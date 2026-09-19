@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roomsie — webapp prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#FDFAF3;--paper:#FFFFFF;--sand:#F8F1E1;--sand-line:#EDE3CC;
+  --ink:#141210;--ink-2:#605A50;--ink-3:#948D7F;--line:#EAE1CE;--line-2:#F4EEE0;
+  --pink:#FF87AC;--pink-soft:#FFE3EC;--pink-ink:#C42D63;
+  --yellow:#FBDF8E;--yellow-soft:#FDF2CE;--yellow-ink:#9A7206;
+  --btn-bg:#141210;--btn-fg:#FDFAF3;
+  --shadow-sm:0 1px 2px rgba(40,32,16,.06),0 4px 14px rgba(40,32,16,.05);
+  --shadow-md:0 10px 34px rgba(40,32,16,.12);--shadow-lg:0 24px 70px rgba(30,22,10,.24);
+  --r-lg:20px;--r-md:14px;--r-sm:10px;
+  --font-d:'Bricolage Grotesque',Georgia,serif;--font-b:'Plus Jakarta Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --cream:#121110;--paper:#1B1917;--sand:#241F19;--sand-line:#342E25;
+  --ink:#F7F1E4;--ink-2:#B9B1A2;--ink-3:#8B8375;--line:#2F2A22;--line-2:#221E19;
+  --pink-soft:#3E1F2A;--pink-ink:#FFA9C4;--yellow:#F0CE72;--yellow-soft:#342A13;--yellow-ink:#F0CE72;
+  --btn-bg:#F7F1E4;--btn-fg:#121110;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.45);--shadow-md:0 10px 34px rgba(0,0,0,.55);--shadow-lg:0 24px 70px rgba(0,0,0,.65);}}
+:root[data-theme="dark"]{--cream:#121110;--paper:#1B1917;--sand:#241F19;--sand-line:#342E25;
+  --ink:#F7F1E4;--ink-2:#B9B1A2;--ink-3:#8B8375;--line:#2F2A22;--line-2:#221E19;
+  --pink-soft:#3E1F2A;--pink-ink:#FFA9C4;--yellow:#F0CE72;--yellow-soft:#342A13;--yellow-ink:#F0CE72;
+  --btn-bg:#F7F1E4;--btn-fg:#121110;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.45);--shadow-md:0 10px 34px rgba(0,0,0,.55);--shadow-lg:0 24px 70px rgba(0,0,0,.65);}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--cream);color:var(--ink);font-family:var(--font-b);font-size:14.5px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(var(--line) 1.1px,transparent 1.1px);background-size:15px 15px;padding-bottom:62px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:2.5px solid var(--pink);outline-offset:2px;border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:10px 18px;border-radius:999px;font-weight:600;font-size:14px;transition:transform .12s,filter .15s,border-color .15s}
+.btn:active{transform:translateY(1px)}
+.btn-dark{background:var(--btn-bg);color:var(--btn-fg)}.btn-dark:hover{filter:brightness(.9)}
+.btn-pink{background:var(--pink);color:#2A0D17}
+.btn-ghost{border:1.5px solid var(--line);background:var(--paper)}.btn-ghost:hover{border-color:var(--ink-3)}
+.btn-sm{padding:7px 14px;font-size:13px}.btn-block{width:100%;justify-content:center}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.wordmark{font-family:var(--font-d);font-weight:800;font-size:20px;letter-spacing:-.02em;display:flex;align-items:center;gap:7px}
+.wordmark .mk{width:22px;height:22px;border-radius:50%;background:var(--pink);display:grid;place-items:center;font-size:11px;color:#2A0D17}
+
+#landing{min-height:100vh}
+.land-nav{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;max-width:1280px;margin:0 auto}
+.land-hero{max-width:1140px;margin:0 auto;padding:40px 48px 70px;display:grid;grid-template-columns:1.05fr .95fr;gap:48px;align-items:center}
+.eyebrow{font-size:13px;color:var(--ink-2);margin-bottom:18px}
+.land-hero h1{font-family:var(--font-d);font-size:clamp(34px,4.2vw,54px);line-height:1.08;letter-spacing:-.03em;margin:0 0 18px;font-weight:700}
+.tag-in{display:inline-block;background:var(--pink-soft);color:var(--pink-ink);border-radius:999px;padding:2px 14px;font-size:.62em;vertical-align:middle;font-family:var(--font-b);font-weight:600}
+.tag-in.y{background:var(--yellow-soft);color:var(--yellow-ink)}
+.land-hero p.sub{color:var(--ink-2);max-width:42ch;margin:0 0 26px}
+.hero-art{background:var(--pink-soft);border-radius:28px;aspect-ratio:4/3;display:grid;place-items:center;font-size:76px;box-shadow:var(--shadow-md)}
+.land-strip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--sand)}
+.land-strip-in{max-width:1140px;margin:0 auto;padding:22px 48px;display:flex;gap:34px;flex-wrap:wrap;font-size:13.5px;color:var(--ink-2)}
+.land-strip-in b{color:var(--ink);font-weight:600}
+.land-note{max-width:1140px;margin:0 auto;padding:34px 48px 70px;color:var(--ink-3);font-size:13px}
+
+#entry,#intent{display:none;min-height:100vh;place-items:center;padding:50px 20px}
+#entry.on,#intent.on{display:grid}
+.gate-card{width:100%;max-width:430px;background:var(--paper);border:1.5px solid var(--line);border-radius:24px;padding:32px;box-shadow:var(--shadow-md);text-align:center}
+.gate-card h1{font-family:var(--font-d);font-size:26px;margin:16px 0 6px;letter-spacing:-.025em;font-weight:700}
+.gate-card p{color:var(--ink-2);font-size:13.5px;margin:0 0 22px}
+.divider{display:flex;align-items:center;gap:12px;margin:16px 0;color:var(--ink-3);font-size:12px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.intent-wrap{width:100%;max-width:640px}
+.intent-wrap h1{font-family:var(--font-d);font-size:30px;margin:0 0 5px;letter-spacing:-.03em;font-weight:700;text-align:center}
+.intent-wrap .isub{color:var(--ink-2);font-size:13.5px;text-align:center;margin:0 0 26px}
+.intent-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.icard{display:flex;gap:13px;align-items:flex-start;text-align:left;padding:18px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--paper);transition:border-color .14s,background .14s}
+.icard:hover{border-color:var(--pink);background:var(--pink-soft)}
+.icard .ii{font-size:24px;flex:none}
+.icard .it{font-weight:700;font-size:15px;display:block;margin-bottom:2px}
+.icard .idd{font-size:12.5px;color:var(--ink-2);line-height:1.4;display:block}
+.guestnote{margin-top:18px;text-align:center;font-size:12.5px;color:var(--ink-3)}
+
+#app{display:none}
+.appbar{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--cream) 88%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.appbar-in{max-width:1420px;margin:0 auto;padding:0 28px;height:62px;display:flex;align-items:center;gap:20px}
+.tabs{display:flex;gap:2px;margin-left:6px}
+.tab{padding:8px 15px;border-radius:999px;font-weight:500;color:var(--ink-2);position:relative;font-size:14px}
+.tab:hover{background:var(--line-2)}
+.tab.on{background:var(--btn-bg);color:var(--btn-fg);font-weight:600}
+.tab .dot{position:absolute;top:4px;right:6px;width:7px;height:7px;background:var(--pink);border-radius:50%}
+.appbar-r{margin-left:auto;display:flex;align-items:center;gap:9px}
+.statuspill{display:flex;align-items:center;gap:8px;padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);font-size:13px;font-weight:500}
+.statuspill .led{width:8px;height:8px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 3px var(--pink-soft)}
+.statuspill .led.off{background:var(--ink-3);box-shadow:0 0 0 3px var(--line-2)}
+.iconbtn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--paper);display:grid;place-items:center;font-size:14px}
+.avatar{width:34px;height:34px;border-radius:50%;background:var(--yellow-soft);display:grid;place-items:center;font-weight:700;font-size:13px;border:1.5px solid var(--sand-line);flex:none}
+.avatar.lg{width:64px;height:64px;font-size:22px}.avatar.xl{width:92px;height:92px;font-size:30px}
+.pctbtn{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);font-size:12.5px;font-weight:700}
+.pctbtn:hover{border-color:var(--pink)}
+.minring{--p:0;width:24px;height:24px;border-radius:50%;background:conic-gradient(var(--pink) calc(var(--p)*1%),var(--line-2) 0);position:relative;flex:none}
+.minring::after{content:"";position:absolute;inset:4px;background:var(--paper);border-radius:50%}
+.view{max-width:1420px;margin:0 auto;padding:24px 28px 60px;display:none}.view.on{display:block}
+
+.vbanner{display:flex;align-items:center;gap:15px;padding:15px 18px;background:var(--pink-soft);border-radius:var(--r-lg);margin-bottom:18px}
+.vbanner .vr{--p:0;width:46px;height:46px;border-radius:50%;background:conic-gradient(var(--pink) calc(var(--p)*1%),var(--paper) 0);position:relative;flex:none;display:grid;place-items:center}
+.vbanner .vr::after{content:"";position:absolute;inset:5px;background:var(--pink-soft);border-radius:50%}
+.vbanner .vr b{position:relative;z-index:1;font-size:12px;font-family:var(--font-d);color:var(--pink-ink)}
+.vbanner .vt{flex:1;color:var(--pink-ink)}
+.vbanner .vt b{display:block;font-size:14px;font-weight:700;margin-bottom:1px}
+.vbanner .vt span{font-size:12.5px;opacity:.9}
+.vbanner .x{color:var(--pink-ink);opacity:.6;font-size:16px;padding:0 4px}
+
+.modebar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.chip{padding:9px 18px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-weight:600;font-size:13.5px}
+.chip:hover{border-color:var(--ink-3)}
+.chip.on{background:var(--btn-bg);color:var(--btn-fg);border-color:var(--btn-bg)}
+.modebar .sep{width:1px;height:26px;background:var(--line);margin:0 4px}
+.subbar{display:flex;gap:7px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.schip{padding:6px 13px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.schip.on{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-ink)}
+.disc{display:grid;grid-template-columns:288px 1fr;gap:24px;align-items:start}
+.filters{position:sticky;top:88px;max-height:calc(100vh - 120px);overflow-y:auto;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-lg)}
+.fgroup{padding:15px 17px;border-bottom:1px solid var(--line-2)}
+.fgroup:last-child{border-bottom:0}
+.fhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.fhead h4{margin:0;font-size:12.5px;font-weight:700}
+.fhead .mini{font-size:11.5px;color:var(--ink-3)}
+.checkrow{display:flex;align-items:center;gap:9px;padding:3px 0;font-size:13.5px;color:var(--ink-2);cursor:pointer}
+.checkrow input{accent-color:var(--pink);width:15px;height:15px;cursor:pointer}
+.range{width:100%;accent-color:var(--pink);margin:4px 0 0}
+.rangeval{font-size:12.5px;font-weight:600}
+select.fsel,input.fin{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:var(--r-sm);background:var(--paper);font-size:13.5px}
+.opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{padding:6px 12px;border:1.5px solid var(--line);border-radius:999px;background:var(--paper);font-size:12.5px;color:var(--ink-2);font-weight:500;display:inline-flex;align-items:center;gap:6px}
+.opt:hover{border-color:var(--ink-3)}
+.opt.on{background:var(--btn-bg);border-color:var(--btn-bg);color:var(--btn-fg);font-weight:600}
+.opt.nice{background:var(--yellow-soft);border-color:var(--yellow);color:var(--yellow-ink);font-weight:600}
+.opt.must{background:var(--pink-soft);border-color:var(--pink);color:var(--pink-ink);font-weight:700}
+.opt .st{font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:999px;background:var(--paper)}
+.opt.must .st{background:var(--pink);color:#2A0D17}
+.opt.nice .st{background:var(--yellow);color:#33260A}
+.legend{display:flex;gap:12px;font-size:11.5px;color:var(--ink-3);margin-bottom:9px;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:middle;font-style:normal}
+.howto{font-size:12px;color:var(--ink-2);background:var(--sand);border-radius:9px;padding:8px 11px;margin-bottom:10px;line-height:1.45}
+.resbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:14px;flex-wrap:wrap}
+.resbar h2{font-family:var(--font-d);font-size:23px;margin:0;font-weight:700;letter-spacing:-.02em}
+.resbar .m{color:var(--ink-3);font-size:13px}
+.excl{display:flex;align-items:center;gap:12px;padding:10px 15px;background:var(--pink-soft);border-radius:var(--r-md);margin-bottom:14px;font-size:13px;color:var(--pink-ink)}
+.excl button{margin-left:auto;font-weight:700;text-decoration:underline;font-size:12.5px}
+.nudge{display:flex;align-items:center;gap:12px;padding:12px 15px;background:var(--yellow-soft);border:1.5px solid var(--yellow);border-radius:var(--r-md);margin-bottom:16px;font-size:13px}
+.nudge .tx{flex:1}.nudge .tx b{display:block;font-weight:700}
+.nudge .tx span{color:var(--ink-2);font-size:12.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+
+.card{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:border-color .15s,box-shadow .15s;display:flex;flex-direction:column;position:relative}
+.card:hover{border-color:var(--ink-3);box-shadow:var(--shadow-md)}
+.ribbon{position:absolute;top:0;left:0;right:0;background:var(--pink);color:#2A0D17;font-size:11px;font-weight:800;padding:5px 13px;z-index:2}
+.card.teamup{border-color:var(--pink)}
+.ph{aspect-ratio:16/10;position:relative;display:grid;place-items:center;font-size:44px}
+.ph .area{position:absolute;left:11px;top:11px;background:var(--paper);color:var(--ink);padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700}
+.ph .save{position:absolute;right:11px;top:11px;width:30px;height:30px;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-size:14px}
+.ph .save.on{background:var(--pink)}
+.cbody{padding:14px 15px 15px;flex:1;display:flex;flex-direction:column;gap:8px}
+.ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.ctop h3{margin:0;font-size:15px;font-weight:700;line-height:1.25}
+.price{font-weight:700;font-size:15px;white-space:nowrap}
+.price small{font-weight:500;color:var(--ink-3);font-size:11.5px}
+.meta{font-size:12.5px;color:var(--ink-2);display:flex;flex-direction:column;gap:2px}
+.meta b{font-weight:600;color:var(--ink)}
+.pills{display:flex;flex-wrap:wrap;gap:5px}
+.pill{background:var(--sand);border:1px solid var(--sand-line);border-radius:999px;padding:3px 9px;font-size:11.5px;color:var(--ink-2);white-space:nowrap}
+.pill.must{background:var(--pink-soft);border-color:transparent;color:var(--pink-ink);font-weight:600}
+.pill.nice{background:var(--yellow-soft);border-color:transparent;color:var(--yellow-ink);font-weight:600}
+.pill.more{background:transparent;border-style:dashed}
+.cfoot{margin-top:auto;padding-top:10px;border-top:1px solid var(--line-2);display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:var(--ink-3)}
+.match{font-weight:700;font-size:12px;color:var(--pink-ink);background:var(--pink-soft);padding:3px 10px;border-radius:999px}
+.match.mid{color:var(--yellow-ink);background:var(--yellow-soft)}
+.quote{font-size:12.5px;color:var(--ink-2);line-height:1.45;border-left:2.5px solid var(--pink);padding-left:9px}
+.quote i{display:block;font-style:normal;font-size:11px;color:var(--ink-3);font-weight:600;margin-bottom:1px}
+.badges{display:flex;gap:5px;flex-wrap:wrap}
+.vbadge{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--pink-soft);color:var(--pink-ink)}
+.vbadge.grey{background:var(--line-2);color:var(--ink-3)}
+.card.person .ph{aspect-ratio:auto;padding:20px 15px 4px;background:transparent!important;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:inherit}
+.card.person.teamup .ph{padding-top:34px}
+.card.person .pname{font-size:16px;font-weight:700}
+.card.person .prole{font-size:12.5px;color:var(--ink-2)}
+
+.overlay{position:fixed;inset:0;background:rgba(18,14,8,.55);backdrop-filter:blur(3px);z-index:60;display:none;overflow-y:auto;padding:40px 20px}
+.overlay.on{display:block}
+.sheet{max-width:940px;margin:0 auto;background:var(--cream);border-radius:24px;overflow:hidden;box-shadow:var(--shadow-lg);animation:pop .22s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.sheet-hd{position:relative}
+.sheet-hero{height:220px;display:grid;place-items:center;font-size:70px}
+.closeb{position:absolute;right:16px;top:16px;width:36px;height:36px;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-size:17px;box-shadow:var(--shadow-sm)}
+.sheet-body{display:grid;grid-template-columns:1fr 300px;gap:28px;padding:24px 30px 32px}
+.sheet-body h1{font-family:var(--font-d);font-size:27px;margin:0 0 6px;letter-spacing:-.025em;font-weight:700}
+.sheet-sub{color:var(--ink-2);font-size:13.5px;margin-bottom:18px}
+.dsec{border-top:1px solid var(--line);padding-top:15px;margin-top:16px}
+.dsec h4{margin:0 0 10px;font-size:13px;font-weight:700}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px}
+.fact{font-size:13px}.fact span{display:block;color:var(--ink-3);font-size:11.5px}.fact b{font-weight:600}
+.mlist{display:flex;flex-direction:column;gap:6px}
+.mrow{display:flex;align-items:center;gap:9px;font-size:13px;padding:7px 11px;border-radius:9px;background:var(--paper);border:1px solid var(--line-2)}
+.mrow .tick{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:800;flex:none}
+.mrow.ok .tick{background:var(--pink);color:#2A0D17}
+.mrow.no .tick{background:var(--line);color:var(--ink-3)}
+.mrow.no .lbl{color:var(--ink-3)}
+.mrow .lbl{flex:1}
+.mrow .kind{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px}
+.mrow .kind.must{background:var(--pink-soft);color:var(--pink-ink)}
+.mrow .kind.nice{background:var(--yellow-soft);color:var(--yellow-ink)}
+.promptcard{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-md);padding:13px 15px;margin-bottom:8px}
+.promptcard .pq{font-size:11.5px;color:var(--ink-3);font-weight:600;margin-bottom:3px}
+.promptcard .pa{font-size:14px;line-height:1.45}
+.aside{position:sticky;top:20px;align-self:start;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:18px}
+.aside .bigp{font-family:var(--font-d);font-size:26px;font-weight:700;letter-spacing:-.02em}
+.aside .bigp small{font-family:var(--font-b);font-size:12.5px;color:var(--ink-3);font-weight:500}
+.hostrow{display:flex;align-items:center;gap:11px;padding:13px 0;margin:13px 0;border-top:1px solid var(--line-2);border-bottom:1px solid var(--line-2)}
+.hostrow .hn{font-weight:700;font-size:13.5px}.hostrow .hr{font-size:12px;color:var(--ink-3)}
+.teambox{background:var(--pink-soft);border-radius:var(--r-md);padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:var(--pink-ink);line-height:1.45}
+.teambox b{display:block;font-size:13px;margin-bottom:2px}
+.gatenote{font-size:11.5px;color:var(--ink-3);margin-top:9px;text-align:center;line-height:1.4}
+.modal{max-width:460px;margin:60px auto;background:var(--paper);border-radius:22px;padding:26px;box-shadow:var(--shadow-lg);animation:pop .2s ease}
+.modal h2{font-family:var(--font-d);font-size:22px;margin:0 0 6px;letter-spacing:-.02em;font-weight:700}
+.modal p.ms{color:var(--ink-2);font-size:13.5px;margin:0 0 18px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:5px}
+.field input,.field textarea,.field select{width:100%;padding:10px 12px;border:1.5px solid var(--line);border-radius:var(--r-sm);background:var(--cream)}
+.field textarea{min-height:86px;resize:vertical;line-height:1.5}
+.field .hint{font-size:11.5px;color:var(--ink-3);margin-top:4px}
+.vopt{display:flex;gap:12px;padding:14px;border:1.5px solid var(--line);border-radius:var(--r-md);margin-bottom:10px;cursor:pointer;background:var(--cream);text-align:left;width:100%;align-items:flex-start}
+.vopt:hover{border-color:var(--pink)}.vopt.on{border-color:var(--pink);background:var(--pink-soft)}
+.vopt .vi{font-size:22px;flex:none}.vopt .vt{font-weight:700;font-size:14px}
+.vopt .vd{font-size:12.5px;color:var(--ink-2);line-height:1.4}
+.vopt .vtime{font-size:11px;color:var(--ink-3);margin-top:4px}
+
+.inbox{display:grid;grid-template-columns:330px 1fr;border:1.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--paper);min-height:520px}
+.ilist{border-right:1.5px solid var(--line);display:flex;flex-direction:column}
+.isubs{display:flex;padding:12px 14px 0;gap:4px}
+.isub{padding:7px 13px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.isub.on{background:var(--line-2);color:var(--ink)}
+.isub .c{display:inline-grid;place-items:center;min-width:17px;height:17px;padding:0 5px;border-radius:999px;background:var(--pink);color:#2A0D17;font-size:10.5px;margin-left:5px;font-weight:800}
+.ithread{display:flex;gap:11px;padding:13px 15px;border-bottom:1px solid var(--line-2);cursor:pointer;align-items:flex-start}
+.ithread:hover{background:var(--cream)}.ithread.on{background:var(--pink-soft)}
+.ithread .tn{font-weight:700;font-size:13.5px;display:flex;justify-content:space-between;gap:8px}
+.ithread .tn span{font-weight:500;font-size:11px;color:var(--ink-3)}
+.ithread .tp{font-size:12.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px}
+.ithread .tctx{font-size:11px;color:var(--ink-3);margin-top:4px;background:var(--sand);border:1px solid var(--sand-line);padding:2px 8px;border-radius:999px;display:inline-block}
+.ipane{display:flex;flex-direction:column}
+.ihd{padding:15px 20px;border-bottom:1px solid var(--line-2);display:flex;align-items:center;gap:11px}
+.imsgs{flex:1;padding:22px;display:flex;flex-direction:column;gap:10px;background:var(--cream)}
+.bub{max-width:66%;padding:11px 15px;border-radius:17px;font-size:13.5px;line-height:1.5}
+.bub.them{background:var(--paper);border:1px solid var(--line);border-bottom-left-radius:5px;align-self:flex-start}
+.bub.me{background:var(--btn-bg);color:var(--btn-fg);border-bottom-right-radius:5px;align-self:flex-end}
+.ireq{padding:14px 20px;border-top:1px solid var(--line-2);background:var(--yellow-soft);display:flex;align-items:center;gap:12px;font-size:13px}
+.icomp{padding:13px 20px;border-top:1px solid var(--line-2);display:flex;gap:10px;align-items:center}
+.icomp input{flex:1;padding:10px 15px;border:1.5px solid var(--line);border-radius:999px;background:var(--cream)}
+
+.two{display:grid;grid-template-columns:1fr 330px;gap:24px;align-items:start}
+.panel{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:20px 22px;margin-bottom:18px}
+.panel h3{font-family:var(--font-d);margin:0 0 3px;font-size:19px;letter-spacing:-.02em;font-weight:700}
+.panel .pd{color:var(--ink-2);font-size:13px;margin:0 0 15px}
+.mylist{display:flex;gap:15px;padding:15px 0;border-top:1px solid var(--line-2)}
+.mylist .mph{width:108px;height:78px;border-radius:12px;display:grid;place-items:center;font-size:28px;flex:none}
+.mylist .mi{flex:1;min-width:0}.mylist .mt{font-weight:700;font-size:14.5px}
+.mylist .mm{font-size:12.5px;color:var(--ink-2);margin:3px 0 7px}
+.stat{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+.stat.live{background:var(--pink-soft);color:var(--pink-ink)}
+.stat.exp{background:var(--yellow-soft);color:var(--yellow-ink)}
+.stat.arc{background:var(--line-2);color:var(--ink-3)}
+.kpis{display:flex;gap:18px;font-size:12px;color:var(--ink-3)}
+.kpis b{display:block;font-size:17px;color:var(--ink);font-family:var(--font-d);font-weight:700}
+.statusrow{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid var(--line);border-radius:var(--r-md);margin-bottom:8px;cursor:pointer;background:var(--cream)}
+.statusrow.on{border-color:var(--pink);background:var(--pink-soft)}
+.statusrow .st2{flex:1}
+.statusrow .st2 b{display:block;font-size:13.5px;font-weight:700}
+.statusrow .st2 span{font-size:12px;color:var(--ink-2)}
+.sw{width:40px;height:23px;border-radius:999px;background:var(--line);position:relative;transition:background .16s;flex:none}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:var(--paper);transition:transform .16s;box-shadow:var(--shadow-sm)}
+.statusrow.on .sw,.visrow.on .sw{background:var(--pink)}
+.statusrow.on .sw::after,.visrow.on .sw::after{transform:translateX(17px)}
+.visrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line-2);cursor:pointer;font-size:13.5px}
+.visrow:last-child{border-bottom:0}
+.visrow .vl{flex:1}.visrow .vl span{display:block;font-size:11.5px;color:var(--ink-3)}
+.ring{--p:0;width:74px;height:74px;border-radius:50%;flex:none;background:conic-gradient(var(--pink) calc(var(--p)*1%),var(--line-2) 0);display:grid;place-items:center;position:relative}
+.ring::after{content:"";position:absolute;inset:7px;background:var(--paper);border-radius:50%}
+.ring b{position:relative;z-index:1;font-family:var(--font-d);font-size:18px;font-weight:700}
+.todo{display:flex;align-items:center;gap:9px;font-size:13px;padding:5px 0;color:var(--ink-2)}
+.todo .tb{width:17px;height:17px;border-radius:50%;border:1.8px solid var(--line);display:grid;place-items:center;font-size:9px;flex:none}
+.todo.done{color:var(--ink-3);text-decoration:line-through}
+.todo.done .tb{background:var(--pink);border-color:var(--pink);color:#2A0D17}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.frow.three{grid-template-columns:1fr 1fr 1fr}
+.pslot{border:1.5px dashed var(--line);border-radius:var(--r-md);padding:13px 15px;margin-bottom:8px;cursor:pointer;background:var(--cream)}
+.pslot:hover{border-color:var(--pink)}
+.pslot.filled{border-style:solid;background:var(--paper)}
+.pslot .pq{font-size:11.5px;color:var(--ink-3);font-weight:600;margin-bottom:2px}
+.pslot .pa{font-size:13.5px}.pslot .pe{font-size:13px;color:var(--ink-3)}
+.whybox{background:var(--pink-soft);border-radius:var(--r-md);padding:14px 16px;margin-bottom:16px;color:var(--pink-ink)}
+.whybox b{display:block;font-size:14px;margin-bottom:3px}
+.whybox span{font-size:12.5px;line-height:1.5}
+
+.postwrap{display:grid;grid-template-columns:214px 1fr 312px;gap:24px;align-items:start}
+.rail{position:sticky;top:88px;background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:14px}
+.railstep{display:flex;gap:10px;padding:8px 6px;border-radius:10px;align-items:flex-start;cursor:pointer}
+.railstep:hover{background:var(--line-2)}
+.railstep .rn{width:22px;height:22px;border-radius:50%;background:var(--line-2);color:var(--ink-3);display:grid;place-items:center;font-size:11px;font-weight:800;flex:none;font-family:var(--font-d)}
+.railstep.on{background:var(--pink-soft)}.railstep.on .rn{background:var(--pink);color:#2A0D17}
+.railstep.done .rn{background:var(--btn-bg);color:var(--btn-fg)}
+.railstep .rt{font-size:13px;font-weight:600;line-height:1.3}
+.stepcard{background:var(--paper);border:1.5px solid var(--line);border-radius:var(--r-lg);padding:24px 26px}
+.stepcard h2{font-family:var(--font-d);font-size:23px;margin:0 0 4px;letter-spacing:-.025em;font-weight:700}
+.stepcard .sd{color:var(--ink-2);font-size:13.5px;margin:0 0 20px}
+.bigpick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bigpick button{text-align:left;padding:18px;border:1.5px solid var(--line);border-radius:var(--r-md);background:var(--cream)}
+.bigpick button:hover{border-color:var(--pink)}
+.bigpick button.on{border-color:var(--pink);background:var(--pink-soft)}
+.bigpick .bi{font-size:26px;display:block;margin-bottom:8px}
+.bigpick .bt{font-weight:700;font-size:15px;display:block;margin-bottom:3px}
+.bigpick .bd{font-size:12.5px;color:var(--ink-2);line-height:1.4;display:block}
+.uploads{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.upslot{aspect-ratio:4/3;border:1.5px dashed var(--line);border-radius:var(--r-md);display:grid;place-items:center;font-size:20px;color:var(--ink-3);background:var(--cream)}
+.upslot.filled{border-style:solid;border-color:transparent;font-size:26px;position:relative}
+.upslot.filled.cover::after{content:"Cover";position:absolute;bottom:6px;left:6px;background:var(--paper);font-size:9.5px;font-weight:800;padding:2px 7px;border-radius:999px;color:var(--ink)}
+.stepnav{display:flex;align-items:center;gap:10px;margin-top:22px;padding-top:16px;border-top:1px solid var(--line-2)}
+.stepnav .sp{margin-left:auto;font-size:12.5px;color:var(--ink-3)}
+.previewbox{position:sticky;top:88px}
+.previewlab{font-size:11.5px;color:var(--ink-3);margin-bottom:8px;font-weight:600}
+.rulebox{background:var(--yellow-soft);border:1.5px solid var(--yellow);border-radius:var(--r-md);padding:12px 14px;font-size:12.5px;line-height:1.5;margin-top:12px}
+.rulebox b{display:block;margin-bottom:2px}
+.checkline{display:flex;gap:9px;align-items:flex-start;font-size:13px;padding:6px 0;color:var(--ink-2)}
+.checkline .cb{width:18px;height:18px;border-radius:5px;border:1.8px solid var(--line);display:grid;place-items:center;font-size:10px;flex:none;background:var(--cream)}
+.checkline.on .cb{background:var(--pink);border-color:var(--pink);color:#2A0D17}
+
+#demobar{position:fixed;left:0;right:0;bottom:0;z-index:90;background:var(--btn-bg);color:var(--btn-fg);
+  display:flex;align-items:center;gap:9px;padding:9px 18px;box-shadow:0 -6px 24px rgba(0,0,0,.16);flex-wrap:wrap}
+#demobar .dl{font-size:11px;font-weight:800;opacity:.55;margin-right:2px}
+.dbtn{padding:6px 13px;border-radius:999px;font-size:12.5px;font-weight:600;border:1.5px solid currentColor;color:inherit;opacity:.55}
+.dbtn:hover{opacity:.9}
+.dbtn.on{background:var(--pink);color:#2A0D17;border-color:var(--pink);opacity:1}
+#demobar .rt2{margin-left:auto;display:flex;gap:8px;align-items:center}
+#toast{position:fixed;bottom:74px;left:50%;transform:translateX(-50%) translateY(140px);background:var(--pink);color:#2A0D17;padding:12px 22px;border-radius:999px;font-size:13.5px;font-weight:700;z-index:200;transition:transform .26s cubic-bezier(.2,.8,.3,1);box-shadow:var(--shadow-md)}
+#toast.on{transform:translateX(-50%) translateY(0)}
+@media (max-width:1180px){.postwrap{grid-template-columns:1fr}.rail,.previewbox{position:static}}
+@media (max-width:1080px){.disc{grid-template-columns:1fr}.filters{position:static;max-height:none}.two,.sheet-body{grid-template-columns:1fr}.inbox{grid-template-columns:1fr}.land-hero,.intent-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="landing">
+  <div class="land-nav">
+    <div class="wordmark"><span class="mk">◠</span>Roomsie</div>
+    <div style="display:flex;gap:9px;align-items:center">
+      <button class="iconbtn" onclick="toggleTheme()">◐</button>
+      <button class="btn btn-ghost btn-sm" onclick="showEntry()">Log in</button>
+      <button class="btn btn-dark btn-sm" onclick="showEntry()">Sign up</button>
+    </div>
+  </div>
+  <div class="land-hero">
+    <div>
+      <div class="eyebrow">For women. By women 🩷</div>
+      <h1>Find a flatmate you <span class="tag-in">Like 👍🏾</span><br>not one you <span class="tag-in y">Tolerate 👎🏾</span></h1>
+      <p class="sub">Flats and flatmates, filtered by what you actually care about.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-dark" onclick="showEntry()">Start looking</button>
+        <button class="btn btn-ghost" onclick="showEntry()">Post a flat</button>
+      </div>
+    </div>
+    <div class="hero-art">🛋️</div>
+  </div>
+  <div class="land-strip"><div class="land-strip-in">
+    <div><b>Women only.</b> Built around it, not filtered for it.</div>
+    <div><b>Verified before you talk.</b> Face and Aadhaar.</div>
+    <div><b>Dealbreakers, not wishlists.</b></div>
+    <div><b>You choose who sees you.</b></div>
+  </div></div>
+  <div class="land-note">Prototype. Use the bar at the bottom to switch persona and restart the flow.</div>
+</div>
+
+<div id="entry">
+  <div class="gate-card">
+    <div class="wordmark" style="justify-content:center"><span class="mk">◠</span>Roomsie</div>
+    <h1>Mumbai, for now</h1>
+    <p>Browsing is free either way. You only need an account to message someone.</p>
+    <button class="btn btn-dark btn-block" onclick="showIntent('signup')">Sign up</button>
+    <button class="btn btn-ghost btn-block" style="margin-top:9px" onclick="showIntent('login')">Log in</button>
+    <div class="divider">or</div>
+    <button class="btn btn-ghost btn-block" onclick="showIntent('guest')">Look around as a guest</button>
+  </div>
+</div>
+
+<div id="intent">
+  <div class="intent-wrap">
+    <h1 id="intent-h">What are you here for?</h1>
+    <p class="isub" id="intent-s">One tap. You can change it whenever.</p>
+    <div class="intent-grid">
+      <button class="icard" onclick="pickIntent('both')"><span class="ii">🧳</span>
+        <span><span class="it">A flat and flatmates</span><span class="idd">New to the city, or starting fresh</span></span></button>
+      <button class="icard" onclick="pickIntent('flat')"><span class="ii">🔍</span>
+        <span><span class="it">Just a flat</span><span class="idd">You have people already, or want it alone</span></span></button>
+      <button class="icard" onclick="pickIntent('flatmate')"><span class="ii">👯</span>
+        <span><span class="it">Just a flatmate</span><span class="idd">You have a place, a room is free</span></span></button>
+      <button class="icard" onclick="pickIntent('post')"><span class="ii">🔑</span>
+        <span><span class="it">I'm renting out a flat</span><span class="idd">You own it or you're moving out</span></span></button>
+    </div>
+    <div class="guestnote"><button onclick="pickIntent('browse')" style="text-decoration:underline;color:var(--ink-3)">Just having a look</button>
+      <div id="guesthint" style="margin-top:8px"></div></div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="appbar"><div class="appbar-in">
+    <div class="wordmark" style="cursor:pointer" onclick="go('discover')"><span class="mk">◠</span>Roomsie</div>
+    <div class="tabs">
+      <button class="tab on" data-v="discover" onclick="go('discover')">Discover</button>
+      <button class="tab" data-v="inbox" onclick="go('inbox')">Inbox<span class="dot" id="inboxdot"></span></button>
+      <button class="tab" data-v="listings" onclick="go('listings')">My listings</button>
+      <button class="tab" data-v="profile" onclick="go('profile')">Profile</button>
+    </div>
+    <div class="appbar-r">
+      <button class="pctbtn" id="pctbtn" onclick="go('profile')" title="Profile strength"><span class="minring" id="minring"></span><span id="pcttext">0%</span></button>
+      <button class="statuspill" onclick="go('profile')"><span class="led" id="ledx"></span><span id="statustext">Looking for a flat</span></button>
+      <button class="iconbtn" onclick="toggleTheme()">◐</button>
+      <div class="avatar" id="avinit">RS</div>
+    </div>
+  </div></div>
+
+  <div class="view on" id="v-discover">
+    <div id="vbanner"></div>
+    <div class="modebar">
+      <button class="chip on" data-m="flats" onclick="setMode('flats')">🏠 Flats</button>
+      <button class="chip" data-m="people" onclick="setMode('people')">👯 Flatmates</button>
+      <div class="sep"></div>
+      <button class="chip" onclick="startPost()">＋ Post a listing</button>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:9px">
+        <span style="font-size:13px;color:var(--ink-3)">Mumbai</span>
+        <select class="fsel" style="width:auto" id="sortsel" onchange="render()">
+          <option value="match">Best match</option><option value="new">Newest</option>
+          <option value="lo">Price low to high</option><option value="hi">Price high to low</option></select>
+      </div>
+    </div>
+    <div class="subbar" id="subbar"></div>
+    <div class="disc">
+      <aside class="filters" id="filters"></aside>
+      <main>
+        <div class="resbar"><div><h2 id="restitle"></h2><div class="m" id="resmeta"></div></div></div>
+        <div id="exclbox"></div><div id="nudgebox"></div>
+        <div class="grid" id="grid"></div>
+      </main>
+    </div>
+  </div>
+
+  <div class="view" id="v-post">
+    <div class="resbar"><div><h2 id="posttitle">Post a listing</h2><div class="m">Four minutes. Stops save as a draft.</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="go('discover')">Save and exit</button></div>
+    <div class="postwrap">
+      <aside class="rail" id="rail"></aside>
+      <div class="stepcard" id="stepcard"></div>
+      <aside class="previewbox">
+        <div class="previewlab">How it'll look</div><div id="livepreview"></div>
+        <div class="rulebox"><b>Live for 30 days</b>On day 21 we ask if it's still free. One tap keeps it up.</div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="view" id="v-inbox">
+    <div class="resbar"><div><h2>Inbox</h2><div class="m">Anyone can message you. Replying is your call.</div></div></div>
+    <div class="inbox">
+      <div class="ilist">
+        <div class="isubs">
+          <button class="isub on" data-f="primary" onclick="setInbox('primary')">Chats</button>
+          <button class="isub" data-f="requests" onclick="setInbox('requests')">Requests<span class="c" id="reqcount">2</span></button>
+        </div>
+        <div id="threads" style="overflow-y:auto;margin-top:8px"></div>
+      </div>
+      <div class="ipane" id="ipane"></div>
+    </div>
+  </div>
+
+  <div class="view" id="v-listings">
+    <div id="vbanner2"></div>
+    <div class="resbar"><div><h2>My listings</h2><div class="m">Same account, same profile.</div></div>
+      <button class="btn btn-dark" onclick="startPost()">＋ Post a listing</button></div>
+    <div class="two"><div id="listcol"></div>
+      <aside><div class="panel"><h3>Who's looking</h3><p class="pd">Saved or messaged about your room.</p><div id="interested"></div></div></aside></div>
+  </div>
+
+  <div class="view" id="v-profile">
+    <div class="resbar"><div><h2>Your profile</h2><div class="m" id="profsub"></div></div>
+      <button class="btn btn-ghost btn-sm" onclick="previewMe()">Preview as others see it</button></div>
+    <div class="two">
+      <div>
+        <div class="panel">
+          <div id="whybox"></div>
+          <div style="display:flex;gap:18px;align-items:center">
+            <div class="avatar xl" id="avxl">RS</div>
+            <div style="flex:1"><h3 style="margin-bottom:2px" id="pname">Riya Sharma</h3>
+              <p class="pd" style="margin-bottom:8px" id="prole">25 · UX Designer</p>
+              <div class="badges"></div></div>
+          </div>
+        </div>
+        <div class="panel"><h3>Your status</h3><p class="pd">Decides which feeds you appear in.</p><div id="statusbox"></div></div>
+        <div class="panel" id="searchpanel"><h3>Your search</h3><p class="pd">Shown on your card so people can rule themselves in or out.</p><div id="searchbox"></div></div>
+        <div class="panel"><h3>About you</h3><p class="pd">Up to three. Optional, but these get the most replies.</p><div id="promptbox"></div></div>
+        <div class="panel"><h3>What you are</h3><p class="pd">Facts about how you live. Other people's filters check these.</p><div id="selfbox"></div></div>
+        <div class="panel"><h3>What you need</h3><p class="pd">Tap once for prefer, twice for dealbreaker.</p><div id="wantbox"></div></div>
+        <div class="panel"><h3>Visible to others</h3><div id="visbox"></div></div>
+      </div>
+      <aside>
+        <div class="panel">
+          <div style="display:flex;gap:15px;align-items:center;margin-bottom:12px">
+            <div class="ring" id="ring"><b id="ringp">0%</b></div>
+            <div><div style="font-weight:700;font-size:14px">Profile strength</div>
+              <div style="font-size:12.5px;color:var(--ink-2)" id="ringmsg"></div></div>
+          </div>
+          <div id="todobox"></div>
+        </div>
+        <div class="panel"><h3 style="font-size:16px">Daily limit</h3>
+          <p class="pd" style="margin-bottom:10px"><b id="limitleft">5</b> new chats a day. Aadhaar raises it to 20.</p>
+          <button class="btn btn-pink btn-block btn-sm" onclick="openVerify(true)">Add Aadhaar</button></div>
+      </aside>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="detail" onclick="if(event.target===this)closeDetail()"><div id="detailsheet"></div></div>
+<div class="overlay" id="gate" onclick="if(event.target===this)closeGate()"><div id="gatesheet"></div></div>
+<div id="toast"></div>
+
+<div id="demobar">
+  <span class="dl">PROTOTYPE</span>
+  <span class="rt2">
+    <button class="dbtn" onclick="restart()">↻ Restart from the beginning</button>
+    <button class="dbtn" onclick="toggleTheme()">◐ Theme</button>
+  </span>
+</div>
+
+<script>
+function toggleTheme(){const r=document.documentElement,d=matchMedia('(prefers-color-scheme:dark)').matches;
+  const c=r.getAttribute('data-theme')||(d?'dark':'light');r.setAttribute('data-theme',c==='dark'?'light':'dark')}
+
+const ATTRS=[
+ {id:'food',l:'Kitchen',o:[['veg','Veg only'],['nonveg','Non-veg okay']]},
+ {id:'smoke',l:'Smoking',o:[['no','No smoking'],['yes','Smoking okay']]},
+ {id:'drink',l:'Alcohol',o:[['no','None at home'],['yes','Fine at home']]},
+ {id:'guests',l:'Guests',o:[['yes','Guests welcome'],['some','Weekends only'],['no','Rarely']]},
+ {id:'pets',l:'Pets',o:[['yes','Pets okay'],['no','No pets']]},
+ {id:'hours',l:'Hours',o:[['early','Early riser'],['late','Night owl']]},
+ {id:'tidy',l:'Tidiness',o:[['high','Very tidy'],['chill','Relaxed']]},
+ {id:'vibe',l:'At home',o:[['quiet','Quiet'],['social','Social']]},
+ {id:'day',l:'Daytime',o:[['wfh','Home most days'],['out','Out most days']]},
+];
+const AL=Object.fromEntries(ATTRS.map(a=>[a.id,a]));
+const val=(id,v)=>{const a=AL[id];const f=a&&a.o.find(x=>x[0]===v);return f?f[1]:null};
+const LIFE=[
+ {a:'food',v:'veg',l:'Veg kitchen'},{a:'smoke',v:'no',l:'No smoking'},
+ {a:'drink',v:'no',l:'No alcohol at home'},{a:'guests',v:'yes',l:'Guests welcome'},
+ {a:'tidy',v:'high',l:'Very tidy'},{a:'vibe',v:'quiet',l:'Quiet home'},
+ {a:'pets',v:'yes',l:'Pets okay'},{a:'hours',v:'early',l:'Early riser'},
+ {a:'food',v:'nonveg',l:'Non-veg kitchen okay'},{a:'pets',v:'no',l:'No pets'},
+ {a:'hours',v:'late',l:'Night owl'},{a:'vibe',v:'social',l:'Social home'},
+ {a:'day',v:'wfh',l:'Home during the day'},{a:'day',v:'out',l:'Out during the day'},
+ {a:'tidy',v:'chill',l:'Relaxed about mess'},{a:'guests',v:'no',l:'Guests rarely'},
+];
+const AREAS=['Chandivali, Powai','Borivali West','Goregaon East','Andheri West','Bandra East','Malad West','Lower Parel','Thane West'];
+const AMEN=['Lift','Parking','Security','Gym','Balcony','Washing machine'];
+const HUES=['var(--pink-soft)','var(--yellow-soft)','var(--sand)','var(--pink-soft)','var(--yellow-soft)'];
+const ICONS=['🛏️','🪴','🏡','🪟','🌿','☕','🔑','🌆'];
+const PROMPTS=['My ideal Sunday at home','A dealbreaker I won\'t budge on','The kitchen is usually','You\'ll know I\'m home when',
+ 'I\'m looking for someone who','My last flat taught me','Weeknights I\'m usually','Something I\'m particular about'];
+
+const FLATS=[
+ {id:'f1',t:'Private room in 3 BHK',room:'Private room',bhk:'3 BHK',area:'Chandivali, Powai',rent:12000,dep:3,spots:1,living:3,from:'31 Mar 26',days:14,age:2,ic:'🛏️',
+  furn:'Semi-furnished',bath:'Shared',amen:['Lift','Parking','Security'],
+  at:{food:'veg',smoke:'no',drink:'no',guests:'yes',pets:'no',hours:'early',tidy:'high',vibe:'quiet',day:'wfh'},
+  needs:{food:{v:'veg',w:'must'},smoke:{v:'no',w:'must'},tidy:{v:'high',w:'nice'}},
+  host:{n:'Ananya Iyer',r:'26 · Business analyst',v:2},
+  d:'Corner room in a 3 BHK we have had two years. Veg kitchen, not negotiable. Gated society with a lift.'},
+ {id:'f2',t:'Private room in 2 BHK',room:'Private room',bhk:'2 BHK',area:'Borivali West',rent:12000,dep:2,spots:1,living:2,from:'10 Apr 26',days:24,age:6,ic:'🪴',
+  furn:'Furnished',bath:'Shared',amen:['Lift','Security'],
+  at:{food:'veg',smoke:'no',drink:'no',guests:'some',pets:'no',hours:'early',tidy:'high',vibe:'quiet',day:'out'},
+  needs:{food:{v:'veg',w:'must'},hours:{v:'early',w:'nice'}},host:{n:'Sneha Rane',r:'28 · Teacher',v:2},
+  d:'Ten minutes from Borivali station. We keep early hours. Calm home, not a party house.'},
+ {id:'f3',t:'2 BHK, full flat',room:'Whole flat',bhk:'2 BHK',area:'Andheri West',rent:35000,dep:3,spots:2,living:0,from:'Immediately',days:0,age:1,ic:'🏡',
+  furn:'Fully furnished',bath:'Attached',amen:['Lift','Parking','Security','Washing machine','Balcony'],
+  at:{food:'nonveg',smoke:'no',drink:'yes',guests:'yes',pets:'yes',tidy:'chill',vibe:'social',day:'out'},
+  needs:{smoke:{v:'no',w:'must'}},host:{n:'Meera Shah',r:'Owner · women only',v:2},
+  d:'Whole 2 BHK, freshly painted, furnished down to the geyser. I rent to working women and students only.'},
+ {id:'f4',t:'Shared room in 2 BHK',room:'Shared room',bhk:'2 BHK',area:'Goregaon East',rent:8500,dep:2,spots:1,living:2,from:'5 Apr 26',days:19,age:9,ic:'🪟',
+  furn:'Semi-furnished',bath:'Shared',amen:['Security'],
+  at:{food:'veg',smoke:'no',drink:'no',guests:'no',pets:'no',hours:'early',tidy:'high',vibe:'quiet',day:'out'},
+  needs:{food:{v:'veg',w:'must'},drink:{v:'no',w:'must'},smoke:{v:'no',w:'must'}},host:{n:'Pooja Nair',r:'23 · CA student',v:1},
+  d:'Twin beds, sharing with me. Strictly veg, no alcohol. Quiet after ten.'},
+ {id:'f5',t:'Private room in 3 BHK',room:'Private room',bhk:'3 BHK',area:'Bandra East',rent:21000,dep:2,spots:1,living:2,from:'20 Apr 26',days:34,age:3,ic:'🌿',
+  furn:'Furnished',bath:'Attached',amen:['Lift','Balcony','Security'],
+  at:{food:'nonveg',smoke:'no',drink:'yes',guests:'yes',pets:'yes',hours:'late',tidy:'chill',vibe:'social',day:'out'},
+  needs:{pets:{v:'yes',w:'must'},smoke:{v:'no',w:'nice'}},host:{n:'Tanvi Desai',r:'29 · Marketing lead',v:2},
+  d:'Both of us are in media so the hours are odd. Friendly cat. Attached bathroom and a balcony.'},
+ {id:'f6',t:'Private room in 1 BHK',room:'Private room',bhk:'1 BHK',area:'Malad West',rent:15500,dep:2,spots:1,living:1,from:'Immediately',days:0,age:4,ic:'☕',
+  furn:'Furnished',bath:'Attached',amen:['Lift','Washing machine'],
+  at:{food:'veg',smoke:'no',drink:'no',guests:'some',pets:'no',hours:'early',tidy:'high',vibe:'quiet',day:'wfh'},
+  needs:{food:{v:'veg',w:'must'},tidy:{v:'high',w:'must'},smoke:{v:'no',w:'must'}},host:{n:'Ishita Verma',r:'27 · Product manager',v:2},
+  d:'Just me. I work from home four days a week. Veg kitchen, and I like things tidy.'},
+ {id:'f7',t:'1 BHK, full flat',room:'Whole flat',bhk:'1 BHK',area:'Thane West',rent:18000,dep:2,spots:2,living:0,from:'1 May 26',days:45,age:11,ic:'🔑',
+  furn:'Furnished',bath:'Attached',amen:['Lift','Parking','Security','Gym'],
+  at:{food:'nonveg',smoke:'yes',drink:'yes',guests:'yes',pets:'yes',tidy:'chill',vibe:'social',day:'out'},
+  needs:{},host:{n:'Rekha Joshi',r:'Owner · women only',v:1},
+  d:'Gated complex with a gym and round-the-clock security. Pets fine. Suits two sharing.'},
+ {id:'f8',t:'Private room in 4 BHK',room:'Private room',bhk:'4 BHK',area:'Lower Parel',rent:26000,dep:2,spots:2,living:3,from:'15 Apr 26',days:29,age:5,ic:'🌆',
+  furn:'Fully furnished',bath:'Shared',amen:['Lift','Security','Balcony','Washing machine'],
+  at:{food:'nonveg',smoke:'no',drink:'yes',guests:'yes',pets:'no',hours:'late',tidy:'chill',vibe:'social',day:'wfh'},
+  needs:{smoke:{v:'no',w:'must'},guests:{v:'yes',w:'nice'}},host:{n:'Zoya Merchant',r:'26 · Consultant',v:2},
+  d:'Four of us, walking distance from Kamala Mills. Everyone works late. Weekend guests are normal.'},
+];
+const PEOPLE=[
+ {id:'p1',n:'Ruhi Chawla',age:24,role:'Software engineer',want:'flat',area:'Goregaon East',rent:22000,from:'31 Mar 26',days:14,age_d:1,ic:'RC',v:2,
+  at:{food:'veg',smoke:'no',drink:'no',guests:'yes',pets:'no',hours:'early',tidy:'high',vibe:'social',day:'wfh'},
+  needs:{food:{v:'veg',w:'must'},smoke:{v:'no',w:'must'}},
+  prompts:[['My ideal Sunday at home','Cooking far too much food and making everyone eat it'],['I\'m looking for someone who','Says yes to plans but is fine if I cancel']],
+  d:'Moving from Pune for a role in Goregaon. Four years of sharing flats, so I know the drill.'},
+ {id:'p2',n:'Josephina Elora',age:24,role:'Product designer',want:'flat',area:'Borivali West',rent:20000,from:'8 Apr 26',days:22,age_d:3,ic:'JE',v:2,
+  at:{food:'veg',smoke:'no',drink:'yes',guests:'yes',pets:'yes',hours:'late',tidy:'chill',vibe:'social',day:'out'},
+  needs:{smoke:{v:'no',w:'must'}},
+  prompts:[['You\'ll know I\'m home when','There\'s music on at 1am and something in the oven'],['Something I\'m particular about','My own mug. That\'s genuinely it.']],
+  d:'Want a furnished place with one or two others. Out most weekends, low maintenance.'},
+ {id:'p3',n:'Neha Kulkarni',age:27,role:'Resident doctor',want:'flat',area:'Chandivali, Powai',rent:18000,from:'Immediately',days:0,age_d:2,ic:'NK',v:2,
+  at:{food:'nonveg',smoke:'no',drink:'no',guests:'no',pets:'no',hours:'early',tidy:'high',vibe:'quiet',day:'out'},
+  needs:{vibe:{v:'quiet',w:'must'},smoke:{v:'no',w:'must'},tidy:{v:'high',w:'nice'}},
+  prompts:[['A dealbreaker I won\'t budge on','Noise. I sleep at strange hours and I need it quiet.'],['Weeknights I\'m usually','At the hospital, or asleep']],
+  d:'Hospital is in Powai. Barely home — I need somewhere clean and quiet between shifts.'},
+ {id:'p4',n:'Aisha Khan',age:23,role:'Masters student',want:'flat',area:'Andheri West',rent:12000,from:'1 Apr 26',days:15,age_d:7,ic:'AK',v:1,
+  at:{food:'veg',smoke:'no',drink:'no',guests:'some',pets:'no',hours:'early',tidy:'high',vibe:'quiet',day:'out'},
+  needs:{food:{v:'veg',w:'nice'},drink:{v:'no',w:'must'}},
+  prompts:[['My last flat taught me','That I should have asked about the water timing'],['I\'m looking for someone who','Doesn\'t mind showing me around the city']],
+  d:'Starting my masters in Andheri. Sharing a room is fine — budget is tight.'},
+ {id:'p5',n:'Tanvi Desai',age:29,role:'Marketing lead',want:'flatmate',area:'Bandra East',rent:21000,from:'20 Apr 26',days:34,age_d:3,ic:'TD',v:2,
+  at:{food:'nonveg',smoke:'no',drink:'yes',guests:'yes',pets:'yes',hours:'late',tidy:'chill',vibe:'social',day:'out'},
+  needs:{pets:{v:'yes',w:'must'}},
+  prompts:[['The kitchen is usually','Chaotic but in a nice way'],['I\'m looking for someone who','Likes cats, or is at least willing to negotiate']],
+  d:'I have a spot in my 3 BHK. Also keeping an eye out in case something better comes up.'},
+ {id:'p6',n:'Priya Menon',age:26,role:'Data scientist',want:'flat',area:'Lower Parel',rent:25000,from:'12 Apr 26',days:26,age_d:5,ic:'PM',v:2,
+  at:{food:'nonveg',smoke:'no',drink:'yes',guests:'yes',pets:'no',hours:'late',tidy:'high',vibe:'quiet',day:'wfh'},
+  needs:{smoke:{v:'no',w:'must'},day:{v:'out',w:'nice'}},
+  prompts:[['Weeknights I\'m usually','On a call I said would take ten minutes'],['Something I\'m particular about','A door I can close during work hours']],
+  d:'Relocating from Bengaluru. Fully remote, so I need a room I can take calls in.'},
+];
+
+const IDENTITY={
+ both:{n:'Riya Sharma',age:25,role:'UX Designer',now:'Moving from Pune',budget:20000,areas:['Goregaon East','Chandivali, Powai']},
+ flat:{n:'Riya Sharma',age:25,role:'UX Designer',now:'Kurla',budget:18000,areas:['Chandivali, Powai']},
+ flatmate:{n:'Aditi Rao',age:28,role:'Architect',now:'Bandra East',budget:21000,areas:[]},
+ post:{n:'Shalini Gupta',age:43,role:'Owner',now:'Andheri West',budget:35000,areas:[]},
+ browse:{n:'Riya Sharma',age:25,role:'UX Designer',now:'Mumbai',budget:20000,areas:[]},
+};
+const BASE_LIST=[
+ {id:'m1',t:'Private room in 3 BHK',area:'Chandivali, Powai',rent:12000,spots:1,living:3,from:'31 Mar 26',ic:'🛏️',
+  at:{food:'veg',smoke:'no',guests:'yes'},state:'exp',dayn:21,views:184,saves:11,reqs:4},
+ {id:'m2',t:'Shared room in 2 BHK',area:'Goregaon East',rent:8500,spots:1,living:2,from:'filled 2 Feb',ic:'🚪',
+  at:{},state:'arc',views:96,saves:5,reqs:2},
+];
+const BASE_THREADS=[
+ {id:'t1',f:'primary',n:'Ananya Iyer',ic:'AI',ctx:'Private room · Powai',t:'11:04',
+  msgs:[['them','Hi! Saw you saved the Powai room — ask me anything.'],['me','Is the veg kitchen strict for guests too?'],['them','Just for what we cook. Ordering in is fine.']]},
+ {id:'t2',f:'primary',n:'Ishita Verma',ic:'IV',ctx:'Private room · Malad West',t:'Yesterday',
+  msgs:[['them','Malad might be a long commute from Andheri.'],['me','I\'m hybrid, only in office twice a week.']]},
+ {id:'t3',f:'requests',n:'Zoya Merchant',ic:'ZM',ctx:'Private room · Lower Parel',t:'2d',
+  msgs:[['them','Hey! A spot opens in our Lower Parel flat in April. Four of us, all working. Want details?']]},
+ {id:'t4',f:'requests',n:'Rekha Joshi',ic:'RJ',ctx:'1 BHK · Thane West',t:'4d',
+  msgs:[['them','Hello, 1 BHK in Thane West from May. Suits two sharing.']]},
+];
+
+let MYLIST=[],THREADS=[];
+const ME={n:'Riya Sharma',age:25,role:'UX Designer',now:'Mumbai',lookAreas:new Set(),budget:20000,from:'2026-04-15',at:{},prompts:[[null,null],[null,null],[null,null]]};
+const S={mode:'flats',want:{},areas:new Set(),rooms:new Set(),furn:new Set(),amen:new Set(),who:'all',
+  saved:new Set(),loggedIn:false,guest:false,faceVerified:false,aadhaar:false,
+  statuses:{flat:true,flatmate:false,spot:false},vis:{photo:true,work:true,area:true,budget:true,phone:false},
+  inboxTab:'primary',activeThread:'t1',pendingTarget:null,team:0,limit:5,budget:40000,movein:99,
+  bannerDismissed:false,showAllLife:false};
+
+/* matching */
+const wantList=w=>Object.entries(w).filter(([,x])=>x.w&&x.v);
+function score(at,w){
+  const list=wantList(w),musts=list.filter(([,x])=>x.w==='must'),nices=list.filter(([,x])=>x.w==='nice');
+  const failed=musts.filter(([k,x])=>at[k]!==x.v).map(([k,x])=>({k,v:x.v,has:at[k]}));
+  if(failed.length)return{ok:false,failed,pct:0};
+  if(!nices.length)return{ok:true,failed:[],pct:100};
+  const hit=nices.filter(([k,x])=>at[k]===x.v).length;
+  return{ok:true,failed:[],pct:Math.round(70+30*hit/nices.length)};
+}
+function passBase(it){
+  if(it.rent>S.budget)return false;
+  if(S.areas.size&&!S.areas.has(it.area))return false;
+  if(S.movein!==99&&it.days>S.movein)return false;
+  if(S.mode==='flats'){
+    if(S.rooms.size&&!S.rooms.has(it.room))return false;
+    if(S.furn.size&&!S.furn.has(it.furn))return false;
+    if(S.amen.size&&![...S.amen].every(a=>(it.amen||[]).includes(a)))return false;
+  }else if(S.who!=='all'&&it.want!==S.who)return false;
+  return true;
+}
+const items=()=>S.mode==='flats'?FLATS:PEOPLE;
+const teamUp=p=>p.want==='flat'&&S.statuses.flat;
+
+/* lifestyle chips */
+function cycle(a,v){
+  const cur=S.want[a];
+  if(!cur||cur.v!==v)S.want[a]={v,w:'nice'};
+  else if(cur.w==='nice')S.want[a]={v,w:'must'};
+  else delete S.want[a];
+  paintFilters();render();
+  if(document.getElementById('v-profile').classList.contains('on'))paintProfile();
+}
+function lifeChips(state,fn){
+  const list=S.showAllLife?LIFE:LIFE.slice(0,8);
+  return `<div class="legend"><span><i style="background:var(--yellow)"></i>One tap — prefer</span>
+      <span><i style="background:var(--pink)"></i>Two taps — dealbreaker</span></div>
+    <div class="opts">${list.map(x=>{const c=state[x.a],on=c&&c.v===x.v;
+      return `<button class="opt ${on?c.w:''}" onclick="${fn}('${x.a}','${x.v}')">${x.l}${on?`<span class="st">${c.w==='must'?'MUST':'PREFER'}</span>`:''}</button>`}).join('')}
+      <button class="opt" style="border-style:dashed" onclick="S.showAllLife=!S.showAllLife;paintFilters();if(document.getElementById('v-profile').classList.contains('on'))paintProfile();if(document.getElementById('v-post').classList.contains('on'))paintPost()">${S.showAllLife?'Show less':'More options'}</button></div>`;
+}
+
+function paintFilters(){
+  const common=`
+  <div class="fgroup"><div class="fhead"><h4>Areas</h4><button class="mini" onclick="S.areas.clear();paintFilters();render()">Clear</button></div>
+    ${AREAS.map(a=>`<label class="checkrow"><input type="checkbox" ${S.areas.has(a)?'checked':''} onchange="togSet(S.areas,'${a}')">${a}</label>`).join('')}</div>
+  <div class="fgroup"><div class="fhead"><h4>${S.mode==='flats'?'Rent':'Their budget'}</h4><span class="rangeval">Up to ₹${S.budget.toLocaleString('en-IN')}</span></div>
+    <input type="range" class="range" min="6000" max="40000" step="500" value="${S.budget}" oninput="S.budget=+this.value;paintFilters();render()"></div>
+  <div class="fgroup"><div class="fhead"><h4>${S.mode==='flats'?'Available by':'Can shift by'}</h4></div>
+    <select class="fsel" onchange="S.movein=+this.value;render()">
+      <option value="99" ${S.movein===99?'selected':''}>Any time</option><option value="0" ${S.movein===0?'selected':''}>Right away</option>
+      <option value="30" ${S.movein===30?'selected':''}>Within a month</option><option value="60" ${S.movein===60?'selected':''}>Within two months</option></select></div>`;
+  const flatOnly=`
+  <div class="fgroup"><div class="fhead"><h4>Room type</h4></div><div class="opts">
+    ${['Private room','Shared room','Whole flat'].map(r=>`<button class="opt ${S.rooms.has(r)?'on':''}" onclick="togSet(S.rooms,'${r}')">${r}</button>`).join('')}</div></div>
+  <div class="fgroup"><div class="fhead"><h4>Furnishing</h4></div><div class="opts">
+    ${['Unfurnished','Semi-furnished','Furnished','Fully furnished'].map(f=>`<button class="opt ${S.furn.has(f)?'on':''}" onclick="togSet(S.furn,'${f}')">${f}</button>`).join('')}</div></div>
+  <div class="fgroup"><div class="fhead"><h4>Building has</h4></div><div class="opts">
+    ${AMEN.map(a=>`<button class="opt ${S.amen.has(a)?'on':''}" onclick="togSet(S.amen,'${a}')">${a}</button>`).join('')}</div></div>`;
+  const life=`<div class="fgroup"><div class="fhead"><h4>Lifestyle</h4><button class="mini" onclick="S.want={};paintFilters();render()">Clear</button></div>
+    <div class="howto">Tap what matters. A second tap makes it a dealbreaker — anything that doesn't match gets hidden.</div>
+    ${lifeChips(S.want,'cycle')}</div>`;
+  document.getElementById('filters').innerHTML=common+(S.mode==='flats'?flatOnly:'')+life;
+  document.getElementById('subbar').innerHTML=S.mode==='people'?
+    `<span style="font-size:12.5px;color:var(--ink-3);margin-right:4px">Show</span>
+     ${[['all','Everyone'],['flat','Also looking for a flat'],['flatmate','Has a spot to offer']].map(([k,l])=>
+      `<button class="schip ${S.who===k?'on':''}" onclick="S.who='${k}';paintFilters();render()">${l}</button>`).join('')}`:'';
+}
+function togSet(set,v){set.has(v)?set.delete(v):set.add(v);paintFilters();render()}
+
+/* value prop */
+function valueProp(){
+  const st=S.statuses;
+  if(roomMissing())return{h:'Put your room up first',
+    s:'Browse as long as you like. But when you message someone, the room is the thing she\'ll want to see — without it there\'s nothing to reply to.',
+    cta:'Add your room',act:'startPost()'};
+  if(st.spot&&!st.flat&&!st.flatmate)return{h:'People check who they\'d be living with',
+    s:'Women read your profile before replying to a listing. Fuller profiles get more requests, and better ones.'};
+  if(st.spot)return{h:'Your profile sells the room',
+    s:'People decide from your profile, not just the photos. It also puts you in the flatmates feed.'};
+  if(st.flat&&st.flatmate)return{h:'Let them come to you',
+    s:'Women with a room open, and women looking to team up, both search this feed. Finish your profile and you show up in it.'};
+  if(st.flatmate)return{h:'You appear in the flatmates feed',
+    s:'Women with a spot open browse it and message first. Right now you barely show up.'};
+  if(st.flat)return{h:'Women with rooms can find you',
+    s:'They search this feed and message first. Your profile is how they decide whether to.'};
+  return{h:'Nobody can find you yet',s:'Turn on a status and finish your profile to appear in searches.'};
+}
+function profilePct(){
+  const lookingOnly=!S.statuses.flat&&!S.statuses.flatmate&&S.statuses.spot;
+  const done=[S.loggedIn,S.faceVerified,Object.values(S.statuses).some(Boolean),
+    lookingOnly?MYLIST.some(l=>l.state!=='arc'):(!!ME.budget&&!!ME.from),
+    lookingOnly?true:ME.lookAreas.size>0,
+    ME.prompts.some(p=>p[0]),ATTRS.every(a=>ME.at[a.id]),S.aadhaar];
+  return Math.round(done.filter(Boolean).length/done.length*100);
+}
+function paintBanner(){
+  const pct=profilePct(),v=valueProp(),urgent=roomMissing();
+  const html=((pct>=85&&!urgent)||(S.bannerDismissed&&!urgent))?'':`<div class="vbanner">
+    <span class="vr" style="--p:${pct}"><b>${pct}%</b></span>
+    <span class="vt"><b>${v.h}</b><span>${v.s}</span></span>
+    <button class="btn btn-dark btn-sm" onclick="${v.act||"go('profile')"}">${v.cta||'Finish profile'}</button>
+    ${urgent?'':`<button class="x" onclick="S.bannerDismissed=true;paintBanner()">✕</button>`}</div>`;
+  document.getElementById('vbanner').innerHTML=html;
+  document.getElementById('vbanner2').innerHTML=html;
+  document.getElementById('minring').style.setProperty('--p',pct);
+  document.getElementById('pcttext').textContent=pct+'%';
+  document.getElementById('pctbtn').style.borderColor=pct<60?'var(--pink)':'var(--line)';
+}
+
+/* render */
+function render(){
+  const all=items(),base=all.filter(passBase);
+  const scored=base.map(it=>({it,s:score(it.at,S.want)}));
+  let pass=scored.filter(x=>x.s.ok),blocked=scored.filter(x=>!x.s.ok);
+  const sort=document.getElementById('sortsel').value;
+  pass.sort((a,c)=>sort==='match'?c.s.pct-a.s.pct||a.it.rent-c.it.rent
+    :sort==='new'?(a.it.age??a.it.age_d)-(c.it.age??c.it.age_d)
+    :sort==='lo'?a.it.rent-c.it.rent:c.it.rent-a.it.rent);
+  if(S.mode==='people')pass.sort((a,c)=>(teamUp(c.it)?1:0)-(teamUp(a.it)?1:0)||c.s.pct-a.s.pct);
+  document.getElementById('restitle').textContent=S.mode==='flats'?'Flats in Mumbai':'Women in Mumbai';
+  const L=wantList(S.want),mc=L.filter(([,x])=>x.w==='must').length;
+  document.getElementById('resmeta').textContent=`${pass.length} of ${all.length} · ${mc} dealbreaker${mc===1?'':'s'}, ${L.length-mc} preferred`;
+  document.getElementById('exclbox').innerHTML=blocked.length?`<div class="excl">🔒 <b>${blocked.length} hidden</b> by your dealbreakers.<button onclick="showBlocked()">See which</button></div>`:'';
+  document.getElementById('nudgebox').innerHTML=(!S.loggedIn&&S.saved.size>=2)?`<div class="nudge">🩷
+    <span class="tx"><b>${S.saved.size} saved</b><span>Make a profile to keep them.</span></span>
+    <button class="btn btn-dark btn-sm" onclick="openGate(null)">Create profile</button></div>`:'';
+  document.getElementById('grid').innerHTML=pass.length?pass.map(x=>S.mode==='flats'?flatCard(x):personCard(x)).join('')
+   :`<div style="grid-column:1/-1;padding:50px 20px;text-align:center;background:var(--paper);border:1.5px dashed var(--line);border-radius:var(--r-lg)">
+      <div style="font-size:34px;margin-bottom:8px">🫙</div>
+      <div style="font-weight:700;font-size:16px;margin-bottom:4px">Nothing matches every dealbreaker</div>
+      <div style="color:var(--ink-2);font-size:13.5px;margin-bottom:14px">Tap a pink chip once more to switch it off.</div>
+      <button class="btn btn-ghost btn-sm" onclick="S.want={};paintFilters();render()">Clear lifestyle</button></div>`;
+  paintBanner();
+}
+function atPills(at,lim=3){
+  const keys=Object.keys(at).filter(k=>at[k]).sort((a,b)=>{const r=x=>S.want[x]?(S.want[x].w==='must'?2:1):0;return r(b)-r(a)});
+  return keys.slice(0,lim).map(k=>{const w=S.want[k];
+    return `<span class="pill ${w&&w.v===at[k]?w.w:''}">${val(k,at[k])}</span>`}).join('')
+    +(keys.length>lim?`<span class="pill more">+${keys.length-lim}</span>`:'');
+}
+const matchTag=s=>!wantList(S.want).length?'':`<span class="match ${s.pct>=85?'':'mid'}">${s.pct}% match</span>`;
+const hue=i=>HUES[i%HUES.length];
+function flatCard({it,s}){
+  return `<article class="card" onclick="openDetail('${it.id}')">
+    <div class="ph" style="background:${hue(FLATS.indexOf(it))}">${it.ic}
+      <span class="area">📍 ${it.area}</span>
+      <span class="save ${S.saved.has(it.id)?'on':''}" onclick="event.stopPropagation();toggleSave('${it.id}')">${S.saved.has(it.id)?'🩷':'🤍'}</span></div>
+    <div class="cbody"><div class="ctop"><h3>${it.t}</h3><div class="price">₹${it.rent.toLocaleString('en-IN')}<small>/mo</small></div></div>
+      <div class="meta"><div>${it.spots} spot${it.spots>1?'s':''}${it.living?` · ${it.living} living here`:''} · ${it.furn}</div>
+        <div>From <b>${it.from}</b> · ${it.dep} month deposit</div></div>
+      <div class="pills">${atPills(it.at)}</div>
+      <div class="cfoot"><span>${it.host.n}</span>${matchTag(s)}</div></div></article>`;
+}
+function personCard({it,s}){
+  const tu=teamUp(it),pr=(it.prompts||[])[0];
+  return `<article class="card person ${tu?'teamup':''}" onclick="openDetail('${it.id}')">
+    ${tu?`<div class="ribbon">👯 You're both looking for a flat</div>`:''}
+    <div class="ph"><div class="avatar lg" style="background:${hue(PEOPLE.indexOf(it)+2)}">${it.ic}</div>
+      <div style="text-align:center"><div class="pname">${it.n}</div><div class="prole">${it.age} · ${it.role}</div></div>
+      <span class="save ${S.saved.has(it.id)?'on':''}" onclick="event.stopPropagation();toggleSave('${it.id}')">${S.saved.has(it.id)?'🩷':'🤍'}</span></div>
+    <div class="cbody"><div class="meta">
+      <div>Wants <b>${it.want==='flat'?'a flat':'a flatmate'}</b> in <b>${it.area}</b></div>
+      <div>Up to <b>₹${it.rent.toLocaleString('en-IN')}</b> · from <b>${it.from}</b></div></div>
+      ${pr?`<div class="quote"><i>${pr[0]}</i>${pr[1]}</div>`:''}
+      <div class="pills">${atPills(it.at)}</div>
+      <div class="cfoot"><span class="vbadge">✓ ${it.v===2?'Face + Aadhaar':'Face'}</span>${matchTag(s)}</div></div></article>`;
+}
+function showBlocked(){
+  const b=items().filter(passBase).map(it=>({it,s:score(it.at,S.want)})).filter(x=>!x.s.ok);
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" style="max-width:560px" onclick="event.stopPropagation()">
+    <h2>Hidden by your dealbreakers</h2><p class="ms">Tap a pink chip again to soften it.</p>
+    <div class="mlist">${b.map(x=>`<div class="mrow no"><span class="tick">✕</span>
+      <span class="lbl"><b>${x.it.t||x.it.n}</b> · ${x.it.area}</span>
+      <span style="font-size:11.5px;color:var(--pink-ink);font-weight:600">${x.s.failed.map(f=>f.has?val(f.k,f.has):'not stated').join(', ')}</span></div>`).join('')||'<p class="ms">Nothing hidden.</p>'}</div>
+    <button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="closeGate()">Close</button></div>`;
+  document.getElementById('gate').classList.add('on');
+}
+
+function openDetail(id){
+  const it=[...FLATS,...PEOPLE].find(x=>x.id===id);
+  const isFlat=!!it.t,s=score(it.at,S.want),tu=!isFlat&&teamUp(it),L=wantList(S.want);
+  const mine=L.length?L.map(([k,x])=>{const ok=it.at[k]===x.v;
+    return `<div class="mrow ${ok?'ok':'no'}"><span class="tick">${ok?'✓':'✕'}</span>
+      <span class="lbl">${val(k,x.v)}${!ok?` — ${it.at[k]?val(k,it.at[k]):'not stated'}`:''}</span>
+      <span class="kind ${x.w}">${x.w==='must'?'Dealbreaker':'Preferred'}</span></div>`}).join('')
+    :'<p style="font-size:13px;color:var(--ink-2);margin:0">Tap a few lifestyle chips and this becomes a checklist.</p>';
+  const theirs=Object.entries(it.needs||{});
+  const theirBlock=theirs.length?`<div class="dsec"><h4>What they need from you</h4><div class="mlist">
+    ${theirs.map(([k,x])=>{const ok=ME.at[k]===x.v;
+      return `<div class="mrow ${ok?'ok':'no'}"><span class="tick">${ok?'✓':'✕'}</span>
+        <span class="lbl">${val(k,x.v)}</span><span class="kind ${x.w}">${x.w==='must'?'Their dealbreaker':'They\'d prefer'}</span></div>`}).join('')}</div>
+    <p style="font-size:12px;color:var(--ink-3);margin:8px 0 0">Fail a dealbreaker and you won't appear in their search either.</p></div>`:'';
+  const facts=isFlat?[['Room',it.room],['Size',it.bhk],['Furnishing',it.furn],['Bathroom',it.bath],
+      ['Deposit',it.dep+' months'],['Brokerage','None'],['Spots',it.spots],['Living there',it.living||'—']]
+      .map(([k,v])=>`<div class="fact"><span>${k}</span><b>${v}</b></div>`).join('')
+    :[['Wants',it.want==='flat'?'A flat':'A flatmate'],['Area',it.area],['Budget','₹'+it.rent.toLocaleString('en-IN')],
+      ['From',it.from],['Age',it.age],['Work',it.role]].map(([k,v])=>`<div class="fact"><span>${k}</span><b>${v}</b></div>`).join('');
+  document.getElementById('detailsheet').innerHTML=`<div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-hd"><div class="sheet-hero" style="background:${hue(isFlat?FLATS.indexOf(it):PEOPLE.indexOf(it)+2)}">
+      ${isFlat?it.ic:`<div class="avatar xl" style="background:var(--paper)">${it.ic}</div>`}</div>
+      <button class="closeb" onclick="closeDetail()">✕</button></div>
+    <div class="sheet-body"><div>
+      <h1>${isFlat?it.t:it.n}</h1>
+      <div class="sheet-sub">${isFlat?`${it.area} · ${it.spots} spot${it.spots>1?'s':''}${it.living?` · ${it.living} living here`:''}`:`${it.age} · ${it.role} · looking in ${it.area}`}</div>
+      <p style="font-size:14px;line-height:1.6;color:var(--ink-2);margin:0;max-width:58ch">${it.d}</p>
+      ${!isFlat&&it.prompts?`<div class="dsec"><h4>In her words</h4>
+        ${it.prompts.map(p=>`<div class="promptcard"><div class="pq">${p[0]}</div><div class="pa">${p[1]}</div></div>`).join('')}</div>`:''}
+      <div class="dsec"><h4>Against what you asked for</h4><div class="mlist">${mine}</div></div>
+      ${theirBlock}
+      <div class="dsec"><h4>${isFlat?'Details':'Her search'}</h4><div class="facts">${facts}</div></div>
+      <div class="dsec"><h4>${isFlat?'The home':'How she lives'}</h4>
+        <div class="pills">${Object.keys(it.at).map(k=>`<span class="pill">${val(k,it.at[k])}</span>`).join('')}</div></div>
+      ${isFlat&&it.amen?`<div class="dsec"><h4>Building</h4><div class="pills">${it.amen.map(a=>`<span class="pill">${a}</span>`).join('')}</div></div>`:''}
+    </div>
+    <aside class="aside">
+      <div class="bigp">₹${it.rent.toLocaleString('en-IN')}<small>${isFlat?' /month':' budget'}</small></div>
+      <div style="font-size:12.5px;color:var(--ink-2);margin-top:2px">From ${it.from}</div>
+      ${matchTag(s)?`<div style="margin-top:10px">${matchTag(s)}</div>`:''}
+      <div class="hostrow"><div class="avatar">${isFlat?it.host.n.split(' ').map(w=>w[0]).join(''):it.ic}</div>
+        <div style="flex:1"><div class="hn">${isFlat?it.host.n:it.n}</div><div class="hr">${isFlat?it.host.r:it.role}</div></div></div>
+      <div class="badges" style="margin-bottom:13px"><span class="vbadge">✓ Face</span>
+        ${(isFlat?it.host.v:it.v)===2?'<span class="vbadge">✓ Aadhaar</span>':'<span class="vbadge grey">No Aadhaar</span>'}</div>
+      ${tu?`<div class="teambox"><b>You're both flat hunting</b>Similar budgets, overlapping areas. Some people find a place faster together.</div>
+        <button class="btn btn-pink btn-block" onclick="startMessage('${it.id}',1)">Ask to search together</button>
+        <button class="btn btn-ghost btn-block" style="margin-top:8px" onclick="startMessage('${it.id}')">Just say hi</button>`
+      :`<button class="btn btn-dark btn-block" onclick="startMessage('${it.id}')">Send a message</button>`}
+      <button class="btn btn-ghost btn-block" style="margin-top:8px" onclick="toggleSave('${it.id}');openDetail('${it.id}')">${S.saved.has(it.id)?'🩷 Saved':'🤍 Save'}</button>
+      <div class="gatenote">${S.loggedIn?'Numbers stay hidden until shared in a chat.':'Free to browse. Account needed to message.'}</div>
+    </aside></div></div>`;
+  document.getElementById('detail').classList.add('on');document.body.style.overflow='hidden';
+}
+const closeDetail=()=>{document.getElementById('detail').classList.remove('on');document.body.style.overflow=''};
+
+/* profile */
+const STATUSES=[{k:'flat',t:'Looking for a flat',d:'People with rooms can find you'},
+ {k:'flatmate',t:'Looking for a flatmate',d:'You appear in the flatmates feed'},
+ {k:'spot',t:'I have a spot',d:'Your listing appears in flats'}];
+const VIS=[{k:'photo',t:'Your photo',d:'Off shows initials only'},{k:'work',t:'Your work',d:'Role only, never the company'},
+ {k:'area',t:'Where you live now',d:'Neighbourhood only'},{k:'budget',t:'Your budget',d:'Helps people rule themselves out'},
+ {k:'phone',t:'Your number',d:'Shared inside a chat, one person at a time'}];
+function paintProfile(){
+  const v=valueProp(),lookingOnly=!S.statuses.flat&&!S.statuses.flatmate&&S.statuses.spot;
+  document.getElementById('whybox').innerHTML=`<div class="whybox"><b>${v.h}</b><span>${v.s}</span></div>`;
+  document.getElementById('profsub').textContent=lookingOnly?'What people see before replying to your listing.':'What people see in the flatmates feed.';
+  document.getElementById('pname').textContent=ME.n;
+  document.getElementById('prole').textContent=`${ME.age} · ${ME.role} · ${ME.now}`;
+  const ini=ME.n.split(' ').map(w=>w[0]).join('');
+  document.getElementById('avxl').textContent=ini;document.getElementById('avinit').textContent=ini;
+  document.getElementById('statusbox').innerHTML=STATUSES.map(s=>`<div class="statusrow ${S.statuses[s.k]?'on':''}" onclick="togStatus('${s.k}')">
+    <span class="st2"><b>${s.t}</b><span>${s.d}</span></span><span class="sw"></span></div>`).join('')
+    +`<p style="font-size:12px;color:var(--ink-3);margin:9px 0 0">All off and you can still browse — you just stop appearing. Switches off after 30 quiet days.</p>`;
+  document.getElementById('searchpanel').style.display=lookingOnly?'none':'block';
+  document.getElementById('searchbox').innerHTML=`
+    <div class="frow"><div class="field"><label>Budget</label><input class="fin" type="number" value="${ME.budget}" oninput="ME.budget=+this.value||0;paintBanner()"></div>
+      <div class="field"><label>Can move from</label><input class="fin" type="date" value="${ME.from}" onchange="ME.from=this.value;paintProfile()"></div></div>
+    <div class="field"><label>Areas you're looking in</label><div class="opts">
+      ${AREAS.map(a=>`<button class="opt ${ME.lookAreas.has(a)?'on':''}" onclick="ME.lookAreas.has('${a}')?ME.lookAreas.delete('${a}'):ME.lookAreas.add('${a}');paintProfile()">${a}</button>`).join('')}</div></div>`;
+  document.getElementById('promptbox').innerHTML=ME.prompts.map((p,i)=>p[0]
+    ?`<div class="pslot filled" onclick="editPrompt(${i})"><div class="pq">${p[0]}</div><div class="pa">${p[1]}</div></div>`
+    :`<div class="pslot" onclick="editPrompt(${i})"><div class="pe">＋ Add a prompt</div></div>`).join('');
+  document.getElementById('selfbox').innerHTML=`<div class="opts">
+    ${(S.showAllLife?LIFE:LIFE.slice(0,8)).map(x=>`<button class="opt ${ME.at[x.a]===x.v?'on':''}" onclick="ME.at['${x.a}']=ME.at['${x.a}']==='${x.v}'?null:'${x.v}';paintProfile()">${x.l}</button>`).join('')}
+    <button class="opt" style="border-style:dashed" onclick="S.showAllLife=!S.showAllLife;paintProfile();paintFilters()">${S.showAllLife?'Show less':'More options'}</button></div>`;
+  document.getElementById('wantbox').innerHTML=lifeChips(S.want,'cycle');
+  document.getElementById('visbox').innerHTML=VIS.map(x=>`<div class="visrow ${S.vis[x.k]?'on':''}" onclick="togVis('${x.k}')">
+    <span class="vl">${x.t}<span>${x.d}</span></span><span class="sw"></span></div>`).join('');
+  const done=[['Phone number',S.loggedIn],['Face check',S.faceVerified],
+    ['A status switched on',Object.values(S.statuses).some(Boolean)],
+    [lookingOnly?'A live listing':'Budget and date',lookingOnly?MYLIST.some(l=>l.state!=='arc'):(!!ME.budget&&!!ME.from)],
+    [lookingOnly?'Your details':'Areas picked',lookingOnly?true:ME.lookAreas.size>0],
+    ['One prompt answered',ME.prompts.some(p=>p[0])],['How you live',ATTRS.every(a=>ME.at[a.id])],['Aadhaar',S.aadhaar]];
+  const pct=profilePct();
+  document.getElementById('ring').style.setProperty('--p',pct);
+  document.getElementById('ringp').textContent=pct+'%';
+  document.getElementById('ringmsg').textContent=pct>=80?'Near the top of matching feeds.':pct>=50?'You appear, below fuller profiles.':'Too thin to rank.';
+  document.getElementById('todobox').innerHTML=done.map(d=>`<div class="todo ${d[1]?'done':''}"><span class="tb">${d[1]?'✓':''}</span>${d[0]}</div>`).join('');
+  document.getElementById('limitleft').textContent=S.limit;
+  const on=STATUSES.filter(s=>S.statuses[s.k]);
+  document.getElementById('statustext').textContent=on.length?on[0].t:'Just exploring';
+  document.getElementById('ledx').className='led'+(on.length?'':' off');
+  const ba=document.querySelector('#v-profile .badges');
+  if(ba)ba.innerHTML=`<span class="vbadge${S.faceVerified?'':' grey'}">${S.faceVerified?'✓ Face verified':'Face not verified'}</span>
+    <span class="vbadge${S.aadhaar?'':' grey'}">${S.aadhaar?'✓ Aadhaar':'No Aadhaar'}</span>`;
+  document.getElementById('inboxdot').style.display=THREADS.some(t=>t.f==='requests')?'block':'none';
+  paintBanner();
+}
+function togStatus(k){S.statuses[k]=!S.statuses[k];paintProfile();render();toast(S.statuses[k]?'You now appear there':'You stopped appearing there')}
+function togVis(k){S.vis[k]=!S.vis[k];paintProfile()}
+function editPrompt(i){
+  const used=ME.prompts.map(p=>p[0]).filter(Boolean);
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" onclick="event.stopPropagation()">
+    <h2>Add a prompt</h2><p class="ms">One line is plenty.</p>
+    <div class="field"><label>Prompt</label><select class="fsel" id="pq">
+      ${PROMPTS.filter(p=>!used.includes(p)||p===ME.prompts[i][0]).map(p=>`<option ${ME.prompts[i][0]===p?'selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="field"><label>Your answer</label><textarea id="pa" style="min-height:70px">${ME.prompts[i][1]||''}</textarea></div>
+    <button class="btn btn-dark btn-block" onclick="savePrompt(${i})">Save</button>
+    ${ME.prompts[i][0]?`<button class="btn btn-block btn-sm" style="margin-top:8px;color:var(--ink-3)" onclick="ME.prompts[${i}]=[null,null];closeGate();paintProfile()">Remove</button>`:''}</div>`;
+  document.getElementById('gate').classList.add('on');
+}
+function savePrompt(i){const q=document.getElementById('pq').value,a=document.getElementById('pa').value.trim();
+  if(a)ME.prompts[i]=[q,a];closeGate();paintProfile()}
+function previewMe(){
+  const me={id:'me',n:ME.n,age:ME.age,role:ME.role,want:S.statuses.spot?'flatmate':'flat',
+    area:[...ME.lookAreas][0]||'Mumbai',rent:ME.budget,
+    from:ME.from?new Date(ME.from).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}):'—',
+    ic:ME.n.split(' ').map(w=>w[0]).join(''),v:S.aadhaar?2:1,
+    at:Object.fromEntries(Object.entries(ME.at).filter(([,v])=>v)),prompts:ME.prompts.filter(p=>p[0])};
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" onclick="event.stopPropagation()">
+    <h2>How your card looks</h2><p class="ms">What the flatmates feed shows.</p>
+    ${personCard({it:me,s:{pct:100,ok:true}}).replace(/onclick="[^"]*"/g,'')}
+    <button class="btn btn-ghost btn-block" style="margin-top:14px" onclick="closeGate()">Close</button></div>`;
+  document.getElementById('gate').classList.add('on');
+}
+
+/* post */
+const STEPS=[{t:'What you\'re offering'},{t:'The place'},{t:'The home'},{t:'Who fits'},{t:'Photos and preview'}];
+const NEW={step:0,kind:null,room:'Private room',bhk:'3 BHK',area:AREAS[0],rent:'',dep:'2',from:'',
+  furn:'Semi-furnished',bath:'Shared',living:'2',spots:'1',amen:new Set(),at:{},needs:{},photos:0,desc:'',agree:false,alsoLooking:false};
+function startPost(){NEW.step=0;go('post')}
+function paintPost(){
+  document.getElementById('posttitle').textContent=NEW.kind==='whole'?'Post a flat':NEW.kind==='spot'?'Post a spot':'Post a listing';
+  document.getElementById('rail').innerHTML=STEPS.map((s,i)=>`<div class="railstep ${i===NEW.step?'on':''} ${i<NEW.step?'done':''}" onclick="gotoStep(${i})">
+    <span class="rn">${i<NEW.step?'✓':i+1}</span><span class="rt">${s.t}</span></div>`).join('');
+  document.getElementById('stepcard').innerHTML=STEPHTML[NEW.step]();
+  document.getElementById('livepreview').innerHTML=previewCard();
+}
+function gotoStep(i){if(i<=NEW.step||canNext()){NEW.step=i;paintPost();scrollTo(0,0)}}
+function nextStep(){if(NEW.step<4){NEW.step++;paintPost();scrollTo(0,0)}}
+function prevStep(){if(NEW.step>0){NEW.step--;paintPost();scrollTo(0,0)}}
+function canNext(){if(NEW.step===0)return !!NEW.kind;if(NEW.step===1)return !!NEW.rent&&!!NEW.from;if(NEW.step===4)return NEW.agree;return true}
+function setf(k,v){NEW[k]=v;paintPost()}
+function cycleNeed(a,v){const cur=NEW.needs[a];
+  if(!cur||cur.v!==v)NEW.needs[a]={v,w:'nice'};else if(cur.w==='nice')NEW.needs[a]={v,w:'must'};else delete NEW.needs[a];
+  paintPost()}
+const nav=(l,extra)=>`<div class="stepnav">${NEW.step>0?`<button class="btn btn-ghost" onclick="prevStep()">Back</button>`:''}
+  <button class="btn btn-dark" onclick="${NEW.step===4?'publish()':'nextStep()'}" ${canNext()?'':'disabled'}>${l}</button>
+  ${extra||''}<span class="sp">${NEW.step+1} of 5</span></div>`;
+const quickBtn=()=>canNext()?`<button class="btn btn-ghost" onclick="NEW.agree=true;publish()">Publish now, finish later</button>`:'';
+const STEPHTML=[
+ ()=>`<h2>What are you putting up?</h2><p class="sd">This changes what we ask next.</p>
+  <div class="bigpick">
+    <button class="${NEW.kind==='spot'?'on':''}" onclick="setf('kind','spot')"><span class="bi">🚪</span>
+      <span class="bt">A spot in my flat</span><span class="bd">You live here. A room is opening up.</span></button>
+    <button class="${NEW.kind==='whole'?'on':''}" onclick="setf('kind','whole')"><span class="bi">🔑</span>
+      <span class="bt">A whole flat</span><span class="bd">You own it or you're moving out.</span></button></div>
+  <div class="rulebox" style="background:var(--pink-soft);border-color:var(--pink);color:var(--pink-ink)">
+    <b>Only women see this.</b>Everyone who messages you has passed a face check.</div>${nav('Continue')}`,
+ ()=>`<h2>Where and how much?</h2><p class="sd">Rent and the date are what people filter on hardest.</p>
+  <div class="frow"><div class="field"><label>Area</label><select class="fsel" onchange="setf('area',this.value)">
+    ${AREAS.map(a=>`<option ${NEW.area===a?'selected':''}>${a}</option>`).join('')}</select>
+    <div class="hint">Neighbourhood only. The address is never shown.</div></div>
+    <div class="field"><label>Flat size</label><select class="fsel" onchange="setf('bhk',this.value)">
+      ${['1 BHK','2 BHK','3 BHK','4 BHK','Studio'].map(o=>`<option ${NEW.bhk===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
+  ${NEW.kind==='spot'?`<div class="frow"><div class="field"><label>Room type</label><select class="fsel" onchange="setf('room',this.value)">
+    ${['Private room','Shared room'].map(o=>`<option ${NEW.room===o?'selected':''}>${o}</option>`).join('')}</select></div>
+    <div class="field"><label>People living there now</label><select class="fsel" onchange="setf('living',this.value)">
+      ${['1','2','3','4','5'].map(o=>`<option ${NEW.living===o?'selected':''}>${o}</option>`).join('')}</select></div></div>`:''}
+  <div class="frow three">
+    <div class="field"><label>Rent per month</label><input class="fin" type="number" placeholder="12000" value="${NEW.rent}" oninput="NEW.rent=this.value;document.getElementById('livepreview').innerHTML=previewCard()"></div>
+    <div class="field"><label>Deposit</label><select class="fsel" onchange="setf('dep',this.value)">
+      ${['1','2','3','6'].map(o=>`<option value="${o}" ${NEW.dep===o?'selected':''}>${o} month${o==='1'?'':'s'}</option>`).join('')}</select></div>
+    <div class="field"><label>Available from</label><input class="fin" type="date" value="${NEW.from}" onchange="setf('from',this.value)"></div></div>
+  <div class="frow three">
+    <div class="field"><label>Furnishing</label><select class="fsel" onchange="setf('furn',this.value)">
+      ${['Unfurnished','Semi-furnished','Furnished','Fully furnished'].map(o=>`<option ${NEW.furn===o?'selected':''}>${o}</option>`).join('')}</select></div>
+    <div class="field"><label>Bathroom</label><select class="fsel" onchange="setf('bath',this.value)">
+      ${['Attached','Shared'].map(o=>`<option ${NEW.bath===o?'selected':''}>${o}</option>`).join('')}</select></div>
+    <div class="field"><label>Spots</label><select class="fsel" onchange="setf('spots',this.value)">
+      ${['1','2','3'].map(o=>`<option ${NEW.spots===o?'selected':''}>${o}</option>`).join('')}</select></div></div>
+  <div class="field"><label>Building has</label><div class="opts">
+    ${AMEN.map(a=>`<button class="opt ${NEW.amen.has(a)?'on':''}" onclick="NEW.amen.has('${a}')?NEW.amen.delete('${a}'):NEW.amen.add('${a}');paintPost()">${a}</button>`).join('')}</div></div>
+  ${nav('Continue',quickBtn())}
+  ${canNext()?'<p style="font-size:11.5px;color:var(--ink-3);margin:9px 0 0">That\'s enough to go live. The rest makes it easier to find.</p>':''}`,
+ ()=>`<h2>What's the home like?</h2><p class="sd">Facts, not wishes. Pick what's true today.</p>
+  <div class="opts">${LIFE.map(x=>`<button class="opt ${NEW.at[x.a]===x.v?'on':''}" onclick="NEW.at['${x.a}']=NEW.at['${x.a}']==='${x.v}'?null:'${x.v}';paintPost()">${x.l}</button>`).join('')}</div>
+  <div class="field" style="margin-top:18px"><label>A few lines in your own words</label>
+    <textarea placeholder="${NEW.kind==='whole'?'The flat, the building, who you rent to.':'Who lives here and what the routine is.'}" oninput="NEW.desc=this.value">${NEW.desc}</textarea>
+    <div class="hint">Listings with this get about twice the replies.</div></div>${nav('Continue')}`,
+ ()=>{const m=Object.values(NEW.needs).filter(x=>x.w==='must').length;
+  return `<h2>Who fits?</h2><p class="sd">Tap once for prefer. Twice makes it a dealbreaker — women who don't match won't see your listing.</p>
+  ${lifeChips(NEW.needs,'cycleNeed')}
+  <div class="rulebox" style="background:var(--pink-soft);border-color:var(--pink);color:var(--pink-ink);margin-top:16px">
+    <b>${m} dealbreaker${m===1?'':'s'}</b>Two or three is usually right. More and listings go quiet.</div>
+  ${NEW.kind==='spot'?`<div class="statusrow ${NEW.alsoLooking?'on':''}" style="margin-top:14px" onclick="NEW.alsoLooking=!NEW.alsoLooking;paintPost()">
+    <span class="st2"><b>I'm also looking for a flat myself</b><span>Turns on your looking status too</span></span><span class="sw"></span></div>`:''}
+  ${nav('Continue')}`},
+ ()=>`<h2>Photos</h2><p class="sd">The room, kitchen, bathroom, and the building. Four is plenty.</p>
+  <div class="uploads">${[0,1,2,3].map(i=>i<NEW.photos?`<div class="upslot filled ${i===0?'cover':''}" style="background:${hue(i)}">${ICONS[i]}</div>`
+    :`<button class="upslot" onclick="NEW.photos=Math.min(4,NEW.photos+1);paintPost()">＋</button>`).join('')}</div>
+  <div class="hint" style="margin-top:8px;font-size:11.5px;color:var(--ink-3)">Faces are blurred. Nameplates and house numbers get flagged.</div>
+  <div style="margin-top:20px;border-top:1px solid var(--line-2);padding-top:16px">
+    <div class="checkline on"><span class="cb">✓</span><span>Only verified women can see this and message you.</span></div>
+    <div class="checkline on"><span class="cb">✓</span><span>Your number stays hidden until you share it.</span></div>
+    <div class="checkline ${NEW.agree?'on':''}" onclick="NEW.agree=!NEW.agree;paintPost()" style="cursor:pointer">
+      <span class="cb">${NEW.agree?'✓':''}</span><span>This is accurate, it's mine to let, and I'll mark it taken when it is.</span></div>
+  </div>${nav('Publish')}`,
+];
+function previewCard(){
+  const title=NEW.kind==='whole'?`${NEW.bhk}, full flat`:`${NEW.room} in ${NEW.bhk}`;
+  const at=Object.fromEntries(Object.entries(NEW.at).filter(([,v])=>v));
+  const rent=NEW.rent?'₹'+Number(NEW.rent).toLocaleString('en-IN'):'₹—';
+  const from=NEW.from?new Date(NEW.from).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}):'—';
+  const keys=Object.keys(at);
+  return `<article class="card" style="cursor:default">
+    <div class="ph" style="background:${NEW.photos?hue(0):'var(--line-2)'}">${NEW.photos?ICONS[0]:'<span style="font-size:13px;color:var(--ink-3)">No photos</span>'}
+      <span class="area">📍 ${NEW.area}</span><span class="save">🤍</span></div>
+    <div class="cbody"><div class="ctop"><h3>${title}</h3><div class="price">${rent}<small>/mo</small></div></div>
+      <div class="meta"><div>${NEW.spots} spot${NEW.spots>'1'?'s':''}${NEW.kind==='spot'?` · ${NEW.living} living here`:''} · ${NEW.furn}</div>
+        <div>From <b>${from}</b> · ${NEW.dep} month deposit</div></div>
+      <div class="pills">${keys.length?keys.slice(0,3).map(k=>`<span class="pill">${val(k,at[k])}</span>`).join('')+(keys.length>3?`<span class="pill more">+${keys.length-3}</span>`:'')
+        :'<span class="pill more">Nothing set yet</span>'}</div>
+      <div class="cfoot"><span>${ME.n}</span><span class="vbadge">✓ Face</span></div></div></article>`;
+}
+function publish(){
+  if(!S.loggedIn){S.pendingTarget='__publish';openGate(null);return}
+  const title=NEW.kind==='whole'?`${NEW.bhk}, full flat`:`${NEW.room} in ${NEW.bhk}`;
+  MYLIST.unshift({id:'m'+Date.now(),t:title,area:NEW.area,rent:+NEW.rent||0,spots:NEW.spots,living:NEW.living,
+    from:NEW.from?new Date(NEW.from).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'2-digit'}):'—',
+    ic:NEW.photos?ICONS[0]:'🏠',at:Object.fromEntries(Object.entries(NEW.at).filter(([,v])=>v)),state:'live',dayn:0,views:0,saves:0,reqs:0});
+  S.statuses.spot=true;if(NEW.alsoLooking)S.statuses.flat=true;
+  paintListings();paintProfile();go('listings');toast('Published — live for 30 days');
+}
+
+function paintListings(){
+  const live=MYLIST.filter(l=>l.state!=='arc'),arc=MYLIST.filter(l=>l.state==='arc'),n=MYLIST.find(l=>l.state==='exp');
+  document.getElementById('listcol').innerHTML=
+   (n?`<div class="nudge"><span style="font-size:18px">⏳</span>
+     <span class="tx"><b>Still available?</b><span>${n.area.split(',')[0]} room, live 21 days.</span></span>
+     <button class="btn btn-dark btn-sm" onclick="keepLive('${n.id}')">Keep it live</button>
+     <button class="btn btn-ghost btn-sm" onclick="markTaken('${n.id}')">It's taken</button></div>`:'')+
+   `<div class="panel"><h3>Active</h3><p class="pd">Expire after 30 days unless kept live.</p>
+     ${live.length?live.map(listRow).join(''):`<div style="padding:18px 0;border-top:1px solid var(--line-2)">
+       <p style="font-size:13.5px;color:var(--ink-3);margin:0 0 12px">Nothing live yet.</p>
+       <button class="btn btn-dark btn-sm" onclick="startPost()">Post your first listing</button></div>`}</div>
+    ${arc.length?`<div class="panel"><h3>Archived</h3><p class="pd">Hidden from the feed.</p>${arc.map(listRow).join('')}</div>`:''}`;
+}
+function listRow(l){
+  const badge=l.state==='live'?`<span class="stat live">● Live</span>`:l.state==='exp'?`<span class="stat exp">⏳ ${30-l.dayn} days left</span>`:`<span class="stat arc">Archived</span>`;
+  const keys=Object.keys(l.at||{});
+  return `<div class="mylist"><div class="mph" style="background:${l.state==='arc'?'var(--line-2)':hue(MYLIST.indexOf(l))}">${l.ic}</div>
+    <div class="mi"><div class="mt">${l.t} · ${l.area}</div>
+      <div class="mm">₹${l.rent.toLocaleString('en-IN')}/mo${l.state==='arc'?'':` · ${l.spots} spot · from ${l.from}`}</div>
+      <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap">${badge}
+        ${keys.slice(0,3).map(k=>`<span class="pill">${val(k,l.at[k])}</span>`).join('')}</div></div>
+    ${l.state==='arc'?`<div style="align-self:center"><button class="btn btn-ghost btn-sm" onclick="relist('${l.id}')">Relist</button></div>`
+      :`<div class="kpis"><div><b>${l.views}</b>views</div><div><b>${l.saves}</b>saves</div><div><b>${l.reqs}</b>requests</div></div>`}</div>`;
+}
+function keepLive(id){const l=MYLIST.find(x=>x.id===id);l.state='live';l.dayn=0;paintListings();toast('Live for 30 more days')}
+function markTaken(id){const l=MYLIST.find(x=>x.id===id);l.state='arc';paintListings();paintProfile();toast('Marked taken')}
+function relist(id){const l=MYLIST.find(x=>x.id===id);l.state='live';l.dayn=0;paintListings();toast('Relisted')}
+
+function startMessage(id,team){
+  const it=[...FLATS,...PEOPLE].find(x=>x.id===id);
+  if(roomMissing()&&!it.t&&!team){S.pendingTarget=id;openRoomGate(it);return}
+  if(!S.loggedIn){S.pendingTarget=id;S.team=team;openGate(id);return}
+  if(!S.faceVerified){S.pendingTarget=id;S.team=team;openVerify();return}
+  openCompose(id,team);
+}
+function openRoomGate(it){
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" onclick="event.stopPropagation()">
+    <h2>Add your room first</h2>
+    <p class="ms">${it.n.split(' ')[0]} will want to see the place before she replies. A message with no room attached almost never gets one.</p>
+    <div class="vopt on"><span class="vi">⚡</span><span><span class="vt">The short version</span>
+      <span class="vd">Area, rent and date. Goes live straight away, and you can add photos later.</span>
+      <span class="vtime">About a minute</span></span></div>
+    <button class="btn btn-dark btn-block" onclick="closeGate();closeDetail();startPost()">Add my room</button>
+    <p class="gatenote" style="margin-top:10px">Keep browsing if you'd rather. Nothing here disappears.</p></div>`;
+  document.getElementById('gate').classList.add('on');
+}
+function openGate(id){
+  if(id)S.pendingTarget=id;
+  const pub=S.pendingTarget==='__publish';
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" onclick="event.stopPropagation()">
+    <h2>${pub?'One step before it goes up':'One step before you say hi'}</h2>
+    <p class="ms">${pub?'A listing needs a verified person behind it.':'So the woman on the other side knows who\'s messaging.'}</p>
+    <div class="field"><label>Mobile number</label><input value="+91 98200 41123"></div>
+    <div class="field"><label>Full name</label><input value="${ME.n}"></div>
+    <button class="btn btn-dark btn-block" onclick="doLogin()">Send OTP</button>
+    <p class="gatenote" style="margin-top:11px">Your number never shows on your profile.</p></div>`;
+  document.getElementById('gate').classList.add('on');
+}
+function doLogin(){S.loggedIn=true;S.guest=false;openVerify()}
+function openVerify(fromProfile){
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" onclick="event.stopPropagation()">
+    <h2>${fromProfile?'Add Aadhaar':'Verify it\'s you'}</h2>
+    <p class="ms">${fromProfile?'A second badge, and 20 chats a day instead of 5.':'Everyone does this once.'}</p>
+    ${!fromProfile?`<button class="vopt on" data-k="face" onclick="this.classList.toggle('on')"><span class="vi">🤳</span><span>
+      <span class="vt">Face check</span><span class="vd">A quick selfie. Required before you can message or post.</span>
+      <span class="vtime">30 seconds</span></span></button>`:''}
+    <button class="vopt ${fromProfile?'on':''}" data-k="aadhaar" onclick="this.classList.toggle('on')"><span class="vi">🪪</span><span>
+      <span class="vt">Aadhaar via DigiLocker</span><span class="vd">Second badge. Raises your daily limit from 5 to 20.</span>
+      <span class="vtime">2 minutes · optional</span></span></button>
+    <button class="btn btn-dark btn-block" style="margin-top:4px" onclick="doVerify(${!!fromProfile})">${fromProfile?'Open DigiLocker':'Continue'}</button>
+    ${!fromProfile?`<button class="btn btn-block btn-sm" style="margin-top:8px;color:var(--ink-3)" onclick="doVerify(false,true)">Skip Aadhaar</button>`:''}</div>`;
+  document.getElementById('gate').classList.add('on');
+}
+function doVerify(fromProfile,skip){
+  if(fromProfile){S.aadhaar=true;S.limit=20;closeGate();paintProfile();toast('Aadhaar added — 20 chats a day');return}
+  S.faceVerified=true;
+  const a=document.querySelector('.vopt[data-k="aadhaar"]');
+  if(!skip&&a&&a.classList.contains('on')){S.aadhaar=true;S.limit=20}
+  closeGate();paintProfile();
+  if(S.pendingTarget==='__publish'){S.pendingTarget=null;publish();return}
+  if(S.pendingTarget)openCompose(S.pendingTarget,S.team);
+}
+function openCompose(id,team){
+  const it=[...FLATS,...PEOPLE].find(x=>x.id===id);
+  const who=(it.t?it.host.n:it.n).split(' ')[0];
+  const msg=team?`Hi ${who}! We're both looking in ${it.area} with similar budgets. Want to look at places together? Two of us splitting a 2 BHK opens up a lot more options.`
+    :it.t?`Hi ${who}! Your place lines up with what I'm looking for. Is it still free?`
+    :`Hi ${who}! We seem to want similar things. Open to chatting?`;
+  document.getElementById('gatesheet').innerHTML=`<div class="modal" onclick="event.stopPropagation()">
+    <h2>${team?'Ask to search together':'Message '+who}</h2><p class="ms">Lands in her requests. She decides whether to reply.</p>
+    <div class="field"><label>About</label><input value="${it.t?it.t+' · '+it.area:it.n+' · '+it.area}" disabled></div>
+    <div class="field"><label>Message</label><textarea>${msg}</textarea></div>
+    <button class="btn btn-dark btn-block" onclick="sendMsg('${it.t?it.host.n:it.n}','${(it.t||it.n).replace(/'/g,'')}')">Send</button>
+    <p class="gatenote" style="margin-top:10px">${S.limit-1} of ${S.limit} left today.</p></div>`;
+  document.getElementById('gate').classList.add('on');
+}
+function sendMsg(who,ctx){
+  THREADS.unshift({id:'n'+Date.now(),f:'primary',n:who,ic:who.split(' ').map(w=>w[0]).join(''),ctx,t:'now',msgs:[['me','Sent just now.']]});
+  S.limit=Math.max(0,S.limit-1);closeGate();closeDetail();toast('Sent');paintInbox();paintProfile();
+}
+const closeGate=()=>document.getElementById('gate').classList.remove('on');
+
+function setInbox(f){S.inboxTab=f;document.querySelectorAll('.isub').forEach(b=>b.classList.toggle('on',b.dataset.f===f));paintInbox()}
+function paintInbox(){
+  const list=THREADS.filter(t=>t.f===S.inboxTab);
+  document.getElementById('reqcount').textContent=THREADS.filter(t=>t.f==='requests').length;
+  document.getElementById('threads').innerHTML=list.map(t=>`<div class="ithread ${t.id===S.activeThread?'on':''}" onclick="openThread('${t.id}')">
+    <div class="avatar">${t.ic}</div><div style="flex:1;min-width:0"><div class="tn">${t.n}<span>${t.t}</span></div>
+    <div class="tp">${t.msgs[t.msgs.length-1][1]}</div><div class="tctx">${t.ctx}</div></div></div>`).join('')
+    ||`<div style="padding:30px 18px;text-align:center;color:var(--ink-3);font-size:13px">Nothing here.</div>`;
+  const t=THREADS.find(x=>x.id===S.activeThread)||list[0],p=document.getElementById('ipane');
+  if(!t){p.innerHTML=`<div style="display:grid;place-items:center;height:100%;color:var(--ink-3);font-size:13.5px">Pick a conversation</div>`;return}
+  const r=t.f==='requests';
+  p.innerHTML=`<div class="ihd"><div class="avatar">${t.ic}</div>
+      <div style="flex:1"><div style="font-weight:700;font-size:14px">${t.n}</div><div style="font-size:12px;color:var(--ink-3)">${t.ctx}</div></div>
+      <span class="vbadge">✓ Face + Aadhaar</span></div>
+    <div class="imsgs">${t.msgs.map(m=>`<div class="bub ${m[0]}">${m[1]}</div>`).join('')}</div>
+    ${r?`<div class="ireq">👀<span style="flex:1">Replying moves this to your chats. Ignoring it tells her nothing.</span>
+      <button class="btn btn-dark btn-sm" onclick="acceptReq('${t.id}')">Reply</button>
+      <button class="btn btn-ghost btn-sm" onclick="toast('Deleted')">Delete</button></div>`
+    :`<div class="icomp"><input placeholder="Write a message"><button class="btn btn-dark btn-sm">Send</button>
+      <button class="btn btn-ghost btn-sm" onclick="toast('Number shared')">Share number</button></div>`}`;
+}
+function openThread(id){S.activeThread=id;paintInbox()}
+function acceptReq(id){const t=THREADS.find(x=>x.id===id);t.f='primary';setInbox('primary');toast('Moved to chats')}
+
+/* flow */
+function hideAll(){document.getElementById('landing').style.display='none';
+  document.getElementById('entry').classList.remove('on');
+  document.getElementById('intent').classList.remove('on');
+  document.getElementById('app').style.display='none'}
+function showEntry(){hideAll();document.getElementById('entry').classList.add('on');scrollTo(0,0)}
+function showIntent(how){
+  S.guest=how==='guest';S.loggedIn=how!=='guest';
+  hideAll();document.getElementById('intent').classList.add('on');
+  document.getElementById('intent-h').textContent=how==='guest'?'What are you looking for?':'What are you here for?';
+  document.getElementById('intent-s').textContent=how==='guest'
+    ?'Just so the feed is useful. Nothing is saved until you make a profile.'
+    :'One tap. This decides who can find you, and you can change it whenever.';
+  document.getElementById('guesthint').innerHTML=how==='guest'
+    ?'<span style="font-size:12px;color:var(--ink-3)">As a guest you can browse and filter. Messaging needs an account.</span>':'';
+  scrollTo(0,0);
+}
+function pickIntent(k){
+  const id=IDENTITY[k]||IDENTITY.browse;
+  Object.assign(ME,{n:id.n,age:id.age,role:id.role,now:id.now,budget:id.budget,lookAreas:new Set(id.areas)});
+  if(!S.guest&&k!=='browse')
+    S.statuses={flat:k==='both'||k==='flat',flatmate:k==='both'||k==='flatmate',spot:k==='flatmate'||k==='post'};
+  if(k==='browse')S.statuses={flat:false,flatmate:false,spot:false};
+  /* an owner arriving here usually already has one place listed elsewhere; seeded so the
+     30-day expiry nudge is visible. A flatmate-seeker starts with nothing, on purpose. */
+  MYLIST=k==='post'?JSON.parse(JSON.stringify(BASE_LIST)):[];
+  S.mode=(k==='flatmate')?'people':'flats';
+  document.querySelectorAll('.chip[data-m]').forEach(c=>c.classList.toggle('on',c.dataset.m===S.mode));
+  hideAll();document.getElementById('app').style.display='block';
+  paintFilters();paintProfile();paintInbox();paintListings();render();
+  if(k==='post')startPost();else go('discover');
+}
+/* she's offering a spot but hasn't put the room up yet */
+const roomMissing=()=>S.statuses.spot&&!S.statuses.flat&&!MYLIST.some(l=>l.state!=='arc');
+function go(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+  document.getElementById('v-'+v).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.v===v));
+  if(v==='post')paintPost();if(v==='listings')paintListings();if(v==='profile')paintProfile();
+  paintBanner();scrollTo(0,0)}
+function toggleSave(id){S.saved.has(id)?S.saved.delete(id):S.saved.add(id);render()}
+function setMode(m){S.mode=m;document.querySelectorAll('.chip[data-m]').forEach(c=>c.classList.toggle('on',c.dataset.m===m));paintFilters();render()}
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),2600)}
+
+function resetAll(){
+  Object.assign(ME,IDENTITY.browse,{lookAreas:new Set(),from:'2026-04-15',at:{},prompts:[[null,null],[null,null],[null,null]]});
+  Object.assign(S,{mode:'flats',want:{},areas:new Set(),rooms:new Set(),furn:new Set(),amen:new Set(),who:'all',
+    saved:new Set(),loggedIn:false,guest:false,faceVerified:false,aadhaar:false,
+    statuses:{flat:false,flatmate:false,spot:false},
+    inboxTab:'primary',activeThread:'t1',pendingTarget:null,team:0,limit:5,budget:40000,movein:99,
+    bannerDismissed:false,showAllLife:false});
+  MYLIST=[];THREADS=JSON.parse(JSON.stringify(BASE_THREADS));
+  Object.assign(NEW,{step:0,kind:null,rent:'',from:'',amen:new Set(),at:{},needs:{},photos:0,desc:'',agree:false,alsoLooking:false});
+  document.querySelectorAll('.chip[data-m]').forEach(c=>c.classList.toggle('on',c.dataset.m===S.mode));
+}
+function restart(fresh){
+  if(fresh!==false)resetAll();
+  document.getElementById('app').style.display='none';
+  document.getElementById('entry').classList.remove('on');
+  document.getElementById('intent').classList.remove('on');
+  document.getElementById('landing').style.display='block';
+  paintFilters();paintProfile();paintInbox();paintListings();render();scrollTo(0,0);
+}
+
+document.getElementById('interested').innerHTML=PEOPLE.slice(0,3).map((p,i)=>`
+  <div style="display:flex;gap:11px;align-items:center;padding:11px 0;border-top:1px solid var(--line-2)">
+    <div class="avatar" style="background:${hue(i+1)}">${p.ic}</div>
+    <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:13.5px">${p.n}</div>
+      <div style="font-size:11.5px;color:var(--ink-3)">${p.age} · ${i===0?'messaged you':'saved your room'}</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="openDetail('${p.id}')">View</button></div>`).join('');
+addEventListener('keydown',e=>{if(e.key==='Escape'){closeDetail();closeGate()}});
+resetAll();restart();
+</script>
+</body>
+</html>
