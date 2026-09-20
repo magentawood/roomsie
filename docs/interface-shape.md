@@ -40,8 +40,17 @@ Three options, and one must be chosen:
 | Tabs | Chat and Results as two tabs, with a badge on Results. | Cheapest. Loses the live feedback, which is the whole point. |
 | Inline cards | Results appear inside the chat as card carousels. | Most natural on mobile. Hard to compare options, which property search needs. |
 
-**Recommendation: bottom sheet.** It keeps the live count visible, which is the
-feedback that stops people quitting.
+**Provisional design (2026-09-20), to be finalised later.** The chat fills the
+screen at the start. When results are ready, the chat shrinks to a bar at the
+bottom, about 25% of the height, and the listings fill the space above. Tapping
+the input expands the chat to about 60% so the user can read the history. It
+shrinks again when the listings update.
+
+The mechanics are the same as desktop. One form, two views.
+
+**One rule to hold.** Never resize while the user is typing or reading. An
+auto-shrink that fires mid-sentence is the same defect as silent reordering in
+hole 4. Shrink on send, or let the user drag it.
 
 ### 2. Search traffic breaks the no-skip rule
 

@@ -61,7 +61,7 @@ exists to keep, cut or rework.
 | D4 | Monetisation model and pricing | Pending, follows D3 |
 | D5 | Team size, budget and timeline | Pending |
 | D6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
-| D6a | Mobile pattern for the split view | **Open.** Side-by-side does not exist at 400px. |
+| D6a | Mobile pattern for the split view | **Provisional.** Chat fills the screen, then shrinks to a bottom bar at 25% when listings appear, expanding to 60% on tap. Same mechanics as desktop. UI not final. |
 | D6b | What a visitor from Google search sees | **Open.** Public listing pages bypass the no-skip rule. |
 | D7 | Model vendor and data-residency posture for inference | Pending |
 | D8 | Verification and trust-and-safety stance | Pending |
