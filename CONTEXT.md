@@ -72,6 +72,17 @@ exists to keep, cut or rework.
 
 ---
 
+## Ready to start now
+
+| Who | What | Blocked by |
+|---|---|---|
+| Marketing | Call Mumbai brokers to test the free-listing, paid-introduction model | Nothing |
+| Marketing | Write the 30 corpus articles, `docs/content/corpus-plan.md` | Nothing |
+| Designer | Resolve the V3 prototype palette against ADR 0011's Untitled UI pipeline | Nothing, and it blocks frontend work |
+| Tech | Build the Hinglish and Marathi eval set before choosing anything | Nothing |
+
+---
+
 ## Deliverables for this session
 
 A single unified master launch document, covering, in order:
