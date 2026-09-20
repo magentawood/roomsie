@@ -144,30 +144,89 @@ is a blog article marketing should write.
 
 ---
 
-## The full path of a turn
+## The architecture
 
-```
-turn arrives
-   │
-   ├─ chip tap ────────────────► scripted question            (no model)
-   │
-   └─ free text
-         │
-      [Router]  small model
-         │
-         ├─ slot answer ──────► [Extractor] ──► Form A   ─┐  run in
-         ├─ revealing ────────► [Observer]  ──► Form B   ─┘  parallel
-         ├─ consulting ───────► [Advisor] + retrieval → grounded answer
-         ├─ off topic ────────► scripted redirect            (no model)
-         └─ safety ───────────► scripted response, logged    (no model)
-         │
-      Form A changed?  ──yes──► re-run the query, update the panel
-         │
-      reply needs writing? ──yes──► [Composer]  good model
-                                     input: Form A + Form B + last 2 turns
+```mermaid
+flowchart TD
+    U([User turn])
+
+    U --> K{Chip tap<br/>or free text?}
+
+    K -->|Chip tap| SCR[Scripted next question]
+    K -->|Free text| R[["**Router**<br/>small model"]]
+
+    R -->|slot answer| EX[["**Extractor**<br/>small, constrained to enums"]]
+    R -->|revealing| OB[["**Observer**<br/>small, must quote the user"]]
+    R -->|consulting| AD[["**Advisor**<br/>small + retrieval"]]
+    R -->|off topic| RED[Scripted redirect]
+    R -->|safety signal| SAF[Scripted response<br/>logged]
+
+    AD <--> CORP[(roomsie corpus<br/>blog, FAQ, guides<br/>Postgres full-text)]
+
+    EX --> FA[(<b>Form A</b><br/>filter slots<br/>typed, weighted)]
+    OB --> FB[(<b>Form B</b><br/>profile observations<br/>each with evidence)]
+
+    FA --> CH{Value or weight<br/>changed?}
+    CH -->|yes| SQL[[SQL query<br/>over Postgres]]
+    CH -->|no| STILL[Panel unchanged]
+    SQL --> PANEL([Listings panel])
+
+    FA -.context.-> CMP
+    FB -.context.-> CMP
+    AD --> CMP
+    EX --> CMP
+
+    CMP[["**Composer**<br/>good model<br/>Form A + Form B + last 2 turns<br/>never the transcript"]]
+
+    CMP --> OUT([Reply])
+    SCR --> OUT
+    RED --> OUT
+    SAF --> OUT
+
+    classDef nomodel fill:#FDF2CE,stroke:#9A7206,color:#33260A
+    classDef small fill:#FFE3EC,stroke:#C42D63,color:#2A0D17
+    classDef big fill:#C42D63,stroke:#C42D63,color:#FFFFFF
+    classDef store fill:#F8F1E1,stroke:#EDE3CC,color:#141210
+
+    class SCR,RED,SAF,STILL nomodel
+    class R,EX,OB,AD small
+    class CMP big
+    class FA,FB,CORP store
 ```
 
----
+**Reading the colours.** Yellow costs nothing. Pink is a small cheap model.
+Dark pink is the only expensive call, and most turns never reach it.
+
+### Two things the diagram does not show well
+
+**The Extractor and the Observer run in parallel.** One turn can be both. "I
+need Powai under 20k, my last place fell apart because of my flatmate's
+boyfriend" fills slots *and* reveals something. Both handlers see the same
+input at the same time. Neither waits for the other.
+
+**The Composer is often skipped.** A chip tap gets a scripted question. A clean
+slot answer gets a scripted acknowledgement and the next question. The Composer
+runs only when a reply genuinely has to be written.
+
+### Cost per turn, by path
+
+```mermaid
+flowchart LR
+    A[Chip tap] --> A1["**zero**<br/>no model"]
+    B[Typed slot answer] --> B1["**low**<br/>router + extractor"]
+    C[Something revealing] --> C1["**low**<br/>router + extractor + observer<br/>last two in parallel"]
+    D[Consulting question] --> D1["**medium**<br/>router + advisor + retrieval<br/>+ composer"]
+    E[Off topic] --> E1["**zero**<br/>router only, then a script"]
+
+    classDef zero fill:#FDF2CE,stroke:#9A7206,color:#33260A
+    classDef low fill:#FFE3EC,stroke:#C42D63,color:#2A0D17
+    classDef med fill:#C42D63,stroke:#C42D63,color:#FFFFFF
+    class A1,E1 zero
+    class B1,C1 low
+    class D1 med
+```
+
+The first three turns of every interview are chip taps. They are free.
 
 ## How this answers each worry
 
