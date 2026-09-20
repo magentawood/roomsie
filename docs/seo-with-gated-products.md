@@ -1,16 +1,55 @@
-# SEO when both products are gated
+# Search and the login gate
 
-**Date:** 2026-09-20 · **Status:** proposed · **Closes:** hole 2, decision D6b
-
-Both products, flats and flatmates, sit behind login. Nothing about them is
-public. This document sets out how roomsie still gets found in search.
+**Date:** 2026-09-20 · **Status:** decided · **Closes:** hole 2, decision D6b
 
 ---
 
-## The reframe
+## Where the login gate actually sits
 
-Gating the listings costs far less than it appears, because **individual
-listing pages were never the SEO asset.**
+Login is **not** required to browse. It is required for two things only:
+
+1. Seeing the full details of one listing.
+2. Contacting anyone.
+
+Everything before that is public:
+
+| Step | Login needed |
+|---|---|
+| Landing page | No |
+| Full-screen chat | No |
+| Split view, chat and listings | No |
+| Scrolling and filtering results | No |
+| Opening one listing's details | **Yes** |
+| Messaging a person or a lister | **Yes** |
+
+So the earlier conflict disappears. Area pages can be public and indexed,
+because the results grid was never gated in the first place.
+
+---
+
+## What a visitor from Google gets
+
+They land straight in the split view.
+
+- The listings panel opens with the page's filters already applied. A visit to
+  "Flats in Powai" opens the grid filtered to Powai.
+- The chat opens with **no history**. It is a fresh conversation.
+- But the **form is not empty.** The area and intent slots are filled from the
+  page they arrived on.
+
+**Form state and chat history are different things.** The transcript starts
+blank. The form starts partly filled. The assistant opens by confirming what it
+already knows rather than asking cold: "You were looking at Powai. What is your
+budget?"
+
+That removes the two slowest turns of the interview.
+
+---
+
+## The reframe on listing pages
+
+Gating the listing *detail* costs far less than it appears, because
+**individual listing pages were never the SEO asset.**
 
 Three reasons:
 
@@ -58,6 +97,15 @@ band. Without that, a small cell leaks an individual.
 **Freshness rule.** These pages update monthly and never 404. They survive
 market cycles, unlike a listing.
 
+### Layer 1b — Filter pages
+
+Same mechanism, narrower. "2 BHK in Andheri West", "Rooms under 15000 in
+Powai". Each opens the split view with those filters set.
+
+Build these from real search demand, not from every possible filter
+combination. Thousands of near-empty permutation pages is the thin-content
+problem all over again.
+
 ### Layer 2 — Editorial pages. The top of the funnel.
 
 Most rental search volume is informational, not transactional. People search
@@ -68,6 +116,12 @@ Maharashtra, deposit norms, police verification, Powai against Andheri for
 young professionals, what to ask before moving in with a stranger.
 
 Evergreen, cheap, and it feeds Layer 1 through internal links.
+
+**Use `roomsie.com/blog`, not `blogs.roomsie.com`.** Google treats a subdomain
+as a partly separate site, so ranking strength built on a blog subdomain does
+not pass cleanly to the main domain. A subdirectory keeps it all on one domain.
+Singular "blog" is also the convention. This is worth getting right at the
+start, because moving it later means redirecting every article.
 
 ### Layer 3 — The landing page and brand.
 
@@ -105,6 +159,38 @@ Two reasons to leave it alone:
 
 Keep it in reserve. It is the right tool if roomsie ever publishes long-form
 gated content.
+
+---
+
+## The new cost this creates
+
+The interview now runs **before login**. That has two consequences.
+
+**Anonymous state.** The form exists before there is a user row. It needs an
+anonymous session id, and that state has to merge into the user record on
+login. This is not in the schema ledger's S1 to S7 and needs adding.
+
+**Anyone can spend your inference budget.** An unauthenticated chat is open to
+the world. Someone can burn money by talking to it, and bots will find it.
+Needed before launch:
+
+- Rate limit per device and per network, not per user, because there is no user
+- A cap on turns in an anonymous session before login is asked for
+- A cheaper model or a shorter context for anonymous turns
+- A hard daily spend ceiling with a defined behaviour when it is hit
+
+Tracked as decision D9.
+
+---
+
+## Sequencing
+
+Layer 1 needs users, and at launch there are none. So:
+
+| When | What |
+|---|---|
+| Launch | Landing page, editorial pages, area pages with area facts only |
+| Once there are users | Add the aggregate numbers to the area pages |
 
 ---
 

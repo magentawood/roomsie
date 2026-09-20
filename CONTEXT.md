@@ -62,7 +62,8 @@ exists to keep, cut or rework.
 | D5 | Team size, budget and timeline | Pending |
 | D6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
 | D6a | Mobile pattern for the split view | **Provisional.** Chat fills the screen, then shrinks to a bottom bar at 25% when listings appear, expanding to 60% on tap. Same mechanics as desktop. UI not final. |
-| D6b | Search visibility with both products gated | **Proposed.** No listing is public. Search traffic comes from area pages built on aggregate data, plus editorial pages. Every public page opens the chat with slots pre-filled. See `docs/seo-with-gated-products.md`. |
+| D6b | Where the login gate sits, and search | **Settled.** Login is needed only to see a listing's details and to contact anyone. Chat, split view and browsing are public. Area and filter pages are indexed and open the split view with filters applied and the form pre-filled. Blog lives at `roomsie.com/blog`. See `docs/seo-with-gated-products.md`. |
+| D9 | Abuse and cost limits on the pre-login chat | **Open.** The interview now runs before login, so anyone can spend the inference budget. |
 | D7 | Model vendor and data-residency posture for inference | Pending |
 | D8 | Verification and trust-and-safety stance | Pending |
 
