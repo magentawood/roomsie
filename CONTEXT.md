@@ -53,10 +53,12 @@ exists to keep, cut or rework.
 
 | # | Question | Status |
 |---|---|---|
-| D3 | Where listing supply comes from at launch | **Next up** |
-| D4 | Monetisation model and pricing | Pending |
+| D3 | Where listing supply comes from at launch | **Deferred pending broker interviews.** Working hypothesis: brokers list free, roomsie charges for a qualified introduction. See `docs/research/supply-and-broker-model.md`. To be validated by calling Mumbai brokers. |
+| D3a | Flatmate matching design | **Active track.** Being worked in parallel, because it is substantially independent of D3. |
+| D3b | What the AI interview adds over the chip filters | **Settled: both.** It surfaces what chips cannot capture, and it consults and pushes back. A structured form runs alongside the whole chat session; contradictions are confirmed with the user rather than silently overwritten. |
+| D4 | Monetisation model and pricing | Pending, follows D3 |
 | D5 | Team size, budget and timeline | Pending |
-| D6 | How deep the AI agent goes — sole interface vs. augmented browse | Pending |
+| D6 | How deep the AI agent goes, sole interface vs. augmented browse | Pending. See `docs/ai-agent-design.md`. |
 | D7 | Model vendor and data-residency posture for inference | Pending |
 | D8 | Verification and trust-and-safety stance | Pending |
 
