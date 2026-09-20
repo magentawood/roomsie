@@ -1,6 +1,6 @@
 # Interface shape
 
-**Date:** 2026-09-20 · **Status:** decided for desktop, open for mobile
+**Date:** 2026-09-20 · **Status:** holes 2 to 5 closed. Mobile provisional.
 **Decision:** D6
 
 ---
@@ -27,7 +27,7 @@
 
 ## The five holes
 
-### 1. Mobile has no side-by-side
+### 1. Mobile has no side-by-side — PROVISIONAL
 
 This is the biggest one. A split view needs about 900px. Mumbai is a
 mobile-first market. At 400px there is no second panel.
@@ -52,56 +52,103 @@ The mechanics are the same as desktop. One form, two views.
 auto-shrink that fires mid-sentence is the same defect as silent reordering in
 hole 4. Shrink on send, or let the user drag it.
 
-### 2. Search traffic breaks the no-skip rule
+### 2. Search traffic breaks the no-skip rule — CLOSED
 
-ADR 0007 makes listing pages the search surface. They are server-rendered and
-public so Google can index them.
+**Resolved by moving the gate.** Login is required only to open a listing's
+details and to contact anyone. Browsing, the chat and the split view are all
+public, so there was never a conflict.
 
-So someone who searches "1BHK Powai rent" lands on a listing page. They have
-skipped the interview. The rule cannot hold.
+A visitor from search lands in the split view with the page's filters applied
+and an empty chat, but a partly filled form. See
+`seo-with-gated-products.md`.
 
-Decide what that visitor sees. Options: the listing plus a chat prompt, the
-listing plus a limited grid, or the listing with everything else gated.
+### 3. Two or three turns is not enough to rank — CLOSED
 
-Do not drop the public pages. They are the cheapest demand you will get.
+**Decision.** The panel first appears once intent, area and budget are filled.
+That is about three turns.
 
-### 3. Two or three turns is not enough to rank
+Filtering and ranking are different things. Filtering needs area and budget.
+Ranking on compatibility needs the lifestyle answers, which take much longer.
+So show results early and honestly, and withhold the match score until it
+means something. The V3 prototype already does this: it hides the match tag
+when no lifestyle filters are set.
 
-After three turns you might know intent and area. That is not enough to rank
-anything.
-
-So the first panel state is not "your matches". It is "everything in Mumbai".
-Say so. A panel that claims to be personalised when it is not will lose trust
-on the first look.
-
-Proposed labels as the form fills:
+**Headers by state:**
 
 | Slots filled | Panel header |
 |---|---|
 | Intent only | "Everything in Mumbai" |
-| Plus area or budget | "Narrowing down" with the count |
-| Minimum set complete | "Your matches" with the match score shown |
+| Plus area | "Flats in Powai" with the count |
+| Plus budget | "Flats in Powai under 20,000" |
+| Enough lifestyle answers | Match score appears on cards |
 
-### 4. Live updates will feel jarring
+**The first three turns are chip-driven.** Intent, area and budget are closed
+questions, so tapping is right. Reuse the four intent cards from the prototype.
+Area shows the top five or six as chips plus "somewhere else" which opens
+search, and is multi-select. Budget shows bands rather than a slider, because
+bands are faster on a phone: under 15, 15 to 20, 20 to 25, above 25.
 
-If the list reshuffles every turn, the user loses the card they were reading.
+**Chips are the floor, not the ceiling.** A user who types "2bhk in Powai under
+25k from October" fills four slots in one turn and goes straight to results. If
+that does not work, the chips are a form with a chat skin.
 
-Rules:
+**Where the interview ends, revised.** It does not. The open questions begin
+once results are already on screen, and continue while the user browses. The
+completeness gate in `ai-agent-design.md` section 3.3 governs when the match
+score appears, not when the conversation stops.
 
-- Never reorder silently while the user is scrolling.
-- Show a banner instead: "8 new matches. Refresh."
-- Removals are the worse case. If a new dealbreaker hides a card the user just
-  saved, say which one and why.
-- Keep saved cards pinned regardless of filters.
+### 4. Live updates — CLOSED
 
-### 5. Two input surfaces, one state
+**The rule: the panel updates when the form changes, not when a turn happens.**
 
-The user can set a manual filter and then contradict it in chat.
+A turn that changes no slot changes nothing on screen. A ten-turn conversation
+might produce three panel updates. The panel is a pure function of the form,
+which makes it deterministic and testable, unlike everything else in this
+layer.
 
-There is one form. The chat and the filter panel are two views of it. A manual
-filter change writes to the same slot and the assistant acknowledges it. A chat
-statement updates the panel. Conflicts follow the rule in
-`ai-agent-design.md` section 3.1: ask, do not overwrite.
+**A form change means a slot's value or weight changed.** It does not mean
+provenance changed. Confirming an inferred value that was already applied does
+not re-query.
+
+**Direction decides the behaviour:**
+
+| Change | Behaviour |
+|---|---|
+| Widening, more results | Banner: "12 more matches. Show them." Tappable. |
+| Narrowing, fewer results | Applies, and says what went: "Hid 8 that allow smoking." With undo. |
+| Reordering | Only on explicit refresh. Never while scrolling. |
+| A saved card would be hidden | Never removed. Marked, with the reason. |
+
+**Freeze while scrolling.** Updates queue while the user is scrolling or
+reading a card, and apply when idle.
+
+**The "don't ask again" checkbox covers widening only.** Once ticked, more
+results arrive automatically. Narrowing always tells the user, even when it
+stops asking. A toast with undo is not an interruption. Without this scoping,
+one tick means cards silently vanish for the rest of the session.
+
+### 5. Two inputs, one form — CLOSED
+
+There is one form. The chat and the filter panel are two views of it.
+
+**A manual filter edit writes to the same slot** and its context reaches the
+assistant, so the source of truth stays common.
+
+**Manual edits are silent in the transcript by default.** If every filter tap
+produced a chat message, the conversation would become a log of taps. The
+assistant speaks only when the edit contradicts something the user said
+earlier.
+
+**The complete conflict rule:**
+
+| What happened | What the system does |
+|---|---|
+| Chat contradicts earlier chat | Ask which to keep |
+| Manual edit contradicts earlier chat | Manual wins, assistant notes it once |
+| Inference contradicts anything | Never wins, propose it |
+
+A manual tap is explicit and recent. Asking "are you sure" after a deliberate
+tap is irritating and teaches people to dismiss dialogs.
 
 ---
 
