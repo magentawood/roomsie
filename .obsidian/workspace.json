@@ -1,0 +1,212 @@
+{
+  "main": {
+    "id": "62ee4a778696f07d",
+    "type": "split",
+    "children": [
+      {
+        "id": "a78b0d80c5d6f8de",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "58f95dfe59a7d346",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "session/README.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "README"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "34ce92fddb878485",
+    "type": "split",
+    "children": [
+      {
+        "id": "b310f37010c5443c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "c01a226489721f75",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "c1d24bf3882056a9",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "f74026a769a71365",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a9b7929d8d1caad7",
+    "type": "split",
+    "children": [
+      {
+        "id": "609e4d9600ee50ec",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8d7f73abf0048361",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "session/README.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "e09f8c95d0d6d8e1",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "session/README.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "2414f8e737e1cc82",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "6bbfd489525d9e77",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "de16b9bcffe80a81",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "session/README.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "c01a226489721f75",
+  "lastOpenFiles": [
+    "docs/seo-with-gated-products.md",
+    "docs/interface-shape.md",
+    "docs/cost-and-team.md",
+    "docs/ai-agent-design.md",
+    "docs/source/femmeflats-PRD-deprecated.md",
+    "docs/source/decisions/0009-hosting-and-region.md",
+    "docs/source/decisions/0010-monorepo-tooling.md",
+    "docs/source/decisions/0011-design-system-token-pipeline.md",
+    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/source/decisions/0013-ci-gate-and-testing.md",
+    "docs/source/decisions/0008-web-stack.md",
+    "docs/source/decisions/0007-web-rendering-and-auth-transport.md",
+    "docs/source/decisions/0006-drizzle.md",
+    "docs/source/decisions/0005-managed-platform-split.md",
+    "docs/source/decisions/0004-api-stack-typescript-fastify.md",
+    "docs/source/decisions/0003-api-as-separate-service.md",
+    "docs/source/decisions/0002-api-boundary.md",
+    "docs/source/decisions/0001-rent-infrastructure.md"
+  ]
+}
