@@ -189,45 +189,88 @@ suggestions on the handful of turns where the answer space is genuinely open.
 
 ## 4. The risks not raised
 
-### 4.1 Discrimination — the largest risk in this product
+### 4.1 Exclusionary preferences — decision D3c
 
-This is the one to think hardest about, and it is not a hypothetical.
+**Decision taken (2026-09-20): roomsie records whatever preference the user
+states, including community and religion, and filters on it.**
 
-Housing discrimination in Indian cities on religion, caste, marital status and
-food practice is widespread and well documented. The V3 prototype already makes
-`veg` a lifestyle axis and a tappable dealbreaker. In Mumbai, "veg only" is
-frequently a proxy for religious and caste exclusion, whatever the individual
-user means by it.
+The reasoning is that it is the user's home, and that the Mumbai market already
+works this way. This section documents the decision, the exposure it carries,
+and the mitigations that remain available within it.
 
-**A filter chip and a conversational assistant are not the same liability.**
-A chip is a preference the user selected. An assistant that asks about it,
-infers it, suggests it, or learns to predict it is a system that participates.
-That is a materially different position legally and reputationally, and it gets
-worse if the assistant is good at its job, because a well-tuned matcher
-optimising on these signals will systematise the exclusion.
+#### The legal position, stated accurately
 
-Guardrails, and these should be non-negotiable:
+India has no general statute prohibiting discrimination in private housing.
+Article 15 of the Constitution binds the State, not private persons. The
+Anti-Discrimination and Equality Bill introduced in 2016 never passed. So a
+private individual selecting a flatmate on community grounds is not doing
+something Indian law forbids, and a platform recording that preference is not
+obviously unlawful either.
 
-1. **Never infer a protected attribute.** Religion, caste, ethnicity, sexuality,
-   disability, health status. Not from a name, not from diet, not from an area,
-   not from a festival mentioned in passing. Do not store an inferred value even
-   internally, because a stored inference becomes a training signal.
-2. **Never suggest a discriminatory filter the user did not state.** The
-   assistant may record "veg kitchen" if the user asks for it. It may never
-   offer it as a chip, propose it, or ask whether they want it.
-3. **Keep diet framed as a kitchen practice, not an identity.** Ask what the
-   kitchen is like. Never ask what the person is.
-4. **Refuse explicit exclusion outright.** If a user says "no Muslims" or "only
-   Brahmins", the assistant does not record it, does not soften it into a
-   proxy, and says plainly that roomsie does not filter on that. Log it.
-   Repeated attempts are a trust-and-safety signal.
-5. **Do not let the ranking model learn a proxy.** When learned ranking
-   eventually replaces the heuristic score, protected attributes and their
-   close proxies must be excluded from the feature set, and the model must be
-   tested for disparate impact before it ships.
-6. **Watch the all-genders decision here.** Dropping women-only removed a
-   safety story. It did not remove the safety problem. Gender-based exclusion
-   will now arrive through the interview instead, and needs a stated position.
+Two qualifications matter:
+
+- **The DPDP Act 2023 does not create a sensitive-data category.** Unlike GDPR
+  Article 9, it treats all personal data uniformly. So storing a religion
+  preference carries the same obligations as storing a budget, not heavier
+  ones. This is a lower compliance burden than people usually assume.
+- **That stops being true outside India.** Under GDPR, religion is special
+  category data and processing it needs an Article 9 condition. This becomes
+  relevant on EU expansion, and during diligence by any investor who applies
+  GDPR standards to the whole book.
+
+#### The exposure that remains
+
+1. **Press and platform risk, not legal risk.** The realistic downside is a
+   story about a housing app that filters by religion, not a court case. Indian
+   housing discrimination is a live media subject, and a conversational product
+   makes a more vivid story than a checkbox.
+2. **Published listings are a different thing from private preferences.** A
+   seeker privately filtering their own results is one position. A listing
+   published on roomsie that reads "no Muslims" is an advertisement, and that
+   is where both the press exposure and any future regulatory exposure
+   concentrate. These two cases should be decided separately, and currently
+   only the first has been decided.
+3. **The data now exists and is attributable.** A stated exclusion is stored
+   against a named, phone-verified user. It is discoverable, it is exportable
+   under a DPDP access request, and it sits in the same database as the
+   analytics corpus that ADR 0012 designates as future training data.
+
+#### Mitigations still compatible with the decision
+
+These do not reverse D3c. They limit it to what was actually asked for.
+
+1. **Never infer.** Record only what the user explicitly states. Do not derive a
+   community preference from a name, a diet, an area, or a festival mentioned
+   in passing. An inferred value is the difference between serving a preference
+   and manufacturing one.
+2. **Never suggest.** The assistant does not offer these as chips, does not
+   propose them, and does not ask. It records them when raised, and otherwise
+   does not raise them. This also follows from section 3.4, which already
+   forbids suggestions on open questions.
+3. **Keep the ranking model clean.** When learned ranking replaces the heuristic
+   score, exclude these attributes and their proxies from the feature set. A
+   stated filter is a hard constraint the user chose. A learned weight is the
+   system developing a preference of its own, which nobody asked for.
+4. **Filter server-side.** The excluded party is never told they were excluded
+   and never sees the filter. The exclusion removes rows from a query result.
+   It is not a visible badge on anyone.
+5. **Decide the listing side separately.** See point 2 above. Whether a
+   published listing may carry an identity restriction in its visible text is
+   an open question, tracked as D3d.
+6. **Log and make it retrievable.** Every stated exclusion, with the turn it was
+   stated in. If this is ever questioned, the difference between "we recorded
+   what users told us" and "we cannot say where this came from" is the whole
+   defence.
+7. **State it publicly.** A policy page explaining what roomsie filters on and
+   why is far better than being asked about it later. Silence reads worse than
+   a stated position.
+
+#### Related, and still open
+
+Dropping women-only (D1) removed a safety story without removing the safety
+problem. Gender-based preferences will now arrive through the interview like
+any other. Under D3c they are recorded. Whether that is sufficient for the
+trust story the product needs is unresolved, and it belongs with D8.
 
 ### 4.2 Prompt injection through user-generated content
 
