@@ -60,7 +60,9 @@ exists to keep, cut or rework.
 | D3d | Whether a published listing may carry identity restrictions in visible text | **Open.** Separated from D3c because an advertisement is a different position from a private filter. |
 | D4 | Monetisation model and pricing | Pending, follows D3 |
 | D5 | Team size, budget and timeline | Pending |
-| D6 | How deep the AI agent goes, sole interface vs. augmented browse | Pending. See `docs/ai-agent-design.md`. |
+| D6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
+| D6a | Mobile pattern for the split view | **Open.** Side-by-side does not exist at 400px. |
+| D6b | What a visitor from Google search sees | **Open.** Public listing pages bypass the no-skip rule. |
 | D7 | Model vendor and data-residency posture for inference | Pending |
 | D8 | Verification and trust-and-safety stance | Pending |
 
@@ -140,6 +142,8 @@ roomsie/
   not the transcript, are the citable record.
 - **Remote Control stays off.** Session sharing is file-based, through this
   repo, and nothing else.
+- **Write in simple, crisp English.** Short sentences. Plain words. This
+  applies to every document in this repo.
 - Repo is **private**. The transcript contains personal data.
 
 ---
