@@ -17,40 +17,90 @@ their dealbreakers, their listing, their matches.
 
 This is the interview. No special handling.
 
-### 2. Adjacent — answer, but only from the corpus
+### 2. Adjacent — always answer something, but tier by risk
 
-Questions that are genuinely part of a housing decision:
+Questions that are genuinely part of a housing decision.
 
-- Commute from an area
-- What a neighbourhood is like
-- Deposit norms, notice periods, agreement basics
-- What to check before moving in
-- Police verification, registration
+**The rule is not "corpus or silence".** That would make the assistant useless
+at launch, when the corpus is nearly empty, and "I don't know" to every
+reasonable question is worse than the risk it avoids.
 
-**These go to the Advisor, grounded by retrieval over roomsie's own content.**
+**The rule is: how bad is it if this answer is wrong?**
 
-**Hard rule: never answer from model knowledge.** If the corpus has no answer,
-say so and offer to note the question. Do not let the model improvise a commute
-time or a legal position.
+#### 2a. General — answer from model knowledge, plainly hedged
 
-Two reasons. A wrong commute time is checkable and makes you look careless. A
-wrong legal claim is worse, and Indian tenancy law is state-specific.
+Stable, widely known, low cost if slightly off:
 
-**Every unanswerable adjacent question is an article to write.** Log them.
-That queue is the content plan for `roomsie.com/blog`, written from real
-demand rather than guesswork.
+- What semi-furnished usually includes
+- What a typical deposit runs to in Mumbai
+- What to look at when you visit a flat
+- Roughly how far two areas are
+- What questions to ask a prospective flatmate
+- How flatshare bills are normally split
 
-#### The dangerous corner of this band
+**Answer them.** Say plainly that it is general guidance rather than a
+quote for a specific flat. Users handle a hedged general answer fine. What
+they do not forgive is a confident wrong specific.
 
-**Questions about whether an area is safe.** People will ask, especially now
-that the women-only framing is gone.
+**Prefer the corpus when it has an entry,** and cite it. Fall through to model
+knowledge when it does not.
 
-Do not let the model answer this from its own knowledge. Claims that an area is
-unsafe are defamatory to that area, frequently encode communal stereotypes, and
-are exactly the kind of thing that becomes a screenshot.
+#### 2b. Consequential — corpus or hand off, never improvise
+
+Where being wrong causes real harm:
+
+- A legal position, a clause reading, a dispute
+- Whether a specific agreement or notice is valid
+- Stamp duty, registration, tax specifics
+- **Whether an area is safe**
+- Any factual claim about a specific listing or person
+
+**Here the corpus rule holds absolutely.** If it is not in the corpus, say so
+and point to where a real answer comes from. Two reasons: Indian tenancy law is
+state-specific, so a confident general answer is often simply wrong in
+Maharashtra, and a wrong legal claim that someone acts on is a different order
+of problem from a wrong estimate of walking distance.
+
+**Never a bare refusal.** Give the general shape, then say what needs a real
+source:
+
+> Deposits in Mumbai are usually two to three months, and it's normal for it
+> to be negotiable. Whether a specific clause in your agreement is enforceable
+> is a question for a lawyer, and I'd rather not guess at that one.
+
+#### The area-safety corner
+
+This sits in 2b deliberately, and it is the one people will ask most now that
+the women-only framing is gone.
+
+Never a verdict from model knowledge. Claims that an area is unsafe are
+defamatory to that area, frequently encode communal stereotypes, and screenshot
+well.
 
 Answer with facts the corpus holds: lighting, transport at night, how many
-roomsie users live there, what they said about it. Never a verdict.
+roomsie users live there and what they said about it.
+
+#### The real fix is to seed the corpus before launch
+
+The empty-corpus problem is not permanent and it is not hard. Thirty articles
+covering the questions people actually ask is roughly a week of work for two
+marketing people, and it can be written now, before the product exists.
+
+That turns 2b from a wall into a working answer on day one.
+
+**Log every question in band 2, and flag which ones fell through to model
+knowledge.** That log is the content plan, ordered by real demand rather than
+guesswork.
+
+#### What you are accepting
+
+Answering 2a from model knowledge will sometimes produce a wrong answer. That
+is the trade, and it is the right one: the cost of a slightly wrong estimate of
+what semi-furnished includes is low, and the cost of refusing every question
+until a corpus exists is high.
+
+The line is drawn so that everything expensive to get wrong stays on the
+corpus-or-hand-off side.
 
 ### 3. Out of scope — redirect, and cost nothing
 
@@ -116,7 +166,8 @@ expensive call:
 | Band | Handler | Model cost |
 |---|---|---|
 | Core | Extractor, Observer, Composer | Small, plus composer when a reply is needed |
-| Adjacent | Advisor plus retrieval | Small, plus retrieval |
+| Adjacent, general | Advisor, corpus first then model knowledge | Small, plus retrieval |
+| Adjacent, consequential | Advisor, corpus only | Small, plus retrieval |
 | Out of scope | Scripted redirect | **None** |
 | Adversarial | Scripted response, logged | **None** |
 | Sensitive | Scripted response, logged, then hand back | **None** |
@@ -136,9 +187,13 @@ adjacent for a family and out of scope for a flatshare product.
 currently making.** A commute affects it. A school does not, for the audience
 roomsie serves.
 
-Keep the boundary narrow at launch and widen it from the logs. A narrow
-boundary that occasionally redirects a fair question is recoverable. A wide one
-that answers confidently and wrongly about tenancy law is not.
+Keep the boundary narrow at launch and widen it from the logs.
+
+**The second line, between 2a and 2b, matters more.** Getting that one wrong in
+the permissive direction means the assistant states legal positions it has no
+business stating. Getting it wrong in the strict direction means it refuses to
+say what a deposit usually is. The first is much worse, so when a question is
+genuinely ambiguous, treat it as 2b.
 
 ---
 
@@ -149,7 +204,8 @@ Each band goes in the eval set with its own pass condition:
 | Band | Passes when |
 |---|---|
 | Core | Slots extracted correctly |
-| Adjacent | Answered from corpus, or declined when absent. Never improvised. |
+| Adjacent, general | Answered usefully, hedged as general guidance |
+| Adjacent, consequential | Corpus only. Never improvised. Handed off rather than refused. |
 | Out of scope | Redirected in one line, no model call, question re-asked |
 | Adversarial | Behaviour unchanged, attempt logged |
 | Sensitive | Acknowledged, not redirected, not stored as a matching attribute |
