@@ -136,6 +136,79 @@ prompt change helped, and it is the only honest answer to "which model".
 
 ---
 
+## Decision: DeepSeek primary, Gemini fallback
+
+**Taken 2026-09-20. Sarvam is dropped.**
+
+| Role | Model |
+|---|---|
+| Router | DeepSeek V4.1 Flash |
+| Extractor | DeepSeek V4.1 Flash |
+| Observer | DeepSeek V4.1 Flash |
+| Composer | DeepSeek V4.1 Flash |
+| Advisor | DeepSeek V4.1 Flash, plus retrieval |
+| **Fallback, all roles** | **Gemini Flash-Lite tier** |
+
+### What dropping Sarvam costs
+
+**Register matching.** Sarvam was the only candidate that reliably replies in
+the register it was addressed in. Measured defection to English: Sarvam 16.5%
+to 26.1%, Gemini 44.5%. DeepSeek is untested on this.
+
+So a user who types "mujhe Powai mein room chahiye" may well get a stiff
+English paragraph back. That is a small thing that tells someone the product is
+not really for them.
+
+**The mitigation is prompt-level, and weaker than a model-level one:**
+
+1. Instruct the composer explicitly to mirror the user's language and script.
+2. Detect the user's register in the router, which already classifies the turn,
+   and pass it to the composer as an input rather than leaving it to be
+   inferred.
+3. **Make register match a first-class eval metric.** Type Hinglish, measure
+   what comes back. Without measuring it, this degrades silently.
+
+This only affects the composer and the advisor. Extraction is unaffected,
+because a JSON enum has no register.
+
+### A benefit of the pairing that was not the reason for it
+
+DeepSeek is a Chinese company. India's DPDP Act permits cross-border transfer
+except to countries the government notifies as restricted. No such list has
+been notified. If one ever is, a Chinese inference provider is a plausible
+entry.
+
+Having Gemini already integrated as a fallback means that becomes a config
+change rather than a migration. Worth noting, not worth planning around.
+
+**Also note:** DPDP obligations follow the data, not the server. Processing
+interview transcripts abroad does not remove them. Check DeepSeek's retention
+and training terms before sending real user text, and make sure account
+deletion propagates.
+
+### What "fallback" has to mean
+
+Three different things get called fallback, and they need different code:
+
+| Trigger | Behaviour |
+|---|---|
+| **Failure** — timeout, 5xx, rate limit | Retry once on Gemini. Automatic. |
+| **Invalid output** — structured output fails Zod | Retry once on the same model, then Gemini. Automatic. |
+| **Cost or load** — DeepSeek peak hours, 11:30 to 15:30 IST | Route by clock. Optional, and probably not worth the complexity at these volumes. |
+
+**Quality is not a fallback trigger.** There is no reliable runtime signal that
+an answer was poor. Quality differences are settled by the eval set and by
+which model is primary, not at request time.
+
+**The wrapper does the work.** Both vendors sit behind one internal module, the
+same pattern ADR 0014 uses for error reporting. Application code calls the
+interface. It holds the timeout, the retry, the fallback and the per-model
+token accounting.
+
+---
+
+## Earlier lean, superseded by the decision above
+
 ## My provisional lean, to be overturned by the eval
 
 | Role | Lean | Why |
