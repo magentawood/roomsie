@@ -53,6 +53,7 @@ exists to keep, cut or rework.
 
 | # | Question | Status |
 |---|---|---|
+| D0 | v0 scope | **Flatmate matching only.** No property listings as separate objects; someone with a spare room is a person card. Moves the broker work out of v0 and makes cold start a one-sided problem. |
 | D3 | Where listing supply comes from at launch | **Deferred pending broker interviews.** Working hypothesis: brokers list free, roomsie charges for a qualified introduction. See `docs/research/supply-and-broker-model.md`. To be validated by calling Mumbai brokers. |
 | D3a | Flatmate matching design | **Active track.** Being worked in parallel, because it is substantially independent of D3. |
 | D3b | What the AI interview adds over the chip filters | **Settled: both.** It surfaces what chips cannot capture, and it consults and pushes back. A structured form runs alongside the whole chat session; contradictions are confirmed with the user rather than silently overwritten. |
@@ -68,7 +69,7 @@ exists to keep, cut or rework.
 | D9 | Abuse and cost limits on the pre-login chat | **Settled: both a turn cap and rate limits.** Five free-text turns, chip taps not counted, and the wall cannot appear before results have rendered. Listings stay visible when the chat gates. At the daily spend ceiling the assistant degrades to the zero-cost chip flow rather than failing. See `docs/pre-login-limits.md`. |
 | D7a | Agent architecture | **Proposed: a router with small specialist handlers,** not multi-agent and not one big model. Two forms: a filter form driving SQL, and a structured profile form where every observation must quote the user. RAG only for consulting questions, over your own corpus, using Postgres full-text search rather than a vector store. See `docs/agent-architecture.md`. |
 | D7 | Models | **Settled: DeepSeek V4.1 Flash for every role, Gemini Flash-Lite as fallback.** Sarvam dropped. Residency constraint dropped. Cost is register matching, mitigated at prompt level and measured in the eval. Marathi is the real language risk, not Hinglish. See `docs/model-selection.md` and `docs/research/hinglish-model-report.md`. |
-| D8 | Verification and trust-and-safety stance | Pending |
+| D8 | Verification | **Settled with one change.** Blurred cards for users who opt into verified-only, with mutual verification required, which makes the blur the conversion prompt. Blur must be server-side. **The manual Aadhaar upload route is dropped:** collecting Aadhaar copies is an offence and UIDAI is banning it. DigiLocker through a registered KYC provider is primary, with a non-Aadhaar government ID as the manual fallback. See `docs/verification.md`. |
 
 ---
 
