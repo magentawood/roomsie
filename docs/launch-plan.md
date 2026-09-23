@@ -102,6 +102,21 @@ people in it shows an empty panel on day one.
 
 ---
 
+## Decided: the fallback is time, not scope
+
+**Target 7 October. Fallback 9 October.** If the team falls behind, the date
+slips by two days and the scope stays whole. Decided 2026-09-23.
+
+The two extra weekdays, 8 and 9 October, add roughly 16 to 20 person-hours.
+
+**Go or no-go on Monday 5 October.** Decide that evening, not on the 7th. By
+then the remaining work is visible, and announcing a date you then miss costs
+more than announcing the later one at the start.
+
+**9 October is the last slip.** If the team is not ready by then, cut scope in
+this order rather than move the date again: template the replies, then drop
+photos for a week.
+
 ## Decided: public launch
 
 **7 October is a public launch, not a closed beta.** Decided 2026-09-23.
