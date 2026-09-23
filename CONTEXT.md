@@ -85,6 +85,13 @@ exists to keep, cut or rework.
 
 ---
 
+## Deferred
+
+| Item | State |
+|---|---|
+| The 10-section master launch document | **Deferred on 2026-09-23.** Every decision it needs is settled in the tables above. |
+| The elevator pitch | Open. "Your agentic broker" proposed. Recommendation: use it as the investor and press line, and find a plainer line for users, because "broker" implies fees to renters and v0 has no property. |
+
 ## Deliverables for this session
 
 A single unified master launch document, covering, in order:
