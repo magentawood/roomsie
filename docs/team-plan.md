@@ -8,8 +8,8 @@ Every task below is also a GitHub issue, grouped into one milestone per checkpoi
 
 ## How to use this
 
-1. **Put a name against every role.** Task F-01. Roles are slots, so the plan works before anyone is named.
-2. **Assign yourself** to the issues with your role's label.
+1. **Put a name against every vertical and role.** Task F-01. They are slots, so the plan works before anyone is named.
+2. **Pick a vertical and assign yourself** to the issues with its label, for example `vertical:V4 matching`.
 3. **Work your list in order.** The order is the schedule. Finish and merge one task before starting the next.
 4. **Post a standup by 10 am:** what you finished, what you're on, what's blocking you.
 5. **Blocked for more than half a day?** Say so in the channel. The founder reassigns.
@@ -18,23 +18,151 @@ Every task below is also a GitHub issue, grouped into one milestone per checkpoi
 
 ---
 
-## Roles
+## Five verticals
 
-| Role | Owns | Build hours to 5 Oct | Person |
+Each engineer owns one slice of the product, from the database to the screen. Pick one and put your name against it.
+
+| Vertical | Question it answers | Owns | Hours to 5 Oct | Spare | Person |
+|---|---|---|---|---|---|
+| **V1 · Platform** | The ground everyone builds on | Code base, CI, deploy, Google sign-in, error reporting, invite gate, event logging, alerts, legal pages, abuse test | 24 | 0 | _name_ |
+| **V2 · Assistant** | What the assistant understands and says | Form contract, model wrapper, extraction, replies, turn cap and spend ceiling, eval | 24 | 0 | _name_ |
+| **V3 · Visitor journey** | From landing to signed in | Landing page, chat screen and split view, chips, carrying the chat into the account, launch areas and waitlist | 23 | 1 | _name_ |
+| **V4 · Matching and trust rules** | Who sees whom | Database schema, match query, report, block and suspend, account deletion | 22 | 2 | _name_ |
+| **V5 · People and connections** | The people on the screen | Results panel, profile and photos, person screen, connect and contact reveal | 22 | 2 | _name_ |
+
+Each engineer has 24 hours from Thursday 24 September to Monday 5 October, at two hours a day. Tuesday 6 October is bug fixing. Wednesday 7 October is launch.
+
+**Why the conversation is two verticals.** The assistant's logic and the chat screens together are about 38 hours. That is more than one person has. So V2 owns what the assistant understands and says, and V3 owns what the visitor sees. They meet at the Form A contract, which V2 writes on day one.
+
+**How verticals share the early days.** Nobody can wait for someone else's slice. So V3 and V5 build their screens from the V3 prototype and the Form A contract, with sample data, and wire them to the real API when it lands. Each person's list below already has this order.
+
+**Other roles.** Design, marketing and the founder keep their roles. Their sequences are below too.
+
+**If there are four engineers, not five,** one vertical has no owner, and its 22 to 24 hours has nowhere to go. Plan for 9 October from day one, and use the cut order in `docs/launch-plan.md`.
+
+---
+
+## Each person's sequence
+
+Work top to bottom. Finish and merge one task before starting the next. Dates assume two hours every day.
+
+### V1 · Platform — the ground everyone builds on
+
+| # | Task | Hours | When | Waits on |
+|---|---|---|---|---|
+| 1 | T-02 ⚑ · Scaffold the monorepo in this repo | 4 | Thu 24 Sep → Fri 25 Sep | — |
+| 2 | T-05 ⚑ · Google sign-in and token checks in the API | 6 | Sat 26 Sep → Mon 28 Sep | T-02 |
+| 3 | T-04 · Deploy web and API to Mumbai | 3 | Tue 29 Sep → Wed 30 Sep | T-02 |
+| 4 | T-03 · CI: typecheck, lint, build, secret scan | 2 | Wed 30 Sep → Thu 1 Oct | T-02 |
+| 5 | T-07 · Error reporting wrapper and Sentry | 1 | Thu 1 Oct | T-02 |
+| 6 | T-33 · Invite-only gate until launch | 1 | Fri 2 Oct | T-05 |
+| 7 | T-24 · Event logging table | 2 | Fri 2 Oct → Sat 3 Oct | T-06 |
+| 8 | T-23b · Privacy, terms and grievance pages | 2 | Sat 3 Oct → Sun 4 Oct | T-02 |
+| 9 | T-25 · Uptime monitor and spend alerts | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
+| 10 | T-29 · Abuse test: 100 fake sessions | 1 | Mon 5 Oct | T-21 |
+
+Finish line: Mon 5 Oct. 0 spare hours.
+
+### V2 · Assistant — what the assistant understands and says
+
+| # | Task | Hours | When | Waits on |
+|---|---|---|---|---|
+| 1 | T-08 ⚑ · Form A contract: slots and enums | 2 | Thu 24 Sep | — |
+| 2 | T-11 ⚑ · Model wrapper: DeepSeek with Gemini fallback | 4 | Fri 25 Sep → Sat 26 Sep | T-08 |
+| 3 | T-12 ⚑ · Extraction: free text to form slots | 6 | Sun 27 Sep → Tue 29 Sep | T-11 |
+| 4 | T-13 · Reply writer with scope rules | 4 | Wed 30 Sep → Thu 1 Oct | T-11 |
+| 5 | T-21 · Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct → Sun 4 Oct | T-12 |
+| 6 | T-27 · Run the eval set and tune the prompt | 3 | Sun 4 Oct → Mon 5 Oct | T-12 |
+
+Finish line: Mon 5 Oct. 0 spare hours.
+
+### V3 · Visitor journey — from landing to signed in
+
+| # | Task | Hours | When | Waits on |
+|---|---|---|---|---|
+| 1 | T-10 ⚑ · Chat screen and split view | 8 | Thu 24 Sep → Sun 27 Sep | — |
+| 2 | T-09 ⚑ · Chip flow for intent, area, budget | 6 | Mon 28 Sep → Wed 30 Sep | T-10, T-08 |
+| 3 | T-17 · Carry anonymous chat into the account on sign-in | 2 | Thu 1 Oct | T-05, T-06 |
+| 4 | T-23a · Landing page ported from the prototype | 4 | Fri 2 Oct → Sat 3 Oct | — |
+| 5 | T-22 · Launch areas and waitlist | 3 | Sun 4 Oct → Mon 5 Oct | T-14 |
+
+Finish line: Mon 5 Oct. 1 spare hour.
+
+### V4 · Matching and trust rules — who sees whom
+
+| # | Task | Hours | When | Waits on |
+|---|---|---|---|---|
+| 1 | T-06 ⚑ · Database schema v1 | 8 | Thu 24 Sep → Sun 27 Sep | — |
+| 2 | T-14 ⚑ · Match query API | 6 | Mon 28 Sep → Wed 30 Sep | T-06, T-08 |
+| 3 | T-19 · Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct → Sat 3 Oct | T-06 |
+| 4 | T-20 · Account deletion | 3 | Sat 3 Oct → Sun 4 Oct | T-06 |
+
+Finish line: Sun 4 Oct. 2 spare hours.
+
+### V5 · People and connections — the people on the screen
+
+| # | Task | Hours | When | Waits on |
+|---|---|---|---|---|
+| 1 | T-18b ⚑ · Person detail and connect screens | 4 | Thu 24 Sep → Fri 25 Sep | nothing yet. Wire to T-18a on Sun 4 Oct |
+| 2 | T-15 ⚑ · Results panel, built against the contract | 6 | Sat 26 Sep → Mon 28 Sep | T-08. Wire to T-14 on Wed 30 Sep |
+| 3 | T-16 ⚑ · Profile create and edit, with photos | 8 | Tue 29 Sep → Fri 2 Oct | T-05, T-06 |
+| 4 | T-18a ⚑ · Connect request and contact reveal API | 4 | Sat 3 Oct → Sun 4 Oct | T-05, T-06 |
+
+Finish line: Sun 4 Oct. 2 spare hours.
+
+### D · Design
+
+| # | Task | When | Waits on |
 |---|---|---|---|
-| T1 · Agent | Form contract, model wrapper, extraction, replies, limits, eval | 24 of 24 | _name_ |
-| T2 · Chat UI | Chat screen, split view, chips, person screens, landing page | 22 of 24 | _name_ |
-| T3 · Data and API | Schema, match query, connect, report and block | 23 of 24 | _name_ |
-| T4 · Platform | Scaffold, sign-in, errors, logging, legal pages, alerts, deletion | 24 of 24 | _name_ |
-| T5 · Profiles and panel | Results panel, CI, deploy, profile editing, waitlist | 22 of 24 | _name_ |
-| D · Design | Every screen design, design QA, launch visuals | — | _name_ |
-| M1 · Content | Articles, eval sentences, launch posts | — | _name_ |
-| M2 · Community | Seeding profiles, beta invites, broker calls | — | _name_ |
-| F · Founder | Accounts, billing, legal text, moderation, the go/no-go call | — | _name_ |
+| 1 | D-01 · Styling decision for launch | Thu 24 Sep | — |
+| 2 | D-02 ⚑ · Design the chat screens | Thu 24 Sep → Fri 25 Sep | D-01 |
+| 3 | D-03 · Design results, profile and connect screens | Fri 25 Sep → Sun 27 Sep | D-01 |
+| 4 | D-04 · Design landing, wall and waitlist | Mon 28 Sep → Tue 29 Sep | D-01 |
+| 5 | D-05 · Design QA on the live build | Fri 2 Oct → Mon 5 Oct | D-02, D-03 |
+| 6 | D-06 · Launch visuals | Mon 5 Oct → Tue 6 Oct | — |
 
-Each engineer has 24 hours from 24 September to 5 October, at two hours a day. Tuesday 6 October is bug fixing and Wednesday 7 October is launch.
+Finish line: Tue 6 Oct.
 
-**If there are four engineers, not five,** about 22 hours has nowhere to go. Plan for 9 October from day one, and use the cut order in `docs/launch-plan.md`.
+### M1 · Content
+
+| # | Task | When | Waits on |
+|---|---|---|---|
+| 1 | M-04 · Interviews for articles 1 to 10 | Thu 24 Sep → Mon 28 Sep | — |
+| 2 | M-03 · Write the eval sentences | Sat 26 Sep → Tue 29 Sep | — |
+| 3 | M-05 · Drafts of articles 1 to 10 | Tue 29 Sep → Mon 5 Oct | M-04 |
+| 4 | M-07 · Draft launch posts | Wed 30 Sep → Sat 3 Oct | — |
+
+Finish line: Mon 5 Oct.
+
+### M2 · Community
+
+| # | Task | When | Waits on |
+|---|---|---|---|
+| 1 | M-01 ⚑ · Seeding form live, outreach starts | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
+| 2 | M-02 · Seeding target: 100 sign-ups | Sat 26 Sep → Wed 30 Sep | M-01 |
+| 3 | M-06 ⚑ · Beta invites to seeded sign-ups | Sat 3 Oct → Tue 6 Oct | M-02, T-16 |
+| 4 | M-09 · Broker calls | Wed 7 Oct → Wed 14 Oct | — |
+
+Finish line: Wed 14 Oct.
+
+### F · Founder
+
+| # | Task | When | Waits on |
+|---|---|---|---|
+| 1 | F-01 · Kickoff: names on every role | Thu 24 Sep | — |
+| 2 | F-02 · Secure the domain | Thu 24 Sep | — |
+| 3 | F-03 · Billing and hard spend caps | Thu 24 Sep | — |
+| 4 | F-04 · Create accounts in Mumbai regions | Thu 24 Sep | F-03 |
+| 5 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | — |
+| 6 | F-06 · Pick the three launch areas | Thu 24 Sep → Fri 25 Sep | — |
+| 7 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | — |
+| 8 | F-09 · Write down the three ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
+| 9 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
+| 10 | F-10 · Go/no-go meeting | Mon 5 Oct | — |
+
+Finish line: Mon 5 Oct.
+
+Everyone: Tuesday 6 October is bug fixing, task A-01. Wednesday 7 October is launch, task A-02.
 
 ---
 
@@ -65,44 +193,44 @@ gantt
     CP3 Feature freeze and go/no-go :milestone, cp3, 2026-10-05, 0d
     CP4 Launch :milestone, cp4, 2026-10-07, 0d
     CP5 First-week review :milestone, cp5, 2026-10-14, 0d
-    section T1 - Agent
+    section V1 - Platform
+    T-02 Scaffold the monorepo in this repo :crit, t02, 2026-09-24, 2d
+    T-05 Google sign-in and token checks in the API :crit, t05, 2026-09-26, 3d
+    T-04 Deploy web and API to Mumbai :t04, 2026-09-29, 2d
+    T-03 CI - typecheck lint build secret scan :t03, 2026-09-30, 2d
+    T-07 Error reporting wrapper and Sentry :t07, 2026-10-01, 1d
+    T-33 Invite-only gate until launch :t33, 2026-10-02, 1d
+    T-24 Event logging table :t24, 2026-10-02, 2d
+    T-23b Privacy terms and grievance pages :t23b, 2026-10-03, 2d
+    T-25 Uptime monitor and spend alerts :t25, 2026-10-04, 2d
+    T-29 Abuse test - 100 fake sessions :t29, 2026-10-05, 1d
+    section V2 - Assistant
     T-08 Form A contract - slots and enums :crit, t08, 2026-09-24, 1d
     T-11 Model wrapper - DeepSeek with Gemini fallback :crit, t11, 2026-09-25, 2d
     T-12 Extraction - free text to form slots :crit, t12, 2026-09-27, 3d
     T-13 Reply writer with scope rules :t13, 2026-09-30, 2d
     T-21 Five-turn cap rate limits spend ceiling :t21, 2026-10-02, 3d
     T-27 Run the eval set and tune the prompt :t27, 2026-10-04, 2d
-    section T2 - Chat UI
+    section V3 - Visitor journey
     T-10 Chat screen and split view :crit, t10, 2026-09-24, 4d
     T-09 Chip flow for intent area budget :crit, t09, 2026-09-28, 3d
-    T-23a Landing page ported from the prototype :t23a, 2026-10-01, 2d
-    T-18b Person detail and connect screens :crit, t18b, 2026-10-03, 2d
-    section T3 - Data and API
+    T-17 Carry anonymous chat into the account on sign-in :t17, 2026-10-01, 1d
+    T-23a Landing page ported from the prototype :t23a, 2026-10-02, 2d
+    T-22 Launch areas and waitlist :t22, 2026-10-04, 2d
+    section V4 - Matching and trust rules
     T-06 Database schema v1 :crit, t06, 2026-09-24, 4d
     T-14 Match query API :crit, t14, 2026-09-28, 3d
-    T-18a Connect request and contact reveal API :crit, t18a, 2026-10-01, 2d
-    T-19 Report block suspend and a saved moderation query :t19, 2026-10-03, 3d
-    section T4 - Platform
-    T-02 Scaffold the monorepo in this repo :crit, t02, 2026-09-24, 2d
-    T-05 Google sign-in and token checks in the API :crit, t05, 2026-09-26, 3d
-    T-07 Error reporting wrapper and Sentry :t07, 2026-09-29, 1d
-    T-33 Invite-only gate until launch :t33, 2026-09-29, 1d
-    T-17 Carry anonymous chat into the account on sign-in :t17, 2026-09-30, 1d
-    T-24 Event logging table :t24, 2026-10-01, 1d
-    T-23b Privacy terms and grievance pages :t23b, 2026-10-02, 1d
-    T-25 Uptime monitor and spend alerts :t25, 2026-10-03, 1d
-    T-20 Account deletion :t20, 2026-10-04, 2d
-    T-29 Abuse test - 100 fake sessions :t29, 2026-10-05, 1d
-    section T5 - Profiles and panel
-    T-15 Results panel built against the contract :crit, t15, 2026-09-25, 3d
-    T-03 CI - typecheck lint build secret scan :t03, 2026-09-28, 1d
-    T-04 Deploy web and API to Mumbai :t04, 2026-09-29, 2d
-    T-16 Profile create and edit with photos :crit, t16, 2026-09-30, 5d
-    T-22 Launch areas and waitlist :t22, 2026-10-04, 2d
+    T-19 Report block suspend and a saved moderation query :t19, 2026-10-01, 3d
+    T-20 Account deletion :t20, 2026-10-03, 2d
+    section V5 - People and connections
+    T-18b Person detail and connect screens :crit, t18b, 2026-09-24, 2d
+    T-15 Results panel built against the contract :crit, t15, 2026-09-26, 3d
+    T-16 Profile create and edit with photos :crit, t16, 2026-09-29, 4d
+    T-18a Connect request and contact reveal API :crit, t18a, 2026-10-03, 2d
     section D - Design
     D-01 Styling decision for launch :d01, 2026-09-24, 1d
-    D-02 Design the core screens :crit, d02, 2026-09-24, 2d
-    D-03 Design profile and connect screens :d03, 2026-09-26, 3d
+    D-02 Design the chat screens :crit, d02, 2026-09-24, 2d
+    D-03 Design results profile and connect screens :d03, 2026-09-25, 3d
     D-04 Design landing wall and waitlist :d04, 2026-09-28, 2d
     D-05 Design QA on the live build :d05, 2026-10-02, 4d
     D-06 Launch visuals :d06, 2026-10-05, 2d
@@ -114,7 +242,7 @@ gantt
     section M2 - Community
     M-01 Seeding form live outreach starts :crit, m01, 2026-09-25, 2d
     M-02 Seeding target - 100 sign-ups :m02, 2026-09-26, 5d
-    M-06 Beta invites to seeded sign-ups :crit, m06, 2026-10-04, 3d
+    M-06 Beta invites to seeded sign-ups :crit, m06, 2026-10-03, 4d
     M-09 Broker calls :m09, 2026-10-07, 8d
     section F - Founder
     F-01 Kickoff - names on every role :f01, 2026-09-24, 1d
@@ -149,11 +277,12 @@ Every role has a name. Accounts and billing are live. Styling is decided. Launch
 | F-02 | Secure the domain | F |  | Thu 24 Sep | — |
 | F-03 | Billing and hard spend caps | F |  | Thu 24 Sep | — |
 | F-04 | Create accounts in Mumbai regions | F |  | Thu 24 Sep | F-03 |
-| T-08 ⚑ | Form A contract: slots and enums | T1 | 2 | Thu 24 Sep | — |
-| D-02 ⚑ | Design the core screens | D |  | Thu 24 Sep → Fri 25 Sep | D-01 |
+| T-08 ⚑ | Form A contract: slots and enums | V2 | 2 | Thu 24 Sep | — |
+| D-02 ⚑ | Design the chat screens | D |  | Thu 24 Sep → Fri 25 Sep | D-01 |
 | F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | — |
 | F-06 | Pick the three launch areas | F |  | Thu 24 Sep → Fri 25 Sep | — |
-| T-02 ⚑ | Scaffold the monorepo in this repo | T4 | 4 | Thu 24 Sep → Fri 25 Sep | — |
+| T-02 ⚑ | Scaffold the monorepo in this repo | V1 | 4 | Thu 24 Sep → Fri 25 Sep | — |
+| T-18b ⚑ | Person detail and connect screens | V5 | 4 | Thu 24 Sep → Fri 25 Sep | — |
 
 **D-01 · Styling decision for launch** — done when:
 - Launch uses the V3 prototype's look, not the Untitled UI pipeline
@@ -187,9 +316,9 @@ Every role has a name. Accounts and billing are live. Styling is decided. Launch
 - Every enum has an `unclear` value
 - Read first: `docs/agent-architecture.md`, `docs/ai-agent-design.md`
 
-**D-02 · Design the core screens** — done when:
+**D-02 · Design the chat screens** — done when:
 - Chat with chips, the split view, and the phone chat bar
-- Results panel with its header states, and the person card
+- These have no prototype equivalent, and V3 starts building them on Thursday
 - Read first: `docs/interface-shape.md`
 
 **F-05 · Consent text for the seeding form** — done when:
@@ -208,22 +337,28 @@ Every role has a name. Accounts and billing are live. Styling is decided. Launch
 - `pnpm dev` runs web and API locally. docs/ and session/ are untouched
 - Read first: `docs/source/decisions/0010-monorepo-tooling.md`, `docs/source/decisions/0003-api-as-separate-service.md`
 
+**T-18b · Person detail and connect screens** — done when:
+- Built first from the V3 prototype's detail sheet, against a mock of the connect API. Wired to T-18a when it lands on Sun 4 Oct
+- The person screen needs sign-in
+- Connect button with sent, accepted and declined states
+- The number shows only after both accept
+- Report and block are one tap away
+
 ### CP1 · Foundation — Mon 28 Sep
 
 The monorepo, the schema, sign-in, CI and the model wrapper are merged. The chat screen and results panel are built. Article interviews are done. The seeding form is live.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
-| T-06 ⚑ | Database schema v1 | T3 | 8 | Thu 24 Sep → Sun 27 Sep | — |
-| T-10 ⚑ | Chat screen and split view | T2 | 8 | Thu 24 Sep → Sun 27 Sep | — |
+| T-06 ⚑ | Database schema v1 | V4 | 8 | Thu 24 Sep → Sun 27 Sep | — |
+| T-10 ⚑ | Chat screen and split view | V3 | 8 | Thu 24 Sep → Sun 27 Sep | — |
 | M-04 | Interviews for articles 1 to 10 | M1 |  | Thu 24 Sep → Mon 28 Sep | — |
 | M-01 ⚑ | Seeding form live, outreach starts | M2 |  | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
-| T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | T1 | 4 | Fri 25 Sep → Sat 26 Sep | T-08 |
-| T-15 ⚑ | Results panel, built against the contract | T5 | 6 | Fri 25 Sep → Sun 27 Sep | T-08 |
+| T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | V2 | 4 | Fri 25 Sep → Sat 26 Sep | T-08 |
+| D-03 | Design results, profile and connect screens | D |  | Fri 25 Sep → Sun 27 Sep | D-01 |
 | F-09 | Write down the three ADR exceptions | F |  | Sat 26 Sep → Sun 27 Sep | — |
-| D-03 | Design profile and connect screens | D |  | Sat 26 Sep → Mon 28 Sep | D-02 |
-| T-05 ⚑ | Google sign-in and token checks in the API | T4 | 6 | Sat 26 Sep → Mon 28 Sep | T-02 |
-| T-03 | CI: typecheck, lint, build, secret scan | T5 | 2 | Mon 28 Sep | T-02 |
+| T-05 ⚑ | Google sign-in and token checks in the API | V1 | 6 | Sat 26 Sep → Mon 28 Sep | T-02 |
+| T-15 ⚑ | Results panel, built against the contract | V5 | 6 | Sat 26 Sep → Mon 28 Sep | T-08 |
 
 **T-06 · Database schema v1** — done when:
 - Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
@@ -256,13 +391,11 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The chat
 - Logs tokens in, tokens out and the model for every call. The system prompt is cached
 - Read first: `docs/model-selection.md`
 
-**T-15 · Results panel, built against the contract** — done when:
-- A grid of person cards from the matches API
-- The header says what is shown, from Everything in Mumbai down to People in Powai under 20k
-- Updates only when a form value or weight changes, never reorders while scrolling
-- Match score hidden until lifestyle answers exist
-- Built with sample data first, then wired to T-14
-- Read first: `docs/interface-shape.md`
+**D-03 · Design results, profile and connect screens** — done when:
+- Results panel header states and the person card, for V5 on Sat 26 Sep
+- Profile create and edit with photo upload, for V5 on Tue 29 Sep
+- Connect and report states, refining the prototype detail sheet V5 builds first
+- Delete confirmation
 
 **F-09 · Write down the three ADR exceptions** — done when:
 - 0011: prototype styling for launch
@@ -270,20 +403,18 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The chat
 - 0014: Sentry free tier instead of GlitchTip
 - Read first: `docs/launch-plan.md`
 
-**D-03 · Design profile and connect screens** — done when:
-- Profile create and edit, photo upload
-- Person screen, connect states, report and block, delete confirmation
-
 **T-05 · Google sign-in and token checks in the API** — done when:
 - Google sign-in through Firebase on the web, token held in memory
 - The API verifies the ID token locally, with no call to Firebase
 - A users row is created on first sign-in. `tokens_valid_after` is in the first migration
 - Read first: `docs/source/decisions/0007-web-rendering-and-auth-transport.md`, `docs/source/decisions/0005-managed-platform-split.md`
 
-**T-03 · CI: typecheck, lint, build, secret scan** — done when:
-- Every pull request runs typecheck, lint, build and gitleaks
-- Finishes in under five minutes
-- Read first: `docs/source/decisions/0013-ci-gate-and-testing.md`
+**T-15 · Results panel, built against the contract** — done when:
+- A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands
+- The header says what is shown, from Everything in Mumbai down to People in Powai under 20k
+- Updates only when a form value or weight changes, never reorders while scrolling
+- Match score hidden until lifestyle answers exist
+- Read first: `docs/interface-shape.md`
 
 ### CP2 · Core loop live — Thu 1 Oct
 
@@ -294,16 +425,15 @@ Deployed in Mumbai. A visitor taps chips, types a sentence the assistant underst
 | F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | — |
 | M-03 | Write the eval sentences | M1 |  | Sat 26 Sep → Tue 29 Sep | — |
 | M-02 | Seeding target: 100 sign-ups | M2 |  | Sat 26 Sep → Wed 30 Sep | M-01 |
-| T-12 ⚑ | Extraction: free text to form slots | T1 | 6 | Sun 27 Sep → Tue 29 Sep | T-11 |
+| T-12 ⚑ | Extraction: free text to form slots | V2 | 6 | Sun 27 Sep → Tue 29 Sep | T-11 |
 | D-04 | Design landing, wall and waitlist | D |  | Mon 28 Sep → Tue 29 Sep | D-01 |
-| T-09 ⚑ | Chip flow for intent, area, budget | T2 | 6 | Mon 28 Sep → Wed 30 Sep | T-10, T-08 |
-| T-14 ⚑ | Match query API | T3 | 6 | Mon 28 Sep → Wed 30 Sep | T-06, T-08 |
-| T-07 | Error reporting wrapper and Sentry | T4 | 1 | Tue 29 Sep | T-02 |
-| T-33 | Invite-only gate until launch | T4 | 1 | Tue 29 Sep | T-05 |
-| T-04 | Deploy web and API to Mumbai | T5 | 3 | Tue 29 Sep → Wed 30 Sep | T-02 |
-| T-17 | Carry anonymous chat into the account on sign-in | T4 | 2 | Wed 30 Sep | T-05, T-06 |
-| T-13 | Reply writer with scope rules | T1 | 4 | Wed 30 Sep → Thu 1 Oct | T-11 |
-| T-24 | Event logging table | T4 | 2 | Thu 1 Oct | T-06 |
+| T-09 ⚑ | Chip flow for intent, area, budget | V3 | 6 | Mon 28 Sep → Wed 30 Sep | T-10, T-08 |
+| T-14 ⚑ | Match query API | V4 | 6 | Mon 28 Sep → Wed 30 Sep | T-06, T-08 |
+| T-04 | Deploy web and API to Mumbai | V1 | 3 | Tue 29 Sep → Wed 30 Sep | T-02 |
+| T-03 | CI: typecheck, lint, build, secret scan | V1 | 2 | Wed 30 Sep → Thu 1 Oct | T-02 |
+| T-13 | Reply writer with scope rules | V2 | 4 | Wed 30 Sep → Thu 1 Oct | T-11 |
+| T-07 | Error reporting wrapper and Sentry | V1 | 1 | Thu 1 Oct | T-02 |
+| T-17 | Carry anonymous chat into the account on sign-in | V3 | 2 | Thu 1 Oct | T-05, T-06 |
 
 **F-07 · Draft privacy policy, terms, grievance contact** — done when:
 - Says what is collected, why, for how long, how to delete, and who to contact
@@ -343,26 +473,16 @@ Deployed in Mumbai. A visitor taps chips, types a sentence the assistant underst
 - Blocked and suspended people never appear
 - Read first: `docs/interface-shape.md`
 
-**T-07 · Error reporting wrapper and Sentry** — done when:
-- `reportError(err, context)` lives in packages/config and is the only way code reports errors
-- Sentry free tier connected in web and API
-- `beforeSend` strips message text, phone numbers and the Authorization header
-- Read first: `docs/source/decisions/0014-error-tracking.md`
-
-**T-33 · Invite-only gate until launch** — done when:
-- Before launch, sign-in works only for emails on an allowlist
-- One setting turns the gate off on launch day
-
 **T-04 · Deploy web and API to Mumbai** — done when:
 - Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile
 - Secrets set in both
 - A merge to main deploys automatically
 - Read first: `docs/source/decisions/0009-hosting-and-region.md`
 
-**T-17 · Carry anonymous chat into the account on sign-in** — done when:
-- What a visitor told the assistant before signing in is attached to their account when they sign in
-- Nothing is lost and nothing is asked twice
-- Read first: `docs/seo-with-gated-products.md`
+**T-03 · CI: typecheck, lint, build, secret scan** — done when:
+- Every pull request runs typecheck, lint, build and gitleaks
+- Finishes in under five minutes
+- Read first: `docs/source/decisions/0013-ci-gate-and-testing.md`
 
 **T-13 · Reply writer with scope rules** — done when:
 - Writes the reply from the form and the last two turns, never the whole chat
@@ -371,10 +491,16 @@ Deployed in Mumbai. A visitor taps chips, types a sentence the assistant underst
 - Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
 - Read first: `docs/scope-policy.md`
 
-**T-24 · Event logging table** — done when:
-- One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
-- No message text is stored
-- Read first: `docs/source/decisions/0012-analytics-event-store.md`
+**T-07 · Error reporting wrapper and Sentry** — done when:
+- `reportError(err, context)` lives in packages/config and is the only way code reports errors
+- Sentry free tier connected in web and API
+- `beforeSend` strips message text, phone numbers and the Authorization header
+- Read first: `docs/source/decisions/0014-error-tracking.md`
+
+**T-17 · Carry anonymous chat into the account on sign-in** — done when:
+- What a visitor told the assistant before signing in is attached to their account when they sign in
+- Nothing is lost and nothing is asked twice
+- Read first: `docs/seo-with-gated-products.md`
 
 ### CP3 · Feature freeze and go/no-go — Mon 5 Oct
 
@@ -382,23 +508,30 @@ Every feature is merged and live behind the invite gate. Seeded people are creat
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
+| T-16 ⚑ | Profile create and edit, with photos | V5 | 8 | Tue 29 Sep → Fri 2 Oct | T-05, T-06 |
 | M-05 | Drafts of articles 1 to 10 | M1 |  | Tue 29 Sep → Mon 5 Oct | M-04 |
 | F-08 | Name the moderator | F |  | Wed 30 Sep → Fri 2 Oct | — |
 | M-07 | Draft launch posts | M1 |  | Wed 30 Sep → Sat 3 Oct | — |
-| T-16 ⚑ | Profile create and edit, with photos | T5 | 8 | Wed 30 Sep → Sun 4 Oct | T-05, T-06 |
-| T-18a ⚑ | Connect request and contact reveal API | T3 | 4 | Thu 1 Oct → Fri 2 Oct | T-05, T-06 |
-| T-23a | Landing page ported from the prototype | T2 | 4 | Thu 1 Oct → Fri 2 Oct | — |
-| T-23b | Privacy, terms and grievance pages | T4 | 2 | Fri 2 Oct | T-02 |
-| T-21 | Five-turn cap, rate limits, spend ceiling | T1 | 5 | Fri 2 Oct → Sun 4 Oct | T-12 |
-| D-05 | Design QA on the live build | D |  | Fri 2 Oct → Mon 5 Oct | D-03 |
-| T-25 | Uptime monitor and spend alerts | T4 | 2 | Sat 3 Oct | T-04 |
-| T-18b ⚑ | Person detail and connect screens | T2 | 4 | Sat 3 Oct → Sun 4 Oct | T-18a |
-| T-19 | Report, block, suspend, and a saved moderation query | T3 | 5 | Sat 3 Oct → Mon 5 Oct | T-06 |
-| T-20 | Account deletion | T4 | 3 | Sun 4 Oct → Mon 5 Oct | T-06 |
-| T-22 | Launch areas and waitlist | T5 | 3 | Sun 4 Oct → Mon 5 Oct | T-14 |
-| T-27 | Run the eval set and tune the prompt | T1 | 3 | Sun 4 Oct → Mon 5 Oct | T-12 |
+| T-19 | Report, block, suspend, and a saved moderation query | V4 | 5 | Thu 1 Oct → Sat 3 Oct | T-06 |
+| T-33 | Invite-only gate until launch | V1 | 1 | Fri 2 Oct | T-05 |
+| T-23a | Landing page ported from the prototype | V3 | 4 | Fri 2 Oct → Sat 3 Oct | — |
+| T-24 | Event logging table | V1 | 2 | Fri 2 Oct → Sat 3 Oct | T-06 |
+| T-21 | Five-turn cap, rate limits, spend ceiling | V2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12 |
+| D-05 | Design QA on the live build | D |  | Fri 2 Oct → Mon 5 Oct | D-02, D-03 |
+| T-18a ⚑ | Connect request and contact reveal API | V5 | 4 | Sat 3 Oct → Sun 4 Oct | T-05, T-06 |
+| T-20 | Account deletion | V4 | 3 | Sat 3 Oct → Sun 4 Oct | T-06 |
+| T-23b | Privacy, terms and grievance pages | V1 | 2 | Sat 3 Oct → Sun 4 Oct | T-02 |
+| T-22 | Launch areas and waitlist | V3 | 3 | Sun 4 Oct → Mon 5 Oct | T-14 |
+| T-25 | Uptime monitor and spend alerts | V1 | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
+| T-27 | Run the eval set and tune the prompt | V2 | 3 | Sun 4 Oct → Mon 5 Oct | T-12 |
 | F-10 | Go/no-go meeting | F |  | Mon 5 Oct | — |
-| T-29 | Abuse test: 100 fake sessions | T4 | 1 | Mon 5 Oct | T-21 |
+| T-29 | Abuse test: 100 fake sessions | V1 | 1 | Mon 5 Oct | T-21 |
+
+**T-16 · Profile create and edit, with photos** — done when:
+- Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
+- Up to four photos, uploaded straight to R2 with a presigned URL
+- Photo bytes never pass through the API
+- Read first: `docs/source/decisions/0005-managed-platform-split.md`
 
 **M-05 · Drafts of articles 1 to 10** — done when:
 - Ten drafts written from the interviews
@@ -415,16 +548,16 @@ Every feature is merged and live behind the invite gate. Seeded people are creat
 - Launch posts, the founder story, a list of groups and channels
 - Scheduled on Tuesday 6 October
 
-**T-16 · Profile create and edit, with photos** — done when:
-- Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
-- Up to four photos, uploaded straight to R2 with a presigned URL
-- Photo bytes never pass through the API
-- Read first: `docs/source/decisions/0005-managed-platform-split.md`
+**T-19 · Report, block, suspend, and a saved moderation query** — done when:
+- The API behind the report and block buttons, which live in T-18b
+- A block hides both people from each other, including in the match query
+- A saved query in Supabase lists open reports
+- Suspend sets `tokens_valid_after` to now and hides the profile
+- Read first: `docs/scope-policy.md`
 
-**T-18a · Connect request and contact reveal API** — done when:
-- Send, accept or decline a connect request
-- On mutual accept, both people see each other's number
-- At most 10 new requests a day. No request to someone who blocked you
+**T-33 · Invite-only gate until launch** — done when:
+- Before launch, sign-in works only for emails on an allowlist
+- One setting turns the gate off on launch day
 
 **T-23a · Landing page ported from the prototype** — done when:
 - Landing page in the V3 prototype's look
@@ -432,9 +565,10 @@ Every feature is merged and live behind the invite gate. Seeded people are creat
 - Every women-only line removed
 - Read first: `docs/source/roomsie-prototype-V3.html`
 
-**T-23b · Privacy, terms and grievance pages** — done when:
-- /privacy, /terms and /grievance show the founder's text
-- Linked from the footer and from the sign-in screen
+**T-24 · Event logging table** — done when:
+- One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
+- No message text is stored
+- Read first: `docs/source/decisions/0012-analytics-event-store.md`
 
 **T-21 · Five-turn cap, rate limits, spend ceiling** — done when:
 - Five typed turns before sign-in. Chip taps do not count
@@ -447,23 +581,10 @@ Every feature is merged and live behind the invite gate. Seeded people are creat
 - Walk every screen on a phone and a laptop
 - Every fix filed as an issue
 
-**T-25 · Uptime monitor and spend alerts** — done when:
-- The API is checked every minute, with alerts to the team channel
-- An alert fires when daily model spend passes 70% of the ceiling
-- Read first: `docs/pre-login-limits.md`
-
-**T-18b · Person detail and connect screens** — done when:
-- The person screen needs sign-in
-- Connect button with sent, accepted and declined states
-- The number shows only after both accept
-- Report and block are one tap away
-
-**T-19 · Report, block, suspend, and a saved moderation query** — done when:
-- Report and block from the person screen
-- A block hides both people from each other
-- A saved query in Supabase lists open reports
-- Suspend sets `tokens_valid_after` to now and hides the profile
-- Read first: `docs/scope-policy.md`
+**T-18a · Connect request and contact reveal API** — done when:
+- Send, accept or decline a connect request
+- On mutual accept, both people see each other's number
+- At most 10 new requests a day. No request to someone who blocked you
 
 **T-20 · Account deletion** — done when:
 - A person can delete their account from settings
@@ -471,11 +592,20 @@ Every feature is merged and live behind the invite gate. Seeded people are creat
 - `tokens_valid_after` is set to now, so every session ends
 - Read first: `docs/source/decisions/0012-analytics-event-store.md`
 
+**T-23b · Privacy, terms and grievance pages** — done when:
+- /privacy, /terms and /grievance show the founder's text
+- Linked from the footer and from the sign-in screen
+
 **T-22 · Launch areas and waitlist** — done when:
 - The three launch areas are named on the site
 - A visitor from elsewhere gets a waitlist form, not an empty panel
 - Waitlist entries are saved with their area
 - Read first: `docs/launch-plan.md`
+
+**T-25 · Uptime monitor and spend alerts** — done when:
+- The API is checked every minute, with alerts to the team channel
+- An alert fires when daily model spend passes 70% of the ceiling
+- Read first: `docs/pre-login-limits.md`
 
 **T-27 · Run the eval set and tune the prompt** — done when:
 - The 50 test sentences run through extraction
@@ -500,13 +630,13 @@ Public launch. Fallback Friday 9 October.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
-| M-06 ⚑ | Beta invites to seeded sign-ups | M2 |  | Sun 4 Oct → Tue 6 Oct | M-02, T-16 |
+| M-06 ⚑ | Beta invites to seeded sign-ups | M2 |  | Sat 3 Oct → Tue 6 Oct | M-02, T-16 |
 | D-06 | Launch visuals | D |  | Mon 5 Oct → Tue 6 Oct | — |
 | A-01 | Bug fix day | ALL |  | Tue 6 Oct | — |
 | A-02 | Launch | ALL |  | Wed 7 Oct | — |
 
 **M-06 · Beta invites to seeded sign-ups** — done when:
-- Invites go out once profile creation works
+- Invites go out on Sat 3 Oct, the day after profile creation works
 - Help people finish profiles
 - 150 profiles, at least 40 in each launch area, by Tuesday 6 October
 - Read first: `docs/launch-plan.md`
@@ -574,7 +704,7 @@ Look at the numbers and the bug list, and set the order of v1.
 | If | Then |
 |---|---|
 | The scaffold, T-02, is not merged by Friday night | Everything waits on it. The founder moves a second engineer onto it on Saturday morning. |
-| An engineer misses days | Their next task goes to whoever finishes first. T2 has 2 spare hours and T3 has 1. |
+| An engineer misses days | Their next task goes to whoever has spare hours. V4 and V5 have 2 each and V3 has 1. |
 | Only four engineers | Plan for 9 October from day one and apply the cut order. |
 | DeepSeek or Gemini sign-up is delayed | Run on whichever works. The wrapper, T-11, makes it a setting. |
 | Seeding is short | Launch in fewer areas. Never launch into an empty panel. |
@@ -587,15 +717,3 @@ Look at the numbers and the bug list, and set the order of v1.
 T-02 scaffolds `apps/` and `packages/` here, beside `docs/` and `session/`. ADR 0010's layout already puts decisions inside the monorepo, so the plan and the code stay together.
 
 If you would rather keep them apart, T-02 creates `magentawood/roomsie-app` instead. Nothing else in this plan changes.
-
----
-
-## The live tracker
-
-- [All issues by checkpoint](https://github.com/magentawood/roomsie/milestones)
-- [CP0 · Kickoff](https://github.com/magentawood/roomsie/milestone/1) · [CP1 · Foundation](https://github.com/magentawood/roomsie/milestone/2) · [CP2 · Core loop live](https://github.com/magentawood/roomsie/milestone/3) · [CP3 · Feature freeze and go/no-go](https://github.com/magentawood/roomsie/milestone/4) · [CP4 · Launch](https://github.com/magentawood/roomsie/milestone/5) · [CP5 · First-week review](https://github.com/magentawood/roomsie/milestone/6)
-- [Critical path only](https://github.com/magentawood/roomsie/issues?q=is%3Aopen+label%3A%22critical+path%22)
-
-Filter by your role label, for example `role:T3 data`, to see your list in order.
-
-`docs/team-plan.json` holds the same tasks as data. Re-plan from it if dates move.
