@@ -61,6 +61,7 @@ exists to keep, cut or rework.
 | D3d | Whether a published listing may carry identity restrictions in visible text | **Open.** Separated from D3c because an advertisement is a different position from a private filter. |
 | D4 | Monetisation model and pricing | Pending, follows D3 |
 | D5 | Team and budget | **Settled: 4 to 5 tech at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |
+| D12 | Team plan | **Settled.** 55 tasks across nine roles and six checkpoints. Engineering build work ends 5 October for every engineer, with no margin. See `docs/team-plan.md`. |
 | D11 | Launch | **Target 7 October 2026, fallback 9 October.** Scope is protected, time slips. Go or no-go decided on 5 October. About 72 to 140 person-hours available against 250 to 350 for the full v0. Cut to roughly 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 free. **Public launch**, which adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. New total about 130 hours with no margin. See `docs/launch-plan.md`. |
 | D6c | The five holes in the interface design | **Four closed, one provisional.** The panel updates on form change rather than on chat turn. Widening arrives as a banner, narrowing applies but says what went. One form, two views, with a complete conflict rule. See `docs/interface-shape.md`. |
 | D6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
@@ -73,6 +74,19 @@ exists to keep, cut or rework.
 | D8 | Verification | **Settled with one change.** Blurred cards for users who opt into verified-only, with mutual verification required, which makes the blur the conversion prompt. Blur must be server-side. **The manual Aadhaar upload route is dropped:** collecting Aadhaar copies is an offence and UIDAI is banning it. DigiLocker through a registered KYC provider is primary, with a non-Aadhaar government ID as the manual fallback. See `docs/verification.md`. |
 
 ---
+
+## Team plan
+
+**Everything to launch is in `docs/team-plan.md`**, with every task mirrored as a GitHub issue under a checkpoint milestone.
+
+| Checkpoint | Date |
+|---|---|
+| CP0 Kickoff | Fri 25 Sep |
+| CP1 Foundation | Mon 28 Sep |
+| CP2 Core loop live | Thu 1 Oct |
+| CP3 Feature freeze and go/no-go | Mon 5 Oct, 8 pm |
+| CP4 Launch | Wed 7 Oct, fallback Fri 9 Oct |
+| CP5 First-week review | Wed 14 Oct |
 
 ## Ready to start now
 
