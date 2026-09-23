@@ -102,9 +102,45 @@ people in it shows an empty panel on day one.
 
 ---
 
+## Decided: public launch
+
+**7 October is a public launch, not a closed beta.** Decided 2026-09-23.
+
+A public launch needs things a closed beta could skip. None are optional.
+
+| # | Item | Rough hours | Why it cannot wait |
+|---|---|---|---|
+| 14 | Report and block on every person, with manual suspend | 4 | Contact details are revealed to strangers. There must be a way out. |
+| 15 | Account deletion | 3 | Required under the DPDP Act. |
+| 16 | Launch areas plus a waitlist for everywhere else | 4 | A public visitor from Thane seeing an empty panel leaves for good. |
+| 17 | Uptime monitor and spend alerts | 2 | One Fly machine and an open chat. You need to know first. |
+| 18 | Privacy policy, terms, grievance contact pages | 2 | Legal minimum for a public service handling personal data. |
+| | **Added** | **about 15** | |
+
+**New total: about 130 person-hours, against 72 to 140 available.**
+
+That fits only if 5 people work most days, weekends included, and nothing goes
+wrong. There is no margin.
+
+### Launch areas, stated publicly
+
+Do not launch "in Mumbai". Launch "in Powai, Andheri and Bandra", or whichever
+three have the most seeded profiles.
+
+A visitor from a covered area sees a full panel. A visitor from anywhere else
+joins a waitlist for their area. That turns an empty result into a demand signal
+and tells marketing where to seed next.
+
+### Work that is not engineering hours
+
+- **Privacy policy and terms.** Drafted by the founders, reviewed by a lawyer if
+  at all possible. The DPDP Act requires a clear notice of what is collected and
+  why, and a named grievance contact.
+- **Moderation.** Someone checks reported profiles every day from launch. Name
+  that person now.
+- **Seeding.** 150 to 200 real profiles in the launch areas before 7 October.
+
 ## Assumptions
 
 - **v0 is free.** There is no monetisation in two weeks and nothing to charge for.
   D4 moves to v1.
-- **"Launch" means a closed beta** in two or three neighbourhoods with seeded
-  profiles, not a public announcement. Still to confirm.
