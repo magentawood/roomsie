@@ -166,6 +166,70 @@ Everyone: Tuesday 6 October is bug fixing, task A-01. Wednesday 7 October is lau
 
 ---
 
+## All tasks
+
+One row per task, grouped by owner in the order they are worked. ⚑ marks the critical path.
+
+| Owner | # | ID | Task | Hours | Start | End | Checkpoint | Waits on | Issue |
+|---|---|---|---|---|---|---|---|---|---|
+| V1 Platform | 1 | T-02 ⚑ | Scaffold the monorepo in this repo | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#10](https://github.com/magentawood/roomsie/issues/10) |
+| V1 Platform | 2 | T-05 ⚑ | Google sign-in and token checks in the API | 6 | Sat 26 Sep | Mon 28 Sep | CP1 | T-02 | [#20](https://github.com/magentawood/roomsie/issues/20) |
+| V1 Platform | 3 | T-04 | Deploy web and API to Mumbai | 3 | Tue 29 Sep | Wed 30 Sep | CP2 | T-02 | [#30](https://github.com/magentawood/roomsie/issues/30) |
+| V1 Platform | 4 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Wed 30 Sep | Thu 1 Oct | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
+| V1 Platform | 5 | T-07 | Error reporting wrapper and Sentry | 1 | Thu 1 Oct | Thu 1 Oct | CP2 | T-02 | [#28](https://github.com/magentawood/roomsie/issues/28) |
+| V1 Platform | 6 | T-33 | Invite-only gate until launch | 1 | Fri 2 Oct | Fri 2 Oct | CP3 | T-05 | [#29](https://github.com/magentawood/roomsie/issues/29) |
+| V1 Platform | 7 | T-24 | Event logging table | 2 | Fri 2 Oct | Sat 3 Oct | CP3 | T-06 | [#37](https://github.com/magentawood/roomsie/issues/37) |
+| V1 Platform | 8 | T-23b | Privacy, terms and grievance pages | 2 | Sat 3 Oct | Sun 4 Oct | CP3 | T-02 | [#40](https://github.com/magentawood/roomsie/issues/40) |
+| V1 Platform | 9 | T-25 | Uptime monitor and spend alerts | 2 | Sun 4 Oct | Mon 5 Oct | CP3 | T-04 | [#43](https://github.com/magentawood/roomsie/issues/43) |
+| V1 Platform | 10 | T-29 | Abuse test: 100 fake sessions | 1 | Mon 5 Oct | Mon 5 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
+| V2 Assistant | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#6](https://github.com/magentawood/roomsie/issues/6) |
+| V2 Assistant | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Fri 25 Sep | Sat 26 Sep | CP1 | T-08 | [#15](https://github.com/magentawood/roomsie/issues/15) |
+| V2 Assistant | 3 | T-12 ⚑ | Extraction: free text to form slots | 6 | Sun 27 Sep | Tue 29 Sep | CP2 | T-11 | [#23](https://github.com/magentawood/roomsie/issues/23) |
+| V2 Assistant | 4 | T-13 | Reply writer with scope rules | 4 | Wed 30 Sep | Thu 1 Oct | CP2 | T-11 | [#33](https://github.com/magentawood/roomsie/issues/33) |
+| V2 Assistant | 5 | T-21 | Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct | Sun 4 Oct | CP3 | T-12 | [#41](https://github.com/magentawood/roomsie/issues/41) |
+| V2 Assistant | 6 | T-27 | Run the eval set and tune the prompt | 3 | Sun 4 Oct | Mon 5 Oct | CP3 | T-12 | [#48](https://github.com/magentawood/roomsie/issues/48) |
+| V3 Visitor | 1 | T-10 ⚑ | Chat screen and split view | 8 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#12](https://github.com/magentawood/roomsie/issues/12) |
+| V3 Visitor | 2 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Mon 28 Sep | Wed 30 Sep | CP2 | T-10, T-08 | [#26](https://github.com/magentawood/roomsie/issues/26) |
+| V3 Visitor | 3 | T-17 | Carry anonymous chat into the account on sign-in | 2 | Thu 1 Oct | Thu 1 Oct | CP2 | T-05, T-06 | [#32](https://github.com/magentawood/roomsie/issues/32) |
+| V3 Visitor | 4 | T-23a | Landing page ported from the prototype | 4 | Fri 2 Oct | Sat 3 Oct | CP3 | — | [#39](https://github.com/magentawood/roomsie/issues/39) |
+| V3 Visitor | 5 | T-22 | Launch areas and waitlist | 3 | Sun 4 Oct | Mon 5 Oct | CP3 | T-14 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| V4 Matching | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#11](https://github.com/magentawood/roomsie/issues/11) |
+| V4 Matching | 2 | T-14 ⚑ | Match query API | 6 | Mon 28 Sep | Wed 30 Sep | CP2 | T-06, T-08 | [#27](https://github.com/magentawood/roomsie/issues/27) |
+| V4 Matching | 3 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Sat 3 Oct | CP3 | T-06 | [#45](https://github.com/magentawood/roomsie/issues/45) |
+| V4 Matching | 4 | T-20 | Account deletion | 3 | Sat 3 Oct | Sun 4 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
+| V5 People | 1 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | — (T-18a later) | [#44](https://github.com/magentawood/roomsie/issues/44) |
+| V5 People | 2 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 26 Sep | Mon 28 Sep | CP1 | T-08 | [#16](https://github.com/magentawood/roomsie/issues/16) |
+| V5 People | 3 | T-16 ⚑ | Profile create and edit, with photos | 8 | Tue 29 Sep | Fri 2 Oct | CP3 | T-05, T-06 | [#36](https://github.com/magentawood/roomsie/issues/36) |
+| V5 People | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Sat 3 Oct | Sun 4 Oct | CP3 | T-05, T-06 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
+| Design | 2 | D-02 ⚑ | Design the chat screens |  | Thu 24 Sep | Fri 25 Sep | CP0 | D-01 | [#7](https://github.com/magentawood/roomsie/issues/7) |
+| Design | 3 | D-03 | Design results, profile and connect screens |  | Fri 25 Sep | Sun 27 Sep | CP1 | D-01 | [#19](https://github.com/magentawood/roomsie/issues/19) |
+| Design | 4 | D-04 | Design landing, wall and waitlist |  | Mon 28 Sep | Tue 29 Sep | CP2 | D-01 | [#25](https://github.com/magentawood/roomsie/issues/25) |
+| Design | 5 | D-05 | Design QA on the live build |  | Fri 2 Oct | Mon 5 Oct | CP3 | D-02, D-03 | [#42](https://github.com/magentawood/roomsie/issues/42) |
+| Design | 6 | D-06 | Launch visuals |  | Mon 5 Oct | Tue 6 Oct | CP4 | — | [#52](https://github.com/magentawood/roomsie/issues/52) |
+| M1 Content | 1 | M-04 | Interviews for articles 1 to 10 |  | Thu 24 Sep | Mon 28 Sep | CP1 | — | [#13](https://github.com/magentawood/roomsie/issues/13) |
+| M1 Content | 2 | M-03 | Write the eval sentences |  | Sat 26 Sep | Tue 29 Sep | CP2 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
+| M1 Content | 3 | M-05 | Drafts of articles 1 to 10 |  | Tue 29 Sep | Mon 5 Oct | CP3 | M-04 | [#31](https://github.com/magentawood/roomsie/issues/31) |
+| M1 Content | 4 | M-07 | Draft launch posts |  | Wed 30 Sep | Sat 3 Oct | CP3 | — | [#35](https://github.com/magentawood/roomsie/issues/35) |
+| M2 Community | 1 | M-01 ⚑ | Seeding form live, outreach starts |  | Fri 25 Sep | Sat 26 Sep | CP1 | F-05, F-06 | [#14](https://github.com/magentawood/roomsie/issues/14) |
+| M2 Community | 2 | M-02 | Seeding target: 100 sign-ups |  | Sat 26 Sep | Wed 30 Sep | CP2 | M-01 | [#22](https://github.com/magentawood/roomsie/issues/22) |
+| M2 Community | 3 | M-06 ⚑ | Beta invites to seeded sign-ups |  | Sat 3 Oct | Tue 6 Oct | CP4 | M-02, T-16 | [#49](https://github.com/magentawood/roomsie/issues/49) |
+| M2 Community | 4 | M-09 | Broker calls |  | Wed 7 Oct | Wed 14 Oct | CP5 | — | [#55](https://github.com/magentawood/roomsie/issues/55) |
+| Founder | 1 | F-01 | Kickoff: names on every role |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#2](https://github.com/magentawood/roomsie/issues/2) |
+| Founder | 2 | F-02 | Secure the domain |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#3](https://github.com/magentawood/roomsie/issues/3) |
+| Founder | 3 | F-03 | Billing and hard spend caps |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#4](https://github.com/magentawood/roomsie/issues/4) |
+| Founder | 4 | F-04 | Create accounts in Mumbai regions |  | Thu 24 Sep | Thu 24 Sep | CP0 | F-03 | [#5](https://github.com/magentawood/roomsie/issues/5) |
+| Founder | 5 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#8](https://github.com/magentawood/roomsie/issues/8) |
+| Founder | 6 | F-06 | Pick the three launch areas |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| Founder | 7 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | — | [#17](https://github.com/magentawood/roomsie/issues/17) |
+| Founder | 8 | F-09 | Write down the three ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
+| Founder | 9 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
+| Founder | 10 | F-10 | Go/no-go meeting |  | Mon 5 Oct | Mon 5 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
+| Everyone | 1 | A-01 | Bug fix day |  | Tue 6 Oct | Tue 6 Oct | CP4 | — | [#53](https://github.com/magentawood/roomsie/issues/53) |
+| Everyone | 2 | A-02 | Launch |  | Wed 7 Oct | Wed 7 Oct | CP4 | — | [#54](https://github.com/magentawood/roomsie/issues/54) |
+
+---
+
 ## Checkpoints
 
 | | Date | What is true by then |
