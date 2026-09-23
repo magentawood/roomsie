@@ -10,5 +10,6 @@ build/
 .next/
 session/transcript/*.bak.*
 
-# Editor / vault state
-.obsidian/
+# Editor / vault state. Only the shared graph colours are tracked.
+.obsidian/*
+!.obsidian/graph.json

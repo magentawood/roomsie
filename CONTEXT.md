@@ -79,6 +79,8 @@ exists to keep, cut or rework.
 
 **Everything to launch is in `docs/team-plan.md`**, with every task mirrored as a GitHub issue under a checkpoint milestone. Each engineer picks one of five verticals and works its issues in sequence order.
 
+**To see it visually,** open this repo as an Obsidian vault. Start at `docs/plan/roomsie launch.md`, then open the graph view or `docs/plan/Launch timeline.canvas`. Rebuild with `python3 tools/build-obsidian-plan.py` after editing `docs/team-plan.json`.
+
 | Checkpoint | Date |
 |---|---|
 | CP0 Kickoff | Fri 25 Sep |

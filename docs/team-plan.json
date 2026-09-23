@@ -16,7 +16,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP0",
-   "critical": false
+   "critical": false,
+   "issue": 1
   },
   {
    "id": "F-01",
@@ -35,7 +36,8 @@
     "docs/team-plan.md"
    ],
    "cp": "CP0",
-   "critical": false
+   "critical": false,
+   "issue": 2
   },
   {
    "id": "F-02",
@@ -51,7 +53,8 @@
    ],
    "read": [],
    "cp": "CP0",
-   "critical": false
+   "critical": false,
+   "issue": 3
   },
   {
    "id": "F-03",
@@ -69,7 +72,8 @@
     "docs/cost-and-team.md"
    ],
    "cp": "CP0",
-   "critical": false
+   "critical": false,
+   "issue": 4
   },
   {
    "id": "F-04",
@@ -90,7 +94,8 @@
     "docs/source/decisions/0009-hosting-and-region.md"
    ],
    "cp": "CP0",
-   "critical": false
+   "critical": false,
+   "issue": 5
   },
   {
    "id": "T-08",
@@ -110,7 +115,8 @@
     "docs/ai-agent-design.md"
    ],
    "cp": "CP0",
-   "critical": true
+   "critical": true,
+   "issue": 6
   },
   {
    "id": "D-02",
@@ -130,7 +136,8 @@
     "docs/interface-shape.md"
    ],
    "cp": "CP0",
-   "critical": true
+   "critical": true,
+   "issue": 7
   },
   {
    "id": "F-05",
@@ -146,7 +153,8 @@
    ],
    "read": [],
    "cp": "CP0",
-   "critical": true
+   "critical": true,
+   "issue": 8
   },
   {
    "id": "F-06",
@@ -164,7 +172,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP0",
-   "critical": false
+   "critical": false,
+   "issue": 9
   },
   {
    "id": "T-02",
@@ -185,7 +194,8 @@
     "docs/source/decisions/0003-api-as-separate-service.md"
    ],
    "cp": "CP0",
-   "critical": true
+   "critical": true,
+   "issue": 10
   },
   {
    "id": "T-18b",
@@ -204,7 +214,8 @@
    ],
    "read": [],
    "cp": "CP0",
-   "critical": true
+   "critical": true,
+   "issue": 44
   },
   {
    "id": "T-06",
@@ -225,7 +236,8 @@
     "docs/agent-architecture.md"
    ],
    "cp": "CP1",
-   "critical": true
+   "critical": true,
+   "issue": 11
   },
   {
    "id": "T-10",
@@ -245,7 +257,8 @@
     "docs/interface-shape.md"
    ],
    "cp": "CP1",
-   "critical": true
+   "critical": true,
+   "issue": 12
   },
   {
    "id": "M-04",
@@ -263,7 +276,8 @@
     "docs/content/corpus-plan.md"
    ],
    "cp": "CP1",
-   "critical": false
+   "critical": false,
+   "issue": 13
   },
   {
    "id": "M-01",
@@ -285,7 +299,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP1",
-   "critical": true
+   "critical": true,
+   "issue": 14
   },
   {
    "id": "T-11",
@@ -307,7 +322,8 @@
     "docs/model-selection.md"
    ],
    "cp": "CP1",
-   "critical": true
+   "critical": true,
+   "issue": 15
   },
   {
    "id": "D-03",
@@ -327,7 +343,8 @@
    ],
    "read": [],
    "cp": "CP1",
-   "critical": false
+   "critical": false,
+   "issue": 19
   },
   {
    "id": "F-07",
@@ -343,7 +360,8 @@
    ],
    "read": [],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 17
   },
   {
    "id": "F-09",
@@ -362,7 +380,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP1",
-   "critical": false
+   "critical": false,
+   "issue": 18
   },
   {
    "id": "T-05",
@@ -384,7 +403,8 @@
     "docs/source/decisions/0005-managed-platform-split.md"
    ],
    "cp": "CP1",
-   "critical": true
+   "critical": true,
+   "issue": 20
   },
   {
    "id": "T-15",
@@ -406,7 +426,8 @@
     "docs/interface-shape.md"
    ],
    "cp": "CP1",
-   "critical": true
+   "critical": true,
+   "issue": 16
   },
   {
    "id": "M-03",
@@ -425,7 +446,8 @@
     "docs/model-selection.md"
    ],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 21
   },
   {
    "id": "M-02",
@@ -443,7 +465,8 @@
    ],
    "read": [],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 22
   },
   {
    "id": "T-12",
@@ -466,7 +489,8 @@
     "docs/agent-architecture.md"
    ],
    "cp": "CP2",
-   "critical": true
+   "critical": true,
+   "issue": 23
   },
   {
    "id": "D-04",
@@ -484,7 +508,8 @@
    ],
    "read": [],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 25
   },
   {
    "id": "T-09",
@@ -506,7 +531,8 @@
     "docs/interface-shape.md"
    ],
    "cp": "CP2",
-   "critical": true
+   "critical": true,
+   "issue": 26
   },
   {
    "id": "T-14",
@@ -529,7 +555,8 @@
     "docs/interface-shape.md"
    ],
    "cp": "CP2",
-   "critical": true
+   "critical": true,
+   "issue": 27
   },
   {
    "id": "T-04",
@@ -550,7 +577,8 @@
     "docs/source/decisions/0009-hosting-and-region.md"
    ],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 30
   },
   {
    "id": "T-16",
@@ -572,7 +600,8 @@
     "docs/source/decisions/0005-managed-platform-split.md"
    ],
    "cp": "CP3",
-   "critical": true
+   "critical": true,
+   "issue": 36
   },
   {
    "id": "M-05",
@@ -592,7 +621,8 @@
     "docs/content/corpus-plan.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 31
   },
   {
    "id": "T-03",
@@ -612,7 +642,8 @@
     "docs/source/decisions/0013-ci-gate-and-testing.md"
    ],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 24
   },
   {
    "id": "T-13",
@@ -634,7 +665,8 @@
     "docs/scope-policy.md"
    ],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 33
   },
   {
    "id": "F-08",
@@ -653,7 +685,8 @@
     "docs/scope-policy.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 34
   },
   {
    "id": "M-07",
@@ -669,7 +702,8 @@
    ],
    "read": [],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 35
   },
   {
    "id": "T-07",
@@ -690,7 +724,8 @@
     "docs/source/decisions/0014-error-tracking.md"
    ],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 28
   },
   {
    "id": "T-17",
@@ -711,7 +746,8 @@
     "docs/seo-with-gated-products.md"
    ],
    "cp": "CP2",
-   "critical": false
+   "critical": false,
+   "issue": 32
   },
   {
    "id": "T-19",
@@ -733,7 +769,8 @@
     "docs/scope-policy.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 45
   },
   {
    "id": "T-33",
@@ -751,7 +788,8 @@
    ],
    "read": [],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 29
   },
   {
    "id": "T-23a",
@@ -770,7 +808,8 @@
     "docs/source/roomsie-prototype-V3.html"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 39
   },
   {
    "id": "T-24",
@@ -790,7 +829,8 @@
     "docs/source/decisions/0012-analytics-event-store.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 37
   },
   {
    "id": "T-21",
@@ -812,7 +852,8 @@
     "docs/pre-login-limits.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 41
   },
   {
    "id": "D-05",
@@ -831,7 +872,8 @@
    ],
    "read": [],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 42
   },
   {
    "id": "T-18a",
@@ -851,7 +893,8 @@
    ],
    "read": [],
    "cp": "CP3",
-   "critical": true
+   "critical": true,
+   "issue": 38
   },
   {
    "id": "T-20",
@@ -872,7 +915,8 @@
     "docs/source/decisions/0012-analytics-event-store.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 46
   },
   {
    "id": "T-23b",
@@ -890,7 +934,8 @@
    ],
    "read": [],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 40
   },
   {
    "id": "M-06",
@@ -912,7 +957,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP4",
-   "critical": true
+   "critical": true,
+   "issue": 49
   },
   {
    "id": "T-22",
@@ -933,7 +979,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 47
   },
   {
    "id": "T-25",
@@ -953,7 +1000,8 @@
     "docs/pre-login-limits.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 43
   },
   {
    "id": "T-27",
@@ -974,7 +1022,8 @@
     "docs/model-selection.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 48
   },
   {
    "id": "F-10",
@@ -992,7 +1041,8 @@
     "docs/team-plan.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 50
   },
   {
    "id": "T-29",
@@ -1013,7 +1063,8 @@
     "docs/pre-login-limits.md"
    ],
    "cp": "CP3",
-   "critical": false
+   "critical": false,
+   "issue": 51
   },
   {
    "id": "D-06",
@@ -1028,7 +1079,8 @@
    ],
    "read": [],
    "cp": "CP4",
-   "critical": false
+   "critical": false,
+   "issue": 52
   },
   {
    "id": "A-01",
@@ -1044,7 +1096,8 @@
    ],
    "read": [],
    "cp": "CP4",
-   "critical": false
+   "critical": false,
+   "issue": 53
   },
   {
    "id": "A-02",
@@ -1063,7 +1116,8 @@
     "docs/launch-plan.md"
    ],
    "cp": "CP4",
-   "critical": false
+   "critical": false,
+   "issue": 54
   },
   {
    "id": "M-09",
@@ -1082,7 +1136,8 @@
     "docs/research/supply-and-broker-model.md"
    ],
    "cp": "CP5",
-   "critical": false
+   "critical": false,
+   "issue": 55
   }
  ],
  "milestones": [
@@ -1124,15 +1179,15 @@
   ]
  ],
  "roles": {
-  "V1": "V1 \u00b7 Platform",
-  "V2": "V2 \u00b7 Assistant",
-  "V3": "V3 \u00b7 Visitor journey",
-  "V4": "V4 \u00b7 Matching and trust rules",
-  "V5": "V5 \u00b7 People and connections",
-  "D": "D \u00b7 Design",
-  "M1": "M1 \u00b7 Content",
-  "M2": "M2 \u00b7 Community",
-  "F": "F \u00b7 Founder",
+  "V1": "V1 · Platform",
+  "V2": "V2 · Assistant",
+  "V3": "V3 · Visitor journey",
+  "V4": "V4 · Matching and trust rules",
+  "V5": "V5 · People and connections",
+  "D": "D · Design",
+  "M1": "M1 · Content",
+  "M2": "M2 · Community",
+  "F": "F · Founder",
   "ALL": "Everyone"
  }
 }
