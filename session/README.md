@@ -61,3 +61,13 @@ directories. The script computes it, so you can clone anywhere.
   remain visible as history but you cannot re-run them.
 - **Vendored source material** lives in `docs/source/`, so the session's file
   references still resolve on your machine.
+- **The transcript grows, and git keeps every version.** It is a single file of
+  a few megabytes, and each sync stores a whole new copy rather than a diff. If
+  the repo gets uncomfortably large, squash the session commits or keep only
+  the latest transcript in history. Nothing depends on the old copies.
+
+## Verified
+
+The resume path was tested from a clean clone on 2026-09-23. The transcript
+installed to the correct project directory and every recorded working
+directory rewrote to the clone's own path.

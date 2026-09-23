@@ -9,3 +9,6 @@ dist/
 build/
 .next/
 session/transcript/*.bak.*
+
+# Editor / vault state
+.obsidian/
