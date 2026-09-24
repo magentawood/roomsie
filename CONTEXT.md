@@ -75,6 +75,10 @@ exists to keep, cut or rework.
 
 ---
 
+## Product record
+
+**`docs/product-base.html` is the one-page record of every product decision,** in the same format as `docs/source/tech-base.html`. Open it in a browser. Keep it in step with the tables above.
+
 ## Team plan
 
 **Everything to launch is in `docs/team-plan.md`**, with every task mirrored as a GitHub issue under a checkpoint milestone. Each engineer picks one of five verticals and works its issues in sequence order.

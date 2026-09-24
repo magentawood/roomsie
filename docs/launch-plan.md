@@ -30,22 +30,23 @@ So one of three things has to give: the date, the scope, or the meaning of
 The smallest thing that proves the idea: **a person talks to the assistant, sees
 real flatmate matches, and can connect with one.**
 
-| # | Item | Rough hours |
-|---|---|---|
-| 1 | Monorepo scaffold, deploy to Vercel, Fly and Supabase in Mumbai | 10 |
-| 2 | Google sign-in through Firebase | 6 |
-| 3 | Schema: users, profiles, anonymous form state, connection requests | 8 |
-| 4 | Landing page, ported from the V3 prototype | 6 |
-| 5 | Chat UI with the scripted chip flow for intent, area, budget | 14 |
-| 6 | One extraction call and one reply call, DeepSeek with Gemini fallback | 14 |
-| 7 | Split view: results panel re-queried when the form changes | 12 |
-| 8 | Profile create and edit, photo upload straight to R2 | 10 |
-| 9 | Person detail, connect request, contact revealed on mutual accept | 8 |
-| 10 | Five-turn cap, rate limits, daily spend ceiling | 5 |
-| 11 | Fifty-utterance eval set in English, Hinglish, Marathi, run by hand | 4 |
-| 12 | Error tracking and basic logging | 3 |
-| 13 | QA and bug buffer | 15 |
-| | **Total** | **about 115** |
+| #   | Item                                                                  | Rough hours   |
+| --- | --------------------------------------------------------------------- | ------------- |
+| 1   | Monorepo scaffold, deploy to Vercel, Fly and Supabase in Mumbai       | 10            |
+| 2   | Google sign-in through Firebase                                       | 6             |
+| 3   | Schema: users, profiles, anonymous form state, connection requests    | 8             |
+| 4   | Landing page, ported from the V3 prototype                            | 6             |
+| 5   | Chat UI with the scripted chip flow for intent, area, budget          | 14            |
+| 6   | One extraction call and one reply call, DeepSeek with Gemini fallback | 14            |
+| 7   | Split view: results panel re-queried when the form changes            | 12            |
+| 8   | Profile create and edit, photo upload straight to R2                  | 10            |
+| 9   | Person detail, connect request, contact revealed on mutual accept     | 8             |
+| 10  | Five-turn cap, rate limits, daily spend ceiling                       | 5             |
+| 11  | Fifty-utterance eval set in English, Hinglish, Marathi, run by hand   | 4             |
+| 12  | Error tracking and basic logging                                      | 3             |
+| 13  | QA and bug buffer                                                     | 15            |
+|     | **Total**                                                             | **about 115** |
+|     |                                                                       |               |
 
 That sits inside the range only if the team works most days and nothing
 surprises anyone. There is no slack. Treat every estimate as optimistic.
