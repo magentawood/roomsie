@@ -217,7 +217,7 @@ tr.hl td:first-child{color:var(--accent)}
     <div class="rgroup">
       <div class="rlabel">Launch</div>
       <a class="rlink" href="#p16"><span class="rn">16</span><span>7 October</span></a>
-      <a class="rlink" href="#p17"><span class="rn">17</span><span>Verticals &amp; checkpoints</span></a>
+      <a class="rlink" href="#p17"><span class="rn">17</span><span>Lanes &amp; checkpoints</span></a>
     </div>
     <div class="rgroup">
       <div class="rlabel">Reference</div>
@@ -270,7 +270,7 @@ tr.hl td:first-child{color:var(--accent)}
         <a class="lrow" href="#p15"><span class="ln">15</span><span class="lt">A small, self-funded team<em>About ₹1–2 per interview</em></span><span class="chip g">Settled</span></a>
         <div class="lgroup">Launch</div>
         <a class="lrow" href="#p16"><span class="ln">16</span><span class="lt">Public launch, 7 October<em>Fallback 9 October</em></span><span class="chip g">Settled</span></a>
-        <a class="lrow" href="#p17"><span class="ln">17</span><span class="lt">Five verticals, six checkpoints<em>55 tasks on GitHub</em></span><span class="chip g">Settled</span></a>
+        <a class="lrow" href="#p17"><span class="ln">17</span><span class="lt">Five lanes, two phases<em>Design-free work first, screens once designs land</em></span><span class="chip g">Settled</span></a>
       </div>
     </section>
 
@@ -385,6 +385,10 @@ tr.hl td:first-child{color:var(--accent)}
         <div class="k">Decision</div>
         <div class="v">Results update when a form value or weight changes, not on every chat turn.</div>
         <p>First results come after intent, area and budget. The match score stays hidden until lifestyle answers exist.</p>
+      </div>
+      <div class="call">
+        <div class="ct">For 7 October, only the basics</div>
+        <p>At launch the panel re-queries when the form changes. The banners, undo and scroll rules below come in v1.</p>
       </div>
       <div class="tw"><table>
         <thead><tr><th>Change</th><th>What the panel does</th></tr></thead>
@@ -548,7 +552,7 @@ tr.hl td:first-child{color:var(--accent)}
     <section id="p15">
       <div class="sechead"><span class="secnum">15</span><h2>A small, self-funded team</h2><span class="did">D5</span></div>
       <div class="stats">
-        <div class="stat"><div class="n">4–5</div><div class="l">Engineers, 2 hours a day</div></div>
+        <div class="stat"><div class="n">5</div><div class="l">Engineers, 2 hours a day</div></div>
         <div class="stat"><div class="n">2 + 1</div><div class="l">Marketing and design</div></div>
         <div class="stat a"><div class="n">₹1–2</div><div class="l">Model cost per interview</div></div>
       </div>
@@ -565,9 +569,9 @@ tr.hl td:first-child{color:var(--accent)}
         <p>Go or no-go is decided on Mon 5 Oct at 8 pm.</p>
       </div>
       <div class="stats">
-        <div class="stat"><div class="n">72–140</div><div class="l">Person-hours available</div></div>
-        <div class="stat"><div class="n">~130</div><div class="l">Needed after the cut</div></div>
-        <div class="stat a"><div class="n">0</div><div class="l">Margin</div></div>
+        <div class="stat"><div class="n">120</div><div class="l">Person-hours available, 5 × 2h × 12 days</div></div>
+        <div class="stat"><div class="n">115</div><div class="l">Build hours in the plan</div></div>
+        <div class="stat a"><div class="n">0</div><div class="l">Slack before designs land</div></div>
       </div>
       <div class="tw"><table>
         <thead><tr><th>Ships 7 Oct</th><th>After launch</th></tr></thead>
@@ -576,6 +580,7 @@ tr.hl td:first-child{color:var(--accent)}
           <tr><td>Results panel, profiles with photos</td><td>In-app messaging</td></tr>
           <tr><td>Contact revealed when both accept</td><td>Verification, blurred cards</td></tr>
           <tr><td>Report, block, account deletion, waitlist, legal pages</td><td>SEO area pages</td></tr>
+          <tr><td>Results re-queried when the form changes, responsive mobile</td><td>Live-update banners and undo, mobile bottom sheet</td></tr>
         </tbody>
       </table></div>
       <div class="call r">
@@ -587,21 +592,33 @@ tr.hl td:first-child{color:var(--accent)}
     <hr class="divider">
 
     <section id="p17">
-      <div class="sechead"><span class="secnum">17</span><h2>Five verticals, six checkpoints</h2><span class="did">D12</span></div>
+      <div class="sechead"><span class="secnum">17</span><h2>Five lanes, two phases</h2><span class="did">D12</span></div>
       <div class="verdict">
         <div class="k">Decision</div>
-        <div class="v">Each engineer owns one slice of the product, end to end. Design, marketing and the founder keep their roles.</div>
+        <div class="v">There are no designs yet, so the work runs in two phases. All design-free work lands first, and every screen is built once designs exist.</div>
+        <p>Every task still has one owner, start to finish. Design, marketing and the founder keep their roles.</p>
       </div>
       <div class="tw"><table>
-        <thead><tr><th>Vertical</th><th>Owns</th><th>Hours</th></tr></thead>
+        <thead><tr><th>Lane</th><th>Owns</th><th>Hours</th></tr></thead>
         <tbody>
-          <tr><td>V1 Platform</td><td>Code base, deploy, sign-in, logging, alerts, legal pages</td><td class="n-c">24</td></tr>
-          <tr><td>V2 Assistant</td><td>Form contract, models, extraction, replies, limits, eval</td><td class="n-c">24</td></tr>
-          <tr><td>V3 Visitor journey</td><td>Landing, chat, chips, waitlist</td><td class="n-c">23</td></tr>
-          <tr><td>V4 Matching &amp; trust</td><td>Database, match query, report and block, deletion</td><td class="n-c">22</td></tr>
-          <tr><td>V5 People</td><td>Results panel, profiles, connect</td><td class="n-c">22</td></tr>
+          <tr><td>P1 Platform</td><td>Code base, sign-in, deploy, errors, alerts, invite gate. Then the chips.</td><td class="n-c">24</td></tr>
+          <tr><td>P2 Assistant</td><td>Form contract, models, extraction, replies, limits, eval</td><td class="n-c">24</td></tr>
+          <tr><td>P3 Data &amp; trust</td><td>Database and match query. Then the results panel and person screens.</td><td class="n-c">24</td></tr>
+          <tr><td>P4 Content &amp; moderation</td><td>Landing, legal pages, report and block, deletion. Then profiles and the waitlist.</td><td class="n-c">25</td></tr>
+          <tr><td>P5 Accounts &amp; connections</td><td>Eval sentences, CI, events, chat carry-over, connect API. Then the chat screen.</td><td class="n-c">22</td></tr>
         </tbody>
       </table></div>
+      <div class="tw"><table>
+        <thead><tr><th>Phase</th><th>Dates</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td>A · Design-free</td><td class="n-c">Thu 24 → Wed 30 Sep</td><td>80 hours: monorepo, database, sign-in, assistant, matching, moderation</td></tr>
+          <tr><td>B · Screens</td><td class="n-c">Thu 1 → Mon 5 Oct</td><td>35 hours: every screen, built from finished designs</td></tr>
+        </tbody>
+      </table></div>
+      <div class="call w">
+        <div class="ct">The one hard deadline</div>
+        <p>Designs D-02, D-03 and D-04 must be finished by the end of Wednesday 30 September. Phase A has no slack, so every day a design slips is a day the launch slips.</p>
+      </div>
       <div class="tw"><table>
         <thead><tr><th>Checkpoint</th><th>Date</th></tr></thead>
         <tbody>
@@ -613,7 +630,7 @@ tr.hl td:first-child{color:var(--accent)}
           <tr><td>CP5 First-week review</td><td class="n-c">Wed 14 Oct</td></tr>
         </tbody>
       </table></div>
-      <p>55 tasks are tracked as GitHub issues. Each person's sequence is in <span class="mono">docs/team-plan.md</span>. The graph and timeline are in <span class="mono">docs/plan/</span>, for Obsidian.</p>
+      <p>55 tasks are tracked as GitHub issues. Each person's list, in order, is in <span class="mono">docs/how-to-work.md</span>. Every task's done-when list is in <span class="mono">docs/team-plan.md</span>. The graph and timeline are in <span class="mono">docs/plan/</span>, for Obsidian.</p>
     </section>
 
     <hr class="divider">
@@ -626,6 +643,8 @@ tr.hl td:first-child{color:var(--accent)}
           <tr><td>Brokers and monetisation</td><td><span class="chip w">Testing</span> Waiting on broker calls</td></tr>
           <tr><td>Identity text in a published listing</td><td><span class="chip m">Open</span> Separate from private filters</td></tr>
           <tr><td>Elevator pitch</td><td><span class="chip m">Open</span> “Your agentic broker” for investors. A plainer line for users.</td></tr>
+          <tr><td>Which intent cards ship in v0</td><td><span class="chip m">Open</span> Two of the prototype's four cards are about property, which D0 keeps out of v0</td></tr>
+          <tr><td>Designs D-02 to D-04</td><td><span class="chip c">Due</span> End of Wed 30 Sep. The launch date depends on it.</td></tr>
           <tr><td>Mobile split-view UI</td><td><span class="chip w">Provisional</span> The mechanics are settled, the look isn't</td></tr>
           <tr><td>Design system</td><td><span class="chip w">Exception</span> Prototype look for launch, Untitled UI later (ADR 0011)</td></tr>
           <tr><td>Master launch document</td><td><span class="chip m">Deferred</span> Every input is settled</td></tr>
@@ -651,7 +670,9 @@ tr.hl td:first-child{color:var(--accent)}
           <tr><td>Verification</td><td class="n-c">docs/verification.md</td></tr>
           <tr><td>Brokers and supply</td><td class="n-c">docs/research/supply-and-broker-model.md</td></tr>
           <tr><td>Launch scope</td><td class="n-c">docs/launch-plan.md</td></tr>
-          <tr><td>Team plan</td><td class="n-c">docs/team-plan.md</td></tr>
+          <tr><td>Who does what, in order</td><td class="n-c">docs/how-to-work.md</td></tr>
+          <tr><td>Decisions for the designer</td><td class="n-c">docs/design-review.md</td></tr>
+          <tr><td>Every task and its done-when list</td><td class="n-c">docs/team-plan.md</td></tr>
           <tr><td>Technical base</td><td class="n-c">docs/source/tech-base.html</td></tr>
         </tbody>
       </table></div>

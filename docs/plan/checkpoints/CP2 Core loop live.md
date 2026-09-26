@@ -8,7 +8,7 @@ tags:
 
 **Date:** Thu 1 Oct
 
-Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, connect and contact reveal work. Designs are finished and screen work has started.
+Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, and connect with contact reveal works. Designs are finished and screen work has started. 100 seeding sign-ups. The eval sentences are written.
 
 **After:** [[CP1 Foundation]]  
 **Next:** [[CP3 Freeze and go-no-go]]

@@ -4,7 +4,7 @@ Read this first. It is the running state of the planning session, kept current
 so that anyone (or any agent) picking the repo up knows where things stand
 without replaying the whole transcript.
 
-**Last updated:** 2026-09-19 · **Owner:** Yash Mangal · **Org:** magentawood
+**Last updated:** 2026-09-26 · **Owner:** Yash Mangal · **Org:** magentawood
 
 ---
 
@@ -60,9 +60,9 @@ exists to keep, cut or rework.
 | D3c | Exclusionary preferences | **Settled: record what the user states,** including community and religion, and filter on it. Mitigations retained: never infer, never suggest, keep them out of any learned ranking, filter server-side. See `docs/ai-agent-design.md` section 4.1. |
 | D3d | Whether a published listing may carry identity restrictions in visible text | **Open.** Separated from D3c because an advertisement is a different position from a private filter. |
 | D4 | Monetisation model and pricing | Pending, follows D3 |
-| D5 | Team and budget | **Settled: 4 to 5 tech at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |
-| D12 | Team plan | **Settled, organised by vertical.** Five engineering verticals, each owned end to end: V1 Platform, V2 Assistant, V3 Visitor journey, V4 Matching and trust rules, V5 People and connections. Design, marketing and founder keep roles. 55 tasks, each person has an ordered sequence, every vertical finishes by 5 October. See `docs/team-plan.md`. |
-| D11 | Launch | **Target 7 October 2026, fallback 9 October.** Scope is protected, time slips. Go or no-go decided on 5 October. About 72 to 140 person-hours available against 250 to 350 for the full v0. Cut to roughly 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 free. **Public launch**, which adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. New total about 130 hours with no margin. See `docs/launch-plan.md`. |
+| D5 | Team and budget | **Settled: 5 engineers at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |
+| D12 | Team plan | **Settled, re-cut on 2026-09-25 because there are no designs yet.** Five engineering lanes: P1 Platform, P2 Assistant, P3 Data and trust, P4 Content and moderation, P5 Accounts and connections. Phase A (24–30 Sep) is all 80 design-free hours; Phase B (1–5 Oct) is all 35 hours of screens. Designs D-02 to D-04 are due by end of 30 September. Every task keeps one owner, and nobody's list waits on another person after Phase A. Design, marketing and founder keep roles. See `docs/how-to-work.md`, `docs/team-plan.md` and `docs/design-review.md`. |
+| D11 | Launch | **Target 7 October 2026, fallback 9 October.** Scope is protected, time slips. Go or no-go decided on 5 October. About 72 to 140 person-hours available against 250 to 350 for the full v0. Cut to roughly 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 free. **Public launch**, which adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. New total about 130 hours with no margin. **Scheduled in D12 as 115 build hours against 120 available for five engineers, plus a bug-fix day on 6 October.** See `docs/launch-plan.md`. |
 | D6c | The five holes in the interface design | **Four closed, one provisional.** The panel updates on form change rather than on chat turn. Widening arrives as a banner, narrowing applies but says what went. One form, two views, with a complete conflict rule. See `docs/interface-shape.md`. |
 | D6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
 | D6a | Mobile pattern for the split view | **Provisional.** Chat fills the screen, then shrinks to a bottom bar at 25% when listings appear, expanding to 60% on tap. Same mechanics as desktop. UI not final. |
@@ -81,9 +81,11 @@ exists to keep, cut or rework.
 
 ## Team plan
 
-**Everything to launch is in `docs/team-plan.md`**, with every task mirrored as a GitHub issue under a checkpoint milestone. Each engineer picks one of five verticals and works its issues in sequence order.
+**Each person's list, in order, is in `docs/how-to-work.md`.** Every task with its done-when list is in `docs/team-plan.md`. Both follow `docs/team-plan.json`, which is the one place the plan is edited. Every task is mirrored as a GitHub issue, but the issues still carry the original `vertical:V1`–`V5` labels and milestones until they are relabelled.
 
-**To see it visually,** open this repo as an Obsidian vault. Start at `docs/plan/roomsie launch.md`, then open the graph view or `docs/plan/Launch timeline.canvas`. Rebuild with `python3 tools/build-obsidian-plan.py` after editing `docs/team-plan.json`.
+**For the designer:** `docs/design-review.md` lists every behaviour engineering is building on, to confirm, change or defer.
+
+**To see it visually,** open this repo as an Obsidian vault. Start at `docs/plan/roomsie launch.md`, then open the graph view or `docs/plan/Launch timeline.canvas`. Rebuild with `python3 tools/build-obsidian-plan.py` after editing `docs/team-plan.json`. That also regenerates `docs/team-plan.md`.
 
 | Checkpoint | Date |
 |---|---|
@@ -101,7 +103,7 @@ exists to keep, cut or rework.
 | Marketing | Call Mumbai brokers to test the free-listing, paid-introduction model | Nothing |
 | Marketing | Write the 30 corpus articles, `docs/content/corpus-plan.md` | Nothing |
 | Designer | Resolve the V3 prototype palette against ADR 0011's Untitled UI pipeline | Nothing, and it blocks frontend work |
-| Tech | Build the Hinglish and Marathi eval set before choosing anything | Nothing |
+| Tech | Work the lanes in `docs/how-to-work.md` | Nothing |
 
 ---
 
@@ -162,33 +164,75 @@ for hiding a swappable vendor behind one internal module.
 
 ## Repo layout
 
+The top level is fixed by ADR 0003 and ADR 0010. Inside `apps/` is a proposal
+mapped to the tasks that build it. T-02 creates it, and whoever owns T-02 may
+adjust names inside an app without asking. Anything marked with a task code
+does not exist yet.
+
 ```
 roomsie/
-├── CONTEXT.md              this file — running state
-├── CLAUDE.md               agent entry point
+├── apps/
+│   ├── web/                    Next 16 · React 19 · Tailwind v4 · TanStack Query → Vercel, bom1
+│   │   ├── app/                routes
+│   │   │   ├── (public)/       landing, privacy, terms, grievance        T-23a T-23b
+│   │   │   ├── chat/           full-screen chat, then split view, chips  T-10 T-09
+│   │   │   ├── people/[id]/    person detail and connect                 T-18b
+│   │   │   ├── profile/        create and edit, photos                   T-16
+│   │   │   └── waitlist/       launch areas and waitlist                 T-22
+│   │   ├── components/         UI in the V3 prototype's look             ADR 0011 exception
+│   │   └── lib/                API client typed from packages/contract, Firebase sign-in, reportError
+│   └── api/                    Fastify · Zod · Drizzle → Fly.io Mumbai
+│       ├── src/
+│       │   ├── server.ts
+│       │   ├── plugins/        auth (verifies the Firebase JWT), rate limits,
+│       │   │                   invite gate, error reporting              T-05 T-21 T-33 T-07
+│       │   ├── routes/         chat, matches, profiles, photos, connections,
+│       │   │                   reports, account, waitlist, events        T-14 T-16 T-18a T-19 T-20 T-24
+│       │   ├── assistant/      model wrapper, extractor, reply writer,
+│       │   │                   scope rules, turn cap and spend ceiling   T-11 T-12 T-13 T-21
+│       │   ├── match/          the match query                           T-14
+│       │   └── db/             Drizzle schema and client                 T-06
+│       ├── drizzle/            generated SQL migrations                  ADR 0006
+│       ├── eval/               eval sentences and the runner             M-03 T-27
+│       ├── Dockerfile
+│       └── fly.toml                                                      T-04
+├── packages/
+│   ├── contract/               Zod: Form A, every API route, analytics
+│   │                           events. OpenAPI is generated from it      T-08 · ADR 0004 0012
+│   └── config/                 shared tsconfig and ESLint                ADR 0010 0013
 ├── docs/
-│   ├── source/             vendored inputs (deprecated PRD, ADRs, tech base, prototype)
-│   └── …                   the master launch document, as it is written
-├── session/
-│   ├── SESSION_ID          the Claude Code session id
-│   ├── README.md           how to resume the session on your machine
-│   └── transcript/         the conversation itself
-└── tools/
-    ├── resume-session.sh   install the session locally
-    └── sync-session.sh     save session progress back to the repo
+│   ├── how-to-work.md          each person's list, in order, and the code index
+│   ├── design-review.md        behaviour decisions for the designer
+│   ├── product-base.html       the product record
+│   ├── team-plan.json          the plan's data. Edit this, then run the builder
+│   ├── team-plan.md            generated from team-plan.json
+│   ├── plan/                   the Obsidian view, generated
+│   ├── *.md                    decision notes: interface, agent, models, scope, limits, SEO, verification
+│   ├── research/ · content/    market research and the article corpus plan
+│   └── source/                 vendored inputs: ADRs, tech base, V3 prototype, deprecated PRD
+├── tools/
+│   └── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
+├── .github/workflows/ci.yml    typecheck, lint, build, secret scan       T-03
+├── .obsidian/                  vault settings; the graph shows docs/plan
+├── package.json · pnpm-workspace.yaml · turbo.json                       T-02 · ADR 0010
+├── CLAUDE.md                   agent entry point
+└── CONTEXT.md                  this file
 ```
+
+**Deliberately not in v0:** a mobile app (the auth path already allows one), a
+separate analytics database (ADR 0012 exception: one events table for now), the
+router, observer and advisor (v1), and a vector store (matching is a SQL query).
 
 ## Conventions
 
-- The session is part of the deliverable. Run `./tools/sync-session.sh` and
-  commit `session/transcript/session.jsonl` alongside any document change.
 - Update the decision tables above whenever something is settled. The tables,
   not the transcript, are the citable record.
-- **Remote Control stays off.** Session sharing is file-based, through this
-  repo, and nothing else.
+- **Remote Control stays off.**
+- **Never push to `main`.** Every change reaches the repo as a pull request.
 - **Write in simple, crisp English.** Short sentences. Plain words. This
   applies to every document in this repo.
-- Repo is **private**. The transcript contains personal data.
+- Repo is **private**. Its history still holds the old session transcript, which
+  contains personal data.
 
 ---
 

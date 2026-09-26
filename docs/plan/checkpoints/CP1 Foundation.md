@@ -8,7 +8,7 @@ tags:
 
 **Date:** Mon 28 Sep
 
-The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn.
+The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn. Article interviews are done. The seeding form is live.
 
 **After:** [[CP0 Kickoff]]  
 **Next:** [[CP2 Core loop live]]

@@ -7,7 +7,7 @@ tags:
 
 # P1 Platform
 
-_The ground everyone builds on._
+_The ground everyone builds on, then the chips._
 
 **24 hours** of build work, 0 spare, finishing Tue 6 Oct.
 

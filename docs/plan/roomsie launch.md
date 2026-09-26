@@ -39,6 +39,14 @@ Target **Wed 7 Oct 2026**, fallback Fri 9 Oct. 55 tasks.
 - [[CP4 Launch]] — Wed 7 Oct
 - [[CP5 First-week review]] — Wed 14 Oct
 
+## Documents
+
+- [[how-to-work|How to work]] — each person's list, in order, and a plain-words index of every code
+- [[design-review|For the designer]] — the behaviour we are locking in, to confirm, change or defer
+- [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
+- [[CONTEXT|Working context]] — the running decision record
+- `docs/product-base.html` and `docs/source/tech-base.html` — the product and technical records, open in a browser
+
 ---
 
 These notes are generated from `docs/team-plan.json`. To change the plan, edit that file and run `python3 tools/build-obsidian-plan.py`. The [GitHub issues](https://github.com/magentawood/roomsie/issues) stay the live tracker.

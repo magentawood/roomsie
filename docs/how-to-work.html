@@ -124,13 +124,13 @@ slips past 30 September is a day the launch slips.</strong></p>
 <tbody>
 <tr>
 <td>1</td>
-<td>T-02 Scaffold the monorepo</td>
+<td>T-02 Scaffold the monorepo in this repo</td>
 <td>4</td>
 <td>Thu 24 → Fri 25</td>
 </tr>
 <tr>
 <td>2</td>
-<td>T-05 Google sign-in and token checks</td>
+<td>T-05 Google sign-in and token checks in the API</td>
 <td>6</td>
 <td>Sat 26 → Mon 28</td>
 </tr>
@@ -142,7 +142,7 @@ slips past 30 September is a day the launch slips.</strong></p>
 </tr>
 <tr>
 <td>4</td>
-<td>T-07 Error reporting and Sentry</td>
+<td>T-07 Error reporting wrapper and Sentry</td>
 <td>1</td>
 <td>Wed 30</td>
 </tr>
@@ -229,7 +229,7 @@ through both phases without interruption.</p>
 <p>14 hours. T-06 alone, four days, nothing else until it merges. Everything
 downstream waits on it, so finishing early is the most useful thing you can do
 with spare time.</p>
-<h2>P4 · Content pages and moderation</h2>
+<h2>P4 · Content and moderation</h2>
 <table>
 <thead>
 <tr>
@@ -254,7 +254,7 @@ with spare time.</p>
 </tr>
 <tr>
 <td>3</td>
-<td>T-19 Report, block, suspend, moderation query</td>
+<td>T-19 Report, block, suspend, and a saved moderation query</td>
 <td>5</td>
 <td>Mon 28 → Wed 30</td>
 </tr>
@@ -301,7 +301,7 @@ Use it to read the ADRs or help with M-03, the eval sentences.</p>
 </tr>
 <tr>
 <td>4</td>
-<td>T-17 Carry anonymous chat into the account</td>
+<td>T-17 Carry anonymous chat into the account on sign-in</td>
 <td>2</td>
 <td>Tue 29</td>
 </tr>
@@ -309,7 +309,7 @@ Use it to read the ADRs or help with M-03, the eval sentences.</p>
 <td>5</td>
 <td>T-18a Connect request and contact reveal API</td>
 <td>4</td>
-<td>Tue 29 → Wed 30</td>
+<td>Wed 30 → Thu 1 Oct</td>
 </tr>
 </tbody>
 </table>
@@ -325,6 +325,7 @@ spare here too.</p>
 <th>Person</th>
 <th>Task</th>
 <th>Hours</th>
+<th>When</th>
 </tr>
 </thead>
 <tbody>
@@ -332,41 +333,49 @@ spare here too.</p>
 <td><strong>P1</strong></td>
 <td>T-25 Uptime monitor and spend alerts</td>
 <td>2</td>
+<td>Thu 1 Oct</td>
 </tr>
 <tr>
 <td><strong>P1</strong></td>
-<td>T-33 Invite-only gate</td>
+<td>T-33 Invite-only gate until launch</td>
 <td>1</td>
+<td>Fri 2 Oct</td>
 </tr>
 <tr>
 <td><strong>P1</strong></td>
 <td>T-09 Chip flow for intent, area, budget</td>
 <td>6</td>
+<td>Sat 3 → Mon 5 Oct</td>
 </tr>
 <tr>
 <td><strong>P3 (you)</strong></td>
-<td>T-15 Results panel</td>
+<td>T-15 Results panel, built against the contract</td>
 <td>6</td>
+<td>Thu 1 → Sat 3 Oct</td>
 </tr>
 <tr>
 <td><strong>P3 (you)</strong></td>
 <td>T-18b Person detail and connect screens</td>
 <td>4</td>
+<td>Sun 4 → Mon 5 Oct</td>
 </tr>
 <tr>
 <td><strong>P4</strong></td>
 <td>T-16 Profile create and edit, with photos</td>
 <td>8</td>
+<td>Fri 2 → Mon 5 Oct</td>
 </tr>
 <tr>
 <td><strong>P4</strong></td>
 <td>T-22 Launch areas and waitlist</td>
 <td>3</td>
+<td>Tue 6 Oct — flex</td>
 </tr>
 <tr>
 <td><strong>P5</strong></td>
 <td>T-10 Chat screen and split view</td>
 <td>8</td>
+<td>Fri 2 → Mon 5 Oct</td>
 </tr>
 </tbody>
 </table>
@@ -439,8 +448,8 @@ read this section first.</p>
 <td>Everyone</td>
 </tr>
 <tr>
-<td><strong>V1–V5</strong></td>
-<td>The five engineering verticals</td>
+<td><strong>P1–P5</strong></td>
+<td>The five engineering lanes. The first plan called them V1–V5</td>
 <td>One engineer each</td>
 </tr>
 </tbody>
@@ -450,7 +459,7 @@ half and a screen half, owned by different people.</p>
 <p>Number gaps are normal — T-01, T-26, T-28, T-30 to T-32 and M-08 were dropped
 or merged while planning. The codes were never reused.</p>
 <p><strong>⚑ marks the critical path.</strong> If a ⚑ task slips, the launch date slips.</p>
-<h2>The verticals and roles</h2>
+<h2>The lanes and roles</h2>
 <table>
 <thead>
 <tr>
@@ -461,29 +470,29 @@ or merged while planning. The codes were never reused.</p>
 </thead>
 <tbody>
 <tr>
-<td><strong>V1</strong></td>
+<td><strong>P1</strong></td>
 <td>Platform</td>
-<td>The plumbing. The ground the other four build on — the project itself, sign-in, deployment, monitoring.</td>
+<td>The plumbing: the project itself, sign-in, deploy, monitoring. Then the chips.</td>
 </tr>
 <tr>
-<td><strong>V2</strong></td>
+<td><strong>P2</strong></td>
 <td>Assistant</td>
-<td>The brain. Everything about what the AI understands and says back.</td>
+<td>The brain: everything the AI understands and says, and the limits on it.</td>
 </tr>
 <tr>
-<td><strong>V3</strong></td>
-<td>Visitor journey</td>
-<td>The front door. What a stranger sees, from landing page to signed in.</td>
+<td><strong>P3</strong></td>
+<td>Data and trust</td>
+<td>The database and the matching. Then the results panel and person screens that show them.</td>
 </tr>
 <tr>
-<td><strong>V4</strong></td>
-<td>Matching and trust</td>
-<td>Who sees whom. The data, the matching logic, and the safety rules.</td>
+<td><strong>P4</strong></td>
+<td>Content and moderation</td>
+<td>The public and legal pages, reporting and deletion. Then profiles and the waitlist.</td>
 </tr>
 <tr>
-<td><strong>V5</strong></td>
-<td>People and connections</td>
-<td>The humans on screen. Profiles, photos, and asking to connect.</td>
+<td><strong>P5</strong></td>
+<td>Accounts and connections</td>
+<td>CI, event logging, carrying a chat into an account, connecting two people. Then the chat screen.</td>
 </tr>
 <tr>
 <td><strong>D</strong></td>
@@ -528,19 +537,19 @@ or merged while planning. The codes were never reused.</p>
 <td><strong>CP1</strong></td>
 <td>Foundation</td>
 <td>Mon 28 Sep</td>
-<td>The shared plumbing is merged — project, database, sign-in, AI wrapper. Chat screen and results panel exist.</td>
+<td>The shared plumbing is merged — project, database, sign-in, AI wrapper. Landing and legal pages are up. No product screens yet.</td>
 </tr>
 <tr>
 <td><strong>CP2</strong></td>
 <td>Core loop live</td>
 <td>Thu 1 Oct</td>
-<td>It works end to end on the real internet: type a sentence, get matches back. 100 people signed up.</td>
+<td>It works end to end on the real internet without a UI: a sentence goes in, matches come out, connecting works. Designs are finished. 100 people signed up.</td>
 </tr>
 <tr>
 <td><strong>CP3</strong></td>
 <td>Feature freeze, go/no-go</td>
 <td>Mon 5 Oct</td>
-<td>Nothing new gets built after this. 8 pm meeting decides 7 or 9 October.</td>
+<td>Every screen is merged and live behind the invite gate. 8 pm meeting decides 7 or 9 October.</td>
 </tr>
 <tr>
 <td><strong>CP4</strong></td>
@@ -570,175 +579,175 @@ or merged while planning. The codes were never reused.</p>
 <tr>
 <td><strong>T-02</strong> ⚑</td>
 <td><strong>Scaffold the monorepo</strong> — Make one single project folder that holds the website, the server and the shared code, so all five people commit into the same place. <em>Example: instead of five people each starting their own separate project, everyone opens the same one and works in their own corner of it.</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#10</td>
 </tr>
 <tr>
 <td><strong>T-03</strong></td>
 <td><strong>CI: typecheck, lint, build, secret scan</strong> — A robot that checks every pull request automatically. <em>Example: you open a PR at 11 pm and two minutes later a green tick or red cross tells you whether you broke anything — including whether you accidentally pasted a password.</em></td>
-<td>V1</td>
+<td>P5</td>
 <td>#24</td>
 </tr>
 <tr>
 <td><strong>T-04</strong></td>
 <td><strong>Deploy web and API to Mumbai</strong> — Put the site and server on real machines in Mumbai so anyone on the internet can use it. <em>Example: the site stops being "works on my laptop" and starts being a real web address that loads fast in India.</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#30</td>
 </tr>
 <tr>
 <td><strong>T-05</strong> ⚑</td>
 <td><strong>Google sign-in and token checks</strong> — Let people log in with Google, and make the server check who they are on every request. <em>Example: you tap "Continue with Google", pick your Gmail, and you're in — no password to invent.</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#20</td>
 </tr>
 <tr>
 <td><strong>T-06</strong> ⚑</td>
 <td><strong>Database schema v1</strong> — Decide the exact shape of everything you store: people, flats, messages, matches. <em>Example: agreeing a person has a name, age, budget and photos — and that budget is a number like 25000, not text like "around 25k".</em></td>
-<td>V4</td>
+<td>P3</td>
 <td>#11</td>
 </tr>
 <tr>
 <td><strong>T-07</strong></td>
 <td><strong>Error reporting wrapper and Sentry</strong> — When the app breaks for a user, send the crash to a dashboard automatically. <em>Example: someone hits a broken page at 2 am; you see exactly which line failed and how many people hit it, without anyone reporting it.</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#28</td>
 </tr>
 <tr>
 <td><strong>T-08</strong> ⚑</td>
-<td><strong>Form A contract: slots and enums</strong> — Write down the exact list of things the assistant tries to learn, and the exact allowed answers. <em>Example: "intent" can only be <code>has_flat</code>, <code>wants_flat</code> or <code>wants_room</code>. Everyone builds against that fixed list so the pieces fit together.</em></td>
-<td>V2</td>
+<td><strong>Form A contract: slots and enums</strong> — Write down the exact list of things the assistant tries to learn, and the exact allowed answers. <em>Example: "intent" is one of the prototype's four cards — a flat and flatmates, just a flat, just a flatmate, or renting out a flat — or <code>unclear</code>. The nine lifestyle axes are smoking, alcohol, guests, pets, hours, tidiness, at home, daytime and kitchen. Everyone builds against that fixed list.</em></td>
+<td>P2</td>
 <td>#6</td>
 </tr>
 <tr>
 <td><strong>T-09</strong> ⚑</td>
-<td><strong>Chip flow for intent, area, budget</strong> — Tappable buttons under the chat so people don't have to type. <em>Example: instead of typing a full sentence, you tap [Looking for a room] [Bandra] [Under ₹25k].</em></td>
-<td>V3</td>
+<td><strong>Chip flow for intent, area, budget</strong> — Tappable buttons under the chat so people don't have to type. <em>Example: instead of typing a sentence, you tap [A flat and flatmates] [Powai] [₹15–20k].</em></td>
+<td>P1</td>
 <td>#26</td>
 </tr>
 <tr>
 <td><strong>T-10</strong> ⚑</td>
-<td><strong>Chat screen and split view</strong> — The main screen: conversation on one side, results on the other. <em>Example: you chat on the left, and as the assistant works out what you want, flats appear on the right.</em></td>
-<td>V3</td>
+<td><strong>Chat screen and split view</strong> — The main screen: conversation on one side, results on the other. <em>Example: you chat on the left, and as the assistant works out what you want, people who fit appear on the right.</em></td>
+<td>P5</td>
 <td>#12</td>
 </tr>
 <tr>
 <td><strong>T-11</strong> ⚑</td>
 <td><strong>Model wrapper: DeepSeek with Gemini fallback</strong> — One piece of code that talks to the AI, and silently switches to a backup AI if the first one is down. <em>Example: DeepSeek goes offline at 9 pm and users never notice, because Gemini answers instead.</em></td>
-<td>V2</td>
+<td>P2</td>
 <td>#15</td>
 </tr>
 <tr>
 <td><strong>T-12</strong> ⚑</td>
-<td><strong>Extraction: free text to form slots</strong> — Turn a sentence someone typed into tidy fields. <em>Example: "me and my sister need a 2BHK in Powai, max 40k, moving next month" becomes intent=wants_flat, area=Powai, budget=40000, move-in=October.</em></td>
-<td>V2</td>
+<td><strong>Extraction: free text to form slots</strong> — Turn a sentence someone typed into tidy fields. <em>Example: "need a room near Powai, max 18k, moving next month, I don't smoke" becomes intent = a flat and flatmates, area = Powai, budget = 18,000, move date = October, smoking = no.</em></td>
+<td>P2</td>
 <td>#23</td>
 </tr>
 <tr>
 <td><strong>T-13</strong></td>
 <td><strong>Reply writer with scope rules</strong> — Make the assistant write its answers, and keep it on topic. <em>Example: someone asks "what's the weather?" and it politely steers back to flats instead of answering.</em></td>
-<td>V2</td>
+<td>P2</td>
 <td>#33</td>
 </tr>
 <tr>
 <td><strong>T-14</strong> ⚑</td>
-<td><strong>Match query API</strong> — The server code that takes what someone wants and returns who or what fits. <em>Example: budget 25k, Bandra, non-smoker → here are the 12 best matches, best first.</em></td>
-<td>V4</td>
+<td><strong>Match query API</strong> — The server code that takes what someone wants and returns who fits. <em>Example: Powai, ₹18k, no smoking → the 12 people who fit best, best first.</em></td>
+<td>P3</td>
 <td>#27</td>
 </tr>
 <tr>
 <td><strong>T-15</strong> ⚑</td>
-<td><strong>Results panel</strong> — The part of the screen that shows matches as cards. <em>Example: the right-hand column filling up with flat cards showing rent, area and a photo.</em></td>
-<td>V5</td>
+<td><strong>Results panel</strong> — The part of the screen that shows matches as cards. In v0 every card is a person, never a property listing. <em>Example: the right-hand column fills with person cards — name, area, budget, and once we know enough, a match score.</em></td>
+<td>P3</td>
 <td>#16</td>
 </tr>
 <tr>
 <td><strong>T-16</strong> ⚑</td>
 <td><strong>Profile create and edit, with photos</strong> — The screens where someone says who they are and uploads pictures. <em>Example: name, age, job, "I'm tidy and sleep early", plus four photos of the room.</em></td>
-<td>V5</td>
+<td>P4</td>
 <td>#36</td>
 </tr>
 <tr>
 <td><strong>T-17</strong></td>
 <td><strong>Carry anonymous chat into the account</strong> — If someone chats before signing up, keep that conversation when they do. <em>Example: you chat for five minutes as a stranger, then sign in — and your chat is still there instead of wiped.</em></td>
-<td>V3</td>
+<td>P5</td>
 <td>#32</td>
 </tr>
 <tr>
 <td><strong>T-18a</strong> ⚑</td>
 <td><strong>Connect request and contact reveal API</strong> — The server side of asking to connect, and only showing phone numbers once both people agree. <em>Example: you tap Connect, they accept, and only then do you both see each other's number.</em></td>
-<td>V5</td>
+<td>P5</td>
 <td>#38</td>
 </tr>
 <tr>
 <td><strong>T-18b</strong> ⚑</td>
 <td><strong>Person detail and connect screens</strong> — The screens for reading someone's full profile and sending that request. <em>Example: tapping a card opens their whole profile with a Connect button at the bottom.</em></td>
-<td>V5</td>
+<td>P3</td>
 <td>#44</td>
 </tr>
 <tr>
 <td><strong>T-19</strong></td>
 <td><strong>Report, block, suspend, moderation query</strong> — The safety tools. <em>Example: someone sends a creepy message — you block them, they disappear from your results, and a moderator sees the report.</em></td>
-<td>V4</td>
+<td>P4</td>
 <td>#45</td>
 </tr>
 <tr>
 <td><strong>T-20</strong></td>
 <td><strong>Account deletion</strong> — Let people delete their account and data properly. <em>Example: you tap Delete, and your profile, photos and messages are actually gone — which Indian law requires.</em></td>
-<td>V4</td>
+<td>P4</td>
 <td>#46</td>
 </tr>
 <tr>
 <td><strong>T-21</strong></td>
 <td><strong>Five-turn cap, rate limits, spend ceiling</strong> — Limits so the AI can't be abused or run up a huge bill. <em>Example: one visitor can't send 10,000 messages overnight and cost you ₹80,000 in AI fees.</em></td>
-<td>V2</td>
+<td>P2</td>
 <td>#41</td>
 </tr>
 <tr>
 <td><strong>T-22</strong></td>
 <td><strong>Launch areas and waitlist</strong> — Only open the three chosen Mumbai areas; collect emails from everywhere else. <em>Example: someone in Pune visits, sees "not here yet", and leaves their email for later.</em></td>
-<td>V3</td>
+<td>P4</td>
 <td>#47</td>
 </tr>
 <tr>
 <td><strong>T-23a</strong></td>
 <td><strong>Landing page</strong> — The public home page explaining what roomsie is. <em>Example: the first thing a stranger sees, with the pitch and a "Start chatting" button.</em></td>
-<td>V3</td>
+<td>P4</td>
 <td>#39</td>
 </tr>
 <tr>
 <td><strong>T-23b</strong></td>
 <td><strong>Privacy, terms and grievance pages</strong> — The legal pages every Indian site must have. <em>Example: the Privacy Policy link in the footer, plus a named grievance officer people can contact.</em></td>
-<td>V1</td>
+<td>P4</td>
 <td>#40</td>
 </tr>
 <tr>
 <td><strong>T-24</strong></td>
 <td><strong>Event logging table</strong> — Record what people actually do, so you can see what works. <em>Example: counting how many people start a chat but never sign up — and where exactly they drop off.</em></td>
-<td>V1</td>
+<td>P5</td>
 <td>#37</td>
 </tr>
 <tr>
 <td><strong>T-25</strong></td>
 <td><strong>Uptime monitor and spend alerts</strong> — Automatic warnings if the site dies or costs spike. <em>Example: a message at 3 am saying "site down" or "AI spend passed ₹5,000 today".</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#43</td>
 </tr>
 <tr>
 <td><strong>T-27</strong></td>
 <td><strong>Run the eval set and tune the prompt</strong> — Test the assistant on a list of real sentences and fix what it gets wrong. <em>Example: you feed it 100 sentences, it misreads "PG" as a whole flat 30 times, you fix the wording and retest.</em></td>
-<td>V2</td>
+<td>P2</td>
 <td>#48</td>
 </tr>
 <tr>
 <td><strong>T-29</strong></td>
 <td><strong>Abuse test: 100 fake sessions</strong> — Attack your own site before strangers do. <em>Example: run 100 fake users hammering the chat at once and check the limits actually hold.</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#51</td>
 </tr>
 <tr>
 <td><strong>T-33</strong></td>
 <td><strong>Invite-only gate until launch</strong> — Keep the public out until launch day. <em>Example: anyone without an invite code sees a "coming soon" page instead of the app.</em></td>
-<td>V1</td>
+<td>P1</td>
 <td>#29</td>
 </tr>
 </tbody>
@@ -811,7 +820,7 @@ or merged while planning. The codes were never reused.</p>
 <tr>
 <td><strong>M-03</strong></td>
 <td><strong>Write the eval sentences</strong> — Write realistic sentences to test the assistant against. <em>Example: "need a room in Chembur under 15k, veg only".</em></td>
-<td>M1</td>
+<td>P5 (normally M1)</td>
 <td>#21</td>
 </tr>
 <tr>

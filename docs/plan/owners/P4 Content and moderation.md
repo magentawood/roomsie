@@ -7,7 +7,7 @@ tags:
 
 # P4 Content and moderation
 
-_Public pages, reports and account removal._
+_Public pages and safety, then profiles._
 
 **25 hours** of build work, -1 spare, finishing Tue 6 Oct.
 

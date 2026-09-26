@@ -39,9 +39,10 @@ tags:
 ## Done when
 - [ ] pnpm workspaces and Turborepo, per ADR 0010
 - [ ] apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle
-- [ ] packages/contract and packages/config exist
-- [ ] `pnpm dev` runs web and API locally. docs/ and session/ are untouched
+- [ ] packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md
+- [ ] `pnpm dev` runs web and API locally. docs/ is untouched
 
 ## Read first
+- [CONTEXT.md](../../../CONTEXT.md)
 - [0010-monorepo-tooling.md](../../source/decisions/0010-monorepo-tooling.md)
 - [0003-api-as-separate-service.md](../../source/decisions/0003-api-as-separate-service.md)

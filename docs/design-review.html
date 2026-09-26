@@ -25,7 +25,7 @@ font:.88em ui-monospace,SFMono-Regular,Menlo,monospace}
 a{color:#58a6ff}
 </style>
 <main><h1>For the designer — decisions we are about to lock</h1>
-<p><strong>Date:</strong> 2026-09-25 · <strong>For:</strong> whoever owns design · <strong>From:</strong> engineering</p>
+<p><strong>Date:</strong> 2026-09-25 · <strong>Updated:</strong> 2026-09-26 · <strong>For:</strong> whoever owns design · <strong>From:</strong> engineering</p>
 <hr />
 <h2>Why you are reading this</h2>
 <p>We are building for a fortnight before your designs arrive. Roughly 80 of the
@@ -89,8 +89,8 @@ the table below is sorted that way.</p>
 <tbody>
 <tr>
 <td><strong>Now</strong></td>
-<td>§1 The conversation's questions</td>
-<td>The contract is the first thing built. Everything reads from it.</td>
+<td>§1 The conversation's questions, and §6.3 the launch look</td>
+<td>The contract is the first thing built, and the styling decision gates every design.</td>
 </tr>
 <tr>
 <td><strong>Sun 27 Sep</strong></td>
@@ -126,15 +126,23 @@ the AI extraction, the matching, the profile screens — reads from one shared
 definition of <em>what we ask a person</em>. Add or remove a question later and all
 four change together.</p>
 <p><strong>1.1 — The form has exactly these fields.</strong> Intent, areas, budget, move date,
-and nine lifestyle answers. Nothing else. 🔴</p>
+room type, and nine lifestyle answers: smoking, alcohol, guests, pets, hours,
+tidiness, at home, daytime and kitchen. Nothing else. 🔴</p>
 <blockquote>
 <p><strong>If you add a flow</strong> — say, "do you have pets?" as its own step — it is not
 one new question. It is a migration, a contract change, a re-tuned extraction
 prompt and a new filter. <strong>Tell us before Sunday and it's an hour. After, it's
 a day and a half.</strong></p>
 </blockquote>
-<p><strong>1.2 — Intent is one of four choices</strong>, reusing the four intent cards from the
-V3 prototype: has a flat, wants a whole flat, wants a room, open to either. 🔴</p>
+<p><strong>1.2 — Intent is one of the prototype's four cards:</strong> a flat and flatmates,
+just a flat, just a flatmate, or I'm renting out a flat. 🔴</p>
+<blockquote>
+<p><strong>This clashes with a settled decision, and it needs you first.</strong> Decision D0
+says v0 is flatmate matching only, with no property listings. Two of the four
+cards — <em>just a flat</em> and <em>I'm renting out a flat</em> — are about property. Either
+they are hidden for launch, or they lead somewhere that does not exist yet.
+<strong>Tell us which cards ship on 7 October.</strong></p>
+</blockquote>
 <p><strong>1.3 — The first three turns are chips, not typing.</strong> Intent, area and budget
 are closed questions, so we show tappable options. 🟡</p>
 <p><strong>1.4 — Budget is bands, not a slider.</strong> Under 15k, 15–20k, 20–25k, above 25k.
@@ -146,6 +154,11 @@ not to know. 🟢</p>
 <p><strong>1.7 — Typing beats tapping.</strong> Someone who types "2bhk in Powai under 25k from
 October" fills four fields at once and skips ahead. The chips are a floor, not
 a cage. 🟡</p>
+<p><strong>1.8 — Some preferences are never offered as chips.</strong> If someone raises
+community or religion, we record it and filter on it. We never suggest it, never
+ask about it, and never infer it from a name, a diet or an area. This is
+settled (D3c), so it is not up for review, but it limits what the chips may
+show. 🔒</p>
 <hr />
 <h1>§2 · What we store about a person — 🔴 structural, by Sun 27 Sep</h1>
 <p>The database is committed Sunday night. It is the hardest thing on this list to
@@ -183,6 +196,8 @@ assistant doesn't narrate it — otherwise the conversation becomes a log of
 taps. It speaks only when your tap contradicts something you said earlier. 🟡</p>
 <hr />
 <h1>§4 · How results appear and update — 🟡 by Wed 30 Sep</h1>
+<p>Launch builds 4.1 to 4.4. The rest were cut to v1 in <code>docs/launch-plan.md</code>, so
+marking them LATER costs nothing.</p>
 <p><strong>4.1 — The results panel appears once intent, area and budget are filled</strong> —
 about three turns in. 🔴</p>
 <p><strong>4.2 — The match score stays hidden until we know enough.</strong> Filtering needs
@@ -190,21 +205,26 @@ area and budget. Ranking on compatibility needs the lifestyle answers, which
 take much longer. We show results early and honestly, and withhold the score
 until it means something. 🟡</p>
 <p><strong>4.3 — The panel header changes as we learn more:</strong> "Everything in Mumbai" →
-"Flats in Powai" → "Flats in Powai under 20,000" → match scores appear. 🟢</p>
+"Powai" → "Powai, under ₹20,000" → match scores appear. In v0 every card is a
+person, never a listing (D0), so the exact words are yours. 🟢</p>
 <p><strong>4.4 — The panel updates when the form changes, not when a turn happens.</strong> A
 ten-turn conversation might redraw the panel three times. 🟡</p>
 <p><strong>4.5 — Widening and narrowing behave differently.</strong> More results arrive as a
-tappable banner. Fewer results apply immediately but say what went, with undo. 🟡</p>
-<p><strong>4.6 — Nothing reorders while you scroll.</strong> Updates queue and apply when idle. 🟡</p>
+tappable banner. Fewer results apply immediately but say what went, with undo.
+<strong>v1, not launch.</strong> 🟡</p>
+<p><strong>4.6 — Nothing reorders while you scroll.</strong> Updates queue and apply when idle.
+<strong>v1, not launch.</strong> 🟡</p>
 <p><strong>4.7 — A card you saved is never silently removed</strong> — it gets marked with the
-reason instead. 🟢</p>
+reason instead. <strong>v1, not launch.</strong> 🟢</p>
 <hr />
 <h1>§5 · Mobile — 🔴 unresolved, and the biggest risk</h1>
 <p><strong>This is the one we most need you for.</strong></p>
 <p>The whole product is a split view: chat on one side, results on the other. That
 needs about 900 pixels. <strong>Mumbai is a mobile-first market.</strong> At 400px there is
 no second panel, so the central idea has to work some other way.</p>
-<p>Three options were written down on 20 September and none was chosen:</p>
+<p>Three options were written down on 20 September. None was chosen outright:
+engineering picked a provisional pattern so it could start (below), and the
+launch plan has already cut the bottom sheet to v1.</p>
 <table>
 <thead>
 <tr>
@@ -240,7 +260,7 @@ someone is typing or reading.</p>
 <p><strong>This is provisional and we expect you to overrule it.</strong> But it is currently
 being built. Decide by 30 September.</p>
 <hr />
-<h1>§6 · Two things nobody has designed at all</h1>
+<h1>§6 · Three open questions outside the flow</h1>
 <p><strong>6.1 — The empty state.</strong> There is no skip, so if a search returns nothing the
 user has answered a full interview for zero results. That is the worst moment
 in the product and it currently has no design. Options: widen the area, relax a
@@ -249,6 +269,11 @@ dealbreaker, or offer to notify them. <strong>Undesigned. 🔴</strong></p>
 built for femmeflats — a women-only swipe app we have since pivoted away from.
 It will be live and public. If you want a different landing page, the port is
 four hours of work we could spend elsewhere. 🟡</p>
+<p><strong>6.3 — Launch uses the V3 prototype's look, not Untitled UI.</strong> ADR 0011 says
+to build on the Untitled UI token pipeline, but that pipeline is blocked and
+the prototype's palette doesn't match it. The launch plan proposes porting the
+prototype's styling for 7 October and rebuilding on the pipeline in v1. <strong>This
+needs your sign-off, and it is D-01, due on day one.</strong> 🔴</p>
 <hr />
 <h2>What you never have to ask us about</h2>
 <p>Change these whenever you like, before or after launch, and nothing breaks:</p>
@@ -261,7 +286,7 @@ above.</p>
 <hr />
 <h2>What we need back</h2>
 <ol>
-<li>Read §1 and §5 first. Those two are worth more than the rest combined.</li>
+<li>Read §1, §5 and §6.3 first. Those three are worth more than the rest combined.</li>
 <li>Mark every item OK / CHANGE / LATER.</li>
 <li>For anything marked CHANGE, we'll come back the same day with the real cost
    and what it displaces.</li>

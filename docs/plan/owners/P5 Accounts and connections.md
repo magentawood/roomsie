@@ -7,7 +7,7 @@ tags:
 
 # P5 Accounts and connections
 
-_Sign-in plumbing, events, and connecting people._
+_CI, events and connections, then the chat screen._
 
 **22 hours** of build work, 2 spare, finishing Mon 5 Oct.
 

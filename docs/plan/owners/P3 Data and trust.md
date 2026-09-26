@@ -7,7 +7,7 @@ tags:
 
 # P3 Data and trust
 
-_The schema, the matching, and who sees whom._
+_The data and the matching, then the screens that show them._
 
 **24 hours** of build work, 0 spare, finishing Mon 5 Oct.
 
