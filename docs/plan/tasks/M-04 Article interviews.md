@@ -2,7 +2,7 @@
 id: M-04
 title: "Interviews for articles 1 to 10"
 owner: "M1 Content"
-sequence: "1 of 4"
+sequence: "1 of 3"
 start: 2026-09-24
 end: 2026-09-28
 checkpoint: CP1
@@ -16,7 +16,7 @@ tags:
 
 # M-04 · Interviews for articles 1 to 10
 
-**Owner:** [[M1 Content]], task 1 of 4  
+**Owner:** [[M1 Content]], task 1 of 3  
 **When:** Thu 24 Sep → Mon 28 Sep  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#13](https://github.com/magentawood/roomsie/issues/13)

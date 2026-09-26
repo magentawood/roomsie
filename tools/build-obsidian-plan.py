@@ -39,11 +39,11 @@ SHORT = {
  "A-01":"Bug fix day","A-02":"Launch day",
 }
 OWNERS = [  # key, note name, tag, colour
- ("V1","V1 Platform","v1","#8B949E"),
- ("V2","V2 Assistant","v2","#8B6CFF"),
- ("V3","V3 Visitor journey","v3","#3B82F6"),
- ("V4","V4 Matching and trust","v4","#2EA44F"),
- ("V5","V5 People and connections","v5","#14B8A6"),
+ ("P1","P1 Platform","p1","#8B949E"),
+ ("P2","P2 Assistant","p2","#8B6CFF"),
+ ("P3","P3 Data and trust","p3","#2EA44F"),
+ ("P4","P4 Content and moderation","p4","#3B82F6"),
+ ("P5","P5 Accounts and connections","p5","#14B8A6"),
  ("D","Design","design","#FF87AC"),
  ("M1","M1 Content","content","#E3B341"),
  ("M2","M2 Community","community","#F9A03F"),
@@ -51,13 +51,14 @@ OWNERS = [  # key, note name, tag, colour
  ("ALL","Everyone","everyone","#9CC3E6"),
 ]
 OWN = {k:(n,tag,c) for k,n,tag,c in OWNERS}
-QUESTION = {"V1":"The ground everyone builds on","V2":"What the assistant understands and says",
- "V3":"From landing to signed in","V4":"Who sees whom","V5":"The people on the screen"}
+QUESTION = {"P1":"The ground everyone builds on","P2":"What the assistant understands and says",
+ "P3":"The schema, the matching, and who sees whom","P4":"Public pages, reports and account removal",
+ "P5":"Sign-in plumbing, events, and connecting people"}
 CPNAME = {"CP0":"CP0 Kickoff","CP1":"CP1 Foundation","CP2":"CP2 Core loop live",
  "CP3":"CP3 Freeze and go-no-go","CP4":"CP4 Launch","CP5":"CP5 First-week review"}
 CPCOLOUR = "#D73A4A"
-SOFT = {"T-18b":("T-18a","Wire to it when it lands on Sun 4 Oct"),
-        "T-15":("T-14","Wire to it when it lands on Wed 30 Sep")}
+SOFT = {"T-18b":("T-18a","It lands Thu 1 Oct, before you start"),
+        "T-15":("T-14","It lands Wed 30 Sep, before you start")}
 
 D = dt.date.fromisoformat
 f = lambda s: D(s).strftime("%a %-d %b")

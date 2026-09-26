@@ -25,6 +25,9 @@ tags:
 - [[D-01 Styling decision]]
 
 ## Unblocks
+- [[T-18b Person and connect screens ⚑]]
+- [[T-15 Results panel ⚑]]
+- [[T-16 Profiles and photos ⚑]]
 - [[D-05 Design QA]]
 
 ## Done when

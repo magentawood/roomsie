@@ -8,7 +8,7 @@ tags:
 
 **Date:** Mon 28 Sep
 
-The monorepo, the schema, sign-in, CI and the model wrapper are merged. The chat screen and results panel are built. Article interviews are done. The seeding form is live.
+The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn.
 
 **After:** [[CP0 Kickoff]]  
 **Next:** [[CP2 Core loop live]]
@@ -18,11 +18,12 @@ Part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[M-01 Seeding form ⚑]] — M2 Community
-- [[T-11 Model wrapper ⚑]] — V2 Assistant
+- [[T-03 CI checks]] — P5 Accounts and connections
+- [[T-11 Model wrapper ⚑]] — P2 Assistant
+- [[T-23b Legal pages]] — P4 Content and moderation
 - [[D-03 Results and profile designs]] — Design
 - [[F-09 ADR exceptions]] — Founder
-- [[T-06 Database schema ⚑]] — V4 Matching and trust
-- [[T-10 Chat screen and split view ⚑]] — V3 Visitor journey
+- [[T-06 Database schema ⚑]] — P3 Data and trust
 - [[M-04 Article interviews]] — M1 Content
-- [[T-05 Google sign-in ⚑]] — V1 Platform
-- [[T-15 Results panel ⚑]] — V5 People and connections
+- [[T-05 Google sign-in ⚑]] — P1 Platform
+- [[T-24 Event logging]] — P5 Accounts and connections

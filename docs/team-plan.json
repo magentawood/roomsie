@@ -100,7 +100,7 @@
   {
    "id": "T-08",
    "title": "Form A contract: slots and enums",
-   "role": "V2",
+   "role": "P2",
    "hours": 2,
    "start": "2026-09-24",
    "end": "2026-09-24",
@@ -178,7 +178,7 @@
   {
    "id": "T-02",
    "title": "Scaffold the monorepo in this repo",
-   "role": "V1",
+   "role": "P1",
    "hours": 4,
    "start": "2026-09-24",
    "end": "2026-09-25",
@@ -200,11 +200,13 @@
   {
    "id": "T-18b",
    "title": "Person detail and connect screens",
-   "role": "V5",
+   "role": "P3",
    "hours": 4,
-   "start": "2026-09-24",
-   "end": "2026-09-25",
-   "deps": [],
+   "start": "2026-10-04",
+   "end": "2026-10-05",
+   "deps": [
+    "D-03"
+   ],
    "done": [
     "Built first from the V3 prototype's detail sheet, against a mock of the connect API. Wired to T-18a when it lands on Sun 4 Oct",
     "The person screen needs sign-in",
@@ -213,14 +215,14 @@
     "Report and block are one tap away"
    ],
    "read": [],
-   "cp": "CP0",
+   "cp": "CP3",
    "critical": true,
    "issue": 44
   },
   {
    "id": "T-06",
    "title": "Database schema v1",
-   "role": "V4",
+   "role": "P3",
    "hours": 8,
    "start": "2026-09-24",
    "end": "2026-09-27",
@@ -242,11 +244,13 @@
   {
    "id": "T-10",
    "title": "Chat screen and split view",
-   "role": "V3",
+   "role": "P5",
    "hours": 8,
-   "start": "2026-09-24",
-   "end": "2026-09-27",
-   "deps": [],
+   "start": "2026-10-02",
+   "end": "2026-10-05",
+   "deps": [
+    "D-02"
+   ],
    "done": [
     "The landing button opens a full-screen chat",
     "The screen splits into chat and results once results exist",
@@ -256,7 +260,7 @@
    "read": [
     "docs/interface-shape.md"
    ],
-   "cp": "CP1",
+   "cp": "CP3",
    "critical": true,
    "issue": 12
   },
@@ -305,7 +309,7 @@
   {
    "id": "T-11",
    "title": "Model wrapper: DeepSeek with Gemini fallback",
-   "role": "V2",
+   "role": "P2",
    "hours": 4,
    "start": "2026-09-25",
    "end": "2026-09-26",
@@ -386,7 +390,7 @@
   {
    "id": "T-05",
    "title": "Google sign-in and token checks in the API",
-   "role": "V1",
+   "role": "P1",
    "hours": 6,
    "start": "2026-09-26",
    "end": "2026-09-28",
@@ -409,12 +413,13 @@
   {
    "id": "T-15",
    "title": "Results panel, built against the contract",
-   "role": "V5",
+   "role": "P3",
    "hours": 6,
-   "start": "2026-09-26",
-   "end": "2026-09-28",
+   "start": "2026-10-01",
+   "end": "2026-10-03",
    "deps": [
-    "T-08"
+    "T-08",
+    "D-03"
    ],
    "done": [
     "A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands",
@@ -425,17 +430,17 @@
    "read": [
     "docs/interface-shape.md"
    ],
-   "cp": "CP1",
+   "cp": "CP3",
    "critical": true,
    "issue": 16
   },
   {
    "id": "M-03",
    "title": "Write the eval sentences",
-   "role": "M1",
-   "hours": null,
-   "start": "2026-09-26",
-   "end": "2026-09-29",
+   "role": "P5",
+   "hours": 4,
+   "start": "2026-09-24",
+   "end": "2026-09-25",
    "deps": [],
    "done": [
     "50 sentences people would really type, in English, Hinglish and Marathi",
@@ -445,7 +450,7 @@
    "read": [
     "docs/model-selection.md"
    ],
-   "cp": "CP2",
+   "cp": "CP0",
    "critical": false,
    "issue": 21
   },
@@ -471,7 +476,7 @@
   {
    "id": "T-12",
    "title": "Extraction: free text to form slots",
-   "role": "V2",
+   "role": "P2",
    "hours": 6,
    "start": "2026-09-27",
    "end": "2026-09-29",
@@ -514,13 +519,14 @@
   {
    "id": "T-09",
    "title": "Chip flow for intent, area, budget",
-   "role": "V3",
+   "role": "P1",
    "hours": 6,
-   "start": "2026-09-28",
-   "end": "2026-09-30",
+   "start": "2026-10-03",
+   "end": "2026-10-05",
    "deps": [
     "T-10",
-    "T-08"
+    "T-08",
+    "D-02"
    ],
    "done": [
     "Intent as four cards, area as the top six plus search, budget as bands",
@@ -530,14 +536,14 @@
    "read": [
     "docs/interface-shape.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": true,
    "issue": 26
   },
   {
    "id": "T-14",
    "title": "Match query API",
-   "role": "V4",
+   "role": "P3",
    "hours": 6,
    "start": "2026-09-28",
    "end": "2026-09-30",
@@ -561,7 +567,7 @@
   {
    "id": "T-04",
    "title": "Deploy web and API to Mumbai",
-   "role": "V1",
+   "role": "P1",
    "hours": 3,
    "start": "2026-09-29",
    "end": "2026-09-30",
@@ -583,13 +589,14 @@
   {
    "id": "T-16",
    "title": "Profile create and edit, with photos",
-   "role": "V5",
+   "role": "P4",
    "hours": 8,
-   "start": "2026-09-29",
-   "end": "2026-10-02",
+   "start": "2026-10-02",
+   "end": "2026-10-05",
    "deps": [
     "T-05",
-    "T-06"
+    "T-06",
+    "D-03"
    ],
    "done": [
     "Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers",
@@ -627,10 +634,10 @@
   {
    "id": "T-03",
    "title": "CI: typecheck, lint, build, secret scan",
-   "role": "V1",
+   "role": "P5",
    "hours": 2,
-   "start": "2026-09-30",
-   "end": "2026-10-01",
+   "start": "2026-09-26",
+   "end": "2026-09-26",
    "deps": [
     "T-02"
    ],
@@ -641,14 +648,14 @@
    "read": [
     "docs/source/decisions/0013-ci-gate-and-testing.md"
    ],
-   "cp": "CP2",
+   "cp": "CP1",
    "critical": false,
    "issue": 24
   },
   {
    "id": "T-13",
    "title": "Reply writer with scope rules",
-   "role": "V2",
+   "role": "P2",
    "hours": 4,
    "start": "2026-09-30",
    "end": "2026-10-01",
@@ -708,10 +715,10 @@
   {
    "id": "T-07",
    "title": "Error reporting wrapper and Sentry",
-   "role": "V1",
+   "role": "P1",
    "hours": 1,
-   "start": "2026-10-01",
-   "end": "2026-10-01",
+   "start": "2026-09-30",
+   "end": "2026-09-30",
    "deps": [
     "T-02"
    ],
@@ -730,10 +737,10 @@
   {
    "id": "T-17",
    "title": "Carry anonymous chat into the account on sign-in",
-   "role": "V3",
+   "role": "P5",
    "hours": 2,
-   "start": "2026-10-01",
-   "end": "2026-10-01",
+   "start": "2026-09-29",
+   "end": "2026-09-29",
    "deps": [
     "T-05",
     "T-06"
@@ -752,10 +759,10 @@
   {
    "id": "T-19",
    "title": "Report, block, suspend, and a saved moderation query",
-   "role": "V4",
+   "role": "P4",
    "hours": 5,
-   "start": "2026-10-01",
-   "end": "2026-10-03",
+   "start": "2026-09-28",
+   "end": "2026-09-30",
    "deps": [
     "T-06"
    ],
@@ -768,14 +775,14 @@
    "read": [
     "docs/scope-policy.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": false,
    "issue": 45
   },
   {
    "id": "T-33",
    "title": "Invite-only gate until launch",
-   "role": "V1",
+   "role": "P1",
    "hours": 1,
    "start": "2026-10-02",
    "end": "2026-10-02",
@@ -794,10 +801,10 @@
   {
    "id": "T-23a",
    "title": "Landing page ported from the prototype",
-   "role": "V3",
+   "role": "P4",
    "hours": 4,
-   "start": "2026-10-02",
-   "end": "2026-10-03",
+   "start": "2026-09-24",
+   "end": "2026-09-25",
    "deps": [],
    "done": [
     "Landing page in the V3 prototype's look",
@@ -807,17 +814,17 @@
    "read": [
     "docs/source/roomsie-prototype-V3.html"
    ],
-   "cp": "CP3",
+   "cp": "CP0",
    "critical": false,
    "issue": 39
   },
   {
    "id": "T-24",
    "title": "Event logging table",
-   "role": "V1",
+   "role": "P5",
    "hours": 2,
-   "start": "2026-10-02",
-   "end": "2026-10-03",
+   "start": "2026-09-28",
+   "end": "2026-09-28",
    "deps": [
     "T-06"
    ],
@@ -828,14 +835,14 @@
    "read": [
     "docs/source/decisions/0012-analytics-event-store.md"
    ],
-   "cp": "CP3",
+   "cp": "CP1",
    "critical": false,
    "issue": 37
   },
   {
    "id": "T-21",
    "title": "Five-turn cap, rate limits, spend ceiling",
-   "role": "V2",
+   "role": "P2",
    "hours": 5,
    "start": "2026-10-02",
    "end": "2026-10-04",
@@ -878,10 +885,10 @@
   {
    "id": "T-18a",
    "title": "Connect request and contact reveal API",
-   "role": "V5",
+   "role": "P5",
    "hours": 4,
-   "start": "2026-10-03",
-   "end": "2026-10-04",
+   "start": "2026-09-30",
+   "end": "2026-10-01",
    "deps": [
     "T-05",
     "T-06"
@@ -892,17 +899,17 @@
     "At most 10 new requests a day. No request to someone who blocked you"
    ],
    "read": [],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": true,
    "issue": 38
   },
   {
    "id": "T-20",
    "title": "Account deletion",
-   "role": "V4",
+   "role": "P4",
    "hours": 3,
-   "start": "2026-10-03",
-   "end": "2026-10-04",
+   "start": "2026-09-30",
+   "end": "2026-10-01",
    "deps": [
     "T-06"
    ],
@@ -914,17 +921,17 @@
    "read": [
     "docs/source/decisions/0012-analytics-event-store.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": false,
    "issue": 46
   },
   {
    "id": "T-23b",
    "title": "Privacy, terms and grievance pages",
-   "role": "V1",
+   "role": "P4",
    "hours": 2,
-   "start": "2026-10-03",
-   "end": "2026-10-04",
+   "start": "2026-09-26",
+   "end": "2026-09-26",
    "deps": [
     "T-02"
    ],
@@ -933,7 +940,7 @@
     "Linked from the footer and from the sign-in screen"
    ],
    "read": [],
-   "cp": "CP3",
+   "cp": "CP1",
    "critical": false,
    "issue": 40
   },
@@ -963,12 +970,13 @@
   {
    "id": "T-22",
    "title": "Launch areas and waitlist",
-   "role": "V3",
+   "role": "P4",
    "hours": 3,
-   "start": "2026-10-04",
-   "end": "2026-10-05",
+   "start": "2026-10-06",
+   "end": "2026-10-06",
    "deps": [
-    "T-14"
+    "T-14",
+    "D-04"
    ],
    "done": [
     "The three launch areas are named on the site",
@@ -978,17 +986,17 @@
    "read": [
     "docs/launch-plan.md"
    ],
-   "cp": "CP3",
+   "cp": "CP4",
    "critical": false,
    "issue": 47
   },
   {
    "id": "T-25",
    "title": "Uptime monitor and spend alerts",
-   "role": "V1",
+   "role": "P1",
    "hours": 2,
-   "start": "2026-10-04",
-   "end": "2026-10-05",
+   "start": "2026-10-01",
+   "end": "2026-10-01",
    "deps": [
     "T-04"
    ],
@@ -999,14 +1007,14 @@
    "read": [
     "docs/pre-login-limits.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": false,
    "issue": 43
   },
   {
    "id": "T-27",
    "title": "Run the eval set and tune the prompt",
-   "role": "V2",
+   "role": "P2",
    "hours": 3,
    "start": "2026-10-04",
    "end": "2026-10-05",
@@ -1047,10 +1055,10 @@
   {
    "id": "T-29",
    "title": "Abuse test: 100 fake sessions",
-   "role": "V1",
+   "role": "P1",
    "hours": 1,
-   "start": "2026-10-05",
-   "end": "2026-10-05",
+   "start": "2026-10-06",
+   "end": "2026-10-06",
    "deps": [
     "T-21"
    ],
@@ -1062,7 +1070,7 @@
    "read": [
     "docs/pre-login-limits.md"
    ],
-   "cp": "CP3",
+   "cp": "CP4",
    "critical": false,
    "issue": 51
   },
@@ -1151,19 +1159,19 @@
    "CP1",
    "Foundation",
    "2026-09-28",
-   "The monorepo, the schema, sign-in, CI and the model wrapper are merged. The chat screen and results panel are built. Article interviews are done. The seeding form is live."
+   "The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn."
   ],
   [
    "CP2",
    "Core loop live",
    "2026-10-01",
-   "Deployed in Mumbai. A visitor taps chips, types a sentence the assistant understands, and sees matching test profiles. The reply writer is merged. 100 seeding sign-ups. The eval sentences are written."
+   "Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, connect and contact reveal work. Designs are finished and screen work has started."
   ],
   [
    "CP3",
    "Feature freeze and go/no-go",
    "2026-10-05",
-   "Every feature is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 7 October or 9 October."
+   "Every screen is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 7 October or 9 October."
   ],
   [
    "CP4",
@@ -1179,11 +1187,11 @@
   ]
  ],
  "roles": {
-  "V1": "V1 · Platform",
-  "V2": "V2 · Assistant",
-  "V3": "V3 · Visitor journey",
-  "V4": "V4 · Matching and trust rules",
-  "V5": "V5 · People and connections",
+  "P1": "P1 · Platform",
+  "P2": "P2 · Assistant",
+  "P3": "P3 · Data and trust",
+  "P4": "P4 · Content and moderation",
+  "P5": "P5 · Accounts and connections",
   "D": "D · Design",
   "M1": "M1 · Content",
   "M2": "M2 · Community",

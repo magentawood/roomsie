@@ -2,7 +2,7 @@
 id: M-05
 title: "Drafts of articles 1 to 10"
 owner: "M1 Content"
-sequence: "3 of 4"
+sequence: "2 of 3"
 start: 2026-09-29
 end: 2026-10-05
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # M-05 · Drafts of articles 1 to 10
 
-**Owner:** [[M1 Content]], task 3 of 4  
+**Owner:** [[M1 Content]], task 2 of 3  
 **When:** Tue 29 Sep → Mon 5 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#31](https://github.com/magentawood/roomsie/issues/31)

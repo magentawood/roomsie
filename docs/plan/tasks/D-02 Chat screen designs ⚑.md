@@ -29,6 +29,8 @@ tags:
 - [[D-01 Styling decision]]
 
 ## Unblocks
+- [[T-10 Chat screen and split view ⚑]]
+- [[T-09 Chip flow ⚑]]
 - [[D-05 Design QA]]
 
 ## Done when

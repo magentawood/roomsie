@@ -2,7 +2,7 @@
 id: M-07
 title: "Draft launch posts"
 owner: "M1 Content"
-sequence: "4 of 4"
+sequence: "3 of 3"
 start: 2026-09-30
 end: 2026-10-03
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # M-07 · Draft launch posts
 
-**Owner:** [[M1 Content]], task 4 of 4  
+**Owner:** [[M1 Content]], task 3 of 3  
 **When:** Wed 30 Sep → Sat 3 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#35](https://github.com/magentawood/roomsie/issues/35)
