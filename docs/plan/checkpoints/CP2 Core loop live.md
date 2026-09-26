@@ -8,7 +8,7 @@ tags:
 
 **Date:** Thu 1 Oct
 
-Deployed in Mumbai. A visitor taps chips, types a sentence the assistant understands, and sees matching test profiles. The reply writer is merged. 100 seeding sign-ups. The eval sentences are written.
+Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, connect and contact reveal work. Designs are finished and screen work has started.
 
 **After:** [[CP1 Foundation]]  
 **Next:** [[CP3 Freeze and go-no-go]]
@@ -18,14 +18,15 @@ Part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[D-04 Landing and waitlist designs]] — Design
-- [[M-03 Eval sentences]] — M1 Content
-- [[T-12 Extraction ⚑]] — V2 Assistant
+- [[T-12 Extraction ⚑]] — P2 Assistant
+- [[T-17 Carry chat into account]] — P5 Accounts and connections
 - [[F-07 Privacy and terms draft]] — Founder
 - [[M-02 100 sign-ups]] — M2 Community
-- [[T-04 Deploy to Mumbai]] — V1 Platform
-- [[T-09 Chip flow ⚑]] — V3 Visitor journey
-- [[T-14 Match query ⚑]] — V4 Matching and trust
-- [[T-03 CI checks]] — V1 Platform
-- [[T-07 Error reporting]] — V1 Platform
-- [[T-13 Reply writer]] — V2 Assistant
-- [[T-17 Carry chat into account]] — V3 Visitor journey
+- [[T-04 Deploy to Mumbai]] — P1 Platform
+- [[T-07 Error reporting]] — P1 Platform
+- [[T-14 Match query ⚑]] — P3 Data and trust
+- [[T-19 Report and block]] — P4 Content and moderation
+- [[T-13 Reply writer]] — P2 Assistant
+- [[T-18a Connect API ⚑]] — P5 Accounts and connections
+- [[T-20 Account deletion]] — P4 Content and moderation
+- [[T-25 Uptime and spend alerts]] — P1 Platform

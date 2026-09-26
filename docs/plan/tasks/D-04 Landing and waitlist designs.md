@@ -25,7 +25,7 @@ tags:
 - [[D-01 Styling decision]]
 
 ## Unblocks
-- Nothing waits on this.
+- [[T-22 Launch areas and waitlist]]
 
 ## Done when
 - [ ] Landing page for all genders

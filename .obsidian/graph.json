@@ -15,35 +15,35 @@
       }
     },
     {
-      "query": "tag:#v1",
+      "query": "tag:#p1",
       "color": {
         "a": 1,
         "rgb": 9147550
       }
     },
     {
-      "query": "tag:#v2",
+      "query": "tag:#p2",
       "color": {
         "a": 1,
         "rgb": 9137407
       }
     },
     {
-      "query": "tag:#v3",
-      "color": {
-        "a": 1,
-        "rgb": 3900150
-      }
-    },
-    {
-      "query": "tag:#v4",
+      "query": "tag:#p3",
       "color": {
         "a": 1,
         "rgb": 3056719
       }
     },
     {
-      "query": "tag:#v5",
+      "query": "tag:#p4",
+      "color": {
+        "a": 1,
+        "rgb": 3900150
+      }
+    },
+    {
+      "query": "tag:#p5",
       "color": {
         "a": 1,
         "rgb": 1357990

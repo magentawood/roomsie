@@ -12,6 +12,5 @@ Part of [[roomsie launch]].
 ## Sequence
 
 1. [[M-04 Article interviews]] — Thu 24 Sep → Mon 28 Sep
-2. [[M-03 Eval sentences]] — Sat 26 Sep → Tue 29 Sep
-3. [[M-05 Article drafts]] — Tue 29 Sep → Mon 5 Oct
-4. [[M-07 Launch posts]] — Wed 30 Sep → Sat 3 Oct
+2. [[M-05 Article drafts]] — Tue 29 Sep → Mon 5 Oct
+3. [[M-07 Launch posts]] — Wed 30 Sep → Sat 3 Oct

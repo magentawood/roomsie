@@ -18,11 +18,11 @@ Target **Wed 7 Oct 2026**, fallback Fri 9 Oct. 55 tasks.
 
 | Colour | Owner |
 |---|---|
-| <span style="color:#8B949E">●</span> | [[V1 Platform]] |
-| <span style="color:#8B6CFF">●</span> | [[V2 Assistant]] |
-| <span style="color:#3B82F6">●</span> | [[V3 Visitor journey]] |
-| <span style="color:#2EA44F">●</span> | [[V4 Matching and trust]] |
-| <span style="color:#14B8A6">●</span> | [[V5 People and connections]] |
+| <span style="color:#8B949E">●</span> | [[P1 Platform]] |
+| <span style="color:#8B6CFF">●</span> | [[P2 Assistant]] |
+| <span style="color:#2EA44F">●</span> | [[P3 Data and trust]] |
+| <span style="color:#3B82F6">●</span> | [[P4 Content and moderation]] |
+| <span style="color:#14B8A6">●</span> | [[P5 Accounts and connections]] |
 | <span style="color:#FF87AC">●</span> | [[Design]] |
 | <span style="color:#E3B341">●</span> | [[M1 Content]] |
 | <span style="color:#F9A03F">●</span> | [[M2 Community]] |

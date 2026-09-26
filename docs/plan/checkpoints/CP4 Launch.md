@@ -20,4 +20,6 @@ Part of [[roomsie launch]].
 - [[A-01 Bug fix day]] — Everyone
 - [[D-06 Launch visuals]] — Design
 - [[M-06 Beta invites ⚑]] — M2 Community
+- [[T-22 Launch areas and waitlist]] — P4 Content and moderation
+- [[T-29 Abuse test]] — P1 Platform
 - [[A-02 Launch day]] — Everyone

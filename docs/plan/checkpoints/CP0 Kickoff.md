@@ -21,9 +21,10 @@ Part of [[roomsie launch]].
 - [[F-02 Domain]] — Founder
 - [[F-03 Billing and caps]] — Founder
 - [[F-04 Accounts in Mumbai]] — Founder
-- [[T-08 Form A contract ⚑]] — V2 Assistant
+- [[T-08 Form A contract ⚑]] — P2 Assistant
 - [[D-02 Chat screen designs ⚑]] — Design
 - [[F-05 Seeding consent text ⚑]] — Founder
 - [[F-06 Launch areas picked]] — Founder
-- [[T-02 Scaffold monorepo ⚑]] — V1 Platform
-- [[T-18b Person and connect screens ⚑]] — V5 People and connections
+- [[M-03 Eval sentences]] — P5 Accounts and connections
+- [[T-02 Scaffold monorepo ⚑]] — P1 Platform
+- [[T-23a Landing page]] — P4 Content and moderation
