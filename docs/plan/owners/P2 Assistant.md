@@ -7,9 +7,9 @@ tags:
 
 # P2 Assistant
 
-_What the assistant understands and says._
+_What the assistant understands and says, and the router in front of it._
 
-**24 hours** of build work, 0 spare, finishing Mon 5 Oct.
+**30 hours** of build work, 4 spare, finishing Thu 8 Oct.
 
 Part of [[roomsie launch]].
 
@@ -19,5 +19,6 @@ Part of [[roomsie launch]].
 2. [[T-11 Model wrapper ⚑]] — Fri 25 Sep → Sat 26 Sep, 4h
 3. [[T-12 Extraction ⚑]] — Sun 27 Sep → Tue 29 Sep, 6h
 4. [[T-13 Reply writer]] — Wed 30 Sep → Thu 1 Oct, 4h
-5. [[T-21 Turn cap and spend ceiling]] — Fri 2 Oct → Sun 4 Oct, 5h
-6. [[T-27 Eval run]] — Sun 4 Oct → Mon 5 Oct, 3h
+5. [[T-34 Router ⚑]] — Fri 2 Oct → Sun 4 Oct, 6h
+6. [[T-21 Turn cap and spend ceiling]] — Mon 5 Oct → Wed 7 Oct, 5h
+7. [[T-27 Eval run]] — Wed 7 Oct → Thu 8 Oct, 3h

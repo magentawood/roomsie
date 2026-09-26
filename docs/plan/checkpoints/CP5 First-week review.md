@@ -6,7 +6,7 @@ tags:
 
 # CP5 · First-week review
 
-**Date:** Wed 14 Oct
+**Date:** Mon 19 Oct
 
 Look at the numbers and the bug list, and set the order of v1.
 

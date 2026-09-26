@@ -25,7 +25,7 @@ font:.88em ui-monospace,SFMono-Regular,Menlo,monospace}
 a{color:#58a6ff}
 </style>
 <main><h1>For the designer — decisions we are about to lock</h1>
-<p><strong>Date:</strong> 2026-09-25 · <strong>Updated:</strong> 2026-09-26 · <strong>For:</strong> whoever owns design · <strong>From:</strong> engineering</p>
+<p><strong>Date:</strong> 2026-09-25 · <strong>Updated:</strong> 2026-09-26, launch now Mon 12 Oct · <strong>For:</strong> whoever owns design · <strong>From:</strong> engineering</p>
 <hr />
 <h2>Why you are reading this</h2>
 <p>We are building for a fortnight before your designs arrive. Roughly 80 of the
@@ -72,7 +72,7 @@ the table below is sorted that way.</p>
 </tr>
 <tr>
 <td>🔴 <strong>Structural</strong></td>
-<td>Other work is stacked on top. Changing it after its date means dropping something else to keep 7 October.</td>
+<td>Other work is stacked on top. Changing it after its date means dropping something else to keep 12 October.</td>
 </tr>
 </tbody>
 </table>
@@ -141,7 +141,7 @@ just a flat, just a flatmate, or I'm renting out a flat. 🔴</p>
 says v0 is flatmate matching only, with no property listings. Two of the four
 cards — <em>just a flat</em> and <em>I'm renting out a flat</em> — are about property. Either
 they are hidden for launch, or they lead somewhere that does not exist yet.
-<strong>Tell us which cards ship on 7 October.</strong></p>
+<strong>Tell us which cards ship on 12 October.</strong></p>
 </blockquote>
 <p><strong>1.3 — The first three turns are chips, not typing.</strong> Intent, area and budget
 are closed questions, so we show tappable options. 🟡</p>
@@ -175,14 +175,24 @@ should rank preferences instead, or weight them on a scale, say so now.</p>
 <blockquote>
 <p>Four is a guess. Six is free to change today, and a day of work in October.</p>
 </blockquote>
-<p><strong>2.4 — We store anonymous sessions</strong>, so someone can chat before signing up
-and keep that conversation when they do. 🟡</p>
+<p><strong>2.4 — We store anonymous sessions and what people type</strong>, so someone can chat
+before signing up and keep that conversation when they do. The typed messages
+are kept, and deleted with the account. Should the chat say so up front? 🟡</p>
 <p><strong>2.5 — Reports, blocks and a waitlist are first-class</strong>, not bolted on. 🟢</p>
+<p><strong>2.6 — The assistant keeps notes about each person.</strong> The observer turns what
+people say into notes, like "partner stays over most nights", and every note
+carries the person's exact words. <strong>Can people see and correct these notes, and
+where?</strong> On the profile, in the chat, or nowhere at launch? This shapes the
+profile screens (D-03), so it's needed by Wed 30 Sep. 🔴</p>
 <hr />
 <h1>§3 · How the assistant behaves — 🟡 by Tue 29 Sep</h1>
-<p><strong>3.1 — It answers housing-adjacent questions rather than refusing.</strong> Ask it
-what semi-furnished usually includes, or what a deposit normally runs to, and
-it answers with a plain hedge rather than "I can only help with flats." 🟡</p>
+<p><strong>3.1 — It answers housing questions rather than refusing.</strong> Ask it what
+semi-furnished usually includes, or what a deposit normally runs to. It answers
+from roomsie's own articles first, naming the article. If they don't cover it,
+a signed-in person gets an answer from a web search, and a visitor gets a plain
+hedged answer. Law, tax, area safety and claims about a person are never
+answered from the web: articles only, or handed off. Should a web-searched
+answer look different from one of ours? 🟡</p>
 <p><strong>3.2 — Five typed turns before we ask you to sign in.</strong> Chip taps are free and
 don't count. 🟡</p>
 <p><strong>3.3 — The sign-in wall never appears before results have.</strong> You always see
@@ -194,6 +204,8 @@ down. 🟢</p>
 <p><strong>3.6 — Manual filter edits are silent in the chat.</strong> If you tap a filter, the
 assistant doesn't narrate it — otherwise the conversation becomes a log of
 taps. It speaks only when your tap contradicts something you said earlier. 🟡</p>
+<p><strong>3.7 — Off-topic messages get one scripted line.</strong> "Write my essay" gets a
+polite fixed reply, costs no model call and is logged. The wording is yours. 🟢</p>
 <hr />
 <h1>§4 · How results appear and update — 🟡 by Wed 30 Sep</h1>
 <p>Launch builds 4.1 to 4.4. The rest were cut to v1 in <code>docs/launch-plan.md</code>, so
@@ -272,7 +284,7 @@ four hours of work we could spend elsewhere. 🟡</p>
 <p><strong>6.3 — Launch uses the V3 prototype's look, not Untitled UI.</strong> ADR 0011 says
 to build on the Untitled UI token pipeline, but that pipeline is blocked and
 the prototype's palette doesn't match it. The launch plan proposes porting the
-prototype's styling for 7 October and rebuilding on the pipeline in v1. <strong>This
+prototype's styling for 12 October and rebuilding on the pipeline in v1. <strong>This
 needs your sign-off, and it is D-01, due on day one.</strong> 🔴</p>
 <hr />
 <h2>What you never have to ask us about</h2>

@@ -1,6 +1,6 @@
 # For the designer — decisions we are about to lock
 
-**Date:** 2026-09-25 · **Updated:** 2026-09-26 · **For:** whoever owns design · **From:** engineering
+**Date:** 2026-09-25 · **Updated:** 2026-09-26, launch now Mon 12 Oct · **For:** whoever owns design · **From:** engineering
 
 ---
 
@@ -46,7 +46,7 @@ the table below is sorted that way.
 |---|---|
 | 🟢 **Free** | Change whenever. Nothing is built on it. Styling, colour, copy, spacing, icons, card layout, imagery — all free, always. |
 | 🟡 **Costly** | Roughly a day or two of rework if you change it after its build date. Annoying, survivable. |
-| 🔴 **Structural** | Other work is stacked on top. Changing it after its date means dropping something else to keep 7 October. |
+| 🔴 **Structural** | Other work is stacked on top. Changing it after its date means dropping something else to keep 12 October. |
 
 ---
 
@@ -86,7 +86,7 @@ just a flat, just a flatmate, or I'm renting out a flat. 🔴
 > says v0 is flatmate matching only, with no property listings. Two of the four
 > cards — *just a flat* and *I'm renting out a flat* — are about property. Either
 > they are hidden for launch, or they lead somewhere that does not exist yet.
-> **Tell us which cards ship on 7 October.**
+> **Tell us which cards ship on 12 October.**
 
 **1.3 — The first three turns are chips, not typing.** Intent, area and budget
 are closed questions, so we show tappable options. 🟡
@@ -130,18 +130,29 @@ dealbreaker filters people out; a preference only affects ranking. 🔴
 
 > Four is a guess. Six is free to change today, and a day of work in October.
 
-**2.4 — We store anonymous sessions**, so someone can chat before signing up
-and keep that conversation when they do. 🟡
+**2.4 — We store anonymous sessions and what people type**, so someone can chat
+before signing up and keep that conversation when they do. The typed messages
+are kept, and deleted with the account. Should the chat say so up front? 🟡
 
 **2.5 — Reports, blocks and a waitlist are first-class**, not bolted on. 🟢
+
+**2.6 — The assistant keeps notes about each person.** The observer turns what
+people say into notes, like "partner stays over most nights", and every note
+carries the person's exact words. **Can people see and correct these notes, and
+where?** On the profile, in the chat, or nowhere at launch? This shapes the
+profile screens (D-03), so it's needed by Wed 30 Sep. 🔴
 
 ---
 
 # §3 · How the assistant behaves — 🟡 by Tue 29 Sep
 
-**3.1 — It answers housing-adjacent questions rather than refusing.** Ask it
-what semi-furnished usually includes, or what a deposit normally runs to, and
-it answers with a plain hedge rather than "I can only help with flats." 🟡
+**3.1 — It answers housing questions rather than refusing.** Ask it what
+semi-furnished usually includes, or what a deposit normally runs to. It answers
+from roomsie's own articles first, naming the article. If they don't cover it,
+a signed-in person gets an answer from a web search, and a visitor gets a plain
+hedged answer. Law, tax, area safety and claims about a person are never
+answered from the web: articles only, or handed off. Should a web-searched
+answer look different from one of ours? 🟡
 
 **3.2 — Five typed turns before we ask you to sign in.** Chip taps are free and
 don't count. 🟡
@@ -158,6 +169,9 @@ down. 🟢
 **3.6 — Manual filter edits are silent in the chat.** If you tap a filter, the
 assistant doesn't narrate it — otherwise the conversation becomes a log of
 taps. It speaks only when your tap contradicts something you said earlier. 🟡
+
+**3.7 — Off-topic messages get one scripted line.** "Write my essay" gets a
+polite fixed reply, costs no model call and is logged. The wording is yours. 🟢
 
 ---
 
@@ -239,7 +253,7 @@ four hours of work we could spend elsewhere. 🟡
 **6.3 — Launch uses the V3 prototype's look, not Untitled UI.** ADR 0011 says
 to build on the Untitled UI token pipeline, but that pipeline is blocked and
 the prototype's palette doesn't match it. The launch plan proposes porting the
-prototype's styling for 7 October and rebuilding on the pipeline in v1. **This
+prototype's styling for 12 October and rebuilding on the pipeline in v1. **This
 needs your sign-off, and it is D-01, due on day one.** 🔴
 
 ---

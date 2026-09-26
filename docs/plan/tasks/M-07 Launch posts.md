@@ -29,4 +29,4 @@ tags:
 
 ## Done when
 - [ ] Launch posts, the founder story, a list of groups and channels
-- [ ] Scheduled on Tuesday 6 October
+- [ ] Scheduled on Sunday 11 October

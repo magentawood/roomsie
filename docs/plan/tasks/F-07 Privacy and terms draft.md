@@ -30,3 +30,7 @@ tags:
 ## Done when
 - [ ] Says what is collected, why, for how long, how to delete, and who to contact
 - [ ] A named grievance contact
+- [ ] Says that chat messages are stored, and that deleting the account deletes them
+
+## Read first
+- [extensibility.md](../../extensibility.md)

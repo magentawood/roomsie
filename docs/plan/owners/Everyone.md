@@ -11,5 +11,5 @@ Part of [[roomsie launch]].
 
 ## Sequence
 
-1. [[A-01 Bug fix day]] — Tue 6 Oct
-2. [[A-02 Launch day]] — Wed 7 Oct
+1. [[A-01 Bug fix day]] — Sun 11 Oct
+2. [[A-02 Launch day]] — Mon 12 Oct

@@ -3,8 +3,8 @@ id: A-01
 title: "Bug fix day"
 owner: "Everyone"
 sequence: "1 of 2"
-start: 2026-10-06
-end: 2026-10-06
+start: 2026-10-11
+end: 2026-10-11
 checkpoint: CP4
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/53
@@ -17,7 +17,7 @@ tags:
 # A-01 · Bug fix day
 
 **Owner:** [[Everyone]], task 1 of 2  
-**When:** Tue 6 Oct  
+**When:** Sun 11 Oct  
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#53](https://github.com/magentawood/roomsie/issues/53)
 

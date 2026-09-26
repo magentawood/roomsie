@@ -7,9 +7,9 @@ tags:
 
 # P3 Data and trust
 
-_The data and the matching, then the screens that show them._
+_The data and the matching, then the screens that show them and the advisor._
 
-**24 hours** of build work, 0 spare, finishing Mon 5 Oct.
+**34 hours** of build work, 0 spare, finishing Sat 10 Oct.
 
 Part of [[roomsie launch]].
 
@@ -17,5 +17,7 @@ Part of [[roomsie launch]].
 
 1. [[T-06 Database schema ⚑]] — Thu 24 Sep → Sun 27 Sep, 8h
 2. [[T-14 Match query ⚑]] — Mon 28 Sep → Wed 30 Sep, 6h
-3. [[T-15 Results panel ⚑]] — Thu 1 Oct → Sat 3 Oct, 6h
-4. [[T-18b Person and connect screens ⚑]] — Sun 4 Oct → Mon 5 Oct, 4h
+3. [[T-37 Articles and search]] — Thu 1 Oct → Fri 2 Oct, 3h
+4. [[T-15 Results panel ⚑]] — Fri 2 Oct → Mon 5 Oct, 6h
+5. [[T-18b Person and connect screens ⚑]] — Mon 5 Oct → Wed 7 Oct, 4h
+6. [[T-38 Advisor]] — Wed 7 Oct → Sat 10 Oct, 7h

@@ -2,7 +2,7 @@
 id: T-10
 title: "Chat screen and split view"
 owner: "P5 Accounts and connections"
-sequence: "6 of 6"
+sequence: "6 of 7"
 hours: 8
 start: 2026-10-02
 end: 2026-10-05
@@ -18,7 +18,7 @@ tags:
 
 # T-10 · Chat screen and split view
 
-**Owner:** [[P5 Accounts and connections]], task 6 of 6  
+**Owner:** [[P5 Accounts and connections]], task 6 of 7  
 **When:** Fri 2 Oct → Mon 5 Oct · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#12](https://github.com/magentawood/roomsie/issues/12)

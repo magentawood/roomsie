@@ -2,7 +2,7 @@
 id: T-14
 title: "Match query API"
 owner: "P3 Data and trust"
-sequence: "2 of 4"
+sequence: "2 of 6"
 hours: 6
 start: 2026-09-28
 end: 2026-09-30
@@ -18,7 +18,7 @@ tags:
 
 # T-14 · Match query API
 
-**Owner:** [[P3 Data and trust]], task 2 of 4  
+**Owner:** [[P3 Data and trust]], task 2 of 6  
 **When:** Mon 28 Sep → Wed 30 Sep · 6 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#27](https://github.com/magentawood/roomsie/issues/27)

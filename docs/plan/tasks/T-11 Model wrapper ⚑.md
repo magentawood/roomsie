@@ -2,7 +2,7 @@
 id: T-11
 title: "Model wrapper: DeepSeek with Gemini fallback"
 owner: "P2 Assistant"
-sequence: "2 of 6"
+sequence: "2 of 7"
 hours: 4
 start: 2026-09-25
 end: 2026-09-26
@@ -18,7 +18,7 @@ tags:
 
 # T-11 · Model wrapper: DeepSeek with Gemini fallback
 
-**Owner:** [[P2 Assistant]], task 2 of 6  
+**Owner:** [[P2 Assistant]], task 2 of 7  
 **When:** Fri 25 Sep → Sat 26 Sep · 4 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#15](https://github.com/magentawood/roomsie/issues/15)
@@ -32,6 +32,7 @@ tags:
 ## Unblocks
 - [[T-12 Extraction ⚑]]
 - [[T-13 Reply writer]]
+- [[T-38 Advisor]]
 
 ## Done when
 - [ ] One module is the only way the app calls a model

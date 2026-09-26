@@ -20,4 +20,4 @@ Part of [[roomsie launch]].
 7. [[F-07 Privacy and terms draft]] — Fri 25 Sep → Wed 30 Sep
 8. [[F-09 ADR exceptions]] — Sat 26 Sep → Sun 27 Sep
 9. [[F-08 Moderator named]] — Wed 30 Sep → Fri 2 Oct
-10. [[F-10 Go-no-go meeting]] — Mon 5 Oct
+10. [[F-10 Go-no-go meeting]] — Sat 10 Oct

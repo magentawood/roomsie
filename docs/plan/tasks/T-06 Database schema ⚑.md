@@ -2,7 +2,7 @@
 id: T-06
 title: "Database schema v1"
 owner: "P3 Data and trust"
-sequence: "1 of 4"
+sequence: "1 of 6"
 hours: 8
 start: 2026-09-24
 end: 2026-09-27
@@ -18,7 +18,7 @@ tags:
 
 # T-06 · Database schema v1
 
-**Owner:** [[P3 Data and trust]], task 1 of 4  
+**Owner:** [[P3 Data and trust]], task 1 of 6  
 **When:** Thu 24 Sep → Sun 27 Sep · 8 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#11](https://github.com/magentawood/roomsie/issues/11)
@@ -37,13 +37,18 @@ tags:
 - [[T-24 Event logging]]
 - [[T-18a Connect API ⚑]]
 - [[T-20 Account deletion]]
+- [[T-35 Form B contract]]
+- [[T-37 Articles and search]]
 
 ## Done when
 - [ ] Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
 - [ ] Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility
 - [ ] UUIDv7 ids with no database default. `created_at` from the server clock
+- [ ] Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id`
+- [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
 
 ## Read first
 - [0015-primary-key-strategy.md](../../source/decisions/0015-primary-key-strategy.md)
 - [0006-drizzle.md](../../source/decisions/0006-drizzle.md)
 - [agent-architecture.md](../../agent-architecture.md)
+- [extensibility.md](../../extensibility.md)

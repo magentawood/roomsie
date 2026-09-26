@@ -2,7 +2,7 @@
 id: T-17
 title: "Carry anonymous chat into the account on sign-in"
 owner: "P5 Accounts and connections"
-sequence: "4 of 6"
+sequence: "4 of 7"
 hours: 2
 start: 2026-09-29
 end: 2026-09-29
@@ -17,7 +17,7 @@ tags:
 
 # T-17 · Carry anonymous chat into the account on sign-in
 
-**Owner:** [[P5 Accounts and connections]], task 4 of 6  
+**Owner:** [[P5 Accounts and connections]], task 4 of 7  
 **When:** Tue 29 Sep · 2 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#32](https://github.com/magentawood/roomsie/issues/32)
@@ -32,6 +32,8 @@ tags:
 ## Done when
 - [ ] What a visitor told the assistant before signing in is attached to their account when they sign in
 - [ ] Nothing is lost and nothing is asked twice
+- [ ] The stored chat turns move to the account with the session
 
 ## Read first
 - [seo-with-gated-products.md](../../seo-with-gated-products.md)
+- [extensibility.md](../../extensibility.md)

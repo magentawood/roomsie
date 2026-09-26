@@ -7,9 +7,9 @@ tags:
 
 # P1 Platform
 
-_The ground everyone builds on, then the chips._
+_The ground everyone builds on, then profiles, the waitlist and backups._
 
-**24 hours** of build work, 0 spare, finishing Tue 6 Oct.
+**34 hours** of build work, 0 spare, finishing Sat 10 Oct.
 
 Part of [[roomsie launch]].
 
@@ -21,5 +21,8 @@ Part of [[roomsie launch]].
 4. [[T-07 Error reporting]] — Wed 30 Sep, 1h
 5. [[T-25 Uptime and spend alerts]] — Thu 1 Oct, 2h
 6. [[T-33 Invite-only gate]] — Fri 2 Oct, 1h
-7. [[T-09 Chip flow ⚑]] — Sat 3 Oct → Mon 5 Oct, 6h
-8. [[T-29 Abuse test]] — Tue 6 Oct, 1h
+7. [[T-39 Analytics database]] — Fri 2 Oct → Sat 3 Oct, 3h
+8. [[T-40 Nightly backups]] — Sun 4 Oct, 2h
+9. [[T-16 Profiles and photos ⚑]] — Mon 5 Oct → Thu 8 Oct, 8h
+10. [[T-22 Launch areas and waitlist]] — Fri 9 Oct → Sat 10 Oct, 3h
+11. [[T-29 Abuse test]] — Sat 10 Oct, 1h
