@@ -1,0 +1,288 @@
+<!doctype html><html lang="en"><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>roomsie — build journal</title><style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--fg:#e6edf3;--dim:#9198a1;--accent:#a371f7}
+*{box-sizing:border-box}
+body{margin:0;padding:48px 24px 96px;background:var(--bg);color:var(--fg);
+font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+main{max-width:820px;margin:0 auto}
+h1{font-size:1.9rem;margin:2em 0 .5em;padding-bottom:.3em;border-bottom:2px solid var(--accent)}
+h1:first-child{margin-top:0;border-bottom-color:var(--line)}
+h2{font-size:1.3rem;margin:2em 0 .6em;color:var(--accent)}
+h3{font-size:1.05rem;margin:1.6em 0 .5em}
+p{margin:.9em 0}
+hr{border:0;border-top:1px solid var(--line);margin:2.6em 0}
+table{width:100%;border-collapse:collapse;margin:1.2em 0;font-size:.92rem}
+th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:var(--panel);font-weight:600}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+pre{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto}
+pre code{background:none;border:0;padding:0}
+code{background:var(--panel);border:1px solid var(--line);border-radius:5px;padding:.12em .4em;
+font:.88em ui-monospace,SFMono-Regular,Menlo,monospace}
+ol,ul{padding-left:1.4em}li{margin:.5em 0}
+strong{color:#fff;font-weight:600}
+a{color:#58a6ff}
+</style>
+<main><h1>Build journal</h1>
+<p>A running record of building roomsie, written so it makes sense with no prior
+context. Every entry says what was built, why it was built that way, and
+explains the ideas as they come up.</p>
+<p>Newest entry at the bottom. Append, never rewrite.</p>
+<hr />
+<h2>Before anything: what are we building?</h2>
+<p><strong>roomsie</strong> finds you a flat or a flatmate in Mumbai. The difference from every
+other rental site is the front door: instead of a search box and filters, an
+assistant interviews you. It works out what you actually need, then shows
+matches. Browsing exists, but downstream of the conversation.</p>
+<p>It handles four intents: someone with a flat looking for flatmates, someone
+wanting a whole flat, someone wanting a room in an occupied flat, and people
+open to either.</p>
+<p>The product is a <strong>pivot</strong>. The previous one, <em>femmeflats</em>, was a women-only
+swipe app. roomsie is open to all genders, launching in three Mumbai areas.
+The femmeflats requirements are dead; its <strong>technical</strong> decisions carried over
+unchanged — fifteen accepted ADRs.</p>
+<h3>Words you will meet constantly</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>What it means here</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ADR</strong></td>
+<td>Architecture Decision Record. A short document saying "we chose X over Y, and here is why." Numbered, dated, and binding. <code>docs/source/decisions/</code> holds fifteen.</td>
+</tr>
+<tr>
+<td><strong>Monorepo</strong></td>
+<td>One repository holding the website, the server and the shared code, instead of three separate ones. Everyone commits to the same place.</td>
+</tr>
+<tr>
+<td><strong>Schema</strong></td>
+<td>The shape of the database: what tables exist, what columns they have, what type each column is.</td>
+</tr>
+<tr>
+<td><strong>Migration</strong></td>
+<td>A file of SQL that changes the schema. Run in order, never edited once shipped, so every machine ends up with the same database.</td>
+</tr>
+<tr>
+<td><strong>Drizzle</strong></td>
+<td>The tool we use to describe the schema in TypeScript and generate those SQL migrations from it.</td>
+</tr>
+<tr>
+<td><strong>Form A</strong></td>
+<td>The structured list of things the assistant tries to learn from you — intent, budget, areas, move date, and nine lifestyle answers. The assistant fills it as you talk.</td>
+</tr>
+<tr>
+<td><strong>T-06, T-14…</strong></td>
+<td>Task codes. Each is a GitHub issue. <code>docs/how-to-work.md</code> indexes all 55 in plain words.</td>
+</tr>
+<tr>
+<td><strong>P1–P5</strong></td>
+<td>The five people's work lanes. This journal is written from <strong>P3 · Data and trust</strong> — the schema, the matching, and who sees whom.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1>Entry 1 — T-06, the database schema</h1>
+<p><strong>Issue <a href="https://github.com/magentawood/roomsie/issues/11">#11</a> · 8 hours · critical path</strong></p>
+<p>This is the most depended-on task in the project. Seven other tasks across four
+people cannot start until it lands: the match query, profiles, carrying a chat
+into an account, reporting and blocking, account deletion, event logging and
+the connect API. So it is first, and it needs to be right rather than fast.</p>
+<h2>What a schema actually is</h2>
+<p>A database stores rows in tables, like spreadsheets that know about each other.
+The schema is the definition: which tables, which columns, which types, and
+which rules.</p>
+<p>It matters more than most code because <strong>it is the hardest thing to change
+later.</strong> You can rewrite a screen in an afternoon. Changing a column after real
+people's data is in it means a migration, a backfill, and something to do with
+every row that does not fit the new shape.</p>
+<p>So the job is to think hard once, and to leave room where you are unsure.</p>
+<h2>Decision 1 — <code>users</code> is thin</h2>
+<p>Two ways to store a person:</p>
+<ul>
+<li><strong>Fat:</strong> one <code>users</code> table holding everything — name, age, photos, budget, preferences.</li>
+<li><strong>Thin:</strong> <code>users</code> holds only identity and account state. Everything else lives in <code>profiles</code>, linked one-to-one.</li>
+</ul>
+<p>We went thin. Three reasons:</p>
+<ol>
+<li><strong>Every single request reads the user row</strong> to check who you are. That should touch a tiny row, not one carrying four photo keys and twenty preferences.</li>
+<li><strong>Editing your profile never touches your auth row.</strong> Different things change at different rates and for different reasons.</li>
+<li><strong>Deletion gets simpler.</strong> Account deletion (T-20) can drop the profile while keeping the minimal record needed to stop a suspended person signing straight back up.</li>
+</ol>
+<p>Cost: one extra join when you need both. Worth it.</p>
+<h2>Decision 2 — UUIDv7 ids, minted in code</h2>
+<p>Every table's id is a <code>uuid</code>, not a counting number. This was already decided
+in <strong>ADR 0015</strong> and I followed it. The reasoning is worth understanding:</p>
+<p><strong>Why not <code>1, 2, 3</code>?</strong> Because <code>/users/1024</code> tells you <code>1023</code> and <code>1025</code> exist.
+On a product where people's homes and photos are involved, that turns any
+id-taking endpoint into a walkable list of every user. Authorization should
+stop it — but you do not publish the map.</p>
+<p><strong>Why v7 rather than v4?</strong> A random UUIDv4 lands in a different place in the
+index on every insert, which gets slow once the index outgrows memory. UUIDv7
+puts a millisecond timestamp in its leading bits, so new ids sort to the end.
+You get v4's unguessability with sequential-insert performance.</p>
+<p><strong>Why not let the database generate it?</strong> Because then the id only exists
+<em>after</em> the insert commits, so the phone can never know it in advance. Minting
+it in app code means the client can render immediately, and a retried request
+is naturally safe — the same id arrives twice and the second is ignored.</p>
+<pre><code class="language-ts">const id = () =&gt; uuid('id').primaryKey().$defaultFn(() =&gt; uuidv7())
+</code></pre>
+<p><code>$defaultFn</code> means "run this function in TypeScript when inserting," as opposed
+to <code>.default()</code> which would put it in the database.</p>
+<h2>Decision 3 — the axis catalogue</h2>
+<p>Here is where I hit a wall, and the interesting part of this entry.</p>
+<p>Every planning document refers to <strong>"the nine lifestyle axes."</strong> Six documents
+mention them. <strong>None of them says what the nine are.</strong></p>
+<p>Two bad options:</p>
+<ul>
+<li><strong>Guess, and hardcode nine columns.</strong> If the guess is wrong — and it will be — every correction is a migration plus a contract change plus a re-tuned AI prompt plus a new filter branch. Five files across three people's lanes, after real data exists.</li>
+<li><strong>Wait.</strong> Blocks seven tasks and four people.</li>
+</ul>
+<p>So, a third option: <strong>make the axes data instead of schema.</strong></p>
+<p>There are two tables. <code>lifestyle_axes</code> defines what the axes <em>are</em> — key,
+question, allowed answers, order. <code>profile_lifestyle</code> holds one row per person
+per axis they have answered.</p>
+<p>Adding a tenth axis is now an edit to a seed file and a re-seed. No migration,
+no backfill, no deploy. Renaming one, dropping one, changing its allowed
+answers — all the same.</p>
+<h3>The idea behind it</h3>
+<p>This is a known trade. Columns are fast and rigid; rows are flexible and
+slower. You reach for rows when <strong>you do not yet know what the columns should
+be</strong>, which is exactly our situation.</p>
+<p>The cost: matching becomes a join and an aggregate rather than comparing
+columns. At launch scale — a hundred seeded profiles in three areas — that is
+nothing. It would matter at a scale we will not see this year, and by then we
+would know the nine and could collapse them into columns deliberately.</p>
+<h3>The catch, which is real</h3>
+<p>The flexibility only survives if three things hold:</p>
+<ol>
+<li><code>packages/contract</code> <strong>generates</strong> Form A from the catalogue rather than hardcoding nine fields</li>
+<li>the match query (T-14, mine) <strong>joins through</strong> the catalogue, never <code>WHERE smoking = 'never'</code></li>
+<li>the extraction prompt (T-12) is <strong>built from</strong> the catalogue, not typed out</li>
+</ol>
+<p>Break any one and that part goes rigid again while the rest pretends to be
+flexible — which is worse than being rigid honestly. One and three are P2's
+lane, so this is a shared contract between us, like Form A itself.</p>
+<h3>The nine provisional names</h3>
+<p>I named them so work could start. They are in <code>seed-axes.ts</code> with a warning
+comment on top:</p>
+<p><code>smoking</code> · <code>drinking</code> · <code>diet</code> · <code>sleep_schedule</code> · <code>guests</code> ·
+<code>cleanliness</code> · <code>work_from_home</code> · <code>pets</code> · <code>community</code></p>
+<p>Some are grounded rather than invented. <code>smoking</code> appears by name in
+<code>ai-agent-design.md</code>. <code>guests</code> appears as the example key <code>guest_frequency</code>,
+with the worked example <em>"my ex basically lived there, that's what killed it."</em>
+<code>diet</code> carries jain and eggetarian because the market is Mumbai.</p>
+<p><code>community</code> needs naming out loud: decision <strong>D3c</strong> (2026-09-20) explicitly
+chose to record and filter on community and religion, and <code>ai-agent-design.md</code>
+§4.1 documents the press exposure that carries at length. It is in because that
+decision says so. It is one line to remove if that is revisited.</p>
+<h2>Decision 4 — <code>prefer</code> vs <code>dealbreaker</code></h2>
+<p>Each answer carries a weight. A <strong>dealbreaker</strong> filters people out of your
+results entirely. A <strong>preference</strong> only moves them down the ranking.</p>
+<p>This is a product decision wearing a database costume, and it is still
+unconfirmed — it is §2.2 of <code>docs/design-review.md</code>, waiting on the designer.
+If they decide preferences should be a 1–5 scale instead of two states, that
+<em>is</em> a migration. Flagged, not hidden.</p>
+<h2>Decision 5 — where "we don't know" lives</h2>
+<p>Form A says every field can be <code>unclear</code>, because the assistant is allowed not
+to know. That shows up in two different ways:</p>
+<ul>
+<li><strong>Enums carry an <code>unclear</code> value.</strong> <code>intent</code> can be <code>has_flat</code>, <code>wants_flat</code>, <code>wants_room</code>, <code>open</code> or <code>unclear</code>.</li>
+<li><strong>Lifestyle answers use the absence of a row.</strong> No row means unanswered. We never store "we don't know" as a fact.</li>
+</ul>
+<p>Lifecycle enums — account status, connection status — deliberately have no
+<code>unclear</code>. Those are facts the system owns, not answers a person gave.</p>
+<h2>The eight tables</h2>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Holds</th>
+<th>Serves</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>users</code></td>
+<td>Identity and account state only</td>
+<td>Every authenticated request</td>
+</tr>
+<tr>
+<td><code>profiles</code></td>
+<td>The person: name, age, work, Form A, photo keys, visibility</td>
+<td>T-16</td>
+</tr>
+<tr>
+<td><code>lifestyle_axes</code></td>
+<td>What the axes <em>are</em></td>
+<td>T-08, T-12, T-14</td>
+</tr>
+<tr>
+<td><code>profile_lifestyle</code></td>
+<td>One row per person per answered axis</td>
+<td>T-14</td>
+</tr>
+<tr>
+<td><code>anonymous_sessions</code></td>
+<td>Chat before sign-up, and the turn count</td>
+<td>T-17, T-21</td>
+</tr>
+<tr>
+<td><code>connection_requests</code></td>
+<td>Asking to connect; contact revealed on accept</td>
+<td>T-18a</td>
+</tr>
+<tr>
+<td><code>reports</code></td>
+<td>Someone flagged someone</td>
+<td>T-19</td>
+</tr>
+<tr>
+<td><code>blocks</code></td>
+<td>Someone hid someone, both directions</td>
+<td>T-19</td>
+</tr>
+<tr>
+<td><code>events</code></td>
+<td>What people did, including anonymously</td>
+<td>T-24</td>
+</tr>
+<tr>
+<td><code>waitlist</code></td>
+<td>People outside the three launch areas</td>
+<td>T-22</td>
+</tr>
+</tbody>
+</table>
+<p>Ten, not eight — the two extra are the axis catalogue, which the ticket's
+"nine lifestyle answers" line implies but does not name.</p>
+<h2>Small things worth noticing</h2>
+<p><strong>Blocks work both ways.</strong> The match query subtracts blocks in both directions
+— blocking someone hides each of you from the other, not just one. There is an
+index for exactly that lookup.</p>
+<p><strong><code>reports</code> and <code>blocks</code> are client-mintable.</strong> ADR 0015 lists them as tables
+where the phone generates the id. Their endpoints accept an <code>id</code> and dedupe
+with <code>ON CONFLICT (id) DO NOTHING</code>, so a retried tap on a flaky connection
+never files two reports.</p>
+<p><strong>Anonymous events are the point of <code>events</code>.</strong> The question worth answering is
+how many people start a chat and never sign up, which is only visible if
+anonymous activity is recorded. Hence a nullable <code>anonymous_session_id</code>
+alongside the nullable <code>user_id</code>.</p>
+<p><strong><code>turnCount</code> counts typed turns only.</strong> Chip taps are free — they run no model
+— so counting them against a budget that exists to control model spend would
+punish the cheapest users. From <code>pre-login-limits.md</code>.</p>
+<h2>What is not done</h2>
+<ul>
+<li><strong>No migrations yet.</strong> Drizzle generates SQL from this file, but that needs <code>apps/api</code> to exist, which is T-02 and P1's. The design is done; the generated SQL is not.</li>
+<li><strong>Form B has nowhere to live.</strong> <code>agent-architecture.md</code> describes a second structure — observations, with kind, evidence, turn and confidence — and says plainly it must be structured, not a text blob. It is in no table here because T-06's checklist does not mention it. Raised, not silently added.</li>
+<li><strong><code>room_type</code> is contested.</strong> <code>agent-architecture.md</code> lists it as a Form A slot; T-06's acceptance criteria do not. I included it. One of the two documents is wrong.</li>
+</ul>
+<h2>Files</h2>
+<pre><code>apps/api/src/db/
+├── schema.ts       the ten tables, the enums, the indexes
+└── seed-axes.ts    the nine provisional axes
+</code></pre></main></html>
