@@ -32,5 +32,7 @@ tags:
 - [ ] Fourteen days of dumps are kept, and older ones are deleted
 - [ ] A restore has been tested once, into a scratch project
 
+^done
+
 ## Read first
 - [extensibility.md](../../extensibility.md)

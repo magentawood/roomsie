@@ -34,6 +34,8 @@ tags:
 - [ ] `tokens_valid_after` is set to now, so every session ends
 - [ ] The person's chat turns are deleted too
 
+^done
+
 ## Read first
 - [0012-analytics-event-store.md](../../source/decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)

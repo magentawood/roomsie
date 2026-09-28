@@ -34,6 +34,8 @@ tags:
 - [ ] A one-off job backfills Form B from the stored chat turns
 - [ ] Tested on the eval sentences, with the rejection rate recorded
 
+^done
+
 ## Read first
 - [agent-architecture.md](../../agent-architecture.md)
 - [ai-agent-design.md](../../ai-agent-design.md)

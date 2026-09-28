@@ -34,6 +34,8 @@ tags:
 - [ ] Every women-only line removed
 - [ ] Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values
 
+^done
+
 ## Read first
 - [roomsie-prototype-V3.html](../../source/roomsie-prototype-V3.html)
 - [extensibility.md](../../extensibility.md)

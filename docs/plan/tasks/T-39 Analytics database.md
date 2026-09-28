@@ -32,6 +32,8 @@ tags:
 - [ ] pg_cron in that project deletes events past the retention period and creates next month's partition
 - [ ] The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation
 
+^done
+
 ## Read first
 - [0012-analytics-event-store.md](../../source/decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)

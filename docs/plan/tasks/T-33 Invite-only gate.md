@@ -31,3 +31,5 @@ tags:
 ## Done when
 - [ ] Before launch, sign-in works only for emails on an allowlist
 - [ ] One setting turns the gate off on launch day
+
+^done

@@ -35,3 +35,5 @@ tags:
 - [ ] Profile create and edit with photo upload, for V5 on Tue 29 Sep
 - [ ] Connect and report states, refining the prototype detail sheet V5 builds first
 - [ ] Delete confirmation
+
+^done

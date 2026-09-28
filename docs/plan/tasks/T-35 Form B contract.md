@@ -32,6 +32,8 @@ tags:
 - [ ] Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
 - [ ] An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
 
+^done
+
 ## Read first
 - [agent-architecture.md](../../agent-architecture.md)
 - [extensibility.md](../../extensibility.md)

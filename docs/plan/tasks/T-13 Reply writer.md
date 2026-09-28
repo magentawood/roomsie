@@ -34,5 +34,7 @@ tags:
 - [ ] Never states a fact about a specific person
 - [ ] Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
 
+^done
+
 ## Read first
 - [scope-policy.md](../../scope-policy.md)

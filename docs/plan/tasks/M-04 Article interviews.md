@@ -31,5 +31,7 @@ tags:
 - [ ] Three to five real people interviewed for each topic group
 - [ ] Notes saved
 
+^done
+
 ## Read first
 - [corpus-plan.md](../../content/corpus-plan.md)

@@ -31,5 +31,7 @@ tags:
 - [ ] Three areas chosen with marketing
 - [ ] Chosen by where the team can actually reach people
 
+^done
+
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

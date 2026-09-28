@@ -37,3 +37,5 @@ tags:
 - [ ] Send, accept or decline a connect request
 - [ ] On mutual accept, both people see each other's number
 - [ ] At most 10 new requests a day. No request to someone who blocked you
+
+^done
