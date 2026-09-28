@@ -8,6 +8,7 @@ start: 2026-10-04
 end: 2026-10-05
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/67
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 9 of 13  
 **When:** Sun 4 Oct → Mon 5 Oct · 7 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** not filed yet
+**Issue:** [#67](https://github.com/magentawood/roomsie/issues/67)
 
 ## Needs first
 - [[T-37 Articles and search]]

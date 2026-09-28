@@ -8,6 +8,7 @@ start: 2026-10-06
 end: 2026-10-08
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/68
 tags:
   - task
   - p1
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P1 Platform]], task 7 of 9  
 **When:** Tue 6 Oct → Thu 8 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** not filed yet
+**Issue:** [#68](https://github.com/magentawood/roomsie/issues/68)
 
 ## Needs first
 - [[T-24 Event logging]]
