@@ -48,6 +48,8 @@ tags:
 - [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
 - [x] An `areas` catalogue and a `listings` table, so area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
 
+^done
+
 ## Read first
 - [0015-primary-key-strategy.md](../../source/decisions/0015-primary-key-strategy.md)
 - [0006-drizzle.md](../../source/decisions/0006-drizzle.md)

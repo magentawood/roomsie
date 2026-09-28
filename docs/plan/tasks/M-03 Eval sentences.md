@@ -33,5 +33,7 @@ tags:
 - [ ] Mumbai areas, 20k, bees hazaar, next month end
 - [ ] 10 deliberately vague ones. T1 labels the right answers
 
+^done
+
 ## Read first
 - [model-selection.md](../../model-selection.md)

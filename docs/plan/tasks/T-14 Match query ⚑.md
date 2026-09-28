@@ -40,5 +40,7 @@ tags:
 - [x] Match score is 70 plus 30 times the share of preferences met, shown only once lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
 
+^done
+
 ## Read first
 - [interface-shape.md](../../interface-shape.md)

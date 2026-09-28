@@ -34,6 +34,8 @@ tags:
 - [ ] Events are written only through one `track()` function in apps/api
 - [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
 
+^done
+
 ## Read first
 - [0012-analytics-event-store.md](../../source/decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)

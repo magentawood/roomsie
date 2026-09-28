@@ -33,5 +33,7 @@ tags:
 - [ ] Per-device and per-network limits trip
 - [ ] Hitting the spend ceiling falls back to chips only, with no error page
 
+^done
+
 ## Read first
 - [pre-login-limits.md](../../pre-login-limits.md)

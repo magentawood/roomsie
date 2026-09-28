@@ -40,5 +40,7 @@ tags:
 - [ ] Output that fails Zod retries once, then goes to Gemini
 - [ ] Logs tokens in, tokens out and the model for every call. The system prompt is cached
 
+^done
+
 ## Read first
 - [model-selection.md](../../model-selection.md)

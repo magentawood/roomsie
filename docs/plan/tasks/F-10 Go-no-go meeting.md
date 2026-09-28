@@ -31,5 +31,7 @@ tags:
 - [ ] Saturday 10 October, 8 pm
 - [ ] Checked against the go/no-go list in docs/team-plan.md
 
+^done
+
 ## Read first
 - [team-plan.md](../../team-plan.md)

@@ -34,5 +34,7 @@ tags:
 - [ ] A saved query in Supabase lists open reports
 - [ ] Suspend sets `tokens_valid_after` to now and hides the profile
 
+^done
+
 ## Read first
 - [scope-policy.md](../../scope-policy.md)

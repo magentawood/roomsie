@@ -32,5 +32,7 @@ tags:
 - [ ] 0012: one events table instead of a second database
 - [ ] 0014: Sentry free tier instead of GlitchTip
 
+^done
+
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

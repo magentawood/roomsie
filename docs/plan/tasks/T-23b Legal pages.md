@@ -31,3 +31,5 @@ tags:
 ## Done when
 - [ ] /privacy, /terms and /grievance show the founder's text
 - [ ] Linked from the footer and from the sign-in screen
+
+^done

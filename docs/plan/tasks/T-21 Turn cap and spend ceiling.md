@@ -34,5 +34,7 @@ tags:
 - [ ] Limits per device and per network
 - [ ] At the daily spend ceiling the chat drops to chips only
 
+^done
+
 ## Read first
 - [pre-login-limits.md](../../pre-login-limits.md)

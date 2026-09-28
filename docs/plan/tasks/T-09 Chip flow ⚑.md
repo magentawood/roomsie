@@ -39,5 +39,7 @@ tags:
 - [ ] Each tap writes to the form. A tap never calls a model
 - [ ] Typing instead of tapping still works
 
+^done
+
 ## Read first
 - [interface-shape.md](../../interface-shape.md)

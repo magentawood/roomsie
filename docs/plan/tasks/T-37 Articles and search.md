@@ -33,6 +33,8 @@ tags:
 - [ ] The launch articles load from files in the repo, so publishing one is a pull request
 - [ ] A search returns the best matching passages with their article and heading
 
+^done
+
 ## Read first
 - [corpus-plan.md](../../content/corpus-plan.md)
 - [extensibility.md](../../extensibility.md)

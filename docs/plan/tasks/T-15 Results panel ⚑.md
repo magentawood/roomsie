@@ -40,5 +40,7 @@ tags:
 - [ ] Updates only when a form value or weight changes, never reorders while scrolling
 - [ ] Match score hidden until lifestyle answers exist
 
+^done
+
 ## Read first
 - [interface-shape.md](../../interface-shape.md)

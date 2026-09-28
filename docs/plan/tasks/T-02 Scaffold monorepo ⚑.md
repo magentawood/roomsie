@@ -43,6 +43,8 @@ tags:
 - [ ] `pnpm dev` runs web and API locally. docs/ is untouched
 - [ ] Every API route is served under `/v1`, so a future mobile app keeps working through later changes
 
+^done
+
 ## Read first
 - [CONTEXT.md](../../../CONTEXT.md)
 - [0010-monorepo-tooling.md](../../source/decisions/0010-monorepo-tooling.md)

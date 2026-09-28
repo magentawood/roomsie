@@ -36,6 +36,8 @@ tags:
 - [ ] Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
 - [ ] Web searches count toward the daily spend ceiling
 
+^done
+
 ## Read first
 - [scope-policy.md](../../scope-policy.md)
 - [extensibility.md](../../extensibility.md)

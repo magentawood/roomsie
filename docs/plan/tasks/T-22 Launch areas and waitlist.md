@@ -34,5 +34,7 @@ tags:
 - [ ] A visitor from elsewhere gets a waitlist form, not an empty panel
 - [ ] Waitlist entries are saved with their area
 
+^done
+
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

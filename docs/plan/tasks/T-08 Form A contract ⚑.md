@@ -42,6 +42,8 @@ tags:
 - [ ] Every enum has an `unclear` value
 - [ ] Results are a tagged union, `kind: "person"` for v0, so property listings can be added later without breaking clients
 
+^done
+
 ## Read first
 - [agent-architecture.md](../../agent-architecture.md)
 - [ai-agent-design.md](../../ai-agent-design.md)

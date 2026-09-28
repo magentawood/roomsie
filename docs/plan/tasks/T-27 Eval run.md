@@ -33,5 +33,7 @@ tags:
 - [ ] Record the share of slots right and how often vague sentences are marked unclear
 - [ ] Tune the prompt. Save the results in docs/research/
 
+^done
+
 ## Read first
 - [model-selection.md](../../model-selection.md)
