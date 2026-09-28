@@ -2,11 +2,11 @@
 id: T-25
 title: "Uptime monitor and spend alerts"
 owner: "P1 Platform"
-sequence: "5 of 11"
+sequence: "5 of 9"
 hours: 2
-start: 2026-10-01
-end: 2026-10-01
-checkpoint: CP2
+start: 2026-10-04
+end: 2026-10-05
+checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/43
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-25 · Uptime monitor and spend alerts
 
-**Owner:** [[P1 Platform]], task 5 of 11  
-**When:** Thu 1 Oct · 2 hours  
-**Checkpoint:** [[CP2 Core loop live]]  
+**Owner:** [[P1 Platform]], task 5 of 9  
+**When:** Sun 4 Oct → Mon 5 Oct · 2 hours  
+**Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#43](https://github.com/magentawood/roomsie/issues/43)
 
 ## Needs first

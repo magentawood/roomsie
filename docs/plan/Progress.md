@@ -22,11 +22,11 @@ Part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 0 / 11 | 0 / 33 | 0% |
-| [[P2 Assistant]] | 0 / 7 | 0 / 28 | 0% |
-| [[P3 Data and trust]] | 1 / 6 | 8 / 26 | 31% |
+| [[P1 Platform]] | 0 / 9 | 0 / 27 | 0% |
+| [[P2 Chat]] | 0 / 13 | 0 / 48 | 0% |
+| [[P3 Data and trust]] | 1 / 4 | 8 / 19 | 42% |
 | [[P4 Content and moderation]] | 0 / 6 | 0 / 20 | 0% |
-| [[P5 Accounts and connections]] | 0 / 7 | 0 / 22 | 0% |
+| [[P5 Accounts and people]] | 0 / 5 | 0 / 15 | 0% |
 | [[Design]] | 0 / 6 | 0 / 13 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 11 | 0% |
@@ -49,17 +49,11 @@ Part of [[roomsie launch]].
 - [ ] [[T-04 Deploy to Mumbai]] — Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile
 - [ ] [[T-04 Deploy to Mumbai]] — Secrets set in both
 - [ ] [[T-04 Deploy to Mumbai]] — A merge to main deploys automatically
-- [ ] [[T-16 Profiles and photos ⚑]] — Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
-- [ ] [[T-16 Profiles and photos ⚑]] — Up to four photos, uploaded straight to R2 with a presigned URL
-- [ ] [[T-16 Profiles and photos ⚑]] — Photo bytes never pass through the API
 - [ ] [[T-07 Error reporting]] — `reportError(err, context)` lives in packages/config and is the only way code reports errors
 - [ ] [[T-07 Error reporting]] — Sentry free tier connected in web and API
 - [ ] [[T-07 Error reporting]] — `beforeSend` strips message text, phone numbers and the Authorization header
 - [ ] [[T-33 Invite-only gate]] — Before launch, sign-in works only for emails on an allowlist
 - [ ] [[T-33 Invite-only gate]] — One setting turns the gate off on launch day
-- [ ] [[T-22 Launch areas and waitlist]] — The three launch areas are named on the site
-- [ ] [[T-22 Launch areas and waitlist]] — A visitor from elsewhere gets a waitlist form, not an empty panel
-- [ ] [[T-22 Launch areas and waitlist]] — Waitlist entries are saved with their area
 - [ ] [[T-25 Uptime and spend alerts]] — The API is checked every minute, with alerts to the team channel
 - [ ] [[T-25 Uptime and spend alerts]] — An alert fires when daily model spend passes 70% of the ceiling
 - [ ] [[T-29 Abuse test]] — A script opens 100 anonymous sessions
@@ -72,12 +66,16 @@ Part of [[roomsie launch]].
 - [ ] [[T-40 Nightly backups]] — Fourteen days of dumps are kept, and older ones are deleted
 - [ ] [[T-40 Nightly backups]] — A restore has been tested once, into a scratch project
 
-**P2 Assistant**
+**P2 Chat**
 
 - [ ] [[T-08 Form A contract ⚑]] — A Zod schema in packages/contract for Form A
 - [ ] [[T-08 Form A contract ⚑]] — Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty
 - [ ] [[T-08 Form A contract ⚑]] — Every enum has an `unclear` value
 - [ ] [[T-08 Form A contract ⚑]] — Results are a tagged union, `kind: "person"` for v0, so property listings can be added later without breaking clients
+- [ ] [[T-10 Chat screen and split view ⚑]] — The landing button opens a full-screen chat
+- [ ] [[T-10 Chat screen and split view ⚑]] — The screen splits into chat and results once results exist
+- [ ] [[T-10 Chat screen and split view ⚑]] — On a phone, the chat drops to a bar at the bottom and expands on tap
+- [ ] [[T-10 Chat screen and split view ⚑]] — Nothing resizes while the person is typing
 - [ ] [[T-11 Model wrapper ⚑]] — One module is the only way the app calls a model
 - [ ] [[T-11 Model wrapper ⚑]] — DeepSeek V4.1 Flash first. Gemini on a timeout, a 5xx or a rate limit
 - [ ] [[T-11 Model wrapper ⚑]] — Output that fails Zod retries once, then goes to Gemini
@@ -87,10 +85,16 @@ Part of [[roomsie launch]].
 - [ ] [[T-12 Extraction ⚑]] — Numbers and dates are parsed by code, not by the model
 - [ ] [[T-12 Extraction ⚑]] — Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
 - [ ] [[T-12 Extraction ⚑]] — The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
+- [ ] [[T-09 Chip flow ⚑]] — Intent as four cards, area as the top six plus search, budget as bands
+- [ ] [[T-09 Chip flow ⚑]] — Each tap writes to the form. A tap never calls a model
+- [ ] [[T-09 Chip flow ⚑]] — Typing instead of tapping still works
 - [ ] [[T-13 Reply writer]] — Writes the reply from the form and the last two turns, never the whole chat
 - [ ] [[T-13 Reply writer]] — Replies in the language the person used
 - [ ] [[T-13 Reply writer]] — Never states a fact about a specific person
 - [ ] [[T-13 Reply writer]] — Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
+- [ ] [[T-17 Carry chat into account]] — What a visitor told the assistant before signing in is attached to their account when they sign in
+- [ ] [[T-17 Carry chat into account]] — Nothing is lost and nothing is asked twice
+- [ ] [[T-17 Carry chat into account]] — The stored chat turns move to the account with the session
 - [ ] [[T-21 Turn cap and spend ceiling]] — Five typed turns before sign-in. Chip taps do not count
 - [ ] [[T-21 Turn cap and spend ceiling]] — The sign-in wall never appears before results have shown, and results stay visible behind it
 - [ ] [[T-21 Turn cap and spend ceiling]] — Limits per device and per network
@@ -102,6 +106,16 @@ Part of [[roomsie launch]].
 - [ ] [[T-34 Router ⚑]] — It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged
 - [ ] [[T-34 Router ⚑]] — The pipeline runs only the handlers the router picks
 - [ ] [[T-34 Router ⚑]] — The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
+- [ ] [[T-35 Form B contract]] — Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
+- [ ] [[T-35 Form B contract]] — An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
+- [ ] [[T-36 Observer]] — The observer turns personal context into Form B observations
+- [ ] [[T-36 Observer]] — Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
+- [ ] [[T-36 Observer]] — A one-off job backfills Form B from the stored chat turns
+- [ ] [[T-36 Observer]] — Tested on the eval sentences, with the rejection rate recorded
+- [ ] [[T-38 Advisor]] — Consulting questions are answered from the articles first, naming the article
+- [ ] [[T-38 Advisor]] — If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead
+- [ ] [[T-38 Advisor]] — Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
+- [ ] [[T-38 Advisor]] — Web searches count toward the daily spend ceiling
 
 **P3 Data and trust**
 
@@ -116,13 +130,6 @@ Part of [[roomsie launch]].
 - [ ] [[T-15 Results panel ⚑]] — The header says what is shown, from Everything in Mumbai down to People in Powai under 20k
 - [ ] [[T-15 Results panel ⚑]] — Updates only when a form value or weight changes, never reorders while scrolling
 - [ ] [[T-15 Results panel ⚑]] — Match score hidden until lifestyle answers exist
-- [ ] [[T-37 Articles and search]] — An articles table with a Postgres full-text index. No vector store
-- [ ] [[T-37 Articles and search]] — The launch articles load from files in the repo, so publishing one is a pull request
-- [ ] [[T-37 Articles and search]] — A search returns the best matching passages with their article and heading
-- [ ] [[T-38 Advisor]] — Consulting questions are answered from the articles first, naming the article
-- [ ] [[T-38 Advisor]] — If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead
-- [ ] [[T-38 Advisor]] — Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
-- [ ] [[T-38 Advisor]] — Web searches count toward the daily spend ceiling
 
 **P4 Content and moderation**
 
@@ -140,30 +147,23 @@ Part of [[roomsie launch]].
 - [ ] [[T-20 Account deletion]] — The person's chat turns are deleted too
 - [ ] [[T-23b Legal pages]] — /privacy, /terms and /grievance show the founder's text
 - [ ] [[T-23b Legal pages]] — Linked from the footer and from the sign-in screen
-- [ ] [[T-35 Form B contract]] — Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
-- [ ] [[T-35 Form B contract]] — An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
-- [ ] [[T-36 Observer]] — The observer turns personal context into Form B observations
-- [ ] [[T-36 Observer]] — Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
-- [ ] [[T-36 Observer]] — A one-off job backfills Form B from the stored chat turns
-- [ ] [[T-36 Observer]] — Tested on the eval sentences, with the rejection rate recorded
+- [ ] [[T-22 Launch areas and waitlist]] — The three launch areas are named on the site
+- [ ] [[T-22 Launch areas and waitlist]] — A visitor from elsewhere gets a waitlist form, not an empty panel
+- [ ] [[T-22 Launch areas and waitlist]] — Waitlist entries are saved with their area
+- [ ] [[T-37 Articles and search]] — An articles table with a Postgres full-text index. No vector store
+- [ ] [[T-37 Articles and search]] — The launch articles load from files in the repo, so publishing one is a pull request
+- [ ] [[T-37 Articles and search]] — A search returns the best matching passages with their article and heading
 
-**P5 Accounts and connections**
+**P5 Accounts and people**
 
-- [ ] [[T-10 Chat screen and split view ⚑]] — The landing button opens a full-screen chat
-- [ ] [[T-10 Chat screen and split view ⚑]] — The screen splits into chat and results once results exist
-- [ ] [[T-10 Chat screen and split view ⚑]] — On a phone, the chat drops to a bar at the bottom and expands on tap
-- [ ] [[T-10 Chat screen and split view ⚑]] — Nothing resizes while the person is typing
 - [ ] [[M-03 Eval sentences]] — 50 sentences people would really type, in English, Hinglish and Marathi
 - [ ] [[M-03 Eval sentences]] — Mumbai areas, 20k, bees hazaar, next month end
 - [ ] [[M-03 Eval sentences]] — 10 deliberately vague ones. T1 labels the right answers
-- [ ] [[T-09 Chip flow ⚑]] — Intent as four cards, area as the top six plus search, budget as bands
-- [ ] [[T-09 Chip flow ⚑]] — Each tap writes to the form. A tap never calls a model
-- [ ] [[T-09 Chip flow ⚑]] — Typing instead of tapping still works
+- [ ] [[T-16 Profiles and photos ⚑]] — Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
+- [ ] [[T-16 Profiles and photos ⚑]] — Up to four photos, uploaded straight to R2 with a presigned URL
+- [ ] [[T-16 Profiles and photos ⚑]] — Photo bytes never pass through the API
 - [ ] [[T-03 CI checks]] — Every pull request runs typecheck, lint, build and gitleaks
 - [ ] [[T-03 CI checks]] — Finishes in under five minutes
-- [ ] [[T-17 Carry chat into account]] — What a visitor told the assistant before signing in is attached to their account when they sign in
-- [ ] [[T-17 Carry chat into account]] — Nothing is lost and nothing is asked twice
-- [ ] [[T-17 Carry chat into account]] — The stored chat turns move to the account with the session
 - [ ] [[T-24 Event logging]] — One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
 - [ ] [[T-24 Event logging]] — No message text is stored
 - [ ] [[T-24 Event logging]] — Events are written only through one `track()` function in apps/api
@@ -302,25 +302,13 @@ Part of [[roomsie launch]].
 - [ ] Fourteen days of dumps are kept, and older ones are deleted
 - [ ] A restore has been tested once, into a scratch project
 
-### ⬜ [[T-16 Profiles and photos ⚑]] — 0/3
-
-- [ ] Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
-- [ ] Up to four photos, uploaded straight to R2 with a presigned URL
-- [ ] Photo bytes never pass through the API
-
-### ⬜ [[T-22 Launch areas and waitlist]] — 0/3
-
-- [ ] The three launch areas are named on the site
-- [ ] A visitor from elsewhere gets a waitlist form, not an empty panel
-- [ ] Waitlist entries are saved with their area
-
 ### ⬜ [[T-29 Abuse test]] — 0/3
 
 - [ ] A script opens 100 anonymous sessions
 - [ ] Per-device and per-network limits trip
 - [ ] Hitting the spend ceiling falls back to chips only, with no error page
 
-## P2 Assistant
+## P2 Chat
 
 
 ### ⬜ [[T-08 Form A contract ⚑]] — 0/4
@@ -337,6 +325,11 @@ Part of [[roomsie launch]].
 - [ ] Output that fails Zod retries once, then goes to Gemini
 - [ ] Logs tokens in, tokens out and the model for every call. The system prompt is cached
 
+### ⬜ [[T-35 Form B contract]] — 0/2
+
+- [ ] Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
+- [ ] An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
+
 ### ⬜ [[T-12 Extraction ⚑]] — 0/5
 
 - [ ] Free text becomes Form A slots, as JSON limited to the enums
@@ -345,6 +338,13 @@ Part of [[roomsie launch]].
 - [ ] Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
 - [ ] The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
 
+### ⬜ [[T-34 Router ⚑]] — 0/4
+
+- [ ] Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope
+- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged
+- [ ] The pipeline runs only the handlers the router picks
+- [ ] The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
+
 ### ⬜ [[T-13 Reply writer]] — 0/4
 
 - [ ] Writes the reply from the form and the last two turns, never the whole chat
@@ -352,12 +352,12 @@ Part of [[roomsie launch]].
 - [ ] Never states a fact about a specific person
 - [ ] Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
 
-### ⬜ [[T-34 Router ⚑]] — 0/4
+### ⬜ [[T-36 Observer]] — 0/4
 
-- [ ] Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope
-- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged
-- [ ] The pipeline runs only the handlers the router picks
-- [ ] The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
+- [ ] The observer turns personal context into Form B observations
+- [ ] Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
+- [ ] A one-off job backfills Form B from the stored chat turns
+- [ ] Tested on the eval sentences, with the rejection rate recorded
 
 ### ⬜ [[T-21 Turn cap and spend ceiling]] — 0/4
 
@@ -366,11 +366,37 @@ Part of [[roomsie launch]].
 - [ ] Limits per device and per network
 - [ ] At the daily spend ceiling the chat drops to chips only
 
+### ⬜ [[T-38 Advisor]] — 0/4
+
+- [ ] Consulting questions are answered from the articles first, naming the article
+- [ ] If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead
+- [ ] Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
+- [ ] Web searches count toward the daily spend ceiling
+
 ### ⬜ [[T-27 Eval run]] — 0/3
 
 - [ ] The 50 test sentences run through extraction
 - [ ] Record the share of slots right and how often vague sentences are marked unclear
 - [ ] Tune the prompt. Save the results in docs/research/
+
+### ⬜ [[T-17 Carry chat into account]] — 0/3
+
+- [ ] What a visitor told the assistant before signing in is attached to their account when they sign in
+- [ ] Nothing is lost and nothing is asked twice
+- [ ] The stored chat turns move to the account with the session
+
+### ⬜ [[T-10 Chat screen and split view ⚑]] — 0/4
+
+- [ ] The landing button opens a full-screen chat
+- [ ] The screen splits into chat and results once results exist
+- [ ] On a phone, the chat drops to a bar at the bottom and expands on tap
+- [ ] Nothing resizes while the person is typing
+
+### ⬜ [[T-09 Chip flow ⚑]] — 0/3
+
+- [ ] Intent as four cards, area as the top six plus search, budget as bands
+- [ ] Each tap writes to the form. A tap never calls a model
+- [ ] Typing instead of tapping still works
 
 ## P3 Data and trust
 
@@ -391,12 +417,6 @@ Part of [[roomsie launch]].
 - [x] Match score is 70 plus 30 times the share of preferences met, shown only once lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
 
-### ⬜ [[T-37 Articles and search]] — 0/3
-
-- [ ] An articles table with a Postgres full-text index. No vector store
-- [ ] The launch articles load from files in the repo, so publishing one is a pull request
-- [ ] A search returns the best matching passages with their article and heading
-
 ### ⬜ [[T-15 Results panel ⚑]] — 0/4
 
 - [ ] A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands
@@ -411,13 +431,6 @@ Part of [[roomsie launch]].
 - [ ] Connect button with sent, accepted and declined states
 - [ ] The number shows only after both accept
 - [ ] Report and block are one tap away
-
-### ⬜ [[T-38 Advisor]] — 0/4
-
-- [ ] Consulting questions are answered from the articles first, naming the article
-- [ ] If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead
-- [ ] Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
-- [ ] Web searches count toward the daily spend ceiling
 
 ## P4 Content and moderation
 
@@ -434,6 +447,12 @@ Part of [[roomsie launch]].
 - [ ] /privacy, /terms and /grievance show the founder's text
 - [ ] Linked from the footer and from the sign-in screen
 
+### ⬜ [[T-37 Articles and search]] — 0/3
+
+- [ ] An articles table with a Postgres full-text index. No vector store
+- [ ] The launch articles load from files in the repo, so publishing one is a pull request
+- [ ] A search returns the best matching passages with their article and heading
+
 ### ⬜ [[T-19 Report and block]] — 0/4
 
 - [ ] The API behind the report and block buttons, which live in T-18b
@@ -448,19 +467,13 @@ Part of [[roomsie launch]].
 - [ ] `tokens_valid_after` is set to now, so every session ends
 - [ ] The person's chat turns are deleted too
 
-### ⬜ [[T-35 Form B contract]] — 0/2
+### ⬜ [[T-22 Launch areas and waitlist]] — 0/3
 
-- [ ] Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
-- [ ] An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
+- [ ] The three launch areas are named on the site
+- [ ] A visitor from elsewhere gets a waitlist form, not an empty panel
+- [ ] Waitlist entries are saved with their area
 
-### ⬜ [[T-36 Observer]] — 0/4
-
-- [ ] The observer turns personal context into Form B observations
-- [ ] Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
-- [ ] A one-off job backfills Form B from the stored chat turns
-- [ ] Tested on the eval sentences, with the rejection rate recorded
-
-## P5 Accounts and connections
+## P5 Accounts and people
 
 
 ### ⬜ [[M-03 Eval sentences]] — 0/3
@@ -481,30 +494,17 @@ Part of [[roomsie launch]].
 - [ ] Events are written only through one `track()` function in apps/api
 - [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
 
-### ⬜ [[T-17 Carry chat into account]] — 0/3
-
-- [ ] What a visitor told the assistant before signing in is attached to their account when they sign in
-- [ ] Nothing is lost and nothing is asked twice
-- [ ] The stored chat turns move to the account with the session
-
 ### ⬜ [[T-18a Connect API ⚑]] — 0/3
 
 - [ ] Send, accept or decline a connect request
 - [ ] On mutual accept, both people see each other's number
 - [ ] At most 10 new requests a day. No request to someone who blocked you
 
-### ⬜ [[T-10 Chat screen and split view ⚑]] — 0/4
+### ⬜ [[T-16 Profiles and photos ⚑]] — 0/3
 
-- [ ] The landing button opens a full-screen chat
-- [ ] The screen splits into chat and results once results exist
-- [ ] On a phone, the chat drops to a bar at the bottom and expands on tap
-- [ ] Nothing resizes while the person is typing
-
-### ⬜ [[T-09 Chip flow ⚑]] — 0/3
-
-- [ ] Intent as four cards, area as the top six plus search, budget as bands
-- [ ] Each tap writes to the form. A tap never calls a model
-- [ ] Typing instead of tapping still works
+- [ ] Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
+- [ ] Up to four photos, uploaded straight to R2 with a presigned URL
+- [ ] Photo bytes never pass through the API
 
 ## Design
 

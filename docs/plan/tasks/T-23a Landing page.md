@@ -5,8 +5,8 @@ owner: "P4 Content and moderation"
 sequence: "1 of 6"
 hours: 4
 start: 2026-09-24
-end: 2026-09-25
-checkpoint: CP0
+end: 2026-09-27
+checkpoint: CP1
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/39
 tags:
@@ -18,8 +18,8 @@ tags:
 # T-23a · Landing page ported from the prototype
 
 **Owner:** [[P4 Content and moderation]], task 1 of 6  
-**When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
-**Checkpoint:** [[CP0 Kickoff]]  
+**When:** Thu 24 Sep → Sun 27 Sep · 4 hours  
+**Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#39](https://github.com/magentawood/roomsie/issues/39)
 
 ## Needs first

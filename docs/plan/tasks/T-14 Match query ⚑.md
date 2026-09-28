@@ -2,11 +2,11 @@
 id: T-14
 title: "Match query API"
 owner: "P3 Data and trust"
-sequence: "2 of 6"
+sequence: "2 of 4"
 hours: 6
-start: 2026-09-28
-end: 2026-09-30
-checkpoint: CP2
+start: 2026-09-29
+end: 2026-10-03
+checkpoint: CP3
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/27
 tags:
@@ -18,9 +18,9 @@ tags:
 
 # T-14 · Match query API
 
-**Owner:** [[P3 Data and trust]], task 2 of 6  
-**When:** Mon 28 Sep → Wed 30 Sep · 6 hours  
-**Checkpoint:** [[CP2 Core loop live]]  
+**Owner:** [[P3 Data and trust]], task 2 of 4  
+**When:** Tue 29 Sep → Sat 3 Oct · 6 hours  
+**Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#27](https://github.com/magentawood/roomsie/issues/27)
 
 > [!warning] Critical path

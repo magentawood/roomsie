@@ -1,12 +1,12 @@
 ---
 id: T-24
 title: "Event logging table"
-owner: "P5 Accounts and connections"
-sequence: "3 of 7"
+owner: "P5 Accounts and people"
+sequence: "3 of 5"
 hours: 2
-start: 2026-09-28
-end: 2026-09-28
-checkpoint: CP1
+start: 2026-09-29
+end: 2026-09-30
+checkpoint: CP2
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/37
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-24 · Event logging table
 
-**Owner:** [[P5 Accounts and connections]], task 3 of 7  
-**When:** Mon 28 Sep · 2 hours  
-**Checkpoint:** [[CP1 Foundation]]  
+**Owner:** [[P5 Accounts and people]], task 3 of 5  
+**When:** Tue 29 Sep → Wed 30 Sep · 2 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#37](https://github.com/magentawood/roomsie/issues/37)
 
 ## Needs first

@@ -2,10 +2,10 @@
 id: T-40
 title: "Nightly database backups to R2"
 owner: "P1 Platform"
-sequence: "8 of 11"
+sequence: "8 of 9"
 hours: 2
-start: 2026-10-04
-end: 2026-10-04
+start: 2026-10-08
+end: 2026-10-10
 checkpoint: CP3
 critical: false
 tags:
@@ -16,8 +16,8 @@ tags:
 
 # T-40 · Nightly database backups to R2
 
-**Owner:** [[P1 Platform]], task 8 of 11  
-**When:** Sun 4 Oct · 2 hours  
+**Owner:** [[P1 Platform]], task 8 of 9  
+**When:** Thu 8 Oct → Sat 10 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** not filed yet
 

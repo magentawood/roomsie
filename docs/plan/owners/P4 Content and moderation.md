@@ -9,15 +9,15 @@ tags:
 
 _Public pages and safety, then the observer._
 
-**25 hours** of build work, 9 spare, finishing Wed 7 Oct.
+**20 hours** of build work at 1.18h a day, 14 spare, finishing Sat 10 Oct.
 
 Part of [[roomsie launch]].
 
 ## Sequence
 
-1. [[T-23a Landing page]] — Thu 24 Sep → Fri 25 Sep, 4h
-2. [[T-23b Legal pages]] — Sat 26 Sep, 2h
-3. [[T-19 Report and block]] — Mon 28 Sep → Wed 30 Sep, 5h
-4. [[T-20 Account deletion]] — Wed 30 Sep → Thu 1 Oct, 3h
-5. [[T-35 Form B contract]] — Fri 2 Oct → Sat 3 Oct, 3h
-6. [[T-36 Observer]] — Sat 3 Oct → Wed 7 Oct, 8h
+1. [[T-23a Landing page]] — Thu 24 Sep → Sun 27 Sep, 4h
+2. [[T-23b Legal pages]] — Sun 27 Sep → Tue 29 Sep, 2h
+3. [[T-37 Articles and search]] — Tue 29 Sep → Thu 1 Oct, 3h
+4. [[T-19 Report and block]] — Thu 1 Oct → Mon 5 Oct, 5h
+5. [[T-20 Account deletion]] — Mon 5 Oct → Thu 8 Oct, 3h
+6. [[T-22 Launch areas and waitlist]] — Thu 8 Oct → Sat 10 Oct, 3h

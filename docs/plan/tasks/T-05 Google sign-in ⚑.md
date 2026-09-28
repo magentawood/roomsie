@@ -2,11 +2,11 @@
 id: T-05
 title: "Google sign-in and token checks in the API"
 owner: "P1 Platform"
-sequence: "2 of 11"
+sequence: "2 of 9"
 hours: 6
 start: 2026-09-26
-end: 2026-09-28
-checkpoint: CP1
+end: 2026-10-01
+checkpoint: CP2
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/20
 tags:
@@ -18,9 +18,9 @@ tags:
 
 # T-05 · Google sign-in and token checks in the API
 
-**Owner:** [[P1 Platform]], task 2 of 11  
-**When:** Sat 26 Sep → Mon 28 Sep · 6 hours  
-**Checkpoint:** [[CP1 Foundation]]  
+**Owner:** [[P1 Platform]], task 2 of 9  
+**When:** Sat 26 Sep → Thu 1 Oct · 6 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#20](https://github.com/magentawood/roomsie/issues/20)
 
 > [!warning] Critical path

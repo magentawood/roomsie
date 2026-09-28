@@ -4,9 +4,9 @@ title: "Privacy, terms and grievance pages"
 owner: "P4 Content and moderation"
 sequence: "2 of 6"
 hours: 2
-start: 2026-09-26
-end: 2026-09-26
-checkpoint: CP1
+start: 2026-09-27
+end: 2026-09-29
+checkpoint: CP2
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/40
 tags:
@@ -18,8 +18,8 @@ tags:
 # T-23b · Privacy, terms and grievance pages
 
 **Owner:** [[P4 Content and moderation]], task 2 of 6  
-**When:** Sat 26 Sep · 2 hours  
-**Checkpoint:** [[CP1 Foundation]]  
+**When:** Sun 27 Sep → Tue 29 Sep · 2 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#40](https://github.com/magentawood/roomsie/issues/40)
 
 ## Needs first
