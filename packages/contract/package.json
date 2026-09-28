@@ -1,0 +1,22 @@
+{
+  "name": "@roomsie/contract",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./openapi.json": "./openapi.json"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@roomsie/config": "workspace:*",
+    "eslint": "^9.39.5",
+    "typescript": "~6.0.3"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@roomsie/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=.env src/index.ts",
+    "build": "tsup",
+    "start": "node dist/index.js",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "openapi": "tsx scripts/generate-openapi.ts",
+    "db:generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@fastify/swagger": "^9.9.0",
+    "@roomsie/contract": "workspace:*",
+    "drizzle-orm": "^0.45.3",
+    "fastify": "^5.12.5",
+    "fastify-type-provider-zod": "^7.0.0",
+    "postgres": "^3.4.9",
+    "uuidv7": "^1.2.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@roomsie/config": "workspace:*",
+    "@types/node": "^22.20.4",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9.39.5",
+    "tsup": "^8.5.1",
+    "tsx": "^4.23.15",
+    "typescript": "~6.0.3"
+  }
+}
