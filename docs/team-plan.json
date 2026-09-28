@@ -244,10 +244,10 @@
   {
    "id": "T-10",
    "title": "Chat screen and split view",
-   "role": "P5",
+   "role": "P2",
    "hours": 8,
-   "start": "2026-10-02",
-   "end": "2026-10-05",
+   "start": "2026-10-01",
+   "end": "2026-10-03",
    "deps": [
     "D-02"
    ],
@@ -311,8 +311,8 @@
    "title": "Model wrapper: DeepSeek with Gemini fallback",
    "role": "P2",
    "hours": 4,
-   "start": "2026-09-25",
-   "end": "2026-09-26",
+   "start": "2026-09-24",
+   "end": "2026-09-25",
    "deps": [
     "T-08"
    ],
@@ -325,7 +325,7 @@
    "read": [
     "docs/model-selection.md"
    ],
-   "cp": "CP1",
+   "cp": "CP0",
    "critical": true,
    "issue": 15
   },
@@ -478,8 +478,8 @@
    "title": "Extraction: free text to form slots",
    "role": "P2",
    "hours": 6,
-   "start": "2026-09-27",
-   "end": "2026-09-29",
+   "start": "2026-09-26",
+   "end": "2026-09-27",
    "deps": [
     "T-11"
    ],
@@ -493,7 +493,7 @@
     "docs/research/hinglish-model-report.md",
     "docs/agent-architecture.md"
    ],
-   "cp": "CP2",
+   "cp": "CP1",
    "critical": true,
    "issue": 23
   },
@@ -519,9 +519,9 @@
   {
    "id": "T-09",
    "title": "Chip flow for intent, area, budget",
-   "role": "P1",
+   "role": "P2",
    "hours": 6,
-   "start": "2026-10-03",
+   "start": "2026-10-04",
    "end": "2026-10-05",
    "deps": [
     "T-10",
@@ -589,7 +589,7 @@
   {
    "id": "T-16",
    "title": "Profile create and edit, with photos",
-   "role": "P4",
+   "role": "P5",
    "hours": 8,
    "start": "2026-10-02",
    "end": "2026-10-05",
@@ -657,8 +657,8 @@
    "title": "Reply writer with scope rules",
    "role": "P2",
    "hours": 4,
-   "start": "2026-09-30",
-   "end": "2026-10-01",
+   "start": "2026-09-28",
+   "end": "2026-09-29",
    "deps": [
     "T-11"
    ],
@@ -737,10 +737,10 @@
   {
    "id": "T-17",
    "title": "Carry anonymous chat into the account on sign-in",
-   "role": "P5",
+   "role": "P2",
    "hours": 2,
-   "start": "2026-09-29",
-   "end": "2026-09-29",
+   "start": "2026-10-01",
+   "end": "2026-10-01",
    "deps": [
     "T-05",
     "T-06"
@@ -844,8 +844,8 @@
    "title": "Five-turn cap, rate limits, spend ceiling",
    "role": "P2",
    "hours": 5,
-   "start": "2026-10-02",
-   "end": "2026-10-04",
+   "start": "2026-09-29",
+   "end": "2026-09-30",
    "deps": [
     "T-12"
    ],
@@ -858,7 +858,7 @@
    "read": [
     "docs/pre-login-limits.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": false,
    "issue": 41
   },
@@ -1016,8 +1016,8 @@
    "title": "Run the eval set and tune the prompt",
    "role": "P2",
    "hours": 3,
-   "start": "2026-10-04",
-   "end": "2026-10-05",
+   "start": "2026-09-30",
+   "end": "2026-09-30",
    "deps": [
     "T-12"
    ],
@@ -1029,7 +1029,7 @@
    "read": [
     "docs/model-selection.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": false,
    "issue": 48
   },
@@ -1188,10 +1188,10 @@
  ],
  "roles": {
   "P1": "P1 · Platform",
-  "P2": "P2 · Assistant",
+  "P2": "P2 · Chat",
   "P3": "P3 · Data and trust",
   "P4": "P4 · Content and moderation",
-  "P5": "P5 · Accounts and connections",
+  "P5": "P5 · Accounts and people",
   "D": "D · Design",
   "M1": "M1 · Content",
   "M2": "M2 · Community",

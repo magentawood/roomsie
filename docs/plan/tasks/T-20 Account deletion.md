@@ -2,7 +2,7 @@
 id: T-20
 title: "Account deletion"
 owner: "P4 Content and moderation"
-sequence: "4 of 6"
+sequence: "4 of 5"
 hours: 3
 start: 2026-09-30
 end: 2026-10-01
@@ -17,7 +17,7 @@ tags:
 
 # T-20 · Account deletion
 
-**Owner:** [[P4 Content and moderation]], task 4 of 6  
+**Owner:** [[P4 Content and moderation]], task 4 of 5  
 **When:** Wed 30 Sep → Thu 1 Oct · 3 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#46](https://github.com/magentawood/roomsie/issues/46)

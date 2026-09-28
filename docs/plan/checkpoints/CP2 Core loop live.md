@@ -18,15 +18,16 @@ Part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[D-04 Landing and waitlist designs]] — Design
-- [[T-12 Extraction ⚑]] — P2 Assistant
-- [[T-17 Carry chat into account]] — P5 Accounts and connections
+- [[T-13 Reply writer]] — P2 Chat
 - [[F-07 Privacy and terms draft]] — Founder
 - [[M-02 100 sign-ups]] — M2 Community
 - [[T-04 Deploy to Mumbai]] — P1 Platform
 - [[T-07 Error reporting]] — P1 Platform
 - [[T-14 Match query ⚑]] — P3 Data and trust
 - [[T-19 Report and block]] — P4 Content and moderation
-- [[T-13 Reply writer]] — P2 Assistant
-- [[T-18a Connect API ⚑]] — P5 Accounts and connections
+- [[T-21 Turn cap and spend ceiling]] — P2 Chat
+- [[T-27 Eval run]] — P2 Chat
+- [[T-17 Carry chat into account]] — P2 Chat
+- [[T-18a Connect API ⚑]] — P5 Accounts and people
 - [[T-20 Account deletion]] — P4 Content and moderation
 - [[T-25 Uptime and spend alerts]] — P1 Platform

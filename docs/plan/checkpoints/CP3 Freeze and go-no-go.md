@@ -20,13 +20,11 @@ Part of [[roomsie launch]].
 - [[F-08 Moderator named]] — Founder
 - [[T-33 Invite-only gate]] — P1 Platform
 - [[M-07 Launch posts]] — M1 Content
+- [[T-10 Chat screen and split view ⚑]] — P2 Chat
 - [[T-15 Results panel ⚑]] — P3 Data and trust
-- [[T-21 Turn cap and spend ceiling]] — P2 Assistant
 - [[D-05 Design QA]] — Design
 - [[F-10 Go-no-go meeting]] — Founder
 - [[M-05 Article drafts]] — M1 Content
-- [[T-09 Chip flow ⚑]] — P1 Platform
-- [[T-10 Chat screen and split view ⚑]] — P5 Accounts and connections
-- [[T-16 Profiles and photos ⚑]] — P4 Content and moderation
+- [[T-09 Chip flow ⚑]] — P2 Chat
+- [[T-16 Profiles and photos ⚑]] — P5 Accounts and people
 - [[T-18b Person and connect screens ⚑]] — P3 Data and trust
-- [[T-27 Eval run]] — P2 Assistant

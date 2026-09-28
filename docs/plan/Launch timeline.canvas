@@ -322,16 +322,6 @@
    "height": 84
   },
   {
-   "id": "task-T-09",
-   "type": "text",
-   "text": "**[[T-09 Chip flow ⚑|T-09 Chip flow]]**\n6h · Sat 3 Oct → Mon 5 Oct",
-   "x": 1980,
-   "y": 230,
-   "width": 652,
-   "height": 84,
-   "color": "1"
-  },
-  {
    "id": "task-T-29",
    "type": "text",
    "text": "**[[T-29 Abuse test|T-29 Abuse test]]**\n1h · Tue 6 Oct",
@@ -343,7 +333,7 @@
   {
    "id": "lane-P2",
    "type": "group",
-   "label": "P2 Assistant",
+   "label": "P2 Chat",
    "x": -20,
    "y": 490,
    "width": 4652,
@@ -363,9 +353,9 @@
   {
    "id": "task-T-11",
    "type": "text",
-   "text": "**[[T-11 Model wrapper ⚑|T-11 Model wrapper]]**\n4h · Fri 25 Sep → Sat 26 Sep",
-   "x": 220,
-   "y": 520,
+   "text": "**[[T-11 Model wrapper ⚑|T-11 Model wrapper]]**\n4h · Thu 24 Sep → Fri 25 Sep",
+   "x": 0,
+   "y": 616,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -373,18 +363,18 @@
   {
    "id": "task-T-12",
    "type": "text",
-   "text": "**[[T-12 Extraction ⚑|T-12 Extraction]]**\n6h · Sun 27 Sep → Tue 29 Sep",
-   "x": 660,
+   "text": "**[[T-12 Extraction ⚑|T-12 Extraction]]**\n6h · Sat 26 Sep → Sun 27 Sep",
+   "x": 440,
    "y": 520,
-   "width": 652,
+   "width": 432,
    "height": 84,
    "color": "1"
   },
   {
    "id": "task-T-13",
    "type": "text",
-   "text": "**[[T-13 Reply writer|T-13 Reply writer]]**\n4h · Wed 30 Sep → Thu 1 Oct",
-   "x": 1320,
+   "text": "**[[T-13 Reply writer|T-13 Reply writer]]**\n4h · Mon 28 Sep → Tue 29 Sep",
+   "x": 880,
    "y": 520,
    "width": 432,
    "height": 84
@@ -392,20 +382,49 @@
   {
    "id": "task-T-21",
    "type": "text",
-   "text": "**[[T-21 Turn cap and spend ceiling|T-21 Turn cap and spend ceiling]]**\n5h · Fri 2 Oct → Sun 4 Oct",
-   "x": 1760,
-   "y": 520,
-   "width": 652,
+   "text": "**[[T-21 Turn cap and spend ceiling|T-21 Turn cap and spend ceiling]]**\n5h · Tue 29 Sep → Wed 30 Sep",
+   "x": 1100,
+   "y": 616,
+   "width": 432,
    "height": 84
   },
   {
    "id": "task-T-27",
    "type": "text",
-   "text": "**[[T-27 Eval run|T-27 Eval run]]**\n3h · Sun 4 Oct → Mon 5 Oct",
-   "x": 2200,
-   "y": 616,
-   "width": 432,
+   "text": "**[[T-27 Eval run|T-27 Eval run]]**\n3h · Wed 30 Sep",
+   "x": 1320,
+   "y": 520,
+   "width": 212,
    "height": 84
+  },
+  {
+   "id": "task-T-17",
+   "type": "text",
+   "text": "**[[T-17 Carry chat into account|T-17 Carry chat into account]]**\n2h · Thu 1 Oct",
+   "x": 1540,
+   "y": 520,
+   "width": 212,
+   "height": 84
+  },
+  {
+   "id": "task-T-10",
+   "type": "text",
+   "text": "**[[T-10 Chat screen and split view ⚑|T-10 Chat screen and split view]]**\n8h · Thu 1 Oct → Sat 3 Oct",
+   "x": 1540,
+   "y": 616,
+   "width": 652,
+   "height": 84,
+   "color": "1"
+  },
+  {
+   "id": "task-T-09",
+   "type": "text",
+   "text": "**[[T-09 Chip flow ⚑|T-09 Chip flow]]**\n6h · Sun 4 Oct → Mon 5 Oct",
+   "x": 2200,
+   "y": 520,
+   "width": 432,
+   "height": 84,
+   "color": "1"
   },
   {
    "id": "lane-P3",
@@ -504,16 +523,6 @@
    "height": 84
   },
   {
-   "id": "task-T-16",
-   "type": "text",
-   "text": "**[[T-16 Profiles and photos ⚑|T-16 Profiles and photos]]**\n8h · Fri 2 Oct → Mon 5 Oct",
-   "x": 1760,
-   "y": 1004,
-   "width": 872,
-   "height": 84,
-   "color": "1"
-  },
-  {
    "id": "task-T-22",
    "type": "text",
    "text": "**[[T-22 Launch areas and waitlist|T-22 Launch areas and waitlist]]**\n3h · Tue 6 Oct",
@@ -525,7 +534,7 @@
   {
    "id": "lane-P5",
    "type": "group",
-   "label": "P5 Accounts and connections",
+   "label": "P5 Accounts and people",
    "x": -20,
    "y": 1264,
    "width": 4652,
@@ -560,15 +569,6 @@
    "height": 84
   },
   {
-   "id": "task-T-17",
-   "type": "text",
-   "text": "**[[T-17 Carry chat into account|T-17 Carry chat into account]]**\n2h · Tue 29 Sep",
-   "x": 1100,
-   "y": 1294,
-   "width": 212,
-   "height": 84
-  },
-  {
    "id": "task-T-18a",
    "type": "text",
    "text": "**[[T-18a Connect API ⚑|T-18a Connect API]]**\n4h · Wed 30 Sep → Thu 1 Oct",
@@ -579,9 +579,9 @@
    "color": "1"
   },
   {
-   "id": "task-T-10",
+   "id": "task-T-16",
    "type": "text",
-   "text": "**[[T-10 Chat screen and split view ⚑|T-10 Chat screen and split view]]**\n8h · Fri 2 Oct → Mon 5 Oct",
+   "text": "**[[T-16 Profiles and photos ⚑|T-16 Profiles and photos]]**\n8h · Fri 2 Oct → Mon 5 Oct",
    "x": 1760,
    "y": 1294,
    "width": 872,

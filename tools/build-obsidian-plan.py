@@ -40,10 +40,10 @@ SHORT = {
 }
 OWNERS = [  # key, note name, tag, colour
  ("P1","P1 Platform","p1","#8B949E"),
- ("P2","P2 Assistant","p2","#8B6CFF"),
+ ("P2","P2 Chat","p2","#8B6CFF"),
  ("P3","P3 Data and trust","p3","#2EA44F"),
  ("P4","P4 Content and moderation","p4","#3B82F6"),
- ("P5","P5 Accounts and connections","p5","#14B8A6"),
+ ("P5","P5 Accounts and people","p5","#14B8A6"),
  ("D","Design","design","#FF87AC"),
  ("M1","M1 Content","content","#E3B341"),
  ("M2","M2 Community","community","#F9A03F"),
@@ -51,9 +51,9 @@ OWNERS = [  # key, note name, tag, colour
  ("ALL","Everyone","everyone","#9CC3E6"),
 ]
 OWN = {k:(n,tag,c) for k,n,tag,c in OWNERS}
-QUESTION = {"P1":"The ground everyone builds on","P2":"What the assistant understands and says",
+QUESTION = {"P1":"The ground everyone builds on","P2":"The whole conversation, from the model to the screen",
  "P3":"The schema, the matching, and who sees whom","P4":"Public pages, reports and account removal",
- "P5":"Sign-in plumbing, events, and connecting people"}
+ "P5":"Profiles, photos, events and connecting people"}
 CPNAME = {"CP0":"CP0 Kickoff","CP1":"CP1 Foundation","CP2":"CP2 Core loop live",
  "CP3":"CP3 Freeze and go-no-go","CP4":"CP4 Launch","CP5":"CP5 First-week review"}
 CPCOLOUR = "#D73A4A"
@@ -121,7 +121,11 @@ for k,(own,tag,colour) in OWN.items():
     hrs = sum(t["hours"] or 0 for t in rows)
     b = ["---","tags:","  - owner",f"  - {tag}","---",HEADER,f"# {own}\n"]
     if k in QUESTION: b.append(f"_{QUESTION[k]}._\n")
-    if hrs: b.append(f"**{hrs} hours** of build work, {24-hrs} spare, finishing {f(max(t['end'] for t in rows))}.\n")
+    if hrs:
+        rate = hrs/12
+        pace = f"{rate:.2f}".rstrip("0").rstrip(".")
+        spare = f", {24-hrs} spare" if hrs <= 24 else ""
+        b.append(f"**{hrs} hours** of build work at {pace}h a day{spare}, finishing {f(max(t['end'] for t in rows))}.\n")
     b.append("Part of [[roomsie launch]].\n\n## Sequence\n")
     for i,t in enumerate(rows,1):
         when = f(t["start"]) if t["start"]==t["end"] else f"{f(t['start'])} → {f(t['end'])}"

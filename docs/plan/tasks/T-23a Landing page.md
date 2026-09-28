@@ -2,7 +2,7 @@
 id: T-23a
 title: "Landing page ported from the prototype"
 owner: "P4 Content and moderation"
-sequence: "1 of 6"
+sequence: "1 of 5"
 hours: 4
 start: 2026-09-24
 end: 2026-09-25
@@ -17,7 +17,7 @@ tags:
 
 # T-23a · Landing page ported from the prototype
 
-**Owner:** [[P4 Content and moderation]], task 1 of 6  
+**Owner:** [[P4 Content and moderation]], task 1 of 5  
 **When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#39](https://github.com/magentawood/roomsie/issues/39)

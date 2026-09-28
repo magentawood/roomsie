@@ -9,7 +9,7 @@ tags:
 
 _The schema, the matching, and who sees whom._
 
-**24 hours** of build work, 0 spare, finishing Mon 5 Oct.
+**24 hours** of build work at 2h a day, 0 spare, finishing Mon 5 Oct.
 
 Part of [[roomsie launch]].
 

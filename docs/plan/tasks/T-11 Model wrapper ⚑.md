@@ -1,12 +1,12 @@
 ---
 id: T-11
 title: "Model wrapper: DeepSeek with Gemini fallback"
-owner: "P2 Assistant"
-sequence: "2 of 6"
+owner: "P2 Chat"
+sequence: "2 of 9"
 hours: 4
-start: 2026-09-25
-end: 2026-09-26
-checkpoint: CP1
+start: 2026-09-24
+end: 2026-09-25
+checkpoint: CP0
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/15
 tags:
@@ -18,9 +18,9 @@ tags:
 
 # T-11 · Model wrapper: DeepSeek with Gemini fallback
 
-**Owner:** [[P2 Assistant]], task 2 of 6  
-**When:** Fri 25 Sep → Sat 26 Sep · 4 hours  
-**Checkpoint:** [[CP1 Foundation]]  
+**Owner:** [[P2 Chat]], task 2 of 9  
+**When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
+**Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#15](https://github.com/magentawood/roomsie/issues/15)
 
 > [!warning] Critical path

@@ -1,12 +1,12 @@
 ---
 id: T-21
 title: "Five-turn cap, rate limits, spend ceiling"
-owner: "P2 Assistant"
-sequence: "5 of 6"
+owner: "P2 Chat"
+sequence: "5 of 9"
 hours: 5
-start: 2026-10-02
-end: 2026-10-04
-checkpoint: CP3
+start: 2026-09-29
+end: 2026-09-30
+checkpoint: CP2
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/41
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-21 · Five-turn cap, rate limits, spend ceiling
 
-**Owner:** [[P2 Assistant]], task 5 of 6  
-**When:** Fri 2 Oct → Sun 4 Oct · 5 hours  
-**Checkpoint:** [[CP3 Freeze and go-no-go]]  
+**Owner:** [[P2 Chat]], task 5 of 9  
+**When:** Tue 29 Sep → Wed 30 Sep · 5 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#41](https://github.com/magentawood/roomsie/issues/41)
 
 ## Needs first

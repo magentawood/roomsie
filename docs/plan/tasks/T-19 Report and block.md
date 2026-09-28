@@ -2,7 +2,7 @@
 id: T-19
 title: "Report, block, suspend, and a saved moderation query"
 owner: "P4 Content and moderation"
-sequence: "3 of 6"
+sequence: "3 of 5"
 hours: 5
 start: 2026-09-28
 end: 2026-09-30
@@ -17,7 +17,7 @@ tags:
 
 # T-19 · Report, block, suspend, and a saved moderation query
 
-**Owner:** [[P4 Content and moderation]], task 3 of 6  
+**Owner:** [[P4 Content and moderation]], task 3 of 5  
 **When:** Mon 28 Sep → Wed 30 Sep · 5 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#45](https://github.com/magentawood/roomsie/issues/45)

@@ -2,7 +2,7 @@
 id: T-22
 title: "Launch areas and waitlist"
 owner: "P4 Content and moderation"
-sequence: "6 of 6"
+sequence: "5 of 5"
 hours: 3
 start: 2026-10-06
 end: 2026-10-06
@@ -17,7 +17,7 @@ tags:
 
 # T-22 · Launch areas and waitlist
 
-**Owner:** [[P4 Content and moderation]], task 6 of 6  
+**Owner:** [[P4 Content and moderation]], task 5 of 5  
 **When:** Tue 6 Oct · 3 hours  
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#47](https://github.com/magentawood/roomsie/issues/47)

@@ -1,8 +1,8 @@
 ---
 id: T-24
 title: "Event logging table"
-owner: "P5 Accounts and connections"
-sequence: "3 of 6"
+owner: "P5 Accounts and people"
+sequence: "3 of 5"
 hours: 2
 start: 2026-09-28
 end: 2026-09-28
@@ -17,7 +17,7 @@ tags:
 
 # T-24 · Event logging table
 
-**Owner:** [[P5 Accounts and connections]], task 3 of 6  
+**Owner:** [[P5 Accounts and people]], task 3 of 5  
 **When:** Mon 28 Sep · 2 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#37](https://github.com/magentawood/roomsie/issues/37)

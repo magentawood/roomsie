@@ -1,11 +1,11 @@
 ---
 id: T-13
 title: "Reply writer with scope rules"
-owner: "P2 Assistant"
-sequence: "4 of 6"
+owner: "P2 Chat"
+sequence: "4 of 9"
 hours: 4
-start: 2026-09-30
-end: 2026-10-01
+start: 2026-09-28
+end: 2026-09-29
 checkpoint: CP2
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/33
@@ -17,8 +17,8 @@ tags:
 
 # T-13 · Reply writer with scope rules
 
-**Owner:** [[P2 Assistant]], task 4 of 6  
-**When:** Wed 30 Sep → Thu 1 Oct · 4 hours  
+**Owner:** [[P2 Chat]], task 4 of 9  
+**When:** Mon 28 Sep → Tue 29 Sep · 4 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#33](https://github.com/magentawood/roomsie/issues/33)
 

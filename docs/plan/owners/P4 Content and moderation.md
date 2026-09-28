@@ -9,7 +9,7 @@ tags:
 
 _Public pages, reports and account removal._
 
-**25 hours** of build work, -1 spare, finishing Tue 6 Oct.
+**17 hours** of build work at 1.42h a day, 7 spare, finishing Tue 6 Oct.
 
 Part of [[roomsie launch]].
 
@@ -19,5 +19,4 @@ Part of [[roomsie launch]].
 2. [[T-23b Legal pages]] — Sat 26 Sep, 2h
 3. [[T-19 Report and block]] — Mon 28 Sep → Wed 30 Sep, 5h
 4. [[T-20 Account deletion]] — Wed 30 Sep → Thu 1 Oct, 3h
-5. [[T-16 Profiles and photos ⚑]] — Fri 2 Oct → Mon 5 Oct, 8h
-6. [[T-22 Launch areas and waitlist]] — Tue 6 Oct, 3h
+5. [[T-22 Launch areas and waitlist]] — Tue 6 Oct, 3h

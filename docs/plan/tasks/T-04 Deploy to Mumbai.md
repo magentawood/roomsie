@@ -2,7 +2,7 @@
 id: T-04
 title: "Deploy web and API to Mumbai"
 owner: "P1 Platform"
-sequence: "3 of 8"
+sequence: "3 of 7"
 hours: 3
 start: 2026-09-29
 end: 2026-09-30
@@ -17,7 +17,7 @@ tags:
 
 # T-04 · Deploy web and API to Mumbai
 
-**Owner:** [[P1 Platform]], task 3 of 8  
+**Owner:** [[P1 Platform]], task 3 of 7  
 **When:** Tue 29 Sep → Wed 30 Sep · 3 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#30](https://github.com/magentawood/roomsie/issues/30)

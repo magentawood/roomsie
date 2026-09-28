@@ -2,7 +2,7 @@
 id: T-02
 title: "Scaffold the monorepo in this repo"
 owner: "P1 Platform"
-sequence: "1 of 8"
+sequence: "1 of 7"
 hours: 4
 start: 2026-09-24
 end: 2026-09-25
@@ -18,7 +18,7 @@ tags:
 
 # T-02 · Scaffold the monorepo in this repo
 
-**Owner:** [[P1 Platform]], task 1 of 8  
+**Owner:** [[P1 Platform]], task 1 of 7  
 **When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#10](https://github.com/magentawood/roomsie/issues/10)

@@ -9,7 +9,7 @@ tags:
 
 _The ground everyone builds on._
 
-**24 hours** of build work, 0 spare, finishing Tue 6 Oct.
+**18 hours** of build work at 1.5h a day, 6 spare, finishing Tue 6 Oct.
 
 Part of [[roomsie launch]].
 
@@ -21,5 +21,4 @@ Part of [[roomsie launch]].
 4. [[T-07 Error reporting]] — Wed 30 Sep, 1h
 5. [[T-25 Uptime and spend alerts]] — Thu 1 Oct, 2h
 6. [[T-33 Invite-only gate]] — Fri 2 Oct, 1h
-7. [[T-09 Chip flow ⚑]] — Sat 3 Oct → Mon 5 Oct, 6h
-8. [[T-29 Abuse test]] — Tue 6 Oct, 1h
+7. [[T-29 Abuse test]] — Tue 6 Oct, 1h

@@ -2,7 +2,7 @@
 id: T-23b
 title: "Privacy, terms and grievance pages"
 owner: "P4 Content and moderation"
-sequence: "2 of 6"
+sequence: "2 of 5"
 hours: 2
 start: 2026-09-26
 end: 2026-09-26
@@ -17,7 +17,7 @@ tags:
 
 # T-23b · Privacy, terms and grievance pages
 
-**Owner:** [[P4 Content and moderation]], task 2 of 6  
+**Owner:** [[P4 Content and moderation]], task 2 of 5  
 **When:** Sat 26 Sep · 2 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#40](https://github.com/magentawood/roomsie/issues/40)

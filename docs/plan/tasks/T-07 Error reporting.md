@@ -2,7 +2,7 @@
 id: T-07
 title: "Error reporting wrapper and Sentry"
 owner: "P1 Platform"
-sequence: "4 of 8"
+sequence: "4 of 7"
 hours: 1
 start: 2026-09-30
 end: 2026-09-30
@@ -17,7 +17,7 @@ tags:
 
 # T-07 · Error reporting wrapper and Sentry
 
-**Owner:** [[P1 Platform]], task 4 of 8  
+**Owner:** [[P1 Platform]], task 4 of 7  
 **When:** Wed 30 Sep · 1 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#28](https://github.com/magentawood/roomsie/issues/28)

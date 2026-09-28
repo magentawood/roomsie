@@ -1,8 +1,8 @@
 ---
 id: T-18a
 title: "Connect request and contact reveal API"
-owner: "P5 Accounts and connections"
-sequence: "5 of 6"
+owner: "P5 Accounts and people"
+sequence: "4 of 5"
 hours: 4
 start: 2026-09-30
 end: 2026-10-01
@@ -18,7 +18,7 @@ tags:
 
 # T-18a · Connect request and contact reveal API
 
-**Owner:** [[P5 Accounts and connections]], task 5 of 6  
+**Owner:** [[P5 Accounts and people]], task 4 of 5  
 **When:** Wed 30 Sep → Thu 1 Oct · 4 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#38](https://github.com/magentawood/roomsie/issues/38)

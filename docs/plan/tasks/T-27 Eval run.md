@@ -1,12 +1,12 @@
 ---
 id: T-27
 title: "Run the eval set and tune the prompt"
-owner: "P2 Assistant"
-sequence: "6 of 6"
+owner: "P2 Chat"
+sequence: "6 of 9"
 hours: 3
-start: 2026-10-04
-end: 2026-10-05
-checkpoint: CP3
+start: 2026-09-30
+end: 2026-09-30
+checkpoint: CP2
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/48
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-27 · Run the eval set and tune the prompt
 
-**Owner:** [[P2 Assistant]], task 6 of 6  
-**When:** Sun 4 Oct → Mon 5 Oct · 3 hours  
-**Checkpoint:** [[CP3 Freeze and go-no-go]]  
+**Owner:** [[P2 Chat]], task 6 of 9  
+**When:** Wed 30 Sep · 3 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#48](https://github.com/magentawood/roomsie/issues/48)
 
 ## Needs first

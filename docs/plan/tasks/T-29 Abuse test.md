@@ -2,7 +2,7 @@
 id: T-29
 title: "Abuse test: 100 fake sessions"
 owner: "P1 Platform"
-sequence: "8 of 8"
+sequence: "7 of 7"
 hours: 1
 start: 2026-10-06
 end: 2026-10-06
@@ -17,7 +17,7 @@ tags:
 
 # T-29 · Abuse test: 100 fake sessions
 
-**Owner:** [[P1 Platform]], task 8 of 8  
+**Owner:** [[P1 Platform]], task 7 of 7  
 **When:** Tue 6 Oct · 1 hours  
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#51](https://github.com/magentawood/roomsie/issues/51)
