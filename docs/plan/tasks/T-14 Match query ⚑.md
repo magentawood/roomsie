@@ -35,10 +35,10 @@ tags:
 - [[T-22 Launch areas and waitlist]]
 
 ## Done when
-- [ ] Returns matching people for a form state
-- [ ] Hard filters: area, budget, move date, compatible intent, dealbreakers
-- [ ] Match score is 70 plus 30 times the share of preferences met, shown only once lifestyle answers exist
-- [ ] Blocked and suspended people never appear
+- [x] Returns matching people for a form state · [#59](https://github.com/magentawood/roomsie/pull/59)
+- [x] Hard filters: area, budget, move date, compatible intent, dealbreakers · [#59](https://github.com/magentawood/roomsie/pull/59)
+- [x] Match score is 70 plus 30 times the share of preferences met, shown only once lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
+- [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
 
 ## Read first
 - [interface-shape.md](../../interface-shape.md)

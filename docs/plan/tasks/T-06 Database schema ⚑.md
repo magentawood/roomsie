@@ -42,10 +42,11 @@ tags:
 
 ## Done when
 - [ ] Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
-- [ ] Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility
-- [ ] UUIDv7 ids with no database default. `created_at` from the server clock
-- [ ] Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id`
+- [x] Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility · [#58](https://github.com/magentawood/roomsie/pull/58)
+- [x] UUIDv7 ids with no database default. `created_at` from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
+- [x] Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
 - [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
+- [x] An `areas` catalogue and a `listings` table, so area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
 
 ## Read first
 - [0015-primary-key-strategy.md](../../source/decisions/0015-primary-key-strategy.md)
