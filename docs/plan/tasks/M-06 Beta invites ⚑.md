@@ -37,5 +37,7 @@ tags:
 - [ ] Help people finish profiles
 - [ ] 150 profiles, at least 40 in each launch area, by Sunday 11 October
 
+^done
+
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

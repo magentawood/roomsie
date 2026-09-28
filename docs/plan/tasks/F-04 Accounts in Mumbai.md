@@ -32,5 +32,7 @@ tags:
 - [ ] Firebase project, R2 buckets for public photos and private files, DeepSeek and Gemini keys
 - [ ] Keys shared through a password manager, never in chat or the repo
 
+^done
+
 ## Read first
 - [0009-hosting-and-region.md](../../source/decisions/0009-hosting-and-region.md)

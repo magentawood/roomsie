@@ -31,5 +31,7 @@ tags:
 - [ ] Ten drafts written from the interviews
 - [ ] Published once the blog is live after launch
 
+^done
+
 ## Read first
 - [corpus-plan.md](../../content/corpus-plan.md)

@@ -32,5 +32,7 @@ tags:
 - [ ] Notes in docs/research/
 - [ ] Dropped first if seeding is behind
 
+^done
+
 ## Read first
 - [supply-and-broker-model.md](../../research/supply-and-broker-model.md)

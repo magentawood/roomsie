@@ -37,5 +37,7 @@ tags:
 - [ ] Outreach through own networks, college and company groups, and flat-hunting groups
 - [ ] Invite people to sign up. Never copy anyone's posts or details
 
+^done
+
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

@@ -41,6 +41,8 @@ tags:
 - [ ] The API verifies the ID token locally, with no call to Firebase
 - [ ] A users row is created on first sign-in. `tokens_valid_after` is in the first migration
 
+^done
+
 ## Read first
 - [0007-web-rendering-and-auth-transport.md](../../source/decisions/0007-web-rendering-and-auth-transport.md)
 - [0005-managed-platform-split.md](../../source/decisions/0005-managed-platform-split.md)

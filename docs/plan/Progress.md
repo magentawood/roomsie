@@ -6,19 +6,18 @@ tags:
 
 # Progress
 
-**The vault is the source of truth for progress.** Tick a box in its task
-note, then run `python3 tools/build-obsidian-plan.py`. Tick state survives
-the rebuild, and boxes you add by hand are kept.
+**The vault is the source of truth for progress.** Every task below opens
+to show its sub-tasks. Those checkboxes are the task note's own list, shown
+here rather than copied — tick one here and it is ticked in the task note.
 
-This note is generated. Ticking here does nothing — tick in the task note.
+The counts and ✅ 🟡 ⬜ marks are a snapshot. Run
+`python3 tools/build-obsidian-plan.py` to refresh them.
 
 **8 of 189 done · 4%**
 
 `█░░░░░░░░░░░░░░░░░░░░░░░`
 
 Part of [[roomsie launch]].
-
-## By lane
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
@@ -33,625 +32,220 @@ Part of [[roomsie launch]].
 | [[Founder]] | 0 / 10 | 0 / 25 | 0% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
-## What is left — 181 open
-
-
-**P1 Platform**
-
-- [ ] [[T-02 Scaffold monorepo ⚑]] — pnpm workspaces and Turborepo, per ADR 0010
-- [ ] [[T-02 Scaffold monorepo ⚑]] — apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle
-- [ ] [[T-02 Scaffold monorepo ⚑]] — packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md
-- [ ] [[T-02 Scaffold monorepo ⚑]] — `pnpm dev` runs web and API locally. docs/ is untouched
-- [ ] [[T-02 Scaffold monorepo ⚑]] — Every API route is served under `/v1`, so a future mobile app keeps working through later changes
-- [ ] [[T-05 Google sign-in ⚑]] — Google sign-in through Firebase on the web, token held in memory
-- [ ] [[T-05 Google sign-in ⚑]] — The API verifies the ID token locally, with no call to Firebase
-- [ ] [[T-05 Google sign-in ⚑]] — A users row is created on first sign-in. `tokens_valid_after` is in the first migration
-- [ ] [[T-04 Deploy to Mumbai]] — Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile
-- [ ] [[T-04 Deploy to Mumbai]] — Secrets set in both
-- [ ] [[T-04 Deploy to Mumbai]] — A merge to main deploys automatically
-- [ ] [[T-16 Profiles and photos ⚑]] — Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
-- [ ] [[T-16 Profiles and photos ⚑]] — Up to four photos, uploaded straight to R2 with a presigned URL
-- [ ] [[T-16 Profiles and photos ⚑]] — Photo bytes never pass through the API
-- [ ] [[T-07 Error reporting]] — `reportError(err, context)` lives in packages/config and is the only way code reports errors
-- [ ] [[T-07 Error reporting]] — Sentry free tier connected in web and API
-- [ ] [[T-07 Error reporting]] — `beforeSend` strips message text, phone numbers and the Authorization header
-- [ ] [[T-33 Invite-only gate]] — Before launch, sign-in works only for emails on an allowlist
-- [ ] [[T-33 Invite-only gate]] — One setting turns the gate off on launch day
-- [ ] [[T-22 Launch areas and waitlist]] — The three launch areas are named on the site
-- [ ] [[T-22 Launch areas and waitlist]] — A visitor from elsewhere gets a waitlist form, not an empty panel
-- [ ] [[T-22 Launch areas and waitlist]] — Waitlist entries are saved with their area
-- [ ] [[T-25 Uptime and spend alerts]] — The API is checked every minute, with alerts to the team channel
-- [ ] [[T-25 Uptime and spend alerts]] — An alert fires when daily model spend passes 70% of the ceiling
-- [ ] [[T-29 Abuse test]] — A script opens 100 anonymous sessions
-- [ ] [[T-29 Abuse test]] — Per-device and per-network limits trip
-- [ ] [[T-29 Abuse test]] — Hitting the spend ceiling falls back to chips only, with no error page
-- [ ] [[T-39 Analytics database]] — Events are written to their own Supabase project, on the second account, through the same track() function
-- [ ] [[T-39 Analytics database]] — pg_cron in that project deletes events past the retention period and creates next month's partition
-- [ ] [[T-39 Analytics database]] — The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation
-- [ ] [[T-40 Nightly backups]] — A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
-- [ ] [[T-40 Nightly backups]] — Fourteen days of dumps are kept, and older ones are deleted
-- [ ] [[T-40 Nightly backups]] — A restore has been tested once, into a scratch project
-
-**P2 Assistant**
-
-- [ ] [[T-08 Form A contract ⚑]] — A Zod schema in packages/contract for Form A
-- [ ] [[T-08 Form A contract ⚑]] — Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty
-- [ ] [[T-08 Form A contract ⚑]] — Every enum has an `unclear` value
-- [ ] [[T-08 Form A contract ⚑]] — Results are a tagged union, `kind: "person"` for v0, so property listings can be added later without breaking clients
-- [ ] [[T-11 Model wrapper ⚑]] — One module is the only way the app calls a model
-- [ ] [[T-11 Model wrapper ⚑]] — DeepSeek V4.1 Flash first. Gemini on a timeout, a 5xx or a rate limit
-- [ ] [[T-11 Model wrapper ⚑]] — Output that fails Zod retries once, then goes to Gemini
-- [ ] [[T-11 Model wrapper ⚑]] — Logs tokens in, tokens out and the model for every call. The system prompt is cached
-- [ ] [[T-12 Extraction ⚑]] — Free text becomes Form A slots, as JSON limited to the enums
-- [ ] [[T-12 Extraction ⚑]] — The Mumbai area list and number and date forms are in the cached prompt
-- [ ] [[T-12 Extraction ⚑]] — Numbers and dates are parsed by code, not by the model
-- [ ] [[T-12 Extraction ⚑]] — Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
-- [ ] [[T-12 Extraction ⚑]] — The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
-- [ ] [[T-13 Reply writer]] — Writes the reply from the form and the last two turns, never the whole chat
-- [ ] [[T-13 Reply writer]] — Replies in the language the person used
-- [ ] [[T-13 Reply writer]] — Never states a fact about a specific person
-- [ ] [[T-13 Reply writer]] — Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
-- [ ] [[T-21 Turn cap and spend ceiling]] — Five typed turns before sign-in. Chip taps do not count
-- [ ] [[T-21 Turn cap and spend ceiling]] — The sign-in wall never appears before results have shown, and results stay visible behind it
-- [ ] [[T-21 Turn cap and spend ceiling]] — Limits per device and per network
-- [ ] [[T-21 Turn cap and spend ceiling]] — At the daily spend ceiling the chat drops to chips only
-- [ ] [[T-27 Eval run]] — The 50 test sentences run through extraction
-- [ ] [[T-27 Eval run]] — Record the share of slots right and how often vague sentences are marked unclear
-- [ ] [[T-27 Eval run]] — Tune the prompt. Save the results in docs/research/
-- [ ] [[T-34 Router ⚑]] — Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope
-- [ ] [[T-34 Router ⚑]] — It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged
-- [ ] [[T-34 Router ⚑]] — The pipeline runs only the handlers the router picks
-- [ ] [[T-34 Router ⚑]] — The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
-
-**P3 Data and trust**
-
-- [ ] [[T-18b Person and connect screens ⚑]] — Built first from the V3 prototype's detail sheet, against a mock of the connect API. Wired to T-18a when it lands on Sun 4 Oct
-- [ ] [[T-18b Person and connect screens ⚑]] — The person screen needs sign-in
-- [ ] [[T-18b Person and connect screens ⚑]] — Connect button with sent, accepted and declined states
-- [ ] [[T-18b Person and connect screens ⚑]] — The number shows only after both accept
-- [ ] [[T-18b Person and connect screens ⚑]] — Report and block are one tap away
-- [ ] [[T-06 Database schema ⚑]] — Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
-- [ ] [[T-06 Database schema ⚑]] — A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
-- [ ] [[T-15 Results panel ⚑]] — A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands
-- [ ] [[T-15 Results panel ⚑]] — The header says what is shown, from Everything in Mumbai down to People in Powai under 20k
-- [ ] [[T-15 Results panel ⚑]] — Updates only when a form value or weight changes, never reorders while scrolling
-- [ ] [[T-15 Results panel ⚑]] — Match score hidden until lifestyle answers exist
-- [ ] [[T-37 Articles and search]] — An articles table with a Postgres full-text index. No vector store
-- [ ] [[T-37 Articles and search]] — The launch articles load from files in the repo, so publishing one is a pull request
-- [ ] [[T-37 Articles and search]] — A search returns the best matching passages with their article and heading
-- [ ] [[T-38 Advisor]] — Consulting questions are answered from the articles first, naming the article
-- [ ] [[T-38 Advisor]] — If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead
-- [ ] [[T-38 Advisor]] — Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
-- [ ] [[T-38 Advisor]] — Web searches count toward the daily spend ceiling
-
-**P4 Content and moderation**
-
-- [ ] [[T-19 Report and block]] — The API behind the report and block buttons, which live in T-18b
-- [ ] [[T-19 Report and block]] — A block hides both people from each other, including in the match query
-- [ ] [[T-19 Report and block]] — A saved query in Supabase lists open reports
-- [ ] [[T-19 Report and block]] — Suspend sets `tokens_valid_after` to now and hides the profile
-- [ ] [[T-23a Landing page]] — Landing page in the V3 prototype's look
-- [ ] [[T-23a Landing page]] — Hero, how it works, and a button into the chat
-- [ ] [[T-23a Landing page]] — Every women-only line removed
-- [ ] [[T-23a Landing page]] — Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values
-- [ ] [[T-20 Account deletion]] — A person can delete their account from settings
-- [ ] [[T-20 Account deletion]] — Profile, photos in R2 and form state are removed. Events are pseudonymised
-- [ ] [[T-20 Account deletion]] — `tokens_valid_after` is set to now, so every session ends
-- [ ] [[T-20 Account deletion]] — The person's chat turns are deleted too
-- [ ] [[T-23b Legal pages]] — /privacy, /terms and /grievance show the founder's text
-- [ ] [[T-23b Legal pages]] — Linked from the footer and from the sign-in screen
-- [ ] [[T-35 Form B contract]] — Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
-- [ ] [[T-35 Form B contract]] — An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
-- [ ] [[T-36 Observer]] — The observer turns personal context into Form B observations
-- [ ] [[T-36 Observer]] — Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
-- [ ] [[T-36 Observer]] — A one-off job backfills Form B from the stored chat turns
-- [ ] [[T-36 Observer]] — Tested on the eval sentences, with the rejection rate recorded
-
-**P5 Accounts and connections**
-
-- [ ] [[T-10 Chat screen and split view ⚑]] — The landing button opens a full-screen chat
-- [ ] [[T-10 Chat screen and split view ⚑]] — The screen splits into chat and results once results exist
-- [ ] [[T-10 Chat screen and split view ⚑]] — On a phone, the chat drops to a bar at the bottom and expands on tap
-- [ ] [[T-10 Chat screen and split view ⚑]] — Nothing resizes while the person is typing
-- [ ] [[M-03 Eval sentences]] — 50 sentences people would really type, in English, Hinglish and Marathi
-- [ ] [[M-03 Eval sentences]] — Mumbai areas, 20k, bees hazaar, next month end
-- [ ] [[M-03 Eval sentences]] — 10 deliberately vague ones. T1 labels the right answers
-- [ ] [[T-09 Chip flow ⚑]] — Intent as four cards, area as the top six plus search, budget as bands
-- [ ] [[T-09 Chip flow ⚑]] — Each tap writes to the form. A tap never calls a model
-- [ ] [[T-09 Chip flow ⚑]] — Typing instead of tapping still works
-- [ ] [[T-03 CI checks]] — Every pull request runs typecheck, lint, build and gitleaks
-- [ ] [[T-03 CI checks]] — Finishes in under five minutes
-- [ ] [[T-17 Carry chat into account]] — What a visitor told the assistant before signing in is attached to their account when they sign in
-- [ ] [[T-17 Carry chat into account]] — Nothing is lost and nothing is asked twice
-- [ ] [[T-17 Carry chat into account]] — The stored chat turns move to the account with the session
-- [ ] [[T-24 Event logging]] — One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
-- [ ] [[T-24 Event logging]] — No message text is stored
-- [ ] [[T-24 Event logging]] — Events are written only through one `track()` function in apps/api
-- [ ] [[T-24 Event logging]] — Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
-- [ ] [[T-18a Connect API ⚑]] — Send, accept or decline a connect request
-- [ ] [[T-18a Connect API ⚑]] — On mutual accept, both people see each other's number
-- [ ] [[T-18a Connect API ⚑]] — At most 10 new requests a day. No request to someone who blocked you
-
-**Design**
-
-- [ ] [[D-01 Styling decision]] — Launch uses the V3 prototype's look, not the Untitled UI pipeline
-- [ ] [[D-01 Styling decision]] — Every women-only line is marked for removal
-- [ ] [[D-02 Chat screen designs ⚑]] — Chat with chips, the split view, and the phone chat bar
-- [ ] [[D-02 Chat screen designs ⚑]] — These have no prototype equivalent, and V3 starts building them on Thursday
-- [ ] [[D-03 Results and profile designs]] — Results panel header states and the person card, for V5 on Sat 26 Sep
-- [ ] [[D-03 Results and profile designs]] — Profile create and edit with photo upload, for V5 on Tue 29 Sep
-- [ ] [[D-03 Results and profile designs]] — Connect and report states, refining the prototype detail sheet V5 builds first
-- [ ] [[D-03 Results and profile designs]] — Delete confirmation
-- [ ] [[D-04 Landing and waitlist designs]] — Landing page for all genders
-- [ ] [[D-04 Landing and waitlist designs]] — Legal page template, the sign-in wall, the waitlist, empty states
-- [ ] [[D-05 Design QA]] — Walk every screen on a phone and a laptop
-- [ ] [[D-05 Design QA]] — Every fix filed as an issue
-- [ ] [[D-06 Launch visuals]] — Social post images and link preview images
-
-**M1 Content**
-
-- [ ] [[M-04 Article interviews]] — Three to five real people interviewed for each topic group
-- [ ] [[M-04 Article interviews]] — Notes saved
-- [ ] [[M-05 Article drafts]] — Ten drafts written from the interviews
-- [ ] [[M-05 Article drafts]] — Published once the blog is live after launch
-- [ ] [[M-07 Launch posts]] — Launch posts, the founder story, a list of groups and channels
-- [ ] [[M-07 Launch posts]] — Scheduled on Sunday 11 October
-
-**M2 Community**
-
-- [ ] [[M-01 Seeding form ⚑]] — Form live with the consent text
-- [ ] [[M-01 Seeding form ⚑]] — Outreach through own networks, college and company groups, and flat-hunting groups
-- [ ] [[M-01 Seeding form ⚑]] — Invite people to sign up. Never copy anyone's posts or details
-- [ ] [[M-02 100 sign-ups]] — 100 sign-ups by Wednesday 30 September
-- [ ] [[M-02 100 sign-ups]] — 250 by Sunday 4 October, because about 6 in 10 will finish a profile
-- [ ] [[M-06 Beta invites ⚑]] — Invites go out on Sat 3 Oct, the day after profile creation works
-- [ ] [[M-06 Beta invites ⚑]] — Help people finish profiles
-- [ ] [[M-06 Beta invites ⚑]] — 150 profiles, at least 40 in each launch area, by Sunday 11 October
-- [ ] [[M-09 Broker calls]] — 10 to 15 calls to Mumbai brokers
-- [ ] [[M-09 Broker calls]] — Notes in docs/research/
-- [ ] [[M-09 Broker calls]] — Dropped first if seeding is behind
-
-**Founder**
-
-- [ ] [[F-01 Kickoff]] — Every role in this plan has a person's name
-- [ ] [[F-01 Kickoff]] — Everyone has access to the repo and the issues
-- [ ] [[F-01 Kickoff]] — Team channel exists, with a written standup by 10 am daily
-- [ ] [[F-02 Domain]] — roomsie.com, or the chosen alternative, is owned
-- [ ] [[F-02 Domain]] — DNS access is shared with T4
-- [ ] [[F-03 Billing and caps]] — Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
-- [ ] [[F-03 Billing and caps]] — Hard monthly caps are set on both AI accounts
-- [ ] [[F-04 Accounts in Mumbai]] — Supabase in ap-south-1, Fly in bom, Vercel functions in bom1
-- [ ] [[F-04 Accounts in Mumbai]] — Firebase project, R2 buckets for public photos and private files, DeepSeek and Gemini keys
-- [ ] [[F-04 Accounts in Mumbai]] — Keys shared through a password manager, never in chat or the repo
-- [ ] [[F-05 Seeding consent text ⚑]] — Says what is collected, that the profile will be shown to other roomsie users, and how to delete it
-- [ ] [[F-05 Seeding consent text ⚑]] — Short enough to read on a phone
-- [ ] [[F-06 Launch areas picked]] — Three areas chosen with marketing
-- [ ] [[F-06 Launch areas picked]] — Chosen by where the team can actually reach people
-- [ ] [[F-07 Privacy and terms draft]] — Says what is collected, why, for how long, how to delete, and who to contact
-- [ ] [[F-07 Privacy and terms draft]] — A named grievance contact
-- [ ] [[F-07 Privacy and terms draft]] — Says that chat messages are stored, and that deleting the account deletes them
-- [ ] [[F-09 ADR exceptions]] — 0011: prototype styling for launch
-- [ ] [[F-09 ADR exceptions]] — 0012: one events table instead of a second database
-- [ ] [[F-09 ADR exceptions]] — 0014: Sentry free tier instead of GlitchTip
-- [ ] [[F-08 Moderator named]] — A moderator and a backup are named
-- [ ] [[F-08 Moderator named]] — Rules for when to suspend, and how fast to respond
-- [ ] [[F-08 Moderator named]] — Reports checked every day from launch
-- [ ] [[F-10 Go-no-go meeting]] — Saturday 10 October, 8 pm
-- [ ] [[F-10 Go-no-go meeting]] — Checked against the go/no-go list in docs/team-plan.md
-
-**Everyone**
-
-- [ ] [[A-01 Bug fix day]] — Engineers spend their two hours on P1 bugs only
-- [ ] [[A-01 Bug fix day]] — No database migrations
-- [ ] [[A-02 Launch day]] — T4 turns off the invite gate and has tested the rollback
-- [ ] [[A-02 Launch day]] — Everyone checks the live site on their own phone
-- [ ] [[A-02 Launch day]] — Marketing posts and replies to every comment. Every bug report becomes an issue
-
 ---
 
-# Every checkbox, by lane
+## P1 Platform — 0/33
 
-## P1 Platform
+> [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/5
+> ![[T-02 Scaffold monorepo ⚑#^done]]
 
+> [!todo]- ⬜ [[T-05 Google sign-in ⚑]] · 0/3
+> ![[T-05 Google sign-in ⚑#^done]]
 
-### ⬜ [[T-02 Scaffold monorepo ⚑]] — 0/5
+> [!todo]- ⬜ [[T-04 Deploy to Mumbai]] · 0/3
+> ![[T-04 Deploy to Mumbai#^done]]
 
-- [ ] pnpm workspaces and Turborepo, per ADR 0010
-- [ ] apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle
-- [ ] packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md
-- [ ] `pnpm dev` runs web and API locally. docs/ is untouched
-- [ ] Every API route is served under `/v1`, so a future mobile app keeps working through later changes
+> [!todo]- ⬜ [[T-07 Error reporting]] · 0/3
+> ![[T-07 Error reporting#^done]]
 
-### ⬜ [[T-05 Google sign-in ⚑]] — 0/3
+> [!todo]- ⬜ [[T-25 Uptime and spend alerts]] · 0/2
+> ![[T-25 Uptime and spend alerts#^done]]
 
-- [ ] Google sign-in through Firebase on the web, token held in memory
-- [ ] The API verifies the ID token locally, with no call to Firebase
-- [ ] A users row is created on first sign-in. `tokens_valid_after` is in the first migration
+> [!todo]- ⬜ [[T-33 Invite-only gate]] · 0/2
+> ![[T-33 Invite-only gate#^done]]
 
-### ⬜ [[T-04 Deploy to Mumbai]] — 0/3
+> [!todo]- ⬜ [[T-39 Analytics database]] · 0/3
+> ![[T-39 Analytics database#^done]]
 
-- [ ] Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile
-- [ ] Secrets set in both
-- [ ] A merge to main deploys automatically
+> [!todo]- ⬜ [[T-40 Nightly backups]] · 0/3
+> ![[T-40 Nightly backups#^done]]
 
-### ⬜ [[T-07 Error reporting]] — 0/3
+> [!todo]- ⬜ [[T-16 Profiles and photos ⚑]] · 0/3
+> ![[T-16 Profiles and photos ⚑#^done]]
 
-- [ ] `reportError(err, context)` lives in packages/config and is the only way code reports errors
-- [ ] Sentry free tier connected in web and API
-- [ ] `beforeSend` strips message text, phone numbers and the Authorization header
+> [!todo]- ⬜ [[T-22 Launch areas and waitlist]] · 0/3
+> ![[T-22 Launch areas and waitlist#^done]]
 
-### ⬜ [[T-25 Uptime and spend alerts]] — 0/2
+> [!todo]- ⬜ [[T-29 Abuse test]] · 0/3
+> ![[T-29 Abuse test#^done]]
 
-- [ ] The API is checked every minute, with alerts to the team channel
-- [ ] An alert fires when daily model spend passes 70% of the ceiling
 
-### ⬜ [[T-33 Invite-only gate]] — 0/2
+## P2 Assistant — 0/28
 
-- [ ] Before launch, sign-in works only for emails on an allowlist
-- [ ] One setting turns the gate off on launch day
+> [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/4
+> ![[T-08 Form A contract ⚑#^done]]
 
-### ⬜ [[T-39 Analytics database]] — 0/3
+> [!todo]- ⬜ [[T-11 Model wrapper ⚑]] · 0/4
+> ![[T-11 Model wrapper ⚑#^done]]
 
-- [ ] Events are written to their own Supabase project, on the second account, through the same track() function
-- [ ] pg_cron in that project deletes events past the retention period and creates next month's partition
-- [ ] The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation
+> [!todo]- ⬜ [[T-12 Extraction ⚑]] · 0/5
+> ![[T-12 Extraction ⚑#^done]]
 
-### ⬜ [[T-40 Nightly backups]] — 0/3
+> [!todo]- ⬜ [[T-13 Reply writer]] · 0/4
+> ![[T-13 Reply writer#^done]]
 
-- [ ] A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
-- [ ] Fourteen days of dumps are kept, and older ones are deleted
-- [ ] A restore has been tested once, into a scratch project
+> [!todo]- ⬜ [[T-34 Router ⚑]] · 0/4
+> ![[T-34 Router ⚑#^done]]
 
-### ⬜ [[T-16 Profiles and photos ⚑]] — 0/3
+> [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/4
+> ![[T-21 Turn cap and spend ceiling#^done]]
 
-- [ ] Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
-- [ ] Up to four photos, uploaded straight to R2 with a presigned URL
-- [ ] Photo bytes never pass through the API
+> [!todo]- ⬜ [[T-27 Eval run]] · 0/3
+> ![[T-27 Eval run#^done]]
 
-### ⬜ [[T-22 Launch areas and waitlist]] — 0/3
 
-- [ ] The three launch areas are named on the site
-- [ ] A visitor from elsewhere gets a waitlist form, not an empty panel
-- [ ] Waitlist entries are saved with their area
+## P3 Data and trust — 8/26
 
-### ⬜ [[T-29 Abuse test]] — 0/3
+> [!todo]- 🟡 [[T-06 Database schema ⚑]] · 4/6
+> ![[T-06 Database schema ⚑#^done]]
 
-- [ ] A script opens 100 anonymous sessions
-- [ ] Per-device and per-network limits trip
-- [ ] Hitting the spend ceiling falls back to chips only, with no error page
+> [!todo]- ✅ [[T-14 Match query ⚑]] · 4/4
+> ![[T-14 Match query ⚑#^done]]
 
-## P2 Assistant
+> [!todo]- ⬜ [[T-37 Articles and search]] · 0/3
+> ![[T-37 Articles and search#^done]]
 
+> [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/4
+> ![[T-15 Results panel ⚑#^done]]
 
-### ⬜ [[T-08 Form A contract ⚑]] — 0/4
+> [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/5
+> ![[T-18b Person and connect screens ⚑#^done]]
 
-- [ ] A Zod schema in packages/contract for Form A
-- [ ] Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty
-- [ ] Every enum has an `unclear` value
-- [ ] Results are a tagged union, `kind: "person"` for v0, so property listings can be added later without breaking clients
+> [!todo]- ⬜ [[T-38 Advisor]] · 0/4
+> ![[T-38 Advisor#^done]]
 
-### ⬜ [[T-11 Model wrapper ⚑]] — 0/4
 
-- [ ] One module is the only way the app calls a model
-- [ ] DeepSeek V4.1 Flash first. Gemini on a timeout, a 5xx or a rate limit
-- [ ] Output that fails Zod retries once, then goes to Gemini
-- [ ] Logs tokens in, tokens out and the model for every call. The system prompt is cached
+## P4 Content and moderation — 0/20
 
-### ⬜ [[T-12 Extraction ⚑]] — 0/5
+> [!todo]- ⬜ [[T-23a Landing page]] · 0/4
+> ![[T-23a Landing page#^done]]
 
-- [ ] Free text becomes Form A slots, as JSON limited to the enums
-- [ ] The Mumbai area list and number and date forms are in the cached prompt
-- [ ] Numbers and dates are parsed by code, not by the model
-- [ ] Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
-- [ ] The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
+> [!todo]- ⬜ [[T-23b Legal pages]] · 0/2
+> ![[T-23b Legal pages#^done]]
 
-### ⬜ [[T-13 Reply writer]] — 0/4
+> [!todo]- ⬜ [[T-19 Report and block]] · 0/4
+> ![[T-19 Report and block#^done]]
 
-- [ ] Writes the reply from the form and the last two turns, never the whole chat
-- [ ] Replies in the language the person used
-- [ ] Never states a fact about a specific person
-- [ ] Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
+> [!todo]- ⬜ [[T-20 Account deletion]] · 0/4
+> ![[T-20 Account deletion#^done]]
 
-### ⬜ [[T-34 Router ⚑]] — 0/4
+> [!todo]- ⬜ [[T-35 Form B contract]] · 0/2
+> ![[T-35 Form B contract#^done]]
 
-- [ ] Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope
-- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged
-- [ ] The pipeline runs only the handlers the router picks
-- [ ] The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
+> [!todo]- ⬜ [[T-36 Observer]] · 0/4
+> ![[T-36 Observer#^done]]
 
-### ⬜ [[T-21 Turn cap and spend ceiling]] — 0/4
 
-- [ ] Five typed turns before sign-in. Chip taps do not count
-- [ ] The sign-in wall never appears before results have shown, and results stay visible behind it
-- [ ] Limits per device and per network
-- [ ] At the daily spend ceiling the chat drops to chips only
+## P5 Accounts and connections — 0/22
 
-### ⬜ [[T-27 Eval run]] — 0/3
+> [!todo]- ⬜ [[M-03 Eval sentences]] · 0/3
+> ![[M-03 Eval sentences#^done]]
 
-- [ ] The 50 test sentences run through extraction
-- [ ] Record the share of slots right and how often vague sentences are marked unclear
-- [ ] Tune the prompt. Save the results in docs/research/
+> [!todo]- ⬜ [[T-03 CI checks]] · 0/2
+> ![[T-03 CI checks#^done]]
 
-## P3 Data and trust
+> [!todo]- ⬜ [[T-24 Event logging]] · 0/4
+> ![[T-24 Event logging#^done]]
 
+> [!todo]- ⬜ [[T-17 Carry chat into account]] · 0/3
+> ![[T-17 Carry chat into account#^done]]
 
-### 🟡 [[T-06 Database schema ⚑]] — 4/6
+> [!todo]- ⬜ [[T-18a Connect API ⚑]] · 0/3
+> ![[T-18a Connect API ⚑#^done]]
 
-- [ ] Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
-- [x] Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [x] UUIDv7 ids with no database default. `created_at` from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [x] Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
-- [x] An `areas` catalogue and a `listings` table, so area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
+> [!todo]- ⬜ [[T-10 Chat screen and split view ⚑]] · 0/4
+> ![[T-10 Chat screen and split view ⚑#^done]]
 
-### ✅ [[T-14 Match query ⚑]] — 4/4
+> [!todo]- ⬜ [[T-09 Chip flow ⚑]] · 0/3
+> ![[T-09 Chip flow ⚑#^done]]
 
-- [x] Returns matching people for a form state · [#59](https://github.com/magentawood/roomsie/pull/59)
-- [x] Hard filters: area, budget, move date, compatible intent, dealbreakers · [#59](https://github.com/magentawood/roomsie/pull/59)
-- [x] Match score is 70 plus 30 times the share of preferences met, shown only once lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
-- [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
 
-### ⬜ [[T-37 Articles and search]] — 0/3
+## Design — 0/13
 
-- [ ] An articles table with a Postgres full-text index. No vector store
-- [ ] The launch articles load from files in the repo, so publishing one is a pull request
-- [ ] A search returns the best matching passages with their article and heading
+> [!todo]- ⬜ [[D-01 Styling decision]] · 0/2
+> ![[D-01 Styling decision#^done]]
 
-### ⬜ [[T-15 Results panel ⚑]] — 0/4
+> [!todo]- ⬜ [[D-02 Chat screen designs ⚑]] · 0/2
+> ![[D-02 Chat screen designs ⚑#^done]]
 
-- [ ] A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands
-- [ ] The header says what is shown, from Everything in Mumbai down to People in Powai under 20k
-- [ ] Updates only when a form value or weight changes, never reorders while scrolling
-- [ ] Match score hidden until lifestyle answers exist
+> [!todo]- ⬜ [[D-03 Results and profile designs]] · 0/4
+> ![[D-03 Results and profile designs#^done]]
 
-### ⬜ [[T-18b Person and connect screens ⚑]] — 0/5
+> [!todo]- ⬜ [[D-04 Landing and waitlist designs]] · 0/2
+> ![[D-04 Landing and waitlist designs#^done]]
 
-- [ ] Built first from the V3 prototype's detail sheet, against a mock of the connect API. Wired to T-18a when it lands on Sun 4 Oct
-- [ ] The person screen needs sign-in
-- [ ] Connect button with sent, accepted and declined states
-- [ ] The number shows only after both accept
-- [ ] Report and block are one tap away
+> [!todo]- ⬜ [[D-05 Design QA]] · 0/2
+> ![[D-05 Design QA#^done]]
 
-### ⬜ [[T-38 Advisor]] — 0/4
+> [!todo]- ⬜ [[D-06 Launch visuals]] · 0/1
+> ![[D-06 Launch visuals#^done]]
 
-- [ ] Consulting questions are answered from the articles first, naming the article
-- [ ] If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead
-- [ ] Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web
-- [ ] Web searches count toward the daily spend ceiling
 
-## P4 Content and moderation
+## M1 Content — 0/6
 
+> [!todo]- ⬜ [[M-04 Article interviews]] · 0/2
+> ![[M-04 Article interviews#^done]]
 
-### ⬜ [[T-23a Landing page]] — 0/4
+> [!todo]- ⬜ [[M-05 Article drafts]] · 0/2
+> ![[M-05 Article drafts#^done]]
 
-- [ ] Landing page in the V3 prototype's look
-- [ ] Hero, how it works, and a button into the chat
-- [ ] Every women-only line removed
-- [ ] Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values
+> [!todo]- ⬜ [[M-07 Launch posts]] · 0/2
+> ![[M-07 Launch posts#^done]]
 
-### ⬜ [[T-23b Legal pages]] — 0/2
 
-- [ ] /privacy, /terms and /grievance show the founder's text
-- [ ] Linked from the footer and from the sign-in screen
+## M2 Community — 0/11
 
-### ⬜ [[T-19 Report and block]] — 0/4
+> [!todo]- ⬜ [[M-01 Seeding form ⚑]] · 0/3
+> ![[M-01 Seeding form ⚑#^done]]
 
-- [ ] The API behind the report and block buttons, which live in T-18b
-- [ ] A block hides both people from each other, including in the match query
-- [ ] A saved query in Supabase lists open reports
-- [ ] Suspend sets `tokens_valid_after` to now and hides the profile
+> [!todo]- ⬜ [[M-02 100 sign-ups]] · 0/2
+> ![[M-02 100 sign-ups#^done]]
 
-### ⬜ [[T-20 Account deletion]] — 0/4
+> [!todo]- ⬜ [[M-06 Beta invites ⚑]] · 0/3
+> ![[M-06 Beta invites ⚑#^done]]
 
-- [ ] A person can delete their account from settings
-- [ ] Profile, photos in R2 and form state are removed. Events are pseudonymised
-- [ ] `tokens_valid_after` is set to now, so every session ends
-- [ ] The person's chat turns are deleted too
+> [!todo]- ⬜ [[M-09 Broker calls]] · 0/3
+> ![[M-09 Broker calls#^done]]
 
-### ⬜ [[T-35 Form B contract]] — 0/2
 
-- [ ] Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
-- [ ] An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
+## Founder — 0/25
 
-### ⬜ [[T-36 Observer]] — 0/4
+> [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
+> ![[F-01 Kickoff#^done]]
 
-- [ ] The observer turns personal context into Form B observations
-- [ ] Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
-- [ ] A one-off job backfills Form B from the stored chat turns
-- [ ] Tested on the eval sentences, with the rejection rate recorded
+> [!todo]- ⬜ [[F-02 Domain]] · 0/2
+> ![[F-02 Domain#^done]]
 
-## P5 Accounts and connections
+> [!todo]- ⬜ [[F-03 Billing and caps]] · 0/2
+> ![[F-03 Billing and caps#^done]]
 
+> [!todo]- ⬜ [[F-04 Accounts in Mumbai]] · 0/3
+> ![[F-04 Accounts in Mumbai#^done]]
 
-### ⬜ [[M-03 Eval sentences]] — 0/3
+> [!todo]- ⬜ [[F-05 Seeding consent text ⚑]] · 0/2
+> ![[F-05 Seeding consent text ⚑#^done]]
 
-- [ ] 50 sentences people would really type, in English, Hinglish and Marathi
-- [ ] Mumbai areas, 20k, bees hazaar, next month end
-- [ ] 10 deliberately vague ones. T1 labels the right answers
+> [!todo]- ⬜ [[F-06 Launch areas picked]] · 0/2
+> ![[F-06 Launch areas picked#^done]]
 
-### ⬜ [[T-03 CI checks]] — 0/2
+> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/3
+> ![[F-07 Privacy and terms draft#^done]]
 
-- [ ] Every pull request runs typecheck, lint, build and gitleaks
-- [ ] Finishes in under five minutes
+> [!todo]- ⬜ [[F-09 ADR exceptions]] · 0/3
+> ![[F-09 ADR exceptions#^done]]
 
-### ⬜ [[T-24 Event logging]] — 0/4
+> [!todo]- ⬜ [[F-08 Moderator named]] · 0/3
+> ![[F-08 Moderator named#^done]]
 
-- [ ] One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
-- [ ] No message text is stored
-- [ ] Events are written only through one `track()` function in apps/api
-- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
+> [!todo]- ⬜ [[F-10 Go-no-go meeting]] · 0/2
+> ![[F-10 Go-no-go meeting#^done]]
 
-### ⬜ [[T-17 Carry chat into account]] — 0/3
 
-- [ ] What a visitor told the assistant before signing in is attached to their account when they sign in
-- [ ] Nothing is lost and nothing is asked twice
-- [ ] The stored chat turns move to the account with the session
+## Everyone — 0/5
 
-### ⬜ [[T-18a Connect API ⚑]] — 0/3
+> [!todo]- ⬜ [[A-01 Bug fix day]] · 0/2
+> ![[A-01 Bug fix day#^done]]
 
-- [ ] Send, accept or decline a connect request
-- [ ] On mutual accept, both people see each other's number
-- [ ] At most 10 new requests a day. No request to someone who blocked you
+> [!todo]- ⬜ [[A-02 Launch day]] · 0/3
+> ![[A-02 Launch day#^done]]
 
-### ⬜ [[T-10 Chat screen and split view ⚑]] — 0/4
-
-- [ ] The landing button opens a full-screen chat
-- [ ] The screen splits into chat and results once results exist
-- [ ] On a phone, the chat drops to a bar at the bottom and expands on tap
-- [ ] Nothing resizes while the person is typing
-
-### ⬜ [[T-09 Chip flow ⚑]] — 0/3
-
-- [ ] Intent as four cards, area as the top six plus search, budget as bands
-- [ ] Each tap writes to the form. A tap never calls a model
-- [ ] Typing instead of tapping still works
-
-## Design
-
-
-### ⬜ [[D-01 Styling decision]] — 0/2
-
-- [ ] Launch uses the V3 prototype's look, not the Untitled UI pipeline
-- [ ] Every women-only line is marked for removal
-
-### ⬜ [[D-02 Chat screen designs ⚑]] — 0/2
-
-- [ ] Chat with chips, the split view, and the phone chat bar
-- [ ] These have no prototype equivalent, and V3 starts building them on Thursday
-
-### ⬜ [[D-03 Results and profile designs]] — 0/4
-
-- [ ] Results panel header states and the person card, for V5 on Sat 26 Sep
-- [ ] Profile create and edit with photo upload, for V5 on Tue 29 Sep
-- [ ] Connect and report states, refining the prototype detail sheet V5 builds first
-- [ ] Delete confirmation
-
-### ⬜ [[D-04 Landing and waitlist designs]] — 0/2
-
-- [ ] Landing page for all genders
-- [ ] Legal page template, the sign-in wall, the waitlist, empty states
-
-### ⬜ [[D-05 Design QA]] — 0/2
-
-- [ ] Walk every screen on a phone and a laptop
-- [ ] Every fix filed as an issue
-
-### ⬜ [[D-06 Launch visuals]] — 0/1
-
-- [ ] Social post images and link preview images
-
-## M1 Content
-
-
-### ⬜ [[M-04 Article interviews]] — 0/2
-
-- [ ] Three to five real people interviewed for each topic group
-- [ ] Notes saved
-
-### ⬜ [[M-05 Article drafts]] — 0/2
-
-- [ ] Ten drafts written from the interviews
-- [ ] Published once the blog is live after launch
-
-### ⬜ [[M-07 Launch posts]] — 0/2
-
-- [ ] Launch posts, the founder story, a list of groups and channels
-- [ ] Scheduled on Sunday 11 October
-
-## M2 Community
-
-
-### ⬜ [[M-01 Seeding form ⚑]] — 0/3
-
-- [ ] Form live with the consent text
-- [ ] Outreach through own networks, college and company groups, and flat-hunting groups
-- [ ] Invite people to sign up. Never copy anyone's posts or details
-
-### ⬜ [[M-02 100 sign-ups]] — 0/2
-
-- [ ] 100 sign-ups by Wednesday 30 September
-- [ ] 250 by Sunday 4 October, because about 6 in 10 will finish a profile
-
-### ⬜ [[M-06 Beta invites ⚑]] — 0/3
-
-- [ ] Invites go out on Sat 3 Oct, the day after profile creation works
-- [ ] Help people finish profiles
-- [ ] 150 profiles, at least 40 in each launch area, by Sunday 11 October
-
-### ⬜ [[M-09 Broker calls]] — 0/3
-
-- [ ] 10 to 15 calls to Mumbai brokers
-- [ ] Notes in docs/research/
-- [ ] Dropped first if seeding is behind
-
-## Founder
-
-
-### ⬜ [[F-01 Kickoff]] — 0/3
-
-- [ ] Every role in this plan has a person's name
-- [ ] Everyone has access to the repo and the issues
-- [ ] Team channel exists, with a written standup by 10 am daily
-
-### ⬜ [[F-02 Domain]] — 0/2
-
-- [ ] roomsie.com, or the chosen alternative, is owned
-- [ ] DNS access is shared with T4
-
-### ⬜ [[F-03 Billing and caps]] — 0/2
-
-- [ ] Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
-- [ ] Hard monthly caps are set on both AI accounts
-
-### ⬜ [[F-04 Accounts in Mumbai]] — 0/3
-
-- [ ] Supabase in ap-south-1, Fly in bom, Vercel functions in bom1
-- [ ] Firebase project, R2 buckets for public photos and private files, DeepSeek and Gemini keys
-- [ ] Keys shared through a password manager, never in chat or the repo
-
-### ⬜ [[F-05 Seeding consent text ⚑]] — 0/2
-
-- [ ] Says what is collected, that the profile will be shown to other roomsie users, and how to delete it
-- [ ] Short enough to read on a phone
-
-### ⬜ [[F-06 Launch areas picked]] — 0/2
-
-- [ ] Three areas chosen with marketing
-- [ ] Chosen by where the team can actually reach people
-
-### ⬜ [[F-07 Privacy and terms draft]] — 0/3
-
-- [ ] Says what is collected, why, for how long, how to delete, and who to contact
-- [ ] A named grievance contact
-- [ ] Says that chat messages are stored, and that deleting the account deletes them
-
-### ⬜ [[F-09 ADR exceptions]] — 0/3
-
-- [ ] 0011: prototype styling for launch
-- [ ] 0012: one events table instead of a second database
-- [ ] 0014: Sentry free tier instead of GlitchTip
-
-### ⬜ [[F-08 Moderator named]] — 0/3
-
-- [ ] A moderator and a backup are named
-- [ ] Rules for when to suspend, and how fast to respond
-- [ ] Reports checked every day from launch
-
-### ⬜ [[F-10 Go-no-go meeting]] — 0/2
-
-- [ ] Saturday 10 October, 8 pm
-- [ ] Checked against the go/no-go list in docs/team-plan.md
-
-## Everyone
-
-
-### ⬜ [[A-01 Bug fix day]] — 0/2
-
-- [ ] Engineers spend their two hours on P1 bugs only
-- [ ] No database migrations
-
-### ⬜ [[A-02 Launch day]] — 0/3
-
-- [ ] T4 turns off the invite gate and has tested the rollback
-- [ ] Everyone checks the live site on their own phone
-- [ ] Marketing posts and replies to every comment. Every bug report becomes an issue

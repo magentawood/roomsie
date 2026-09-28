@@ -34,5 +34,7 @@ tags:
 - [ ] Secrets set in both
 - [ ] A merge to main deploys automatically
 
+^done
+
 ## Read first
 - [0009-hosting-and-region.md](../../source/decisions/0009-hosting-and-region.md)

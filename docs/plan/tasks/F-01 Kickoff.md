@@ -32,5 +32,7 @@ tags:
 - [ ] Everyone has access to the repo and the issues
 - [ ] Team channel exists, with a written standup by 10 am daily
 
+^done
+
 ## Read first
 - [team-plan.md](../../team-plan.md)

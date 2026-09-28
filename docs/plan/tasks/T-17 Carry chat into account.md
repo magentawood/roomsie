@@ -34,6 +34,8 @@ tags:
 - [ ] Nothing is lost and nothing is asked twice
 - [ ] The stored chat turns move to the account with the session
 
+^done
+
 ## Read first
 - [seo-with-gated-products.md](../../seo-with-gated-products.md)
 - [extensibility.md](../../extensibility.md)

@@ -39,5 +39,7 @@ tags:
 - [ ] Up to four photos, uploaded straight to R2 with a presigned URL
 - [ ] Photo bytes never pass through the API
 
+^done
+
 ## Read first
 - [0005-managed-platform-split.md](../../source/decisions/0005-managed-platform-split.md)

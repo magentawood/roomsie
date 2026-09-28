@@ -37,6 +37,8 @@ tags:
 - [ ] The pipeline runs only the handlers the router picks
 - [ ] The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
 
+^done
+
 ## Read first
 - [agent-architecture.md](../../agent-architecture.md)
 - [scope-policy.md](../../scope-policy.md)
