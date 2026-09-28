@@ -2,11 +2,11 @@
 id: T-02
 title: "Scaffold the monorepo in this repo"
 owner: "P1 Platform"
-sequence: "1 of 11"
+sequence: "1 of 9"
 hours: 4
 start: 2026-09-24
-end: 2026-09-25
-checkpoint: CP0
+end: 2026-09-26
+checkpoint: CP1
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/10
 tags:
@@ -18,9 +18,9 @@ tags:
 
 # T-02 · Scaffold the monorepo in this repo
 
-**Owner:** [[P1 Platform]], task 1 of 11  
-**When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
-**Checkpoint:** [[CP0 Kickoff]]  
+**Owner:** [[P1 Platform]], task 1 of 9  
+**When:** Thu 24 Sep → Sat 26 Sep · 4 hours  
+**Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#10](https://github.com/magentawood/roomsie/issues/10)
 
 > [!warning] Critical path

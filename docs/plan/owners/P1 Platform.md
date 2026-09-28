@@ -9,20 +9,18 @@ tags:
 
 _The ground everyone builds on, then profiles, the waitlist and backups._
 
-**34 hours** of build work, 0 spare, finishing Sat 10 Oct.
+**23 hours** of build work at 1.35h a day, 11 spare, finishing Sat 10 Oct.
 
 Part of [[roomsie launch]].
 
 ## Sequence
 
-1. [[T-02 Scaffold monorepo ⚑]] — Thu 24 Sep → Fri 25 Sep, 4h
-2. [[T-05 Google sign-in ⚑]] — Sat 26 Sep → Mon 28 Sep, 6h
-3. [[T-04 Deploy to Mumbai]] — Tue 29 Sep → Wed 30 Sep, 3h
-4. [[T-07 Error reporting]] — Wed 30 Sep, 1h
-5. [[T-25 Uptime and spend alerts]] — Thu 1 Oct, 2h
-6. [[T-33 Invite-only gate]] — Fri 2 Oct, 1h
-7. [[T-39 Analytics database]] — Fri 2 Oct → Sat 3 Oct, 3h
-8. [[T-40 Nightly backups]] — Sun 4 Oct, 2h
-9. [[T-16 Profiles and photos ⚑]] — Mon 5 Oct → Thu 8 Oct, 8h
-10. [[T-22 Launch areas and waitlist]] — Fri 9 Oct → Sat 10 Oct, 3h
-11. [[T-29 Abuse test]] — Sat 10 Oct, 1h
+1. [[T-02 Scaffold monorepo ⚑]] — Thu 24 Sep → Sat 26 Sep, 4h
+2. [[T-05 Google sign-in ⚑]] — Sat 26 Sep → Thu 1 Oct, 6h
+3. [[T-04 Deploy to Mumbai]] — Thu 1 Oct → Sat 3 Oct, 3h
+4. [[T-07 Error reporting]] — Sat 3 Oct → Sun 4 Oct, 1h
+5. [[T-25 Uptime and spend alerts]] — Sun 4 Oct → Mon 5 Oct, 2h
+6. [[T-33 Invite-only gate]] — Mon 5 Oct → Tue 6 Oct, 1h
+7. [[T-39 Analytics database]] — Tue 6 Oct → Thu 8 Oct, 3h
+8. [[T-40 Nightly backups]] — Thu 8 Oct → Sat 10 Oct, 2h
+9. [[T-29 Abuse test]] — Sat 10 Oct, 1h
