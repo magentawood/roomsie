@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline, and each person's list, in order, is also in `docs/how-to-work.md`.
 
-> **The GitHub issues still carry the original `vertical:V1`–`V5` labels and checkpoint milestones.** Where they disagree with this file, this file wins until the issues are relabelled. **Not filed yet:** T-34, T-35, T-36, T-37, T-38, T-39, T-40.
+> **The GitHub issues still carry the original `vertical:V1`–`V5` labels and checkpoint milestones.** Where they disagree with this file, this file wins until the issues are relabelled.
 
 ---
 
@@ -197,18 +197,18 @@ One row per task, grouped by owner in the order they are worked. ⚑ marks the c
 | P1 Platform | 4 | T-07 | Error reporting wrapper and Sentry | 1 | Sat 3 Oct | Sun 4 Oct | CP3 | T-02 | [#28](https://github.com/magentawood/roomsie/issues/28) |
 | P1 Platform | 5 | T-25 | Uptime monitor and spend alerts | 2 | Sun 4 Oct | Mon 5 Oct | CP3 | T-04 | [#43](https://github.com/magentawood/roomsie/issues/43) |
 | P1 Platform | 6 | T-33 | Invite-only gate until launch | 1 | Mon 5 Oct | Tue 6 Oct | CP3 | T-05 | [#29](https://github.com/magentawood/roomsie/issues/29) |
-| P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | not filed yet |
-| P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04 | not filed yet |
+| P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | [#68](https://github.com/magentawood/roomsie/issues/68) |
+| P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | P1 Platform | 9 | T-29 | Abuse test: 100 fake sessions | 1 | Sat 10 Oct | Sat 10 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08 | [#15](https://github.com/magentawood/roomsie/issues/15) |
-| P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | not filed yet |
+| P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | P2 Chat | 4 | T-12 ⚑ | Extraction: free text to form slots | 6 | Sat 26 Sep | Sun 27 Sep | CP1 | T-11 | [#23](https://github.com/magentawood/roomsie/issues/23) |
-| P2 Chat | 5 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | 6 | Sun 27 Sep | Tue 29 Sep | CP2 | T-12 | not filed yet |
+| P2 Chat | 5 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | 6 | Sun 27 Sep | Tue 29 Sep | CP2 | T-12 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | P2 Chat | 6 | T-13 | Reply writer with scope rules | 4 | Tue 29 Sep | Wed 30 Sep | CP2 | T-11 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| P2 Chat | 7 | T-36 | Observer: Form B from free text, with the quote check | 8 | Wed 30 Sep | Fri 2 Oct | CP3 | T-35, T-12 | not filed yet |
+| P2 Chat | 7 | T-36 | Observer: Form B from free text, with the quote check | 8 | Wed 30 Sep | Fri 2 Oct | CP3 | T-35, T-12 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | P2 Chat | 8 | T-21 | Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct | Sun 4 Oct | CP3 | T-12 | [#41](https://github.com/magentawood/roomsie/issues/41) |
-| P2 Chat | 9 | T-38 | Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct | Mon 5 Oct | CP3 | T-37, T-11, T-05 | not filed yet |
+| P2 Chat | 9 | T-38 | Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct | Mon 5 Oct | CP3 | T-37, T-11, T-05 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | P2 Chat | 10 | T-27 | Run the eval set and tune the prompt | 3 | Mon 5 Oct | Tue 6 Oct | CP3 | T-12 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | P2 Chat | 11 | T-17 | Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct | Wed 7 Oct | CP3 | T-05, T-06 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02 | [#12](https://github.com/magentawood/roomsie/issues/12) |
@@ -219,7 +219,7 @@ One row per task, grouped by owner in the order they are worked. ⚑ marks the c
 | P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | P4 Content and moderation | 1 | T-23a | Landing page ported from the prototype | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#40](https://github.com/magentawood/roomsie/issues/40) |
-| P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | not filed yet |
+| P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
 | P4 Content and moderation | 6 | T-22 | Launch areas and waitlist | 3 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, D-04 | [#47](https://github.com/magentawood/roomsie/issues/47) |

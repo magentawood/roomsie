@@ -8,6 +8,7 @@ start: 2026-09-27
 end: 2026-09-29
 checkpoint: CP2
 critical: true
+issue: https://github.com/magentawood/roomsie/issues/63
 tags:
   - task
   - p2
@@ -20,7 +21,7 @@ tags:
 **Owner:** [[P2 Chat]], task 5 of 13  
 **When:** Sun 27 Sep → Tue 29 Sep · 6 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
-**Issue:** not filed yet
+**Issue:** [#63](https://github.com/magentawood/roomsie/issues/63)
 
 > [!warning] Critical path
 > If this slips, the launch slips.

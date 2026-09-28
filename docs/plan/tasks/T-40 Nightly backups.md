@@ -8,6 +8,7 @@ start: 2026-10-08
 end: 2026-10-10
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/69
 tags:
   - task
   - p1
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P1 Platform]], task 8 of 9  
 **When:** Thu 8 Oct → Sat 10 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** not filed yet
+**Issue:** [#69](https://github.com/magentawood/roomsie/issues/69)
 
 ## Needs first
 - [[T-04 Deploy to Mumbai]]
