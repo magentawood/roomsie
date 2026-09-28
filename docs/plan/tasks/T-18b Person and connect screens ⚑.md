@@ -2,10 +2,10 @@
 id: T-18b
 title: "Person detail and connect screens"
 owner: "P3 Data and trust"
-sequence: "5 of 6"
+sequence: "4 of 4"
 hours: 4
-start: 2026-10-05
-end: 2026-10-07
+start: 2026-10-08
+end: 2026-10-10
 checkpoint: CP3
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/44
@@ -18,8 +18,8 @@ tags:
 
 # T-18b · Person detail and connect screens
 
-**Owner:** [[P3 Data and trust]], task 5 of 6  
-**When:** Mon 5 Oct → Wed 7 Oct · 4 hours  
+**Owner:** [[P3 Data and trust]], task 4 of 4  
+**When:** Thu 8 Oct → Sat 10 Oct · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#44](https://github.com/magentawood/roomsie/issues/44)
 

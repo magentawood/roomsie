@@ -2,11 +2,11 @@
 id: T-06
 title: "Database schema v1"
 owner: "P3 Data and trust"
-sequence: "1 of 6"
+sequence: "1 of 4"
 hours: 8
 start: 2026-09-24
-end: 2026-09-27
-checkpoint: CP1
+end: 2026-09-29
+checkpoint: CP2
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/11
 tags:
@@ -18,9 +18,9 @@ tags:
 
 # T-06 · Database schema v1
 
-**Owner:** [[P3 Data and trust]], task 1 of 6  
-**When:** Thu 24 Sep → Sun 27 Sep · 8 hours  
-**Checkpoint:** [[CP1 Foundation]]  
+**Owner:** [[P3 Data and trust]], task 1 of 4  
+**When:** Thu 24 Sep → Tue 29 Sep · 8 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#11](https://github.com/magentawood/roomsie/issues/11)
 
 > [!warning] Critical path

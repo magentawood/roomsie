@@ -1,12 +1,12 @@
 ---
 id: T-34
 title: "Router: sort each typed message and flag what we should not answer"
-owner: "P2 Assistant"
-sequence: "5 of 7"
+owner: "P2 Chat"
+sequence: "5 of 13"
 hours: 6
-start: 2026-10-02
-end: 2026-10-04
-checkpoint: CP3
+start: 2026-09-27
+end: 2026-09-29
+checkpoint: CP2
 critical: true
 tags:
   - task
@@ -17,9 +17,9 @@ tags:
 
 # T-34 · Router: sort each typed message and flag what we should not answer
 
-**Owner:** [[P2 Assistant]], task 5 of 7  
-**When:** Fri 2 Oct → Sun 4 Oct · 6 hours  
-**Checkpoint:** [[CP3 Freeze and go-no-go]]  
+**Owner:** [[P2 Chat]], task 5 of 13  
+**When:** Sun 27 Sep → Tue 29 Sep · 6 hours  
+**Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** not filed yet
 
 > [!warning] Critical path

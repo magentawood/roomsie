@@ -2,11 +2,11 @@
 id: T-04
 title: "Deploy web and API to Mumbai"
 owner: "P1 Platform"
-sequence: "3 of 11"
+sequence: "3 of 9"
 hours: 3
-start: 2026-09-29
-end: 2026-09-30
-checkpoint: CP2
+start: 2026-10-01
+end: 2026-10-03
+checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/30
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-04 · Deploy web and API to Mumbai
 
-**Owner:** [[P1 Platform]], task 3 of 11  
-**When:** Tue 29 Sep → Wed 30 Sep · 3 hours  
-**Checkpoint:** [[CP2 Core loop live]]  
+**Owner:** [[P1 Platform]], task 3 of 9  
+**When:** Thu 1 Oct → Sat 3 Oct · 3 hours  
+**Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#30](https://github.com/magentawood/roomsie/issues/30)
 
 ## Needs first

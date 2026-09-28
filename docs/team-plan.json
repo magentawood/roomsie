@@ -183,7 +183,7 @@
    "role": "P1",
    "hours": 4,
    "start": "2026-09-24",
-   "end": "2026-09-25",
+   "end": "2026-09-26",
    "deps": [],
    "done": [
     "pnpm workspaces and Turborepo, per ADR 0010",
@@ -198,7 +198,7 @@
     "docs/source/decisions/0003-api-as-separate-service.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP0",
+   "cp": "CP1",
    "critical": true,
    "issue": 10
   },
@@ -207,8 +207,8 @@
    "title": "Person detail and connect screens",
    "role": "P3",
    "hours": 4,
-   "start": "2026-10-05",
-   "end": "2026-10-07",
+   "start": "2026-10-08",
+   "end": "2026-10-10",
    "deps": [
     "D-03"
    ],
@@ -230,7 +230,7 @@
    "role": "P3",
    "hours": 8,
    "start": "2026-09-24",
-   "end": "2026-09-27",
+   "end": "2026-09-29",
    "deps": [],
    "done": [
     "Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist",
@@ -245,17 +245,17 @@
     "docs/agent-architecture.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP1",
+   "cp": "CP2",
    "critical": true,
    "issue": 11
   },
   {
    "id": "T-10",
    "title": "Chat screen and split view",
-   "role": "P5",
+   "role": "P2",
    "hours": 8,
-   "start": "2026-10-02",
-   "end": "2026-10-05",
+   "start": "2026-10-07",
+   "end": "2026-10-09",
    "deps": [
     "D-02"
    ],
@@ -319,8 +319,8 @@
    "title": "Model wrapper: DeepSeek with Gemini fallback",
    "role": "P2",
    "hours": 4,
-   "start": "2026-09-25",
-   "end": "2026-09-26",
+   "start": "2026-09-24",
+   "end": "2026-09-25",
    "deps": [
     "T-08"
    ],
@@ -333,7 +333,7 @@
    "read": [
     "docs/model-selection.md"
    ],
-   "cp": "CP1",
+   "cp": "CP0",
    "critical": true,
    "issue": 15
   },
@@ -404,7 +404,7 @@
    "role": "P1",
    "hours": 6,
    "start": "2026-09-26",
-   "end": "2026-09-28",
+   "end": "2026-10-01",
    "deps": [
     "T-02"
    ],
@@ -417,7 +417,7 @@
     "docs/source/decisions/0007-web-rendering-and-auth-transport.md",
     "docs/source/decisions/0005-managed-platform-split.md"
    ],
-   "cp": "CP1",
+   "cp": "CP2",
    "critical": true,
    "issue": 20
   },
@@ -426,8 +426,8 @@
    "title": "Results panel, built against the contract",
    "role": "P3",
    "hours": 6,
-   "start": "2026-10-02",
-   "end": "2026-10-05",
+   "start": "2026-10-03",
+   "end": "2026-10-08",
    "deps": [
     "T-08",
     "D-03"
@@ -451,7 +451,7 @@
    "role": "P5",
    "hours": 4,
    "start": "2026-09-24",
-   "end": "2026-09-25",
+   "end": "2026-09-27",
    "deps": [],
    "done": [
     "50 sentences people would really type, in English, Hinglish and Marathi",
@@ -461,7 +461,7 @@
    "read": [
     "docs/model-selection.md"
    ],
-   "cp": "CP0",
+   "cp": "CP1",
    "critical": false,
    "issue": 21
   },
@@ -489,8 +489,8 @@
    "title": "Extraction: free text to form slots",
    "role": "P2",
    "hours": 6,
-   "start": "2026-09-27",
-   "end": "2026-09-29",
+   "start": "2026-09-26",
+   "end": "2026-09-27",
    "deps": [
     "T-11"
    ],
@@ -506,7 +506,7 @@
     "docs/agent-architecture.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP2",
+   "cp": "CP1",
    "critical": true,
    "issue": 23
   },
@@ -532,10 +532,10 @@
   {
    "id": "T-09",
    "title": "Chip flow for intent, area, budget",
-   "role": "P5",
+   "role": "P2",
    "hours": 6,
-   "start": "2026-10-06",
-   "end": "2026-10-08",
+   "start": "2026-10-09",
+   "end": "2026-10-10",
    "deps": [
     "T-10",
     "T-08",
@@ -558,8 +558,8 @@
    "title": "Match query API",
    "role": "P3",
    "hours": 6,
-   "start": "2026-09-28",
-   "end": "2026-09-30",
+   "start": "2026-09-29",
+   "end": "2026-10-03",
    "deps": [
     "T-06",
     "T-08"
@@ -573,7 +573,7 @@
    "read": [
     "docs/interface-shape.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": true,
    "issue": 27
   },
@@ -582,8 +582,8 @@
    "title": "Deploy web and API to Mumbai",
    "role": "P1",
    "hours": 3,
-   "start": "2026-09-29",
-   "end": "2026-09-30",
+   "start": "2026-10-01",
+   "end": "2026-10-03",
    "deps": [
     "T-02"
    ],
@@ -595,17 +595,17 @@
    "read": [
     "docs/source/decisions/0009-hosting-and-region.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 30
   },
   {
    "id": "T-16",
    "title": "Profile create and edit, with photos",
-   "role": "P1",
+   "role": "P5",
    "hours": 8,
-   "start": "2026-10-05",
-   "end": "2026-10-08",
+   "start": "2026-10-04",
+   "end": "2026-10-10",
    "deps": [
     "T-05",
     "T-06",
@@ -649,8 +649,8 @@
    "title": "CI: typecheck, lint, build, secret scan",
    "role": "P5",
    "hours": 2,
-   "start": "2026-09-26",
-   "end": "2026-09-26",
+   "start": "2026-09-27",
+   "end": "2026-09-29",
    "deps": [
     "T-02"
    ],
@@ -661,7 +661,7 @@
    "read": [
     "docs/source/decisions/0013-ci-gate-and-testing.md"
    ],
-   "cp": "CP1",
+   "cp": "CP2",
    "critical": false,
    "issue": 24
   },
@@ -670,8 +670,8 @@
    "title": "Reply writer with scope rules",
    "role": "P2",
    "hours": 4,
-   "start": "2026-09-30",
-   "end": "2026-10-01",
+   "start": "2026-09-29",
+   "end": "2026-09-30",
    "deps": [
     "T-11"
    ],
@@ -730,8 +730,8 @@
    "title": "Error reporting wrapper and Sentry",
    "role": "P1",
    "hours": 1,
-   "start": "2026-09-30",
-   "end": "2026-09-30",
+   "start": "2026-10-03",
+   "end": "2026-10-04",
    "deps": [
     "T-02"
    ],
@@ -743,17 +743,17 @@
    "read": [
     "docs/source/decisions/0014-error-tracking.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 28
   },
   {
    "id": "T-17",
    "title": "Carry anonymous chat into the account on sign-in",
-   "role": "P5",
+   "role": "P2",
    "hours": 2,
-   "start": "2026-09-29",
-   "end": "2026-09-29",
+   "start": "2026-10-06",
+   "end": "2026-10-07",
    "deps": [
     "T-05",
     "T-06"
@@ -767,7 +767,7 @@
     "docs/seo-with-gated-products.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 32
   },
@@ -776,8 +776,8 @@
    "title": "Report, block, suspend, and a saved moderation query",
    "role": "P4",
    "hours": 5,
-   "start": "2026-09-28",
-   "end": "2026-09-30",
+   "start": "2026-10-01",
+   "end": "2026-10-05",
    "deps": [
     "T-06"
    ],
@@ -790,7 +790,7 @@
    "read": [
     "docs/scope-policy.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 45
   },
@@ -799,8 +799,8 @@
    "title": "Invite-only gate until launch",
    "role": "P1",
    "hours": 1,
-   "start": "2026-10-02",
-   "end": "2026-10-02",
+   "start": "2026-10-05",
+   "end": "2026-10-06",
    "deps": [
     "T-05"
    ],
@@ -819,7 +819,7 @@
    "role": "P4",
    "hours": 4,
    "start": "2026-09-24",
-   "end": "2026-09-25",
+   "end": "2026-09-27",
    "deps": [],
    "done": [
     "Landing page in the V3 prototype's look",
@@ -831,7 +831,7 @@
     "docs/source/roomsie-prototype-V3.html",
     "docs/extensibility.md"
    ],
-   "cp": "CP0",
+   "cp": "CP1",
    "critical": false,
    "issue": 39
   },
@@ -840,8 +840,8 @@
    "title": "Event logging table",
    "role": "P5",
    "hours": 2,
-   "start": "2026-09-28",
-   "end": "2026-09-28",
+   "start": "2026-09-29",
+   "end": "2026-09-30",
    "deps": [
     "T-06"
    ],
@@ -855,7 +855,7 @@
     "docs/source/decisions/0012-analytics-event-store.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP1",
+   "cp": "CP2",
    "critical": false,
    "issue": 37
   },
@@ -864,8 +864,8 @@
    "title": "Five-turn cap, rate limits, spend ceiling",
    "role": "P2",
    "hours": 5,
-   "start": "2026-10-05",
-   "end": "2026-10-07",
+   "start": "2026-10-02",
+   "end": "2026-10-04",
    "deps": [
     "T-12"
    ],
@@ -908,7 +908,7 @@
    "role": "P5",
    "hours": 4,
    "start": "2026-09-30",
-   "end": "2026-10-01",
+   "end": "2026-10-04",
    "deps": [
     "T-05",
     "T-06"
@@ -919,7 +919,7 @@
     "At most 10 new requests a day. No request to someone who blocked you"
    ],
    "read": [],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": true,
    "issue": 38
   },
@@ -928,8 +928,8 @@
    "title": "Account deletion",
    "role": "P4",
    "hours": 3,
-   "start": "2026-09-30",
-   "end": "2026-10-01",
+   "start": "2026-10-05",
+   "end": "2026-10-08",
    "deps": [
     "T-06"
    ],
@@ -943,7 +943,7 @@
     "docs/source/decisions/0012-analytics-event-store.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 46
   },
@@ -952,8 +952,8 @@
    "title": "Privacy, terms and grievance pages",
    "role": "P4",
    "hours": 2,
-   "start": "2026-09-26",
-   "end": "2026-09-26",
+   "start": "2026-09-27",
+   "end": "2026-09-29",
    "deps": [
     "T-02"
    ],
@@ -962,7 +962,7 @@
     "Linked from the footer and from the sign-in screen"
    ],
    "read": [],
-   "cp": "CP1",
+   "cp": "CP2",
    "critical": false,
    "issue": 40
   },
@@ -992,9 +992,9 @@
   {
    "id": "T-22",
    "title": "Launch areas and waitlist",
-   "role": "P1",
+   "role": "P4",
    "hours": 3,
-   "start": "2026-10-09",
+   "start": "2026-10-08",
    "end": "2026-10-10",
    "deps": [
     "T-14",
@@ -1017,8 +1017,8 @@
    "title": "Uptime monitor and spend alerts",
    "role": "P1",
    "hours": 2,
-   "start": "2026-10-01",
-   "end": "2026-10-01",
+   "start": "2026-10-04",
+   "end": "2026-10-05",
    "deps": [
     "T-04"
    ],
@@ -1029,7 +1029,7 @@
    "read": [
     "docs/pre-login-limits.md"
    ],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 43
   },
@@ -1038,8 +1038,8 @@
    "title": "Run the eval set and tune the prompt",
    "role": "P2",
    "hours": 3,
-   "start": "2026-10-07",
-   "end": "2026-10-08",
+   "start": "2026-10-05",
+   "end": "2026-10-06",
    "deps": [
     "T-12"
    ],
@@ -1174,8 +1174,8 @@
    "title": "Router: sort each typed message and flag what we should not answer",
    "role": "P2",
    "hours": 6,
-   "start": "2026-10-02",
-   "end": "2026-10-04",
+   "start": "2026-09-27",
+   "end": "2026-09-29",
    "deps": [
     "T-12"
    ],
@@ -1190,17 +1190,17 @@
     "docs/scope-policy.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": true,
    "issue": null
   },
   {
    "id": "T-35",
    "title": "Form B contract and table",
-   "role": "P4",
+   "role": "P2",
    "hours": 3,
-   "start": "2026-10-02",
-   "end": "2026-10-03",
+   "start": "2026-09-25",
+   "end": "2026-09-26",
    "deps": [
     "T-06",
     "T-08"
@@ -1213,17 +1213,17 @@
     "docs/agent-architecture.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP3",
+   "cp": "CP1",
    "critical": false,
    "issue": null
   },
   {
    "id": "T-36",
    "title": "Observer: Form B from free text, with the quote check",
-   "role": "P4",
+   "role": "P2",
    "hours": 8,
-   "start": "2026-10-03",
-   "end": "2026-10-07",
+   "start": "2026-09-30",
+   "end": "2026-10-02",
    "deps": [
     "T-35",
     "T-12"
@@ -1245,10 +1245,10 @@
   {
    "id": "T-37",
    "title": "Articles table and full-text search",
-   "role": "P3",
+   "role": "P4",
    "hours": 3,
-   "start": "2026-10-01",
-   "end": "2026-10-02",
+   "start": "2026-09-29",
+   "end": "2026-10-01",
    "deps": [
     "T-06"
    ],
@@ -1261,17 +1261,17 @@
     "docs/content/corpus-plan.md",
     "docs/extensibility.md"
    ],
-   "cp": "CP3",
+   "cp": "CP2",
    "critical": false,
    "issue": null
   },
   {
    "id": "T-38",
    "title": "Advisor: articles first, then web search after sign-in",
-   "role": "P3",
+   "role": "P2",
    "hours": 7,
-   "start": "2026-10-07",
-   "end": "2026-10-10",
+   "start": "2026-10-04",
+   "end": "2026-10-05",
    "deps": [
     "T-37",
     "T-11",
@@ -1296,8 +1296,8 @@
    "title": "Analytics in its own database, with scheduled jobs",
    "role": "P1",
    "hours": 3,
-   "start": "2026-10-02",
-   "end": "2026-10-03",
+   "start": "2026-10-06",
+   "end": "2026-10-08",
    "deps": [
     "T-24"
    ],
@@ -1319,8 +1319,8 @@
    "title": "Nightly database backups to R2",
    "role": "P1",
    "hours": 2,
-   "start": "2026-10-04",
-   "end": "2026-10-04",
+   "start": "2026-10-08",
+   "end": "2026-10-10",
    "deps": [
     "T-04"
    ],
@@ -1377,10 +1377,10 @@
  ],
  "roles": {
   "P1": "P1 · Platform",
-  "P2": "P2 · Assistant",
+  "P2": "P2 · Chat",
   "P3": "P3 · Data and trust",
   "P4": "P4 · Content and moderation",
-  "P5": "P5 · Accounts and connections",
+  "P5": "P5 · Accounts and people",
   "D": "D · Design",
   "M1": "M1 · Content",
   "M2": "M2 · Community",

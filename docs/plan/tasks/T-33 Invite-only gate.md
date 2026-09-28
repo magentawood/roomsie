@@ -2,10 +2,10 @@
 id: T-33
 title: "Invite-only gate until launch"
 owner: "P1 Platform"
-sequence: "6 of 11"
+sequence: "6 of 9"
 hours: 1
-start: 2026-10-02
-end: 2026-10-02
+start: 2026-10-05
+end: 2026-10-06
 checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/29
@@ -17,8 +17,8 @@ tags:
 
 # T-33 · Invite-only gate until launch
 
-**Owner:** [[P1 Platform]], task 6 of 11  
-**When:** Fri 2 Oct · 1 hours  
+**Owner:** [[P1 Platform]], task 6 of 9  
+**When:** Mon 5 Oct → Tue 6 Oct · 1 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#29](https://github.com/magentawood/roomsie/issues/29)
 

@@ -18,25 +18,30 @@ Part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[F-08 Moderator named]] — Founder
-- [[T-33 Invite-only gate]] — P1 Platform
-- [[T-37 Articles and search]] — P3 Data and trust
+- [[T-36 Observer]] — P2 Chat
 - [[M-07 Launch posts]] — M1 Content
-- [[T-35 Form B contract]] — P4 Content and moderation
-- [[T-39 Analytics database]] — P1 Platform
-- [[T-34 Router ⚑]] — P2 Assistant
-- [[T-40 Nightly backups]] — P1 Platform
+- [[T-04 Deploy to Mumbai]] — P1 Platform
+- [[T-14 Match query ⚑]] — P3 Data and trust
+- [[T-07 Error reporting]] — P1 Platform
+- [[T-18a Connect API ⚑]] — P5 Accounts and people
+- [[T-21 Turn cap and spend ceiling]] — P2 Chat
 - [[M-05 Article drafts]] — M1 Content
-- [[T-10 Chat screen and split view ⚑]] — P5 Accounts and connections
+- [[T-19 Report and block]] — P4 Content and moderation
+- [[T-25 Uptime and spend alerts]] — P1 Platform
+- [[T-38 Advisor]] — P2 Chat
+- [[T-27 Eval run]] — P2 Chat
+- [[T-33 Invite-only gate]] — P1 Platform
+- [[T-17 Carry chat into account]] — P2 Chat
 - [[T-15 Results panel ⚑]] — P3 Data and trust
-- [[T-18b Person and connect screens ⚑]] — P3 Data and trust
-- [[T-21 Turn cap and spend ceiling]] — P2 Assistant
-- [[T-36 Observer]] — P4 Content and moderation
-- [[T-09 Chip flow ⚑]] — P5 Accounts and connections
-- [[T-16 Profiles and photos ⚑]] — P1 Platform
-- [[T-27 Eval run]] — P2 Assistant
+- [[T-20 Account deletion]] — P4 Content and moderation
+- [[T-39 Analytics database]] — P1 Platform
+- [[T-10 Chat screen and split view ⚑]] — P2 Chat
 - [[D-05 Design QA]] — Design
 - [[D-06 Launch visuals]] — Design
 - [[F-10 Go-no-go meeting]] — Founder
-- [[T-22 Launch areas and waitlist]] — P1 Platform
+- [[T-09 Chip flow ⚑]] — P2 Chat
+- [[T-16 Profiles and photos ⚑]] — P5 Accounts and people
+- [[T-18b Person and connect screens ⚑]] — P3 Data and trust
+- [[T-22 Launch areas and waitlist]] — P4 Content and moderation
 - [[T-29 Abuse test]] — P1 Platform
-- [[T-38 Advisor]] — P3 Data and trust
+- [[T-40 Nightly backups]] — P1 Platform

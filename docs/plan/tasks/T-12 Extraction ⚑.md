@@ -1,12 +1,12 @@
 ---
 id: T-12
 title: "Extraction: free text to form slots"
-owner: "P2 Assistant"
-sequence: "3 of 7"
+owner: "P2 Chat"
+sequence: "4 of 13"
 hours: 6
-start: 2026-09-27
-end: 2026-09-29
-checkpoint: CP2
+start: 2026-09-26
+end: 2026-09-27
+checkpoint: CP1
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/23
 tags:
@@ -18,9 +18,9 @@ tags:
 
 # T-12 · Extraction: free text to form slots
 
-**Owner:** [[P2 Assistant]], task 3 of 7  
-**When:** Sun 27 Sep → Tue 29 Sep · 6 hours  
-**Checkpoint:** [[CP2 Core loop live]]  
+**Owner:** [[P2 Chat]], task 4 of 13  
+**When:** Sat 26 Sep → Sun 27 Sep · 6 hours  
+**Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#23](https://github.com/magentawood/roomsie/issues/23)
 
 > [!warning] Critical path

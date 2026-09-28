@@ -21,11 +21,11 @@ Part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 0 / 11 | 0 / 33 | 0% |
-| [[P2 Assistant]] | 0 / 7 | 0 / 28 | 0% |
-| [[P3 Data and trust]] | 1 / 6 | 8 / 26 | 31% |
+| [[P1 Platform]] | 0 / 9 | 0 / 27 | 0% |
+| [[P2 Chat]] | 0 / 13 | 0 / 48 | 0% |
+| [[P3 Data and trust]] | 1 / 4 | 8 / 19 | 42% |
 | [[P4 Content and moderation]] | 0 / 6 | 0 / 20 | 0% |
-| [[P5 Accounts and connections]] | 0 / 7 | 0 / 22 | 0% |
+| [[P5 Accounts and people]] | 0 / 5 | 0 / 15 | 0% |
 | [[Design]] | 0 / 6 | 0 / 13 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 11 | 0% |
@@ -34,7 +34,7 @@ Part of [[roomsie launch]].
 
 ---
 
-## P1 Platform — 0/33
+## P1 Platform — 0/27
 
 > [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/5
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -60,17 +60,11 @@ Part of [[roomsie launch]].
 > [!todo]- ⬜ [[T-40 Nightly backups]] · 0/3
 > ![[T-40 Nightly backups#^done]]
 
-> [!todo]- ⬜ [[T-16 Profiles and photos ⚑]] · 0/3
-> ![[T-16 Profiles and photos ⚑#^done]]
-
-> [!todo]- ⬜ [[T-22 Launch areas and waitlist]] · 0/3
-> ![[T-22 Launch areas and waitlist#^done]]
-
 > [!todo]- ⬜ [[T-29 Abuse test]] · 0/3
 > ![[T-29 Abuse test#^done]]
 
 
-## P2 Assistant — 0/28
+## P2 Chat — 0/48
 
 > [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -78,23 +72,41 @@ Part of [[roomsie launch]].
 > [!todo]- ⬜ [[T-11 Model wrapper ⚑]] · 0/4
 > ![[T-11 Model wrapper ⚑#^done]]
 
+> [!todo]- ⬜ [[T-35 Form B contract]] · 0/2
+> ![[T-35 Form B contract#^done]]
+
 > [!todo]- ⬜ [[T-12 Extraction ⚑]] · 0/5
 > ![[T-12 Extraction ⚑#^done]]
-
-> [!todo]- ⬜ [[T-13 Reply writer]] · 0/4
-> ![[T-13 Reply writer#^done]]
 
 > [!todo]- ⬜ [[T-34 Router ⚑]] · 0/4
 > ![[T-34 Router ⚑#^done]]
 
+> [!todo]- ⬜ [[T-13 Reply writer]] · 0/4
+> ![[T-13 Reply writer#^done]]
+
+> [!todo]- ⬜ [[T-36 Observer]] · 0/4
+> ![[T-36 Observer#^done]]
+
 > [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/4
 > ![[T-21 Turn cap and spend ceiling#^done]]
+
+> [!todo]- ⬜ [[T-38 Advisor]] · 0/4
+> ![[T-38 Advisor#^done]]
 
 > [!todo]- ⬜ [[T-27 Eval run]] · 0/3
 > ![[T-27 Eval run#^done]]
 
+> [!todo]- ⬜ [[T-17 Carry chat into account]] · 0/3
+> ![[T-17 Carry chat into account#^done]]
 
-## P3 Data and trust — 8/26
+> [!todo]- ⬜ [[T-10 Chat screen and split view ⚑]] · 0/4
+> ![[T-10 Chat screen and split view ⚑#^done]]
+
+> [!todo]- ⬜ [[T-09 Chip flow ⚑]] · 0/3
+> ![[T-09 Chip flow ⚑#^done]]
+
+
+## P3 Data and trust — 8/19
 
 > [!todo]- 🟡 [[T-06 Database schema ⚑]] · 4/6
 > ![[T-06 Database schema ⚑#^done]]
@@ -102,17 +114,11 @@ Part of [[roomsie launch]].
 > [!todo]- ✅ [[T-14 Match query ⚑]] · 4/4
 > ![[T-14 Match query ⚑#^done]]
 
-> [!todo]- ⬜ [[T-37 Articles and search]] · 0/3
-> ![[T-37 Articles and search#^done]]
-
 > [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/4
 > ![[T-15 Results panel ⚑#^done]]
 
 > [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/5
 > ![[T-18b Person and connect screens ⚑#^done]]
-
-> [!todo]- ⬜ [[T-38 Advisor]] · 0/4
-> ![[T-38 Advisor#^done]]
 
 
 ## P4 Content and moderation — 0/20
@@ -123,20 +129,20 @@ Part of [[roomsie launch]].
 > [!todo]- ⬜ [[T-23b Legal pages]] · 0/2
 > ![[T-23b Legal pages#^done]]
 
+> [!todo]- ⬜ [[T-37 Articles and search]] · 0/3
+> ![[T-37 Articles and search#^done]]
+
 > [!todo]- ⬜ [[T-19 Report and block]] · 0/4
 > ![[T-19 Report and block#^done]]
 
 > [!todo]- ⬜ [[T-20 Account deletion]] · 0/4
 > ![[T-20 Account deletion#^done]]
 
-> [!todo]- ⬜ [[T-35 Form B contract]] · 0/2
-> ![[T-35 Form B contract#^done]]
-
-> [!todo]- ⬜ [[T-36 Observer]] · 0/4
-> ![[T-36 Observer#^done]]
+> [!todo]- ⬜ [[T-22 Launch areas and waitlist]] · 0/3
+> ![[T-22 Launch areas and waitlist#^done]]
 
 
-## P5 Accounts and connections — 0/22
+## P5 Accounts and people — 0/15
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/3
 > ![[M-03 Eval sentences#^done]]
@@ -147,17 +153,11 @@ Part of [[roomsie launch]].
 > [!todo]- ⬜ [[T-24 Event logging]] · 0/4
 > ![[T-24 Event logging#^done]]
 
-> [!todo]- ⬜ [[T-17 Carry chat into account]] · 0/3
-> ![[T-17 Carry chat into account#^done]]
-
 > [!todo]- ⬜ [[T-18a Connect API ⚑]] · 0/3
 > ![[T-18a Connect API ⚑#^done]]
 
-> [!todo]- ⬜ [[T-10 Chat screen and split view ⚑]] · 0/4
-> ![[T-10 Chat screen and split view ⚑#^done]]
-
-> [!todo]- ⬜ [[T-09 Chip flow ⚑]] · 0/3
-> ![[T-09 Chip flow ⚑#^done]]
+> [!todo]- ⬜ [[T-16 Profiles and photos ⚑]] · 0/3
+> ![[T-16 Profiles and photos ⚑#^done]]
 
 
 ## Design — 0/13

@@ -9,15 +9,13 @@ tags:
 
 _The data and the matching, then the screens that show them and the advisor._
 
-**34 hours** of build work, 0 spare, finishing Sat 10 Oct.
+**24 hours** of build work at 1.41h a day, 10 spare, finishing Sat 10 Oct.
 
 Part of [[roomsie launch]].
 
 ## Sequence
 
-1. [[T-06 Database schema ⚑]] — Thu 24 Sep → Sun 27 Sep, 8h
-2. [[T-14 Match query ⚑]] — Mon 28 Sep → Wed 30 Sep, 6h
-3. [[T-37 Articles and search]] — Thu 1 Oct → Fri 2 Oct, 3h
-4. [[T-15 Results panel ⚑]] — Fri 2 Oct → Mon 5 Oct, 6h
-5. [[T-18b Person and connect screens ⚑]] — Mon 5 Oct → Wed 7 Oct, 4h
-6. [[T-38 Advisor]] — Wed 7 Oct → Sat 10 Oct, 7h
+1. [[T-06 Database schema ⚑]] — Thu 24 Sep → Tue 29 Sep, 8h
+2. [[T-14 Match query ⚑]] — Tue 29 Sep → Sat 3 Oct, 6h
+3. [[T-15 Results panel ⚑]] — Sat 3 Oct → Thu 8 Oct, 6h
+4. [[T-18b Person and connect screens ⚑]] — Thu 8 Oct → Sat 10 Oct, 4h

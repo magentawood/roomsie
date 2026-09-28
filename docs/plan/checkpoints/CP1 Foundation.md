@@ -18,12 +18,11 @@ Part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[M-01 Seeding form ⚑]] — M2 Community
-- [[T-03 CI checks]] — P5 Accounts and connections
-- [[T-11 Model wrapper ⚑]] — P2 Assistant
-- [[T-23b Legal pages]] — P4 Content and moderation
+- [[T-02 Scaffold monorepo ⚑]] — P1 Platform
+- [[T-35 Form B contract]] — P2 Chat
 - [[D-03 Results and profile designs]] — Design
 - [[F-09 ADR exceptions]] — Founder
-- [[T-06 Database schema ⚑]] — P3 Data and trust
+- [[M-03 Eval sentences]] — P5 Accounts and people
+- [[T-12 Extraction ⚑]] — P2 Chat
+- [[T-23a Landing page]] — P4 Content and moderation
 - [[M-04 Article interviews]] — M1 Content
-- [[T-05 Google sign-in ⚑]] — P1 Platform
-- [[T-24 Event logging]] — P5 Accounts and connections
