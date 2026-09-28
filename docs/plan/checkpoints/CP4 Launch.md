@@ -6,9 +6,9 @@ tags:
 
 # CP4 · Launch
 
-**Date:** Wed 7 Oct
+**Date:** Mon 12 Oct
 
-Public launch. Fallback Friday 9 October.
+Public launch. Fallback Wednesday 14 October.
 
 **After:** [[CP3 Freeze and go-no-go]]  
 **Next:** [[CP5 First-week review]]
@@ -18,8 +18,5 @@ Part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[A-01 Bug fix day]] — Everyone
-- [[D-06 Launch visuals]] — Design
 - [[M-06 Beta invites ⚑]] — M2 Community
-- [[T-22 Launch areas and waitlist]] — P4 Content and moderation
-- [[T-29 Abuse test]] — P1 Platform
 - [[A-02 Launch day]] — Everyone

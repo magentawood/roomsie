@@ -2,7 +2,7 @@
 id: M-03
 title: "Write the eval sentences"
 owner: "P5 Accounts and connections"
-sequence: "1 of 6"
+sequence: "1 of 7"
 hours: 4
 start: 2026-09-24
 end: 2026-09-25
@@ -17,7 +17,7 @@ tags:
 
 # M-03 · Write the eval sentences
 
-**Owner:** [[P5 Accounts and connections]], task 1 of 6  
+**Owner:** [[P5 Accounts and connections]], task 1 of 7  
 **When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#21](https://github.com/magentawood/roomsie/issues/21)

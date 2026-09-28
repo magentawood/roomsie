@@ -1,6 +1,6 @@
 # For the designer — decisions we are about to lock
 
-**Date:** 2026-09-25 · **For:** whoever owns design · **From:** engineering
+**Date:** 2026-09-25 · **Updated:** 2026-09-26, launch now Mon 12 Oct · **For:** whoever owns design · **From:** engineering
 
 ---
 
@@ -46,7 +46,7 @@ the table below is sorted that way.
 |---|---|
 | 🟢 **Free** | Change whenever. Nothing is built on it. Styling, colour, copy, spacing, icons, card layout, imagery — all free, always. |
 | 🟡 **Costly** | Roughly a day or two of rework if you change it after its build date. Annoying, survivable. |
-| 🔴 **Structural** | Other work is stacked on top. Changing it after its date means dropping something else to keep 7 October. |
+| 🔴 **Structural** | Other work is stacked on top. Changing it after its date means dropping something else to keep 12 October. |
 
 ---
 
@@ -54,7 +54,7 @@ the table below is sorted that way.
 
 | By | What must be settled | Why |
 |---|---|---|
-| **Now** | §1 The conversation's questions | The contract is the first thing built. Everything reads from it. |
+| **Now** | §1 The conversation's questions, and §6.3 the launch look | The contract is the first thing built, and the styling decision gates every design. |
 | **Sun 27 Sep** | §2 What we store about a person | The schema is committed Sunday night. Migrations after that are painful. |
 | **Tue 29 Sep** | §3 How the assistant behaves | The reply writer is built Wed–Thu. |
 | **Wed 30 Sep** | §4 How results appear and update | The match query and results panel start Thursday. |
@@ -71,15 +71,22 @@ definition of *what we ask a person*. Add or remove a question later and all
 four change together.
 
 **1.1 — The form has exactly these fields.** Intent, areas, budget, move date,
-and nine lifestyle answers. Nothing else. 🔴
+room type, and nine lifestyle answers: smoking, alcohol, guests, pets, hours,
+tidiness, at home, daytime and kitchen. Nothing else. 🔴
 
 > **If you add a flow** — say, "do you have pets?" as its own step — it is not
 > one new question. It is a migration, a contract change, a re-tuned extraction
 > prompt and a new filter. **Tell us before Sunday and it's an hour. After, it's
 > a day and a half.**
 
-**1.2 — Intent is one of four choices**, reusing the four intent cards from the
-V3 prototype: has a flat, wants a whole flat, wants a room, open to either. 🔴
+**1.2 — Intent is one of the prototype's four cards:** a flat and flatmates,
+just a flat, just a flatmate, or I'm renting out a flat. 🔴
+
+> **This clashes with a settled decision, and it needs you first.** Decision D0
+> says v0 is flatmate matching only, with no property listings. Two of the four
+> cards — *just a flat* and *I'm renting out a flat* — are about property. Either
+> they are hidden for launch, or they lead somewhere that does not exist yet.
+> **Tell us which cards ship on 12 October.**
 
 **1.3 — The first three turns are chips, not typing.** Intent, area and budget
 are closed questions, so we show tappable options. 🟡
@@ -96,6 +103,12 @@ not to know. 🟢
 **1.7 — Typing beats tapping.** Someone who types "2bhk in Powai under 25k from
 October" fills four fields at once and skips ahead. The chips are a floor, not
 a cage. 🟡
+
+**1.8 — Some preferences are never offered as chips.** If someone raises
+community or religion, we record it and filter on it. We never suggest it, never
+ask about it, and never infer it from a name, a diet or an area. This is
+settled (D3c), so it is not up for review, but it limits what the chips may
+show. 🔒
 
 ---
 
@@ -117,18 +130,29 @@ dealbreaker filters people out; a preference only affects ranking. 🔴
 
 > Four is a guess. Six is free to change today, and a day of work in October.
 
-**2.4 — We store anonymous sessions**, so someone can chat before signing up
-and keep that conversation when they do. 🟡
+**2.4 — We store anonymous sessions and what people type**, so someone can chat
+before signing up and keep that conversation when they do. The typed messages
+are kept, and deleted with the account. Should the chat say so up front? 🟡
 
 **2.5 — Reports, blocks and a waitlist are first-class**, not bolted on. 🟢
+
+**2.6 — The assistant keeps notes about each person.** The observer turns what
+people say into notes, like "partner stays over most nights", and every note
+carries the person's exact words. **Can people see and correct these notes, and
+where?** On the profile, in the chat, or nowhere at launch? This shapes the
+profile screens (D-03), so it's needed by Wed 30 Sep. 🔴
 
 ---
 
 # §3 · How the assistant behaves — 🟡 by Tue 29 Sep
 
-**3.1 — It answers housing-adjacent questions rather than refusing.** Ask it
-what semi-furnished usually includes, or what a deposit normally runs to, and
-it answers with a plain hedge rather than "I can only help with flats." 🟡
+**3.1 — It answers housing questions rather than refusing.** Ask it what
+semi-furnished usually includes, or what a deposit normally runs to. It answers
+from roomsie's own articles first, naming the article. If they don't cover it,
+a signed-in person gets an answer from a web search, and a visitor gets a plain
+hedged answer. Law, tax, area safety and claims about a person are never
+answered from the web: articles only, or handed off. Should a web-searched
+answer look different from one of ours? 🟡
 
 **3.2 — Five typed turns before we ask you to sign in.** Chip taps are free and
 don't count. 🟡
@@ -146,9 +170,15 @@ down. 🟢
 assistant doesn't narrate it — otherwise the conversation becomes a log of
 taps. It speaks only when your tap contradicts something you said earlier. 🟡
 
+**3.7 — Off-topic messages get one scripted line.** "Write my essay" gets a
+polite fixed reply, costs no model call and is logged. The wording is yours. 🟢
+
 ---
 
 # §4 · How results appear and update — 🟡 by Wed 30 Sep
+
+Launch builds 4.1 to 4.4. The rest were cut to v1 in `docs/launch-plan.md`, so
+marking them LATER costs nothing.
 
 **4.1 — The results panel appears once intent, area and budget are filled** —
 about three turns in. 🔴
@@ -159,18 +189,21 @@ take much longer. We show results early and honestly, and withhold the score
 until it means something. 🟡
 
 **4.3 — The panel header changes as we learn more:** "Everything in Mumbai" →
-"Flats in Powai" → "Flats in Powai under 20,000" → match scores appear. 🟢
+"Powai" → "Powai, under ₹20,000" → match scores appear. In v0 every card is a
+person, never a listing (D0), so the exact words are yours. 🟢
 
 **4.4 — The panel updates when the form changes, not when a turn happens.** A
 ten-turn conversation might redraw the panel three times. 🟡
 
 **4.5 — Widening and narrowing behave differently.** More results arrive as a
-tappable banner. Fewer results apply immediately but say what went, with undo. 🟡
+tappable banner. Fewer results apply immediately but say what went, with undo.
+**v1, not launch.** 🟡
 
-**4.6 — Nothing reorders while you scroll.** Updates queue and apply when idle. 🟡
+**4.6 — Nothing reorders while you scroll.** Updates queue and apply when idle.
+**v1, not launch.** 🟡
 
 **4.7 — A card you saved is never silently removed** — it gets marked with the
-reason instead. 🟢
+reason instead. **v1, not launch.** 🟢
 
 ---
 
@@ -182,7 +215,9 @@ The whole product is a split view: chat on one side, results on the other. That
 needs about 900 pixels. **Mumbai is a mobile-first market.** At 400px there is
 no second panel, so the central idea has to work some other way.
 
-Three options were written down on 20 September and none was chosen:
+Three options were written down on 20 September. None was chosen outright:
+engineering picked a provisional pattern so it could start (below), and the
+launch plan has already cut the bottom sheet to v1.
 
 | Option | How it works | Trade |
 |---|---|---|
@@ -203,7 +238,7 @@ being built. Decide by 30 September.
 
 ---
 
-# §6 · Two things nobody has designed at all
+# §6 · Three open questions outside the flow
 
 **6.1 — The empty state.** There is no skip, so if a search returns nothing the
 user has answered a full interview for zero results. That is the worst moment
@@ -214,6 +249,12 @@ dealbreaker, or offer to notify them. **Undesigned. 🔴**
 built for femmeflats — a women-only swipe app we have since pivoted away from.
 It will be live and public. If you want a different landing page, the port is
 four hours of work we could spend elsewhere. 🟡
+
+**6.3 — Launch uses the V3 prototype's look, not Untitled UI.** ADR 0011 says
+to build on the Untitled UI token pipeline, but that pipeline is blocked and
+the prototype's palette doesn't match it. The launch plan proposes porting the
+prototype's styling for 12 October and rebuilding on the pipeline in v1. **This
+needs your sign-off, and it is D-01, due on day one.** 🔴
 
 ---
 
@@ -233,7 +274,7 @@ above.
 
 ## What we need back
 
-1. Read §1 and §5 first. Those two are worth more than the rest combined.
+1. Read §1, §5 and §6.3 first. Those three are worth more than the rest combined.
 2. Mark every item OK / CHANGE / LATER.
 3. For anything marked CHANGE, we'll come back the same day with the real cost
    and what it displaces.

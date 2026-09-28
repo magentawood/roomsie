@@ -2,11 +2,11 @@
 id: T-29
 title: "Abuse test: 100 fake sessions"
 owner: "P1 Platform"
-sequence: "8 of 8"
+sequence: "11 of 11"
 hours: 1
-start: 2026-10-06
-end: 2026-10-06
-checkpoint: CP4
+start: 2026-10-10
+end: 2026-10-10
+checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/51
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-29 · Abuse test: 100 fake sessions
 
-**Owner:** [[P1 Platform]], task 8 of 8  
-**When:** Tue 6 Oct · 1 hours  
-**Checkpoint:** [[CP4 Launch]]  
+**Owner:** [[P1 Platform]], task 11 of 11  
+**When:** Sat 10 Oct · 1 hours  
+**Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#51](https://github.com/magentawood/roomsie/issues/51)
 
 ## Needs first

@@ -1,6 +1,19 @@
-# Launch plan: 7 October 2026
+# Launch plan: 12 October 2026
 
-**Date:** 2026-09-23 · **Status:** proposed · **Decision:** D11
+**Date:** 2026-09-23 · **Updated:** 2026-09-26 · **Status:** proposed · **Decision:** D11
+
+> **Update, 26 September.** Launch moved from 7 October to **Monday 12
+> October**, with **Wednesday 14 October** as the fallback. The move brings
+> four cuts back into launch: the router, Form B and the observer, the advisor
+> (articles first, then web search for signed-in users), and a separate
+> analytics database. Nightly backups were added, because both databases are on
+> free Supabase accounts (D13). **Quality comes before the date:** if a
+> go/no-go check fails, the date moves a little rather than shipping something
+> below it.
+>
+> The reasoning below is the original, dated 23 September, and stays as the
+> record of why each cut was made. The schedule now lives in
+> `docs/team-plan.json`, `docs/team-plan.md` and `docs/how-to-work.md`.
 
 ---
 
@@ -58,15 +71,15 @@ surprises anyone. There is no slack. Treat every estimate as optimistic.
 | Cut | Why it can wait | Comes back |
 |---|---|---|
 | **In-app messaging** | Replaced by a mutual-accept contact reveal. Realtime chat is the single biggest build item. Mumbai already lives on WhatsApp. | v1 |
-| Router as a separate model | Chips are routed by the client. Free text goes to one extraction call. Off-topic is a line in the reply prompt. | v1 |
-| Form B, the profile observer | Filtering needs Form A only. Log every free-text turn now so Form B can be backfilled. | v1 |
-| Advisor and RAG | The corpus is not written yet anyway. Adjacent questions get a hedged general answer. Consequential ones hand off. | v1, once 10 articles exist |
+| Router as a separate model | Chips are routed by the client. Free text goes to one extraction call. Off-topic is a line in the reply prompt. | **Back in for launch, 26 Sep** |
+| Form B, the profile observer | Filtering needs Form A only. Log every free-text turn now so Form B can be backfilled. | **Back in for launch, 26 Sep** |
+| Advisor and RAG | The corpus is not written yet anyway. Adjacent questions get a hedged general answer. Consequential ones hand off. | **Back in for launch, 26 Sep**, with web search after sign-in |
 | DigiLocker verification | KYC provider onboarding takes longer than two weeks. | v1 |
 | Blurred verified-only cards | Depends on verification. | v1 |
 | SEO area pages | Need data that does not exist yet. Blog goes live instead. | v1 |
 | Live-update rules beyond the basics | Re-query on form change. Skip the banners and direction rules. | v1 |
 | Mobile bottom sheet | Responsive layout only. | v1 |
-| Separate analytics database | Log key events to one table in the main database. | v1 |
+| Separate analytics database | Log key events to one table in the main database. | **Back in for launch, 26 Sep** |
 
 **Nothing on this list is abandoned.** Every cut has a slot in v1 and the design
 docs stay as written.

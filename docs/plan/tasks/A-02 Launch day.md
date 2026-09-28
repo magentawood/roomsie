@@ -3,8 +3,8 @@ id: A-02
 title: "Launch"
 owner: "Everyone"
 sequence: "2 of 2"
-start: 2026-10-07
-end: 2026-10-07
+start: 2026-10-12
+end: 2026-10-12
 checkpoint: CP4
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/54
@@ -17,7 +17,7 @@ tags:
 # A-02 · Launch
 
 **Owner:** [[Everyone]], task 2 of 2  
-**When:** Wed 7 Oct  
+**When:** Mon 12 Oct  
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#54](https://github.com/magentawood/roomsie/issues/54)
 

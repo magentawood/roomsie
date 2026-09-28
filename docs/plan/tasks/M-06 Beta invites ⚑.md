@@ -4,7 +4,7 @@ title: "Beta invites to seeded sign-ups"
 owner: "M2 Community"
 sequence: "3 of 4"
 start: 2026-10-03
-end: 2026-10-06
+end: 2026-10-11
 checkpoint: CP4
 critical: true
 issue: https://github.com/magentawood/roomsie/issues/49
@@ -18,7 +18,7 @@ tags:
 # M-06 · Beta invites to seeded sign-ups
 
 **Owner:** [[M2 Community]], task 3 of 4  
-**When:** Sat 3 Oct → Tue 6 Oct  
+**When:** Sat 3 Oct → Sun 11 Oct  
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#49](https://github.com/magentawood/roomsie/issues/49)
 
@@ -35,7 +35,7 @@ tags:
 ## Done when
 - [ ] Invites go out on Sat 3 Oct, the day after profile creation works
 - [ ] Help people finish profiles
-- [ ] 150 profiles, at least 40 in each launch area, by Tuesday 6 October
+- [ ] 150 profiles, at least 40 in each launch area, by Sunday 11 October
 
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

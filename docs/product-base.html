@@ -216,8 +216,8 @@ tr.hl td:first-child{color:var(--accent)}
     </div>
     <div class="rgroup">
       <div class="rlabel">Launch</div>
-      <a class="rlink" href="#p16"><span class="rn">16</span><span>7 October</span></a>
-      <a class="rlink" href="#p17"><span class="rn">17</span><span>Verticals &amp; checkpoints</span></a>
+      <a class="rlink" href="#p16"><span class="rn">16</span><span>12 October</span></a>
+      <a class="rlink" href="#p17"><span class="rn">17</span><span>Lanes &amp; checkpoints</span></a>
     </div>
     <div class="rgroup">
       <div class="rlabel">Reference</div>
@@ -233,7 +233,7 @@ tr.hl td:first-child{color:var(--accent)}
       <h1>What roomsie does, and <em>why</em></h1>
       <p class="sub">Every product decision from the planning session, from audience to launch plan. Each one records what we chose and what it costs, so nothing has to be re-argued from memory.</p>
       <div class="meta">
-        <span>Sept 2026</span><span>·</span><span>Mumbai</span><span>·</span><span>v0 flatmates only</span><span>·</span><span>Launch 7 Oct</span><span>·</span><span>5 devs × 2h/day</span>
+        <span>Sept 2026</span><span>·</span><span>Mumbai</span><span>·</span><span>v0 flatmates only</span><span>·</span><span>Launch 12 Oct</span><span>·</span><span>5 devs × 2h/day</span>
       </div>
     </header>
 
@@ -260,7 +260,7 @@ tr.hl td:first-child{color:var(--accent)}
         <a class="lrow" href="#p07"><span class="ln">07</span><span class="lt">The panel follows the form<em>Not the chat turn</em></span><span class="chip g">Settled</span></a>
         <a class="lrow" href="#p08"><span class="ln">08</span><span class="lt">Login gates details and contact only<em>Everything else is public and indexable</em></span><span class="chip g">Settled</span></a>
         <div class="lgroup">Assistant</div>
-        <a class="lrow" href="#p09"><span class="ln">09</span><span class="lt">A router, not an agent swarm<em>Two forms, small handlers</em></span><span class="chip w">Proposed</span></a>
+        <a class="lrow" href="#p09"><span class="ln">09</span><span class="lt">A router, not an agent swarm<em>All four handlers ship at launch</em></span><span class="chip g">Settled</span></a>
         <a class="lrow" href="#p10"><span class="ln">10</span><span class="lt">DeepSeek, with Gemini behind it<em>Chosen on Hinglish, not price</em></span><span class="chip g">Settled</span></a>
         <a class="lrow" href="#p11"><span class="ln">11</span><span class="lt">Five scope bands<em>Always answer something</em></span><span class="chip g">Settled</span></a>
         <a class="lrow" href="#p12"><span class="ln">12</span><span class="lt">Five turns before sign-in<em>Plus rate limits and a spend ceiling</em></span><span class="chip g">Settled</span></a>
@@ -269,8 +269,8 @@ tr.hl td:first-child{color:var(--accent)}
         <a class="lrow" href="#p14"><span class="ln">14</span><span class="lt">Brokers pay for introductions<em>Waiting on broker calls</em></span><span class="chip w">Testing</span></a>
         <a class="lrow" href="#p15"><span class="ln">15</span><span class="lt">A small, self-funded team<em>About ₹1–2 per interview</em></span><span class="chip g">Settled</span></a>
         <div class="lgroup">Launch</div>
-        <a class="lrow" href="#p16"><span class="ln">16</span><span class="lt">Public launch, 7 October<em>Fallback 9 October</em></span><span class="chip g">Settled</span></a>
-        <a class="lrow" href="#p17"><span class="ln">17</span><span class="lt">Five verticals, six checkpoints<em>55 tasks on GitHub</em></span><span class="chip g">Settled</span></a>
+        <a class="lrow" href="#p16"><span class="ln">16</span><span class="lt">Public launch, 12 October<em>Fallback 14 October</em></span><span class="chip g">Settled</span></a>
+        <a class="lrow" href="#p17"><span class="ln">17</span><span class="lt">Five lanes, two phases<em>Design-free work first, screens once designs land</em></span><span class="chip g">Settled</span></a>
       </div>
     </section>
 
@@ -386,6 +386,10 @@ tr.hl td:first-child{color:var(--accent)}
         <div class="v">Results update when a form value or weight changes, not on every chat turn.</div>
         <p>First results come after intent, area and budget. The match score stays hidden until lifestyle answers exist.</p>
       </div>
+      <div class="call">
+        <div class="ct">For 12 October, only the basics</div>
+        <p>At launch the panel re-queries when the form changes. The banners, undo and scroll rules below come in v1.</p>
+      </div>
       <div class="tw"><table>
         <thead><tr><th>Change</th><th>What the panel does</th></tr></thead>
         <tbody>
@@ -439,7 +443,7 @@ tr.hl td:first-child{color:var(--accent)}
         <tbody>
           <tr><td>Extractor</td><td>Free text into Form A, the filters. Limited to enums.</td></tr>
           <tr><td>Observer</td><td>Into Form B, the profile. Every observation quotes the user.</td></tr>
-          <tr><td>Advisor</td><td>Consulting questions, grounded in roomsie's own articles. Postgres full-text search, no vector store.</td></tr>
+          <tr><td>Advisor</td><td>Consulting questions, from roomsie's own articles first, with Postgres full-text search and no vector store. Then a web search for general questions, after sign-in only.</td></tr>
           <tr><td>Reply writer</td><td>Reads the forms and the last two turns, never the whole transcript.</td></tr>
         </tbody>
       </table></div>
@@ -447,7 +451,7 @@ tr.hl td:first-child{color:var(--accent)}
         <div class="ct">Hallucination is removed by structure</div>
         <p>Extraction can only pick an enum. A profile fact must point at the user's words. Results come from SQL, never from prose.</p>
       </div>
-      <p>For the 7 October launch, only the extractor and the reply writer ship. The router, observer and advisor come after.</p>
+      <p>All four ship on 12 October. The router runs on DeepSeek Flash behind its own adapter, and Jev gets a trial on the eval set once access arrives. Every typed message is stored, so the observer can learn from all of them.</p>
     </section>
 
     <hr class="divider">
@@ -457,6 +461,7 @@ tr.hl td:first-child{color:var(--accent)}
       <div class="verdict">
         <div class="k">Decision</div>
         <div class="v">DeepSeek V4.1 Flash runs every role. Gemini Flash-Lite takes over on failure or invalid output. Sarvam is dropped.</div>
+        <p>Web search is not on by default. The advisor turns on DeepSeek's <span class="mono">web_search</span> tool, which only its Anthropic-compatible endpoint offers, and falls back to Gemini's Google Search grounding.</p>
         <p>Chosen on how well each model reads Hinglish, not on price. At this volume the price gap is noise.</p>
       </div>
       <div class="stats">
@@ -482,7 +487,7 @@ tr.hl td:first-child{color:var(--accent)}
         <thead><tr><th>Band</th><th>Handling</th></tr></thead>
         <tbody>
           <tr><td>Core</td><td>The interview</td></tr>
-          <tr><td>Adjacent, general</td><td>Articles first, then general knowledge, clearly hedged</td></tr>
+          <tr><td>Adjacent, general</td><td>Articles first, then a web search for signed-in users. Visitors get general knowledge, clearly hedged</td></tr>
           <tr class="hl"><td>Adjacent, consequential</td><td>Law, tax, area safety, claims about a person. Articles only, otherwise handed off. Never improvised.</td></tr>
           <tr><td>Out of scope</td><td>One scripted line, no model call. Counts toward the turn cap.</td></tr>
           <tr><td>Adversarial</td><td>Scripted and logged</td></tr>
@@ -521,7 +526,7 @@ tr.hl td:first-child{color:var(--accent)}
         <div class="ct">Dropped: manual Aadhaar upload</div>
         <p>Private companies may not collect or keep Aadhaar copies under the Aadhaar Act 2016, sections 29 and 37, and UIDAI is banning photocopy collection outright. roomsie stores the result, never the document.</p>
       </div>
-      <p>Verification is not in the 7 October launch. It ships in v1.</p>
+      <p>Verification is not in the 12 October launch. It ships in v1.</p>
     </section>
 
     <hr class="divider">
@@ -548,7 +553,7 @@ tr.hl td:first-child{color:var(--accent)}
     <section id="p15">
       <div class="sechead"><span class="secnum">15</span><h2>A small, self-funded team</h2><span class="did">D5</span></div>
       <div class="stats">
-        <div class="stat"><div class="n">4–5</div><div class="l">Engineers, 2 hours a day</div></div>
+        <div class="stat"><div class="n">5</div><div class="l">Engineers, 2 hours a day</div></div>
         <div class="stat"><div class="n">2 + 1</div><div class="l">Marketing and design</div></div>
         <div class="stat a"><div class="n">₹1–2</div><div class="l">Model cost per interview</div></div>
       </div>
@@ -558,24 +563,27 @@ tr.hl td:first-child{color:var(--accent)}
     <hr class="divider">
 
     <section id="p16">
-      <div class="sechead"><span class="secnum">16</span><h2>Public launch, 7 October</h2><span class="did">D11</span></div>
+      <div class="sechead"><span class="secnum">16</span><h2>Public launch, 12 October</h2><span class="did">D11</span></div>
       <div class="verdict">
         <div class="k">Decision</div>
-        <div class="v">Public launch on Wed 7 Oct. If the team falls behind, launch moves to Fri 9 Oct and the scope stays the same.</div>
-        <p>Go or no-go is decided on Mon 5 Oct at 8 pm.</p>
+        <div class="v">Public launch on Mon 12 Oct. If the team falls behind, launch moves to Wed 14 Oct and the scope stays the same.</div>
+        <p>Go or no-go is decided on Sat 10 Oct at 8 pm. The launch moved from 7 October on 26 September, to bring the router, observer and advisor into launch.</p>
       </div>
       <div class="stats">
-        <div class="stat"><div class="n">72–140</div><div class="l">Person-hours available</div></div>
-        <div class="stat"><div class="n">~130</div><div class="l">Needed after the cut</div></div>
-        <div class="stat a"><div class="n">0</div><div class="l">Margin</div></div>
+        <div class="stat"><div class="n">170</div><div class="l">Person-hours available, 5 × 2h × 17 days</div></div>
+        <div class="stat"><div class="n">151</div><div class="l">Build hours in the plan</div></div>
+        <div class="stat a"><div class="n">19</div><div class="l">Spare, none of it before designs land</div></div>
       </div>
       <div class="tw"><table>
-        <thead><tr><th>Ships 7 Oct</th><th>After launch</th></tr></thead>
+        <thead><tr><th>Ships 12 Oct</th><th>After launch</th></tr></thead>
         <tbody>
-          <tr><td>Chat with chips, one extraction call, reply writer</td><td>Router, observer, advisor</td></tr>
-          <tr><td>Results panel, profiles with photos</td><td>In-app messaging</td></tr>
+          <tr><td>Chat with chips, the router, extraction, the observer and the reply writer</td><td>In-app messaging</td></tr>
+          <tr><td>The advisor: articles first, web search after sign-in</td><td>—</td></tr>
+          <tr><td>Results panel, profiles with photos</td><td>—</td></tr>
           <tr><td>Contact revealed when both accept</td><td>Verification, blurred cards</td></tr>
           <tr><td>Report, block, account deletion, waitlist, legal pages</td><td>SEO area pages</td></tr>
+          <tr><td>Results re-queried when the form changes, responsive mobile</td><td>Live-update banners and undo, mobile bottom sheet</td></tr>
+          <tr><td>Analytics in its own database, nightly backups</td><td>—</td></tr>
         </tbody>
       </table></div>
       <div class="call r">
@@ -587,33 +595,45 @@ tr.hl td:first-child{color:var(--accent)}
     <hr class="divider">
 
     <section id="p17">
-      <div class="sechead"><span class="secnum">17</span><h2>Five verticals, six checkpoints</h2><span class="did">D12</span></div>
+      <div class="sechead"><span class="secnum">17</span><h2>Five lanes, two phases</h2><span class="did">D12</span></div>
       <div class="verdict">
         <div class="k">Decision</div>
-        <div class="v">Each engineer owns one slice of the product, end to end. Design, marketing and the founder keep their roles.</div>
+        <div class="v">There are no designs yet, so the work runs in two phases. All design-free work lands first, and every screen is built once designs exist.</div>
+        <p>Every task still has one owner, start to finish. Design, marketing and the founder keep their roles.</p>
       </div>
       <div class="tw"><table>
-        <thead><tr><th>Vertical</th><th>Owns</th><th>Hours</th></tr></thead>
+        <thead><tr><th>Lane</th><th>Owns</th><th>Hours</th></tr></thead>
         <tbody>
-          <tr><td>V1 Platform</td><td>Code base, deploy, sign-in, logging, alerts, legal pages</td><td class="n-c">24</td></tr>
-          <tr><td>V2 Assistant</td><td>Form contract, models, extraction, replies, limits, eval</td><td class="n-c">24</td></tr>
-          <tr><td>V3 Visitor journey</td><td>Landing, chat, chips, waitlist</td><td class="n-c">23</td></tr>
-          <tr><td>V4 Matching &amp; trust</td><td>Database, match query, report and block, deletion</td><td class="n-c">22</td></tr>
-          <tr><td>V5 People</td><td>Results panel, profiles, connect</td><td class="n-c">22</td></tr>
+          <tr><td>P1 Platform</td><td>Code base, sign-in, deploy, errors, alerts, invite gate. Then profiles, the waitlist, the analytics database and backups.</td><td class="n-c">34</td></tr>
+          <tr><td>P2 Assistant</td><td>Form contract, models, extraction, replies, the router, limits, eval</td><td class="n-c">30</td></tr>
+          <tr><td>P3 Data &amp; trust</td><td>Database and match query. Then the results panel, person screens and the advisor.</td><td class="n-c">34</td></tr>
+          <tr><td>P4 Content &amp; moderation</td><td>Landing, legal pages, report and block, deletion. Then Form B and the observer.</td><td class="n-c">25</td></tr>
+          <tr><td>P5 Accounts &amp; connections</td><td>Eval sentences, CI, events, chat carry-over, connect API. Then the chat screen and its chips.</td><td class="n-c">28</td></tr>
         </tbody>
       </table></div>
+      <div class="tw"><table>
+        <thead><tr><th>Phase</th><th>Dates</th><th>What happens</th></tr></thead>
+        <tbody>
+          <tr><td>A · Design-free</td><td class="n-c">Thu 24 → Wed 30 Sep</td><td>Monorepo, database, sign-in, assistant, matching, moderation</td></tr>
+          <tr><td>B · Screens and the assistant</td><td class="n-c">Thu 1 → Sat 10 Oct</td><td>Every screen, built from finished designs, plus the router, observer, advisor, analytics database and backups</td></tr>
+        </tbody>
+      </table></div>
+      <div class="call w">
+        <div class="ct">The one hard deadline</div>
+        <p>Designs D-02, D-03 and D-04 must be finished by the end of Wednesday 30 September. Phase A has no slack, so every day a design slips is a day the launch slips.</p>
+      </div>
       <div class="tw"><table>
         <thead><tr><th>Checkpoint</th><th>Date</th></tr></thead>
         <tbody>
           <tr><td>CP0 Kickoff</td><td class="n-c">Fri 25 Sep</td></tr>
           <tr><td>CP1 Foundation</td><td class="n-c">Mon 28 Sep</td></tr>
           <tr><td>CP2 Core loop live</td><td class="n-c">Thu 1 Oct</td></tr>
-          <tr><td>CP3 Freeze and go/no-go</td><td class="n-c">Mon 5 Oct, 8 pm</td></tr>
-          <tr class="hl"><td>CP4 Launch</td><td class="n-c">Wed 7 Oct</td></tr>
-          <tr><td>CP5 First-week review</td><td class="n-c">Wed 14 Oct</td></tr>
+          <tr><td>CP3 Freeze and go/no-go</td><td class="n-c">Sat 10 Oct, 8 pm</td></tr>
+          <tr class="hl"><td>CP4 Launch</td><td class="n-c">Mon 12 Oct, fallback Wed 14 Oct</td></tr>
+          <tr><td>CP5 First-week review</td><td class="n-c">Mon 19 Oct</td></tr>
         </tbody>
       </table></div>
-      <p>55 tasks are tracked as GitHub issues. Each person's sequence is in <span class="mono">docs/team-plan.md</span>. The graph and timeline are in <span class="mono">docs/plan/</span>, for Obsidian.</p>
+      <p>55 tasks are tracked as GitHub issues. Each person's list, in order, is in <span class="mono">docs/how-to-work.md</span>. Every task's done-when list is in <span class="mono">docs/team-plan.md</span>. The graph and timeline are in <span class="mono">docs/plan/</span>, for Obsidian.</p>
     </section>
 
     <hr class="divider">
@@ -626,8 +646,12 @@ tr.hl td:first-child{color:var(--accent)}
           <tr><td>Brokers and monetisation</td><td><span class="chip w">Testing</span> Waiting on broker calls</td></tr>
           <tr><td>Identity text in a published listing</td><td><span class="chip m">Open</span> Separate from private filters</td></tr>
           <tr><td>Elevator pitch</td><td><span class="chip m">Open</span> “Your agentic broker” for investors. A plainer line for users.</td></tr>
+          <tr><td>Which intent cards ship in v0</td><td><span class="chip m">Open</span> Two of the prototype's four cards are about property, which D0 keeps out of v0</td></tr>
+          <tr><td>Designs D-02 to D-04</td><td><span class="chip c">Due</span> End of Wed 30 Sep. The launch date depends on it.</td></tr>
           <tr><td>Mobile split-view UI</td><td><span class="chip w">Provisional</span> The mechanics are settled, the look isn't</td></tr>
           <tr><td>Design system</td><td><span class="chip w">Exception</span> Prototype look for launch, Untitled UI later (ADR 0011)</td></tr>
+          <tr><td>Router model</td><td><span class="chip w">Testing</span> DeepSeek at launch. Trial Jev on the eval set once access arrives</td></tr>
+          <tr><td>Two Supabase accounts</td><td><span class="chip w">Exception</span> Main and analytics databases on two free accounts. Both move into one paid organisation when we start paying. No backups on free, so a nightly dump goes to R2</td></tr>
           <tr><td>Master launch document</td><td><span class="chip m">Deferred</span> Every input is settled</td></tr>
         </tbody>
       </table></div>
@@ -651,7 +675,10 @@ tr.hl td:first-child{color:var(--accent)}
           <tr><td>Verification</td><td class="n-c">docs/verification.md</td></tr>
           <tr><td>Brokers and supply</td><td class="n-c">docs/research/supply-and-broker-model.md</td></tr>
           <tr><td>Launch scope</td><td class="n-c">docs/launch-plan.md</td></tr>
-          <tr><td>Team plan</td><td class="n-c">docs/team-plan.md</td></tr>
+          <tr><td>Who does what, in order</td><td class="n-c">docs/how-to-work.md</td></tr>
+          <tr><td>Decisions for the designer</td><td class="n-c">docs/design-review.md</td></tr>
+          <tr><td>Every task and its done-when list</td><td class="n-c">docs/team-plan.md</td></tr>
+          <tr><td>How the architecture absorbs change</td><td class="n-c">docs/extensibility.md</td></tr>
           <tr><td>Technical base</td><td class="n-c">docs/source/tech-base.html</td></tr>
         </tbody>
       </table></div>

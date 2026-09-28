@@ -15,5 +15,5 @@ Part of [[roomsie launch]].
 2. [[D-02 Chat screen designs ⚑]] — Thu 24 Sep → Fri 25 Sep
 3. [[D-03 Results and profile designs]] — Fri 25 Sep → Sun 27 Sep
 4. [[D-04 Landing and waitlist designs]] — Mon 28 Sep → Tue 29 Sep
-5. [[D-05 Design QA]] — Fri 2 Oct → Mon 5 Oct
-6. [[D-06 Launch visuals]] — Mon 5 Oct → Tue 6 Oct
+5. [[D-05 Design QA]] — Mon 5 Oct → Sat 10 Oct
+6. [[D-06 Launch visuals]] — Fri 9 Oct → Sat 10 Oct

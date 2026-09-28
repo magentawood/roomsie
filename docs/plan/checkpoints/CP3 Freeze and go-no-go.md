@@ -6,9 +6,9 @@ tags:
 
 # CP3 · Feature freeze and go/no-go
 
-**Date:** Mon 5 Oct
+**Date:** Sat 10 Oct
 
-Every screen is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 7 October or 9 October.
+Every screen and every assistant handler is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 12 October or 14 October.
 
 **After:** [[CP2 Core loop live]]  
 **Next:** [[CP4 Launch]]
@@ -19,14 +19,24 @@ Part of [[roomsie launch]].
 
 - [[F-08 Moderator named]] — Founder
 - [[T-33 Invite-only gate]] — P1 Platform
+- [[T-37 Articles and search]] — P3 Data and trust
 - [[M-07 Launch posts]] — M1 Content
-- [[T-15 Results panel ⚑]] — P3 Data and trust
-- [[T-21 Turn cap and spend ceiling]] — P2 Assistant
-- [[D-05 Design QA]] — Design
-- [[F-10 Go-no-go meeting]] — Founder
+- [[T-35 Form B contract]] — P4 Content and moderation
+- [[T-39 Analytics database]] — P1 Platform
+- [[T-34 Router ⚑]] — P2 Assistant
+- [[T-40 Nightly backups]] — P1 Platform
 - [[M-05 Article drafts]] — M1 Content
-- [[T-09 Chip flow ⚑]] — P1 Platform
 - [[T-10 Chat screen and split view ⚑]] — P5 Accounts and connections
-- [[T-16 Profiles and photos ⚑]] — P4 Content and moderation
+- [[T-15 Results panel ⚑]] — P3 Data and trust
 - [[T-18b Person and connect screens ⚑]] — P3 Data and trust
+- [[T-21 Turn cap and spend ceiling]] — P2 Assistant
+- [[T-36 Observer]] — P4 Content and moderation
+- [[T-09 Chip flow ⚑]] — P5 Accounts and connections
+- [[T-16 Profiles and photos ⚑]] — P1 Platform
 - [[T-27 Eval run]] — P2 Assistant
+- [[D-05 Design QA]] — Design
+- [[D-06 Launch visuals]] — Design
+- [[F-10 Go-no-go meeting]] — Founder
+- [[T-22 Launch areas and waitlist]] — P1 Platform
+- [[T-29 Abuse test]] — P1 Platform
+- [[T-38 Advisor]] — P3 Data and trust

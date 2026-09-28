@@ -32,6 +32,8 @@ tags:
 - [ ] Landing page in the V3 prototype's look
 - [ ] Hero, how it works, and a button into the chat
 - [ ] Every women-only line removed
+- [ ] Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values
 
 ## Read first
 - [roomsie-prototype-V3.html](../../source/roomsie-prototype-V3.html)
+- [extensibility.md](../../extensibility.md)

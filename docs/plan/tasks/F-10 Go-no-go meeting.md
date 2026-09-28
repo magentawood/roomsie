@@ -3,8 +3,8 @@ id: F-10
 title: "Go/no-go meeting"
 owner: "Founder"
 sequence: "10 of 10"
-start: 2026-10-05
-end: 2026-10-05
+start: 2026-10-10
+end: 2026-10-10
 checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/50
@@ -17,7 +17,7 @@ tags:
 # F-10 · Go/no-go meeting
 
 **Owner:** [[Founder]], task 10 of 10  
-**When:** Mon 5 Oct  
+**When:** Sat 10 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#50](https://github.com/magentawood/roomsie/issues/50)
 
@@ -28,7 +28,7 @@ tags:
 - Nothing waits on this.
 
 ## Done when
-- [ ] Monday 5 October, 8 pm
+- [ ] Saturday 10 October, 8 pm
 - [ ] Checked against the go/no-go list in docs/team-plan.md
 
 ## Read first

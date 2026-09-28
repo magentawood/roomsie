@@ -2,7 +2,7 @@
 id: T-24
 title: "Event logging table"
 owner: "P5 Accounts and connections"
-sequence: "3 of 6"
+sequence: "3 of 7"
 hours: 2
 start: 2026-09-28
 end: 2026-09-28
@@ -17,7 +17,7 @@ tags:
 
 # T-24 · Event logging table
 
-**Owner:** [[P5 Accounts and connections]], task 3 of 6  
+**Owner:** [[P5 Accounts and connections]], task 3 of 7  
 **When:** Mon 28 Sep · 2 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#37](https://github.com/magentawood/roomsie/issues/37)
@@ -26,11 +26,14 @@ tags:
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- [[T-39 Analytics database]]
 
 ## Done when
 - [ ] One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
 - [ ] No message text is stored
+- [ ] Events are written only through one `track()` function in apps/api
+- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
 
 ## Read first
 - [0012-analytics-event-store.md](../../source/decisions/0012-analytics-event-store.md)
+- [extensibility.md](../../extensibility.md)

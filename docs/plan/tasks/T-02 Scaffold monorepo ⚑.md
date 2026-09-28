@@ -2,7 +2,7 @@
 id: T-02
 title: "Scaffold the monorepo in this repo"
 owner: "P1 Platform"
-sequence: "1 of 8"
+sequence: "1 of 11"
 hours: 4
 start: 2026-09-24
 end: 2026-09-25
@@ -18,7 +18,7 @@ tags:
 
 # T-02 · Scaffold the monorepo in this repo
 
-**Owner:** [[P1 Platform]], task 1 of 8  
+**Owner:** [[P1 Platform]], task 1 of 11  
 **When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#10](https://github.com/magentawood/roomsie/issues/10)
@@ -39,9 +39,12 @@ tags:
 ## Done when
 - [ ] pnpm workspaces and Turborepo, per ADR 0010
 - [ ] apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle
-- [ ] packages/contract and packages/config exist
-- [ ] `pnpm dev` runs web and API locally. docs/ and session/ are untouched
+- [ ] packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md
+- [ ] `pnpm dev` runs web and API locally. docs/ is untouched
+- [ ] Every API route is served under `/v1`, so a future mobile app keeps working through later changes
 
 ## Read first
+- [CONTEXT.md](../../../CONTEXT.md)
 - [0010-monorepo-tooling.md](../../source/decisions/0010-monorepo-tooling.md)
 - [0003-api-as-separate-service.md](../../source/decisions/0003-api-as-separate-service.md)
+- [extensibility.md](../../extensibility.md)

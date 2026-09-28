@@ -4,7 +4,7 @@ Read this first. It is the running state of the planning session, kept current
 so that anyone (or any agent) picking the repo up knows where things stand
 without replaying the whole transcript.
 
-**Last updated:** 2026-09-19 · **Owner:** Yash Mangal · **Org:** magentawood
+**Last updated:** 2026-09-26 · **Owner:** Yash Mangal · **Org:** magentawood
 
 ---
 
@@ -60,16 +60,17 @@ exists to keep, cut or rework.
 | D3c | Exclusionary preferences | **Settled: record what the user states,** including community and religion, and filter on it. Mitigations retained: never infer, never suggest, keep them out of any learned ranking, filter server-side. See `docs/ai-agent-design.md` section 4.1. |
 | D3d | Whether a published listing may carry identity restrictions in visible text | **Open.** Separated from D3c because an advertisement is a different position from a private filter. |
 | D4 | Monetisation model and pricing | Pending, follows D3 |
-| D5 | Team and budget | **Settled: 4 to 5 tech at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |
-| D12 | Team plan | **Settled, organised by vertical.** Five engineering verticals, each owned end to end: V1 Platform, V2 Assistant, V3 Visitor journey, V4 Matching and trust rules, V5 People and connections. Design, marketing and founder keep roles. 55 tasks, each person has an ordered sequence, every vertical finishes by 5 October. See `docs/team-plan.md`. |
-| D11 | Launch | **Target 7 October 2026, fallback 9 October.** Scope is protected, time slips. Go or no-go decided on 5 October. About 72 to 140 person-hours available against 250 to 350 for the full v0. Cut to roughly 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 free. **Public launch**, which adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. New total about 130 hours with no margin. See `docs/launch-plan.md`. |
+| D5 | Team and budget | **Settled: 5 engineers at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |
+| D12 | Team plan | **Settled, re-cut on 2026-09-25 because there are no designs yet.** Five engineering lanes: P1 Platform, P2 Assistant, P3 Data and trust, P4 Content and moderation, P5 Accounts and connections. Phase A (24–30 Sep) is design-free work; Phase B (1–10 Oct) is all 35 hours of screens plus the router, observer, advisor, analytics database and backups. 151 build hours against 170 available. Designs D-02 to D-04 are due by end of 30 September. Every task keeps one owner, and nobody's list waits on another person after Phase A. Design, marketing and founder keep roles. See `docs/how-to-work.md`, `docs/team-plan.md` and `docs/design-review.md`. |
+| D11 | Launch | **Moved on 2026-09-26: target Monday 12 October, fallback Wednesday 14 October. Quality comes before the date.** The go/no-go list is the quality bar: if a check fails, the date moves a little rather than shipping something below it. Go or no-go on Saturday 10 October, 8 pm. The move buys back the router, the observer and the advisor for launch, plus analytics in its own database and nightly backups. *History:* the first target was 7 October, fallback 9 October, and go or no-go on 5 October. About 72 to 140 person-hours available against 250 to 350 for the full v0. Cut to roughly 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 free. **Public launch**, which adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. New total about 130 hours with no margin. **Scheduled in D12 as 115 build hours against 120 available for five engineers, plus a bug-fix day on 6 October.** See `docs/launch-plan.md`. |
 | D6c | The five holes in the interface design | **Four closed, one provisional.** The panel updates on form change rather than on chat turn. Widening arrives as a banner, narrowing applies but says what went. One form, two views, with a complete conflict rule. See `docs/interface-shape.md`. |
 | D6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
 | D6a | Mobile pattern for the split view | **Provisional.** Chat fills the screen, then shrinks to a bottom bar at 25% when listings appear, expanding to 60% on tap. Same mechanics as desktop. UI not final. |
 | D6b | Where the login gate sits, and search | **Settled.** Login is needed only to see a listing's details and to contact anyone. Chat, split view and browsing are public. Area and filter pages are indexed and open the split view with filters applied and the form pre-filled. Blog lives at `roomsie.com/blog`. See `docs/seo-with-gated-products.md`. |
 | D10 | What the assistant will discuss | **Five bands.** Adjacent questions are always answered, tiered by risk: general ones fall through to model knowledge with a hedge, consequential ones (law, tax, area safety, claims about a listing) are corpus-only and handed off rather than refused. Out of scope gets a one-line scripted redirect with no model call. Adversarial is scripted and logged. Sensitive is never redirected. Corpus to be seeded with ~30 articles before launch. See `docs/scope-policy.md`. |
 | D9 | Abuse and cost limits on the pre-login chat | **Settled: both a turn cap and rate limits.** Five free-text turns, chip taps not counted, and the wall cannot appear before results have rendered. Listings stay visible when the chat gates. At the daily spend ceiling the assistant degrades to the zero-cost chip flow rather than failing. See `docs/pre-login-limits.md`. |
-| D7a | Agent architecture | **Proposed: a router with small specialist handlers,** not multi-agent and not one big model. Two forms: a filter form driving SQL, and a structured profile form where every observation must quote the user. RAG only for consulting questions, over your own corpus, using Postgres full-text search rather than a vector store. See `docs/agent-architecture.md`. |
+| D7a | Agent architecture | **Settled on 2026-09-26, and all of it ships at launch: a router with small specialist handlers,** not multi-agent and not one big model. The router runs on DeepSeek Flash behind its own adapter, and Jev gets a trial on the eval set once access arrives. It also flags off-topic and adversarial messages. The advisor answers from our articles first, then with DeepSeek's `web_search` tool (Gemini's Google Search grounding as fallback), **for general questions and signed-in users only**. Law, tax, area safety and claims about a person stay articles-only or handed off. Two forms: a filter form driving SQL, and a structured profile form where every observation must quote the user. RAG only for consulting questions, over your own corpus, using Postgres full-text search rather than a vector store. See `docs/agent-architecture.md`. |
+| D13 | Databases and backups | **Settled on 2026-09-26, as an exception.** The main and analytics databases are on two free Supabase accounts. Supabase's acceptable use policy discourages extra accounts, and the free plan has no backups. So a nightly dump of both goes to R2, and both projects move into one paid organisation when we start paying. Connection details live only in environment settings, so the move is a transfer, not a code change. |
 | D7 | Models | **Settled: DeepSeek V4.1 Flash for every role, Gemini Flash-Lite as fallback.** Sarvam dropped. Residency constraint dropped. Cost is register matching, mitigated at prompt level and measured in the eval. Marathi is the real language risk, not Hinglish. See `docs/model-selection.md` and `docs/research/hinglish-model-report.md`. |
 | D8 | Verification | **Settled with one change.** Blurred cards for users who opt into verified-only, with mutual verification required, which makes the blur the conversion prompt. Blur must be server-side. **The manual Aadhaar upload route is dropped:** collecting Aadhaar copies is an offence and UIDAI is banning it. DigiLocker through a registered KYC provider is primary, with a non-Aadhaar government ID as the manual fallback. See `docs/verification.md`. |
 
@@ -81,18 +82,20 @@ exists to keep, cut or rework.
 
 ## Team plan
 
-**Everything to launch is in `docs/team-plan.md`**, with every task mirrored as a GitHub issue under a checkpoint milestone. Each engineer picks one of five verticals and works its issues in sequence order.
+**Each person's list, in order, is in `docs/how-to-work.md`.** Every task with its done-when list is in `docs/team-plan.md`. Both follow `docs/team-plan.json`, which is the one place the plan is edited. Every task is mirrored as a GitHub issue, but the issues still carry the original `vertical:V1`–`V5` labels and milestones until they are relabelled.
 
-**To see it visually,** open this repo as an Obsidian vault. Start at `docs/plan/roomsie launch.md`, then open the graph view or `docs/plan/Launch timeline.canvas`. Rebuild with `python3 tools/build-obsidian-plan.py` after editing `docs/team-plan.json`.
+**For the designer:** `docs/design-review.md` lists every behaviour engineering is building on, to confirm, change or defer.
+
+**To see it visually,** open this repo as an Obsidian vault. Start at `docs/plan/roomsie launch.md`, then open the graph view or `docs/plan/Launch timeline.canvas`. Rebuild with `python3 tools/build-obsidian-plan.py` after editing `docs/team-plan.json`. That also regenerates `docs/team-plan.md`.
 
 | Checkpoint | Date |
 |---|---|
 | CP0 Kickoff | Fri 25 Sep |
 | CP1 Foundation | Mon 28 Sep |
 | CP2 Core loop live | Thu 1 Oct |
-| CP3 Feature freeze and go/no-go | Mon 5 Oct, 8 pm |
-| CP4 Launch | Wed 7 Oct, fallback Fri 9 Oct |
-| CP5 First-week review | Wed 14 Oct |
+| CP3 Feature freeze and go/no-go | Sat 10 Oct, 8 pm |
+| CP4 Launch | Mon 12 Oct, fallback Wed 14 Oct |
+| CP5 First-week review | Mon 19 Oct |
 
 ## Ready to start now
 
@@ -101,7 +104,7 @@ exists to keep, cut or rework.
 | Marketing | Call Mumbai brokers to test the free-listing, paid-introduction model | Nothing |
 | Marketing | Write the 30 corpus articles, `docs/content/corpus-plan.md` | Nothing |
 | Designer | Resolve the V3 prototype palette against ADR 0011's Untitled UI pipeline | Nothing, and it blocks frontend work |
-| Tech | Build the Hinglish and Marathi eval set before choosing anything | Nothing |
+| Tech | Work the lanes in `docs/how-to-work.md` | Nothing |
 
 ---
 
@@ -162,33 +165,98 @@ for hiding a swappable vendor behind one internal module.
 
 ## Repo layout
 
+The top level is fixed by ADR 0003 and ADR 0010. Inside `apps/` is a proposal
+mapped to the tasks that build it. T-02 creates it, and whoever owns T-02 may
+adjust names inside an app without asking. Anything marked with a task code
+does not exist yet.
+
 ```
 roomsie/
-├── CONTEXT.md              this file — running state
-├── CLAUDE.md               agent entry point
+├── apps/
+│   ├── web/                    Next 16 · React 19 · Tailwind v4 · TanStack Query → Vercel, bom1
+│   │   ├── app/                routes
+│   │   │   ├── (public)/       landing, privacy, terms, grievance        T-23a T-23b
+│   │   │   ├── chat/           full-screen chat, then split view, chips  T-10 T-09
+│   │   │   ├── people/[id]/    person detail and connect                 T-18b
+│   │   │   ├── profile/        create and edit, photos                   T-16
+│   │   │   └── waitlist/       launch areas and waitlist                 T-22
+│   │   ├── components/         prototype look, theme tokens only         ADR 0011 exception · T-23a
+│   │   └── lib/                API client typed from packages/contract, Firebase sign-in
+│   └── api/                    Fastify · Zod · Drizzle → Fly.io Mumbai
+│       ├── src/
+│       │   ├── server.ts       mounts every module under /v1             T-02
+│       │   ├── plugins/        auth check, rate limits, invite gate      T-05 T-21 T-33
+│       │   ├── adapters/       the only place a vendor SDK is imported
+│       │   │   ├── llm/        DeepSeek, then Gemini                     T-11
+│       │   │   ├── auth/       Firebase token check                      T-05
+│       │   │   ├── storage/    R2 presigned URLs                         T-16
+│       │   │   └── analytics/  track(), into the analytics database      T-24 T-39
+│       │   ├── assistant/      one entry point for every turn
+│       │   │   ├── pipeline.ts router first, then the handlers it picks T-12 T-34
+│       │   │   └── handlers/   extract, observe, advise, reply           T-12 T-36 T-38 T-13
+│       │   ├── articles/       the advisor's articles, full-text search  T-37
+│       │   ├── modules/        one folder per feature, each owning its tables
+│       │   │   ├── chat/       stored turns, form state, turn cap,
+│       │   │   │               spend ceiling                             T-06 T-17 T-21
+│       │   │   ├── matching/   the match query                           T-14
+│       │   │   ├── profiles/   profiles and photos                       T-16
+│       │   │   ├── connections/ connect request, contact reveal          T-18a
+│       │   │   ├── moderation/ report, block, suspend                    T-19
+│       │   │   ├── account/    first sign-in, deletion                   T-05 T-20
+│       │   │   └── waitlist/   launch areas and waitlist                 T-22
+│       │   └── db/             Drizzle client; each module keeps its
+│       │                       own schema file                           T-06
+│       ├── drizzle/            generated SQL migrations                  ADR 0006
+│       ├── eval/               eval sentences and the runner             M-03 T-27
+│       ├── Dockerfile
+│       └── fly.toml                                                      T-04
+├── packages/
+│   ├── contract/               Zod: Form A, every API route, analytics
+│   │                           events. OpenAPI is generated from it      T-08 · ADR 0004 0012
+│   └── config/                 shared tsconfig and ESLint, and reportError()  ADR 0010 0013 · T-07
 ├── docs/
-│   ├── source/             vendored inputs (deprecated PRD, ADRs, tech base, prototype)
-│   └── …                   the master launch document, as it is written
-├── session/
-│   ├── SESSION_ID          the Claude Code session id
-│   ├── README.md           how to resume the session on your machine
-│   └── transcript/         the conversation itself
-└── tools/
-    ├── resume-session.sh   install the session locally
-    └── sync-session.sh     save session progress back to the repo
+│   ├── how-to-work.md          each person's list, in order, and the code index
+│   ├── design-review.md        behaviour decisions for the designer
+│   ├── extensibility.md        every known future change, and the seam that absorbs it
+│   ├── product-base.html       the product record
+│   ├── team-plan.json          the plan's data. Edit this, then run the builder
+│   ├── team-plan.md            generated from team-plan.json
+│   ├── plan/                   the Obsidian view, generated
+│   ├── *.md                    decision notes: interface, agent, models, scope, limits, SEO, verification
+│   ├── research/ · content/    market research and the article corpus plan
+│   └── source/                 vendored inputs: ADRs, tech base, V3 prototype, deprecated PRD
+├── tools/
+│   └── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
+├── .github/workflows/ci.yml    typecheck, lint, build, secret scan       T-03
+├── .obsidian/                  vault settings; the graph shows docs/plan
+├── package.json · pnpm-workspace.yaml · turbo.json                       T-02 · ADR 0010
+├── CLAUDE.md                   agent entry point
+└── CONTEXT.md                  this file
 ```
+
+**The layout is built to absorb change, not to be redrawn.** A vendor swap
+changes one folder in `adapters/`. A new feature is a new folder in `modules/`.
+The v1 assistant handlers slot into `handlers/`. `docs/extensibility.md` lists
+every change we know is coming, where it lands, and what must be true today.
+
+Not in v0: a mobile app, which has a place ready beside `apps/web`. A vector
+store is not planned at all, because matching is a SQL query and the corpus fits
+Postgres full-text search. Nightly backups to R2 run from
+`.github/workflows/` (T-40).
 
 ## Conventions
 
-- The session is part of the deliverable. Run `./tools/sync-session.sh` and
-  commit `session/transcript/session.jsonl` alongside any document change.
+- **Before adding a vendor or a feature, read `docs/extensibility.md`.** Vendors
+  go behind `adapters/`, features go in `modules/`, and nothing changes shape.
+
 - Update the decision tables above whenever something is settled. The tables,
   not the transcript, are the citable record.
-- **Remote Control stays off.** Session sharing is file-based, through this
-  repo, and nothing else.
+- **Remote Control stays off.**
+- **Never push to `main`.** Every change reaches the repo as a pull request.
 - **Write in simple, crisp English.** Short sentences. Plain words. This
   applies to every document in this repo.
-- Repo is **private**. The transcript contains personal data.
+- Repo is **private**. Its history still holds the old session transcript, which
+  contains personal data.
 
 ---
 

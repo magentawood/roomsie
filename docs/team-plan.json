@@ -108,11 +108,13 @@
    "done": [
     "A Zod schema in packages/contract for Form A",
     "Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty",
-    "Every enum has an `unclear` value"
+    "Every enum has an `unclear` value",
+    "Results are a tagged union, `kind: \"person\"` for v0, so property listings can be added later without breaking clients"
    ],
    "read": [
     "docs/agent-architecture.md",
-    "docs/ai-agent-design.md"
+    "docs/ai-agent-design.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP0",
    "critical": true,
@@ -186,12 +188,15 @@
    "done": [
     "pnpm workspaces and Turborepo, per ADR 0010",
     "apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle",
-    "packages/contract and packages/config exist",
-    "`pnpm dev` runs web and API locally. docs/ and session/ are untouched"
+    "packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md",
+    "`pnpm dev` runs web and API locally. docs/ is untouched",
+    "Every API route is served under `/v1`, so a future mobile app keeps working through later changes"
    ],
    "read": [
+    "CONTEXT.md",
     "docs/source/decisions/0010-monorepo-tooling.md",
-    "docs/source/decisions/0003-api-as-separate-service.md"
+    "docs/source/decisions/0003-api-as-separate-service.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP0",
    "critical": true,
@@ -202,8 +207,8 @@
    "title": "Person detail and connect screens",
    "role": "P3",
    "hours": 4,
-   "start": "2026-10-04",
-   "end": "2026-10-05",
+   "start": "2026-10-05",
+   "end": "2026-10-07",
    "deps": [
     "D-03"
    ],
@@ -230,12 +235,15 @@
    "done": [
     "Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist",
     "Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility",
-    "UUIDv7 ids with no database default. `created_at` from the server clock"
+    "UUIDv7 ids with no database default. `created_at` from the server clock",
+    "Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id`",
+    "A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1"
    ],
    "read": [
     "docs/source/decisions/0015-primary-key-strategy.md",
     "docs/source/decisions/0006-drizzle.md",
-    "docs/agent-architecture.md"
+    "docs/agent-architecture.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP1",
    "critical": true,
@@ -360,9 +368,12 @@
    "deps": [],
    "done": [
     "Says what is collected, why, for how long, how to delete, and who to contact",
-    "A named grievance contact"
+    "A named grievance contact",
+    "Says that chat messages are stored, and that deleting the account deletes them"
    ],
-   "read": [],
+   "read": [
+    "docs/extensibility.md"
+   ],
    "cp": "CP2",
    "critical": false,
    "issue": 17
@@ -415,8 +426,8 @@
    "title": "Results panel, built against the contract",
    "role": "P3",
    "hours": 6,
-   "start": "2026-10-01",
-   "end": "2026-10-03",
+   "start": "2026-10-02",
+   "end": "2026-10-05",
    "deps": [
     "T-08",
     "D-03"
@@ -487,11 +498,13 @@
     "Free text becomes Form A slots, as JSON limited to the enums",
     "The Mumbai area list and number and date forms are in the cached prompt",
     "Numbers and dates are parsed by code, not by the model",
-    "Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently"
+    "Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently",
+    "The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring"
    ],
    "read": [
     "docs/research/hinglish-model-report.md",
-    "docs/agent-architecture.md"
+    "docs/agent-architecture.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP2",
    "critical": true,
@@ -519,10 +532,10 @@
   {
    "id": "T-09",
    "title": "Chip flow for intent, area, budget",
-   "role": "P1",
+   "role": "P5",
    "hours": 6,
-   "start": "2026-10-03",
-   "end": "2026-10-05",
+   "start": "2026-10-06",
+   "end": "2026-10-08",
    "deps": [
     "T-10",
     "T-08",
@@ -589,10 +602,10 @@
   {
    "id": "T-16",
    "title": "Profile create and edit, with photos",
-   "role": "P4",
+   "role": "P1",
    "hours": 8,
-   "start": "2026-10-02",
-   "end": "2026-10-05",
+   "start": "2026-10-05",
+   "end": "2026-10-08",
    "deps": [
     "T-05",
     "T-06",
@@ -705,7 +718,7 @@
    "deps": [],
    "done": [
     "Launch posts, the founder story, a list of groups and channels",
-    "Scheduled on Tuesday 6 October"
+    "Scheduled on Sunday 11 October"
    ],
    "read": [],
    "cp": "CP3",
@@ -747,10 +760,12 @@
    ],
    "done": [
     "What a visitor told the assistant before signing in is attached to their account when they sign in",
-    "Nothing is lost and nothing is asked twice"
+    "Nothing is lost and nothing is asked twice",
+    "The stored chat turns move to the account with the session"
    ],
    "read": [
-    "docs/seo-with-gated-products.md"
+    "docs/seo-with-gated-products.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP2",
    "critical": false,
@@ -809,10 +824,12 @@
    "done": [
     "Landing page in the V3 prototype's look",
     "Hero, how it works, and a button into the chat",
-    "Every women-only line removed"
+    "Every women-only line removed",
+    "Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values"
    ],
    "read": [
-    "docs/source/roomsie-prototype-V3.html"
+    "docs/source/roomsie-prototype-V3.html",
+    "docs/extensibility.md"
    ],
    "cp": "CP0",
    "critical": false,
@@ -830,10 +847,13 @@
    ],
    "done": [
     "One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed",
-    "No message text is stored"
+    "No message text is stored",
+    "Events are written only through one `track()` function in apps/api",
+    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1"
    ],
    "read": [
-    "docs/source/decisions/0012-analytics-event-store.md"
+    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP1",
    "critical": false,
@@ -844,8 +864,8 @@
    "title": "Five-turn cap, rate limits, spend ceiling",
    "role": "P2",
    "hours": 5,
-   "start": "2026-10-02",
-   "end": "2026-10-04",
+   "start": "2026-10-05",
+   "end": "2026-10-07",
    "deps": [
     "T-12"
    ],
@@ -867,8 +887,8 @@
    "title": "Design QA on the live build",
    "role": "D",
    "hours": null,
-   "start": "2026-10-02",
-   "end": "2026-10-05",
+   "start": "2026-10-05",
+   "end": "2026-10-10",
    "deps": [
     "D-02",
     "D-03"
@@ -916,10 +936,12 @@
    "done": [
     "A person can delete their account from settings",
     "Profile, photos in R2 and form state are removed. Events are pseudonymised",
-    "`tokens_valid_after` is set to now, so every session ends"
+    "`tokens_valid_after` is set to now, so every session ends",
+    "The person's chat turns are deleted too"
    ],
    "read": [
-    "docs/source/decisions/0012-analytics-event-store.md"
+    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/extensibility.md"
    ],
    "cp": "CP2",
    "critical": false,
@@ -950,7 +972,7 @@
    "role": "M2",
    "hours": null,
    "start": "2026-10-03",
-   "end": "2026-10-06",
+   "end": "2026-10-11",
    "deps": [
     "M-02",
     "T-16"
@@ -958,7 +980,7 @@
    "done": [
     "Invites go out on Sat 3 Oct, the day after profile creation works",
     "Help people finish profiles",
-    "150 profiles, at least 40 in each launch area, by Tuesday 6 October"
+    "150 profiles, at least 40 in each launch area, by Sunday 11 October"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -970,10 +992,10 @@
   {
    "id": "T-22",
    "title": "Launch areas and waitlist",
-   "role": "P4",
+   "role": "P1",
    "hours": 3,
-   "start": "2026-10-06",
-   "end": "2026-10-06",
+   "start": "2026-10-09",
+   "end": "2026-10-10",
    "deps": [
     "T-14",
     "D-04"
@@ -986,7 +1008,7 @@
    "read": [
     "docs/launch-plan.md"
    ],
-   "cp": "CP4",
+   "cp": "CP3",
    "critical": false,
    "issue": 47
   },
@@ -1016,8 +1038,8 @@
    "title": "Run the eval set and tune the prompt",
    "role": "P2",
    "hours": 3,
-   "start": "2026-10-04",
-   "end": "2026-10-05",
+   "start": "2026-10-07",
+   "end": "2026-10-08",
    "deps": [
     "T-12"
    ],
@@ -1038,11 +1060,11 @@
    "title": "Go/no-go meeting",
    "role": "F",
    "hours": null,
-   "start": "2026-10-05",
-   "end": "2026-10-05",
+   "start": "2026-10-10",
+   "end": "2026-10-10",
    "deps": [],
    "done": [
-    "Monday 5 October, 8 pm",
+    "Saturday 10 October, 8 pm",
     "Checked against the go/no-go list in docs/team-plan.md"
    ],
    "read": [
@@ -1057,8 +1079,8 @@
    "title": "Abuse test: 100 fake sessions",
    "role": "P1",
    "hours": 1,
-   "start": "2026-10-06",
-   "end": "2026-10-06",
+   "start": "2026-10-10",
+   "end": "2026-10-10",
    "deps": [
     "T-21"
    ],
@@ -1070,7 +1092,7 @@
    "read": [
     "docs/pre-login-limits.md"
    ],
-   "cp": "CP4",
+   "cp": "CP3",
    "critical": false,
    "issue": 51
   },
@@ -1079,14 +1101,14 @@
    "title": "Launch visuals",
    "role": "D",
    "hours": null,
-   "start": "2026-10-05",
-   "end": "2026-10-06",
+   "start": "2026-10-09",
+   "end": "2026-10-10",
    "deps": [],
    "done": [
     "Social post images and link preview images"
    ],
    "read": [],
-   "cp": "CP4",
+   "cp": "CP3",
    "critical": false,
    "issue": 52
   },
@@ -1095,8 +1117,8 @@
    "title": "Bug fix day",
    "role": "ALL",
    "hours": null,
-   "start": "2026-10-06",
-   "end": "2026-10-06",
+   "start": "2026-10-11",
+   "end": "2026-10-11",
    "deps": [],
    "done": [
     "Engineers spend their two hours on P1 bugs only",
@@ -1112,8 +1134,8 @@
    "title": "Launch",
    "role": "ALL",
    "hours": null,
-   "start": "2026-10-07",
-   "end": "2026-10-07",
+   "start": "2026-10-12",
+   "end": "2026-10-12",
    "deps": [],
    "done": [
     "T4 turns off the invite gate and has tested the rollback",
@@ -1132,8 +1154,8 @@
    "title": "Broker calls",
    "role": "M2",
    "hours": null,
-   "start": "2026-10-07",
-   "end": "2026-10-14",
+   "start": "2026-10-12",
+   "end": "2026-10-19",
    "deps": [],
    "done": [
     "10 to 15 calls to Mumbai brokers",
@@ -1146,6 +1168,173 @@
    "cp": "CP5",
    "critical": false,
    "issue": 55
+  },
+  {
+   "id": "T-34",
+   "title": "Router: sort each typed message and flag what we should not answer",
+   "role": "P2",
+   "hours": 6,
+   "start": "2026-10-02",
+   "end": "2026-10-04",
+   "deps": [
+    "T-12"
+   ],
+   "done": [
+    "Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope",
+    "It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged",
+    "The pipeline runs only the handlers the router picks",
+    "The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline"
+   ],
+   "read": [
+    "docs/agent-architecture.md",
+    "docs/scope-policy.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": true,
+   "issue": null
+  },
+  {
+   "id": "T-35",
+   "title": "Form B contract and table",
+   "role": "P4",
+   "hours": 3,
+   "start": "2026-10-02",
+   "end": "2026-10-03",
+   "deps": [
+    "T-06",
+    "T-08"
+   ],
+   "done": [
+    "Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible",
+    "An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account"
+   ],
+   "read": [
+    "docs/agent-architecture.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-36",
+   "title": "Observer: Form B from free text, with the quote check",
+   "role": "P4",
+   "hours": 8,
+   "start": "2026-10-03",
+   "end": "2026-10-07",
+   "deps": [
+    "T-35",
+    "T-12"
+   ],
+   "done": [
+    "The observer turns personal context into Form B observations",
+    "Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected",
+    "A one-off job backfills Form B from the stored chat turns",
+    "Tested on the eval sentences, with the rejection rate recorded"
+   ],
+   "read": [
+    "docs/agent-architecture.md",
+    "docs/ai-agent-design.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-37",
+   "title": "Articles table and full-text search",
+   "role": "P3",
+   "hours": 3,
+   "start": "2026-10-01",
+   "end": "2026-10-02",
+   "deps": [
+    "T-06"
+   ],
+   "done": [
+    "An articles table with a Postgres full-text index. No vector store",
+    "The launch articles load from files in the repo, so publishing one is a pull request",
+    "A search returns the best matching passages with their article and heading"
+   ],
+   "read": [
+    "docs/content/corpus-plan.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-38",
+   "title": "Advisor: articles first, then web search after sign-in",
+   "role": "P3",
+   "hours": 7,
+   "start": "2026-10-07",
+   "end": "2026-10-10",
+   "deps": [
+    "T-37",
+    "T-11",
+    "T-05"
+   ],
+   "done": [
+    "Consulting questions are answered from the articles first, naming the article",
+    "If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead",
+    "Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web",
+    "Web searches count toward the daily spend ceiling"
+   ],
+   "read": [
+    "docs/scope-policy.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-39",
+   "title": "Analytics in its own database, with scheduled jobs",
+   "role": "P1",
+   "hours": 3,
+   "start": "2026-10-02",
+   "end": "2026-10-03",
+   "deps": [
+    "T-24"
+   ],
+   "done": [
+    "Events are written to their own Supabase project, on the second account, through the same track() function",
+    "pg_cron in that project deletes events past the retention period and creates next month's partition",
+    "The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation"
+   ],
+   "read": [
+    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-40",
+   "title": "Nightly database backups to R2",
+   "role": "P1",
+   "hours": 2,
+   "start": "2026-10-04",
+   "end": "2026-10-04",
+   "deps": [
+    "T-04"
+   ],
+   "done": [
+    "A scheduled GitHub Action dumps both databases to Cloudflare R2 every night",
+    "Fourteen days of dumps are kept, and older ones are deleted",
+    "A restore has been tested once, into a scratch project"
+   ],
+   "read": [
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   }
  ],
  "milestones": [
@@ -1159,30 +1348,30 @@
    "CP1",
    "Foundation",
    "2026-09-28",
-   "The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn."
+   "The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn. Article interviews are done. The seeding form is live."
   ],
   [
    "CP2",
    "Core loop live",
    "2026-10-01",
-   "Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, connect and contact reveal work. Designs are finished and screen work has started."
+   "Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, and connect with contact reveal works. Designs are finished and screen work has started. 100 seeding sign-ups. The eval sentences are written."
   ],
   [
    "CP3",
    "Feature freeze and go/no-go",
-   "2026-10-05",
-   "Every screen is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 7 October or 9 October."
+   "2026-10-10",
+   "Every screen and every assistant handler is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 12 October or 14 October."
   ],
   [
    "CP4",
    "Launch",
-   "2026-10-07",
-   "Public launch. Fallback Friday 9 October."
+   "2026-10-12",
+   "Public launch. Fallback Wednesday 14 October."
   ],
   [
    "CP5",
    "First-week review",
-   "2026-10-14",
+   "2026-10-19",
    "Look at the numbers and the bug list, and set the order of v1."
   ]
  ],

@@ -2,7 +2,7 @@
 id: T-08
 title: "Form A contract: slots and enums"
 owner: "P2 Assistant"
-sequence: "1 of 6"
+sequence: "1 of 7"
 hours: 2
 start: 2026-09-24
 end: 2026-09-24
@@ -18,7 +18,7 @@ tags:
 
 # T-08 · Form A contract: slots and enums
 
-**Owner:** [[P2 Assistant]], task 1 of 6  
+**Owner:** [[P2 Assistant]], task 1 of 7  
 **When:** Thu 24 Sep · 2 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#6](https://github.com/magentawood/roomsie/issues/6)
@@ -34,12 +34,15 @@ tags:
 - [[T-15 Results panel ⚑]]
 - [[T-09 Chip flow ⚑]]
 - [[T-14 Match query ⚑]]
+- [[T-35 Form B contract]]
 
 ## Done when
 - [ ] A Zod schema in packages/contract for Form A
 - [ ] Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty
 - [ ] Every enum has an `unclear` value
+- [ ] Results are a tagged union, `kind: "person"` for v0, so property listings can be added later without breaking clients
 
 ## Read first
 - [agent-architecture.md](../../agent-architecture.md)
 - [ai-agent-design.md](../../ai-agent-design.md)
+- [extensibility.md](../../extensibility.md)

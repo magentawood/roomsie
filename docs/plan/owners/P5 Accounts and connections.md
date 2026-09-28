@@ -7,9 +7,9 @@ tags:
 
 # P5 Accounts and connections
 
-_Sign-in plumbing, events, and connecting people._
+_CI, events and connections, then the chat screen and its chips._
 
-**22 hours** of build work, 2 spare, finishing Mon 5 Oct.
+**28 hours** of build work, 6 spare, finishing Thu 8 Oct.
 
 Part of [[roomsie launch]].
 
@@ -21,3 +21,4 @@ Part of [[roomsie launch]].
 4. [[T-17 Carry chat into account]] — Tue 29 Sep, 2h
 5. [[T-18a Connect API ⚑]] — Wed 30 Sep → Thu 1 Oct, 4h
 6. [[T-10 Chat screen and split view ⚑]] — Fri 2 Oct → Mon 5 Oct, 8h
+7. [[T-09 Chip flow ⚑]] — Tue 6 Oct → Thu 8 Oct, 6h

@@ -6,7 +6,7 @@ tags:
 
 # roomsie launch
 
-Target **Wed 7 Oct 2026**, fallback Fri 9 Oct. 55 tasks.
+Target **Mon 12 Oct 2026**, fallback Wed 14 Oct. 62 tasks.
 
 ## How to look at it
 
@@ -35,9 +35,18 @@ Target **Wed 7 Oct 2026**, fallback Fri 9 Oct. 55 tasks.
 - [[CP0 Kickoff]] — Fri 25 Sep
 - [[CP1 Foundation]] — Mon 28 Sep
 - [[CP2 Core loop live]] — Thu 1 Oct
-- [[CP3 Freeze and go-no-go]] — Mon 5 Oct
-- [[CP4 Launch]] — Wed 7 Oct
-- [[CP5 First-week review]] — Wed 14 Oct
+- [[CP3 Freeze and go-no-go]] — Sat 10 Oct
+- [[CP4 Launch]] — Mon 12 Oct
+- [[CP5 First-week review]] — Mon 19 Oct
+
+## Documents
+
+- [[how-to-work|How to work]] — each person's list, in order, and a plain-words index of every code
+- [[design-review|For the designer]] — the behaviour we are locking in, to confirm, change or defer
+- [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
+- [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
+- [[CONTEXT|Working context]] — the running decision record
+- `docs/product-base.html` and `docs/source/tech-base.html` — the product and technical records, open in a browser
 
 ---
 

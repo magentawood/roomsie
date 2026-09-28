@@ -2,7 +2,7 @@
 id: T-12
 title: "Extraction: free text to form slots"
 owner: "P2 Assistant"
-sequence: "3 of 6"
+sequence: "3 of 7"
 hours: 6
 start: 2026-09-27
 end: 2026-09-29
@@ -18,7 +18,7 @@ tags:
 
 # T-12 · Extraction: free text to form slots
 
-**Owner:** [[P2 Assistant]], task 3 of 6  
+**Owner:** [[P2 Assistant]], task 3 of 7  
 **When:** Sun 27 Sep → Tue 29 Sep · 6 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#23](https://github.com/magentawood/roomsie/issues/23)
@@ -32,13 +32,17 @@ tags:
 ## Unblocks
 - [[T-21 Turn cap and spend ceiling]]
 - [[T-27 Eval run]]
+- [[T-34 Router ⚑]]
+- [[T-36 Observer]]
 
 ## Done when
 - [ ] Free text becomes Form A slots, as JSON limited to the enums
 - [ ] The Mumbai area list and number and date forms are in the cached prompt
 - [ ] Numbers and dates are parsed by code, not by the model
 - [ ] Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
+- [ ] The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
 
 ## Read first
 - [hinglish-model-report.md](../../research/hinglish-model-report.md)
 - [agent-architecture.md](../../agent-architecture.md)
+- [extensibility.md](../../extensibility.md)
