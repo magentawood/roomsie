@@ -309,3 +309,138 @@ requires hiding any cell with fewer than twenty users, or it leaks an
 individual. That is a different query, it does not exist, and no one owns it.
 
 Twelve tables now, not ten.
+---
+
+# Entry 2 — T-14, the match query
+
+**Issue [#27](https://github.com/magentawood/roomsie/issues/27) · 6 hours · critical path**
+
+Given what the assistant has learned about you, return the people who fit.
+This is the thing the whole product points at: the chat exists to fill a form,
+and this turns that form into results.
+
+## The one idea that shapes everything
+
+**Filtering and ranking are different jobs.** Confusing them is the easiest way
+to build this wrong.
+
+- **Filtering** removes people who cannot work. Wrong area, wrong budget, a
+  violated dealbreaker, a block. Binary, and cheap.
+- **Ranking** orders whoever survives, by how well they suit you.
+
+Why it matters: filtering needs only area and budget, which arrive about three
+turns in. Ranking needs lifestyle answers, which take much longer. If you treat
+them as one step, you either show nothing for ten turns, or you show a match
+score computed from almost no information.
+
+`interface-shape.md` settles it — show results early and honestly, and
+**withhold the score until it means something.** So the query returns rows as
+soon as intent, area and budget exist, with `score: null` until there is a
+preference to measure.
+
+## Intent is not symmetric
+
+roomsie serves both sides of the market at once, so "who should I see" depends
+on which side you are on. Someone with a spare room and someone looking for a
+room are a match. Two people who each already have a flat are not.
+
+```
+has_flat    → wants_room, open
+wants_room  → has_flat,   open
+wants_flat  → wants_flat, open     ← two seekers teaming up to rent together
+open        → everyone
+unclear     → nobody
+```
+
+`wants_flat → wants_flat` is the non-obvious one, and it is correct: two people
+who each want a whole flat can rent one together. `unclear → nobody` is
+deliberate — intent is required before results appear at all, so an unclear
+intent means we should not be querying.
+
+## Ranges overlap, they do not match
+
+A first instinct is to filter budget with equality or a simple ceiling. Both
+are wrong.
+
+Everyone has a *range*. Someone asking for up to ₹25,000 and someone offering
+from ₹20,000 have an overlap worth talking about. The filter is therefore:
+
+```
+their minimum ≤ my maximum   AND   their maximum ≥ my minimum
+```
+
+`coalesce` handles the open-ended cases — an unstated minimum is 0, an unstated
+maximum is effectively infinite.
+
+Move date works the same way, with a thirty-day window either side. Moving
+dates are approximate, and an exact-match filter would empty the panel.
+
+## Dealbreakers, and the question nobody answered
+
+A dealbreaker is a hard filter: *I will not live with a smoker.* Easy enough
+one way — require the candidate to have answered that axis with a value you
+accept.
+
+Note that **an unanswered axis is not a pass.** If you said no smoking and a
+candidate never answered the smoking question, they are excluded. Silence is
+not consent when the stake is your home.
+
+The harder question: **do their dealbreakers filter you back?**
+
+The ticket says "Hard filters: area, budget, move date, compatible intent,
+dealbreakers." It does not say whose. Flatsharing is mutual — if they will not
+live with a smoker and you smoke, neither of you should be in the other's
+results. So I implemented it both ways, with a caveat: the reverse filter needs
+your own answers, so anonymous searchers get the one-way version only.
+
+Flagged in the PR. It is a product decision, not a technical one.
+
+## The score, and why it starts at 70
+
+```
+score = 70 + 30 × (share of your preferences this person meets)
+```
+
+That formula came from the ticket, but the 70 is worth understanding rather
+than just copying.
+
+Everyone being scored **has already cleared every hard filter.** They are in
+your areas, inside your budget, on a compatible side of the market, and they
+violate none of your dealbreakers. They are all genuinely viable.
+
+If the score ran 0–100, someone meeting one preference out of eight would show
+as 12%. That reads as "bad match" when the truth is "viable person, fewer
+shared preferences." The floor of 70 says: everyone here works; the top thirty
+points are about how well.
+
+## What I could not settle
+
+The two source documents disagree on when the score appears.
+
+- T-14's checklist: "shown only once lifestyle answers exist"
+- `ai-agent-design.md` §3.3: "at least 2 dealbreakers" before the first recommendation
+
+Those measure different things. Dealbreakers *filter*; preferences *rank*. A
+person could have two dealbreakers and no preferences, and the score formula
+would divide by zero.
+
+So I implemented both, separately, and named them honestly:
+
+- `scoreShown()` — at least one preference exists, because that is what the score measures
+- `minimumSlotSetMet()` — the §3.3 interview gate, which the assistant uses and the query does not
+
+Someone should confirm which was meant.
+
+## What is not done
+
+- **Not executable.** Same blocker as T-06: no `apps/api`, no workspace, so nothing compiles or runs. Design is complete.
+- **`FormA` is a local placeholder.** The real one is T-08's, in `packages/contract`, and P2 has not built it. Mine mirrors `agent-architecture.md`. It carries a warning comment, because two definitions of the same form is exactly the drift T-08 exists to prevent.
+- **No tests.** They need a running database and a way to seed it. First thing once T-02 lands.
+
+## Files
+
+```
+apps/api/src/match/
+├── intent.ts   which intents match which, and why
+└── query.ts    the filters, the score, the gates
+```
