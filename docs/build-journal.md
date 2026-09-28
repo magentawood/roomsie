@@ -238,3 +238,74 @@ apps/api/src/db/
 ├── schema.ts       the ten tables, the enums, the indexes
 └── seed-axes.ts    the nine provisional axes
 ```
+
+## Addendum — two tables the checklist did not ask for
+
+Added after checking the schema against `seo-with-gated-products.md`, which is
+the project's search strategy and was decided before T-06 was written.
+
+That document calls **public area pages the main SEO asset** — "this data is
+the moat." They are built from aggregates: median budget of people searching an
+area, typical move-in window, the lifestyle mix, and **rent bands by room
+type**. Checking whether the schema could actually serve them turned up two
+things it could not.
+
+### `listings`
+
+There was no listings table, and two other documents assume one.
+
+ADR 0015 names it directly in its client-versus-API minting split —
+"`users`, `profiles`, `listings`". The SEO document says listings expire after
+thirty days and that opening one's details is the gated action.
+
+Without it, someone whose intent is `has_flat` could describe **themselves**
+but not the flat. Rent bands could not be aggregated because no rent was
+stored anywhere. That is a hole in the data model, not just in SEO.
+
+A profile is a person; a listing is a property. One person can post several,
+and a listing outlives any single conversation about it. They expire rather
+than delete, because expired rows still feed the aggregates — and because
+Google demotes link decay, so a page that 404s is worse than one that says the
+flat is gone.
+
+### `areas`
+
+Areas were a `text[]` on `profiles`. That is fine until URLs depend on them.
+
+Area pages live at `/flats-in-powai`, and that URL has to mean the same thing
+forever. Free text drifts: "Powai", "powai" and "Powai, Mumbai" become three
+separate cells, which splits every aggregate and produces duplicate or dead
+pages. A controlled vocabulary fixes it, and the table is also the natural
+home for the evergreen commute notes and area copy the pages need.
+
+`isLaunchArea` covers F-06, which picks three areas to open with; the rest
+exist so the waitlist has something to point at.
+
+### A deliberate ADR exception
+
+`areas` and `lifestyle_axes` both use a **text slug as the primary key**, not a
+UUIDv7. ADR 0015 says every table uses a uuid, so this is a departure and
+worth defending.
+
+The ADR's reasoning is enumerability: you should not be able to walk
+`/users/1024` to `/users/1025` and harvest the user base. Catalogue tables are
+the exact opposite — the slugs are published, meant to be guessed, and meant to
+be linked. `/flats-in-powai` is the product. Applying the rule there would cost
+a join on every page and protect nothing.
+
+`profiles.areas` stays an array, because Postgres cannot put a foreign key on
+an array element. Validation lives in the contract layer, the same pattern
+already used for `profile_lifestyle.value` against its axis.
+
+### Still nobody's job
+
+The area pages themselves have no task. I searched all fifty-five: nothing
+mentions area pages, aggregates, SEO or sitemaps. T-22 is "Launch areas and
+waitlist", which is a different thing.
+
+And **T-14 is the wrong shape for them.** It returns individual people for a
+searcher. Area pages need aggregates with a suppression floor — the strategy
+requires hiding any cell with fewer than twenty users, or it leaks an
+individual. That is a different query, it does not exist, and no one owns it.
+
+Twelve tables now, not ten.

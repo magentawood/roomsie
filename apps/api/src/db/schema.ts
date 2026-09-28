@@ -72,7 +72,10 @@ export const profiles = pgTable('profiles', {
   /** Rupees per month. A band in the UI, a range here. */
   budgetMin: integer('budget_min'),
   budgetMax: integer('budget_max'),
-  /** Multi-select, so an array. Values are area slugs, not free text. */
+  /** Multi-select, so an array. Every value must be an `areas.slug`.
+   *  Postgres cannot put a foreign key on an array element, so this is
+   *  enforced in the contract layer — the same pattern as
+   *  profile_lifestyle.value against its axis. */
   areas: text('areas').array().notNull().default([]),
   moveDate: date('move_date'),
 
@@ -134,6 +137,84 @@ export const profileLifestyle = pgTable('profile_lifestyle', {
   pk: primaryKey({ columns: [t.profileId, t.axisKey] }),
   /** The match query filters on dealbreakers first — this is its index. */
   axisValueIdx: index('profile_lifestyle_axis_value_idx').on(t.axisKey, t.value, t.weight),
+}))
+
+/* ── areas ──────────────────────────────────────────────────────────────────
+ * A controlled vocabulary, not free text.
+ *
+ * Two things depend on area slugs being stable and canonical:
+ *   · the public area pages (`/flats-in-powai`) that seo-with-gated-products.md
+ *     calls the main SEO asset — a URL has to mean the same thing forever
+ *   · every aggregate on those pages, which splits into useless fragments the
+ *     moment "Powai", "powai" and "Powai, Mumbai" become three cells
+ *
+ * This table is also where the evergreen copy lives: the commute notes and
+ * area description written once and reused on every page.
+ *
+ * ADR 0015 exception, deliberately: the primary key is the slug, not a UUIDv7.
+ * The ADR's reasoning is enumerability — you should not be able to walk
+ * `/users/1024` to `/users/1025`. Areas are the opposite: the slugs are
+ * published, guessable by design, and meant to be linked. `lifestyle_axes`
+ * takes the same exception for the same reason.
+ */
+export const areas = pgTable('areas', {
+  /** URL slug. Canonical, permanent, lowercase-hyphenated: `bandra-east`. */
+  slug: text('slug').primaryKey(),
+  /** Display name: `Bandra East`. */
+  name: text('name').notNull(),
+  /** Evergreen copy for the area page. Written once, not generated. */
+  description: text('description'),
+  commuteNotes: text('commute_notes'),
+  /** F-06 picks three to open with. The rest exist for the waitlist (T-22). */
+  isLaunchArea: boolean('is_launch_area').notNull().default(false),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+}, (t) => ({
+  launchIdx: index('areas_launch_idx').on(t.isLaunchArea, t.sortOrder),
+}))
+
+/* ── listings ───────────────────────────────────────────────────────────────
+ * A flat or a room being offered, posted by someone whose intent is has_flat.
+ *
+ * Named as a table by ADR 0015's client-vs-API minting split, and required by
+ * seo-with-gated-products.md, which aggregates rent bands by room type across
+ * listings and states that listings expire after 30 days.
+ *
+ * Distinct from `profiles` on purpose: a profile is a person, a listing is a
+ * property. One person can post more than one, and a listing outlives any
+ * single conversation about it.
+ */
+export const listings = pgTable('listings', {
+  id: id(),
+  profileId: uuid('profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+
+  title: text('title').notNull(),
+  description: text('description'),
+  /** References areas.slug. Not a text array — a listing is in one place. */
+  areaSlug: text('area_slug').notNull().references(() => areas.slug),
+  roomType: roomTypeEnum('room_type').notNull().default('unclear'),
+
+  /** Rupees per month. A listing states a rent; a seeker states a budget. */
+  rent: integer('rent').notNull(),
+  deposit: integer('deposit'),
+  availableFrom: date('available_from'),
+
+  photoKeys: text('photo_keys').array().notNull().default([]),
+  visibility: visibilityEnum('visibility').notNull().default('draft'),
+  /** Listings go stale and Google demotes link decay, so they expire rather
+   *  than 404. Thirty days, per seo-with-gated-products.md. */
+  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+}, (t) => ({
+  /** The area-page aggregate: rent bands by room type, per area. */
+  areaRentIdx: index('listings_area_rent_idx').on(t.areaSlug, t.roomType, t.rent),
+  /** Live listings only — expired ones vanish from results but stay queryable
+   *  for the aggregates, which is why they are dated rather than deleted. */
+  liveIdx: index('listings_live_idx').on(t.visibility, t.expiresAt),
+  ownerIdx: index('listings_owner_idx').on(t.profileId),
 }))
 
 /* ── the anonymous visitor ──────────────────────────────────────────────── */
