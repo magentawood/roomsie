@@ -38,5 +38,7 @@ tags:
 - [ ] On a phone, the chat drops to a bar at the bottom and expands on tap
 - [ ] Nothing resizes while the person is typing
 
+^done
+
 ## Read first
 - [interface-shape.md](../../interface-shape.md)

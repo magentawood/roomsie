@@ -169,6 +169,10 @@ for t in T:
     b.append("\n## Unblocks")
     b += [f"- {link(u)}" for u in unblocks[t["id"]]] or ["- Nothing waits on this."]
     b.append("\n## Done when"); b += checklist(t["id"], t["done"])
+    # A block id on its own line after the list lets Progress.md embed this
+    # exact list. The embed is the list itself, not a copy, so a box ticked
+    # in either place is the same box.
+    b += ["", "^done"]
     if t["read"]:
         b.append("\n## Read first"); b += [f"- [{os.path.basename(r)}]({rel(r)})" for r in t["read"]]
     write("tasks", name(t["id"]) + ".md", "\n".join(b) + "\n")
@@ -385,8 +389,11 @@ for cp,label,due,what in ms:
 open(TP, "w").write("\n".join(L).rstrip() + "\n\n" + TAIL_MARK + tail)
 
 # ── the global progress rollup ──────────────────────────────────────────────
-# One note holding every checkbox in the project, clustered by lane and task.
-# Generated, so it is read-only: tick the box in the task note, then rebuild.
+# Every task in the project, grouped by lane. Each task is a callout that starts
+# collapsed; opening it shows the task's own Done when list, EMBEDDED rather than
+# copied. So there is one copy of every checkbox, it lives in the task note, and
+# ticking it here ticks it there. Only the counts and marks in the callout titles
+# are a snapshot, refreshed on the next build.
 FINAL = harvest()          # re-read what we just wrote, so counts match the notes
 ORDER = [k for k,_,_,_ in OWNERS]
 
@@ -409,38 +416,27 @@ for k in ORDER:
     tot_d += d; tot_n += n
     lane_rows.append(f"| [[{own}]] | {td} / {len(rows)} | {d} / {n} | {round(100*d/n) if n else 0}% |")
 
-    body.append(f"\n## {own}\n")
+    body.append(f"\n## {own} — {d}/{n}\n")
     for t, its in items:
         dn = sum(1 for _,ok,_ in its if ok)
         mark = "✅" if its and dn == len(its) else ("🟡" if dn else "⬜")
-        body.append(f"\n### {mark} {link(t['id'])} — {dn}/{len(its)}\n")
-        if not its:
-            body.append("- _No done-when list._"); continue
-        for text, ok, pr in its:
-            ref = f" · [#{pr}]({REPO.replace('/issues/','/pull/')}{pr})" if pr else ""
-            body.append(f"- [{'x' if ok else ' '}] {text}{ref}")
-
-open_items = [(OWN[t['role']][0], t, text)
-              for k in ORDER for t in T if t["role"]==k
-              for text, ok, _ in FINAL.get(t["id"], []) if not ok]
+        # `-` after the callout type makes it start collapsed.
+        body.append(f"> [!todo]- {mark} {link(t['id'])} · {dn}/{len(its)}")
+        body.append(f"> ![[{name(t['id'])}#^done]]" if its else "> _No done-when list._")
+        body.append("")
 
 P_ = ["---","tags:","  - progress","---", HEADER,
       "# Progress\n",
-      "**The vault is the source of truth for progress.** Tick a box in its task",
-      "note, then run `python3 tools/build-obsidian-plan.py`. Tick state survives",
-      "the rebuild, and boxes you add by hand are kept.\n",
-      "This note is generated. Ticking here does nothing — tick in the task note.\n",
+      "**The vault is the source of truth for progress.** Every task below opens",
+      "to show its sub-tasks. Those checkboxes are the task note's own list, shown",
+      "here rather than copied — tick one here and it is ticked in the task note.\n",
+      "The counts and ✅ 🟡 ⬜ marks are a snapshot. Run",
+      "`python3 tools/build-obsidian-plan.py` to refresh them.\n",
       f"**{tot_d} of {tot_n} done · {round(100*tot_d/tot_n) if tot_n else 0}%**\n",
       f"`{bar(tot_d, tot_n)}`\n",
       "Part of [[roomsie launch]].\n",
-      "## By lane\n",
       "| Lane | Tasks complete | Items | Done |","|---|---|---|---|", *lane_rows,
-      f"\n## What is left — {len(open_items)} open\n"]
-cur = None
-for own, t, text in open_items:
-    if own != cur: P_.append(f"\n**{own}**\n"); cur = own
-    P_.append(f"- [ ] {link(t['id'])} — {text}")
-P_ += ["\n---\n", "# Every checkbox, by lane", *body]
+      "\n---", *body]
 write(None, "Progress.md", "\n".join(P_) + "\n")
 
 print(f"{len(T)} task notes, {len(OWN)} owner notes, {len(ms)} checkpoints, "

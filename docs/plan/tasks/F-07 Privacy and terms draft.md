@@ -32,5 +32,7 @@ tags:
 - [ ] A named grievance contact
 - [ ] Says that chat messages are stored, and that deleting the account deletes them
 
+^done
+
 ## Read first
 - [extensibility.md](../../extensibility.md)

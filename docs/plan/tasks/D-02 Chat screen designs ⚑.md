@@ -37,5 +37,7 @@ tags:
 - [ ] Chat with chips, the split view, and the phone chat bar
 - [ ] These have no prototype equivalent, and V3 starts building them on Thursday
 
+^done
+
 ## Read first
 - [interface-shape.md](../../interface-shape.md)

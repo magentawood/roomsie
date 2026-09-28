@@ -32,5 +32,7 @@ tags:
 - [ ] Rules for when to suspend, and how fast to respond
 - [ ] Reports checked every day from launch
 
+^done
+
 ## Read first
 - [scope-policy.md](../../scope-policy.md)

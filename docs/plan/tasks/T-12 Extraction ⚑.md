@@ -42,6 +42,8 @@ tags:
 - [ ] Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
 - [ ] The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
 
+^done
+
 ## Read first
 - [hinglish-model-report.md](../../research/hinglish-model-report.md)
 - [agent-architecture.md](../../agent-architecture.md)

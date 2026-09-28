@@ -32,5 +32,7 @@ tags:
 - [ ] The API is checked every minute, with alerts to the team channel
 - [ ] An alert fires when daily model spend passes 70% of the ceiling
 
+^done
+
 ## Read first
 - [pre-login-limits.md](../../pre-login-limits.md)
