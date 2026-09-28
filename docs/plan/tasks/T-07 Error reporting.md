@@ -33,5 +33,7 @@ tags:
 - [ ] Sentry free tier connected in web and API
 - [ ] `beforeSend` strips message text, phone numbers and the Authorization header
 
+^done
+
 ## Read first
 - [0014-error-tracking.md](../../source/decisions/0014-error-tracking.md)

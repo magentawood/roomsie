@@ -32,5 +32,7 @@ tags:
 - [ ] Every pull request runs typecheck, lint, build and gitleaks
 - [ ] Finishes in under five minutes
 
+^done
+
 ## Read first
 - [0013-ci-gate-and-testing.md](../../source/decisions/0013-ci-gate-and-testing.md)

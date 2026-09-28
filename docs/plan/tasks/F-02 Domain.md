@@ -30,3 +30,5 @@ tags:
 ## Done when
 - [ ] roomsie.com, or the chosen alternative, is owned
 - [ ] DNS access is shared with T4
+
+^done

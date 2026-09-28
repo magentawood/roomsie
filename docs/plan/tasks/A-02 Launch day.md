@@ -32,5 +32,7 @@ tags:
 - [ ] Everyone checks the live site on their own phone
 - [ ] Marketing posts and replies to every comment. Every bug report becomes an issue
 
+^done
+
 ## Read first
 - [launch-plan.md](../../launch-plan.md)

@@ -34,3 +34,5 @@ tags:
 ## Done when
 - [ ] Says what is collected, that the profile will be shown to other roomsie users, and how to delete it
 - [ ] Short enough to read on a phone
+
+^done

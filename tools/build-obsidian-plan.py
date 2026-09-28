@@ -12,7 +12,7 @@ and .obsidian/graph.json with colours by owner.
 Generated. Edit docs/team-plan.json, then run: python3 tools/build-obsidian-plan.py
 GitHub issues stay the live tracker.
 """
-import json, os, shutil, datetime as dt
+import json, os, re, shutil, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLAN = os.path.join(ROOT, "docs", "plan")
@@ -85,6 +85,56 @@ for k in OWN:
     rows = sorted([t for t in T if t["role"]==k], key=lambda t:(t["start"],t["end"],t["id"]))
     for i,t in enumerate(rows,1): seq[t["id"]] = (i,len(rows))
 
+# ── progress is owned by the vault, not by this script ──────────────────────
+# The notes are regenerated every run, so tick state has to survive the wipe.
+# Harvest it first, keyed by task id and item text, then replay it below.
+# Items ticked by hand in Obsidian, and items added by hand that this script
+# does not know about, both survive. The vault is the source of truth for
+# progress; team-plan.json is the source of truth for the plan.
+CHECK_RE = re.compile(r"^- \[([ xX])\]\s+(.*?)\s*$")
+DONE_RE  = re.compile(r"^## Done when\s*$")
+PR_RE    = re.compile(r"\s*·\s*\[#(\d+)\]\([^)]*\)\s*$")
+
+def harvest():
+    """{task_id: [(text, ticked, pr_or_None), ...]} from the notes on disk."""
+    state = {}
+    tdir = os.path.join(PLAN, "tasks")
+    if not os.path.isdir(tdir): return state
+    for fn in os.listdir(tdir):
+        if not fn.endswith(".md"): continue
+        tid, inside, items = fn.split(" ")[0], False, []
+        for line in open(os.path.join(tdir, fn)):
+            line = line.rstrip("\n")
+            if DONE_RE.match(line): inside = True; continue
+            if inside and line.startswith("## "): break
+            if not inside: continue
+            m = CHECK_RE.match(line)
+            if not m: continue
+            text = m.group(2)
+            pr = PR_RE.search(text)
+            if pr: text = PR_RE.sub("", text)
+            items.append((text.strip(), m.group(1).lower() == "x", pr.group(1) if pr else None))
+        if items: state[tid] = items
+    return state
+
+PRIOR = harvest()
+
+def checklist(tid, planned):
+    """Render Done when, replaying tick state and keeping hand-added items."""
+    prior = {text: (ticked, pr) for text, ticked, pr in PRIOR.get(tid, [])}
+    seen, out = set(), []
+    for d in planned:
+        ticked, pr = prior.get(d, (False, None))
+        seen.add(d)
+        suffix = f" · [#{pr}]({REPO.replace('/issues/','/pull/')}{pr})" if pr else ""
+        out.append(f"- [{'x' if ticked else ' '}] {d}{suffix}")
+    # anything in the note but not in team-plan.json was added by hand: keep it
+    for text, ticked, pr in PRIOR.get(tid, []):
+        if text in seen: continue
+        suffix = f" · [#{pr}]({REPO.replace('/issues/','/pull/')}{pr})" if pr else ""
+        out.append(f"- [{'x' if ticked else ' '}] {text}{suffix}")
+    return out
+
 for sub in ("tasks","owners","checkpoints"):
     shutil.rmtree(os.path.join(PLAN,sub), ignore_errors=True)
     os.makedirs(os.path.join(PLAN,sub))
@@ -118,7 +168,11 @@ for t in T:
         s, why = SOFT[t["id"]]; b.append(f"- {link(s)}, later. {why}.")
     b.append("\n## Unblocks")
     b += [f"- {link(u)}" for u in unblocks[t["id"]]] or ["- Nothing waits on this."]
-    b.append("\n## Done when"); b += [f"- [ ] {d}" for d in t["done"]]
+    b.append("\n## Done when"); b += checklist(t["id"], t["done"])
+    # A block id on its own line after the list lets Progress.md embed this
+    # exact list. The embed is the list itself, not a copy, so a box ticked
+    # in either place is the same box.
+    b += ["", "^done"]
     if t["read"]:
         b.append("\n## Read first"); b += [f"- [{os.path.basename(r)}]({rel(r)})" for r in t["read"]]
     write("tasks", name(t["id"]) + ".md", "\n".join(b) + "\n")
@@ -334,5 +388,57 @@ for cp,label,due,what in ms:
         L.append("")
 open(TP, "w").write("\n".join(L).rstrip() + "\n\n" + TAIL_MARK + tail)
 
+# ── the global progress rollup ──────────────────────────────────────────────
+# Every task in the project, grouped by lane. Each task is a callout that starts
+# collapsed; opening it shows the task's own Done when list, EMBEDDED rather than
+# copied. So there is one copy of every checkbox, it lives in the task note, and
+# ticking it here ticks it there. Only the counts and marks in the callout titles
+# are a snapshot, refreshed on the next build.
+FINAL = harvest()          # re-read what we just wrote, so counts match the notes
+ORDER = [k for k,_,_,_ in OWNERS]
+
+def bar(done, total, width=24):
+    if not total: return "─" * width
+    filled = round(width * done / total)
+    return "█" * filled + "░" * (width - filled)
+
+tot_d = tot_n = 0
+lane_rows, body = [], []
+
+for k in ORDER:
+    own = OWN[k][0]
+    rows = sorted([t for t in T if t["role"]==k], key=lambda t:(t["start"],t["end"],t["id"]))
+    if not rows: continue
+    items = [(t, FINAL.get(t["id"], [])) for t in rows]
+    d = sum(1 for _, its in items for _,ok,_ in its if ok)
+    n = sum(len(its) for _, its in items)
+    td = sum(1 for _, its in items if its and all(ok for _,ok,_ in its))
+    tot_d += d; tot_n += n
+    lane_rows.append(f"| [[{own}]] | {td} / {len(rows)} | {d} / {n} | {round(100*d/n) if n else 0}% |")
+
+    body.append(f"\n## {own} — {d}/{n}\n")
+    for t, its in items:
+        dn = sum(1 for _,ok,_ in its if ok)
+        mark = "✅" if its and dn == len(its) else ("🟡" if dn else "⬜")
+        # `-` after the callout type makes it start collapsed.
+        body.append(f"> [!todo]- {mark} {link(t['id'])} · {dn}/{len(its)}")
+        body.append(f"> ![[{name(t['id'])}#^done]]" if its else "> _No done-when list._")
+        body.append("")
+
+P_ = ["---","tags:","  - progress","---", HEADER,
+      "# Progress\n",
+      "**The vault is the source of truth for progress.** Every task below opens",
+      "to show its sub-tasks. Those checkboxes are the task note's own list, shown",
+      "here rather than copied — tick one here and it is ticked in the task note.\n",
+      "The counts and ✅ 🟡 ⬜ marks are a snapshot. Run",
+      "`python3 tools/build-obsidian-plan.py` to refresh them.\n",
+      f"**{tot_d} of {tot_n} done · {round(100*tot_d/tot_n) if tot_n else 0}%**\n",
+      f"`{bar(tot_d, tot_n)}`\n",
+      "Part of [[roomsie launch]].\n",
+      "| Lane | Tasks complete | Items | Done |","|---|---|---|---|", *lane_rows,
+      "\n---", *body]
+write(None, "Progress.md", "\n".join(P_) + "\n")
+
 print(f"{len(T)} task notes, {len(OWN)} owner notes, {len(ms)} checkpoints, "
-      f"canvas with {len(nodes)} nodes and {len(edges)} edges, graph colours set, team-plan.md rebuilt")
+      f"canvas with {len(nodes)} nodes and {len(edges)} edges, graph colours set, team-plan.md rebuilt,\n"
+      f"Progress.md: {tot_d}/{tot_n} checkboxes done")

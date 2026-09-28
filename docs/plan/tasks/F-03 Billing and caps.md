@@ -31,5 +31,7 @@ tags:
 - [ ] Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
 - [ ] Hard monthly caps are set on both AI accounts
 
+^done
+
 ## Read first
 - [cost-and-team.md](../../cost-and-team.md)
