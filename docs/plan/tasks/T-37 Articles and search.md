@@ -8,6 +8,7 @@ start: 2026-09-29
 end: 2026-10-01
 checkpoint: CP2
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/66
 tags:
   - task
   - p4
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P4 Content and moderation]], task 3 of 6  
 **When:** Tue 29 Sep → Thu 1 Oct · 3 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
-**Issue:** not filed yet
+**Issue:** [#66](https://github.com/magentawood/roomsie/issues/66)
 
 ## Needs first
 - [[T-06 Database schema ⚑]]

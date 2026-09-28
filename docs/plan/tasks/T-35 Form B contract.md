@@ -8,6 +8,7 @@ start: 2026-09-25
 end: 2026-09-26
 checkpoint: CP1
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/64
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 3 of 13  
 **When:** Fri 25 Sep → Sat 26 Sep · 3 hours  
 **Checkpoint:** [[CP1 Foundation]]  
-**Issue:** not filed yet
+**Issue:** [#64](https://github.com/magentawood/roomsie/issues/64)
 
 ## Needs first
 - [[T-06 Database schema ⚑]]

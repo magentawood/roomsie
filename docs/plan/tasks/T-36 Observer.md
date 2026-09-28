@@ -8,6 +8,7 @@ start: 2026-09-30
 end: 2026-10-02
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/65
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 7 of 13  
 **When:** Wed 30 Sep → Fri 2 Oct · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** not filed yet
+**Issue:** [#65](https://github.com/magentawood/roomsie/issues/65)
 
 ## Needs first
 - [[T-35 Form B contract]]
