@@ -250,8 +250,8 @@ Search engines index the area pages and the filter pages. These pages open the s
 | Band | Handling |
 |---|---|
 | Core | The interview |
-| Adjacent, general | Articles first, then a web search for signed-in users. Visitors get general knowledge, clearly hedged |
-| Adjacent, consequential | Law, tax, area safety, claims about a person. Articles only. If no article applies, the assistant transfers the question. Never improvised. |
+| Adjacent (2a): general | Articles first, then a web search for signed-in users. Visitors get general knowledge, clearly hedged |
+| Adjacent (2b): consequential | Law, tax, area safety, claims about a person. Articles only. If no article applies, the assistant transfers the question. Never improvised. |
 | Out of scope | One scripted line, no model call. It counts toward the turn cap. |
 | Adversarial | Scripted and logged |
 | Sensitive | Never redirected |

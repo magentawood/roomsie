@@ -3,6 +3,9 @@
 **Date:** 2026-09-20 · **Status:** research report, input to decision PD7
 **Question:** What is the performance of DeepSeek with Hinglish? Should Sarvam be on the shortlist?
 
+> [!warning] Superseded in part
+> PD7 decided the models after this report: DeepSeek V4.1 Flash for all roles, Gemini Flash-Lite as fallback. **Sarvam is dropped.** The findings below stay as research input. Their recommendations are not current.
+
 ---
 
 ## The headline

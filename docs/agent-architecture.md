@@ -123,7 +123,7 @@ The router classifies each turn first.
   - Area guides
   - A deposit and agreement explainer
 - **Still no vector store.** The corpus is dozens of documents, not millions.
-- **The Advisor refuses when the corpus has no answer.** It does not use the general knowledge of the model as a fallback.
+- **The Advisor uses the corpus first.** For a general question with no corpus answer, signed-in users get a web search, and visitors get model knowledge, clearly hedged. Law, tax, area safety and claims about a person stay corpus-only or go to a hand-off. (PD7a)
 - Each consulting question with no good answer is a blog article that marketing should write.
 
 > [!note]- Why
@@ -206,13 +206,13 @@ flowchart LR
     B[Typed slot answer] --> B1["**low**<br/>router + extractor"]
     C[Something revealing] --> C1["**low**<br/>router + extractor + observer<br/>last two in parallel"]
     D[Consulting question] --> D1["**medium**<br/>router + advisor + retrieval<br/>+ composer"]
-    E[Off topic] --> E1["**zero**<br/>router only, then a script"]
+    E[Off topic] --> E1["**low**<br/>router only, then a script"]
 
     classDef zero fill:#FDF2CE,stroke:#9A7206,color:#33260A
     classDef low fill:#FFE3EC,stroke:#C42D63,color:#2A0D17
     classDef med fill:#C42D63,stroke:#C42D63,color:#FFFFFF
-    class A1,E1 zero
-    class B1,C1 low
+    class A1 zero
+    class B1,C1,E1 low
     class D1 med
 ```
 
@@ -223,7 +223,7 @@ In all interviews, the first three turns are chip taps. These turns have no cost
 > [!note]- Why
 > | Worry | Answer |
 > |---|---|
-> | It hallucinates | The Extractor can use only enum values. The Observer must quote the user. The Advisor is grounded, and it refuses. The Composer states no facts about listings. No part remains that can invent. |
+> | It hallucinates | The Extractor can use only enum values. The Observer must quote the user. The Advisor uses the corpus first (PD7a). The Composer states no facts about listings. No part remains that can invent. |
 > | The chat wanders | The router finds off-topic turns before an expensive call, and it sends a scripted redirect. This is cheap and on rails. |
 > | Consulting questions pollute the profile | They do not write to Form A or Form B. |
 
