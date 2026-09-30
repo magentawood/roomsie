@@ -14,7 +14,9 @@ Usage:
   python3 tools/sync-issues.py --apply    make the changes
 
 Run the vault builder first, so the tick state it reads is current. Rerunning
-is safe: an issue that already matches is left alone.
+is safe: an issue that already matches is left alone. Only the lane:*, role:*,
+critical path and retired vertical:* labels are managed here; status:* labels
+set by build-feature, and any other label, are kept.
 """
 import json, os, re, subprocess, sys, datetime as dt
 
@@ -149,6 +151,18 @@ def labels_for(t):
     return sorted(out)
 
 
+OWN = {name for name, _ in LABELS.values()} | {CRITICAL}
+
+
+def own_label(name):
+    return name in OWN or name.startswith(("lane:", "role:", RETIRED_PREFIX))
+
+
+def merge_labels(want, have):
+    """Our labels from the plan, plus every label we do not manage (status:*, manual ones)."""
+    return sorted(set(want) | {l for l in have if not own_label(l)})
+
+
 # ── milestones ─────────────────────────────────────────────────────────────
 existing_ms = gh_json("api", f"repos/{REPO}/milestones?state=all&per_page=100")
 ms_number = {}
@@ -207,6 +221,7 @@ for t in T:
         "labels": sorted(l["name"] for l in cur["labels"]),
         "milestone": cur["milestone"]["number"] if cur["milestone"] else None,
     }
+    want["labels"] = merge_labels(want["labels"], have["labels"])
     if have == want:
         unchanged += 1
         continue
@@ -214,8 +229,8 @@ for t in T:
     print(f"  issue      ~ #{num} {title}  [{', '.join(changed)}]")
     edited += 1
     if APPLY:
-        # Setting labels here replaces the whole set, which is what retires
-        # the old vertical:* labels from every issue.
+        # Setting labels replaces the whole set: merge_labels keeps status:* and
+        # other labels we do not manage, and drops the retired vertical:* ones.
         gh_json("api", "-X", "PATCH", f"repos/{REPO}/issues/{num}", "--input", "-",
                 input=json.dumps(want))
 
