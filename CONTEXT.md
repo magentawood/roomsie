@@ -28,6 +28,7 @@ Open, with no record yet: the elevator pitch.
 | When your task touches… | Read first |
 |---|---|
 | Any task | Its task note in `docs/plan/tasks/` and its "Read first" list |
+| Writing or reviewing code | [docs/standards/_index.md](docs/standards/_index.md) and the file for the area |
 | The schema, migrations, ids | [ADR-0006](docs/decisions/0006-drizzle.md), [ADR-0015](docs/decisions/0015-primary-key-strategy.md), [ADR-0012](docs/decisions/0012-analytics-event-store.md) |
 | The API, auth, tokens | [ADR-0002](docs/decisions/0002-api-boundary.md), [ADR-0004](docs/decisions/0004-api-stack-typescript-fastify.md), [ADR-0007](docs/decisions/0007-web-rendering-and-auth-transport.md) |
 | Secrets, env vars, logging PII | [ADR-0016](docs/decisions/0016-credentials-and-secrets.md), [ADR-0014](docs/decisions/0014-error-tracking.md) |
