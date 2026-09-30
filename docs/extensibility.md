@@ -56,7 +56,7 @@ done-when lists on 2026-09-26.
 
 **One exception on purpose:** both databases run on free Supabase accounts
 until we pay, which means no backups and a policy risk. Nightly dumps to R2
-(T-40) cover the backups. See D13 in `CONTEXT.md`.
+(T-40) cover the backups. See PD13 in `CONTEXT.md`.
 
 ---
 

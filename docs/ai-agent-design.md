@@ -1,6 +1,6 @@
 # The conversational agent: failure modes and guardrails
 
-**Date:** 2026-09-20 · **Status:** working document, feeds decision D6
+**Date:** 2026-09-20 · **Status:** working document, feeds decision PD6
 **Scope:** every way the roomsie assistant can fail, and what to do about each.
 
 ---
@@ -189,7 +189,7 @@ suggestions on the handful of turns where the answer space is genuinely open.
 
 ## 4. The risks not raised
 
-### 4.1 Exclusionary preferences — decision D3c
+### 4.1 Exclusionary preferences — decision PD3c
 
 **Decision taken (2026-09-20): roomsie records whatever preference the user
 states, including community and religion, and filters on it.**
@@ -237,7 +237,7 @@ Two qualifications matter:
 
 #### Mitigations still compatible with the decision
 
-These do not reverse D3c. They limit it to what was actually asked for.
+These do not reverse PD3c. They limit it to what was actually asked for.
 
 1. **Never infer.** Record only what the user explicitly states. Do not derive a
    community preference from a name, a diet, an area, or a festival mentioned
@@ -256,7 +256,7 @@ These do not reverse D3c. They limit it to what was actually asked for.
    It is not a visible badge on anyone.
 5. **Decide the listing side separately.** See point 2 above. Whether a
    published listing may carry an identity restriction in its visible text is
-   an open question, tracked as D3d.
+   an open question, tracked as PD3d.
 6. **Log and make it retrievable.** Every stated exclusion, with the turn it was
    stated in. If this is ever questioned, the difference between "we recorded
    what users told us" and "we cannot say where this came from" is the whole
@@ -267,10 +267,10 @@ These do not reverse D3c. They limit it to what was actually asked for.
 
 #### Related, and still open
 
-Dropping women-only (D1) removed a safety story without removing the safety
+Dropping women-only (PD1) removed a safety story without removing the safety
 problem. Gender-based preferences will now arrive through the interview like
-any other. Under D3c they are recorded. Whether that is sufficient for the
-trust story the product needs is unresolved, and it belongs with D8.
+any other. Under PD3c they are recorded. Whether that is sufficient for the
+trust story the product needs is unresolved, and it belongs with PD8.
 
 ### 4.2 Prompt injection through user-generated content
 
@@ -432,9 +432,9 @@ product better or worse.
 
 ## 7. Open questions this document does not settle
 
-1. Which model, and where it runs. See section 4.7. This is decision D7.
+1. Which model, and where it runs. See section 4.7. This is decision PD7.
 2. Whether the interview is the only entry, or whether a user can skip it and
-   browse the grid directly. This is decision D6.
+   browse the grid directly. This is decision PD6.
 3. Whether the assistant is present after the interview, during browsing and
    chat, or whether it hands off entirely.
 4. Whether the assistant ever speaks to the other side of a match on the user's

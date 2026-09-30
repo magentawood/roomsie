@@ -1,6 +1,6 @@
 # Hinglish performance: DeepSeek, Sarvam, and the rest
 
-**Date:** 2026-09-20 · **Status:** research report, feeds decision D7
+**Date:** 2026-09-20 · **Status:** research report, feeds decision PD7
 **Question:** how well does DeepSeek handle Hinglish, and should Sarvam be on
 the shortlist?
 

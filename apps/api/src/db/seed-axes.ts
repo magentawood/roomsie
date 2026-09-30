@@ -14,7 +14,7 @@
  *                agent-architecture.md, and as the worked example
  *                "my ex basically lived there, that's what killed it"
  *   · `diet`     carries jain and eggetarian because the launch market is Mumbai
- *   · `community` exists because decision D3c (2026-09-20) explicitly chose to
+ *   · `community` exists because decision PD3c (2026-09-20) explicitly chose to
  *                record and filter on community and religion. It is the one
  *                axis with press exposure attached — see ai-agent-design.md
  *                §4.1, which documents that exposure at length. Dropping it is

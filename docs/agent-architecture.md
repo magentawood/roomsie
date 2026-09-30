@@ -1,6 +1,6 @@
 # Agent architecture
 
-**Date:** 2026-09-20 · **Status:** proposed · **Decision:** D7a
+**Date:** 2026-09-20 · **Status:** proposed · **Decision:** PD7a
 **Supersedes** the single-model assumption in `ai-agent-design.md`.
 
 ---
@@ -272,6 +272,6 @@ tells you which handler to shrink.
   Separate handlers make evals easier, not harder, because each has one job.
 - **`packages/contract`.** Handler inputs and outputs are versioned Zod
   schemas, alongside the analytics event schemas already there.
-- **Model choice (D7).** This design needs a small fast model and a good model.
+- **Model choice (PD7).** This design needs a small fast model and a good model.
   It does not need one model to be excellent at everything, which widens the
   options and lowers the price.

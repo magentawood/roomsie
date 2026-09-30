@@ -324,7 +324,7 @@ ui = [t for t in build if any(d.startswith("D-0") for d in t["deps"])]
 b_h = sum(t["hours"] or 0 for t in build); ui_h = sum(t["hours"] or 0 for t in ui)
 unfiled = [t["id"] for t in T if not t["issue"]]
 L = [f"# Team plan: launch on {D(LAUNCH):%-d %B}", "",
- "**Status:** ready to assign · **Decision:** D12 · **Generated from** `docs/team-plan.json`", "",
+ "**Status:** ready to assign · **Decision:** PD12 · **Generated from** `docs/team-plan.json`", "",
  "Every task below is also a GitHub issue. This file is the baseline, and each person's list, in order, is also in `docs/how-to-work.md`.", "",
  "> **The GitHub issues still carry the original `vertical:V1`–`V5` labels and checkpoint milestones.** Where they disagree with this file, this file wins until the issues are relabelled."
  + (f" **Not filed yet:** {', '.join(unfiled)}." if unfiled else ""), "",

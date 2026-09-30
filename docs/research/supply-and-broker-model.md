@@ -1,6 +1,6 @@
 # Supply, brokers and duplicate listings
 
-**Date:** 2026-09-19 · **Status:** research note, feeds decision D3
+**Date:** 2026-09-19 · **Status:** research note, feeds decision PD3
 
 This note checks three claims about the Indian rental market. It then examines
 the duplicate listing problem. It ends with a proposed model for brokers and

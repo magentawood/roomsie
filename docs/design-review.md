@@ -82,7 +82,7 @@ tidiness, at home, daytime and kitchen. Nothing else. 🔴
 **1.2 — Intent is one of the prototype's four cards:** a flat and flatmates,
 just a flat, just a flatmate, or I'm renting out a flat. 🔴
 
-> **This clashes with a settled decision, and it needs you first.** Decision D0
+> **This clashes with a settled decision, and it needs you first.** Decision PD0
 > says v0 is flatmate matching only, with no property listings. Two of the four
 > cards — *just a flat* and *I'm renting out a flat* — are about property. Either
 > they are hidden for launch, or they lead somewhere that does not exist yet.
@@ -107,7 +107,7 @@ a cage. 🟡
 **1.8 — Some preferences are never offered as chips.** If someone raises
 community or religion, we record it and filter on it. We never suggest it, never
 ask about it, and never infer it from a name, a diet or an area. This is
-settled (D3c), so it is not up for review, but it limits what the chips may
+settled (PD3c), so it is not up for review, but it limits what the chips may
 show. 🔒
 
 ---
@@ -190,7 +190,7 @@ until it means something. 🟡
 
 **4.3 — The panel header changes as we learn more:** "Everything in Mumbai" →
 "Powai" → "Powai, under ₹20,000" → match scores appear. In v0 every card is a
-person, never a listing (D0), so the exact words are yours. 🟢
+person, never a listing (PD0), so the exact words are yours. 🟢
 
 **4.4 — The panel updates when the form changes, not when a turn happens.** A
 ten-turn conversation might redraw the panel three times. 🟡

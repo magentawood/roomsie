@@ -1,7 +1,7 @@
 # Model selection
 
 **Date:** 2026-09-20 · **Status:** method agreed, choice pending an eval
-**Decision:** D7
+**Decision:** PD7
 
 **Constraint removed:** data residency is not a requirement. Inference may run
 anywhere. This simplifies the decision considerably and supersedes the caution
@@ -70,7 +70,7 @@ optimising the wrong variable.
 
 **The budget risk remains abuse, not legitimate use.** The chat runs before
 login. A bot talking to it all night costs more than a thousand real users.
-D9 is the control that matters.
+PD9 is the control that matters.
 
 ---
 
