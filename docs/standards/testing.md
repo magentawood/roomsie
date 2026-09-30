@@ -5,7 +5,7 @@ These rules apply to the CI gate, tests and assistant evals. The rules in [_inde
 ## The CI gate
 
 - Each PR runs typecheck, lint, build and `gitleaks` [tool: planned T-03]. Why: these checks find the cheap mistakes before a merge. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
-- The full gate also runs unit tests, API integration tests, the generated-file check and `check-tokens.mjs` [tool]. Why: the rule areas need tests, and generated files and tokens must stay correct. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
+- Each PR also runs unit tests, API integration tests and `check-tokens.mjs` [tool]. The generated-file check starts when the token pipeline ships [tool]. Why: the rule areas need tests, and generated files and tokens must stay correct. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Typecheck is strict across the full monorepo. Lint uses the shared config from `packages/config`. Why: all packages obey the same checks. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - CI finishes in approximately five minutes. If the suite becomes too large, run it in parallel or divide it. Why: after five minutes, people merge on hope. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 
@@ -20,7 +20,7 @@ These rules apply to the CI gate, tests and assistant evals. The rules in [_inde
 - Test the pre-login limits: the turn cap, the rate limits, and the change to chips at the spend ceiling. Why: the abuse test is a go/no-go check. ([PD9](../decisions/pd-09-pre-login-limits.md), [PD11](../decisions/pd-11-launch.md))
 - Run API integration tests with Vitest against a disposable Postgres database. Never mock the database. Why: the queue rules are mostly SQL, so a mock tests nothing that ships. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Put the test data for the queue rules in a shared fixture. Do not copy it into each test. Why: the setup is not simple. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
-- Write no snapshot tests on UI components while the design changes. Do not require component coverage. Why: assertions on a UI that changes each week cost time and find nothing. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
+- Do not require or add snapshot tests on UI components while the design changes. Do not require component coverage. Why: assertions on a UI that changes each week cost time and find nothing. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Do not add Playwright end-to-end tests until the UI is stable. Why: they are slow to write and brittle while the UI changes. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 
 ## Assistant evals
