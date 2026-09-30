@@ -1,28 +1,30 @@
 # Model selection
 
-**Date:** 2026-09-20 · **Status:** method agreed, choice pending an eval
+**Date:** 2026-09-20 · **Status:** method agreed, choice waits for an eval
 **Decision:** PD7
 
-**Constraint removed:** data residency is not a requirement. Inference may run
-anywhere. This simplifies the decision considerably and supersedes the caution
-carried over from ADR 0012.
+**Constraint removed:** data residency is not a requirement. Inference can run
+in all locations. This makes the decision much simpler. It also supersedes the
+caution that came from ADR 0012.
 
 ---
 
 ## Three corrections to the shortlist
 
 **Qwen 2.3 does not exist.** The current line is Qwen 3.x. Qwen3.6 shipped in
-April 2026 under Apache licence, supports tool calling and JSON-schema
-structured output, and the Qwen 3 family was trained across 119 languages.
-Qwen3.5-397B covers 201. Being Apache-licensed means it is self-hostable later
-if that ever matters.
+April 2026 with an Apache licence. It supports tool calling and JSON-schema
+structured output.
 
-**Groq is not a model, it is an inference provider.** It serves open-weight
-models on its own hardware, very fast. So "Groq" is a decision about *where*
-Qwen or another open model runs, not a decision about *which* model.
+The training data for the Qwen 3 family has 119 languages.
+Qwen3.5-397B covers 201. The Apache licence lets you self-host Qwen
+subsequently, if that is ever important.
 
-**DeepSeek V4 Flash has been superseded.** V4.1 Flash shipped on 10 September
-2026 with a new API route and lower prices.
+**Groq is not a model. It is an inference provider.** It serves open-weight
+models very fast on its own hardware. Thus, "Groq" is a decision about *where*
+Qwen or a different open model runs. It is not a decision about *which* model.
+
+**DeepSeek V4.1 Flash supersedes DeepSeek V4 Flash.** V4.1 Flash shipped on 10
+September 2026. It has a new API route and lower prices.
 
 ---
 
@@ -36,22 +38,24 @@ Qwen or another open model runs, not a decision about *which* model.
 | DeepSeek V4.1 Flash, off-peak | $0.15 | $0.60 |
 | DeepSeek V4.1 Flash, cache hit | ~$0.006 | — |
 
-**DeepSeek prices by clock.** Peak is 01:00 to 04:00 and 06:00 to 10:00 UTC,
-Monday to Friday. In IST that is 06:30 to 09:30 and 11:30 to 15:30. So peak
-covers the Indian working day but **not** the Indian evening, which is when
-people are most likely to hunt for a flat. That works in your favour, but it is
-a real operational wrinkle: the same interview costs different amounts
-depending on the hour.
+**DeepSeek prices change with the clock.** Peak is 01:00 to 04:00 and 06:00 to
+10:00 UTC, Monday to Friday. In IST, peak is 06:30 to 09:30 and 11:30 to 15:30.
+Thus, peak includes the Indian work day but **not** the Indian evening.
 
-**Cache discount matters more than headline price.** Your system prompt is
-fixed and large, and it is sent on every call. A 98% cache discount applies to
-exactly that part. Design for caching from the start.
+People
+are most likely to look for a flat in the evening. This is good for you. But it
+is a real complication for operations: the same interview has different costs
+at different hours.
+
+**Cache discount matters more than headline price.** Your system prompt does not
+change, and it is large. All calls send it. A 98% cache discount applies to that
+fixed part only. Design for caching from the start.
 
 ---
 
 ## What this actually costs you
 
-Order of magnitude, for a completed interview:
+Order of magnitude, for one completed interview:
 
 | | |
 |---|---|
@@ -61,53 +65,56 @@ Order of magnitude, for a completed interview:
 | Cost per completed interview | **roughly ₹1 to ₹2** |
 | 1,000 interviews a month | **roughly ₹1,000 to ₹2,000** |
 
-That is 12 to 25 dollars a month at a thousand interviews. Real, but not
-frightening next to a 50 to 80 dollar base.
+At a thousand interviews, the cost is 12 to 25 dollars a month. This cost is
+real. But next to a 50 to 80 dollar base, it is not a cause for concern.
 
-**So price is not the deciding factor.** The gap between the cheapest and the
-dearest option on this list is noise at your volume. Choosing on price is
-optimising the wrong variable.
+**Thus, price does not decide the choice.** At your volume, the difference
+between the cheapest and the most expensive option on this list is noise. If you
+choose on price, you optimise the incorrect factor.
 
 **The budget risk remains abuse, not legitimate use.** The chat runs before
-login. A bot talking to it all night costs more than a thousand real users.
-PD9 is the control that matters.
+login. A bot that talks to the chat all night costs more than a thousand real
+users. PD9 is the control that matters.
 
 ---
 
 ## The thing that should actually decide it
 
 **Hinglish.** Your users will type "mujhe Powai mein 20k tak ka room chahiye,
-non-veg okay hai" and the extractor has to get every slot right.
+non-veg okay hai". The extractor must fill all slots correctly.
 
-Two findings from current research make this the deciding constraint:
+Two findings from current research make Hinglish the constraint that decides the
+choice:
 
 1. **Small open models are about 13 points worse on Hinglish than on English.**
-   Code-mixing consistently degrades performance, and more mixing makes it
+   Code-mixing consistently decreases performance. More code-mixing makes
+   performance worse.
+2. **Indic-tuned models parse code-mixed input more reliably. But their training
+   had far fewer tool-calling examples.** Thus, they understand the input
+   better. But their structured output, which your extractor needs, is
    worse.
-2. **Indic-tuned models parse code-mixed input more reliably but have seen far
-   fewer tool-calling examples.** So they are better at understanding and worse
-   at producing the structured output your extractor needs.
 
-That is a direct tension and it sits exactly on your highest-volume call.
+This is a direct conflict, and it is on your highest-volume call.
 
 ### The finding that threatens the design
 
 **Small models "abstain almost never."**
 
-The whole architecture rests on the empty slot being the confidence signal. If
-the extractor always picks *some* enum value rather than saying it does not
-know, that signal is gone and the assistant starts filling slots with guesses.
-This is the failure mode to guard hardest against.
+The full architecture depends on one rule: the empty slot is the confidence
+signal. The extractor can always pick *some* enum value, and not say that it
+does not know. If it does this, you lose that signal. Then the assistant starts
+to fill slots with guesses. This failure mode needs the strongest guards.
 
-Three guards:
+There are three guards:
 
-1. **Put an explicit "unclear" value in every enum.** Do not rely on the model
-   volunteering uncertainty. Give it a slot to put it in.
-2. **Gate on token probability, not on the model's opinion.** Below the
-   threshold, ask instead of filling.
-3. **Make abstention rate a first-class eval metric.** Measure how often the
-   extractor correctly declines on deliberately ambiguous input. A model that
-   never abstains fails, however good its accuracy looks.
+1. **Put an explicit "unclear" value in all enums.** Do not expect the model to
+   tell you that it is not sure. Give it a slot for its uncertainty.
+2. **Gate on token probability, not on the model's opinion.** If the probability
+   is below the threshold, ask. Do not fill the slot.
+3. **Make abstention rate a first-class eval metric.** Give input that is
+   ambiguous on purpose to the extractor. Measure how frequently it correctly
+   declines. A model that does not abstain at all fails. This is correct also
+   when its accuracy looks very good.
 
 ---
 
@@ -115,30 +122,32 @@ Three guards:
 
 Do not pick from a leaderboard. Pick from your own eval.
 
-1. **Build the eval set first.** 200 to 300 utterances in the real mix: English,
-   Hindi, Marathi, Romanised Hinglish, Devanagari. Mumbai place names, Indian
-   number forms ("20k", "bees hazaar", "20,000"), Indian date forms. Label each
-   with the correct slot values. **Include ambiguous cases whose correct answer
-   is "unclear".**
-2. **Run every candidate against it.** Gemini Flash-Lite tier, DeepSeek V4.1
-   Flash, Qwen3.6 via a fast provider. Score extraction accuracy, abstention
-   accuracy, structured-output validity, and latency.
-3. **Pick separately for each role.** The router, extractor and observer have
-   one set of needs. The composer has another. They do not have to be the same
-   vendor, and the architecture already decouples them.
-4. **Hide the vendor behind one module.** Same pattern as the `reportError`
-   wrapper in ADR 0014. Application code calls your interface, never a vendor
-   SDK. Swapping then costs a config change, which matters because this list
-   will look different in six months.
+1. **Build the eval set first.** Use 200 to 300 utterances in the language mix
+   of your users: English, Hindi, Marathi, Romanised Hinglish, Devanagari.
+   Include Mumbai place names, Indian number forms ("20k", "bees hazaar",
+   "20,000") and Indian date forms. Label each utterance with the correct slot
+   values. **Include ambiguous cases. For these cases, the correct answer is
+   "unclear".**
+2. **Run all candidates against the eval set.** The candidates are Gemini
+   Flash-Lite tier, DeepSeek V4.1 Flash, and Qwen3.6 through a fast provider.
+   Score extraction accuracy, abstention accuracy, structured-output validity,
+   and latency.
+3. **Pick a model for each role independently.** The router, extractor and
+   observer have one set of needs. The composer has a different set. The roles
+   do not have to use the same vendor. The current architecture decouples them.
+4. **Hide the vendor behind one module.** Use the same pattern as the
+   `reportError` wrapper in ADR 0014. Application code calls your interface. It
+   does not call a vendor SDK. Then a vendor swap costs a config change. This is
+   important because this list will be different in six months.
 
-This eval set is not overhead. It is the same artefact that tells you whether a
-prompt change helped, and it is the only honest answer to "which model".
+The eval set is not overhead. It is the same artefact that tells you if a prompt
+change helped. It is also the only honest answer to "which model".
 
 ---
 
 ## Decision: DeepSeek primary, Gemini fallback
 
-**Taken 2026-09-20. Sarvam is dropped.**
+**We took this decision on 2026-09-20. We dropped Sarvam.**
 
 | Role | Model |
 |---|---|
@@ -152,58 +161,61 @@ prompt change helped, and it is the only honest answer to "which model".
 ### What dropping Sarvam costs
 
 **Register matching.** Sarvam was the only candidate that reliably replies in
-the register it was addressed in. Measured defection to English: Sarvam 16.5%
-to 26.1%, Gemini 44.5%. DeepSeek is untested on this.
+the register of the message to it. Measured defection to English: Sarvam 16.5%
+to 26.1%, Gemini 44.5%. There are no tests of DeepSeek for this.
 
-So a user who types "mujhe Powai mein room chahiye" may well get a stiff
-English paragraph back. That is a small thing that tells someone the product is
-not really for them.
+Thus, a user who types "mujhe Powai mein room chahiye" can easily get a formal
+English paragraph as the reply. This is a small thing. But it tells the user
+that the product is not really for them.
 
-**The mitigation is prompt-level, and weaker than a model-level one:**
+**The mitigation is prompt-level. It is weaker than a model-level mitigation:**
 
 1. Instruct the composer explicitly to mirror the user's language and script.
-2. Detect the user's register in the router, which already classifies the turn,
-   and pass it to the composer as an input rather than leaving it to be
-   inferred.
-3. **Make register match a first-class eval metric.** Type Hinglish, measure
-   what comes back. Without measuring it, this degrades silently.
+2. Detect the user's register in the router. The router already
+   classifies the turn. Give the register to the composer as an input. Do not let the
+   composer infer it.
+3. **Make register match a first-class eval metric.** Type Hinglish, then
+   measure the reply. If you do not measure register match, it becomes worse
+   and nobody sees it.
 
-This only affects the composer and the advisor. Extraction is unaffected,
-because a JSON enum has no register.
+This problem affects only the composer and the advisor. It does not affect
+extraction, because a JSON enum has no register.
 
 ### A benefit of the pairing that was not the reason for it
 
-DeepSeek is a Chinese company. India's DPDP Act permits cross-border transfer
-except to countries the government notifies as restricted. No such list has
-been notified. If one ever is, a Chinese inference provider is a plausible
-entry.
+DeepSeek is a Chinese company. India's DPDP Act permits cross-border transfer,
+but not to countries that the government notifies as restricted. The government
+has not notified such a list. If the government ever notifies a list, a Chinese
+inference provider is a plausible entry.
 
-Having Gemini already integrated as a fallback means that becomes a config
-change rather than a migration. Worth noting, not worth planning around.
+Gemini is the integrated fallback from the start. Thus, such a restriction
+becomes a config change, not a migration. This is worth a note, but not worth a
+plan.
 
-**Also note:** DPDP obligations follow the data, not the server. Processing
-interview transcripts abroad does not remove them. Check DeepSeek's retention
-and training terms before sending real user text, and make sure account
-deletion propagates.
+**Also note:** DPDP obligations follow the data, not the server. If you process
+interview transcripts in a different country, the obligations stay. Before you
+send real user text, examine the retention terms and training terms of DeepSeek.
+Make sure that account deletion propagates.
 
 ### What "fallback" has to mean
 
-Three different things get called fallback, and they need different code:
+We use the name "fallback" for three different things. They need different
+code:
 
 | Trigger | Behaviour |
 |---|---|
-| **Failure** — timeout, 5xx, rate limit | Retry once on Gemini. Automatic. |
-| **Invalid output** — structured output fails Zod | Retry once on the same model, then Gemini. Automatic. |
-| **Cost or load** — DeepSeek peak hours, 11:30 to 15:30 IST | Route by clock. Optional, and probably not worth the complexity at these volumes. |
+| **Failure** — timeout, 5xx, rate limit | Retry one time on Gemini. Automatic. |
+| **Invalid output** — structured output fails Zod | Retry one time on the same model. Then retry on Gemini. Automatic. |
+| **Cost or load** — DeepSeek peak hours, 11:30 to 15:30 IST | Route by clock. Optional. At these volumes, it is probably not worth the complexity. |
 
-**Quality is not a fallback trigger.** There is no reliable runtime signal that
-an answer was poor. Quality differences are settled by the eval set and by
-which model is primary, not at request time.
+**Quality is not a fallback trigger.** No reliable runtime signal shows that an
+answer had low quality. The eval set and the choice of the primary model settle
+quality differences. The system does not settle them at request time.
 
-**The wrapper does the work.** Both vendors sit behind one internal module, the
-same pattern ADR 0014 uses for error reporting. Application code calls the
-interface. It holds the timeout, the retry, the fallback and the per-model
-token accounting.
+**The wrapper does the work.** Both vendors are behind one internal module. ADR
+0014 uses the same pattern for error reporting. Application code calls the
+interface. The module holds the timeout, the retry, the fallback and the token
+accounting for each model.
 
 ---
 
@@ -213,18 +225,19 @@ token accounting.
 
 | Role | Lean | Why |
 |---|---|---|
-| Router | Cheapest thing that classifies reliably | It is a five-way classification. Do not overspend. |
-| Extractor and Observer | Gemini Flash-Lite tier | Strong multilingual coverage, mature structured output, latency-optimised. The Hinglish risk is the real one and Google's Indic coverage is the strongest of the three. |
-| Composer | A good model, vendor open | Runs rarely. Quality shows here and nowhere else. |
-| Advisor | Same as composer, plus retrieval | Grounded, so raw model knowledge matters less |
+| Router | The cheapest model that classifies reliably | The task is a five-way classification. Do not spend too much. |
+| Extractor and Observer | Gemini Flash-Lite tier | Strong multilingual coverage, mature structured output, latency-optimised. The Hinglish risk is the real one, and Google has the strongest Indic coverage of the three. |
+| Composer | A good model, vendor open | It does not run frequently. Quality is visible here and in no other role. |
+| Advisor | Same as composer, plus retrieval | It is grounded. Thus, raw model knowledge is less important. |
 
-**DeepSeek V4.1 Flash is the value option** and the cache discount is genuinely
-large. If it clears the Hinglish eval, take it. The peak-hour pricing is
-manageable because your traffic should skew to the Indian evening.
+**DeepSeek V4.1 Flash is the value option.** Its cache discount is genuinely
+large. If it passes the Hinglish eval, use it. You can manage the peak-hour
+pricing, because your traffic should be mostly in the Indian evening.
 
-**Qwen3.6 is the option that keeps a door open,** because Apache licensing
-means you could host it yourself later. That door is worth little while data
-residency is not a requirement, so do not pay for it in quality today.
+**Qwen3.6 is the option that keeps a door open.** Its Apache licence lets you
+host it on your own servers subsequently. While data residency is not a
+requirement, that door has small value. Thus, do not decrease quality today to
+keep it.
 
 ---
 
