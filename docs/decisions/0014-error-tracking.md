@@ -13,14 +13,14 @@ is a third of the bill.
 
 - It sees only `apps/web`. The business logic is in the API on Fly, and Vercel
   logging cannot see the API.
-- It logs what runs on Vercel's servers. Some errors never touch a Vercel server:
-  a React crash in the swipe stack, a fetch that fails, or a null reference in
-  chat.
-  Thus, **browser errors do not appear at all**. These errors are most of the
-  breakage that users see.
+- It logs only what runs on Vercel's servers. Thus, **browser errors do not
+  appear at all**. These errors are most of the breakage that users see.
 
 Vercel logging also has no grouping, no alerting, no source-map symbolication
 and no release correlation. Its retention is short and depends on the plan.
+
+> [!example]- Examples
+> - Errors that never touch a Vercel server: a React crash in the swipe stack, a fetch that fails, or a null reference in chat.
 
 ## Decision
 
@@ -35,7 +35,7 @@ and no release correlation. Its retention is short and depends on the plan.
 | Uptime | A free-tier monitor on the single Fly machine |
 
 GlitchTip is protocol-compatible with the Sentry SDK. Thus, **where errors go is
-a DSN, not a vendor commitment.** We choose a URL. We do not choose a lock-in.
+a DSN, not a vendor commitment.**
 
 ### Planned migration to Crashlytics for web
 
@@ -48,19 +48,20 @@ we move to it.** The reasons are:
 - It uses Google Cloud's Observability Suite as its base. Thus, it puts client and
   server errors in one place.
 
-This move would put all three clients on one free tool. It would also retire the
+This move would put all three clients on one free tool, and retire the
 GlitchTip instance that we operate.
 
-⚠️ **This migration is not the one-variable switch.** GlitchTip implements the
-Sentry protocol. Thus, GlitchTip → Sentry is a DSN change. Crashlytics does
-**not** implement this protocol. It is the Firebase JS SDK, a fully different
-integration.
+⚠️ **This migration is not the one-variable switch.** GlitchTip → Sentry is a
+DSN change. But Crashlytics does **not** implement the Sentry protocol. It is
+the Firebase JS SDK, a fully different integration.
 
-**Mitigation. Build it from the start:** a thin internal module wraps error
-reporting. This module is a single `reportError(err, context)`, with breadcrumb
-and user-context helpers. It is in `packages/config` or in a small shared
-package. Application code calls only this module. Then, a change of the
-SDK that the module wraps touches one file for each app, not all call sites.
+**Mitigation. Build it from the start:**
+
+- A thin internal module wraps error reporting: a single
+  `reportError(err, context)`, with breadcrumb and user-context helpers.
+- It is in `packages/config` or in a small shared package.
+- Application code calls only this module. Then, a change of the SDK that the
+  module wraps touches one file for each app, not all call sites.
 
 Without this wrapper, `Sentry.captureException` goes into many places across the
 codebase. Then the migration that we explicitly plan becomes the type of rework
@@ -68,26 +69,19 @@ that this project consistently chose to avoid.
 
 ## Rationale
 
-We instrument with the Sentry SDK in all cases. This is what makes the decision
-reversible. The SDK is the de-facto standard, and it has first-class Next.js and
-Node integrations. GlitchTip implements its protocol.
-
-We chose GlitchTip, not the Sentry free tier. The limit that stops us on the free tier
-is **1 user**, not the 5,000-error cap. A shared login conflicts with the rules
-in `docs/security/credentials.md`. GlitchTip gives unlimited users and events for
-approximately $5/month. Also, error data stays in our own infrastructure. This
-agrees with the sovereignty reasoning in ADR 0012.
-
-**Crashlytics for mobile, not Sentry.** Crashlytics is free, and it is best in
-class for native crash reporting. Also, we already use Firebase (ADR 0005). There
-is no reason to pay for mobile error tracking.
-
-**We considered Crashlytics for web, and rejected it on timing.** Its
-announcement was at Google I/O 2026, and it uses Google Cloud's Observability
-Suite as its base. But it is **private preview, not generally available**.
-Thus, it cannot carry a launch that is weeks away. It is worth a new look when it
-reaches GA, because it would be free and would put client and server errors in
-one place.
+- **We instrument with the Sentry SDK in all cases.** This is what makes the
+  decision reversible. The SDK is the de-facto standard, and it has first-class
+  Next.js and Node integrations.
+- **GlitchTip, not the Sentry free tier.** The limit that stops us on the free
+  tier is **1 user**, not the 5,000-error cap. A shared login conflicts with the
+  rules in `docs/security/credentials.md`. GlitchTip gives unlimited users and
+  events. Also, error data stays in our own infrastructure. This agrees with the
+  sovereignty reasoning in ADR 0012.
+- **Crashlytics for mobile, not Sentry.** There is no reason to pay for mobile
+  error tracking.
+- **We considered Crashlytics for web, and rejected it on timing.** Its
+  announcement was at Google I/O 2026. But it is **private preview, not
+  generally available**. Thus, it cannot carry a launch that is weeks away.
 
 ## Consequences
 
