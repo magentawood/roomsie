@@ -7,9 +7,11 @@ The launch uses the look of the V3 prototype, as an exception to ADR-0011. Untit
 - **Launch rules** apply to all styles from today.
 - **Token pipeline rules** start when the Untitled UI pipeline ships. Reviewers enforce them only after that.
 
+PD12 does not say which ADR-0011 rules apply at launch. We divided the rules from our interpretation of PD12. The launch rules are the ADR-0011 rules that do not need the Figma pipeline.
+
 ## Launch rules
 
-- Colours, type and spacing in components come from theme tokens, never from hex or arbitrary values [tool]. Why: the v1 token pipeline then changes only values. ([ADR-0011](../decisions/0011-design-system-token-pipeline.md), [ADR-0013](../decisions/0013-ci-gate-and-testing.md), [PD12](../decisions/pd-12-team-plan.md))
+- Colours, type and spacing in components come from theme tokens, never from hex or arbitrary values [tool]. Why: the v1 pipeline then changes token definitions, not component code. ([ADR-0011](../decisions/0011-design-system-token-pipeline.md), [ADR-0013](../decisions/0013-ci-gate-and-testing.md), [PD12](../decisions/pd-12-team-plan.md))
 - Components use semantic tokens, never primitives [tool]. Why: dark mode reassigns only the semantic tokens. ([ADR-0011](../decisions/0011-design-system-token-pipeline.md), [ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Use plain `@theme`, never `@theme inline`. Why: with `inline`, the dark mode values have no effect. ([ADR-0011](../decisions/0011-design-system-token-pipeline.md))
 - Put the light values in `@theme`. Put the dark values in `@layer base { .dark-mode { … } }`. Why: the product is light-first, as Untitled UI is. ([ADR-0011](../decisions/0011-design-system-token-pipeline.md))
