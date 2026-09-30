@@ -67,7 +67,7 @@ Open `docs/plan/Progress.md` or `docs/team-plan.md` (generated from `docs/team-p
 0. One time in each clone, run `git config core.hooksPath .githooks`. The hook checks the doc limits and the generated files before each commit.
 1. Take the next task in your list.
 2. Open its note in `docs/plan/tasks/`. Read the description, "Needs first", "Done when" and "Read first".
-3. Make a branch from `main`. Do the work.
+3. Make a branch from `main`. Do the work. Obey the code rules in [docs/standards/](standards/_index.md).
 4. Open one pull request. Put the task ID in the title.
 5. When a "Done when" item is true, tick its box in the task note, not in the GitHub issue.
 6. Merge when all the items are true. Then start the next task.
