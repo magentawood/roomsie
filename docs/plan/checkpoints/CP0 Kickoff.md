@@ -8,11 +8,11 @@ tags:
 
 **Date:** Fri 25 Sep
 
-Every role has a name. Accounts and billing are live. Styling is decided. Launch areas are picked. Seeding consent text is ready. The core screens are designed.
+Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete.
 
 **Next:** [[CP1 Foundation]]
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 

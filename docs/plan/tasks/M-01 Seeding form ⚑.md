@@ -23,7 +23,7 @@ tags:
 **Issue:** [#14](https://github.com/magentawood/roomsie/issues/14)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[F-05 Seeding consent text ⚑]]
@@ -33,9 +33,9 @@ tags:
 - [[M-02 100 sign-ups]]
 
 ## Done when
-- [ ] Form live with the consent text
-- [ ] Outreach through own networks, college and company groups, and flat-hunting groups
-- [ ] Invite people to sign up. Never copy anyone's posts or details
+- [ ] The form is live with the consent text
+- [ ] Outreach uses the team's own networks, college and company groups, and flat-hunting groups
+- [ ] The team invites people to sign up. The team never copies the posts or details of any person
 
 ^done
 

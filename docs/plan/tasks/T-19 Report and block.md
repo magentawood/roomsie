@@ -26,11 +26,11 @@ tags:
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] The API behind the report and block buttons, which live in T-18b
-- [ ] A block hides both people from each other, including in the match query
+- [ ] The API for the report and block buttons exists. The buttons are in T-18b
+- [ ] A block hides both people from each other. This also applies in the match query
 - [ ] A saved query in Supabase lists open reports
 - [ ] Suspend sets `tokens_valid_after` to now and hides the profile
 

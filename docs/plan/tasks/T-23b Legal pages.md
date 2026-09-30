@@ -26,10 +26,10 @@ tags:
 - [[T-02 Scaffold monorepo ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] /privacy, /terms and /grievance show the founder's text
-- [ ] Linked from the footer and from the sign-in screen
+- [ ] Links to it are in the footer and on the sign-in screen
 
 ^done

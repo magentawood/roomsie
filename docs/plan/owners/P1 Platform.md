@@ -9,9 +9,9 @@ tags:
 
 _The ground everyone builds on, then profiles, the waitlist and backups._
 
-**23 hours** of build work at 1.35h a day, 11 spare, finishing Sat 10 Oct.
+**23 hours** of build work, at 1.35h a day, with 11 hours spare. The last task ends on Sat 10 Oct.
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Sequence
 

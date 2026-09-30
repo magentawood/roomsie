@@ -23,19 +23,19 @@ tags:
 **Issue:** [#49](https://github.com/magentawood/roomsie/issues/49)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[M-02 100 sign-ups]]
 - [[T-16 Profiles and photos ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] Invites go out on Sat 3 Oct, the day after profile creation works
-- [ ] Help people finish profiles
-- [ ] 150 profiles, at least 40 in each launch area, by Sunday 11 October
+- [ ] The team helps people complete profiles
+- [ ] There are 150 profiles by Sunday 11 October, with at least 40 in each launch area
 
 ^done
 

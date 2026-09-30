@@ -28,7 +28,7 @@ tags:
 - [[T-22 Launch areas and waitlist]]
 
 ## Done when
-- [ ] Landing page for all genders
-- [ ] Legal page template, the sign-in wall, the waitlist, empty states
+- [ ] The landing page is for all genders
+- [ ] The design has a legal page template, the sign-in wall, the waitlist and empty states
 
 ^done

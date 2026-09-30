@@ -31,9 +31,9 @@ tags:
 - [[D-05 Design QA]]
 
 ## Done when
-- [ ] Results panel header states and the person card, for V5 on Sat 26 Sep
-- [ ] Profile create and edit with photo upload, for V5 on Tue 29 Sep
-- [ ] Connect and report states, refining the prototype detail sheet V5 builds first
-- [ ] Delete confirmation
+- [ ] The results panel header states and the person card are ready for V5 on Sat 26 Sep
+- [ ] The profile create and edit screens, with photo upload, are ready for V5 on Tue 29 Sep
+- [ ] The design has connect and report states. They refine the prototype detail sheet that V5 builds first
+- [ ] There is a delete confirmation
 
 ^done

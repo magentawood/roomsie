@@ -26,12 +26,12 @@ tags:
 - [[T-12 Extraction ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] The 50 test sentences run through extraction
-- [ ] Record the share of slots right and how often vague sentences are marked unclear
-- [ ] Tune the prompt. Save the results in docs/research/
+- [ ] The 50 test sentences go through extraction
+- [ ] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear
+- [ ] The team tunes the prompt and saves the results in docs/research/
 
 ^done
 

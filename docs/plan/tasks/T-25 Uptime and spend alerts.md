@@ -26,11 +26,11 @@ tags:
 - [[T-04 Deploy to Mumbai]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] The API is checked every minute, with alerts to the team channel
-- [ ] An alert fires when daily model spend passes 70% of the ceiling
+- [ ] A monitor checks the API every minute and sends alerts to the team channel
+- [ ] An alert starts when the daily model spend is more than 70% of the ceiling
 
 ^done
 

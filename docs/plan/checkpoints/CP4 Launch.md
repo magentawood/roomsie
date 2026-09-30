@@ -8,12 +8,12 @@ tags:
 
 **Date:** Mon 12 Oct
 
-Public launch. Fallback Wednesday 14 October.
+Public launch. The fallback date is Wednesday 14 October.
 
 **After:** [[CP3 Freeze and go-no-go]]  
 **Next:** [[CP5 First-week review]]
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 

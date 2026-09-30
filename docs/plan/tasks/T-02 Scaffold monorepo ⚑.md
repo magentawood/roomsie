@@ -24,10 +24,10 @@ tags:
 **Issue:** [#10](https://github.com/magentawood/roomsie/issues/10)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[T-05 Google sign-in ⚑]]
@@ -37,11 +37,11 @@ tags:
 - [[T-23b Legal pages]]
 
 ## Done when
-- [ ] pnpm workspaces and Turborepo, per ADR 0010
-- [ ] apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle
-- [ ] packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md
-- [ ] `pnpm dev` runs web and API locally. docs/ is untouched
-- [ ] Every API route is served under `/v1`, so a future mobile app keeps working through later changes
+- [ ] The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies
+- [ ] apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle
+- [ ] packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows
+- [ ] `pnpm dev` runs web and API locally. docs/ has no changes
+- [ ] The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
 
 ^done
 

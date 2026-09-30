@@ -24,10 +24,10 @@ tags:
 **Issue:** [#6](https://github.com/magentawood/roomsie/issues/6)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[T-11 Model wrapper ⚑]]
@@ -37,10 +37,10 @@ tags:
 - [[T-35 Form B contract]]
 
 ## Done when
-- [ ] A Zod schema in packages/contract for Form A
-- [ ] Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty
+- [ ] A Zod schema for Form A is in packages/contract
+- [ ] The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty
 - [ ] Every enum has an `unclear` value
-- [ ] Results are a tagged union, `kind: "person"` for v0, so property listings can be added later without breaking clients
+- [ ] Results are a tagged union with `kind: "person"` for v0. Thus, a later change can add property listings and not break clients
 
 ^done
 

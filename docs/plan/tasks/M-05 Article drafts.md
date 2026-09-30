@@ -25,11 +25,11 @@ tags:
 - [[M-04 Article interviews]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Ten drafts written from the interviews
-- [ ] Published once the blog is live after launch
+- [ ] Ten drafts from the interviews are written
+- [ ] It is published when the blog is live after launch
 
 ^done
 

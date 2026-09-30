@@ -22,14 +22,14 @@ tags:
 **Issue:** [#4](https://github.com/magentawood/roomsie/issues/4)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[F-04 Accounts in Mumbai]]
 
 ## Done when
 - [ ] Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
-- [ ] Hard monthly caps are set on both AI accounts
+- [ ] Both AI accounts have hard monthly caps
 
 ^done
 

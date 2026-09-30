@@ -26,10 +26,10 @@ tags:
 - [[T-05 Google sign-in ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] Before launch, sign-in works only for emails on an allowlist
-- [ ] One setting turns the gate off on launch day
+- [ ] One setting disables the gate on launch day
 
 ^done

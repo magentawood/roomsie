@@ -24,21 +24,21 @@ tags:
 **Issue:** [#16](https://github.com/magentawood/roomsie/issues/16)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-08 Form A contract ⚑]]
 - [[D-03 Results and profile designs]]
-- [[T-14 Match query ⚑]], later. It lands Wed 30 Sep, before you start.
+- [[T-14 Match query ⚑]], at a later time. It goes into main on Wed 30 Sep, before you start.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands
-- [ ] The header says what is shown, from Everything in Mumbai down to People in Powai under 20k
-- [ ] Updates only when a form value or weight changes, never reorders while scrolling
-- [ ] Match score hidden until lifestyle answers exist
+- [ ] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
+- [ ] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
+- [ ] It updates only when a form value or weight changes. It never changes the order during a scroll
+- [ ] The match score is hidden until lifestyle answers exist
 
 ^done
 

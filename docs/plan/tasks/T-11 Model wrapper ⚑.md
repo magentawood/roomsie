@@ -24,7 +24,7 @@ tags:
 **Issue:** [#15](https://github.com/magentawood/roomsie/issues/15)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-08 Form A contract ⚑]]
@@ -36,9 +36,9 @@ tags:
 
 ## Done when
 - [ ] One module is the only way the app calls a model
-- [ ] DeepSeek V4.1 Flash first. Gemini on a timeout, a 5xx or a rate limit
-- [ ] Output that fails Zod retries once, then goes to Gemini
-- [ ] Logs tokens in, tokens out and the model for every call. The system prompt is cached
+- [ ] The model wrapper calls DeepSeek V4.1 Flash first. It calls Gemini if there is a timeout, a 5xx or a rate limit
+- [ ] If output fails Zod, the call retries one time, then goes to Gemini
+- [ ] It logs tokens in, tokens out and the model for every call. The system prompt is cached
 
 ^done
 

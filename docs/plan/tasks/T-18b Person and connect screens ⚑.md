@@ -24,20 +24,20 @@ tags:
 **Issue:** [#44](https://github.com/magentawood/roomsie/issues/44)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[D-03 Results and profile designs]]
-- [[T-18a Connect API ⚑]], later. It lands Thu 1 Oct, before you start.
+- [[T-18a Connect API ⚑]], at a later time. It goes into main on Thu 1 Oct, before you start.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Built first from the V3 prototype's detail sheet, against a mock of the connect API. Wired to T-18a when it lands on Sun 4 Oct
+- [ ] The first version uses the detail sheet of the V3 prototype, against a mock of the connect API. It connects to T-18a when T-18a lands on Sun 4 Oct
 - [ ] The person screen needs sign-in
-- [ ] Connect button with sent, accepted and declined states
+- [ ] The connect button has sent, accepted and declined states
 - [ ] The number shows only after both accept
-- [ ] Report and block are one tap away
+- [ ] Report and block need only one tap
 
 ^done

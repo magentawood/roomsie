@@ -22,13 +22,13 @@ tags:
 **Issue:** [#54](https://github.com/magentawood/roomsie/issues/54)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] T4 turns off the invite gate and has tested the rollback
+- [ ] T4 disables the invite gate. T4 tested the rollback
 - [ ] Everyone checks the live site on their own phone
 - [ ] Marketing posts and replies to every comment. Every bug report becomes an issue
 

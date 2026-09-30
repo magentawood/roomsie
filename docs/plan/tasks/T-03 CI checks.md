@@ -26,11 +26,11 @@ tags:
 - [[T-02 Scaffold monorepo ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] Every pull request runs typecheck, lint, build and gitleaks
-- [ ] Finishes in under five minutes
+- [ ] It finishes in less than five minutes
 
 ^done
 

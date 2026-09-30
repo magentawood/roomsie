@@ -26,11 +26,11 @@ tags:
 - [[T-02 Scaffold monorepo ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] `reportError(err, context)` lives in packages/config and is the only way code reports errors
-- [ ] Sentry free tier connected in web and API
+- [ ] `reportError(err, context)` is in packages/config. It is the only way that code reports errors
+- [ ] The Sentry free tier is connected in web and API
 - [ ] `beforeSend` strips message text, phone numbers and the Authorization header
 
 ^done

@@ -27,12 +27,12 @@ tags:
 - [[D-04 Landing and waitlist designs]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] The three launch areas are named on the site
-- [ ] A visitor from elsewhere gets a waitlist form, not an empty panel
-- [ ] Waitlist entries are saved with their area
+- [ ] The site gives the names of the three launch areas
+- [ ] A visitor from a different area gets a waitlist form, not an empty panel
+- [ ] The system saves each waitlist entry with its area
 
 ^done
 

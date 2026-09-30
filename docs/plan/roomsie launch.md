@@ -6,13 +6,13 @@ tags:
 
 # roomsie launch
 
-Target **Mon 12 Oct 2026**, fallback Wed 14 Oct. 62 tasks.
+The target date is **Mon 12 Oct 2026**. The fallback date is Wed 14 Oct. The plan has 62 tasks.
 
 ## How to look at it
 
-- **Graph view.** Open it with Cmd+G. It shows only this plan, coloured by owner. Every line is a link: a task to what it waits on, to its owner, and to its checkpoint. ⚑ marks the critical path.
-- **Timeline.** Open [[Launch timeline.canvas]]. One swimlane per person, laid out on the calendar. Red cards are the critical path, and arrows show what waits on what.
-- **One person's view.** Open their owner note and turn on the local graph.
+- **Graph view.** Open it with Cmd+G. It shows only this plan, with one colour for each owner. Every line is a link. A line connects a task to the tasks that it waits on. Lines also connect a task to its owner and to its checkpoint. ⚑ identifies the critical path.
+- **Timeline.** Open [[Launch timeline.canvas]]. It has one swimlane for each person, on the calendar. The red cards are the critical path. The arrows show which task waits on which task.
+- **One person's view.** Open the owner note of that person. Then open the local graph.
 
 ## Owners
 
@@ -41,13 +41,13 @@ Target **Mon 12 Oct 2026**, fallback Wed 14 Oct. 62 tasks.
 
 ## Documents
 
-- [[how-to-work|How to work]] — each person's list, in order, and a plain-words index of every code
-- [[design-review|For the designer]] — the behaviour we are locking in, to confirm, change or defer
+- [[how-to-work|How to work]] — the list of each person, in order, and an index of every code in plain words
+- [[design-review|For the designer]] — the behaviour that we will lock, to confirm, change or defer
 - [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
 - [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
-- [[CONTEXT|Working context]] — the running decision record
-- `docs/product-base.md` and `docs/tech-base.md` — the product and technical records. Each has a browser version, `.html`, made by `tools/render-docs.py`
+- [[CONTEXT|Working context]] — the decision record that we keep current
+- `docs/product-base.md` and `docs/tech-base.md` — the product record and the technical record. Each has a browser version, `.html`, that `tools/render-docs.py` makes
 
 ---
 
-These notes are generated from `docs/team-plan.json`. To change the plan, edit that file and run `python3 tools/build-obsidian-plan.py`. The [GitHub issues](https://github.com/magentawood/roomsie/issues) stay the live tracker.
+These notes come from `docs/team-plan.json`. To change the plan, edit that file. Then run `python3 tools/build-obsidian-plan.py`. The [GitHub issues](https://github.com/magentawood/roomsie/issues) stay the live tracker.

@@ -22,14 +22,14 @@ tags:
 **Issue:** [#50](https://github.com/magentawood/roomsie/issues/50)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] Saturday 10 October, 8 pm
-- [ ] Checked against the go/no-go list in docs/team-plan.md
+- [ ] The team checks it against the go/no-go list in docs/team-plan.md
 
 ^done
 

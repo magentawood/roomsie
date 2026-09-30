@@ -27,11 +27,11 @@ tags:
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] What a visitor told the assistant before signing in is attached to their account when they sign in
-- [ ] Nothing is lost and nothing is asked twice
+- [ ] When a visitor signs in, the account gets what the visitor told the assistant before sign-in
+- [ ] Nothing is lost, and the assistant never asks the same thing two times
 - [ ] The stored chat turns move to the account with the session
 
 ^done

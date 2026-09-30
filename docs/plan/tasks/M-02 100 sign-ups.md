@@ -28,7 +28,7 @@ tags:
 - [[M-06 Beta invites ⚑]]
 
 ## Done when
-- [ ] 100 sign-ups by Wednesday 30 September
-- [ ] 250 by Sunday 4 October, because about 6 in 10 will finish a profile
+- [ ] There are 100 sign-ups by Wednesday 30 September
+- [ ] The count is 250 by Sunday 4 October, because approximately 6 in 10 people will complete a profile
 
 ^done

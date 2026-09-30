@@ -23,7 +23,7 @@ tags:
 **Issue:** [#7](https://github.com/magentawood/roomsie/issues/7)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[D-01 Styling decision]]
@@ -34,8 +34,8 @@ tags:
 - [[D-05 Design QA]]
 
 ## Done when
-- [ ] Chat with chips, the split view, and the phone chat bar
-- [ ] These have no prototype equivalent, and V3 starts building them on Thursday
+- [ ] The chat with chips, the split view and the phone chat bar exist
+- [ ] These have no equivalent in the prototype. V3 starts to build them on Thursday
 
 ^done
 

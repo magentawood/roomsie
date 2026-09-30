@@ -22,15 +22,15 @@ tags:
 **Issue:** [#2](https://github.com/magentawood/roomsie/issues/2)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] Every role in this plan has a person's name
 - [ ] Everyone has access to the repo and the issues
-- [ ] Team channel exists, with a written standup by 10 am daily
+- [ ] A team channel exists, and it has a written standup by 10 am every day
 
 ^done
 

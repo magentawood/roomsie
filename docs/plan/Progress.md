@@ -6,18 +6,19 @@ tags:
 
 # Progress
 
-**The vault is the source of truth for progress.** Every task below opens
-to show its sub-tasks. Those checkboxes are the task note's own list, shown
-here rather than copied — tick one here and it is ticked in the task note.
+**The vault is the source of truth for progress.** You can open every task
+below to see its sub-tasks. These checkboxes are the list in the task note
+itself. This note shows that list, and does not copy it. Thus, if you tick
+a box here, you also tick the same box in the task note.
 
-The counts and ✅ 🟡 ⬜ marks are a snapshot. Run
-`python3 tools/build-obsidian-plan.py` to refresh them.
+The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
+`python3 tools/build-obsidian-plan.py`.
 
 **8 of 189 done · 4%**
 
 `█░░░░░░░░░░░░░░░░░░░░░░░`
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|

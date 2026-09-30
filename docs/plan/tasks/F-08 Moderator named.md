@@ -22,15 +22,15 @@ tags:
 **Issue:** [#34](https://github.com/magentawood/roomsie/issues/34)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] A moderator and a backup are named
-- [ ] Rules for when to suspend, and how fast to respond
-- [ ] Reports checked every day from launch
+- [ ] The team names a moderator and a backup
+- [ ] Rules exist for when to suspend a person and how fast to respond
+- [ ] The team checks reports every day from launch
 
 ^done
 

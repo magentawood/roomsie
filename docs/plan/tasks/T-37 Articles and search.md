@@ -29,9 +29,9 @@ tags:
 - [[T-38 Advisor]]
 
 ## Done when
-- [ ] An articles table with a Postgres full-text index. No vector store
-- [ ] The launch articles load from files in the repo, so publishing one is a pull request
-- [ ] A search returns the best matching passages with their article and heading
+- [ ] An articles table has a Postgres full-text index. There is no vector store
+- [ ] The launch articles load from files in the repo. Thus, a pull request publishes an article
+- [ ] A search returns the passages that match best, with their article and heading
 
 ^done
 

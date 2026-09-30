@@ -22,15 +22,15 @@ tags:
 **Issue:** [#17](https://github.com/magentawood/roomsie/issues/17)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Says what is collected, why, for how long, how to delete, and who to contact
-- [ ] A named grievance contact
-- [ ] Says that chat messages are stored, and that deleting the account deletes them
+- [ ] It says what the system collects, why, for how long, how to delete it, and who to contact
+- [ ] There is a named grievance contact
+- [ ] It says that the system stores chat messages, and that account deletion deletes them
 
 ^done
 

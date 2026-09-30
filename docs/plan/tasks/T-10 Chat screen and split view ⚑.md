@@ -24,7 +24,7 @@ tags:
 **Issue:** [#12](https://github.com/magentawood/roomsie/issues/12)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[D-02 Chat screen designs ⚑]]
@@ -34,9 +34,9 @@ tags:
 
 ## Done when
 - [ ] The landing button opens a full-screen chat
-- [ ] The screen splits into chat and results once results exist
-- [ ] On a phone, the chat drops to a bar at the bottom and expands on tap
-- [ ] Nothing resizes while the person is typing
+- [ ] When results exist, the screen splits into chat and results
+- [ ] On a phone, the chat becomes a bar at the bottom and expands when the user taps it
+- [ ] Nothing changes size while the person types
 
 ^done
 

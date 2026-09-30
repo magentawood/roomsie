@@ -24,10 +24,10 @@ tags:
 **Issue:** [#11](https://github.com/magentawood/roomsie/issues/11)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[T-14 Match query ⚑]]
@@ -41,12 +41,12 @@ tags:
 - [[T-37 Articles and search]]
 
 ## Done when
-- [ ] Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
+- [ ] Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
 - [x] Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [x] UUIDv7 ids with no database default. `created_at` from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [x] Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
-- [x] An `areas` catalogue and a `listings` table, so area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
+- [x] IDs are UUIDv7 with no database default. `created_at` comes from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
+- [x] Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
+- [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B
+- [x] An `areas` catalogue and a `listings` table exist, thus area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
 
 ^done
 

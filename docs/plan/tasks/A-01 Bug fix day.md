@@ -22,13 +22,13 @@ tags:
 **Issue:** [#53](https://github.com/magentawood/roomsie/issues/53)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] Engineers spend their two hours on P1 bugs only
-- [ ] No database migrations
+- [ ] There are no database migrations
 
 ^done

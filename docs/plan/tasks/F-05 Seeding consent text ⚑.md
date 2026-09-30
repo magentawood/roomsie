@@ -23,16 +23,16 @@ tags:
 **Issue:** [#8](https://github.com/magentawood/roomsie/issues/8)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[M-01 Seeding form ⚑]]
 
 ## Done when
-- [ ] Says what is collected, that the profile will be shown to other roomsie users, and how to delete it
-- [ ] Short enough to read on a phone
+- [ ] It says what the system collects, that other roomsie users will see the profile, and how to delete it
+- [ ] It is short enough to read on a phone
 
 ^done

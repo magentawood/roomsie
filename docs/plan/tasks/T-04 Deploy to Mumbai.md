@@ -30,8 +30,8 @@ tags:
 - [[T-40 Nightly backups]]
 
 ## Done when
-- [ ] Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile
-- [ ] Secrets set in both
+- [ ] Web is on Vercel, pinned to bom1. The API is on Fly in bom, built from a Dockerfile
+- [ ] Secrets are set in both
 - [ ] A merge to main deploys automatically
 
 ^done
