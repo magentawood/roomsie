@@ -6,56 +6,53 @@
 
 The femmeflats design system is a **customised Untitled UI**:
 
-- On the design side, it uses the Untitled UI Figma kit.
-- In code, it uses Untitled UI React (React Aria based), with
-  `@untitledui/icons`.
+- Design side: the Untitled UI Figma kit.
+- Code: Untitled UI React (React Aria based), with `@untitledui/icons`.
 
-The current Figma export is still **stock Untitled UI**. The brand ramp is the
-default blue of Untitled UI, and the fonts are Inter. The customisation comes
-subsequently, and it goes through this same pipeline.
+The current Figma export is still **stock Untitled UI**: the default blue brand
+ramp of Untitled UI, and Inter fonts. The customisation comes subsequently,
+through this same pipeline.
 
 `figma-mcp-bridge` makes snapshots of the Figma file. Its own documentation
 says that values go **Figma → export only**. If you edit an exported file, this
 changes nothing in Figma, and the next export overwrites the file. The export
 is a build artefact, not a sync.
 
-The current export has **691 variables in 7 collections**. It also has 44 text
-styles, 26 effect styles, 8 grid styles, 111 gradient styles and 299 solid
-colour styles.
+The current export has **691 variables in 7 collections**, 44 text styles, 26
+effect styles, 8 grid styles, 111 gradient styles and 299 solid colour styles.
 
 ## Decisions
 
 ### 1. Figma is the single source of truth
 
-You define and edit tokens only in Figma. The derived artefacts are the export,
-`token-map.md`, `theme.css` and all generated files. Nobody ever edits a
-generated file by hand, because the next sync overwrites it.
-
-Code can need a token that Figma does not have. For this token, the path is
-`DS-GAP` → designer adds it in Figma → re-export. There is no code → Figma
-direction.
+- You define and edit tokens only in Figma.
+- The export, `token-map.md`, `theme.css` and all generated files are derived
+  artefacts. Nobody ever edits a generated file by hand, because the next sync
+  overwrites it.
+- If code needs a token that Figma does not have, the path is `DS-GAP` →
+  designer adds it in Figma → re-export. There is no code → Figma direction.
 
 ### 2. Build input is `figma-variables.json`, not `tokens.dtcg.json`
 
 The bridge writes the two files. DTCG **loses data in exactly the way that is
-important to us**. `$value` carries only the *default* mode of the collection.
-The other modes are deep in `$extensions["com.figma"].modes`.
+important to us**:
 
-Here, light and dark are each first-class. Thus, a standard DTCG build would
-silently drop one of them. Also, we would read the Figma extension block by
-hand in all conditions. This removes the only real advantage of DTCG.
+- `$value` carries only the *default* mode of the collection. The other modes
+  are deep in `$extensions["com.figma"].modes`.
+- Here, light and dark are each first-class. Thus, a standard DTCG build would
+  silently drop one of them.
+- We would read the Figma extension block by hand in all conditions. This
+  removes the only real advantage of DTCG.
 
 The lossless file also keeps the `valuesByMode` **aliases by id**. Decision 4
-depends on this.
-
-`tokens.dtcg.json` stays useful as an interchange artefact for any future tool
-that wants standard DTCG. It is not the build input.
+depends on this. `tokens.dtcg.json` stays useful as an interchange artefact for
+any future tool that wants standard DTCG.
 
 ### 3. `theme.css` is generated wholesale
 
-`theme.css` is only a build artefact. If you delete it, it regenerates from the
-export. No hand edit can cause drift. Thus, the structure gives Figma ↔ code
-parity, and the parity does not depend on discipline.
+If you delete `theme.css`, it regenerates from the export. No hand edit can
+cause drift. Thus, the structure gives Figma ↔ code parity, and the parity does
+not depend on discipline.
 
 **Required mitigation.** When the generator makes the full file, a naming
 divergence would silently break Untitled UI React components, and not show an
@@ -82,10 +79,11 @@ Thus, a silent visual break becomes a loud build error.
 }
 ```
 
-You can see the primitive → semantic tier in the CSS. If you recolour one
-primitive, the change cascades to all locations. DevTools shows the full chain.
-If we flatten the aliases, only Figma and `token-map.md` would record that
-structure.
+- You can see the primitive → semantic tier in the CSS.
+- If you recolour one primitive, the change cascades to all locations.
+- DevTools shows the full chain.
+- If we flatten the aliases, only Figma and `token-map.md` would record that
+  structure.
 
 Generator rules:
 
@@ -93,19 +91,19 @@ Generator rules:
 |---|---|
 | The value is a raw value (primitives) | literal |
 | The value is a `VARIABLE_ALIAS` | `var(--<resolved target name>)` |
-| The alias target is not in the export (`unresolvedAliases`) | **fail the build**. Never silently flatten |
+| The alias target is not in the export (`unresolvedAliases`) | **fail the build** |
 | The alias goes across collections | resolve in the `defaultModeId` of the target collection, as the bridge docs specify |
-| Two collections have the same variable name | resolve **by id**, never by name. The bridge docs state this limitation |
+| Two collections have the same variable name | resolve **by id**. The bridge docs state this limitation |
 
 ### 5. Plain `@theme`, not `@theme inline`
 
-This trap makes decision 4 safe or broken. Thus, we record it explicitly.
+This trap makes decision 4 safe or broken.
 
-With plain `@theme`, the utility compiles to `color: var(--color-text-primary)`.
-Thus, when `.dark-mode` reassigns that token, the utility uses the new value.
-With `@theme inline`, the value goes into the utility as
-`color: var(--color-neutral-900)`. Then the `.dark-mode` reassignment has **no
-effect**.
+- With plain `@theme`, the utility compiles to `color: var(--color-text-primary)`.
+  Thus, when `.dark-mode` reassigns that token, the utility uses the new value.
+- With `@theme inline`, the value goes into the utility as
+  `color: var(--color-neutral-900)`. Then the `.dark-mode` reassignment has **no
+  effect**.
 
 **The rule that follows: dark mode reassigns the *semantic* token, never the
 primitive.** Figma already models it in this way. Semantic variables carry
@@ -113,13 +111,12 @@ aliases for each mode, and primitives do not change with the mode.
 
 ### 6. femmeflats is light-first, matching Untitled UI
 
-Light values are in `@theme`. Dark values are in
-`@layer base { .dark-mode { … } }`. We do not invert the architecture of the
-library.
-
-Dark mode is a **class**, not a media query. Thus, for an Appearance setting of
-"system", we read `prefers-color-scheme` in JavaScript. Then we apply
-`.dark-mode` on the root element ourselves.
+- Light values are in `@theme`. Dark values are in
+  `@layer base { .dark-mode { … } }`. We do not invert the architecture of the
+  library.
+- Dark mode is a **class**, not a media query. Thus, for an Appearance setting
+  of "system", we read `prefers-color-scheme` in JavaScript. Then we apply
+  `.dark-mode` on the root element ourselves.
 
 ### 7. Generated files are committed; CI verifies they are current
 
@@ -129,7 +126,6 @@ if the output is different from the committed files**.
 
 - Vercel and Fly builds need no Figma access and no generator step.
 - A Figma change shows as a CSS diff in the pull request that you can review.
-  Thus, design review really becomes code review.
 - If a person edits a generated file by hand, CI finds it at that time, not
   subsequently. Decision 3 exists to prevent this drift.
 
@@ -142,31 +138,31 @@ is the purpose.
   `var()` references dangle. Primitive utilities that you do not use cost
   nothing, because Tailwind emits only what you use.
 - `check-tokens.mjs` continues to make sure that components use semantic
-  tokens. The reason is that the primitives in `@theme` make `bg-neutral-900`
-  technically valid.
+  tokens, because the primitives in `@theme` make `bg-neutral-900` technically
+  valid.
 - Git ignores each generated file, or the file has a clear mark that it is
-  generated. The review
-  is on the Figma change and the generator, not on the output.
+  generated. The review is on the Figma change and the generator, not on the
+  output.
 - The rebrand (brand ramp → femmeflats, typography) changes only values, and it
   runs this pipeline again. It needs no architectural work.
 
 ## Blocked
 
-**We cannot write the naming transform at this time.** `token-map.md` proposes
-`--color-bg-primary` → utility `bg-primary`. But stock Tailwind v4 would
-generate `bg-bg-primary` from that variable. Untitled UI React must define
-custom utilities to get the shorter names. Its own docs do not say how.
+**We cannot write the naming transform at this time.**
 
-One command removes this block: `npx untitledui@latest tailwind`. Then read the
-real `theme.css`. Its names win, as `token-map.md` specifies. Until then, the
-name-mapping rules of the generator are not specified. We settled all the other
-items in this ADR.
+- `token-map.md` proposes `--color-bg-primary` → utility `bg-primary`. But stock
+  Tailwind v4 would generate `bg-bg-primary` from that variable.
+- Untitled UI React must define custom utilities to get the shorter names. Its
+  own docs do not say how.
+- One command removes this block: `npx untitledui@latest tailwind`. Then read
+  the real `theme.css`. Its names win, as `token-map.md` specifies.
+
+Until then, the name-mapping rules of the generator are not specified. We
+settled all the other items in this ADR.
 
 ## Notes
 
 - We deprecated `PRD.md` (2026-09-14). It is not a source for design decisions.
-- The current export is stock Untitled UI. This known customisation work stays
-  open: the Brand ramp is still Untitled UI blue, and the font family variables
-  are still Inter. When Brand moves to a rose/red hue, **brand and `error` must
-  stay clearly different**. femmeflats is a safety product. On it, Block,
-  Report and destructive confirmations cannot read as primary actions.
+- When Brand moves to a rose/red hue, **brand and `error` must stay clearly
+  different**. femmeflats is a safety product. On it, Block, Report and
+  destructive confirmations cannot read as primary actions.
