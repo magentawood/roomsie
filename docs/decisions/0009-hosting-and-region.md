@@ -4,8 +4,10 @@
 
 ## Context
 
-`apps/api` (ADR 0003) is a long-running Node process. `apps/web` is a Next.js
-app. Supabase manages Postgres (ADR 0005). All users are in one Indian city.
+- `apps/api` (ADR 0003) is a long-running Node process.
+- `apps/web` is a Next.js app.
+- Supabase manages Postgres (ADR 0005).
+- All users are in one Indian city.
 
 ## Decision
 
@@ -28,24 +30,23 @@ latency is not user→API. It is **API→database**.
 | API Singapore · DB Singapore | ~1ms | ~5ms |
 | **API Singapore · DB Mumbai** | ~55ms | **~275ms wasted** |
 
-The failure mode is not the incorrect city. It is **an API and a database in
-different regions**. We chose Mumbai because all users are in one Indian city.
-Thus, one region serves all the audience, with no multi-region complexity.
-
-**The Postgres region is the choice that is not easy to change. Compute
-follows it.** To move `apps/api` to a different host takes an afternoon. To
-move a Supabase project to a different region is a dump-and-restore, with
-downtime.
-
-Of the candidate hosts, only Fly.io has an Indian region. Render has no Indian
-region. Railway has no confirmed Indian region. Vercel does offer `bom1`. Thus,
-latency alone does not make Fly different from Vercel.
+- The failure mode is not the incorrect city. It is **an API and a database in
+  different regions**.
+- We chose Mumbai because all users are in one Indian city. One region serves
+  all the audience, with no multi-region complexity.
+- **The Postgres region is the choice that is not easy to change. Compute
+  follows it.** To move `apps/api` to a different host takes an afternoon. To
+  move a Supabase project to a different region is a dump-and-restore, with
+  downtime.
+- Of the candidate hosts, only Fly.io has an Indian region. Render has none.
+  Railway has no confirmed Indian region. Vercel does offer `bom1`. Thus,
+  latency alone does not make Fly different from Vercel.
 
 ### 2. Runtime — the argument that actually decided it
 
 Serverless functions have **no shared memory between requests**. Thus, no
-function can buffer, batch, throttle or cache data across requests. Each
-request is an island. Three items in our spec conflict with this limit.
+function can buffer, batch, throttle or cache data across requests. Three items
+in our spec conflict with this limit.
 
 **Analytics ingestion.** This item is the decisive one:
 
@@ -57,17 +58,16 @@ request is an island. Three items in our spec conflict with this limit.
 | Flushes for each session (from the spec) | ~50–80 |
 | **HTTP requests only for analytics** | **~4.2M/month** |
 
-On a long-running process, an in-memory buffer batches inserts of ~500. It
-sends them through one connection that stays open. A traffic spike causes more
-concurrent requests to the same process. But the database gets the same stable
-batched writes.
-
-On serverless, each flush is an isolated invocation. A spike makes the function
-scale to many instances. Each instance needs a connection, and all the
-connections arrive at the pooler at the same time. Then the pooler queues them,
-and the query latency increases. Thus, the swipe stack stutters, and the swipe
-stack is the core interaction. The fix is architectural, and we discover the
-problem under load.
+- **Long-running process:** an in-memory buffer batches inserts of ~500 and
+  sends them through one connection that stays open. A traffic spike causes
+  more concurrent requests to the same process, but the database gets the same
+  stable batched writes.
+- **Serverless:** each flush is an isolated invocation. A spike makes the
+  function scale to many instances. Each instance needs a connection, and all
+  the connections arrive at the pooler at the same time. Then the pooler queues
+  them, and the query latency increases. Thus, the swipe stack, the core
+  interaction, stutters. The fix is architectural, and we discover the problem
+  under load.
 
 **Rate limiting.** The limit is ~10 new conversations for each user each day. A
 long-running process keeps a counter in the process. Serverless needs a round
@@ -93,7 +93,7 @@ serverless is better than a single long-running machine:
 
 ADR 0007 already divides the work along this line. Vercel server-renders the
 public pages, and the CDN caches them. All write-heavy work goes behind
-`apps/api`. Thus, we use each tool where it is actually good.
+`apps/api`.
 
 ### 4. Vendor risk versus coupling risk
 
@@ -104,21 +104,20 @@ public pages, and the CDN caches them. All write-heavy work goes behind
 | Customers | 37,000 | 1M+ monthly Next.js devs |
 | Latest round | $25M Series D, Aug 2026 | Series F, Sept 2025, $9.3B |
 
-In its Series D statements, Fly reports that agent-native customers are
-approximately two-thirds of the revenue from its largest customers. These
-customers grow ~12× year on year. Fly changes into an AI-agent infrastructure
-company. The part of its attention for general web hosting decreases. That is a
-real risk.
-
-But the artefact that we deploy is a **Docker container**. If Fly is not
-satisfactory, the same image runs with no change on Railway, Render, AWS or a
-VPS. This move is the work of an afternoon. Vercel is the much safer company.
-But Vercel produces code that runs on no other platform.
+- **Fly's risk is real.** In its Series D statements, Fly reports that
+  agent-native customers are approximately two-thirds of the revenue from its
+  largest customers, and they grow ~12× year on year. Fly changes into an
+  AI-agent infrastructure company, and its attention to general web hosting
+  decreases.
+- **But the artefact that we deploy is a Docker container.** If Fly is not
+  satisfactory, the same image runs with no change on Railway, Render, AWS or a
+  VPS.
+- **Vercel is the much safer company,** but it produces code that runs on no
+  other platform.
 
 **The safer vendor carries the riskier coupling.** Of the two risks, only
-coupling costs engineering time. The reason is that portability is the thing
-that lets you respond to vendor risk at all. This is the same posture as ADR
-0001.
+coupling costs engineering time, because portability is the thing that lets you
+respond to vendor risk at all. This is the same posture as ADR 0001.
 
 ## Consequences
 
@@ -135,20 +134,17 @@ that lets you respond to vendor risk at all. This is the same posture as ADR
 
 ## Alternatives rejected
 
-- **Vercel `bom1` as a separate project.** It has the same region, almost zero
-  setup, and the safest vendor. We rejected it because of the no-shared-memory
-  problem. Buffering, rate limiting and background jobs each need one more
-  service (Supavisor, Upstash, QStash). Also, Fastify needs an adapter. Thus,
-  we need more vendors, hours and money to assemble again what one process
-  gives free.
-- **Railway / Render in Singapore.** These give a long-running process with
-  push-to-deploy simplicity. Their vendors continue to focus on general app hosting.
-  We rejected them because of the region. The user latency is ~50–70ms, not
-  ~10–20ms, and this is permanent.
+- **Vercel `bom1` as a separate project.** Same region and almost zero setup.
+  Rejected because of the no-shared-memory problem: buffering, rate limiting
+  and background jobs each need one more service (Supavisor, Upstash, QStash),
+  and Fastify needs an adapter. Thus, we need more vendors, hours and money to
+  assemble again what one process gives free.
+- **Railway / Render in Singapore.** A long-running process with push-to-deploy
+  simplicity, from vendors that continue to focus on general app hosting.
+  Rejected because of the region: the user latency is ~50–70ms, not ~10–20ms,
+  and this is permanent.
 
 ## Revisit when
 
-Revisit this decision when the reliability or the direction of Fly becomes a
-problem. Then the container moves to Railway, Render or AWS in an afternoon.
-Also revisit it when the traffic justifies more than one machine. That change
-is a config change, not a decision.
+- The reliability or the direction of Fly becomes a problem.
+- The traffic justifies more than one machine.
