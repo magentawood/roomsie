@@ -6,61 +6,51 @@
 
 ## Where the login gate actually sits
 
-Login is **not** required to browse. It is required for two things only:
+A user can browse with **no** login. Login is necessary for only two things:
 
-1. Seeing the full details of one listing.
-2. Contacting anyone.
+1. To see the full details of one listing.
+2. To contact a person.
 
-Everything before that is public:
+All the steps before these two are public:
 
 | Step | Login needed |
 |---|---|
 | Landing page | No |
 | Full-screen chat | No |
 | Split view, chat and listings | No |
-| Scrolling and filtering results | No |
-| Opening one listing's details | **Yes** |
-| Messaging a person or a lister | **Yes** |
+| Scroll and filter the results | No |
+| Open the details of one listing | **Yes** |
+| Send a message to a person or a lister | **Yes** |
 
-So the earlier conflict disappears. Area pages can be public and indexed,
-because the results grid was never gated in the first place.
+Thus, there is no longer a conflict between SEO and the login gate. Area pages can be public and indexed. The reason is that the results grid had no gate from the start.
 
 ---
 
 ## What a visitor from Google gets
 
-They land straight in the split view.
+The visitor goes directly to the split view.
 
-- The listings panel opens with the page's filters already applied. A visit to
-  "Flats in Powai" opens the grid filtered to Powai.
-- The chat opens with **no history**. It is a fresh conversation.
-- But the **form is not empty.** The area and intent slots are filled from the
-  page they arrived on.
+- The listings panel opens with the filters of the page applied. For example, a visit to "Flats in Powai" opens the grid with the Powai filter.
+- The chat opens with **no history**. It is a new conversation.
+- But the **form is not empty.** The area and intent slots get their values from the page where the visitor arrived.
 
-**Form state and chat history are different things.** The transcript starts
-blank. The form starts partly filled. The assistant opens by confirming what it
-already knows rather than asking cold: "You were looking at Powai. What is your
-budget?"
+**The form state and the chat history are different things.** The transcript starts empty. The form starts with some values. Thus, the assistant does not start with a cold question. It first confirms the values that it knows: "You were looking at Powai. What is your budget?"
 
-That removes the two slowest turns of the interview.
+This removes the two slowest turns of the interview.
 
 ---
 
 ## The reframe on listing pages
 
-Gating the listing *detail* costs far less than it appears, because
-**individual listing pages were never the SEO asset.**
+A gate on the listing *detail* costs much less than it seems to cost. The reason is that **individual listing pages were at no time the SEO asset.**
 
-Three reasons:
+There are three reasons:
 
-1. They are thin. A rent, an area, a few amenities.
-2. They churn. roomsie listings expire after 30 days. That means 404s and link
-   decay, which Google demotes.
-3. They are stale by the time they rank. The flat is gone.
+1. They are thin. They show a rent, an area, and some amenities.
+2. They change frequently. roomsie listings expire after 30 days. Thus, they cause 404s and link decay, and Google demotes pages with these problems.
+3. When they rank, their data is not current. The flat is not available.
 
-The portals do not rank on individual flats either. They rank on **area
-pages**. So the thing you are gating is not the thing that was going to bring
-you traffic.
+The portals also do not rank on individual flats. They rank on **area pages**. Thus, the gate is on a thing that would not bring you traffic.
 
 ---
 
@@ -68,129 +58,107 @@ you traffic.
 
 ### Layer 1 — Area and intent pages. The main asset.
 
-Public, server-rendered, built from **aggregate data only**. One page per area
-per intent.
+These pages are public and server-rendered. They use **aggregate data only**. There is one page for each area and each intent.
 
-Examples: "Flatmates in Powai", "Rooms for rent in Bandra East", "Flat sharing
-in Andheri West".
+Examples: "Flatmates in Powai", "Rooms for rent in Bandra East", "Flat sharing in Andheri West".
 
-What goes on the page:
+The page contains these blocks:
 
 | Block | Source |
 |---|---|
-| Median budget of people searching here | Aggregate over active seekers |
-| How many are searching this month | Count, rounded |
-| Typical move-in window | Aggregate |
-| Rent bands, by room type | Aggregate over listings |
-| Common lifestyle mix in the area | Aggregate over the nine axes |
-| Nearby areas people also search | Co-occurrence |
-| Commute and area description | Written once, evergreen |
+| Median budget of the people who search here | Aggregate of the active seekers |
+| Number of people who search this month | Count, rounded |
+| Usual move-in window | Aggregate |
+| Rent bands, for each room type | Aggregate of the listings |
+| Usual lifestyle mix in the area | Aggregate of the nine axes |
+| Nearby areas that people also search | Co-occurrence |
+| Commute and area description | Written one time, evergreen |
 
-**This data is the moat.** Nobody else has it. Unique data is what ranks. The
-portals can publish rent averages. They cannot publish what people searching
-Powai actually want in a flatmate, because they never ask.
+**This data is the moat.** No other company has it. Unique data is what ranks. The portals can publish rent averages. But they cannot publish what people who search Powai actually want in a flatmate. The reason is that the portals at no time ask this question.
 
-**Privacy rule.** Aggregates only, with a minimum count per cell. If fewer than
-20 active users or listings fall in a cell, suppress the number and show a
-band. Without that, a small cell leaks an individual.
+**Privacy rule.** Show aggregates only, with a minimum count for each cell. If fewer than 20 active users or listings are in a cell, do not show the number. Show a band. Without this rule, a small cell shows data about one person.
 
-**Freshness rule.** These pages update monthly and never 404. They survive
-market cycles, unlike a listing.
+**Freshness rule.** These pages update each month, and at no time do they give a 404. Unlike a listing, they continue through market cycles.
 
 ### Layer 1b — Filter pages
 
-Same mechanism, narrower. "2 BHK in Andheri West", "Rooms under 15000 in
-Powai". Each opens the split view with those filters set.
+Filter pages use the same mechanism as Layer 1, but they are narrower. Examples: "2 BHK in Andheri West", "Rooms under 15000 in Powai". Each page opens the split view with its filters set.
 
-Build these from real search demand, not from every possible filter
-combination. Thousands of near-empty permutation pages is the thin-content
-problem all over again.
+Make these pages from real search demand. Do not make them from all possible filter combinations. Thousands of almost empty permutation pages cause the thin-content problem again.
 
 ### Layer 2 — Editorial pages. The top of the funnel.
 
-Most rental search volume is informational, not transactional. People search
-how to do this before they search what is available.
+Most rental search volume is informational, not transactional. People first search how to do it. Then they search what is available.
 
-Targets: how to find a flatmate in Mumbai, rental agreement checklist for
-Maharashtra, deposit norms, police verification, Powai against Andheri for
-young professionals, what to ask before moving in with a stranger.
+Targets:
 
-Evergreen, cheap, and it feeds Layer 1 through internal links.
+- How to find a flatmate in Mumbai
+- Rental agreement checklist for Maharashtra
+- Deposit norms
+- Police verification
+- Powai against Andheri for young professionals
+- What to ask before you move in with a stranger
 
-**Use `roomsie.com/blog`, not `blogs.roomsie.com`.** Google treats a subdomain
-as a partly separate site, so ranking strength built on a blog subdomain does
-not pass cleanly to the main domain. A subdirectory keeps it all on one domain.
-Singular "blog" is also the convention. This is worth getting right at the
-start, because moving it later means redirecting every article.
+This content is evergreen and cheap. It sends users to Layer 1 through internal links.
+
+**Use `roomsie.com/blog`, not `blogs.roomsie.com`.** Google thinks of a subdomain as a site that is not fully connected to the primary domain. Thus, the ranking strength of a blog subdomain does not fully go to the primary domain. A subdirectory keeps all the content on one domain. Also, the singular "blog" is the usual convention.
+
+It is important to make this decision correctly at the start. If you move the blog after the start, you must redirect all the articles.
 
 ### Layer 3 — The landing page and brand.
 
-Already planned. Hero, narrative, the call to action into chat.
+This layer is in the plan. It contains the hero, the narrative, and the call to action into the chat.
 
 ---
 
 ## What every public page does
 
-Ends in the same place: the chat.
+All public pages end in the same location: the chat.
 
-**And it starts the interview warm.** A visitor arriving on "Flatmates in
-Powai" has already told you their area and their intent. The chat opens with
-those two slots filled and confirms them rather than asking cold.
+**Each page also starts the interview warm.** A visitor who arrives on "Flatmates in Powai" told you their area and their intent. The chat opens with these two slots filled. The assistant confirms them and does not start with a cold question.
 
-That is worth more than the page view. It removes the two slowest turns of the
-interview.
+This warm start has more value than the page view. It removes the two slowest turns of the interview.
 
 ---
 
 ## The gated-indexing route, and why not to use it
 
-Google does support indexing content that users cannot see. The method is
-structured data: `isAccessibleForFree: false` plus a `hasPart` block with a
-`cssSelector` marking the gated section, on `CreativeWork` or `NewsArticle`.
+Google does support the indexing of content that users cannot see. The method is structured data: `isAccessibleForFree: false` plus a `hasPart` block with a `cssSelector` that marks the gated section, on `CreativeWork` or `NewsArticle`.
 
-Two reasons to leave it alone:
+There are two reasons not to use this route:
 
-1. **Get it wrong and it is cloaking.** Serving Googlebot content users cannot
-   see is a spam violation unless the markup declares it correctly. The penalty
-   is demotion or removal from the index.
-2. **It would get you indexed on the wrong pages.** The whole point above is
-   that listing pages are thin and churning. Succeeding at indexing them wins
-   little.
+1. **An error makes it cloaking.** If Googlebot gets content that users cannot see, this is a spam violation. The only exception is when the markup declares it correctly. The penalty is demotion or removal from the index.
+2. **It would get you indexed on the incorrect pages.** The section above shows that listing pages are thin and change frequently. If Google indexes these pages, you get almost no benefit.
 
-Keep it in reserve. It is the right tool if roomsie ever publishes long-form
-gated content.
+Keep this route in reserve. It is the correct tool if roomsie ever publishes long-form gated content.
 
 ---
 
 ## The new cost this creates
 
-The interview now runs **before login**. That has two consequences.
+At this time, the interview runs **before login**. This has two results.
 
-**Anonymous state.** The form exists before there is a user row. It needs an
-anonymous session id, and that state has to merge into the user record on
-login. This is not in the schema ledger's S1 to S7 and needs adding.
+**Anonymous state.** The form exists before there is a user row. Thus, it needs an anonymous session id. At login, this state has to merge into the user record. The schema ledger's S1 to S7 do not include this state. You must add it.
 
-**Anyone can spend your inference budget.** An unauthenticated chat is open to
-the world. Someone can burn money by talking to it, and bots will find it.
-Needed before launch:
+**Anyone can spend your inference budget.** An unauthenticated chat is open to all people. A person can spend your money when they talk to it. Bots will find it. Before launch, these items are necessary:
 
-- Rate limit per device and per network, not per user, because there is no user
-- A cap on turns in an anonymous session before login is asked for
+- A rate limit for each device and each network, not for each user, because there is no user
+- A maximum number of turns in an anonymous session before the chat asks for login
 - A cheaper model or a shorter context for anonymous turns
-- A hard daily spend ceiling with a defined behaviour when it is hit
+- A hard daily spend ceiling, with a defined behaviour when the spend gets to the ceiling
 
-Tracked as decision PD9.
+Decision PD9 tracks these protections.
 
 ---
 
 ## Sequencing
 
-Layer 1 needs users, and at launch there are none. So:
+Layer 1 needs users, and at launch there are no users. Thus:
 
 | When | What |
 |---|---|
-| Launch | Landing page, editorial pages, area pages with area facts only |
-| Once there are users | Add the aggregate numbers to the area pages |
+| Launch | Landing page, editorial pages, and area pages with area facts only |
+| When there are users | Add the aggregate numbers to the area pages |
 
 ---
 
@@ -198,10 +166,10 @@ Layer 1 needs users, and at launch there are none. So:
 
 | Metric | Why |
 |---|---|
-| Ranking position per area page | The main asset working or not |
-| Chat starts from an area page | The conversion that matters |
-| Slots pre-filled on arrival | Whether warm starts actually help |
-| Interview completion, warm against cold | Whether a pre-filled start converts better |
+| Ranking position for each area page | Shows if the main asset works |
+| Chat starts from an area page | The conversion that is important |
+| Slots pre-filled on arrival | Shows if warm starts actually help |
+| Interview completion, warm against cold | Shows if a pre-filled start converts better |
 
 ---
 
