@@ -66,7 +66,7 @@ connection, never subscribe to a Postgres table, and never learn a column name.
 Fourteen architecture decisions are settled. **Schema design is in progress** —
 before any scaffolding, because the data model is the most expensive thing to
 change. Schema decisions are ADR 0015 onward, and are mirrored on the Schema
-page of `../tech-base.html`.
+page of `../tech-base.md`.
 
 - ✅ **S1 — ID strategy** → ADR 0015
 - ⏳ **S2 — `users` table** ← next
@@ -87,7 +87,7 @@ Scope still to cover:
 unblocks the token generator's naming transform (ADR 0011), which needs the real
 `theme.css` on disk.
 
-**Open items carried forward** are listed at the end of `../tech-base.html`.
+**Open items carried forward** are listed at the end of `../tech-base.md`.
 
 ## Standing rules
 
