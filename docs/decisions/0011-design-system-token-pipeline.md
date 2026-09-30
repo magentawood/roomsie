@@ -140,9 +140,8 @@ is the purpose.
 - `check-tokens.mjs` continues to make sure that components use semantic
   tokens, because the primitives in `@theme` make `bg-neutral-900` technically
   valid.
-- Git ignores each generated file, or the file has a clear mark that it is
-  generated. The review is on the Figma change and the generator, not on the
-  output.
+- We commit each generated file with a clear mark that it is generated (decision 7).
+  The review is on the Figma change and the generator, not on the output.
 - The rebrand (brand ramp → femmeflats, typography) changes only values, and it
   runs this pipeline again. It needs no architectural work.
 

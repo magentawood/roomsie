@@ -306,6 +306,7 @@ apps/api/src/db/
 > - The aggregate query is a different query from T-14.
 
 Twelve tables now, not ten.
+
 ---
 
 # Entry 2 — T-14, the match query

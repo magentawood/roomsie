@@ -35,7 +35,7 @@
 - **Answer them.**
 - Say clearly that the answer is general guidance, not a quote for one flat.
 - **Prefer the corpus when it has an entry,** and cite it.
-- If the corpus has no entry, use model knowledge.
+- If the corpus has no entry: signed-in users get an answer from a web search, and visitors get model knowledge, plainly hedged. (PD7a)
 
 > [!example]- Examples
 > - What semi-furnished usually includes
@@ -170,7 +170,7 @@ Classification occurs one time, at low cost, before all expensive calls:
 | Band | Handler | Model cost |
 |---|---|---|
 | Core | Extractor, Observer, Composer | Small, plus the composer when a reply is necessary |
-| Adjacent, general | Advisor: corpus first, then model knowledge | Small, plus retrieval |
+| Adjacent, general | Advisor: corpus first, then web search (signed in) or model knowledge (visitors). PD7a | Small, plus retrieval |
 | Adjacent, consequential | Advisor: corpus only | Small, plus retrieval |
 | Out of scope | Scripted redirect | **None** |
 | Adversarial | Scripted response, logged | **None** |
