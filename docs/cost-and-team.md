@@ -18,10 +18,7 @@ quality high.
 - The first three turns are chips.
 - A completed interview is approximately 8 to 12 model calls.
 
-> [!note]- Why
-> - Only one turn type is expensive: the open phase, and only when the user types.
-> - The first three turns cost nothing.
-> - A completed interview is not 25 model calls. Most of the 8 to 12 calls are small.
+Why: [PD5](decisions/pd-05-team-and-budget.md)
 
 ## The five cost levers, in order of size
 
@@ -34,12 +31,7 @@ quality high.
 4. **Cache the system prompt.**
 5. **Chips shorten the interview.**
 
-> [!note]- Why
-> - Lever 2: extraction is a classification task, and a small, cheap model does it correctly. Conversation needs a good model.
-> - Extraction is most of the calls. Thus, lever 2 is the largest lever after lever 1.
-> - Lever 3: the form is the state. If each call carries the full transcript, cost increases as the square of the length.
-> - Lever 4: the system prompt is the same on each call. It is the largest fixed part of the input.
-> - Lever 5: fewer turns give less cost and less drop-off. The UX lever and the cost lever are the same lever.
+Why: [PD5](decisions/pd-05-team-and-budget.md)
 
 ## Where the real risk is
 
@@ -59,10 +51,7 @@ The PD9 controls are a budget control, not only a safety control:
 - Tie the log to the session.
 - Cost for each completed interview is a launch metric, not an afterthought.
 
-> [!note]- Why
-> - One interview is cheap.
-> - But a thousand interviews a month at some rupees each cost approximately all of the current infrastructure bill.
-> - The chat runs before login. Thus, anyone can start an interview.
+Why: [PD5](decisions/pd-05-team-and-budget.md)
 
 ## What the AI layer adds to the monthly bill
 
@@ -74,11 +63,7 @@ The current base is approximately $50 to $80 a month.
 | A second Fly machine | ADR 0009 accepts a single machine today. This decision is worth a new review. |
 | Vector store | **Not necessary.** Retrieval is SQL. The assistant does not search documents. It fills a form and runs a query. |
 
-> [!note]- Why
-> - Long in-flight agent requests make restarts much easier to see.
-> - Structured filters on Postgres do retrieval correctly and at low cost.
-> - No vector store prevents a conflict with ADR 0001, which forbids proprietary extensions on the critical path.
-> - It also saves money and a decision.
+Why: [PD5](decisions/pd-05-team-and-budget.md)
 
 ## Team allocation
 
@@ -90,9 +75,7 @@ Nothing blocks them.
    work with the highest value today.
 2. **The blog.** Start immediately, and publish at `roomsie.com/blog`.
 
-> [!note]- Why
-> - SEO compounds slowly. Thus, a late start causes a loss of real traffic.
-> - Articles need no users and no product.
+Why: [PD5](decisions/pd-05-team-and-budget.md)
 
 ### The designer has one unresolved decision
 
@@ -123,9 +106,7 @@ This division is approximate. We will make it firm when we know the hours.
 - The score is extraction accuracy, not string equality.
 - Budget the eval suite as its own piece of work.
 
-> [!note]- Why
-> - Only the eval suite tells you if a prompt change made the product better or worse.
-> - Without it, each change is a guess.
+Why: [PD5](decisions/pd-05-team-and-budget.md)
 
 ## Open
 
@@ -133,6 +114,4 @@ This division is approximate. We will make it firm when we know the hours.
   number turns the plan into a timeline.
 - The previous base assumed 2 hours a day.
 
-> [!note]- Why
-> - We wrote all of the above to be cheap in hours and in money.
-> - But we cannot make the schedule without this number.
+Why: [PD5](decisions/pd-05-team-and-budget.md)

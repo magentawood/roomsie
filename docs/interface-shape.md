@@ -16,11 +16,7 @@
 
 ## Why it works
 
-> [!note]- Why
-> - The user sees results fast. Thus, the interview feels worth the effort.
-> - Results change as the user talks. This proves that the assistant listens.
-> - Minimal manual filters give a way out, and the user does not leave the chat.
-> - A full chat first and two panels after give the effort a good pace.
+Why: [PD6](decisions/pd-06-interface-shape.md)
 
 ---
 
@@ -50,14 +46,7 @@
 **One rule to hold.** Do not change the size while the user types or reads.
 The size should change on send, or when the user drags it.
 
-> [!note]- Why
-> - Mumbai is a mobile-first market. At 400px, a second panel cannot fit.
-> - Bottom sheet: one more component, but one product.
-> - Tabs: lowest cost. But it loses the live feedback, which is the primary function.
-> - Inline cards: most natural on mobile. But it is hard to compare options, which property search needs.
-> - The chat becomes approximately 60% of the height to let the user read the history.
-> - The mechanics are the same as on desktop: one form, two views.
-> - An automatic shrink in the middle of a sentence is the same defect as silent reorder in hole 4.
+Why: [PD6a](decisions/pd-06a-mobile-split-view.md)
 
 ### 2. Search traffic breaks the no-skip rule — CLOSED
 
@@ -70,8 +59,7 @@ The size should change on send, or when the user drags it.
   - Some fields of the form have values.
 - Refer to `seo-with-gated-products.md`.
 
-> [!note]- Why
-> Browse, chat and the two-panel view are public. Thus, there was no conflict with the no-skip rule.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ### 3. Two or three turns is not enough to rank — CLOSED
 
@@ -107,13 +95,7 @@ budget. This takes approximately three turns.
 - They continue while the user browses.
 - The completeness gate in `ai-agent-design.md` section 3.3 controls when the match score shows, not when the conversation stops.
 
-> [!note]- Why
-> - Filters and rank are different. Filters need area and budget.
-> - A compatibility rank needs the lifestyle answers, which take much more time.
-> - Intent, area and budget have a closed set of answers, so a tap is correct.
-> - Bands are faster than a slider on a phone.
-> - A user who types "2bhk in Powai under 25k from October" fills four slots in one turn. This user goes directly to results.
-> - If this does not work, the chips are only a form with a chat skin.
+Why: [PD6c](decisions/pd-06c-interface-holes.md)
 
 ### 4. Live updates — CLOSED
 
@@ -141,11 +123,7 @@ updates wait in a queue. When the user is idle, they apply.
 - After a tick, more results come automatically.
 - A narrow change always tells the user, also when the system does not ask.
 
-> [!note]- Why
-> - A turn that changes no slot changes nothing on the screen. Ten turns can give only three panel updates.
-> - A pure function of the form is deterministic and testable. No other part of this layer is.
-> - A toast with undo is not an interruption.
-> - Without the limit on "don't ask again", one tick makes cards go away silently for the remainder of the session.
+Why: [PD6c](decisions/pd-06c-interface-holes.md)
 
 ### 5. Two inputs, one form — CLOSED
 
@@ -162,11 +140,7 @@ updates wait in a queue. When the user is idle, they apply.
 | Manual edit contradicts earlier chat | Manual edit wins. The assistant tells this one time. |
 | Inference contradicts anything | Inference never wins. Propose it. |
 
-> [!note]- Why
-> - One form gives one source of truth.
-> - If each filter tap made a chat message, the conversation would become a list of taps.
-> - A manual tap is explicit and recent.
-> - An "are you sure" question after a deliberate tap annoys the user. It also teaches people to close dialogs without a check.
+Why: [PD6c](decisions/pd-06c-interface-holes.md)
 
 ---
 
@@ -182,5 +156,4 @@ state before launch:
 - Relax a dealbreaker.
 - Offer a notification.
 
-> [!note]- Why
-> If Mumbai supply is small, a forced interview makes the dead end worse. The user did work for no result.
+Why: [PD6](decisions/pd-06-interface-shape.md)

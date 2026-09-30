@@ -6,8 +6,7 @@
 **Constraint removed:** data residency is not a requirement. Inference can run
 in all locations. This supersedes the caution that came from ADR 0012.
 
-> [!note]- Why
-> - This makes the decision much simpler.
+Why: [PD7](decisions/pd-07-models.md)
 
 ---
 
@@ -19,9 +18,6 @@ in all locations. This supersedes the caution that came from ADR 0012.
   - The Apache licence lets you self-host Qwen subsequently, if that is ever important.
 - **Groq is not a model. It is an inference provider.** "Groq" is a decision about *where* Qwen or a different open model runs. It is not a decision about *which* model.
 - **DeepSeek V4.1 Flash supersedes DeepSeek V4 Flash.** V4.1 Flash shipped on 10 September 2026. It has a new API route and lower prices.
-
-> [!note]- Why
-> - Groq serves open-weight models very fast on its own hardware.
 
 ---
 
@@ -41,11 +37,7 @@ in all locations. This supersedes the caution that came from ADR 0012.
 - **Cache discount matters more than headline price.** A 98% cache discount applies to the fixed system prompt only.
 - Design for caching from the start.
 
-> [!note]- Why
-> - Peak includes the Indian work day but **not** the Indian evening.
-> - People are most likely to look for a flat in the evening. This is good for you.
-> - But the clock prices are a complication for operations.
-> - Your system prompt does not change, and it is large. All calls send it.
+Why: [PD7](decisions/pd-07-models.md)
 
 ---
 
@@ -65,12 +57,7 @@ Order of magnitude, for one completed interview:
 - **The budget risk remains abuse, not legitimate use.** The chat runs before login.
 - PD9 is the control that matters.
 
-> [!note]- Why
-> - Most of the model calls are small-model calls.
-> - At a thousand interviews, the cost is 12 to 25 dollars a month. This cost is real. But next to the base, it is not a cause for concern.
-> - At your volume, the difference between the cheapest and the most expensive option on this list is noise.
-> - If you choose on price, you optimise the incorrect factor.
-> - A bot that talks to the chat all night costs more than a thousand human users.
+Why: [PD7](decisions/pd-07-models.md), [PD9](decisions/pd-09-pre-login-limits.md), [PD5](decisions/pd-05-team-and-budget.md)
 
 ---
 
@@ -81,10 +68,7 @@ Order of magnitude, for one completed interview:
 - **Indic-tuned models parse code-mixed input more reliably. But their training had far fewer tool-calling examples.** Thus, their structured output, which your extractor needs, is worse.
 - This conflict is on your highest-volume call.
 
-> [!note]- Why
-> - Your users will type "mujhe Powai mein 20k tak ka room chahiye, non-veg okay hai".
-> - Two findings from current research make Hinglish the constraint that decides the choice.
-> - The two findings are in direct conflict.
+Why: [PD7](decisions/pd-07-models.md)
 
 ### The finding that threatens the design
 
@@ -96,10 +80,7 @@ Order of magnitude, for one completed interview:
   3. **Make abstention rate a first-class eval metric.** Give input that is ambiguous on purpose to the extractor. Measure how frequently it correctly declines.
 - A model that does not abstain at all fails. This is correct also when its accuracy looks very good.
 
-> [!note]- Why
-> - The extractor can always pick *some* enum value, and not say that it does not know. Then you lose the confidence signal.
-> - Then the assistant starts to fill slots with guesses.
-> - The model does not tell you that it is not sure. The "unclear" value gives it a slot for its uncertainty.
+Why: [PD7](decisions/pd-07-models.md), [PD3b](decisions/pd-03b-interview-vs-chips.md)
 
 ---
 
@@ -118,12 +99,7 @@ Do not pick from a leaderboard. Pick from your own eval.
 3. **Pick a model for each role independently.** The roles do not have to use the same vendor.
 4. **Hide the vendor behind one module.** Use the same pattern as the `reportError` wrapper in ADR 0014. Application code calls your interface. It does not call a vendor SDK.
 
-> [!note]- Why
-> - The router, extractor and observer have one set of needs. The composer has a different set.
-> - The current architecture decouples the roles.
-> - With one module, a vendor swap costs a config change. This is important because this list will be different in six months.
-> - The eval set is not overhead. It is the same artefact that tells you if a prompt change helped.
-> - It is also the only honest answer to "which model".
+Why: [PD7](decisions/pd-07-models.md), [PD5](decisions/pd-05-team-and-budget.md)
 
 ---
 
@@ -150,12 +126,7 @@ Do not pick from a leaderboard. Pick from your own eval.
   3. **Make register match a first-class eval metric.**
 - This problem affects only the composer and the advisor.
 
-> [!note]- Why
-> - A user who types "mujhe Powai mein room chahiye" can easily get a formal English paragraph as the reply. This is a small thing. But it tells the user that the product is not really for them.
-> - A prompt-level mitigation is weaker than a model-level mitigation.
-> - The router classifies each turn.
-> - To measure register match, type Hinglish, then measure the reply. If you do not measure it, it becomes worse and nobody sees it.
-> - Extraction has no register problem, because a JSON enum has no register.
+Why: [PD7](decisions/pd-07-models.md)
 
 ### A benefit of the pairing that was not the reason for it
 
@@ -166,9 +137,7 @@ Do not pick from a leaderboard. Pick from your own eval.
 - **Also note:** DPDP obligations follow the data, not the server.
 - Before you send text from actual users, examine the retention terms and training terms of DeepSeek. Make sure that account deletion propagates.
 
-> [!note]- Why
-> - Gemini is the integrated fallback from the start. Thus, such a restriction becomes a config change, not a migration.
-> - If you process interview transcripts in a different country, the obligations stay.
+Why: [PD7](decisions/pd-07-models.md)
 
 ### What "fallback" has to mean
 
@@ -183,10 +152,7 @@ The three uses of "fallback" need different code:
 - **Quality is not a fallback trigger.** The eval set and the choice of the primary model settle quality differences. The system does not settle them at request time.
 - The wrapper holds the timeout, the retry, the fallback and the token accounting for each model.
 
-> [!note]- Why
-> - No reliable runtime signal shows that an answer had low quality.
-> - The wrapper does the work. Both vendors are behind one internal module.
-> - ADR 0014 uses the same pattern for error reporting. Application code calls the interface.
+Why: [PD7](decisions/pd-07-models.md), [ADR 0014](decisions/0014-error-tracking.md)
 
 ---
 
@@ -197,16 +163,7 @@ The three uses of "fallback" need different code:
 - The router task is a five-way classification.
 - If DeepSeek V4.1 Flash passes the Hinglish eval, use it.
 
-> [!note]- History
-> | Role | Lean | Why |
-> |---|---|---|
-> | Router | The cheapest model that classifies reliably | Do not spend too much. |
-> | Extractor and Observer | Gemini Flash-Lite tier | Strong multilingual coverage, mature structured output, latency-optimised. The Hinglish risk is the risk that matters. Google has the strongest Indic coverage of the three. |
-> | Composer | A good model, vendor open | It does not run frequently. You can see quality here and in no other role. |
-> | Advisor | Same as composer, plus retrieval | It is grounded. Thus, raw model knowledge is less important. |
->
-> - **DeepSeek V4.1 Flash is the value option.** Its cache discount is genuinely large. You can manage the peak-hour pricing, because your traffic should be mostly in the Indian evening.
-> - **Qwen3.6 is the option that keeps a door open.** Its Apache licence lets you host it on your own servers subsequently. While data residency is not a requirement, that door has small value. Thus, do not decrease quality today to keep it.
+Why: [PD7](decisions/pd-07-models.md)
 
 ---
 

@@ -19,9 +19,7 @@ A user can browse with **no** login. Login is necessary for only two things:
 
 Area pages can be public and indexed.
 
-> [!note]- Why
-> - The results grid had no gate from the start.
-> - Thus, there is no longer a conflict between SEO and the login gate.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -34,11 +32,7 @@ Area pages can be public and indexed.
 - **The form state and the chat history are different things.**
 - The assistant first confirms the values that it knows. It does not start with a cold question.
 
-> [!note]- Why
-> - Example: a visit to "Flats in Powai" opens the grid with the Powai filter.
-> - The chat is a new conversation. The transcript starts empty, but the form starts with some values.
-> - Example: "You were looking at Powai. What is your budget?"
-> - This removes the two slowest turns of the interview.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -46,13 +40,7 @@ Area pages can be public and indexed.
 
 roomsie listings expire after 30 days.
 
-> [!note]- Why
-> - A gate on the listing *detail* costs much less than it seems to cost. Individual listing pages were at no time the SEO asset.
-> - They are thin. They show a rent, an area, and some amenities.
-> - They change frequently. Expired listings cause 404s and link decay, and Google demotes pages with these problems.
-> - When they rank, their data is not current. The flat is not available.
-> - The portals also do not rank on individual flats. They rank on **area pages**.
-> - Thus, the gate is on a thing that would not bring you traffic.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -78,12 +66,7 @@ roomsie listings expire after 30 days.
 
 **Freshness rule.** These pages update each month. They at no time give a 404.
 
-> [!note]- Why
-> - Examples: "Flatmates in Powai", "Rooms for rent in Bandra East", "Flat sharing in Andheri West".
-> - This data is the moat. No other company has it, and unique data is what ranks.
-> - The portals can publish rent averages. But they cannot publish what people who search Powai actually want in a flatmate. The portals at no time ask this question.
-> - Without the privacy rule, a small cell shows data about one person.
-> - Unlike a listing, area pages continue through market cycles.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ### Layer 1b — Filter pages
 
@@ -91,9 +74,7 @@ roomsie listings expire after 30 days.
 - Each page opens the split view with its filters set.
 - Make these pages from actual search demand, not from all possible filter combinations.
 
-> [!note]- Why
-> - Examples: "2 BHK in Andheri West", "Rooms under 15000 in Powai".
-> - Thousands of almost empty permutation pages cause the thin-content problem again.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ### Layer 2 — Editorial pages. The top of the funnel.
 
@@ -110,12 +91,7 @@ These pages send users to Layer 1 through internal links.
 
 **Use `roomsie.com/blog`, not `blogs.roomsie.com`.**
 
-> [!note]- Why
-> - Most rental search volume is informational, not transactional. People first search how to do it. Then they search what is available.
-> - This content is evergreen and cheap.
-> - Google thinks of a subdomain as a site that is not fully connected to the primary domain. Thus, the ranking strength of a blog subdomain does not fully go to the primary domain.
-> - A subdirectory keeps all the content on one domain. Also, the singular "blog" is the usual convention.
-> - It is important to make this decision correctly at the start. If you move the blog after the start, you must redirect all the articles.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ### Layer 3 — The landing page and brand.
 
@@ -128,9 +104,7 @@ This layer is already in the plan: the hero, the narrative, and the call to acti
 - All public pages end in the same location: the chat.
 - Each page also starts the interview warm.
 
-> [!note]- Why
-> - A visitor who arrives on "Flatmates in Powai" told you their area and their intent.
-> - This warm start has more value than the page view.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -140,11 +114,7 @@ This layer is already in the plan: the hero, the narrative, and the call to acti
 - **Do not use this route.**
 - Keep it in reserve. It is the correct tool if roomsie ever publishes long-form gated content.
 
-> [!note]- Why
-> - Google does support the indexing of content that users cannot see.
-> - An error makes it cloaking. If Googlebot gets content that users cannot see, this is a spam violation. The only exception is when the markup declares it correctly.
-> - The penalty is demotion or removal from the index.
-> - It would get you indexed on the incorrect pages. Listing pages are thin and change frequently. If Google indexes them, you get almost no benefit.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -167,9 +137,7 @@ At this time, the interview runs **before login**.
 
 Decision PD9 tracks these protections.
 
-> [!note]- Why
-> - An unauthenticated chat is open to all people. A person can spend your money when they talk to it. Bots will find it.
-> - The rate limit is not for each user, because there is no user.
+Why: [PD6b](decisions/pd-06b-login-gate-and-search.md), [PD9](decisions/pd-09-pre-login-limits.md)
 
 ---
 

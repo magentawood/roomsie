@@ -12,12 +12,7 @@
 - In ten days, some of these decisions will cost the launch date.
 - This document does not ask you to approve visuals. It asks you to confirm, change or defer **behaviour**.
 
-> [!note]- Why
-> - "Does not need a design" is not the same as "has no design decisions in it."
-> - Each task quietly assumes some behaviour of the product. Examples: how many questions the assistant asks, what a profile contains, when results appear, and what occurs on a phone.
-> - We had to make those decisions to start. This document writes them down.
-> - The cost to change a decision depends fully on when you tell us. Today, most of the decisions are free to change.
-> - Thus, we do not build the incorrect thing for a fortnight.
+Why: [PD12](decisions/pd-12-team-plan.md)
 
 ---
 
@@ -34,9 +29,6 @@ For each numbered item, write one of these words:
 - You do not have to answer all of the items at one time.
 - Answer them in the sequence of their deadlines.
 
-> [!note]- Why
-> The deadlines table below uses the sequence of the deadlines.
-
 ---
 
 ## What it costs to change something
@@ -46,9 +38,6 @@ For each numbered item, write one of these words:
 | 🟢 **Free** | Change it at all times. No work uses it. Styling, colour, copy, spacing, icons, card layout and imagery are always free. |
 | 🟡 **Costly** | A change after its build date costs approximately one or two days of rework. |
 | 🔴 **Structural** | Other work is on top of it. After its date, a change means that we must remove other work to keep 12 October. |
-
-> [!note]- Why
-> A costly change causes problems, but we can survive it.
 
 ---
 
@@ -63,12 +52,7 @@ For each numbered item, write one of these words:
 | **Wed 30 Sep** | §5 Mobile — **not resolved at this time** | The largest open question in the product. |
 | **Wed 30 Sep** | Designs D-02, D-03, D-04 finished | Five people start to build screens on Thursday 1 October. |
 
-> [!note]- Why
-> - §1: we build the contract first.
-> - §6.3: the styling decision controls all designs.
-> - §2: migrations after the schema commit are painful.
-> - §3: we build the reply writer on Wed–Thu.
-> - §4: work on the match query and the results panel starts on Thursday.
+Why: [PD12](decisions/pd-12-team-plan.md)
 
 ---
 
@@ -97,15 +81,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 
 **1.8 — We never offer some preferences as chips.** If a user speaks about community or religion, we record it and filter on it. We never suggest it, never ask about it, and never infer it from a name, a diet or an area. PD3c settles this. 🔒
 
-> [!note]- Why
-> - §1 is the most expensive item on the list. If you add or remove a question after this, all four parts change together.
-> - 1.1: A flow is not one new question. An example is "do you have pets?" as its own step. A flow is a migration, a contract change, a re-tuned extraction prompt and a new filter.
-> - 1.2: Either we hide the two property cards for launch, or they go to a location that does not exist at this time.
-> - 1.3: The answers are a closed set. Thus, we show options that the user can tap.
-> - 1.4: Bands are faster on a phone.
-> - 1.6: The assistant has permission to not know an answer.
-> - 1.7: A user can type "2bhk in Powai under 25k from October". This fills four fields at one time and moves the user forward. The chips are the minimum, not a limit.
-> - 1.8: This item is not open for review. But it limits what the chips can show.
+Why: [PD0](decisions/pd-00-v0-scope.md), [PD3c](decisions/pd-03c-exclusionary-preferences.md), [PD6c](decisions/pd-06c-interface-holes.md), [PD7](decisions/pd-07-models.md)
 
 ---
 
@@ -127,11 +103,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 - **Can people see and correct these notes, and where?** On the profile, in the chat, or nowhere at launch?
 - This decision gives the shape of the profile screens (D-03). We need it by Wed 30 Sep.
 
-> [!note]- Why
-> - We commit the database on Sunday night. After that, it is the item on this list with the highest cost to change. Real data goes into it in the next week.
-> - 2.2: This is a product decision in the costume of a database.
-> - 2.3: Four is a guess.
-> - 2.4: A user can chat before sign-up, and keep that conversation after sign-up. Thus, we keep the typed messages.
+Why: [ADR 0001](decisions/0001-rent-infrastructure.md), [PD6b](decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -155,11 +127,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 
 **3.7 — Off-topic messages get one scripted line.** This reply costs no model call, and we log the message. You write the words of the reply. 🟢
 
-> [!note]- Why
-> - 3.1: Example questions are what semi-furnished usually includes, or the usual amount of a deposit.
-> - 3.3: You always see something that you want before we ask who you are.
-> - 3.6: If the assistant told about each tap, the conversation would become a list of taps.
-> - 3.7: Example: "Write my essay" gets a polite fixed reply.
+Why: [PD6c](decisions/pd-06c-interface-holes.md), [PD9](decisions/pd-09-pre-login-limits.md), [PD10](decisions/pd-10-scope-bands.md)
 
 ---
 
@@ -182,11 +150,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 
 **4.7 — We never silently remove a card that you saved.** We mark it with the reason. **v1, not launch.** 🟢
 
-> [!note]- Why
-> - 4.1: This is after approximately three turns.
-> - 4.2: The filter needs the area and the budget. The rank for compatibility needs the lifestyle answers, which take much more time to collect. We do not show the score until it has a meaning.
-> - 4.3: Example: "Everything in Mumbai" → "Powai" → "Powai, under ₹20,000" → match scores appear.
-> - 4.4: In a conversation of ten turns, the panel can change maybe three times.
+Why: [PD6c](decisions/pd-06c-interface-holes.md)
 
 ---
 
@@ -215,14 +179,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 
 **This pattern is provisional.** Work on it is in progress. Decide by 30 September.
 
-> [!note]- Why
-> - We need you for this item more than for all other items.
-> - At 400px, there is no second panel. Thus, the central idea must work in a different way on mobile.
-> - Bottom sheet: one more component, but one product.
-> - Tabs: cheapest to build. It loses the live feedback, which is the full purpose.
-> - Inline cards: most natural on mobile. It is not easy to compare options, and property search needs this.
-> - At 60%, you can read back.
-> - We expect that you will overrule the provisional pattern.
+Why: [PD6a](decisions/pd-06a-mobile-split-view.md)
 
 ---
 
@@ -234,10 +191,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 
 **6.3 — Launch uses the V3 prototype's look, not Untitled UI.** ADR 0011 says to build on the Untitled UI token pipeline. But that pipeline is blocked. The launch plan proposes to port the prototype's styling for 12 October, then rebuild on the pipeline in v1. **This needs your approval. It is D-01, and it is due on day one.** 🔴
 
-> [!note]- Why
-> - 6.1: If a search gives no results, the user answered a full interview for zero results. That is the worst moment in the product.
-> - 6.2: The team made the V3 prototype for femmeflats, a women-only swipe app. We pivoted away from femmeflats after that.
-> - 6.3: The prototype's palette does not agree with the pipeline.
+Why: [PD1](decisions/pd-01-audience.md), [PD5](decisions/pd-05-team-and-budget.md), [PD6c](decisions/pd-06c-interface-holes.md)
 
 ---
 
@@ -253,9 +207,6 @@ of each screen.
 changes what we *ask*, what we *store*, or *when something appears*, it is on the
 list above.
 
-> [!note]- Why
-> You can change these items at all times, before or after launch. Nothing breaks.
-
 ---
 
 ## What we need back
@@ -264,6 +215,4 @@ list above.
 2. Mark each item OK / CHANGE / LATER.
 3. For each item that you mark CHANGE, we tell you the real cost on the same day. We also tell you what work it moves out.
 
-> [!note]- Why
-> - §1, §5 and §6.3 are more important than all other items together.
-> - The build is in progress. Each day that this document stays unread, more items change from 🟢 to 🔴.
+Why: [PD12](decisions/pd-12-team-plan.md)

@@ -18,16 +18,7 @@
 - Send each turn to the cheapest thing that can handle it.
 - Make sure that most turns do not go to a large model at all.
 
-> [!note]- Why
-> - Right: a small model that does one narrow job is much cheaper and much more reliable than a large model that does all the jobs.
-> - Wrong: the decrease in cost comes from model size for each task, not from the number of agents.
-> - More agents add cost:
->   - Each agent has its own system prompt. Thus, each turn has more input tokens, not fewer.
->   - Each handoff serialises the state, reads it again and repeats the context.
->   - Calls run in sequence. Thus, the latency of each call adds to the total. Users notice three seconds in a chat.
->   - More parts give more failure modes and a much more complex eval suite.
-> - "Specialised agents think less" is correct for each agent. But it is incorrect for the system if all the agents run on each turn.
-> - The fix is not more agents. The fix is fewer calls to expensive models.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ---
 
@@ -35,8 +26,7 @@
 
 There are two forms: Form A and Form B.
 
-> [!note]- Why
-> - This idea is correct. It is the centre of the design.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ### Form A — the filter form
 
@@ -67,13 +57,7 @@ observation: {
 - **Build Form B one turn at a time, not in one pass at the end.**
 - **The user can see and edit Form B.** This is how we meet the DPDP access and correction obligations with no more work.
 
-> [!note]- Why
-> - Chips cannot capture this information. It is the reason that the product exists.
-> - A text blob that grows is the transcript with a different name. Then Form B has no purpose.
-> - The verbatim rule is the strongest anti-hallucination device available here. It forces each stored fact to point at the words of the user.
-> - One turn at a time costs less, because each call sees one turn, not the full conversation.
-> - Form B is then available during the session. Thus, it can inform the ranking while the user browses.
-> - A profile that the user can see and edit is good product.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md), [PD3b](decisions/pd-03b-interview-vs-chips.md)
 
 ---
 
@@ -93,11 +77,7 @@ The router classifies each turn first.
 - One turn can be more than one type. **Run the Extractor and the Observer in parallel** on the same input.
 - **Keep the router rules-based where possible.** A chip tap needs no classification. Only free text needs the classifier.
 
-> [!note]- Why
-> - Classification is the cost lever and the on-rails lever at the same time.
-> - Example: "I need Powai under 20k, my last place fell apart because of my flatmate's boyfriend" fills slots *and* reveals something.
-> - The Extractor and the Observer are small and cheap.
-> - The router knows a chip tap from the client.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ### The composer
 
@@ -126,14 +106,7 @@ The router classifies each turn first.
 - **The Advisor uses the corpus first.** For a general question with no corpus answer, signed-in users get a web search, and visitors get model knowledge, clearly hedged. Law, tax, area safety and claims about a person stay corpus-only or go to a hand-off. (PD7a)
 - Each consulting question with no good answer is a blog article that marketing should write.
 
-> [!note]- Why
-> - An example of a consulting question is "What should I watch out for legally when renting in Mumbai".
-> - A general model hallucinates on this type of question. An incorrect answer also causes the most damage here.
-> - Postgres full-text search gives good results for a corpus of this size.
-> - This does not break ADR 0001, because no proprietary extension goes on the critical path.
-> - It also removes one decision and one line of spend.
-> - Refusal with no fallback is the full purpose of the grounding.
-> - The questions with no answer make a useful loop.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md), [PD10](decisions/pd-10-scope-bands.md), [PD5](decisions/pd-05-team-and-budget.md)
 
 ---
 
@@ -187,16 +160,11 @@ flowchart TD
     class FA,FB,CORP store
 ```
 
-> [!note]- Why
-> - Yellow has no cost.
-> - Pink is a small, cheap model.
-> - Dark pink is the only expensive call, and most turns do not get to it.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ### Two things the diagram does not show well
 
-> [!note]- Why
-> - The Extractor and the Observer run in parallel. Neither handler waits for the other.
-> - The Composer frequently does not run. It runs only when a reply genuinely needs new text.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ### Cost per turn, by path
 
@@ -220,12 +188,7 @@ In all interviews, the first three turns are chip taps. These turns have no cost
 
 ## How this answers each worry
 
-> [!note]- Why
-> | Worry | Answer |
-> |---|---|
-> | It hallucinates | The Extractor can use only enum values. The Observer must quote the user. The Advisor uses the corpus first (PD7a). The Composer states no facts about listings. No part remains that can invent. |
-> | The chat wanders | The router finds off-topic turns before an expensive call, and it sends a scripted redirect. This is cheap and on rails. |
-> | Consulting questions pollute the profile | They do not write to Form A or Form B. |
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ---
 
@@ -236,10 +199,7 @@ In all interviews, the first three turns are chip taps. These turns have no cost
 - **Watch 2: do not let this grow.** For four part-time engineers, twelve handlers is a maintenance problem.
 - Measure the cost of each completed interview from the first day. Record this cost for each handler.
 
-> [!note]- Why
-> - The router and then the extractor are two sequential calls before the panel can move.
-> - Each new handler is a new prompt, a new eval set and a new failure mode. Six handlers is a design.
-> - The cost for each handler tells you which handler to make smaller.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ---
 
@@ -250,6 +210,4 @@ In all interviews, the first three turns are chip taps. These turns have no cost
 - **`packages/contract`.** Handler inputs and outputs are Zod schemas with versions. They are next to the analytics event schemas in the package.
 - **Model choice (PD7).** This design needs a small fast model and a good model.
 
-> [!note]- Why
-> - Separate handlers make evals easier, not more complex, because each handler has one job.
-> - The design does not need one model that is excellent at all tasks. Thus, there are more options and the price is lower.
+Why: [PD7a](decisions/pd-07a-agent-architecture.md), [PD7](decisions/pd-07-models.md)

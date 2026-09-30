@@ -2,13 +2,6 @@
 
 **Date:** 2026-09-26 · **Status:** proposed · **Applies to:** all changes to `apps/` and `packages/`
 
-> [!note]- Why
-> - The architecture should not change each time we add a feature or change a vendor.
-> - This page lists all the changes that we know about.
-> - For each change, it gives the location. It also gives the conditions that must be correct **from day one** for a clean change.
-> - The technical base in `docs/tech-base.md` designed most of these seams.
-> - The scope cuts in `docs/launch-plan.md` removed some seams. Thus, this page compares the launch tasks with the seams.
-
 ---
 
 ## Five rules
@@ -25,10 +18,7 @@
    - A vendor ID is not a primary key or a foreign key.
 5. **A feature is a module, and a module owns its tables.** Other modules call the functions of a module. They do not use its tables.
 
-> [!note]- Why
-> - Rule 1: to replace a vendor, you change one file in each app.
-> - Rule 2: the schema can change and we do not release a new client.
-> - Rule 5: to add a feature, you add a folder.
+Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error-tracking.md)
 
 ---
 
@@ -62,8 +52,7 @@
 - Nightly dumps to R2 (T-40) give the backups.
 - Refer to PD13 in `CONTEXT.md`.
 
-> [!note]- Why
-> - All routes are under `/v1` so that earlier app versions continue to work.
+Why: [ADR 0002](decisions/0002-api-boundary.md)
 
 ---
 
@@ -75,10 +64,7 @@
 | **An exit from Postgres** | ADR 0001 prohibits proprietary extensions on the critical path. We do not plan to leave Postgres fully. |
 | **A breaking change to the contract** | This needs a new `/v2` set of routes. We serve `/v2` with `/v1` until no clients use `/v1`. |
 
-> [!note]- Why
-> - No architecture makes all changes free. These changes cost much work, and we accept this cost intentionally.
-> - Supabase in `ap-south-1` is the choice that is not easy to change. To move the database is a full migration. Thus, we selected the region first.
-> - Drizzle and plain SQL migrations let us move to a different Postgres host. The ADR 0001 rule keeps this correct.
+Why: [ADR 0001](decisions/0001-rent-infrastructure.md), [ADR 0006](decisions/0006-drizzle.md), [ADR 0009](decisions/0009-hosting-and-region.md)
 
 ---
 
@@ -92,8 +78,4 @@
 - Postgres full-text search processes the corpus of the advisor.
 - If we ever need embeddings, `pgvector` would run in the same Postgres. This needs an ADR 0001 amendment, but it does not add a service.
 
-> [!note]- Why
-> - To save time, the launch plan first removed the router, the observer, the advisor and the isolated analytics database.
-> - No mobile app in v0: the web app is responsive, and one client is sufficient to learn from. Later, it goes in a new `apps/mobile` on the same `/v1` API.
-> - The vector store is not only deferred. Matching is a SQL query on typed fields. It is not a document search.
-> - The corpus of the advisor is some dozens of articles.
+Why: [ADR 0002](decisions/0002-api-boundary.md), [PD5](decisions/pd-05-team-and-budget.md), [PD7a](decisions/pd-07a-agent-architecture.md), [PD11](decisions/pd-11-launch.md)
