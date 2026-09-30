@@ -7,7 +7,7 @@ The launch uses the look of the V3 prototype, as an exception to ADR-0011. Untit
 - **Launch rules** apply to all styles from today.
 - **Token pipeline rules** start when the Untitled UI pipeline ships. Reviewers enforce them only after that.
 
-PD12 does not say which ADR-0011 rules apply at launch. We divided the rules from our interpretation of PD12. The launch rules are the ADR-0011 rules that do not need the Figma pipeline.
+PD12 gives this division: at launch, the styles of the V3 prototype apply, and the ADR-0011 token pipeline starts after the launch ([PD12](../decisions/pd-12-team-plan.md)). The launch rules are the ADR-0011 rules that do not need the Figma pipeline.
 
 ## Launch rules
 
