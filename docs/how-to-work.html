@@ -33,17 +33,17 @@ border-radius:6px;background:var(--panel)}
 </style>
 <main>
 <h1 id="how-to-work--no-designs-plan">How to work — no-designs plan</h1>
-<p>Launch is <strong>Monday 12 October</strong>. The fallback is <strong>Wednesday 14 October</strong>.
-Work two hours each day, on all days, weekends included, from <strong>Thursday 24 September</strong>.</p>
-<p><strong>Quality comes before the date.</strong> The go/no-go list in <code>docs/team-plan.md</code> is
-the quality bar. If a check fails, we move the date by a small number of days.
-We do not release something below the bar. Do not decrease the quality to meet
-a date. If your task will be late, tell the team.</p>
-<p><strong>We do not have designs at this time.</strong> We made this plan for that condition.</p>
+<ul>
+<li>Launch: <strong>Monday 12 October</strong>. Fallback: <strong>Wednesday 14 October</strong>.</li>
+<li>Work two hours each day, on all days, weekends included, from <strong>Thursday 24 September</strong>.</li>
+<li><strong>Quality comes before the date.</strong> The quality bar is the go/no-go list in <code>docs/team-plan.md</code>.</li>
+<li>If a check fails, the date moves by a small number of days. We do not release below the bar.</li>
+<li>If your task will be late, tell the team.</li>
+<li><strong>We do not have designs at this time.</strong></li>
+</ul>
 <hr />
 <h2 id="what-we-found">What we found</h2>
-<p>Of the 115 engineering hours in the first estimate, <strong>80 needed no design</strong>.
-The other <strong>35 could not start without a design</strong>. The lanes did not get equal parts:</p>
+<p>Of the 115 engineering hours in the first estimate, <strong>80 needed no design</strong>. The other <strong>35 could not start without a design</strong>.</p>
 <table>
 <thead>
 <tr>
@@ -86,43 +86,39 @@ The other <strong>35 could not start without a design</strong>. The lanes did no
 </tr>
 </tbody>
 </table>
-<p>The lack of designs has no effect on three lanes. Two lanes are almost fully
-blocked. Thus, we <strong>cannot keep the initial verticals</strong> for the first week.
-With those verticals, V3 and V5 would have no work while all the other engineers work.</p>
-<p><strong>The fix:</strong> in the design-free period, all engineers work from one shared pool
-of backend and infrastructure work. When the designs arrive, all five engineers
-change to screens at the same time.</p>
+<p>Thus, we <strong>cannot keep the initial verticals</strong> for the first week.</p>
+<p><strong>The fix:</strong> in the design-free period, all engineers work from one shared pool of backend and infrastructure work. When the designs arrive, all five engineers change to screens at the same time.</p>
 <hr />
 <h2 id="the-two-phases">The two phases</h2>
 <ul>
 <li><strong>Phase A · Thu 24 → Wed 30 Sep.</strong> Design-free work. No person works on a screen.</li>
-<li><strong>Phase B · Thu 1 → Sat 10 Oct.</strong> All 35 hours of screens, when designs exist.
-  Phase B also has the router, observer, advisor, analytics database and backups.</li>
+<li>
+<p><strong>Phase B · Thu 1 → Sat 10 Oct.</strong> All 35 hours of screens, when designs exist. Also the router, observer, advisor, analytics database and backups.</p>
+</li>
+<li>
+<p>Each task has one owner from start to finish.</p>
+</li>
+<li>No task in your list waits for a different person.</li>
+<li>The finish date is the same.</li>
 </ul>
-<p><strong>The principles from before stay the same.</strong> Each task has one owner from start
-to finish. No task in your list waits for a different person. The finish date
-is the same.</p>
 <hr />
 <h2 id="the-one-hard-deadline">The one hard deadline</h2>
 <p><strong>Design must finish D-02, D-03 and D-04 by end of Wednesday 30 September.</strong></p>
-<p>"Mostly done" is not sufficient. The designs must be complete, because five
-people must build from them on Thursday morning. All Phase A slots have work,
-but P4 and P5 each have one free slot on Sunday 27. There is no spare time for
-a design that arrives late. <strong>For each day after 30 September that a design is
-late, the launch is one day late.</strong></p>
-<p>We need D-01, the styling decision, before that date. The other three designs
-cannot start before D-01 is complete.</p>
+<ul>
+<li>The designs must be complete. "Mostly done" is not sufficient.</li>
+<li>All Phase A slots have work, but P4 and P5 each have one free slot on Sunday 27.</li>
+<li><strong>For each day after 30 September that a design is late, the launch is one day late.</strong></li>
+<li>D-01, the styling decision, must come before that date. D-02, D-03 and D-04 cannot start before D-01 is complete.</li>
+</ul>
 <hr />
 <h2 id="the-rules">The rules</h2>
 <ol>
-<li><strong>Work your list in order.</strong> The order is the schedule.</li>
+<li><strong>Work your list in order.</strong></li>
 <li><strong>Do one task at a time.</strong> Finish and merge a task before you start the next task.</li>
-<li><strong>Open a pull request for each task.</strong> Never push to <code>main</code>. Never commit
-   to <code>main</code> directly. Your work goes into the repo only as a PR.</li>
+<li><strong>Open a pull request for each task.</strong> Never push to <code>main</code>.</li>
 <li><strong>Make one PR for each task.</strong> Put the task ID in the PR title.</li>
-<li><strong>Give your standup by 10 am.</strong> Tell the team the tasks that you finished,
-   your current task, and your blockers.</li>
-<li><strong>In the first week, merge on the day that you finish.</strong> Other people wait for your work.</li>
+<li><strong>Give your standup by 10 am:</strong> tasks finished, current task, blockers.</li>
+<li><strong>In the first week, merge on the day that you finish.</strong></li>
 </ol>
 <hr />
 <h1 id="phase-a--thu-24--wed-30-sep">Phase A · Thu 24 → Wed 30 Sep</h1>
@@ -130,7 +126,6 @@ cannot start before D-01 is complete.</p>
 <table>
 <thead>
 <tr>
-<th>#</th>
 <th>Task</th>
 <th>Hours</th>
 <th>When</th>
@@ -138,39 +133,33 @@ cannot start before D-01 is complete.</p>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
 <td>T-02 Scaffold the monorepo in this repo</td>
 <td>4</td>
 <td>Thu 24 → Fri 25</td>
 </tr>
 <tr>
-<td>2</td>
 <td>T-05 Google sign-in and token checks in the API</td>
 <td>6</td>
 <td>Sat 26 → Mon 28</td>
 </tr>
 <tr>
-<td>3</td>
 <td>T-04 Deploy web and API to Mumbai</td>
 <td>3</td>
 <td>Tue 29 → Wed 30</td>
 </tr>
 <tr>
-<td>4</td>
 <td>T-07 Error reporting wrapper and Sentry</td>
 <td>1</td>
 <td>Wed 30</td>
 </tr>
 </tbody>
 </table>
-<p>14 hours. You start first. All engineers commit into T-02.</p>
+<p>14 hours.</p>
 <h2 id="p2--assistant--the-chatbot-specialist">P2 · Assistant — the chatbot specialist</h2>
-<p>Your lane needs no designs, so we do <strong>not</strong> re-cut your list. Work through the
-two phases with no interruption.</p>
+<p>We do <strong>not</strong> re-cut your list.</p>
 <table>
 <thead>
 <tr>
-<th>#</th>
 <th>Task</th>
 <th>Hours</th>
 <th>When</th>
@@ -178,55 +167,47 @@ two phases with no interruption.</p>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
 <td>T-08 Form A contract: slots and enums</td>
 <td>2</td>
 <td>Thu 24</td>
 </tr>
 <tr>
-<td>2</td>
 <td>T-11 Model wrapper: DeepSeek with Gemini fallback</td>
 <td>4</td>
 <td>Fri 25 → Sat 26</td>
 </tr>
 <tr>
-<td>3</td>
 <td>T-12 Extraction: free text to form slots</td>
 <td>6</td>
 <td>Sun 27 → Tue 29</td>
 </tr>
 <tr>
-<td>4</td>
 <td>T-13 Reply writer with scope rules</td>
 <td>4</td>
 <td>Wed 30 → Thu 1 Oct</td>
 </tr>
 <tr>
-<td>5</td>
 <td>T-34 Router: sort each typed message and flag what we should not answer</td>
 <td>6</td>
 <td>Fri 2 → Sun 4 Oct</td>
 </tr>
 <tr>
-<td>6</td>
 <td>T-21 Five-turn cap, rate limits, spend ceiling</td>
 <td>5</td>
 <td>Mon 5 → Wed 7 Oct</td>
 </tr>
 <tr>
-<td>7</td>
 <td>T-27 Run the eval set and tune the prompt</td>
 <td>3</td>
 <td>Wed 7 → Thu 8 Oct</td>
 </tr>
 </tbody>
 </table>
-<p>30 hours, for the full period. <strong>Do T-08 on day one.</strong> Three people build against it.</p>
+<p>30 hours, for the full period. <strong>Do T-08 on day one.</strong></p>
 <h2 id="p3--data-and-trust--you">P3 · Data and trust — you</h2>
 <table>
 <thead>
 <tr>
-<th>#</th>
 <th>Task</th>
 <th>Hours</th>
 <th>When</th>
@@ -234,27 +215,26 @@ two phases with no interruption.</p>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
 <td>T-06 Database schema v1</td>
 <td>8</td>
 <td>Thu 24 → Sun 27</td>
 </tr>
 <tr>
-<td>2</td>
 <td>T-14 Match query API</td>
 <td>6</td>
 <td>Mon 28 → Wed 30</td>
 </tr>
 </tbody>
 </table>
-<p>14 hours. Do T-06 alone, in four days. Do no other task until T-06 merges.
-All downstream work waits for T-06. Thus, if you have spare time, the most
-useful thing is to finish T-06 before its date.</p>
+<p>14 hours.</p>
+<ul>
+<li>Do T-06 alone, in four days. Do no other task until T-06 merges.</li>
+<li>All downstream work waits for T-06. If you have spare time, the most useful thing to do is to finish T-06 before its date.</li>
+</ul>
 <h2 id="p4--content-and-moderation">P4 · Content and moderation</h2>
 <table>
 <thead>
 <tr>
-<th>#</th>
 <th>Task</th>
 <th>Hours</th>
 <th>When</th>
@@ -262,40 +242,36 @@ useful thing is to finish T-06 before its date.</p>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
 <td>T-23a Landing page ported from the prototype</td>
 <td>4</td>
 <td>Thu 24 → Fri 25</td>
 </tr>
 <tr>
-<td>2</td>
 <td>T-23b Privacy, terms and grievance pages</td>
 <td>2</td>
 <td>Sat 26</td>
 </tr>
 <tr>
-<td>3</td>
 <td>T-19 Report, block, suspend, and a saved moderation query</td>
 <td>5</td>
 <td>Mon 28 → Wed 30</td>
 </tr>
 <tr>
-<td>4</td>
 <td>T-20 Account deletion</td>
 <td>3</td>
 <td>Wed 30 → Thu 1 Oct</td>
 </tr>
 </tbody>
 </table>
-<p>14 hours. The prototype at <code>docs/source/roomsie-prototype-V3.html</code> <strong>is</strong> your
-design for T-23a. Thus, T-23a is not blocked.</p>
-<p>Sunday 27 is a spare slot, because T-19 needs the schema. The schema arrives on
-the evening of that day. Use the slot to read the ADRs or to help with M-03, the eval sentences.</p>
+<p>14 hours.</p>
+<ul>
+<li>The prototype at <code>docs/source/roomsie-prototype-V3.html</code> <strong>is</strong> your design for T-23a.</li>
+<li>Sunday 27 is a spare slot. Use it to read the ADRs or to help with M-03, the eval sentences.</li>
+</ul>
 <h2 id="p5--accounts-and-connections">P5 · Accounts and connections</h2>
 <table>
 <thead>
 <tr>
-<th>#</th>
 <th>Task</th>
 <th>Hours</th>
 <th>When</th>
@@ -303,55 +279,46 @@ the evening of that day. Use the slot to read the ADRs or to help with M-03, the
 </thead>
 <tbody>
 <tr>
-<td>1</td>
 <td>M-03 Write the eval sentences</td>
 <td>4</td>
 <td>Thu 24 → Fri 25</td>
 </tr>
 <tr>
-<td>2</td>
 <td>T-03 CI: typecheck, lint, build, secret scan</td>
 <td>2</td>
 <td>Sat 26</td>
 </tr>
 <tr>
-<td>3</td>
 <td>T-24 Event logging table</td>
 <td>2</td>
 <td>Mon 28</td>
 </tr>
 <tr>
-<td>4</td>
 <td>T-17 Carry anonymous chat into the account on sign-in</td>
 <td>2</td>
 <td>Tue 29</td>
 </tr>
 <tr>
-<td>5</td>
 <td>T-18a Connect request and contact reveal API</td>
 <td>4</td>
 <td>Wed 30 → Thu 1 Oct</td>
 </tr>
 </tbody>
 </table>
-<p>14 hours. Usually, M-03 is a marketing task. You do it for these reasons:</p>
+<p>14 hours.</p>
 <ul>
-<li>It needs no design and no code.</li>
-<li>It is the only task available to you on day one.</li>
-<li>P2 needs it for T-27.</li>
+<li>You do M-03 because P2 needs it for T-27.</li>
+<li>Sunday 27 is also a spare slot for you.</li>
 </ul>
-<p>Sunday 27 is also a spare slot for you.</p>
 <hr />
 <h1 id="phase-b--thu-1--sat-10-oct--screens-and-the-assistant">Phase B · Thu 1 → Sat 10 Oct — screens and the assistant</h1>
-<p>In Phase B, designs exist. Everyone builds screens. The assistant gets its
-router, observer and advisor. P2 continues on their own lane, as given above.</p>
 <table>
 <thead>
 <tr>
 <th>Person</th>
 <th>Task</th>
 <th>Hours</th>
-<th>When</th>
+<th>When (October)</th>
 </tr>
 </thead>
 <tbody>
@@ -359,124 +326,114 @@ router, observer and advisor. P2 continues on their own lane, as given above.</p
 <td><strong>P1</strong></td>
 <td>T-25 Uptime monitor and spend alerts</td>
 <td>2</td>
-<td>Thu 1 Oct</td>
+<td>Thu 1</td>
 </tr>
 <tr>
-<td><strong>P1</strong></td>
+<td></td>
 <td>T-33 Invite-only gate until launch</td>
 <td>1</td>
-<td>Fri 2 Oct</td>
+<td>Fri 2</td>
 </tr>
 <tr>
-<td><strong>P1</strong></td>
+<td></td>
 <td>T-39 Analytics in its own database, with scheduled jobs</td>
 <td>3</td>
-<td>Fri 2 → Sat 3 Oct</td>
+<td>Fri 2 → Sat 3</td>
 </tr>
 <tr>
-<td><strong>P1</strong></td>
+<td></td>
 <td>T-40 Nightly database backups to R2</td>
 <td>2</td>
-<td>Sun 4 Oct</td>
+<td>Sun 4</td>
 </tr>
 <tr>
-<td><strong>P1</strong></td>
+<td></td>
 <td>T-16 Profile create and edit, with photos</td>
 <td>8</td>
-<td>Mon 5 → Thu 8 Oct</td>
+<td>Mon 5 → Thu 8</td>
 </tr>
 <tr>
-<td><strong>P1</strong></td>
+<td></td>
 <td>T-22 Launch areas and waitlist</td>
 <td>3</td>
-<td>Fri 9 → Sat 10 Oct</td>
+<td>Fri 9 → Sat 10</td>
 </tr>
 <tr>
-<td><strong>P1</strong></td>
+<td></td>
 <td>T-29 Abuse test: 100 fake sessions</td>
 <td>1</td>
-<td>Sat 10 Oct</td>
+<td>Sat 10</td>
 </tr>
 <tr>
 <td><strong>P3 (you)</strong></td>
 <td>T-37 Articles table and full-text search</td>
 <td>3</td>
-<td>Thu 1 → Fri 2 Oct</td>
+<td>Thu 1 → Fri 2</td>
 </tr>
 <tr>
-<td><strong>P3 (you)</strong></td>
+<td></td>
 <td>T-15 Results panel, built against the contract</td>
 <td>6</td>
-<td>Fri 2 → Mon 5 Oct</td>
+<td>Fri 2 → Mon 5</td>
 </tr>
 <tr>
-<td><strong>P3 (you)</strong></td>
+<td></td>
 <td>T-18b Person detail and connect screens</td>
 <td>4</td>
-<td>Mon 5 → Wed 7 Oct</td>
+<td>Mon 5 → Wed 7</td>
 </tr>
 <tr>
-<td><strong>P3 (you)</strong></td>
+<td></td>
 <td>T-38 Advisor: articles first, then web search after sign-in</td>
 <td>7</td>
-<td>Wed 7 → Sat 10 Oct</td>
+<td>Wed 7 → Sat 10</td>
 </tr>
 <tr>
 <td><strong>P4</strong></td>
 <td>T-35 Form B contract and table</td>
 <td>3</td>
-<td>Fri 2 → Sat 3 Oct</td>
+<td>Fri 2 → Sat 3</td>
 </tr>
 <tr>
-<td><strong>P4</strong></td>
+<td></td>
 <td>T-36 Observer: Form B from free text, with the quote check</td>
 <td>8</td>
-<td>Sat 3 → Wed 7 Oct</td>
+<td>Sat 3 → Wed 7</td>
 </tr>
 <tr>
 <td><strong>P5</strong></td>
 <td>T-10 Chat screen and split view</td>
 <td>8</td>
-<td>Fri 2 → Mon 5 Oct</td>
+<td>Fri 2 → Mon 5</td>
 </tr>
 <tr>
-<td><strong>P5</strong></td>
+<td></td>
 <td>T-09 Chip flow for intent, area, budget</td>
 <td>6</td>
-<td>Tue 6 → Thu 8 Oct</td>
+<td>Tue 6 → Thu 8</td>
 </tr>
 </tbody>
 </table>
-<p>All lanes finish by Saturday 10 October. P4 has about 9 spare hours. P5 has 6
-and P2 has 4. If a person is late, P4, P5 and P2 are the first to do their work.</p>
-<p>You own T-15 and T-18b because they show the matches and people from your own
-schema and match query. You also own the advisor because it searches data that
-you own. You have no spare hours. Thus, if a task will take more time than
-planned, tell the team immediately.</p>
+<ul>
+<li>All lanes finish by Saturday 10 October.</li>
+<li>Spare hours: P4 about 9, P5 6, P2 4. If a person is late, P4, P5 and P2 are the first to do their work.</li>
+<li>P3 has no spare hours. If a task will take more time than planned, tell the team immediately.</li>
+</ul>
 <hr />
 <h2 id="everyone">Everyone</h2>
 <ul>
 <li><strong>Sunday 11 October</strong> — bug fixing (A-01).</li>
-<li><strong>Monday 12 October</strong> — launch (A-02). The fallback is <strong>Wednesday 14 October</strong>.</li>
+<li><strong>Monday 12 October</strong> — launch (A-02).</li>
 </ul>
 <hr />
 <h2 id="what-this-costs">What this costs</h2>
 <ul>
-<li><strong>We build all screens in Phase B.</strong> Usually, UI work is spread across the
-  schedule, and problems show at the start. Here, problems show in the first week
-  of October. This is the cost of no designs. It is not a mistake in the order of tasks.</li>
-<li><strong>During Phase A, no person owns a vertical from end to end.</strong> This is a
-  change from before. You get resilience, but you lose clean ownership.</li>
-<li><strong>Phase A has almost no slack.</strong> All slots have work, but P4 and P5 have
-  Sunday 27 free.</li>
-<li><strong>Two people have a spare slot on Sunday 27 September.</strong> The cause: only three
-  tasks in the full project can start before the schema and monorepo exist.</li>
+<li><strong>We build all screens in Phase B.</strong> Thus, UI problems show in the first week of October.</li>
+<li><strong>Phase A has almost no slack.</strong></li>
+<li><strong>One thing decides if the launch stays on 12 October: if the designs arrive on 30 September.</strong></li>
 </ul>
-<p><strong>One thing decides if the launch stays on 12 October: if the designs arrive on
-30 September.</strong> We arranged all other parts of this plan around that date.</p>
 <h1 id="index-of-every-code">Index of every code</h1>
-<p>This section gives each task in plain words, with an example. If you are new to
-the project, read this section first.</p>
+<p>If you are new to the project, read this section first.</p>
 <h2 id="how-a-code-is-built">How a code is built</h2>
 <table>
 <thead>
@@ -524,31 +481,31 @@ the project, read this section first.</p>
 </tr>
 </tbody>
 </table>
-<p>A letter at the end of a code (<strong>T-18a</strong>, <strong>T-18b</strong>) shows one task divided into
-a backend half and a screen half. Different people own the two halves.</p>
-<p>Gaps in the numbers are usual. We removed or merged T-01, T-26, T-28, T-30 to
-T-32 and M-08 during the plan work. We never used a code again. We added T-34
-to T-40 on 26 September.</p>
-<p><strong>⚑ marks the critical path.</strong> If a ⚑ task is late, the launch date is late.</p>
+<ul>
+<li>A letter at the end of a code (<strong>T-18a</strong>, <strong>T-18b</strong>) shows one task in two halves: backend and screen. Different people own the two halves.</li>
+<li>We removed or merged T-01, T-26, T-28, T-30 to T-32 and M-08 during the plan work. We never used a code again.</li>
+<li>We added T-34 to T-40 on 26 September.</li>
+<li><strong>⚑ marks the critical path.</strong> If a ⚑ task is late, the launch date is late.</li>
+</ul>
 <h2 id="the-lanes-and-roles">The lanes and roles</h2>
 <table>
 <thead>
 <tr>
 <th>Code</th>
 <th>Name</th>
-<th>In plain words</th>
+<th>Covers</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>P1</strong></td>
 <td>Platform</td>
-<td>The plumbing: the project itself, sign-in, deploy, monitoring. Then profiles, the waitlist, the analytics database and backups.</td>
+<td>The plumbing: the project, sign-in, deploy, monitoring. Then profiles, the waitlist, the analytics database and backups.</td>
 </tr>
 <tr>
 <td><strong>P2</strong></td>
 <td>Assistant</td>
-<td>The brain: all that the AI understands and says, the limits on the AI, and the router that decides which part of the AI runs.</td>
+<td>The brain: all that the AI understands and says, the AI limits, and the router that decides which part of the AI runs.</td>
 </tr>
 <tr>
 <td><strong>P3</strong></td>
@@ -594,7 +551,7 @@ to T-40 on 26 September.</p>
 <th>Code</th>
 <th>Name</th>
 <th>Date</th>
-<th>What is true by then</th>
+<th>True by then</th>
 </tr>
 </thead>
 <tbody>
@@ -608,7 +565,7 @@ to T-40 on 26 September.</p>
 <td><strong>CP1</strong></td>
 <td>Foundation</td>
 <td>Mon 28 Sep</td>
-<td>The shared plumbing is merged: project, database, sign-in, AI wrapper. Landing and legal pages are live. There are no product screens at this time.</td>
+<td>Project, database, sign-in and AI wrapper are merged. Landing and legal pages are live. There are no product screens at this time.</td>
 </tr>
 <tr>
 <td><strong>CP2</strong></td>
@@ -620,7 +577,7 @@ to T-40 on 26 September.</p>
 <td><strong>CP3</strong></td>
 <td>Feature freeze, go/no-go</td>
 <td>Sat 10 Oct</td>
-<td>All screens and assistant handlers are merged and live behind the invite gate. An 8 pm meeting decides 12 or 14 October.</td>
+<td>All screens and assistant handlers are merged, live behind the invite gate. An 8 pm meeting decides 12 or 14 October.</td>
 </tr>
 <tr>
 <td><strong>CP4</strong></td>
@@ -632,7 +589,7 @@ to T-40 on 26 September.</p>
 <td><strong>CP5</strong></td>
 <td>First-week review</td>
 <td>Mon 19 Oct</td>
-<td>The team looks at the numbers and decides what v1 should be.</td>
+<td>The team reads the numbers and decides what v1 should be.</td>
 </tr>
 </tbody>
 </table>
@@ -641,7 +598,7 @@ to T-40 on 26 September.</p>
 <thead>
 <tr>
 <th>Code</th>
-<th>Task — in plain words, with an example</th>
+<th>Task</th>
 <th>Owner</th>
 <th>Issue</th>
 </tr>
@@ -649,217 +606,217 @@ to T-40 on 26 September.</p>
 <tbody>
 <tr>
 <td><strong>T-02</strong> ⚑</td>
-<td><strong>Scaffold the monorepo</strong> — Make one project folder that holds the website, the server and the shared code. Then all five people commit into the same place. <em>Example: all five people open the same project, and each person works in their own part of it. There are not five separate projects.</em></td>
+<td><strong>Scaffold the monorepo</strong> — One folder for the website, server and shared code. All five people commit into it.</td>
 <td>P1</td>
 <td>#10</td>
 </tr>
 <tr>
 <td><strong>T-03</strong></td>
-<td><strong>CI: typecheck, lint, build, secret scan</strong> — A robot that checks each pull request automatically. <em>Example: you open a PR at 11 pm. Two minutes later, a green tick or a red cross tells you if you broke something. This includes a password that you pasted accidentally.</em></td>
+<td><strong>CI: typecheck, lint, build, secret scan</strong> — Checks each pull request automatically.</td>
 <td>P5</td>
 <td>#24</td>
 </tr>
 <tr>
 <td><strong>T-04</strong></td>
-<td><strong>Deploy web and API to Mumbai</strong> — Put the site and server on real machines in Mumbai, so anyone on the internet can use it. <em>Example: the site is no longer "works on my laptop". It becomes a real web address that loads fast in India.</em></td>
+<td><strong>Deploy web and API to Mumbai</strong> — Real machines in Mumbai, so anyone on the internet can use the site.</td>
 <td>P1</td>
 <td>#30</td>
 </tr>
 <tr>
 <td><strong>T-05</strong> ⚑</td>
-<td><strong>Google sign-in and token checks</strong> — Let people log in with Google. Make the server check who the user is on each request. <em>Example: you tap "Continue with Google" and pick your Gmail. Then you are in, with no password to invent.</em></td>
+<td><strong>Google sign-in and token checks</strong> — Log in with Google. The server checks the user on each request.</td>
 <td>P1</td>
 <td>#20</td>
 </tr>
 <tr>
 <td><strong>T-06</strong> ⚑</td>
-<td><strong>Database schema v1</strong> — Decide the exact shape of all the data that you store: people, flats, messages, matches. <em>Example: a person has a name, age, budget and photos. The budget is a number like 25000, not text like "around 25k".</em></td>
+<td><strong>Database schema v1</strong> — The exact shape of all stored data: people, flats, messages, matches. <em>Example: the budget is a number like 25000, not text like "around 25k".</em></td>
 <td>P3</td>
 <td>#11</td>
 </tr>
 <tr>
 <td><strong>T-07</strong></td>
-<td><strong>Error reporting wrapper and Sentry</strong> — When the app breaks for a user, send the crash to a dashboard automatically. <em>Example: at 2 am, a person gets a broken page. You see exactly which line failed and how many people got it, but no person reported it to you.</em></td>
+<td><strong>Error reporting wrapper and Sentry</strong> — Sends each crash that a user gets to a dashboard automatically.</td>
 <td>P1</td>
 <td>#28</td>
 </tr>
 <tr>
 <td><strong>T-08</strong> ⚑</td>
-<td><strong>Form A contract: slots and enums</strong> — Write down the exact list of things that the assistant tries to learn, and the exact allowed answers. <em>Example: "intent" is one of the four cards of the prototype — a flat and flatmates, just a flat, just a flatmate, or renting out a flat — or <code>unclear</code>. The nine lifestyle axes are smoking, alcohol, guests, pets, hours, tidiness, at home, daytime and kitchen. Everyone builds against that fixed list.</em></td>
+<td><strong>Form A contract: slots and enums</strong> — The exact things that the assistant tries to learn, and the exact allowed answers. "intent" is one of the four prototype cards (a flat and flatmates, just a flat, just a flatmate, renting out a flat) or <code>unclear</code>. Nine lifestyle axes: smoking, alcohol, guests, pets, hours, tidiness, at home, daytime, kitchen. Everyone builds against this fixed list.</td>
 <td>P2</td>
 <td>#6</td>
 </tr>
 <tr>
 <td><strong>T-09</strong> ⚑</td>
-<td><strong>Chip flow for intent, area, budget</strong> — Buttons under the chat that people tap, so they do not have to type. <em>Example: you do not type a sentence. You tap [A flat and flatmates] [Powai] [₹15–20k].</em></td>
+<td><strong>Chip flow for intent, area, budget</strong> — Buttons under the chat. People tap and do not have to type.</td>
 <td>P5</td>
 <td>#26</td>
 </tr>
 <tr>
 <td><strong>T-10</strong> ⚑</td>
-<td><strong>Chat screen and split view</strong> — The main screen: the conversation on one side, the results on the other side. <em>Example: you chat on the left. While the assistant learns what you want, people who fit appear on the right.</em></td>
+<td><strong>Chat screen and split view</strong> — The main screen: chat on one side, results on the other.</td>
 <td>P5</td>
 <td>#12</td>
 </tr>
 <tr>
 <td><strong>T-11</strong> ⚑</td>
-<td><strong>Model wrapper: DeepSeek with Gemini fallback</strong> — One piece of code that talks to the AI. If the first AI is down, it silently changes to a backup AI. <em>Example: DeepSeek goes offline at 9 pm. Users never know, because Gemini answers.</em></td>
+<td><strong>Model wrapper: DeepSeek with Gemini fallback</strong> — One piece of code that talks to the AI. If DeepSeek is down, it silently changes to Gemini.</td>
 <td>P2</td>
 <td>#15</td>
 </tr>
 <tr>
 <td><strong>T-12</strong> ⚑</td>
-<td><strong>Extraction: free text to form slots</strong> — Change a sentence that a person typed into tidy fields. <em>Example: "need a room near Powai, max 18k, moving next month, I don't smoke" becomes intent = a flat and flatmates, area = Powai, budget = 18,000, move date = October, smoking = no.</em></td>
+<td><strong>Extraction: free text to form slots</strong> — Changes a typed sentence into tidy form slots.</td>
 <td>P2</td>
 <td>#23</td>
 </tr>
 <tr>
 <td><strong>T-13</strong></td>
-<td><strong>Reply writer with scope rules</strong> — Make the assistant write its answers, and keep it on the topic. <em>Example: a person asks "what's the weather?". The assistant does not answer. It politely moves the conversation back to flats.</em></td>
+<td><strong>Reply writer with scope rules</strong> — The assistant writes its answers and stays on the topic.</td>
 <td>P2</td>
 <td>#33</td>
 </tr>
 <tr>
 <td><strong>T-14</strong> ⚑</td>
-<td><strong>Match query API</strong> — The server code that takes what a person wants and returns the people who fit. <em>Example: Powai, ₹18k, no smoking → the 12 people who fit best, best first.</em></td>
+<td><strong>Match query API</strong> — Takes what a person wants and returns the people who fit.</td>
 <td>P3</td>
 <td>#27</td>
 </tr>
 <tr>
 <td><strong>T-15</strong> ⚑</td>
-<td><strong>Results panel</strong> — The part of the screen that shows matches as cards. In v0, each card is a person, never a property listing. <em>Example: the right column fills with person cards: name, area, budget, and a match score when we know enough.</em></td>
+<td><strong>Results panel</strong> — Shows matches as cards. In v0, each card is a person, never a property listing.</td>
 <td>P3</td>
 <td>#16</td>
 </tr>
 <tr>
 <td><strong>T-16</strong> ⚑</td>
-<td><strong>Profile create and edit, with photos</strong> — The screens where a person says who they are and uploads photos. <em>Example: name, age, job, "I'm tidy and sleep early", and four photos of the room.</em></td>
+<td><strong>Profile create and edit, with photos</strong> — A person says who they are and uploads photos.</td>
 <td>P1</td>
 <td>#36</td>
 </tr>
 <tr>
 <td><strong>T-17</strong></td>
-<td><strong>Carry anonymous chat into the account</strong> — If a person chats before they sign up, keep that conversation when they sign up. <em>Example: you chat for five minutes as a stranger, then you sign in. Your chat is still there. It is not deleted.</em></td>
+<td><strong>Carry anonymous chat into the account</strong> — Keeps a chat from before sign-up when the person signs up.</td>
 <td>P5</td>
 <td>#32</td>
 </tr>
 <tr>
 <td><strong>T-18a</strong> ⚑</td>
-<td><strong>Connect request and contact reveal API</strong> — The server side of a connect request. It shows phone numbers only when the two people agree. <em>Example: you tap Connect and they accept. Only then do you both see the number of the other person.</em></td>
+<td><strong>Connect request and contact reveal API</strong> — The server side of a connect request. Shows phone numbers only when the two people agree.</td>
 <td>P5</td>
 <td>#38</td>
 </tr>
 <tr>
 <td><strong>T-18b</strong> ⚑</td>
-<td><strong>Person detail and connect screens</strong> — The screens where you read the full profile of a person and send that request. <em>Example: when you tap a card, the full profile opens, with a Connect button at the bottom.</em></td>
+<td><strong>Person detail and connect screens</strong> — Read the full profile of a person and send a connect request.</td>
 <td>P3</td>
 <td>#44</td>
 </tr>
 <tr>
 <td><strong>T-19</strong></td>
-<td><strong>Report, block, suspend, moderation query</strong> — The safety tools. <em>Example: a person sends you a creepy message. You block them, and they disappear from your results. A moderator sees the report.</em></td>
+<td><strong>Report, block, suspend, moderation query</strong> — The safety tools.</td>
 <td>P4</td>
 <td>#45</td>
 </tr>
 <tr>
 <td><strong>T-20</strong></td>
-<td><strong>Account deletion</strong> — Let people delete their account and data correctly. <em>Example: you tap Delete, and your profile, photos and messages are really removed. Indian law requires this.</em></td>
+<td><strong>Account deletion</strong> — Delete the account and data correctly: profile, photos and messages are really removed. Indian law requires this.</td>
 <td>P4</td>
 <td>#46</td>
 </tr>
 <tr>
 <td><strong>T-21</strong></td>
-<td><strong>Five-turn cap, rate limits, spend ceiling</strong> — Limits that stop abuse of the AI and a very large bill. <em>Example: one visitor cannot send 10,000 messages overnight and cost you ₹80,000 in AI fees.</em></td>
+<td><strong>Five-turn cap, rate limits, spend ceiling</strong> — Stops abuse of the AI and a very large bill.</td>
 <td>P2</td>
 <td>#41</td>
 </tr>
 <tr>
 <td><strong>T-22</strong></td>
-<td><strong>Launch areas and waitlist</strong> — Open only the three chosen Mumbai areas. Collect emails from all other areas. <em>Example: a person in Pune visits and sees "not here yet". They leave their email for later.</em></td>
+<td><strong>Launch areas and waitlist</strong> — Opens only the three chosen Mumbai areas. Collects emails from all other areas.</td>
 <td>P1</td>
 <td>#47</td>
 </tr>
 <tr>
 <td><strong>T-23a</strong></td>
-<td><strong>Landing page</strong> — The public home page that explains what roomsie is. <em>Example: the first page that a stranger sees, with the pitch and a "Start chatting" button.</em></td>
+<td><strong>Landing page</strong> — The public home page that explains roomsie.</td>
 <td>P4</td>
 <td>#39</td>
 </tr>
 <tr>
 <td><strong>T-23b</strong></td>
-<td><strong>Privacy, terms and grievance pages</strong> — The legal pages that each Indian site must have. <em>Example: the Privacy Policy link in the footer, and a named grievance officer that people can contact.</em></td>
+<td><strong>Privacy, terms and grievance pages</strong> — The legal pages that each Indian site must have.</td>
 <td>P4</td>
 <td>#40</td>
 </tr>
 <tr>
 <td><strong>T-24</strong></td>
-<td><strong>Event logging table</strong> — Record what people actually do, so you can see what works. <em>Example: count how many people start a chat but never sign up, and exactly where they stop.</em></td>
+<td><strong>Event logging table</strong> — Records what people actually do, to show what works.</td>
 <td>P5</td>
 <td>#37</td>
 </tr>
 <tr>
 <td><strong>T-25</strong></td>
-<td><strong>Uptime monitor and spend alerts</strong> — Automatic warnings if the site stops or costs increase quickly. <em>Example: a message at 3 am that says "site down" or "AI spend passed ₹5,000 today".</em></td>
+<td><strong>Uptime monitor and spend alerts</strong> — Automatic warnings if the site stops or costs increase quickly.</td>
 <td>P1</td>
 <td>#43</td>
 </tr>
 <tr>
 <td><strong>T-27</strong></td>
-<td><strong>Run the eval set and tune the prompt</strong> — Test the assistant on a list of real sentences. Fix what it gets wrong. <em>Example: you give it 100 sentences. It reads "PG" as a full flat 30 times. You fix the wording and test again.</em></td>
+<td><strong>Run the eval set and tune the prompt</strong> — Test the assistant on real sentences. Fix what it gets wrong.</td>
 <td>P2</td>
 <td>#48</td>
 </tr>
 <tr>
 <td><strong>T-29</strong></td>
-<td><strong>Abuse test: 100 fake sessions</strong> — Attack your own site before strangers do. <em>Example: send 100 fake users to the chat at the same time. Make sure that the limits actually hold.</em></td>
+<td><strong>Abuse test: 100 fake sessions</strong> — Attack our own site before strangers do.</td>
 <td>P1</td>
 <td>#51</td>
 </tr>
 <tr>
 <td><strong>T-33</strong></td>
-<td><strong>Invite-only gate until launch</strong> — Keep the public out until launch day. <em>Example: a person with no invite code sees a "coming soon" page, not the app.</em></td>
+<td><strong>Invite-only gate until launch</strong> — Keeps the public out until launch day.</td>
 <td>P1</td>
 <td>#29</td>
 </tr>
 <tr>
 <td><strong>T-34</strong> ⚑</td>
-<td><strong>Router: sort each typed message and flag what we should not answer</strong> — One cheap model call that decides what a message is. Thus, it decides which handlers run. <em>Example: "is semi-furnished normal in Powai?" goes to the advisor. "my ex basically lived there" goes to the observer. "write my essay" gets a polite scripted line, with no model call, and is logged.</em></td>
+<td><strong>Router: sort each typed message and flag what we should not answer</strong> — One cheap model call decides what a message is. Thus, it decides which handlers run. <em>Example: "write my essay" gets a polite scripted line, with no model call, and is logged.</em></td>
 <td>P2</td>
 <td>—</td>
 </tr>
 <tr>
 <td><strong>T-35</strong></td>
-<td><strong>Form B contract and table</strong> — The shape of what the observer records about a person, and where we store it. <em>Example: guest frequency = "partner stays over most nights", with the exact words of the user as evidence.</em></td>
+<td><strong>Form B contract and table</strong> — What the observer records about a person, and where we store it.</td>
 <td>P4</td>
 <td>—</td>
 </tr>
 <tr>
 <td><strong>T-36</strong></td>
-<td><strong>Observer: Form B from free text, with the quote check</strong> — Records what chips cannot capture, but only when it can quote the user. <em>Example: "my ex basically lived there, that's what killed it" becomes a note about guests. The observer discards a note that has no exact quote behind it.</em></td>
+<td><strong>Observer: Form B from free text, with the quote check</strong> — Records what chips cannot capture, only when it can quote the user. It discards a note with no exact quote.</td>
 <td>P4</td>
 <td>—</td>
 </tr>
 <tr>
 <td><strong>T-37</strong></td>
-<td><strong>Articles table and full-text search</strong> — Stores the articles of roomsie and finds the correct passage. <em>Example: "deposit" finds the paragraph in the article on Mumbai deposits.</em></td>
+<td><strong>Articles table and full-text search</strong> — Stores the roomsie articles and finds the correct passage.</td>
 <td>P3</td>
 <td>—</td>
 </tr>
 <tr>
 <td><strong>T-38</strong></td>
-<td><strong>Advisor: articles first, then web search after sign-in</strong> — Answers housing questions from our articles first, then from the web. <em>Example: "what does semi-furnished usually include?" uses our article if we have one. If not, it uses a web search for signed-in users. The advisor never answers "Is this clause in my agreement legal?" from the web. It hands that question off.</em></td>
+<td><strong>Advisor: articles first, then web search after sign-in</strong> — Answers housing questions from our articles first, then from the web, for signed-in users only. It never answers "Is this clause in my agreement legal?" from the web. It hands that question off.</td>
 <td>P3</td>
 <td>—</td>
 </tr>
 <tr>
 <td><strong>T-39</strong></td>
-<td><strong>Analytics in its own database, with scheduled jobs</strong> — Keeps analytics writes off the main database. <em>Example: many "results shown" events at one time cannot make a profile save slow.</em></td>
+<td><strong>Analytics in its own database, with scheduled jobs</strong> — Keeps analytics writes off the main database.</td>
 <td>P1</td>
 <td>—</td>
 </tr>
 <tr>
 <td><strong>T-40</strong></td>
-<td><strong>Nightly database backups to R2</strong> — A copy of the two databases each night, because the free plan keeps no backups. <em>Example: a bad migration on day three is undone from the copy of last night. It is not lost permanently.</em></td>
+<td><strong>Nightly database backups to R2</strong> — Copies the two databases each night.</td>
 <td>P1</td>
 <td>—</td>
 </tr>
@@ -870,34 +827,34 @@ to T-40 on 26 September.</p>
 <thead>
 <tr>
 <th>Code</th>
-<th>Task — in plain words, with an example</th>
+<th>Task</th>
 <th>Issue</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>D-01</strong></td>
-<td><strong>Styling decision for launch</strong> — Pick the colours, fonts and general feel one time, so that the team never argues about them again. <em>Example: roomsie looks clean and warm, not neon and loud.</em></td>
+<td><strong>Styling decision for launch</strong> — Pick the colours, fonts and general feel one time, and never argue about them again.</td>
 <td>#1</td>
 </tr>
 <tr>
 <td><strong>D-02</strong> ⚑</td>
-<td><strong>Design the chat screens</strong> — Draw what the chat looks like before anyone builds it. <em>Example: a picture that shows the positions of the message bubbles, chips and results.</em></td>
+<td><strong>Design the chat screens</strong> — Before anyone builds them.</td>
 <td>#7</td>
 </tr>
 <tr>
 <td><strong>D-03</strong></td>
-<td><strong>Design results, profile and connect screens</strong> — Draw the match cards, profile pages and the connect flow.</td>
+<td><strong>Design results, profile and connect screens</strong> — Match cards, profile pages and the connect flow.</td>
 <td>#19</td>
 </tr>
 <tr>
 <td><strong>D-04</strong></td>
-<td><strong>Design landing, wall and waitlist</strong> — Draw the public home page and the waitlist page.</td>
+<td><strong>Design landing, wall and waitlist</strong> — The public home page and the waitlist page.</td>
 <td>#25</td>
 </tr>
 <tr>
 <td><strong>D-05</strong></td>
-<td><strong>Design QA on the live build</strong> — Make sure that the built site actually agrees with the drawings. <em>Example: you see that a real button is grey, but the design says purple.</em></td>
+<td><strong>Design QA on the live build</strong> — The built site must agree with the drawings.</td>
 <td>#42</td>
 </tr>
 <tr>
@@ -912,7 +869,7 @@ to T-40 on 26 September.</p>
 <thead>
 <tr>
 <th>Code</th>
-<th>Task — in plain words, with an example</th>
+<th>Task</th>
 <th>Role</th>
 <th>Issue</th>
 </tr>
@@ -920,49 +877,49 @@ to T-40 on 26 September.</p>
 <tbody>
 <tr>
 <td><strong>M-01</strong> ⚑</td>
-<td><strong>Seeding form live, outreach starts</strong> — Publish a simple sign-up form and start to tell people. <em>Example: share it in Mumbai flat-hunting WhatsApp groups.</em></td>
+<td><strong>Seeding form live, outreach starts</strong> — A simple sign-up form, and tell people about it.</td>
 <td>M2</td>
 <td>#14</td>
 </tr>
 <tr>
 <td><strong>M-02</strong></td>
-<td><strong>Seeding target: 100 sign-ups</strong> — Get 100 real people in before launch, so day one is not empty. <em>Example: nobody joins a flatmate app that has zero flatmates on it.</em></td>
+<td><strong>Seeding target: 100 sign-ups</strong> — 100 real people before launch.</td>
 <td>M2</td>
 <td>#22</td>
 </tr>
 <tr>
 <td><strong>M-03</strong></td>
-<td><strong>Write the eval sentences</strong> — Write realistic sentences to test the assistant against. <em>Example: "need a room in Chembur under 15k, veg only".</em></td>
+<td><strong>Write the eval sentences</strong> — Realistic sentences to test the assistant.</td>
 <td>P5 (normally M1)</td>
 <td>#21</td>
 </tr>
 <tr>
 <td><strong>M-04</strong></td>
-<td><strong>Interviews for articles 1 to 10</strong> — Talk to real flat-hunters and collect their stories.</td>
+<td><strong>Interviews for articles 1 to 10</strong> — Collect stories from real flat-hunters.</td>
 <td>M1</td>
 <td>#13</td>
 </tr>
 <tr>
 <td><strong>M-05</strong></td>
-<td><strong>Drafts of articles 1 to 10</strong> — Write those ten articles, so Google sends people to you. <em>Example: "What renting in Bandra actually costs in 2026".</em></td>
+<td><strong>Drafts of articles 1 to 10</strong> — So Google sends people to roomsie.</td>
 <td>M1</td>
 <td>#31</td>
 </tr>
 <tr>
 <td><strong>M-06</strong> ⚑</td>
-<td><strong>Beta invites to seeded sign-ups</strong> — Let the 100 seeded people in first, before the public.</td>
+<td><strong>Beta invites to seeded sign-ups</strong> — Let the 100 seeded people in before the public.</td>
 <td>M2</td>
 <td>#49</td>
 </tr>
 <tr>
 <td><strong>M-07</strong></td>
-<td><strong>Draft launch posts</strong> — Write the launch-day social posts before the launch.</td>
+<td><strong>Draft launch posts</strong> — Social posts for launch day, written before it.</td>
 <td>M1</td>
 <td>#35</td>
 </tr>
 <tr>
 <td><strong>M-09</strong></td>
-<td><strong>Broker calls</strong> — Phone brokers to get real flats listed.</td>
+<td><strong>Broker calls</strong> — Get real flats listed.</td>
 <td>M2</td>
 <td>#55</td>
 </tr>
@@ -973,59 +930,59 @@ to T-40 on 26 September.</p>
 <thead>
 <tr>
 <th>Code</th>
-<th>Task — in plain words, with an example</th>
+<th>Task</th>
 <th>Issue</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>F-01</strong></td>
-<td><strong>Kickoff: names on every role</strong> — Put the name of a real person against each vertical. <em>Example: fill in the five blanks that say <code>_name_</code> at this time.</em></td>
+<td><strong>Kickoff: names on every role</strong> — A real person against each vertical.</td>
 <td>#2</td>
 </tr>
 <tr>
 <td><strong>F-02</strong></td>
-<td><strong>Secure the domain</strong> — Buy the web address before a different person does.</td>
+<td><strong>Secure the domain</strong> — Buy it before a different person does.</td>
 <td>#3</td>
 </tr>
 <tr>
 <td><strong>F-03</strong></td>
-<td><strong>Billing and hard spend caps</strong> — Configure payment, with hard ceilings. <em>Example: limit the AI account to ₹20,000 a month, so a bug cannot quietly cost a lakh.</em></td>
+<td><strong>Billing and hard spend caps</strong> — <em>Example: limit the AI account to ₹20,000 a month, so a bug cannot quietly cost a lakh.</em></td>
 <td>#4</td>
 </tr>
 <tr>
 <td><strong>F-04</strong></td>
-<td><strong>Create accounts in Mumbai regions</strong> — Open the hosting and database accounts in the Mumbai region, so the site is fast for Indian users.</td>
+<td><strong>Create accounts in Mumbai regions</strong> — Hosting and database accounts.</td>
 <td>#5</td>
 </tr>
 <tr>
 <td><strong>F-05</strong> ⚑</td>
-<td><strong>Consent text for the seeding form</strong> — The text that tells people what you will do with their data.</td>
+<td><strong>Consent text for the seeding form</strong> — What we will do with their data.</td>
 <td>#8</td>
 </tr>
 <tr>
 <td><strong>F-06</strong></td>
-<td><strong>Pick the three launch areas</strong> — Choose the three Mumbai neighbourhoods where we open. <em>Example: Bandra, Andheri and Powai, and no other areas at launch.</em></td>
+<td><strong>Pick the three launch areas</strong> — Three Mumbai neighbourhoods. <em>Example: Bandra, Andheri and Powai, and no other areas at launch.</em></td>
 <td>#9</td>
 </tr>
 <tr>
 <td><strong>F-07</strong></td>
-<td><strong>Draft privacy policy, terms, grievance contact</strong> — Write the legal text for those pages.</td>
+<td><strong>Draft privacy policy, terms, grievance contact</strong> — The text for the legal pages.</td>
 <td>#17</td>
 </tr>
 <tr>
 <td><strong>F-08</strong></td>
-<td><strong>Name the moderator</strong> — Decide who handles reports and abuse when they arrive.</td>
+<td><strong>Name the moderator</strong> — Who handles reports and abuse.</td>
 <td>#34</td>
 </tr>
 <tr>
 <td><strong>F-09</strong></td>
-<td><strong>Write down the three ADR exceptions</strong> — Record the three places where you knowingly broke your own architecture rules, and the reasons. <em>Example: so that in six months, nobody asks "why on earth did we do it this way?".</em></td>
+<td><strong>Write down the three ADR exceptions</strong> — Where we knowingly broke our own architecture rules, and why.</td>
 <td>#18</td>
 </tr>
 <tr>
 <td><strong>F-10</strong></td>
-<td><strong>Go/no-go meeting</strong> — The meeting on Saturday 10 October, 8 pm. It decides to launch on the 12th, or to move the launch to the 14th. Quality decides, not the calendar.</td>
+<td><strong>Go/no-go meeting</strong> — Saturday 10 October, 8 pm. Launch on the 12th, or move to the 14th. Quality decides, not the calendar.</td>
 <td>#50</td>
 </tr>
 </tbody>
@@ -1035,14 +992,14 @@ to T-40 on 26 September.</p>
 <thead>
 <tr>
 <th>Code</th>
-<th>Task — in plain words</th>
+<th>Task</th>
 <th>Issue</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>A-01</strong></td>
-<td><strong>Bug fix day</strong> (Sun 11 Oct) — One full day. Nobody builds new things. Everyone only repairs what is broken.</td>
+<td><strong>Bug fix day</strong> (Sun 11 Oct) — One full day. Nobody builds new things. Everyone only repairs.</td>
 <td>#53</td>
 </tr>
 <tr>
@@ -1052,7 +1009,5 @@ to T-40 on 26 September.</p>
 </tr>
 </tbody>
 </table>
-<p><strong>62 tasks, 55 issues.</strong> All codes above are live GitHub issues at
-<code>github.com/magentawood/roomsie/issues</code>, but not T-34 to T-40. These seven tasks
-are not filed at this time.</p>
+<p><strong>62 tasks, 55 issues.</strong> All codes above are live GitHub issues at <code>github.com/magentawood/roomsie/issues</code>, but not T-34 to T-40. These seven tasks are not filed at this time.</p>
 </main>
