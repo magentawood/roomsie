@@ -2,7 +2,7 @@
 
 *Architecture record · v0.1*
 
-Fourteen architecture decisions settled, and the schema now being designed on top of them. Each records what we chose, the data behind it, and what we rejected — so nothing here has to be re-argued from memory.
+This record gives fourteen settled architecture decisions. At this time, we design the schema on these decisions. For each decision, the record gives our choice, the data for it, and the options that we rejected. Thus, nobody has to argue a decision again from memory.
 
 Sept 2026 · One city · 20k users · 4 devs × 2h/day · ~$50–80/mo
 
@@ -17,34 +17,34 @@ Sept 2026 · One city · 20k users · 4 devs × 2h/day · ~$50–80/mo
 | 05 | [Supabase · Firebase · Cloudflare R2](#05--supabase-firebase-cloudflare-r2) | Postgres, identity, storage | Settled |
 | 06 | [Drizzle](#06--drizzle-as-the-database-layer) | Schema in TypeScript, migrations in plain SQL | Settled |
 | 07 | [Hybrid rendering, Bearer tokens](#07--hybrid-rendering-bearer-tokens-instant-revocation) | One auth path for web, Android and iOS | Settled |
-| 08 | [Next 16 · Tailwind v4 · TanStack Query](#08--the-web-stack) | Existing design work ported in | Settled |
-| 09 | [Fly.io Mumbai · Vercel · Supabase ap-south-1](#09--hosting--region) | Region is sticky; compute follows it | Settled |
+| 08 | [Next 16 · Tailwind v4 · TanStack Query](#08--the-web-stack) | We port the design work that exists | Settled |
+| 09 | [Fly.io Mumbai · Vercel · Supabase ap-south-1](#09--hosting--region) | The region is sticky, and compute follows it | Settled |
 | 10 | [pnpm workspaces + Turborepo](#10--monorepo-tooling) | Strict dependencies, zero-config remote caching | Settled |
-| 11 | [Untitled UI · theme.css generated from Figma](#11--design-system-and-the-token-pipeline) | Figma is the source of truth, one way | Settled |
-| 12 | [Analytics in our own Postgres](#12--analytics-events) | No vendor — the schema is what must be right | Settled |
-| 13 | [CI gate & testing baseline](#13--ci-gate-and-testing) | Test where the expensive bugs live | Settled |
-| 14 | [Sentry SDK → GlitchTip](#14--error-tracking) | GlitchTip now, Crashlytics for web when it lands | Settled |
+| 11 | [Untitled UI · theme.css generated from Figma](#11--design-system-and-the-token-pipeline) | Figma is the source of truth, in one direction | Settled |
+| 12 | [Analytics in our own Postgres](#12--analytics-events) | No vendor. The schema is the part that must be correct | Settled |
+| 13 | [CI gate & testing baseline](#13--ci-gate-and-testing) | Test where the expensive bugs are | Settled |
+| 14 | [Sentry SDK → GlitchTip](#14--error-tracking) | GlitchTip now, Crashlytics for web when it is available | Settled |
 
 ### The budget that decides everything
 
-Four people at two hours a day for a month is roughly 200 real hours. The v1 scope is UI-heavy, so the split isn't negotiable — and the backend share is what every decision here was measured against.
+Four people at two hours a day for a month give approximately 200 real hours. The v1 scope has much UI work. Thus, the division of hours is not negotiable. We measured each decision in this record against the backend part.
 
 | Item | Value |
 |---|---|
 | Frontend | 120–140h |
 | Backend + infra | 60–80h |
 
-Every “should we build this ourselves?” question was answered against the second bar.
+We answered each “should we build this ourselves?” question against the second bar.
 
 ### The principle underneath
 
-“Build for scale from the start” is where most small teams burn their runway. Rework cost isn’t uniform — so we spend up front only on the things that get baked into every client and every stored row.
+Most small teams spend their runway on “Build for scale from the start”. The cost of rework is not the same for all things. Thus, at the start, we spend only on the things that become part of each client and each stored row.
 
 > [!success] Cheap to change later
 >
 > - Hosting provider, server size, region
 > - CDN
-> - Which cloud we’re on
+> - The cloud that we use
 > - Client-side libraries
 
 > [!failure] Expensive to change later
@@ -92,120 +92,126 @@ Every “should we build this ourselves?” question was answered against the se
           </g>
         </svg>
 
-Clients hold a Firebase ID token and hit `apps/api`. They never open a database connection, never subscribe to a Postgres table, and never learn a column name.
+Clients hold a Firebase ID token and send requests to `apps/api`. They never open a database connection. They never subscribe to a Postgres table, and they never learn a column name.
 
 ### Standing rules
 
-- Our own **users.id** is the primary key everywhere. The Firebase UID is a plain `auth_provider_id` column.
-- Every byte entering the API from outside is **parsed by a Zod schema** before any other code touches it.
-- The **OpenAPI document** is generated and committed from day one. It is the contract all clients generate from.
-- Image bytes **never pass through the API** — clients upload directly to R2 via presigned URLs.
-- Verification selfies live in a **separate, non-public bucket** with short retention.
+- Our own **users.id** is the primary key in all tables. The Firebase UID is a plain `auth_provider_id` column.
+- A **Zod schema parses** each byte that comes into the API from outside. It does this before other code touches the byte.
+- We generate and commit the **OpenAPI document** from day one. All clients generate their code from this contract.
+- Image bytes **never go through the API**. Clients upload them directly to R2 through presigned URLs.
+- Verification selfies are in a **separate, non-public bucket** with short retention.
 - Realtime is **broadcast only**. No client subscribes to a table.
-- No business logic in Next.js. Route handlers are for OAuth callbacks, image proxying and webhooks only.
+- Next.js has no business logic. Route handlers are only for OAuth callbacks, image proxying and webhooks.
 
 ---
 
 ## 01 · Rent the infrastructure, own the application
 
-**Decision:** A provider runs Postgres, storage and CDN. We hand-write every migration, query and endpoint ourselves.
+**Decision:** A provider operates Postgres, storage and the CDN. We write each migration, query and endpoint ourselves, by hand.
 
-No vendor-generated application code. No `apt install`.
+We use no application code that a vendor generates. We run no `apt install`.
 
-Wanting operational control is a good instinct, but “ops” means two different things — and only one is worth paying for now.
+It is good to want control of operations. But “ops” has two different meanings, and at this time, only one of them is worth the cost.
 
 | Layer | What it is | Cost to reclaim later |
 |---|---|---|
 | Infrastructure ops | Provisioning, Postgres tuning, backups, TLS, pooling, monitoring, patching | **[Low]** a weekend |
 | Application ops | Schema, migrations, API, deploys, observability | **[High]** a rewrite |
 
-Moving from managed Postgres to your own is a dump and a restore — same database. But if a vendor owns your business logic or your data access patterns, unwinding that is a rewrite. **So we buy control of the application and rent the machines.**
+A move from managed Postgres to your own Postgres is a dump and a restore. The database stays the same. But if a vendor owns your business logic or your data access patterns, you must do a rewrite to remove the vendor. **Thus, we buy control of the application and rent the machines.**
 
 > [!danger] Worth saying plainly
 >
-> At 20k users in one city there is no scaling problem yet. A single modest Postgres instance covers it comfortably. The scaling lessons are real, but you’d be learning them against a load that doesn’t exist.
+> At 20k users in one city, there is no scaling problem at this time. One small Postgres instance is sufficient, with a large margin. The scaling lessons are real. But you would learn them against a load that does not exist.
 
 - Run our own VPS + Postgres from day one
   Rejected
-  Realistically 40–60 person-hours before the first feature ships, plus an ongoing tax — out of a ~200 hour budget. Buys control over the layer that’s cheapest to reclaim.
+  A realistic cost is 40–60 person-hours before the first feature ships, from a ~200 hour budget. After that, it has a continuous cost. It buys control of the layer that is the cheapest to reclaim.
 
 ---
 
 ## 02 · Clients talk to our API, never to the database
 
-**Decision:** All application reads and writes go through an HTTP API we write. Clients never hold a database connection.
+**Decision:** All application reads and writes go through an HTTP API that we write. Clients never hold a database connection.
 
-We rent three genuine infrastructure pieces: the OAuth flow, storage + CDN, and the websocket transport. RLS stays on underneath as defence in depth, not as the primary lock.
+We rent exactly three pieces that are genuinely infrastructure: the OAuth flow, storage + CDN, and the websocket transport. RLS stays on below the API as defence in depth. It is not the primary lock.
 
-This is the decision that determines whether the KMP apps in month four are a port or a rewrite.
+This decision determines if the KMP apps in month four are a port or a rewrite.
 
 - A · Direct-to-database (BaaS)
   Rejected
-  Clients query Postgres directly; RLS policies are the only security layer. Fastest v1 — but business rules split between SQL policies and three clients, each coupled to your table shapes. Rename a column, break iOS.
+  Clients query Postgres directly. RLS policies are the only security layer. This gives the fastest v1. But the business rules divide between SQL policies and three clients, and each client depends on the shapes of your tables. If you rename a column, iOS breaks.
 - B · Own API for absolutely everything
   Rejected
-  Maximum portability. But you hand-build OAuth token handling, upload pipelines and websocket infrastructure — 30–40 hours against a 60–80 hour budget, spent on solved, non-differentiating problems.
+  This gives maximum portability. But you must build OAuth token handling, upload pipelines and websocket infrastructure by hand. That is 30–40 hours from a 60–80 hour budget. You spend these hours on problems that other people solved before, and that do not make the product different.
 - C · Own the logic, rent the plumbing **(chosen)**
   Chosen
-  Our API owns every read and write that carries business logic. The platform provides OAuth, storage and the chat socket only.
+  Our API owns each read and write that has business logic. The platform gives only OAuth, storage and the chat socket.
 
 ### The argument that settled it
 
-Parts of the spec **cannot be expressed as RLS at all.** The queue ranking score, exclusion of already-seen profiles, the three-rejects-then-suppress-90-days rule, chat rate limits, first-message contact-detail stripping — all of it needs server-side code.
+**RLS cannot express parts of the spec at all.** These items all need server-side code:
 
-So a backend exists no matter which option we pick. The only question is whether we admit it now, or discover it in week three having already built half of one by accident.
+- the queue ranking score
+- the exclusion of profiles that the user saw before
+- the three-rejects-then-suppress-90-days rule
+- chat rate limits
+- first-message contact-detail stripping.
+
+Thus, a backend exists for all the options. The only question is when we admit it. We can admit it at this time. Or we can find it in week three, after we built half of a backend by accident.
 
 ---
 
 ## 03 · The API is its own deployable
 
-**Decision:** One repository, two artefacts: `apps/web` and `apps/api`, building and deploying independently.
+**Decision:** One repository has two artefacts: `apps/web` and `apps/api`. Each artefact builds and deploys independently.
 
-Separate *deployable* — not separate *repository*.
+The API is a separate *deployable*. It is not a separate *repository*.
 
-The cheap way to build the API is inside Next.js as route handlers: one project, one deploy, no CORS, no network hop. For a solo project shipping only a website, that’s right. Four reasons it isn’t ours.
+The cheap way to build the API is as route handlers in Next.js. This gives one project, one deploy, no CORS and no network hop. For a solo project that ships only a website, that is correct. There are four reasons why it is not correct for us.
 
-- **It makes Decision 02 enforceable rather than aspirational.** Inside the Next app, the database is one import away from every Server Component. Under deadline pressure someone queries it directly because it works — and that rule now lives only in the web client. A network boundary can’t be reached past by accident.
-- **The runtime model fits.** Background jobs (auto-suspend on report threshold, ghost-profile decay at 30/60 days, analytics aggregation), scheduled work and a persistent connection pool are each a workaround on serverless. A long-running service simply has them.
-- **Deploy coupling.** Otherwise a CSS change redeploys the API that shipped mobile apps — which can’t be force-updated — depend on.
+- **It lets us enforce Decision 02. Without it, Decision 02 is only an aspiration.** In the Next app, each Server Component can get the database with one import. Under deadline pressure, a person queries the database directly because it works. Then that rule is only in the web client. Nobody can go around a network boundary by accident.
+- **The runtime model fits.** On serverless, each of these items needs a workaround: background jobs (auto-suspend on report threshold, ghost-profile decay at 30/60 days, analytics aggregation), scheduled work and a persistent connection pool. A long-running service simply has them.
+- **Deploy coupling.** With one deployable, a CSS change also deploys the API again. Shipped mobile apps depend on that API, and we cannot force an update of these apps.
 - **Four part-time people parallelise better** across two deployables with a contract between them than across one codebase.
 
 - **~4h** CORS, token propagation, two local processes
 - **1–5ms** Extra SSR hop, in-region
 
-A few hours now against the boundary holding under pressure for the next two years.
+We pay a small number of hours at this time. In return, the boundary holds, also when there is pressure, for the next two years.
 
 ---
 
 ## 04 · TypeScript, Fastify, Zod
 
-**Decision:** `apps/api` is TypeScript on Node, using Fastify for HTTP and Zod for runtime validation at every external boundary.
+**Decision:** `apps/api` is TypeScript on Node. It uses Fastify for HTTP, and Zod for runtime validation at each external boundary.
 
-The OpenAPI document generated from those schemas is the single source of truth for all clients.
+We generate the OpenAPI document from those schemas. This document is the single source of truth for all clients.
 
 ### Language
 
-Team preferences split between JavaScript and Java; Yash is Android/Kotlin. At 20k users every candidate is over-provisioned — only a load test would tell them apart. So the binding constraint is hours, not throughput.
+Some team members prefer JavaScript, and some prefer Java. Yash is Android/Kotlin. At 20k users, each candidate has much more capacity than necessary. Only a load test would show a difference between them. Thus, the binding constraint is hours, not throughput.
 
 | Option | For | Against |
 |---|---|---|
-| TypeScript | Two devs know it; single-toolchain monorepo; strongest AI assistance; fastest to an endpoint | Types erased at runtime — validation must be a discipline |
-| Kotlin + Ktor | Yash’s strongest; one language server→Android→KMP; shared DTOs | Polyglot monorepo (Gradle + pnpm); two devs ramping; thinner server ecosystem |
-| Java + Spring | Most mature ecosystem; runtime type safety; big hiring pool | 3–4× the code per endpoint; heavy runtime; slow rebuilds |
+| TypeScript | Two devs know it. Single-toolchain monorepo. Strongest AI assistance. Fastest to an endpoint. | Types do not exist at runtime. Thus, validation must be a discipline. |
+| Kotlin + Ktor | Yash’s strongest language. One language for server→Android→KMP. Shared DTOs. | Polyglot monorepo (Gradle + pnpm). Two devs must learn it. Smaller server ecosystem. |
+| Java + Spring | Most mature ecosystem. Runtime type safety. Big hiring pool. | 3–4× the code for each endpoint. Heavy runtime. Slow rebuilds. |
 
 > [!danger] Why not Kotlin, honestly
 >
-> Kotlin’s real advantage — sharing DTOs directly with the KMP module — is **recoverable later** through OpenAPI codegen. The month spent ramping the team is not. You can’t buy back a month.
+> The real advantage of Kotlin is that it shares DTOs directly with the KMP module. We **can recover this advantage in the future** through OpenAPI codegen. We cannot recover the month that the team spends to learn Kotlin. You cannot buy back a month.
 
 ### Framework
 
-Fastify is built for exactly the long-running Node process Decision 03 committed to, and ships first-party plugins for CORS, rate limiting, JWT, multipart uploads and OpenAPI generation — all of which the spec requires.
+The design of Fastify is for exactly the long-running Node process that Decision 03 chose. Fastify ships first-party plugins for CORS, rate limiting, JWT, multipart uploads and OpenAPI generation. The spec requires all of these.
 
-Hono’s headline advantages are edge-runtime portability (moot here) and TypeScript-only RPC typing, **which Kotlin cannot consume** — risking crowding out the real OpenAPI spec mobile needs. Express is dated and effectively in maintenance.
+The primary advantages of Hono are edge-runtime portability (not relevant here) and TypeScript-only RPC typing. **Kotlin cannot consume that typing.** Thus, it could push out the real OpenAPI spec that mobile needs. Express is out of date. In practice, it is in maintenance.
 
 ### Why Zod is mandatory, not optional
 
-In Kotlin, types are real at runtime. In TypeScript they’re erased at compile time — `as SomeType` is a promise you made to the compiler, not a check.
+In Kotlin, types are real at runtime. In TypeScript, the compiler erases types at compile time. `as SomeType` is a promise that you make to the compiler. It is not a check.
 
 Lies to you
 
@@ -232,7 +238,7 @@ const body = Profile.parse(await req.json())
 
 > [!warning] The rule
 >
-> Every byte entering the API from outside — request bodies, query params, webhooks, third-party responses — is parsed by a schema before anything else touches it. Skip that and TypeScript’s safety is theatre.
+> A schema parses each byte that comes into the API from outside, before anything else touches it. This includes request bodies, query params, webhooks and third-party responses. If you skip this step, the safety of TypeScript is only theatre.
 
 ---
 
@@ -240,9 +246,9 @@ const body = Profile.parse(await req.json())
 
 **Decision:** Postgres + Realtime on Supabase · Google sign-in on Firebase · object storage on Cloudflare R2
 
-Roughly `$50–80/month` at launch scale.
+The cost is approximately `$50–80/month` at launch scale.
 
-After Decisions 01–03 we need exactly four commodity services and nothing else: Postgres, OAuth, storage + CDN, and a websocket transport. No query APIs, no generated clients, no vendor-held logic.
+After Decisions 01–03, we need exactly four commodity services and nothing more: Postgres, OAuth, storage + CDN, and a websocket transport. We use no query APIs, no generated clients and no logic that a vendor holds.
 
 ### Identity — the cost is not the argument
 
@@ -254,7 +260,7 @@ After Decisions 01–03 we need exactly four commodity services and nothing else
 | Clerk | $1,800 |
 | Auth0 | $500–3k |
 
-Monthly cost at 100,000 MAU — five times our stated ceiling. Firebase is free below 50k.
+The table gives the monthly cost at 100,000 MAU. This is five times our stated ceiling. Firebase is free below 50k.
 
 | MAU | Firebase | Supabase | Clerk | WorkOS |
 |---|---|---|---|---|
@@ -263,17 +269,17 @@ Monthly cost at 100,000 MAU — five times our stated ceiling. Firebase is free 
 | 100k | ~$275 | ~$25 | ~$1,800 | $0 |
 | 1M | ~$4,415 | ~$2,950 | ~$19,000 | $0 |
 
-Firebase past 50k free MAU is graduated: `$0.0055`/MAU to 100k, `$0.0046` to 1M. Graduated means each rate applies only within its band — so 100k MAU is `50k free + 50k × $0.0055 = $275`.
+Above the 50k free MAU, Firebase uses graduated prices: `$0.0055`/MAU to 100k, and `$0.0046` to 1M. Graduated means that each rate applies only in its band. Thus, 100k MAU costs `50k free + 50k × $0.0055 = $275`.
 
 > [!danger] So we chose on mobile, not price
 >
-> At 20–50k MAU every option but Clerk and Auth0 is free. What actually differs today is that this product will be predominantly a phone app — and Firebase’s Android/iOS SDKs and Credential Manager / One Tap integration deliver exactly the zero-typing sign-in the spec calls for.
+> At 20–50k MAU, only Clerk and Auth0 are not free. The real difference today is that this product will be mainly a phone app. The Firebase Android/iOS SDKs and its Credential Manager / One Tap integration give exactly the zero-typing sign-in that the spec asks for.
 >
-> WorkOS was tempting at free-to-1M, but it’s web- and B2B-first: on mobile you wire OAuth/PKCE flows yourself. A real cost in month four, paid to avoid a bill we won’t see for years.
+> WorkOS was attractive at free-to-1M. But it is web-first and B2B-first. On mobile, you must connect the OAuth/PKCE flows with your own code. That is a real cost in month four. We would pay it to avoid a bill that we will not see for years.
 
 ### Storage — here the cost *is* the argument
 
-A swipe app is an egress monster. Modelled at 20k users:
+A swipe app causes very large egress. Our model at 20k users gives these values:
 
 - **45 GB** Stored — profiles, listings, selfies
 - **700 GB** Egressed per month
@@ -286,53 +292,53 @@ A swipe app is an egress monster. Modelled at 20k users:
 | Supabase | $210–615 |
 | AWS S3 | ~$632 |
 
-Monthly cost at 200k users — 500 GB stored, 7 TB egressed. Storage costs everyone under $12; the rest is egress.
+The table gives the monthly cost at 200k users, with 500 GB stored and 7 TB egressed. On all providers, storage costs less than $12. The remainder is egress.
 
-**R2 charges nothing for egress.** Worth roughly $600/month by the time we reach 200k users — more than every other infrastructure line item combined. And it’s S3-compatible, so the exit is a bucket copy and an endpoint change.
+**R2 charges nothing for egress.** When we reach 200k users, this is worth approximately $600/month. That is more than all the other infrastructure line items together. Also, R2 is S3-compatible. Thus, the exit is a bucket copy and an endpoint change.
 
 > [!tip] Wasabi ruled out on policy, not price
 >
-> Its “no egress fees” claim carries a fair-use expectation that monthly downloads stay *below* stored volume. At 14× stored volume we’d be in violation from month one. Wasabi is priced for backup and archive, not media serving.
+> Wasabi says “no egress fees”. But this claim has a fair-use expectation: monthly downloads stay *below* the stored volume. At 14× the stored volume, we would be in violation from month one. Wasabi sets its prices for backup and archive, not for media serving.
 
 ### Realtime — broadcast, never postgres_changes
 
-Supabase Realtime’s popular mode has clients subscribe to changes on a *table* — which would silently demolish Decision 02. With `broadcast`, our API writes the message, applies the rules, then publishes to a channel. Clients subscribe to channels, never tables. Same feature, same cost, boundary intact.
+In the popular mode of Supabase Realtime, clients subscribe to changes on a *table*. That would silently destroy Decision 02. With `broadcast`, our API writes the message and applies the rules. Then it publishes to a channel. Clients subscribe to channels, never to tables. The feature and the cost are the same, and the boundary is not broken.
 
-Capacity: Pro includes 500 concurrent connections, then $10 per additional 1,000. Budget $10–20/month extra.
+Capacity: Pro includes 500 concurrent connections. Each 1,000 more connections cost $10. Budget $10–20/month more.
 
 ### Where the lock-in actually is
 
 | Piece | Lock-in | Exit |
 |---|---|---|
 | Postgres | **[None]** | pg_dump, restore, change connection string |
-| Storage | **[Low]** | S3-compatible — copy bucket, change endpoint |
-| Realtime | **[Low]** | Transport sits behind our API; clients unaffected |
+| Storage | **[Low]** | S3-compatible. Copy the bucket, change the endpoint. |
+| Realtime | **[Low]** | The transport is behind our API. Clients see no change. |
 | Identity | **[Medium]** | One-column backfill + silent re-login — *only because of Rule 1* |
 
 > [!warning] The five-minute decision that saves weeks
 >
-> You cannot `pg_dump` an OAuth relationship. So the Firebase UID is stored as a plain `auth_provider_id` column, and every other table foreign-keys to *our* `users.id`.
+> You cannot `pg_dump` an OAuth relationship. Thus, we store the Firebase UID as a plain `auth_provider_id` column. All other tables have a foreign key to *our* `users.id`.
 >
-> With that rule, switching providers means re-linking one column and asking users to tap Google once more. Without it, the provider’s ID is embedded in every foreign key in the database.
+> With that rule, a change of provider needs two things. We link one column again, and users tap Google one more time. Without that rule, the ID of the provider is in each foreign key in the database.
 
 ---
 
 ## 06 · Drizzle as the database layer
 
-**Decision:** Drizzle, in `apps/api` only. The TypeScript schema is the single source of truth for the entire database.
+**Decision:** We use Drizzle, only in `apps/api`. The TypeScript schema is the single source of truth for the full database.
 
 > [!note] Not like Room
 >
-> In Room, every phone has its own SQLite file. Here there is exactly **one** Postgres database, and the schema file describes its real, complete structure — every table, column, index and foreign key. Not a client view or a subset.
+> In Room, each phone has its own SQLite file. Here, there is exactly **one** Postgres database. The schema file describes its real, complete structure: all tables, columns, indexes and foreign keys. It is not a client view or a subset.
 
 ```
 schema.ts  →  drizzle-kit generate  →  0003_add_verified_flag.sql  →  Postgres
 ```
 
-- **Portability.** Migrations are plain SQL any Postgres accepts. Leave Drizzle or leave Supabase and the schema history travels intact.
-- **It teaches SQL rather than replacing it.** The query builder mirrors SQL structure instead of hiding it. Prisma would teach you Prisma.
-- **The hardest query stays typed.** The ranking score must run inside Postgres. Drizzle supports raw SQL with a typed result; under Prisma that’s an untyped `$queryRaw` escape hatch.
-- **Compile-time safety matters disproportionately here.** Four people editing one schema at two hours a day. Renaming a column breaks the build and lists every affected query — rather than failing in production, in an untested endpoint, on a Tuesday.
+- **Portability.** Migrations are plain SQL that each Postgres accepts. If we leave Drizzle or Supabase, the schema history moves with us, with no loss.
+- **It teaches SQL. It does not replace SQL.** The query builder shows the SQL structure and does not hide it. Prisma would teach you Prisma.
+- **The hardest query stays typed.** The ranking score must run in Postgres. Drizzle supports raw SQL with a typed result. In Prisma, that is an untyped `$queryRaw` escape hatch.
+- **Compile-time safety is much more important here than usual.** Four people edit one schema at two hours a day. If a person renames a column, the build breaks and lists all the affected queries. Without this, the failure occurs in production, in an untested endpoint, on a Tuesday.
 
 ### Adoption — mid-2026
 
@@ -340,49 +346,51 @@ schema.ts  →  drizzle-kit generate  →  0003_add_verified_flag.sql  →  Post
 |---|---|---|
 | Prisma | 55.3M | 3.8M → 4.3M |
 | Drizzle | 48.1M | 2.9M → 5.1M |
-| TypeORM | 19.3M | declining |
+| TypeORM | 19.3M | goes down |
 
-Drizzle overtook Prisma on weekly downloads in Q4 2025 and the gap is widening. Production users include Replit, Sentry, Databricks and Figma; Astro DB is built on it; Hono ships it as the default. It gained company backing in March 2026, removing the main prior objection.
+Drizzle overtook Prisma on weekly downloads in Q4 2025, and the gap continues to increase. Production users include Replit, Sentry, Databricks and Figma. Astro DB uses Drizzle as its base, and Hono ships it as the default. In March 2026, Drizzle got the support of a company. This removed the primary objection from before.
 
 | Cost / benefit | Hours |
 |---|---|
 | Learning cost | −2 to −3 |
 | Migration tooling not hand-rolled | +4 to +6 |
 | Row mapping across ~100 queries | +5 to +8 |
-| Schema drift caught at compile time | unpriced — the main one |
+| Schema drift caught at compile time | unpriced — the primary one |
 | Net | ~15–25 hours saved |
 
 ---
 
 ## 07 · Hybrid rendering, Bearer tokens, instant revocation
 
-**Decision:** Rendering splits by whether a page needs SEO. Identity travels as `Authorization: Bearer` everywhere.
+**Decision:** The rendering of a page depends on if the page needs SEO. Identity goes as `Authorization: Bearer` on all surfaces.
 
 | Surface | Rendering | Identity |
 |---|---|---|
-| Landing, listings | Server-rendered by Next, calling the API server-to-server | None — public data |
+| Landing, listings | Next renders it on the server, and calls the API server-to-server | None — public data |
 | Stack, liked, chat, settings | Client-rendered in the browser | `Bearer <ID token>` |
 
-Listings are the organic-search surface. The authenticated app has no SEO value at all — nobody googles someone’s chat inbox.
+Listings are the organic-search surface. The authenticated app has no SEO value at all. Nobody googles the chat inbox of a different person.
 
 ### Why Bearer and not session cookies
 
-A cookie path would be web-only — **mobile clients cannot use cookies** — leaving two authentication code paths to build, test and keep in sync forever. Exactly the divergence Decision 02 exists to prevent.
+A cookie path would work only on the web, because **mobile clients cannot use cookies**. Then we would have two authentication code paths to build, test and keep in sync forever. Decision 02 exists to prevent exactly this divergence.
 
 | Token | Lifetime | Who sees it |
 |---|---|---|
-| ID token (JWT) | ~1 hour **[fixed]** | Sent to our API on every request |
-| Refresh token | Long-lived | Stays on device. **Our API never sees it.** |
+| ID token (JWT) | ~1 hour **[fixed]** | Goes to our API with each request |
+| Refresh token | Long-lived | Stays on the device. **Our API never sees it.** |
 
-The API verifies the JWT signature against Google’s cached public keys — locally, no database lookup, no call to Firebase.
+The API verifies the JWT signature against the cached public keys of Google. It does this locally, with no database lookup and no call to Firebase.
 
 ### Why we don’t shorten the 1-hour TTL
 
-It’s fixed by Firebase and not configurable. But more usefully: **it’s the wrong lever.** The threat a short TTL addresses is a stolen token, and tokens are stolen via XSS. An attacker who can run JavaScript harvests fresh tokens for as long as the tab is open, or takes the refresh token and mints their own. A 5-minute TTL barely inconveniences them, while costing 12× the refresh traffic and a class of expired-mid-request edge cases.
+Firebase sets the TTL, and we cannot configure it. But the more useful point is this: **it is the incorrect lever.**
+
+A short TTL is a defence against a stolen token, and attackers steal tokens through XSS. An attacker who can run JavaScript gets new tokens for as long as the tab is open. Or the attacker takes the refresh token and mints new tokens. A 5-minute TTL causes the attacker almost no problem. But it costs 12× the refresh traffic and a class of expired-mid-request edge cases.
 
 > [!danger] What we build instead — instant revocation
 >
-> One column, three lines of middleware, about an hour of work.
+> It needs one column, three lines of middleware and approximately one hour of work.
 
 ```
 users.tokens_valid_after   timestamptz  not null  default now()
@@ -392,7 +400,7 @@ if (decoded.iat * 1000 < user.tokens_valid_after.getTime())
   throw unauthorized()   // every token issued before this moment is dead
 ```
 
-Setting that column to `now()` kills every session the user holds, on every device, immediately. Suspend, ban, log-out-everywhere and compromise response are all the same one-line write — and the spec requires auto-suspend on crossing the report-rate threshold, which needs exactly this.
+When we set that column to `now()`, all sessions of the user end immediately, on all devices. Suspend, ban, log-out-everywhere and compromise response are all the same one-line write. The spec requires auto-suspend when an account crosses the report-rate threshold, and that needs exactly this column.
 
 ---
 
@@ -400,13 +408,13 @@ Setting that column to `now()` kills every session the user holds, on every devi
 
 **Decision:** Next 16 App Router · React 19 · Tailwind v4 · TanStack Query
 
-Existing pages from `femmeflats-design` get ported in, not rebuilt.
+We port the pages that exist in `femmeflats-design`. We do not build them again.
 
-Styling was already decided by code that exists — a landing page, login, signup and browse screen built on Tailwind v4. Re-litigating it would discard real work for no benefit.
+Code that exists already decided the styling: a landing page, login, signup and a browse screen on Tailwind v4. If we argue this decision again, we would discard real work for no benefit.
 
 ### TanStack Query — caching is not the reason
 
-That’s a side effect people over-index on. The reason is boilerplate and correctness.
+Caching is a side effect, and people give it too much importance. The reason is boilerplate and correctness.
 
 Without
 
@@ -437,7 +445,7 @@ const { data, isLoading, error } =
 
 > [!warning] Look at the cancelled guard
 >
-> Without it, a response landing after `id` has changed overwrites fresh data with stale. In a swipe stack **id changes every second or two** — so this race is the main interaction in the product, not an edge case. It presents as “sometimes the wrong profile appears,” which is expensive to diagnose.
+> Without the guard, a response can arrive after `id` changes. Then it writes the data of the previous id in place of the data of the current id. In a swipe stack, **id changes every second or two**. Thus, this race is the primary interaction in the product, not an edge case. The symptom is “sometimes the wrong profile appears”, and that is expensive to diagnose.
 
 | Fetching components across the authed app | ~30–40 |
 |---|---|
@@ -446,7 +454,10 @@ const { data, isLoading, error } =
 | Learning cost | 1–2 hours |
 | Break-even | ~5th endpoint |
 
-It also gives two things the product specifically needs: **prefetching the next N cards** so the stack feels instant, and **optimistic accept/reject** with automatic rollback.
+It also gives two things that the product specially needs:
+
+- **prefetching the next N cards**, so that the stack feels instant
+- **optimistic accept/reject** with automatic rollback.
 
 ---
 
@@ -454,31 +465,31 @@ It also gives two things the product specifically needs: **prefetching the next 
 
 **Decision:** Supabase `ap-south-1` · `apps/api` on Fly.io Mumbai · `apps/web` on Vercel pinned to `bom1`
 
-Postgres region is the sticky choice and compute follows it. Moving `apps/api` between hosts is an afternoon; moving a Supabase project between regions is a dump-and-restore with downtime.
+The Postgres region is the sticky choice, and compute follows it. A move of `apps/api` to a different host takes an afternoon. A move of a Supabase project to a different region is a dump-and-restore with downtime.
 
 ### Region matters more than the vendor
 
-Every API request makes several round trips to Postgres, so the latency that dominates isn’t user→API — it’s **API→database**.
+Each API request makes a number of round trips to Postgres. Thus, the largest latency is not user→API. It is **API→database**.
 
-| Setup | API→DB per query | Endpoint doing 5 queries |
+| Setup | API→DB per query | Endpoint with 5 queries |
 |---|---|---|
 | API Mumbai · DB Mumbai | ~1ms | ~5ms |
 | API Singapore · DB Singapore | ~1ms | ~5ms |
 | API Singapore · DB Mumbai | ~55ms | ~275ms wasted |
 
-The failure mode isn’t picking the wrong city — it’s **splitting API and database across regions.** Of the obvious hosts, only Fly.io has an Indian region; Render has none, Railway has none confirmed. Vercel does offer `bom1` (Mumbai), so latency alone doesn’t separate Fly from Vercel.
+The failure mode is not an incorrect city. It is **an API and a database in different regions.** Of the obvious hosts, only Fly.io has an Indian region. Render has no Indian region, and Railway has no confirmed Indian region. Vercel does offer `bom1` (Mumbai). Thus, latency alone does not make a difference between Fly and Vercel.
 
 ### Fly.io vs Vercel — the runtime
 
 |   | Fly.io (bom) | Vercel (bom1) |
 |---|---|---|
-| Runtime model | Always-on container | Function instances, reused via Fluid |
-| Cold starts | None | Reduced, not eliminated |
+| Runtime model | Always-on container | Function instances, reused through Fluid |
+| Cold starts | None | Fewer, but not zero |
 | Max duration | Unlimited | 300s default · 800s paid |
-| Persistent worker | Just run one | None — Cron + queue |
-| DB connections | Real long-lived pool | Needs Supabase’s pooler |
-| Fastify fit | What it’s designed for | Needs an adapter |
-| Portability | A container runs anywhere | Vercel-shaped code |
+| Persistent worker | Run one | None — Cron + queue |
+| DB connections | Real long-lived pool | Needs the Supabase pooler |
+| Fastify fit | Its design target | Needs an adapter |
+| Portability | A container runs on all hosts | Vercel-shaped code |
 | Cost | ~$5–10/mo fixed | Per invocation |
 
 ### Vendor health — mid-2026
@@ -492,27 +503,32 @@ The failure mode isn’t picking the wrong city — it’s **splitting API and d
 
 > [!danger] The inversion worth noticing
 >
-> Fly’s own Series D messaging says agent-native customers are now ~two-thirds of revenue among its largest, growing ~12× year on year. Read plainly: Fly is becoming an AI-agent infrastructure company, and general web hosting is a shrinking share of its attention.
+> The Series D messaging of Fly says this. In its largest customers, agent-native customers are at this time ~two-thirds of revenue. They grow ~12× year on year. The plain meaning is that Fly changes into an AI-agent infrastructure company. General web hosting gets a smaller share of its attention.
 >
-> But ask what you’d be locked into. On Fly you deploy a **Docker container** — if Fly disappoints, the same image runs on Railway, Render or AWS unchanged. An afternoon. Vercel is the far safer company but produces code that runs nowhere else. **The safer vendor gives the riskier coupling.**
+> But ask what the lock-in would be. On Fly, you deploy a **Docker container**. If Fly disappoints, the same image runs on Railway, Render or AWS with no change. That move takes an afternoon.
+>
+> Vercel is the much safer company. But it produces code that runs on no other platform. **The safer vendor gives the riskier coupling.**
 
 ### The argument that actually decided it
 
 > [!danger] Serverless functions have no shared memory between requests
 >
-> So nothing can be buffered, batched, throttled or cached *across* requests. Every request is an island. That is the whole con — everything else follows from it.
+> Thus, you cannot buffer, batch, throttle or cache anything *across* requests. Each request is an island. That is the full disadvantage. All other problems follow from it.
 
-Take analytics ingestion, which the spec (§3.1) defines as a per-card lifecycle flushed on every decision:
+An example is analytics ingestion. The spec (§3.1) defines it as a per-card lifecycle, with a flush on each decision:
 
 - **65k** Sessions per month at 5k weekly actives
 - **~12M** Events per month
 - **~4.2M** HTTP requests for analytics alone
 
-On a long-running process: an in-memory buffer batches inserts of ~500 over one persistent connection. A traffic spike means more concurrent requests to the same process — the database sees the same steady writes.
+On a long-running process, an in-memory buffer batches inserts of ~500 through one persistent connection. A traffic spike gives more concurrent requests to the same process. The database continues to get the same stable writes.
 
-On serverless: every flush is an isolated invocation. A launch-night spike scales out to many instances, each needing a connection, all arriving at the pooler at once. The pooler queues, latency climbs, and the swipe stack — the core interaction — stutters. The fix is architectural, discovered under load at 2am.
+On serverless, each flush is an isolated invocation. A launch-night spike scales to many instances. Each instance needs a connection, and all of them arrive at the pooler at the same time. The pooler queues them, and latency increases. Then the swipe stack, which is the core interaction, stutters. The fix is architectural, and you find the problem at 2am, when the load is high.
 
-Two more collisions: **rate limiting** (§8.2 caps new conversations per day — a counter in process versus an external round trip on every message send), and **auto-suspend on report threshold**, which wants a process continuously watching.
+There are two more collisions:
+
+- **rate limiting**: §8.2 sets a daily limit on new conversations. This is a counter in the process, against an external round trip on each message send.
+- **auto-suspend on report threshold**: this needs a process that monitors continuously.
 
 ### But serverless wins the other half — so we use it there
 
@@ -525,7 +541,7 @@ Two more collisions: **rate limiting** (§8.2 caps new conversations per day —
 | Rate limits | per message | ❌ stateful | **[Long-running]** |
 | Background jobs | continuous | ❌ daemon | **[Long-running]** |
 
-Grids and lists are the part serverless does *well* — and Decision 07 already put them there. Public pages render on Vercel and cache at the edge; everything write-heavy sits behind `apps/api` on Fly. Each tool where it is actually good.
+Serverless is *good* at grids and lists, and Decision 07 already put them on serverless. Public pages render on Vercel and cache at the edge. All write-heavy work is behind `apps/api` on Fly. We use each tool where it is actually good.
 
 ---
 
@@ -546,29 +562,31 @@ roomsie/
 
 ### Why pnpm — strictness, not speed
 
-npm and yarn flatten every dependency into one hoisted `node_modules`, so `apps/web` can import a package only `apps/api` declared. It works on a laptop and fails in CI. pnpm enforces that a package may import only what it declares. With four people and two independently deployed artefacts, that bug class is worth designing out.
+npm and yarn flatten all dependencies into one hoisted `node_modules`. Thus, `apps/web` can import a package that only `apps/api` declared. This works on a laptop and fails in CI. pnpm makes sure that a package can import only what it declares. With four people and two artefacts that deploy independently, a design that removes that bug class is worth the work.
 
 ### Why Turborepo over Nx
 
-Both are task runners over the same workspace, so this is narrow. Two things decided it: `apps/web` deploys to Vercel, which auto-detects Turborepo and gives **remote caching with zero configuration** — team and CI share a build cache for free. And it is one config file, at a moment when the team is already absorbing Fastify, Zod, Drizzle, TanStack Query, Fly.io and Docker.
+Both are task runners on the same workspace. Thus, the difference is small. Two things decided it. First, `apps/web` deploys to Vercel, which automatically detects Turborepo and gives **remote caching with zero configuration**. The team and CI share a build cache for free.
+
+Second, Turborepo is one config file. At this time, the team already must learn Fastify, Zod, Drizzle, TanStack Query, Fly.io and Docker.
 
 > [!note] Nx’s real advantage is `affected`, not generators
 >
-> Nx builds a project graph from actual imports, so it runs only what a change could have broken. That matters at twenty packages with a fifteen-minute CI run. At four packages, `turbo build` with caching finishes either way.
+> Nx makes a project graph from the actual imports. Thus, it runs only what a change could break. That is important at twenty packages with a fifteen-minute CI run. At four packages, `turbo build` with caching finishes in either case.
 >
-> And the migration is cheap — delete `turbo.json`, run `nx init`, update a few scripts. About half a day. Adopting a heavier tool now to avoid that inverts the principle applied everywhere else in this document.
+> Also, the migration is cheap: delete `turbo.json`, run `nx init` and update some scripts. It takes approximately half a day. If we adopt a heavier tool at this time to avoid that migration, we invert the principle that all other parts of this document apply.
 
-Terminology note: Nx has deprecated the package-based vs integrated distinction, replacing it with inferred tasks (“Project Crystal”). Incremental plugin adoption is now simply how Nx works — there is nothing to hedge for by picking a repo style up front.
+Terminology note: Nx deprecated the difference between package-based and integrated repos. Inferred tasks (“Project Crystal”) replaced it. At this time, incremental plugin adoption is simply how Nx works. Thus, there is no reason to choose a repo style at the start as a hedge.
 
 ---
 
 ## 11 · Design system and the token pipeline
 
-**Decision:** Roomsie DS = customised Untitled UI. Figma is the single source of truth; `theme.css` is generated wholesale from the export.
+**Decision:** Roomsie DS = customised Untitled UI. Figma is the single source of truth. We generate all of `theme.css` from the export.
 
-Untitled UI Figma kit ↔ Untitled UI React (React Aria) · `@untitledui/icons` · light-first, matching the library.
+Untitled UI Figma kit ↔ Untitled UI React (React Aria) · `@untitledui/icons` · light-first, the same as the library.
 
-We are not architecting a token system — Untitled UI already did. The export carries **691 variables across 7 collections**, already tiered, already light/dark moded, already namespaced for Tailwind v4. The outstanding work is rebranding values, not building structure.
+We do not design a token system, because Untitled UI already did this. The export has **691 variables across 7 collections**. The variables have tiers, light/dark modes and namespaces for Tailwind v4. The remaining work is to rebrand values, not to build structure.
 
 | Tier | Collections | Example |
 |---|---|---|
@@ -583,11 +601,13 @@ Figma  ──►  figma-variables.json  ──►  generator  ──►  theme.c
           (lossless)                                (build artefact)
 ```
 
-Per the bridge’s own docs, values flow **Figma → export only**. Editing an exported file changes nothing in Figma and the next export overwrites it. There is no round trip: a token code needs but Figma lacks goes `DS-GAP` → designer adds it → re-export.
+The docs of the bridge say that values flow **Figma → export only**. If you edit an exported file, nothing changes in Figma, and the next export replaces the file. There is no round trip. If code needs a token that Figma does not have, the path is `DS-GAP` → designer adds it → re-export.
 
 > [!warning] Why not the DTCG file
 >
-> The bridge also writes `tokens.dtcg.json`, and DTCG is the industry-standard interchange format. But it is **lossy in exactly the way that matters here**: `$value` carries only the collection’s default mode, with the rest buried in `$extensions["com.figma"].modes`. Light and dark are both first-class, so a standard build would silently drop one — and we would be reading the Figma extension block by hand anyway, which removes DTCG’s only real advantage.
+> The bridge also writes `tokens.dtcg.json`, and DTCG is the industry-standard interchange format. But it is **lossy in exactly the way that is important here**. `$value` has only the default mode of the collection. The other modes are deep in `$extensions["com.figma"].modes`.
+>
+> Light mode and dark mode are each first-class. Thus, a standard build would silently drop one of them. Also, we would read the Figma extension block by hand in all cases. That removes the only real advantage of DTCG.
 
 ### Aliases are preserved, never flattened
 
@@ -603,29 +623,31 @@ Per the bridge’s own docs, values flow **Figma → export only**. Editing an e
 }
 ```
 
-The primitive → semantic tier stays visible in the CSS itself, recolouring one primitive cascades everywhere, and DevTools shows the chain. Flattening to hex would leave that structure documented only in Figma.
+You can see the primitive → semantic tier in the CSS. If you recolour one primitive, the change cascades to all places. DevTools shows the chain. If we flattened to hex, only Figma would document that structure.
 
 > [!tip] The trap that makes this work or break
 >
-> Plain `@theme` compiles the utility to `color: var(--color-text-primary)`, so `.dark-mode` reassigning that token is picked up. `@theme inline` bakes the value in as `color: var(--color-neutral-900)` and the reassignment has **no effect**.
+> Plain `@theme` compiles the utility to `color: var(--color-text-primary)`. Thus, when `.dark-mode` reassigns that token, the utility uses the new value. `@theme inline` puts the value in directly as `color: var(--color-neutral-900)`, and the reassignment has **no effect**.
 >
-> So: **plain `@theme`**, and **dark mode reassigns the semantic token, never the primitive.** That matches how Figma already models it — semantic variables carry per-mode aliases, primitives are mode-independent.
+> Thus: use **plain `@theme`**, and **dark mode reassigns the semantic token, never the primitive.** That agrees with how Figma already models it. Semantic variables have per-mode aliases, and primitives do not change with the mode.
 
 ### Generating wholesale needs a guard
 
-A pure build artefact means a naming divergence would silently break Untitled UI React components rather than error. So the generator ends with a verification pass: collect every `var(--…)` the Untitled UI React source references, and **hard-fail the build** if the generated file does not define one. A silent visual break becomes a loud build error.
+The file is a pure build artefact. Thus, a naming divergence would silently break Untitled UI React components, and it would not cause an error. For this reason, the generator ends with a verification pass. The pass collects each `var(--…)` that the Untitled UI React source references. It **hard-fails the build** if the generated file does not define one of them. Thus, a silent visual break becomes a loud build error.
 
 > [!note] Blocked on one command
 >
-> `token-map.md` proposes `--color-bg-primary` → utility `bg-primary`, but stock Tailwind v4 would generate `bg-bg-primary`. Untitled UI must define custom utilities to get the shorter names, and its docs do not say how. Run `npx untitledui@latest tailwind` and read the real `theme.css` — its names win. Everything else above is settled.
+> `token-map.md` proposes `--color-bg-primary` → utility `bg-primary`. But stock Tailwind v4 would generate `bg-bg-primary`. To get the shorter names, Untitled UI must define custom utilities, and its docs do not say how.
+>
+> Run `npx untitledui@latest tailwind`. Then read the real `theme.css`. Its names win. We settled all the other items above.
 
-Outstanding customisation: the Brand ramp is still Untitled UI blue and fonts are still Inter. When Brand moves to a rose/red hue, brand and `error` must stay clearly distinguishable — Block, Report and destructive confirmations cannot read as primary actions on a safety product.
+Remaining customisation: at this time, the Brand ramp is Untitled UI blue, and the fonts are Inter. When Brand changes to a rose/red hue, brand and `error` must stay clearly different. On a safety product, Block, Report and destructive confirmations cannot look like primary actions.
 
 ---
 
 ## 12 · Analytics events
 
-**Decision:** All events go to a separate, append-only Postgres instance we own. No third-party analytics vendor.
+**Decision:** All events go to a separate, append-only Postgres instance that we own. We use no third-party analytics vendor.
 
 Partitioned monthly · buffered batched writes from `apps/api` · schema versioned in `packages/contract`.
 
@@ -635,11 +657,11 @@ Partitioned monthly · buffered batched writes from `apps/api` · schema version
 
 > [!danger] The schema is expensive; the store is not
 >
-> Once fifty million rows carry a field name, renaming it means a migration and a gap in history. Moving those rows to ClickHouse later is an export and an import. So the schema is defined once, versioned, in `packages/contract` with an `event_version` on every row — that is the part that has to be right today.
+> When fifty million rows have a field name, a change to that name needs a migration and causes a gap in the history. If we move those rows to ClickHouse in the future, that is an export and an import. Thus, we define the schema one time, with versions, in `packages/contract`. Each row has an `event_version`. That is the part that must be correct today.
 
 ### Why not specialist tooling
 
-~5 writes/sec is unremarkable for Postgres, and because `apps/api` is a long-running process (Decision 09) it buffers and batches — Postgres sees a few large inserts, not a firehose. ClickHouse and Tinybird are the right answer at roughly ten times this scale.
+For Postgres, ~5 writes/sec is a usual load. `apps/api` is a long-running process (Decision 09). Thus, it buffers and batches the writes, and Postgres gets some large inserts, not a firehose. ClickHouse and Tinybird are the correct answer at approximately ten times this scale.
 
 | Option | Cost/month | Verdict |
 |---|---|---|
@@ -650,19 +672,21 @@ Partitioned monthly · buffered batched writes from `apps/api` · schema version
 
 ### Why a separate instance, not a separate table
 
-The point of keeping analytics off the primary database is resource isolation — write bursts must not compete for IOPS or connections with a user waiting on the swipe stack. A different schema in the same instance would not achieve that.
+We keep analytics off the primary database for resource isolation. Write bursts must not compete for IOPS or connections with a user who waits on the swipe stack. A different schema in the same instance would not give that isolation.
 
 ### Data sovereignty
 
-This platform holds verified profiles, locations, budgets and behavioural traces of women searching for housing. The behavioural stream is sensitive in its own right — who looked at whom, for how long. Keeping it inside our own infrastructure rather than shipping it to a vendor is the defensible position for this product specifically.
+This platform holds verified profiles, locations, budgets and behavioural traces of women who search for housing. The behavioural stream is sensitive by itself: it shows who looked at whom, and for how long. For this product specifically, the defensible position is to keep the stream in our own infrastructure, not to send it to a vendor.
 
 > [!warning] What owning the data costs you
 >
-> **You build your own dashboards.** Funnels, D7/D30 retention, activation and accept rate are queries and UI we write. Real work, deliberately accepted — and deferrable, since events accumulate from day one whether or not anything reads them yet.
+> **You build your own dashboards.** Funnels, D7/D30 retention, activation and accept rate are queries and UI that we write. This is real work, and we accept it deliberately. We can also defer it, because events collect from day one, also when nothing reads them.
 >
-> **Deletion becomes your problem.** Events reference `users.id`, so they are personal data under India’s DPDP Act. Account deletion must purge or pseudonymise a user’s event history, and raw events need a defined retention window. Design this with the schema, not after — it is the one genuinely harder part of owning the data rather than renting it.
+> **Deletion becomes your problem.** Events reference `users.id`. Thus, they are personal data for the DPDP Act of India. Account deletion must purge or pseudonymise the event history of the user. Raw events need a defined retention window.
+>
+> Design this with the schema, not after the schema. It is the one genuinely more difficult part when you own the data and do not rent it.
 
-Also required: automated partition creation, or inserts fail at a month boundary. And rollup tables built by a background job — which apps/api already has.
+We also need automated partition creation. Without it, inserts fail at a month boundary. We also need rollup tables that a background job builds, and apps/api already has background jobs.
 
 ---
 
@@ -670,38 +694,40 @@ Also required: automated partition creation, or inserts fail at a month boundary
 
 **Decision:** Typecheck · lint · build · unit tests · API integration tests · generated-file check · token check · gitleaks
 
-Unit tests are written alongside the code, not as a later phase. Playwright E2E deferred.
+We write unit tests together with the code, not in a subsequent phase. We deferred Playwright E2E.
 
-Two constraints shape this. **CI must finish in about five minutes** — past that people stop waiting and start merging on hope. And every test is an hour not spent on features, out of roughly 200. So the question is not how much testing is good in the abstract, but where the expensive bugs actually live.
+Two constraints decide this. **CI must finish in approximately five minutes.** After that time, people do not wait, and they merge on hope. Also, each test is an hour that we do not spend on features, from approximately 200 hours. Thus, the question is not how much testing is good in general. The question is where the expensive bugs actually are.
 
 | Rule | Failure mode |
 |---|---|
-| Verification gates participation | An unverified account initiates chat — a product-promise failure, not a bug |
+| Verification gates participation | An unverified account starts a chat. This is a product-promise failure, not a bug. |
 | `tokens_valid_after` revocation | A suspended account stays logged in |
 | Chat rate limits | The daily new-conversation cap silently does nothing |
-| Queue exclusion & suppression | Users cycle the same faces; the product feels broken |
+| Queue exclusion & suppression | Users see the same faces again and again. The product feels broken. |
 
-Every one is server-side, deterministic, and genuinely hard to eyeball. A snapshot test on a card component, by contrast, is near-worthless while the design still moves weekly.
+All of them are server-side and deterministic, and they are genuinely difficult to check by eye. But a snapshot test on a card component is almost worthless while the design changes each week.
 
 > [!danger] Integration tests run against a real Postgres, not mocks
 >
-> The queue rules are largely SQL. A mocked database would test nothing that ships.
+> The queue rules are mostly SQL. A mocked database would test nothing that ships.
 
 > [!note] Deferred: Playwright on critical paths
 >
-> Signup → verification → swipe → first message. Genuinely valuable, and it catches integration breaks nothing else sees. Deferred because E2E is slow to write and brittle while the UI moves weekly — 15–20 hours now plus maintenance, against a 200-hour launch budget. Revisit once the UI stabilises, before a regression can reach real users.
+> The path is signup → verification → swipe → first message. This test is genuinely valuable, and it finds integration breaks that nothing else sees. We deferred it because E2E is slow to write, and it breaks easily while the UI changes each week. It costs 15–20 hours at this time, plus maintenance, from a 200-hour launch budget. Examine it again when the UI is stable, before a regression can get to real users.
 
 ---
 
 ## 14 · Error tracking
 
-**Decision:** Instrument with the Sentry SDK. Point the DSN at self-hosted GlitchTip now; switch to paid Sentry later by changing one variable.
+**Decision:** Instrument with the Sentry SDK. Now, point the DSN at self-hosted GlitchTip. Later, change one variable to switch to paid Sentry.
 
-Firebase Crashlytics handles Android and iOS in month 4 — free, and we are already on Firebase.
+In month 4, Firebase Crashlytics handles Android and iOS. It is free, and we already use Firebase.
 
 ### Why not just use Vercel’s logs
 
-Two structural gaps, not preferences. Vercel sees only `apps/web` — the API on Fly, where the business logic lives, is invisible to it. And it logs what runs on *Vercel’s servers*: the authenticated app is client-rendered, so a React crash in the swipe stack or a failed fetch never touches a Vercel server and **never appears**. That is most user-facing breakage.
+There are two structural gaps. They are not preferences. First, Vercel sees only `apps/web`. It cannot see the API on Fly, where the business logic is.
+
+Second, Vercel logs what runs on *Vercel’s servers*. The authenticated app is client-rendered. Thus, a React crash in the swipe stack or a fetch that fails never touches a Vercel server, and it **never appears**. That is most of the breakage that users see.
 
 |   | Vercel logs | Sentry SDK |
 |---|---|---|
@@ -715,34 +741,34 @@ Two structural gaps, not preferences. Vercel sees only `apps/web` — the API on
 
 > [!danger] The move that makes this reversible
 >
-> GlitchTip implements the Sentry protocol. So we instrument with the Sentry SDK and the destination is a **DSN — a URL, not a vendor commitment**. Moving to paid Sentry later is one environment variable.
+> GlitchTip implements the Sentry protocol. Thus, we instrument with the Sentry SDK, and the destination is a **DSN — a URL, not a vendor commitment**. When we move to paid Sentry, we change one environment variable.
 
 | Option | Cost | Why not |
 |---|---|---|
 | GlitchTip self-hosted | ~$5/mo | **[Chosen]** — unlimited users, data stays ours |
-| Sentry free tier | $0 | Binding limit is **1 user**, not the 5k errors — we are four |
-| Sentry Team | $26/mo | Best product; a third of the infra budget. Deferred, not rejected |
+| Sentry free tier | $0 | The binding limit is **1 user**, not the 5k errors. We are four. |
+| Sentry Team | $26/mo | Best product. It costs a third of the infra budget. Deferred, not rejected. |
 | Crashlytics for web | free | **Private preview** since I/O 2026 — cannot carry a launch |
 
 > [!note] Planned: move to Crashlytics for web when it reaches GA
 >
-> It will be free, we are already on Firebase, Crashlytics is handling Android and iOS anyway, and being built on Google Cloud’s Observability Suite it puts client and server errors in one place — consolidating all three clients onto one free tool and retiring the GlitchTip instance we operate.
+> It will be free. We already use Firebase, and Crashlytics also handles Android and iOS. Its base is Google Cloud’s Observability Suite, so it puts client and server errors in one place. Thus, all three clients will use one free tool, and we can retire the GlitchTip instance that we operate.
 >
-> ⚠️ **That migration is not the one-variable switch.** GlitchTip speaks the Sentry protocol; Crashlytics is the Firebase JS SDK — a different integration entirely. So error reporting gets wrapped in a thin internal module from day one: a single `reportError(err, context)` that application code calls. Swapping the SDK then touches one file per app instead of every call site.
+> ⚠️ **That migration is not the one-variable switch.** GlitchTip uses the Sentry protocol. Crashlytics is the Firebase JS SDK, which is a fully different integration. Thus, from day one, we put error reporting in a thin internal module: a single `reportError(err, context)` that application code calls. Then an SDK swap touches one file in each app, not all call sites.
 
 > [!warning] Two things to get right
 >
-> **PII scrubbing via `beforeSend` is mandatory.** No message bodies, no phone numbers, no precise locations, `Authorization` redacted. Less acute while data stays on our own GlitchTip — but it must be correct before the DSN ever points at a vendor.
+> **PII scrubbing through `beforeSend` is mandatory.** Send no message bodies, no phone numbers and no accurate locations, and redact `Authorization`. This is less urgent while the data stays on our own GlitchTip. But it must be correct before the DSN ever points at a vendor.
 >
-> **Error tracking runs on the infrastructure it monitors.** If Fly has a problem, GlitchTip may be down exactly when needed. Accepted knowingly — and one more reason the DSN switch must stay trivial.
+> **Error tracking runs on the infrastructure that it monitors.** If Fly has a problem, GlitchTip can be down exactly when we need it. We know this and accept it. It is one more reason why the DSN switch must stay trivial.
 
 ---
 
 ## § · Schema design
 
-The fourteen decisions above settle *what we build on*. This settles *what the data looks like* — the most expensive thing in the system to change, because it is copied into every table, every API response, every generated Kotlin data class, and eventually into the local cache on 20,000 phones.
+The fourteen decisions above settle *what we build on*. This section settles *what the data looks like*. The data is the most expensive thing in the system to change. The reason is that it goes into all tables, all API responses and all generated Kotlin data classes. Eventually, it also goes into the local cache on 20,000 phones.
 
-The order below is a dependency chain, not a preference. Each step needs the one above it to be fixed first.
+The order below is a dependency chain, not a preference. Each step needs a decision on the step above it first.
 
 ```
 1. Identity     users                              ← every other table has a foreign key to this
@@ -761,7 +787,7 @@ The order below is a dependency chain, not a preference. Each step needs the one
 | S2 | The users table | Columns, verification state, revocation, deletion | Next |
 | S3 | Profiles and the attribute model | Rapid-fire answers — columns, rows or JSONB | Pending |
 | S4 | The queue | unseen → seen → accepted/rejected, reject counts, suppression | Pending |
-| S5 | Listings | Lister accounts kept separate from user accounts | Pending |
+| S5 | Listings | Lister accounts separate from user accounts | Pending |
 | S6 | Chat | Threads, messages, message requests, blocks, reports | Pending |
 | S7 | Analytics events | event_version, plus DPDP-compliant retention | Pending |
 
@@ -769,11 +795,11 @@ The order below is a dependency chain, not a preference. Each step needs the one
 
 ## S1 · UUIDv7 primary keys
 
-**Decision:** Every table uses `id uuid primary key` holding a **UUIDv7**, with **no database default**. The API mints it; for offline-capable writes the client mints it instead and the API validates it.
+**Decision:** All tables use `id uuid primary key`, which holds a **UUIDv7**, with **no database default**. The API mints the id. For offline-capable writes, the client mints it, and the API validates it.
 
 ### Why not the obvious choice
 
-A sequential `bigint` is smaller and faster and needs no library. Three things outweigh that here.
+A sequential `bigint` is smaller and faster, and it needs no library. But here, three things are more important.
 
 |   | `bigint` identity | `uuid` v4 | `uuid` v7 |
 |---|---|---|---|
@@ -783,9 +809,11 @@ A sequential `bigint` is smaller and faster and needs no library. Three things o
 | Guessable | yes | no | no |
 | What it leaks | user count + signup order | nothing | approximate signup time |
 
-- **Enumerability — the one that matters most for this product.** With a sequential id, `/users/1024` implies `1023` and `1025` exist. Any endpoint taking a user id becomes a walkable list of every woman on the platform. That needs no bug — only a `for` loop. Authorization should stop it, and will; but on a safety product, defence in depth means not handing out the map in the first place.
-- **Insert locality — why “UUIDs are slow” is only half true.** A Postgres index is a sorted B-tree, so where a new key lands depends on its value. A sequential key always lands on the rightmost page, which stays hot in RAM. A *random* v4 lands on a different page every time — once the index outgrows RAM that is a random disk read plus a dirty page per insert. **v7 puts a 48-bit millisecond timestamp in the high bits**, so new ids sort to the end: v4’s opacity with `bigint`’s locality. Invisible at 20k users; very visible on a 144M-row events table.
-- **Client-generated ids — the one that pays off in month 4.** If ids are uuids, the phone can mint the real, permanent id before the server ever sees the row. With `bigint` the database must assign it, so the app renders a *temporary* message, waits, then rewrites every reference to it — reply threading, read receipts, cache keys — and a retried POST creates a duplicate.
+- **Enumerability — the most important item for this product.** With a sequential id, `/users/1024` shows that `1023` and `1025` exist. Then each endpoint that takes a user id becomes a list that a person can walk. This list has all the women on the platform. That needs no bug, only a `for` loop. Authorization should stop it, and it will. But on a safety product, defence in depth means that we do not give out the map at all.
+- **Insert locality — why “UUIDs are slow” is only half correct.** A Postgres index is a sorted B-tree. Thus, the value of a new key decides where it goes. A sequential key always goes on the rightmost page, which stays hot in RAM. A *random* v4 goes on a different page each time. When the index becomes larger than RAM, each insert causes a random disk read and a dirty page.
+
+  **v7 puts a 48-bit millisecond timestamp in the high bits**. Thus, new ids sort to the end. This gives the opacity of v4 with the locality of `bigint`. You cannot see the effect at 20k users, but you can see it clearly on a 144M-row events table.
+- **Client-generated ids — the item that pays off in month 4.** If ids are uuids, the phone can mint the real, permanent id before the server ever sees the row. With `bigint`, the database must assign the id. Thus, the app renders a *temporary* message and waits. Then it rewrites all references to the message: reply threading, read receipts and cache keys. Also, a retried POST creates a duplicate.
 
 ### Where the id comes from
 
@@ -799,9 +827,9 @@ Three layers could generate it. We use them in this priority order:
 
 > [!note] Why the database is excluded
 >
-> Supabase hosted runs **Postgres 17**; the native `uuidv7()` function only arrived in Postgres 18. But even once it lands, we would not use it as a column default — a `DEFAULT uuidv7()` means the id exists only *after* the INSERT commits, so the phone can never know it in advance. Offline-first would be dead on arrival.
+> Supabase hosted runs **Postgres 17**. The native `uuidv7()` function came only in Postgres 18. But when it is available, we would not use it as a column default. With a `DEFAULT uuidv7()`, the id exists only *after* the INSERT commits. Thus, the phone can never know it in advance. Offline-first would be dead on arrival.
 >
-> So the column is declared with no default and filled by whichever layer first knows the row should exist. Generating in app code works identically on 17 and 18, which also removes the upgrade from the critical path.
+> Thus, we declare the column with no default. The first layer that knows that the row should exist fills the column. Generation in app code works the same on 17 and 18. This also removes the upgrade from the critical path.
 
 Chat message — client mints
 
@@ -837,67 +865,71 @@ id: uuid('id').primaryKey()
 { "id": "019abc50-…" }
 ```
 
-Same column, same type, no database default. Only the endpoint’s Zod schema differs — whether it accepts an `id` field in the request body at all.
+The column and the type are the same, and there is no database default. Only the Zod schema of the endpoint is different: it accepts or does not accept an `id` field in the request body at all.
 
 ### Two objections, answered
 
 - “Two clients could generate the same id”
   Not in practice
-  A UUIDv7 carries a 48-bit millisecond timestamp plus **at least 62 bits of randomness**. A collision needs two devices to pick the same 62-bit number *inside the same millisecond*. At a million writes per millisecond — roughly 10,000× our peak — that is about 1 in 10 million. And if it did happen nothing breaks: it is a *primary key*, so the second INSERT fails loudly.
+  A UUIDv7 has a 48-bit millisecond timestamp and **at least 62 bits of randomness**. For a collision, two devices must pick the same 62-bit number *in the same millisecond*. At a million writes per millisecond, approximately 10,000× our peak, the chance is approximately 1 in 10 million. If a collision does occur, nothing breaks. The id is a *primary key*, so the second INSERT fails loudly.
 - “A client could send someone else’s id and overwrite their row”
   Structurally impossible
-  `INSERT` with a duplicate primary key **errors** — it does not overwrite. Overwriting requires `UPDATE`, and we never update a row by a client-supplied id without `WHERE user_id = <id from the verified JWT>`. The worst a malicious client achieves by guessing an id is making *their own* insert fail.
+  `INSERT` with a duplicate primary key **gives an error**. It does not replace the row. To replace a row, you need `UPDATE`. We never update a row by a client-supplied id without `WHERE user_id = <id from the verified JWT>`. If a malicious client guesses an id, the worst result is that *its own* insert fails.
 
 ### The three real traps
 
 | Trap | What goes wrong | Guard |
 |---|---|---|
-| Spoofed timestamp | Client sends a v7 prefixed with year 2099. Index locality is destroyed and anything sorting by id is wrong. | Zod: embedded timestamp within ±5 min of the server clock. |
-| Sorting by id | You assume ids sort chronologically, then a client with a skewed clock reorders a chat thread. | **Never sort by the uuid.** Every table gets `created_at timestamptz not null default now()` — server clock — and that is what ordering uses. |
-| Id squatting | Attacker pre-inserts rows at ids you will later want. | Irrelevant — ids are random, they cannot predict yours. |
+| Spoofed timestamp | A client sends a v7 with the year 2099 as its prefix. This destroys index locality, and all sorts by id are incorrect. | Zod: embedded timestamp within ±5 min of the server clock. |
+| Sorting by id | You think that ids sort in time order. Then a client with a skewed clock changes the order of a chat thread. | **Never sort by the uuid.** All tables get `created_at timestamptz not null default now()`, from the server clock. Ordering uses that column. |
+| Id squatting | An attacker inserts rows in advance at ids that you will want in the future. | Not a problem. Ids are random, so the attacker cannot predict yours. |
 
 > [!warning] Standing rule
 >
-> The timestamp inside a UUIDv7 is an **optimisation for Postgres, not data**. It is never read, never displayed and never ordered by. `created_at` is the only chronology the application trusts.
+> The timestamp in a UUIDv7 is an **optimisation for Postgres, not data**. The application never reads it, never shows it and never orders by it. `created_at` is the only chronology that the application trusts.
 
 ### Which tables let the client mint
 
-Not all of them. The rule: **only rows the client creates as a self-contained action it could perform offline.**
+Not all tables. The rule is: **only rows that the client creates as a self-contained action that it could do offline.**
 
 | Table | Minted by | Why |
 |---|---|---|
 | `messages` | client | Offline send, retry-safe, instant render |
-| `swipes` | client | User can swipe with no signal; queue and flush |
-| `reports` | client | Must work on a dying connection — safety-critical |
-| `blocks` | client | Same — safety-critical |
+| `swipes` | client | The user can swipe with no signal. Queue and flush. |
+| `reports` | client | Must work on a connection that is about to fail. Safety-critical. |
+| `blocks` | client | Same. Safety-critical. |
 | `users` | API | Cannot exist before Firebase verifies the token |
 | `profiles` | API | Derived from `users` |
-| `listings` | API | Needs a server-side R2 presign first anyway |
+| `listings` | API | Also needs a server-side R2 presign first |
 
 ### What it costs
 
 - **+8 B** Per row, per foreign key, per index entry
 - **160 KB** Total overhead on `users` at 20k — noise
-- **~1 GB** Extra index on a 144M-row events table — real, revisited at S7
+- **~1 GB** Extra index on a 144M-row events table — real, and we examine it again at S7
 
 - bigint
   primary key + a separate public slug
   Rejected
-  Best storage profile and nothing enumerable leaves the API — but it means two identifiers per row forever, every join and every response has to pick the right one, and it still cannot mint ids offline. The 8 bytes are not worth a permanent second id.
+  This gives the best storage profile, and nothing enumerable leaves the API. But each row has two identifiers forever, and each join and each response must pick the correct one. Also, it cannot mint ids offline. The 8 bytes are not worth a permanent second id.
 
 > [!tip] Revisit when
 >
-> A single table passes roughly 500M rows and its index size becomes the binding constraint. That table — almost certainly `analytics_events` — can switch to `bigint` in isolation without touching anything else, because nothing ever holds a foreign key to a log line.
+> One table grows to more than approximately 500M rows, and its index size becomes the binding constraint. That table is almost certainly `analytics_events`. It can change to `bigint` by itself, with no change to other tables, because nothing ever holds a foreign key to a log line.
 
 ---
 
 ## § · Credentials
 
-The goal isn’t “nothing visible in the browser.” Some values are public by design and cannot be hidden. The goal is nothing *dangerous* visible in the browser.
+The goal is not “nothing visible in the browser.” Some values are public by design, and we cannot hide them. The goal is that the browser shows nothing *dangerous*.
 
 > [!danger] The Firebase web apiKey is not a secret
 >
-> It ships in the browser bundle by necessity and Google documents it as public. It’s an *identifier* — “this request is for the Roomsie project” — not a password. Security comes from the authorized-domains allowlist, the fact that a valid token still requires a real Google sign-in, and our API verifying every token.
+> It must ship in the browser bundle, and Google documents it as public. It is an *identifier* (“this request is for the Roomsie project”), not a password. Security comes from these three items:
+>
+> - the authorized-domains allowlist
+> - a token that our API accepts also needs a real Google sign-in
+> - our API verifies each token.
 
 | Credential | Class | Lives in |
 |---|---|---|
@@ -913,22 +945,22 @@ The goal isn’t “nothing visible in the browser.” Some values are public by
 
 > [!tip] The one that ends the company
 >
-> The Supabase `service_role` key bypasses Row Level Security entirely. Leaking it is full database compromise — every profile, message and verification selfie. It never leaves `apps/api`.
+> The Supabase `service_role` key bypasses Row Level Security fully. A leak of this key is a full database compromise: all profiles, messages and verification selfies. It never leaves `apps/api`.
 
 ### Two hard rules
 
-- Anything named `NEXT_PUBLIC_*` is **compiled into the browser bundle**. That prefix is a public declaration. Never put a secret behind it.
-- Secrets exist only in `apps/api`’s environment. They never enter `apps/web` — not in a config file, not in an env var, not via an import.
+- The build **compiles all items named `NEXT_PUBLIC_*` into the browser bundle**. That prefix is a public declaration. Never put a secret behind it.
+- Secrets exist only in the environment of `apps/api`. They never go into `apps/web`: not in a config file, not in an env var and not through an import.
 
 ### Handling — where leaks actually happen
 
-Through people and process, far more often than through code.
+Leaks occur through people and process much more frequently than through code.
 
-- `.env*` gitignored; a committed `.env.example` documents every key with dummy values.
-- Real values in the provider’s env store and CI secrets — **never in Slack or WhatsApp.** With four people, a shared vault is worth the setup time.
-- `gitleaks` as a pre-commit hook — catches the paste-into-the-wrong-file mistake before it’s permanent git history.
-- `Authorization` headers redacted in API logs. Logging a token is logging a password.
-- Rotate anything ever pasted into a chat, a screenshot or a shared laptop — before launch.
+- Git ignores `.env*`. A committed `.env.example` documents each key with dummy values.
+- Real values are in the env store of the provider and in CI secrets, **never in Slack or WhatsApp.** With four people, a shared vault is worth the setup time.
+- `gitleaks` runs as a pre-commit hook. It finds the paste-into-the-wrong-file mistake before it becomes permanent git history.
+- API logs redact `Authorization` headers. To log a token is to log a password.
+- Before launch, rotate all values that anybody ever pasted into a chat, a screenshot or a shared laptop.
 
 ---
 
@@ -936,16 +968,16 @@ Through people and process, far more often than through code.
 
 > [!danger] The frontier is empty
 >
-> Every architectural decision is settled and recorded. Nothing is silently assumed.
+> We settled and recorded all architectural decisions. We assume nothing silently.
 
 ### Carried forward
 
 | Item | Where |
 |---|---|
-| Naming transform for the token generator | Blocked on `npx untitledui@latest tailwind` — read the real theme.css |
-| Rebrand: Brand ramp is still Untitled UI blue, fonts still Inter | Decision 11 · brand must stay distinguishable from `error` |
+| Naming transform for the token generator | Blocked on `npx untitledui@latest tailwind`. Read the real theme.css. |
+| Rebrand: at this time, the Brand ramp is Untitled UI blue and the fonts are Inter | Decision 11 · brand must stay different from `error` |
 | Event retention & deletion policy (DPDP) | Decision 12 · design with the schema, not after |
-| Playwright E2E on critical paths | Decision 13 · after the UI stabilises |
-| Product requirements — PRD.md is deprecated | Requirement claims in Decisions 07, 09, 12 need revalidating |
+| Playwright E2E on critical paths | Decision 13 · after the UI is stable |
+| Product requirements — we deprecated PRD.md | Requirement claims in Decisions 07, 09, 12 need validation again |
 
-Next: schema design, then building the base by hand — one piece at a time.
+Next: schema design. Then we build the base by hand, one piece at a time.
