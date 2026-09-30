@@ -4,22 +4,29 @@
 
 ## Context
 
-`apps/api` needs to talk to Postgres. Candidates spanned the full spectrum:
-Prisma (schema-first ORM), Drizzle (code-first, SQL-shaped), Kysely (pure typed
-query builder), raw `pg` with SQL strings.
+`apps/api` must connect to Postgres. The candidates covered the full range of
+database layers:
 
-Constraints: ~60–80 backend hours, four part-time developers editing one schema,
-a stated goal of learning SQL rather than an abstraction over it, and a ranking
-query that must run inside Postgres.
+- Prisma, an ORM that starts from the schema.
+- Drizzle, which starts from the code and has the shape of SQL.
+- Kysely, which is only a typed query builder.
+- Raw `pg` with SQL strings.
+
+The constraints:
+
+- ~60–80 backend hours.
+- Four part-time developers change one schema.
+- Our stated goal is to learn SQL, not an abstraction above SQL.
+- A ranking query must run in Postgres.
 
 ## Decision
 
-**Drizzle**, in `apps/api` only. The web app has no database dependency
-whatsoever (ADR 0002).
+We use **Drizzle**, only in `apps/api`. The web app has no database dependency
+at all (ADR 0002).
 
-The Drizzle schema in TypeScript is the **single source of truth for the entire
-database** — not a client-side view or subset. Migrations are generated from it
-as plain `.sql` files and committed:
+The Drizzle schema in TypeScript is the **single source of truth for the full
+database**. It is not a client-side view or a subset. Drizzle generates the
+migrations from the schema as plain `.sql` files, and we commit these files:
 
 ```
 schema.ts → drizzle-kit generate → 0003_add_verified_flag.sql → applied to Postgres
@@ -27,26 +34,26 @@ schema.ts → drizzle-kit generate → 0003_add_verified_flag.sql → applied to
 
 ## Rationale
 
-**Portability.** Migrations are standard SQL that any Postgres will accept.
-If we leave Drizzle or leave Supabase, the schema history travels intact. This
-is the same reasoning as ADR 0001 — keep the exit cheap.
+**Portability.** The migrations are standard SQL that all Postgres databases
+accept. If we leave Drizzle or Supabase, we keep the full schema history. This
+is the same reason as in ADR 0001: keep the cost of the exit low.
 
-**It teaches SQL rather than replacing it.** The query builder mirrors SQL
-structure instead of hiding it behind object graphs.
+**Drizzle teaches SQL. It does not replace SQL.** The query builder follows the
+structure of SQL. It does not hide SQL behind object graphs.
 
-**The hardest query stays typed.** The ranking score, seen-exclusion and
-90-day suppression rule must run in Postgres (ADR 0004: don't block the event
-loop). Drizzle supports raw SQL with a typed result. Under Prisma the same query
+**The hardest query stays typed.** The ranking score, the seen-exclusion and the
+90-day suppression rule must run in Postgres (ADR 0004: do not block the event
+loop). Drizzle supports raw SQL with a typed result. With Prisma, the same query
 is an untyped `$queryRaw` escape hatch.
 
-**Compile-time safety matters disproportionately here.** Four people editing one
-schema at two hours a day. Renaming a column breaks the build immediately and
-lists every affected query, rather than failing in production in an untested
-endpoint.
+**Compile-time safety is disproportionately important here.** Four people change
+one schema, two hours each day. If a person renames a column, the build fails
+immediately and lists all the affected queries. Thus, the error does not occur
+in production, in an endpoint that has no tests.
 
-**The schema is machine-readable context.** With the schema as TypeScript in the
-repo, AI-assisted query writing is materially more accurate — relevant given how
-this team is building.
+**The schema is machine-readable context.** The schema is TypeScript in the
+repo. Thus, queries that an AI helps to write are materially more accurate. This
+is relevant because of how this team builds.
 
 ## Adoption evidence (mid-2026)
 
@@ -54,41 +61,45 @@ this team is building.
 |---|---|---|
 | Prisma | 55.3M | Q1'25 ~3.8M → Q1'26 ~4.3M |
 | **Drizzle** | 48.1M | Q1'25 ~2.9M → **Q1'26 ~5.1M** |
-| TypeORM | 19.3M | declining |
+| TypeORM | 19.3M | decreases |
 
-Drizzle overtook Prisma on weekly downloads in Q4 2025 and the gap is widening.
-Production users include Replit, Sentry, Databricks and Figma; Astro DB is built
-on it; Hono ships it as the default recommendation. It gained company backing in
-March 2026, removing the main prior objection.
+In Q4 2025, Drizzle got more weekly downloads than Prisma. The difference
+continues to increase. Users in production include Replit, Sentry, Databricks
+and Figma. Astro DB uses Drizzle as its base, and Hono gives Drizzle as its
+default recommendation. In March 2026, a company started to support Drizzle.
+This removed the primary objection from before.
 
 ## Cost/benefit
 
 | | Hours |
 |---|---|
-| Learning cost | −2 to −3 |
-| Migration tooling not hand-rolled | +4 to +6, plus ongoing |
-| Row mapping / insert / update boilerplate across ~100 queries | +5 to +8 |
-| Schema drift caught at compile time | unpriced, the main benefit |
+| Cost to learn | −2 to −3 |
+| We do not write our own migration tools | +4 to +6, and continued savings |
+| Row mapping, insert and update boilerplate in ~100 queries | +5 to +8 |
+| The compiler finds schema drift | No price. This is the primary benefit. |
 | **Net** | **~15–25 hours saved** |
 
 ## Consequences
 
-- `apps/api` owns the schema; nothing else may import it.
-- Every schema change ships as a committed `.sql` migration, applied in CI.
-- Complex analytical queries are written as raw SQL through Drizzle, not forced
-  through the query builder.
+- `apps/api` owns the schema. Other code must not import the schema.
+- Each schema change ships as a committed `.sql` migration. CI applies the
+  migration.
+- We write complex analytical queries as raw SQL through Drizzle. We do not
+  force them through the query builder.
 
 ## Alternatives rejected
 
-- **Prisma** — larger community and more AI training data, but a separate schema
-  language, SQL hidden, proprietary migration format, and untyped raw queries
-  exactly where our hardest logic lives.
-- **Kysely** — purer and thinner, but no bundled migration tooling and schema
-  types maintained separately. A few more setup hours for a marginal gain.
-- **Raw `pg`** — no compile-time safety across ~100 queries with four part-time
-  developers, plus hand-rolled migration tooling.
+- **Prisma**: It has a larger community and more AI training data. But it has
+  its own schema language, it hides SQL, and its migration format is
+  proprietary. Also, its raw queries have no types exactly where our hardest
+  logic is.
+- **Kysely**: It is purer and thinner. But it has no bundled migration tools,
+  and we must maintain the schema types independently. It costs a few more setup
+  hours for a small gain.
+- **Raw `pg`**: It gives no compile-time safety in ~100 queries with four
+  part-time developers. Also, we must write our own migration tools.
 
 ## Revisit when
 
-Drizzle's raw-SQL escape hatch stops being sufficient, or the project outgrows
-Node entirely.
+Drizzle's raw-SQL escape hatch is no longer sufficient, or the project fully
+outgrows Node.
