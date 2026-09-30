@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#5](https://github.com/magentawood/roomsie/issues/5)
 
+Hosting and database accounts.
+
 ## Needs first
 - [[F-03 Billing and caps]]
 

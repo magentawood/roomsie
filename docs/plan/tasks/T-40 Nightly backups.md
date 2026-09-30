@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#69](https://github.com/magentawood/roomsie/issues/69)
 
+Copies the two databases each night.
+
 ## Needs first
 - [[T-04 Deploy to Mumbai]]
 

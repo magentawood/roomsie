@@ -164,6 +164,7 @@ for t in T:
           f"**Checkpoint:** [[{CPNAME[t['cp']]}]]  ",
           f"**Issue:** {issue_md(t)}"]
     if t["critical"]: b.append("\n> [!warning] Critical path\n> If this task is late, the launch is late.")
+    if t.get("plain"): b.append(f"\n{t['plain']}")
     b.append("\n## Needs first")
     b += [f"- {link(d)}" for d in t["deps"]] or ["- Nothing. You can start this task at any time."]
     if t["id"] in SOFT:
@@ -237,7 +238,7 @@ The target date is **{f(next(m[2] for m in ms if m[0] == 'CP4'))} 2026**. The fa
 
 ## Documents
 
-- [[how-to-work|How to work]] — the list of each person, in order, and an index of every code in plain words
+- [[how-to-work|How to work]] — how the team works: principles, deadlines, and the rules for a task
 - [[design-review|For the designer]] — the behaviour that we will lock, to confirm, change or defer
 - [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
 - [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
@@ -325,7 +326,7 @@ b_h = sum(t["hours"] or 0 for t in build); ui_h = sum(t["hours"] or 0 for t in u
 unfiled = [t["id"] for t in T if not t["issue"]]
 L = [f"# Team plan: launch on {D(LAUNCH):%-d %B}", "",
  "**Status:** ready to assign · **Decision:** PD12 · **Generated from** `docs/team-plan.json`", "",
- "Every task below is also a GitHub issue. This file is the baseline. The list of each person, in order, is also in `docs/how-to-work.md`.", "",
+ "Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.", "",
  "> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues."
  + (f" **No issue at this time:** {', '.join(unfiled)}." if unfiled else ""), "",
  "---", "", "## How to use this", "",

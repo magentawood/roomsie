@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#50](https://github.com/magentawood/roomsie/issues/50)
 
+Saturday 10 October, 8 pm. Launch on the 12th, or move to the 14th. Quality decides, not the calendar.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

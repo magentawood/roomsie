@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#64](https://github.com/magentawood/roomsie/issues/64)
 
+What the observer records about a person, and where we store it.
+
 ## Needs first
 - [[T-06 Database schema ⚑]]
 - [[T-08 Form A contract ⚑]]

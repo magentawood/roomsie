@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#4](https://github.com/magentawood/roomsie/issues/4)
 
+*Example: limit the AI account to ₹20,000 a month, so a bug cannot quietly cost a lakh.*
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

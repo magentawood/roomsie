@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#42](https://github.com/magentawood/roomsie/issues/42)
 
+The built site must agree with the drawings.
+
 ## Needs first
 - [[D-02 Chat screen designs ⚑]]
 - [[D-03 Results and profile designs]]

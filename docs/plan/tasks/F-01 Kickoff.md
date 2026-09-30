@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#2](https://github.com/magentawood/roomsie/issues/2)
 
+A real person against each vertical.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

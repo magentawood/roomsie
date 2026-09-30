@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#47](https://github.com/magentawood/roomsie/issues/47)
 
+Opens only the three chosen Mumbai areas. Collects emails from all other areas.
+
 ## Needs first
 - [[T-14 Match query ⚑]]
 - [[D-04 Landing and waitlist designs]]

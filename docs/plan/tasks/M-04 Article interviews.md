@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#13](https://github.com/magentawood/roomsie/issues/13)
 
+Collect stories from real flat-hunters.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

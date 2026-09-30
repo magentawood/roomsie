@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#39](https://github.com/magentawood/roomsie/issues/39)
 
+The public home page that explains roomsie.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#53](https://github.com/magentawood/roomsie/issues/53)
 
+One full day. Nobody builds new things. Everyone only repairs.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

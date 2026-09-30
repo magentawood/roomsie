@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Shows matches as cards. In v0, each card is a person, never a property listing.
+
 ## Needs first
 - [[T-08 Form A contract ⚑]]
 - [[D-03 Results and profile designs]]

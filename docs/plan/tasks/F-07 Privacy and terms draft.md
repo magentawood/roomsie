@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#17](https://github.com/magentawood/roomsie/issues/17)
 
+The text for the legal pages.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

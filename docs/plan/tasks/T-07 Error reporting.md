@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#28](https://github.com/magentawood/roomsie/issues/28)
 
+Sends each crash that a user gets to a dashboard automatically.
+
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 

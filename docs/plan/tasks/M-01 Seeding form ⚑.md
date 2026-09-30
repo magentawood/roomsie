@@ -25,6 +25,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+A simple sign-up form, and tell people about it.
+
 ## Needs first
 - [[F-05 Seeding consent text ⚑]]
 - [[F-06 Launch areas picked]]

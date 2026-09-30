@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#31](https://github.com/magentawood/roomsie/issues/31)
 
+So Google sends people to roomsie.
+
 ## Needs first
 - [[M-04 Article interviews]]
 

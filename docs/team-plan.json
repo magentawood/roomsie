@@ -3,6 +3,7 @@
   {
    "id": "D-01",
    "title": "Styling decision for launch",
+   "plain": "Pick the colours, fonts and general feel one time, and never argue about them again.",
    "role": "D",
    "hours": null,
    "start": "2026-09-24",
@@ -22,6 +23,7 @@
   {
    "id": "F-01",
    "title": "Kickoff: names on every role",
+   "plain": "A real person against each vertical.",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
@@ -42,6 +44,7 @@
   {
    "id": "F-02",
    "title": "Secure the domain",
+   "plain": "Buy it before a different person does.",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
@@ -59,6 +62,7 @@
   {
    "id": "F-03",
    "title": "Billing and hard spend caps",
+   "plain": "*Example: limit the AI account to ₹20,000 a month, so a bug cannot quietly cost a lakh.*",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
@@ -78,6 +82,7 @@
   {
    "id": "F-04",
    "title": "Create accounts in Mumbai regions",
+   "plain": "Hosting and database accounts.",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
@@ -100,6 +105,7 @@
   {
    "id": "T-08",
    "title": "Form A contract: slots and enums",
+   "plain": "The exact things that the assistant tries to learn, and the exact allowed answers. \"intent\" is one of the four prototype cards (a flat and flatmates, just a flat, just a flatmate, renting out a flat) or `unclear`. Nine lifestyle axes: smoking, alcohol, guests, pets, hours, tidiness, at home, daytime, kitchen. Everyone builds against this fixed list.",
    "role": "P2",
    "hours": 2,
    "start": "2026-09-24",
@@ -123,6 +129,7 @@
   {
    "id": "D-02",
    "title": "Design the chat screens",
+   "plain": "Before anyone builds them.",
    "role": "D",
    "hours": null,
    "start": "2026-09-24",
@@ -144,6 +151,7 @@
   {
    "id": "F-05",
    "title": "Consent text for the seeding form",
+   "plain": "What we will do with their data.",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
@@ -161,6 +169,7 @@
   {
    "id": "F-06",
    "title": "Pick the three launch areas",
+   "plain": "Three Mumbai neighbourhoods.",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
@@ -180,6 +189,7 @@
   {
    "id": "T-02",
    "title": "Scaffold the monorepo in this repo",
+   "plain": "One folder for the website, server and shared code. All five people commit into it.",
    "role": "P1",
    "hours": 4,
    "start": "2026-09-24",
@@ -205,6 +215,7 @@
   {
    "id": "T-18b",
    "title": "Person detail and connect screens",
+   "plain": "Read the full profile of a person and send a connect request.",
    "role": "P3",
    "hours": 4,
    "start": "2026-10-08",
@@ -227,6 +238,7 @@
   {
    "id": "T-06",
    "title": "Database schema v1",
+   "plain": "The exact shape of all stored data: people, flats, messages, matches.",
    "role": "P3",
    "hours": 8,
    "start": "2026-09-24",
@@ -252,6 +264,7 @@
   {
    "id": "T-10",
    "title": "Chat screen and split view",
+   "plain": "The main screen: chat on one side, results on the other.",
    "role": "P2",
    "hours": 8,
    "start": "2026-10-07",
@@ -275,6 +288,7 @@
   {
    "id": "M-04",
    "title": "Interviews for articles 1 to 10",
+   "plain": "Collect stories from real flat-hunters.",
    "role": "M1",
    "hours": null,
    "start": "2026-09-24",
@@ -294,6 +308,7 @@
   {
    "id": "M-01",
    "title": "Seeding form live, outreach starts",
+   "plain": "A simple sign-up form, and tell people about it.",
    "role": "M2",
    "hours": null,
    "start": "2026-09-25",
@@ -317,6 +332,7 @@
   {
    "id": "T-11",
    "title": "Model wrapper: DeepSeek with Gemini fallback",
+   "plain": "One piece of code that talks to the AI. If DeepSeek is down, it silently changes to Gemini.",
    "role": "P2",
    "hours": 4,
    "start": "2026-09-24",
@@ -340,6 +356,7 @@
   {
    "id": "D-03",
    "title": "Design results, profile and connect screens",
+   "plain": "Match cards, profile pages and the connect flow.",
    "role": "D",
    "hours": null,
    "start": "2026-09-25",
@@ -361,6 +378,7 @@
   {
    "id": "F-07",
    "title": "Draft privacy policy, terms, grievance contact",
+   "plain": "The text for the legal pages.",
    "role": "F",
    "hours": null,
    "start": "2026-09-25",
@@ -381,6 +399,7 @@
   {
    "id": "F-09",
    "title": "Write down the three ADR exceptions",
+   "plain": "Where we knowingly broke our own architecture rules, and why.",
    "role": "F",
    "hours": null,
    "start": "2026-09-26",
@@ -401,6 +420,7 @@
   {
    "id": "T-05",
    "title": "Google sign-in and token checks in the API",
+   "plain": "Log in with Google. The server checks the user on each request.",
    "role": "P1",
    "hours": 6,
    "start": "2026-09-26",
@@ -424,6 +444,7 @@
   {
    "id": "T-15",
    "title": "Results panel, built against the contract",
+   "plain": "Shows matches as cards. In v0, each card is a person, never a property listing.",
    "role": "P3",
    "hours": 6,
    "start": "2026-10-03",
@@ -448,6 +469,7 @@
   {
    "id": "M-03",
    "title": "Write the eval sentences",
+   "plain": "Realistic sentences to test the assistant.",
    "role": "P5",
    "hours": 4,
    "start": "2026-09-24",
@@ -468,6 +490,7 @@
   {
    "id": "M-02",
    "title": "Seeding target: 100 sign-ups",
+   "plain": "100 real people before launch.",
    "role": "M2",
    "hours": null,
    "start": "2026-09-26",
@@ -487,6 +510,7 @@
   {
    "id": "T-12",
    "title": "Extraction: free text to form slots",
+   "plain": "Changes a typed sentence into tidy form slots.",
    "role": "P2",
    "hours": 6,
    "start": "2026-09-26",
@@ -513,6 +537,7 @@
   {
    "id": "D-04",
    "title": "Design landing, wall and waitlist",
+   "plain": "The public home page and the waitlist page.",
    "role": "D",
    "hours": null,
    "start": "2026-09-28",
@@ -532,6 +557,7 @@
   {
    "id": "T-09",
    "title": "Chip flow for intent, area, budget",
+   "plain": "Buttons under the chat. People tap and do not have to type.",
    "role": "P2",
    "hours": 6,
    "start": "2026-10-09",
@@ -556,6 +582,7 @@
   {
    "id": "T-14",
    "title": "Match query API",
+   "plain": "Takes what a person wants and returns the people who fit.",
    "role": "P3",
    "hours": 6,
    "start": "2026-09-29",
@@ -580,6 +607,7 @@
   {
    "id": "T-04",
    "title": "Deploy web and API to Mumbai",
+   "plain": "Real machines in Mumbai, so anyone on the internet can use the site.",
    "role": "P1",
    "hours": 3,
    "start": "2026-10-01",
@@ -602,6 +630,7 @@
   {
    "id": "T-16",
    "title": "Profile create and edit, with photos",
+   "plain": "A person says who they are and uploads photos.",
    "role": "P5",
    "hours": 8,
    "start": "2026-10-04",
@@ -626,6 +655,7 @@
   {
    "id": "M-05",
    "title": "Drafts of articles 1 to 10",
+   "plain": "So Google sends people to roomsie.",
    "role": "M1",
    "hours": null,
    "start": "2026-09-29",
@@ -647,6 +677,7 @@
   {
    "id": "T-03",
    "title": "CI: typecheck, lint, build, secret scan",
+   "plain": "Checks each pull request automatically.",
    "role": "P5",
    "hours": 2,
    "start": "2026-09-27",
@@ -668,6 +699,7 @@
   {
    "id": "T-13",
    "title": "Reply writer with scope rules",
+   "plain": "The assistant writes its answers and stays on the topic.",
    "role": "P2",
    "hours": 4,
    "start": "2026-09-29",
@@ -691,6 +723,7 @@
   {
    "id": "F-08",
    "title": "Name the moderator",
+   "plain": "Who handles reports and abuse.",
    "role": "F",
    "hours": null,
    "start": "2026-09-30",
@@ -711,6 +744,7 @@
   {
    "id": "M-07",
    "title": "Draft launch posts",
+   "plain": "Social posts for launch day, written before it.",
    "role": "M1",
    "hours": null,
    "start": "2026-09-30",
@@ -728,6 +762,7 @@
   {
    "id": "T-07",
    "title": "Error reporting wrapper and Sentry",
+   "plain": "Sends each crash that a user gets to a dashboard automatically.",
    "role": "P1",
    "hours": 1,
    "start": "2026-10-03",
@@ -750,6 +785,7 @@
   {
    "id": "T-17",
    "title": "Carry anonymous chat into the account on sign-in",
+   "plain": "Keeps a chat from before sign-up when the person signs up.",
    "role": "P2",
    "hours": 2,
    "start": "2026-10-06",
@@ -774,6 +810,7 @@
   {
    "id": "T-19",
    "title": "Report, block, suspend, and a saved moderation query",
+   "plain": "The safety tools.",
    "role": "P4",
    "hours": 5,
    "start": "2026-10-01",
@@ -797,6 +834,7 @@
   {
    "id": "T-33",
    "title": "Invite-only gate until launch",
+   "plain": "Keeps the public out until launch day.",
    "role": "P1",
    "hours": 1,
    "start": "2026-10-05",
@@ -816,6 +854,7 @@
   {
    "id": "T-23a",
    "title": "Landing page ported from the prototype",
+   "plain": "The public home page that explains roomsie.",
    "role": "P4",
    "hours": 4,
    "start": "2026-09-24",
@@ -838,6 +877,7 @@
   {
    "id": "T-24",
    "title": "Event logging table",
+   "plain": "Records what people actually do, to show what works.",
    "role": "P5",
    "hours": 2,
    "start": "2026-09-29",
@@ -862,6 +902,7 @@
   {
    "id": "T-21",
    "title": "Five-turn cap, rate limits, spend ceiling",
+   "plain": "Stops abuse of the AI and a very large bill.",
    "role": "P2",
    "hours": 5,
    "start": "2026-10-02",
@@ -885,6 +926,7 @@
   {
    "id": "D-05",
    "title": "Design QA on the live build",
+   "plain": "The built site must agree with the drawings.",
    "role": "D",
    "hours": null,
    "start": "2026-10-05",
@@ -905,6 +947,7 @@
   {
    "id": "T-18a",
    "title": "Connect request and contact reveal API",
+   "plain": "The server side of a connect request. Shows phone numbers only when the two people agree.",
    "role": "P5",
    "hours": 4,
    "start": "2026-09-30",
@@ -926,6 +969,7 @@
   {
    "id": "T-20",
    "title": "Account deletion",
+   "plain": "Delete the account and data correctly: profile, photos and messages are really removed. Indian law requires this.",
    "role": "P4",
    "hours": 3,
    "start": "2026-10-05",
@@ -950,6 +994,7 @@
   {
    "id": "T-23b",
    "title": "Privacy, terms and grievance pages",
+   "plain": "The legal pages that each Indian site must have.",
    "role": "P4",
    "hours": 2,
    "start": "2026-09-27",
@@ -969,6 +1014,7 @@
   {
    "id": "M-06",
    "title": "Beta invites to seeded sign-ups",
+   "plain": "Let the 100 seeded people in before the public.",
    "role": "M2",
    "hours": null,
    "start": "2026-10-03",
@@ -992,6 +1038,7 @@
   {
    "id": "T-22",
    "title": "Launch areas and waitlist",
+   "plain": "Opens only the three chosen Mumbai areas. Collects emails from all other areas.",
    "role": "P4",
    "hours": 3,
    "start": "2026-10-08",
@@ -1015,6 +1062,7 @@
   {
    "id": "T-25",
    "title": "Uptime monitor and spend alerts",
+   "plain": "Automatic warnings if the site stops or costs increase quickly.",
    "role": "P1",
    "hours": 2,
    "start": "2026-10-04",
@@ -1036,6 +1084,7 @@
   {
    "id": "T-27",
    "title": "Run the eval set and tune the prompt",
+   "plain": "Test the assistant on real sentences. Fix what it gets wrong.",
    "role": "P2",
    "hours": 3,
    "start": "2026-10-05",
@@ -1058,6 +1107,7 @@
   {
    "id": "F-10",
    "title": "Go/no-go meeting",
+   "plain": "Saturday 10 October, 8 pm. Launch on the 12th, or move to the 14th. Quality decides, not the calendar.",
    "role": "F",
    "hours": null,
    "start": "2026-10-10",
@@ -1077,6 +1127,7 @@
   {
    "id": "T-29",
    "title": "Abuse test: 100 fake sessions",
+   "plain": "Attack our own site before strangers do.",
    "role": "P1",
    "hours": 1,
    "start": "2026-10-10",
@@ -1099,6 +1150,7 @@
   {
    "id": "D-06",
    "title": "Launch visuals",
+   "plain": "The images for the launch-day posts.",
    "role": "D",
    "hours": null,
    "start": "2026-10-09",
@@ -1115,6 +1167,7 @@
   {
    "id": "A-01",
    "title": "Bug fix day",
+   "plain": "One full day. Nobody builds new things. Everyone only repairs.",
    "role": "ALL",
    "hours": null,
    "start": "2026-10-11",
@@ -1132,6 +1185,7 @@
   {
    "id": "A-02",
    "title": "Launch",
+   "plain": "Remove the gate. Open to the public.",
    "role": "ALL",
    "hours": null,
    "start": "2026-10-12",
@@ -1152,6 +1206,7 @@
   {
    "id": "M-09",
    "title": "Broker calls",
+   "plain": "Get real flats listed.",
    "role": "M2",
    "hours": null,
    "start": "2026-10-12",
@@ -1172,6 +1227,7 @@
   {
    "id": "T-34",
    "title": "Router: sort each typed message and flag what we should not answer",
+   "plain": "One cheap model call decides what a message is. Thus, it decides which handlers run. *Example: \"write my essay\" gets a polite scripted line, with no model call, and is logged.*",
    "role": "P2",
    "hours": 6,
    "start": "2026-09-27",
@@ -1197,6 +1253,7 @@
   {
    "id": "T-35",
    "title": "Form B contract and table",
+   "plain": "What the observer records about a person, and where we store it.",
    "role": "P2",
    "hours": 3,
    "start": "2026-09-25",
@@ -1220,6 +1277,7 @@
   {
    "id": "T-36",
    "title": "Observer: Form B from free text, with the quote check",
+   "plain": "Records what chips cannot capture, only when it can quote the user. It discards a note with no exact quote.",
    "role": "P2",
    "hours": 8,
    "start": "2026-09-30",
@@ -1245,6 +1303,7 @@
   {
    "id": "T-37",
    "title": "Articles table and full-text search",
+   "plain": "Stores the roomsie articles and finds the correct passage.",
    "role": "P4",
    "hours": 3,
    "start": "2026-09-29",
@@ -1268,6 +1327,7 @@
   {
    "id": "T-38",
    "title": "Advisor: articles first, then web search after sign-in",
+   "plain": "Answers housing questions from our articles first, then from the web, for signed-in users only. It never answers \"Is this clause in my agreement legal?\" from the web. It hands that question off.",
    "role": "P2",
    "hours": 7,
    "start": "2026-10-04",
@@ -1294,6 +1354,7 @@
   {
    "id": "T-39",
    "title": "Analytics in its own database, with scheduled jobs",
+   "plain": "Keeps analytics writes off the main database.",
    "role": "P1",
    "hours": 3,
    "start": "2026-10-06",
@@ -1317,6 +1378,7 @@
   {
    "id": "T-40",
    "title": "Nightly database backups to R2",
+   "plain": "Copies the two databases each night.",
    "role": "P1",
    "hours": 2,
    "start": "2026-10-08",

@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Read the full profile of a person and send a connect request.
+
 ## Needs first
 - [[D-03 Results and profile designs]]
 - [[T-18a Connect API ⚑]], at a later time. It goes into main on Thu 1 Oct, before you start.

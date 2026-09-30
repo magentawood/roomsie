@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#41](https://github.com/magentawood/roomsie/issues/41)
 
+Stops abuse of the AI and a very large bill.
+
 ## Needs first
 - [[T-12 Extraction ⚑]]
 

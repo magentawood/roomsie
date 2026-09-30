@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+One piece of code that talks to the AI. If DeepSeek is down, it silently changes to Gemini.
+
 ## Needs first
 - [[T-08 Form A contract ⚑]]
 

@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#51](https://github.com/magentawood/roomsie/issues/51)
 
+Attack our own site before strangers do.
+
 ## Needs first
 - [[T-21 Turn cap and spend ceiling]]
 

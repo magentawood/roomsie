@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#43](https://github.com/magentawood/roomsie/issues/43)
 
+Automatic warnings if the site stops or costs increase quickly.
+
 ## Needs first
 - [[T-04 Deploy to Mumbai]]
 

@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Buttons under the chat. People tap and do not have to type.
+
 ## Needs first
 - [[T-10 Chat screen and split view ⚑]]
 - [[T-08 Form A contract ⚑]]

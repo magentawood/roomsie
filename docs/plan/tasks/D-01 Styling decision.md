@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#1](https://github.com/magentawood/roomsie/issues/1)
 
+Pick the colours, fonts and general feel one time, and never argue about them again.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#34](https://github.com/magentawood/roomsie/issues/34)
 
+Who handles reports and abuse.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

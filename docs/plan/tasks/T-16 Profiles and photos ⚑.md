@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+A person says who they are and uploads photos.
+
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]

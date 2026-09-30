@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#66](https://github.com/magentawood/roomsie/issues/66)
 
+Stores the roomsie articles and finds the correct passage.
+
 ## Needs first
 - [[T-06 Database schema ⚑]]
 

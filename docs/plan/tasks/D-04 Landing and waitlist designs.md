@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#25](https://github.com/magentawood/roomsie/issues/25)
 
+The public home page and the waitlist page.
+
 ## Needs first
 - [[D-01 Styling decision]]
 

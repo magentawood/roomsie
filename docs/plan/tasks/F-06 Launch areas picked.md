@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#9](https://github.com/magentawood/roomsie/issues/9)
 
+Three Mumbai neighbourhoods.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

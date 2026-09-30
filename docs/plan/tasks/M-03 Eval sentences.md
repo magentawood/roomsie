@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#21](https://github.com/magentawood/roomsie/issues/21)
 
+Realistic sentences to test the assistant.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

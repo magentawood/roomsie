@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#67](https://github.com/magentawood/roomsie/issues/67)
 
+Answers housing questions from our articles first, then from the web, for signed-in users only. It never answers "Is this clause in my agreement legal?" from the web. It hands that question off.
+
 ## Needs first
 - [[T-37 Articles and search]]
 - [[T-11 Model wrapper ⚑]]

@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#32](https://github.com/magentawood/roomsie/issues/32)
 
+Keeps a chat from before sign-up when the person signs up.
+
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]

@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Changes a typed sentence into tidy form slots.
+
 ## Needs first
 - [[T-11 Model wrapper ⚑]]
 

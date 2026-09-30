@@ -2,7 +2,7 @@
 
 **Status:** ready to assign · **Decision:** PD12 · **Generated from** `docs/team-plan.json`
 
-Every task below is also a GitHub issue. This file is the baseline. The list of each person, in order, is also in `docs/how-to-work.md`.
+Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
 > **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
 

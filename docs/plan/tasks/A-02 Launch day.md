@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP4 Launch]]  
 **Issue:** [#54](https://github.com/magentawood/roomsie/issues/54)
 
+Remove the gate. Open to the public.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

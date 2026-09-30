@@ -38,7 +38,7 @@ roomsie handles four intents:
 | **Migration** | A file of SQL that changes the schema. Migrations run in sequence. Never edit a migration after you ship it. |
 | **Drizzle** | The tool that we use to describe the schema in TypeScript. It also generates the SQL migrations from that description. |
 | **Form A** | The structured list of data that the assistant tries to learn from you: intent, budget, areas, move date, and nine lifestyle answers. The assistant fills it while you talk. |
-| **T-06, T-14…** | Task codes. Each code is a GitHub issue. `docs/how-to-work.md` gives an index of all 55 in plain words. |
+| **T-06, T-14…** | Task codes. Each code is a GitHub issue. Each task note and GitHub issue starts with a plain-words description. |
 | **P1–P5** | The work lanes of the five people. This journal comes from **P3 · Data and trust**: the schema, the matching, and who sees whom. |
 
 > [!note]- Why

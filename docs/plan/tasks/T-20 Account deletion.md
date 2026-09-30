@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#46](https://github.com/magentawood/roomsie/issues/46)
 
+Delete the account and data correctly: profile, photos and messages are really removed. Indian law requires this.
+
 ## Needs first
 - [[T-06 Database schema ⚑]]
 

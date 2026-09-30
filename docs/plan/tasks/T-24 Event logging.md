@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#37](https://github.com/magentawood/roomsie/issues/37)
 
+Records what people actually do, to show what works.
+
 ## Needs first
 - [[T-06 Database schema ⚑]]
 
