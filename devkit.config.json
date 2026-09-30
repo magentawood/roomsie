@@ -1,0 +1,16 @@
+{
+  "repo": "magentawood/roomsie",
+  "vaultPath": ".",
+  "standardsPath": "docs/standards",
+  "decisionsPath": "docs/decisions",
+  "plan": {
+    "source": "docs/team-plan.json",
+    "build": "python3 tools/build-obsidian-plan.py",
+    "syncIssues": "python3 tools/sync-issues.py --apply",
+    "tasksPath": "docs/plan/tasks",
+    "progressNote": "docs/plan/Progress.md"
+  },
+  "ste": {
+    "spelling": "british"
+  }
+}
