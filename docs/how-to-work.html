@@ -109,7 +109,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-to-do-a-task">How to do a task</h2>
 <ol start="0">
-<li>One time in each clone, run <code>git config core.hooksPath .githooks</code>. The hook checks the doc limits and the generated files before each commit.</li>
+<li>The hook turns on by itself when you open the repo in Claude Code, and on <code>pnpm install</code> after T-02. If it is off, run <code>git config core.hooksPath .githooks</code> one time in the clone. The hook checks the doc limits and the generated files before each commit.</li>
 <li>Take the next task in your list.</li>
 <li>Open its note in <code>docs/plan/tasks/</code>. Read the description, "Needs first", "Done when" and "Read first".</li>
 <li>Make a branch from <code>main</code>. Do the work. Obey the code rules in <a href="standards/_index.md">docs/standards/</a>.</li>
