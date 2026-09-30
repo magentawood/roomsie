@@ -1,8 +1,8 @@
 # roomsie — working context
 
-Read this first. It is the running state of the planning session, kept current
-so that anyone (or any agent) picking the repo up knows where things stand
-without replaying the whole transcript.
+Read this file first. It gives the current state of the planning session. We
+keep it current. Thus, a person or an agent that starts work on the repo knows
+the status, and does not have to read the full transcript again.
 
 **Last updated:** 2026-09-26 · **Owner:** Yash Mangal · **Org:** magentawood
 
@@ -10,91 +10,108 @@ without replaying the whole transcript.
 
 ## What roomsie is
 
-An AI-native platform for finding flats and flatmates. Instead of putting a
-search box in front of a user and making them filter a list, an assistant
-interviews them — conversationally — to understand what they actually need,
-then consults and recommends. Only once the assistant has enough signal does it
-start surfacing matches. Browsing exists, but it is downstream of the
-conversation rather than the front door.
+roomsie is an AI-native platform to find flats and flatmates. It does not give
+the user a search box and a list to filter. An assistant interviews the user in
+a conversation to learn the real needs of the user. Then the assistant consults
+and recommends. The assistant shows matches only when it has sufficient signal.
 
-The assistant has to handle every intent in the market, not just one:
+Browsing exists, but it comes after the conversation. It is not the front door.
 
-- someone looking for a whole flat,
-- someone looking for a room in an already-occupied flat,
-- someone who **has** a flat and is looking for flatmates,
-- and the combinations in between.
+The assistant must handle all the intents in the market, not only one:
+
+- a person who looks for a full flat
+- a person who looks for a room in an already-occupied flat
+- a person who **has** a flat and looks for flatmates
+- the combinations between these intents.
 
 ## Where this came from
 
-roomsie is a pivot. The previous product, **femmeflats**, was a women-only,
-swipe-stack discovery app — dating-app mechanics applied to shared living. Its
-PRD is **deprecated**: do not cite it as a requirement source. It was deleted
-from the repo, but three architecture decisions were argued from claims it
-made, so it stays in git history: `git show 08ecb48:docs/source/femmeflats-PRD-deprecated.md`. The
-women-only "HerNest" PRD draft was deleted the same way:
+roomsie is a pivot. The previous product was **femmeflats**. It was a
+women-only, swipe-stack discovery app: it applied dating-app mechanics to
+shared living. Its PRD is **deprecated**. Do not cite it as a requirement
+source.
+
+We deleted the PRD from the repo. But three architecture decisions used
+claims from this PRD as their argument. Thus, it stays in git history: `git show 08ecb48:docs/source/femmeflats-PRD-deprecated.md`.
+We deleted the women-only "HerNest" PRD draft in the same way:
 `git show a3d135e:docs/source/PRD-DraftV1.pdf > PRD-DraftV1.pdf`.
 
 The **technical base does not change.** Fifteen accepted ADRs and a full
-architecture record carry over unchanged. They are vendored in
-`docs/decisions/` and `docs/tech-base.md`.
+architecture record stay with no change. We vendored them in `docs/decisions/`
+and `docs/tech-base.md`.
 
-A clickable wireframe for the pre-pivot product is at
-`docs/source/roomsie-prototype-V3.html`, kept as context for what UI already
-exists to keep, cut or rework.
+A clickable wireframe of the pre-pivot product is at
+`docs/source/roomsie-prototype-V3.html`. We keep it as context. It shows the UI
+that already exists, which we can keep, cut or rework.
 
 ---
 
 ## Decisions taken in this session
 
-Product decisions use the prefix **PD** (PD0 to PD13). Architecture decisions
-are cited as **ADR-NNNN** and live in `docs/decisions/`. Task IDs keep their
-own prefixes (T-, D-, M-, F-, A-), so `D-04` is a design task, never a decision.
+Product decisions use the prefix **PD** (PD0 to PD13). We cite architecture
+decisions as **ADR-NNNN**, and they are in `docs/decisions/`. Task IDs keep
+their own prefixes (T-, D-, M-, F-, A-). Thus, `D-04` is a design task, never a
+decision.
 
 | # | Decision | Value | Consequence |
 |---|---|---|---|
-| PD1 | Audience | **Open to all genders** | Drops the femmeflats women-only wedge. Gender verification is no longer a launch blocker. Larger market, harder differentiation, more direct competition. |
-| PD2 | Launch market | **Mumbai** | Matches existing infrastructure region (`ap-south-1` / `bom` / `bom1`). Highest rents and most acute flatshare need; broker-dominated supply. |
+| PD1 | Audience | **Open to all genders** | roomsie drops the women-only wedge of femmeflats. Gender verification is no longer a launch blocker. The market is larger. But differentiation is harder, and there is more direct competition. |
+| PD2 | Launch market | **Mumbai** | Mumbai agrees with the current infrastructure region (`ap-south-1` / `bom` / `bom1`). It has the highest rents and the most acute need for flatshares. Brokers control most of the supply. |
 
 ## Open decisions
 
 | # | Question | Status |
 |---|---|---|
-| PD0 | v0 scope | **Flatmate matching only.** No property listings as separate objects; someone with a spare room is a person card. Moves the broker work out of v0 and makes cold start a one-sided problem. |
-| PD3 | Where listing supply comes from at launch | **Deferred pending broker interviews.** Working hypothesis: brokers list free, roomsie charges for a qualified introduction. See `docs/research/supply-and-broker-model.md`. To be validated by calling Mumbai brokers. |
-| PD3a | Flatmate matching design | **Active track.** Being worked in parallel, because it is substantially independent of PD3. |
-| PD3b | What the AI interview adds over the chip filters | **Settled: both.** It surfaces what chips cannot capture, and it consults and pushes back. A structured form runs alongside the whole chat session; contradictions are confirmed with the user rather than silently overwritten. |
-| PD3c | Exclusionary preferences | **Settled: record what the user states,** including community and religion, and filter on it. Mitigations retained: never infer, never suggest, keep them out of any learned ranking, filter server-side. See `docs/ai-agent-design.md` section 4.1. |
-| PD3d | Whether a published listing may carry identity restrictions in visible text | **Open.** Separated from PD3c because an advertisement is a different position from a private filter. |
-| PD4 | Monetisation model and pricing | Pending, follows PD3 |
+| PD0 | v0 scope | **Flatmate matching only.** Property listings are not separate objects. A person with a spare room is a person card. This moves the broker work out of v0. It also makes cold start a one-sided problem. |
+| PD3 | Where listing supply comes from at launch | **Deferred until the broker interviews.** Working hypothesis: brokers list free, and roomsie charges for a qualified introduction. See `docs/research/supply-and-broker-model.md`. We will validate this hypothesis with calls to Mumbai brokers. |
+| PD3a | Flatmate matching design | **Active track.** The team works on it in parallel, because it is mostly independent of PD3. |
+| PD3b | What the AI interview adds over the chip filters | **Settled: both.** The interview finds what chips cannot capture. It also consults and challenges the user. A structured form runs next to the full chat session. The assistant confirms each contradiction with the user. It does not silently overwrite the value. |
+| PD3c | Exclusionary preferences | **Settled: record what the user states,** including community and religion, and filter on it. We keep these mitigations: never infer, never suggest, keep these preferences out of all learned ranking, and filter server-side. See `docs/ai-agent-design.md` section 4.1. |
+| PD3d | Whether a published listing may carry identity restrictions in visible text | **Open.** It is separate from PD3c, because an advertisement is a different position from a private filter. |
+| PD4 | Monetisation model and pricing | Pending. It follows PD3. |
 | PD5 | Team and budget | **Settled: 5 engineers at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |
-| PD12 | Team plan | **Settled, re-cut on 2026-09-25 because there are no designs yet.** Five engineering lanes: P1 Platform, P2 Assistant, P3 Data and trust, P4 Content and moderation, P5 Accounts and connections. Phase A (24–30 Sep) is design-free work; Phase B (1–10 Oct) is all 35 hours of screens plus the router, observer, advisor, analytics database and backups. 151 build hours against 170 available. Designs D-02 to D-04 are due by end of 30 September. Every task keeps one owner, and nobody's list waits on another person after Phase A. Design, marketing and founder keep roles. See `docs/how-to-work.md`, `docs/team-plan.md` and `docs/design-review.md`. |
-| PD11 | Launch | **Moved on 2026-09-26: target Monday 12 October, fallback Wednesday 14 October. Quality comes before the date.** The go/no-go list is the quality bar: if a check fails, the date moves a little rather than shipping something below it. Go or no-go on Saturday 10 October, 8 pm. The move buys back the router, the observer and the advisor for launch, plus analytics in its own database and nightly backups. *History:* the first target was 7 October, fallback 9 October, and go or no-go on 5 October. About 72 to 140 person-hours available against 250 to 350 for the full v0. Cut to roughly 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 free. **Public launch**, which adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. New total about 130 hours with no margin. **Scheduled in PD12 as 115 build hours against 120 available for five engineers, plus a bug-fix day on 6 October.** See `docs/launch-plan.md`. |
-| PD6c | The five holes in the interface design | **Four closed, one provisional.** The panel updates on form change rather than on chat turn. Widening arrives as a banner, narrowing applies but says what went. One form, two views, with a complete conflict rule. See `docs/interface-shape.md`. |
+| PD12 | Team plan | **Settled. We cut it again on 2026-09-25, because there are no designs yet.** Five engineering lanes: P1 Platform, P2 Assistant, P3 Data and trust, P4 Content and moderation, P5 Accounts and connections. Phase A (24–30 Sep) is work that needs no design. Phase B (1–10 Oct) has all 35 hours of screens. It also has the router, observer, advisor, analytics database and backups. 151 build hours against 170 available. Designs D-02 to D-04 are due by the end of 30 September. Each task keeps one owner. After Phase A, the list of no person waits on another person. Design, marketing and founder keep their roles. See `docs/how-to-work.md`, `docs/team-plan.md` and `docs/design-review.md`. |
+| PD11 | Launch | **Moved on 2026-09-26: target Monday 12 October, fallback Wednesday 14 October. Quality comes before the date.** The go/no-go list is the quality bar. If a check fails, the date moves a little, and we do not ship something below the bar. Go or no-go on Saturday 10 October, 8 pm. The move gets back the router, the observer and the advisor for launch. It also gets back analytics in its own database, and nightly backups. *History:* the first target was 7 October, fallback 9 October, and go or no-go on 5 October. About 72 to 140 person-hours were available against 250 to 350 for the full v0. We cut v0 to approximately 130 hours: chip flow plus one extraction call, results panel, profiles, and a mutual-accept contact reveal instead of in-app chat. v0 is free. **Public launch**: this adds about 15 hours for report and block, account deletion, a waitlist outside the launch areas, monitoring and legal pages. The new total is about 130 hours, with no margin. **Scheduled in PD12 as 115 build hours against 120 available for five engineers, plus a bug-fix day on 6 October.** See `docs/launch-plan.md`. |
+| PD6c | The five holes in the interface design | **Four closed, one provisional.** The panel updates when the form changes, not on each chat turn. Widening shows as a banner. Narrowing applies, and it tells the user what it removed. One form, two views, with a complete conflict rule. See `docs/interface-shape.md`. |
 | PD6 | Interface shape | **Settled for desktop.** Landing page, then a full-screen chat with no skip, then a side-by-side chat and listings view after 2 to 3 inputs. Listings update live. Minimal manual filters. See `docs/interface-shape.md`. |
-| PD6a | Mobile pattern for the split view | **Provisional.** Chat fills the screen, then shrinks to a bottom bar at 25% when listings appear, expanding to 60% on tap. Same mechanics as desktop. UI not final. |
-| PD6b | Where the login gate sits, and search | **Settled.** Login is needed only to see a listing's details and to contact anyone. Chat, split view and browsing are public. Area and filter pages are indexed and open the split view with filters applied and the form pre-filled. Blog lives at `roomsie.com/blog`. See `docs/seo-with-gated-products.md`. |
-| PD10 | What the assistant will discuss | **Five bands.** Adjacent questions are always answered, tiered by risk: general ones fall through to model knowledge with a hedge, consequential ones (law, tax, area safety, claims about a listing) are corpus-only and handed off rather than refused. Out of scope gets a one-line scripted redirect with no model call. Adversarial is scripted and logged. Sensitive is never redirected. Corpus to be seeded with ~30 articles before launch. See `docs/scope-policy.md`. |
-| PD9 | Abuse and cost limits on the pre-login chat | **Settled: both a turn cap and rate limits.** Five free-text turns, chip taps not counted, and the wall cannot appear before results have rendered. Listings stay visible when the chat gates. At the daily spend ceiling the assistant degrades to the zero-cost chip flow rather than failing. See `docs/pre-login-limits.md`. |
-| PD7a | Agent architecture | **Settled on 2026-09-26, and all of it ships at launch: a router with small specialist handlers,** not multi-agent and not one big model. The router runs on DeepSeek Flash behind its own adapter, and Jev gets a trial on the eval set once access arrives. It also flags off-topic and adversarial messages. The advisor answers from our articles first, then with DeepSeek's `web_search` tool (Gemini's Google Search grounding as fallback), **for general questions and signed-in users only**. Law, tax, area safety and claims about a person stay articles-only or handed off. Two forms: a filter form driving SQL, and a structured profile form where every observation must quote the user. RAG only for consulting questions, over your own corpus, using Postgres full-text search rather than a vector store. See `docs/agent-architecture.md`. |
-| PD13 | Databases and backups | **Settled on 2026-09-26, as an exception.** The main and analytics databases are on two free Supabase accounts. Supabase's acceptable use policy discourages extra accounts, and the free plan has no backups. So a nightly dump of both goes to R2, and both projects move into one paid organisation when we start paying. Connection details live only in environment settings, so the move is a transfer, not a code change. |
-| PD7 | Models | **Settled: DeepSeek V4.1 Flash for every role, Gemini Flash-Lite as fallback.** Sarvam dropped. Residency constraint dropped. Cost is register matching, mitigated at prompt level and measured in the eval. Marathi is the real language risk, not Hinglish. See `docs/model-selection.md` and `docs/research/hinglish-model-report.md`. |
-| PD8 | Verification | **Settled with one change.** Blurred cards for users who opt into verified-only, with mutual verification required, which makes the blur the conversion prompt. Blur must be server-side. **The manual Aadhaar upload route is dropped:** collecting Aadhaar copies is an offence and UIDAI is banning it. DigiLocker through a registered KYC provider is primary, with a non-Aadhaar government ID as the manual fallback. See `docs/verification.md`. |
+| PD6a | Mobile pattern for the split view | **Provisional.** Chat fills the screen. When listings appear, the chat shrinks to a bottom bar at 25%. A tap expands it to 60%. The mechanics are the same as on desktop. The UI is not final. |
+| PD6b | Where the login gate sits, and search | **Settled.** A user must log in only to see the details of a listing and to contact a person. Chat, split view and browsing are public. Area and filter pages are indexed. They open the split view with the filters applied and the form pre-filled. The blog is at `roomsie.com/blog`. See `docs/seo-with-gated-products.md`. |
+| PD10 | What the assistant will discuss | **Five bands.** The assistant always answers adjacent questions, in tiers by risk. It answers general questions from model knowledge, with a hedge. It answers consequential questions (law, tax, area safety, claims about a listing) only from the corpus. It hands them off, and does not refuse them. An out-of-scope message gets a one-line scripted redirect with no model call. An adversarial message gets a scripted reply, and the system logs it. A sensitive message never gets a redirect. Before launch, we will seed the corpus with ~30 articles. See `docs/scope-policy.md`. |
+| PD9 | Abuse and cost limits on the pre-login chat | **Settled: both a turn cap and rate limits.** Five free-text turns. Chip taps do not count. The wall cannot appear before the results show. Listings stay visible when the chat gates. At the daily spend ceiling, the assistant degrades to the zero-cost chip flow, and does not fail. See `docs/pre-login-limits.md`. |
+| PD7a | Agent architecture | **Settled on 2026-09-26, and all of it ships at launch: a router with small specialist handlers,** not multi-agent and not one big model. The router runs on DeepSeek Flash behind its own adapter. Jev gets a trial on the eval set when access arrives. The router also flags off-topic and adversarial messages. The advisor answers from our articles first. Then it uses the DeepSeek `web_search` tool, with the Gemini Google Search grounding as fallback. It does this **for general questions and signed-in users only**. Law, tax, area safety and claims about a person stay articles-only or handed off. There are two forms: a filter form that drives SQL, and a structured profile form. In the profile form, each observation must quote the user. RAG is only for consulting questions, over your own corpus. It uses Postgres full-text search, not a vector store. See `docs/agent-architecture.md`. |
+| PD13 | Databases and backups | **Settled on 2026-09-26, as an exception.** The main and analytics databases are on two free Supabase accounts. The Supabase acceptable use policy discourages extra accounts, and the free plan has no backups. Thus, a nightly dump of the two databases goes to R2. When we start to pay, the two projects move into one paid organisation. Connection details are only in environment settings. Thus, the move is a transfer, not a code change. |
+| PD7 | Models | **Settled: DeepSeek V4.1 Flash for every role, Gemini Flash-Lite as fallback.** We dropped Sarvam. We dropped the residency constraint. The cost is register matching. We mitigate it at the prompt level and measure it in the eval. Marathi is the real language risk, not Hinglish. See `docs/model-selection.md` and `docs/research/hinglish-model-report.md`. |
+| PD8 | Verification | **Settled with one change.** Users who opt into verified-only see blurred cards, and verification must be mutual. Thus, the blur is the conversion prompt. The blur must be server-side. **The manual Aadhaar upload route is dropped:** it is an offence to collect Aadhaar copies, and UIDAI is banning it. The primary route is DigiLocker through a registered KYC provider. The manual fallback is a non-Aadhaar government ID. See `docs/verification.md`. |
 
 ---
 
 ## Product record
 
-**`docs/product-base.md` is the one-page record of every product decision,** in the same format as `docs/tech-base.md`. Keep it in step with the tables above.
+**`docs/product-base.md` is the one-page record of all product decisions,** in
+the same format as `docs/tech-base.md`. Keep it in step with the tables above.
 
-**The Markdown is the source for every doc with a browser version.** `tools/render-docs.py` writes each `.html` from its `.md`: tech-base, product-base, how-to-work, build-journal and design-review. Edit the `.md`, then run the script. `--check` fails if an `.html` is out of date. It needs `pip3 install -r tools/requirements.txt`.
+**The Markdown is the source for each doc that has a browser version.**
+`tools/render-docs.py` writes each `.html` from its `.md`: tech-base,
+product-base, how-to-work, build-journal and design-review. Edit the `.md`,
+then run the script. `--check` fails if an `.html` is out of date. The script
+needs `pip3 install -r tools/requirements.txt`.
 
 ## Team plan
 
-**Each person's list, in order, is in `docs/how-to-work.md`.** Every task with its done-when list is in `docs/team-plan.md`. Both follow `docs/team-plan.json`, which is the one place the plan is edited. Every task is mirrored as a GitHub issue, but the issues still carry the original `vertical:V1`–`V5` labels and milestones until they are relabelled.
+**The list of each person, in order, is in `docs/how-to-work.md`.**
+`docs/team-plan.md` has all the tasks, each with its done-when list. The two
+files come from `docs/team-plan.json`. This file is the one place where you
+edit the plan. Each task has a mirror GitHub issue. But the issues still have
+the initial `vertical:V1`–`V5` labels and milestones, until we relabel them.
 
-**For the designer:** `docs/design-review.md` lists every behaviour engineering is building on, to confirm, change or defer.
+**For the designer:** `docs/design-review.md` lists all the behaviours that
+engineering builds on. The designer confirms, changes or defers each one.
 
-**To see it visually,** open this repo as an Obsidian vault. Start at `docs/plan/roomsie launch.md`, then open the graph view or `docs/plan/Launch timeline.canvas`. Rebuild with `python3 tools/build-obsidian-plan.py` after editing `docs/team-plan.json`. That also regenerates `docs/team-plan.md`.
+**To see it visually,** open this repo as an Obsidian vault. Start at
+`docs/plan/roomsie launch.md`. Then open the graph view or
+`docs/plan/Launch timeline.canvas`. After you edit `docs/team-plan.json`,
+rebuild with `python3 tools/build-obsidian-plan.py`. This also makes
+`docs/team-plan.md` again.
 
 | Checkpoint | Date |
 |---|---|
@@ -109,10 +126,10 @@ own prefixes (T-, D-, M-, F-, A-), so `D-04` is a design task, never a decision.
 
 | Who | What | Blocked by |
 |---|---|---|
-| Marketing | Call Mumbai brokers to test the free-listing, paid-introduction model | Nothing |
+| Marketing | Call Mumbai brokers to test the model of free listings and paid introductions | Nothing |
 | Marketing | Write the 30 corpus articles, `docs/content/corpus-plan.md` | Nothing |
-| Designer | Resolve the V3 prototype palette against ADR 0011's Untitled UI pipeline | Nothing, and it blocks frontend work |
-| Tech | Work the lanes in `docs/how-to-work.md` | Nothing |
+| Designer | Resolve the V3 prototype palette against the Untitled UI pipeline of ADR 0011 | Nothing. This task blocks frontend work. |
+| Tech | Do the work in the lanes in `docs/how-to-work.md` | Nothing |
 
 ---
 
@@ -120,12 +137,12 @@ own prefixes (T-, D-, M-, F-, A-), so `D-04` is a design task, never a decision.
 
 | Item | State |
 |---|---|
-| The 10-section master launch document | **Deferred on 2026-09-23.** Every decision it needs is settled in the tables above. |
-| The elevator pitch | Open. "Your agentic broker" proposed. Recommendation: use it as the investor and press line, and find a plainer line for users, because "broker" implies fees to renters and v0 has no property. |
+| The 10-section master launch document | **Deferred on 2026-09-23.** The tables above settle all the decisions that it needs. |
+| The elevator pitch | Open. Proposal: "Your agentic broker". Recommendation: use it as the line for investors and press. Find a plainer line for users, because "broker" implies fees to renters, and v0 has no property. |
 
 ## Deliverables for this session
 
-A single unified master launch document, covering, in order:
+One unified master launch document, with these sections in this order:
 
 1. Executive summary and vision
 2. Market and customer analysis
@@ -138,45 +155,48 @@ A single unified master launch document, covering, in order:
 9. Launch execution and governance
 10. Post-launch evaluation and next steps
 
-Each is finalised interactively, one point at a time, before being written.
+We finalise each section interactively, one point at a time, before we write
+it.
 
 ---
 
 ## Carried-over technical constraints that the AI pivot stresses
 
-The existing stack was designed for a deterministic swipe app. An LLM agent
-layer collides with it in specific places, and the technical document has to
-resolve each:
+We designed the current stack for a deterministic swipe app. An LLM agent
+layer conflicts with it in the places below. The technical document must
+resolve each conflict:
 
-- **No queue or message broker.** Background work runs in-process on one Fly
-  machine. Multi-turn agent loops have nowhere durable to live.
+- **No queue or message broker.** Background work runs in the process on one
+  Fly machine. Multi-turn agent loops have no durable place to live.
 - **No vector store.** ADR 0001 forbids proprietary extensions on the critical
-  path, so adopting `pgvector` needs an explicit amendment.
-- **No streaming.** The API boundary is contract-first: Zod parses every byte
+  path. Thus, `pgvector` needs an explicit amendment before we adopt it.
+- **No streaming.** The API boundary is contract-first. Zod parses each byte
   in, and a generated OpenAPI document is the source of truth for all clients.
   Token streaming does not fit that shape.
-- **Realtime is capped.** Supabase Realtime `broadcast` only, 500 concurrent
-  connections on Pro, then $10 per additional 1,000.
-- **No inference vendor, key class, prompt-versioning or eval story** exists,
-  and no line in the ~$50–80/month budget for one.
+- **Realtime has a cap.** Supabase Realtime `broadcast` only: 500 concurrent
+  connections on Pro, then $10 for each 1,000 more.
+- **No inference vendor, key class, prompt-versioning or eval story** exists.
+  The ~$50–80/month budget has no line for one.
 - **Data-residency posture is hostile to third-party inference.** ADR 0012
-  rejected a vendor partly to avoid shipping a behavioural stream out; ADR 0014
-  mandates PII scrubbing. Sending conversation content to an external model
-  needs a decision that engages that reasoning directly.
+  rejected a vendor. One reason was to not send a behavioural stream out. ADR
+  0014 mandates PII scrubbing. Before we send conversation content to an
+  external model, we need a decision that directly engages that reasoning.
 
-Sanctioned hooks that help: ADR 0004 explicitly allows a separate ML service
-called from the API; ADR 0012 already designates the analytics store as a
-training corpus; ADR 0014's `reportError` wrapper is the documented precedent
-for hiding a swappable vendor behind one internal module.
+These sanctioned hooks help:
+
+- ADR 0004 explicitly allows an ML service outside the API, which the API calls.
+- ADR 0012 already designates the analytics store as a training corpus.
+- The `reportError` wrapper of ADR 0014 is the documented precedent to put a
+  swappable vendor behind one internal module.
 
 ---
 
 ## Repo layout
 
-The top level is fixed by ADR 0003 and ADR 0010. Inside `apps/` is a proposal
-mapped to the tasks that build it. T-02 creates it, and whoever owns T-02 may
-adjust names inside an app without asking. Anything marked with a task code
-does not exist yet.
+ADR 0003 and ADR 0010 fix the top level. The contents of `apps/` are a
+proposal, mapped to the tasks that build them. T-02 creates them. The owner of
+T-02 can adjust names in an app, and does not have to ask. Each item with a
+task code does not exist yet.
 
 ```
 roomsie/
@@ -246,72 +266,93 @@ roomsie/
 └── CONTEXT.md                  this file
 ```
 
-**The layout is built to absorb change, not to be redrawn.** A vendor swap
+**We made the layout to absorb change, not to redraw it.** A vendor swap
 changes one folder in `adapters/`. A new feature is a new folder in `modules/`.
-The v1 assistant handlers slot into `handlers/`. `docs/extensibility.md` lists
-every change we know is coming, where it lands, and what must be true today.
+The v1 assistant handlers go into `handlers/`. `docs/extensibility.md` lists
+all the future changes that we know about. For each change, it gives where it
+goes and what must be correct today.
 
-Not in v0: a mobile app, which has a place ready beside `apps/web`. A vector
-store is not planned at all, because matching is a SQL query and the corpus fits
-Postgres full-text search. Nightly backups to R2 run from
+Not in v0: a mobile app. It has a prepared place next to `apps/web`. We do not
+plan a vector store at all, because matching is a SQL query and the corpus
+fits Postgres full-text search. Nightly backups to R2 run from
 `.github/workflows/` (T-40).
 
 ## Conventions
 
-- **Before adding a vendor or a feature, read `docs/extensibility.md`.** Vendors
-  go behind `adapters/`, features go in `modules/`, and nothing changes shape.
+- **Before you add a vendor or a feature, read `docs/extensibility.md`.**
+  Vendors go behind `adapters/`, features go in `modules/`, and nothing
+  changes shape.
 
-- Update the decision tables above whenever something is settled. The tables,
-  not the transcript, are the citable record.
+- Each time we settle a decision, update the decision tables above. The
+  tables are the citable record, not the transcript.
 - **Remote Control stays off.**
-- **Never push to `main`.** Every change reaches the repo as a pull request.
-- **Write in simple, crisp English.** Short sentences. Plain words. This
-  applies to every document in this repo.
-- Repo is **private**. Its history still holds the old session transcript, which
-  contains personal data.
+- **Never push to `main`.** All changes go into the repo through a pull
+  request.
+- **Write all Markdown in STE (ASD-STE100 Simplified Technical English), with
+  the ste-writing skill.** Use short sentences and plain words. This applies to
+  all the documents in this repo.
+- The repo is **private**. Its history still holds the previous session
+  transcript, and this transcript contains personal data.
 
 ---
 
 ## What the V3 prototype already establishes
 
 `docs/source/roomsie-prototype-V3.html` is a 23-surface clickable desktop
-prototype, and it is considerably further along than the deprecated PRD. It
-already carries the roomsie name, is already Mumbai-only, and has already
-abandoned the swipe stack. Treat it, not the PRD, as the pre-pivot baseline.
+prototype. It is much more complete than the deprecated PRD. It already
+carries the roomsie name, it is already Mumbai-only, and it already abandoned
+the swipe stack. Use it, not the PRD, as the pre-pivot baseline.
 
-**Things it settles that the pivot should probably keep:**
+**Items that it settles, and that the pivot should probably keep:**
 
-- **Grid, not stack.** Both flats and flatmates render in one responsive card
-  grid with a sticky filter rail. No swiping anywhere.
-- **The three-state chip.** Sixteen lifestyle chips across nine axes. One tap
-  means prefer, two means dealbreaker, three turns it off. A failed dealbreaker
-  hides the item entirely and is surfaced as "N hidden by your dealbreakers".
-- **The nine-axis lifestyle vocabulary** — kitchen, smoking, alcohol, guests,
-  pets, hours, tidiness, at-home vibe, daytime presence. Each is used three
-  ways: as a fact about you, as a want with a weight, and as a filter.
-- **Intent as the first question.** Four cards: a flat and flatmates, just a
-  flat, just a flatmate, renting out a flat. This maps exactly onto the intents
-  the AI interview has to disambiguate.
-- **Lazy registration.** Nothing is asked up front. Auth, phone and face check
-  are triggered by the first message or the first publish, not by signup.
-- **Match score** = 100 with no preferences set, otherwise 70 plus 30 times the
-  fraction of preferences hit.
-- **Design language** — warm cream and paper, pink `#FF87AC` primary, yellow
-  `#FBDF8E` secondary, Bricolage Grotesque display over Plus Jakarta Sans body,
-  light-first with full dark mode.
+- **Grid, not stack.** Flats and flatmates show in one responsive card grid
+  with a sticky filter rail. There is no swipe anywhere.
+- **The three-state chip.** Sixteen lifestyle chips on nine axes. One tap
+  means prefer, two taps mean dealbreaker, and three taps turn it off. If an
+  item fails a dealbreaker, the grid hides it fully. The grid shows the count
+  as "N hidden by your dealbreakers".
+- **The nine-axis lifestyle vocabulary**: kitchen, smoking, alcohol, guests,
+  pets, hours, tidiness, at-home vibe, daytime presence. Each axis has three
+  uses: a fact about you, a want with a weight, and a filter.
+- **Intent as the first question.** Four cards: a flat and flatmates, only a
+  flat, only a flatmate, renting out a flat. These cards map exactly onto the
+  intents that the AI interview must disambiguate.
+- **Lazy registration.** The prototype asks nothing at the start. The first
+  message or the first publish starts auth, phone and face check. Signup does
+  not start them.
+- **Match score** = 100 with no preferences set. If the user sets preferences, the
+  score is 70 plus 30 times the fraction of preferences hit.
+- **Design language**: warm cream and paper, pink `#FF87AC` primary, yellow
+  `#FBDF8E` secondary, Bricolage Grotesque for display and Plus Jakarta Sans
+  for body. Light-first, with full dark mode.
 
-**Things the all-genders decision (PD1) invalidates in it:** every women-only
-string, the "For women. By women" hero, the "Only women see this" reassurance
-in the post wizard, and the safety argument those carry. Replacing them needs a
-new trust story, which the product scope section has to supply.
+**Items that the all-genders decision (PD1) makes invalid in it:**
 
-**Things it leaves unbuilt** that matter to planning: no OTP screen, no working
-message composer in an existing chat, no photo upload, no persistence, no
-reporting or blocking, no notifications, no settings, no search, no map, and
-the privacy visibility toggles do nothing. The listing description is collected
-and then discarded.
+- all the women-only strings
+- the "For women. By women" hero
+- the "Only women see this" reassurance in the post wizard
+- the safety argument that these items carry.
 
-Note the tension with the design-system ADR: the prototype's palette and fonts
-are not Untitled UI, and ADR 0011 makes Figma the single source of truth with a
-generated `theme.css`. Whether the prototype's look becomes the design system,
-or gets rebuilt inside Untitled UI, is an unresolved question.
+To replace them, roomsie needs a new trust story. The product scope section
+must supply this story.
+
+**Items that it does not build** and that are important to the plan:
+
+- no OTP screen
+- no message composer that works in a chat that exists
+- no photo upload
+- no persistence
+- no report or block function
+- no notifications
+- no settings
+- no search
+- no map
+- the privacy visibility toggles do nothing.
+
+The prototype collects the listing description, and then discards it.
+
+The prototype and the design-system ADR do not agree. The palette and fonts of
+the prototype are not Untitled UI. ADR 0011 makes Figma the single source of
+truth, with a generated `theme.css`. We did not resolve this question: does the
+look of the prototype become the design system, or do we rebuild it in
+Untitled UI?
