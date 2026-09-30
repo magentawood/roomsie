@@ -4,70 +4,83 @@
 
 ## Context
 
-Team of four: Yash is Android/Kotlin, at least one member has real server-side
-experience, and the group's stated preferences are JavaScript and Java.
-Roughly 60–80 person-hours available for backend before launch. Native Android
-and iOS follow later, sharing business logic through Kotlin Multiplatform.
+The team has four people. Yash is Android/Kotlin. One or more members have real
+server-side experience. The stated preferences of the group are JavaScript and
+Java.
 
-Candidates considered: TypeScript on Node, Kotlin with Ktor, Java with Spring Boot.
+Approximately 60–80 person-hours are available for backend before launch.
+Native Android and iOS follow subsequently. They share business logic through
+Kotlin Multiplatform.
+
+We considered these candidates: TypeScript on Node, Kotlin with Ktor, and Java
+with Spring Boot.
 
 ## Decision
 
-`apps/api` is TypeScript on Node, using **Fastify** as the HTTP framework and
-**Zod** for runtime validation at every external boundary.
+`apps/api` is TypeScript on Node. It uses **Fastify** as the HTTP framework. It
+uses **Zod** for runtime validation at each external boundary.
 
-The API contract is expressed as an **OpenAPI document generated from those
-schemas**, and that document is the single source of truth for all clients.
+We express the API contract as an **OpenAPI document generated from those
+schemas**. That document is the single source of truth for all clients.
 
 ## Rationale
 
-**Why TypeScript rather than Kotlin or Java.** The binding constraint is
-person-hours, not throughput — at 20k users in one city, every candidate is
-over-provisioned and only a load test would distinguish them. Two developers
-already prefer JavaScript, AI assistance for TypeScript is materially stronger,
-and a single-language monorepo avoids running Gradle and pnpm side by side.
+**Why TypeScript rather than Kotlin or Java.** The constraint that controls the
+decision is person-hours, not throughput. At 20k users in one city, each
+candidate has more capacity than necessary. Only a load test would show a
+difference between them.
 
-Kotlin's real advantage — sharing DTOs directly with the KMP module — is
-recoverable later through OpenAPI codegen. The month spent ramping the team is
-not recoverable. Java was rejected on verbosity and slow feedback loops against
-a two-hours-a-day schedule.
+Two developers already prefer JavaScript. AI assistance for TypeScript is
+materially stronger. A single-language monorepo does not need Gradle and pnpm
+side by side.
 
-**Why Fastify rather than Hono or Express.** Fastify is built for exactly the
-long-running Node process ADR 0003 committed to, and ships first-party plugins
-for CORS, rate limiting, JWT, multipart uploads and OpenAPI generation — all of
-which the spec requires. Its schema-first design means the OpenAPI document the
-KMP clients need is a byproduct of routine work rather than a separate chore.
+The real advantage of Kotlin is that it shares DTOs directly with the KMP
+module. We can get this advantage back subsequently, through OpenAPI codegen.
+We cannot get back the month that the team spends on ramp-up. We rejected Java
+because of its verbosity and its slow feedback loops, against a
+two-hours-a-day schedule.
 
-Hono's headline advantages are edge-runtime portability (moot under ADR 0003)
-and TypeScript-only RPC typing, which Kotlin cannot consume and which risks
-crowding out a real OpenAPI spec. Express is dated and effectively in
-maintenance.
+**Why Fastify rather than Hono or Express.** Fastify has a design for exactly
+the Node process that runs continuously, which ADR 0003 committed to. It ships
+first-party plugins for CORS, rate limits, JWT, multipart uploads and OpenAPI generation.
+The spec requires all of these.
 
-**Why Zod is mandatory, not optional.** TypeScript types are erased at compile
-time; `as SomeType` is an assertion, not a check. Without runtime parsing at the
-edge, the type safety is theatre. Rule: every byte entering the API from outside
-— request bodies, query params, webhooks, third-party responses — is parsed by a
-schema before any other code touches it.
+Fastify has a schema-first design. Thus, the KMP clients get the OpenAPI
+document that they need as a byproduct of usual work. It is not a chore of its
+own.
+
+Hono has two headline advantages. The first is edge-runtime portability, which
+is moot with ADR 0003. The second is TypeScript-only RPC types. Kotlin cannot
+consume these types, and there is a risk that it pushes out a real OpenAPI
+spec. Express is not modern, and in effect it is in maintenance.
+
+**Why Zod is mandatory, not optional.** The compiler erases TypeScript types at
+compile time. `as SomeType` is an assertion, not a check. Without runtime
+parsing at the edge, the type safety is theatre. Rule: a schema parses each
+byte that enters the API from outside, before all other code touches it. This
+includes request bodies, query params, webhooks and third-party responses.
 
 ## Consequences
 
-- Runtime validation at every boundary is a non-negotiable review item.
-- CPU-heavy work must not block the event loop; the ranking computation belongs
-  in SQL, which is where it should live anyway.
-- The OpenAPI document must be generated and committed from day one, before any
-  mobile client exists, so it never has to be reconstructed retroactively.
-- Node dependency churn is an accepted ongoing maintenance cost.
+- Runtime validation at each boundary is a non-negotiable review item.
+- CPU-heavy work must not block the event loop. The ranking computation belongs
+  in SQL. SQL is the correct place for it for other reasons too.
+- We must generate and commit the OpenAPI document from day one, before a
+  mobile client exists. Thus, we never have to reconstruct it retroactively.
+- Node dependency churn is a continuous maintenance cost. We accept this cost.
 
 ## Alternatives rejected
 
-- **Kotlin + Ktor** — best long-term fit for the mobile story, rejected on
-  polyglot-monorepo friction, team ramp-up, thinner server ecosystem.
-- **Java + Spring Boot** — most mature, rejected on verbosity and feedback-loop
-  speed against the hour budget.
-- **Go, Python** — nobody on the team knows Go; Python is nobody's preference.
-  A Python ML service can be called from this API later if v2 ranking needs one.
+- **Kotlin + Ktor** — This is the best long-term fit for the mobile story. We
+  rejected it because of polyglot-monorepo friction, team ramp-up and a thinner
+  server ecosystem.
+- **Java + Spring Boot** — This is the most mature option. We rejected it
+  because of verbosity and feedback-loop speed, against the hour budget.
+- **Go, Python** — No person on the team knows Go. No person on the team
+  prefers Python. If v2 ranking needs a Python ML service, this API can call it
+  subsequently.
 
 ## Revisit when
 
-The team composition changes substantially toward JVM, or a workload appears
-that Node genuinely cannot serve. Neither is expected before launch.
+The team composition has a large change in the direction of JVM. Or, a workload
+occurs that Node genuinely cannot serve. We do not expect these conditions before launch.
