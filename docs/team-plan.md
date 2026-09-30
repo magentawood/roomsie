@@ -454,6 +454,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows
 - `pnpm dev` runs web and API locally. docs/ has no changes
 - The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
+- The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook
 - Read first: `CONTEXT.md`, `docs/decisions/0010-monorepo-tooling.md`, `docs/decisions/0003-api-as-separate-service.md`, `docs/extensibility.md`
 
 **M-03 · Write the eval sentences** — done when:
@@ -549,6 +550,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 
 **T-03 · CI: typecheck, lint, build, secret scan** — done when:
 - Every pull request runs typecheck, lint, build and gitleaks
+- Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`
 - It finishes in less than five minutes
 - Read first: `docs/decisions/0013-ci-gate-and-testing.md`
 

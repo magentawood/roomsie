@@ -200,7 +200,8 @@
     "apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle",
     "packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows",
     "`pnpm dev` runs web and API locally. docs/ has no changes",
-    "The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes"
+    "The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes",
+    "The root package.json has the script `\"prepare\": \"git config core.hooksPath .githooks\"`. Thus, `pnpm install` turns on the doc hook"
    ],
    "read": [
     "CONTEXT.md",
@@ -687,6 +688,7 @@
    ],
    "done": [
     "Every pull request runs typecheck, lint, build and gitleaks",
+    "Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`",
     "It finishes in less than five minutes"
    ],
    "read": [
