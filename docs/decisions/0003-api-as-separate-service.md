@@ -50,6 +50,8 @@ contain no business logic.
 - Server-side rendering has one more network hop. In-region, this adds
   approximately 1–5ms.
 - The monorepo needs a task runner and a shared contract package from day one.
+- `apps/web` and `apps/api` never import from each other. Shared code goes in
+  `packages/`.
 - We pay a small number of hours at this time. In return, the boundary holds
   against pressure for the next two years.
 
