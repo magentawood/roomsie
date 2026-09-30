@@ -4,20 +4,23 @@
 
 ## Context
 
-`apps/web` runs on Vercel, `apps/api` on Fly (ADR 0009). The authenticated app
-is client-rendered (ADR 0007). Budget is tight — roughly $50–80/month total
-infrastructure — so a $26/month line item is a third of the bill.
+`apps/web` runs on Vercel, and `apps/api` runs on Fly (ADR 0009). The
+authenticated app is client-rendered (ADR 0007). The budget is tight:
+approximately $50–80/month for all infrastructure. Thus, a $26/month line item
+is a third of the bill.
 
-**Vercel's own logging does not cover this system.** Two structural gaps:
+**Vercel's own logging does not cover this system.** It has two structural gaps:
 
-- It sees only `apps/web`. The API on Fly — where the business logic lives — is
-  invisible to it.
-- It logs what runs on Vercel's servers. A React crash in the swipe stack, a
-  failed fetch, a null reference in chat never touches a Vercel server, so
-  **browser errors do not appear at all** — and that is most user-facing breakage.
+- It sees only `apps/web`. The business logic is in the API on Fly, and Vercel
+  logging cannot see the API.
+- It logs what runs on Vercel's servers. Some errors never touch a Vercel server:
+  a React crash in the swipe stack, a fetch that fails, or a null reference in
+  chat.
+  Thus, **browser errors do not appear at all**. These errors are most of the
+  breakage that users see.
 
-It also has no grouping, no alerting, no source-map symbolication, no release
-correlation, and short plan-dependent retention.
+Vercel logging also has no grouping, no alerting, no source-map symbolication
+and no release correlation. Its retention is short and depends on the plan.
 
 ## Decision
 
@@ -27,90 +30,101 @@ correlation, and short plan-dependent retention.
 |---|---|
 | Instrumentation | Sentry SDK in `apps/web` and `apps/api` |
 | Destination now | **Self-hosted GlitchTip** on Fly, ~$5/month |
-| Destination later | **Firebase Crashlytics for web, once it reaches GA** — preferred. Sentry paid as the fallback |
-| Mobile (month 4) | **Firebase Crashlytics** — free, best in class, already on Firebase |
-| Uptime | Free-tier monitor on the single Fly machine |
+| Destination later | **Firebase Crashlytics for web, when it reaches GA.** This is the preferred destination. The fallback is Sentry paid. |
+| Mobile (month 4) | **Firebase Crashlytics**: free, best in class, and we already use Firebase |
+| Uptime | A free-tier monitor on the single Fly machine |
 
-GlitchTip is protocol-compatible with the Sentry SDK, so **where errors go is a
-DSN, not a vendor commitment.** We are choosing a URL, not locking in.
+GlitchTip is protocol-compatible with the Sentry SDK. Thus, **where errors go is
+a DSN, not a vendor commitment.** We choose a URL. We do not choose a lock-in.
 
 ### Planned migration to Crashlytics for web
 
 **Stated intent: when Firebase Crashlytics for web reaches general availability,
-we move to it.** Rationale: it is free, we are already on Firebase (ADR 0005),
-Crashlytics will be handling Android and iOS anyway, and being built on Google
-Cloud's Observability Suite it puts client and server errors in one place. That
-would consolidate all three clients onto one free tool and retire the GlitchTip
-instance we operate.
+we move to it.** The reasons are:
+
+- It is free.
+- We already use Firebase (ADR 0005).
+- Crashlytics will handle Android and iOS anyway.
+- It uses Google Cloud's Observability Suite as its base. Thus, it puts client and
+  server errors in one place.
+
+This move would put all three clients on one free tool. It would also retire the
+GlitchTip instance that we operate.
 
 ⚠️ **This migration is not the one-variable switch.** GlitchTip implements the
-Sentry protocol, so GlitchTip → Sentry is a DSN change. Crashlytics does **not**
-— it is the Firebase JS SDK, a different integration entirely.
+Sentry protocol. Thus, GlitchTip → Sentry is a DSN change. Crashlytics does
+**not** implement this protocol. It is the Firebase JS SDK, a fully different
+integration.
 
-**Mitigation, to be built from the start:** error reporting is wrapped in a thin
-internal module — a single `reportError(err, context)` (plus breadcrumb and
-user-context helpers) in `packages/config` or a small shared package. Application
-code calls only that. Swapping the underlying SDK then touches one file per app
-rather than every call site.
+**Mitigation. Build it from the start:** a thin internal module wraps error
+reporting. This module is a single `reportError(err, context)`, with breadcrumb
+and user-context helpers. It is in `packages/config` or in a small shared
+package. Application code calls only this module. Then, a change of the
+SDK that the module wraps touches one file for each app, not all call sites.
 
-Without that wrapper, `Sentry.captureException` ends up scattered across the
-codebase and the migration we are explicitly planning for becomes the kind of
-rework this project has consistently chosen to avoid.
+Without this wrapper, `Sentry.captureException` goes into many places across the
+codebase. Then the migration that we explicitly plan becomes the type of rework
+that this project consistently chose to avoid.
 
 ## Rationale
 
-Instrumenting with the Sentry SDK regardless is what makes this reversible. The
-SDK is the de-facto standard, has first-class Next.js and Node integrations, and
-its protocol is what GlitchTip implements.
+We instrument with the Sentry SDK in all cases. This is what makes the decision
+reversible. The SDK is the de-facto standard, and it has first-class Next.js and
+Node integrations. GlitchTip implements its protocol.
 
-GlitchTip over Sentry's free tier: the free tier's binding limit is **1 user**,
-not the 5,000-error cap, and a shared login conflicts with the rules in
-`docs/security/credentials.md`. GlitchTip gives unlimited users and events for
-roughly $5/month, and error data stays inside our own infrastructure —
-consistent with the sovereignty reasoning in ADR 0012.
+We chose GlitchTip, not the Sentry free tier. The limit that stops us on the free tier
+is **1 user**, not the 5,000-error cap. A shared login conflicts with the rules
+in `docs/security/credentials.md`. GlitchTip gives unlimited users and events for
+approximately $5/month. Also, error data stays in our own infrastructure. This
+agrees with the sovereignty reasoning in ADR 0012.
 
-**Crashlytics for mobile, not Sentry.** Crashlytics is free, best in class for
-native crash reporting, and we are already on Firebase (ADR 0005). There is no
-reason to pay for mobile error tracking.
+**Crashlytics for mobile, not Sentry.** Crashlytics is free, and it is best in
+class for native crash reporting. Also, we already use Firebase (ADR 0005). There
+is no reason to pay for mobile error tracking.
 
-**Crashlytics for web was considered and rejected on timing.** Announced at
-Google I/O 2026 and built on Google Cloud's Observability Suite, but it is
-**private preview, not generally available** — it cannot carry a launch weeks
-away. Worth revisiting when it reaches GA, since it would be free and would put
-client and server errors in one place.
+**We considered Crashlytics for web, and rejected it on timing.** Its
+announcement was at Google I/O 2026, and it uses Google Cloud's Observability
+Suite as its base. But it is **private preview, not generally available**.
+Thus, it cannot carry a launch that is weeks away. It is worth a new look when it
+reaches GA, because it would be free and would put client and server errors in
+one place.
 
 ## Consequences
 
-- **PII scrubbing via `beforeSend` is mandatory, not optional.** No message
-  bodies, no phone numbers, no precise locations; `Authorization` redacted per
-  `docs/security/credentials.md`. Less acute while data stays on our own
-  GlitchTip, but it must be correct before the DSN ever points at a vendor.
-- ⚠️ **Error tracking runs on the infrastructure it monitors.** If the Fly
-  account or region has a problem, GlitchTip may be down exactly when it is
-  needed. Accepted knowingly; hosted Sentry would not have this weakness, and it
-  is one more reason the DSN switch must stay trivial.
-- GlitchTip is a service we operate — mild tension with ADR 0001's
-  rent-don't-run posture, accepted because the alternative costs a third of the
-  infrastructure budget.
-- It needs its own Postgres database. The analytics instance (ADR 0012) is a
-  reasonable host, since neither is on the transactional path. Verify GlitchTip's
-  exact dependencies at setup.
-- Sentry SDK integrations must be added to both apps from the start, or errors
-  before instrumentation are simply lost.
+- **PII scrubbing through `beforeSend` is mandatory, not optional.** Error
+  reports must contain no message bodies, no phone numbers and no accurate
+  locations. Redact `Authorization` as `docs/security/credentials.md` specifies.
+  This is less urgent while the data stays on our own GlitchTip. But it must be
+  correct before the DSN ever points at a vendor.
+- ⚠️ **Error tracking runs on the infrastructure that it monitors.** If the Fly
+  account or region has a problem, GlitchTip can be down exactly when we need it.
+  We accept this knowingly. Hosted Sentry would not have this weakness. This is
+  one more reason why the DSN switch must stay trivial.
+- GlitchTip is a service that we operate. This is in mild tension with the
+  rent-don't-run posture of ADR 0001. We accept this tension, because the
+  alternative costs a third of the infrastructure budget.
+- GlitchTip needs its own Postgres database. The analytics instance (ADR 0012)
+  is a reasonable host for it, because the analytics instance and GlitchTip are
+  not on the transactional path. At setup, verify the exact dependencies of
+  GlitchTip.
+- Add the Sentry SDK integrations to the two apps from the start. If not, we simply
+  lose the errors that occur before instrumentation.
 
 ## Alternatives rejected
 
-- **Vercel logs only.** $0 and zero setup, but blind to browser errors and to the
-  entire API, with no grouping or alerting. On a product where broken chat is a
-  safety issue, learning about breakage from users is not acceptable.
-- **Sentry free tier.** Full feature set at $0, but 1 user against a team of four.
-- **Sentry Team at $26/month.** The best product, and the destination we expect
-  to reach — deferred purely on budget, and reachable by changing one variable.
+- **Vercel logs only.** $0 and zero setup. But it sees no browser errors and
+  no part of the API, and it has no grouping or alerting. On a product where broken
+  chat is a safety issue, it is not acceptable to learn about breakage from users.
+- **Sentry free tier.** The full feature set at $0, but 1 user against a team of
+  four.
+- **Sentry Team at $26/month.** This is the best product, and the destination
+  that we expect to reach. We deferred it only because of the budget. A change
+  to one variable moves us to it.
 
 ## Revisit when
 
-- **Crashlytics for web reaches GA** — migrate, per the stated intent above.
-  Track the Firebase release notes and the `firebase-js-sdk` RFC.
-- GlitchTip's operational burden outweighs $26/month, or error volume outgrows
-  the self-hosted instance — in which case point the DSN at Sentry paid as an
-  interim step.
+- **Crashlytics for web reaches GA**: migrate, as the stated intent above says.
+  Monitor the Firebase release notes and the `firebase-js-sdk` RFC.
+- The burden to operate GlitchTip becomes more than $26/month, or error
+  volume becomes too large for the self-hosted instance. In these cases, point
+  the DSN at Sentry paid as an interim step.
