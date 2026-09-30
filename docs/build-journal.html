@@ -33,23 +33,28 @@ border-radius:6px;background:var(--panel)}
 </style>
 <main>
 <h1 id="build-journal">Build journal</h1>
-<p>A running record of building roomsie, written so it makes sense with no prior
-context. Every entry says what was built, why it was built that way, and
-explains the ideas as they come up.</p>
-<p>Newest entry at the bottom. Append, never rewrite.</p>
+<p>This journal is a continuous record of the roomsie build. A reader with no prior
+context can understand it. Each entry tells what we built and why we built it
+that way. Each entry also explains the ideas when they occur.</p>
+<p>The newest entry is at the bottom. Add new entries only. Never rewrite the journal.</p>
 <hr />
 <h2 id="before-anything-what-are-we-building">Before anything: what are we building?</h2>
-<p><strong>roomsie</strong> finds you a flat or a flatmate in Mumbai. The difference from every
-other rental site is the front door: instead of a search box and filters, an
-assistant interviews you. It works out what you actually need, then shows
-matches. Browsing exists, but downstream of the conversation.</p>
-<p>It handles four intents: someone with a flat looking for flatmates, someone
-wanting a whole flat, someone wanting a room in an occupied flat, and people
-open to either.</p>
-<p>The product is a <strong>pivot</strong>. The previous one, <em>femmeflats</em>, was a women-only
-swipe app. roomsie is open to all genders, launching in three Mumbai areas.
-The femmeflats requirements are dead; its <strong>technical</strong> decisions carried over
-unchanged — fifteen accepted ADRs.</p>
+<p><strong>roomsie</strong> finds a flat or a flatmate for you in Mumbai. Other rental sites
+start with a search box and filters. roomsie starts with an assistant that
+interviews you. This front door is the difference from all other rental sites.
+The assistant finds what you actually need. Then it shows matches. You can also
+browse, but only after the conversation.</p>
+<p>roomsie handles four intents:</p>
+<ul>
+<li>A person with a flat who wants flatmates</li>
+<li>A person who wants a full flat</li>
+<li>A person who wants a room in an occupied flat</li>
+<li>People who will accept a flat or a room</li>
+</ul>
+<p>The product is a <strong>pivot</strong>. The previous product, <em>femmeflats</em>, was a swipe app
+for women only. roomsie is open to all genders. It will launch in three Mumbai
+areas. The femmeflats requirements are dead. But roomsie keeps the
+<strong>technical</strong> decisions of femmeflats with no change: fifteen accepted ADRs.</p>
 <h3 id="words-you-will-meet-constantly">Words you will meet constantly</h3>
 <table>
 <thead>
@@ -61,149 +66,166 @@ unchanged — fifteen accepted ADRs.</p>
 <tbody>
 <tr>
 <td><strong>ADR</strong></td>
-<td>Architecture Decision Record. A short document saying "we chose X over Y, and here is why." Numbered, dated, and binding. <code>docs/decisions/</code> holds fifteen.</td>
+<td>Architecture Decision Record. A short document that says "we chose X over Y, and here is why." Each ADR has a number and a date, and each ADR is binding. <code>docs/decisions/</code> holds fifteen.</td>
 </tr>
 <tr>
 <td><strong>Monorepo</strong></td>
-<td>One repository holding the website, the server and the shared code, instead of three separate ones. Everyone commits to the same place.</td>
+<td>One repository for the website, the server and the shared code, not three separate repositories. All people commit to the same repository.</td>
 </tr>
 <tr>
 <td><strong>Schema</strong></td>
-<td>The shape of the database: what tables exist, what columns they have, what type each column is.</td>
+<td>The shape of the database: the tables, the columns in each table, and the type of each column.</td>
 </tr>
 <tr>
 <td><strong>Migration</strong></td>
-<td>A file of SQL that changes the schema. Run in order, never edited once shipped, so every machine ends up with the same database.</td>
+<td>A file of SQL that changes the schema. Migrations run in sequence. Never edit a migration after you ship it. Thus, all machines get the same database.</td>
 </tr>
 <tr>
 <td><strong>Drizzle</strong></td>
-<td>The tool we use to describe the schema in TypeScript and generate those SQL migrations from it.</td>
+<td>The tool that we use to describe the schema in TypeScript. It also generates the SQL migrations from that description.</td>
 </tr>
 <tr>
 <td><strong>Form A</strong></td>
-<td>The structured list of things the assistant tries to learn from you — intent, budget, areas, move date, and nine lifestyle answers. The assistant fills it as you talk.</td>
+<td>The structured list of data that the assistant tries to learn from you: intent, budget, areas, move date, and nine lifestyle answers. The assistant fills it while you talk.</td>
 </tr>
 <tr>
 <td><strong>T-06, T-14…</strong></td>
-<td>Task codes. Each is a GitHub issue. <code>docs/how-to-work.md</code> indexes all 55 in plain words.</td>
+<td>Task codes. Each code is a GitHub issue. <code>docs/how-to-work.md</code> gives an index of all 55 in plain words.</td>
 </tr>
 <tr>
 <td><strong>P1–P5</strong></td>
-<td>The five people's work lanes. This journal is written from <strong>P3 · Data and trust</strong> — the schema, the matching, and who sees whom.</td>
+<td>The work lanes of the five people. This journal comes from <strong>P3 · Data and trust</strong>: the schema, the matching, and who sees whom.</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h1 id="entry-1--t-06-the-database-schema">Entry 1 — T-06, the database schema</h1>
 <p><strong>Issue <a href="https://github.com/magentawood/roomsie/issues/11">#11</a> · 8 hours · critical path</strong></p>
-<p>This is the most depended-on task in the project. Seven other tasks across four
-people cannot start until it lands: the match query, profiles, carrying a chat
-into an account, reporting and blocking, account deletion, event logging and
-the connect API. So it is first, and it needs to be right rather than fast.</p>
-<h2 id="what-a-schema-actually-is">What a schema actually is</h2>
-<p>A database stores rows in tables, like spreadsheets that know about each other.
-The schema is the definition: which tables, which columns, which types, and
-which rules.</p>
-<p>It matters more than most code because <strong>it is the hardest thing to change
-later.</strong> You can rewrite a screen in an afternoon. Changing a column after real
-people's data is in it means a migration, a backfill, and something to do with
-every row that does not fit the new shape.</p>
-<p>So the job is to think hard once, and to leave room where you are unsure.</p>
-<h2 id="decision-1--users-is-thin">Decision 1 — <code>users</code> is thin</h2>
-<p>Two ways to store a person:</p>
+<p>No other task in the project has as many tasks that depend on it. Seven
+other tasks cannot start until this task is complete. These tasks belong to
+four people:</p>
 <ul>
-<li><strong>Fat:</strong> one <code>users</code> table holding everything — name, age, photos, budget, preferences.</li>
-<li><strong>Thin:</strong> <code>users</code> holds only identity and account state. Everything else lives in <code>profiles</code>, linked one-to-one.</li>
+<li>The match query</li>
+<li>Profiles</li>
+<li>The transfer of a chat into an account</li>
+<li>Report and block</li>
+<li>Account deletion</li>
+<li>Event logging</li>
+<li>The connect API</li>
 </ul>
-<p>We went thin. Three reasons:</p>
+<p>Thus, this task is first. It must be correct, and correctness is more
+important than speed.</p>
+<h2 id="what-a-schema-actually-is">What a schema actually is</h2>
+<p>A database keeps rows in tables. The tables are like spreadsheets that know
+about each other. The schema is the definition: the tables, the columns, the
+types, and the rules.</p>
+<p>The schema is more important than most code because <strong>after you ship it, no other part is as hard to change.</strong> You can rewrite a screen in an afternoon.
+But after real people's data is in a column, a change to that column needs a
+migration and a backfill. You must also decide what to do with each row that
+does not fit the new shape.</p>
+<p>Thus, the job is to think carefully one time, and to leave space where you are
+not sure.</p>
+<h2 id="decision-1--users-is-thin">Decision 1 — <code>users</code> is thin</h2>
+<p>There are two ways to store a person:</p>
+<ul>
+<li><strong>Fat:</strong> one <code>users</code> table holds all the data: name, age, photos, budget, preferences.</li>
+<li><strong>Thin:</strong> <code>users</code> holds only identity and account state. All other data is in <code>profiles</code>, with a one-to-one link.</li>
+</ul>
+<p>We chose thin, for three reasons:</p>
 <ol>
-<li><strong>Every single request reads the user row</strong> to check who you are. That should touch a tiny row, not one carrying four photo keys and twenty preferences.</li>
-<li><strong>Editing your profile never touches your auth row.</strong> Different things change at different rates and for different reasons.</li>
-<li><strong>Deletion gets simpler.</strong> Account deletion (T-20) can drop the profile while keeping the minimal record needed to stop a suspended person signing straight back up.</li>
+<li><strong>Each request reads the user row</strong> to check who you are. That read should touch a very small row, not a row with four photo keys and twenty preferences.</li>
+<li><strong>A profile edit never touches your auth row.</strong> Different data changes at different rates and for different reasons.</li>
+<li><strong>Deletion is simpler.</strong> Account deletion (T-20) can remove the profile and keep the minimum record. We need this record to stop a suspended person who tries to sign up again immediately.</li>
 </ol>
-<p>Cost: one extra join when you need both. Worth it.</p>
+<p>Cost: one more join when you need the two tables. The cost is worth it.</p>
 <h2 id="decision-2--uuidv7-ids-minted-in-code">Decision 2 — UUIDv7 ids, minted in code</h2>
-<p>Every table's id is a <code>uuid</code>, not a counting number. This was already decided
-in <strong>ADR 0015</strong> and I followed it. The reasoning is worth understanding:</p>
-<p><strong>Why not <code>1, 2, 3</code>?</strong> Because <code>/users/1024</code> tells you <code>1023</code> and <code>1025</code> exist.
-On a product where people's homes and photos are involved, that turns any
-id-taking endpoint into a walkable list of every user. Authorization should
-stop it — but you do not publish the map.</p>
-<p><strong>Why v7 rather than v4?</strong> A random UUIDv4 lands in a different place in the
-index on every insert, which gets slow once the index outgrows memory. UUIDv7
-puts a millisecond timestamp in its leading bits, so new ids sort to the end.
-You get v4's unguessability with sequential-insert performance.</p>
-<p><strong>Why not let the database generate it?</strong> Because then the id only exists
-<em>after</em> the insert commits, so the phone can never know it in advance. Minting
-it in app code means the client can render immediately, and a retried request
-is naturally safe — the same id arrives twice and the second is ignored.</p>
+<p>The id of each table is a <code>uuid</code>, not a number in a sequence. <strong>ADR 0015</strong> already
+made this decision, and I obeyed it. The reasons are worth your attention:</p>
+<p><strong>Why not <code>1, 2, 3</code>?</strong> Because <code>/users/1024</code> tells you that <code>1023</code> and <code>1025</code>
+exist. This is important, because this product holds people's homes and photos.
+Thus, each endpoint that takes an id becomes a list of all users that you can walk
+through. Authorization should stop that. But you do not publish the map.</p>
+<p><strong>Why v7 rather than v4?</strong> A random UUIDv4 goes to a different place in the
+index on each insert. This becomes slow when the index is larger than the
+memory. UUIDv7 puts a millisecond timestamp in its first bits. Thus, new ids
+sort to the end. You get the unguessability of v4 with the performance of
+sequential inserts.</p>
+<p><strong>Why not let the database generate it?</strong> Because then the id exists only
+<em>after</em> the insert commits. Thus, the phone can never know the id in advance.
+When app code mints the id, the client can render immediately. Also, a retried
+request is naturally safe: the same id arrives two times, and the database
+ignores the second.</p>
 <pre><code class="language-ts">const id = () =&gt; uuid('id').primaryKey().$defaultFn(() =&gt; uuidv7())
 </code></pre>
-<p><code>$defaultFn</code> means "run this function in TypeScript when inserting," as opposed
-to <code>.default()</code> which would put it in the database.</p>
+<p><code>$defaultFn</code> means "run this function in TypeScript when inserting." This is
+different from <code>.default()</code>, which would put it in the database.</p>
 <h2 id="decision-3--the-axis-catalogue">Decision 3 — the axis catalogue</h2>
-<p>Here is where I hit a wall, and the interesting part of this entry.</p>
-<p>Every planning document refers to <strong>"the nine lifestyle axes."</strong> Six documents
+<p>At this point I hit a wall. This part of the entry has the most interest.</p>
+<p>All plan documents refer to <strong>"the nine lifestyle axes."</strong> Six documents
 mention them. <strong>None of them says what the nine are.</strong></p>
-<p>Two bad options:</p>
+<p>There were two bad options:</p>
 <ul>
-<li><strong>Guess, and hardcode nine columns.</strong> If the guess is wrong — and it will be — every correction is a migration plus a contract change plus a re-tuned AI prompt plus a new filter branch. Five files across three people's lanes, after real data exists.</li>
-<li><strong>Wait.</strong> Blocks seven tasks and four people.</li>
+<li><strong>Guess, and hardcode nine columns.</strong> The guess can be incorrect, and it will be incorrect. Then each correction needs a migration, a contract change, a re-tuned AI prompt and a new filter branch. That is five files in the lanes of three people, after real data exists.</li>
+<li><strong>Wait.</strong> This blocks seven tasks and four people.</li>
 </ul>
-<p>So, a third option: <strong>make the axes data instead of schema.</strong></p>
-<p>There are two tables. <code>lifestyle_axes</code> defines what the axes <em>are</em> — key,
-question, allowed answers, order. <code>profile_lifestyle</code> holds one row per person
-per axis they have answered.</p>
-<p>Adding a tenth axis is now an edit to a seed file and a re-seed. No migration,
-no backfill, no deploy. Renaming one, dropping one, changing its allowed
-answers — all the same.</p>
+<p>Thus, I chose a third option: <strong>make the axes data, not schema.</strong></p>
+<p>There are two tables. <code>lifestyle_axes</code> defines what the axes <em>are</em>: key,
+question, allowed answers, order. <code>profile_lifestyle</code> holds one row for each
+axis that each person answered.</p>
+<p>Now, to add a tenth axis, you edit a seed file and seed again. You need no
+migration, no backfill and no deploy. The same applies when you rename an
+axis, remove an axis, or change its allowed answers.</p>
 <h3 id="the-idea-behind-it">The idea behind it</h3>
-<p>This is a known trade. Columns are fast and rigid; rows are flexible and
-slower. You reach for rows when <strong>you do not yet know what the columns should
-be</strong>, which is exactly our situation.</p>
-<p>The cost: matching becomes a join and an aggregate rather than comparing
-columns. At launch scale — a hundred seeded profiles in three areas — that is
-nothing. It would matter at a scale we will not see this year, and by then we
-would know the nine and could collapse them into columns deliberately.</p>
+<p>This is a known trade-off. Columns are fast and rigid. Rows are flexible and
+slower. Use rows when <strong>you do not know at this time what the columns should be</strong>. That is our condition.</p>
+<p>The cost: the match becomes a join and an aggregate, not a comparison of
+columns. At launch scale (a hundred seeded profiles in three areas), that cost
+is nothing. The cost would be important at a scale that we will not see this
+year. At that time, we would know the nine, and we could deliberately collapse
+them into columns.</p>
 <h3 id="the-catch-which-is-real">The catch, which is real</h3>
-<p>The flexibility only survives if three things hold:</p>
+<p>The flexibility stays only if the system obeys these three conditions:</p>
 <ol>
-<li><code>packages/contract</code> <strong>generates</strong> Form A from the catalogue rather than hardcoding nine fields</li>
-<li>the match query (T-14, mine) <strong>joins through</strong> the catalogue, never <code>WHERE smoking = 'never'</code></li>
-<li>the extraction prompt (T-12) is <strong>built from</strong> the catalogue, not typed out</li>
+<li><code>packages/contract</code> <strong>generates</strong> Form A from the catalogue. It does not hardcode nine fields.</li>
+<li>The match query (T-14, mine) <strong>joins through</strong> the catalogue, never <code>WHERE smoking = 'never'</code>.</li>
+<li>The code <strong>builds</strong> the extraction prompt (T-12) from the catalogue. Nobody types the prompt out.</li>
 </ol>
-<p>Break any one and that part goes rigid again while the rest pretends to be
-flexible — which is worse than being rigid honestly. One and three are P2's
-lane, so this is a shared contract between us, like Form A itself.</p>
+<p>If one condition fails, that part becomes rigid again, but the other parts
+pretend to be flexible. That is worse than a system that is honestly rigid.
+Conditions one and three are in P2's lane. Thus, this is a shared contract
+between P2 and me, as Form A is.</p>
 <h3 id="the-nine-provisional-names">The nine provisional names</h3>
-<p>I named them so work could start. They are in <code>seed-axes.ts</code> with a warning
-comment on top:</p>
+<p>I gave them names so that work could start. They are in <code>seed-axes.ts</code>, with a
+warning comment at the top:</p>
 <p><code>smoking</code> · <code>drinking</code> · <code>diet</code> · <code>sleep_schedule</code> · <code>guests</code> ·
 <code>cleanliness</code> · <code>work_from_home</code> · <code>pets</code> · <code>community</code></p>
-<p>Some are grounded rather than invented. <code>smoking</code> appears by name in
-<code>ai-agent-design.md</code>. <code>guests</code> appears as the example key <code>guest_frequency</code>,
-with the worked example <em>"my ex basically lived there, that's what killed it."</em>
-<code>diet</code> carries jain and eggetarian because the market is Mumbai.</p>
-<p><code>community</code> needs naming out loud: decision <strong>PD3c</strong> (2026-09-20) explicitly
-chose to record and filter on community and religion, and <code>ai-agent-design.md</code>
-§4.1 documents the press exposure that carries at length. It is in because that
-decision says so. It is one line to remove if that is revisited.</p>
+<p>Some names come from the documents, and I did not invent them. <code>smoking</code>
+occurs by name in <code>ai-agent-design.md</code>. <code>guests</code> occurs as the example key
+<code>guest_frequency</code>, with the worked example <em>"my ex basically lived there,
+that's what killed it."</em> <code>diet</code> includes jain and eggetarian because the
+market is Mumbai.</p>
+<p><code>community</code> needs a clear statement. Decision <strong>PD3c</strong> (2026-09-20) explicitly
+chose to record community and religion and to filter on them.
+<code>ai-agent-design.md</code> §4.1 gives a long description of the press exposure that
+this causes. <code>community</code> is in the list because that decision says so. If
+someone revisits that decision, the removal is one line.</p>
 <h2 id="decision-4--prefer-vs-dealbreaker">Decision 4 — <code>prefer</code> vs <code>dealbreaker</code></h2>
-<p>Each answer carries a weight. A <strong>dealbreaker</strong> filters people out of your
-results entirely. A <strong>preference</strong> only moves them down the ranking.</p>
-<p>This is a product decision wearing a database costume, and it is still
-unconfirmed — it is §2.2 of <code>docs/design-review.md</code>, waiting on the designer.
-If they decide preferences should be a 1–5 scale instead of two states, that
-<em>is</em> a migration. Flagged, not hidden.</p>
+<p>Each answer has a weight. A <strong>dealbreaker</strong> removes people from your results
+fully. A <strong>preference</strong> only moves them lower in the order.</p>
+<p>This is a product decision that looks like a database decision. It is not confirmed at this time. It is §2.2 of <code>docs/design-review.md</code>, and it waits for the designer.</p>
+<p>The designer can decide that preferences should be a 1–5 scale, not
+two states. If so, that change <em>is</em> a migration. I flagged this. I did not hide
+it.</p>
 <h2 id="decision-5--where-we-dont-know-lives">Decision 5 — where "we don't know" lives</h2>
-<p>Form A says every field can be <code>unclear</code>, because the assistant is allowed not
-to know. That shows up in two different ways:</p>
+<p>Form A says that each field can be <code>unclear</code>, because the assistant has
+permission to not know. This shows in two different ways:</p>
 <ul>
-<li><strong>Enums carry an <code>unclear</code> value.</strong> <code>intent</code> can be <code>has_flat</code>, <code>wants_flat</code>, <code>wants_room</code>, <code>open</code> or <code>unclear</code>.</li>
-<li><strong>Lifestyle answers use the absence of a row.</strong> No row means unanswered. We never store "we don't know" as a fact.</li>
+<li><strong>Enums have an <code>unclear</code> value.</strong> <code>intent</code> can be <code>has_flat</code>, <code>wants_flat</code>, <code>wants_room</code>, <code>open</code> or <code>unclear</code>.</li>
+<li><strong>Lifestyle answers use a missing row.</strong> No row means no answer. We never store "we don't know" as a fact.</li>
 </ul>
-<p>Lifecycle enums — account status, connection status — deliberately have no
-<code>unclear</code>. Those are facts the system owns, not answers a person gave.</p>
+<p>Lifecycle enums (account status, connection status) deliberately have no
+<code>unclear</code>. Those values are facts that the system owns. They are not answers
+from a person.</p>
 <h2 id="the-eight-tables">The eight tables</h2>
 <table>
 <thead>
@@ -217,7 +239,7 @@ to know. That shows up in two different ways:</p>
 <tr>
 <td><code>users</code></td>
 <td>Identity and account state only</td>
-<td>Every authenticated request</td>
+<td>All authenticated requests</td>
 </tr>
 <tr>
 <td><code>profiles</code></td>
@@ -231,7 +253,7 @@ to know. That shows up in two different ways:</p>
 </tr>
 <tr>
 <td><code>profile_lifestyle</code></td>
-<td>One row per person per answered axis</td>
+<td>One row for each answered axis of each person</td>
 <td>T-14</td>
 </tr>
 <tr>
@@ -241,22 +263,22 @@ to know. That shows up in two different ways:</p>
 </tr>
 <tr>
 <td><code>connection_requests</code></td>
-<td>Asking to connect; contact revealed on accept</td>
+<td>Requests to connect. The contact shows after an accept</td>
 <td>T-18a</td>
 </tr>
 <tr>
 <td><code>reports</code></td>
-<td>Someone flagged someone</td>
+<td>A person flagged a person</td>
 <td>T-19</td>
 </tr>
 <tr>
 <td><code>blocks</code></td>
-<td>Someone hid someone, both directions</td>
+<td>A person hid a person, in the two directions</td>
 <td>T-19</td>
 </tr>
 <tr>
 <td><code>events</code></td>
-<td>What people did, including anonymously</td>
+<td>What people did, also when anonymous</td>
 <td>T-24</td>
 </tr>
 <tr>
@@ -266,28 +288,28 @@ to know. That shows up in two different ways:</p>
 </tr>
 </tbody>
 </table>
-<p>Ten, not eight — the two extra are the axis catalogue, which the ticket's
-"nine lifestyle answers" line implies but does not name.</p>
+<p>There are ten, not eight. The other two tables are the axis catalogue. The
+"nine lifestyle answers" line in the ticket implies these tables, but it does
+not name them.</p>
 <h2 id="small-things-worth-noticing">Small things worth noticing</h2>
-<p><strong>Blocks work both ways.</strong> The match query subtracts blocks in both directions
-— blocking someone hides each of you from the other, not just one. There is an
-index for exactly that lookup.</p>
+<p><strong>Blocks work in the two directions.</strong> The match query subtracts blocks in the two directions. A block hides each of you from the other, not only one of you. There is an index for that lookup.</p>
 <p><strong><code>reports</code> and <code>blocks</code> are client-mintable.</strong> ADR 0015 lists them as tables
 where the phone generates the id. Their endpoints accept an <code>id</code> and dedupe
-with <code>ON CONFLICT (id) DO NOTHING</code>, so a retried tap on a flaky connection
+with <code>ON CONFLICT (id) DO NOTHING</code>. Thus, a retried tap on a bad connection
 never files two reports.</p>
-<p><strong>Anonymous events are the point of <code>events</code>.</strong> The question worth answering is
-how many people start a chat and never sign up, which is only visible if
-anonymous activity is recorded. Hence a nullable <code>anonymous_session_id</code>
-alongside the nullable <code>user_id</code>.</p>
-<p><strong><code>turnCount</code> counts typed turns only.</strong> Chip taps are free — they run no model
-— so counting them against a budget that exists to control model spend would
-punish the cheapest users. From <code>pre-login-limits.md</code>.</p>
+<p><strong>Anonymous events are the point of <code>events</code>.</strong> The important question is: how
+many people start a chat and never sign up? You can see this only if the system
+records anonymous activity. Thus, there is a nullable <code>anonymous_session_id</code>
+next to the nullable <code>user_id</code>.</p>
+<p><strong><code>turnCount</code> counts typed turns only.</strong> Chip taps are free, because they run
+no model. The turn budget exists to control model spend. If it counted chip
+taps, it would punish the users with the lowest cost. This rule comes from
+<code>pre-login-limits.md</code>.</p>
 <h2 id="what-is-not-done">What is not done</h2>
 <ul>
-<li><strong>No migrations yet.</strong> Drizzle generates SQL from this file, but that needs <code>apps/api</code> to exist, which is T-02 and P1's. The design is done; the generated SQL is not.</li>
-<li><strong>Form B has nowhere to live.</strong> <code>agent-architecture.md</code> describes a second structure — observations, with kind, evidence, turn and confidence — and says plainly it must be structured, not a text blob. It is in no table here because T-06's checklist does not mention it. Raised, not silently added.</li>
-<li><strong><code>room_type</code> is contested.</strong> <code>agent-architecture.md</code> lists it as a Form A slot; T-06's acceptance criteria do not. I included it. One of the two documents is wrong.</li>
+<li><strong>No migrations at this time.</strong> Drizzle generates SQL from this file, but for that, <code>apps/api</code> must exist. That is T-02, which is P1's task. The design is complete. The generated SQL is not.</li>
+<li><strong>Form B has nowhere to live.</strong> <code>agent-architecture.md</code> describes a second structure: observations, with kind, evidence, turn and confidence. It says clearly that this structure must have a structure. It must not be a text blob. No table here holds it, because T-06's checklist does not mention it. I raised it. I did not silently add it.</li>
+<li><strong>Two documents disagree about <code>room_type</code>.</strong> <code>agent-architecture.md</code> lists it as a Form A slot. T-06's acceptance criteria do not. I included it. One of the two documents is incorrect.</li>
 </ul>
 <h2 id="files">Files</h2>
 <pre><code>apps/api/src/db/
@@ -295,148 +317,158 @@ punish the cheapest users. From <code>pre-login-limits.md</code>.</p>
 └── seed-axes.ts    the nine provisional axes
 </code></pre>
 <h2 id="addendum--two-tables-the-checklist-did-not-ask-for">Addendum — two tables the checklist did not ask for</h2>
-<p>Added after checking the schema against <code>seo-with-gated-products.md</code>, which is
-the project's search strategy and was decided before T-06 was written.</p>
-<p>That document calls <strong>public area pages the main SEO asset</strong> — "this data is
-the moat." They are built from aggregates: median budget of people searching an
-area, typical move-in window, the lifestyle mix, and <strong>rent bands by room
-type</strong>. Checking whether the schema could actually serve them turned up two
-things it could not.</p>
+<p>I added these tables after I compared the schema with
+<code>seo-with-gated-products.md</code>. That document is the search strategy of the
+project. The team decided it before T-06 existed.</p>
+<p>That document says that <strong>public area pages are the primary SEO asset</strong>:
+"this data is the moat." Aggregates supply these pages. The aggregates are the
+median budget of people
+who search an area, the typical move-in window, the lifestyle mix, and <strong>rent
+bands by room type</strong>. I checked if the schema could actually supply them.
+It could not supply two things.</p>
 <h3 id="listings"><code>listings</code></h3>
-<p>There was no listings table, and two other documents assume one.</p>
-<p>ADR 0015 names it directly in its client-versus-API minting split —
-"<code>users</code>, <code>profiles</code>, <code>listings</code>". The SEO document says listings expire after
-thirty days and that opening one's details is the gated action.</p>
-<p>Without it, someone whose intent is <code>has_flat</code> could describe <strong>themselves</strong>
-but not the flat. Rent bands could not be aggregated because no rent was
-stored anywhere. That is a hole in the data model, not just in SEO.</p>
-<p>A profile is a person; a listing is a property. One person can post several,
-and a listing outlives any single conversation about it. They expire rather
-than delete, because expired rows still feed the aggregates — and because
-Google demotes link decay, so a page that 404s is worse than one that says the
-flat is gone.</p>
+<p>There was no listings table, but two other documents assume that one exists.</p>
+<p>ADR 0015 names it directly in its list of the ids that the client mints and
+the ids that the API mints: "<code>users</code>, <code>profiles</code>, <code>listings</code>". The SEO document says that listings
+expire after thirty days. It also says that the gated action is to open the
+details of a listing.</p>
+<p>Without this table, a person with intent <code>has_flat</code> could describe
+<strong>themselves</strong> but not the flat. Nobody could aggregate rent bands, because no
+table stored rent. That is a hole in the data model, not only in SEO.</p>
+<p>A profile is a person. A listing is a property. One person can post more than one
+listing, and a listing lives longer than a single conversation about it.</p>
+<p>Listings expire, and the system does not delete them. There are two reasons.
+Expired rows continue to feed the aggregates. Also, Google demotes link decay.
+Thus, a page that gives a 404 is worse than a page that says that the flat is
+not available.</p>
 <h3 id="areas"><code>areas</code></h3>
-<p>Areas were a <code>text[]</code> on <code>profiles</code>. That is fine until URLs depend on them.</p>
-<p>Area pages live at <code>/flats-in-powai</code>, and that URL has to mean the same thing
+<p>Areas were a <code>text[]</code> on <code>profiles</code>. That is satisfactory until URLs depend on
+them.</p>
+<p>Area pages are at <code>/flats-in-powai</code>, and that URL must mean the same thing
 forever. Free text drifts: "Powai", "powai" and "Powai, Mumbai" become three
-separate cells, which splits every aggregate and produces duplicate or dead
-pages. A controlled vocabulary fixes it, and the table is also the natural
-home for the evergreen commute notes and area copy the pages need.</p>
-<p><code>isLaunchArea</code> covers F-06, which picks three areas to open with; the rest
-exist so the waitlist has something to point at.</p>
+different cells. This divides each aggregate and makes duplicate or dead pages. A
+controlled vocabulary prevents this. The table is also the natural location
+for the evergreen commute notes and the area text that the pages need.</p>
+<p><code>isLaunchArea</code> covers F-06, which selects three areas for the launch. The other
+areas exist so that the waitlist has a target.</p>
 <h3 id="a-deliberate-adr-exception">A deliberate ADR exception</h3>
-<p><code>areas</code> and <code>lifestyle_axes</code> both use a <strong>text slug as the primary key</strong>, not a
-UUIDv7. ADR 0015 says every table uses a uuid, so this is a departure and
-worth defending.</p>
-<p>The ADR's reasoning is enumerability: you should not be able to walk
+<p><code>areas</code> and <code>lifestyle_axes</code> use a <strong>text slug as the primary key</strong>, not a
+UUIDv7. ADR 0015 says that each table uses a uuid. Thus, this is a departure,
+and it needs a defence.</p>
+<p>The reason for the ADR is enumerability: you should not be able to walk from
 <code>/users/1024</code> to <code>/users/1025</code> and harvest the user base. Catalogue tables are
-the exact opposite — the slugs are published, meant to be guessed, and meant to
-be linked. <code>/flats-in-powai</code> is the product. Applying the rule there would cost
-a join on every page and protect nothing.</p>
+the full opposite. The slugs are public, and we want people to guess them and
+link to them. <code>/flats-in-powai</code> is the product. The rule there would cost a
+join on each page and protect nothing.</p>
 <p><code>profiles.areas</code> stays an array, because Postgres cannot put a foreign key on
-an array element. Validation lives in the contract layer, the same pattern
-already used for <code>profile_lifestyle.value</code> against its axis.</p>
+an array element. Validation occurs in the contract layer. This is the same
+pattern that <code>profile_lifestyle.value</code> already uses against its axis.</p>
 <h3 id="still-nobodys-job">Still nobody's job</h3>
-<p>The area pages themselves have no task. I searched all fifty-five: nothing
-mentions area pages, aggregates, SEO or sitemaps. T-22 is "Launch areas and
-waitlist", which is a different thing.</p>
-<p>And <strong>T-14 is the wrong shape for them.</strong> It returns individual people for a
-searcher. Area pages need aggregates with a suppression floor — the strategy
-requires hiding any cell with fewer than twenty users, or it leaks an
-individual. That is a different query, it does not exist, and no one owns it.</p>
+<p>The area pages have no task. I searched all fifty-five tasks. No task mentions
+area pages, aggregates, SEO or sitemaps. T-22 is "Launch areas and waitlist",
+which is a different thing.</p>
+<p>Also, <strong>T-14 is the incorrect shape for them.</strong> It returns individual people to a
+person who searches. Area pages need aggregates with a suppression floor. The
+strategy requires that you hide each cell with fewer than twenty users.
+Without this floor, the cell leaks an individual.</p>
+<p>That is a different query. It
+does not exist, and no one owns it.</p>
 <h2 id="twelve-tables-now-not-ten">Twelve tables now, not ten.</h2>
 <h1 id="entry-2--t-14-the-match-query">Entry 2 — T-14, the match query</h1>
 <p><strong>Issue <a href="https://github.com/magentawood/roomsie/issues/27">#27</a> · 6 hours · critical path</strong></p>
-<p>Given what the assistant has learned about you, return the people who fit.
-This is the thing the whole product points at: the chat exists to fill a form,
-and this turns that form into results.</p>
+<p>This query takes what the assistant learned about you, and returns the people
+who fit. All of the product points to this query. The chat exists to fill a
+form, and this query changes that form into results.</p>
 <h2 id="the-one-idea-that-shapes-everything">The one idea that shapes everything</h2>
-<p><strong>Filtering and ranking are different jobs.</strong> Confusing them is the easiest way
-to build this wrong.</p>
+<p><strong>Filtering and ranking are different jobs.</strong> To confuse them is the easiest way to build
+this incorrectly.</p>
 <ul>
-<li><strong>Filtering</strong> removes people who cannot work. Wrong area, wrong budget, a
-  violated dealbreaker, a block. Binary, and cheap.</li>
-<li><strong>Ranking</strong> orders whoever survives, by how well they suit you.</li>
+<li><strong>Filtering</strong> removes people who cannot work: incorrect area, incorrect budget, a
+  violated dealbreaker, a block. It is binary and cheap.</li>
+<li><strong>Ranking</strong> puts the remaining people in sequence, by how much they suit you.</li>
 </ul>
-<p>Why it matters: filtering needs only area and budget, which arrive about three
-turns in. Ranking needs lifestyle answers, which take much longer. If you treat
-them as one step, you either show nothing for ten turns, or you show a match
-score computed from almost no information.</p>
-<p><code>interface-shape.md</code> settles it — show results early and honestly, and
-<strong>withhold the score until it means something.</strong> So the query returns rows as
-soon as intent, area and budget exist, with <code>score: null</code> until there is a
-preference to measure.</p>
+<p>This is important because filtering needs only area and budget, which arrive
+after approximately three turns. Ranking needs lifestyle answers, which take
+much longer. If you make them one step, you get one of two bad results. You
+show nothing for ten turns. Or you show a match score from almost no
+information.</p>
+<p><code>interface-shape.md</code> gives the decision: show results quickly and honestly, and
+<strong>withhold the score until it means something.</strong> Thus, the query returns rows
+immediately when intent, area and budget exist. It returns <code>score: null</code> until
+there is a preference to measure.</p>
 <h2 id="intent-is-not-symmetric">Intent is not symmetric</h2>
-<p>roomsie serves both sides of the market at once, so "who should I see" depends
-on which side you are on. Someone with a spare room and someone looking for a
-room are a match. Two people who each already have a flat are not.</p>
+<p>roomsie serves the two sides of the market at the same time. Thus, the answer
+to "who should I see" depends on your side. A person with a spare room and a
+person who looks for a room are a match. Two people who each already have a
+flat are not a match.</p>
 <pre><code>has_flat    → wants_room, open
 wants_room  → has_flat,   open
 wants_flat  → wants_flat, open     ← two seekers teaming up to rent together
 open        → everyone
 unclear     → nobody
 </code></pre>
-<p><code>wants_flat → wants_flat</code> is the non-obvious one, and it is correct: two people
-who each want a whole flat can rent one together. <code>unclear → nobody</code> is
-deliberate — intent is required before results appear at all, so an unclear
-intent means we should not be querying.</p>
+<p><code>wants_flat → wants_flat</code> is the non-obvious match, and it is correct: two people who each want a full flat can rent one together. <code>unclear → nobody</code> is
+deliberate. The system requires intent before results appear at all. Thus, an
+unclear intent means that we should not query.</p>
 <h2 id="ranges-overlap-they-do-not-match">Ranges overlap, they do not match</h2>
-<p>A first instinct is to filter budget with equality or a simple ceiling. Both
-are wrong.</p>
-<p>Everyone has a <em>range</em>. Someone asking for up to ₹25,000 and someone offering
-from ₹20,000 have an overlap worth talking about. The filter is therefore:</p>
+<p>A first instinct is to filter budget with equality or a simple ceiling. The two methods are incorrect.</p>
+<p>All people have a <em>range</em>. A person who asks for up to ₹25,000 and a person who
+offers from ₹20,000 have an overlap that is worth a discussion. Thus, the
+filter is:</p>
 <pre><code>their minimum ≤ my maximum   AND   their maximum ≥ my minimum
 </code></pre>
-<p><code>coalesce</code> handles the open-ended cases — an unstated minimum is 0, an unstated
-maximum is effectively infinite.</p>
-<p>Move date works the same way, with a thirty-day window either side. Moving
-dates are approximate, and an exact-match filter would empty the panel.</p>
+<p><code>coalesce</code> handles the open-ended cases: an unstated minimum is 0, and an
+unstated maximum is effectively infinite.</p>
+<p>Move date works in the same way, with a thirty-day window on each side. Move
+dates are approximate, and a filter that needs the same date would empty the
+panel.</p>
 <h2 id="dealbreakers-and-the-question-nobody-answered">Dealbreakers, and the question nobody answered</h2>
-<p>A dealbreaker is a hard filter: <em>I will not live with a smoker.</em> Easy enough
-one way — require the candidate to have answered that axis with a value you
-accept.</p>
-<p>Note that <strong>an unanswered axis is not a pass.</strong> If you said no smoking and a
-candidate never answered the smoking question, they are excluded. Silence is
-not consent when the stake is your home.</p>
-<p>The harder question: <strong>do their dealbreakers filter you back?</strong></p>
+<p>A dealbreaker is a hard filter: <em>I will not live with a smoker.</em> In one
+direction, this is easy: the candidate must have an answer for that axis, with
+a value that you accept.</p>
+<p><strong>An unanswered axis is not a pass.</strong> If you said no to <code>smoking</code> and a
+candidate never answered the <code>smoking</code> question, the query excludes that candidate. Silence
+is not consent when your home is at risk.</p>
+<p>The next question is not easy: <strong>do their dealbreakers filter you back?</strong></p>
 <p>The ticket says "Hard filters: area, budget, move date, compatible intent,
-dealbreakers." It does not say whose. Flatsharing is mutual — if they will not
-live with a smoker and you smoke, neither of you should be in the other's
-results. So I implemented it both ways, with a caveat: the reverse filter needs
-your own answers, so anonymous searchers get the one-way version only.</p>
-<p>Flagged in the PR. It is a product decision, not a technical one.</p>
+dealbreakers." It does not say which person's dealbreakers. Flatsharing is mutual. If they will not
+live with a smoker and you smoke, the two of you should not be in the results of
+the other. Thus, I implemented the filter in the two directions, with one limit.
+The opposite filter needs your own answers. Thus, anonymous searchers get only
+the one-way version.</p>
+<p>I flagged this in the PR. It is a product decision, not a technical decision.</p>
 <h2 id="the-score-and-why-it-starts-at-70">The score, and why it starts at 70</h2>
 <pre><code>score = 70 + 30 × (share of your preferences this person meets)
 </code></pre>
-<p>That formula came from the ticket, but the 70 is worth understanding rather
-than just copying.</p>
-<p>Everyone being scored <strong>has already cleared every hard filter.</strong> They are in
-your areas, inside your budget, on a compatible side of the market, and they
-violate none of your dealbreakers. They are all genuinely viable.</p>
-<p>If the score ran 0–100, someone meeting one preference out of eight would show
-as 12%. That reads as "bad match" when the truth is "viable person, fewer
-shared preferences." The floor of 70 says: everyone here works; the top thirty
-points are about how well.</p>
+<p>That formula came from the ticket. But it is worth it to understand the 70, not
+only to copy it.</p>
+<p>All people who get a score <strong>already passed all hard filters.</strong> They are in
+your areas and inside your budget. They are on a compatible side of the market,
+and they violate none of your dealbreakers. They are all genuinely viable.</p>
+<p>If the score went from 0–100, a person who meets one preference out of eight
+would show as 12%. That looks like "bad match", but the truth is "viable
+person, fewer shared preferences." The floor of 70 says that all people here
+work. The top thirty points show how much they suit you.</p>
 <h2 id="what-i-could-not-settle">What I could not settle</h2>
-<p>The two source documents disagree on when the score appears.</p>
+<p>The two source documents do not agree about when the score appears.</p>
 <ul>
 <li>T-14's checklist: "shown only once lifestyle answers exist"</li>
 <li><code>ai-agent-design.md</code> §3.3: "at least 2 dealbreakers" before the first recommendation</li>
 </ul>
-<p>Those measure different things. Dealbreakers <em>filter</em>; preferences <em>rank</em>. A
-person could have two dealbreakers and no preferences, and the score formula
-would divide by zero.</p>
-<p>So I implemented both, separately, and named them honestly:</p>
+<p>Those rules measure different things. Dealbreakers <em>filter</em>, and preferences
+<em>rank</em>. A person could have two dealbreakers and no preferences. Then the score
+formula would divide by zero.</p>
+<p>Thus, I implemented the two rules independently, and gave them honest names:</p>
 <ul>
-<li><code>scoreShown()</code> — at least one preference exists, because that is what the score measures</li>
+<li><code>scoreShown()</code> — one or more preferences exist, because that is what the score measures</li>
 <li><code>minimumSlotSetMet()</code> — the §3.3 interview gate, which the assistant uses and the query does not</li>
 </ul>
-<p>Someone should confirm which was meant.</p>
+<p>Someone should confirm which rule the documents meant.</p>
 <h2 id="what-is-not-done_1">What is not done</h2>
 <ul>
-<li><strong>Not executable.</strong> Same blocker as T-06: no <code>apps/api</code>, no workspace, so nothing compiles or runs. Design is complete.</li>
-<li><strong><code>FormA</code> is a local placeholder.</strong> The real one is T-08's, in <code>packages/contract</code>, and P2 has not built it. Mine mirrors <code>agent-architecture.md</code>. It carries a warning comment, because two definitions of the same form is exactly the drift T-08 exists to prevent.</li>
-<li><strong>No tests.</strong> They need a running database and a way to seed it. First thing once T-02 lands.</li>
+<li><strong>Not executable.</strong> The blocker is the same as for T-06: no <code>apps/api</code> and no workspace. Thus, nothing compiles or runs. The design is complete.</li>
+<li><strong><code>FormA</code> is a local placeholder.</strong> The real one is T-08's, in <code>packages/contract</code>, and P2 has not built it. My placeholder mirrors <code>agent-architecture.md</code>. It has a warning comment. Two definitions of the same form are the drift that T-08 exists to prevent.</li>
+<li><strong>No tests.</strong> Tests need a database that runs, and a way to seed it. They are the first thing to do after T-02 is complete.</li>
 </ul>
 <h2 id="files_1">Files</h2>
 <pre><code>apps/api/src/match/
