@@ -21,7 +21,7 @@ DOCS = [
     "docs/tech-base.md",
     "docs/product-base.md",
     "docs/how-to-work.md",
-    "docs/build-journal.md",
+    "docs/journal/2026-09.md",
     "docs/design-review.md",
 ]
 CALLOUT = re.compile(r"^> \[!(\w+)\]([+-]?) ?(.*)$")
