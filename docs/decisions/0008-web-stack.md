@@ -4,16 +4,16 @@
 
 ## Context
 
-Existing work in `~/Desktop/femmeflats-design/femmeflats` already contains a
-landing page, login, signup and browse screens built on:
+The work in `~/Desktop/femmeflats-design/femmeflats` already has a landing
+page, login, signup and browse screens. That work uses this stack:
 
 ```
 next 16.3.3 · react 19.2.8 · tailwindcss v4 · typescript · app router
 @fontsource/inter · @fontsource/playfair-display
 ```
 
-That is real work already paid for. Re-litigating styling would discard it for
-no benefit.
+That work is real, and we already paid for it. A new decision about the styles
+would discard it for no benefit.
 
 ## Decision
 
@@ -21,58 +21,68 @@ no benefit.
 |---|---|
 | Framework | Next.js 16, App Router |
 | UI runtime | React 19 |
-| Styling | **Tailwind CSS v4** — carried over from existing work |
+| Styling | **Tailwind CSS v4**, from the work that exists |
 | Client data fetching | **TanStack Query** (authed app only) |
 | Rendering split | Per ADR 0007 |
 
-Existing pages from `femmeflats-design` are ported into `apps/web` rather than
-rebuilt from `create-next-app`.
+We port the pages from `femmeflats-design` into `apps/web`. We do not build
+them again from `create-next-app`.
 
-**TanStack Query is used only in the client-rendered authed app.** The public
-server-rendered pages fetch on the Next server and do not use it.
+**Only the client-rendered authed app uses TanStack Query.** The public
+server-rendered pages fetch data on the Next server. They do not use TanStack
+Query.
 
 ## Rationale for TanStack Query
 
-Caching is not the reason — that is a side effect people over-index on. The
-reason is boilerplate and correctness.
+The cache is not the reason. The cache is a side effect, and people give it too
+much importance. The reasons are boilerplate and correctness.
 
-Without it, every fetch is ~15 lines of `useState`/`useEffect` including a
-cancellation guard. Without that guard, a response that lands after `id` has
-changed overwrites fresh data with stale data. **In a swipe stack `id` changes
-every second or two**, so this race is the main interaction in the product, not
-an edge case — and it presents as "sometimes the wrong profile appears," which
-is expensive to diagnose.
+Without TanStack Query, each fetch is ~15 lines of `useState`/`useEffect`.
+These lines include a cancellation guard. Without that guard, a response can
+arrive after `id` changes. Then that response replaces the new data with stale
+data.
 
-With it, the same fetch is ~3 lines and the race is handled.
+**In a swipe stack, `id` changes at intervals of one or two seconds.** Thus, this
+race is the primary interaction in the product, not an edge case. The user sees
+it as "sometimes the wrong profile appears". It is expensive to diagnose this
+symptom.
+
+With TanStack Query, the same fetch is ~3 lines, and TanStack Query handles the
+race.
 
 | | |
 |---|---|
-| Fetching components expected across the authed app | ~30–40 |
-| Lines saved | ~400 |
-| Race-condition opportunities removed | ~30–40 |
-| Learning cost | 1–2 hours (`useQuery`, `useMutation`, `invalidateQueries`) |
-| Break-even | ~5th endpoint |
+| Expected components that fetch data in the authed app | ~30–40 |
+| Lines that we save | ~400 |
+| Possible race conditions that we remove | ~30–40 |
+| Time to learn it | 1–2 hours (`useQuery`, `useMutation`, `invalidateQueries`) |
+| Point where the savings and the cost are equal | ~5th endpoint |
 
-It also gives two things the product specifically needs: **prefetching the next
-N cards** so the stack feels instant rather than stuttering, and **optimistic
-accept/reject** with automatic rollback.
+TanStack Query also gives two functions that the product specially needs:
 
-**Where it costs us:** query-key design and invalidation strategy. Sloppiness
-there produces stale-data bugs. Budget a few hours.
+- **Prefetch of the next N cards.** Thus, the stack shows the cards
+  immediately, and does not stutter.
+- **Optimistic accept/reject**, with automatic rollback.
 
-**Reversibility note:** unlike ADRs 0001–0007 this decision is genuinely
-reversible, but asymmetrically — adopting now is nearly free, migrating 40
-existing components later is not. Hence adopting now.
+**Where it costs us:** the query-key design and the invalidation strategy. If
+we do this work carelessly, we get stale-data bugs. Budget a small number of
+hours for it.
+
+**Reversibility note:** different from ADRs 0001–0007, this decision is
+genuinely reversible. But the cost is not the same in the two directions. To
+adopt it at this time is almost free. To migrate 40 components subsequently is
+not. Thus, we adopt it at this time.
 
 ## Alternatives rejected
 
-- **Plain `fetch` + `useState`** — no dependency, but hand-written loading state
-  in ~40 components, no prefetch, and the cancellation guard must be remembered
-  every time.
-- **SWR** — lighter and well integrated with Next, but weaker mutation and
-  optimistic-update support, which is exactly what swipe accept/reject needs.
+- **Plain `fetch` + `useState`.** It adds no dependency. But ~40 components
+  must have hand-written loading state, and there is no prefetch. Also, the
+  developer must remember the cancellation guard each time.
+- **SWR.** It is lighter, and it has good integration with Next. But its
+  support for mutations and optimistic updates is weaker. Swipe accept/reject
+  needs exactly this support.
 
 ## Revisit when
 
-Not expected. Styling and framework are pinned by existing code; the data layer
-is reversible if it proves a poor fit.
+We do not expect to revisit this decision. The code that exists pins the styles
+and the framework. If the data layer is unsatisfactory, it is reversible.
