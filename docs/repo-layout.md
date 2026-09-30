@@ -55,6 +55,7 @@ roomsie/
 │   ├── product-base.md         product at a glance; ledger generated from the PD records
 │   ├── tech-base.md            architecture at a glance; ledger generated from the ADRs
 │   ├── decisions/              ADRs 0001 to 0016 and product decision records pd-*.md
+│   ├── standards/              code rules for each area, each linked to its record
 │   ├── repo-layout.md          this file
 │   ├── prototype-v3.md         what the V3 prototype settles
 │   ├── archive/                history; never linked from the index
