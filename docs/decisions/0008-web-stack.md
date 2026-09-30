@@ -24,12 +24,17 @@ discard it for no benefit.
 | Framework | Next.js 16, App Router |
 | UI runtime | React 19 |
 | Styling | **Tailwind CSS v4**, from the work that exists |
-| Client data fetching | **TanStack Query** (authed app only) |
+| Client data fetching | **TanStack Query** (all client-side fetching, per PD6b) |
 | Rendering split | Per ADR 0007 |
 
 We port the pages from `femmeflats-design` into `apps/web`. We do not build
 them again from `create-next-app`. The public server-rendered pages fetch data
 on the Next server.
+
+[PD6b](pd-06b-login-gate-and-search.md) widens TanStack Query to all
+client-side data fetching: the public pre-login chat and the authenticated app.
+
+Superseded: TanStack Query for the authenticated app only (2026-09-10).
 
 ## Rationale for TanStack Query
 
