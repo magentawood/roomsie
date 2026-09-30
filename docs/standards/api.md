@@ -9,7 +9,7 @@ These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and
 - Never use an `as` cast on external data. Why: `as` is a promise to the compiler, not a check. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 - Generate the OpenAPI document from the Zod schemas and commit it. Why: it is the single source of truth for all clients. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 - Put the shared contract in `packages/contract`. Why: the two apps and the future mobile app share one contract. ([ADR-0003](../decisions/0003-api-as-separate-service.md), [ADR-0010](../decisions/0010-monorepo-tooling.md))
-- Put CPU-heavy work in SQL. Why: work that blocks the event loop stops all requests. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
+- CPU-heavy work must not block the event loop. Put the rank computation in SQL. Why: work that blocks the event loop stops all requests. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 
 ## Auth
 
@@ -17,11 +17,11 @@ These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and
 - Verify the token signature locally, with the cached public keys of Google. Do not call Firebase for each request. Why: the check then needs no network call and no database lookup. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - After the signature check, reject the token if its `iat` is before `users.tokens_valid_after`. Why: one write then stops all sessions of a user. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - An `UPDATE` on a client-supplied id always has `WHERE user_id = <id from the verified JWT>`. Why: a client that guesses an id cannot change the row of a different user. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
-- Put phone OTP behind our own endpoints, `POST /auth/phone/start` and `/auth/phone/verify`. Why: we can then change the SMS provider. ([ADR-0005](../decisions/0005-managed-platform-split.md))
+- When phone OTP ships, put it behind our own endpoints, `POST /auth/phone/start` and `/auth/phone/verify`. Why: we can then change the SMS provider. ([ADR-0005](../decisions/0005-managed-platform-split.md))
 
 ## Storage and realtime
 
-- Image bytes never go through the API. The API gives a short-lived presigned R2 upload URL. Then the client uploads and reports the key. Why: the API stays small and R2 has no egress fees. ([ADR-0005](../decisions/0005-managed-platform-split.md))
+- Image bytes never go through the API. The API gives a short-lived presigned R2 upload URL. Then the client uploads and reports the key. Why: the API does not carry image traffic. ([ADR-0005](../decisions/0005-managed-platform-split.md))
 - Verification selfies and ID documents go in an isolated bucket that is not public, with short retention. Give access only through short-lived signed URLs, after an authorisation check. Why: one bad bucket policy must not expose biometric data. ([ADR-0005](../decisions/0005-managed-platform-split.md), [PD8](../decisions/pd-08-verification.md))
 - Make the blurred copy of a photo on the server, at upload. Never give a viewer the address of the initial image without permission. Why: anyone can read the initial image in the network tab. ([PD8](../decisions/pd-08-verification.md))
 - Realtime is `broadcast` only. The API writes the message, applies the rules, then publishes to a channel. Never use `postgres_changes`. Why: a client that subscribes to a table learns the schema. ([ADR-0005](../decisions/0005-managed-platform-split.md))
@@ -38,12 +38,13 @@ These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and
 ## The assistant
 
 - Call a model only through the one model module. The module holds the timeout, the retry, the fallback and the token counts. Why: a vendor change is then a config change. ([PD7](../decisions/pd-07-models.md))
-- Parse each model output with Zod. If it fails, retry one time on the same model, then on the fallback. Why: the model is never the source of truth. ([PD7](../decisions/pd-07-models.md))
+- Parse each model output with Zod. If it fails, retry one time on the same model, then on the fallback. Why: the model is never the source of truth. ([PD7](../decisions/pd-07-models.md), [PD7a](../decisions/pd-07a-agent-architecture.md))
 - Each extractor enum has an `unclear` value. Why: without it, the extractor fills slots with guesses. ([PD7](../decisions/pd-07-models.md))
 - Handler inputs and outputs are Zod schemas with a version, in `packages/contract`. Why: each handler has one job and its own eval. ([PD7a](../decisions/pd-07a-agent-architecture.md))
 - The reply writer reads Form A, Form B and the last two turns. It never reads the full transcript. Why: the cost of a full transcript increases with each turn. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD5](../decisions/pd-05-team-and-budget.md))
 - Reject each Form B observation that has no verbatim quote from the user. Why: a profile fact must point to the words of the user. ([PD7a](../decisions/pd-07a-agent-architecture.md))
-- An inferred value never fills a slot silently. A contradiction needs a confirmation from the user, and it never overwrites the earlier value. Log each conflict. Why: the form, not the model, is the source of truth. ([PD3b](../decisions/pd-03b-interview-vs-chips.md))
+- An inferred value never fills a slot silently. If chat contradicts an earlier chat value, ask the user which to keep. Never overwrite it silently. Log each conflict. Why: the form, not the model, is the source of truth. ([PD3b](../decisions/pd-03b-interview-vs-chips.md), [PD6c](../decisions/pd-06c-interface-holes.md))
+- A manual filter edit wins against a chat value, and the assistant tells the user one time. Why: a manual tap is explicit and recent. ([PD6c](../decisions/pd-06c-interface-holes.md))
 - Results come from SQL, never from model text. The model never ranks results. Why: then no text in a listing can move the listing up. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD10](../decisions/pd-10-scope-bands.md))
 - Chip taps, off-topic turns and adversarial turns get a scripted reply with no model call. Log each adversarial turn. Why: these turns need no model, and they cost nothing. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD10](../decisions/pd-10-scope-bands.md))
 - Get the chips for a closed question from the slot definition, not from a model call. Why: a second model call makes latency and cost two times larger. ([PD6c](../decisions/pd-06c-interface-holes.md))
@@ -52,6 +53,6 @@ These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and
 - Consulting questions never write to Form A or Form B. Why: a general question is not a fact about the user. ([PD7a](../decisions/pd-07a-agent-architecture.md))
 - Never infer or suggest a community or religion preference. Record it only when the user states it. Why: a stated value serves a preference, and an inferred value makes one. ([PD3c](../decisions/pd-03c-exclusionary-preferences.md))
 - Apply a stated exclusion on the server, as removed query rows. Log each exclusion with its turn. Why: the excluded person never sees the filter, and the log is our defence. ([PD3c](../decisions/pd-03c-exclusionary-preferences.md))
-- Do not add a third sequential model call before the panel moves, unless a measurement supports it. Why: users notice each second in a chat. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- Do not add a third sequential model call before the panel moves, unless a measurement supports it. Why: the latency of each call adds up, and users notice three seconds in a chat. ([PD7a](../decisions/pd-07a-agent-architecture.md))
 - Use no vector store. The advisor finds articles with Postgres full-text search. Why: the corpus is dozens of documents. ([PD7a](../decisions/pd-07a-agent-architecture.md))
 - For each model call, log tokens in, tokens out and the model, with the session. Why: the cost for each completed interview is a launch metric. ([PD5](../decisions/pd-05-team-and-budget.md), [PD7a](../decisions/pd-07a-agent-architecture.md))
