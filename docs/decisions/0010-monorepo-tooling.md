@@ -4,8 +4,8 @@
 
 ## Context
 
-ADR 0003 put `apps/web` and `apps/api` in one repository as independent
-deployables. The shape we are building toward:
+ADR 0003 put `apps/web` and `apps/api` in one repository. Each is a deployable
+that we deploy independently. This is the shape that we build to:
 
 ```
 femmeflats/
@@ -18,7 +18,8 @@ femmeflats/
 └── docs/decisions/
 ```
 
-Two separable concerns: the package manager, and the task runner.
+There are two different concerns that we can decide one at a time: the
+package manager and the task runner.
 
 ## Decision
 
@@ -28,66 +29,73 @@ Two separable concerns: the package manager, and the task runner.
 
 ### pnpm
 
-Not chosen for speed or disk usage, though it wins on both. Chosen for
-**strictness**.
+We did not choose pnpm for speed or for disk usage, but it is better on the two.
+We chose it for **strictness**.
 
-npm and yarn flatten every dependency into one hoisted `node_modules`, so
-`apps/web` can import a package only `apps/api` declared. It works on a laptop
-and fails in CI or production. pnpm enforces that a package may import only what
-it declares.
+npm and yarn flatten all dependencies into one hoisted `node_modules`. Thus,
+`apps/web` can import a package that only `apps/api` declared. This works on a
+laptop, and it fails in CI or production. pnpm makes sure that a package can
+import only what it declares.
 
-With four people and two independently deployed artefacts, that bug class is
-worth designing out rather than debugging.
+We have four people and two artefacts that we deploy independently. Thus, it is
+worth it to design out that bug class, and not to debug it.
 
 ### Turborepo over Nx
 
-Both are task runners over the same pnpm workspace, so this is a narrow call.
+The two tools are task runners on the same pnpm workspace. Thus, the difference
+between them is small.
 
-**For Turborepo, specific to us:**
+**For Turborepo, in our conditions:**
 
-- `apps/web` deploys to Vercel, which auto-detects Turborepo and enables
-  **remote caching with zero configuration** — the team and CI share a build
-  cache for free. Nx would need Nx Cloud configured separately.
-- One config file. The team is absorbing Fastify, Zod, Drizzle, TanStack Query,
-  Fly.io and Docker in the same month; this is a smaller thing to have opinions
-  about right now.
+- `apps/web` deploys to Vercel. Vercel automatically finds Turborepo and enables
+  **remote caching with zero configuration**. Thus, the team and CI share a
+  build cache for free. Nx would need Nx Cloud, with its own configuration.
+- There is one config file. In the same month, the team learns Fastify, Zod,
+  Drizzle, TanStack Query, Fly.io and Docker. Thus, at this time, Turborepo is
+  a smaller thing to have opinions about.
 
-**Nx's genuine advantage is `affected`,** not code generation. Nx builds a
-project graph from actual imports rather than `package.json` dependencies, so
-`nx affected -t test` runs only what a change could have broken. That matters at
-twenty packages with a fifteen-minute CI run. At four packages, `turbo build`
-with caching finishes either way.
+**The genuine advantage of Nx is `affected`,** not code generation. Nx makes a
+project graph from the actual imports, not from the `package.json` dependencies.
+Thus, `nx affected -t test` runs only what a change could break. That is
+important at twenty packages with a fifteen-minute CI run. At four packages,
+`turbo build` with caching finishes with or without `affected`.
 
 **On the "adopt Nx now to avoid migrating later" argument.** The migration is
-cheap: delete `turbo.json`, run `nx init`, update a few scripts — about half a
-day. Adopting a heavier tool now to avoid half a day later inverts the
-cheap-versus-expensive-to-change principle applied throughout these ADRs.
+cheap: delete `turbo.json`, run `nx init`, and update a small number of scripts.
+This takes approximately half a day. We apply the cheap-versus-expensive-to-change
+principle in all these ADRs. To adopt a heavier tool at this time to
+prevent half a day of subsequent work, is the opposite of that principle.
 
-**Terminology note.** Nx has deprecated the package-based vs integrated
-distinction. It was replaced by **inferred tasks** ("Project Crystal"):
-`nx init` reads existing tool configs and infers tasks, and plugins are adopted
-per project, incrementally. So the incremental-adoption path is now simply how
-Nx works — there is nothing to hedge for by choosing a repo style up front.
+**Terminology note.** Nx deprecated the package-based vs integrated distinction.
+**Inferred tasks** ("Project Crystal") replaced it.
+
+`nx init` reads the tool configs that exist and infers tasks. Then you adopt
+plugins one project at a time, incrementally. Thus, the incremental-adoption
+path is simply how Nx works at this time. You do not have to choose a repo
+style at the start as a hedge.
 
 ## Consequences
 
-- `pnpm-workspace.yaml` defines the workspace; every package declares its own
+- `pnpm-workspace.yaml` defines the workspace. Each package declares its own
   dependencies explicitly.
 - `turbo.json` defines the task graph: `dev`, `build`, `lint`, `test`.
 - CI enables Turborepo remote caching through Vercel.
-- Packages must not rely on hoisting. If something is imported, it is declared.
+- Packages must not rely on hoisting. If a package imports something, it must
+  declare it.
 
 ## Alternatives rejected
 
-- **Nx with inferred tasks** — scales further and detects affected projects more
-  precisely. Rejected on learning surface this month and on remote caching
-  needing separate setup. A legitimate alternative, cheap to adopt later.
-- **npm workspaces** — nothing new to install, but hoisting reintroduces the
-  phantom-dependency bug class.
-- **No task runner** — viable at this size, but two terminals to start work and
-  no CI caching, for ~10 minutes of saved setup.
+- **Nx with inferred tasks.** It scales to a larger size, and it finds the
+  affected projects more accurately. We rejected it because of the amount that the
+  team must learn this month. Also, its remote caching needs a separate setup.
+  It is a legitimate alternative, and it is cheap to adopt subsequently.
+- **npm workspaces.** There is nothing new to install. But hoisting brings back
+  the phantom-dependency bug class.
+- **No task runner.** This is viable at this size. But you need two terminals
+  to start work, and CI has no caching. It saves only ~10 minutes of setup.
 
 ## Revisit when
 
-The repo passes roughly fifteen packages, or CI wall-clock becomes a real
-complaint. Then `nx init` is half a day.
+Revisit this decision when the repo has more than approximately fifteen
+packages, or when the CI wall-clock time becomes a real complaint. Then
+`nx init` is half a day.
