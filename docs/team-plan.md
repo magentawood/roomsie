@@ -402,7 +402,7 @@ Every role has a name. Accounts and billing are live. Styling is decided. Launch
 - Supabase in ap-south-1, Fly in bom, Vercel functions in bom1
 - Firebase project, R2 buckets for public photos and private files, DeepSeek and Gemini keys
 - Keys shared through a password manager, never in chat or the repo
-- Read first: `docs/source/decisions/0009-hosting-and-region.md`
+- Read first: `docs/decisions/0009-hosting-and-region.md`
 
 **T-08 · Form A contract: slots and enums** — done when:
 - A Zod schema in packages/contract for Form A
@@ -454,7 +454,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md
 - `pnpm dev` runs web and API locally. docs/ is untouched
 - Every API route is served under `/v1`, so a future mobile app keeps working through later changes
-- Read first: `CONTEXT.md`, `docs/source/decisions/0010-monorepo-tooling.md`, `docs/source/decisions/0003-api-as-separate-service.md`, `docs/extensibility.md`
+- Read first: `CONTEXT.md`, `docs/decisions/0010-monorepo-tooling.md`, `docs/decisions/0003-api-as-separate-service.md`, `docs/extensibility.md`
 
 **M-03 · Write the eval sentences** — done when:
 - 50 sentences people would really type, in English, Hinglish and Marathi
@@ -529,7 +529,7 @@ Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goe
 - UUIDv7 ids with no database default. `created_at` from the server clock
 - Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id`
 - A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1
-- Read first: `docs/source/decisions/0015-primary-key-strategy.md`, `docs/source/decisions/0006-drizzle.md`, `docs/agent-architecture.md`, `docs/extensibility.md`
+- Read first: `docs/decisions/0015-primary-key-strategy.md`, `docs/decisions/0006-drizzle.md`, `docs/agent-architecture.md`, `docs/extensibility.md`
 
 **F-07 · Draft privacy policy, terms, grievance contact** — done when:
 - Says what is collected, why, for how long, how to delete, and who to contact
@@ -545,12 +545,12 @@ Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goe
 - Google sign-in through Firebase on the web, token held in memory
 - The API verifies the ID token locally, with no call to Firebase
 - A users row is created on first sign-in. `tokens_valid_after` is in the first migration
-- Read first: `docs/source/decisions/0007-web-rendering-and-auth-transport.md`, `docs/source/decisions/0005-managed-platform-split.md`
+- Read first: `docs/decisions/0007-web-rendering-and-auth-transport.md`, `docs/decisions/0005-managed-platform-split.md`
 
 **T-03 · CI: typecheck, lint, build, secret scan** — done when:
 - Every pull request runs typecheck, lint, build and gitleaks
 - Finishes in under five minutes
-- Read first: `docs/source/decisions/0013-ci-gate-and-testing.md`
+- Read first: `docs/decisions/0013-ci-gate-and-testing.md`
 
 **T-23b · Privacy, terms and grievance pages** — done when:
 - /privacy, /terms and /grievance show the founder's text
@@ -579,7 +579,7 @@ Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goe
 - No message text is stored
 - Events are written only through one `track()` function in apps/api
 - Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
-- Read first: `docs/source/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
+- Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **T-37 · Articles table and full-text search** — done when:
 - An articles table with a Postgres full-text index. No vector store
@@ -660,7 +660,7 @@ Every screen and every assistant handler is merged and live behind the invite ga
 - Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile
 - Secrets set in both
 - A merge to main deploys automatically
-- Read first: `docs/source/decisions/0009-hosting-and-region.md`
+- Read first: `docs/decisions/0009-hosting-and-region.md`
 
 **T-19 · Report, block, suspend, and a saved moderation query** — done when:
 - The API behind the report and block buttons, which live in T-18b
@@ -680,7 +680,7 @@ Every screen and every assistant handler is merged and live behind the invite ga
 - `reportError(err, context)` lives in packages/config and is the only way code reports errors
 - Sentry free tier connected in web and API
 - `beforeSend` strips message text, phone numbers and the Authorization header
-- Read first: `docs/source/decisions/0014-error-tracking.md`
+- Read first: `docs/decisions/0014-error-tracking.md`
 
 **T-15 · Results panel, built against the contract** — done when:
 - A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands
@@ -705,7 +705,7 @@ Every screen and every assistant handler is merged and live behind the invite ga
 - Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
 - Up to four photos, uploaded straight to R2 with a presigned URL
 - Photo bytes never pass through the API
-- Read first: `docs/source/decisions/0005-managed-platform-split.md`
+- Read first: `docs/decisions/0005-managed-platform-split.md`
 
 **T-27 · Run the eval set and tune the prompt** — done when:
 - The 50 test sentences run through extraction
@@ -722,7 +722,7 @@ Every screen and every assistant handler is merged and live behind the invite ga
 - Profile, photos in R2 and form state are removed. Events are pseudonymised
 - `tokens_valid_after` is set to now, so every session ends
 - The person's chat turns are deleted too
-- Read first: `docs/source/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
+- Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **D-05 · Design QA on the live build** — done when:
 - Walk every screen on a phone and a laptop
@@ -738,7 +738,7 @@ Every screen and every assistant handler is merged and live behind the invite ga
 - Events are written to their own Supabase project, on the second account, through the same track() function
 - pg_cron in that project deletes events past the retention period and creates next month's partition
 - The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation
-- Read first: `docs/source/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
+- Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **T-10 · Chat screen and split view** — done when:
 - The landing button opens a full-screen chat

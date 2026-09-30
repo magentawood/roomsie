@@ -6,7 +6,7 @@ The architecture should not change every time we add a feature or swap a
 vendor. This page lists every change we already know is coming, where each one
 lands, and what has to be true **from day one** so that it lands cleanly.
 
-The technical base in `docs/source/tech-base.html` already designed most of
+The technical base in `docs/tech-base.html` already designed most of
 these seams. This page checks the launch tasks against them, because the scope
 cuts in `docs/launch-plan.md` dropped some of them.
 

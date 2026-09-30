@@ -28,7 +28,7 @@ unchanged — fifteen accepted ADRs.
 
 | Term | What it means here |
 |---|---|
-| **ADR** | Architecture Decision Record. A short document saying "we chose X over Y, and here is why." Numbered, dated, and binding. `docs/source/decisions/` holds fifteen. |
+| **ADR** | Architecture Decision Record. A short document saying "we chose X over Y, and here is why." Numbered, dated, and binding. `docs/decisions/` holds fifteen. |
 | **Monorepo** | One repository holding the website, the server and the shared code, instead of three separate ones. Everyone commits to the same place. |
 | **Schema** | The shape of the database: what tables exist, what columns they have, what type each column is. |
 | **Migration** | A file of SQL that changes the schema. Run in order, never edited once shipped, so every machine ends up with the same database. |

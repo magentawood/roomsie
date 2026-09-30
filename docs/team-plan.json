@@ -91,7 +91,7 @@
     "Keys shared through a password manager, never in chat or the repo"
    ],
    "read": [
-    "docs/source/decisions/0009-hosting-and-region.md"
+    "docs/decisions/0009-hosting-and-region.md"
    ],
    "cp": "CP0",
    "critical": false,
@@ -194,8 +194,8 @@
    ],
    "read": [
     "CONTEXT.md",
-    "docs/source/decisions/0010-monorepo-tooling.md",
-    "docs/source/decisions/0003-api-as-separate-service.md",
+    "docs/decisions/0010-monorepo-tooling.md",
+    "docs/decisions/0003-api-as-separate-service.md",
     "docs/extensibility.md"
    ],
    "cp": "CP1",
@@ -240,8 +240,8 @@
     "A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1"
    ],
    "read": [
-    "docs/source/decisions/0015-primary-key-strategy.md",
-    "docs/source/decisions/0006-drizzle.md",
+    "docs/decisions/0015-primary-key-strategy.md",
+    "docs/decisions/0006-drizzle.md",
     "docs/agent-architecture.md",
     "docs/extensibility.md"
    ],
@@ -414,8 +414,8 @@
     "A users row is created on first sign-in. `tokens_valid_after` is in the first migration"
    ],
    "read": [
-    "docs/source/decisions/0007-web-rendering-and-auth-transport.md",
-    "docs/source/decisions/0005-managed-platform-split.md"
+    "docs/decisions/0007-web-rendering-and-auth-transport.md",
+    "docs/decisions/0005-managed-platform-split.md"
    ],
    "cp": "CP2",
    "critical": true,
@@ -593,7 +593,7 @@
     "A merge to main deploys automatically"
    ],
    "read": [
-    "docs/source/decisions/0009-hosting-and-region.md"
+    "docs/decisions/0009-hosting-and-region.md"
    ],
    "cp": "CP3",
    "critical": false,
@@ -617,7 +617,7 @@
     "Photo bytes never pass through the API"
    ],
    "read": [
-    "docs/source/decisions/0005-managed-platform-split.md"
+    "docs/decisions/0005-managed-platform-split.md"
    ],
    "cp": "CP3",
    "critical": true,
@@ -659,7 +659,7 @@
     "Finishes in under five minutes"
    ],
    "read": [
-    "docs/source/decisions/0013-ci-gate-and-testing.md"
+    "docs/decisions/0013-ci-gate-and-testing.md"
    ],
    "cp": "CP2",
    "critical": false,
@@ -741,7 +741,7 @@
     "`beforeSend` strips message text, phone numbers and the Authorization header"
    ],
    "read": [
-    "docs/source/decisions/0014-error-tracking.md"
+    "docs/decisions/0014-error-tracking.md"
    ],
    "cp": "CP3",
    "critical": false,
@@ -852,7 +852,7 @@
     "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1"
    ],
    "read": [
-    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/decisions/0012-analytics-event-store.md",
     "docs/extensibility.md"
    ],
    "cp": "CP2",
@@ -940,7 +940,7 @@
     "The person's chat turns are deleted too"
    ],
    "read": [
-    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/decisions/0012-analytics-event-store.md",
     "docs/extensibility.md"
    ],
    "cp": "CP3",
@@ -1307,7 +1307,7 @@
     "The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation"
    ],
    "read": [
-    "docs/source/decisions/0012-analytics-event-store.md",
+    "docs/decisions/0012-analytics-event-store.md",
     "docs/extensibility.md"
    ],
    "cp": "CP3",

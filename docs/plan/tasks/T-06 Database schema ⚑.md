@@ -51,7 +51,7 @@ tags:
 ^done
 
 ## Read first
-- [0015-primary-key-strategy.md](../../source/decisions/0015-primary-key-strategy.md)
-- [0006-drizzle.md](../../source/decisions/0006-drizzle.md)
+- [0015-primary-key-strategy.md](../../decisions/0015-primary-key-strategy.md)
+- [0006-drizzle.md](../../decisions/0006-drizzle.md)
 - [agent-architecture.md](../../agent-architecture.md)
 - [extensibility.md](../../extensibility.md)

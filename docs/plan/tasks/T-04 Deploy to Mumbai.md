@@ -37,4 +37,4 @@ tags:
 ^done
 
 ## Read first
-- [0009-hosting-and-region.md](../../source/decisions/0009-hosting-and-region.md)
+- [0009-hosting-and-region.md](../../decisions/0009-hosting-and-region.md)

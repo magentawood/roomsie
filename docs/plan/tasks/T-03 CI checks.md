@@ -35,4 +35,4 @@ tags:
 ^done
 
 ## Read first
-- [0013-ci-gate-and-testing.md](../../source/decisions/0013-ci-gate-and-testing.md)
+- [0013-ci-gate-and-testing.md](../../decisions/0013-ci-gate-and-testing.md)

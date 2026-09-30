@@ -36,5 +36,5 @@ tags:
 ^done
 
 ## Read first
-- [0012-analytics-event-store.md](../../source/decisions/0012-analytics-event-store.md)
+- [0012-analytics-event-store.md](../../decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)

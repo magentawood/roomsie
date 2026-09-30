@@ -44,5 +44,5 @@ tags:
 ^done
 
 ## Read first
-- [0007-web-rendering-and-auth-transport.md](../../source/decisions/0007-web-rendering-and-auth-transport.md)
-- [0005-managed-platform-split.md](../../source/decisions/0005-managed-platform-split.md)
+- [0007-web-rendering-and-auth-transport.md](../../decisions/0007-web-rendering-and-auth-transport.md)
+- [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)

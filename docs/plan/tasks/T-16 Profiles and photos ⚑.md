@@ -42,4 +42,4 @@ tags:
 ^done
 
 ## Read first
-- [0005-managed-platform-split.md](../../source/decisions/0005-managed-platform-split.md)
+- [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
