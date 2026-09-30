@@ -14,35 +14,29 @@ This note uses ASD-STE100 Simplified Technical English.
 
 **Verdict: probably correct, but not proven. Do not put a number in the pitch.**
 
-No public source gives a clear value for the online part of the total rental
-supply. All sources describe the market as unorganised and fragmented. But they
-give no numbers for it.
+- No public source gives a clear value for the online part of the total rental supply.
+- All sources describe the market as unorganised and fragmented. They give no numbers for it.
+- The one usage number is from NoBroker's own blog. It says that 43% of renters in Mumbai use online portals to find a home.
+- That number measures demand behaviour, not supply coverage. The source has an interest in the result.
 
-The one usage number comes from NoBroker's own blog. It says that 43% of renters
-in Mumbai use online portals to find a home. That number measures demand
-behaviour, not supply coverage. Also, the source has an interest in the result.
+Safe facts:
 
-Only two facts are safe to state:
+- The market has no Multiple Listing Service. India has no central database of available property.
+- Attempts to make one exist, but they stayed small.
 
-- The market has no Multiple Listing Service. India has no central database of
-  available property.
-- Attempts to make one exist, but they stayed small. Listings of India started
-  in December 2015. MyBroker runs a verified broker community.
+**Next step:** treat the claim as a hypothesis. Measure it in Mumbai during the pilot. Count the listings that a set of brokers hold, and compare them with the listings that they publish online.
 
-Treat the claim as a hypothesis. Measure it in Mumbai during the pilot. Count
-the listings that a set of brokers hold, and compare them with the listings
-that they publish online.
+> [!note]- Why
+> - Only two facts are safe to state.
+> - Listings of India started in December 2015.
+> - MyBroker runs a verified broker community.
 
 ## Claim 2 — the no-broker platforms carry brokers, and charge like brokers
 
-**Verdict: the first half is correct. The second half is half true.
-The real difference is more useful than the claim.**
+**Verdict: the first half is correct. The second half is half true.**
 
-Brokers do operate on these platforms. Reports describe broker reposts. Reports
-also describe brokers who say that they are owners, to collect leads. Duplicates
-and reposts occur on all high-volume rental platforms.
-
-The price comparison is weaker than it seems.
+- Duplicates and reposts occur on all high-volume rental platforms.
+- The price comparison is weaker than it seems.
 
 | Item | Amount |
 |---|---|
@@ -53,48 +47,58 @@ The price comparison is weaker than it seems.
 | 99acres reported broker spend | ₹4,000 to ₹60,000 each month |
 | Traditional Mumbai brokerage | approximately one month of rent, sometimes more |
 
-The top owner plan costs less than one month of Mumbai rent. Thus, the fee is
-lower than brokerage. But at the top tier, it has the same order of magnitude.
+- The top owner plan costs less than one month of Mumbai rent. Thus, the fee is lower than brokerage.
+- At the top tier, the fee has the same order of magnitude as brokerage.
 
-**The important difference is not the amount. It is the time when you pay.**
+**The important difference is the time when you pay.**
 
-Brokerage is a success fee. You pay the broker when you sign a lease. A
-platform subscription is not a success fee. You pay to search. You pay if you
-find a home, and you pay if you do not.
+| Model | Fee type |
+|---|---|
+| Brokerage | Success fee |
+| Platform subscription | Not a success fee |
 
-This is the real defect in the incumbent model. It explains the complaints.
-Users report that they paid for a plan, and then got no visits and no leads.
+- Payment to search, not on success, is the real defect in the incumbent model.
+- Users report that they paid for a plan, and then got no visits and no leads.
+- NoBroker, FY24: ₹803 crore of operating revenue, an increase of 32% from ₹609 crore. Subscriptions were 99% of income. The loss was ₹411 crore.
+- The business grows when it sells more searches, not when more people move.
 
-It also explains the accounts of NoBroker. In FY24, NoBroker got ₹803 crore of
-operating revenue, an increase of 32% from ₹609 crore. Subscriptions were 99%
-of income. The loss was ₹411 crore. The business grows when it sells more
-searches, not when more people move.
+> [!note]- Why
+> - The real difference is more useful than the claim.
+> - Brokers do operate on these platforms. Reports describe broker reposts.
+> - Reports also describe brokers who say that they are owners, to collect leads.
+> - The important difference is not the amount.
+> - You pay the broker when you sign a lease.
+> - With a subscription, you pay to search. You pay if you find a home, and you pay if you do not.
+> - This defect explains the complaints. It also explains the accounts of NoBroker.
 
 ## Claim 3 — the same property appears many times
 
-**Verdict: correct, and it has a clear cause.**
+**Verdict: correct.**
 
-The cause is the open listing. In India, an owner does not sign an agreement
-with only one broker. The owner tells five brokers. Then each broker has a
-correct reason to publish the same flat. No rule stops them, because no
-Multiple Listing Service exists to enforce one listing for one property.
+- The cause is the open listing. In India, an owner does not sign an agreement with only one broker.
+- No rule stops brokers who publish the same flat.
 
-Three things then make it worse:
+Other factors:
 
 1. Brokers repost to refresh the timestamp and stay high in the results.
-2. Some brokers publish a flat that they do not actually control, to collect
-   leads.
-3. Platforms reward listing volume, because listing volume is what they sell.
-
-Compare the United States. There, the Multiple Listing Service rejects a second
-entry for the same property. If a person enters a listing without a written
-agreement, that person must pay a fine. India has no control of this type.
+2. Some brokers publish a flat that they do not actually control, to collect leads.
+3. Platforms reward listing volume.
 
 **Is this problem worth a solution? Yes, but not as a data cleaning task.**
 
-Deduplication treats the symptom. The cause is structural. A platform that
-charges for listing slots will always attract duplicates. This is because each
-duplicate is one more chance to win the lead.
+- The cause is structural.
+- A platform that charges for listing slots will always attract duplicates.
+
+> [!note]- Why
+> - The problem has a clear cause.
+> - The owner tells five brokers. Then each broker has a correct reason to publish the same flat.
+> - No Multiple Listing Service exists to enforce one listing for one property.
+> - Three things make the problem worse.
+> - Platforms reward listing volume because listing volume is what they sell.
+> - In the United States, the Multiple Listing Service rejects a second entry for the same property.
+> - There, a person who enters a listing without a written agreement must pay a fine. India has no control of this type.
+> - Deduplication treats the symptom.
+> - Each duplicate is one more chance to win the lead.
 
 ---
 
@@ -102,80 +106,62 @@ duplicate is one more chance to win the lead.
 
 ### The core move: stop selling search, start selling a qualified introduction
 
-roomsie has one asset that the incumbents do not have: the assistant interviews
-the user. At the end of the interview, roomsie knows the intent, the budget,
-the areas, the move date and the dealbreakers. A user with this information is
-a qualified seeker.
+- roomsie has one asset that the incumbents do not have: the assistant interviews the user.
+- After the interview, the user is a qualified seeker.
+- **Listing is free and unlimited for brokers.**
+- **The broker pays only for the introduction.**
+- roomsie charges when the assistant sends a matched, interviewed seeker who agrees to an introduction.
+- **The user pays nothing to search.**
 
-A qualified seeker is worth much more to a broker than a listing slot. Also,
-roomsie can make a qualified seeker at a low cost, because the interview is the
-product.
-
-Thus:
-
-- **Listing is free and unlimited for brokers.** This pulls in the scattered
-  supply. It removes the reason to hold inventory back.
-- **The broker pays for the introduction.** roomsie charges when the assistant
-  sends a matched, interviewed seeker who agrees to an introduction.
-- **The user pays nothing to search.** The user never pays to see a flat.
-
-This model is the opposite of the incumbent model. The incumbent sells access
-to a search. The incumbent gets money when nobody moves. roomsie gets money
-closer to the move.
+> [!note]- Why
+> - At the end of the interview, roomsie knows the intent, the budget, the areas, the move date and the dealbreakers.
+> - A qualified seeker is worth much more to a broker than a listing slot.
+> - roomsie can make a qualified seeker at a low cost, because the interview is the product.
+> - Free listing pulls in the scattered supply. It removes the reason to hold inventory back.
+> - This model is the opposite of the incumbent model. The incumbent sells access to a search.
+> - The incumbent gets money when nobody moves. roomsie gets money closer to the move.
 
 ### Why this fixes duplicates instead of fighting them
 
-If listing is free, duplicates increase. That is not a problem, because roomsie
-does not sell listing slots.
+- If listing is free, duplicates increase.
+- Resolve the duplicates into one property. Match on building, unit, rent, photos and layout.
+- Show the user **one** property card.
+- Behind that card, keep the set of brokers who offer the property.
+- When the user asks for an introduction, route it to one broker.
+- Choose the broker on response time, on accuracy of the listing, and on the fee that the broker will accept.
+- The incumbents cannot easily copy this structure.
 
-Resolve the duplicates into one property. Match on building, unit, rent, photos
-and layout. Show the user **one** property card.
-
-Behind that card, keep the set of brokers who offer the property. When the user
-asks for an introduction, route it to one broker. Choose the broker on response
-time, on accuracy of the listing, and on the fee that the broker will accept.
-
-Then the duplicate is not a defect. It becomes competition for the
-introduction. The user sees one clean result. The broker who answers fastest
-and describes the flat honestly wins the lead.
-
-The incumbents cannot easily copy this structure. Their revenue depends on the
-sale of the listing slot that creates the duplicate.
+> [!note]- Why
+> - More duplicates are not a problem, because roomsie does not sell listing slots.
+> - Then the duplicate is not a defect. It becomes competition for the introduction.
+> - The broker who answers fastest and describes the flat honestly wins the lead.
+> - The revenue of the incumbents depends on the sale of the listing slot that creates the duplicate.
 
 ### What each side gets
 
-**The broker gets:**
+- The broker gets a reason to keep listings accurate.
 
-- Free, unlimited listing. No monthly subscription.
-- Seekers who already stated a budget, an area, a date and their dealbreakers.
-- Payment only when a real introduction occurs.
-- A reason to keep listings accurate, because accuracy wins the routing.
-
-**The user gets:**
-
-- One card for one flat. No duplicate results.
-- No fee to search, and no fee for the introduction.
-- An assistant that read all the listings and asked what the user actually
-  needs.
+> [!note]- Why
+> - Accuracy wins the routing.
+> - The broker pays no monthly subscription.
+> - The broker gets seekers who already stated a budget, an area, a date and their dealbreakers.
+> - The user pays no fee for the introduction.
+> - The user gets an assistant that read all the listings and asked what the user actually needs.
 
 ### The honest risks
 
-1. **Off-platform leakage.** When the broker has the phone number, the deal can
-   close outside roomsie. Charge at the introduction, not at the close of the
-   deal. Then roomsie already has the fee. Keep numbers hidden until the
-   introduction. The prototype already does this.
-2. **Brokers may not pay for each lead.** Indian brokers expect subscriptions
-   and free listing. Test the price during the Mumbai pilot, before you build
-   billing.
-3. **A free listing tier attracts junk.** Broker verification becomes load-bearing.
-   The prototype has no broker verification at all today.
-4. **Deduplication is hard without addresses.** The prototype deliberately
-   never collects the address. Deduplication needs a property identity of some
-   type. This need conflicts with the current privacy design. roomsie must
-   resolve this conflict.
-5. **Brokers break the all-genders trust story differently.** roomsie dropped
-   the women-only promise. Thus, roomsie must rebuild the safety argument. Also,
-   brokers have the lowest trust of all actors in the market.
+| # | Risk | Response | Status |
+|---|---|---|---|
+| 1 | **Off-platform leakage.** When the broker has the phone number, the deal can close outside roomsie. | Charge at the introduction, not at the close of the deal. Keep numbers hidden until the introduction. | The prototype already hides the numbers. |
+| 2 | **Brokers may not pay for each lead.** | Test the price during the Mumbai pilot, before you build billing. | — |
+| 3 | **A free listing tier attracts junk.** | Broker verification becomes load-bearing. | The prototype has no broker verification at all today. |
+| 4 | **Deduplication is hard without addresses.** | Deduplication needs a property identity of some type. This need conflicts with the current privacy design. roomsie must resolve this conflict. | The prototype deliberately never collects the address. |
+| 5 | **Brokers break the all-genders trust story differently.** | roomsie dropped the women-only promise. Thus, roomsie must rebuild the safety argument. | — |
+
+> [!note]- Why
+> - Risk 1: if roomsie charges at the introduction, roomsie already has the fee.
+> - Risk 2: Indian brokers expect subscriptions and free listing.
+> - Risk 5: brokers have the lowest trust of all actors in the market.
 
 ---
 
