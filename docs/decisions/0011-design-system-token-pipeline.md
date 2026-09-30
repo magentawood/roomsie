@@ -20,8 +20,18 @@ is a build artefact, not a sync.
 
 The current export has **691 variables in 7 collections**, 44 text styles, 26
 effect styles, 8 grid styles, 111 gradient styles and 299 solid colour styles.
+Untitled UI already designed the token system. The variables already have tiers,
+light/dark modes and Tailwind v4 namespaces. Only the rebrand remains.
+
+| Tier | Collections | Example |
+|---|---|---|
+| Primitives | colour, spacing | `Colors/Brand/600` → `#2563eb` |
+| Semantic (moded) | text, fg, bg, border, effects, alpha | `bg-brand-solid` |
+| Component | component, utility colour | `utility-brand-900_alt` |
 
 ## Decisions
+
+**In one line:** Figma is the single source of truth, and a generator makes `theme.css` from `figma-variables.json`, with aliases as `var()` references, never flattened.
 
 ### 1. Figma is the single source of truth
 
@@ -34,7 +44,7 @@ effect styles, 8 grid styles, 111 gradient styles and 299 solid colour styles.
 
 ### 2. Build input is `figma-variables.json`, not `tokens.dtcg.json`
 
-The bridge writes the two files. DTCG **loses data in exactly the way that is
+The bridge writes the two files. DTCG, the industry-standard format, **loses data in exactly the way that is
 important to us**:
 
 - `$value` carries only the *default* mode of the collection. The other modes

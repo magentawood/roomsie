@@ -16,6 +16,8 @@ filters. The design had five holes:
 
 ## Decision
 
+**In one line:** The panel is a pure function of the form: it updates when the form changes, not when a chat turn happens.
+
 **The panel updates when the form changes, not when a chat turn happens.**
 
 - The panel is a pure function of the form.

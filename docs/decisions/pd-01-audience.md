@@ -8,6 +8,8 @@ femmeflats was a women-only, swipe-stack discovery app. roomsie is its AI-native
 
 ## Decision
 
+**In one line:** roomsie is open to all genders and drops the women-only promise of femmeflats.
+
 - **roomsie is open to all genders.**
 - roomsie drops the women-only wedge of femmeflats. We removed the women-only promise.
 

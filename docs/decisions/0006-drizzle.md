@@ -21,11 +21,14 @@ The constraints:
 
 ## Decision
 
+**In one line:** Only `apps/api` uses Drizzle, its TypeScript schema is the single source of truth for the full database, and we commit the generated `.sql` migrations.
+
 We use **Drizzle**, only in `apps/api`. The web app has no database dependency
 at all (ADR 0002).
 
 The Drizzle schema in TypeScript is the **single source of truth for the full
-database**, not a client-side view or a subset. Drizzle generates the
+database**, not a client-side view or a subset. The schema file describes the
+real, complete structure: all tables, columns, indexes and foreign keys. Drizzle generates the
 migrations from the schema as plain `.sql` files, and we commit these files:
 
 ```

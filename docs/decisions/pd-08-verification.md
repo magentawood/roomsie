@@ -10,6 +10,8 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 
 ## Decision
 
+**In one line:** Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback, and we store the result, never the document.
+
 - **Verified-only and mutual.** Users who opt into verified-only show as
   blurred cards. Only verified users see them.
 - **The blur is server-side.** At upload, make a different blurred asset and

@@ -8,6 +8,8 @@
 
 ## Decision
 
+**In one line:** The router puts each question in one of five scope bands by the cost of an incorrect answer, and band 2b is corpus only.
+
 The quantity that the assistant can say depends on the cost of an incorrect answer. **The rule is not "corpus or silence". The rule is: how bad is it if this answer is incorrect?**
 
 | Band | Handling |

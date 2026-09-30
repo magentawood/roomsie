@@ -13,25 +13,38 @@
 
 ## Decision
 
+**In one line:** For v1, we rent Postgres, object storage and the CDN, and we write the schema, migrations, queries and API endpoints by hand.
+
 For v1, we rent infrastructure. A provider operates Postgres, object storage and
 the CDN. We write the schema, each migration, each query and each API endpoint
-ourselves, by hand. We use no application code that a vendor generates.
+ourselves, by hand. We use no application code that a vendor generates. We
+run no `apt install`, because we operate no servers of our own.
 
 ## Rationale
+
+"Ops" has two meanings. Only one of them is worth the cost at this time:
+
+- **Infrastructure ops:** provisioning, Postgres tuning, backups, TLS, pooling,
+  monitoring, patching. The cost to reclaim it subsequently is low: a weekend.
+- **Application ops:** schema, migrations, API, deploys, observability. The
+  cost to reclaim it subsequently is high: a rewrite.
 
 The cost of rework is not the same for all items. The two layers are in
 different cost groups:
 
 - **Cheap to change subsequently:** hosting provider, server size, CDN, region.
   At all the scales that we will plausibly reach, a move of Postgres to a
-  different host is a dump-and-restore.
+  different host is a dump-and-restore, because the database stays the same.
 - **Expensive to change subsequently:** data model, API contract, identity/auth
   model, analytics event schema. These items become fixed in each client and
-  each stored row.
+  each stored row. If a vendor owns our business logic or our data access
+  patterns, removal of that vendor is a rewrite.
 
 Thus, we buy control where control compounds (the application). We rent where
 it does not compound (the machines). At 20k users in one city, we have no scale
 problem to solve at this time. One small Postgres instance is easily sufficient.
+The scaling lessons are correct, but we would learn them against a load that does
+not exist.
 
 ## Consequences
 

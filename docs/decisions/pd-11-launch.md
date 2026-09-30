@@ -9,6 +9,8 @@
 
 ## Decision
 
+**In one line:** The public launch is on Monday 12 October, with Wednesday 14 October as the fallback, and the go/no-go list is the quality bar.
+
 - **Target: Monday 12 October. Fallback: Wednesday 14 October. Quality comes before the date.**
 - **The go/no-go list is the quality bar.** If a check fails, the date moves by a small quantity. We do not ship something below the bar.
 - **Go or no-go: Saturday 10 October, 8 pm.** Sunday 11 October is a bug-fix day.
@@ -23,6 +25,7 @@
 | Results panel, profiles with photos | SEO area pages |
 | Contact shown when the two people accept | Live-update banners and undo, mobile bottom sheet |
 | Report, block, deletion, waitlist, legal pages | — |
+| Results queried again when the form changes, responsive mobile | — |
 | Analytics in its own database, nightly backups (PD13) | — |
 
 Engineering go/no-go checks (from `team-plan.md`):
@@ -53,6 +56,7 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - Capacity: 170 person-hours (5 × 2h × 17 days), 151 build hours, 19 spare, none before the designs arrive (PD12).
 - If the team is late, the launch moves to 14 October. The scope stays the same.
 - If a checkpoint is more than a day late, decide on that checkpoint call if 14 October becomes the plan.
+- **Still open (deferred): the master launch document.** All its inputs are settled.
 - Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls. They make the broker calls at this time, because the answers take time.
 
 Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October. That plan had no margin.

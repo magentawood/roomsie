@@ -19,6 +19,8 @@ Duplicate listings come from the structure of the market. Owners give the same f
 
 ## Decision
 
+**In one line:** Pending: v0 is free, and the v1 working hypothesis is that brokers list free and pay only for an introduction to a matched seeker.
+
 No decision at this time. **v0 is free.** There is no monetisation in two weeks. PD4 moves to v1.
 
 The working hypothesis:

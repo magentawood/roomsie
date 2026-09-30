@@ -7,9 +7,12 @@
 ADR 0002 set this rule: clients talk to an API that we own, never to the
 database. The obvious cheap way to build that API is in the Next.js app, as
 route handlers: one project, one deploy, no CORS, no network hop, and types
-shared at no cost.
+shared at no cost. That is correct for a solo project that ships only a
+website. It is not correct for Roomsie, for four reasons.
 
 ## Decision
+
+**In one line:** One monorepo holds `apps/web` and `apps/api` as separate deployables, and Next.js route handlers hold no business logic.
 
 One repository contains (at least) `apps/web` and `apps/api`: two artefacts
 that build and deploy independently, and share the same tools and the API
@@ -42,11 +45,13 @@ contain no business logic.
 
 ## Consequences
 
-- The setup needs a few extra hours: CORS, auth token propagation, and two local
+- The setup needs ~4 more hours: CORS, auth token propagation, and two local
   processes (one monorepo task runner command).
 - Server-side rendering has one more network hop. In-region, this adds
   approximately 1–5ms.
 - The monorepo needs a task runner and a shared contract package from day one.
+- We pay a small number of hours at this time. In return, the boundary holds
+  against pressure for the next two years.
 
 ## Alternatives rejected
 

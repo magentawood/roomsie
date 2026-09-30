@@ -5,8 +5,7 @@
 ## Context
 
 ADR 0001 (rent infrastructure) and ADR 0002 (we own the API) have this result:
-we need exactly four commodity services from providers, and nothing else: no
-query APIs, no generated clients and no business logic that a vendor holds.
+we need exactly four commodity services.
 
 | # | Need | Used for |
 |---|---|---|
@@ -16,6 +15,8 @@ query APIs, no generated clients and no business logic that a vendor holds.
 | 4 | Websocket transport | Chat delivery |
 
 ## Decision
+
+**In one line:** Supabase runs Postgres and `broadcast`-only Realtime, Firebase Authentication runs identity, and Cloudflare R2 runs object storage.
 
 | Component | Vendor | Plan |
 |---|---|---|
@@ -46,8 +47,8 @@ SSO or SMS.
 We used these published rates:
 
 - **Firebase / GCIP**: graduated rates after the free tier: $0.0055/MAU
-  (50k–100k), $0.0046 (100k–1M), $0.0032 (1M–10M). Each rate applies only to
-  the users in that band.
+  (50k–100k), $0.0046 (100k–1M), $0.0032 (1M–10M). Each rate applies only
+  in its band.
 - **Supabase Auth**: Pro includes 100k MAU. Then ~$0.00325/MAU.
 - **Clerk**: ~$0.02/MAU. **Auth0**: ~$0.07/MAU. Both prices are for B2B SaaS.
 - **WorkOS AuthKit**: Free up to 1,000,000 MAU, with no time limit. Then $2,500
@@ -63,20 +64,18 @@ optimise this cost now is to optimise a number that does not exist yet.
 
 What actually differs between the options today is **mobile**:
 
-- The Android and iOS SDKs of Firebase are best in class. This product will be
+- Firebase's Android and iOS SDKs are best in class. This product will be
   predominantly a phone app.
 - Google Sign-In integrates with Android Credential Manager / One Tap. This
   gives exactly the zero-typing sign-in that the spec requires.
-- Yash already knows the Firebase mobile SDKs, so he needs no time to learn
-  them.
+- Yash already knows the Firebase mobile SDKs.
 - Supabase officially supports Firebase as a third-party auth provider. Thus,
-  Supabase will trust JWTs that Firebase issues, and RLS continues to work as
-  defence in depth.
+  Supabase trusts Firebase JWTs, and RLS still works as defence in depth.
 
 WorkOS was genuinely attractive on price (free up to 1M MAU). But WorkOS is
 web-first and B2B-first. On mobile, you wire the OAuth/PKCE flows yourself, and
 the native experience is materially worse. That is a real cost in month four,
-paid to save on a bill that we will not see for years.
+paid to save on a bill that we will not see for years. We rejected WorkOS.
 
 **Firebase has no official KMP SDK.** This is not a problem, because auth is
 inherently a platform concern. The KMP module uses `expect`/`actual` as a layer
@@ -110,7 +109,8 @@ workaround.
 | Monthly egress, with listings | **~700 GB** |
 
 **The decisive ratio is ~14 GB of egress for each 1 GB stored**, and it becomes
-worse when engagement increases. Egress, not storage, is the full bill.
+worse when engagement increases. In a swipe app, egress, not storage, is the
+full bill.
 
 ### Monthly cost
 
@@ -135,8 +135,10 @@ We used these published rates:
 
 ### Why R2
 
+**For storage, cost decides.**
+
 - **Zero egress fees.** At all other providers, this workload is 93% egress by
-  cost. This is worth approximately **$600/month by the time we reach 200k
+  cost. At 200k users, storage costs below $12 at each provider. This is worth approximately **$600/month by the time we reach 200k
   users**: more than all the other infrastructure line items together.
 - **S3-compatible API.** The exit is a bucket copy and an endpoint change.
 - Cloudflare CDN and Image Transformations are available natively.
@@ -144,12 +146,11 @@ We used these published rates:
 **⚠️ We ruled out Wasabi because of its policy, not its price.** Its "no egress
 fees" claim has a fair-use expectation that monthly downloads stay *below* the
 stored volume. Our downloads are ~14× the stored volume, so we would violate the
-policy from month one. The prices of Wasabi are for backup and archive, not
+policy from month one. Wasabi prices are for backup and archive, not
 media serving.
 
 **We rejected Backblaze B2 because of the vendor count.** Its storage is
-marginally cheaper. But its free egress requires Cloudflare in front, through
-the Bandwidth Alliance: a fourth vendor to save ~$5/month. R2 already *is*
+marginally cheaper. But its free egress requires Cloudflare in front: a fourth vendor to save ~$5/month. R2 already *is*
 Cloudflare.
 
 ---
@@ -184,10 +185,10 @@ These rules are non-negotiable and reviewable:
 1. **Our own `users.id` is the primary key everywhere.** We store the Firebase
    UID in a plain `auth_provider_id` column, and only the login path reads it.
    All other tables foreign-key to *our* ID.
-   *Why:* Auth is the one piece with real lock-in. You cannot `pg_dump` an OAuth
+   *Why:* Auth is the one piece with real lock-in: you cannot `pg_dump` an OAuth
    relationship. With this rule, a change of provider is a one-column backfill
-   and a silent Google re-login. Without it, the ID of the provider is in all
-   the foreign keys, and the migration is a rewrite.
+   and a silent Google re-login. Without it, the provider ID is in all foreign keys,
+   and the migration is a rewrite. This five-minute rule saves weeks.
 2. **Never proxy image bytes through the API.** The API issues a short-lived
    presigned upload URL. The client uploads directly to R2 and reports the key.
 3. **Verification selfies are in a separate, non-public bucket** with short

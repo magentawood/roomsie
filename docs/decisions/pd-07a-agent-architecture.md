@@ -9,6 +9,8 @@ handlers.
 
 ## Decision
 
+**In one line:** A router sends each turn to the smallest handler that can serve it, and all of it ships at launch.
+
 **A router sends each turn to the smallest handler that can serve it.** Not
 multi-agent, and not one large model. **All of it ships at launch.**
 
@@ -97,6 +99,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
 - Web searches count against the daily spend ceiling.
 - Each question with no article becomes the next article.
 - Consulting questions never write to Form A or Form B.
+- **Still open (testing): the router model.** DeepSeek runs the router at
+  launch. When Jev access arrives, try Jev on the eval set.
 
 Superseded: the 2026-09-23 launch plan cut the router, Form B and the
 advisor. On 2026-09-26 they came back, and the advisor got web search after

@@ -15,6 +15,8 @@ simpler.
 
 ## Decision
 
+**In one line:** DeepSeek V4.1 Flash serves all roles, the Gemini Flash-Lite tier is the fallback on failure or invalid output, and we dropped Sarvam.
+
 | Role | Model |
 |---|---|
 | Router, extractor, observer, composer | DeepSeek V4.1 Flash |

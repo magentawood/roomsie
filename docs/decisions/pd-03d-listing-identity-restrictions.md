@@ -14,6 +14,8 @@ A published listing is a different case. For example, a roomsie listing that say
 
 ## Decision
 
+**In one line:** Open: if a published listing can show an identity restriction in the text that people see.
+
 No decision at this time. The question is: can a published listing show an identity restriction in the text that people see?
 
 PD3d is a different decision from PD3c. We decide the two cases independently. PD3c decided only the private-filter case.

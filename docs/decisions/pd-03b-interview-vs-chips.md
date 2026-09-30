@@ -8,6 +8,8 @@ The team asked what the AI interview adds to the chip filters.
 
 ## Decision
 
+**In one line:** Both: the assistant interview runs with the chip filters, and the structured form, not the model, is the source of truth.
+
 **Settled: both.** The assistant does two things that chips cannot do:
 
 - It finds what people never tick a box for: "My ex basically lived there."

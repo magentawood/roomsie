@@ -8,6 +8,8 @@ roomsie is the AI-native pivot of femmeflats. The V3 prototype shows flats and f
 
 ## Decision
 
+**In one line:** v0 is flatmate matching only, with no property listing objects: a person with a spare room is a person card.
+
 - **v0 is flatmate matching only.**
 - Property listings are not objects of their own. v0 has no property listing objects.
 - A person with a spare room is a person card, not a listing.

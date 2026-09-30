@@ -11,6 +11,8 @@
 
 ## Decision
 
+**In one line:** Five engineering lanes work in two phases, and designs D-02, D-03 and D-04 must be complete by the end of Wednesday 30 September.
+
 **All the work that needs no design comes first. We build all screens when the designs are available.**
 
 There are **five engineering lanes, P1 to P5**, and two phases.
@@ -76,6 +78,8 @@ Why the designer gets a design review (`design-review.md`):
 - During Phase A, no person owns a vertical from end to end. We get resilience, but we lose clean ownership.
 - If there are only four engineers, plan for 14 October from day one.
 - `docs/team-plan.json` is the one place where you edit the plan. `how-to-work.md` and `team-plan.md` come from it.
+- Each task is a GitHub issue. `docs/plan/` has the graph and the timeline, for Obsidian.
+- **Design system: an exception to ADR 0011.** The launch uses the appearance of the prototype. Untitled UI comes later.
 - The GitHub issues keep the initial `vertical:V1`–`V5` labels until we relabel them. Until then, `team-plan.md` has priority.
 
 Superseded: the first schedule of 115 build hours against 120 available for five engineers, with a bug-fix day on 6 October (see PD11).

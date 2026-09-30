@@ -14,6 +14,8 @@
 
 ## Decision
 
+**In one line:** `apps/api` uses TypeScript on Node, Fastify and Zod, and the OpenAPI document from those schemas is the single source of truth.
+
 `apps/api` is TypeScript on Node, with **Fastify** as the HTTP framework and
 **Zod** for runtime validation at each external boundary.
 
@@ -27,14 +29,19 @@ schemas**. That document is the single source of truth for all clients.
 - The constraint that controls the decision is person-hours, not throughput. At
   20k users in one city, each candidate has more capacity than necessary. Only
   a load test would show a difference between them.
-- Two developers already prefer JavaScript.
+- Two developers already know and prefer JavaScript.
+- TypeScript gives the fastest path to an endpoint.
+- Against TypeScript: types do not exist at runtime. Thus, validation must be
+  a discipline.
 - AI assistance for TypeScript is materially stronger.
 - A single-language monorepo does not need Gradle and pnpm side by side.
 - The real advantage of Kotlin is that it shares DTOs directly with the KMP
   module. We can get this back subsequently, through OpenAPI codegen. We cannot
-  get back the month that the team spends on ramp-up.
-- We rejected Java because of its verbosity and its slow feedback loops,
-  against a two-hours-a-day schedule.
+  get back the month that the team spends on ramp-up. You cannot buy back a
+  month.
+- We rejected Java because of its verbosity (3–4× the code for each
+  endpoint), its heavy runtime and its slow rebuilds, against a
+  two-hours-a-day schedule.
 
 **Why Fastify rather than Hono or Express.**
 
@@ -46,11 +53,14 @@ schemas**. That document is the single source of truth for all clients.
   byproduct of usual work, not as a chore of its own.
 - Hono has two headline advantages. Edge-runtime portability is moot with
   ADR 0003. Kotlin cannot consume its TypeScript-only RPC types, and there is a
-  risk that these types push out a real OpenAPI spec.
-- Express is not modern, and in effect it is in maintenance.
+  risk that these types push out the real OpenAPI spec that mobile needs. We
+  rejected Hono.
+- Express is not modern, and in effect it is in maintenance. We rejected
+  Express.
 
-**Why Zod is mandatory, not optional.** The compiler erases TypeScript types at
-compile time. `as SomeType` is an assertion, not a check. Without runtime
+**Why Zod is mandatory, not optional.** In Kotlin, types are real at runtime.
+In TypeScript, the compiler erases TypeScript types at
+compile time. `as SomeType` is a promise to the compiler, not a check. Without runtime
 parsing at the edge, the type safety is theatre. Rule: a schema parses each
 byte that enters the API from outside (request bodies, query params, webhooks
 and third-party responses), before all other code touches it.
@@ -66,10 +76,13 @@ and third-party responses), before all other code touches it.
 
 ## Alternatives rejected
 
-- **Kotlin + Ktor** — This is the best long-term fit for the mobile story. We
+- **Kotlin + Ktor** — This is the best long-term fit for the mobile story. It
+  is Yash's strongest language, with one language for server, Android and KMP,
+  and shared DTOs. We
   rejected it because of polyglot-monorepo friction, team ramp-up and a thinner
   server ecosystem.
-- **Java + Spring Boot** — This is the most mature option. We rejected it for
+- **Java + Spring Boot** — This is the most mature option, with runtime type
+  safety and a large pool of people to hire. We rejected it for
   the reason in the Rationale.
 - **Go, Python** — No person on the team knows Go, and no person prefers
   Python. If v2 ranking needs a Python ML service, this API can call it

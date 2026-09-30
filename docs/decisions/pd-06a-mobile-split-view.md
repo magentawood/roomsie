@@ -12,6 +12,8 @@ PD6 gives a split view: the chat on one side and the results on the other. Two p
 
 ## Decision
 
+**In one line:** Provisional: on mobile, the chat is a bar below the listings, and its size never changes while the user types or reads.
+
 Engineering chose a provisional pattern so that it can start:
 
 | When | Chat | Listings |

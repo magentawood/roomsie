@@ -20,6 +20,8 @@ The cost of inference depends on the turn type:
 
 ## Decision
 
+**In one line:** The self-funded team is 5 engineers at 2 hours a day, 2 marketing and 1 designer, with five cost levers and no vector store.
+
 - **5 engineers at 2 hours a day, 2 marketing, 1 designer.** Self-funded.
 - Superseded: `cost-and-team.md` (2026-09-20) gave 4 tech people, with unknown hours. PD12 (2026-09-25) has five engineering lanes, and PD11 (2026-09-26) uses 5 × 2h × 17 days.
 - Keep the cost low with five levers, in order of size:
@@ -47,6 +49,7 @@ The cost of inference depends on the turn type:
 - One interview is cheap. But a thousand interviews a month at some rupees each cost approximately all of the current infrastructure bill.
 - The PD9 controls are a budget control, not only a safety control. Cost and latency is not a safety issue.
 - For each turn, log tokens in, tokens out and the model. Tie the log to the session. Cost for each completed interview is a launch metric.
+- One completed interview costs approximately ₹1–2 (PD7).
 - Inference is the cost that changes. It scales with conversations, not users.
 - A second Fly machine is worth a new review, because long in-flight agent requests make restarts much easier to see.
 - The 2 marketing people can start at this time. Nothing blocks them. The broker calls have the highest value, because PD3 waits on them. The blog starts immediately, because SEO compounds slowly and articles need no users.

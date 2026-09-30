@@ -12,6 +12,8 @@
 
 ## Decision
 
+**In one line:** Deferred until the broker interviews: the working hypothesis is that brokers list free and pay only for a qualified introduction.
+
 **Deferred until the broker interviews.** It is not in v0.
 
 **Working hypothesis:** brokers list free, and roomsie charges for a qualified introduction.

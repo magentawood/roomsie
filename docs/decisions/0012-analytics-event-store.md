@@ -13,7 +13,7 @@ weekly actives:
 |---|---|
 | Sessions/month | ~65,000 |
 | Events for each session | ~150–200 |
-| **Events/month** | **~10–13M** |
+| **Events/month** | **~10–13M (~12M)** |
 | **Average write rate** | **~5/sec** |
 
 These events have two different consumers:
@@ -26,6 +26,8 @@ the specific events again. The volume model and the two-consumer split do not
 depend on that document.)*
 
 ## Decision
+
+**In one line:** All analytics events go to a separate, append-only Postgres instance that we own, and we use no third-party analytics vendor.
 
 **All analytics events go to a separate, append-only Postgres instance that we
 own.** We use no third-party analytics vendor.
@@ -88,7 +90,8 @@ own.** We use no third-party analytics vendor.
   for the events.
 - **ClickHouse / Tinybird** — correct at ~10× this volume. But it is new
   technology and one more vendor, for a workload that Postgres handles
-  comfortably.
+  comfortably. Tinybird costs ~$99/month and ClickHouse Cloud costs
+  $67+/month. Both are too much for our needs now.
 
 ## Revisit when
 
