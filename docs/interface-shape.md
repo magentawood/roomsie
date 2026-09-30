@@ -7,21 +7,19 @@
 
 ## The decided flow
 
-1. **Landing page.** Traditional hero and product narrative. Public.
+1. **Landing page.** A traditional hero and product narrative. Public.
 2. **Primary call to action.** "Start looking" opens a full-screen chat.
-3. **No skip.** The user cannot jump to the grid from here.
-4. **After 2 to 3 inputs, the view splits.** Chat on one side, listings on the
-   other.
-5. **The listings panel has minimal manual filters.** Most filtering comes from
-   the chat.
-6. **The panel updates as the chat goes on.**
+3. **No skip.** From the chat, the user cannot go to the grid.
+4. **After 2 to 3 inputs, the view splits.** Chat on one side, listings on the other.
+5. **The listings panel has minimal manual filters.** Most filters come from the chat.
+6. **The panel updates as the chat continues.**
 
 ## Why it works
 
-- The user sees results early, so the interview feels worth it.
-- Results that change as you talk prove the assistant is listening.
-- Minimal manual filters give an escape hatch without leaving the chat.
-- Full chat first, split later, paces the effort well.
+- The user sees results fast. Thus, the interview feels worth the effort.
+- Results change as the user talks. This proves that the assistant listens.
+- Minimal manual filters give a way out, and the user does not leave the chat.
+- A full chat first and two panels after give the effort a good pace.
 
 ---
 
@@ -29,49 +27,48 @@
 
 ### 1. Mobile has no side-by-side — PROVISIONAL
 
-This is the biggest one. A split view needs about 900px. Mumbai is a
-mobile-first market. At 400px there is no second panel.
+This is the largest hole. Two panels need approximately 900px. Mumbai is a
+mobile-first market. At 400px, a second panel cannot fit.
 
-Three options, and one must be chosen:
+Select one of three options:
 
 | Option | How it works | Cost |
 |---|---|---|
-| Bottom sheet | Chat fills the screen. Results sit in a sheet that drags up. A pill shows the live count. | Extra component, but one product |
-| Tabs | Chat and Results as two tabs, with a badge on Results. | Cheapest. Loses the live feedback, which is the whole point. |
-| Inline cards | Results appear inside the chat as card carousels. | Most natural on mobile. Hard to compare options, which property search needs. |
+| Bottom sheet | Chat fills the screen. Results are in a sheet that the user drags up. A pill shows the live count. | One more component, but one product |
+| Tabs | Two tabs, Chat and Results. Results has a badge. | Lowest cost. Loses the live feedback, which is the main function. |
+| Inline cards | Results show in the chat as card carousels. | Most natural on mobile. Hard to compare options, which property search needs. |
 
-**Provisional design (2026-09-20), to be finalised later.** The chat fills the
-screen at the start. When results are ready, the chat shrinks to a bar at the
-bottom, about 25% of the height, and the listings fill the space above. Tapping
-the input expands the chat to about 60% so the user can read the history. It
-shrinks again when the listings update.
+**Provisional design (2026-09-20).** We will finalise it subsequently. At the
+start, the chat fills the screen. When results are available, the chat becomes a bar at
+the bottom (approximately 25% of the height), and the listings fill the
+space above. A tap on the input makes the chat approximately 60% of the height, to
+let the user read the history. When the listings update, the chat becomes
+small again.
 
-The mechanics are the same as desktop. One form, two views.
+The mechanics are the same as on desktop: one form, two views.
 
-**One rule to hold.** Never resize while the user is typing or reading. An
-auto-shrink that fires mid-sentence is the same defect as silent reordering in
-hole 4. Shrink on send, or let the user drag it.
+**One rule to hold.** Do not change the size while the user types or reads. An automatic shrink in the middle of a sentence is the same defect as silent reorder in hole 4.
+The size should change on send, or when the user drags it.
 
 ### 2. Search traffic breaks the no-skip rule — CLOSED
 
-**Resolved by moving the gate.** Login is required only to open a listing's
-details and to contact anyone. Browsing, the chat and the split view are all
-public, so there was never a conflict.
+**We moved the gate.** The user must log in only to open the details of a
+listing or to contact a person. Browse, chat and the two-panel view are
+public. Thus, there was no conflict.
 
-A visitor from search lands in the split view with the page's filters applied
-and an empty chat, but a partly filled form. See
+A visitor from search starts in the two-panel view. The page filters apply,
+the chat is empty, and some fields of the form have values. Refer to
 `seo-with-gated-products.md`.
 
 ### 3. Two or three turns is not enough to rank — CLOSED
 
-**Decision.** The panel first appears once intent, area and budget are filled.
-That is about three turns.
+**Decision.** The panel shows first when the user gives intent, area and
+budget. This takes approximately three turns.
 
-Filtering and ranking are different things. Filtering needs area and budget.
-Ranking on compatibility needs the lifestyle answers, which take much longer.
-So show results early and honestly, and withhold the match score until it
-means something. The V3 prototype already does this: it hides the match tag
-when no lifestyle filters are set.
+Filters and rank are different. Filters need area and budget. A compatibility
+rank needs the lifestyle answers, which take much more time. Thus, show
+results fast and honestly. Do not show the match score until it has a meaning.
+The V3 prototype does this: with no lifestyle filters, it hides the match tag.
 
 **Headers by state:**
 
@@ -80,84 +77,86 @@ when no lifestyle filters are set.
 | Intent only | "Everything in Mumbai" |
 | Plus area | "Flats in Powai" with the count |
 | Plus budget | "Flats in Powai under 20,000" |
-| Enough lifestyle answers | Match score appears on cards |
+| Enough lifestyle answers | Match score shows on cards |
 
-**The first three turns are chip-driven.** Intent, area and budget are closed
-questions, so tapping is right. Reuse the four intent cards from the prototype.
-Area shows the top five or six as chips plus "somewhere else" which opens
-search, and is multi-select. Budget shows bands rather than a slider, because
-bands are faster on a phone: under 15, 15 to 20, 20 to 25, above 25.
+**The first three turns are chip-driven.** Intent, area and budget have a
+closed set of answers, so a tap is correct. Use the four intent cards from
+the prototype again. Area shows the top five or six areas as chips, and a
+"somewhere else" chip that opens search. The user can select more than one
+area. Budget shows bands, not a slider, because bands are faster on a phone:
+below 15, 15 to 20, 20 to 25, above 25.
 
-**Chips are the floor, not the ceiling.** A user who types "2bhk in Powai under
-25k from October" fills four slots in one turn and goes straight to results. If
-that does not work, the chips are a form with a chat skin.
+**Chips are the floor, not the ceiling.** A user who types "2bhk in Powai
+under 25k from October" fills four slots in one turn and goes directly to
+results. If this does not work, the chips are only a form with a chat skin.
 
-**Where the interview ends, revised.** It does not. The open questions begin
-once results are already on screen, and continue while the user browses. The
-completeness gate in `ai-agent-design.md` section 3.3 governs when the match
-score appears, not when the conversation stops.
+**Where the interview ends, revised.** It does not end. The open questions
+start when results are on the screen, and continue while the user browses.
+The completeness gate in `ai-agent-design.md` section 3.3 controls when the
+match score shows, not when the conversation stops.
 
 ### 4. Live updates — CLOSED
 
 **The rule: the panel updates when the form changes, not when a turn happens.**
 
-A turn that changes no slot changes nothing on screen. A ten-turn conversation
-might produce three panel updates. The panel is a pure function of the form,
-which makes it deterministic and testable, unlike everything else in this
-layer.
+A turn that changes no slot changes nothing on the screen. Ten turns can give
+only three panel updates. The panel is a pure function of the form. Thus, it
+is deterministic and testable, but no other part of this layer is.
 
-**A form change means a slot's value or weight changed.** It does not mean
-provenance changed. Confirming an inferred value that was already applied does
-not re-query.
+**A form change means a change to the value or weight of a slot.** A change to
+provenance is not a form change. If the user confirms an inferred value that
+the panel uses, there is no new query.
 
-**Direction decides the behaviour:**
+**The direction of the change sets what the panel does:**
 
 | Change | Behaviour |
 |---|---|
-| Widening, more results | Banner: "12 more matches. Show them." Tappable. |
-| Narrowing, fewer results | Applies, and says what went: "Hid 8 that allow smoking." With undo. |
-| Reordering | Only on explicit refresh. Never while scrolling. |
-| A saved card would be hidden | Never removed. Marked, with the reason. |
+| Widen, more results | A banner that the user can tap: "12 more matches. Show them." |
+| Narrow, fewer results | The change applies, and the system tells what it removed: "Hid 8 that allow smoking." With undo. |
+| Reorder | Only on explicit refresh. Never while the user scrolls. |
+| A saved card would be hidden | Never remove it. Mark it, with the reason. |
 
-**Freeze while scrolling.** Updates queue while the user is scrolling or
-reading a card, and apply when idle.
+**Freeze while the user scrolls.** While the user scrolls or reads a card,
+updates wait in a queue. When the user is idle, they apply.
 
-**The "don't ask again" checkbox covers widening only.** Once ticked, more
-results arrive automatically. Narrowing always tells the user, even when it
-stops asking. A toast with undo is not an interruption. Without this scoping,
-one tick means cards silently vanish for the rest of the session.
+**The "don't ask again" checkbox applies to wider results only.** After a
+tick, more results come automatically. A narrow change always tells the user,
+also when the system does not ask. A toast with undo is not an interruption.
+Without this limit, one tick makes cards go away silently for the remainder
+of the session.
 
 ### 5. Two inputs, one form — CLOSED
 
 There is one form. The chat and the filter panel are two views of it.
 
-**A manual filter edit writes to the same slot** and its context reaches the
-assistant, so the source of truth stays common.
+**A manual filter edit writes to the same slot,** and the assistant gets its
+context. Thus, there is one source of truth.
 
-**Manual edits are silent in the transcript by default.** If every filter tap
-produced a chat message, the conversation would become a log of taps. The
-assistant speaks only when the edit contradicts something the user said
-earlier.
+**Manual edits are silent in the transcript by default.** If each filter tap
+made a chat message, the conversation would become a list of taps. The
+assistant speaks only when the edit contradicts an earlier statement of the
+user.
 
 **The complete conflict rule:**
 
 | What happened | What the system does |
 |---|---|
 | Chat contradicts earlier chat | Ask which to keep |
-| Manual edit contradicts earlier chat | Manual wins, assistant notes it once |
-| Inference contradicts anything | Never wins, propose it |
+| Manual edit contradicts earlier chat | Manual edit wins. The assistant tells this one time. |
+| Inference contradicts anything | Inference never wins. Propose it. |
 
-A manual tap is explicit and recent. Asking "are you sure" after a deliberate
-tap is irritating and teaches people to dismiss dialogs.
+A manual tap is explicit and recent. An "are you sure" question after a
+deliberate tap annoys the user, and teaches people to close dialogs without a
+check.
 
 ---
 
 ## Two smaller notes
 
-**Latency.** The panel must not wait for the model. Run the query off the
+**Latency.** The panel must not wait for the model. Run the query from the
 current form state. A turn that does not change a slot changes nothing.
 
-**Cold start.** No skip plus an empty panel is a dead end. If Mumbai supply is
-thin, a forced interview makes it worse, because the user spent effort for
-nothing. Define the empty state before launch: widen the area, relax a
-dealbreaker, or offer to notify.
+**Cold start.** No skip and an empty panel give a dead end. If Mumbai supply
+is small, a forced interview makes this worse, because the user did work for
+no result. Define the empty state before launch: make the area larger, relax
+a dealbreaker, or offer a notification.
