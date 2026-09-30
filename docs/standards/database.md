@@ -7,7 +7,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 - The Drizzle schema in `apps/api` is the single source of truth for the full database. It holds all tables, columns, indexes and keys. Why: the compiler then finds schema drift in each query. ([ADR-0006](../decisions/0006-drizzle.md))
 - Only `apps/api` imports the schema. `apps/web` has no database dependency. Why: clients never know table or column names. ([ADR-0006](../decisions/0006-drizzle.md), [ADR-0002](../decisions/0002-api-boundary.md))
 - Make each migration with `drizzle-kit generate`, and commit the `.sql` file. Why: plain SQL keeps the full schema history if we leave Drizzle or Supabase. ([ADR-0006](../decisions/0006-drizzle.md))
-- Each schema change ships as a committed migration that CI applies. Never change the schema by hand. Why: the migrations must agree with the database. ([ADR-0006](../decisions/0006-drizzle.md))
+- Each schema change ships as a committed migration that CI applies. Never change the live database outside a committed migration. Why: the migrations must agree with the database. ([ADR-0006](../decisions/0006-drizzle.md))
 - Use plain Postgres SQL, with no proprietary extensions in the path that users need. Why: a move to a different Postgres host stays a dump and restore. ([ADR-0001](../decisions/0001-rent-infrastructure.md))
 - Design the tables in the order of the schema phases, S1 to S7. Never design a table before the tables that it depends on. Why: each phase needs a fixed phase above it. ([S1–S7](../decisions/README.md#where-we-are))
 - `users.tokens_valid_after timestamptz not null default now()` is in the first migration. Why: the auth check needs it from day one. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
@@ -38,4 +38,4 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 - Store each typed message. Why: the observer learns from all messages, and a user keeps the chat after sign-up. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md))
 - For verification, store only the result. The result is: verified or not, the method, the timestamp, the returned name, and at most the last 4 digits. Why: we store the result, never the document. ([PD8](../decisions/pd-08-verification.md))
-- Never store the document image or the full Aadhaar number. Delete the document after the check. Why: the Aadhaar Act prohibits Aadhaar copies at a private entity. ([PD8](../decisions/pd-08-verification.md))
+- Never store the document image or the full Aadhaar number. Delete the document after the check. Why: the Aadhaar Act prohibits Aadhaar copies at an unlicensed private entity, and we do not accept the breach risk. ([PD8](../decisions/pd-08-verification.md))
