@@ -2,97 +2,100 @@
 
 **Date:** 2026-09-20 · **Status:** settled · **Decision:** PD9
 
-The interview runs before login, so the assistant is open to anyone. At roughly
-₹1 to ₹2 per completed interview, a bot talking all night costs more than a
-thousand real users.
+The interview occurs before login, so the assistant is open to all persons. A
+completed interview costs approximately ₹1 to ₹2. Thus, a bot that talks all
+night costs more than a thousand human users.
 
-**Decision: both a turn cap and rate limits, with a cap of 5.**
+**Decision: use the two, a turn cap and rate limits, with a cap of 5.**
 
 ---
 
 ## The turn cap
 
-**Five turns, then sign in to continue.**
+**After five turns, the user must sign in to continue.**
 
 This works because results appear at turn three. Intent, area and budget are
-chip-driven, so the user sees the panel fill before the wall arrives. They are
-asked to sign in at the moment they have just seen something they want, which
-is the right moment to ask.
+chip-driven, so the panel fills before the wall appears. Thus, we ask the user
+to sign in immediately after they see something that they want. That is the
+correct time.
 
 ### Guard 1 — chip taps do not count
 
-A chip tap costs nothing. It runs no model. Counting it against a budget that
-exists to control model spend is wrong, and it punishes the users who are
-cheapest to serve.
+A chip tap runs no model, so it has no cost. The turn budget controls model
+cost. Thus, it is incorrect to count chip taps in it. That also penalises the
+users with the lowest cost.
 
-**Count free-text turns only.** A user who taps through intent, area and budget
-arrives at results having spent none of their five.
+**Count free-text turns only.** A user who taps chips for intent, area and
+budget gets to the results with all five turns available.
 
 ### Guard 2 — the wall never appears before results have
 
-Someone who types instead of tapping can burn turns on clarification. "I'm
-looking for a place", then "somewhere central", then a clarifying question, and
-they are at five with no results shown.
+A user who types and does not tap can use turns on clarification: "I'm looking
+for a place", then "somewhere central", then a question to clarify. The user
+is then at five turns with no results.
 
-That is the worst outcome available. They gave effort, got nothing, and left.
-You paid for the tokens and got no conversion.
+That is the worst possible result. The user gave effort, got nothing, and
+left. We paid for the tokens and got no conversion.
 
-**Hard rule: the cap cannot trigger until the panel has rendered at least
-once.** If slots are still missing at turn five, keep going until results
-exist, then stop.
+**Hard rule: the cap cannot stop the chat until the panel renders one time.** If slots
+are missing at turn five, continue until results exist. Then stop.
 
 ### What the wall looks like
 
-**The listings stay visible.** Gate the chat, not the results. Taking away what
-they have already seen reads as a trick.
+**The listings stay on the screen.** Gate the chat, not the results. If you
+remove results that the user saw, it looks like a trick.
 
-The chat input is replaced by a sign-in prompt. Scrolling and filtering the
-panel keep working, because manual filters cost nothing.
+The wall replaces the chat input with a request to sign in. The user can
+continue to scroll and filter the panel, because manual filters have no cost.
 
 ### Five is a tuning knob, not a constant
 
-It is a conversion lever and it is cheap to change. Put it in config, not in
-code, and A/B it once there is traffic. Too low and people leave before they
-are invested. Too high and you pay for tyre-kickers.
+The cap is a conversion lever, and it is cheap to change. Put the value in
+config, not in code. When there is traffic, do an A/B test of it. If the cap
+is too low, users leave before they are invested. If it is too high, we pay for
+tyre-kickers.
 
 ---
 
 ## Rate limits
 
-The turn cap converts. These stop abuse. They are different jobs.
+The turn cap gets conversions. Rate limits stop abuse. These are different
+jobs.
 
 | Limit | Scope |
 |---|---|
-| Sessions per device | Cookie or fingerprint. Stops one browser starting fifty interviews. |
+| Sessions per device | Cookie or fingerprint. Stops one browser that starts fifty interviews. |
 | Sessions per IP | Catches the naive case. |
 | Sessions per IP range | Catches the less naive case. |
-| Turns per minute | Stops a script running flat out. |
-| **Daily spend ceiling** | The backstop. Global, not per user. |
+| Turns per minute | Stops a script that runs at full speed. |
+| **Daily spend ceiling** | The backstop. Global, not for each user. |
 
-**Where these live.** ADR 0009 rejected serverless partly because rate limiting
-wants an in-process counter rather than an external round trip per request, and
-the API is a single long-running Fly machine. That works today.
+**Where these live.** ADR 0009 rejected serverless. One reason: rate limiting
+needs an in-process counter, not an external round trip for each request. The
+API is a single Fly machine that runs for a long time. It keeps the counters
+in-process.
+This works today.
 
-**It stops working at two machines.** In-process counters are per-machine, so
-two machines means double the limit. ADR 0009 calls a second machine a one-line
-config change. It is not, once counters exist. Note the coupling now.
+**It fails at two machines.** Each machine has its own in-process counters, so
+two machines double the limit. ADR 0009 says that a second machine is a
+one-line config change. When counters exist, this is incorrect. Record this
+dependency today.
 
 ---
 
 ## What happens at the ceiling
 
-Not an outage. **Degrade to the zero-cost path.**
+It is not an outage. **Degrade to the zero-cost path.**
 
-The chip-driven flow runs no models at all. Intent, area and budget are
-scripted questions with enum answers, and the panel is a SQL query. So when the
-spend ceiling is hit, the assistant stops accepting free text and falls back to
-chips only.
+The chip-driven flow runs no models. Intent, area and budget use scripted
+questions with enum answers. The panel is a SQL query. Thus, at the spend
+ceiling, the assistant does not accept free text. It uses only chips.
 
-The product still works. It just stops understanding sentences until the
+The product continues to work. But it does not understand sentences until the
 window resets. Nobody sees an error page.
 
-**Alert before the ceiling, not at it.** An alert at 70% of the daily budget
-gives someone a chance to look before users notice anything.
+**Alert before the ceiling, not at it.** The alert starts at 70% of the daily
+budget. Then a person can look before users see an effect.
 
 ---
 
@@ -100,12 +103,13 @@ gives someone a chance to look before users notice anything.
 
 | Metric | Why |
 |---|---|
-| Cost per completed interview | The unit that matters, split by handler |
-| Anonymous sessions reaching results | Whether guard 2 is doing its job |
-| Sign-in rate at the wall | Whether five is the right number |
-| Turns to results, distribution not mean | Whether the chips are working |
-| Spend by hour | Whether DeepSeek's peak window bites |
-| Blocked sessions by limit type | Whether a limit is catching real users |
+| Cost per completed interview | The unit that matters. Split it by handler. |
+| Anonymous sessions that reach results | Shows if guard 2 does its job |
+| Sign-in rate at the wall | Shows if five is the correct number |
+| Turns to results, distribution not mean | Shows if the chips work |
+| Spend by hour | Shows if DeepSeek's peak window has an effect |
+| Blocked sessions by limit type | Shows if a limit stops human users |
 
-That last one matters most. A rate limit that quietly blocks genuine users is
-worse than the abuse it prevents, and it is invisible unless measured.
+The last metric is the most important. A rate limit that silently blocks
+genuine users is worse than the abuse that it prevents. If you do not measure
+it, you cannot see it.
