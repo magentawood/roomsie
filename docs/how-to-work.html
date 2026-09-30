@@ -108,7 +108,8 @@ details.callout[open] summary{color:var(--fg)}
 <li>To change the plan, edit <code>docs/team-plan.json</code>. Then run <code>python3 tools/build-obsidian-plan.py</code>. Do not edit the generated files.</li>
 </ul>
 <h2 id="how-to-do-a-task">How to do a task</h2>
-<ol>
+<ol start="0">
+<li>One time in each clone, run <code>git config core.hooksPath .githooks</code>. The hook checks the doc limits and the generated files before each commit.</li>
 <li>Take the next task in your list.</li>
 <li>Open its note in <code>docs/plan/tasks/</code>. Read the description, "Needs first", "Done when" and "Read first".</li>
 <li>Make a branch from <code>main</code>. Do the work.</li>
