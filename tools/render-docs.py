@@ -3,6 +3,7 @@
 
 The Markdown is the source. Each .html next to it is generated: edit the .md,
 then run this script. Obsidian callouts (> [!note] Title) become styled boxes,
+and a folded callout (> [!note]- Why) becomes a box that opens on a click,
 and links between rendered docs point at the .html versions.
 
 Usage:
@@ -23,7 +24,7 @@ DOCS = [
     "docs/build-journal.md",
     "docs/design-review.md",
 ]
-CALLOUT = re.compile(r"^> \[!(\w+)\][+-]? ?(.*)$")
+CALLOUT = re.compile(r"^> \[!(\w+)\]([+-]?) ?(.*)$")
 
 CSS = """
 :root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--fg:#e6edf3;--dim:#9198a1;--accent:#a371f7;--ok:#3fb950;--warn:#d29922}
@@ -51,6 +52,8 @@ a{color:#58a6ff}
 .callout{margin:1.2em 0;padding:.6em 1em;border:1px solid var(--line);border-left:3px solid var(--accent);
 border-radius:6px;background:var(--panel)}
 .callout .ct{font-weight:600;margin:.2em 0}
+details.callout summary{cursor:pointer;color:var(--dim)}
+details.callout[open] summary{color:var(--fg)}
 .callout.warning,.callout.caution{border-left-color:var(--warn)}
 .callout.success,.callout.done{border-left-color:var(--ok)}
 """
@@ -65,14 +68,19 @@ def callouts(md):
             out.append(lines[i])
             i += 1
             continue
-        kind, title = m.group(1).lower(), m.group(2)
+        kind, fold, title = m.group(1).lower(), m.group(2), m.group(3)
         body = []
         i += 1
         while i < len(lines) and lines[i].startswith(">"):
             body.append(lines[i][2:] if lines[i].startswith("> ") else lines[i][1:])
             i += 1
-        head = f'<div class="ct">{render_inline(title)}</div>' if title else ""
         inner = render("\n".join(body))
+        if fold:  # "-" starts folded and "+" starts open, as in Obsidian
+            label = render_inline(title) if title else kind.title()
+            opened = " open" if fold == "+" else ""
+            out += ["", f'<details class="callout {kind}"{opened}><summary class="ct">{label}</summary>{inner}</details>', ""]
+            continue
+        head = f'<div class="ct">{render_inline(title)}</div>' if title else ""
         out += ["", f'<div class="callout {kind}">{head}{inner}</div>', ""]
     return "\n".join(out)
 
