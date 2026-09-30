@@ -8,55 +8,56 @@
 ## The verdict in one line
 
 **You do not want a multi-agent system. You want a router and small
-specialist handlers.** That is cheaper than a single big model *and* cheaper
-than multi-agent, and it fixes hallucination structurally rather than by
-prompting.
+specialist handlers.** This design costs less than a single large model *and*
+less than a multi-agent system. It also fixes hallucination through its
+structure, not through the prompt.
 
 ---
 
 ## Where the multi-agent instinct is right, and where it is wrong
 
-**Right:** a small model doing one narrow job is much cheaper and much more
-reliable than a big model doing everything.
+**Right:** a small model that does one narrow job is much cheaper and much more
+reliable than a large model that does all the jobs.
 
-**Wrong:** that saving comes from **model size per task**, not from **number of
-agents**. Adding agents adds cost:
+**Wrong:** the decrease in cost comes from **model size for each task**, not
+from **number of agents**. More agents add cost:
 
 | What agents add | Why it costs |
 |---|---|
-| Each agent has its own system prompt | More input tokens on every turn, not fewer |
-| Handoffs pass state | Serialise, re-read, repeat context |
-| Calls run in sequence | Latency stacks. Three seconds is noticed in a chat. |
-| More parts | More failure modes, and a much harder eval suite |
+| Each agent has its own system prompt | More input tokens on each turn, not fewer |
+| Handoffs pass state | Each handoff serialises the state, reads it again and repeats the context |
+| Calls run in sequence | The latency of each call adds to the total. Users notice three seconds in a chat. |
+| More parts | More failure modes, and a much more complex eval suite |
 
-"Specialised agents think less" is true of each agent and false of the system,
-if the agents all run on every turn.
+"Specialised agents think less" is correct for each agent. But it is incorrect
+for the system if all the agents run on each turn.
 
-**The fix is not more agents. It is fewer calls to expensive models.** Route
-each turn to the cheapest thing that can handle it, and let most turns never
-reach a big model at all.
+**The fix is not more agents. The fix is fewer calls to expensive models.**
+Send each turn to the cheapest thing that can handle it. Make sure that most
+turns do not go to a large model at all.
 
 ---
 
 ## Two forms, not one
 
-This idea is correct and it is the centre of the design.
+This idea is correct. It is the centre of the design.
 
 ### Form A — the filter form
 
-Drives the SQL query and the listings panel. Hard constraints only.
+Form A drives the SQL query and the listings panel. It holds hard constraints
+only.
 
-Intent, budget, areas, move date, room type, the nine lifestyle axes with
-weights. Every slot typed and enumerated. This is what
-`ai-agent-design.md` section 3.1 describes.
+It contains intent, budget, areas, move date, room type, and the nine lifestyle
+axes with weights. Each slot has a type and a fixed set of values.
+`ai-agent-design.md` section 3.1 describes this form.
 
 ### Form B — the profile
 
-Everything else the user reveals. This is what chips cannot capture and it is
-the reason the product exists.
+Form B holds all the other information that the user reveals. Chips cannot
+capture this information. It is the reason that the product exists.
 
-**It must be structured, not a text blob.** A growing blob is the transcript
-by another name and defeats the whole point.
+**Form B must have a structure. It must not be a text blob.** A text blob that
+grows is the transcript with a different name. Then Form B has no purpose.
 
 ```
 observation: {
@@ -70,24 +71,25 @@ observation: {
 }
 ```
 
-**Every observation must carry the user's actual words.** If the model cannot
-produce a verbatim span from the turn, the observation is rejected. This one
-rule is the strongest anti-hallucination device available here, because it
-forces every stored fact to point at real text.
+**Each observation must contain the user's actual words.** If the model cannot
+give a verbatim span from the turn, the system rejects the observation. This
+one rule is the strongest anti-hallucination device available here. It forces
+each stored fact to point at real text.
 
-**Build it turn by turn, not in one pass at the end.** Incremental is cheaper,
-because each call sees one turn instead of the whole conversation. It is also
-available during the session, so it can inform ranking while the user browses.
+**Build Form B one turn at a time, not in one pass at the end.** This costs
+less, because each call sees one turn, not the full conversation. Also, Form B
+is available during the session. Thus, it can inform the ranking while the user
+browses.
 
-**The user can see and edit Form B.** Good product, and it is also how DPDP
-access and correction obligations get met without extra work.
+**The user can see and edit Form B.** This is good product. It is also how we
+meet the DPDP access and correction obligations with no more work.
 
 ---
 
 ## The router
 
-Every turn is classified first. This is the cost lever and the on-rails lever
-at once.
+The router classifies each turn first. This is the cost lever and the on-rails
+lever at the same time.
 
 | Turn type | Handler | Model |
 |---|---|---|
@@ -98,49 +100,53 @@ at once.
 | Off topic | Scripted redirect | **None** |
 | Safety signal | Scripted response, logged | **None** |
 
-A single turn can be more than one type. "I need Powai under 20k, my last place
-fell apart because of my flatmate's boyfriend" fills slots *and* reveals
-something. **Run the Extractor and the Observer in parallel** on the same
-input. Both are small and both are cheap.
+One turn can be more than one type. "I need Powai under 20k, my last place fell
+apart because of my flatmate's boyfriend" fills slots *and* reveals something.
+**Run the Extractor and the Observer in parallel** on the same input. The two
+handlers are small and cheap.
 
-**Keep the router rules-based wherever possible.** A chip tap is known from the
-client, so it needs no classification at all. Only free text needs the
-classifier.
+**Keep the router rules-based where possible.** The router knows a chip tap
+from the client. Thus, a chip tap needs no classification. Only free text needs
+the classifier.
 
 ### The composer
 
-The only expensive call. It writes the free text that goes back to the user.
+The composer is the only expensive call. It writes the free text that goes
+back to the user.
 
-It gets Form A, Form B and the last two turns. Never the transcript.
+It gets Form A, Form B and the last two turns. It does not get the transcript at any time.
 
-**Many turns do not need it.** A chip tap gets a scripted question. A clean
-slot answer gets a scripted acknowledgement and the next question. The composer
-runs when the reply genuinely has to be written, which is a minority of turns.
+**Many turns do not need the composer.** A chip tap gets a scripted question. A
+clean slot answer gets a scripted acknowledgement and the next question. The
+composer runs when the reply genuinely needs new text. These turns are a
+minority.
 
 ---
 
 ## RAG: yes, for exactly one thing
 
-**Not for listings.** Retrieval there is a structured query over Postgres. This
-was settled in `cost-and-team.md`.
+**Not for listings.** For listings, retrieval is a structured query in
+Postgres. We decided this in `cost-and-team.md`.
 
-**Yes for consulting questions.** "What should I watch out for legally when
-renting in Mumbai" is precisely where a general model hallucinates, and
-precisely where a wrong answer is most damaging. Ground it.
+**Yes for consulting questions.** An example is "What should I watch out for
+legally when renting in Mumbai". This is the type of question where a general model
+hallucinates. An incorrect answer also causes the most damage here. Thus,
+ground the answer.
 
-The corpus is your own material: the blog articles marketing is about to write,
-a rental FAQ, area guides, a deposit and agreement explainer.
+The corpus is your own material: the blog articles that marketing will write
+next, a rental FAQ, area guides, and a deposit and agreement explainer.
 
 **Still no vector store.** The corpus is dozens of documents, not millions.
-Postgres full-text search handles that well. This keeps ADR 0001 intact, since
-no proprietary extension goes on the critical path, and it saves a decision and
-a line of spend.
+Postgres full-text search gives good results for a corpus of this size. This
+does not break ADR 0001, because no proprietary extension goes on the critical
+path. It also removes one decision and one line of spend.
 
-**The Advisor refuses when the corpus has no answer.** It does not fall back on
-the model's general knowledge. That is the whole point of grounding it.
+**The Advisor refuses when the corpus has no answer.** It does not use the
+general knowledge of the model as a fallback. That is the full purpose of the
+grounding.
 
-This also creates a useful loop: every consulting question with no good answer
-is a blog article marketing should write.
+This also makes a useful loop. Each consulting question with no good answer is
+a blog article that marketing should write.
 
 ---
 
@@ -194,19 +200,17 @@ flowchart TD
     class FA,FB,CORP store
 ```
 
-**Reading the colours.** Yellow costs nothing. Pink is a small cheap model.
-Dark pink is the only expensive call, and most turns never reach it.
+**Key to the colours.** Yellow has no cost. Pink is a small, cheap model. Dark
+pink is the only expensive call, and most turns do not get to it.
 
 ### Two things the diagram does not show well
 
-**The Extractor and the Observer run in parallel.** One turn can be both. "I
-need Powai under 20k, my last place fell apart because of my flatmate's
-boyfriend" fills slots *and* reveals something. Both handlers see the same
-input at the same time. Neither waits for the other.
+**The Extractor and the Observer run in parallel.** One turn can be the two
+types, as the Powai example in the router section shows. The two handlers
+see the same input at the same time. Neither handler waits for the other.
 
-**The Composer is often skipped.** A chip tap gets a scripted question. A clean
-slot answer gets a scripted acknowledgement and the next question. The Composer
-runs only when a reply genuinely has to be written.
+**The Composer frequently does not run.** A chip tap receives a scripted question.
+A clean slot answer receives a scripted acknowledgement and the next question. The Composer runs only when a reply genuinely needs new text.
 
 ### Cost per turn, by path
 
@@ -226,52 +230,55 @@ flowchart LR
     class D1 med
 ```
 
-The first three turns of every interview are chip taps. They are free.
+In all interviews, the first three turns are chip taps. These turns have no
+cost.
 
 ## How this answers each worry
 
 | Worry | Answer |
 |---|---|
-| It hallucinates | The Extractor is constrained to enums. The Observer must quote the user. The Advisor is grounded and refuses. The Composer states no facts about listings. Nothing is left that can invent. |
-| The chat wanders | The router catches off-topic before any expensive call and redirects with a script. Cheap and on rails. |
-| The form alone is too thin a profile | Form B captures everything else, structured and evidenced. |
-| Consulting questions pollute the profile | They are a separate turn type with a separate handler, and they write to neither form. |
-| Multi-agent costs more | It would. A router with small handlers costs less than one big model, because the big model runs rarely. |
+| It hallucinates | The Extractor can use only enum values. The Observer must quote the user. The Advisor is grounded, and it refuses. The Composer states no facts about listings. No part remains that can invent. |
+| The chat wanders | The router finds off-topic turns before any expensive call, and it sends a scripted redirect. This is cheap and on rails. |
+| The form alone is too thin a profile | Form B captures all the other information. It has a structure and evidence. |
+| Consulting questions pollute the profile | They are a separate turn type with a separate handler. They write to neither form. |
+| Multi-agent costs more | It would. But a router with small handlers costs less than one large model, because the large model runs rarely. |
 
 ---
 
 ## Cost, honestly
 
-This should cost **less** than a single-model design, because the expensive
-model runs on a minority of turns rather than all of them.
+This design should cost **less** than a single-model design. The reason is
+that the expensive model runs on a minority of turns, not on all turns.
 
-Extra calls added: one router call per free-text turn. It is small, and it is
-skipped for chip taps.
+Added calls: one router call for each free-text turn. This call is small, and
+chip taps do not use it.
 
 **Two things to watch:**
 
-1. **Latency stacks.** Router then extractor is two sequential calls before the
-   panel can move. Keep the router tiny, run the extractor and observer in
-   parallel, and do not add a third sequential hop without measuring.
-2. **Do not let this grow.** Every new handler is a new prompt, a new eval set
-   and a new failure mode. Six handlers is a design. Twelve is a maintenance
-   problem for four part-time engineers.
+1. **Latency adds up.** The router and then the extractor are two sequential
+   calls before the panel can move. Keep the router very small. Run the
+   extractor and the observer in parallel. Do not add a third sequential hop
+   without a measurement.
+2. **Do not let this grow.** Each new handler is a new prompt, a new eval set
+   and a new failure mode. Six handlers is a design. For four part-time
+   engineers, twelve handlers is a maintenance problem.
 
-Measure cost per completed interview from the first day, split by handler. It
-tells you which handler to shrink.
+Measure the cost of each completed interview from the first day. Record this
+cost for each handler. Then you know which handler to make smaller.
 
 ---
 
 ## What this changes elsewhere
 
-- **Schema.** Form A and Form B both need a home. Neither is in the ledger's
-  S1 to S7. Form B is personal data derived from free text, so account deletion
-  must purge it.
-- **Evals.** Each handler is scored separately. Router accuracy, extractor
+- **Schema.** Form A and Form B each need a home. Neither form is in S1 to S7
+  of the ledger. Form B is personal data that comes from free text. Thus,
+  account deletion must purge it.
+- **Evals.** Each handler gets its own score: router accuracy, extractor
   accuracy, observer evidence validity, advisor grounding and refusal rate.
-  Separate handlers make evals easier, not harder, because each has one job.
-- **`packages/contract`.** Handler inputs and outputs are versioned Zod
-  schemas, alongside the analytics event schemas already there.
+  Separate handlers make evals easier, not more complex, because each handler
+  has one job.
+- **`packages/contract`.** Handler inputs and outputs are Zod schemas with
+  versions. They are next to the analytics event schemas in the package.
 - **Model choice (PD7).** This design needs a small fast model and a good model.
-  It does not need one model to be excellent at everything, which widens the
-  options and lowers the price.
+  It does not need one model that is excellent at all tasks. Thus, there are
+  more options and the price is lower.
