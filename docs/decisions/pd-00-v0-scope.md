@@ -31,7 +31,7 @@ roomsie is the AI-native pivot of femmeflats. The V3 prototype shows flats and f
 - The SEO area pages continue to work.
 - Cold start is easier.
 - In v0, each card in the results panel is a person, never a listing.
-- **Open:** which intent cards ship in v0. Two of the four intent cards in the prototype are about property: "just a flat" and "I'm renting out a flat". This item conflicts with PD0. The designer must tell the team which cards ship on 12 October.
+- **Open:** which intent cards ship in v0. Two of the four intent cards in the prototype are about property: "just a flat" and "I'm renting out a flat". This item conflicts with PD0. Either we hide the two property cards for launch, or they go to a location that does not exist at this time. The designer must tell the team which cards ship on 12 October.
 
 ## Sources
 

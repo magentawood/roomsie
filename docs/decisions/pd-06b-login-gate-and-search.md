@@ -61,7 +61,9 @@ We do not use the gated-indexing route (`isAccessibleForFree: false` with
 - **A warm start has more value than the page view.** A visitor on "Flatmates
   in Powai" told you their area and intent. This removes the two slowest turns
   of the interview.
-- **Editorial content** is evergreen and cheap.
+- **Editorial content** is evergreen and cheap. Most rental search volume is
+  informational, not transactional. People first search how to do it. Then
+  they search what is available.
 - **A subdirectory, not a subdomain.** Google treats a subdomain as a site that
   is not fully connected to the primary domain. Thus, its rank strength does
   not fully go to the primary domain. "blog" is the usual convention. A move
@@ -75,6 +77,8 @@ We do not use the gated-indexing route (`isAccessibleForFree: false` with
 - The interview runs before login. The form needs an anonymous session id. At
   login, the form merges into the user record. S1 to S7 do not include this
   state.
+- A user can chat before sign-up, and keep that conversation after sign-up.
+  Thus, we store the typed messages.
 - Anyone can spend the inference budget, and bots will find an open chat. The
   cost risk is volume and abuse, not unit cost. PD9 owns the controls:
   - rate limits for each device and network, because there is no user
@@ -105,3 +109,5 @@ roomsie publishes long-form gated content.
 - [interface-shape.md](../interface-shape.md), hole 2
 - [cost-and-team.md](../cost-and-team.md), "Where the real risk is"
 - [launch-plan.md](../launch-plan.md), "What moves to after launch"
+- [design-review.md](../design-review.md), item 2.4
+- [content/corpus-plan.md](../content/corpus-plan.md)

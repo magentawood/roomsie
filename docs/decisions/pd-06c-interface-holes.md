@@ -61,12 +61,32 @@ The banners, the undo and the scroll rules come in v1.
 - **A pure function is deterministic and testable.** No other part of this
   layer is.
 - **Filters and rank are different.** Filters need area and budget. A
-  compatibility rank needs lifestyle answers, which take much more time.
+  compatibility rank needs lifestyle answers, which take much more time. The
+  panel header shows what the panel knows. Example: "Everything in Mumbai" →
+  "Powai" → "Powai, under ₹20,000" → match scores appear.
+- **Budget is in the first three turns.** Budget is the most frequent cause of
+  wasted results.
 - **Chips for closed slots.** Intent, area and budget have a closed set of
   answers, so a tap is correct. Bands are faster than a slider on a phone. A
   user who types "2bhk in Powai under 25k from October" fills four slots and
   goes directly to results. Without this, the chips are only a form with a
   chat skin.
+- **Chips give three benefits:**
+  1. The user does not have to type. On mobile, to type is the primary cause
+     of fatigue.
+  2. They make the interview faster. A slow interview is the primary cause of
+     abandonment.
+  3. They limit the input space. This decreases prompt injection, off-topic
+     drift and adversarial input. This is a security benefit, not only a UX
+     benefit.
+- **The cost of chips is anchoring.** Thus, suggestions go on closed questions,
+  never on open ones. Suggestions push the answer to the options that the user
+  sees. But the full premise of the interview (option 1) is to learn things
+  that chips cannot capture. Example: the assistant offers "Early riser" and
+  "Night owl". Then it does not learn about shifts that rotate.
+- **Chips for a closed question come from the slot definition,** not from a
+  second model call. A second model call on each turn makes the latency and
+  the cost two times larger.
 - **A toast with undo is not an interruption.**
 - **The limit on "don't ask again".** Without it, one tick makes cards go away
   silently for the remainder of the session.
@@ -100,5 +120,6 @@ mechanics, but not the appearance.
 - [CONTEXT.md](../../CONTEXT.md), PD6c row
 - [product-base.md](../product-base.md), section 07
 - [interface-shape.md](../interface-shape.md), holes 1 to 5 and "Two smaller notes"
-- [ai-agent-design.md](../ai-agent-design.md), section 3.3
+- [ai-agent-design.md](../ai-agent-design.md), sections 3.3 and 3.4
+- [design-review.md](../design-review.md), item 4.3
 - [launch-plan.md](../launch-plan.md), "What moves to after launch"

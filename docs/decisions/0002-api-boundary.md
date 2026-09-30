@@ -7,6 +7,9 @@
 - Web (responsive) ships first. Native Android and iOS follow, with business
   logic shared in Kotlin Multiplatform and native UI in Compose / SwiftUI.
   Thus, three clients will use the same rules.
+- v0 has no mobile app. The web app is responsive, and one client is
+  sufficient to learn from. Later, the mobile app goes in a new `apps/mobile`
+  on the same `/v1` API.
 - Managed backends let clients query Postgres directly, with Row Level Security
   policies as the only authorisation layer. This is the fastest path to a v1.
 
@@ -48,7 +51,8 @@ the primary authorisation mechanism.
 ## Consequences
 
 - The API contract itself becomes an expensive-to-change artefact. We must
-  version it and document it deliberately.
+  version it and document it deliberately. All routes have the `/v1`
+  prefix, so that earlier app versions continue to work.
 - The time to first screen is longer than with direct-to-database. We accept
   this.
 - Auth token verification must occur in our API, not only at the database edge.
@@ -70,3 +74,7 @@ the primary authorisation mechanism.
 The rented pieces (OAuth, storage, socket) become a constraint. Or, costs at
 scale justify a move of one of them in-house. We can replace each piece
 independently, because no piece holds business logic.
+
+## Sources
+
+- [extensibility.md](../extensibility.md)

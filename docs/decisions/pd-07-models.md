@@ -10,7 +10,8 @@ Hindi, Marathi and English in Latin and Devanagari script: "mujhe Powai mein
 Flash, Qwen3.6 and Sarvam.
 
 Data residency is **not** a requirement. Inference can run in all locations.
-This supersedes the caution from ADR 0012.
+This supersedes the caution from ADR 0012. This makes the decision much
+simpler.
 
 ## Decision
 
@@ -41,6 +42,17 @@ quality. The eval set and the primary model settle quality.
 ## Rationale
 
 - **We chose the model for how correctly it reads Hinglish, not for price.**
+  Two findings from current research make Hinglish the constraint that decides
+  the choice. The two findings are in direct conflict:
+  - Small open models are about 13 points worse on Hinglish than on English.
+  - Indic-tuned models parse code-mixed input more reliably. But their
+    structured output, which the extractor needs, is worse.
+- **Each role has different needs.**
+  - Router: the cheapest model that classifies reliably. Do not spend too much.
+  - Composer: a good model. It does not run frequently. You can see quality
+    here and in no other role.
+  - Advisor: the same as the composer, plus retrieval. Retrieval grounds its
+    answers. Thus, raw model knowledge is less important.
 - **Price is noise at this volume.** One completed interview costs **₹1–2**
   (8 to 12 calls), against a base of 50 to 80 dollars a month. The budget
   risk is abuse, not legitimate use (PD9).
@@ -59,7 +71,15 @@ quality. The eval set and the primary model settle quality.
   No list exists. If one comes, a Chinese provider is a plausible entry. With Gemini in
   place from the start, this becomes a config change, not a migration.
 - **Cache discount matters more than headline price.** Each call sends the
-  large fixed system prompt.
+  large fixed system prompt. DeepSeek V4.1 Flash is the value option: its
+  cache discount is genuinely large.
+- **Peak-hour pricing is manageable.** Peak includes the Indian work day but
+  **not** the Indian evening. People are most likely to look for a flat in the
+  evening, so our traffic should be mostly in the Indian evening. But the clock
+  prices are a complication for operations.
+- **One module for the two vendors.** With one module, a vendor swap costs a
+  config change. This is important because this list will be different in six
+  months.
 
 ## Consequences
 
@@ -71,13 +91,22 @@ mitigation is at prompt level, and weaker than a model-level fix:
 
 1. Tell the composer to mirror the language and script of the user.
 2. The router detects the register and gives it to the composer.
-3. Register match is a first-class eval metric.
+3. Register match is a first-class eval metric. To measure it, type
+   Hinglish, then measure the reply. If you do not measure it, it becomes worse
+   and nobody sees it.
 
-Only the composer and the advisor have this problem.
+Only the composer and the advisor have this problem. Extraction has no
+register problem, because a JSON enum has no register.
 
-**Abstention.** Small models almost never say "I don't know". Thus, each enum
-has an `unclear` value, and the gate is token probability. The eval measures
-abstention. A model that never abstains fails.
+**Abstention.** Small models almost never say "I don't know". The extractor
+can always pick *some* enum value, and not say that it does not know. Then we
+lose the confidence signal, and the assistant starts to fill slots with
+guesses.
+
+Thus, each enum has an `unclear` value, and the gate is token probability.
+Token probability has much better calibration than a confidence score in
+natural language. The eval measures abstention. A model that never abstains
+fails.
 
 **The eval set:** 200 to 300 utterances in the actual language mix, with
 Mumbai places, Indian number and date forms, and ambiguous cases. Give Marathi
@@ -85,9 +114,15 @@ a heavy weight. Test at 25%, 50% and 75% code-mix levels. Put the enum
 definitions, area list and number forms in the extractor instructions. IndicDB
 gave **+24% to +27%** from structured evidence (Marathi +27.5%).
 
-**Data:** examine the DeepSeek retention and training terms before we send
-user text. Account deletion must propagate. DPDP obligations follow the
-data, not the server.
+**Data:** the interview is more sensitive than all the data that the swipe
+product collected. The cause is its free-text disclosures about the user's
+life. One reason for ADR 0012 was to keep a behavioural stream in the control
+of the company. To send interview transcripts to an external inference
+provider is a larger version of the same action.
+
+Thus, examine the DeepSeek retention and training terms before we send user
+text. Account deletion must propagate. DPDP obligations follow the data, not
+the server.
 
 Superseded:
 
@@ -112,6 +147,7 @@ and Marathi.
 - [product-base.md](../product-base.md), section 10
 - [model-selection.md](../model-selection.md)
 - [research/hinglish-model-report.md](../research/hinglish-model-report.md)
-- [ai-agent-design.md](../ai-agent-design.md), sections 4.3 and 4.7
+- [ai-agent-design.md](../ai-agent-design.md), section 3.3
+- [assistant-risks.md](../assistant-risks.md), sections 4.3 and 4.7
 - [agent-architecture.md](../agent-architecture.md), "What this changes elsewhere"
 - [team-plan.md](../team-plan.md), risk table

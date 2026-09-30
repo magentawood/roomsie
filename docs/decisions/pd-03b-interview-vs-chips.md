@@ -25,13 +25,24 @@ The team asked what the AI interview adds to the chip filters.
 
 - The interview finds what chips cannot capture.
 - The interview also consults and challenges the user.
+- **The form alongside the chat is the single most important design decision** in `ai-agent-design.md`.
+- **The fix for confidence is in the structure.** If you ask the model how confident it is, the result is not reliable:
+  - Language models have bad calibration when they give their certainty in natural language.
+  - That number has a weak relation to the correctness of the answer. It has a relation to how fluent the answer sounds.
+  - If you make a gate on that number, you feel safe, but you are not safe.
+- **An empty slot is a hard fact about state that you can audit.** It is not the opinion of a model.
+- Most of what you fear as "the AI assumed something" is an inferred value that the model wrote silently. Prevent that, and most of the fear goes away.
+- **The conflict rule is correct.** The conflict log is the one addition.
+- Chips also make the attack surface smaller. But they have one important cost: anchoring (PD6c).
 
 ## Consequences
 
 - The structured form, not the model, holds the values.
 - Each contradiction needs a confirmation from the user.
+- Log all conflicts.
 
 ## Sources
 
 - [CONTEXT.md](../../CONTEXT.md): "Open decisions" table, row PD3b
 - [product-base.md](../product-base.md): section 04 and its "The form is the source of truth, not the model" callout
+- [ai-agent-design.md](../ai-agent-design.md): sections 1, 3.1 and 3.3

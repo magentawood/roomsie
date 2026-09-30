@@ -44,7 +44,9 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **Guard 1:** at launch, almost no users have verification. Offer the setting
   when the verified pool is sufficiently large to hide in.
 - **A CSS blur gives no protection.** Anyone can read the initial image in the
-  network tab. The server blur agrees with ADR 0005: short-lived signed URLs
+  network tab. This is the most frequent error in this feature. The blurred
+  copy is one more object with a different access rule. The server blur
+  agrees with ADR 0005: short-lived signed URLs
   after an authorisation check.
 - **The law restricts Aadhaar copies.** Under the Aadhaar Act 2016
   (sections 29(2), 29(3), 29(4) and 37), unlicensed private entities must not
@@ -55,7 +57,8 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **Do not accept the breach risk.** The manual route puts the most sensitive
   identity data in India into the storage of a seven-person startup.
 - **DigiLocker gives a verified assertion.** After OTP authentication, it
-  returns a signed Aadhaar XML, and we never hold the document.
+  returns a signed Aadhaar XML, and we never hold the document. Approximately
+  4,313 agencies have the document-requester status.
 - **Buy, do not build.** A direct connection needs MeitY registration. Four
   part-time engineers should not spend a month on it.
 - **The fallback avoids the legal problem.** The Aadhaar Act restrictions do
@@ -101,4 +104,4 @@ Also:
 - [product-base.md](../product-base.md), section 13
 - [verification.md](../verification.md)
 - [launch-plan.md](../launch-plan.md), "What moves to after launch"
-- [ai-agent-design.md](../ai-agent-design.md), section 4.1
+- [assistant-risks.md](../assistant-risks.md), section 4.1
