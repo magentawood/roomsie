@@ -119,6 +119,29 @@ def harvest():
 
 PRIOR = harvest()
 
+# ## Spec and ## Log are written by hand (build-feature writes both). Each runs
+# from its heading to the next "## " heading or EOF, and is kept verbatim at
+# the end of the note: generated content, then Spec, then Log.
+KEEP = ("## Spec", "## Log")
+
+def harvest_kept():
+    """{task_id: {heading: section_text}} from the notes on disk."""
+    kept = {}
+    tdir = os.path.join(PLAN, "tasks")
+    if not os.path.isdir(tdir): return kept
+    for fn in os.listdir(tdir):
+        if not fn.endswith(".md"): continue
+        cur, secs = None, {}
+        for line in open(os.path.join(tdir, fn)):
+            if line.startswith("## "):
+                cur = line.rstrip() if line.rstrip() in KEEP else None
+                if cur: secs[cur] = ""
+            if cur: secs[cur] += line
+        if secs: kept[fn.split(" ")[0]] = secs
+    return kept
+
+KEPT = harvest_kept()
+
 def checklist(tid, planned):
     """Render Done when, replaying tick state and keeping hand-added items."""
     prior = {text: (ticked, pr) for text, ticked, pr in PRIOR.get(tid, [])}
@@ -178,7 +201,10 @@ for t in T:
     b += ["", "^done"]
     if t["read"]:
         b.append("\n## Read first"); b += [f"- [{os.path.basename(r)}]({rel(r)})" for r in t["read"]]
-    write("tasks", name(t["id"]) + ".md", "\n".join(b) + "\n")
+    note = "\n".join(b) + "\n"
+    for h in KEEP:
+        if h in KEPT.get(t["id"], {}): note += "\n" + KEPT[t["id"]][h].rstrip("\n") + "\n"
+    write("tasks", name(t["id"]) + ".md", note)
 
 # owner hubs
 for k,(own,tag,colour) in OWN.items():
