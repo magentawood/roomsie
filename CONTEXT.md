@@ -36,7 +36,7 @@ women-only "HerNest" PRD draft was deleted the same way:
 
 The **technical base does not change.** Fifteen accepted ADRs and a full
 architecture record carry over unchanged. They are vendored in
-`docs/decisions/` and `docs/tech-base.html`.
+`docs/decisions/` and `docs/tech-base.md`.
 
 A clickable wireframe for the pre-pivot product is at
 `docs/source/roomsie-prototype-V3.html`, kept as context for what UI already
@@ -84,7 +84,9 @@ own prefixes (T-, D-, M-, F-, A-), so `D-04` is a design task, never a decision.
 
 ## Product record
 
-**`docs/product-base.html` is the one-page record of every product decision,** in the same format as `docs/tech-base.html`. Open it in a browser. Keep it in step with the tables above.
+**`docs/product-base.md` is the one-page record of every product decision,** in the same format as `docs/tech-base.md`. Keep it in step with the tables above.
+
+**The Markdown is the source for every doc with a browser version.** `tools/render-docs.py` writes each `.html` from its `.md`: tech-base, product-base, how-to-work, build-journal and design-review. Edit the `.md`, then run the script. `--check` fails if an `.html` is out of date. It needs `pip3 install -r tools/requirements.txt`.
 
 ## Team plan
 
@@ -224,8 +226,8 @@ roomsie/
 │   ├── how-to-work.md          each person's list, in order, and the code index
 │   ├── design-review.md        behaviour decisions for the designer
 │   ├── extensibility.md        every known future change, and the seam that absorbs it
-│   ├── product-base.html       the product record
-│   ├── tech-base.html          the technical record
+│   ├── product-base.md         the product record (.html generated)
+│   ├── tech-base.md            the technical record (.html generated)
 │   ├── decisions/              the ADRs, 0001 to 0015
 │   ├── team-plan.json          the plan's data. Edit this, then run the builder
 │   ├── team-plan.md            generated from team-plan.json
@@ -234,7 +236,9 @@ roomsie/
 │   ├── research/ · content/    market research and the article corpus plan
 │   └── source/                 vendored inputs: the V3 prototype
 ├── tools/
-│   └── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
+│   ├── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
+│   ├── render-docs.py          writes each docs .html from its .md
+│   └── sync-issues.py          makes the GitHub issues match the plan
 ├── .github/workflows/ci.yml    typecheck, lint, build, secret scan       T-03
 ├── .obsidian/                  vault settings; the graph shows docs/plan
 ├── package.json · pnpm-workspace.yaml · turbo.json                       T-02 · ADR 0010
