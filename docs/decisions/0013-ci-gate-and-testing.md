@@ -4,83 +4,87 @@
 
 ## Context
 
-Four developers at roughly two hours a day. Two constraints follow:
+Four developers work approximately two hours a day. From this, two constraints
+follow:
 
-1. **CI must finish in about five minutes.** Past that, people stop waiting for
-   it and start merging on hope.
-2. **Every test is an hour not spent on features**, out of roughly 200 total.
+1. **CI must finish in about five minutes.** After that time, people do not wait
+   for CI. They start to merge on hope.
+2. **Each test is an hour that we do not spend on features.** The total is
+   approximately 200 hours.
 
-So the question is not how much testing is good in the abstract — it is where
-the expensive bugs actually live in this product.
+Thus, the question is not how much testing is good in the abstract. The question
+is where the expensive bugs actually are in this product.
 
-For femmeflats they concentrate in a small number of server-side rules, each
-deterministic, each genuinely hard to verify by hand, each severe when wrong:
+For femmeflats, these bugs concentrate in a small number of server-side rules.
+Each rule is deterministic, genuinely hard to verify by hand, and severe when it
+is incorrect:
 
 | Rule | Failure mode |
 |---|---|
-| Verification gates participation | An unverified account initiates chat — a product-promise failure, not a bug |
+| Verification gates participation | An unverified account starts a chat. This is a failure of the product promise, not a bug. |
 | `tokens_valid_after` revocation (ADR 0007) | A suspended account stays logged in |
 | Chat rate limits | The daily new-conversation cap silently does nothing |
-| Queue seen-exclusion and reject suppression | Users cycle the same faces; the product feels broken |
+| Queue seen-exclusion and reject suppression | Users see the same faces again and again. The product feels broken. |
 
-A snapshot test on a card component, by contrast, is near-worthless while the
-design still moves weekly.
+But a snapshot test on a card component is almost worthless while the design
+changes each week.
 
 ## Decision
 
-Every pull request runs:
+Each pull request runs these checks:
 
 | Check | Why |
 |---|---|
-| Typecheck | Whole monorepo, strict |
+| Typecheck | All of the monorepo, strict |
 | Lint | Shared config from `packages/config` |
-| `turbo build` | Both apps actually build |
-| **Unit tests** | Written alongside the code as it is authored, not as a later phase |
-| **API integration tests** | Vitest against a disposable Postgres, concentrated on the four rule areas above |
-| **Generated-file check** | Re-run the token generator; fail if `theme.css` differs from what is committed (ADR 0011) |
-| `check-tokens.mjs` | Components use semantic tokens only — no hex, no arbitrary values |
-| `gitleaks` | Catches a secret paste before it becomes permanent git history |
+| `turbo build` | Makes sure that the two apps actually build |
+| **Unit tests** | We write them with the code, at the time that we write the code, not in a subsequent phase |
+| **API integration tests** | Vitest against a disposable Postgres. They concentrate on the four rule areas above. |
+| **Generated-file check** | Run the token generator again. Fail if `theme.css` is different from the committed file (ADR 0011). |
+| `check-tokens.mjs` | Components use only semantic tokens: no hex and no arbitrary values |
+| `gitleaks` | Finds a secret paste before it becomes permanent git history |
 
-Unit tests are a **coding-time habit**, not a separate task: whoever writes the
-code writes its tests in the same pass, and CI runs the whole suite on every
+Unit tests are a **coding-time habit**, not a task of its own. The person who
+writes the code writes its tests in the same pass. CI runs the full suite on each
 merge check.
 
 ## Rationale
 
-Integration tests over the rule areas give the highest confidence per hour
-spent, because those rules are exactly what cannot be eyeballed and exactly what
-is unacceptable to get wrong on a safety product. Running them against a real
-disposable Postgres rather than mocks matters here — the queue rules are largely
-SQL, so a mocked database would test nothing that ships.
+Integration tests on the rule areas give the highest confidence for each hour
+that we spend. These rules are exactly the items that a person cannot eyeball.
+They are also exactly the items where an error is unacceptable on a safety
+product. Here, it is important to run the tests against a real disposable
+Postgres, not mocks. The queue rules are largely SQL. Thus, a mocked database
+would test nothing that ships.
 
-Keeping frontend unit tests to what developers write naturally, rather than
-mandating component coverage, avoids paying maintenance on assertions about a
-UI that is still changing.
+We keep frontend unit tests to the tests that developers write naturally. We do
+not mandate component coverage. Thus, we do not pay maintenance on assertions
+about a UI that is not stable.
 
 ## Consequences
 
-- CI needs a disposable Postgres — a container in CI, or a database branch.
-- The five-minute budget is a real constraint: if the suite outgrows it,
-  parallelise or split rather than letting people learn to ignore CI.
-- Turborepo remote caching (ADR 0010) helps keep build time off the critical path.
-- Test data setup for the queue rules is non-trivial and should be a shared
-  fixture from the start, not copy-pasted per test.
+- CI needs a disposable Postgres: a container in CI, or a database branch.
+- The five-minute budget is a real constraint. If the suite becomes too large
+  for it, parallelise or divide the suite. Do not let people learn to ignore CI.
+- Turborepo remote caching (ADR 0010) helps to keep build time off the critical path.
+- Test data setup for the queue rules is not simple. It should be a shared
+  fixture from the start. Do not copy and paste it for each test.
 
 ## Deferred
 
 **Playwright end-to-end tests on critical paths** — signup → verification →
-swipe → first message. Genuinely valuable, and it catches integration breaks
-nothing else sees. Deferred because E2E is slow to write and brittle while the
-UI moves weekly: realistically 15–20 hours now plus ongoing maintenance, against
-a 200-hour launch budget.
+swipe → first message. These tests are genuinely valuable. They find integration
+breaks that nothing else sees. We deferred them because E2E tests are slow to
+write and brittle while the UI changes each week. The realistic cost is 15–20
+hours at this time, plus continued maintenance, against a 200-hour launch budget.
 
-Revisit once the UI has stabilised, ideally before the first release where a
-regression would reach real users.
+Revisit these tests after the UI becomes stable. Ideally, do this before the
+first release where a regression would reach real users.
 
 ## Alternatives rejected
 
-- **Typecheck, lint and build only.** A ~90-second gate and zero test hours, but
-  nothing would verify that unverified users cannot chat or that revocation
-  works. Those failures would be discovered by users, on a safety platform.
-- **Full pyramid from day one.** Highest confidence, but roughly 40+ hours out
-  of 200 and a CI run people would start skipping.
+- **Typecheck, lint and build only.** This is a ~90-second gate with zero test
+  hours. But nothing would verify that unverified users cannot chat, or that
+  revocation works. Users would find those failures, on a safety platform.
+- **Full pyramid from day one.** This gives the highest confidence. But it costs
+  approximately 40+ hours out of 200, and people would start to skip the CI run.
