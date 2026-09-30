@@ -32,11 +32,12 @@ The cost of inference depends on the turn type:
 
 ## Rationale
 
+- **The team size and hours come first.** We wrote all of the cost plan to be cheap in hours and in money. But we cannot make the schedule without the hours for each person.
 - Only one turn type is expensive: the open phase, and only when the user types.
 - Lever 2: extraction is a classification task, and a small, cheap model does it correctly. Conversation needs a good model. Extraction is most of the calls.
-- Lever 3: the form is the state. If each call carries the full transcript, cost increases as the square of the length.
+- Lever 3: the form is the state. If each call carries the full transcript, cost increases as the square of the length. Also, a transcript that is not current makes the model's behaviour worse. A summary that replaces the raw transcript is the primary control on cost.
 - Lever 4: the system prompt is the same on each call. It is the largest fixed part of the input.
-- Lever 5: fewer turns give less cost and less drop-off. The UX lever and the cost lever are the same lever.
+- Lever 5: fewer turns give less cost and less drop-off. The UX lever and the cost lever are the same lever. If an interview is too short, the matches are bad. If it is too long, nobody completes it.
 - No vector store: matching is a database query, not a document search. Structured filters on Postgres do retrieval correctly and at low cost.
 - No vector store also prevents a conflict with ADR 0001, which forbids proprietary extensions on the critical path. It saves money and a decision.
 
@@ -44,7 +45,7 @@ The cost of inference depends on the turn type:
 
 - The cost risk is volume and abuse, not unit cost. The chat runs before login (PD6b), thus anyone can start an interview.
 - One interview is cheap. But a thousand interviews a month at some rupees each cost approximately all of the current infrastructure bill.
-- The PD9 controls are a budget control, not only a safety control.
+- The PD9 controls are a budget control, not only a safety control. Cost and latency is not a safety issue.
 - For each turn, log tokens in, tokens out and the model. Tie the log to the session. Cost for each completed interview is a launch metric.
 - Inference is the cost that changes. It scales with conversations, not users.
 - A second Fly machine is worth a new review, because long in-flight agent requests make restarts much easier to see.
@@ -57,3 +58,5 @@ The cost of inference depends on the turn type:
 - [CONTEXT.md, PD5, PD11 and PD12 rows](../../CONTEXT.md)
 - [product-base.md, section 15 and its Why callout](../product-base.md)
 - [cost-and-team.md and its Why callouts](../cost-and-team.md)
+- [ai-agent-design.md, section 3.1](../ai-agent-design.md)
+- [assistant-risks.md, sections 4.6 and 4.9](../assistant-risks.md)

@@ -53,9 +53,17 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - Capacity: 170 person-hours (5 × 2h × 17 days), 151 build hours, 19 spare, none before the designs arrive (PD12).
 - If the team is late, the launch moves to 14 October. The scope stays the same.
 - If a checkpoint is more than a day late, decide on that checkpoint call if 14 October becomes the plan.
-- Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls.
+- Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls. They make the broker calls at this time, because the answers take time.
 
-Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October.
+Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October. That plan had no margin.
+
+The 23 September plan gave a reason for each cut:
+
+- Router: the client routes chips. Free text goes to one extraction call. One line in the reply prompt handles off-topic text.
+- Form B: filters need only Form A.
+- Advisor and RAG: we had not written the corpus.
+
+`launch-plan.md` keeps the initial reasoning as the record of the reason for each cut.
 
 ## Sources
 

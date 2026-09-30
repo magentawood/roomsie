@@ -42,6 +42,9 @@ problem to solve at this time. One small Postgres instance is easily sufficient.
   stays cheap.
 - Self-hosting stays available as a subsequent option: a deliberate exercise on
   a system that operates, which teaches more than a greenfield setup.
+- We commit the database on the night of Sunday 27 September. After that, the
+  database is the item in the design review with the highest cost to change.
+  Real data goes into it in the next week.
 
 ## Alternatives rejected
 
@@ -53,3 +56,7 @@ problem to solve at this time. One small Postgres instance is easily sufficient.
 
 Infrastructure cost becomes material. Or, a requirement occurs that managed
 hosting cannot serve (data residency, an unsupported extension, custom tuning).
+
+## Sources
+
+- [design-review.md](../design-review.md), §2

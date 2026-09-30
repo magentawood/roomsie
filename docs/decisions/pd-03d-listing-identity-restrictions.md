@@ -31,4 +31,4 @@ PD3d is a different decision from PD3c. We decide the two cases independently. P
 
 - [CONTEXT.md, PD3c and PD3d rows, and the Why callout below the open decisions](../../CONTEXT.md)
 - [product-base.md, section 05 "Still open" callout, and the "Still open" table](../product-base.md)
-- [ai-agent-design.md, section 4.1 "The exposure that remains", and mitigation 5](../ai-agent-design.md)
+- [assistant-risks.md, section 4.1 "The exposure that remains", and mitigation 5](../assistant-risks.md)

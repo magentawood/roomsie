@@ -52,7 +52,7 @@ At the ceiling:
 
 - The API is a single Fly machine. It keeps the counters in-process. **This fails at two machines**, because each machine has its own counters, and two machines double the limit.
 - Thus, a second machine is not a one-line config change, which ADR 0009 says. Record this dependency.
-- Measure from day one:
+- Measure from day one. If you do not measure it, you cannot see it:
   - Cost for each completed interview, for each handler. This is the unit that matters.
   - Anonymous sessions that reach results. This shows if the no-wall-before-results rule works.
   - Sign-in rate at the wall. This shows if five is the correct number.

@@ -56,6 +56,6 @@ These mitigations stay with the decision:
 
 - [CONTEXT.md, PD3c row](../../CONTEXT.md)
 - [product-base.md, section 05 and its Why callout](../product-base.md)
-- [ai-agent-design.md, section 4.1 and its Why callouts](../ai-agent-design.md)
+- [assistant-risks.md, section 4.1](../assistant-risks.md)
 - [build-journal.md, the nine provisional names](../build-journal.md)
 - [design-review.md, item 1.8](../design-review.md)

@@ -46,14 +46,31 @@ multi-agent, and not one large model. **All of it ships at launch.**
 - **Cost comes from model size for each task, not from the number of agents.**
   Each agent adds a system prompt, each handoff repeats the context, and
   sequential calls add latency. More parts give more failure modes.
+- **Calls run in sequence.** Thus, the latency of each call adds to the total.
+  Users notice three seconds in a chat.
+- **"Specialised agents think less"** is correct for each agent. But it is
+  incorrect for the system if all the agents run on each turn.
+- **No model must be excellent at all tasks.** Thus, there are more options and
+  the price is lower.
 - **Most turns never get to an expensive model.** Classification is the cost
-  lever and the on-rails lever at the same time.
-- **Structure removes hallucination.** The extractor can only select an enum. A
+  lever and the on-rails lever at the same time. The router knows a chip tap
+  from the client.
+- **The extractor and the observer run in parallel,** because one turn can be
+  more than one type. Example: "I need Powai under 20k, my last place fell
+  apart because of my flatmate's boyfriend" fills slots *and* reveals
+  something.
+- **Structure removes hallucination.** In almost all the hallucination
+  scenarios that people fear in this product, we ask the model to *know*
+  something. The extractor can only select an enum. A
   profile fact must point to the words of the user. Results come from SQL,
   never from prose. The model is never the source of truth. The form is.
+- **The two-form idea is correct.** It is the centre of the design.
 - **Form B must not be a text blob.** A blob that grows is the transcript with
-  a different name. One turn at a time costs less. An editable profile meets
-  the DPDP access and correction obligations with no more work.
+  a different name. One turn at a time costs less. Form B is then available
+  during the session. Thus, it can inform the ranking while the user browses.
+- **An editable profile.** A profile that the user can see and edit is good
+  product. It also meets the DPDP access and correction obligations with no
+  more work.
 - **The advisor needs a base in our articles.** A general model hallucinates
   on legal rental questions, where an incorrect answer does the most damage.
   Postgres full-text search suits dozens of documents and keeps to ADR 0001.
@@ -69,7 +86,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
   moves. Do not add a third hop without a measurement.
 - Six handlers is a design. Twelve is a maintenance problem for four
   part-time engineers.
-- Measure cost for each interview and each handler from day one.
+- Measure cost for each interview and each handler from day one. The cost for
+  each handler tells you which handler to make smaller.
 - Form A and Form B need a schema home outside S1 to S7. Account deletion must
   purge Form B.
 - Handler inputs and outputs are Zod schemas with versions, in

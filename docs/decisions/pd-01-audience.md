@@ -37,5 +37,5 @@ femmeflats was a women-only, swipe-stack discovery app. roomsie is its AI-native
 
 - [CONTEXT.md](../../CONTEXT.md): "Decisions taken in this session" table, row PD1, and its "Why" callout. The V3 prototype section, "Items that the all-genders decision (PD1) makes invalid in it", and its "Why" callout
 - [product-base.md](../product-base.md): section 01, "What it costs" and "Why" callouts
-- [ai-agent-design.md](../ai-agent-design.md): section 4.1, "Related, and still open", and its "Why" callout
+- [assistant-risks.md](../assistant-risks.md): section 4.1, "Related, and still open"
 - [supply-and-broker-model.md](../research/supply-and-broker-model.md): "The honest risks", risk 5

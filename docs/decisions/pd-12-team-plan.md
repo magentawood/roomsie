@@ -41,8 +41,33 @@ There are **five engineering lanes, P1 to P5**, and two phases.
 ## Rationale
 
 - **We cut the plan again because there are no designs at this time.** Because there are no designs, the work has two phases.
+- The principles from before stay the same.
 - The designs must be complete because five people must build from them on the morning of Thursday 1 October. There is no spare time for a late design.
 - The order of each person's list is the schedule. Other people wait for your work.
+
+Why each lane starts where it does:
+
+- P1 starts first, with the monorepo (T-02).
+- The P2 lane needs no designs. P2 works through the two phases with no interruption. Three people build against T-08, so P2 does T-08 on day one.
+- P3 owns T-15 and T-18b, because they show the matches and people from the P3 schema and match query. P3 owns the advisor, T-38, because it searches data that P3 owns.
+- For P4, the prototype is the design, so T-23a is not blocked. Sunday 27 is spare because T-19 needs the schema. The schema arrives on the evening of that day.
+- M-03 also needs no design and no code. It is the only task available to P5 on day one.
+- P4 and P5 have Sunday 27 free, because only three tasks in the full project can start before the schema and monorepo exist.
+
+Why the designer gets a design review (`design-review.md`):
+
+- "Does not need a design" is not the same as "has no design decisions in it." Each task quietly assumes some behaviour of the product. Examples: how many questions the assistant asks, what a profile contains, when results appear, and what occurs on a phone.
+- We had to make those decisions to start. The design review writes them down.
+- The cost to change a decision depends fully on when the designer tells us. On 25 September, most of the decisions were free to change. Thus, we do not build the incorrect thing for a fortnight.
+- §1, §5 (mobile) and §6.3 are more important than all other items together. The build is in progress. Each day that the review stays unread, more items change from 🟢 free to 🔴 structural.
+
+| By | Design review item | Why this date |
+|---|---|---|
+| Now | §1 The questions in the conversation | We build the contract first. |
+| Now | §6.3 The launch look | The styling decision controls all designs. |
+| Sun 27 Sep | §2 What we store about a person | Migrations after the schema commit are painful. |
+| Tue 29 Sep | §3 How the assistant behaves | We build the reply writer on Wed–Thu. |
+| Wed 30 Sep | §4 How results appear and update | Work on the match query and the results panel starts on Thursday. |
 
 ## Consequences
 
