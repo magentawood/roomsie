@@ -16,3 +16,5 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 
 | Date | PR | Mistake |
 |---|---|---|
+| 2026-09-30 | — (source: standards extraction) | A module owns its tables. Other modules call its functions and never use its tables. Source: [extensibility.md](../extensibility.md), proposed. |
+| 2026-09-30 | — (source: standards extraction) | Code writes analytics events only through one `track()` function. Source: [T-24 task note](<../plan/tasks/T-24 Event logging.md>). |
