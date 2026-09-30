@@ -38,29 +38,52 @@ details.callout[open] summary{color:var(--fg)}
 <p><strong>Date:</strong> 2026-09-25 · <strong>Updated:</strong> 2026-09-26, launch moved to Mon 12 Oct · <strong>For:</strong> the person who owns design · <strong>From:</strong> engineering</p>
 <hr />
 <h2 id="why-you-are-reading-this">Why you are reading this</h2>
-<p>We will build for a fortnight before your designs arrive. Approximately 80 of the
-115 engineering hours do not need a picture to start. This work is the database,
-the sign-in, the AI and the matching.</p>
-<p><strong>But "does not need a design" is not the same as "has no design decisions in it."</strong></p>
-<p>Each of those tasks quietly assumes some behaviour of the product. For example:
-how many questions the assistant asks, what a profile contains, when results
-appear, and what occurs on a phone. We already made those decisions, because we
-had to make them to start. This document writes them down.</p>
-<p>If you do not agree with a decision, <strong>its cost to change depends fully on
-when you tell us.</strong> Today, most of the decisions are free to change. In ten days,
-some of them will cost the launch date.</p>
-<p>This document does not ask you to approve visuals. It asks you to confirm,
-change or defer <strong>behaviour</strong>. Then we do not build the incorrect thing for a fortnight.</p>
+<ul>
+<li>We build for a fortnight before your designs arrive.</li>
+<li>Approximately 80 of the 115 engineering hours do not need a picture to start: the database, the sign-in, the AI and the matching.</li>
+<li>We made the behaviour decisions in that work.</li>
+<li>In ten days, some of these decisions will cost the launch date.</li>
+<li>This document does not ask you to approve visuals. It asks you to confirm, change or defer <strong>behaviour</strong>.</li>
+</ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>"Does not need a design" is not the same as "has no design decisions in it."</li>
+<li>Each task quietly assumes some behaviour of the product. Examples: how many questions the assistant asks, what a profile contains, when results appear, and what occurs on a phone.</li>
+<li>We had to make those decisions to start. This document writes them down.</li>
+<li>The cost to change a decision depends fully on when you tell us. Today, most of the decisions are free to change.</li>
+<li>Thus, we do not build the incorrect thing for a fortnight.</li>
+</ul></details>
+
 <hr />
 <h2 id="how-to-answer">How to answer</h2>
 <p>For each numbered item, write one of these words:</p>
+<table>
+<thead>
+<tr>
+<th>Word</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>OK</strong></td>
+<td>Build it as the item tells.</td>
+</tr>
+<tr>
+<td><strong>CHANGE</strong></td>
+<td>Tell us the new behaviour. On the same day, we tell you what it costs.</td>
+</tr>
+<tr>
+<td><strong>LATER</strong></td>
+<td>You want a different behaviour, but not before launch.</td>
+</tr>
+</tbody>
+</table>
 <ul>
-<li><strong>OK</strong> — build it as the item tells.</li>
-<li><strong>CHANGE</strong> — and tell us the new behaviour. On the same day, we will tell you what it costs.</li>
-<li><strong>LATER</strong> — you want a different behaviour, but not before launch.</li>
+<li>You do not have to answer all of the items at one time.</li>
+<li>Answer them in the sequence of their deadlines.</li>
 </ul>
-<p>You do not have to answer all of the items at one time. Answer them in the
-sequence of their deadlines. The table below uses that sequence.</p>
+<details class="callout note"><summary class="ct">Why</summary><p>The deadlines table below uses the sequence of the deadlines.</p></details>
+
 <hr />
 <h2 id="what-it-costs-to-change-something">What it costs to change something</h2>
 <table>
@@ -73,53 +96,55 @@ sequence of their deadlines. The table below uses that sequence.</p>
 <tbody>
 <tr>
 <td>🟢 <strong>Free</strong></td>
-<td>Change it at all times. No work is built on it. Styling, colour, copy, spacing, icons, card layout and imagery are always free.</td>
+<td>Change it at all times. No work uses it. Styling, colour, copy, spacing, icons, card layout and imagery are always free.</td>
 </tr>
 <tr>
 <td>🟡 <strong>Costly</strong></td>
-<td>If you change it after its build date, it costs approximately one or two days of rework. This is annoying, but we can survive it.</td>
+<td>A change after its build date costs approximately one or two days of rework.</td>
 </tr>
 <tr>
 <td>🔴 <strong>Structural</strong></td>
-<td>Other work is on top of it. If you change it after its date, we must remove other work to keep 12 October.</td>
+<td>Other work is on top of it. After its date, a change means that we must remove other work to keep 12 October.</td>
 </tr>
 </tbody>
 </table>
+<details class="callout note"><summary class="ct">Why</summary><p>A costly change causes problems, but we can survive it.</p></details>
+
 <hr />
 <h2 id="deadlines-in-order">Deadlines, in order</h2>
 <table>
 <thead>
 <tr>
 <th>By</th>
-<th>What must be settled</th>
-<th>Why</th>
+<th>What to decide</th>
+<th>Note</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Now</strong></td>
 <td>§1 The conversation's questions, and §6.3 the launch look</td>
-<td>We build the contract first. The styling decision controls all designs.</td>
+<td></td>
 </tr>
 <tr>
 <td><strong>Sun 27 Sep</strong></td>
 <td>§2 What we store about a person</td>
-<td>We commit the schema on Sunday night. Migrations after that are painful.</td>
+<td>We commit the schema on Sunday night.</td>
 </tr>
 <tr>
 <td><strong>Tue 29 Sep</strong></td>
 <td>§3 How the assistant behaves</td>
-<td>We build the reply writer on Wed–Thu.</td>
+<td></td>
 </tr>
 <tr>
 <td><strong>Wed 30 Sep</strong></td>
 <td>§4 How results appear and update</td>
-<td>Work on the match query and the results panel starts on Thursday.</td>
+<td></td>
 </tr>
 <tr>
 <td><strong>Wed 30 Sep</strong></td>
-<td>§5 Mobile — <strong>still unresolved</strong></td>
-<td>This is the largest open question in the product.</td>
+<td>§5 Mobile — <strong>not resolved at this time</strong></td>
+<td>The largest open question in the product.</td>
 </tr>
 <tr>
 <td><strong>Wed 30 Sep</strong></td>
@@ -128,204 +153,181 @@ sequence of their deadlines. The table below uses that sequence.</p>
 </tr>
 </tbody>
 </table>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>§1: we build the contract first.</li>
+<li>§6.3: the styling decision controls all designs.</li>
+<li>§2: migrations after the schema commit are painful.</li>
+<li>§3: we build the reply writer on Wed–Thu.</li>
+<li>§4: work on the match query and the results panel starts on Thursday.</li>
+</ul></details>
+
 <hr />
 <h1 id="1--the-conversations-questions---structural-needed-now">§1 · The conversation's questions — 🔴 structural, needed now</h1>
-<p>This is the most expensive item on the list. The database, the AI extraction,
-the matching and the profile screens all read from one shared definition of
-<em>what we ask a person</em>. If you add or remove a question after this, all four change
-together.</p>
-<p><strong>1.1 — The form has only these fields.</strong> Intent, areas, budget, move date,
-room type, and nine lifestyle answers. The nine answers are smoking, alcohol,
-guests, pets, hours, tidiness, at home, daytime and kitchen. The form has no
-other fields. 🔴</p>
-<blockquote>
-<p><strong>If you add a flow</strong>, it is not one new question. An example is "do you have
-pets?" as a separate step. A flow is a migration, a contract change, a re-tuned
-extraction prompt and a new filter. <strong>If you tell us before Sunday, it costs an
-hour. After Sunday, it costs a day and a half.</strong></p>
-</blockquote>
-<p><strong>1.2 — Intent is one of the four cards from the prototype.</strong> The cards are
-"a flat and flatmates", "just a flat", "just a flatmate" and "I'm renting out a flat". 🔴</p>
-<blockquote>
-<p><strong>This item is in conflict with a settled decision, and we need your answer
-first.</strong> Decision PD0 says that v0 is flatmate matching only, with no property
-listings. Two of the four cards, <em>just a flat</em> and <em>I'm renting out a flat</em>,
-are about property. Thus, either we hide these two cards for launch, or they go
-to a location that does not exist yet. <strong>Tell us which cards ship on 12 October.</strong></p>
-</blockquote>
-<p><strong>1.3 — The first three turns are chips, not typed text.</strong> For intent, area and
-budget, the answers are a closed set. Thus, we show options that the user can tap. 🟡</p>
-<p><strong>1.4 — Budget is bands, not a slider.</strong> The bands are below 15k, 15–20k,
-20–25k and above 25k. We chose bands because they are faster on a phone. 🟡</p>
-<p><strong>1.5 — Areas are multi-select.</strong> We show the top five or six areas as chips.
-We also show a "somewhere else" chip, which opens a search. 🟡</p>
-<p><strong>1.6 — The user can answer each question with "unclear."</strong> It is
-acceptable for the assistant to not know an answer. 🟢</p>
-<p><strong>1.7 — Typed text is better than taps.</strong> A user can type "2bhk in Powai under
-25k from October". This fills four fields at one time and moves the user
-forward. The chips are the minimum, not a limit. 🟡</p>
-<p><strong>1.8 — We never offer some preferences as chips.</strong> If a user speaks about
-community or religion, we record it and filter on it. We never suggest it and we
-never ask about it. We never infer it from a name, a diet or an area. PD3c settles
-this, thus it is not open for review. But it limits what the chips can show. 🔒</p>
+<p>The database, the AI extraction, the matching and the profile screens all read from one shared definition of <em>what we ask a person</em>.</p>
+<p><strong>1.1 — The form has only these fields.</strong> Intent, areas, budget, move date, room type, and nine lifestyle answers: smoking, alcohol, guests, pets, hours, tidiness, at home, daytime and kitchen. The form has no other fields. 🔴
+- To add a flow: if you tell us before Sunday, it costs an hour. After Sunday, it costs a day and a half.</p>
+<p><strong>1.2 — Intent is one of the four cards from the prototype:</strong> "a flat and flatmates", "just a flat", "just a flatmate" and "I'm renting out a flat". 🔴
+- <strong>This item is in conflict with a settled decision, and we need your answer first.</strong>
+- Decision PD0: v0 is flatmate matching only, with no property listings.
+- Two of the four cards, <em>just a flat</em> and <em>I'm renting out a flat</em>, are about property.
+- <strong>Tell us which cards ship on 12 October.</strong></p>
+<p><strong>1.3 — The first three turns are chips, not typed text:</strong> intent, area and budget. 🟡</p>
+<p><strong>1.4 — Budget is bands, not a slider:</strong> below 15k, 15–20k, 20–25k and above 25k. 🟡</p>
+<p><strong>1.5 — Areas are multi-select.</strong> The top five or six areas show as chips. A "somewhere else" chip opens a search. 🟡</p>
+<p><strong>1.6 — The user can answer each question with "unclear."</strong> 🟢</p>
+<p><strong>1.7 — Typed text is better than taps.</strong> 🟡</p>
+<p><strong>1.8 — We never offer some preferences as chips.</strong> If a user speaks about community or religion, we record it and filter on it. We never suggest it, never ask about it, and never infer it from a name, a diet or an area. PD3c settles this. 🔒</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>§1 is the most expensive item on the list. If you add or remove a question after this, all four parts change together.</li>
+<li>1.1: A flow is not one new question. An example is "do you have pets?" as its own step. A flow is a migration, a contract change, a re-tuned extraction prompt and a new filter.</li>
+<li>1.2: Either we hide the two property cards for launch, or they go to a location that does not exist at this time.</li>
+<li>1.3: The answers are a closed set. Thus, we show options that the user can tap.</li>
+<li>1.4: Bands are faster on a phone.</li>
+<li>1.6: The assistant has permission to not know an answer.</li>
+<li>1.7: A user can type "2bhk in Powai under 25k from October". This fills four fields at one time and moves the user forward. The chips are the minimum, not a limit.</li>
+<li>1.8: This item is not open for review. But it limits what the chips can show.</li>
+</ul></details>
+
 <hr />
 <h1 id="2--what-we-store-about-a-person---structural-by-sun-27-sep">§2 · What we store about a person — 🔴 structural, by Sun 27 Sep</h1>
-<p>We commit the database on Sunday night. After that, it is the item on this
-list with the highest cost to change. The reason is that real data goes into it in the
-next week.</p>
-<p><strong>2.1 — A profile holds:</strong> name, age, work, intent, budget, areas, move date,
-and the nine lifestyle answers. 🔴</p>
-<p><strong>2.2 — Each lifestyle answer has the mark "prefer" or "dealbreaker."</strong> A
-dealbreaker removes people from the results. A preference changes only the
-rank. 🔴</p>
-<blockquote>
-<p>This is a product decision in the costume of a database. Maybe you think that
-people must rank preferences, or give them a weight on a scale. If so, tell
-us now.</p>
-</blockquote>
-<p><strong>2.3 — A maximum of four photos for each person.</strong> 🟡</p>
-<blockquote>
-<p>Four is a guess. Today, a change to six is free. In October, it is a day of work.</p>
-</blockquote>
-<p><strong>2.4 — We store anonymous sessions and the text that people type.</strong> Thus, a
-user can chat before sign-up, and keep that conversation after sign-up. We keep
-the typed messages and delete them with the account. Should the chat tell
-users this at the start? 🟡</p>
+<p><strong>2.1 — A profile holds:</strong> name, age, work, intent, budget, areas, move date, and the nine lifestyle answers. 🔴</p>
+<p><strong>2.2 — Each lifestyle answer has the mark "prefer" or "dealbreaker."</strong> A dealbreaker removes people from the results. A preference changes only the rank. 🔴
+- If you think that people must rank preferences, or give them a weight on a scale, tell us today.</p>
+<p><strong>2.3 — A maximum of four photos for each person.</strong> Today, a change to six is free. In October, it is a day of work. 🟡</p>
+<p><strong>2.4 — We store anonymous sessions and the text that people type.</strong> We delete the typed messages with the account. 🟡
+- <strong>Open:</strong> should the chat tell users this at the start?</p>
 <p><strong>2.5 — Reports, blocks and a waitlist are first-class</strong>, not add-ons. 🟢</p>
-<p><strong>2.6 — The assistant keeps notes about each person.</strong> The observer changes what
-people say into notes, for example "partner stays over most nights". Each note
-holds the exact words that the person used.</p>
-<p><strong>Can people see and correct these notes,
-and where?</strong> On the profile, in the chat, or nowhere at launch? This decision
-gives the shape of the profile screens (D-03). Thus, we need it by Wed 30 Sep. 🔴</p>
+<p><strong>2.6 — The assistant keeps notes about each person.</strong> The observer changes what people say into notes, for example "partner stays over most nights". Each note holds the exact words that the person used. 🔴
+- <strong>Can people see and correct these notes, and where?</strong> On the profile, in the chat, or nowhere at launch?
+- This decision gives the shape of the profile screens (D-03). We need it by Wed 30 Sep.</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>We commit the database on Sunday night. After that, it is the item on this list with the highest cost to change. Real data goes into it in the next week.</li>
+<li>2.2: This is a product decision in the costume of a database.</li>
+<li>2.3: Four is a guess.</li>
+<li>2.4: A user can chat before sign-up, and keep that conversation after sign-up. Thus, we keep the typed messages.</li>
+</ul></details>
+
 <hr />
 <h1 id="3--how-the-assistant-behaves---by-tue-29-sep">§3 · How the assistant behaves — 🟡 by Tue 29 Sep</h1>
-<p><strong>3.1 — It answers questions about housing, and does not refuse them.</strong> For
-example, a user can ask what semi-furnished usually includes, or the usual
-amount of a deposit. First, it answers from the roomsie articles, and it gives
-the name of the article.</p>
-<p>If the articles do not have the answer, a signed-in person gets an answer from a
-web search. A visitor gets a simple answer with a caveat. The assistant never
-answers questions about law, tax, area safety or claims about a person from the
-web. For these questions, it uses articles only, or it sends the question to a
-person. Should an answer from a web search look different from our answers? 🟡</p>
-<p><strong>3.2 — Five typed turns before we ask you to sign in.</strong> Chip taps are free,
-and they do not count. 🟡</p>
-<p><strong>3.3 — The sign-in wall never appears before the results appear.</strong> You always see
-something that you want before we ask who you are. 🔴</p>
-<p><strong>3.4 — The results stay in view behind the sign-in wall.</strong> The wall is not a
-page that stops you. 🟡</p>
-<p><strong>3.5 — When the money is low, the chat changes to chips only.</strong> It does not
-stop. 🟢</p>
-<p><strong>3.6 — Manual filter changes are silent in the chat.</strong> If you tap a filter, the
-assistant does not tell about it. If it did, the conversation would become a
-list of taps. It speaks only when your tap contradicts something that you said
-before. 🟡</p>
-<p><strong>3.7 — Off-topic messages get one scripted line.</strong> "Write my essay" gets a
-polite fixed reply. This reply costs no model call, and we log the message. You
-write the words of the reply. 🟢</p>
+<p><strong>3.1 — It answers questions about housing, and does not refuse them.</strong> 🟡
+- First, it answers from the roomsie articles, and it gives the name of the article.
+- If the articles do not have the answer, a signed-in person gets an answer from a web search. A visitor gets a simple answer with a caveat.
+- It never answers questions about law, tax, area safety or claims about a person from the web. For these, it uses articles only, or it uses a hand-off.
+- <strong>Open:</strong> should an answer from a web search look different from our answers?</p>
+<p><strong>3.2 — Five typed turns before we ask you to sign in.</strong> Chip taps are free, and they do not count. 🟡</p>
+<p><strong>3.3 — The sign-in wall never appears before the results appear.</strong> 🔴</p>
+<p><strong>3.4 — The results stay in view behind the sign-in wall.</strong> The wall is not a page that stops you. 🟡</p>
+<p><strong>3.5 — When the money is low, the chat changes to chips only.</strong> It does not stop. 🟢</p>
+<p><strong>3.6 — Manual filter changes are silent in the chat.</strong> The assistant speaks only when your tap contradicts something that you said before. 🟡</p>
+<p><strong>3.7 — Off-topic messages get one scripted line.</strong> This reply costs no model call, and we log the message. You write the words of the reply. 🟢</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>3.1: Example questions are what semi-furnished usually includes, or the usual amount of a deposit.</li>
+<li>3.3: You always see something that you want before we ask who you are.</li>
+<li>3.6: If the assistant told about each tap, the conversation would become a list of taps.</li>
+<li>3.7: Example: "Write my essay" gets a polite fixed reply.</li>
+</ul></details>
+
 <hr />
 <h1 id="4--how-results-appear-and-update---by-wed-30-sep">§4 · How results appear and update — 🟡 by Wed 30 Sep</h1>
-<p>Launch builds 4.1 to 4.4. <code>docs/launch-plan.md</code> moved the other items to v1.
-Thus, if you mark them LATER, it costs nothing.</p>
-<p><strong>4.1 — The results panel appears when intent, area and budget have values.</strong>
-This is after approximately three turns. 🔴</p>
-<p><strong>4.2 — The match score stays hidden until we know sufficient information.</strong>
-The filter needs the area and the budget. The rank for compatibility needs the
-lifestyle answers, which take much more time to collect. We show results
-quickly and honestly. We do not show the score until it has a meaning. 🟡</p>
-<p><strong>4.3 — The panel header changes when we learn more:</strong> "Everything in Mumbai" →
-"Powai" → "Powai, under ₹20,000" → match scores appear. In v0, each card is a
-person, never a listing (PD0). Thus, you choose the words. 🟢</p>
-<p><strong>4.4 — The panel updates when the form changes, not after each turn.</strong> In a
-conversation of ten turns, the panel can change maybe three times. 🟡</p>
-<p><strong>4.5 — More results and fewer results have different behaviour.</strong> More results
-come as a banner that the user can tap. Fewer results apply immediately. They
-also tell what went, and they give an undo. <strong>v1, not launch.</strong> 🟡</p>
-<p><strong>4.6 — No card moves while you scroll.</strong> Updates wait in a queue and apply when
-the user stops. <strong>v1, not launch.</strong> 🟡</p>
-<p><strong>4.7 — We never silently remove a card that you saved.</strong> We mark it with the
-reason. <strong>v1, not launch.</strong> 🟢</p>
+<ul>
+<li>Launch builds 4.1 to 4.4.</li>
+<li><code>docs/launch-plan.md</code> moved 4.5 to 4.7 to v1. If you mark them LATER, it costs nothing.</li>
+</ul>
+<p><strong>4.1 — The results panel appears when intent, area and budget have values.</strong> 🔴</p>
+<p><strong>4.2 — The match score stays hidden until we know sufficient information.</strong> We show results quickly and honestly. 🟡</p>
+<p><strong>4.3 — The panel header changes when we learn more.</strong> In v0, each card is a person, never a listing (PD0). You choose the words. 🟢</p>
+<p><strong>4.4 — The panel updates when the form changes, not after each turn.</strong> 🟡</p>
+<p><strong>4.5 — More results and fewer results have different behaviour.</strong> More results come as a banner that the user can tap. Fewer results apply immediately, tell what went, and give an undo. <strong>v1, not launch.</strong> 🟡</p>
+<p><strong>4.6 — No card moves while you scroll.</strong> Updates wait in a queue and apply when the user stops. <strong>v1, not launch.</strong> 🟡</p>
+<p><strong>4.7 — We never silently remove a card that you saved.</strong> We mark it with the reason. <strong>v1, not launch.</strong> 🟢</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>4.1: This is after approximately three turns.</li>
+<li>4.2: The filter needs the area and the budget. The rank for compatibility needs the lifestyle answers, which take much more time to collect. We do not show the score until it has a meaning.</li>
+<li>4.3: Example: "Everything in Mumbai" → "Powai" → "Powai, under ₹20,000" → match scores appear.</li>
+<li>4.4: In a conversation of ten turns, the panel can change maybe three times.</li>
+</ul></details>
+
 <hr />
 <h1 id="5--mobile---unresolved-and-the-biggest-risk">§5 · Mobile — 🔴 unresolved, and the biggest risk</h1>
-<p><strong>We need you for this item more than for all other items.</strong></p>
-<p>The full product is a split view, with the chat on one side and the results on
-the other. That needs approximately 900 pixels. <strong>Mumbai is a mobile-first
-market.</strong> At 400px, there is no second panel. Thus, the central idea must work
-in a different way on mobile.</p>
-<p>On 20 September, we wrote down three options. We did not fully choose one.
-Engineering chose a provisional pattern so that it can start (below). The launch
-plan already moved the bottom sheet to v1.</p>
+<ul>
+<li>The full product is a split view, with the chat on one side and the results on the other. That needs approximately 900 pixels.</li>
+<li><strong>Mumbai is a mobile-first market.</strong></li>
+<li>On 20 September, we wrote down three options. We did not fully choose one.</li>
+<li>Engineering chose a provisional pattern so that it can start (below).</li>
+<li>The launch plan moved the bottom sheet to v1.</li>
+</ul>
 <table>
 <thead>
 <tr>
 <th>Option</th>
 <th>How it works</th>
-<th>Trade</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Bottom sheet</strong></td>
 <td>The chat fills the screen. The results are in a sheet that you pull up. A pill shows the live count.</td>
-<td>One more component, but one product.</td>
 </tr>
 <tr>
 <td><strong>Tabs</strong></td>
 <td>Chat and Results are two tabs, with a badge.</td>
-<td>Cheapest to build. It loses the live feedback, which is the full purpose.</td>
 </tr>
 <tr>
 <td><strong>Inline cards</strong></td>
 <td>The results appear in the chat as card carousels.</td>
-<td>Most natural on mobile. It is difficult to compare options, and property search needs this.</td>
 </tr>
 </tbody>
 </table>
 <p><strong>What engineering assumed, so that it can start:</strong></p>
 <ul>
 <li>The chat fills the screen.</li>
-<li>When the results are available, the chat becomes a bar at the bottom. The bar
-  is approximately 25% of the height. The listings fill the space above it.</li>
-<li>When you tap the input, the chat increases to approximately 60%. Then you can
-  read back.</li>
+<li>When the results are available, the chat becomes a bar at the bottom, approximately 25% of the height. The listings fill the space above it.</li>
+<li>When you tap the input, the chat increases to approximately 60%.</li>
 <li>When you send, the chat becomes small again.</li>
 </ul>
-<p><strong>One rule that we want to keep for all options:</strong> never change the size while
-a person types or reads.</p>
-<p><strong>This pattern is provisional, and we expect that you will overrule it.</strong> But work on
-it is in progress. Decide by 30 September.</p>
+<p><strong>One rule that we want to keep for all options:</strong> never change the size while a person types or reads.</p>
+<p><strong>This pattern is provisional.</strong> Work on it is in progress. Decide by 30 September.</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>We need you for this item more than for all other items.</li>
+<li>At 400px, there is no second panel. Thus, the central idea must work in a different way on mobile.</li>
+<li>Bottom sheet: one more component, but one product.</li>
+<li>Tabs: cheapest to build. It loses the live feedback, which is the full purpose.</li>
+<li>Inline cards: most natural on mobile. It is not easy to compare options, and property search needs this.</li>
+<li>At 60%, you can read back.</li>
+<li>We expect that you will overrule the provisional pattern.</li>
+</ul></details>
+
 <hr />
 <h1 id="6--three-open-questions-outside-the-flow">§6 · Three open questions outside the flow</h1>
-<p><strong>6.1 — The empty state.</strong> There is no skip. Thus, if a search gives no results,
-the user answered a full interview for zero results. That is the worst moment in
-the product, and at this time it has no design. The options are: make the area
-larger, relax a dealbreaker, or offer to send the user a notification. <strong>Undesigned. 🔴</strong></p>
-<p><strong>6.2 — The landing page.</strong> We port it from the V3 prototype. The team made
-that prototype for femmeflats, a women-only swipe app that we pivoted away from
-after that. The landing page will be live and public. If you want a different
-landing page, the port is four hours of work that we can use on other work. 🟡</p>
-<p><strong>6.3 — Launch uses the V3 prototype's look, not Untitled UI.</strong> ADR 0011 says
-to build on the Untitled UI token pipeline. But that pipeline is blocked, and
-the prototype's palette does not agree with it. The launch plan proposes to port
-the prototype's styling for 12 October, then rebuild on the pipeline in v1. <strong>This needs your approval. It is D-01, and it is due on day one.</strong> 🔴</p>
+<p><strong>6.1 — The empty state.</strong> There is no skip. The options are: make the area larger, relax a dealbreaker, or offer to send the user a notification. <strong>Undesigned. 🔴</strong></p>
+<p><strong>6.2 — The landing page.</strong> We port it from the V3 prototype. The landing page will be live and public. If you want a different landing page, the port is four hours of work that we can use on other work. 🟡</p>
+<p><strong>6.3 — Launch uses the V3 prototype's look, not Untitled UI.</strong> ADR 0011 says to build on the Untitled UI token pipeline. But that pipeline is blocked. The launch plan proposes to port the prototype's styling for 12 October, then rebuild on the pipeline in v1. <strong>This needs your approval. It is D-01, and it is due on day one.</strong> 🔴</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>6.1: If a search gives no results, the user answered a full interview for zero results. That is the worst moment in the product.</li>
+<li>6.2: The team made the V3 prototype for femmeflats, a women-only swipe app. We pivoted away from femmeflats after that.</li>
+<li>6.3: The prototype's palette does not agree with the pipeline.</li>
+</ul></details>
+
 <hr />
 <h2 id="what-you-never-have-to-ask-us-about">What you never have to ask us about</h2>
-<p>You can change these items at all times, before or after launch. Nothing breaks:</p>
+<p>These items are always free:</p>
 <p>Colours · type · spacing · icons · imagery · copy and tone · card layout ·
 button placement · animation · empty-state illustrations · the visual design
 of each screen.</p>
 <p><strong>The general rule:</strong> if it changes how something <em>looks</em>, it is free. If it
 changes what we <em>ask</em>, what we <em>store</em>, or <em>when something appears</em>, it is on the
 list above.</p>
+<details class="callout note"><summary class="ct">Why</summary><p>You can change these items at all times, before or after launch. Nothing breaks.</p></details>
+
 <hr />
 <h2 id="what-we-need-back">What we need back</h2>
 <ol>
-<li>Read §1, §5 and §6.3 first. Those three items are more important than all other items together.</li>
+<li>Read §1, §5 and §6.3 first.</li>
 <li>Mark each item OK / CHANGE / LATER.</li>
-<li>For each item that you mark CHANGE, on the same day we will tell you the real
-   cost. We will also tell you what work it moves out.</li>
+<li>For each item that you mark CHANGE, we tell you the real cost on the same day. We also tell you what work it moves out.</li>
 </ol>
-<p>The build is already in progress. Each day that this document stays unread,
-more items change from 🟢 to 🔴.</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>§1, §5 and §6.3 are more important than all other items together.</li>
+<li>The build is in progress. Each day that this document stays unread, more items change from 🟢 to 🔴.</li>
+</ul></details>
 </main>
