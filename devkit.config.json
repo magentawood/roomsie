@@ -15,15 +15,15 @@
   },
   "docBudget": {
     "exclude": [
+      "docs/archive/**",
+      "docs/journal/**",
       "docs/plan/**",
-      "docs/team-plan.md",
-      "docs/archive/**"
+      "docs/team-plan.md"
     ],
     "overrides": {
       "docs/design-review.md": 1667,
       "docs/decisions/0005-managed-platform-split.md": 1333,
-      "docs/research/hinglish-model-report.md": 1756,
-      "docs/tech-base.md": 7728
+      "docs/research/hinglish-model-report.md": 1756
     }
   }
 }

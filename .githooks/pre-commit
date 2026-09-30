@@ -1,0 +1,6 @@
+#!/bin/sh
+# Keep the docs inside their limits and the generated files current.
+# Turn it on once per clone: git config core.hooksPath .githooks
+python3 tools/doc-budget.py --staged || exit 1
+python3 tools/build-decision-ledger.py --check || exit 1
+python3 tools/render-docs.py --check || exit 1

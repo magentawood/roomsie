@@ -1,0 +1,26 @@
+{
+  "docBudget": {
+    "exclude": [
+      "**/archive/**"
+    ],
+    "rules": [
+      {
+        "glob": "CONTEXT.md",
+        "maxTokens": 1500
+      },
+      {
+        "glob": "**/decisions/*.md",
+        "maxWords": 1200
+      },
+      {
+        "glob": "**/research/*.md",
+        "maxWords": 1500
+      },
+      {
+        "glob": "*.md",
+        "maxWords": 1200
+      }
+    ],
+    "overrides": {}
+  }
+}
