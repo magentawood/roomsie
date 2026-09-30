@@ -5,8 +5,8 @@
 ## Context
 
 ADR 0001 (rent infrastructure) and ADR 0002 (we own the API) have this result:
-we need exactly four commodity services from providers, and nothing else. We use
-no query APIs, no generated clients and no business logic that a vendor holds.
+we need exactly four commodity services from providers, and nothing else: no
+query APIs, no generated clients and no business logic that a vendor holds.
 
 | # | Need | Used for |
 |---|---|---|
@@ -30,8 +30,8 @@ The estimated total at launch scale is **~$50–80/month.**
 
 ## Analysis 1 — Identity
 
-We compared the options only for consumer social sign-in. We did not compare
-enterprise SSO or SMS.
+We compared the options only for consumer social sign-in, not for enterprise
+SSO or SMS.
 
 ### Monthly cost by monthly-active users
 
@@ -45,12 +45,11 @@ enterprise SSO or SMS.
 
 We used these published rates:
 
-- **Firebase / GCIP**: Free up to 50k MAU. Then it has graduated rates:
-  $0.0055/MAU (50k–100k), $0.0046 (100k–1M), $0.0032 (1M–10M). "Graduated"
-  means that each rate applies only to the users in that band.
+- **Firebase / GCIP**: graduated rates after the free tier: $0.0055/MAU
+  (50k–100k), $0.0046 (100k–1M), $0.0032 (1M–10M). Each rate applies only to
+  the users in that band.
 - **Supabase Auth**: Pro includes 100k MAU. Then ~$0.00325/MAU.
-- **Clerk**: ~$0.02/MAU. **Auth0**: ~$0.07/MAU. The prices of the two are for B2B
-  SaaS.
+- **Clerk**: ~$0.02/MAU. **Auth0**: ~$0.07/MAU. Both prices are for B2B SaaS.
 - **WorkOS AuthKit**: Free up to 1,000,000 MAU, with no time limit. Then $2,500
   for each million more. WorkOS makes its money from enterprise SSO
   connections, which we would never buy.
@@ -59,17 +58,16 @@ We used these published rates:
 
 **At our horizon, this is not a cost decision.** At 20k–50k MAU, all the options
 other than Clerk and Auth0 cost $0. Even at 100k, which is 5× our stated ceiling,
-Firebase costs $275/month. For a business of that size, this cost is negligible.
-If we optimise this cost at this time, we optimise a number that does not exist
-yet.
+Firebase costs $275/month, which is negligible for a business of that size. To
+optimise this cost now is to optimise a number that does not exist yet.
 
-Today, the thing that actually differs between the options is **mobile**:
+What actually differs between the options today is **mobile**:
 
 - The Android and iOS SDKs of Firebase are best in class. This product will be
   predominantly a phone app.
 - Google Sign-In integrates with Android Credential Manager / One Tap. This
   gives exactly the zero-typing sign-in that the spec requires.
-- Yash already knows the Firebase mobile SDKs. Thus, he needs no time to learn
+- Yash already knows the Firebase mobile SDKs, so he needs no time to learn
   them.
 - Supabase officially supports Firebase as a third-party auth provider. Thus,
   Supabase will trust JWTs that Firebase issues, and RLS continues to work as
@@ -77,13 +75,13 @@ Today, the thing that actually differs between the options is **mobile**:
 
 WorkOS was genuinely attractive on price (free up to 1M MAU). But WorkOS is
 web-first and B2B-first. On mobile, you wire the OAuth/PKCE flows yourself, and
-the native experience is materially worse. That is a real cost in month four. We
-would pay that cost to save on a bill that we will not see for years.
+the native experience is materially worse. That is a real cost in month four,
+paid to save on a bill that we will not see for years.
 
 **Firebase has no official KMP SDK.** This is not a problem, because auth is
-inherently a platform concern. Thus, the KMP module uses `expect`/`actual` as a
-layer above the native Firebase SDK on each platform. This is standard
-practice, not a workaround.
+inherently a platform concern. The KMP module uses `expect`/`actual` as a layer
+above the native Firebase SDK on each platform: standard practice, not a
+workaround.
 
 ---
 
@@ -111,9 +109,8 @@ practice, not a workaround.
 | Each session | ~9 MB |
 | Monthly egress, with listings | **~700 GB** |
 
-**The decisive ratio is ~14 GB of egress for each 1 GB stored.** When
-engagement increases, this ratio becomes worse. Egress, not storage, is the
-full bill.
+**The decisive ratio is ~14 GB of egress for each 1 GB stored**, and it becomes
+worse when engagement increases. Egress, not storage, is the full bill.
 
 ### Monthly cost
 
@@ -140,39 +137,39 @@ We used these published rates:
 
 - **Zero egress fees.** At all other providers, this workload is 93% egress by
   cost. This is worth approximately **$600/month by the time we reach 200k
-  users**. That is more than all the other infrastructure line items together.
-- **S3-compatible API.** Thus, the exit is a bucket copy and an endpoint change.
+  users**: more than all the other infrastructure line items together.
+- **S3-compatible API.** The exit is a bucket copy and an endpoint change.
 - Cloudflare CDN and Image Transformations are available natively.
 
 **⚠️ We ruled out Wasabi because of its policy, not its price.** Its "no egress
 fees" claim has a fair-use expectation that monthly downloads stay *below* the
-stored volume. Our downloads are ~14× the stored volume. Thus, we would violate
-the policy from month one. The prices of Wasabi are for backup and archive, not
+stored volume. Our downloads are ~14× the stored volume, so we would violate the
+policy from month one. The prices of Wasabi are for backup and archive, not
 media serving.
 
 **We rejected Backblaze B2 because of the vendor count.** Its storage is
 marginally cheaper. But its free egress requires Cloudflare in front, through
-the Bandwidth Alliance. That adds a fourth vendor to save ~$5/month. R2 already
-*is* Cloudflare.
+the Bandwidth Alliance: a fourth vendor to save ~$5/month. R2 already *is*
+Cloudflare.
 
 ---
 
 ## Analysis 3 — Postgres and Realtime (Supabase)
 
-Supabase Postgres is real Postgres. It has no proprietary layer on the critical
-path, and `pg_dump` is the exit. Supabase is open source and self-hostable.
-Thus, the "self-host later to learn ops" path of ADR 0001 is a supported
-migration, not a rewrite.
+- Supabase Postgres is real Postgres, with no proprietary layer on the critical
+  path. `pg_dump` is the exit.
+- Supabase is open source and self-hostable. Thus, the "self-host later to learn
+  ops" path of ADR 0001 is a supported migration, not a rewrite.
 
-**We must use Realtime as `broadcast`, not `postgres_changes`.** In the popular
-mode, clients subscribe to changes on a *table*. This would silently destroy
-ADR 0002. Clients would learn our table names and column shapes. Also, a schema
-change would break shipped mobile apps, and we cannot force-update these apps.
+**Why `broadcast`, not `postgres_changes`.** In the popular mode, clients
+subscribe to changes on a *table*. This would silently destroy ADR 0002:
+clients would learn our table names and column shapes, and a schema change would
+break shipped mobile apps, which we cannot force-update.
 
-With `broadcast`, our API writes the message and applies the rules (rate limit,
-contact-detail stripping, message-request routing). Then it publishes a payload
-to a channel. Clients subscribe to channels, never to tables. The feature is the
-same, the cost is the same, and the boundary is not damaged.
+With `broadcast`, our API writes the message, applies the rules (rate limit,
+contact-detail stripping, message-request routing), and publishes a payload to a
+channel. Clients subscribe to channels, never to tables. The feature and the
+cost are the same, and the boundary is not damaged.
 
 **Capacity note:** Pro includes 500 concurrent realtime connections. Each
 1,000 more connections cost $10. At 20k registered users, peak concurrent
@@ -189,8 +186,8 @@ These rules are non-negotiable and reviewable:
    All other tables foreign-key to *our* ID.
    *Why:* Auth is the one piece with real lock-in. You cannot `pg_dump` an OAuth
    relationship. With this rule, a change of provider is a one-column backfill
-   and a silent Google re-login. Without the rule, the ID of the provider is in
-   all the foreign keys, and the migration is a rewrite.
+   and a silent Google re-login. Without it, the ID of the provider is in all
+   the foreign keys, and the migration is a rewrite.
 2. **Never proxy image bytes through the API.** The API issues a short-lived
    presigned upload URL. The client uploads directly to R2 and reports the key.
 3. **Verification selfies are in a separate, non-public bucket** with short
@@ -199,9 +196,9 @@ These rules are non-negotiable and reviewable:
    photos, one bad bucket policy exposes biometric-grade data.
 4. **Realtime is `broadcast` only.** No client ever subscribes to a table.
 5. **When phone OTP lands, it goes behind our own endpoints**
-   (`POST /auth/phone/start`, `/auth/phone/verify`). Thus, we can replace the
-   SMS provider. In India, Firebase SMS costs $0.01–0.07 for each verification.
-   Local providers like MSG91 cost ~$0.003.
+   (`POST /auth/phone/start`, `/auth/phone/verify`), so that we can replace the
+   SMS provider. In India, Firebase SMS costs $0.01–0.07 for each verification,
+   and local providers like MSG91 cost ~$0.003.
 
 ## Escape hatches
 
