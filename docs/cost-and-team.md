@@ -1,6 +1,6 @@
 # Cost and team
 
-**Date:** 2026-09-20 · **Status:** working · **Decision:** D5
+**Date:** 2026-09-20 · **Status:** working · **Decision:** PD5
 
 **Team:** 4 tech, 2 marketing, 1 designer. Self-funded. Keep spend low, keep
 quality high.
@@ -47,9 +47,9 @@ of them small.
 
 One interview is cheap. A thousand interviews a month at a few rupees each is
 roughly the size of the entire current infrastructure bill. And because the
-chat now runs before login (D6b), anyone can start one.
+chat now runs before login (PD6b), anyone can start one.
 
-So the controls in D9 are a budget control, not just a safety control:
+So the controls in PD9 are a budget control, not just a safety control:
 
 - Rate limit per device and per network
 - Cap anonymous turns before asking for login
@@ -87,7 +87,7 @@ decision.
 
 They are not blocked on anything.
 
-1. **The broker calls.** The D3 decision waits on them. This is the highest
+1. **The broker calls.** The PD3 decision waits on them. This is the highest
    value work available today.
 2. **The blog.** SEO compounds slowly, so late starting costs real traffic.
    Articles need no users and no product. Start now, publish at

@@ -1,6 +1,6 @@
 # Team plan: launch on 12 October
 
-**Status:** ready to assign · **Decision:** D12 · **Generated from** `docs/team-plan.json`
+**Status:** ready to assign · **Decision:** PD12 · **Generated from** `docs/team-plan.json`
 
 Every task below is also a GitHub issue. This file is the baseline, and each person's list, in order, is also in `docs/how-to-work.md`.
 

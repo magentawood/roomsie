@@ -1,6 +1,6 @@
 # Limits on the pre-login chat
 
-**Date:** 2026-09-20 · **Status:** settled · **Decision:** D9
+**Date:** 2026-09-20 · **Status:** settled · **Decision:** PD9
 
 The interview runs before login, so the assistant is open to anyone. At roughly
 ₹1 to ₹2 per completed interview, a bot talking all night costs more than a

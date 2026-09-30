@@ -1,6 +1,6 @@
 # What the assistant will and will not talk about
 
-**Date:** 2026-09-20 · **Status:** proposed · **Decision:** D10
+**Date:** 2026-09-20 · **Status:** proposed · **Decision:** PD10
 
 "Out of context" is not one thing. It is five, and they need different
 handling. Treating them all the same either makes the assistant rude to

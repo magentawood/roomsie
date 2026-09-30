@@ -161,7 +161,7 @@ Some are grounded rather than invented. `smoking` appears by name in
 with the worked example *"my ex basically lived there, that's what killed it."*
 `diet` carries jain and eggetarian because the market is Mumbai.
 
-`community` needs naming out loud: decision **D3c** (2026-09-20) explicitly
+`community` needs naming out loud: decision **PD3c** (2026-09-20) explicitly
 chose to record and filter on community and religion, and `ai-agent-design.md`
 §4.1 documents the press exposure that carries at length. It is in because that
 decision says so. It is one line to remove if that is revisited.

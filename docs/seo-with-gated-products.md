@@ -1,6 +1,6 @@
 # Search and the login gate
 
-**Date:** 2026-09-20 · **Status:** decided · **Closes:** hole 2, decision D6b
+**Date:** 2026-09-20 · **Status:** decided · **Closes:** hole 2, decision PD6b
 
 ---
 
@@ -179,7 +179,7 @@ Needed before launch:
 - A cheaper model or a shorter context for anonymous turns
 - A hard daily spend ceiling with a defined behaviour when it is hit
 
-Tracked as decision D9.
+Tracked as decision PD9.
 
 ---
 

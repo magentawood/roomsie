@@ -1,7 +1,7 @@
 # Verification and the blurred card
 
 **Date:** 2026-09-22 · **Status:** design accepted, one part must change
-**Decision:** D8
+**Decision:** PD8
 
 ---
 
@@ -12,7 +12,7 @@ person with a spare room is a person card, not a listing.
 
 Consequences:
 
-- The broker work, D3 and D4, moves out of v0. It stays blocked on the calls
+- The broker work, PD3 and PD4, moves out of v0. It stays blocked on the calls
   and nothing waits on it.
 - The post-a-listing wizard from the V3 prototype is out of v0.
 - The SEO area pages still work, because they run on people data.
@@ -174,7 +174,7 @@ Given v0 is flatmate matching only:
 | Message someone | Phone, at minimum |
 | Be discoverable at all | Phone |
 
-Listing and broker verification are out of v0 and come back with D3.
+Listing and broker verification are out of v0 and come back with PD3.
 
 ---
 

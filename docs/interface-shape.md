@@ -1,7 +1,7 @@
 # Interface shape
 
 **Date:** 2026-09-20 · **Status:** holes 2 to 5 closed. Mobile provisional.
-**Decision:** D6
+**Decision:** PD6
 
 ---
 

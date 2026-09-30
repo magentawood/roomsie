@@ -1,13 +1,13 @@
 # Launch plan: 12 October 2026
 
-**Date:** 2026-09-23 · **Updated:** 2026-09-26 · **Status:** proposed · **Decision:** D11
+**Date:** 2026-09-23 · **Updated:** 2026-09-26 · **Status:** proposed · **Decision:** PD11
 
 > **Update, 26 September.** Launch moved from 7 October to **Monday 12
 > October**, with **Wednesday 14 October** as the fallback. The move brings
 > four cuts back into launch: the router, Form B and the observer, the advisor
 > (articles first, then web search for signed-in users), and a separate
 > analytics database. Nightly backups were added, because both databases are on
-> free Supabase accounts (D13). **Quality comes before the date:** if a
+> free Supabase accounts (PD13). **Quality comes before the date:** if a
 > go/no-go check fails, the date moves a little rather than shipping something
 > below it.
 >
@@ -172,4 +172,4 @@ and tells marketing where to seed next.
 ## Assumptions
 
 - **v0 is free.** There is no monetisation in two weeks and nothing to charge for.
-  D4 moves to v1.
+  PD4 moves to v1.
