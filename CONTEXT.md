@@ -30,7 +30,9 @@ roomsie is a pivot. The previous product, **femmeflats**, was a women-only,
 swipe-stack discovery app — dating-app mechanics applied to shared living. Its
 PRD is **deprecated**: do not cite it as a requirement source. It was deleted
 from the repo, but three architecture decisions were argued from claims it
-made, so it stays in git history: `git show 6b1ac08:docs/source/femmeflats-PRD-deprecated.md`.
+made, so it stays in git history: `git show 6b1ac08:docs/source/femmeflats-PRD-deprecated.md`. The
+women-only "HerNest" PRD draft was deleted the same way:
+`git show a3d135e:docs/source/PRD-DraftV1.pdf > PRD-DraftV1.pdf`.
 
 The **technical base does not change.** Fifteen accepted ADRs and a full
 architecture record carry over unchanged. They are vendored in
@@ -230,7 +232,7 @@ roomsie/
 │   ├── plan/                   the Obsidian view, generated
 │   ├── *.md                    decision notes: interface, agent, models, scope, limits, SEO, verification
 │   ├── research/ · content/    market research and the article corpus plan
-│   └── source/                 vendored inputs: the V3 prototype and the PRD draft
+│   └── source/                 vendored inputs: the V3 prototype
 ├── tools/
 │   └── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
 ├── .github/workflows/ci.yml    typecheck, lint, build, secret scan       T-03
