@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**8 of 189 done · 4%**
+**8 of 191 done · 4%**
 
 `█░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -22,11 +22,11 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 0 / 9 | 0 / 27 | 0% |
+| [[P1 Platform]] | 0 / 9 | 0 / 28 | 0% |
 | [[P2 Chat]] | 0 / 13 | 0 / 48 | 0% |
 | [[P3 Data and trust]] | 1 / 4 | 8 / 19 | 42% |
 | [[P4 Content and moderation]] | 0 / 6 | 0 / 20 | 0% |
-| [[P5 Accounts and people]] | 0 / 5 | 0 / 15 | 0% |
+| [[P5 Accounts and people]] | 0 / 5 | 0 / 16 | 0% |
 | [[Design]] | 0 / 6 | 0 / 13 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 11 | 0% |
@@ -35,9 +35,9 @@ This note is part of [[roomsie launch]].
 
 ---
 
-## P1 Platform — 0/27
+## P1 Platform — 0/28
 
-> [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/5
+> [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
 
 > [!todo]- ⬜ [[T-05 Google sign-in ⚑]] · 0/3
@@ -143,12 +143,12 @@ This note is part of [[roomsie launch]].
 > ![[T-22 Launch areas and waitlist#^done]]
 
 
-## P5 Accounts and people — 0/15
+## P5 Accounts and people — 0/16
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/3
 > ![[M-03 Eval sentences#^done]]
 
-> [!todo]- ⬜ [[T-03 CI checks]] · 0/2
+> [!todo]- ⬜ [[T-03 CI checks]] · 0/3
 > ![[T-03 CI checks#^done]]
 
 > [!todo]- ⬜ [[T-24 Event logging]] · 0/4

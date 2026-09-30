@@ -44,6 +44,7 @@ One folder for the website, server and shared code. All five people commit into 
 - [ ] packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows
 - [ ] `pnpm dev` runs web and API locally. docs/ has no changes
 - [ ] The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
+- [ ] The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook
 
 ^done
 
