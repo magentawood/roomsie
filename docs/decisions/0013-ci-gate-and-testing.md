@@ -12,9 +12,7 @@ follow:
 2. **Each test is an hour that we do not spend on features.** The total is
    approximately 200 hours.
 
-Thus, the question is not how much testing is good in the abstract. The question
-is where the expensive bugs actually are in this product.
-
+Thus, the question is where the expensive bugs actually are in this product.
 For femmeflats, these bugs concentrate in a small number of server-side rules.
 Each rule is deterministic, genuinely hard to verify by hand, and severe when it
 is incorrect:
@@ -44,22 +42,20 @@ Each pull request runs these checks:
 | `check-tokens.mjs` | Components use only semantic tokens: no hex and no arbitrary values |
 | `gitleaks` | Finds a secret paste before it becomes permanent git history |
 
-Unit tests are a **coding-time habit**, not a task of its own. The person who
-writes the code writes its tests in the same pass. CI runs the full suite on each
-merge check.
+The person who writes the code writes its tests in the same pass. CI runs the
+full suite on each merge check.
 
 ## Rationale
 
-Integration tests on the rule areas give the highest confidence for each hour
-that we spend. These rules are exactly the items that a person cannot eyeball.
-They are also exactly the items where an error is unacceptable on a safety
-product. Here, it is important to run the tests against a real disposable
-Postgres, not mocks. The queue rules are largely SQL. Thus, a mocked database
-would test nothing that ships.
-
-We keep frontend unit tests to the tests that developers write naturally. We do
-not mandate component coverage. Thus, we do not pay maintenance on assertions
-about a UI that is not stable.
+- **Integration tests on the rule areas give the highest confidence for each
+  hour that we spend.** These rules are exactly the items that a person cannot
+  eyeball, and exactly the items where an error is unacceptable on a safety
+  product.
+- **Real disposable Postgres, not mocks.** The queue rules are largely SQL.
+  Thus, a mocked database would test nothing that ships.
+- **Frontend unit tests stay at the tests that developers write naturally.** We
+  do not mandate component coverage. Thus, we do not pay maintenance on
+  assertions about a UI that is not stable.
 
 ## Consequences
 
@@ -73,13 +69,15 @@ about a UI that is not stable.
 ## Deferred
 
 **Playwright end-to-end tests on critical paths** — signup → verification →
-swipe → first message. These tests are genuinely valuable. They find integration
-breaks that nothing else sees. We deferred them because E2E tests are slow to
-write and brittle while the UI changes each week. The realistic cost is 15–20
-hours at this time, plus continued maintenance, against a 200-hour launch budget.
+swipe → first message.
 
-Revisit these tests after the UI becomes stable. Ideally, do this before the
-first release where a regression would reach real users.
+- These tests are genuinely valuable. They find integration breaks that nothing
+  else sees.
+- We deferred them because E2E tests are slow to write and brittle while the UI
+  changes each week. The realistic cost is 15–20 hours at this time, plus
+  continued maintenance.
+- Revisit these tests after the UI becomes stable. Ideally, do this before the
+  first release where a regression would reach real users.
 
 ## Alternatives rejected
 
