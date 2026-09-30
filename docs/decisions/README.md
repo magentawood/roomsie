@@ -1,7 +1,8 @@
 # Architecture Decision Records
 
-One file per decision. Each records what we chose, why, what we rejected, and
-when to revisit. If a decision gets re-argued in a meeting, the answer is here.
+There is one file for each decision. Each file records what we chose, why we
+chose it, what we rejected, and when to examine the decision again. If people argue
+a decision again in a meeting, the answer is in these files.
 
 **Format:** `NNNN-short-slug.md` · Status: Proposed / Accepted / Superseded
 
@@ -24,12 +25,13 @@ when to revisit. If a decision gets re-argued in a meeting, the answer is here.
 | [0015](0015-primary-key-strategy.md) | UUIDv7 primary keys, no DB default, client mints for offline writes | Accepted |
 
 
-> **Note on requirements sources.** `PRD.md` is **deprecated** (2026-09-14) and
-> must not be cited. ADRs 0007 and 0009 were argued from requirements it stated
+> **Note on requirements sources.** `PRD.md` is **deprecated** (2026-09-14).
+> You must not cite it. ADRs 0007 and 0009 used its requirements as arguments
 > (analytics event volume, chat rate limits, auto-suspend on report threshold,
-> listings as the SEO surface). The *technical* reasoning stands on its own, but
-> those requirement claims should be revalidated against whatever replaces the PRD.
-> femmeflats is **light-first**, matching Untitled UI.
+> listings as the SEO surface). The *technical* reasoning is correct without the
+> PRD. But we should examine those requirement claims again against the document
+> that replaces the PRD.
+> femmeflats is **light-first**, the same as Untitled UI.
 
 ## The stack so far
 
@@ -57,51 +59,53 @@ when to revisit. If a decision gets re-argued in a meeting, the answer is here.
       └───────────────┘     └────────────────┘    └────────────────┘
 ```
 
-Clients hold a Firebase ID token and hit `apps/api`. They never open a database
-connection, never subscribe to a Postgres table, and never learn a column name.
+Clients hold a Firebase ID token and send requests to `apps/api`. Clients never
+open a database connection. They never subscribe to a Postgres table. They never
+know the name of a column.
 
 
 ## Where we are
 
-Fourteen architecture decisions are settled. **Schema design is in progress** —
-before any scaffolding, because the data model is the most expensive thing to
-change. Schema decisions are ADR 0015 onward, and are mirrored on the Schema
-page of `../tech-base.md`.
+We agreed on fourteen architecture decisions. **Schema design is in progress.** We
+do it before all scaffolding, because the data model is the most expensive item
+to change. Schema decisions start at ADR 0015. The Schema page of
+`../tech-base.md` also shows them.
 
 - ✅ **S1 — ID strategy** → ADR 0015
 - ⏳ **S2 — `users` table** ← next
 
-Scope still to cover:
+The schema work has these items, which are not complete:
 
-- `users` — our own id as PK, `auth_provider_id` (Firebase UID) as a plain
-  column, `tokens_valid_after` for instant revocation (ADR 0007), verification state
+- `users`: our own id as PK, `auth_provider_id` (Firebase UID) as a plain
+  column, `tokens_valid_after` for instant revocation (ADR 0007), and the
+  verification state
 - profiles and the rapid-fire attribute model
-- the queue state table — per (viewer, target): unseen → seen → accepted/rejected,
-  reject counts and suppression windows
-- listings, with lister accounts kept separate from user accounts
+- the queue state table, for each (viewer, target): unseen → seen →
+  accepted/rejected, reject counts and suppression windows
+- listings. Lister accounts and user accounts are different accounts.
 - chat: threads, messages, message requests, blocks, reports
-- the analytics event schema — versioned, with `event_version`, plus the
-  retention/deletion policy required by ADR 0012
+- the analytics event schema. It has versions, with `event_version`. It also
+  has the retention/deletion policy that ADR 0012 requires.
 
-**Then:** scaffold the monorepo. Scaffolding `apps/web` with Untitled UI also
-unblocks the token generator's naming transform (ADR 0011), which needs the real
-`theme.css` on disk.
+**Then:** scaffold the monorepo. When we scaffold `apps/web` with Untitled UI,
+we can also start the token generator's naming transform (ADR 0011). This
+transform needs the real `theme.css` on disk.
 
-**Open items carried forward** are listed at the end of `../tech-base.md`.
+**Open items carried forward** are at the end of `../tech-base.md`.
 
 ## Standing rules
 
-1. Our own `users.id` is the primary key everywhere; the Firebase UID is a plain
-   `auth_provider_id` column. (ADR 0005)
-2. Every byte entering the API from outside is parsed by a Zod schema before any
-   other code touches it. (ADR 0004)
-3. The OpenAPI document is generated and committed from day one — it is the
-   contract all clients generate from. (ADR 0004)
-4. Image bytes never pass through the API; clients upload directly to R2 via
-   presigned URLs. (ADR 0005)
-5. Verification selfies live in a separate, non-public bucket. (ADR 0005)
-6. Realtime is `broadcast` only — no client subscribes to a table. (ADR 0005)
-7. No business logic in Next.js. Route handlers are for OAuth callbacks, image
-   proxying and webhooks only. (ADR 0003)
-8. Every primary key is a UUIDv7 with no database default. Never sort by the id —
+1. Our own `users.id` is the primary key in all locations. The Firebase UID is a
+   plain `auth_provider_id` column. (ADR 0005)
+2. A Zod schema parses all bytes that come into the API from outside. It parses
+   them before all other code touches them. (ADR 0004)
+3. We generate and commit the OpenAPI document from day one. It is the contract
+   that all clients generate from. (ADR 0004)
+4. Image bytes never go through the API. Clients upload images directly to R2
+   with presigned URLs. (ADR 0005)
+5. Verification selfies are in their own bucket, which is not public. (ADR 0005)
+6. Realtime is `broadcast` only. No client subscribes to a table. (ADR 0005)
+7. Next.js has no business logic. Route handlers are only for OAuth callbacks,
+   image proxying and webhooks. (ADR 0003)
+8. Each primary key is a UUIDv7 with no database default. Never sort by the id.
    `created_at` (server clock) is the only chronology. (ADR 0015)
