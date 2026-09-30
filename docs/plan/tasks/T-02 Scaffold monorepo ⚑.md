@@ -47,6 +47,6 @@ tags:
 
 ## Read first
 - [CONTEXT.md](../../../CONTEXT.md)
-- [0010-monorepo-tooling.md](../../source/decisions/0010-monorepo-tooling.md)
-- [0003-api-as-separate-service.md](../../source/decisions/0003-api-as-separate-service.md)
+- [0010-monorepo-tooling.md](../../decisions/0010-monorepo-tooling.md)
+- [0003-api-as-separate-service.md](../../decisions/0003-api-as-separate-service.md)
 - [extensibility.md](../../extensibility.md)

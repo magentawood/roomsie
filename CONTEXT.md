@@ -34,7 +34,7 @@ architecture decisions were argued from claims it made.
 
 The **technical base does not change.** Fifteen accepted ADRs and a full
 architecture record carry over unchanged. They are vendored in
-`docs/source/decisions/` and `docs/source/tech-base.html`.
+`docs/decisions/` and `docs/tech-base.html`.
 
 A clickable wireframe for the pre-pivot product is at
 `docs/source/roomsie-prototype-V3.html`, kept as context for what UI already
@@ -78,7 +78,7 @@ exists to keep, cut or rework.
 
 ## Product record
 
-**`docs/product-base.html` is the one-page record of every product decision,** in the same format as `docs/source/tech-base.html`. Open it in a browser. Keep it in step with the tables above.
+**`docs/product-base.html` is the one-page record of every product decision,** in the same format as `docs/tech-base.html`. Open it in a browser. Keep it in step with the tables above.
 
 ## Team plan
 

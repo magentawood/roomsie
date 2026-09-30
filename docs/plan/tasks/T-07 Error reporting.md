@@ -36,4 +36,4 @@ tags:
 ^done
 
 ## Read first
-- [0014-error-tracking.md](../../source/decisions/0014-error-tracking.md)
+- [0014-error-tracking.md](../../decisions/0014-error-tracking.md)
