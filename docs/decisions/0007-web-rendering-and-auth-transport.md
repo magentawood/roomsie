@@ -4,100 +4,104 @@
 
 ## Context
 
-`apps/web` must serve two very different kinds of page. Landing and property
-listings are the organic-search surface (per the product requirements) and need to be
-crawlable. The authenticated app — stack, liked, chat, settings — has no SEO
-value at all; nobody searches for someone's chat inbox.
+`apps/web` must serve two very different types of page. The landing page and
+the property listings are the organic-search surface (per the product
+requirements). Thus, they must be crawlable. The authenticated app (stack,
+liked, chat, settings) has no SEO value at all. Nobody searches for the chat
+inbox of a different person.
 
-Separately, identity has to travel to `apps/api` in a way that Android and iOS
-can reuse unchanged (ADR 0002).
+Also, identity must go to `apps/api` in a way that Android and iOS can use
+again with no change (ADR 0002).
 
 ## Decision
 
-**1. Rendering is split by whether the page needs SEO.**
+**1. The rendering of a page depends on if the page needs SEO.**
 
 | Surface | Rendering | Identity |
 |---|---|---|
-| Landing, listing browse, listing detail | Server-rendered by Next, calling `apps/api` server-to-server | None — public data |
-| Stack, liked, chat, settings | Client-rendered in the browser | Firebase ID token in `Authorization: Bearer` |
+| Landing, listing browse, listing detail | Next renders the page on the server and calls `apps/api` server-to-server | None. The data is public. |
+| Stack, liked, chat, settings | The browser renders the page on the client | Firebase ID token in `Authorization: Bearer` |
 
 **2. `Authorization: Bearer <Firebase ID token>` is the single authentication
-mechanism**, identical on web, Android and iOS. No session cookies.
+mechanism.** It is the same on web, Android and iOS. We use no session cookies.
 
 **3. `users.tokens_valid_after timestamptz not null default now()` ships in the
-first migration**, with the check in auth middleware from day one.
+first migration.** The check is in the auth middleware from day one.
 
 ## Rationale
 
-**Why Bearer rather than session cookies.** A cookie path would be web-only —
-mobile clients cannot use cookies — leaving two authentication code paths to
-build, test and keep in sync forever. That is exactly the divergence ADR 0002
-exists to prevent. With Bearer, the API has one verification path for all three
-clients.
+**Why Bearer and not session cookies.** A cookie path would be web-only, because
+mobile clients cannot use cookies. Thus, we would have two authentication code
+paths to build, test and keep in sync forever. ADR 0002 exists to prevent
+exactly this divergence. With Bearer, the API has one verification path for all
+three clients.
 
-**How verification works.** The Firebase ID token is a JWT signed by Google with
-RS256. The API caches Google's public keys and verifies the signature locally —
-no database lookup, no call to Firebase.
+**How verification works.** The Firebase ID token is a JWT that Google signs
+with RS256. The API caches the public keys of Google and verifies the signature
+locally. It does no database lookup and does not call Firebase.
 
-Firebase issues two tokens per session:
+Firebase issues two tokens for each session:
 
 | Token | Lifetime | Who sees it |
 |---|---|---|
-| ID token (JWT) | ~1 hour, **not configurable** | Sent to our API on every request |
-| Refresh token (opaque) | Long-lived | Stays on device. Our API never sees it. |
+| ID token (JWT) | ~1 hour, **not configurable** | The client sends it to our API with each request. |
+| Refresh token (opaque) | Long-lived | It stays on the device. Our API never sees it. |
 
-The platform SDK silently exchanges the refresh token for a fresh ID token
-before expiry.
+Before the ID token expires, the platform SDK silently exchanges the refresh
+token for a new ID token.
 
-**Why we do not try to shorten the 1-hour TTL.** It is fixed by Firebase and
-cannot be configured — only session cookies have an adjustable lifetime (5
+**Why we do not try to shorten the 1-hour TTL.** Firebase sets this TTL, and we
+cannot configure it. Only session cookies have an adjustable lifetime (5
 minutes to 2 weeks), and we rejected cookies above.
 
-More importantly, it is the wrong lever. The threat a short TTL addresses is a
-stolen token, and tokens are stolen via XSS. An attacker who can run JavaScript
-on the page harvests fresh tokens continuously for as long as the tab is open,
-or takes the refresh token and mints their own. A 5-minute TTL barely
-inconveniences that attacker while costing 12× the refresh traffic and a class
-of "expired mid-request" retry edge cases.
+More importantly, a shorter TTL is the incorrect lever. The threat that a short TTL
+addresses is a stolen token, and attackers steal tokens through XSS. An
+attacker who can run JavaScript on the page continuously harvests new tokens
+while the tab is open. Or the attacker takes the refresh token and mints their
+own tokens. A 5-minute TTL barely inconveniences that attacker. But it costs
+12× the refresh traffic and adds a class of "expired mid-request" retry edge
+cases.
 
-**What we build instead: instant revocation.** Because we own the `users` table
-(ADR 0005 Rule 1), we add one column and one check:
+**What we build as an alternative: instant revocation.** We own the `users`
+table (ADR 0005 Rule 1). Thus, we add one column and one check:
 
 ```ts
 // after verifying the JWT signature
 if (decoded.iat * 1000 < user.tokens_valid_after.getTime()) throw unauthorized()
 ```
 
-Setting `tokens_valid_after = now()` kills every session that user holds, on
-every device, immediately. This serves suspend, ban, "log out everywhere" and
-compromise response with the same one-line write — and the product requirements call for
-auto-suspend on crossing the report-rate threshold, which needs exactly this.
+If we set `tokens_valid_after = now()`, all the sessions of that user stop
+immediately, on all devices. This one-line write serves suspend, ban, "log out
+everywhere" and compromise response. Also, the product requirements require
+auto-suspend when a user goes above the report-rate threshold. Auto-suspend
+needs exactly this.
 
-Cost: one column, ~3 lines of middleware, roughly an hour. Firebase's
-`verifyIdToken(token, checkRevoked: true)` achieves something similar but makes
-a network call to Google on every request; our column is a local check on a row
-we have already loaded.
+The cost is one column, ~3 lines of middleware, and approximately one hour.
+Firebase's `verifyIdToken(token, checkRevoked: true)` does a similar thing. But
+it makes a network call to Google on each request. Our column is a local check
+on a row that the API already loaded.
 
 ## Consequences
 
-- The API rejects requests on two grounds: invalid signature, and `iat` older
-  than `tokens_valid_after`.
-- CORS must be configured on `apps/api` for the web origin.
-- The ID token lives in JavaScript and is therefore XSS-reachable. Mitigations:
-  strict Content-Security-Policy, the Firebase SDK's in-memory token storage
-  (not `localStorage`), 1-hour expiry, and instant revocation above. This is the
-  same exposure every mobile app accepts.
-- Public pages must not require identity, so the API needs unauthenticated read
-  endpoints for listings and landing content.
+- The API rejects a request for two reasons: an invalid signature, or an `iat`
+  older than `tokens_valid_after`.
+- We must configure CORS on `apps/api` for the web origin.
+- The ID token is in JavaScript. Thus, it is XSS-reachable. The mitigations are
+  a strict Content-Security-Policy, the in-memory token storage of the Firebase
+  SDK (not `localStorage`), the 1-hour expiry, and the instant revocation above.
+  All mobile apps accept this same exposure.
+- Public pages must not require identity. Thus, the API needs unauthenticated
+  read endpoints for listings and landing content.
 
 ## Alternatives rejected
 
-- **Everything client-side** — simplest, one auth path, but forfeits the organic
-  search traffic the product depends on.
-- **Everything server-side with session cookies** — best XSS protection and
-  first paint, but web-only, so two auth paths forever.
+- **Everything client-side**: This is the simplest option, with one auth path.
+  But it loses the organic search traffic that the product depends on.
+- **Everything server-side with session cookies**: This gives the best XSS
+  protection and the best first paint. But it is web-only. Thus, we would have
+  two auth paths forever.
 
 ## Revisit when
 
-XSS risk becomes unacceptable (e.g. after a real incident), at which point a
-cookie layer can be added *in addition to* Bearer without removing it.
+The XSS risk becomes unacceptable (for example, after a real incident). Then we
+can add a cookie layer *in addition to* Bearer, and not remove Bearer.
