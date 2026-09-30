@@ -242,7 +242,7 @@ Target **{f(next(m[2] for m in ms if m[0] == 'CP4'))} 2026**, fallback Wed 14 Oc
 - [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
 - [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
 - [[CONTEXT|Working context]] — the running decision record
-- `docs/product-base.html` and `docs/tech-base.html` — the product and technical records, open in a browser
+- `docs/product-base.md` and `docs/tech-base.md` — the product and technical records. Each has a browser version, `.html`, made by `tools/render-docs.py`
 
 ---
 
