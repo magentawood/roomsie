@@ -110,7 +110,8 @@ def body(t):
     i, n = sequence(t)
     when = day(t["start"]) if t["start"] == t["end"] else f"{day(t['start'])} → {day(t['end'])}"
     cp_name, cp_due = MS[t["cp"]]
-    lines = [
+    lines = [t["plain"], ""] if t.get("plain") else []
+    lines += [
         f"**Lane:** {P['roles'][t['role']]}",
         f"**Sequence:** task {i} of {n} in this lane",
     ]

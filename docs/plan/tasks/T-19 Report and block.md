@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#45](https://github.com/magentawood/roomsie/issues/45)
 
+The safety tools.
+
 ## Needs first
 - [[T-06 Database schema ⚑]]
 

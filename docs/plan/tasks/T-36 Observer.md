@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#65](https://github.com/magentawood/roomsie/issues/65)
 
+Records what chips cannot capture, only when it can quote the user. It discards a note with no exact quote.
+
 ## Needs first
 - [[T-35 Form B contract]]
 - [[T-12 Extraction ⚑]]

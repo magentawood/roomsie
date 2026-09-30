@@ -25,6 +25,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Before anyone builds them.
+
 ## Needs first
 - [[D-01 Styling decision]]
 

@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#29](https://github.com/magentawood/roomsie/issues/29)
 
+Keeps the public out until launch day.
+
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 

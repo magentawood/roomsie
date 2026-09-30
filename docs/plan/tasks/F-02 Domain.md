@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#3](https://github.com/magentawood/roomsie/issues/3)
 
+Buy it before a different person does.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

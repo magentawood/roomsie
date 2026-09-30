@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#30](https://github.com/magentawood/roomsie/issues/30)
 
+Real machines in Mumbai, so anyone on the internet can use the site.
+
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 

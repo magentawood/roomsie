@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+One folder for the website, server and shared code. All five people commit into it.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+One cheap model call decides what a message is. Thus, it decides which handlers run. *Example: "write my essay" gets a polite scripted line, with no model call, and is logged.*
+
 ## Needs first
 - [[T-12 Extraction ⚑]]
 

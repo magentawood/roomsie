@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP5 First-week review]]  
 **Issue:** [#55](https://github.com/magentawood/roomsie/issues/55)
 
+Get real flats listed.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

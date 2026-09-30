@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#68](https://github.com/magentawood/roomsie/issues/68)
 
+Keeps analytics writes off the main database.
+
 ## Needs first
 - [[T-24 Event logging]]
 

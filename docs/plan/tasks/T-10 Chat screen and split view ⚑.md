@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+The main screen: chat on one side, results on the other.
+
 ## Needs first
 - [[D-02 Chat screen designs ⚑]]
 

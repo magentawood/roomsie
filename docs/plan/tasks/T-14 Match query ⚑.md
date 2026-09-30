@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Takes what a person wants and returns the people who fit.
+
 ## Needs first
 - [[T-06 Database schema ⚑]]
 - [[T-08 Form A contract ⚑]]

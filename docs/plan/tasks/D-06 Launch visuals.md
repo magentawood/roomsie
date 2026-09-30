@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#52](https://github.com/magentawood/roomsie/issues/52)
 
+The images for the launch-day posts.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

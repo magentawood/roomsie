@@ -25,6 +25,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+What we will do with their data.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

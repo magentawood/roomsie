@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#33](https://github.com/magentawood/roomsie/issues/33)
 
+The assistant writes its answers and stays on the topic.
+
 ## Needs first
 - [[T-11 Model wrapper ⚑]]
 

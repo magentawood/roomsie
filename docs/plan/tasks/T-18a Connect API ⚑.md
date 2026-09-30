@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+The server side of a connect request. Shows phone numbers only when the two people agree.
+
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]

@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#24](https://github.com/magentawood/roomsie/issues/24)
 
+Checks each pull request automatically.
+
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 

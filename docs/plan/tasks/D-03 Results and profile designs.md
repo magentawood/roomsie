@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#19](https://github.com/magentawood/roomsie/issues/19)
 
+Match cards, profile pages and the connect flow.
+
 ## Needs first
 - [[D-01 Styling decision]]
 

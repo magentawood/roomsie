@@ -26,6 +26,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Log in with Google. The server checks the user on each request.
+
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 

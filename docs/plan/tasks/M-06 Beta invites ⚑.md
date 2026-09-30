@@ -25,6 +25,8 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
+Let the 100 seeded people in before the public.
+
 ## Needs first
 - [[M-02 100 sign-ups]]
 - [[T-16 Profiles and photos ⚑]]

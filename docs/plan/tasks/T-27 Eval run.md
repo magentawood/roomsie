@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#48](https://github.com/magentawood/roomsie/issues/48)
 
+Test the assistant on real sentences. Fix what it gets wrong.
+
 ## Needs first
 - [[T-12 Extraction ⚑]]
 

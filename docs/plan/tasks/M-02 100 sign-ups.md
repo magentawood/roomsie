@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#22](https://github.com/magentawood/roomsie/issues/22)
 
+100 real people before launch.
+
 ## Needs first
 - [[M-01 Seeding form ⚑]]
 

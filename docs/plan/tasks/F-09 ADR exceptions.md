@@ -21,6 +21,8 @@ tags:
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#18](https://github.com/magentawood/roomsie/issues/18)
 
+Where we knowingly broke our own architecture rules, and why.
+
 ## Needs first
 - Nothing. You can start this task at any time.
 

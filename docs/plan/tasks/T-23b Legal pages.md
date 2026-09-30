@@ -22,6 +22,8 @@ tags:
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#40](https://github.com/magentawood/roomsie/issues/40)
 
+The legal pages that each Indian site must have.
+
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 
