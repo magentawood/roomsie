@@ -5,14 +5,19 @@
 
 ## The v0 scope decision
 
-**v0 is flatmate matching only.** It has no property listing objects. A person
-with a spare room is a person card, not a listing. Results:
+- **v0 is flatmate matching only.** It has no property listing objects.
+- A person with a spare room is a person card, not a listing.
 
-- The broker work (PD3 and PD4) moves out of v0. It stays blocked on the
-  calls. No work waits on it.
+Results:
+
+- The broker work (PD3 and PD4) moves out of v0. It stays blocked on the calls. No work waits on it.
 - The post-a-listing wizard from the V3 prototype is out of v0.
-- The SEO area pages use people data. Thus, they continue to work.
-- Cold start is easier: one side of a marketplace, not two.
+- The SEO area pages continue to work.
+- Cold start is easier.
+
+> [!note]- Why
+> - The SEO area pages use people data.
+> - Cold start has one side of a marketplace, not two.
 
 ## The design as proposed
 
@@ -26,34 +31,27 @@ with a spare room is a person card, not a listing. Results:
 
 ## Why the mutual rule is the strongest part
 
-Only verified users can see verified-only people. Thus, the rule makes
-verification increase itself: all blurred cards are reasons to verify.
+- **Use the blur as the conversion prompt, not only as protection.**
+- **Plan for cold start.** At launch, a verified user who selects the setting is invisible to almost all users.
+- Guard 1: at launch, the verified-only setting is **off**. Offer it when the verified pool is sufficiently large to hide in.
+- Guard 2: always show the **count** of hidden matches, also on blurred cards.
 
-**Use the blur as the conversion prompt, not only as protection:** "3 of your 4
-matches are verified only. Verify to see them." This converts much better than
-a settings page that nobody opens.
-
-**Plan for cold start.** At launch, almost no users have verification. Thus, a
-verified user who selects the setting is invisible to almost all users. Two
-guards:
-
-- At launch, the verified-only setting is **off**. Offer it when the verified
-  pool is sufficiently large to hide in.
-- Always show the **count** of hidden matches, also on blurred cards. Without a
-  count, a blurred card is only an absence.
+> [!note]- Why
+> - Only verified users can see verified-only people. Thus, the rule makes verification increase itself: all blurred cards are reasons to verify.
+> - An example message: "3 of your 4 matches are verified only. Verify to see them." This converts much better than a settings page that nobody opens.
+> - At launch, almost no users have verification.
+> - Without a count, a blurred card is only an absence.
 
 ## The blur must happen on the server
 
-**If the browser gets the initial image and CSS blurs it, there is no
-protection:** anyone can read the image in the network tab. This is the most
-frequent error in this feature.
+- At upload time, make a different blurred asset and serve its URL.
+- Do not give the address of the initial image to a viewer without permission.
 
-At upload time, make a different blurred asset and serve its URL. Do not give
-the address of the initial image to a viewer without permission.
-
-This agrees with ADR 0005: images go directly to R2, and viewers get them
-through short-lived signed URLs after an authorisation check. The blurred copy
-is one more object with a different access rule.
+> [!note]- Why
+> - If the browser gets the initial image and CSS blurs it, there is no protection. Anyone can read the image in the network tab.
+> - This is the most frequent error in this feature.
+> - This agrees with ADR 0005: images go directly to R2, and viewers get them through short-lived signed URLs after an authorisation check.
+> - The blurred copy is one more object with a different access rule.
 
 ## The manual Aadhaar route: do not build it
 
@@ -67,30 +65,28 @@ UIDAI will ban them.**
   verifies Aadhaar**. Then it must use approved methods, **not physical or
   digital copies**: offline QR check, API authentication, or the new Aadhaar
   app.
-- UIDAI prepares to fully **forbid private entities to collect and keep Aadhaar
-  photocopies**.
 - If the law permits a copy, you must mask the first eight digits.
+- The manual route puts the most sensitive identity data in India into the storage of a seven-person startup.
 
-"Upload a photo or PDF of your Aadhaar and we will check it by hand" is the
-practice that UIDAI removes. It also puts the most sensitive identity data in
-India into the storage of a seven-person startup. Do not accept responsibility
-for that breach risk.
+> [!note]- Why
+> - "Upload a photo or PDF of your Aadhaar and we will check it by hand" is the practice that UIDAI removes.
+> - Do not accept responsibility for that breach risk.
 
 ### What to do instead
 
-**Primary route: DigiLocker, through an established KYC provider.** After OTP
-authentication by the user, DigiLocker returns a signed Aadhaar XML. You get a
-verified assertion and at no time hold the document.
+**Primary route: DigiLocker, through an established KYC provider.**
 
-**Do not connect to DigiLocker directly.** That needs registration with MeitY
-as a document requester, a status of approximately 4,313 agencies. Registered
-providers, such as Surepass, AuthBridge, Sandbox and IDfy, sell the API. Buy
-it. Four part-time engineers should not use a month on this.
+- After OTP authentication by the user, DigiLocker returns a signed Aadhaar XML.
+- You at no time hold the document.
+
+**Do not connect to DigiLocker directly.**
+
+- A direct connection needs registration with MeitY as a document requester.
+- Buy the API from a registered provider, such as Surepass, AuthBridge, Sandbox or IDfy.
+- Four part-time engineers should not use a month on this.
 
 **Fallback route: a government ID that is not Aadhaar**, for example a
-passport, driving licence or voter ID. The Aadhaar Act restrictions do not
-apply to them. A person compares the selfie to the ID photo: the same check,
-without the legal problem.
+passport, driving licence or voter ID. A person compares the selfie to the ID photo.
 
 **What you store, in all cases:**
 
@@ -102,45 +98,46 @@ without the legal problem.
 | Name as returned | |
 | Last 4 digits at most, and only if we store a value | |
 
-Delete the document after the check. For verification selfies, ADR 0005
-requires a different non-public bucket, short retention, and signed-URL access
-only. Identity documents need the same rule or a stronger rule.
+- Delete the document after the check.
+- For verification selfies, ADR 0005 requires a different non-public bucket, short retention, and signed-URL access only.
+- Identity documents need the same rule or a stronger rule.
+
+> [!note]- Why
+> - DigiLocker gives you a verified assertion.
+> - Approximately 4,313 agencies have the document-requester status.
+> - The Aadhaar Act restrictions do not apply to the fallback IDs. Thus, the fallback is the same check, without the legal problem.
 
 ## The operational load nobody has costed
-
-Manual review is a job, not a feature.
 
 | Question | Needs an answer before launch |
 |---|---|
 | Who reviews? | One named person, with a backup |
 | How fast? | An SLA. People will not wait more than 24 hours. |
-| What happens at backlog? | A visible queue. Users know their position in it. |
+| What happens at backlog? | A queue that users can see. Users know their position in it. |
 | Who can see submitted documents? | Named accounts only, with an audit log of all views |
 | What about rejections? | A fast, polite appeal path |
 
-**Budget for incorrect rejections.** A person who hears "your face does not
-agree with your ID" feels accused. The appeal must be fast, and a person must
-answer it.
+- **Budget for incorrect rejections.** The appeal must be fast, and a person must answer it.
+- DigiLocker is instant and needs no person.
 
-**Manual review does not scale:** at a hundred signups a day, it uses most of
-the morning of one person. DigiLocker is instant and needs no person. That is
-the primary reason to make DigiLocker the first route, not an optional route.
+> [!note]- Why
+> - Manual review is a job, not a feature.
+> - A person who hears "your face does not agree with your ID" feels accused.
+> - Manual review does not scale: at a hundred signups a day, it uses most of the morning of one person.
+> - Thus, DigiLocker is the first route, not an optional route.
 
 ## Two badges or one
 
-DigiLocker gives a cryptographically signed government assertion. A person who
-compares a selfie to a driving licence gives an opinion that a forger can
-deceive.
+- **Show one badge.**
+- **Record the route internally.** The manual route is the route to monitor for fraud.
 
-**Show one badge.** Two levels of verified cause confusion and tell users that
-the lower level is not truly verified. This makes the full mechanism weak.
-
-**Record the route internally.** If fraud occurs, you will want to know its
-route. The manual route is the route to monitor for fraud.
+> [!note]- Why
+> - DigiLocker gives a cryptographically signed government assertion.
+> - A person who compares a selfie to a driving licence gives an opinion that a forger can deceive.
+> - Two levels of verified cause confusion. They tell users that the lower level is not truly verified. This makes the full mechanism weak.
+> - If fraud occurs, you will want to know its route.
 
 ## What "verified" gates in v0
-
-Because v0 is flatmate matching only:
 
 | Action | Requirement |
 |---|---|
