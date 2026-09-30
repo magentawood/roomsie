@@ -43,6 +43,11 @@ details.callout[open] summary{color:var(--fg)}
 <li>If your task will be late, tell the team.</li>
 <li><strong>We do not have designs at this time.</strong></li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>Do not decrease the quality to meet a date.</li>
+<li>We made this plan for the condition that we have no designs.</li>
+</ul></details>
+
 <hr />
 <h2 id="what-we-found">What we found</h2>
 <p>Of the 115 engineering hours in the first estimate, <strong>80 needed no design</strong>. The other <strong>35 could not start without a design</strong>.</p>
@@ -90,6 +95,12 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <p>Thus, we <strong>cannot keep the initial verticals</strong> for the first week.</p>
 <p><strong>The fix:</strong> in the design-free period, all engineers work from one shared pool of backend and infrastructure work. When the designs arrive, all five engineers change to screens at the same time.</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>The blocked hours are not equal across the lanes.</li>
+<li>The lack of designs has no effect on three lanes: V1, V2 and V4. Two lanes, V3 and V5, are almost fully blocked.</li>
+<li>With the initial verticals, V3 and V5 would have no work while all the other engineers work.</li>
+</ul></details>
+
 <hr />
 <h2 id="the-two-phases">The two phases</h2>
 <ul>
@@ -103,6 +114,8 @@ details.callout[open] summary{color:var(--fg)}
 <li>No task in your list waits for a different person.</li>
 <li>The finish date is the same.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><p>The principles from before stay the same.</p></details>
+
 <hr />
 <h2 id="the-one-hard-deadline">The one hard deadline</h2>
 <p><strong>Design must finish D-02, D-03 and D-04 by end of Wednesday 30 September.</strong></p>
@@ -112,6 +125,11 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>For each day after 30 September that a design is late, the launch is one day late.</strong></li>
 <li>D-01, the styling decision, must come before that date. D-02, D-03 and D-04 cannot start before D-01 is complete.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>The designs must be complete because five people must build from them on the morning of Thursday 1 October.</li>
+<li>There is no spare time for a design that arrives late.</li>
+</ul></details>
+
 <hr />
 <h2 id="the-rules">The rules</h2>
 <ol>
@@ -122,6 +140,12 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Give your standup by 10 am:</strong> tasks finished, current task, blockers.</li>
 <li><strong>In the first week, merge on the day that you finish.</strong></li>
 </ol>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>Rule 1: the order of your list is the schedule.</li>
+<li>Rule 3: do not commit to <code>main</code> directly. Your work goes into the repo only as a PR.</li>
+<li>Rule 6: other people wait for your work.</li>
+</ul></details>
+
 <hr />
 <h1 id="phase-a--thu-24--wed-30-sep">Phase A · Thu 24 → Wed 30 Sep</h1>
 <h2 id="p1--platform">P1 · Platform</h2>
@@ -157,6 +181,8 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <p>14 hours.</p>
+<details class="callout note"><summary class="ct">Why</summary><p>You start first.</p></details>
+
 <h2 id="p2--assistant--the-chatbot-specialist">P2 · Assistant — the chatbot specialist</h2>
 <p>We do <strong>not</strong> re-cut your list.</p>
 <table>
@@ -206,6 +232,11 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <p>30 hours, for the full period. <strong>Do T-08 on day one.</strong></p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>Your lane needs no designs. Work through the two phases with no interruption.</li>
+<li>Three people build against T-08.</li>
+</ul></details>
+
 <h2 id="p3--data-and-trust--you">P3 · Data and trust — you</h2>
 <table>
 <thead>
@@ -270,6 +301,11 @@ details.callout[open] summary{color:var(--fg)}
 <li>The prototype at <code>docs/source/roomsie-prototype-V3.html</code> <strong>is</strong> your design for T-23a.</li>
 <li>Sunday 27 is a spare slot. Use it to read the ADRs or to help with M-03, the eval sentences.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>The prototype is the design, so T-23a is not blocked.</li>
+<li>Sunday 27 is spare because T-19 needs the schema. The schema arrives on the evening of that day.</li>
+</ul></details>
+
 <h2 id="p5--accounts-and-connections">P5 · Accounts and connections</h2>
 <table>
 <thead>
@@ -312,6 +348,8 @@ details.callout[open] summary{color:var(--fg)}
 <li>You do M-03 because P2 needs it for T-27.</li>
 <li>Sunday 27 is also a spare slot for you.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><p>M-03 also needs no design and no code. It is the only task available to you on day one.</p></details>
+
 <hr />
 <h1 id="phase-b--thu-1--sat-10-oct--screens-and-the-assistant">Phase B · Thu 1 → Sat 10 Oct — screens and the assistant</h1>
 <table>
@@ -421,6 +459,11 @@ details.callout[open] summary{color:var(--fg)}
 <li>Spare hours: P4 about 9, P5 6, P2 4. If a person is late, P4, P5 and P2 are the first to do their work.</li>
 <li>P3 has no spare hours. If a task will take more time than planned, tell the team immediately.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>P3 owns T-15 and T-18b because they show the matches and people from the P3 schema and match query.</li>
+<li>P3 owns the advisor, T-38, because it searches data that P3 owns.</li>
+</ul></details>
+
 <hr />
 <h2 id="everyone">Everyone</h2>
 <ul>
@@ -434,8 +477,17 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Phase A has almost no slack.</strong></li>
 <li><strong>One thing decides if the launch stays on 12 October: if the designs arrive on 30 September.</strong></li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>Usually, UI work is spread across the schedule, and problems show at the start. The late problems are the cost of no designs. They are not a mistake in the order of tasks.</li>
+<li>During Phase A, no person owns a vertical from end to end. You get resilience, but you lose clean ownership.</li>
+<li>P4 and P5 have Sunday 27 free because only three tasks in the full project can start before the schema and monorepo exist.</li>
+<li>We arranged all other parts of this plan around the design date of 30 September.</li>
+</ul></details>
+
 <h1 id="index-of-every-code">Index of every code</h1>
 <p>If you are new to the project, read this section first.</p>
+<details class="callout note"><summary class="ct">Why</summary><p>This section gives each task in plain words. The examples for each table are in a folded box below it.</p></details>
+
 <h2 id="how-a-code-is-built">How a code is built</h2>
 <table>
 <thead>
@@ -489,6 +541,8 @@ details.callout[open] summary{color:var(--fg)}
 <li>We added T-34 to T-40 on 26 September.</li>
 <li><strong>⚑ marks the critical path.</strong> If a ⚑ task is late, the launch date is late.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><p>Gaps in the numbers are usual.</p></details>
+
 <h2 id="the-lanes-and-roles">The lanes and roles</h2>
 <table>
 <thead>
@@ -824,6 +878,43 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
+<details class="callout example"><summary class="ct">Examples</summary><ul>
+<li><code>T-02</code>: all five people open the same project, and each person works in their own part of it. There are not five different projects.</li>
+<li><code>T-03</code>: you open a PR at 11 pm. After two minutes, a green tick or a red cross tells you if you broke something. This includes a password that you pasted accidentally.</li>
+<li><code>T-04</code>: the site is no longer "works on my laptop". It becomes a public web address that loads fast in India.</li>
+<li><code>T-05</code>: you tap "Continue with Google" and pick your Gmail. Then you are in, with no password to invent.</li>
+<li><code>T-06</code>: a person has a name, age, budget and photos.</li>
+<li><code>T-07</code>: at 2 am, a person gets a broken page. You see which line has the error and how many people got it, but no person reported it.</li>
+<li><code>T-09</code>: you do not type a sentence. You tap "A flat and flatmates", "Powai", "₹15–20k".</li>
+<li><code>T-10</code>: you chat on the left. While the assistant learns what you want, people who fit appear on the right.</li>
+<li><code>T-11</code>: DeepSeek goes offline at 9 pm. Users do not see a problem, because Gemini answers.</li>
+<li><code>T-12</code>: "need a room near Powai, max 18k, moving next month, I don't smoke" becomes intent = a flat and flatmates, area = Powai, budget = 18,000, move date = October, smoking = no.</li>
+<li><code>T-13</code>: a person asks "what's the weather?". The assistant does not answer. It politely moves the conversation back to flats.</li>
+<li><code>T-14</code>: Powai, ₹18k, no smoking → the 12 people who fit best, best first.</li>
+<li><code>T-15</code>: the right column fills with person cards: name, area, budget, and a match score when we have sufficient data.</li>
+<li><code>T-16</code>: name, age, job, "I'm tidy and sleep early", and four photos of the room.</li>
+<li><code>T-17</code>: you chat for five minutes as a stranger, then you sign in. Your chat stays. It is not deleted.</li>
+<li><code>T-18a</code>: you tap Connect and they accept. Only then do the two of you see the number of the other person.</li>
+<li><code>T-18b</code>: when you tap a card, the full profile opens, with a Connect button at the bottom.</li>
+<li><code>T-19</code>: a person sends you a creepy message. You block them, and they disappear from your results. A moderator sees the report.</li>
+<li><code>T-21</code>: one visitor cannot send 10,000 messages overnight and cost you ₹80,000 in AI fees.</li>
+<li><code>T-22</code>: a person in Pune visits and sees "not here yet". They leave their email.</li>
+<li><code>T-23a</code>: the first page that a stranger sees, with the pitch and a "Start chatting" button.</li>
+<li><code>T-23b</code>: the Privacy Policy link in the footer, and a named grievance officer that people can contact.</li>
+<li><code>T-24</code>: count how many people start a chat but do not sign up, and where they stop.</li>
+<li><code>T-25</code>: a message at 3 am that says "site down" or "AI spend passed ₹5,000 today".</li>
+<li><code>T-27</code>: you give it 100 sentences. It reads "PG" as a full flat 30 times. You fix the wording and test again.</li>
+<li><code>T-29</code>: send 100 fake users to the chat at the same time. Make sure that the limits hold.</li>
+<li><code>T-33</code>: a person with no invite code sees a "coming soon" page, not the app.</li>
+<li><code>T-34</code>: "is semi-furnished normal in Powai?" goes to the advisor. "my ex basically lived there" goes to the observer.</li>
+<li><code>T-35</code>: guest frequency = "partner stays over most nights", with the words that the user typed as evidence.</li>
+<li><code>T-36</code>: "my ex basically lived there, that's what killed it" becomes a note about guests.</li>
+<li><code>T-37</code>: "deposit" finds the paragraph in the article on Mumbai deposits.</li>
+<li><code>T-38</code>: "what does semi-furnished usually include?" uses our article if we have one. If not, it uses a web search for signed-in users.</li>
+<li><code>T-39</code>: many "results shown" events at one time cannot make a profile save slow.</li>
+<li><code>T-40</code>: the free plan keeps no backups. Thus, a bad migration on day three is undone from the copy of last night. The data stays available.</li>
+</ul></details>
+
 <h2 id="d--design">D · Design</h2>
 <table>
 <thead>
@@ -866,6 +957,12 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
+<details class="callout example"><summary class="ct">Examples</summary><ul>
+<li><code>D-01</code>: roomsie looks clean and warm, not neon and loud.</li>
+<li><code>D-02</code>: a picture that shows the positions of the message bubbles, chips and results.</li>
+<li><code>D-05</code>: you see that a button on the live site is grey, but the design says purple.</li>
+</ul></details>
+
 <h2 id="m--marketing">M · Marketing</h2>
 <table>
 <thead>
@@ -927,6 +1024,13 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
+<details class="callout example"><summary class="ct">Examples</summary><ul>
+<li><code>M-01</code>: share it in Mumbai flat-hunting WhatsApp groups.</li>
+<li><code>M-02</code>: day one must not be empty. Nobody joins a flatmate app that has zero flatmates on it.</li>
+<li><code>M-03</code>: "need a room in Chembur under 15k, veg only".</li>
+<li><code>M-05</code>: "What renting in Bandra actually costs in 2026".</li>
+</ul></details>
+
 <h2 id="f--founder">F · Founder</h2>
 <table>
 <thead>
@@ -989,6 +1093,12 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
+<details class="callout example"><summary class="ct">Examples</summary><ul>
+<li><code>F-01</code>: fill in the five blanks that say <code>_name_</code> at this time.</li>
+<li><code>F-04</code>: the Mumbai region makes the site fast for Indian users.</li>
+<li><code>F-09</code>: in six months, nobody asks "why on earth did we do it this way?".</li>
+</ul></details>
+
 <h2 id="a--everyone">A · Everyone</h2>
 <table>
 <thead>

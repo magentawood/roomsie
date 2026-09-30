@@ -7,6 +7,10 @@
 - If your task will be late, tell the team.
 - **We do not have designs at this time.**
 
+> [!note]- Why
+> - Do not decrease the quality to meet a date.
+> - We made this plan for the condition that we have no designs.
+
 ---
 
 ## What we found
@@ -25,6 +29,11 @@ Thus, we **cannot keep the initial verticals** for the first week.
 
 **The fix:** in the design-free period, all engineers work from one shared pool of backend and infrastructure work. When the designs arrive, all five engineers change to screens at the same time.
 
+> [!note]- Why
+> - The blocked hours are not equal across the lanes.
+> - The lack of designs has no effect on three lanes: V1, V2 and V4. Two lanes, V3 and V5, are almost fully blocked.
+> - With the initial verticals, V3 and V5 would have no work while all the other engineers work.
+
 ---
 
 ## The two phases
@@ -35,6 +44,9 @@ Thus, we **cannot keep the initial verticals** for the first week.
 - Each task has one owner from start to finish.
 - No task in your list waits for a different person.
 - The finish date is the same.
+
+> [!note]- Why
+> The principles from before stay the same.
 
 ---
 
@@ -47,6 +59,10 @@ Thus, we **cannot keep the initial verticals** for the first week.
 - **For each day after 30 September that a design is late, the launch is one day late.**
 - D-01, the styling decision, must come before that date. D-02, D-03 and D-04 cannot start before D-01 is complete.
 
+> [!note]- Why
+> - The designs must be complete because five people must build from them on the morning of Thursday 1 October.
+> - There is no spare time for a design that arrives late.
+
 ---
 
 ## The rules
@@ -57,6 +73,11 @@ Thus, we **cannot keep the initial verticals** for the first week.
 4. **Make one PR for each task.** Put the task ID in the PR title.
 5. **Give your standup by 10 am:** tasks finished, current task, blockers.
 6. **In the first week, merge on the day that you finish.**
+
+> [!note]- Why
+> - Rule 1: the order of your list is the schedule.
+> - Rule 3: do not commit to `main` directly. Your work goes into the repo only as a PR.
+> - Rule 6: other people wait for your work.
 
 ---
 
@@ -73,6 +94,9 @@ Thus, we **cannot keep the initial verticals** for the first week.
 
 14 hours.
 
+> [!note]- Why
+> You start first.
+
 ## P2 · Assistant — the chatbot specialist
 
 We do **not** re-cut your list.
@@ -88,6 +112,10 @@ We do **not** re-cut your list.
 | T-27 Run the eval set and tune the prompt | 3 | Wed 7 → Thu 8 Oct |
 
 30 hours, for the full period. **Do T-08 on day one.**
+
+> [!note]- Why
+> - Your lane needs no designs. Work through the two phases with no interruption.
+> - Three people build against T-08.
 
 ## P3 · Data and trust — you
 
@@ -115,6 +143,10 @@ We do **not** re-cut your list.
 - The prototype at `docs/source/roomsie-prototype-V3.html` **is** your design for T-23a.
 - Sunday 27 is a spare slot. Use it to read the ADRs or to help with M-03, the eval sentences.
 
+> [!note]- Why
+> - The prototype is the design, so T-23a is not blocked.
+> - Sunday 27 is spare because T-19 needs the schema. The schema arrives on the evening of that day.
+
 ## P5 · Accounts and connections
 
 | Task | Hours | When |
@@ -129,6 +161,9 @@ We do **not** re-cut your list.
 
 - You do M-03 because P2 needs it for T-27.
 - Sunday 27 is also a spare slot for you.
+
+> [!note]- Why
+> M-03 also needs no design and no code. It is the only task available to you on day one.
 
 ---
 
@@ -156,6 +191,10 @@ We do **not** re-cut your list.
 - Spare hours: P4 about 9, P5 6, P2 4. If a person is late, P4, P5 and P2 are the first to do their work.
 - P3 has no spare hours. If a task will take more time than planned, tell the team immediately.
 
+> [!note]- Why
+> - P3 owns T-15 and T-18b because they show the matches and people from the P3 schema and match query.
+> - P3 owns the advisor, T-38, because it searches data that P3 owns.
+
 ---
 
 ## Everyone
@@ -171,9 +210,18 @@ We do **not** re-cut your list.
 - **Phase A has almost no slack.**
 - **One thing decides if the launch stays on 12 October: if the designs arrive on 30 September.**
 
+> [!note]- Why
+> - Usually, UI work is spread across the schedule, and problems show at the start. The late problems are the cost of no designs. They are not a mistake in the order of tasks.
+> - During Phase A, no person owns a vertical from end to end. You get resilience, but you lose clean ownership.
+> - P4 and P5 have Sunday 27 free because only three tasks in the full project can start before the schema and monorepo exist.
+> - We arranged all other parts of this plan around the design date of 30 September.
+
 # Index of every code
 
 If you are new to the project, read this section first.
+
+> [!note]- Why
+> This section gives each task in plain words. The examples for each table are in a folded box below it.
 
 ## How a code is built
 
@@ -191,6 +239,9 @@ If you are new to the project, read this section first.
 - We removed or merged T-01, T-26, T-28, T-30 to T-32 and M-08 during the plan work. We never used a code again.
 - We added T-34 to T-40 on 26 September.
 - **⚑ marks the critical path.** If a ⚑ task is late, the launch date is late.
+
+> [!note]- Why
+> Gaps in the numbers are usual.
 
 ## The lanes and roles
 
@@ -258,6 +309,42 @@ If you are new to the project, read this section first.
 | **T-39** | **Analytics in its own database, with scheduled jobs** — Keeps analytics writes off the main database. | P1 | — |
 | **T-40** | **Nightly database backups to R2** — Copies the two databases each night. | P1 | — |
 
+> [!example]- Examples
+> - `T-02`: all five people open the same project, and each person works in their own part of it. There are not five different projects.
+> - `T-03`: you open a PR at 11 pm. After two minutes, a green tick or a red cross tells you if you broke something. This includes a password that you pasted accidentally.
+> - `T-04`: the site is no longer "works on my laptop". It becomes a public web address that loads fast in India.
+> - `T-05`: you tap "Continue with Google" and pick your Gmail. Then you are in, with no password to invent.
+> - `T-06`: a person has a name, age, budget and photos.
+> - `T-07`: at 2 am, a person gets a broken page. You see which line has the error and how many people got it, but no person reported it.
+> - `T-09`: you do not type a sentence. You tap "A flat and flatmates", "Powai", "₹15–20k".
+> - `T-10`: you chat on the left. While the assistant learns what you want, people who fit appear on the right.
+> - `T-11`: DeepSeek goes offline at 9 pm. Users do not see a problem, because Gemini answers.
+> - `T-12`: "need a room near Powai, max 18k, moving next month, I don't smoke" becomes intent = a flat and flatmates, area = Powai, budget = 18,000, move date = October, smoking = no.
+> - `T-13`: a person asks "what's the weather?". The assistant does not answer. It politely moves the conversation back to flats.
+> - `T-14`: Powai, ₹18k, no smoking → the 12 people who fit best, best first.
+> - `T-15`: the right column fills with person cards: name, area, budget, and a match score when we have sufficient data.
+> - `T-16`: name, age, job, "I'm tidy and sleep early", and four photos of the room.
+> - `T-17`: you chat for five minutes as a stranger, then you sign in. Your chat stays. It is not deleted.
+> - `T-18a`: you tap Connect and they accept. Only then do the two of you see the number of the other person.
+> - `T-18b`: when you tap a card, the full profile opens, with a Connect button at the bottom.
+> - `T-19`: a person sends you a creepy message. You block them, and they disappear from your results. A moderator sees the report.
+> - `T-21`: one visitor cannot send 10,000 messages overnight and cost you ₹80,000 in AI fees.
+> - `T-22`: a person in Pune visits and sees "not here yet". They leave their email.
+> - `T-23a`: the first page that a stranger sees, with the pitch and a "Start chatting" button.
+> - `T-23b`: the Privacy Policy link in the footer, and a named grievance officer that people can contact.
+> - `T-24`: count how many people start a chat but do not sign up, and where they stop.
+> - `T-25`: a message at 3 am that says "site down" or "AI spend passed ₹5,000 today".
+> - `T-27`: you give it 100 sentences. It reads "PG" as a full flat 30 times. You fix the wording and test again.
+> - `T-29`: send 100 fake users to the chat at the same time. Make sure that the limits hold.
+> - `T-33`: a person with no invite code sees a "coming soon" page, not the app.
+> - `T-34`: "is semi-furnished normal in Powai?" goes to the advisor. "my ex basically lived there" goes to the observer.
+> - `T-35`: guest frequency = "partner stays over most nights", with the words that the user typed as evidence.
+> - `T-36`: "my ex basically lived there, that's what killed it" becomes a note about guests.
+> - `T-37`: "deposit" finds the paragraph in the article on Mumbai deposits.
+> - `T-38`: "what does semi-furnished usually include?" uses our article if we have one. If not, it uses a web search for signed-in users.
+> - `T-39`: many "results shown" events at one time cannot make a profile save slow.
+> - `T-40`: the free plan keeps no backups. Thus, a bad migration on day three is undone from the copy of last night. The data stays available.
+
 ## D · Design
 
 | Code | Task | Issue |
@@ -268,6 +355,11 @@ If you are new to the project, read this section first.
 | **D-04** | **Design landing, wall and waitlist** — The public home page and the waitlist page. | #25 |
 | **D-05** | **Design QA on the live build** — The built site must agree with the drawings. | #42 |
 | **D-06** | **Launch visuals** — The images for the launch-day posts. | #52 |
+
+> [!example]- Examples
+> - `D-01`: roomsie looks clean and warm, not neon and loud.
+> - `D-02`: a picture that shows the positions of the message bubbles, chips and results.
+> - `D-05`: you see that a button on the live site is grey, but the design says purple.
 
 ## M · Marketing
 
@@ -281,6 +373,12 @@ If you are new to the project, read this section first.
 | **M-06** ⚑ | **Beta invites to seeded sign-ups** — Let the 100 seeded people in before the public. | M2 | #49 |
 | **M-07** | **Draft launch posts** — Social posts for launch day, written before it. | M1 | #35 |
 | **M-09** | **Broker calls** — Get real flats listed. | M2 | #55 |
+
+> [!example]- Examples
+> - `M-01`: share it in Mumbai flat-hunting WhatsApp groups.
+> - `M-02`: day one must not be empty. Nobody joins a flatmate app that has zero flatmates on it.
+> - `M-03`: "need a room in Chembur under 15k, veg only".
+> - `M-05`: "What renting in Bandra actually costs in 2026".
 
 ## F · Founder
 
@@ -296,6 +394,11 @@ If you are new to the project, read this section first.
 | **F-08** | **Name the moderator** — Who handles reports and abuse. | #34 |
 | **F-09** | **Write down the three ADR exceptions** — Where we knowingly broke our own architecture rules, and why. | #18 |
 | **F-10** | **Go/no-go meeting** — Saturday 10 October, 8 pm. Launch on the 12th, or move to the 14th. Quality decides, not the calendar. | #50 |
+
+> [!example]- Examples
+> - `F-01`: fill in the five blanks that say `_name_` at this time.
+> - `F-04`: the Mumbai region makes the site fast for Indian users.
+> - `F-09`: in six months, nobody asks "why on earth did we do it this way?".
 
 ## A · Everyone
 
