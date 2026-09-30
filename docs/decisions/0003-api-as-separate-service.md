@@ -4,54 +4,62 @@
 
 ## Context
 
-ADR 0002 established that clients talk to an API we own, never to the database.
-The obvious cheap way to build that API is inside the Next.js app as route
-handlers: one project, one deploy, no CORS, no network hop, free type sharing.
+ADR 0002 set this rule: clients talk to an API that we own, never to the
+database. The obvious cheap way to build that API is in the Next.js app, as
+route handlers. This gives one project, one deploy, no CORS and no network hop.
+Also, we can share types at no cost.
 
 ## Decision
 
-One repository containing (at least) `apps/web` and `apps/api`. Two artefacts
-that build and deploy independently, sharing tooling and the API contract.
+One repository contains (at least) `apps/web` and `apps/api`. These are two
+artefacts. Each artefact builds and deploys independently. The two artefacts
+share the same tools and the API contract.
 
-Separate *deployable*, not separate *repository*.
+The API is a separate *deployable*, not a separate *repository*.
 
-Next.js keeps route handlers only for things that belong to the web client
-specifically: the OAuth callback, image proxying, webhooks. No business logic.
+Next.js keeps route handlers only for items that are for the web client
+only: the OAuth callback, image proxying and webhooks. These route handlers
+contain no business logic.
 
 ## Rationale
 
-- **It makes ADR 0002 enforceable rather than aspirational.** If the API lives
-  inside the web app, the database is one import away from every Server
-  Component. Under deadline pressure someone queries it directly because it
-  works, and that rule now exists only in the web client. A network boundary
-  cannot be reached past by accident.
-- **The runtime model fits the workload.** The spec needs background jobs
-  (auto-suspend on report threshold, ghost-profile decay at 30/60 days,
-  analytics aggregation), scheduled work, and a persistent Postgres connection
-  pool. Serverless route handlers make each of these a workaround; a
-  long-running service simply has them.
-- **Deploy coupling.** Otherwise a CSS change redeploys the API that shipped
-  mobile apps — which cannot be force-updated — depend on.
-- **Scaling axes diverge** once mobile ships and most traffic carries no web
-  rendering at all.
-- **Four people at ~2 hrs/day parallelise better** across two deployables with a
-  contract between them than across one codebase.
+- **With it, we can enforce ADR 0002. Without it, ADR 0002 is only an
+  aspiration.** If the API is in the web app, each Server Component is one
+  import away from the database. When a deadline is near, a person queries the
+  database directly, because it works. Then that rule exists only in the web
+  client. Nobody can go around a network boundary by accident.
+- **The runtime model agrees with the workload.** The spec needs background
+  jobs (auto-suspend on report threshold, ghost-profile decay at 30/60 days,
+  analytics aggregation). It also needs scheduled work and a persistent Postgres
+  connection pool. With serverless route handlers, each of these needs a
+  workaround. A service that runs continuously has
+  them with no workaround.
+- **Deploy coupling.** If the API is in the web app, a CSS change redeploys the
+  API. Shipped mobile apps depend on this API, and we cannot force-update them.
+- **The axes of scale become different** when mobile ships. After that, most
+  traffic carries no web rendering at all.
+- **Four people at ~2 hrs/day work in parallel better** on two deployables, with
+  a contract between them, than on one codebase.
 
 ## Consequences
 
-- A few extra hours of setup: CORS, auth token propagation, two local processes
-  (one monorepo task runner command).
-- One extra network hop for server-side rendering — roughly 1–5ms in-region.
+- The setup needs a few extra hours: CORS, auth token propagation, and two local
+  processes (one monorepo task runner command).
+- Server-side rendering has one more network hop. In-region, this adds
+  approximately 1–5ms.
 - The monorepo needs a task runner and a shared contract package from day one.
 
 ## Alternatives rejected
 
-- **API inside Next.js route handlers.** Least setup, fastest first screen, but
-  erodes the client/API boundary and fits the background-job requirements poorly.
-- **Separate repositories.** Hardest boundary, but loses single-clone
-  convenience and splits every contract change across two PRs. A later-stage move.
+- **API inside Next.js route handlers.** This has the minimum setup and the
+  fastest first screen. But it gradually makes the client/API boundary
+  weaker. Also, it is a bad match for the background-job requirements.
+- **Separate repositories.** This gives the hardest boundary. But we lose the
+  convenience of a single clone, and each contract change needs two PRs. This
+  is a move for a subsequent stage.
 
 ## Revisit when
 
-The web app is the only client and mobile is cancelled, or operational overhead
-of two deployables measurably outweighs the boundary's value.
+The web app is the only client, and we cancel mobile. Or, the operations
+overhead of two deployables is more than the value of the boundary, by a
+measurable amount.
