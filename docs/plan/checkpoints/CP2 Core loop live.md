@@ -8,12 +8,12 @@ tags:
 
 **Date:** Thu 1 Oct
 
-Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, and connect with contact reveal works. Designs are finished and screen work has started. 100 seeding sign-ups. The eval sentences are written.
+The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. Connect with contact reveal also works. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written.
 
 **After:** [[CP1 Foundation]]  
 **Next:** [[CP3 Freeze and go-no-go]]
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 

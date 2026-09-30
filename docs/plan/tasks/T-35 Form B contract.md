@@ -30,8 +30,8 @@ tags:
 - [[T-36 Observer]]
 
 ## Done when
-- [ ] Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
-- [ ] An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account
+- [ ] Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
+- [ ] An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it
 
 ^done
 

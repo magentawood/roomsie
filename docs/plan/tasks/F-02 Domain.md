@@ -22,13 +22,13 @@ tags:
 **Issue:** [#3](https://github.com/magentawood/roomsie/issues/3)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] roomsie.com, or the chosen alternative, is owned
-- [ ] DNS access is shared with T4
+- [ ] The team owns roomsie.com or the chosen alternative
+- [ ] The team shares DNS access with T4
 
 ^done

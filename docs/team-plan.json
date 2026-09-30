@@ -9,8 +9,8 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "Launch uses the V3 prototype's look, not the Untitled UI pipeline",
-    "Every women-only line is marked for removal"
+    "The launch uses the look of the V3 prototype, not the Untitled UI pipeline",
+    "Every women-only line has a mark for removal"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -30,7 +30,7 @@
    "done": [
     "Every role in this plan has a person's name",
     "Everyone has access to the repo and the issues",
-    "Team channel exists, with a written standup by 10 am daily"
+    "A team channel exists, and it has a written standup by 10 am every day"
    ],
    "read": [
     "docs/team-plan.md"
@@ -48,8 +48,8 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "roomsie.com, or the chosen alternative, is owned",
-    "DNS access is shared with T4"
+    "The team owns roomsie.com or the chosen alternative",
+    "The team shares DNS access with T4"
    ],
    "read": [],
    "cp": "CP0",
@@ -66,7 +66,7 @@
    "deps": [],
    "done": [
     "Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini",
-    "Hard monthly caps are set on both AI accounts"
+    "Both AI accounts have hard monthly caps"
    ],
    "read": [
     "docs/cost-and-team.md"
@@ -86,9 +86,9 @@
     "F-03"
    ],
    "done": [
-    "Supabase in ap-south-1, Fly in bom, Vercel functions in bom1",
-    "Firebase project, R2 buckets for public photos and private files, DeepSeek and Gemini keys",
-    "Keys shared through a password manager, never in chat or the repo"
+    "Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1",
+    "The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist",
+    "The team shares keys through a password manager, never in chat or in the repo"
    ],
    "read": [
     "docs/decisions/0009-hosting-and-region.md"
@@ -106,10 +106,10 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "A Zod schema in packages/contract for Form A",
-    "Intent, areas, budget, move date, and the nine lifestyle answers, each with value, weight and source: stated, inferred, default or empty",
+    "A Zod schema for Form A is in packages/contract",
+    "The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty",
     "Every enum has an `unclear` value",
-    "Results are a tagged union, `kind: \"person\"` for v0, so property listings can be added later without breaking clients"
+    "Results are a tagged union with `kind: \"person\"` for v0. Thus, a later change can add property listings and not break clients"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -131,8 +131,8 @@
     "D-01"
    ],
    "done": [
-    "Chat with chips, the split view, and the phone chat bar",
-    "These have no prototype equivalent, and V3 starts building them on Thursday"
+    "The chat with chips, the split view and the phone chat bar exist",
+    "These have no equivalent in the prototype. V3 starts to build them on Thursday"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -150,8 +150,8 @@
    "end": "2026-09-25",
    "deps": [],
    "done": [
-    "Says what is collected, that the profile will be shown to other roomsie users, and how to delete it",
-    "Short enough to read on a phone"
+    "It says what the system collects, that other roomsie users will see the profile, and how to delete it",
+    "It is short enough to read on a phone"
    ],
    "read": [],
    "cp": "CP0",
@@ -167,8 +167,8 @@
    "end": "2026-09-25",
    "deps": [],
    "done": [
-    "Three areas chosen with marketing",
-    "Chosen by where the team can actually reach people"
+    "The team chooses three areas with marketing",
+    "The team chooses them by where it can really reach people"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -186,11 +186,11 @@
    "end": "2026-09-26",
    "deps": [],
    "done": [
-    "pnpm workspaces and Turborepo, per ADR 0010",
-    "apps/web on Next 16, React 19, Tailwind v4. apps/api on Fastify, Zod, Drizzle",
-    "packages/contract and packages/config exist, laid out as in the repo layout in CONTEXT.md",
-    "`pnpm dev` runs web and API locally. docs/ is untouched",
-    "Every API route is served under `/v1`, so a future mobile app keeps working through later changes"
+    "The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies",
+    "apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle",
+    "packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows",
+    "`pnpm dev` runs web and API locally. docs/ has no changes",
+    "The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes"
    ],
    "read": [
     "CONTEXT.md",
@@ -213,11 +213,11 @@
     "D-03"
    ],
    "done": [
-    "Built first from the V3 prototype's detail sheet, against a mock of the connect API. Wired to T-18a when it lands on Sun 4 Oct",
+    "The first version uses the detail sheet of the V3 prototype, against a mock of the connect API. It connects to T-18a when T-18a lands on Sun 4 Oct",
     "The person screen needs sign-in",
-    "Connect button with sent, accepted and declined states",
+    "The connect button has sent, accepted and declined states",
     "The number shows only after both accept",
-    "Report and block are one tap away"
+    "Report and block need only one tap"
    ],
    "read": [],
    "cp": "CP3",
@@ -233,11 +233,11 @@
    "end": "2026-09-29",
    "deps": [],
    "done": [
-    "Committed migrations for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist",
+    "Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist",
     "Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility",
-    "UUIDv7 ids with no database default. `created_at` from the server clock",
-    "Every table keys to our own `users.id`. The Firebase UID lives only in `users.auth_provider_id`",
-    "A `chat_turns` table stores every free-text turn against the anonymous session or the user, so Form B can be backfilled in v1"
+    "IDs are UUIDv7 with no database default. `created_at` comes from the server clock",
+    "Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id`",
+    "A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B"
    ],
    "read": [
     "docs/decisions/0015-primary-key-strategy.md",
@@ -261,9 +261,9 @@
    ],
    "done": [
     "The landing button opens a full-screen chat",
-    "The screen splits into chat and results once results exist",
-    "On a phone, the chat drops to a bar at the bottom and expands on tap",
-    "Nothing resizes while the person is typing"
+    "When results exist, the screen splits into chat and results",
+    "On a phone, the chat becomes a bar at the bottom and expands when the user taps it",
+    "Nothing changes size while the person types"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -281,8 +281,8 @@
    "end": "2026-09-28",
    "deps": [],
    "done": [
-    "Three to five real people interviewed for each topic group",
-    "Notes saved"
+    "The team interviews three to five real people for each topic group",
+    "The notes are saved"
    ],
    "read": [
     "docs/content/corpus-plan.md"
@@ -303,9 +303,9 @@
     "F-06"
    ],
    "done": [
-    "Form live with the consent text",
-    "Outreach through own networks, college and company groups, and flat-hunting groups",
-    "Invite people to sign up. Never copy anyone's posts or details"
+    "The form is live with the consent text",
+    "Outreach uses the team's own networks, college and company groups, and flat-hunting groups",
+    "The team invites people to sign up. The team never copies the posts or details of any person"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -326,9 +326,9 @@
    ],
    "done": [
     "One module is the only way the app calls a model",
-    "DeepSeek V4.1 Flash first. Gemini on a timeout, a 5xx or a rate limit",
-    "Output that fails Zod retries once, then goes to Gemini",
-    "Logs tokens in, tokens out and the model for every call. The system prompt is cached"
+    "The model wrapper calls DeepSeek V4.1 Flash first. It calls Gemini if there is a timeout, a 5xx or a rate limit",
+    "If output fails Zod, the call retries one time, then goes to Gemini",
+    "It logs tokens in, tokens out and the model for every call. The system prompt is cached"
    ],
    "read": [
     "docs/model-selection.md"
@@ -348,10 +348,10 @@
     "D-01"
    ],
    "done": [
-    "Results panel header states and the person card, for V5 on Sat 26 Sep",
-    "Profile create and edit with photo upload, for V5 on Tue 29 Sep",
-    "Connect and report states, refining the prototype detail sheet V5 builds first",
-    "Delete confirmation"
+    "The results panel header states and the person card are ready for V5 on Sat 26 Sep",
+    "The profile create and edit screens, with photo upload, are ready for V5 on Tue 29 Sep",
+    "The design has connect and report states. They refine the prototype detail sheet that V5 builds first",
+    "There is a delete confirmation"
    ],
    "read": [],
    "cp": "CP1",
@@ -367,9 +367,9 @@
    "end": "2026-09-30",
    "deps": [],
    "done": [
-    "Says what is collected, why, for how long, how to delete, and who to contact",
-    "A named grievance contact",
-    "Says that chat messages are stored, and that deleting the account deletes them"
+    "It says what the system collects, why, for how long, how to delete it, and who to contact",
+    "There is a named grievance contact",
+    "It says that the system stores chat messages, and that account deletion deletes them"
    ],
    "read": [
     "docs/extensibility.md"
@@ -387,9 +387,9 @@
    "end": "2026-09-27",
    "deps": [],
    "done": [
-    "0011: prototype styling for launch",
-    "0012: one events table instead of a second database",
-    "0014: Sentry free tier instead of GlitchTip"
+    "0011: the launch uses the prototype styles",
+    "0012: one events table replaces a second database",
+    "0014: the product uses the Sentry free tier, not GlitchTip"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -409,9 +409,9 @@
     "T-02"
    ],
    "done": [
-    "Google sign-in through Firebase on the web, token held in memory",
+    "Google sign-in works through Firebase on the web. The token stays in memory",
     "The API verifies the ID token locally, with no call to Firebase",
-    "A users row is created on first sign-in. `tokens_valid_after` is in the first migration"
+    "The first sign-in creates a users row. `tokens_valid_after` is in the first migration"
    ],
    "read": [
     "docs/decisions/0007-web-rendering-and-auth-transport.md",
@@ -433,10 +433,10 @@
     "D-03"
    ],
    "done": [
-    "A grid of person cards, built from the prototype's cards against the Form A contract with sample data, then wired to the match query, T-14, when it lands",
-    "The header says what is shown, from Everything in Mumbai down to People in Powai under 20k",
-    "Updates only when a form value or weight changes, never reorders while scrolling",
-    "Match score hidden until lifestyle answers exist"
+    "A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query",
+    "The header says what it shows, from Everything in Mumbai down to People in Powai under 20k",
+    "It updates only when a form value or weight changes. It never changes the order during a scroll",
+    "The match score is hidden until lifestyle answers exist"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -454,9 +454,9 @@
    "end": "2026-09-27",
    "deps": [],
    "done": [
-    "50 sentences people would really type, in English, Hinglish and Marathi",
+    "The set has 50 sentences that people really type, in English, Hinglish and Marathi",
     "Mumbai areas, 20k, bees hazaar, next month end",
-    "10 deliberately vague ones. T1 labels the right answers"
+    "The set includes 10 sentences that are vague on purpose. T1 labels the correct answers"
    ],
    "read": [
     "docs/model-selection.md"
@@ -476,8 +476,8 @@
     "M-01"
    ],
    "done": [
-    "100 sign-ups by Wednesday 30 September",
-    "250 by Sunday 4 October, because about 6 in 10 will finish a profile"
+    "There are 100 sign-ups by Wednesday 30 September",
+    "The count is 250 by Sunday 4 October, because approximately 6 in 10 people will complete a profile"
    ],
    "read": [],
    "cp": "CP2",
@@ -495,11 +495,11 @@
     "T-11"
    ],
    "done": [
-    "Free text becomes Form A slots, as JSON limited to the enums",
+    "Free text becomes Form A slots, as JSON that uses only the enum values",
     "The Mumbai area list and number and date forms are in the cached prompt",
-    "Numbers and dates are parsed by code, not by the model",
-    "Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently",
-    "The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring"
+    "Code parses numbers and dates, not the model",
+    "All vague input becomes `unclear`, never a guess. An inferred value never fills a slot silently",
+    "The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure"
    ],
    "read": [
     "docs/research/hinglish-model-report.md",
@@ -521,8 +521,8 @@
     "D-01"
    ],
    "done": [
-    "Landing page for all genders",
-    "Legal page template, the sign-in wall, the waitlist, empty states"
+    "The landing page is for all genders",
+    "The design has a legal page template, the sign-in wall, the waitlist and empty states"
    ],
    "read": [],
    "cp": "CP2",
@@ -542,9 +542,9 @@
     "D-02"
    ],
    "done": [
-    "Intent as four cards, area as the top six plus search, budget as bands",
+    "Intent shows as four cards, area as the top six plus search, and budget as bands",
     "Each tap writes to the form. A tap never calls a model",
-    "Typing instead of tapping still works"
+    "If a person types and does not tap, the typed answer still works"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -565,9 +565,9 @@
     "T-08"
    ],
    "done": [
-    "Returns matching people for a form state",
-    "Hard filters: area, budget, move date, compatible intent, dealbreakers",
-    "Match score is 70 plus 30 times the share of preferences met, shown only once lifestyle answers exist",
+    "It returns the matching people for a form state",
+    "The hard filters are area, budget, move date, compatible intent and dealbreakers",
+    "The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist",
     "Blocked and suspended people never appear"
    ],
    "read": [
@@ -588,8 +588,8 @@
     "T-02"
    ],
    "done": [
-    "Web on Vercel pinned to bom1. API on Fly in bom from a Dockerfile",
-    "Secrets set in both",
+    "Web is on Vercel, pinned to bom1. The API is on Fly in bom, built from a Dockerfile",
+    "Secrets are set in both",
     "A merge to main deploys automatically"
    ],
    "read": [
@@ -612,8 +612,8 @@
     "D-03"
    ],
    "done": [
-    "Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers",
-    "Up to four photos, uploaded straight to R2 with a presigned URL",
+    "A user can create and edit a profile with name, age, work, intent, budget, areas, move date and lifestyle answers",
+    "A user can upload a maximum of four photos directly to R2 with a presigned URL",
     "Photo bytes never pass through the API"
    ],
    "read": [
@@ -634,8 +634,8 @@
     "M-04"
    ],
    "done": [
-    "Ten drafts written from the interviews",
-    "Published once the blog is live after launch"
+    "Ten drafts from the interviews are written",
+    "It is published when the blog is live after launch"
    ],
    "read": [
     "docs/content/corpus-plan.md"
@@ -656,7 +656,7 @@
    ],
    "done": [
     "Every pull request runs typecheck, lint, build and gitleaks",
-    "Finishes in under five minutes"
+    "It finishes in less than five minutes"
    ],
    "read": [
     "docs/decisions/0013-ci-gate-and-testing.md"
@@ -676,10 +676,10 @@
     "T-11"
    ],
    "done": [
-    "Writes the reply from the form and the last two turns, never the whole chat",
-    "Replies in the language the person used",
-    "Never states a fact about a specific person",
-    "Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source"
+    "It writes the reply from the form and the last two turns, never from the full chat",
+    "It replies in the language that the person used",
+    "It never states a fact about a specific person",
+    "An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source"
    ],
    "read": [
     "docs/scope-policy.md"
@@ -697,9 +697,9 @@
    "end": "2026-10-02",
    "deps": [],
    "done": [
-    "A moderator and a backup are named",
-    "Rules for when to suspend, and how fast to respond",
-    "Reports checked every day from launch"
+    "The team names a moderator and a backup",
+    "Rules exist for when to suspend a person and how fast to respond",
+    "The team checks reports every day from launch"
    ],
    "read": [
     "docs/scope-policy.md"
@@ -717,8 +717,8 @@
    "end": "2026-10-03",
    "deps": [],
    "done": [
-    "Launch posts, the founder story, a list of groups and channels",
-    "Scheduled on Sunday 11 October"
+    "Launch posts, the founder story, and a list of groups and channels exist",
+    "It is scheduled on Sunday 11 October"
    ],
    "read": [],
    "cp": "CP3",
@@ -736,8 +736,8 @@
     "T-02"
    ],
    "done": [
-    "`reportError(err, context)` lives in packages/config and is the only way code reports errors",
-    "Sentry free tier connected in web and API",
+    "`reportError(err, context)` is in packages/config. It is the only way that code reports errors",
+    "The Sentry free tier is connected in web and API",
     "`beforeSend` strips message text, phone numbers and the Authorization header"
    ],
    "read": [
@@ -759,8 +759,8 @@
     "T-06"
    ],
    "done": [
-    "What a visitor told the assistant before signing in is attached to their account when they sign in",
-    "Nothing is lost and nothing is asked twice",
+    "When a visitor signs in, the account gets what the visitor told the assistant before sign-in",
+    "Nothing is lost, and the assistant never asks the same thing two times",
     "The stored chat turns move to the account with the session"
    ],
    "read": [
@@ -782,8 +782,8 @@
     "T-06"
    ],
    "done": [
-    "The API behind the report and block buttons, which live in T-18b",
-    "A block hides both people from each other, including in the match query",
+    "The API for the report and block buttons exists. The buttons are in T-18b",
+    "A block hides both people from each other. This also applies in the match query",
     "A saved query in Supabase lists open reports",
     "Suspend sets `tokens_valid_after` to now and hides the profile"
    ],
@@ -806,7 +806,7 @@
    ],
    "done": [
     "Before launch, sign-in works only for emails on an allowlist",
-    "One setting turns the gate off on launch day"
+    "One setting disables the gate on launch day"
    ],
    "read": [],
    "cp": "CP3",
@@ -822,10 +822,10 @@
    "end": "2026-09-27",
    "deps": [],
    "done": [
-    "Landing page in the V3 prototype's look",
-    "Hero, how it works, and a button into the chat",
-    "Every women-only line removed",
-    "Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values"
+    "The landing page uses the look of the V3 prototype",
+    "The page has a hero, a how-it-works section, and a button into the chat",
+    "Every women-only line is removed",
+    "Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values"
    ],
    "read": [
     "docs/source/roomsie-prototype-V3.html",
@@ -846,10 +846,10 @@
     "T-06"
    ],
    "done": [
-    "One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed",
+    "One events table holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed",
     "No message text is stored",
-    "Events are written only through one `track()` function in apps/api",
-    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1"
+    "Code writes events only through one `track()` function in apps/api",
+    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus v1 can move it to its own database"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",
@@ -870,10 +870,10 @@
     "T-12"
    ],
    "done": [
-    "Five typed turns before sign-in. Chip taps do not count",
-    "The sign-in wall never appears before results have shown, and results stay visible behind it",
-    "Limits per device and per network",
-    "At the daily spend ceiling the chat drops to chips only"
+    "A visitor gets five typed turns before sign-in. Chip taps do not count",
+    "The sign-in wall never appears before results show. The results stay visible behind the wall",
+    "Limits apply per device and per network",
+    "At the daily spend ceiling, the chat changes to chips only"
    ],
    "read": [
     "docs/pre-login-limits.md"
@@ -894,8 +894,8 @@
     "D-03"
    ],
    "done": [
-    "Walk every screen on a phone and a laptop",
-    "Every fix filed as an issue"
+    "The team checks every screen on a phone and on a laptop",
+    "The team files every fix as an issue"
    ],
    "read": [],
    "cp": "CP3",
@@ -914,9 +914,9 @@
     "T-06"
    ],
    "done": [
-    "Send, accept or decline a connect request",
-    "On mutual accept, both people see each other's number",
-    "At most 10 new requests a day. No request to someone who blocked you"
+    "A user can send, accept or decline a connect request",
+    "After a mutual accept, both people see the number of the other person",
+    "A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them"
    ],
    "read": [],
    "cp": "CP3",
@@ -935,9 +935,9 @@
    ],
    "done": [
     "A person can delete their account from settings",
-    "Profile, photos in R2 and form state are removed. Events are pseudonymised",
-    "`tokens_valid_after` is set to now, so every session ends",
-    "The person's chat turns are deleted too"
+    "The profile, the photos in R2 and the form state are removed. Events are pseudonymised",
+    "`tokens_valid_after` is set to now, thus every session ends",
+    "The chat turns of the person are deleted too"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",
@@ -959,7 +959,7 @@
    ],
    "done": [
     "/privacy, /terms and /grievance show the founder's text",
-    "Linked from the footer and from the sign-in screen"
+    "Links to it are in the footer and on the sign-in screen"
    ],
    "read": [],
    "cp": "CP2",
@@ -979,8 +979,8 @@
    ],
    "done": [
     "Invites go out on Sat 3 Oct, the day after profile creation works",
-    "Help people finish profiles",
-    "150 profiles, at least 40 in each launch area, by Sunday 11 October"
+    "The team helps people complete profiles",
+    "There are 150 profiles by Sunday 11 October, with at least 40 in each launch area"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -1001,9 +1001,9 @@
     "D-04"
    ],
    "done": [
-    "The three launch areas are named on the site",
-    "A visitor from elsewhere gets a waitlist form, not an empty panel",
-    "Waitlist entries are saved with their area"
+    "The site gives the names of the three launch areas",
+    "A visitor from a different area gets a waitlist form, not an empty panel",
+    "The system saves each waitlist entry with its area"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -1023,8 +1023,8 @@
     "T-04"
    ],
    "done": [
-    "The API is checked every minute, with alerts to the team channel",
-    "An alert fires when daily model spend passes 70% of the ceiling"
+    "A monitor checks the API every minute and sends alerts to the team channel",
+    "An alert starts when the daily model spend is more than 70% of the ceiling"
    ],
    "read": [
     "docs/pre-login-limits.md"
@@ -1044,9 +1044,9 @@
     "T-12"
    ],
    "done": [
-    "The 50 test sentences run through extraction",
-    "Record the share of slots right and how often vague sentences are marked unclear",
-    "Tune the prompt. Save the results in docs/research/"
+    "The 50 test sentences go through extraction",
+    "The results record the fraction of correct slots and how frequently vague sentences get the mark unclear",
+    "The team tunes the prompt and saves the results in docs/research/"
    ],
    "read": [
     "docs/model-selection.md"
@@ -1065,7 +1065,7 @@
    "deps": [],
    "done": [
     "Saturday 10 October, 8 pm",
-    "Checked against the go/no-go list in docs/team-plan.md"
+    "The team checks it against the go/no-go list in docs/team-plan.md"
    ],
    "read": [
     "docs/team-plan.md"
@@ -1086,8 +1086,8 @@
    ],
    "done": [
     "A script opens 100 anonymous sessions",
-    "Per-device and per-network limits trip",
-    "Hitting the spend ceiling falls back to chips only, with no error page"
+    "The per-device and per-network limits stop the requests when a device or network goes over them",
+    "When spend reaches the ceiling, the chat changes to chips only and shows no error page"
    ],
    "read": [
     "docs/pre-login-limits.md"
@@ -1105,7 +1105,7 @@
    "end": "2026-10-10",
    "deps": [],
    "done": [
-    "Social post images and link preview images"
+    "Social post images and link preview images exist"
    ],
    "read": [],
    "cp": "CP3",
@@ -1122,7 +1122,7 @@
    "deps": [],
    "done": [
     "Engineers spend their two hours on P1 bugs only",
-    "No database migrations"
+    "There are no database migrations"
    ],
    "read": [],
    "cp": "CP4",
@@ -1138,7 +1138,7 @@
    "end": "2026-10-12",
    "deps": [],
    "done": [
-    "T4 turns off the invite gate and has tested the rollback",
+    "T4 disables the invite gate. T4 tested the rollback",
     "Everyone checks the live site on their own phone",
     "Marketing posts and replies to every comment. Every bug report becomes an issue"
    ],
@@ -1158,9 +1158,9 @@
    "end": "2026-10-19",
    "deps": [],
    "done": [
-    "10 to 15 calls to Mumbai brokers",
-    "Notes in docs/research/",
-    "Dropped first if seeding is behind"
+    "The team makes 10 to 15 calls to Mumbai brokers",
+    "The notes are in docs/research/",
+    "If the seeding is late, the team drops this first"
    ],
    "read": [
     "docs/research/supply-and-broker-model.md"
@@ -1180,10 +1180,10 @@
     "T-12"
    ],
    "done": [
-    "Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope",
-    "It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged",
+    "Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope",
+    "It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no more model calls, and the system logs them",
     "The pipeline runs only the handlers the router picks",
-    "The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline"
+    "The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -1206,8 +1206,8 @@
     "T-08"
    ],
    "done": [
-    "Form B is a Zod schema in packages/contract: key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible",
-    "An observations table, keyed to the user or the anonymous session, moves with the session on sign-in and is deleted with the account"
+    "Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible",
+    "An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -1230,9 +1230,9 @@
    ],
    "done": [
     "The observer turns personal context into Form B observations",
-    "Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected",
+    "Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation",
     "A one-off job backfills Form B from the stored chat turns",
-    "Tested on the eval sentences, with the rejection rate recorded"
+    "It is tested on the eval sentences, and the rejection rate is recorded"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -1253,9 +1253,9 @@
     "T-06"
    ],
    "done": [
-    "An articles table with a Postgres full-text index. No vector store",
-    "The launch articles load from files in the repo, so publishing one is a pull request",
-    "A search returns the best matching passages with their article and heading"
+    "An articles table has a Postgres full-text index. There is no vector store",
+    "The launch articles load from files in the repo. Thus, a pull request publishes an article",
+    "A search returns the passages that match best, with their article and heading"
    ],
    "read": [
     "docs/content/corpus-plan.md",
@@ -1278,9 +1278,9 @@
     "T-05"
    ],
    "done": [
-    "Consulting questions are answered from the articles first, naming the article",
-    "If the articles don't cover a general question, a signed-in user gets an answer from DeepSeek's web_search tool, with Gemini's Google Search grounding as the fallback. A visitor who has not signed in gets a hedged general answer instead",
-    "Law, tax, area safety and claims about a person are answered from articles only, or handed off. Never from the web",
+    "Answers to consulting questions come from the articles first, and give the name of the article",
+    "If the articles do not answer a general question, signed-in users get a web_search answer from DeepSeek, or from Gemini Google Search grounding as fallback. A visitor who has not signed in gets a hedged general answer",
+    "The assistant answers law, tax, area safety and claims about a person only from articles, or hands them off. It never uses the web for them",
     "Web searches count toward the daily spend ceiling"
    ],
    "read": [
@@ -1302,9 +1302,9 @@
     "T-24"
    ],
    "done": [
-    "Events are written to their own Supabase project, on the second account, through the same track() function",
+    "The same track() function writes events to their own Supabase project, on the second account",
     "pg_cron in that project deletes events past the retention period and creates next month's partition",
-    "The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation"
+    "The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",
@@ -1326,8 +1326,8 @@
    ],
    "done": [
     "A scheduled GitHub Action dumps both databases to Cloudflare R2 every night",
-    "Fourteen days of dumps are kept, and older ones are deleted",
-    "A restore has been tested once, into a scratch project"
+    "The system keeps fourteen days of dumps and deletes older dumps",
+    "The team tested a restore one time, into a scratch project"
    ],
    "read": [
     "docs/extensibility.md"
@@ -1342,37 +1342,37 @@
    "CP0",
    "Kickoff",
    "2026-09-25",
-   "Every role has a name. Accounts and billing are live. Styling is decided. Launch areas are picked. Seeding consent text is ready. The core screens are designed."
+   "Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete."
   ],
   [
    "CP1",
    "Foundation",
    "2026-09-28",
-   "The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn. Article interviews are done. The seeding form is live."
+   "The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and the legal pages are live. There are no product screens at this time, because the designs are still in progress. The article interviews are complete. The seeding form is live."
   ],
   [
    "CP2",
    "Core loop live",
    "2026-10-01",
-   "Deployed in Mumbai. The whole loop works end to end without a UI: a sentence goes in, the assistant extracts it, the match query answers, and connect with contact reveal works. Designs are finished and screen work has started. 100 seeding sign-ups. The eval sentences are written."
+   "The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. Connect with contact reveal also works. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written."
   ],
   [
    "CP3",
    "Feature freeze and go/no-go",
    "2026-10-10",
-   "Every screen and every assistant handler is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 12 October or 14 October."
+   "Every screen and every assistant handler is merged, and is live behind the invite gate. The seeded people make their profiles. At 8 pm, the go/no-go meeting selects 12 October or 14 October."
   ],
   [
    "CP4",
    "Launch",
    "2026-10-12",
-   "Public launch. Fallback Wednesday 14 October."
+   "Public launch. The fallback date is Wednesday 14 October."
   ],
   [
    "CP5",
    "First-week review",
    "2026-10-19",
-   "Look at the numbers and the bug list, and set the order of v1."
+   "Examine the numbers and the bug list. Then set the order of v1."
   ]
  ],
  "roles": {

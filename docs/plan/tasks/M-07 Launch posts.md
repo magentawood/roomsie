@@ -22,13 +22,13 @@ tags:
 **Issue:** [#35](https://github.com/magentawood/roomsie/issues/35)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Launch posts, the founder story, a list of groups and channels
-- [ ] Scheduled on Sunday 11 October
+- [ ] Launch posts, the founder story, and a list of groups and channels exist
+- [ ] It is scheduled on Sunday 11 October
 
 ^done

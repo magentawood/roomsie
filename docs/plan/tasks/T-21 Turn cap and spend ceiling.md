@@ -29,10 +29,10 @@ tags:
 - [[T-29 Abuse test]]
 
 ## Done when
-- [ ] Five typed turns before sign-in. Chip taps do not count
-- [ ] The sign-in wall never appears before results have shown, and results stay visible behind it
-- [ ] Limits per device and per network
-- [ ] At the daily spend ceiling the chat drops to chips only
+- [ ] A visitor gets five typed turns before sign-in. Chip taps do not count
+- [ ] The sign-in wall never appears before results show. The results stay visible behind the wall
+- [ ] Limits apply per device and per network
+- [ ] At the daily spend ceiling, the chat changes to chips only
 
 ^done
 

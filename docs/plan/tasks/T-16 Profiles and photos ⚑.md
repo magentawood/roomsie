@@ -24,7 +24,7 @@ tags:
 **Issue:** [#36](https://github.com/magentawood/roomsie/issues/36)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
@@ -35,8 +35,8 @@ tags:
 - [[M-06 Beta invites ⚑]]
 
 ## Done when
-- [ ] Create and edit a profile: name, age, work, intent, budget, areas, move date, lifestyle answers
-- [ ] Up to four photos, uploaded straight to R2 with a presigned URL
+- [ ] A user can create and edit a profile with name, age, work, intent, budget, areas, move date and lifestyle answers
+- [ ] A user can upload a maximum of four photos directly to R2 with a presigned URL
 - [ ] Photo bytes never pass through the API
 
 ^done

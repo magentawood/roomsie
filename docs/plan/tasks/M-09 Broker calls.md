@@ -22,15 +22,15 @@ tags:
 **Issue:** [#55](https://github.com/magentawood/roomsie/issues/55)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] 10 to 15 calls to Mumbai brokers
-- [ ] Notes in docs/research/
-- [ ] Dropped first if seeding is behind
+- [ ] The team makes 10 to 15 calls to Mumbai brokers
+- [ ] The notes are in docs/research/
+- [ ] If the seeding is late, the team drops this first
 
 ^done
 

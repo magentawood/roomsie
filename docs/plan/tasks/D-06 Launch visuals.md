@@ -22,12 +22,12 @@ tags:
 **Issue:** [#52](https://github.com/magentawood/roomsie/issues/52)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Social post images and link preview images
+- [ ] Social post images and link preview images exist
 
 ^done

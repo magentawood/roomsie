@@ -960,7 +960,7 @@
    "fromSide": "bottom",
    "toNode": "task-T-18b",
    "toSide": "bottom",
-   "label": "wire up"
+   "label": "connect"
   },
   {
    "id": "e-D-02-T-10",
@@ -1029,7 +1029,7 @@
    "fromSide": "bottom",
    "toNode": "task-T-15",
    "toSide": "bottom",
-   "label": "wire up"
+   "label": "connect"
   },
   {
    "id": "e-M-01-M-02",

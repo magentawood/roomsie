@@ -9,9 +9,9 @@ tags:
 
 _The data and the matching, then the screens that show them and the advisor._
 
-**24 hours** of build work at 1.41h a day, 10 spare, finishing Sat 10 Oct.
+**24 hours** of build work, at 1.41h a day, with 10 hours spare. The last task ends on Sat 10 Oct.
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Sequence
 

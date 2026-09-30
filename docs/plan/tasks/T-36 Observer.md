@@ -27,13 +27,13 @@ tags:
 - [[T-12 Extraction ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] The observer turns personal context into Form B observations
-- [ ] Every observation quotes the user's own words from that turn. If the quote is not in the turn word for word, the observation is rejected
+- [ ] Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation
 - [ ] A one-off job backfills Form B from the stored chat turns
-- [ ] Tested on the eval sentences, with the rejection rate recorded
+- [ ] It is tested on the eval sentences, and the rejection rate is recorded
 
 ^done
 

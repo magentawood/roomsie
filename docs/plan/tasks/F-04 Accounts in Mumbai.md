@@ -25,12 +25,12 @@ tags:
 - [[F-03 Billing and caps]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Supabase in ap-south-1, Fly in bom, Vercel functions in bom1
-- [ ] Firebase project, R2 buckets for public photos and private files, DeepSeek and Gemini keys
-- [ ] Keys shared through a password manager, never in chat or the repo
+- [ ] Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1
+- [ ] The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist
+- [ ] The team shares keys through a password manager, never in chat or in the repo
 
 ^done
 

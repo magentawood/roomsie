@@ -26,12 +26,12 @@ tags:
 - [[T-24 Event logging]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Events are written to their own Supabase project, on the second account, through the same track() function
+- [ ] The same track() function writes events to their own Supabase project, on the second account
 - [ ] pg_cron in that project deletes events past the retention period and creates next month's partition
-- [ ] The main database keeps no events. Each project's connection details live only in environment settings, so both can later move into one paid organisation
+- [ ] The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation
 
 ^done
 

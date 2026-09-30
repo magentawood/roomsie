@@ -8,12 +8,12 @@ tags:
 
 **Date:** Mon 28 Sep
 
-The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and legal pages are up. No product screens yet — designs are still being drawn. Article interviews are done. The seeding form is live.
+The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and the legal pages are live. There are no product screens at this time, because the designs are still in progress. The article interviews are complete. The seeding form is live.
 
 **After:** [[CP0 Kickoff]]  
 **Next:** [[CP2 Core loop live]]
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 

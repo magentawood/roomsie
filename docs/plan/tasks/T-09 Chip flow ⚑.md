@@ -24,7 +24,7 @@ tags:
 **Issue:** [#26](https://github.com/magentawood/roomsie/issues/26)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-10 Chat screen and split view ⚑]]
@@ -32,12 +32,12 @@ tags:
 - [[D-02 Chat screen designs ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Intent as four cards, area as the top six plus search, budget as bands
+- [ ] Intent shows as four cards, area as the top six plus search, and budget as bands
 - [ ] Each tap writes to the form. A tap never calls a model
-- [ ] Typing instead of tapping still works
+- [ ] If a person types and does not tap, the typed answer still works
 
 ^done
 

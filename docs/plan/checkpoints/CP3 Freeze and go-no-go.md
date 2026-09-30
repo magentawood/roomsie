@@ -8,12 +8,12 @@ tags:
 
 **Date:** Sat 10 Oct
 
-Every screen and every assistant handler is merged and live behind the invite gate. Seeded people are creating profiles. The go/no-go meeting at 8 pm decides 12 October or 14 October.
+Every screen and every assistant handler is merged, and is live behind the invite gate. The seeded people make their profiles. At 8 pm, the go/no-go meeting selects 12 October or 14 October.
 
 **After:** [[CP2 Core loop live]]  
 **Next:** [[CP4 Launch]]
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 

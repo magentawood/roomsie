@@ -7,7 +7,7 @@ tags:
 
 # M1 Content
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Sequence
 

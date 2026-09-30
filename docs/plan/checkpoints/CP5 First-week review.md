@@ -8,10 +8,10 @@ tags:
 
 **Date:** Mon 19 Oct
 
-Look at the numbers and the bug list, and set the order of v1.
+Examine the numbers and the bug list. Then set the order of v1.
 
 **After:** [[CP4 Launch]]  
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 

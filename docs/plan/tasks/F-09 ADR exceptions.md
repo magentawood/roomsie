@@ -22,15 +22,15 @@ tags:
 **Issue:** [#18](https://github.com/magentawood/roomsie/issues/18)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] 0011: prototype styling for launch
-- [ ] 0012: one events table instead of a second database
-- [ ] 0014: Sentry free tier instead of GlitchTip
+- [ ] 0011: the launch uses the prototype styles
+- [ ] 0012: one events table replaces a second database
+- [ ] 0014: the product uses the Sentry free tier, not GlitchTip
 
 ^done
 

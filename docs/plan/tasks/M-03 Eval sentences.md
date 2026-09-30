@@ -23,15 +23,15 @@ tags:
 **Issue:** [#21](https://github.com/magentawood/roomsie/issues/21)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] 50 sentences people would really type, in English, Hinglish and Marathi
+- [ ] The set has 50 sentences that people really type, in English, Hinglish and Marathi
 - [ ] Mumbai areas, 20k, bees hazaar, next month end
-- [ ] 10 deliberately vague ones. T1 labels the right answers
+- [ ] The set includes 10 sentences that are vague on purpose. T1 labels the correct answers
 
 ^done
 

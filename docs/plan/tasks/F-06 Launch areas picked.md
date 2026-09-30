@@ -22,14 +22,14 @@ tags:
 **Issue:** [#9](https://github.com/magentawood/roomsie/issues/9)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[M-01 Seeding form ⚑]]
 
 ## Done when
-- [ ] Three areas chosen with marketing
-- [ ] Chosen by where the team can actually reach people
+- [ ] The team chooses three areas with marketing
+- [ ] The team chooses them by where it can really reach people
 
 ^done
 

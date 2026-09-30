@@ -42,7 +42,7 @@ SHORT = {
 }
 CAP = 34  # hours each engineer has, Thu 24 Sep to Sat 10 Oct at two hours a day
 def issue_md(t):
-    return f"[#{t['issue']}]({REPO}{t['issue']})" if t["issue"] else "not filed yet"
+    return f"[#{t['issue']}]({REPO}{t['issue']})" if t["issue"] else "no issue at this time"
 OWNERS = [  # key, note name, tag, colour
  ("P1","P1 Platform","p1","#8B949E"),
  ("P2","P2 Chat","p2","#8B6CFF"),
@@ -64,8 +64,8 @@ QUESTION = {"P1":"The ground everyone builds on, then profiles, the waitlist and
 CPNAME = {"CP0":"CP0 Kickoff","CP1":"CP1 Foundation","CP2":"CP2 Core loop live",
  "CP3":"CP3 Freeze and go-no-go","CP4":"CP4 Launch","CP5":"CP5 First-week review"}
 CPCOLOUR = "#D73A4A"
-SOFT = {"T-18b":("T-18a","It lands Thu 1 Oct, before you start"),
-        "T-15":("T-14","It lands Wed 30 Sep, before you start")}
+SOFT = {"T-18b":("T-18a","It goes into main on Thu 1 Oct, before you start"),
+        "T-15":("T-14","It goes into main on Wed 30 Sep, before you start")}
 
 D = dt.date.fromisoformat
 f = lambda s: D(s).strftime("%a %-d %b")
@@ -163,13 +163,13 @@ for t in T:
           f"**When:** {when}" + (f" · {t['hours']} hours" if t["hours"] else "") + "  ",
           f"**Checkpoint:** [[{CPNAME[t['cp']]}]]  ",
           f"**Issue:** {issue_md(t)}"]
-    if t["critical"]: b.append("\n> [!warning] Critical path\n> If this slips, the launch slips.")
+    if t["critical"]: b.append("\n> [!warning] Critical path\n> If this task is late, the launch is late.")
     b.append("\n## Needs first")
-    b += [f"- {link(d)}" for d in t["deps"]] or ["- Nothing. Start any time."]
+    b += [f"- {link(d)}" for d in t["deps"]] or ["- Nothing. You can start this task at any time."]
     if t["id"] in SOFT:
-        s, why = SOFT[t["id"]]; b.append(f"- {link(s)}, later. {why}.")
+        s, why = SOFT[t["id"]]; b.append(f"- {link(s)}, at a later time. {why}.")
     b.append("\n## Unblocks")
-    b += [f"- {link(u)}" for u in unblocks[t["id"]]] or ["- Nothing waits on this."]
+    b += [f"- {link(u)}" for u in unblocks[t["id"]]] or ["- No task waits on this task."]
     b.append("\n## Done when"); b += checklist(t["id"], t["done"])
     # A block id on its own line after the list lets Progress.md embed this
     # exact list. The embed is the list itself, not a copy, so a box ticked
@@ -188,9 +188,9 @@ for k,(own,tag,colour) in OWN.items():
     if hrs:
         rate = hrs/DAYS_IN_WINDOW
         pace = f"{rate:.2f}".rstrip("0").rstrip(".")
-        spare = f", {CAP-hrs} spare" if hrs <= CAP else ""
-        b.append(f"**{hrs} hours** of build work at {pace}h a day{spare}, finishing {f(max(t['end'] for t in rows))}.\n")
-    b.append("Part of [[roomsie launch]].\n\n## Sequence\n")
+        spare = f", with {CAP-hrs} hours spare" if hrs <= CAP else ""
+        b.append(f"**{hrs} hours** of build work, at {pace}h a day{spare}. The last task ends on {f(max(t['end'] for t in rows))}.\n")
+    b.append("This note is part of [[roomsie launch]].\n\n## Sequence\n")
     for i,t in enumerate(rows,1):
         when = f(t["start"]) if t["start"]==t["end"] else f"{f(t['start'])} → {f(t['end'])}"
         b.append(f"{i}. {link(t['id'])} — {when}" + (f", {t['hours']}h" if t["hours"] else ""))
@@ -203,7 +203,7 @@ for idx,(cp,label,due,what) in enumerate(ms):
     b = ["---","tags:","  - checkpoint","---",HEADER,f"# {cp} · {label}\n",f"**Date:** {f(due)}\n",what+"\n"]
     if idx: b.append(f"**After:** [[{CPNAME[ms[idx-1][0]]}]]  ")
     if idx < len(ms)-1: b.append(f"**Next:** [[{CPNAME[ms[idx+1][0]]}]]\n")
-    b.append("Part of [[roomsie launch]].\n\n## Due by this checkpoint\n")
+    b.append("This note is part of [[roomsie launch]].\n\n## Due by this checkpoint\n")
     b += [f"- {link(t['id'])} — {OWN[t['role']][0]}" for t in rows]
     write("checkpoints", CPNAME[cp] + ".md", "\n".join(b) + "\n")
 
@@ -216,13 +216,13 @@ tags:
 {HEADER}
 # roomsie launch
 
-Target **{f(next(m[2] for m in ms if m[0] == 'CP4'))} 2026**, fallback Wed 14 Oct. {len(T)} tasks.
+The target date is **{f(next(m[2] for m in ms if m[0] == 'CP4'))} 2026**. The fallback date is Wed 14 Oct. The plan has {len(T)} tasks.
 
 ## How to look at it
 
-- **Graph view.** Open it with Cmd+G. It shows only this plan, coloured by owner. Every line is a link: a task to what it waits on, to its owner, and to its checkpoint. ⚑ marks the critical path.
-- **Timeline.** Open [[Launch timeline.canvas]]. One swimlane per person, laid out on the calendar. Red cards are the critical path, and arrows show what waits on what.
-- **One person's view.** Open their owner note and turn on the local graph.
+- **Graph view.** Open it with Cmd+G. It shows only this plan, with one colour for each owner. Every line is a link. A line connects a task to the tasks that it waits on. Lines also connect a task to its owner and to its checkpoint. ⚑ identifies the critical path.
+- **Timeline.** Open [[Launch timeline.canvas]]. It has one swimlane for each person, on the calendar. The red cards are the critical path. The arrows show which task waits on which task.
+- **One person's view.** Open the owner note of that person. Then open the local graph.
 
 ## Owners
 
@@ -237,16 +237,16 @@ Target **{f(next(m[2] for m in ms if m[0] == 'CP4'))} 2026**, fallback Wed 14 Oc
 
 ## Documents
 
-- [[how-to-work|How to work]] — each person's list, in order, and a plain-words index of every code
-- [[design-review|For the designer]] — the behaviour we are locking in, to confirm, change or defer
+- [[how-to-work|How to work]] — the list of each person, in order, and an index of every code in plain words
+- [[design-review|For the designer]] — the behaviour that we will lock, to confirm, change or defer
 - [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
 - [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
-- [[CONTEXT|Working context]] — the running decision record
-- `docs/product-base.md` and `docs/tech-base.md` — the product and technical records. Each has a browser version, `.html`, made by `tools/render-docs.py`
+- [[CONTEXT|Working context]] — the decision record that we keep current
+- `docs/product-base.md` and `docs/tech-base.md` — the product record and the technical record. Each has a browser version, `.html`, that `tools/render-docs.py` makes
 
 ---
 
-These notes are generated from `docs/team-plan.json`. To change the plan, edit that file and run `python3 tools/build-obsidian-plan.py`. The [GitHub issues](https://github.com/magentawood/roomsie/issues) stay the live tracker.
+These notes come from `docs/team-plan.json`. To change the plan, edit that file. Then run `python3 tools/build-obsidian-plan.py`. The [GitHub issues](https://github.com/magentawood/roomsie/issues) stay the live tracker.
 """)
 
 # canvas: swimlanes on a calendar
@@ -288,7 +288,7 @@ for t in T:
         edges.append(e)
     if t["id"] in SOFT:
         s,_ = SOFT[t["id"]]
-        edges.append(dict(id=f"e-{s}-{t['id']}", fromNode=f"task-{s}", fromSide="bottom", toNode=f"task-{t['id']}", toSide="bottom", label="wire up"))
+        edges.append(dict(id=f"e-{s}-{t['id']}", fromNode=f"task-{s}", fromSide="bottom", toNode=f"task-{t['id']}", toSide="bottom", label="connect"))
 json.dump(dict(nodes=nodes, edges=edges), open(os.path.join(PLAN, "Launch timeline.canvas"), "w"), indent=1, ensure_ascii=False)
 
 # graph colours, keeping any other settings already there
@@ -325,31 +325,31 @@ b_h = sum(t["hours"] or 0 for t in build); ui_h = sum(t["hours"] or 0 for t in u
 unfiled = [t["id"] for t in T if not t["issue"]]
 L = [f"# Team plan: launch on {D(LAUNCH):%-d %B}", "",
  "**Status:** ready to assign · **Decision:** PD12 · **Generated from** `docs/team-plan.json`", "",
- "Every task below is also a GitHub issue. This file is the baseline, and each person's list, in order, is also in `docs/how-to-work.md`.", "",
- "> **The GitHub issues still carry the original `vertical:V1`–`V5` labels and checkpoint milestones.** Where they disagree with this file, this file wins until the issues are relabelled."
- + (f" **Not filed yet:** {', '.join(unfiled)}." if unfiled else ""), "",
+ "Every task below is also a GitHub issue. This file is the baseline. The list of each person, in order, is also in `docs/how-to-work.md`.", "",
+ "> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues."
+ + (f" **No issue at this time:** {', '.join(unfiled)}." if unfiled else ""), "",
  "---", "", "## How to use this", "",
- "1. **Put a name against every lane and role.** Task F-01. They are slots, so the plan works before anyone is named.",
- "2. **Work your list in order.** The order is the schedule. Finish and merge one task before starting the next.",
- "3. **Open a pull request for every task.** Never push to `main`. One PR per task, titled with the task ID.",
- "4. **Post a standup by 10 am:** what you finished, what you're on, what's blocking you.",
- "5. **Blocked for more than half a day?** Say so in the channel. The founder reassigns.", "",
- "**Everyone works two hours a day, weekends included, from Thursday 24 September.**", "",
- "**Quality comes before the date.** The go/no-go list at the end of this file is the bar. If a check fails, the date moves a little rather than shipping something below it. Don't cut corners to hit a day. Say you're running long.", "",
+ "1. **Put a name against every lane and role.** This is task F-01. The lanes and roles are slots. Thus, the plan works before we know the names.",
+ "2. **Work your list in order.** The order is the schedule. Finish and merge one task before you start the next task.",
+ "3. **Open a pull request for every task.** Never push to `main`. Use one PR for each task. Put the task ID in the PR title.",
+ "4. **Post a standup by 10 am:** what you finished, what you work on, and what blocks you.",
+ "5. **Blocked for more than half a day?** Tell the channel. Then the founder reassigns the work.", "",
+ "**Everyone works two hours a day from Thursday 24 September. This includes weekends.**", "",
+ "**Quality comes before the date.** The go/no-go list at the end of this file is the bar. If a check fails, the date moves by a small amount. We do not ship something below the bar. Do not cut corners to meet a date. If your work takes more time, say so.", "",
  "---", "", "## Five lanes", "",
- f"We have no designs yet. {b_h - ui_h} of the {b_h} build hours need none, and {ui_h} are screens that cannot start without them. So the work runs in two phases:", "",
- "- **Phase A · Thu 24 → Wed 30 Sep.** Design-free work: the monorepo, the database, sign-in, the assistant, matching, moderation.",
- f"- **Phase B · Thu 1 → {f(LAST_BUILD)}.** Every screen, once designs D-02, D-03 and D-04 exist, plus the router, observer, advisor, analytics database and backups. **Designs are due by end of Wednesday 30 September.**", "",
+ f"We have no designs at this time. {b_h - ui_h} of the {b_h} build hours need no designs. The other {ui_h} hours are screens, and these cannot start without designs. Thus, the work has two phases:", "",
+ "- **Phase A · Thu 24 → Wed 30 Sep.** Work that needs no design: the monorepo, the database, sign-in, the assistant, matching and moderation.",
+ f"- **Phase B · Thu 1 → {f(LAST_BUILD)}.** Every screen, after designs D-02, D-03 and D-04 exist. Also the router, the observer, the advisor, the analytics database and the backups. **The designs are due by the end of Wednesday 30 September.**", "",
  f"| Lane | Question it answers | Owns | Hours | Spare | Person |", "|---|---|---|---|---|---|"]
 for k in LANES:
     rs = rows_of(k); h = sum(t["hours"] or 0 for t in rs)
     owns = ", ".join(SHORT[t["id"]] for t in rs)
     L.append(f"| **{P['roles'][k]}** | {QUESTION.get(k,'')} | {owns} | {h} | {CAP - h} | _name_ |")
-L += ["", f"Each engineer has {CAP} hours from Thursday 24 September to {D(LAST_BUILD):%A %-d %B}, at two hours a day. {D(BUG_DAY):%A %-d %B} is bug fixing. **{D(LAUNCH):%A %-d %B} is launch**, with {D(FALLBACK):%A %-d %B} as the fallback.", "",
- "**Why the lanes are not the old verticals.** V1, V2 and V4 needed no designs, but V3 and V5 were about 80% screens. Keeping them would have left two people idle for a week. Every task still has exactly one owner, start to finish.", "",
- "**Other roles.** Design, marketing and the founder keep their roles. Their sequences are below too.", "",
- f"**If there are four engineers, not five,** one lane has no owner. Plan for {D(FALLBACK):%-d %B} from day one, and use the cut order in `docs/launch-plan.md`.", "",
- "---", "", "## Each person's sequence", "", "Work top to bottom. Finish and merge one task before starting the next. Dates assume two hours every day.", ""]
+L += ["", f"Each engineer has {CAP} hours from Thursday 24 September to {D(LAST_BUILD):%A %-d %B}, at two hours a day. {D(BUG_DAY):%A %-d %B} is for bug fixes. **{D(LAUNCH):%A %-d %B} is launch.** {D(FALLBACK):%A %-d %B} is the fallback date.", "",
+ "**Why the lanes are not the initial verticals.** V1, V2 and V4 needed no designs. But V3 and V5 were approximately 80% screens. With the verticals, two people would have no work for a week. Every task still has exactly one owner, from start to finish.", "",
+ "**Other roles.** Design, marketing and the founder keep their roles. Their sequences are also below.", "",
+ f"**If there are four engineers, not five,** one lane has no owner. Plan for {D(FALLBACK):%-d %B} from day one. Use the cut order in `docs/launch-plan.md`.", "",
+ "---", "", "## Each person's sequence", "", "Do the tasks from top to bottom. Finish and merge one task before you start the next task. The dates assume two hours of work every day.", ""]
 for k,(own,tag,_) in OWN.items():
     rs = rows_of(k)
     if not rs: continue
@@ -365,7 +365,7 @@ for k,(own,tag,_) in OWN.items():
         L += [f"| {i} | {tid(t)} · {t['title']} | {when(t)} | {deps(t)} |" for i,t in enumerate(rs,1)]
         L += ["", f"Finish line: {f(max(t['end'] for t in rs))}."]
     L.append("")
-L += ["---", "", "## All tasks", "", "One row per task, grouped by owner in the order they are worked. ⚑ marks the critical path.", "",
+L += ["---", "", "## All tasks", "", "This table has one row for each task. The rows are in groups by owner, in the order of work. ⚑ identifies the critical path.", "",
  "| Owner | # | ID | Task | Hours | Start | End | Checkpoint | Waits on | Issue |", "|---|---|---|---|---|---|---|---|---|---|"]
 for k,(own,_,_) in OWN.items():
     for i,t in enumerate(rows_of(k),1):
@@ -428,19 +428,20 @@ for k in ORDER:
         mark = "✅" if its and dn == len(its) else ("🟡" if dn else "⬜")
         # `-` after the callout type makes it start collapsed.
         body.append(f"> [!todo]- {mark} {link(t['id'])} · {dn}/{len(its)}")
-        body.append(f"> ![[{name(t['id'])}#^done]]" if its else "> _No done-when list._")
+        body.append(f"> ![[{name(t['id'])}#^done]]" if its else "> _This task has no done-when list._")
         body.append("")
 
 P_ = ["---","tags:","  - progress","---", HEADER,
       "# Progress\n",
-      "**The vault is the source of truth for progress.** Every task below opens",
-      "to show its sub-tasks. Those checkboxes are the task note's own list, shown",
-      "here rather than copied — tick one here and it is ticked in the task note.\n",
-      "The counts and ✅ 🟡 ⬜ marks are a snapshot. Run",
-      "`python3 tools/build-obsidian-plan.py` to refresh them.\n",
+      "**The vault is the source of truth for progress.** You can open every task",
+      "below to see its sub-tasks. These checkboxes are the list in the task note",
+      "itself. This note shows that list, and does not copy it. Thus, if you tick",
+      "a box here, you also tick the same box in the task note.\n",
+      "The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run",
+      "`python3 tools/build-obsidian-plan.py`.\n",
       f"**{tot_d} of {tot_n} done · {round(100*tot_d/tot_n) if tot_n else 0}%**\n",
       f"`{bar(tot_d, tot_n)}`\n",
-      "Part of [[roomsie launch]].\n",
+      "This note is part of [[roomsie launch]].\n",
       "| Lane | Tasks complete | Items | Done |","|---|---|---|---|", *lane_rows,
       "\n---", *body]
 write(None, "Progress.md", "\n".join(P_) + "\n")

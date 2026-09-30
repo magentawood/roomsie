@@ -7,7 +7,7 @@ tags:
 
 # Everyone
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Sequence
 

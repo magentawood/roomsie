@@ -24,7 +24,7 @@ tags:
 **Issue:** [#38](https://github.com/magentawood/roomsie/issues/38)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
@@ -34,8 +34,8 @@ tags:
 - [[T-18b Person and connect screens ⚑]]
 
 ## Done when
-- [ ] Send, accept or decline a connect request
-- [ ] On mutual accept, both people see each other's number
-- [ ] At most 10 new requests a day. No request to someone who blocked you
+- [ ] A user can send, accept or decline a connect request
+- [ ] After a mutual accept, both people see the number of the other person
+- [ ] A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them
 
 ^done

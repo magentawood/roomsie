@@ -26,12 +26,12 @@ tags:
 - [[T-21 Turn cap and spend ceiling]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] A script opens 100 anonymous sessions
-- [ ] Per-device and per-network limits trip
-- [ ] Hitting the spend ceiling falls back to chips only, with no error page
+- [ ] The per-device and per-network limits stop the requests when a device or network goes over them
+- [ ] When spend reaches the ceiling, the chat changes to chips only and shows no error page
 
 ^done
 

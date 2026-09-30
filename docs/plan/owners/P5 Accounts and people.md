@@ -9,9 +9,9 @@ tags:
 
 _CI, events and connections, then the chat screen and its chips._
 
-**20 hours** of build work at 1.18h a day, 14 spare, finishing Sat 10 Oct.
+**20 hours** of build work, at 1.18h a day, with 14 hours spare. The last task ends on Sat 10 Oct.
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Sequence
 

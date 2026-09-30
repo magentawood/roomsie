@@ -9,9 +9,9 @@ tags:
 
 _What the assistant understands and says, and the router in front of it._
 
-**64 hours** of build work at 3.76h a day, finishing Sat 10 Oct.
+**64 hours** of build work, at 3.76h a day. The last task ends on Sat 10 Oct.
 
-Part of [[roomsie launch]].
+This note is part of [[roomsie launch]].
 
 ## Sequence
 

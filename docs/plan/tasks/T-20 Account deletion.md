@@ -26,13 +26,13 @@ tags:
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] A person can delete their account from settings
-- [ ] Profile, photos in R2 and form state are removed. Events are pseudonymised
-- [ ] `tokens_valid_after` is set to now, so every session ends
-- [ ] The person's chat turns are deleted too
+- [ ] The profile, the photos in R2 and the form state are removed. Events are pseudonymised
+- [ ] `tokens_valid_after` is set to now, thus every session ends
+- [ ] The chat turns of the person are deleted too
 
 ^done
 

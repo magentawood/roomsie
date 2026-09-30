@@ -26,13 +26,13 @@ tags:
 - [[T-11 Model wrapper ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Writes the reply from the form and the last two turns, never the whole chat
-- [ ] Replies in the language the person used
-- [ ] Never states a fact about a specific person
-- [ ] Off-topic gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
+- [ ] It writes the reply from the form and the last two turns, never from the full chat
+- [ ] It replies in the language that the person used
+- [ ] It never states a fact about a specific person
+- [ ] An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
 
 ^done
 

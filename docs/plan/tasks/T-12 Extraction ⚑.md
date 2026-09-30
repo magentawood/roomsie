@@ -24,7 +24,7 @@ tags:
 **Issue:** [#23](https://github.com/magentawood/roomsie/issues/23)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-11 Model wrapper ⚑]]
@@ -36,11 +36,11 @@ tags:
 - [[T-36 Observer]]
 
 ## Done when
-- [ ] Free text becomes Form A slots, as JSON limited to the enums
+- [ ] Free text becomes Form A slots, as JSON that uses only the enum values
 - [ ] The Mumbai area list and number and date forms are in the cached prompt
-- [ ] Numbers and dates are parsed by code, not by the model
-- [ ] Anything vague becomes `unclear`, never a guess. An inferred value never fills a slot silently
-- [ ] The assistant has one entry point that runs each turn's steps in order. Extraction and the reply writer are its first two handlers, so the router, observer and advisor can be added in v1 without restructuring
+- [ ] Code parses numbers and dates, not the model
+- [ ] All vague input becomes `unclear`, never a guess. An inferred value never fills a slot silently
+- [ ] The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure
 
 ^done
 

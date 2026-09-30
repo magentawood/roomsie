@@ -23,16 +23,16 @@ tags:
 **Issue:** [#39](https://github.com/magentawood/roomsie/issues/39)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Landing page in the V3 prototype's look
-- [ ] Hero, how it works, and a button into the chat
-- [ ] Every women-only line removed
-- [ ] Colours, type and spacing come from theme tokens, never raw values in components, so the v1 token pipeline only swaps values
+- [ ] The landing page uses the look of the V3 prototype
+- [ ] The page has a hero, a how-it-works section, and a button into the chat
+- [ ] Every women-only line is removed
+- [ ] Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
 
 ^done
 

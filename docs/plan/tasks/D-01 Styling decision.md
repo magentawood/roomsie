@@ -22,7 +22,7 @@ tags:
 **Issue:** [#1](https://github.com/magentawood/roomsie/issues/1)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[D-02 Chat screen designs ⚑]]
@@ -30,8 +30,8 @@ tags:
 - [[D-04 Landing and waitlist designs]]
 
 ## Done when
-- [ ] Launch uses the V3 prototype's look, not the Untitled UI pipeline
-- [ ] Every women-only line is marked for removal
+- [ ] The launch uses the look of the V3 prototype, not the Untitled UI pipeline
+- [ ] Every women-only line has a mark for removal
 
 ^done
 

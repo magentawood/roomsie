@@ -29,10 +29,10 @@ tags:
 - [[T-39 Analytics database]]
 
 ## Done when
-- [ ] One events table: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
+- [ ] One events table holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
 - [ ] No message text is stored
-- [ ] Events are written only through one `track()` function in apps/api
-- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, so it can move to its own database in v1
+- [ ] Code writes events only through one `track()` function in apps/api
+- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus v1 can move it to its own database
 
 ^done
 

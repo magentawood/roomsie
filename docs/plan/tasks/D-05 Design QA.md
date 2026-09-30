@@ -26,10 +26,10 @@ tags:
 - [[D-03 Results and profile designs]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Walk every screen on a phone and a laptop
-- [ ] Every fix filed as an issue
+- [ ] The team checks every screen on a phone and on a laptop
+- [ ] The team files every fix as an issue
 
 ^done

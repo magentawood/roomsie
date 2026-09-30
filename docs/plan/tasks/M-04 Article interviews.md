@@ -22,14 +22,14 @@ tags:
 **Issue:** [#13](https://github.com/magentawood/roomsie/issues/13)
 
 ## Needs first
-- Nothing. Start any time.
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[M-05 Article drafts]]
 
 ## Done when
-- [ ] Three to five real people interviewed for each topic group
-- [ ] Notes saved
+- [ ] The team interviews three to five real people for each topic group
+- [ ] The notes are saved
 
 ^done
 

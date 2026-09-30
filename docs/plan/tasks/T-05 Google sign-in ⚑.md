@@ -24,7 +24,7 @@ tags:
 **Issue:** [#20](https://github.com/magentawood/roomsie/issues/20)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
@@ -37,9 +37,9 @@ tags:
 - [[T-38 Advisor]]
 
 ## Done when
-- [ ] Google sign-in through Firebase on the web, token held in memory
+- [ ] Google sign-in works through Firebase on the web. The token stays in memory
 - [ ] The API verifies the ID token locally, with no call to Firebase
-- [ ] A users row is created on first sign-in. `tokens_valid_after` is in the first migration
+- [ ] The first sign-in creates a users row. `tokens_valid_after` is in the first migration
 
 ^done
 

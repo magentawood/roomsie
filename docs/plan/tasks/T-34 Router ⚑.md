@@ -24,19 +24,19 @@ tags:
 **Issue:** [#63](https://github.com/magentawood/roomsie/issues/63)
 
 > [!warning] Critical path
-> If this slips, the launch slips.
+> If this task is late, the launch is late.
 
 ## Needs first
 - [[T-12 Extraction ⚑]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
-- [ ] Each typed message gets one cheap classification call through the model wrapper: filter details, personal context, a question, or out of scope
-- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no further model call, and are logged
+- [ ] Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope
+- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no more model calls, and the system logs them
 - [ ] The pipeline runs only the handlers the router picks
-- [ ] The classifier sits behind its own adapter, so Jev can be trialled against the eval set without touching the pipeline
+- [ ] The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline
 
 ^done
 

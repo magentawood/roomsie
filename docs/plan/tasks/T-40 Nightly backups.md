@@ -26,12 +26,12 @@ tags:
 - [[T-04 Deploy to Mumbai]]
 
 ## Unblocks
-- Nothing waits on this.
+- No task waits on this task.
 
 ## Done when
 - [ ] A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
-- [ ] Fourteen days of dumps are kept, and older ones are deleted
-- [ ] A restore has been tested once, into a scratch project
+- [ ] The system keeps fourteen days of dumps and deletes older dumps
+- [ ] The team tested a restore one time, into a scratch project
 
 ^done
 
