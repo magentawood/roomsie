@@ -8,6 +8,8 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
 
 ## Decision
 
+**In one line:** roomsie launches in Mumbai, only in the three neighbourhoods with the most seeded profiles, and all other visitors join a waitlist.
+
 - **The launch market is Mumbai.**
 - Launch in the three Mumbai neighbourhoods that have the most seeded profiles.
 - Do not launch in all of the city.

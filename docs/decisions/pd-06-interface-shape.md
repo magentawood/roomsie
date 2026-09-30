@@ -8,6 +8,8 @@ One of the open questions in `ai-agent-design.md` (§7, question 2) was: is the 
 
 ## Decision
 
+**In one line:** On desktop, "Start looking" opens a full-screen chat with no skip, and the view splits into chat and listings after 2 to 3 inputs.
+
 1. **Landing page.** A traditional hero and product narrative. Public.
 2. **Primary call to action.** "Start looking" opens a full-screen chat.
 3. **No skip.** From the chat, the user cannot go to the grid.

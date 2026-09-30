@@ -10,6 +10,8 @@
 
 ## Decision
 
+**In one line:** The pre-login chat uses a turn cap of 5 free-text turns and rate limits, with a global daily spend ceiling as the backstop.
+
 **Use the two: a turn cap and rate limits, with a cap of 5.**
 
 The turn cap:

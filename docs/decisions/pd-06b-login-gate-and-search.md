@@ -9,6 +9,8 @@ arrives on a page, not in the chat, and breaks this rule (hole 2, PD6c).
 
 ## Decision
 
+**In one line:** A user must log in only to open one listing or person, or to send a message, and search engines index area and filter pages.
+
 A user must log in for **only two things**:
 
 | Step | Login needed |

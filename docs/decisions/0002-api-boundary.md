@@ -15,6 +15,8 @@
 
 ## Decision
 
+**In one line:** Client apps never connect to the database: all application reads and writes go through an HTTP API that we write.
+
 All application reads and writes go through an HTTP API that we write. Client
 apps never hold a database connection, and never know table names or column
 names.
@@ -29,6 +31,8 @@ platform:
 Row Level Security stays enabled in the database as defence in depth. It is not
 the primary authorisation mechanism.
 
+This decision determines if the KMP apps in month four are a port or a rewrite.
+
 ## Rationale
 
 - Business rules must be in one place only. Rules in SQL policies and in three
@@ -41,8 +45,8 @@ the primary authorisation mechanism.
   - chat rate limits
   - the removal of contact details from the first message.
 
-  Thus, we need server-side code in all conditions. If we act as if we do not,
-  we build half a backend by accident.
+  Thus, we need server-side code in all conditions. The only question is when
+  we admit it: at this time, or in week three, after we built half a backend by accident.
 - With an API, to add a client is to add an HTTP client. Without an API, we
   must write the rules again.
 - Table shapes become an internal detail again. Thus, a schema change is not a
@@ -64,10 +68,12 @@ the primary authorisation mechanism.
 
 - **Direct-to-database (BaaS), RLS only.** It makes three clients dependent on
   the schema, and it puts business rules in many places. Then the
-  expensive-to-change layer would be the layer that we rented.
+  expensive-to-change layer would be the layer that we rented. If we rename a
+  column, iOS breaks.
 - **Own everything including auth, uploads and websockets.** This gives maximum
-  portability. But it costs approximately 30–40 more person-hours from a 60–80
-  hour budget, on problems that have solutions and do not make us different.
+  portability. But hand-built OAuth token handling, upload pipelines and
+  websocket infrastructure cost approximately 30–40 more person-hours from a 60–80
+  hour budget. The hours go to problems that have solutions and do not make us different.
 
 ## Revisit when
 

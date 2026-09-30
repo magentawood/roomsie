@@ -10,6 +10,8 @@
 
 ## Decision
 
+**In one line:** The main and analytics databases are on two free Supabase accounts, with a nightly dump of the two databases to R2.
+
 - **The main and analytics databases are on two free Supabase accounts.**
 - **A nightly dump of the two databases goes to R2** (T-40).
 - **When we start to pay, the two projects move into one paid organisation.**

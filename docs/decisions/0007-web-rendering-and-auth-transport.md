@@ -17,6 +17,8 @@
 
 ## Decision
 
+**In one line:** Pages that need SEO render on the server, a Bearer Firebase ID token is the single authentication mechanism, and `users.tokens_valid_after` ships in the first migration.
+
 **1. The rendering of a page depends on if the page needs SEO.**
 
 | Surface | Rendering | Identity |

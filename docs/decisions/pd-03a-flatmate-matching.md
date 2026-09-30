@@ -8,6 +8,8 @@ PD3 (where listing supply comes from at launch) waits for the broker interviews.
 
 ## Decision
 
+**In one line:** Open: the flatmate matching design, an active track that the team works on in parallel with PD3.
+
 **Active track.** The team works on the flatmate matching design in parallel with PD3.
 
 ## Rationale

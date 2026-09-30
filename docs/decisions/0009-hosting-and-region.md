@@ -11,6 +11,8 @@
 
 ## Decision
 
+**In one line:** Postgres, `apps/api` and the `apps/web` functions all run in Mumbai: Supabase `ap-south-1`, Fly.io `bom` and Vercel `bom1`.
+
 | Component | Where |
 |---|---|
 | Postgres (Supabase) | **Mumbai — `ap-south-1`** |
@@ -44,11 +46,23 @@ latency is not user→API. It is **API→database**.
 
 ### 2. Runtime — the argument that actually decided it
 
+| | Fly.io | Vercel |
+|---|---|---|
+| Model | Always-on container | Function instances (Fluid reuse) |
+| Cold starts | None | Fewer, not zero |
+| Max duration | No limit | 300s (800s paid) |
+| Persistent worker | Run it | None: Cron + queue |
+| DB connections | Long-lived pool | Supabase pooler |
+| Fastify | Native | Adapter |
+| Portability | Runs anywhere | Vercel-shaped code |
+| Cost | ~$5–10/mo fixed | For each invocation |
+
 Serverless functions have **no shared memory between requests**. Thus, no
-function can buffer, batch, throttle or cache data across requests. Three items
+function can buffer, batch, throttle or cache data across requests. This is the
+whole con of serverless. All else follows. Three items
 in our spec conflict with this limit.
 
-**Analytics ingestion.** This item is the decisive one:
+**Analytics ingestion.** This item is the decisive one. The spec (§3.1) flushes a per-card lifecycle on each decision:
 
 | | |
 |---|---|
@@ -69,7 +83,7 @@ in our spec conflict with this limit.
   interaction, stutters. The fix is architectural, and we discover the problem
   under load.
 
-**Rate limiting.** The limit is ~10 new conversations for each user each day. A
+**Rate limiting.** The spec (§8.2) limit is ~10 new conversations for each user each day. A
 long-running process keeps a counter in the process. Serverless needs a round
 trip to an external store each time a user sends a message.
 
@@ -95,7 +109,7 @@ ADR 0007 already divides the work along this line. Vercel server-renders the
 public pages, and the CDN caches them. All write-heavy work goes behind
 `apps/api`.
 
-### 4. Vendor risk versus coupling risk
+### 4. Vendor risk versus coupling risk (mid-2026)
 
 | | Fly.io | Vercel |
 |---|---|---|
@@ -111,7 +125,7 @@ public pages, and the CDN caches them. All write-heavy work goes behind
   decreases.
 - **But the artefact that we deploy is a Docker container.** If Fly is not
   satisfactory, the same image runs with no change on Railway, Render, AWS or a
-  VPS.
+  VPS, in an afternoon.
 - **Vercel is the much safer company,** but it produces code that runs on no
   other platform.
 

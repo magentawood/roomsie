@@ -16,13 +16,16 @@ is a third of the bill.
 - It logs only what runs on Vercel's servers. Thus, **browser errors do not
   appear at all**. These errors are most of the breakage that users see.
 
-Vercel logging also has no grouping, no alerting, no source-map symbolication
+Vercel logging does show server and SSR errors in `apps/web`. The Sentry SDK
+also shows them. Vercel logging also has no grouping, no alerting, no source-map symbolication
 and no release correlation. Its retention is short and depends on the plan.
 
 > [!example]- Examples
 > - Errors that never touch a Vercel server: a React crash in the swipe stack, a fetch that fails, or a null reference in chat.
 
 ## Decision
+
+**In one line:** `apps/web` and `apps/api` send errors through the Sentry SDK to self-hosted GlitchTip, behind one `reportError` wrapper, until Firebase Crashlytics for web reaches GA.
 
 **Instrument with the Sentry SDK. Point the DSN at self-hosted GlitchTip.**
 
@@ -112,7 +115,7 @@ that this project consistently chose to avoid.
 - **Sentry free tier.** The full feature set at $0, but 1 user against a team of
   four.
 - **Sentry Team at $26/month.** This is the best product, and the destination
-  that we expect to reach. We deferred it only because of the budget. A change
+  that we expect to reach. We deferred it only because of the budget. We did not reject it. A change
   to one variable moves us to it.
 
 ## Revisit when

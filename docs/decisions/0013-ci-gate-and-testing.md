@@ -12,7 +12,8 @@ follow:
 2. **Each test is an hour that we do not spend on features.** The total is
    approximately 200 hours.
 
-Thus, the question is where the expensive bugs actually are in this product.
+Thus, the question is where the expensive bugs actually are in this product,
+not how much testing is good in general.
 For femmeflats, these bugs concentrate in a small number of server-side rules.
 Each rule is deterministic, genuinely hard to verify by hand, and severe when it
 is incorrect:
@@ -28,6 +29,8 @@ But a snapshot test on a card component is almost worthless while the design
 changes each week.
 
 ## Decision
+
+**In one line:** Each pull request runs typecheck, lint, `turbo build`, unit tests, API integration tests, the generated-file check, `check-tokens.mjs` and `gitleaks`.
 
 Each pull request runs these checks:
 
@@ -75,9 +78,9 @@ swipe → first message.
   else sees.
 - We deferred them because E2E tests are slow to write and brittle while the UI
   changes each week. The realistic cost is 15–20 hours at this time, plus
-  continued maintenance.
-- Revisit these tests after the UI becomes stable. Ideally, do this before the
-  first release where a regression would reach real users.
+  continued maintenance, of a 200-hour launch budget.
+- Revisit these tests after the UI becomes stable, before a regression can
+  reach real users.
 
 ## Alternatives rejected
 

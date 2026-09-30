@@ -25,6 +25,7 @@ One file for each decision. Each file records:
 | [0013](0013-ci-gate-and-testing.md) | CI gate: typecheck, lint, build, unit + API integration tests | Accepted |
 | [0014](0014-error-tracking.md) | Sentry SDK, GlitchTip destination now, Crashlytics for mobile | Accepted |
 | [0015](0015-primary-key-strategy.md) | UUIDv7 primary keys, no DB default, client mints for offline writes | Accepted |
+| [0016](0016-credentials-and-secrets.md) | Credentials and secrets: public vs critical, secrets only in apps/api | Accepted |
 
 > **Note on requirements sources.** `PRD.md` is **deprecated** (2026-09-14). You must not cite it.
 >
@@ -72,29 +73,50 @@ One file for each decision. Each file records:
 
 ## Where we are
 
-- We agreed on fourteen architecture decisions.
+- We agreed on sixteen architecture decisions.
 - **Schema design is in progress.** We do it before all scaffolding.
-- Schema decisions start at ADR 0015. The Schema page of `../tech-base.md` also shows them.
-- ✅ **S1 — ID strategy** → ADR 0015
+- Schema decisions start at ADR 0015. The schema phases are in this section, below.
+- ✅ **S1 — ID strategy** → ADR 0015. Settled: UUIDv7 keys that clients can mint. They are not enumerable, they are index-friendly, and offline writes are retry-safe.
 - ⏳ **S2 — `users` table** ← next
 
-Schema items that are not complete:
+The fourteen decisions settle what we build on. The schema settles what the data looks like. The schema goes into each table, each API response, each generated Kotlin data class, and in the future the local cache on 20,000 phones.
+
+The design order is a dependency chain, not a preference. Each step needs a fixed step above it first:
+
+1. Identity: `users`. All other tables have a foreign key to `users`.
+2. Profile: profiles, attributes.
+3. The queue: who has seen whom, and what they did.
+4. Listings: flats and lister accounts.
+5. Chat: threads, messages, requests, blocks, reports.
+6. Events: analytics, with versions and a retention policy.
+
+Schema items that are not complete (S2 is next, S3–S7 are pending):
 
 | Item | Scope |
 |---|---|
-| `users` | Our own id as PK, `auth_provider_id` (Firebase UID) as a plain column, `tokens_valid_after` for instant revocation (ADR 0007), verification state |
-| Profiles | Profiles and the rapid-fire attribute model |
+| `users` | Our own id as PK, `auth_provider_id` (Firebase UID) as a plain column, `tokens_valid_after` for instant revocation (ADR 0007), verification state, deletion |
+| Profiles | Profiles and the rapid-fire attribute model: answers as columns, rows or JSONB |
 | Queue state | For each (viewer, target): unseen → seen → accepted/rejected, reject counts, suppression windows |
 | Listings | Lister accounts and user accounts are different accounts. |
 | Chat | Threads, messages, message requests, blocks, reports |
-| Analytics events | Versions, with `event_version`. The retention/deletion policy that ADR 0012 requires. |
+| Analytics events | Versions, with `event_version`. The DPDP-compliant retention/deletion policy that ADR 0012 requires. |
 
 **Then:** scaffold the monorepo. When we scaffold `apps/web` with Untitled UI, we can also start the token generator's naming transform (ADR 0011). This transform needs the real `theme.css` on disk.
 
-**Open items carried forward** are at the end of `../tech-base.md`.
+**Open items carried forward** are in [Open items](#open-items), below.
 
 > [!note]- Why
 > Schema design comes first because the data model is the most expensive item to change.
+
+## Open items
+
+Items carried forward. We settled and recorded all architectural decisions.
+
+- **Token generator naming transform:** blocked on `npx untitledui@latest tailwind`. Read the real `theme.css`. ([ADR 0011](0011-design-system-token-pipeline.md))
+- **Rebrand:** the Brand ramp is still Untitled UI blue, and the fonts are Inter. The brand must stay different from `error`. ([ADR 0011](0011-design-system-token-pipeline.md))
+- **Event retention and deletion policy (DPDP):** design it with the schema, not after. ([ADR 0012](0012-analytics-event-store.md))
+- **Playwright E2E on critical paths:** after the UI is stable. ([ADR 0013](0013-ci-gate-and-testing.md))
+- **Product requirements:** we deprecated `PRD.md`. Requirement claims in ADRs [0007](0007-web-rendering-and-auth-transport.md), [0009](0009-hosting-and-region.md) and [0012](0012-analytics-event-store.md) need validation again.
 
 ## Standing rules
 

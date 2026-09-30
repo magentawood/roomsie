@@ -23,6 +23,8 @@ package manager and the task runner.
 
 ## Decision
 
+**In one line:** We use pnpm workspaces for dependency management and Turborepo for task running.
+
 **pnpm workspaces** for dependency management, **Turborepo** for task running.
 
 ## Rationale

@@ -17,6 +17,8 @@ discard it for no benefit.
 
 ## Decision
 
+**In one line:** `apps/web` uses Next.js 16 App Router, React 19, Tailwind CSS v4 and TanStack Query, and we port the pages from `femmeflats-design`.
+
 | Concern | Choice |
 |---|---|
 | Framework | Next.js 16, App Router |
