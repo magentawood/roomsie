@@ -28,9 +28,9 @@ The assistant has to handle every intent in the market, not just one:
 
 roomsie is a pivot. The previous product, **femmeflats**, was a women-only,
 swipe-stack discovery app — dating-app mechanics applied to shared living. Its
-PRD is in `docs/source/femmeflats-PRD-deprecated.md` and is **deprecated**: do
-not cite it as a requirement source. It is kept for history and because three
-architecture decisions were argued from claims it made.
+PRD is **deprecated**: do not cite it as a requirement source. It was deleted
+from the repo, but three architecture decisions were argued from claims it
+made, so it stays in git history: `git show 6b1ac08:docs/source/femmeflats-PRD-deprecated.md`.
 
 The **technical base does not change.** Fifteen accepted ADRs and a full
 architecture record carry over unchanged. They are vendored in
@@ -219,12 +219,14 @@ roomsie/
 │   ├── design-review.md        behaviour decisions for the designer
 │   ├── extensibility.md        every known future change, and the seam that absorbs it
 │   ├── product-base.html       the product record
+│   ├── tech-base.html          the technical record
+│   ├── decisions/              the ADRs, 0001 to 0015
 │   ├── team-plan.json          the plan's data. Edit this, then run the builder
 │   ├── team-plan.md            generated from team-plan.json
 │   ├── plan/                   the Obsidian view, generated
 │   ├── *.md                    decision notes: interface, agent, models, scope, limits, SEO, verification
 │   ├── research/ · content/    market research and the article corpus plan
-│   └── source/                 vendored inputs: ADRs, tech base, V3 prototype, deprecated PRD
+│   └── source/                 vendored inputs: the V3 prototype and the PRD draft
 ├── tools/
 │   └── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
 ├── .github/workflows/ci.yml    typecheck, lint, build, secret scan       T-03
