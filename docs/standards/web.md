@@ -10,10 +10,10 @@ These rules apply to `apps/web`: Next.js 16, React 19 and TanStack Query. The ru
 
 ## Rendering and data
 
-- Render the public search pages on the server: the landing page, and the area and filter pages. Next gets their data from `apps/api`, server to server. Why: these pages are the organic search surface. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md))
+- Render the public search pages on the server: the landing page and the editorial pages, and in v1 the area and filter pages. Next gets their data from `apps/api`, server to server. Why: these pages are the organic search surface. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md))
 - Render the pages behind login in the browser. Why: they have no search value. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Area and filter pages show aggregate data only. If a cell has fewer than 20 active users or listings, show a band, not the number. Why: a small cell can show data about one person. ([PD6b](../decisions/pd-06b-login-gate-and-search.md))
-- In the authenticated app, get data only through TanStack Query and the client that we generate from the contract. Why: TanStack Query stops the race when the id changes. ([ADR-0008](../decisions/0008-web-stack.md), [ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
+- In the authenticated app, get data only through TanStack Query, with the types from `packages/contract`. Why: TanStack Query stops the race when the id changes. ([ADR-0008](../decisions/0008-web-stack.md), [ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 - Never call `fetch` in a `useEffect`. Why: each hand-written fetch needs its own cancellation guard, and people forget it. ([ADR-0008](../decisions/0008-web-stack.md))
 - The results panel is a pure function of the form. Query again when the form changes, not when a chat turn occurs. Why: a pure function is deterministic and testable. ([PD6c](../decisions/pd-06c-interface-holes.md))
 - The panel never waits for the model. Run the query from the current form state. Why: the results must not wait for a slow model call. ([PD6c](../decisions/pd-06c-interface-holes.md))
@@ -23,7 +23,7 @@ These rules apply to `apps/web`: Next.js 16, React 19 and TanStack Query. The ru
 - Send the Firebase ID token in `Authorization: Bearer`. Use no session cookies. Why: web and mobile then use one auth path. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Keep the token in the memory of the Firebase SDK, never in `localStorage`. Why: an XSS attack can read the token. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Serve a strict Content-Security-Policy. Why: it is a primary control against XSS, which can steal the token. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
-- Ask for login only when a user opens one listing or person, or sends a message. Browse, chat and filters need no login. Why: the product is open until that step. ([PD6b](../decisions/pd-06b-login-gate-and-search.md))
+- Ask for login only when a user opens one listing or person, sends a message, or reaches the turn cap. Browse and filters need no login. Why: the product is open until that step. ([PD6b](../decisions/pd-06b-login-gate-and-search.md), [PD9](../decisions/pd-09-pre-login-limits.md))
 - The sign-in wall never shows before the results. It replaces the chat input, and the results stay on the screen. Why: a user signs in after they see something that they want. ([PD9](../decisions/pd-09-pre-login-limits.md))
 
 ## Pages and content
