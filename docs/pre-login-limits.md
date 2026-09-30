@@ -6,9 +6,7 @@
 - A completed interview costs approximately ₹1 to ₹2.
 - **Decision: use the two, a turn cap and rate limits, with a cap of 5.**
 
-> [!note]- Why
-> - Before login, the assistant is open to all persons.
-> - A bot that talks all night costs more than a thousand human users.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ---
 
@@ -18,31 +16,20 @@
 
 - Intent, area and budget are chip-driven.
 
-> [!note]- Why
-> - This works because results appear at turn three.
-> - The chips fill the panel before the wall appears.
-> - Thus, we ask the user to sign in immediately after they see something that they want. That is the correct time.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ### Guard 1 — chip taps do not count
 
 **Count free-text turns only.** Chip taps do not count in the turn cap.
 
-> [!note]- Why
-> - A chip tap runs no model, so it has no cost.
-> - The turn budget controls model cost. Thus, it is incorrect to count chip taps in it.
-> - That also penalises the users with the lowest cost.
-> - Example: a user who taps chips for intent, area and budget gets to the results with all five turns available.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ### Guard 2 — the wall never appears before results have
 
 - **Hard rule: the cap cannot stop the chat until the panel renders a minimum of one time.**
 - If slots are missing at turn five, continue until results exist. Then stop.
 
-> [!note]- Why
-> - A user who types and does not tap can use turns on clarification.
-> - Example: "I'm looking for a place", then "somewhere central", then a question to clarify. The user is then at five turns with no results.
-> - That is the worst possible result. The user gave effort, got nothing, and left.
-> - We paid for the tokens and got no conversion.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ### What the wall looks like
 
@@ -50,19 +37,14 @@
 - The wall replaces the chat input with a request to sign in.
 - The user can continue to scroll and filter the panel.
 
-> [!note]- Why
-> - If you remove results that the user saw, it looks like a trick.
-> - Manual filters have no cost.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ### Five is a tuning knob, not a constant
 
 - Put the cap value in config, not in code.
 - When there is traffic, do an A/B test of it.
 
-> [!note]- Why
-> - The cap is a conversion lever, and it is cheap to change.
-> - If the cap is too low, users leave before they are invested.
-> - If it is too high, we pay for tyre-kickers.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ---
 
@@ -87,11 +69,7 @@
 - When counters exist, a second machine is not a one-line config change.
 - Record this dependency today.
 
-> [!note]- Why
-> - Sessions per device stops one browser that starts fifty interviews.
-> - Rate limiting needs an in-process counter, not an external round trip for each request. This is one reason that ADR 0009 rejected serverless.
-> - Each machine has its own in-process counters. Thus, two machines double the limit.
-> - ADR 0009 says that a second machine is a one-line config change.
+Why: [PD9](decisions/pd-09-pre-login-limits.md), [ADR 0009](decisions/0009-hosting-and-region.md)
 
 ---
 
@@ -105,9 +83,7 @@
 - Nobody sees an error page.
 - **Alert before the ceiling, not at it.** The alert starts at 70% of the daily budget.
 
-> [!note]- Why
-> - The product continues to work. But it does not understand sentences until the window resets.
-> - The alert lets a person look before users see an effect.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 ---
 
@@ -122,8 +98,4 @@
 | Spend by hour | Shows if DeepSeek's peak window has an effect |
 | **Blocked sessions by limit type** | Shows if a limit stops human users. The most important metric. |
 
-> [!note]- Why
-> - Cost per completed interview is the unit that matters.
-> - Turns to results shows if the chips work.
-> - A rate limit that silently blocks human users is worse than the abuse that it prevents.
-> - If you do not measure it, you cannot see it.
+Why: [PD9](decisions/pd-09-pre-login-limits.md)

@@ -15,9 +15,7 @@
 - The text below is the initial reasoning, dated 23 September.
 - The schedule is at this time in `docs/team-plan.json`, `docs/team-plan.md` and `docs/how-to-work.md`.
 
-> [!note]- Why
-> - The two databases are on free Supabase accounts. Thus, we added nightly backups.
-> - The initial reasoning stays as the record of the reason for each cut.
+Why: [PD13](decisions/pd-13-databases-and-backups.md), [PD11](decisions/pd-11-launch.md)
 
 ---
 
@@ -37,8 +35,7 @@
 - That is two to four times the available hours.
 - This plan keeps the date and cuts the scope.
 
-> [!note]- Why
-> We must change one of three things: the date, the scope, or the meaning of "launch".
+Why: [PD11](decisions/pd-11-launch.md)
 
 ---
 
@@ -89,18 +86,7 @@ assistant, sees real flatmate matches, and can connect with one.**
 - Each cut has a slot in v1.
 - The design documents stay as they are.
 
-> [!note]- Why
-> - **We do not abandon an item on this list.**
-> - In-app messaging: realtime chat is the largest build item. People in Mumbai use WhatsApp at this time.
-> - DigiLocker verification: onboarding with a KYC provider takes more than two weeks.
-> - Blurred verified-only cards: these need verification.
-> - SEO area pages: these need data that does not exist at this time.
-
-> [!note]- History
-> - Router: the client routes chips. Free text goes to one extraction call. One line in the reply prompt handles off-topic text.
-> - Form B: filters need only Form A.
-> - Advisor and RAG: we have not written the corpus. Adjacent questions get a hedged general answer. Consequential questions go to a hand-off.
-> - The advisor came back with web search after sign-in.
+Why: [PD11](decisions/pd-11-launch.md), [PD10](decisions/pd-10-scope-bands.md)
 
 ---
 
@@ -118,9 +104,7 @@ conflicts here. For each conflict, we propose an exception with a time limit.
 When the app repo exists, each conflict needs a one-line amendment in
 `docs/decisions/`.
 
-> [!note]- Why
-> - The palette of the prototype is not Untitled UI.
-> - With the `reportError` wrapper, a move to a different tool in the future is only a DSN change.
+Why: [PD5](decisions/pd-05-team-and-budget.md), [ADR 0014](decisions/0014-error-tracking.md)
 
 ---
 
@@ -132,10 +116,7 @@ When the app repo exists, each conflict needs a one-line amendment in
 2. **Publish the first ten corpus articles** at `roomsie.com/blog`.
 3. **Make the broker calls.** They give information for v1, not v0.
 
-> [!note]- Why
-> - A matching product with no people in it shows an empty panel on day one.
-> - Many people in Powai is better than a small number of people in all areas.
-> - Make the broker calls at this time, because the answers take time.
+Why: [PD11](decisions/pd-11-launch.md)
 
 ---
 
@@ -148,9 +129,7 @@ When the app repo exists, each conflict needs a one-line amendment in
 - **9 October is the last slip.** If the team cannot launch on that date, do not move the date again.
 - Then cut scope in this sequence: use templates for the replies, then remove photos for a week.
 
-> [!note]- Why
-> - On 5 October, the remaining work is clear.
-> - A date that you announce and then miss has a high cost. It costs more than the second date announced at the start.
+Why: [PD11](decisions/pd-11-launch.md)
 
 ## Decided: public launch
 
@@ -170,12 +149,7 @@ All of these items are necessary:
 That fits only if 5 people work on most days, weekends included, and no problem
 occurs.
 
-> [!note]- Why
-> - A public launch needs items that a closed beta can omit.
-> - Item 14: strangers see the contact details. There must be a way out.
-> - Item 16: a public visitor from Thane who sees an empty panel leaves and does not come back.
-> - Item 17: there is one Fly machine and an open chat. You must know first.
-> - There is no margin.
+Why: [PD11](decisions/pd-11-launch.md)
 
 ### Launch areas, stated publicly
 
@@ -184,9 +158,7 @@ occurs.
 - A visitor from a covered area sees a full panel.
 - A visitor from a different area joins a waitlist for that area.
 
-> [!note]- Why
-> - The waitlist makes an empty result into a demand signal.
-> - It also tells marketing where to seed next.
+Why: [PD11](decisions/pd-11-launch.md)
 
 ### Work that is not engineering hours
 
@@ -199,5 +171,4 @@ occurs.
 
 - **v0 is free.** There is no monetisation in two weeks. PD4 moves to v1.
 
-> [!note]- Why
-> There is nothing to charge for.
+Why: [PD11](decisions/pd-11-launch.md)

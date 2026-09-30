@@ -15,9 +15,7 @@ Results:
 - The SEO area pages continue to work.
 - Cold start is easier.
 
-> [!note]- Why
-> - The SEO area pages use people data.
-> - Cold start has one side of a marketplace, not two.
+Why: [PD0](decisions/pd-00-v0-scope.md)
 
 ## The design as proposed
 
@@ -36,22 +34,14 @@ Results:
 - Guard 1: at launch, the verified-only setting is **off**. Offer it when the verified pool is sufficiently large to hide in.
 - Guard 2: always show the **count** of hidden matches, also on blurred cards.
 
-> [!note]- Why
-> - Only verified users can see verified-only people. Thus, the rule makes verification increase itself: all blurred cards are reasons to verify.
-> - An example message: "3 of your 4 matches are verified only. Verify to see them." This converts much better than a settings page that nobody opens.
-> - At launch, almost no users have verification.
-> - Without a count, a blurred card is only an absence.
+Why: [PD8](decisions/pd-08-verification.md)
 
 ## The blur must happen on the server
 
 - At upload time, make a different blurred asset and serve its URL.
 - Do not give the address of the initial image to a viewer without permission.
 
-> [!note]- Why
-> - If the browser gets the initial image and CSS blurs it, there is no protection. Anyone can read the image in the network tab.
-> - This is the most frequent error in this feature.
-> - This agrees with ADR 0005: images go directly to R2, and viewers get them through short-lived signed URLs after an authorisation check.
-> - The blurred copy is one more object with a different access rule.
+Why: [PD8](decisions/pd-08-verification.md), [ADR 0005](decisions/0005-managed-platform-split.md)
 
 ## The manual Aadhaar route: do not build it
 
@@ -68,9 +58,7 @@ UIDAI will ban them.**
 - If the law permits a copy, you must mask the first eight digits.
 - The manual route puts the most sensitive identity data in India into the storage of a seven-person startup.
 
-> [!note]- Why
-> - "Upload a photo or PDF of your Aadhaar and we will check it by hand" is the practice that UIDAI removes.
-> - Do not accept responsibility for that breach risk.
+Why: [PD8](decisions/pd-08-verification.md)
 
 ### What to do instead
 
@@ -102,10 +90,7 @@ passport, driving licence or voter ID. A person compares the selfie to the ID ph
 - For verification selfies, ADR 0005 requires a different non-public bucket, short retention, and signed-URL access only.
 - Identity documents need the same rule or a stronger rule.
 
-> [!note]- Why
-> - DigiLocker gives you a verified assertion.
-> - Approximately 4,313 agencies have the document-requester status.
-> - The Aadhaar Act restrictions do not apply to the fallback IDs. Thus, the fallback is the same check, without the legal problem.
+Why: [PD8](decisions/pd-08-verification.md)
 
 ## The operational load nobody has costed
 
@@ -120,22 +105,14 @@ passport, driving licence or voter ID. A person compares the selfie to the ID ph
 - **Budget for incorrect rejections.** The appeal must be fast, and a person must answer it.
 - DigiLocker is instant and needs no person.
 
-> [!note]- Why
-> - Manual review is a job, not a feature.
-> - A person who hears "your face does not agree with your ID" feels accused.
-> - Manual review does not scale: at a hundred signups a day, it uses most of the morning of one person.
-> - Thus, DigiLocker is the first route, not an optional route.
+Why: [PD8](decisions/pd-08-verification.md)
 
 ## Two badges or one
 
 - **Show one badge.**
 - **Record the route internally.** The manual route is the route to monitor for fraud.
 
-> [!note]- Why
-> - DigiLocker gives a cryptographically signed government assertion.
-> - A person who compares a selfie to a driving licence gives an opinion that a forger can deceive.
-> - Two levels of verified cause confusion. They tell users that the lower level is not truly verified. This makes the full mechanism weak.
-> - If fraud occurs, you will want to know its route.
+Why: [PD8](decisions/pd-08-verification.md)
 
 ## What "verified" gates in v0
 

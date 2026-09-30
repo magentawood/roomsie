@@ -61,7 +61,7 @@ Product decisions use the prefix **PD** (PD0 to PD13). We cite architecture deci
 | PD3 | Where listing supply comes from at launch | **Deferred until the broker interviews.** Working hypothesis: brokers list free, and roomsie charges for a qualified introduction. We will validate it with calls to Mumbai brokers. See `docs/research/supply-and-broker-model.md`. |
 | PD3a | Flatmate matching design | **Active track.** The team works on it in parallel with PD3. |
 | PD3b | What the AI interview adds over the chip filters | **Settled: both.** The interview finds what chips cannot capture. It also consults and challenges the user. A structured form runs next to the full chat session. The assistant confirms each contradiction with the user, and does not silently overwrite the value. |
-| PD3c | Exclusionary preferences | **Settled: record what the user states,** including community and religion, and filter on it. Mitigations: never infer, never suggest, keep them out of all learned ranking, filter server-side. See `docs/ai-agent-design.md` section 4.1. |
+| PD3c | Exclusionary preferences | **Settled: record what the user states,** including community and religion, and filter on it. Mitigations: never infer, never suggest, keep them out of all learned ranking, filter server-side. See [`docs/assistant-risks.md` section 4.1](docs/assistant-risks.md#41-exclusionary-preferences--decision-pd3c). |
 | PD3d | Whether a published listing may carry identity restrictions in visible text | **Open.** Separate from PD3c. |
 | PD4 | Monetisation model and pricing | Pending. It follows PD3. |
 | PD5 | Team and budget | **Settled: 5 engineers at 2 hours a day, 2 marketing, 1 designer.** Self-funded. See `docs/cost-and-team.md`. |

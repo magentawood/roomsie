@@ -12,5 +12,18 @@
   },
   "ste": {
     "spelling": "british"
+  },
+  "docBudget": {
+    "exclude": [
+      "docs/plan/**",
+      "docs/team-plan.md",
+      "docs/archive/**"
+    ],
+    "overrides": {
+      "docs/design-review.md": 1667,
+      "docs/decisions/0005-managed-platform-split.md": 1333,
+      "docs/research/hinglish-model-report.md": 1756,
+      "docs/tech-base.md": 7728
+    }
   }
 }
