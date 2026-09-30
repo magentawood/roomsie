@@ -4,48 +4,56 @@
 
 ## Context
 
-Team of 4 at ~2 hrs/day, targeting launch in ~1 month (~200 person-hours total,
-of which roughly 60–80 are available for backend and infrastructure). Target
-scale for year one is one city, ceiling ~20k registered users.
+The team has 4 people at ~2 hrs/day. The target is launch in ~1 month. This
+gives ~200 person-hours in total. Of these hours, approximately 60–80 are
+available for backend and infrastructure. The target scale for year one is one
+city, with a ceiling of ~20k registered users.
 
-Yash wants operational control and wants to learn how systems scale, but also
-wants v1 in front of users quickly.
+Yash wants control of the operations, and he wants to learn how systems scale.
+But he also wants v1 in front of users quickly.
 
 ## Decision
 
-For v1 we rent infrastructure: a provider runs Postgres, object storage and the
-CDN. We hand-write the schema, every migration, every query and every API
-endpoint ourselves — no vendor-generated application code.
+For v1, we rent infrastructure. A provider operates Postgres, object storage and
+the CDN. We write the schema, each migration, each query and each API endpoint
+ourselves, by hand. We use no application code that a vendor generates.
 
 ## Rationale
 
-Rework cost is not uniform, and the two layers sit in different buckets:
+The cost of rework is not the same for all items. The two layers are in
+different cost groups:
 
-- **Cheap to change later:** hosting provider, server size, CDN, region. Moving
-  Postgres between hosts is a dump-and-restore at any scale we will plausibly
-  reach.
-- **Expensive to change later:** data model, API contract, identity/auth model,
-  analytics event schema. These get baked into every client and every stored row.
+- **Cheap to change subsequently:** hosting provider, server size, CDN, region.
+  At all the scales that we will plausibly reach, a move of Postgres to a
+  different host is a dump-and-restore.
+- **Expensive to change subsequently:** data model, API contract, identity/auth
+  model, analytics event schema. These items become fixed in each client and
+  each stored row.
 
-So we buy control where it compounds (the application) and rent where it does
-not (the machines). At 20k users in one city there is no scaling problem to
-solve yet — a single modest Postgres instance covers it comfortably.
+Thus, we buy control where control compounds (the application). We rent where
+it does not compound (the machines). At 20k users in one city, we have no scale
+problem to solve at this time. One small Postgres instance is easily sufficient
+for this scale.
 
 ## Consequences
 
-- Effectively zero of the backend hour budget goes to provisioning and babysitting servers.
-- We must keep schema and migrations in version control and provider-agnostic —
-  plain SQL, no proprietary extensions on the critical path — so the exit stays cheap.
-- Self-hosting remains available later as a deliberate exercise against a
-  working system, which is a better teacher than a greenfield setup.
+- In effect, zero hours of the backend hour budget go to server provisioning
+  and server care.
+- We must keep the schema and the migrations in version control. They must also
+  be provider-agnostic: plain SQL, with no proprietary extensions on the
+  critical path. Thus, the exit stays cheap.
+- Self-hosting stays available as a subsequent option. Then it will be a
+  deliberate exercise on a system that operates. A system that operates teaches
+  more than a greenfield setup.
 
 ## Alternatives rejected
 
-- **Run our own VPS + Postgres from day 1.** Realistically 40–60 person-hours
-  before the first feature ships, plus an ongoing tax, out of a ~200 hour budget.
-  Buys control over a layer that is cheap to reclaim later anyway.
+- **Run our own VPS + Postgres from day 1.** Realistically, this costs 40–60
+  person-hours before the first feature ships. It also adds a continuous tax.
+  These hours come from a ~200 hour budget. It buys control of a layer that is
+  cheap to get back subsequently in all cases.
 
 ## Revisit when
 
-Infrastructure cost becomes material, or a requirement appears that managed
+Infrastructure cost becomes material. Or, a requirement occurs that managed
 hosting cannot serve (data residency, an unsupported extension, custom tuning).
