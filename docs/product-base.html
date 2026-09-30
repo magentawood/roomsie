@@ -36,10 +36,14 @@ details.callout[open] summary{color:var(--fg)}
 <main>
 <h1 id="what-roomsie-does-and-why">What roomsie does, and <em>why</em></h1>
 <p><em>Product record · v0.1</em></p>
-<p>This record gives all the product decisions from the planning session, from the audience to the launch plan. For each decision, it gives our choice and its cost. Thus, nobody has to argue a decision again from memory.</p>
 <p>Sept 2026 · Mumbai · v0 flatmates only · Launch 12 Oct · 5 devs × 2h/day</p>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>This record gives all the product decisions from the planning session, from the audience to the launch plan.</li>
+<li>For each decision, it gives our choice and its cost. Thus, nobody has to argue a decision again from memory.</li>
+</ul></details>
+
 <h3 id="the-ledger">The ledger</h3>
-<p>roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the people that fit. The technical base in <code>tech-base.html</code> stays with no change. This page records the product on that base.</p>
+<p>roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the people that fit. The technical base in <code>tech-base.html</code> stays with no change.</p>
 <h3 id="product">Product</h3>
 <table>
 <thead>
@@ -209,18 +213,32 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <hr />
 <h2 id="01--open-to-all-genders-pd1">01 · Open to all genders (PD1)</h2>
-<p><strong>Decision:</strong> roomsie is for all people. We removed the women-only promise from femmeflats.</p>
-<p>The market is two times larger, and the cold start is easier. Also, gender verification no longer stops the launch.</p>
 <div class="callout warning"><div class="ct">What it costs</div><p>We lost the safety story. But the safety problem did not go away. Gender preferences now come through the interview, and we must make the trust story again. We remove all women-only lines from the V3 prototype.</p></div>
+
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>roomsie is for all people. We removed the women-only promise from femmeflats.</li>
+<li>The market is two times larger, and the cold start is easier.</li>
+<li>Gender verification no longer stops the launch.</li>
+</ul></details>
 
 <hr />
 <h2 id="02--mumbai-first-pd2">02 · Mumbai first (PD2)</h2>
-<p><strong>Decision:</strong> Launch in Mumbai, in the three neighbourhoods that have the most seeded profiles. Do not launch in all of the city.</p>
-<p>The region is the same as the stack: <code>ap-south-1</code>, <code>bom</code>, <code>bom1</code>. Mumbai has the highest rents and the largest need for flatshares.</p>
-<p><strong>Density is more important than coverage.</strong> A visitor from a launch area sees a full panel. All other visitors join a waitlist for their area. The waitlist tells marketing where to seed next.</p>
+<p><strong>Decision:</strong> Launch in the three Mumbai neighbourhoods that have the most seeded profiles.</p>
+<p><strong>Density is more important than coverage:</strong></p>
+<ul>
+<li>A visitor from a launch area sees a full panel.</li>
+<li>All other visitors join a waitlist for their area.</li>
+<li>The waitlist tells marketing where to seed next.</li>
+</ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>Do not launch in all of the city.</li>
+<li>The region is the same as the stack: <code>ap-south-1</code>, <code>bom</code>, <code>bom1</code>.</li>
+<li>Mumbai has the highest rents and the largest need for flatshares.</li>
+</ul></details>
+
 <hr />
 <h2 id="03--v0-is-flatmate-matching-only-pd0">03 · v0 is flatmate matching only (PD0)</h2>
-<p><strong>Decision:</strong> v0 has no property listings. A person with a spare room is a person card.</p>
+<p><strong>Decision:</strong> A person with a spare room is a person card.</p>
 <table>
 <thead>
 <tr>
@@ -235,45 +253,55 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
-<p>This removes supply, brokers and money from v0. Thus, the cold start is a problem on one side only.</p>
+<details class="callout note"><summary class="ct">Why</summary><p>This removes supply, brokers and money from v0. Thus, the cold start is a problem on one side only.</p></details>
+
 <hr />
 <h2 id="04--the-interview-earns-its-place-pd3b">04 · The interview earns its place (PD3b)</h2>
-<p><strong>Decision:</strong> The assistant does two things that chips cannot do. It finds what people never tick a box for. It also disagrees with the user.</p>
-<p>“My ex basically lived there.” “Six dealbreakers are hiding 90% of Powai.”</p>
+<p><strong>Decision:</strong> The assistant does two things that chips cannot do:</p>
+<ul>
+<li>It finds what people never tick a box for: “My ex basically lived there.”</li>
+<li>It disagrees with the user: “Six dealbreakers are hiding 90% of Powai.”</li>
+</ul>
 <div class="callout danger"><div class="ct">The form is the source of truth, not the model</div><p>A structured form runs in parallel with all of the chat. For each slot, the form records if the user stated the value or the model inferred it. An inferred value never fills a slot silently. If a value contradicts an earlier value, the assistant confirms it with the user. It never overwrites the earlier value.</p>
 <p>Confidence is the empty slot. It is not a number that the model reports about itself.</p></div>
 
 <hr />
 <h2 id="05--record-stated-preferences-pd3c">05 · Record stated preferences (PD3c)</h2>
 <p><strong>Decision:</strong> If a user states a preference, which includes community or religion, roomsie records it and filters on it.</p>
-<p>India has no general law against discrimination in private housing. The DPDP Act has no sensitive-data class. Thus, the risk comes from the press, not from a court.</p>
 <table>
 <thead>
 <tr>
 <th>Guardrail kept</th>
-<th>Why</th>
+<th>Rule</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>Never infer</td>
-<td>Not from a name, a diet, an area or a festival. To serve a preference is not to make one.</td>
+<td>Not from a name, a diet, an area or a festival</td>
 </tr>
 <tr>
 <td>Never suggest</td>
-<td>We record it only when the user gives it. We never offer it as a chip or a question.</td>
+<td>Record it only when the user gives it. Never offer it as a chip or a question.</td>
 </tr>
 <tr>
 <td>Out of any learned ranking</td>
-<td>A stated filter is the choice of the user. A learned weight is the choice of the system.</td>
+<td>—</td>
 </tr>
 <tr>
 <td>Filter server-side</td>
-<td>Nobody is told that they were excluded.</td>
+<td>—</td>
 </tr>
 </tbody>
 </table>
-<div class="callout warning"><div class="ct">Still open</div><p>We do not know yet if a published listing can have identity restrictions in its visible text. An advert is a different position from a private filter.</p></div>
+<div class="callout warning"><div class="ct">Still open</div><p>We do not know at this time if a published listing can have identity restrictions in its visible text. An advert is a different position from a private filter.</p></div>
+
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>India has no general law against discrimination in private housing. The DPDP Act has no sensitive-data class. Thus, the risk comes from the press, not from a court.</li>
+<li>Never infer: to serve a preference is not to make one.</li>
+<li>Out of any learned ranking: a stated filter is the choice of the user. A learned weight is the choice of the system.</li>
+<li>Filter server-side: the system does not tell a person that it excluded them.</li>
+</ul></details>
 
 <hr />
 <h2 id="06--interview-first-then-split-view-pd6--pd6a">06 · Interview first, then split view (PD6 · PD6a)</h2>
@@ -351,7 +379,7 @@ details.callout[open] summary{color:var(--fg)}
 
 <hr />
 <h2 id="09--a-router-not-an-agent-swarm-pd7a">09 · A router, not an agent swarm (PD7a)</h2>
-<p><strong>Decision:</strong> A cheap router sends each turn to the smallest handler that can serve it. Most turns never get to an expensive model.</p>
+<p><strong>Decision:</strong> A cheap router sends each turn to the smallest handler that can serve it.</p>
 <ul>
 <li><strong>0</strong> Model calls for a chip tap</li>
 <li><strong>8–12</strong> Calls for each completed interview</li>
@@ -385,22 +413,40 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <div class="callout danger"><div class="ct">Hallucination is removed by structure</div><p>Extraction can only select an enum. A profile fact must point to the words of the user. Results come from SQL, never from prose.</p></div>
 
-<p>All four handlers ship on 12 October. The router runs on DeepSeek Flash behind its own adapter. When we get access to Jev, we will try Jev on the eval set. We store all typed messages, so the observer can learn from all of them.</p>
+<ul>
+<li>The router runs on DeepSeek Flash behind its own adapter.</li>
+<li>When we get access to Jev, we will try Jev on the eval set.</li>
+<li>We store all typed messages.</li>
+</ul>
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>Most turns never get to an expensive model.</li>
+<li>We store all typed messages, so the observer can learn from all of them.</li>
+</ul></details>
+
 <hr />
 <h2 id="10--deepseek-with-gemini-behind-it-pd7">10 · DeepSeek, with Gemini behind it (PD7)</h2>
 <p><strong>Decision:</strong> DeepSeek V4.1 Flash runs all roles. If it fails or gives invalid output, Gemini Flash-Lite replaces it. We removed Sarvam.</p>
-<p>Web search is off by default. The advisor turns on the DeepSeek <code>web_search</code> tool. Only the Anthropic-compatible endpoint of DeepSeek has this tool. The fallback is Google Search grounding in Gemini.</p>
-<p>We chose the model for how correctly it reads Hinglish, not for its price. At this volume, the difference in price is too small to be important.</p>
 <ul>
-<li><strong>₹1–2</strong> For each completed interview</li>
-<li><strong>6.87%</strong> Hinglish drop from English, the smallest Indic gap</li>
+<li>Web search is off by default. The advisor turns on the DeepSeek <code>web_search</code> tool.</li>
+<li>Only the Anthropic-compatible endpoint of DeepSeek has this tool.</li>
+<li>
+<p>The fallback is Google Search grounding in Gemini.</p>
+</li>
+<li>
+<p><strong>6.87%</strong> Hinglish drop from English, the smallest Indic gap</p>
+</li>
 <li><strong>9.63%</strong> Marathi drop, one of the largest</li>
 </ul>
 <div class="callout warning"><div class="ct">Marathi is the real language risk, not Hinglish</div><p>Small models almost never say “I don't know”. Thus, each enum has an <code>unclear</code> option, and the eval measures abstention. Without Sarvam, a Hinglish speaker can get a reply in English. The prompt handles this, and we measure it.</p></div>
 
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li>We chose the model for how correctly it reads Hinglish, not for its price.</li>
+<li>At this volume, the difference in price is too small to be important: <strong>₹1–2</strong> for each completed interview.</li>
+</ul></details>
+
 <hr />
 <h2 id="11--five-scope-bands-pd10">11 · Five scope bands (PD10)</h2>
-<p><strong>Decision:</strong> The assistant always gives an answer. The quantity that it can say depends on the cost of a wrong answer.</p>
+<p><strong>Decision:</strong> The quantity that the assistant can say depends on the cost of a wrong answer.</p>
 <table>
 <thead>
 <tr>
@@ -415,7 +461,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>Adjacent, general</td>
-<td>Articles first, then a web search for signed-in users. Visitors get general knowledge, with a clear warning that it can be incorrect</td>
+<td>Articles first, then a web search for signed-in users. Visitors get general knowledge, clearly hedged</td>
 </tr>
 <tr>
 <td>Adjacent, consequential</td>
@@ -435,20 +481,28 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
-<p>The corpus starts with 30 articles. People write them from real interviews before launch. When the corpus cannot answer a question, that question becomes the next article.</p>
+<ul>
+<li>The corpus starts with 30 articles. People write them from real interviews before launch.</li>
+<li>When the corpus cannot answer a question, that question becomes the next article.</li>
+</ul>
 <hr />
 <h2 id="12--five-turns-before-sign-in-pd9">12 · Five turns before sign-in (PD9)</h2>
 <p><strong>Decision:</strong> Anonymous visitors get five typed turns. Chip taps do not count. The sign-in wall never appears before the results.</p>
 <ul>
 <li>The user can see the results behind the wall.</li>
 <li>Rate limits apply for each device and for each network.</li>
-<li>At the daily spend ceiling, the chat changes to chips only, which have no cost. There is no error page.</li>
+<li>At the daily spend ceiling, the chat changes to chips only. There is no error page.</li>
 <li>An alert starts at 70% of the ceiling.</li>
 </ul>
+<details class="callout note"><summary class="ct">Why</summary><p>Chips have no cost.</p></details>
+
 <hr />
 <h2 id="13--digilocker-not-aadhaar-copies-pd8">13 · DigiLocker, not Aadhaar copies (PD8)</h2>
 <p><strong>Decision:</strong> Verification goes through DigiLocker, which we buy from a registered KYC provider. The fallback is a passport, a driving licence or a voter ID, which a person reviews.</p>
-<p>People can choose to let only verified users see them. All other users see blurred photos of them. Thus, the blur itself tells people to verify. The server makes the blur.</p>
+<ul>
+<li>People can choose to let only verified users see them. All other users see blurred photos of them.</li>
+<li>The server makes the blur.</li>
+</ul>
 <div class="callout tip"><div class="ct">Dropped: manual Aadhaar upload</div><p>Under the Aadhaar Act 2016, sections 29 and 37, private companies must not collect or keep Aadhaar copies. UIDAI is also banning all collection of photocopies. roomsie stores the result, never the document.</p></div>
 
 <p>Verification is not in the 12 October launch. It ships in v1.</p>
@@ -457,25 +511,40 @@ details.callout[open] summary{color:var(--fg)}
 <p><strong>Working hypothesis:</strong> Brokers list for free. They pay only when the assistant sends them a seeker that it interviewed and matched. Users never pay to search.</p>
 <ul>
 <li><strong>₹803 Cr</strong> NoBroker FY24 revenue, 99% from subscriptions</li>
-<li><strong>₹411 Cr</strong> NoBroker FY24 loss</li>
+<li>
+<p><strong>₹411 Cr</strong> NoBroker FY24 loss</p>
+</li>
+<li>
+<p>roomsie would merge duplicates into one card.</p>
+</li>
+<li>Behind that card, the brokers would compete for the introduction.</li>
 </ul>
-<p><strong>Incumbents sell search, so they get money when nobody moves.</strong> Duplicate listings come from the structure of the market. Owners give the same flat to many brokers, and India has no shared listing service. roomsie would merge duplicates into one card. Behind that card, the brokers would compete for the introduction.</p>
 <div class="callout warning"><div class="ct">Unproven</div><p>This waits for the broker calls from marketing. It is not in v0.</p></div>
+
+<details class="callout note"><summary class="ct">Why</summary><ul>
+<li><strong>Incumbents sell search, so they get money when nobody moves.</strong></li>
+<li>Duplicate listings come from the structure of the market. Owners give the same flat to many brokers, and India has no shared listing service.</li>
+</ul></details>
 
 <hr />
 <h2 id="15--a-small-self-funded-team-pd5">15 · A small, self-funded team (PD5)</h2>
 <ul>
-<li><strong>5</strong> Engineers, 2 hours each day</li>
 <li><strong>2 + 1</strong> Marketing and design</li>
-<li><strong>₹1–2</strong> Model cost for each interview</li>
+<li>The cost risk is a person who abuses the open chat, not the cost of each interview.</li>
 </ul>
-<p>The cost risk is a person who abuses the open chat, not the cost of each interview. There is no vector store, because matching is a database query, not a document search.</p>
+<details class="callout note"><summary class="ct">Why</summary><p>There is no vector store, because matching is a database query, not a document search.</p></details>
+
 <hr />
 <h2 id="16--public-launch-12-october-pd11">16 · Public launch, 12 October (PD11)</h2>
-<p><strong>Decision:</strong> Public launch on Mon 12 Oct. If the team is late, the launch moves to Wed 14 Oct and the scope stays the same.</p>
-<p>We make the go or no-go decision on Sat 10 Oct at 8 pm. On 26 September, we moved the launch from 7 October. The reason was to put the router, the observer and the advisor into the launch.</p>
 <ul>
-<li><strong>170</strong> Person-hours available, 5 × 2h × 17 days</li>
+<li>If the team is late, the launch moves to Wed 14 Oct. The scope stays the same.</li>
+<li>We make the go or no-go decision on Sat 10 Oct at 8 pm.</li>
+<li>
+<p>On 26 September, we moved the launch from 7 October.</p>
+</li>
+<li>
+<p><strong>170</strong> Person-hours available, 5 × 2h × 17 days</p>
+</li>
 <li><strong>151</strong> Build hours in the plan</li>
 <li><strong>19</strong> Spare, none of it before the designs are available</li>
 </ul>
@@ -519,10 +588,15 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <div class="callout danger"><div class="ct">Cold start is the real risk, not code</div><p>We need a minimum of 150 seeded profiles, with a minimum of 40 in each launch area. If one area does not have sufficient profiles, launch in the other two. Do not move the date.</p></div>
 
+<details class="callout note"><summary class="ct">Why</summary><p>We moved the launch to put the router, the observer and the advisor into the launch.</p></details>
+
 <hr />
 <h2 id="17--five-lanes-two-phases-pd12">17 · Five lanes, two phases (PD12)</h2>
-<p><strong>Decision:</strong> There are no designs at this time, so the work has two phases. All the work that needs no design comes first. We build all screens when the designs are available.</p>
-<p>Each task still has one owner from start to finish. Design, marketing and the founder keep their roles.</p>
+<p><strong>Decision:</strong> There are no designs at this time. All the work that needs no design comes first. We build all screens when the designs are available.</p>
+<ul>
+<li>Each task still has one owner from start to finish.</li>
+<li>Design, marketing and the founder keep their roles.</li>
+</ul>
 <table>
 <thead>
 <tr>
@@ -616,7 +690,14 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
-<p>We track 55 tasks as GitHub issues. <code>docs/how-to-work.md</code> gives the list for each person, in order. <code>docs/team-plan.md</code> gives the done-when list for each task. <code>docs/plan/</code> has the graph and the timeline, for Obsidian.</p>
+<ul>
+<li>We track 55 tasks as GitHub issues.</li>
+<li><code>docs/how-to-work.md</code> gives the list for each person, in order.</li>
+<li><code>docs/team-plan.md</code> gives the done-when list for each task.</li>
+<li><code>docs/plan/</code> has the graph and the timeline, for Obsidian.</li>
+</ul>
+<details class="callout note"><summary class="ct">Why</summary><p>Because there are no designs, the work has two phases.</p></details>
+
 <hr />
 <h2 id="--still-open">→ · Still open</h2>
 <table>
@@ -629,11 +710,11 @@ details.callout[open] summary{color:var(--fg)}
 <tbody>
 <tr>
 <td>Brokers and monetisation</td>
-<td><strong>[Testing]</strong> We wait for the broker calls</td>
+<td><strong>[Testing]</strong></td>
 </tr>
 <tr>
 <td>Identity text in a published listing</td>
-<td><strong>[Open]</strong> Separate from private filters</td>
+<td><strong>[Open]</strong></td>
 </tr>
 <tr>
 <td>Elevator pitch</td>
@@ -645,7 +726,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>Designs D-02 to D-04</td>
-<td><strong>[Due]</strong> End of Wed 30 Sep. The launch date depends on them.</td>
+<td><strong>[Due]</strong> End of Wed 30 Sep</td>
 </tr>
 <tr>
 <td>Mobile split-view UI</td>
@@ -661,7 +742,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>Two Supabase accounts</td>
-<td><strong>[Exception]</strong> The main and analytics databases are on two free accounts. When we start to pay, both move into one paid organisation. The free accounts have no backups, so a nightly dump goes to R2</td>
+<td><strong>[Exception]</strong> The main and analytics databases are on two free accounts. When we start to pay, the two move into one paid organisation. The free accounts have no backups, so a nightly dump goes to R2</td>
 </tr>
 <tr>
 <td>Master launch document</td>
