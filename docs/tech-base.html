@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Femmeflats Tech Base</title>
+<title>Roomsie Tech Base</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -281,7 +281,7 @@ code{font-family:"JetBrains Mono",monospace; font-size:.87em; background:var(--s
 
     <header class="mast">
       <div class="kicker">Architecture record · v0.1</div>
-      <h1>How femmeflats is built, and why</h1>
+      <h1>How Roomsie is built, and why</h1>
       <p class="sub">Fourteen architecture decisions settled, and the schema now being designed on top of them. Each records what we chose, the data behind it, and what we rejected — so nothing here has to be re-argued from memory.</p>
       <div class="meta">
         <span>Sept 2026</span><span>·</span><span>One city · 20k users</span><span>·</span><span>4 devs × 2h/day</span><span>·</span><span>~$50–80/mo</span>
@@ -894,7 +894,7 @@ useEffect(()=&gt;{
         <div class="v">pnpm workspaces for dependencies · Turborepo for task running</div>
       </div>
 
-      <pre>femmeflats/
+      <pre>roomsie/
 ├── apps/
 │   ├── <b>web/</b>          Next 16 · Tailwind v4
 │   └── <b>api/</b>          Fastify · Drizzle
@@ -924,7 +924,7 @@ useEffect(()=&gt;{
       <div class="sechead"><span class="secnum">11</span><h2>Design system and the token pipeline</h2></div>
       <div class="verdict">
         <div class="k">Decision</div>
-        <div class="v">femmeflats DS = customised Untitled UI. Figma is the single source of truth; <span class="mono">theme.css</span> is generated wholesale from the export.</div>
+        <div class="v">Roomsie DS = customised Untitled UI. Figma is the single source of truth; <span class="mono">theme.css</span> is generated wholesale from the export.</div>
         <p>Untitled UI Figma kit ↔ Untitled UI React (React Aria) · <span class="mono">@untitledui/icons</span> · light-first, matching the library.</p>
       </div>
 
@@ -1293,7 +1293,7 @@ id: uuid('id').primaryKey()
 
       <div class="call r">
         <div class="ct">The Firebase web apiKey is not a secret</div>
-        <p>It ships in the browser bundle by necessity and Google documents it as public. It’s an <em>identifier</em> — “this request is for the femmeflats project” — not a password. Security comes from the authorized-domains allowlist, the fact that a valid token still requires a real Google sign-in, and our API verifying every token.</p>
+        <p>It ships in the browser bundle by necessity and Google documents it as public. It’s an <em>identifier</em> — “this request is for the Roomsie project” — not a password. Security comes from the authorized-domains allowlist, the fact that a valid token still requires a real Google sign-in, and our API verifying every token.</p>
       </div>
 
       <div class="tw"><table>
