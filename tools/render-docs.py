@@ -2,28 +2,26 @@
 """Render the browser versions of the docs from their Markdown.
 
 The Markdown is the source. Each .html next to it is generated: edit the .md,
-then run this script. Obsidian callouts (> [!note] Title) become styled boxes,
-and a folded callout (> [!note]- Why) becomes a box that opens on a click,
-and links between rendered docs point at the .html versions.
+then run this script. The pages come from "docArchitecture.renderPages" in
+devkit.config.json. Obsidian callouts (> [!note] Title) become styled boxes,
+a folded callout (> [!note]- Why) becomes a box that opens on a click, headings
+get GitHub-style anchors, and links between rendered docs point at the .html
+versions.
 
 Usage:
-  python3 tools/render-docs.py          write every .html
-  python3 tools/render-docs.py --check  exit 1 if any .html is out of date
+  render-docs          write every .html
+  render-docs --check  exit 1 if any .html is out of date
 
-Needs Python-Markdown: pip3 install -r tools/requirements.txt
+Needs Python-Markdown: pip3 install markdown==3.9
 """
-import html, os, re, sys
+import html, json, os, re, subprocess, sys
 
-import markdown
+TOOL_VERSION = "0.1.1"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DOCS = [
-    "docs/tech-base.md",
-    "docs/product-base.md",
-    "docs/how-to-work.md",
-    "docs/journal/2026-09.md",
-    "docs/design-review.md",
-]
+try:
+    import markdown
+except ImportError:
+    markdown = None
 CALLOUT = re.compile(r"^> \[!(\w+)\]([+-]?) ?(.*)$")
 
 CSS = """
@@ -57,6 +55,27 @@ details.callout[open] summary{color:var(--fg)}
 .callout.warning,.callout.caution{border-left-color:var(--warn)}
 .callout.success,.callout.done{border-left-color:var(--ok)}
 """
+
+
+def load(path):
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def config(root):
+    """The defaults (the plugin defaults file, or devkit-defaults.json next to a project copy), then the project file."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    defaults = os.path.join(here, "devkit-defaults.json")
+    if os.path.basename(here) == "scripts":  # the master copy in the plugin
+        defaults = os.path.join(here, "..", "..", "..", "defaults", "devkit.defaults.json")
+    arch = {}
+    for level in (load(defaults), load(os.path.join(root, "devkit.config.json"))):
+        for key, value in level.get("docArchitecture", {}).items():
+            arch[key] = {**arch.get(key, {}), **value} if isinstance(value, dict) else value
+    return arch
 
 
 def callouts(md):
@@ -99,13 +118,13 @@ def render(md):
                              extension_configs={"toc": {"permalink": False, "slugify": slug}})
 
 
-def page(src):
-    md = open(os.path.join(ROOT, src), encoding="utf-8").read()
+def page(root, src, docs):
+    md = open(os.path.join(root, src), encoding="utf-8").read()
     if md.startswith("---\n"):
         md = md[md.find("\n---", 4) + 4:]
     title = next((l[2:].strip() for l in md.split("\n") if l.startswith("# ")), src)
     body = render(callouts(md))
-    rendered = {os.path.basename(d)[:-3] for d in DOCS}
+    rendered = {os.path.basename(d)[:-3] for d in docs}
     body = re.sub(r'href="([^"#:]*?)([\w-]+)\.md(#[^"]*)?"',
                   lambda m: f'href="{m.group(1)}{m.group(2)}.html{m.group(3) or ""}"'
                   if m.group(2) in rendered else m.group(0), body)
@@ -116,22 +135,28 @@ def page(src):
             f'<main>\n{body}\n</main>\n')
 
 
-def main():
+def main(argv):
+    root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
+    cfg = config(root)
+    docs = cfg.get("renderPages", []) if cfg.get("parts", {}).get("html", True) else []
+    if docs and markdown is None:
+        sys.exit("render-docs: needs Python-Markdown: pip3 install markdown==3.9")
     stale = []
-    for src in DOCS:
-        out = os.path.join(ROOT, src[:-3] + ".html")
-        new = page(src)
+    for src in docs:
+        out = os.path.join(root, src[:-3] + ".html")
+        new = page(root, src, docs)
         old = open(out, encoding="utf-8").read() if os.path.exists(out) else None
         if new != old:
             stale.append(src[:-3] + ".html")
-            if "--check" not in sys.argv:
-                open(out, "w", encoding="utf-8").write(new)
-    if "--check" in sys.argv and stale:
-        print("out of date, run python3 tools/render-docs.py:", *stale, sep="\n  ")
+            if "--check" not in argv:
+                with open(out, "w", encoding="utf-8") as f:
+                    f.write(new)
+    if "--check" in argv and stale:
+        print(f"out of date, run python3 {os.path.relpath(os.path.abspath(__file__), root)}:", *stale, sep="\n  ")
         return 1
-    print(f"render-docs: {len(stale)} of {len(DOCS)} page(s) {'stale' if '--check' in sys.argv else 'written'}")
+    print(f"render-docs: {len(stale)} of {len(docs)} page(s) {'stale' if '--check' in argv else 'written'}")
     return 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(sys.argv[1:]))
