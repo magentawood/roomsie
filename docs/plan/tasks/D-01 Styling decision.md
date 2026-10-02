@@ -32,6 +32,7 @@ Pick the colours, fonts and general feel one time, and never argue about them ag
 - [[D-04 Landing and waitlist designs]]
 
 ## Done when
+- [ ] The launch uses the look of the Figma designs, not the V3 prototype
 - [ ] The launch uses the look of the V3 prototype, not the Untitled UI pipeline
 - [ ] Every women-only line has a mark for removal
 

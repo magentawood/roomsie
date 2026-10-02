@@ -27,6 +27,7 @@ The public home page and the waitlist page.
 - [[D-01 Styling decision]]
 
 ## Unblocks
+- [[T-23a Landing page]]
 - [[T-22 Launch areas and waitlist]]
 
 ## Done when
