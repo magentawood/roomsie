@@ -83,3 +83,7 @@ Clients hold a Firebase ID token and send requests to `apps/api`. They never ope
 | [ADR-0015](decisions/0015-primary-key-strategy.md) | UUIDv7 primary keys, minted by the client where possible | Accepted | Each table uses a UUIDv7 `id` primary key with no database default: the API mints it, or the client mints it for offline writes. |
 | [ADR-0016](decisions/0016-credentials-and-secrets.md) | Credentials and secrets | Accepted | Public credentials can ship in the clients, but critical credentials stay only in `apps/api` or the CI secret store. |
 <!-- ledger:end -->
+
+## Learn
+
+The team writes one page for each technical topic that a ticket teaches, for example the database driver or local development with Docker. All pages are in [Learn](learn/README.md).

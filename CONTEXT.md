@@ -47,6 +47,7 @@ Open, with no record yet: the elevator pitch.
 - **The plan:** edit only `docs/team-plan.json`, then run `python3 tools/build-obsidian-plan.py`. It writes the task notes, `Progress.md` and `team-plan.md`. `python3 tools/sync-issues.py --apply` updates the GitHub issues.
 - **Decision ledgers:** `python3 tools/build-decision-ledger.py` writes the lists in this file, `product-base.md` and `tech-base.md` from the records.
 - **Browser pages:** `python3 tools/render-docs.py` writes each `.html` from its `.md`.
+- **Learn pages:** `docs/learn/` has one plain-language page for each technical topic. [The list](docs/learn/README.md) is generated.
 - **History:** `docs/journal/` (one file each month, append only) and `docs/archive/`. The index never links them.
 
 ## Conventions
