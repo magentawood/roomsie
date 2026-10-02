@@ -9,7 +9,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 - Make each migration with `drizzle-kit generate`, and commit the `.sql` file. Why: plain SQL keeps the full schema history if we leave Drizzle or Supabase. ([ADR-0006](../decisions/0006-drizzle.md))
 - Each schema change ships as a committed migration that CI applies. Never change the live database outside a committed migration. Why: the migrations must agree with the database. ([ADR-0006](../decisions/0006-drizzle.md))
 - Use plain Postgres SQL, with no proprietary extensions in the path that users need. Why: a move to a different Postgres host stays a dump and restore. ([ADR-0001](../decisions/0001-rent-infrastructure.md))
-- Design the tables in the order of the schema phases, S1 to S7. Never design a table before the tables that it depends on. Why: each phase needs a fixed phase above it. ([S1–S7](../decisions/README.md#where-we-are))
+- Never design a table before the tables that it depends on. Why: a foreign key needs its table first. ([ADR-0006](../decisions/0006-drizzle.md))
 - `users.tokens_valid_after timestamptz not null default now()` is in the first migration. Why: the auth check needs it from day one. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Row Level Security stays on as defence in depth. It is not the primary authorisation. Why: the API holds the rules, and RLS is a second barrier. ([ADR-0002](../decisions/0002-api-boundary.md))
 

@@ -2,8 +2,7 @@
 
 **Date:** 2026-09-20 · **Status:** working · **Decision:** PD5
 
-**Team:** 4 tech, 2 marketing, 1 designer. Self-funded. Keep cost low and
-quality high.
+**Team:** see [PD5](decisions/pd-05-team-and-budget.md). Self-funded. Keep cost low and quality high.
 
 ## The important realisation about inference cost
 
@@ -65,47 +64,8 @@ The current base is approximately $50 to $80 a month.
 
 Why: [PD5](decisions/pd-05-team-and-budget.md)
 
-## Team allocation
+## Team
 
-### The 2 marketing people can start now
+The team and its hours are in PD5. The plan and its order are in PD12 and `docs/team-plan.json`.
 
-Nothing blocks them.
-
-1. **The broker calls.** The PD3 decision waits on these calls. They are the
-   work with the highest value today.
-2. **The blog.** Start immediately, and publish at `roomsie.com/blog`.
-
-Why: [PD5](decisions/pd-05-team-and-budget.md)
-
-### The launch look
-
-- The launch look comes from the Figma designs. The V3 prototype is not the launch design ([PD12](decisions/pd-12-team-plan.md)).
-- The designs are not available at this time. Screen work waits for them.
-
-### The 4 tech people
-
-This division is approximate. We will make it firm when we know the hours.
-
-| Person | Area |
-|---|---|
-| 1 | The agent layer: extraction, form state, the two-model split, cost controls |
-| 2 | Web: the chat, the split view, the panel update rules |
-| 3 | Data: schema, the location of the form in the schema, anonymous sessions, the query that drives the panel |
-| 4 | Infra and CI, and the eval suite |
-
-### The eval suite is real work and it is not optional
-
-- ADR 0013 gives CI five minutes and a deterministic philosophy.
-- Evals do not fit in CI. They run independently, on recorded conversations.
-- The score is extraction accuracy, not string equality.
-- Budget the eval suite as its own piece of work.
-
-Why: [PD5](decisions/pd-05-team-and-budget.md)
-
-## Open
-
-- **At this time, we do not know the hours for each person each week.** This
-  number turns the plan into a timeline.
-- The previous base assumed 2 hours a day.
-
-Why: [PD5](decisions/pd-05-team-and-budget.md)
+Why: [PD5](decisions/pd-05-team-and-budget.md), [PD12](decisions/pd-12-team-plan.md)
