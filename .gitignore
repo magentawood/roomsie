@@ -12,3 +12,5 @@ session/transcript/*.bak.*
 
 # Editor / vault state. graph.json is rebuilt by tools/build-obsidian-plan.py.
 .obsidian/
+*.tsbuildinfo
+next-env.d.ts

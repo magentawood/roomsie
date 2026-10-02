@@ -1,0 +1,21 @@
+{
+  "name": "roomsie",
+  "private": true,
+  "packageManager": "pnpm@11.28.2",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "typecheck": "turbo run typecheck",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "db:up": "docker compose up -d --wait",
+    "db:down": "docker compose down",
+    "prepare": "git config core.hooksPath .githooks"
+  },
+  "devDependencies": {
+    "turbo": "^2.11.6"
+  }
+}
