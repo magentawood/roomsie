@@ -451,7 +451,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies
 - apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle
 - packages/contract and packages/config exist, with the layout that docs/repo-layout.md shows
-- `pnpm dev` runs web and API locally. docs/ has no changes
+- `pnpm dev` runs web and API locally. docs/ changes only for the V3 decision of 2 October
 - The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
 - The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook
 - Read first: `CONTEXT.md`, `docs/decisions/0010-monorepo-tooling.md`, `docs/decisions/0003-api-as-separate-service.md`, `docs/extensibility.md`

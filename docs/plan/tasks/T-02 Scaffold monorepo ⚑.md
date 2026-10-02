@@ -42,7 +42,7 @@ One folder for the website, server and shared code. All five people commit into 
 - [ ] The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies
 - [ ] apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle
 - [ ] packages/contract and packages/config exist, with the layout that docs/repo-layout.md shows
-- [ ] `pnpm dev` runs web and API locally. docs/ has no changes
+- [ ] `pnpm dev` runs web and API locally. docs/ changes only for the V3 decision of 2 October
 - [ ] The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
 - [ ] The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook
 
@@ -60,7 +60,7 @@ One folder for the website, server and shared code. All five people commit into 
 
 - **Modules:**
   - The workspace root: new. It holds the pnpm workspace, the Turborepo tasks, the hook activation and the local Postgres. (why: [ADR-0010](../../decisions/0010-monorepo-tooling.md))
-  - `apps/api`: a new Fastify server. It mounts all routes below `/v1` and has one route, the health check. It builds to one bundle. The schema and the match query of T-06 and T-14 compile. Their behaviour does not change. Two types become narrower: the intents that match, and the database client. (why: [ADR-0002](../../decisions/0002-api-boundary.md), [ADR-0004](../../decisions/0004-api-stack-typescript-fastify.md))
+  - `apps/api`: a new Fastify server. It mounts all routes below `/v1` and has one route, the health check. It builds our code into one file. The T-04 image installs the libraries. The schema and the match query of T-06 and T-14 compile. Their behaviour does not change. Two types become narrower: the intents that match, and the database client. (why: [ADR-0002](../../decisions/0002-api-boundary.md), [ADR-0004](../../decisions/0004-api-stack-typescript-fastify.md))
   - The database client of `apps/api`: new. It uses postgres.js with Drizzle. It turns off prepared statements, because the Supabase pooler cannot use them. (why: [ADR-0006](../../decisions/0006-drizzle.md))
   - `apps/web`: a new Next.js shell with no design. One placeholder page gets the health check through TanStack Query. (why: [ADR-0008](../../decisions/0008-web-stack.md))
   - `packages/contract`: new. It holds the Zod schema of the health response. T-08 adds Form A. (why: [ADR-0004](../../decisions/0004-api-stack-typescript-fastify.md))
@@ -69,9 +69,10 @@ One folder for the website, server and shared code. All five people commit into 
   - The HTTP interface of `apps/api`, through `fastify.inject`. The health check agrees with the contract schema. A route without `/v1` gives 404.
   - A disposable Postgres 17 database. The test helper makes it, applies the migrations that exist, and removes it. One smoke test uses it. (why: [ADR-0013](../../decisions/0013-ci-gate-and-testing.md))
 - **Decisions:**
-  - Development runs the API with `tsx`. The build makes one bundle with `tsup`, for the Docker image of T-04.
+  - Development runs the API with `tsx`. The build puts our code into one file with `tsup`. The Docker image of T-04 installs the libraries.
+  - The API generates its OpenAPI document from the Zod schemas of the contract, and the document is committed in `packages/contract`. A test fails when the document is out of date. (why: [ADR-0004](../../decisions/0004-api-stack-typescript-fastify.md))
   - `pnpm dev` starts web and the API. `pnpm db:up` and `pnpm db:down` start and stop Postgres. `pnpm test` starts Postgres if it does not run.
   - TypeScript 6.0, because the ESLint tools do not support TypeScript 7.
-  - The V3 prototype is not the launch design. The launch look comes from the Figma designs, which are not available at this time. This PR updates [PD12](../../decisions/pd-12-team-plan.md), [PD5](../../decisions/pd-05-team-and-budget.md), the standards, the index, each working doc that names V3 as the launch look, T-23a and D-01. It moves the prototype to the archive.
+  - The V3 prototype is not the launch design. The launch look comes from the Figma designs, which are not available at this time. This PR updates [PD12](../../decisions/pd-12-team-plan.md), [PD5](../../decisions/pd-05-team-and-budget.md), the standards, the index, each working doc that names V3 as the launch look, T-23a and D-01. It moves the prototype to the archive. D-01 and T-23a lose their women-only items, because those items applied only to a port of V3. T-23a waits for its Figma design, D-04.
   - The third done item names `docs/repo-layout.md`, because the layout moved out of `CONTEXT.md`.
 - **Out of scope:** the CI workflow (T-03), the deploy (T-04), error reports (T-07), Form A (T-08), and the migrations (T-06). It also does not do product routes or design work.
