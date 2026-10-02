@@ -8,7 +8,11 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
 export default function Home() {
   const health = useQuery({
     queryKey: ['health'],
-    queryFn: async () => healthResponse.parse(await (await fetch(`${apiUrl}/v1/health`)).json()),
+    queryFn: async () => {
+      const res = await fetch(`${apiUrl}/v1/health`)
+      if (!res.ok) throw new Error(`Health check failed: ${res.status}`)
+      return healthResponse.parse(await res.json())
+    },
   })
 
   return (
