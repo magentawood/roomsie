@@ -1,56 +1,55 @@
 # Repo layout
 
-**Updated:** 2026-09-30 · Moved from CONTEXT.md
+**Updated:** 2026-10-03 · Moved from CONTEXT.md
 
-ADR 0003 and ADR 0010 fix the top level. The contents of `apps/` are a proposal, mapped to the tasks that build them. T-02 creates them. The owner of T-02 can adjust names in an app, and does not have to ask. Each item with a task code does not exist yet.
+ADR 0003 and ADR 0010 fix the top level. Inside `apps/`, this is the target layout. A folder exists when its task builds it. The task of each part is in `docs/team-plan.json`.
 
 ```
 roomsie/
 ├── apps/
 │   ├── web/                    Next 16 · React 19 · Tailwind v4 · TanStack Query → Vercel, bom1
 │   │   ├── app/                routes
-│   │   │   ├── (public)/       landing, privacy, terms, grievance        T-23a T-23b
-│   │   │   ├── chat/           full-screen chat, then split view, chips  T-10 T-09
-│   │   │   ├── people/[id]/    person detail and connect                 T-18b
-│   │   │   ├── profile/        create and edit, photos                   T-16b
-│   │   │   └── waitlist/       launch areas and waitlist                 T-22b
-│   │   ├── components/         Figma look, theme tokens only             T-23a
+│   │   │   ├── (public)/       landing, privacy, terms, grievance
+│   │   │   ├── chat/           full-screen chat, then split view, chips
+│   │   │   ├── people/[id]/    person detail and connect
+│   │   │   ├── profile/        create and edit, photos
+│   │   │   └── waitlist/       launch areas and waitlist
+│   │   ├── components/         Figma look, theme tokens only
 │   │   └── lib/                API client typed from packages/contract, Firebase sign-in
 │   └── api/                    Fastify · Zod · Drizzle → Fly.io Mumbai
 │       ├── src/
-│       │   ├── server.ts       mounts every module under /v1             T-02
-│       │   ├── plugins/        auth check, rate limits, invite gate      T-05 T-21 T-33
+│       │   ├── server.ts       mounts every module under /v1
+│       │   ├── plugins/        auth check, rate limits, invite gate
 │       │   ├── adapters/       the only place a vendor SDK is imported
-│       │   │   ├── llm/        DeepSeek, then Gemini                     T-11
-│       │   │   ├── auth/       Firebase token check                      T-05
-│       │   │   ├── storage/    R2 presigned URLs                         T-16a
-│       │   │   └── analytics/  track(), into the analytics database      T-24 T-39
+│       │   │   ├── llm/        DeepSeek, then Gemini
+│       │   │   ├── auth/       Firebase token check
+│       │   │   ├── storage/    R2 presigned URLs
+│       │   │   └── analytics/  track(), into the analytics database
 │       │   ├── assistant/      one entry point for every turn
-│       │   │   ├── pipeline.ts router first, then the handlers it picks T-12 T-34
-│       │   │   └── handlers/   extract, observe, advise, reply           T-12 T-36 T-38 T-13
-│       │   ├── articles/       the advisor's articles, full-text search  T-37
+│       │   │   ├── pipeline.ts router first, then the handlers it picks
+│       │   │   └── handlers/   extract, observe, advise, reply
+│       │   ├── articles/       the advisor's articles, full-text search
 │       │   ├── modules/        one folder per feature, each owning its tables
 │       │   │   ├── chat/       stored turns, form state, turn cap,
-│       │   │   │               spend ceiling                             T-06 T-17 T-21
-│       │   │   ├── matching/   the match query                           T-14
-│       │   │   ├── profiles/   profiles and photos                       T-16a
-│       │   │   ├── connections/ connect request, contact reveal          T-18a
-│       │   │   ├── moderation/ report, block, suspend                    T-19
-│       │   │   ├── account/    first sign-in, deletion                   T-05 T-20
-│       │   │   └── waitlist/   launch areas and waitlist                 T-22a
+│       │   │   │               spend ceiling
+│       │   │   ├── matching/   the match query
+│       │   │   ├── profiles/   profiles and photos
+│       │   │   ├── connections/ connect request, contact reveal
+│       │   │   ├── moderation/ report, block, suspend
+│       │   │   ├── account/    first sign-in, deletion
+│       │   │   └── waitlist/   launch areas and waitlist
 │       │   └── db/             Drizzle client; each module keeps its
-│       │                       own schema file                           T-06
+│       │                       own schema file
 │       ├── drizzle/            generated SQL migrations                  ADR 0006
-│       ├── eval/               eval sentences and the runner             M-03 T-27
+│       ├── eval/               eval sentences and the runner
 │       ├── Dockerfile
-│       └── fly.toml                                                      T-04
+│       └── fly.toml
 ├── packages/
 │   ├── contract/               Zod: Form A, every API route, analytics
-│   │                           events. OpenAPI is generated from it      T-08 · ADR 0004 0012
-│   └── config/                 shared tsconfig and ESLint, and reportError()  ADR 0010 0013 · T-07
+│   │                           events. OpenAPI is generated from it      ADR 0004 0012
+│   └── config/                 shared tsconfig and ESLint, and reportError()  ADR 0010 0013
 ├── docs/
 │   ├── how-to-work.md          how the team works: principles, deadlines, task rules
-│   ├── design-review.md        behaviour decisions for the designer
 │   ├── extensibility.md        every known future change, and the seam that absorbs it
 │   ├── product-base.md         product at a glance; ledger generated from the PD records
 │   ├── tech-base.md            architecture at a glance; ledger generated from the ADRs
@@ -68,9 +67,9 @@ roomsie/
 │   ├── build-decision-ledger.py writes the decision ledgers from the records
 │   ├── render-docs.py          writes each docs .html from its .md
 │   └── sync-issues.py          makes the GitHub issues match the plan
-├── .github/workflows/ci.yml    typecheck, lint, build, secret scan       T-03
+├── .github/workflows/ci.yml    typecheck, lint, build, secret scan
 ├── .obsidian/                  vault settings; the graph shows docs/plan
-├── package.json · pnpm-workspace.yaml · turbo.json                       T-02 · ADR 0010
+├── package.json · pnpm-workspace.yaml · turbo.json                       ADR 0010
 ├── CLAUDE.md                   agent entry point
 └── CONTEXT.md                  this file
 ```
@@ -81,10 +80,8 @@ roomsie/
 - For each future change, `docs/extensibility.md` gives where it goes and what must be correct today.
 - Not in v0: a mobile app. It has a prepared place next to `apps/web`.
 - We do not plan a vector store at all.
-- Nightly backups to R2 run from `.github/workflows/` (T-40).
+- Nightly backups to R2 run from `.github/workflows/`.
 
 ## Why this layout
 
-- We made the layout to absorb change, not to redraw it.
-- `docs/extensibility.md` lists all the future changes that we know about.
-- No vector store: matching is a SQL query, and the corpus fits Postgres full-text search.
+Why: [ADR-0003](decisions/0003-api-as-separate-service.md), [ADR-0010](decisions/0010-monorepo-tooling.md), [PD7a](decisions/pd-07a-agent-architecture.md)
