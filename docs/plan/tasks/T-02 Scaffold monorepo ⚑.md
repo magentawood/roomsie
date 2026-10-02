@@ -39,12 +39,12 @@ One folder for the website, server and shared code. All five people commit into 
 - [[T-23b Legal pages]]
 
 ## Done when
-- [ ] The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies
-- [ ] apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle
-- [ ] packages/contract and packages/config exist, with the layout that docs/repo-layout.md shows
-- [ ] `pnpm dev` runs web and API locally. docs/ changes only for the V3 decision of 2 October
-- [ ] The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
-- [ ] The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook
+- [x] The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies · [#94](https://github.com/magentawood/roomsie/pull/94)
+- [x] apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle · [#94](https://github.com/magentawood/roomsie/pull/94)
+- [x] packages/contract and packages/config exist, with the layout that docs/repo-layout.md shows · [#94](https://github.com/magentawood/roomsie/pull/94)
+- [x] `pnpm dev` runs web and API locally. docs/ changes only for the V3 decision of 2 October · [#94](https://github.com/magentawood/roomsie/pull/94)
+- [x] The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes · [#94](https://github.com/magentawood/roomsie/pull/94)
+- [x] The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook · [#94](https://github.com/magentawood/roomsie/pull/94)
 
 ^done
 
@@ -76,3 +76,12 @@ One folder for the website, server and shared code. All five people commit into 
   - The V3 prototype is not the launch design. The launch look comes from the Figma designs, which are not available at this time. This PR updates [PD12](../../decisions/pd-12-team-plan.md), [PD5](../../decisions/pd-05-team-and-budget.md), the standards, the index, each working doc that names V3 as the launch look, T-23a and D-01. It moves the prototype to the archive. D-01 and T-23a lose their women-only items, because those items applied only to a port of V3. T-23a waits for its Figma design, D-04.
   - The third done item names `docs/repo-layout.md`, because the layout moved out of `CONTEXT.md`.
 - **Out of scope:** the CI workflow (T-03), the deploy (T-04), error reports (T-07), Form A (T-08), and the migrations (T-06). It also does not do product routes or design work.
+
+## Log
+
+- **2026-10-03 · [#94](https://github.com/magentawood/roomsie/pull/94)**
+  - **Change:** the monorepo exists: the pnpm workspace, Turborepo, the Fastify API with `/v1`, the Next.js shell, the contract and config packages, local Postgres 17 and the test harness. The PR also removes the V3 prototype as the launch design.
+  - **Why:** [ADR-0010](../../decisions/0010-monorepo-tooling.md), [ADR-0003](../../decisions/0003-api-as-separate-service.md); the Figma designs replace V3 ([PD12](../../decisions/pd-12-team-plan.md)).
+  - **Ticked:** all six items.
+  - **Not done:** none.
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-03--t-02-the-monorepo-exists)

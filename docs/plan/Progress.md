@@ -14,15 +14,15 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**8 of 189 done · 4%**
+**14 of 189 done · 7%**
 
-`█░░░░░░░░░░░░░░░░░░░░░░░`
+`██░░░░░░░░░░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 0 / 9 | 0 / 28 | 0% |
+| [[P1 Platform]] | 1 / 9 | 6 / 28 | 21% |
 | [[P2 Chat]] | 0 / 13 | 0 / 48 | 0% |
 | [[P3 Data and trust]] | 1 / 4 | 8 / 19 | 42% |
 | [[P4 Content and moderation]] | 0 / 6 | 0 / 19 | 0% |
@@ -35,9 +35,9 @@ This note is part of [[roomsie launch]].
 
 ---
 
-## P1 Platform — 0/28
+## P1 Platform — 6/28
 
-> [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/6
+> [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
 
 > [!todo]- ⬜ [[T-05 Google sign-in ⚑]] · 0/3
