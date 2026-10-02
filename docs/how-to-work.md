@@ -1,6 +1,6 @@
 # How to work — no-designs plan
 
-- Launch: **Monday 12 October**. Fallback: **Wednesday 14 October**.
+- **The launch date is not fixed.** The team selects it when the designs arrive.
 - Work two hours each day, on all days, weekends included, from **Thursday 24 September**.
 - **Quality comes before the date.** The quality bar is the go/no-go list in `docs/team-plan.md`.
 - If a check fails, the date moves by a small number of days. We do not release below the bar.
@@ -13,27 +13,17 @@ Why: [PD11](decisions/pd-11-launch.md), [PD12](decisions/pd-12-team-plan.md)
 
 ## Until the designs arrive: waves
 
-The designs were not complete on 30 September, and they have no new date. Thus, the work goes in waves, not in dates.
+The work goes in waves, not in dates.
 
 - Open "Design-free work" in `docs/plan/Progress.md`. No task there waits on a design.
 - **Wave 0 waits on no open task.** When a wave is complete, the next wave can start.
 - **Many people can work on one wave.** To take a task, assign its GitHub issue to you. First, make sure that the issue has no assignee.
 - In a wave, take the ⚑ tasks first. Then take the task that unblocks the most tasks.
-- Founder and marketing tasks that gate a build task are in the waves too. F-03 and F-04 come first, because the accounts and the keys gate most of the build.
+- Founder and marketing tasks that gate a build task are in the waves too. F-03 and F-04 come first.
 - A small screen part, for example a sign-in button, is plain. It has no design. The screen tasks apply the design to it.
 - When the designs arrive, the tasks in "Waits on the designs" join the waves. Then the team selects the launch date.
 
 Why: [PD12](decisions/pd-12-team-plan.md)
-
-## The baseline dates
-
-These are the dates of the first plan. The launch date can move when the designs arrive.
-
-| Date | What |
-|---|---|
-| **Sat 10 Oct** | All lanes finish. Go/no-go meeting at 8 pm. |
-| **Sun 11 Oct** | Bug fixing (A-01). Nobody builds new things. |
-| **Mon 12 Oct** | Launch (A-02). Fallback Wed 14 Oct. |
 
 ---
 

@@ -24,10 +24,9 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-We have no designs at this time. 119 of the 151 build hours need no designs. The other 32 hours are screens, and these cannot start without designs. Thus, the work has two phases:
+119 of the 151 build hours need no designs. The other 32 hours are screens, and these cannot start without designs.
 
-- **Phase A · Thu 24 → Wed 30 Sep.** Work that needs no design: the monorepo, the database, sign-in, the assistant, matching and moderation.
-- **Phase B · Thu 1 → Sat 10 Oct.** Every screen, after designs D-02, D-03 and D-04 exist. Also the router, the observer, the advisor, the analytics database and the backups. **The designs are due by the end of Wednesday 30 September.**
+**Until the designs arrive, the work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
