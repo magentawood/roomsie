@@ -1,4 +1,5 @@
 import { execSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 import postgres from 'postgres'
 import { adminUrl } from './db'
 
@@ -17,7 +18,7 @@ async function reachable() {
 export default async function setup() {
   if (await reachable()) return
   try {
-    execSync('docker compose up -d --wait', { cwd: '../..', stdio: 'inherit' })
+    execSync('docker compose up -d --wait', { cwd: fileURLToPath(new URL('../../..', import.meta.url)), stdio: 'inherit' })
   } catch {
     throw new Error('Postgres is not running and Docker could not start it. Start Docker, then run pnpm test again.')
   }
