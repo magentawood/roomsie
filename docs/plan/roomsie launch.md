@@ -42,7 +42,6 @@ The target date is **Mon 12 Oct 2026**. The fallback date is Wed 14 Oct. The pla
 ## Documents
 
 - [[how-to-work|How to work]] — how the team works: principles, deadlines, and the rules for a task
-- [[design-review|For the designer]] — the behaviour that we will lock, to confirm, change or defer
 - [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
 - [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
 - [[CONTEXT|Working context]] — the decision record that we keep current

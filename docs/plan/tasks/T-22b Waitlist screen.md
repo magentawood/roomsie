@@ -37,4 +37,4 @@ Show the three open areas, and a waitlist form to visitors from other areas.
 ^done
 
 ## Read first
-- [launch-plan.md](../../launch-plan.md)
+- [pd-11-launch.md](../../decisions/pd-11-launch.md)

@@ -42,4 +42,4 @@ Let the 100 seeded people in before the public.
 ^done
 
 ## Read first
-- [launch-plan.md](../../launch-plan.md)
+- [pd-11-launch.md](../../decisions/pd-11-launch.md)

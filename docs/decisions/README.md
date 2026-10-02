@@ -71,43 +71,6 @@ One file for each decision. Each file records:
 > [!note]- Why
 > Clients send requests to `apps/api`. Clients never open a database connection.
 
-## Where we are
-
-- We agreed on sixteen architecture decisions.
-- **Schema design is in progress.** We do it before all scaffolding.
-- Schema decisions start at ADR 0015. The schema phases are in this section, below.
-- ✅ **S1 — ID strategy** → ADR 0015. Settled: UUIDv7 keys that clients can mint. They are not enumerable, they are index-friendly, and offline writes are retry-safe.
-- ⏳ **S2 — `users` table** ← next
-
-The fourteen decisions settle what we build on. The schema settles what the data looks like. The schema goes into each table, each API response, each generated Kotlin data class, and in the future the local cache on 20,000 phones.
-
-The design order is a dependency chain, not a preference. Each step needs a fixed step above it first:
-
-1. Identity: `users`. All other tables have a foreign key to `users`.
-2. Profile: profiles, attributes.
-3. The queue: who has seen whom, and what they did.
-4. Listings: flats and lister accounts.
-5. Chat: threads, messages, requests, blocks, reports.
-6. Events: analytics, with versions and a retention policy.
-
-Schema items that are not complete (S2 is next, S3–S7 are pending):
-
-| Item | Scope |
-|---|---|
-| `users` | Our own id as PK, `auth_provider_id` (Firebase UID) as a plain column, `tokens_valid_after` for instant revocation (ADR 0007), verification state, deletion |
-| Profiles | Profiles and the rapid-fire attribute model: answers as columns, rows or JSONB |
-| Queue state | For each (viewer, target): unseen → seen → accepted/rejected, reject counts, suppression windows |
-| Listings | Lister accounts and user accounts are different accounts. |
-| Chat | Threads, messages, message requests, blocks, reports |
-| Analytics events | Versions, with `event_version`. The DPDP-compliant retention/deletion policy that ADR 0012 requires. |
-
-**Then:** scaffold the monorepo. When we scaffold `apps/web` with Untitled UI, we can also start the token generator's naming transform (ADR 0011). This transform needs the real `theme.css` on disk.
-
-**Open items carried forward** are in [Open items](#open-items), below.
-
-> [!note]- Why
-> Schema design comes first because the data model is the most expensive item to change.
-
 ## Open items
 
 Items carried forward. We settled and recorded all architectural decisions.

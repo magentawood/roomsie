@@ -53,6 +53,6 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 - [CONTEXT.md](../../CONTEXT.md)
 - [product-base.md §11](../product-base.md)
 - [scope-policy.md](../scope-policy.md)
-- [design-review.md §3](../design-review.md)
+- [design-review.md §3](../archive/2026-09-design-review.md)
 - [assistant-risks.md §4.2 and §4.4](../assistant-risks.md)
 - [content/corpus-plan.md](../content/corpus-plan.md)

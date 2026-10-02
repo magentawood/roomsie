@@ -110,6 +110,6 @@ roomsie publishes long-form gated content.
 - [seo-with-gated-products.md](../seo-with-gated-products.md)
 - [interface-shape.md](../interface-shape.md), hole 2
 - [cost-and-team.md](../cost-and-team.md), "Where the real risk is"
-- [launch-plan.md](../launch-plan.md), "What moves to after launch"
-- [design-review.md](../design-review.md), item 2.4
+- [launch-plan.md](../archive/2026-09-launch-plan.md), "What moves to after launch"
+- [design-review.md](../archive/2026-09-design-review.md), item 2.4
 - [content/corpus-plan.md](../content/corpus-plan.md)

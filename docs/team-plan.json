@@ -13,7 +13,7 @@
     "The launch uses the look of the Figma designs, not the V3 prototype"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP0",
    "critical": false,
@@ -180,7 +180,7 @@
     "The team chooses them by where it can really reach people"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP0",
    "critical": false,
@@ -325,7 +325,7 @@
     "The team invites people to sign up. The team never copies the posts or details of any person"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP1",
    "critical": true,
@@ -414,7 +414,7 @@
     "0014: the product uses the Sentry free tier, not GlitchTip"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP1",
    "critical": false,
@@ -1065,7 +1065,7 @@
     "There are 150 profiles by Sunday 11 October, with at least 40 in each launch area"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP4",
    "critical": true,
@@ -1088,7 +1088,7 @@
     "The system saves each waitlist entry with its area"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP3",
    "critical": false,
@@ -1111,7 +1111,7 @@
     "A visitor from a different area gets a waitlist form, not an empty panel"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP3",
    "critical": false,
@@ -1255,7 +1255,7 @@
     "Marketing posts and replies to every comment. Every bug report becomes an issue"
    ],
    "read": [
-    "docs/launch-plan.md"
+    "docs/decisions/pd-11-launch.md"
    ],
    "cp": "CP4",
    "critical": false,

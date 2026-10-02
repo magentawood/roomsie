@@ -44,7 +44,7 @@ We did not fully choose one option. The trade-offs of the three options:
 ## Consequences
 
 - The launch plan moved the mobile bottom sheet to v1. At launch, mobile uses only a responsive layout.
-- The design review lists mobile as unresolved and the largest open question in the product. The designer must decide by 30 September.
+- The design review lists mobile as unresolved and the largest open question in the product. The designer decides it with the designs ([PD12](pd-12-team-plan.md)).
 - We expect that the designer will overrule the provisional pattern.
 
 ## Revisit when
@@ -56,5 +56,5 @@ The designer decides the mobile pattern in the design review.
 - [CONTEXT.md, PD6a row](../../CONTEXT.md)
 - [product-base.md, section 06 "Mobile is provisional", section 16 and the "Still open" table](../product-base.md)
 - [interface-shape.md, hole 1 and its Why callout](../interface-shape.md)
-- [design-review.md, deadlines and §5 Mobile, with its Why callout](../design-review.md)
-- [launch-plan.md, the cut table](../launch-plan.md)
+- [design-review.md, deadlines and §5 Mobile, with its Why callout](../archive/2026-09-design-review.md)
+- [launch-plan.md, the cut table](../archive/2026-09-launch-plan.md)

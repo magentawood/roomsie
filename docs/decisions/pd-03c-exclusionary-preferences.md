@@ -60,4 +60,4 @@ These mitigations stay with the decision:
 - [product-base.md, section 05 and its Why callout](../product-base.md)
 - [assistant-risks.md, section 4.1](../assistant-risks.md)
 - [journal/2026-09.md, the nine provisional names](../journal/2026-09.md)
-- [design-review.md, item 1.8](../design-review.md)
+- [design-review.md, item 1.8](../archive/2026-09-design-review.md)

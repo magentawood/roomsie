@@ -4,7 +4,7 @@ The architecture at a glance. Each decision's full record is its ADR.
 
 ### The budget that decides everything
 
-Four people at two hours a day for a month give ~200 real hours. Frontend takes 120–140h and backend + infra takes 60–80h. We measure each decision against the backend part ([ADR 0001](decisions/0001-rent-infrastructure.md)).
+The team and its hours are in [PD5](decisions/pd-05-team-and-budget.md). We measure each decision against the backend part ([ADR 0001](decisions/0001-rent-infrastructure.md)).
 
 ### The principle underneath
 

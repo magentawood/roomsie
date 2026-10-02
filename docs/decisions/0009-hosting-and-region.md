@@ -162,3 +162,5 @@ respond to vendor risk at all. This is the same posture as ADR 0001.
 
 - The reliability or the direction of Fly becomes a problem.
 - The traffic justifies more than one machine.
+
+Superseded (2026-09-20): the product has no swipe stack or swipe queue. It starts with the assistant ([PD6](pd-06-interface-shape.md)). The region and hosting choice does not change.

@@ -22,7 +22,6 @@
       "docs/learn/README.md"
     ],
     "overrides": {
-      "docs/design-review.md": 1667,
       "docs/decisions/0005-managed-platform-split.md": 1333,
       "docs/research/hinglish-model-report.md": 1756
     }
@@ -37,7 +36,6 @@
       "docs/product-base.md",
       "docs/how-to-work.md",
       "docs/journal/2026-09.md",
-      "docs/design-review.md",
       "docs/learn/*.md"
     ],
     "toolsVersion": "0.6.1",

@@ -37,4 +37,4 @@ Pick the colours, fonts and general feel one time, and never argue about them ag
 ^done
 
 ## Read first
-- [launch-plan.md](../../launch-plan.md)
+- [pd-11-launch.md](../../decisions/pd-11-launch.md)

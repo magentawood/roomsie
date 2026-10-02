@@ -72,4 +72,4 @@ hosting cannot serve (data residency, an unsupported extension, custom tuning).
 
 ## Sources
 
-- [design-review.md](../design-review.md), §2
+- [design-review.md](../archive/2026-09-design-review.md), §2

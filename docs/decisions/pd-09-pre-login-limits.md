@@ -72,4 +72,4 @@ At the ceiling:
 - [cost-and-team.md](../cost-and-team.md)
 - [seo-with-gated-products.md](../seo-with-gated-products.md)
 - [model-selection.md](../model-selection.md)
-- [design-review.md §3](../design-review.md)
+- [design-review.md §3](../archive/2026-09-design-review.md)

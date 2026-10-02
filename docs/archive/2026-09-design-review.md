@@ -1,5 +1,7 @@
 # For the designer — decisions we are about to lock
 
+> **Archived 2026-10-03.** The deadlines of this review passed on 30 September. The records that it fed link to it as a source. This page is history.
+
 **Date:** 2026-09-25 · **Updated:** 2026-09-26, launch moved to Mon 12 Oct · **For:** the person who owns design · **From:** engineering
 
 ---
@@ -12,7 +14,7 @@
 - In ten days, some of these decisions will cost the launch date.
 - This document does not ask you to approve visuals. It asks you to confirm, change or defer **behaviour**.
 
-Why: [PD12](decisions/pd-12-team-plan.md)
+Why: [PD12](../decisions/pd-12-team-plan.md)
 
 ---
 
@@ -52,7 +54,7 @@ For each numbered item, write one of these words:
 | **Wed 30 Sep** | §5 Mobile — **not resolved at this time** | The largest open question in the product. |
 | **Wed 30 Sep** | Designs D-02, D-03, D-04 finished | Five people start to build screens on Thursday 1 October. |
 
-Why: [PD12](decisions/pd-12-team-plan.md)
+Why: [PD12](../decisions/pd-12-team-plan.md)
 
 ---
 
@@ -81,7 +83,7 @@ The database, the AI extraction, the matching and the profile screens all read f
 
 **1.8 — We never offer some preferences as chips.** If a user speaks about community or religion, we record it and filter on it. We never suggest it, never ask about it, and never infer it from a name, a diet or an area. PD3c settles this. 🔒
 
-Why: [PD0](decisions/pd-00-v0-scope.md), [PD3c](decisions/pd-03c-exclusionary-preferences.md), [PD6c](decisions/pd-06c-interface-holes.md), [PD7](decisions/pd-07-models.md)
+Why: [PD0](../decisions/pd-00-v0-scope.md), [PD3c](../decisions/pd-03c-exclusionary-preferences.md), [PD6c](../decisions/pd-06c-interface-holes.md), [PD7](../decisions/pd-07-models.md)
 
 ---
 
@@ -103,7 +105,7 @@ Why: [PD0](decisions/pd-00-v0-scope.md), [PD3c](decisions/pd-03c-exclusionary-pr
 - **Can people see and correct these notes, and where?** On the profile, in the chat, or nowhere at launch?
 - This decision gives the shape of the profile screens (D-03). We need it by Wed 30 Sep.
 
-Why: [ADR 0001](decisions/0001-rent-infrastructure.md), [PD6b](decisions/pd-06b-login-gate-and-search.md)
+Why: [ADR 0001](../decisions/0001-rent-infrastructure.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md)
 
 ---
 
@@ -127,7 +129,7 @@ Why: [ADR 0001](decisions/0001-rent-infrastructure.md), [PD6b](decisions/pd-06b-
 
 **3.7 — Off-topic messages get one scripted line.** This reply costs no model call, and we log the message. You write the words of the reply. 🟢
 
-Why: [PD6c](decisions/pd-06c-interface-holes.md), [PD9](decisions/pd-09-pre-login-limits.md), [PD10](decisions/pd-10-scope-bands.md)
+Why: [PD6c](../decisions/pd-06c-interface-holes.md), [PD9](../decisions/pd-09-pre-login-limits.md), [PD10](../decisions/pd-10-scope-bands.md)
 
 ---
 
@@ -150,7 +152,7 @@ Why: [PD6c](decisions/pd-06c-interface-holes.md), [PD9](decisions/pd-09-pre-logi
 
 **4.7 — We never silently remove a card that you saved.** We mark it with the reason. **v1, not launch.** 🟢
 
-Why: [PD6c](decisions/pd-06c-interface-holes.md)
+Why: [PD6c](../decisions/pd-06c-interface-holes.md)
 
 ---
 
@@ -179,7 +181,7 @@ Why: [PD6c](decisions/pd-06c-interface-holes.md)
 
 **This pattern is provisional.** Work on it is in progress. Decide by 30 September.
 
-Why: [PD6a](decisions/pd-06a-mobile-split-view.md)
+Why: [PD6a](../decisions/pd-06a-mobile-split-view.md)
 
 ---
 
@@ -189,9 +191,9 @@ Why: [PD6a](decisions/pd-06a-mobile-split-view.md)
 
 **6.2 — The landing page.** It comes from the Figma design (D-04). The landing page will be live and public. 🟡
 
-**6.3 — The launch look.** Settled on 2 October: the launch look comes from the Figma designs, not the V3 prototype ([PD12](decisions/pd-12-team-plan.md)). ✅
+**6.3 — The launch look.** Settled on 2 October: the launch look comes from the Figma designs, not the V3 prototype ([PD12](../decisions/pd-12-team-plan.md)). ✅
 
-Why: [PD1](decisions/pd-01-audience.md), [PD5](decisions/pd-05-team-and-budget.md), [PD6c](decisions/pd-06c-interface-holes.md)
+Why: [PD1](../decisions/pd-01-audience.md), [PD5](../decisions/pd-05-team-and-budget.md), [PD6c](../decisions/pd-06c-interface-holes.md)
 
 ---
 
@@ -215,4 +217,4 @@ list above.
 2. Mark each item OK / CHANGE / LATER.
 3. For each item that you mark CHANGE, we tell you the real cost on the same day. We also tell you what work it moves out.
 
-Why: [PD12](decisions/pd-12-team-plan.md)
+Why: [PD12](../decisions/pd-12-team-plan.md)

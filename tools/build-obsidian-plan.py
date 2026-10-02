@@ -274,7 +274,6 @@ The target date is **{f(next(m[2] for m in ms if m[0] == 'CP4'))} 2026**. The fa
 ## Documents
 
 - [[how-to-work|How to work]] — how the team works: principles, deadlines, and the rules for a task
-- [[design-review|For the designer]] — the behaviour that we will lock, to confirm, change or defer
 - [[team-plan|Team plan]] — every task with its done-when list, by checkpoint
 - [[extensibility|How roomsie absorbs change]] — every future change, and the seam that takes it
 - [[CONTEXT|Working context]] — the decision record that we keep current
@@ -383,7 +382,7 @@ for k in LANES:
 L += ["", f"Each engineer has {CAP} hours from Thursday 24 September to {D(LAST_BUILD):%A %-d %B}, at two hours a day. {D(BUG_DAY):%A %-d %B} is for bug fixes. **{D(LAUNCH):%A %-d %B} is launch.** {D(FALLBACK):%A %-d %B} is the fallback date.", "",
  "**Why the lanes are not the initial verticals.** V1, V2 and V4 needed no designs. But V3 and V5 were approximately 80% screens. With the verticals, two people would have no work for a week. Every task still has exactly one owner, from start to finish.", "",
  "**Other roles.** Design, marketing and the founder keep their roles. Their sequences are also below.", "",
- f"**If there are four engineers, not five,** one lane has no owner. Plan for {D(FALLBACK):%-d %B} from day one. Use the cut order in `docs/launch-plan.md`.", "",
+ f"**If there are four engineers, not five,** one lane has no owner. Plan for {D(FALLBACK):%-d %B} from day one.", "",
  "---", "", "## Each person's sequence", "", "Do the tasks from top to bottom. Finish and merge one task before you start the next task. The dates assume two hours of work every day.", ""]
 for k,(own,tag,_) in OWN.items():
     rs = rows_of(k)
