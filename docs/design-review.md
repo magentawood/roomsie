@@ -187,9 +187,9 @@ Why: [PD6a](decisions/pd-06a-mobile-split-view.md)
 
 **6.1 — The empty state.** There is no skip. The options are: make the area larger, relax a dealbreaker, or offer to send the user a notification. **Undesigned. 🔴**
 
-**6.2 — The landing page.** We port it from the V3 prototype. The landing page will be live and public. If you want a different landing page, the port is four hours of work that we can use on other work. 🟡
+**6.2 — The landing page.** It comes from the Figma design (D-04). The landing page will be live and public. 🟡
 
-**6.3 — Launch uses the V3 prototype's look, not Untitled UI.** ADR 0011 says to build on the Untitled UI token pipeline. But that pipeline is blocked. The launch plan proposes to port the prototype's styling for 12 October, then rebuild on the pipeline in v1. **This needs your approval. It is D-01, and it is due on day one.** 🔴
+**6.3 — The launch look.** Settled on 2 October: the launch look comes from the Figma designs, not the V3 prototype ([PD12](decisions/pd-12-team-plan.md)). ✅
 
 Why: [PD1](decisions/pd-01-audience.md), [PD5](decisions/pd-05-team-and-budget.md), [PD6c](decisions/pd-06c-interface-holes.md)
 

@@ -77,16 +77,10 @@ Nothing blocks them.
 
 Why: [PD5](decisions/pd-05-team-and-budget.md)
 
-### The designer has one unresolved decision
+### The launch look
 
-- The V3 prototype uses a warm cream palette with Bricolage Grotesque and Plus
-  Jakarta Sans.
-- ADR 0011 makes Figma the source of truth and generates `theme.css` from
-  Untitled UI.
-- At this time, `theme.css` is Untitled UI blue with Inter.
-- These are two different design systems, and one must win.
-- ADR 0011's token pipeline stays BLOCKED until the correct `theme.css` exists.
-- This decision is the designer's first task, and it blocks frontend work.
+- The launch look comes from the Figma designs. The V3 prototype is not the launch design ([PD12](decisions/pd-12-team-plan.md)).
+- The designs are not available at this time. Screen work waits for them.
 
 ### The 4 tech people
 

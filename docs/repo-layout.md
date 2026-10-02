@@ -14,7 +14,7 @@ roomsie/
 │   │   │   ├── people/[id]/    person detail and connect                 T-18b
 │   │   │   ├── profile/        create and edit, photos                   T-16
 │   │   │   └── waitlist/       launch areas and waitlist                 T-22
-│   │   ├── components/         prototype look, theme tokens only         ADR 0011 exception · T-23a
+│   │   ├── components/         Figma look, theme tokens only             T-23a
 │   │   └── lib/                API client typed from packages/contract, Firebase sign-in
 │   └── api/                    Fastify · Zod · Drizzle → Fly.io Mumbai
 │       ├── src/
@@ -57,14 +57,12 @@ roomsie/
 │   ├── decisions/              ADRs 0001 to 0016 and product decision records pd-*.md
 │   ├── standards/              code rules for each area, each linked to its record
 │   ├── repo-layout.md          this file
-│   ├── prototype-v3.md         what the V3 prototype settles
 │   ├── archive/                history; never linked from the index
 │   ├── team-plan.json          the plan's data. Edit this, then run the builder
 │   ├── team-plan.md            generated from team-plan.json
 │   ├── plan/                   the Obsidian view, generated
 │   ├── *.md                    working docs: interface, assistant, models, scope, limits, SEO, verification
 │   ├── research/ · content/    market research and the article corpus plan
-│   └── source/                 vendored inputs: the V3 prototype
 ├── tools/
 │   ├── build-obsidian-plan.py  rebuilds docs/plan/, .obsidian/graph.json and docs/team-plan.md
 │   ├── build-decision-ledger.py writes the decision ledgers from the records

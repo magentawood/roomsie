@@ -49,7 +49,7 @@ assistant, sees real flatmate matches, and can connect with one.**
 | 1   | Monorepo scaffold, deploy to Vercel, Fly and Supabase in Mumbai       | 10            |
 | 2   | Google sign-in through Firebase                                       | 6             |
 | 3   | Schema: users, profiles, anonymous form state, connection requests    | 8             |
-| 4   | Landing page, ported from the V3 prototype                            | 6             |
+| 4   | Landing page, from the Figma design                                   | 6             |
 | 5   | Chat UI with the scripted chip flow for intent, area, budget          | 14            |
 | 6   | One extraction call and one reply call, DeepSeek with Gemini fallback | 14            |
 | 7   | Split view: the results panel queries again when the form changes     | 12            |
@@ -97,7 +97,7 @@ conflicts here. For each conflict, we propose an exception with a time limit.
 
 | ADR | Conflict | Proposal |
 |---|---|---|
-| ADR 0011 | The design token pipeline is blocked. | Copy the prototype styles directly for launch. Then build again on the token pipeline in v1. The designer must approve this. |
+| ADR 0011 | The design token pipeline is blocked. | Superseded (2026-10-02): the launch look comes from the Figma designs ([PD12](decisions/pd-12-team-plan.md)). |
 | ADR 0012 | The separate analytics instance | Use one events table in the primary database for launch. Migrate when the volume justifies a second project. |
 | ADR 0014 | Self-hosted GlitchTip | Use the free tier of Sentry for two weeks, behind the same `reportError` wrapper. |
 

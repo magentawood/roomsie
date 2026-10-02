@@ -32,7 +32,7 @@ Open, with no record yet: the elevator pitch.
 | The schema, migrations, ids | [ADR-0006](docs/decisions/0006-drizzle.md), [ADR-0015](docs/decisions/0015-primary-key-strategy.md), [ADR-0012](docs/decisions/0012-analytics-event-store.md) |
 | The API, auth, tokens | [ADR-0002](docs/decisions/0002-api-boundary.md), [ADR-0004](docs/decisions/0004-api-stack-typescript-fastify.md), [ADR-0007](docs/decisions/0007-web-rendering-and-auth-transport.md) |
 | Secrets, env vars, logging PII | [ADR-0016](docs/decisions/0016-credentials-and-secrets.md), [ADR-0014](docs/decisions/0014-error-tracking.md) |
-| Web UI, styling, tokens | [ADR-0008](docs/decisions/0008-web-stack.md), [ADR-0011](docs/decisions/0011-design-system-token-pipeline.md), [prototype-v3.md](docs/prototype-v3.md), [interface-shape.md](docs/interface-shape.md) |
+| Web UI, styling, tokens | [ADR-0008](docs/decisions/0008-web-stack.md), [ADR-0011](docs/decisions/0011-design-system-token-pipeline.md), [interface-shape.md](docs/interface-shape.md) |
 | The assistant, prompts, models | [PD7](docs/decisions/pd-07-models.md), [PD7a](docs/decisions/pd-07a-agent-architecture.md), [PD10](docs/decisions/pd-10-scope-bands.md), [ai-agent-design.md](docs/ai-agent-design.md) |
 | Matching and preferences | [PD3b](docs/decisions/pd-03b-interview-vs-chips.md), [PD3c](docs/decisions/pd-03c-exclusionary-preferences.md), [PD6c](docs/decisions/pd-06c-interface-holes.md) |
 | Limits, abuse, spend | [PD9](docs/decisions/pd-09-pre-login-limits.md), [pre-login-limits.md](docs/pre-login-limits.md) |
