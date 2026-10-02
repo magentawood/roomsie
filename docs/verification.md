@@ -1,6 +1,6 @@
 # Verification and the blurred card
 
-**Date:** 2026-09-22 · **Status:** design accepted, one part must change
+**Date:** 2026-09-22 · **Status:** settled in PD8
 **Decision:** PD8
 
 ## The v0 scope decision
@@ -56,7 +56,7 @@ UIDAI will ban them.**
   digital copies**: offline QR check, API authentication, or the new Aadhaar
   app.
 - If the law permits a copy, you must mask the first eight digits.
-- The manual route puts the most sensitive identity data in India into the storage of a seven-person startup.
+- The manual route puts the most sensitive identity data in India into the storage of a small startup.
 
 Why: [PD8](decisions/pd-08-verification.md)
 
@@ -71,7 +71,7 @@ Why: [PD8](decisions/pd-08-verification.md)
 
 - A direct connection needs registration with MeitY as a document requester.
 - Buy the API from a registered provider, such as Surepass, AuthBridge, Sandbox or IDfy.
-- Four part-time engineers should not use a month on this.
+- The team must not use a month on this ([PD5](decisions/pd-05-team-and-budget.md)).
 
 **Fallback route: a government ID that is not Aadhaar**, for example a
 passport, driving licence or voter ID. A person compares the selfie to the ID photo.
