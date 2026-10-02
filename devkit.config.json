@@ -38,14 +38,14 @@
       "docs/journal/2026-09.md",
       "docs/learn/*.md"
     ],
-    "toolsVersion": "0.6.1",
+    "toolsVersion": "0.6.2",
     "toolCopies": {
       "tools/doc-budget.py": "1a4e1f7ffb6c",
       "tools/doc-links.py": "2468e4ec8342",
       "tools/build-decision-ledger.py": "26d43befb290",
       "tools/render-docs.py": "ab64bfbdd946",
-      ".githooks/pre-commit": "af5b5b154fcd",
-      ".github/workflows/docs-check.yml": "fcb7e6254ef4",
+      ".githooks/pre-commit": "da51ec76d9c6",
+      ".github/workflows/docs-check.yml": "dfe18224bcab",
       "tools/devkit-defaults.json": "6f32cd8ef941"
     },
     "learnIndex": "docs/learn/README.md"

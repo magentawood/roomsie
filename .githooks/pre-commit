@@ -1,9 +1,9 @@
 #!/bin/sh
-# Keep the docs inside their limits, the links whole, and the generated files current.
+# Keep the docs inside their limits, the links whole, and the generated files and the plan current.
 # Master: agentic-devkit skills/doc-architecture/templates/pre-commit. sync-tools copies it here.
 # sync-tools turns it on (package.json "prepare", a Claude Code SessionStart hook). By hand: git config core.hooksPath .githooks
 # CI runs it with DOCS_CHECK_ALL=1, which checks every Markdown file, not only the staged files.
-TOOL_VERSION="0.1.0"
+TOOL_VERSION="0.2.0"
 cd "$(git rev-parse --show-toplevel)" || exit 1
 
 if [ -n "$DOCS_CHECK_ALL" ]; then
@@ -16,6 +16,18 @@ fi
 python3 tools/doc-links.py . || exit 1
 if [ -f tools/build-decision-ledger.py ]; then python3 tools/build-decision-ledger.py --check || exit 1; fi
 if [ -f tools/render-docs.py ]; then python3 tools/render-docs.py --check || exit 1; fi
+
+# Plan drift: with plan.build in the project config, "<plan.build> --check" must exit 0.
+if [ -f devkit.config.json ]; then
+  python3 - <<'PY' || exit 1
+import json, subprocess, sys
+plan = json.load(open("devkit.config.json")).get("plan")
+build = plan.get("build") if isinstance(plan, dict) else None
+if build and subprocess.call(build + " --check", shell=True) != 0:
+    print("plan files are stale. Run: " + build, file=sys.stderr)
+    sys.exit(1)
+PY
+fi
 
 # Tool copies: each copy must match the hash that sync-tools recorded.
 if [ -f devkit.config.json ]; then
