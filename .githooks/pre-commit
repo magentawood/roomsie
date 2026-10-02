@@ -1,6 +1,31 @@
 #!/bin/sh
-# Keep the docs inside their limits and the generated files current.
-# Turn it on once per clone: git config core.hooksPath .githooks
-python3 tools/doc-budget.py --staged || exit 1
-python3 tools/build-decision-ledger.py --check || exit 1
-python3 tools/render-docs.py --check || exit 1
+# Keep the docs inside their limits, the links whole, and the generated files current.
+# Master: agentic-devkit skills/doc-architecture/templates/pre-commit. sync-tools copies it here.
+# sync-tools turns it on (package.json "prepare", a Claude Code SessionStart hook). By hand: git config core.hooksPath .githooks
+# CI runs it with DOCS_CHECK_ALL=1, which checks every Markdown file, not only the staged files.
+TOOL_VERSION="0.1.0"
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+if [ -n "$DOCS_CHECK_ALL" ]; then
+  python3 tools/doc-budget.py || exit 1
+  # In a pull request, also fail on an override that grew since the base branch.
+  if [ -n "$GITHUB_BASE_REF" ]; then python3 tools/doc-budget.py --changed "origin/$GITHUB_BASE_REF" || exit 1; fi
+else
+  python3 tools/doc-budget.py --staged || exit 1
+fi
+python3 tools/doc-links.py . || exit 1
+if [ -f tools/build-decision-ledger.py ]; then python3 tools/build-decision-ledger.py --check || exit 1; fi
+if [ -f tools/render-docs.py ]; then python3 tools/render-docs.py --check || exit 1; fi
+
+# Tool copies: each copy must match the hash that sync-tools recorded.
+if [ -f devkit.config.json ]; then
+  python3 - <<'PY' || exit 1
+import hashlib, json, os, sys
+copies = json.load(open("devkit.config.json")).get("docArchitecture", {}).get("toolCopies", {})
+bad = [p for p, h in sorted(copies.items())
+       if not os.path.exists(p) or hashlib.sha256(open(p, "rb").read()).hexdigest()[:12] != h]
+if bad:
+    print("tool copies changed or missing. Do not edit a copy: run /doc-management check --sync.", *bad, sep="\n  ")
+    sys.exit(1)
+PY
+fi
