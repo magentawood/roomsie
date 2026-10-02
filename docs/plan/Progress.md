@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**8 of 194 done · 4%**
+**8 of 189 done · 4%**
 
 `█░░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -22,12 +22,12 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 0 / 9 | 0 / 29 | 0% |
+| [[P1 Platform]] | 0 / 9 | 0 / 28 | 0% |
 | [[P2 Chat]] | 0 / 13 | 0 / 48 | 0% |
 | [[P3 Data and trust]] | 1 / 4 | 8 / 19 | 42% |
-| [[P4 Content and moderation]] | 0 / 6 | 0 / 21 | 0% |
+| [[P4 Content and moderation]] | 0 / 6 | 0 / 19 | 0% |
 | [[P5 Accounts and people]] | 0 / 5 | 0 / 16 | 0% |
-| [[Design]] | 0 / 6 | 0 / 14 | 0% |
+| [[Design]] | 0 / 6 | 0 / 12 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 11 | 0% |
 | [[Founder]] | 0 / 10 | 0 / 25 | 0% |
@@ -35,9 +35,9 @@ This note is part of [[roomsie launch]].
 
 ---
 
-## P1 Platform — 0/29
+## P1 Platform — 0/28
 
-> [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/7
+> [!todo]- ⬜ [[T-02 Scaffold monorepo ⚑]] · 0/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
 
 > [!todo]- ⬜ [[T-05 Google sign-in ⚑]] · 0/3
@@ -122,9 +122,9 @@ This note is part of [[roomsie launch]].
 > ![[T-18b Person and connect screens ⚑#^done]]
 
 
-## P4 Content and moderation — 0/21
+## P4 Content and moderation — 0/19
 
-> [!todo]- ⬜ [[T-23a Landing page]] · 0/5
+> [!todo]- ⬜ [[T-23a Landing page]] · 0/3
 > ![[T-23a Landing page#^done]]
 
 > [!todo]- ⬜ [[T-23b Legal pages]] · 0/2
@@ -161,9 +161,9 @@ This note is part of [[roomsie launch]].
 > ![[T-16 Profiles and photos ⚑#^done]]
 
 
-## Design — 0/14
+## Design — 0/12
 
-> [!todo]- ⬜ [[D-01 Styling decision]] · 0/3
+> [!todo]- ⬜ [[D-01 Styling decision]] · 0/1
 > ![[D-01 Styling decision#^done]]
 
 > [!todo]- ⬜ [[D-02 Chat screen designs ⚑]] · 0/2

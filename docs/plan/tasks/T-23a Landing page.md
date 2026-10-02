@@ -34,8 +34,6 @@ The public home page that explains roomsie.
 - [ ] The landing page uses the Figma design of D-04
 - [ ] The page has a hero, a how-it-works section, and a button into the chat
 - [ ] Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
-- [ ] The landing page uses the look of the V3 prototype
-- [ ] Every women-only line is removed
 
 ^done
 
