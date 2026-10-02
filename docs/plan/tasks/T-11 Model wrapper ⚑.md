@@ -30,6 +30,7 @@ One piece of code that talks to the AI. If DeepSeek is down, it silently changes
 
 ## Needs first
 - [[T-08 Form A contract ⚑]]
+- [[F-04 Accounts in Mumbai]]
 
 ## Unblocks
 - [[T-12 Extraction ⚑]]

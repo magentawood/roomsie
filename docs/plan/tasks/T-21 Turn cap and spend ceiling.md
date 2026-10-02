@@ -26,6 +26,8 @@ Stops abuse of the AI and a very large bill.
 
 ## Needs first
 - [[T-12 Extraction ⚑]]
+- [[T-06 Database schema ⚑]]
+- [[T-05 Google sign-in ⚑]]
 
 ## Unblocks
 - [[T-29 Abuse test]]

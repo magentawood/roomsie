@@ -19,4 +19,5 @@ This note is part of [[roomsie launch]].
 2. [[T-03 CI checks]] — Sun 27 Sep → Tue 29 Sep, 2h
 3. [[T-24 Event logging]] — Tue 29 Sep → Wed 30 Sep, 2h
 4. [[T-18a Connect API ⚑]] — Wed 30 Sep → Sun 4 Oct, 4h
-5. [[T-16 Profiles and photos ⚑]] — Sun 4 Oct → Sat 10 Oct, 8h
+5. [[T-16a Profile API ⚑]] — Sun 4 Oct → Sat 10 Oct, 5h
+6. [[T-16b Profile screens ⚑]] — Sun 4 Oct → Sat 10 Oct, 3h

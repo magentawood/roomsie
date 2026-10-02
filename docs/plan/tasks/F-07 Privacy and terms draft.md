@@ -27,7 +27,7 @@ The text for the legal pages.
 - Nothing. You can start this task at any time.
 
 ## Unblocks
-- No task waits on this task.
+- [[T-23b Legal pages]]
 
 ## Done when
 - [ ] It says what the system collects, why, for how long, how to delete it, and who to contact

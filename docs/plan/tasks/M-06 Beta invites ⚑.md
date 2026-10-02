@@ -29,7 +29,7 @@ Let the 100 seeded people in before the public.
 
 ## Needs first
 - [[M-02 100 sign-ups]]
-- [[T-16 Profiles and photos ⚑]]
+- [[T-16b Profile screens ⚑]]
 
 ## Unblocks
 - No task waits on this task.

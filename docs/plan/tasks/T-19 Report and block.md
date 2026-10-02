@@ -2,7 +2,7 @@
 id: T-19
 title: "Report, block, suspend, and a saved moderation query"
 owner: "P4 Content and moderation"
-sequence: "4 of 6"
+sequence: "4 of 7"
 hours: 5
 start: 2026-10-01
 end: 2026-10-05
@@ -17,7 +17,7 @@ tags:
 
 # T-19 · Report, block, suspend, and a saved moderation query
 
-**Owner:** [[P4 Content and moderation]], task 4 of 6  
+**Owner:** [[P4 Content and moderation]], task 4 of 7  
 **When:** Thu 1 Oct → Mon 5 Oct · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#45](https://github.com/magentawood/roomsie/issues/45)
@@ -26,6 +26,7 @@ The safety tools.
 
 ## Needs first
 - [[T-06 Database schema ⚑]]
+- [[T-14 Match query ⚑]]
 
 ## Unblocks
 - No task waits on this task.

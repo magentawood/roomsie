@@ -39,6 +39,7 @@ The main screen: chat on one side, results on the other.
 - [ ] When results exist, the screen splits into chat and results
 - [ ] On a phone, the chat becomes a bar at the bottom and expands when the user taps it
 - [ ] Nothing changes size while the person types
+- [ ] The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02
 
 ^done
 

@@ -2,7 +2,7 @@
 id: T-23b
 title: "Privacy, terms and grievance pages"
 owner: "P4 Content and moderation"
-sequence: "2 of 6"
+sequence: "2 of 7"
 hours: 2
 start: 2026-09-27
 end: 2026-09-29
@@ -17,7 +17,7 @@ tags:
 
 # T-23b · Privacy, terms and grievance pages
 
-**Owner:** [[P4 Content and moderation]], task 2 of 6  
+**Owner:** [[P4 Content and moderation]], task 2 of 7  
 **When:** Sun 27 Sep → Tue 29 Sep · 2 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#40](https://github.com/magentawood/roomsie/issues/40)
@@ -26,6 +26,7 @@ The legal pages that each Indian site must have.
 
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
+- [[F-07 Privacy and terms draft]]
 
 ## Unblocks
 - No task waits on this task.

@@ -33,13 +33,16 @@ The exact shape of all stored data: people, flats, messages, matches.
 
 ## Unblocks
 - [[T-14 Match query ⚑]]
-- [[T-16 Profiles and photos ⚑]]
+- [[T-16a Profile API ⚑]]
 - [[T-17 Carry chat into account]]
 - [[T-19 Report and block]]
 - [[T-24 Event logging]]
+- [[T-21 Turn cap and spend ceiling]]
 - [[T-18a Connect API ⚑]]
 - [[T-20 Account deletion]]
+- [[T-34 Router ⚑]]
 - [[T-35 Form B contract]]
+- [[T-36 Observer]]
 - [[T-37 Articles and search]]
 
 ## Done when

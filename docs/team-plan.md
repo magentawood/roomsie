@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-16b, T-22b.
 
 ---
 
@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-We have no designs at this time. 112 of the 151 build hours need no designs. The other 39 hours are screens, and these cannot start without designs. Thus, the work has two phases:
+We have no designs at this time. 119 of the 151 build hours need no designs. The other 32 hours are screens, and these cannot start without designs. Thus, the work has two phases:
 
 - **Phase A · Thu 24 → Wed 30 Sep.** Work that needs no design: the monorepo, the database, sign-in, the assistant, matching and moderation.
 - **Phase B · Thu 1 → Sat 10 Oct.** Every screen, after designs D-02, D-03 and D-04 exist. Also the router, the observer, the advisor, the analytics database and the backups. **The designs are due by the end of Wednesday 30 September.**
@@ -34,8 +34,8 @@ We have no designs at this time. 112 of the 151 build hours need no designs. The
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime and spend alerts, Invite-only gate, Analytics database, Nightly backups, Abuse test | 23 | 11 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens | 24 | 10 | _name_ |
-| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Launch areas and waitlist | 20 | 14 | _name_ |
-| **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Connect API, Profiles and photos | 20 | 14 | _name_ |
+| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen | 20 | 14 | _name_ |
+| **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Connect API, Profile API, Profile screens | 20 | 14 | _name_ |
 
 Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at two hours a day. Sunday 11 October is for bug fixes. **Monday 12 October is launch.** Wednesday 14 October is the fallback date.
 
@@ -56,13 +56,13 @@ Do the tasks from top to bottom. Finish and merge one task before you start the 
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
 | 1 | T-02 ⚑ · Scaffold the monorepo in this repo | 4 | Thu 24 Sep → Sat 26 Sep | — |
-| 2 | T-05 ⚑ · Google sign-in and token checks in the API | 6 | Sat 26 Sep → Thu 1 Oct | T-02 |
-| 3 | T-04 · Deploy web and API to Mumbai | 3 | Thu 1 Oct → Sat 3 Oct | T-02 |
-| 4 | T-07 · Error reporting wrapper and Sentry | 1 | Sat 3 Oct → Sun 4 Oct | T-02 |
+| 2 | T-05 ⚑ · Google sign-in and token checks in the API | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04 |
+| 3 | T-04 · Deploy web and API to Mumbai | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
+| 4 | T-07 · Error reporting wrapper and Sentry | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
 | 5 | T-25 · Uptime monitor and spend alerts | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
 | 6 | T-33 · Invite-only gate until launch | 1 | Mon 5 Oct → Tue 6 Oct | T-05 |
 | 7 | T-39 · Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
-| 8 | T-40 · Nightly database backups to R2 | 2 | Thu 8 Oct → Sat 10 Oct | T-04 |
+| 8 | T-40 · Nightly database backups to R2 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
 | 9 | T-29 · Abuse test: 100 fake sessions | 1 | Sat 10 Oct | T-21 |
 
 Finish line: Sat 10 Oct. 23 hours.
@@ -72,16 +72,16 @@ Finish line: Sat 10 Oct. 23 hours.
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
 | 1 | T-08 ⚑ · Form A contract: slots and enums | 2 | Thu 24 Sep | — |
-| 2 | T-11 ⚑ · Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep → Fri 25 Sep | T-08 |
+| 2 | T-11 ⚑ · Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
 | 3 | T-35 · Form B contract and table | 3 | Fri 25 Sep → Sat 26 Sep | T-06, T-08 |
 | 4 | T-12 ⚑ · Extraction: free text to form slots | 6 | Sat 26 Sep → Sun 27 Sep | T-11 |
-| 5 | T-34 ⚑ · Router: sort each typed message and flag what we should not answer | 6 | Sun 27 Sep → Tue 29 Sep | T-12 |
+| 5 | T-34 ⚑ · Router: sort each typed message and flag what we should not answer | 6 | Sun 27 Sep → Tue 29 Sep | T-12, T-06 |
 | 6 | T-13 · Reply writer with scope rules | 4 | Tue 29 Sep → Wed 30 Sep | T-11 |
-| 7 | T-36 · Observer: Form B from free text, with the quote check | 8 | Wed 30 Sep → Fri 2 Oct | T-35, T-12 |
-| 8 | T-21 · Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct → Sun 4 Oct | T-12 |
-| 9 | T-38 · Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05 |
+| 7 | T-36 · Observer: Form B from free text, with the quote check | 8 | Wed 30 Sep → Fri 2 Oct | T-35, T-12, T-06 |
+| 8 | T-21 · Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct → Sun 4 Oct | T-12, T-06, T-05 |
+| 9 | T-38 · Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05, M-05 |
 | 10 | T-27 · Run the eval set and tune the prompt | 3 | Mon 5 Oct → Tue 6 Oct | T-12 |
-| 11 | T-17 · Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06 |
+| 11 | T-17 · Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06, T-12 |
 | 12 | T-10 ⚑ · Chat screen and split view | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
 | 13 | T-09 ⚑ · Chip flow for intent, area, budget | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
 
@@ -103,11 +103,12 @@ Finish line: Sat 10 Oct. 24 hours.
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
 | 1 | T-23a · Landing page from the Figma design | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
-| 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
+| 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
-| 4 | T-19 · Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct → Mon 5 Oct | T-06 |
+| 4 | T-19 · Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
-| 6 | T-22 · Launch areas and waitlist | 3 | Thu 8 Oct → Sat 10 Oct | T-14, D-04 |
+| 6 | T-22a · Launch areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
+| 7 | T-22b · Launch areas and waitlist screen | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 
 Finish line: Sat 10 Oct. 20 hours.
 
@@ -119,7 +120,8 @@ Finish line: Sat 10 Oct. 20 hours.
 | 2 | T-03 · CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
 | 3 | T-24 · Event logging table | 2 | Tue 29 Sep → Wed 30 Sep | T-06 |
 | 4 | T-18a ⚑ · Connect request and contact reveal API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06 |
-| 5 | T-16 ⚑ · Profile create and edit, with photos | 8 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, D-03 |
+| 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06 |
+| 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
 
 Finish line: Sat 10 Oct. 20 hours.
 
@@ -152,7 +154,7 @@ Finish line: Mon 5 Oct.
 |---|---|---|---|
 | 1 | M-01 ⚑ · Seeding form live, outreach starts | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
 | 2 | M-02 · Seeding target: 100 sign-ups | Sat 26 Sep → Wed 30 Sep | M-01 |
-| 3 | M-06 ⚑ · Beta invites to seeded sign-ups | Sat 3 Oct → Sun 11 Oct | M-02, T-16 |
+| 3 | M-06 ⚑ · Beta invites to seeded sign-ups | Sat 3 Oct → Sun 11 Oct | M-02, T-16b |
 | 4 | M-09 · Broker calls | Mon 12 Oct → Mon 19 Oct | — |
 
 Finish line: Mon 19 Oct.
@@ -192,25 +194,25 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Owner | # | ID | Task | Hours | Start | End | Checkpoint | Waits on | Issue |
 |---|---|---|---|---|---|---|---|---|---|
 | P1 Platform | 1 | T-02 ⚑ | Scaffold the monorepo in this repo | 4 | Thu 24 Sep | Sat 26 Sep | CP1 | — | [#10](https://github.com/magentawood/roomsie/issues/10) |
-| P1 Platform | 2 | T-05 ⚑ | Google sign-in and token checks in the API | 6 | Sat 26 Sep | Thu 1 Oct | CP2 | T-02 | [#20](https://github.com/magentawood/roomsie/issues/20) |
-| P1 Platform | 3 | T-04 | Deploy web and API to Mumbai | 3 | Thu 1 Oct | Sat 3 Oct | CP3 | T-02 | [#30](https://github.com/magentawood/roomsie/issues/30) |
-| P1 Platform | 4 | T-07 | Error reporting wrapper and Sentry | 1 | Sat 3 Oct | Sun 4 Oct | CP3 | T-02 | [#28](https://github.com/magentawood/roomsie/issues/28) |
+| P1 Platform | 2 | T-05 ⚑ | Google sign-in and token checks in the API | 6 | Sat 26 Sep | Thu 1 Oct | CP2 | T-02, F-04 | [#20](https://github.com/magentawood/roomsie/issues/20) |
+| P1 Platform | 3 | T-04 | Deploy web and API to Mumbai | 3 | Thu 1 Oct | Sat 3 Oct | CP3 | T-02, F-04 | [#30](https://github.com/magentawood/roomsie/issues/30) |
+| P1 Platform | 4 | T-07 | Error reporting wrapper and Sentry | 1 | Sat 3 Oct | Sun 4 Oct | CP3 | T-02, F-04 | [#28](https://github.com/magentawood/roomsie/issues/28) |
 | P1 Platform | 5 | T-25 | Uptime monitor and spend alerts | 2 | Sun 4 Oct | Mon 5 Oct | CP3 | T-04 | [#43](https://github.com/magentawood/roomsie/issues/43) |
 | P1 Platform | 6 | T-33 | Invite-only gate until launch | 1 | Mon 5 Oct | Tue 6 Oct | CP3 | T-05 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | [#68](https://github.com/magentawood/roomsie/issues/68) |
-| P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
+| P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04, F-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | P1 Platform | 9 | T-29 | Abuse test: 100 fake sessions | 1 | Sat 10 Oct | Sat 10 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#6](https://github.com/magentawood/roomsie/issues/6) |
-| P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08 | [#15](https://github.com/magentawood/roomsie/issues/15) |
+| P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08, F-04 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | P2 Chat | 4 | T-12 ⚑ | Extraction: free text to form slots | 6 | Sat 26 Sep | Sun 27 Sep | CP1 | T-11 | [#23](https://github.com/magentawood/roomsie/issues/23) |
-| P2 Chat | 5 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | 6 | Sun 27 Sep | Tue 29 Sep | CP2 | T-12 | [#63](https://github.com/magentawood/roomsie/issues/63) |
+| P2 Chat | 5 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | 6 | Sun 27 Sep | Tue 29 Sep | CP2 | T-12, T-06 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | P2 Chat | 6 | T-13 | Reply writer with scope rules | 4 | Tue 29 Sep | Wed 30 Sep | CP2 | T-11 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| P2 Chat | 7 | T-36 | Observer: Form B from free text, with the quote check | 8 | Wed 30 Sep | Fri 2 Oct | CP3 | T-35, T-12 | [#65](https://github.com/magentawood/roomsie/issues/65) |
-| P2 Chat | 8 | T-21 | Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct | Sun 4 Oct | CP3 | T-12 | [#41](https://github.com/magentawood/roomsie/issues/41) |
-| P2 Chat | 9 | T-38 | Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct | Mon 5 Oct | CP3 | T-37, T-11, T-05 | [#67](https://github.com/magentawood/roomsie/issues/67) |
+| P2 Chat | 7 | T-36 | Observer: Form B from free text, with the quote check | 8 | Wed 30 Sep | Fri 2 Oct | CP3 | T-35, T-12, T-06 | [#65](https://github.com/magentawood/roomsie/issues/65) |
+| P2 Chat | 8 | T-21 | Five-turn cap, rate limits, spend ceiling | 5 | Fri 2 Oct | Sun 4 Oct | CP3 | T-12, T-06, T-05 | [#41](https://github.com/magentawood/roomsie/issues/41) |
+| P2 Chat | 9 | T-38 | Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct | Mon 5 Oct | CP3 | T-37, T-11, T-05, M-05 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | P2 Chat | 10 | T-27 | Run the eval set and tune the prompt | 3 | Mon 5 Oct | Tue 6 Oct | CP3 | T-12 | [#48](https://github.com/magentawood/roomsie/issues/48) |
-| P2 Chat | 11 | T-17 | Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct | Wed 7 Oct | CP3 | T-05, T-06 | [#32](https://github.com/magentawood/roomsie/issues/32) |
+| P2 Chat | 11 | T-17 | Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct | Wed 7 Oct | CP3 | T-05, T-06, T-12 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | P2 Chat | 13 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Fri 9 Oct | Sat 10 Oct | CP3 | T-10, T-08, D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | — | [#11](https://github.com/magentawood/roomsie/issues/11) |
@@ -218,16 +220,18 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
-| P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#40](https://github.com/magentawood/roomsie/issues/40) |
+| P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
-| P4 Content and moderation | 4 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06 | [#45](https://github.com/magentawood/roomsie/issues/45) |
+| P4 Content and moderation | 4 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
-| P4 Content and moderation | 6 | T-22 | Launch areas and waitlist | 3 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, D-04 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| P4 Content and moderation | 6 | T-22a | Launch areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | no issue at this time |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | T-06 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | P5 Accounts and people | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| P5 Accounts and people | 5 | T-16 ⚑ | Profile create and edit, with photos | 8 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06, D-03 | [#36](https://github.com/magentawood/roomsie/issues/36) |
+| P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06 | [#36](https://github.com/magentawood/roomsie/issues/36) |
+| P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | no issue at this time |
 | Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
 | Design | 2 | D-02 ⚑ | Design the chat screens |  | Thu 24 Sep | Fri 25 Sep | CP0 | D-01 | [#7](https://github.com/magentawood/roomsie/issues/7) |
 | Design | 3 | D-03 | Design results, profile and connect screens |  | Fri 25 Sep | Sun 27 Sep | CP1 | D-01 | [#19](https://github.com/magentawood/roomsie/issues/19) |
@@ -239,7 +243,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | M1 Content | 3 | M-07 | Draft launch posts |  | Wed 30 Sep | Sat 3 Oct | CP3 | — | [#35](https://github.com/magentawood/roomsie/issues/35) |
 | M2 Community | 1 | M-01 ⚑ | Seeding form live, outreach starts |  | Fri 25 Sep | Sat 26 Sep | CP1 | F-05, F-06 | [#14](https://github.com/magentawood/roomsie/issues/14) |
 | M2 Community | 2 | M-02 | Seeding target: 100 sign-ups |  | Sat 26 Sep | Wed 30 Sep | CP2 | M-01 | [#22](https://github.com/magentawood/roomsie/issues/22) |
-| M2 Community | 3 | M-06 ⚑ | Beta invites to seeded sign-ups |  | Sat 3 Oct | Sun 11 Oct | CP4 | M-02, T-16 | [#49](https://github.com/magentawood/roomsie/issues/49) |
+| M2 Community | 3 | M-06 ⚑ | Beta invites to seeded sign-ups |  | Sat 3 Oct | Sun 11 Oct | CP4 | M-02, T-16b | [#49](https://github.com/magentawood/roomsie/issues/49) |
 | M2 Community | 4 | M-09 | Broker calls |  | Mon 12 Oct | Mon 19 Oct | CP5 | — | [#55](https://github.com/magentawood/roomsie/issues/55) |
 | Founder | 1 | F-01 | Kickoff: names on every role |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#2](https://github.com/magentawood/roomsie/issues/2) |
 | Founder | 2 | F-02 | Secure the domain |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#3](https://github.com/magentawood/roomsie/issues/3) |
@@ -318,13 +322,15 @@ gantt
     T-37 Articles table and full-text search :t37, 2026-09-29, 3d
     T-19 Report block suspend and a saved moderation query :t19, 2026-10-01, 5d
     T-20 Account deletion :t20, 2026-10-05, 4d
-    T-22 Launch areas and waitlist :t22, 2026-10-08, 3d
+    T-22a Launch areas and waitlist API :t22a, 2026-10-08, 3d
+    T-22b Launch areas and waitlist screen :t22b, 2026-10-08, 3d
     section P5 Accounts and people
     M-03 Write the eval sentences :m03, 2026-09-24, 4d
     T-03 CI - typecheck lint build secret scan :t03, 2026-09-27, 3d
     T-24 Event logging table :t24, 2026-09-29, 2d
     T-18a Connect request and contact reveal API :crit, t18a, 2026-09-30, 5d
-    T-16 Profile create and edit with photos :crit, t16, 2026-10-04, 7d
+    T-16a Profile and photo upload API :crit, t16a, 2026-10-04, 7d
+    T-16b Profile create and edit screens :crit, t16b, 2026-10-04, 7d
     section Design
     D-01 Styling decision for launch :d01, 2026-09-24, 1d
     D-02 Design the chat screens :crit, d02, 2026-09-24, 2d
@@ -376,7 +382,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 | D-02 ⚑ | Design the chat screens | D |  | Thu 24 Sep → Fri 25 Sep | D-01 |
 | F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | — |
 | F-06 | Pick the three launch areas | F |  | Thu 24 Sep → Fri 25 Sep | — |
-| T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08 |
+| T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
 
 **D-01 · Styling decision for launch** — done when:
 - The launch uses the look of the Figma designs, not the V3 prototype
@@ -400,6 +406,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 **F-04 · Create accounts in Mumbai regions** — done when:
 - Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1
 - The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist
+- A Sentry project exists for the web and the API
 - The team shares keys through a password manager, never in chat or in the repo
 - Read first: `docs/decisions/0009-hosting-and-region.md`
 
@@ -466,6 +473,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The landing page uses the Figma design of D-04
 - The page has a hero, a how-it-works section, and a button into the chat
 - Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
+- The footer links of T-23b use the design of D-04
 - Read first: `docs/extensibility.md`
 
 **M-04 · Interviews for articles 1 to 10** — done when:
@@ -513,10 +521,10 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 | T-06 ⚑ | Database schema v1 | P3 | 8 | Thu 24 Sep → Tue 29 Sep | — |
 | F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | — |
 | M-02 | Seeding target: 100 sign-ups | M2 |  | Sat 26 Sep → Wed 30 Sep | M-01 |
-| T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02 |
+| T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04 |
 | T-03 | CI: typecheck, lint, build, secret scan | P5 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
-| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
-| T-34 ⚑ | Router: sort each typed message and flag what we should not answer | P2 | 6 | Sun 27 Sep → Tue 29 Sep | T-12 |
+| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
+| T-34 ⚑ | Router: sort each typed message and flag what we should not answer | P2 | 6 | Sun 27 Sep → Tue 29 Sep | T-12, T-06 |
 | D-04 | Design landing, wall and waitlist | D |  | Mon 28 Sep → Tue 29 Sep | D-01 |
 | T-13 | Reply writer with scope rules | P2 | 4 | Tue 29 Sep → Wed 30 Sep | T-11 |
 | T-24 | Event logging table | P5 | 2 | Tue 29 Sep → Wed 30 Sep | T-06 |
@@ -596,27 +604,29 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-14 ⚑ | Match query API | P3 | 6 | Tue 29 Sep → Sat 3 Oct | T-06, T-08 |
 | M-05 | Drafts of articles 1 to 10 | M1 |  | Tue 29 Sep → Mon 5 Oct | M-04 |
 | F-08 | Name the moderator | F |  | Wed 30 Sep → Fri 2 Oct | — |
-| T-36 | Observer: Form B from free text, with the quote check | P2 | 8 | Wed 30 Sep → Fri 2 Oct | T-35, T-12 |
+| T-36 | Observer: Form B from free text, with the quote check | P2 | 8 | Wed 30 Sep → Fri 2 Oct | T-35, T-12, T-06 |
 | M-07 | Draft launch posts | M1 |  | Wed 30 Sep → Sat 3 Oct | — |
 | T-18a ⚑ | Connect request and contact reveal API | P5 | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06 |
-| T-04 | Deploy web and API to Mumbai | P1 | 3 | Thu 1 Oct → Sat 3 Oct | T-02 |
-| T-19 | Report, block, suspend, and a saved moderation query | P4 | 5 | Thu 1 Oct → Mon 5 Oct | T-06 |
-| T-21 | Five-turn cap, rate limits, spend ceiling | P2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12 |
-| T-07 | Error reporting wrapper and Sentry | P1 | 1 | Sat 3 Oct → Sun 4 Oct | T-02 |
+| T-04 | Deploy web and API to Mumbai | P1 | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
+| T-19 | Report, block, suspend, and a saved moderation query | P4 | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
+| T-21 | Five-turn cap, rate limits, spend ceiling | P2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12, T-06, T-05 |
+| T-07 | Error reporting wrapper and Sentry | P1 | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
 | T-15 ⚑ | Results panel, built against the contract | P3 | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03 |
 | T-25 | Uptime monitor and spend alerts | P1 | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
-| T-38 | Advisor: articles first, then web search after sign-in | P2 | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05 |
-| T-16 ⚑ | Profile create and edit, with photos | P5 | 8 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, D-03 |
+| T-38 | Advisor: articles first, then web search after sign-in | P2 | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05, M-05 |
+| T-16a ⚑ | Profile and photo upload API | P5 | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06 |
+| T-16b ⚑ | Profile create and edit screens | P5 | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
 | T-27 | Run the eval set and tune the prompt | P2 | 3 | Mon 5 Oct → Tue 6 Oct | T-12 |
 | T-33 | Invite-only gate until launch | P1 | 1 | Mon 5 Oct → Tue 6 Oct | T-05 |
 | T-20 | Account deletion | P4 | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
 | D-05 | Design QA on the live build | D |  | Mon 5 Oct → Sat 10 Oct | D-02, D-03 |
-| T-17 | Carry anonymous chat into the account on sign-in | P2 | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06 |
+| T-17 | Carry anonymous chat into the account on sign-in | P2 | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06, T-12 |
 | T-39 | Analytics in its own database, with scheduled jobs | P1 | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
 | T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03 |
-| T-22 | Launch areas and waitlist | P4 | 3 | Thu 8 Oct → Sat 10 Oct | T-14, D-04 |
-| T-40 | Nightly database backups to R2 | P1 | 2 | Thu 8 Oct → Sat 10 Oct | T-04 |
+| T-22a | Launch areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
+| T-22b | Launch areas and waitlist screen | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
+| T-40 | Nightly database backups to R2 | P1 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
 | D-06 | Launch visuals | D |  | Fri 9 Oct → Sat 10 Oct | — |
 | T-09 ⚑ | Chip flow for intent, area, budget | P2 | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
 | F-10 | Go/no-go meeting | F |  | Sat 10 Oct | — |
@@ -701,10 +711,16 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Web searches count toward the daily spend ceiling
 - Read first: `docs/scope-policy.md`, `docs/extensibility.md`
 
-**T-16 · Profile create and edit, with photos** — done when:
-- A user can create and edit a profile with name, age, work, intent, budget, areas, move date and lifestyle answers
-- A user can upload a maximum of four photos directly to R2 with a presigned URL
+**T-16a · Profile and photo upload API** — done when:
+- The API creates and edits a profile with name, age, work, intent, budget, areas, move date and lifestyle answers
+- The API gives a presigned URL, thus a user uploads a maximum of four photos directly to R2
 - Photo bytes never pass through the API
+- Read first: `docs/decisions/0005-managed-platform-split.md`
+
+**T-16b · Profile create and edit screens** — done when:
+- A user can create and edit a profile on the web, with the fields of T-16a
+- A user can upload a maximum of four photos from the profile screen
+- The delete button of T-20 uses the design of D-03
 - Read first: `docs/decisions/0005-managed-platform-split.md`
 
 **T-27 · Run the eval set and tune the prompt** — done when:
@@ -745,6 +761,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - When results exist, the screen splits into chat and results
 - On a phone, the chat becomes a bar at the bottom and expands when the user taps it
 - Nothing changes size while the person types
+- The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02
 - Read first: `docs/interface-shape.md`
 
 **T-18b · Person detail and connect screens** — done when:
@@ -754,10 +771,14 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The number shows only after both accept
 - Report and block need only one tap
 
-**T-22 · Launch areas and waitlist** — done when:
+**T-22a · Launch areas and waitlist API** — done when:
+- The API gives the names of the three launch areas
+- The system saves each waitlist entry with its area
+- Read first: `docs/launch-plan.md`
+
+**T-22b · Launch areas and waitlist screen** — done when:
 - The site gives the names of the three launch areas
 - A visitor from a different area gets a waitlist form, not an empty panel
-- The system saves each waitlist entry with its area
 - Read first: `docs/launch-plan.md`
 
 **T-40 · Nightly database backups to R2** — done when:
@@ -792,7 +813,7 @@ Public launch. The fallback date is Wednesday 14 October.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
-| M-06 ⚑ | Beta invites to seeded sign-ups | M2 |  | Sat 3 Oct → Sun 11 Oct | M-02, T-16 |
+| M-06 ⚑ | Beta invites to seeded sign-ups | M2 |  | Sat 3 Oct → Sun 11 Oct | M-02, T-16b |
 | A-01 | Bug fix day | ALL |  | Sun 11 Oct | — |
 | A-02 | Launch | ALL |  | Mon 12 Oct | — |
 

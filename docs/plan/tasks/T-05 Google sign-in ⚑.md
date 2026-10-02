@@ -30,11 +30,13 @@ Log in with Google. The server checks the user on each request.
 
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
+- [[F-04 Accounts in Mumbai]]
 
 ## Unblocks
-- [[T-16 Profiles and photos ⚑]]
+- [[T-16a Profile API ⚑]]
 - [[T-17 Carry chat into account]]
 - [[T-33 Invite-only gate]]
+- [[T-21 Turn cap and spend ceiling]]
 - [[T-18a Connect API ⚑]]
 - [[T-38 Advisor]]
 

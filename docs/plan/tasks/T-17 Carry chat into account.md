@@ -27,6 +27,7 @@ Keeps a chat from before sign-up when the person signs up.
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]
+- [[T-12 Extraction ⚑]]
 
 ## Unblocks
 - No task waits on this task.

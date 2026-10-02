@@ -32,6 +32,7 @@ Changes a typed sentence into tidy form slots.
 - [[T-11 Model wrapper ⚑]]
 
 ## Unblocks
+- [[T-17 Carry chat into account]]
 - [[T-21 Turn cap and spend ceiling]]
 - [[T-27 Eval run]]
 - [[T-34 Router ⚑]]
