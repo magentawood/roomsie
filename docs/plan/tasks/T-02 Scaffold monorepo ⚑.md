@@ -85,3 +85,4 @@ One folder for the website, server and shared code. All five people commit into 
   - **Ticked:** all six items.
   - **Not done:** none.
   - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-03--t-02-the-monorepo-exists)
+  - **Learn:** [Postgres drivers](../../learn/postgres-drivers.md), [Local development with Docker](../../learn/local-dev-with-docker.md), [Building the API](../../learn/building-the-api.md), [OpenAPI from Zod](../../learn/openapi-from-zod.md), [pnpm, Corepack and Turborepo](../../learn/pnpm-and-corepack.md)
