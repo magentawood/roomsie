@@ -52,7 +52,7 @@ Why each lane starts where it does:
 - P1 starts first, with the monorepo (T-02).
 - The P2 lane needs no designs. P2 works through the two phases with no interruption. Three people build against T-08, so P2 does T-08 on day one.
 - P3 owns T-15 and T-18b, because they show the matches and people from the P3 schema and match query. P3 owns the advisor, T-38, because it searches data that P3 owns.
-- For P4, the prototype is the design, so T-23a is not blocked. Sunday 27 is spare because T-19 needs the schema. The schema arrives on the evening of that day.
+- For P4, the prototype was the design, so T-23a was not blocked. Sunday 27 is spare because T-19 needs the schema. The schema arrives on the evening of that day.
 - M-03 also needs no design and no code. It is the only task available to P5 on day one.
 - P4 and P5 have Sunday 27 free, because only three tasks in the full project can start before the schema and monorepo exist.
 
@@ -79,9 +79,10 @@ Why the designer gets a design review (`design-review.md`):
 - If there are only four engineers, plan for 14 October from day one.
 - `docs/team-plan.json` is the one place where you edit the plan. `how-to-work.md` and `team-plan.md` come from it.
 - Each task is a GitHub issue. `docs/plan/` has the graph and the timeline, for Obsidian.
-- **Design system: an exception to ADR 0011.** The launch uses the appearance of the prototype. Untitled UI comes later.
-- At launch, the styles of the V3 prototype apply. The token pipeline of ADR 0011 starts after the launch.
+- **The launch look comes from the Figma designs.** The designs are not available at this time. When they are, the team replans the design work, the screen tasks and the styling rules.
 - The GitHub issues keep the initial `vertical:V1`–`V5` labels until we relabel them. Until then, `team-plan.md` has priority.
+
+Superseded (2026-10-02): the V3 prototype is not the launch design, and its styles do not apply at launch. The user replaced it with the Figma designs. T-23a now waits for D-04.
 
 Superseded: the first schedule of 115 build hours against 120 available for five engineers, with a bug-fix day on 6 October (see PD11).
 

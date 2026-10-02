@@ -54,6 +54,7 @@ The cost of inference depends on the turn type:
 - A second Fly machine is worth a new review, because long in-flight agent requests make restarts much easier to see.
 - The 2 marketing people can start at this time. Nothing blocks them. The broker calls have the highest value, because PD3 waits on them. The blog starts immediately, because SEO compounds slowly and articles need no users.
 - The designer's first task is to choose between the V3 prototype palette and the Untitled UI `theme.css` of ADR 0011. It blocks frontend work.
+  - Superseded (2026-10-02): the launch look comes from the Figma designs ([PD12](pd-12-team-plan.md)).
 - The eval suite is work that we must budget, and it is not optional. Without it, each prompt change is a guess.
 
 ## Sources
