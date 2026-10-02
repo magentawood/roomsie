@@ -3,7 +3,7 @@
 
 The Markdown is the source. Each .html next to it is generated: edit the .md,
 then run this script. The pages come from "docArchitecture.renderPages" in
-devkit.config.json. Obsidian callouts (> [!note] Title) become styled boxes,
+devkit.config.json. An entry can be a glob, for example "docs/learn/*.md". Obsidian callouts (> [!note] Title) become styled boxes,
 a folded callout (> [!note]- Why) becomes a box that opens on a click, headings
 get GitHub-style anchors, and links between rendered docs point at the .html
 versions.
@@ -14,9 +14,9 @@ Usage:
 
 Needs Python-Markdown: pip3 install markdown==3.9
 """
-import html, json, os, re, subprocess, sys
+import glob, html, json, os, re, subprocess, sys
 
-TOOL_VERSION = "0.1.1"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
+TOOL_VERSION = "0.2.0"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
 
 try:
     import markdown
@@ -76,6 +76,19 @@ def config(root):
         for key, value in level.get("docArchitecture", {}).items():
             arch[key] = {**arch.get(key, {}), **value} if isinstance(value, dict) else value
     return arch
+
+
+def pages(root, entries):
+    """The Markdown files of renderPages, in order. A glob entry gives its matches, sorted."""
+    out = []
+    for entry in entries:
+        found = [entry]
+        if any(c in entry for c in "*?["):
+            found = sorted(os.path.relpath(p, root).replace(os.sep, "/")
+                           for p in glob.glob(os.path.join(glob.escape(root), entry), recursive=True)
+                           if p.endswith(".md") and os.path.isfile(p))
+        out += [p for p in (os.path.normpath(f).replace(os.sep, "/") for f in found) if p not in out]
+    return out
 
 
 def callouts(md):
@@ -138,7 +151,7 @@ def page(root, src, docs):
 def main(argv):
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
     cfg = config(root)
-    docs = cfg.get("renderPages", []) if cfg.get("parts", {}).get("html", True) else []
+    docs = pages(root, cfg.get("renderPages", [])) if cfg.get("parts", {}).get("html", True) else []
     if docs and markdown is None:
         sys.exit("render-docs: needs Python-Markdown: pip3 install markdown==3.9")
     stale = []

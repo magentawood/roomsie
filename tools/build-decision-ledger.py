@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the decision ledgers from the decision records.
+"""Generate the decision ledgers from the decision records, and the Learn index from the learn pages.
 
 The records in decisionsPath are the only source. Record file names:
   NNNN-slug.md        architecture record, cited as ADR-NNNN
@@ -10,7 +10,11 @@ The script writes the text between the markers in these files (paths from
   indexFile       <!-- decisions:start --> ... <!-- decisions:end -->  (decisions not settled)
   ledgers.product <!-- ledger:start --> ... <!-- ledger:end -->        (product records)
   ledgers.tech    <!-- ledger:start --> ... <!-- ledger:end -->        (architecture records)
-A ledger file that does not exist gets a heading and the markers.
+  learnIndex      <!-- learn:start --> ... <!-- learn:end -->          (learn pages, when parts.learn is on)
+A ledger file that does not exist gets a heading and the markers. The Learn index
+lists each page in learnPath with its "**In one line:**" line. It runs only when the
+learnPath folder exists. learnIndex defaults to ledgers.tech, then to indexFile.
+If its markers or the file are missing, the script adds them at the end of the file.
 
 Usage:
   build-decision-ledger          write the ledgers
@@ -18,10 +22,11 @@ Usage:
 """
 import json, os, posixpath, re, subprocess, sys
 
-TOOL_VERSION = "0.1.1"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
+TOOL_VERSION = "0.2.0"  # master: agentic-devkit skills/doc-architecture/scripts; sync-tools copies it to tools/
 
 INDEX_MARKERS = ("<!-- decisions:start -->", "<!-- decisions:end -->")
 LEDGER_MARKERS = ("<!-- ledger:start -->", "<!-- ledger:end -->")
+LEARN_MARKERS = ("<!-- learn:start -->", "<!-- learn:end -->")
 LEDGER_TITLES = {"product": "Product decisions", "tech": "Architecture decisions"}
 
 
@@ -105,43 +110,70 @@ def index_block(rows, index, ledgers, settled, dec):
     return "**Not settled yet:** " + ("; ".join(items) if items else "none") + ".\n\n**All decisions:** " + every
 
 
-def fill(root, path, markers, body, title):
+def learn_block(root, folder, index):
+    """One line for each learn page: its title, a link, and its "In one line" summary."""
+    lines = []
+    for name in sorted(os.listdir(os.path.join(root, folder))):
+        if not name.endswith(".md") or name == "README.md" or not os.path.isfile(os.path.join(root, folder, name)):
+            continue
+        text = open(os.path.join(root, folder, name), encoding="utf-8").read()
+        heading = re.search(r"^# (.+)$", text, re.M)
+        oneline = re.search(r"^\*\*In one line:\*\*[ \t]*(.+)$", text, re.M)
+        link = f"[{heading.group(1).strip() if heading else name[:-3]}]({rel(posixpath.join(folder, name), index)})"
+        lines.append(f"- {link}" + (f": {oneline.group(1).strip()}" if oneline else ""))
+    return "\n".join(lines) or "No learn pages yet."
+
+
+def fill(path, markers, body, title, text):
+    """text (the file, or None if it does not exist) with body between the markers."""
     start, end = markers
-    full = os.path.join(root, path)
-    if os.path.exists(full):
-        text = open(full, encoding="utf-8").read()
-    elif title:
+    learn = markers == LEARN_MARKERS
+    if text is None and title:
         text = f"# {title}\n\nGenerated from the decision records. Edit the records, not this list.\n\n{start}\n{end}\n"
-    else:
+    elif text is None and not learn:
         sys.exit(f"build-decision-ledger: {path} does not exist")
     pat = re.compile(re.escape(start) + r".*?" + re.escape(end), re.S)
-    if not pat.search(text):
-        sys.exit(f"build-decision-ledger: markers {start} {end} missing in {path}")
-    new = pat.sub(lambda _: f"{start}\n{body}\n{end}", text)
-    return (None if not os.path.exists(full) else text), new
+    if not pat.search(text or ""):
+        if not learn or start in (text or "") or end in (text or ""):
+            sys.exit(f"build-decision-ledger: markers {start} {end} missing in {path}")
+        text = (text.rstrip("\n") + "\n\n" if text else "") + f"## Learn\n\n{start}\n{end}\n"
+    return pat.sub(lambda _: f"{start}\n{body}\n{end}", text)
 
 
 def main(argv):
     root = subprocess.run(["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True).stdout.strip() or os.getcwd()
     cfg = config(root)
     parts = cfg.get("parts", {})
-    if not parts.get("records", True) or not (parts.get("ledgers", True) or parts.get("index", True)):
-        print("build-decision-ledger: the records, or both the ledgers and the index, are off in devkit.config.json")
+    index = cfg.get("indexFile", "CONTEXT.md")
+    jobs, rows, ledgers = [], [], []
+    if parts.get("records", True) and (parts.get("ledgers", True) or parts.get("index", True)):
+        product = parts.get("productRecords", True)
+        rows = records(root, cfg["decisionsPath"], product)
+        ledgers = [(k, p) for k, p in sorted(cfg.get("ledgers", {}).items(), key=lambda kv: kv[0] != "product")
+                   if p and k in LEDGER_TITLES and (k == "tech" or product) and parts.get("ledgers", True)]
+        jobs = [(posixpath.normpath(p), LEDGER_MARKERS, table([r for r in rows if r["kind"] == k], p), LEDGER_TITLES.get(k))
+                for k, p in ledgers]
+        if parts.get("index", True):
+            settled = cfg.get("settledStatuses", ["Settled", "Accepted", "Superseded"])
+            jobs.insert(0, (posixpath.normpath(index), INDEX_MARKERS, index_block(rows, index, ledgers, settled, cfg["decisionsPath"]), None))
+    learn = cfg.get("learnPath", "docs/learn")
+    if parts.get("learn", True) and os.path.isdir(os.path.join(root, learn)):
+        tech = dict(ledgers).get("tech")  # only a ledger that this run writes
+        target = posixpath.normpath(cfg.get("learnIndex") or tech or index)
+        jobs.append((target, LEARN_MARKERS, learn_block(root, learn, target), None))
+    if not jobs:
+        print("build-decision-ledger: the records, the ledgers, the index, and the learn pages are off or missing")
         return 0
-    product = parts.get("productRecords", True)
-    rows = records(root, cfg["decisionsPath"], product)
-    ledgers = [(k, p) for k, p in sorted(cfg.get("ledgers", {}).items(), key=lambda kv: kv[0] != "product")
-               if p and k in LEDGER_TITLES and (k == "tech" or product) and parts.get("ledgers", True)]
-    jobs = [(p, LEDGER_MARKERS, table([r for r in rows if r["kind"] == k], p), LEDGER_TITLES.get(k))
-            for k, p in ledgers]
-    if parts.get("index", True):
-        index = cfg.get("indexFile", "CONTEXT.md")
-        settled = cfg.get("settledStatuses", ["Settled", "Accepted", "Superseded"])
-        jobs.insert(0, (index, INDEX_MARKERS, index_block(rows, index, ledgers, settled, cfg["decisionsPath"]), None))
     check = "--check" in argv
     stale = []
-    results = [(path,) + fill(root, path, markers, body, title) for path, markers, body, title in jobs]
-    for path, old, new in results:  # all ledgers are computed before the first write
+    results = {}  # path -> [text on disk or None, new text]; jobs on one file apply in order
+    for path, markers, body, title in jobs:
+        if path not in results:
+            full = os.path.join(root, path)
+            old = open(full, encoding="utf-8").read() if os.path.exists(full) else None
+            results[path] = [old, old]
+        results[path][1] = fill(path, markers, body, title, results[path][1])
+    for path, (old, new) in results.items():  # all files are computed before the first write
         if old != new:
             stale.append(path)
             if not check:
@@ -152,7 +184,7 @@ def main(argv):
     if check and stale:
         print(f"out of date, run python3 {os.path.relpath(os.path.abspath(__file__), root)}:", *stale, sep="\n  ")
         return 1
-    print(f"build-decision-ledger: {len(rows)} records, {len(stale)} ledger(s) {'stale' if check else 'written'}")
+    print(f"build-decision-ledger: {len(rows)} records, {len(stale)} file(s) {'stale' if check else 'written'}")
     return 0
 
 
