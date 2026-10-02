@@ -1,6 +1,6 @@
 # Agent architecture
 
-**Date:** 2026-09-20 · **Status:** proposed · **Decision:** PD7a
+**Date:** 2026-09-20 · **Status:** settled · **Decision:** PD7a
 **Supersedes** the single-model assumption in `ai-agent-design.md`.
 
 ---

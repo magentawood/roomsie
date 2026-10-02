@@ -1,6 +1,6 @@
 # What the assistant will and will not talk about
 
-**Date:** 2026-09-20 · **Status:** proposed · **Decision:** PD10
+**Date:** 2026-09-20 · **Status:** settled · **Decision:** PD10
 
 "Out of context" is five different things (bands).
 
