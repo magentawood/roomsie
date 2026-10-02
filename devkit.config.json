@@ -36,17 +36,19 @@
       "docs/product-base.md",
       "docs/how-to-work.md",
       "docs/journal/2026-09.md",
-      "docs/design-review.md"
+      "docs/design-review.md",
+      "docs/learn/*.md"
     ],
-    "toolsVersion": "0.5.1",
+    "toolsVersion": "0.6.0",
     "toolCopies": {
       "tools/doc-budget.py": "1a4e1f7ffb6c",
       "tools/doc-links.py": "2468e4ec8342",
-      "tools/build-decision-ledger.py": "9109b454f89c",
-      "tools/render-docs.py": "7beb8860603a",
+      "tools/build-decision-ledger.py": "dc6ffceb5571",
+      "tools/render-docs.py": "ab64bfbdd946",
       ".githooks/pre-commit": "af5b5b154fcd",
       ".github/workflows/docs-check.yml": "fcb7e6254ef4",
-      "tools/devkit-defaults.json": "64bf72f35be1"
-    }
+      "tools/devkit-defaults.json": "bfa96c43d9f0"
+    },
+    "learnIndex": "docs/learn/README.md"
   }
 }

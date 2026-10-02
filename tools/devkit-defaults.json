@@ -62,12 +62,15 @@
       "journal": true,
       "archive": true,
       "html": true,
+      "learn": true,
       "hook": true,
       "ci": true
     },
     "indexFile": "CONTEXT.md",
     "specPath": "docs/specs",
     "archivePath": "docs/archive",
+    "learnPath": "docs/learn",
+    "learnIndex": null,
     "ledgers": {
       "product": "docs/product-ledger.md",
       "tech": "docs/tech-ledger.md"
