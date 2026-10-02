@@ -10,8 +10,7 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "The launch uses the look of the V3 prototype, not the Untitled UI pipeline",
-    "Every women-only line has a mark for removal"
+    "The launch uses the look of the Figma designs, not the V3 prototype"
    ],
    "read": [
     "docs/launch-plan.md"
@@ -198,7 +197,7 @@
    "done": [
     "The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies",
     "apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle",
-    "packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows",
+    "packages/contract and packages/config exist, with the layout that docs/repo-layout.md shows",
     "`pnpm dev` runs web and API locally. docs/ has no changes",
     "The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes",
     "The root package.json has the script `\"prepare\": \"git config core.hooksPath .githooks\"`. Thus, `pnpm install` turns on the doc hook"
@@ -855,21 +854,21 @@
   },
   {
    "id": "T-23a",
-   "title": "Landing page ported from the prototype",
+   "title": "Landing page from the Figma design",
    "plain": "The public home page that explains roomsie.",
    "role": "P4",
    "hours": 4,
    "start": "2026-09-24",
    "end": "2026-09-27",
-   "deps": [],
+   "deps": [
+    "D-04"
+   ],
    "done": [
-    "The landing page uses the look of the V3 prototype",
+    "The landing page uses the Figma design of D-04",
     "The page has a hero, a how-it-works section, and a button into the chat",
-    "Every women-only line is removed",
     "Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values"
    ],
    "read": [
-    "docs/source/roomsie-prototype-V3.html",
     "docs/extensibility.md"
    ],
    "cp": "CP1",

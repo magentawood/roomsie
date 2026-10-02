@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-We have no designs at this time. 116 of the 151 build hours need no designs. The other 35 hours are screens, and these cannot start without designs. Thus, the work has two phases:
+We have no designs at this time. 112 of the 151 build hours need no designs. The other 39 hours are screens, and these cannot start without designs. Thus, the work has two phases:
 
 - **Phase A · Thu 24 → Wed 30 Sep.** Work that needs no design: the monorepo, the database, sign-in, the assistant, matching and moderation.
 - **Phase B · Thu 1 → Sat 10 Oct.** Every screen, after designs D-02, D-03 and D-04 exist. Also the router, the observer, the advisor, the analytics database and the backups. **The designs are due by the end of Wednesday 30 September.**
@@ -102,7 +102,7 @@ Finish line: Sat 10 Oct. 24 hours.
 
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
-| 1 | T-23a · Landing page ported from the prototype | 4 | Thu 24 Sep → Sun 27 Sep | — |
+| 1 | T-23a · Landing page from the Figma design | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
 | 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
 | 4 | T-19 · Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct → Mon 5 Oct | T-06 |
@@ -217,7 +217,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03 | [#44](https://github.com/magentawood/roomsie/issues/44) |
-| P4 Content and moderation | 1 | T-23a | Landing page ported from the prototype | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#39](https://github.com/magentawood/roomsie/issues/39) |
+| P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06 | [#45](https://github.com/magentawood/roomsie/issues/45) |
@@ -313,7 +313,7 @@ gantt
     T-15 Results panel built against the contract :crit, t15, 2026-10-03, 6d
     T-18b Person detail and connect screens :crit, t18b, 2026-10-08, 3d
     section P4 Content and moderation
-    T-23a Landing page ported from the prototype :t23a, 2026-09-24, 4d
+    T-23a Landing page from the Figma design :t23a, 2026-09-24, 4d
     T-23b Privacy terms and grievance pages :t23b, 2026-09-27, 3d
     T-37 Articles table and full-text search :t37, 2026-09-29, 3d
     T-19 Report block suspend and a saved moderation query :t19, 2026-10-01, 5d
@@ -379,8 +379,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08 |
 
 **D-01 · Styling decision for launch** — done when:
-- The launch uses the look of the V3 prototype, not the Untitled UI pipeline
-- Every women-only line has a mark for removal
+- The launch uses the look of the Figma designs, not the V3 prototype
 - Read first: `docs/launch-plan.md`
 
 **F-01 · Kickoff: names on every role** — done when:
@@ -440,7 +439,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 |---|---|---|---|---|---|
 | T-02 ⚑ | Scaffold the monorepo in this repo | P1 | 4 | Thu 24 Sep → Sat 26 Sep | — |
 | M-03 | Write the eval sentences | P5 | 4 | Thu 24 Sep → Sun 27 Sep | — |
-| T-23a | Landing page ported from the prototype | P4 | 4 | Thu 24 Sep → Sun 27 Sep | — |
+| T-23a | Landing page from the Figma design | P4 | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
 | M-04 | Interviews for articles 1 to 10 | M1 |  | Thu 24 Sep → Mon 28 Sep | — |
 | M-01 ⚑ | Seeding form live, outreach starts | M2 |  | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
 | T-35 | Form B contract and table | P2 | 3 | Fri 25 Sep → Sat 26 Sep | T-06, T-08 |
@@ -451,7 +450,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 **T-02 · Scaffold the monorepo in this repo** — done when:
 - The repo uses pnpm workspaces and Turborepo, as ADR 0010 specifies
 - apps/web uses Next 16, React 19 and Tailwind v4. apps/api uses Fastify, Zod and Drizzle
-- packages/contract and packages/config exist, with the layout that the repo layout in CONTEXT.md shows
+- packages/contract and packages/config exist, with the layout that docs/repo-layout.md shows
 - `pnpm dev` runs web and API locally. docs/ has no changes
 - The API serves every route under `/v1`. Thus, a future mobile app continues to work after later changes
 - The root package.json has the script `"prepare": "git config core.hooksPath .githooks"`. Thus, `pnpm install` turns on the doc hook
@@ -463,12 +462,11 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The set includes 10 sentences that are vague on purpose. T1 labels the correct answers
 - Read first: `docs/model-selection.md`
 
-**T-23a · Landing page ported from the prototype** — done when:
-- The landing page uses the look of the V3 prototype
+**T-23a · Landing page from the Figma design** — done when:
+- The landing page uses the Figma design of D-04
 - The page has a hero, a how-it-works section, and a button into the chat
-- Every women-only line is removed
 - Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
-- Read first: `docs/source/roomsie-prototype-V3.html`, `docs/extensibility.md`
+- Read first: `docs/extensibility.md`
 
 **M-04 · Interviews for articles 1 to 10** — done when:
 - The team interviews three to five real people for each topic group
