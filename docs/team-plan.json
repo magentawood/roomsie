@@ -92,6 +92,7 @@
    "done": [
     "Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1",
     "The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist",
+    "A Sentry project exists for the web and the API",
     "The team shares keys through a password manager, never in chat or in the repo"
    ],
    "read": [
@@ -276,7 +277,8 @@
     "The landing button opens a full-screen chat",
     "When results exist, the screen splits into chat and results",
     "On a phone, the chat becomes a bar at the bottom and expands when the user taps it",
-    "Nothing changes size while the person types"
+    "Nothing changes size while the person types",
+    "The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -338,7 +340,8 @@
    "start": "2026-09-24",
    "end": "2026-09-25",
    "deps": [
-    "T-08"
+    "T-08",
+    "F-04"
    ],
    "done": [
     "One module is the only way the app calls a model",
@@ -426,7 +429,8 @@
    "start": "2026-09-26",
    "end": "2026-10-01",
    "deps": [
-    "T-02"
+    "T-02",
+    "F-04"
    ],
    "done": [
     "Google sign-in works through Firebase on the web. The token stays in memory",
@@ -613,7 +617,8 @@
    "start": "2026-10-01",
    "end": "2026-10-03",
    "deps": [
-    "T-02"
+    "T-02",
+    "F-04"
    ],
    "done": [
     "Web is on Vercel, pinned to bom1. The API is on Fly in bom, built from a Dockerfile",
@@ -628,21 +633,20 @@
    "issue": 30
   },
   {
-   "id": "T-16",
-   "title": "Profile create and edit, with photos",
-   "plain": "A person says who they are and uploads photos.",
+   "id": "T-16a",
+   "title": "Profile and photo upload API",
+   "plain": "The server part of profiles: save who a person is, and give a safe link to upload photos.",
    "role": "P5",
-   "hours": 8,
+   "hours": 5,
    "start": "2026-10-04",
    "end": "2026-10-10",
    "deps": [
     "T-05",
-    "T-06",
-    "D-03"
+    "T-06"
    ],
    "done": [
-    "A user can create and edit a profile with name, age, work, intent, budget, areas, move date and lifestyle answers",
-    "A user can upload a maximum of four photos directly to R2 with a presigned URL",
+    "The API creates and edits a profile with name, age, work, intent, budget, areas, move date and lifestyle answers",
+    "The API gives a presigned URL, thus a user uploads a maximum of four photos directly to R2",
     "Photo bytes never pass through the API"
    ],
    "read": [
@@ -651,6 +655,30 @@
    "cp": "CP3",
    "critical": true,
    "issue": 36
+  },
+  {
+   "id": "T-16b",
+   "title": "Profile create and edit screens",
+   "plain": "The screens where a person says who they are and adds photos.",
+   "role": "P5",
+   "hours": 3,
+   "start": "2026-10-04",
+   "end": "2026-10-10",
+   "deps": [
+    "T-16a",
+    "D-03"
+   ],
+   "done": [
+    "A user can create and edit a profile on the web, with the fields of T-16a",
+    "A user can upload a maximum of four photos from the profile screen",
+    "The delete button of T-20 uses the design of D-03"
+   ],
+   "read": [
+    "docs/decisions/0005-managed-platform-split.md"
+   ],
+   "cp": "CP3",
+   "critical": true,
+   "issue": null
   },
   {
    "id": "M-05",
@@ -769,7 +797,8 @@
    "start": "2026-10-03",
    "end": "2026-10-04",
    "deps": [
-    "T-02"
+    "T-02",
+    "F-04"
    ],
    "done": [
     "`reportError(err, context)` is in packages/config. It is the only way that code reports errors",
@@ -793,7 +822,8 @@
    "end": "2026-10-07",
    "deps": [
     "T-05",
-    "T-06"
+    "T-06",
+    "T-12"
    ],
    "done": [
     "When a visitor signs in, the account gets what the visitor told the assistant before sign-in",
@@ -817,7 +847,8 @@
    "start": "2026-10-01",
    "end": "2026-10-05",
    "deps": [
-    "T-06"
+    "T-06",
+    "T-14"
    ],
    "done": [
     "The API for the report and block buttons exists. The buttons are in T-18b",
@@ -866,7 +897,8 @@
    "done": [
     "The landing page uses the Figma design of D-04",
     "The page has a hero, a how-it-works section, and a button into the chat",
-    "Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values"
+    "Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values",
+    "The footer links of T-23b use the design of D-04"
    ],
    "read": [
     "docs/extensibility.md"
@@ -909,7 +941,9 @@
    "start": "2026-10-02",
    "end": "2026-10-04",
    "deps": [
-    "T-12"
+    "T-12",
+    "T-06",
+    "T-05"
    ],
    "done": [
     "A visitor gets five typed turns before sign-in. Chip taps do not count",
@@ -1001,7 +1035,8 @@
    "start": "2026-09-27",
    "end": "2026-09-29",
    "deps": [
-    "T-02"
+    "T-02",
+    "F-07"
    ],
    "done": [
     "/privacy, /terms and /grievance show the founder's text",
@@ -1022,7 +1057,7 @@
    "end": "2026-10-11",
    "deps": [
     "M-02",
-    "T-16"
+    "T-16b"
    ],
    "done": [
     "Invites go out on Sat 3 Oct, the day after profile creation works",
@@ -1037,20 +1072,19 @@
    "issue": 49
   },
   {
-   "id": "T-22",
-   "title": "Launch areas and waitlist",
-   "plain": "Opens only the three chosen Mumbai areas. Collects emails from all other areas.",
+   "id": "T-22a",
+   "title": "Launch areas and waitlist API",
+   "plain": "The server part: know the three open areas, and save waitlist emails from all other areas.",
    "role": "P4",
-   "hours": 3,
+   "hours": 2,
    "start": "2026-10-08",
    "end": "2026-10-10",
    "deps": [
     "T-14",
-    "D-04"
+    "F-06"
    ],
    "done": [
-    "The site gives the names of the three launch areas",
-    "A visitor from a different area gets a waitlist form, not an empty panel",
+    "The API gives the names of the three launch areas",
     "The system saves each waitlist entry with its area"
    ],
    "read": [
@@ -1059,6 +1093,29 @@
    "cp": "CP3",
    "critical": false,
    "issue": 47
+  },
+  {
+   "id": "T-22b",
+   "title": "Launch areas and waitlist screen",
+   "plain": "Show the three open areas, and a waitlist form to visitors from other areas.",
+   "role": "P4",
+   "hours": 1,
+   "start": "2026-10-08",
+   "end": "2026-10-10",
+   "deps": [
+    "T-22a",
+    "D-04"
+   ],
+   "done": [
+    "The site gives the names of the three launch areas",
+    "A visitor from a different area gets a waitlist form, not an empty panel"
+   ],
+   "read": [
+    "docs/launch-plan.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   },
   {
    "id": "T-25",
@@ -1234,7 +1291,8 @@
    "start": "2026-09-27",
    "end": "2026-09-29",
    "deps": [
-    "T-12"
+    "T-12",
+    "T-06"
    ],
    "done": [
     "Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope",
@@ -1285,7 +1343,8 @@
    "end": "2026-10-02",
    "deps": [
     "T-35",
-    "T-12"
+    "T-12",
+    "T-06"
    ],
    "done": [
     "The observer turns personal context into Form B observations",
@@ -1336,7 +1395,8 @@
    "deps": [
     "T-37",
     "T-11",
-    "T-05"
+    "T-05",
+    "M-05"
    ],
    "done": [
     "Answers to consulting questions come from the articles first, and give the name of the article",
@@ -1385,7 +1445,8 @@
    "start": "2026-10-08",
    "end": "2026-10-10",
    "deps": [
-    "T-04"
+    "T-04",
+    "F-04"
    ],
    "done": [
     "A scheduled GitHub Action dumps both databases to Cloudflare R2 every night",

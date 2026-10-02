@@ -20,4 +20,5 @@ This note is part of [[roomsie launch]].
 3. [[T-37 Articles and search]] — Tue 29 Sep → Thu 1 Oct, 3h
 4. [[T-19 Report and block]] — Thu 1 Oct → Mon 5 Oct, 5h
 5. [[T-20 Account deletion]] — Mon 5 Oct → Thu 8 Oct, 3h
-6. [[T-22 Launch areas and waitlist]] — Thu 8 Oct → Sat 10 Oct, 3h
+6. [[T-22a Waitlist API]] — Thu 8 Oct → Sat 10 Oct, 2h
+7. [[T-22b Waitlist screen]] — Thu 8 Oct → Sat 10 Oct, 1h

@@ -34,10 +34,11 @@ Takes what a person wants and returns the people who fit.
 
 ## Unblocks
 - [[T-15 Results panel ⚑]]
-- [[T-22 Launch areas and waitlist]]
+- [[T-19 Report and block]]
+- [[T-22a Waitlist API]]
 
 ## Done when
-- [x] It returns the matching people for a form state · [#59](https://github.com/magentawood/roomsie/pull/59)
+- [ ] It returns the matching people for a form state
 - [x] The hard filters are area, budget, move date, compatible intent and dealbreakers · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)

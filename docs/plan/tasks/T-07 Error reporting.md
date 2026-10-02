@@ -26,6 +26,7 @@ Sends each crash that a user gets to a dashboard automatically.
 
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
+- [[F-04 Accounts in Mumbai]]
 
 ## Unblocks
 - No task waits on this task.

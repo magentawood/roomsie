@@ -27,6 +27,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
 ## Needs first
 - [[T-35 Form B contract]]
 - [[T-12 Extraction ⚑]]
+- [[T-06 Database schema ⚑]]
 
 ## Unblocks
 - No task waits on this task.

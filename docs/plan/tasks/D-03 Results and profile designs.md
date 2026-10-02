@@ -29,7 +29,7 @@ Match cards, profile pages and the connect flow.
 ## Unblocks
 - [[T-18b Person and connect screens ⚑]]
 - [[T-15 Results panel ⚑]]
-- [[T-16 Profiles and photos ⚑]]
+- [[T-16b Profile screens ⚑]]
 - [[D-05 Design QA]]
 
 ## Done when

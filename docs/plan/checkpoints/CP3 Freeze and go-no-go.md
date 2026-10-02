@@ -40,8 +40,10 @@ This note is part of [[roomsie launch]].
 - [[D-06 Launch visuals]] — Design
 - [[F-10 Go-no-go meeting]] — Founder
 - [[T-09 Chip flow ⚑]] — P2 Chat
-- [[T-16 Profiles and photos ⚑]] — P5 Accounts and people
+- [[T-16a Profile API ⚑]] — P5 Accounts and people
+- [[T-16b Profile screens ⚑]] — P5 Accounts and people
 - [[T-18b Person and connect screens ⚑]] — P3 Data and trust
-- [[T-22 Launch areas and waitlist]] — P4 Content and moderation
+- [[T-22a Waitlist API]] — P4 Content and moderation
+- [[T-22b Waitlist screen]] — P4 Content and moderation
 - [[T-29 Abuse test]] — P1 Platform
 - [[T-40 Nightly backups]] — P1 Platform

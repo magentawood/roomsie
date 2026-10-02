@@ -2,7 +2,7 @@
 id: T-37
 title: "Articles table and full-text search"
 owner: "P4 Content and moderation"
-sequence: "3 of 6"
+sequence: "3 of 7"
 hours: 3
 start: 2026-09-29
 end: 2026-10-01
@@ -17,7 +17,7 @@ tags:
 
 # T-37 · Articles table and full-text search
 
-**Owner:** [[P4 Content and moderation]], task 3 of 6  
+**Owner:** [[P4 Content and moderation]], task 3 of 7  
 **When:** Tue 29 Sep → Thu 1 Oct · 3 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#66](https://github.com/magentawood/roomsie/issues/66)

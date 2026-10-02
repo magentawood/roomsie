@@ -28,7 +28,7 @@ The public home page and the waitlist page.
 
 ## Unblocks
 - [[T-23a Landing page]]
-- [[T-22 Launch areas and waitlist]]
+- [[T-22b Waitlist screen]]
 
 ## Done when
 - [ ] The landing page is for all genders

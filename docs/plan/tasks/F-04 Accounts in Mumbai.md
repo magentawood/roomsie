@@ -27,11 +27,16 @@ Hosting and database accounts.
 - [[F-03 Billing and caps]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-11 Model wrapper ⚑]]
+- [[T-05 Google sign-in ⚑]]
+- [[T-04 Deploy to Mumbai]]
+- [[T-07 Error reporting]]
+- [[T-40 Nightly backups]]
 
 ## Done when
 - [ ] Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1
 - [ ] The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist
+- [ ] A Sentry project exists for the web and the API
 - [ ] The team shares keys through a password manager, never in chat or in the repo
 
 ^done

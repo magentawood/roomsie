@@ -2,7 +2,7 @@
 id: T-23a
 title: "Landing page from the Figma design"
 owner: "P4 Content and moderation"
-sequence: "1 of 6"
+sequence: "1 of 7"
 hours: 4
 start: 2026-09-24
 end: 2026-09-27
@@ -17,7 +17,7 @@ tags:
 
 # T-23a · Landing page from the Figma design
 
-**Owner:** [[P4 Content and moderation]], task 1 of 6  
+**Owner:** [[P4 Content and moderation]], task 1 of 7  
 **When:** Thu 24 Sep → Sun 27 Sep · 4 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#39](https://github.com/magentawood/roomsie/issues/39)
@@ -34,6 +34,7 @@ The public home page that explains roomsie.
 - [ ] The landing page uses the Figma design of D-04
 - [ ] The page has a hero, a how-it-works section, and a button into the chat
 - [ ] Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
+- [ ] The footer links of T-23b use the design of D-04
 
 ^done
 

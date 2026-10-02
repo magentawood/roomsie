@@ -538,7 +538,7 @@
    "x": -20,
    "y": 1070,
    "width": 4652,
-   "height": 240,
+   "height": 336,
    "color": "#3B82F6"
   },
   {
@@ -587,11 +587,20 @@
    "height": 84
   },
   {
-   "id": "task-T-22",
+   "id": "task-T-22a",
    "type": "text",
-   "text": "**[[T-22 Launch areas and waitlist|T-22 Launch areas and waitlist]]**\n3h · Thu 8 Oct → Sat 10 Oct",
+   "text": "**[[T-22a Waitlist API|T-22a Waitlist API]]**\n2h · Thu 8 Oct → Sat 10 Oct",
    "x": 3080,
    "y": 1196,
+   "width": 652,
+   "height": 84
+  },
+  {
+   "id": "task-T-22b",
+   "type": "text",
+   "text": "**[[T-22b Waitlist screen|T-22b Waitlist screen]]**\n1h · Thu 8 Oct → Sat 10 Oct",
+   "x": 3080,
+   "y": 1292,
    "width": 652,
    "height": 84
   },
@@ -600,9 +609,9 @@
    "type": "group",
    "label": "P5 Accounts and people",
    "x": -20,
-   "y": 1360,
+   "y": 1456,
    "width": 4652,
-   "height": 240,
+   "height": 336,
    "color": "#14B8A6"
   },
   {
@@ -610,7 +619,7 @@
    "type": "text",
    "text": "**[[M-03 Eval sentences|M-03 Eval sentences]]**\n4h · Thu 24 Sep → Sun 27 Sep",
    "x": 0,
-   "y": 1390,
+   "y": 1486,
    "width": 872,
    "height": 84
   },
@@ -619,7 +628,7 @@
    "type": "text",
    "text": "**[[T-03 CI checks|T-03 CI checks]]**\n2h · Sun 27 Sep → Tue 29 Sep",
    "x": 660,
-   "y": 1486,
+   "y": 1582,
    "width": 652,
    "height": 84
   },
@@ -628,7 +637,7 @@
    "type": "text",
    "text": "**[[T-24 Event logging|T-24 Event logging]]**\n2h · Tue 29 Sep → Wed 30 Sep",
    "x": 1100,
-   "y": 1390,
+   "y": 1486,
    "width": 432,
    "height": 84
   },
@@ -637,17 +646,27 @@
    "type": "text",
    "text": "**[[T-18a Connect API ⚑|T-18a Connect API]]**\n4h · Wed 30 Sep → Sun 4 Oct",
    "x": 1320,
-   "y": 1486,
+   "y": 1582,
    "width": 1092,
    "height": 84,
    "color": "1"
   },
   {
-   "id": "task-T-16",
+   "id": "task-T-16a",
    "type": "text",
-   "text": "**[[T-16 Profiles and photos ⚑|T-16 Profiles and photos]]**\n8h · Sun 4 Oct → Sat 10 Oct",
+   "text": "**[[T-16a Profile API ⚑|T-16a Profile API]]**\n5h · Sun 4 Oct → Sat 10 Oct",
    "x": 2200,
-   "y": 1390,
+   "y": 1486,
+   "width": 1532,
+   "height": 84,
+   "color": "1"
+  },
+  {
+   "id": "task-T-16b",
+   "type": "text",
+   "text": "**[[T-16b Profile screens ⚑|T-16b Profile screens]]**\n3h · Sun 4 Oct → Sat 10 Oct",
+   "x": 2200,
+   "y": 1678,
    "width": 1532,
    "height": 84,
    "color": "1"
@@ -657,7 +676,7 @@
    "type": "group",
    "label": "Design",
    "x": -20,
-   "y": 1650,
+   "y": 1842,
    "width": 4652,
    "height": 240,
    "color": "#FF87AC"
@@ -667,7 +686,7 @@
    "type": "text",
    "text": "**[[D-01 Styling decision|D-01 Styling decision]]**\nThu 24 Sep",
    "x": 0,
-   "y": 1680,
+   "y": 1872,
    "width": 212,
    "height": 84
   },
@@ -676,7 +695,7 @@
    "type": "text",
    "text": "**[[D-02 Chat screen designs ⚑|D-02 Chat screen designs]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 1776,
+   "y": 1968,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -686,7 +705,7 @@
    "type": "text",
    "text": "**[[D-03 Results and profile designs|D-03 Results and profile designs]]**\nFri 25 Sep → Sun 27 Sep",
    "x": 220,
-   "y": 1680,
+   "y": 1872,
    "width": 652,
    "height": 84
   },
@@ -695,7 +714,7 @@
    "type": "text",
    "text": "**[[D-04 Landing and waitlist designs|D-04 Landing and waitlist designs]]**\nMon 28 Sep → Tue 29 Sep",
    "x": 880,
-   "y": 1680,
+   "y": 1872,
    "width": 432,
    "height": 84
   },
@@ -704,7 +723,7 @@
    "type": "text",
    "text": "**[[D-05 Design QA|D-05 Design QA]]**\nMon 5 Oct → Sat 10 Oct",
    "x": 2420,
-   "y": 1680,
+   "y": 1872,
    "width": 1312,
    "height": 84
   },
@@ -713,7 +732,7 @@
    "type": "text",
    "text": "**[[D-06 Launch visuals|D-06 Launch visuals]]**\nFri 9 Oct → Sat 10 Oct",
    "x": 3300,
-   "y": 1776,
+   "y": 1968,
    "width": 432,
    "height": 84
   },
@@ -722,7 +741,7 @@
    "type": "group",
    "label": "M1 Content",
    "x": -20,
-   "y": 1940,
+   "y": 2132,
    "width": 4652,
    "height": 240,
    "color": "#E3B341"
@@ -732,7 +751,7 @@
    "type": "text",
    "text": "**[[M-04 Article interviews|M-04 Article interviews]]**\nThu 24 Sep → Mon 28 Sep",
    "x": 0,
-   "y": 1970,
+   "y": 2162,
    "width": 1092,
    "height": 84
   },
@@ -741,7 +760,7 @@
    "type": "text",
    "text": "**[[M-05 Article drafts|M-05 Article drafts]]**\nTue 29 Sep → Mon 5 Oct",
    "x": 1100,
-   "y": 1970,
+   "y": 2162,
    "width": 1532,
    "height": 84
   },
@@ -750,7 +769,7 @@
    "type": "text",
    "text": "**[[M-07 Launch posts|M-07 Launch posts]]**\nWed 30 Sep → Sat 3 Oct",
    "x": 1320,
-   "y": 2066,
+   "y": 2258,
    "width": 872,
    "height": 84
   },
@@ -759,7 +778,7 @@
    "type": "group",
    "label": "M2 Community",
    "x": -20,
-   "y": 2230,
+   "y": 2422,
    "width": 4652,
    "height": 240,
    "color": "#F9A03F"
@@ -769,7 +788,7 @@
    "type": "text",
    "text": "**[[M-01 Seeding form ⚑|M-01 Seeding form]]**\nFri 25 Sep → Sat 26 Sep",
    "x": 220,
-   "y": 2260,
+   "y": 2452,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -779,7 +798,7 @@
    "type": "text",
    "text": "**[[M-02 100 sign-ups|M-02 100 sign-ups]]**\nSat 26 Sep → Wed 30 Sep",
    "x": 440,
-   "y": 2356,
+   "y": 2548,
    "width": 1092,
    "height": 84
   },
@@ -788,7 +807,7 @@
    "type": "text",
    "text": "**[[M-06 Beta invites ⚑|M-06 Beta invites]]**\nSat 3 Oct → Sun 11 Oct",
    "x": 1980,
-   "y": 2260,
+   "y": 2452,
    "width": 1972,
    "height": 84,
    "color": "1"
@@ -798,7 +817,7 @@
    "type": "text",
    "text": "**[[M-09 Broker calls|M-09 Broker calls]]**\nMon 12 Oct → Mon 19 Oct",
    "x": 3960,
-   "y": 2260,
+   "y": 2452,
    "width": 1752,
    "height": 84
   },
@@ -807,7 +826,7 @@
    "type": "group",
    "label": "Founder",
    "x": -20,
-   "y": 2520,
+   "y": 2712,
    "width": 4652,
    "height": 624,
    "color": "#B07B4F"
@@ -817,7 +836,7 @@
    "type": "text",
    "text": "**[[F-01 Kickoff|F-01 Kickoff]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2550,
+   "y": 2742,
    "width": 212,
    "height": 84
   },
@@ -826,7 +845,7 @@
    "type": "text",
    "text": "**[[F-02 Domain|F-02 Domain]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2646,
+   "y": 2838,
    "width": 212,
    "height": 84
   },
@@ -835,7 +854,7 @@
    "type": "text",
    "text": "**[[F-03 Billing and caps|F-03 Billing and caps]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2742,
+   "y": 2934,
    "width": 212,
    "height": 84
   },
@@ -844,7 +863,7 @@
    "type": "text",
    "text": "**[[F-04 Accounts in Mumbai|F-04 Accounts in Mumbai]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2838,
+   "y": 3030,
    "width": 212,
    "height": 84
   },
@@ -853,7 +872,7 @@
    "type": "text",
    "text": "**[[F-05 Seeding consent text ⚑|F-05 Seeding consent text]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 2934,
+   "y": 3126,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -863,7 +882,7 @@
    "type": "text",
    "text": "**[[F-06 Launch areas picked|F-06 Launch areas picked]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 3030,
+   "y": 3222,
    "width": 432,
    "height": 84
   },
@@ -872,7 +891,7 @@
    "type": "text",
    "text": "**[[F-07 Privacy and terms draft|F-07 Privacy and terms draft]]**\nFri 25 Sep → Wed 30 Sep",
    "x": 220,
-   "y": 2550,
+   "y": 2742,
    "width": 1312,
    "height": 84
   },
@@ -881,7 +900,7 @@
    "type": "text",
    "text": "**[[F-09 ADR exceptions|F-09 ADR exceptions]]**\nSat 26 Sep → Sun 27 Sep",
    "x": 440,
-   "y": 2646,
+   "y": 2838,
    "width": 432,
    "height": 84
   },
@@ -890,7 +909,7 @@
    "type": "text",
    "text": "**[[F-08 Moderator named|F-08 Moderator named]]**\nWed 30 Sep → Fri 2 Oct",
    "x": 1320,
-   "y": 2646,
+   "y": 2838,
    "width": 652,
    "height": 84
   },
@@ -899,7 +918,7 @@
    "type": "text",
    "text": "**[[F-10 Go-no-go meeting|F-10 Go-no-go meeting]]**\nSat 10 Oct",
    "x": 3520,
-   "y": 2550,
+   "y": 2742,
    "width": 212,
    "height": 84
   },
@@ -908,7 +927,7 @@
    "type": "group",
    "label": "Everyone",
    "x": -20,
-   "y": 3194,
+   "y": 3386,
    "width": 4652,
    "height": 144,
    "color": "#9CC3E6"
@@ -918,7 +937,7 @@
    "type": "text",
    "text": "**[[A-01 Bug fix day|A-01 Bug fix day]]**\nSun 11 Oct",
    "x": 3740,
-   "y": 3224,
+   "y": 3416,
    "width": 212,
    "height": 84
   },
@@ -927,7 +946,7 @@
    "type": "text",
    "text": "**[[A-02 Launch day|A-02 Launch day]]**\nMon 12 Oct",
    "x": 3960,
-   "y": 3224,
+   "y": 3416,
    "width": 212,
    "height": 84
   }
@@ -994,6 +1013,13 @@
    "color": "1"
   },
   {
+   "id": "e-F-04-T-11",
+   "fromNode": "task-F-04",
+   "fromSide": "right",
+   "toNode": "task-T-11",
+   "toSide": "left"
+  },
+  {
    "id": "e-D-01-D-03",
    "fromNode": "task-D-01",
    "fromSide": "right",
@@ -1007,6 +1033,13 @@
    "toNode": "task-T-05",
    "toSide": "left",
    "color": "1"
+  },
+  {
+   "id": "e-F-04-T-05",
+   "fromNode": "task-F-04",
+   "fromSide": "right",
+   "toNode": "task-T-05",
+   "toSide": "left"
   },
   {
    "id": "e-T-08-T-15",
@@ -1101,26 +1134,41 @@
    "toSide": "left"
   },
   {
-   "id": "e-T-05-T-16",
+   "id": "e-F-04-T-04",
+   "fromNode": "task-F-04",
+   "fromSide": "right",
+   "toNode": "task-T-04",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-16a",
    "fromNode": "task-T-05",
    "fromSide": "right",
-   "toNode": "task-T-16",
+   "toNode": "task-T-16a",
    "toSide": "left",
    "color": "1"
   },
   {
-   "id": "e-T-06-T-16",
+   "id": "e-T-06-T-16a",
    "fromNode": "task-T-06",
    "fromSide": "right",
-   "toNode": "task-T-16",
+   "toNode": "task-T-16a",
    "toSide": "left",
    "color": "1"
   },
   {
-   "id": "e-D-03-T-16",
+   "id": "e-T-16a-T-16b",
+   "fromNode": "task-T-16a",
+   "fromSide": "right",
+   "toNode": "task-T-16b",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
+   "id": "e-D-03-T-16b",
    "fromNode": "task-D-03",
    "fromSide": "right",
-   "toNode": "task-T-16",
+   "toNode": "task-T-16b",
    "toSide": "left"
   },
   {
@@ -1152,6 +1200,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-F-04-T-07",
+   "fromNode": "task-F-04",
+   "fromSide": "right",
+   "toNode": "task-T-07",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-05-T-17",
    "fromNode": "task-T-05",
    "fromSide": "right",
@@ -1166,8 +1221,22 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-12-T-17",
+   "fromNode": "task-T-12",
+   "fromSide": "right",
+   "toNode": "task-T-17",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-06-T-19",
    "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-19",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-14-T-19",
+   "fromNode": "task-T-14",
    "fromSide": "right",
    "toNode": "task-T-19",
    "toSide": "left"
@@ -1196,6 +1265,20 @@
   {
    "id": "e-T-12-T-21",
    "fromNode": "task-T-12",
+   "fromSide": "right",
+   "toNode": "task-T-21",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-06-T-21",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-21",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-21",
+   "fromNode": "task-T-05",
    "fromSide": "right",
    "toNode": "task-T-21",
    "toSide": "left"
@@ -1245,6 +1328,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-F-07-T-23b",
+   "fromNode": "task-F-07",
+   "fromSide": "right",
+   "toNode": "task-T-23b",
+   "toSide": "left"
+  },
+  {
    "id": "e-M-02-M-06",
    "fromNode": "task-M-02",
    "fromSide": "right",
@@ -1252,25 +1342,39 @@
    "toSide": "left"
   },
   {
-   "id": "e-T-16-M-06",
-   "fromNode": "task-T-16",
+   "id": "e-T-16b-M-06",
+   "fromNode": "task-T-16b",
    "fromSide": "right",
    "toNode": "task-M-06",
    "toSide": "left",
    "color": "1"
   },
   {
-   "id": "e-T-14-T-22",
+   "id": "e-T-14-T-22a",
    "fromNode": "task-T-14",
    "fromSide": "right",
-   "toNode": "task-T-22",
+   "toNode": "task-T-22a",
    "toSide": "left"
   },
   {
-   "id": "e-D-04-T-22",
+   "id": "e-F-06-T-22a",
+   "fromNode": "task-F-06",
+   "fromSide": "right",
+   "toNode": "task-T-22a",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-22a-T-22b",
+   "fromNode": "task-T-22a",
+   "fromSide": "right",
+   "toNode": "task-T-22b",
+   "toSide": "left"
+  },
+  {
+   "id": "e-D-04-T-22b",
    "fromNode": "task-D-04",
    "fromSide": "right",
-   "toNode": "task-T-22",
+   "toNode": "task-T-22b",
    "toSide": "left"
   },
   {
@@ -1297,6 +1401,14 @@
   {
    "id": "e-T-12-T-34",
    "fromNode": "task-T-12",
+   "fromSide": "right",
+   "toNode": "task-T-34",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
+   "id": "e-T-06-T-34",
+   "fromNode": "task-T-06",
    "fromSide": "right",
    "toNode": "task-T-34",
    "toSide": "left",
@@ -1331,6 +1443,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-06-T-36",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-36",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-06-T-37",
    "fromNode": "task-T-06",
    "fromSide": "right",
@@ -1359,6 +1478,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-M-05-T-38",
+   "fromNode": "task-M-05",
+   "fromSide": "right",
+   "toNode": "task-T-38",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-24-T-39",
    "fromNode": "task-T-24",
    "fromSide": "right",
@@ -1368,6 +1494,13 @@
   {
    "id": "e-T-04-T-40",
    "fromNode": "task-T-04",
+   "fromSide": "right",
+   "toNode": "task-T-40",
+   "toSide": "left"
+  },
+  {
+   "id": "e-F-04-T-40",
+   "fromNode": "task-F-04",
    "fromSide": "right",
    "toNode": "task-T-40",
    "toSide": "left"

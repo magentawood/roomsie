@@ -26,6 +26,7 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
+- [[F-04 Accounts in Mumbai]]
 
 ## Unblocks
 - [[T-25 Uptime and spend alerts]]

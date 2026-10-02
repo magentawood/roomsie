@@ -30,6 +30,7 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
 
 ## Needs first
 - [[T-12 Extraction ⚑]]
+- [[T-06 Database schema ⚑]]
 
 ## Unblocks
 - No task waits on this task.

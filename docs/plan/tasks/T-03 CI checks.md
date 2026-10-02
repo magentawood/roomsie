@@ -2,7 +2,7 @@
 id: T-03
 title: "CI: typecheck, lint, build, secret scan"
 owner: "P5 Accounts and people"
-sequence: "2 of 5"
+sequence: "2 of 6"
 hours: 2
 start: 2026-09-27
 end: 2026-09-29
@@ -17,7 +17,7 @@ tags:
 
 # T-03 · CI: typecheck, lint, build, secret scan
 
-**Owner:** [[P5 Accounts and people]], task 2 of 5  
+**Owner:** [[P5 Accounts and people]], task 2 of 6  
 **When:** Sun 27 Sep → Tue 29 Sep · 2 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#24](https://github.com/magentawood/roomsie/issues/24)
