@@ -87,3 +87,13 @@ Clients hold a Firebase ID token and send requests to `apps/api`. They never ope
 ## Learn
 
 The team writes one page for each technical topic that a ticket teaches, for example the database driver or local development with Docker. All pages are in [Learn](learn/README.md).
+
+<!-- learn-newest:start -->
+These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
+
+- [Building the API](learn/building-the-api.md)
+- [Local development with Docker](learn/local-dev-with-docker.md)
+- [OpenAPI from Zod](learn/openapi-from-zod.md)
+- [pnpm, Corepack and Turborepo](learn/pnpm-and-corepack.md)
+- [Postgres drivers](learn/postgres-drivers.md)
+<!-- learn-newest:end -->
