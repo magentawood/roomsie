@@ -373,9 +373,8 @@ L = [f"# Team plan: launch on {D(LAUNCH):%-d %B}", "",
  "**Everyone works two hours a day from Thursday 24 September. This includes weekends.**", "",
  "**Quality comes before the date.** The go/no-go list at the end of this file is the bar. If a check fails, the date moves by a small amount. We do not ship something below the bar. Do not cut corners to meet a date. If your work takes more time, say so.", "",
  "---", "", "## Five lanes", "",
- f"We have no designs at this time. {b_h - ui_h} of the {b_h} build hours need no designs. The other {ui_h} hours are screens, and these cannot start without designs. Thus, the work has two phases:", "",
- "- **Phase A · Thu 24 → Wed 30 Sep.** Work that needs no design: the monorepo, the database, sign-in, the assistant, matching and moderation.",
- f"- **Phase B · Thu 1 → {f(LAST_BUILD)}.** Every screen, after designs D-02, D-03 and D-04 exist. Also the router, the observer, the advisor, the analytics database and the backups. **The designs are due by the end of Wednesday 30 September.**", "",
+ f"{b_h - ui_h} of the {b_h} build hours need no designs. The other {ui_h} hours are screens, and these cannot start without designs.", "",
+ "**Until the designs arrive, the work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).", "",
  f"| Lane | Question it answers | Owns | Hours | Spare | Person |", "|---|---|---|---|---|---|"]
 for k in LANES:
     rs = rows_of(k); h = sum(t["hours"] or 0 for t in rs)

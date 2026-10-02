@@ -27,7 +27,7 @@
 ## Consequences
 
 - This is the one intentional exception in `extensibility.md`. The result is no backups on the free plan, and a policy risk. The nightly dumps give the backups.
-- P1 owns T-39 (analytics database, 3 hours) and T-40 (nightly backups to R2, 2 hours) in Phase B.
+- T-39 builds the analytics database. T-40 builds the nightly backups to R2.
 - Go/no-go check 8: the backup from last night exists, and a restore worked one or more times.
 - If the app reaches a free Supabase limit, upgrade that account. Or move the two projects into one paid organisation before the planned time. This needs no code changes.
 

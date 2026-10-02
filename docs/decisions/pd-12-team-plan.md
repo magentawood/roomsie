@@ -1,107 +1,63 @@
-# PD12 — Team plan: five lanes, two phases
+# PD12 — Team plan: design-free waves, then screens
 
-**Status:** Settled. Cut again on 2026-09-25. Amended on 2026-10-03. · **Date:** 2026-09-25 · **Deciders:** Yash
+**Status:** Settled. Cut again on 2026-09-25. Changed on 2026-10-03. · **Date:** 2026-10-03 · **Deciders:** Yash
 
 ## Context
 
 - The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer (PD5).
-- There are no designs at this time.
-- In the first estimate, 80 of the 115 build hours needed no design. The other 35 could not start without a design.
-- V1, V2 and V4 had no blocked hours. V3 and V5 were almost fully blocked. With the initial verticals, V3 and V5 would have no work.
+- The designs D-02, D-03 and D-04 were due on 30 September. They were not complete on that date, and they have no new date.
+- Most of the build hours need no design. The screens need the designs.
+- No accounts or keys exist at this time. Sign-in, the model wrapper, the deploy and error reports need them.
 
 ## Decision
 
 **In one line:** All design-free work comes first, in waves, and the screens come when designs D-02, D-03 and D-04 arrive.
 
-**All the work that needs no design comes first. We build all screens when the designs are available.**
-
-There are **five engineering lanes, P1 to P5**, and two phases.
-
-| Phase | Dates | What happens |
-|---|---|---|
-| A · Design-free | Thu 24 → Wed 30 Sep | Monorepo, database, sign-in, assistant, matching, moderation. No person works on a screen. |
-| B · Screens and the assistant | Thu 1 → Sat 10 Oct | All 35 hours of screens, from finished designs. Also the router, the observer, the advisor, the analytics database and backups. |
-
-- **151 build hours against 170 available.**
-- **The one hard deadline: designs D-02, D-03 and D-04 must be complete by the end of Wednesday 30 September.** "Mostly done" is not sufficient. D-01, the decision about the launch look, must come before that date.
-- **Each task keeps one owner** from start to finish.
-- Lane ownership and hours for each lane: see [team-plan.md](../team-plan.md),
-  generated from docs/team-plan.json.
-- After Phase A, no task in a person's list waits for a different person.
-- Design, marketing and the founder keep their roles.
-- Rules: one task at a time for each person. Open one PR for each task. Never push to `main`. In the first week, merge on the day that you finish.
-
-### Amendment, 2026-10-03: design-free waves
-
-The designs were not complete on 30 September, and they have no new date. Until they arrive:
-
-- **Waves replace the lane lists and the dates.** The build script calculates the waves from the `deps` in `docs/team-plan.json`. Wave 0 waits on no open task. `Progress.md` shows the waves.
-- **Many people can work on one wave.** To take a task, a person assigns its GitHub issue to themselves.
-- **Founder and marketing tasks that gate a build task join the waves.** F-04 (accounts and keys) gates T-04, T-05, T-07, T-11 and T-40. F-06, F-07 and M-05 gate T-22a, T-23b and T-38.
-- **A task with a large screen part has two halves.** T-16 is T-16a (API) and T-16b (screens). T-22 is T-22a and T-22b.
-- **The team builds a small screen part plain, with no design.** The screen tasks of D-02, D-03 and D-04 then apply the design to it.
-- **Each ticket PR rebuilds `Progress.md`.** A check fails when the file is stale.
+- **Waves replace the lane lists and the dates.** The plan build calculates the waves from the dependencies in `docs/team-plan.json`. Wave 0 waits on no open task. `docs/plan/Progress.md` shows the waves.
+- **Many people can work on one wave.** Each person does one task at a time. To take a task, a person assigns its GitHub issue to themselves.
+- **A founder or marketing task that gates a build task is a dependency in the plan.** It joins the waves.
+- **A task with a large screen part has two halves.** The API half needs no design. The screen half waits on a design.
+- **The team builds a small screen part plain, with no design.** The screen task of the design then applies the design to it.
+- **Each ticket PR rebuilds the plan files.** A check fails when they are stale.
 - **The team selects the launch date when the designs arrive,** and records it in [PD11](pd-11-launch.md).
-
-| Checkpoint | Date |
-|---|---|
-| CP0 Kickoff | Fri 25 Sep |
-| CP1 Foundation | Mon 28 Sep |
-| CP2 Core loop live | Thu 1 Oct |
-| CP3 Freeze and go/no-go | Sat 10 Oct, 8 pm |
-| CP4 Launch | Mon 12 Oct, fallback Wed 14 Oct |
-| CP5 First-week review | Mon 19 Oct |
+- Rules: open one PR for each task. Never push to `main`. In the first week, merge on the day that you finish.
 
 ## Rationale
 
-- **We cut the plan again because there are no designs at this time.** Because there are no designs, the work has two phases.
-- The principles from before stay the same.
-- The designs must be complete because five people must build from them on the morning of Thursday 1 October. There is no spare time for a late design.
-- The order of each person's list is the schedule. Other people wait for your work.
+- A wave comes from the dependencies, thus it stays correct when a date moves. A list with dates was incorrect on the first day that the designs were late.
+- Most of the work is in one or two hands with agents. One shared queue is better than five lanes that wait on each other.
+- A hidden dependency makes "can start" incorrect. Some tasks need the accounts and the keys, the legal text, the launch areas or the articles. Thus, the plan shows these dependencies.
+- An API half that waits on a design wastes build hours on the critical path (⚑). T-16 and T-22 had such halves.
+- A small screen part must not block the backend tasks after it. A plain button first, with the design subsequently, costs a small amount.
+- A stale `Progress.md` shows the incorrect next task. A check stops this.
 
-Why each lane starts where it does:
+## Alternatives rejected
 
-- P1 starts first, with the monorepo (T-02).
-- The P2 lane needs no designs. P2 works through the two phases with no interruption. Three people build against T-08, so P2 does T-08 on day one.
-- P3 owns T-15 and T-18b, because they show the matches and people from the P3 schema and match query. P3 owns the advisor, T-38, because it searches data that P3 owns.
-- For P4, the prototype was the design, so T-23a was not blocked. Sunday 27 is spare because T-19 needs the schema. The schema arrives on the evening of that day.
-- M-03 also needs no design and no code. It is the only task available to P5 on day one.
-- P4 and P5 have Sunday 27 free, because only three tasks in the full project can start before the schema and monorepo exist.
-
-Why the designer gets a design review (`design-review.md`):
-
-- "Does not need a design" is not the same as "has no design decisions in it." Each task quietly assumes some behaviour of the product. Examples: how many questions the assistant asks, what a profile contains, when results appear, and what occurs on a phone.
-- We had to make those decisions to start. The design review writes them down.
-- The cost to change a decision depends fully on when the designer tells us. On 25 September, most of the decisions were free to change. Thus, we do not build the incorrect thing for a fortnight.
-- §1, §5 (mobile) and §6.3 are more important than all other items together. The build is in progress. Each day that the review stays unread, more items change from 🟢 free to 🔴 structural.
-
-| By | Design review item | Why this date |
-|---|---|---|
-| Now | §1 The questions in the conversation | We build the contract first. |
-| Now | §6.3 The launch look | The styling decision controls all designs. |
-| Sun 27 Sep | §2 What we store about a person | Migrations after the schema commit are painful. |
-| Tue 29 Sep | §3 How the assistant behaves | We build the reply writer on Wed–Thu. |
-| Wed 30 Sep | §4 How results appear and update | Work on the match query and the results panel starts on Thursday. |
+- **Keep the lanes and move each date.** Without a design date, each new date is a guess.
+- **Show who works a task in `Progress.md`.** Assignees change without a commit, so the freshness check fails at random.
+- **Build against fake accounts, and add the founder tasks subsequently.** The user preferred a hard dependency on F-04.
 
 ## Consequences
 
-- We build all screens in Phase B. Thus, UI problems show in the first week of October. These late problems are the cost of no designs, not a mistake in the order of tasks.
-- During Phase A, no person owns a vertical from end to end. We get resilience, but we lose clean ownership.
-- If there are only four engineers, plan for 14 October from day one.
-- `docs/team-plan.json` is the one place where you edit the plan. `how-to-work.md` and `team-plan.md` come from it.
+- We build all screens after the designs arrive. Thus, UI problems show late.
+- The launch date is not fixed until the designs arrive.
+- `docs/team-plan.json` is the one place where you edit the plan. `team-plan.md`, the task notes and `Progress.md` come from it.
 - Each task is a GitHub issue. `docs/plan/` has the graph and the timeline, for Obsidian.
-- **The launch look comes from the Figma designs.** The designs are not available at this time. When they are, the team replans the design work, the screen tasks and the styling rules.
+- **The launch look comes from the Figma designs.**
 - The GitHub issues keep the initial `vertical:V1`–`V5` labels until we relabel them. Until then, `team-plan.md` has priority.
 
-Superseded (2026-10-02): the V3 prototype is not the launch design, and its styles do not apply at launch. The user replaced it with the Figma designs. T-23a now waits for D-04.
+## Revisit when
 
-Superseded: the first schedule of 115 build hours against 120 available for five engineers, with a bug-fix day on 6 October (see PD11).
+- The designs arrive. Then select the launch date in PD11.
+- The team becomes more than one or two people with agents. Then the lanes can return.
+
+Superseded (2026-10-03): five lanes in two phases, from 24 September to 10 October. The designs had a hard deadline of 30 September.
+
+Superseded (2026-10-02): the V3 prototype is not the launch design. The Figma designs replace it.
 
 ## Sources
 
-- [CONTEXT.md, PD12 row and Why callout](../../CONTEXT.md)
-- [product-base.md §17](../product-base.md)
 - [how-to-work.md](../how-to-work.md)
 - [team-plan.md](../team-plan.md)
-- [design-review.md](../design-review.md)
+- [Progress.md](../plan/Progress.md)
 - [cost-and-team.md](../cost-and-team.md)
