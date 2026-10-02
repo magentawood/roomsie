@@ -40,4 +40,4 @@ roomsie is the AI-native pivot of femmeflats. The V3 prototype shows flats and f
 - [CONTEXT.md](../../CONTEXT.md): "Open decisions" table, row PD0, and its "Why" callout
 - [product-base.md](../product-base.md): section 03 and its "Why" callout, and "Still open"
 - [verification.md](../verification.md): "The v0 scope decision" and its "Why" callout, and "What verified gates in v0"
-- [design-review.md](../design-review.md): items 1.2 and 4.3
+- [design-review.md](../archive/2026-09-design-review.md): items 1.2 and 4.3

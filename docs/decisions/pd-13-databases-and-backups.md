@@ -39,7 +39,7 @@ We start to pay, or the app reaches a free Supabase limit.
 
 - [CONTEXT.md, PD13 row and Why callout](../../CONTEXT.md)
 - [product-base.md, Still open](../product-base.md)
-- [launch-plan.md, Update 26 September](../launch-plan.md)
+- [launch-plan.md, Update 26 September](../archive/2026-09-launch-plan.md)
 - [extensibility.md](../extensibility.md)
 - [how-to-work.md](../how-to-work.md)
 - [team-plan.md, If things go incorrectly](../team-plan.md)

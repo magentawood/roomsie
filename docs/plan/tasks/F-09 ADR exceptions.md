@@ -37,4 +37,4 @@ Where we knowingly broke our own architecture rules, and why.
 ^done
 
 ## Read first
-- [launch-plan.md](../../launch-plan.md)
+- [pd-11-launch.md](../../decisions/pd-11-launch.md)

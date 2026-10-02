@@ -93,3 +93,5 @@ and third-party responses), before all other code touches it.
 The team composition has a large change in the direction of JVM. Or, a workload
 occurs that Node genuinely cannot serve. We do not expect these conditions
 before launch.
+
+Superseded (2026-09-25): the team is 5 engineers at 2 hours a day ([PD5](pd-05-team-and-budget.md)). The stack choice does not change.

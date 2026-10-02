@@ -67,13 +67,13 @@ The 23 September plan gave a reason for each cut:
 - Form B: filters need only Form A.
 - Advisor and RAG: we had not written the corpus.
 
-`launch-plan.md` keeps the initial reasoning as the record of the reason for each cut.
+The archived launch plan keeps the initial reasoning as the record of the reason for each cut.
 
 ## Sources
 
 - [CONTEXT.md](../../CONTEXT.md)
 - [product-base.md §16](../product-base.md)
-- [launch-plan.md](../launch-plan.md)
+- [launch-plan.md](../archive/2026-09-launch-plan.md)
 - [team-plan.md](../team-plan.md)
 - [how-to-work.md](../how-to-work.md)
 - [extensibility.md](../extensibility.md)

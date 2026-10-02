@@ -59,6 +59,6 @@ The marketing calls to Mumbai brokers test the model of free listings and paid i
 
 - [CONTEXT.md, PD3 and PD4 rows, and the "Ready to start now" table](../../CONTEXT.md)
 - [product-base.md, section 14 and its Why callout, and the "Still open" table](../product-base.md)
-- [launch-plan.md, Assumptions](../launch-plan.md)
+- [launch-plan.md, Assumptions](../archive/2026-09-launch-plan.md)
 - [verification.md, the v0 scope decision](../verification.md)
 - [research/supply-and-broker-model.md, Claim 1, Claim 3, the proposed model and the honest risks](../research/supply-and-broker-model.md)

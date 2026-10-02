@@ -123,5 +123,5 @@ mechanics, but not the appearance.
 - [product-base.md](../product-base.md), section 07
 - [interface-shape.md](../interface-shape.md), holes 1 to 5 and "Two smaller notes"
 - [ai-agent-design.md](../ai-agent-design.md), sections 3.3 and 3.4
-- [design-review.md](../design-review.md), item 4.3
-- [launch-plan.md](../launch-plan.md), "What moves to after launch"
+- [design-review.md](../archive/2026-09-design-review.md), item 4.3
+- [launch-plan.md](../archive/2026-09-launch-plan.md), "What moves to after launch"

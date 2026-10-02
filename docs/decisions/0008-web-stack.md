@@ -88,3 +88,5 @@ is not. Thus, we adopt it at this time.
 
 We do not expect to revisit this decision. The code that exists pins the styles
 and the framework, and the data layer is reversible if it is unsatisfactory.
+
+Superseded (2026-10-02): we do not copy the pages from `femmeflats-design`. Each page comes from its Figma design ([PD12](pd-12-team-plan.md)). The stack does not change.

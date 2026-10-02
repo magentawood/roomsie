@@ -37,7 +37,7 @@ details.callout[open] summary{color:var(--fg)}
 <h1 id="how-roomsie-is-built-and-why">How Roomsie is built, and why</h1>
 <p>The architecture at a glance. Each decision's full record is its ADR.</p>
 <h3 id="the-budget-that-decides-everything">The budget that decides everything</h3>
-<p>Four people at two hours a day for a month give ~200 real hours. Frontend takes 120–140h and backend + infra takes 60–80h. We measure each decision against the backend part (<a href="decisions/0001-rent-infrastructure.md">ADR 0001</a>).</p>
+<p>The team and its hours are in <a href="decisions/pd-05-team-and-budget.md">PD5</a>. We measure each decision against the backend part (<a href="decisions/0001-rent-infrastructure.md">ADR 0001</a>).</p>
 <h3 id="the-principle-underneath">The principle underneath</h3>
 <p>The cost of rework is not the same for all things. We spend early only on what becomes part of each client and each stored row: data model, API contract, identity and auth model, analytics event schema. Hosting, region, CDN and client libraries are cheap to change later (<a href="decisions/0001-rent-infrastructure.md">ADR 0001</a>).</p>
 <h3 id="the-stack">The stack</h3>

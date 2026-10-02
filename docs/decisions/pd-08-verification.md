@@ -57,7 +57,7 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
   approved methods, **not physical or digital copies**. UIDAI will ban
   photocopy collection.
 - **Do not accept the breach risk.** The manual route puts the most sensitive
-  identity data in India into the storage of a seven-person startup.
+  identity data in India into the storage of a small startup.
 - **DigiLocker gives a verified assertion.** After OTP authentication, it
   returns a signed Aadhaar XML, and we never hold the document. Approximately
   4,313 agencies have the document-requester status.
@@ -105,5 +105,5 @@ Also:
 - [CONTEXT.md](../../CONTEXT.md), PD8 row and its Why callout
 - [product-base.md](../product-base.md), section 13
 - [verification.md](../verification.md)
-- [launch-plan.md](../launch-plan.md), "What moves to after launch"
+- [launch-plan.md](../archive/2026-09-launch-plan.md), "What moves to after launch"
 - [assistant-risks.md](../assistant-risks.md), section 4.1

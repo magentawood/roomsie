@@ -86,7 +86,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
 
 - The router and the extractor are two sequential calls before the panel
   moves. Do not add a third hop without a measurement.
-- Six handlers is a design. Twelve is a maintenance problem for four
+- Six handlers is a design. Twelve is a maintenance problem for five
   part-time engineers.
 - Measure cost for each interview and each handler from day one. The cost for
   each handler tells you which handler to make smaller.
@@ -122,5 +122,5 @@ Jev access arrives.
 - [agent-architecture.md](../agent-architecture.md)
 - [ai-agent-design.md](../ai-agent-design.md), section 2
 - [scope-policy.md](../scope-policy.md), bands 2a and 2b
-- [launch-plan.md](../launch-plan.md), update of 26 September
+- [launch-plan.md](../archive/2026-09-launch-plan.md), update of 26 September
 - [team-plan.md](../team-plan.md), T-38

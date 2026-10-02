@@ -1,5 +1,7 @@
 # Launch plan: 12 October 2026
 
+> **Archived 2026-10-03.** This plan targeted 7 October and cut scope to keep the date. [PD11](../decisions/pd-11-launch.md) and [PD12](../decisions/pd-12-team-plan.md) replace it. This page is history.
+
 **Date:** 2026-09-23 · **Updated:** 2026-09-26 · **Status:** proposed · **Decision:** PD11
 
 **Update, 26 September:**
@@ -15,7 +17,7 @@
 - The text below is the initial reasoning, dated 23 September.
 - The schedule is at this time in `docs/team-plan.json`, `docs/team-plan.md` and `docs/how-to-work.md`.
 
-Why: [PD13](decisions/pd-13-databases-and-backups.md), [PD11](decisions/pd-11-launch.md)
+Why: [PD13](../decisions/pd-13-databases-and-backups.md), [PD11](../decisions/pd-11-launch.md)
 
 ---
 
@@ -35,7 +37,7 @@ Why: [PD13](decisions/pd-13-databases-and-backups.md), [PD11](decisions/pd-11-la
 - That is two to four times the available hours.
 - This plan keeps the date and cuts the scope.
 
-Why: [PD11](decisions/pd-11-launch.md)
+Why: [PD11](../decisions/pd-11-launch.md)
 
 ---
 
@@ -86,7 +88,7 @@ assistant, sees real flatmate matches, and can connect with one.**
 - Each cut has a slot in v1.
 - The design documents stay as they are.
 
-Why: [PD11](decisions/pd-11-launch.md), [PD10](decisions/pd-10-scope-bands.md)
+Why: [PD11](../decisions/pd-11-launch.md), [PD10](../decisions/pd-10-scope-bands.md)
 
 ---
 
@@ -97,14 +99,14 @@ conflicts here. For each conflict, we propose an exception with a time limit.
 
 | ADR | Conflict | Proposal |
 |---|---|---|
-| ADR 0011 | The design token pipeline is blocked. | Superseded (2026-10-02): the launch look comes from the Figma designs ([PD12](decisions/pd-12-team-plan.md)). |
+| ADR 0011 | The design token pipeline is blocked. | Superseded (2026-10-02): the launch look comes from the Figma designs ([PD12](../decisions/pd-12-team-plan.md)). |
 | ADR 0012 | The separate analytics instance | Use one events table in the primary database for launch. Migrate when the volume justifies a second project. |
 | ADR 0014 | Self-hosted GlitchTip | Use the free tier of Sentry for two weeks, behind the same `reportError` wrapper. |
 
 When the app repo exists, each conflict needs a one-line amendment in
 `docs/decisions/`.
 
-Why: [PD5](decisions/pd-05-team-and-budget.md), [ADR 0014](decisions/0014-error-tracking.md)
+Why: [PD5](../decisions/pd-05-team-and-budget.md), [ADR 0014](../decisions/0014-error-tracking.md)
 
 ---
 
@@ -116,7 +118,7 @@ Why: [PD5](decisions/pd-05-team-and-budget.md), [ADR 0014](decisions/0014-error-
 2. **Publish the first ten corpus articles** at `roomsie.com/blog`.
 3. **Make the broker calls.** They give information for v1, not v0.
 
-Why: [PD11](decisions/pd-11-launch.md)
+Why: [PD11](../decisions/pd-11-launch.md)
 
 ---
 
@@ -129,7 +131,7 @@ Why: [PD11](decisions/pd-11-launch.md)
 - **9 October is the last slip.** If the team cannot launch on that date, do not move the date again.
 - Then cut scope in this sequence: use templates for the replies, then remove photos for a week.
 
-Why: [PD11](decisions/pd-11-launch.md)
+Why: [PD11](../decisions/pd-11-launch.md)
 
 ## Decided: public launch
 
@@ -149,7 +151,7 @@ All of these items are necessary:
 That fits only if 5 people work on most days, weekends included, and no problem
 occurs.
 
-Why: [PD11](decisions/pd-11-launch.md)
+Why: [PD11](../decisions/pd-11-launch.md)
 
 ### Launch areas, stated publicly
 
@@ -158,7 +160,7 @@ Why: [PD11](decisions/pd-11-launch.md)
 - A visitor from a covered area sees a full panel.
 - A visitor from a different area joins a waitlist for that area.
 
-Why: [PD11](decisions/pd-11-launch.md)
+Why: [PD11](../decisions/pd-11-launch.md)
 
 ### Work that is not engineering hours
 
@@ -171,4 +173,4 @@ Why: [PD11](decisions/pd-11-launch.md)
 
 - **v0 is free.** There is no monetisation in two weeks. PD4 moves to v1.
 
-Why: [PD11](decisions/pd-11-launch.md)
+Why: [PD11](../decisions/pd-11-launch.md)

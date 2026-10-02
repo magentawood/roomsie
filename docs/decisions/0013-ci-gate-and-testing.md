@@ -89,3 +89,5 @@ swipe → first message.
   revocation works. Users would find those failures, on a safety platform.
 - **Full pyramid from day one.** This gives the highest confidence. But it costs
   approximately 40+ hours out of 200, and people would start to skip the CI run.
+
+Superseded (2026-09-25): the team is 5 engineers at 2 hours a day ([PD5](pd-05-team-and-budget.md)), and [PD12](pd-12-team-plan.md) holds the build hours. The product has no swipe flow: it starts with the assistant ([PD6](pd-06-interface-shape.md)). The five-minute CI gate does not change.

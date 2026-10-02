@@ -42,7 +42,7 @@ Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at
 
 **Other roles.** Design, marketing and the founder keep their roles. Their sequences are also below.
 
-**If there are four engineers, not five,** one lane has no owner. Plan for 14 October from day one. Use the cut order in `docs/launch-plan.md`.
+**If there are four engineers, not five,** one lane has no owner. Plan for 14 October from day one.
 
 ---
 
@@ -385,7 +385,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 
 **D-01 · Styling decision for launch** — done when:
 - The launch uses the look of the Figma designs, not the V3 prototype
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **F-01 · Kickoff: names on every role** — done when:
 - Every role in this plan has a person's name
@@ -428,7 +428,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 **F-06 · Pick the three launch areas** — done when:
 - The team chooses three areas with marketing
 - The team chooses them by where it can really reach people
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **T-11 · Model wrapper: DeepSeek with Gemini fallback** — done when:
 - One module is the only way the app calls a model
@@ -484,7 +484,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The form is live with the consent text
 - Outreach uses the team's own networks, college and company groups, and flat-hunting groups
 - The team invites people to sign up. The team never copies the posts or details of any person
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **T-35 · Form B contract and table** — done when:
 - Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
@@ -501,7 +501,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - 0011: the launch uses the prototype styles
 - 0012: one events table replaces a second database
 - 0014: the product uses the Sentry free tier, not GlitchTip
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **T-12 · Extraction: free text to form slots** — done when:
 - Free text becomes Form A slots, as JSON that uses only the enum values
@@ -773,12 +773,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-22a · Launch areas and waitlist API** — done when:
 - The API gives the names of the three launch areas
 - The system saves each waitlist entry with its area
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **T-22b · Launch areas and waitlist screen** — done when:
 - The site gives the names of the three launch areas
 - A visitor from a different area gets a waitlist form, not an empty panel
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **T-40 · Nightly database backups to R2** — done when:
 - A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
@@ -820,7 +820,7 @@ Public launch. The fallback date is Wednesday 14 October.
 - Invites go out on Sat 3 Oct, the day after profile creation works
 - The team helps people complete profiles
 - There are 150 profiles by Sunday 11 October, with at least 40 in each launch area
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 **A-01 · Bug fix day** — done when:
 - Engineers spend their two hours on P1 bugs only
@@ -830,7 +830,7 @@ Public launch. The fallback date is Wednesday 14 October.
 - T4 disables the invite gate. T4 tested the rollback
 - Everyone checks the live site on their own phone
 - Marketing posts and replies to every comment. Every bug report becomes an issue
-- Read first: `docs/launch-plan.md`
+- Read first: `docs/decisions/pd-11-launch.md`
 
 ### CP5 · First-week review — Mon 19 Oct
 
