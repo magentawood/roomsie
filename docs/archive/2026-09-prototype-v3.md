@@ -1,5 +1,7 @@
 # The V3 prototype
 
+> **Archived 2026-10-02.** The V3 prototype is not the launch design. The launch look comes from the Figma designs ([PD12](../decisions/pd-12-team-plan.md)). This page is history.
+
 **Updated:** 2026-09-30 · Moved from CONTEXT.md
 
 `docs/source/roomsie-prototype-V3.html` is a 23-surface clickable desktop prototype. Use it, not the PRD, as the pre-pivot baseline.
