@@ -26,4 +26,4 @@ export const INTENT_MATCHES = {
 
 export type Intent = keyof typeof INTENT_MATCHES
 
-export const compatibleIntents = (intent: Intent): readonly string[] => INTENT_MATCHES[intent]
+export const compatibleIntents = (intent: Intent): readonly Intent[] => INTENT_MATCHES[intent]

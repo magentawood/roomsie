@@ -14,8 +14,8 @@
  * So we show results early and honestly, and withhold the score until it
  * means something.
  */
-import { and, or, eq, ne, gte, lte, inArray, notInArray, sql, desc } from 'drizzle-orm'
-import type { PgDatabase } from 'drizzle-orm/pg-core'
+import { and, eq, ne, inArray, sql, desc } from 'drizzle-orm'
+import type { Db } from '../db/client'
 import { profiles, users, profileLifestyle, blocks } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
 
@@ -101,7 +101,7 @@ export const panelHeader = (f: FormA, total: number): string => {
 /* ── the query ──────────────────────────────────────────────────────────── */
 
 export async function findMatches(
-  db: PgDatabase<any, any, any>,
+  db: Db,
   form: FormA,
   opts: { viewerUserId?: string; viewerProfileId?: string; limit?: number; offset?: number } = {},
 ): Promise<MatchResult> {
@@ -121,7 +121,7 @@ export async function findMatches(
     eq(profiles.visibility, 'live'),
     /** Suspended and deleted people never appear. */
     eq(users.status, 'active'),
-    inArray(profiles.intent, compatibleIntents(form.intent) as string[]),
+    inArray(profiles.intent, compatibleIntents(form.intent)),
     /** Areas overlap. `&&` is Postgres array intersection. */
     sql`${profiles.areas} && ${form.areas}`,
   ]
