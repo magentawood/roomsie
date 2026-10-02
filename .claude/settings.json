@@ -10,5 +10,16 @@
         ]
       }
     ]
+  },
+  "extraKnownMarketplaces": {
+    "agentic-devkit": {
+      "source": {
+        "source": "github",
+        "repo": "magentawood/agentic-devkit"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "agentic-devkit@agentic-devkit": true
   }
 }
