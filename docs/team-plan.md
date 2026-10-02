@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-16b, T-22b.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
 
 ---
 
@@ -224,13 +224,13 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
 | P4 Content and moderation | 6 | T-22a | Launch areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
-| P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | no issue at this time |
+| P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | T-06 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | P5 Accounts and people | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06 | [#36](https://github.com/magentawood/roomsie/issues/36) |
-| P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | no issue at this time |
+| P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
 | Design | 2 | D-02 ⚑ | Design the chat screens |  | Thu 24 Sep | Fri 25 Sep | CP0 | D-01 | [#7](https://github.com/magentawood/roomsie/issues/7) |
 | Design | 3 | D-03 | Design results, profile and connect screens |  | Fri 25 Sep | Sun 27 Sep | CP1 | D-01 | [#19](https://github.com/magentawood/roomsie/issues/19) |

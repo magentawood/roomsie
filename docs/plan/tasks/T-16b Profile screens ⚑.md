@@ -8,6 +8,7 @@ start: 2026-10-04
 end: 2026-10-10
 checkpoint: CP3
 critical: true
+issue: https://github.com/magentawood/roomsie/issues/98
 tags:
   - task
   - p5
@@ -20,7 +21,7 @@ tags:
 **Owner:** [[P5 Accounts and people]], task 6 of 6  
 **When:** Sun 4 Oct → Sat 10 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#98](https://github.com/magentawood/roomsie/issues/98)
 
 > [!warning] Critical path
 > If this task is late, the launch is late.

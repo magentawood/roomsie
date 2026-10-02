@@ -8,6 +8,7 @@ start: 2026-10-08
 end: 2026-10-10
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/99
 tags:
   - task
   - p4
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P4 Content and moderation]], task 7 of 7  
 **When:** Thu 8 Oct → Sat 10 Oct · 1 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#99](https://github.com/magentawood/roomsie/issues/99)
 
 Show the three open areas, and a waitlist form to visitors from other areas.
 

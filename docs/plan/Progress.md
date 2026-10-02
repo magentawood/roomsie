@@ -95,9 +95,9 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 | [[T-09 Chip flow ⚑]] | P2 | 6 | D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | D-02 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | [[T-15 Results panel ⚑]] | P3 | 6 | D-03 | [#16](https://github.com/magentawood/roomsie/issues/16) |
-| [[T-16b Profile screens ⚑]] | P5 | 3 | D-03 | no issue at this time |
+| [[T-16b Profile screens ⚑]] | P5 | 3 | D-03 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | [[T-18b Person and connect screens ⚑]] | P3 | 4 | D-03 | [#44](https://github.com/magentawood/roomsie/issues/44) |
-| [[T-22b Waitlist screen]] | P4 | 1 | D-04 | no issue at this time |
+| [[T-22b Waitlist screen]] | P4 | 1 | D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | [[T-23a Landing page]] | P4 | 4 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 
 ### Graph
