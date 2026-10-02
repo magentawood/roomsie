@@ -12,8 +12,8 @@ roomsie/
 │   │   │   ├── (public)/       landing, privacy, terms, grievance        T-23a T-23b
 │   │   │   ├── chat/           full-screen chat, then split view, chips  T-10 T-09
 │   │   │   ├── people/[id]/    person detail and connect                 T-18b
-│   │   │   ├── profile/        create and edit, photos                   T-16
-│   │   │   └── waitlist/       launch areas and waitlist                 T-22
+│   │   │   ├── profile/        create and edit, photos                   T-16b
+│   │   │   └── waitlist/       launch areas and waitlist                 T-22b
 │   │   ├── components/         Figma look, theme tokens only             T-23a
 │   │   └── lib/                API client typed from packages/contract, Firebase sign-in
 │   └── api/                    Fastify · Zod · Drizzle → Fly.io Mumbai
@@ -23,7 +23,7 @@ roomsie/
 │       │   ├── adapters/       the only place a vendor SDK is imported
 │       │   │   ├── llm/        DeepSeek, then Gemini                     T-11
 │       │   │   ├── auth/       Firebase token check                      T-05
-│       │   │   ├── storage/    R2 presigned URLs                         T-16
+│       │   │   ├── storage/    R2 presigned URLs                         T-16a
 │       │   │   └── analytics/  track(), into the analytics database      T-24 T-39
 │       │   ├── assistant/      one entry point for every turn
 │       │   │   ├── pipeline.ts router first, then the handlers it picks T-12 T-34
@@ -33,11 +33,11 @@ roomsie/
 │       │   │   ├── chat/       stored turns, form state, turn cap,
 │       │   │   │               spend ceiling                             T-06 T-17 T-21
 │       │   │   ├── matching/   the match query                           T-14
-│       │   │   ├── profiles/   profiles and photos                       T-16
+│       │   │   ├── profiles/   profiles and photos                       T-16a
 │       │   │   ├── connections/ connect request, contact reveal          T-18a
 │       │   │   ├── moderation/ report, block, suspend                    T-19
 │       │   │   ├── account/    first sign-in, deletion                   T-05 T-20
-│       │   │   └── waitlist/   launch areas and waitlist                 T-22
+│       │   │   └── waitlist/   launch areas and waitlist                 T-22a
 │       │   └── db/             Drizzle client; each module keeps its
 │       │                       own schema file                           T-06
 │       ├── drizzle/            generated SQL migrations                  ADR 0006

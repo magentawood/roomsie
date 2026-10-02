@@ -11,30 +11,23 @@ Why: [PD11](decisions/pd-11-launch.md), [PD12](decisions/pd-12-team-plan.md)
 
 ---
 
-## The two phases
+## Until the designs arrive: waves
 
-- **Phase A · Thu 24 → Wed 30 Sep.** Design-free work. No person works on a screen.
-- **Phase B · Thu 1 → Sat 10 Oct.** All 35 hours of screens, when designs exist. Also the router, observer, advisor, analytics database and backups.
+The designs were not complete on 30 September, and they have no new date. Thus, the work goes in waves, not in dates.
 
-- Each task has one owner from start to finish.
-- No task in your list waits for a different person.
-- The finish date is the same.
-
-Why: [PD12](decisions/pd-12-team-plan.md)
-
----
-
-## The one hard deadline
-
-**Design must finish D-02, D-03 and D-04 by end of Wednesday 30 September.**
-
-- The designs must be complete. "Mostly done" is not sufficient.
-- **For each day after 30 September that a design is late, the launch is one day late.**
-- D-01, the styling decision, must come before that date. D-02, D-03 and D-04 cannot start before D-01 is complete.
+- Open "Design-free work" in `docs/plan/Progress.md`. No task there waits on a design.
+- **Wave 0 waits on no open task.** When a wave is complete, the next wave can start.
+- **Many people can work on one wave.** To take a task, assign its GitHub issue to you. First, make sure that the issue has no assignee.
+- In a wave, take the ⚑ tasks first. Then take the task that unblocks the most tasks.
+- Founder and marketing tasks that gate a build task are in the waves too. F-03 and F-04 come first, because the accounts and the keys gate most of the build.
+- A small screen part, for example a sign-in button, is plain. It has no design. The screen tasks apply the design to it.
+- When the designs arrive, the tasks in "Waits on the designs" join the waves. Then the team selects the launch date.
 
 Why: [PD12](decisions/pd-12-team-plan.md)
 
-## Other dates
+## The baseline dates
+
+These are the dates of the first plan. The launch date can move when the designs arrive.
 
 | Date | What |
 |---|---|
@@ -46,7 +39,7 @@ Why: [PD12](decisions/pd-12-team-plan.md)
 
 ## The rules
 
-1. **Work your list in order.**
+1. **Take the next task from the waves.**
 2. **Do one task at a time.** Finish and merge a task before you start the next task.
 3. **Open a pull request for each task.** Never push to `main`.
 4. **Make one PR for each task.** Put the task ID in the PR title.
@@ -57,7 +50,7 @@ Why: [PD12](decisions/pd-12-team-plan.md)
 
 ## Your list
 
-Open `docs/plan/Progress.md` or `docs/team-plan.md` (generated from `docs/team-plan.json`). Your tasks are the rows with your lane.
+Open "Design-free work" in `docs/plan/Progress.md`. It comes from `docs/team-plan.json`.
 
 - Each task note (`docs/plan/tasks/`) and GitHub issue starts with a plain-words description.
 - To change the plan, edit `docs/team-plan.json`. Then run `python3 tools/build-obsidian-plan.py`. Do not edit the generated files.
@@ -65,11 +58,11 @@ Open `docs/plan/Progress.md` or `docs/team-plan.md` (generated from `docs/team-p
 ## How to do a task
 
 0. The hook turns on by itself when you open the repo in Claude Code, and on `pnpm install` after T-02. If it is off, run `git config core.hooksPath .githooks` one time in the clone. The hook checks the doc limits and the generated files before each commit.
-1. Take the next task in your list.
+1. Take the next task from the waves. Assign its issue to you.
 2. Open its note in `docs/plan/tasks/`. Read the description, "Needs first", "Done when" and "Read first".
 3. Make a branch from `main`. Do the work. Obey the code rules in [docs/standards/](standards/_index.md).
 4. Open one pull request. Put the task ID in the title.
-5. When a "Done when" item is true, tick its box in the task note, not in the GitHub issue.
+5. When a "Done when" item is true, tick its box in the task note, not in the GitHub issue. Then run `python3 tools/build-obsidian-plan.py`, and commit `Progress.md` in the same PR.
 6. Merge when all the items are true. Then start the next task.
 
 If you have spare hours, tell the team. If a person is late, P4, P5 and P2 are the first to help.
@@ -96,8 +89,7 @@ Why: [PD12](decisions/pd-12-team-plan.md)
 
 ## What this costs
 
-- **We build all screens in Phase B.** Thus, UI problems show in the first week of October.
-- **Phase A has almost no slack.**
-- **One thing decides if the launch stays on 12 October: if the designs arrive on 30 September.**
+- **We build all screens after the designs arrive.** Thus, UI problems show late.
+- **The launch date depends on the date of the designs.** The team selects it when they arrive.
 
 Why: [PD12](decisions/pd-12-team-plan.md)
