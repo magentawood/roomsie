@@ -45,29 +45,20 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <p>Why: <a href="decisions/pd-11-launch.md">PD11</a>, <a href="decisions/pd-12-team-plan.md">PD12</a></p>
 <hr />
-<h2 id="the-two-phases">The two phases</h2>
+<h2 id="until-the-designs-arrive-waves">Until the designs arrive: waves</h2>
+<p>The designs were not complete on 30 September, and they have no new date. Thus, the work goes in waves, not in dates.</p>
 <ul>
-<li><strong>Phase A · Thu 24 → Wed 30 Sep.</strong> Design-free work. No person works on a screen.</li>
-<li>
-<p><strong>Phase B · Thu 1 → Sat 10 Oct.</strong> All 35 hours of screens, when designs exist. Also the router, observer, advisor, analytics database and backups.</p>
-</li>
-<li>
-<p>Each task has one owner from start to finish.</p>
-</li>
-<li>No task in your list waits for a different person.</li>
-<li>The finish date is the same.</li>
+<li>Open "Design-free work" in <code>docs/plan/Progress.md</code>. No task there waits on a design.</li>
+<li><strong>Wave 0 waits on no open task.</strong> When a wave is complete, the next wave can start.</li>
+<li><strong>Many people can work on one wave.</strong> To take a task, assign its GitHub issue to you. First, make sure that the issue has no assignee.</li>
+<li>In a wave, take the ⚑ tasks first. Then take the task that unblocks the most tasks.</li>
+<li>Founder and marketing tasks that gate a build task are in the waves too. F-03 and F-04 come first, because the accounts and the keys gate most of the build.</li>
+<li>A small screen part, for example a sign-in button, is plain. It has no design. The screen tasks apply the design to it.</li>
+<li>When the designs arrive, the tasks in "Waits on the designs" join the waves. Then the team selects the launch date.</li>
 </ul>
 <p>Why: <a href="decisions/pd-12-team-plan.md">PD12</a></p>
-<hr />
-<h2 id="the-one-hard-deadline">The one hard deadline</h2>
-<p><strong>Design must finish D-02, D-03 and D-04 by end of Wednesday 30 September.</strong></p>
-<ul>
-<li>The designs must be complete. "Mostly done" is not sufficient.</li>
-<li><strong>For each day after 30 September that a design is late, the launch is one day late.</strong></li>
-<li>D-01, the styling decision, must come before that date. D-02, D-03 and D-04 cannot start before D-01 is complete.</li>
-</ul>
-<p>Why: <a href="decisions/pd-12-team-plan.md">PD12</a></p>
-<h2 id="other-dates">Other dates</h2>
+<h2 id="the-baseline-dates">The baseline dates</h2>
+<p>These are the dates of the first plan. The launch date can move when the designs arrive.</p>
 <table>
 <thead>
 <tr>
@@ -93,7 +84,7 @@ details.callout[open] summary{color:var(--fg)}
 <hr />
 <h2 id="the-rules">The rules</h2>
 <ol>
-<li><strong>Work your list in order.</strong></li>
+<li><strong>Take the next task from the waves.</strong></li>
 <li><strong>Do one task at a time.</strong> Finish and merge a task before you start the next task.</li>
 <li><strong>Open a pull request for each task.</strong> Never push to <code>main</code>.</li>
 <li><strong>Make one PR for each task.</strong> Put the task ID in the PR title.</li>
@@ -102,7 +93,7 @@ details.callout[open] summary{color:var(--fg)}
 </ol>
 <p>Why: <a href="decisions/pd-12-team-plan.md">PD12</a></p>
 <h2 id="your-list">Your list</h2>
-<p>Open <code>docs/plan/Progress.md</code> or <code>docs/team-plan.md</code> (generated from <code>docs/team-plan.json</code>). Your tasks are the rows with your lane.</p>
+<p>Open "Design-free work" in <code>docs/plan/Progress.md</code>. It comes from <code>docs/team-plan.json</code>.</p>
 <ul>
 <li>Each task note (<code>docs/plan/tasks/</code>) and GitHub issue starts with a plain-words description.</li>
 <li>To change the plan, edit <code>docs/team-plan.json</code>. Then run <code>python3 tools/build-obsidian-plan.py</code>. Do not edit the generated files.</li>
@@ -110,11 +101,11 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="how-to-do-a-task">How to do a task</h2>
 <ol start="0">
 <li>The hook turns on by itself when you open the repo in Claude Code, and on <code>pnpm install</code> after T-02. If it is off, run <code>git config core.hooksPath .githooks</code> one time in the clone. The hook checks the doc limits and the generated files before each commit.</li>
-<li>Take the next task in your list.</li>
+<li>Take the next task from the waves. Assign its issue to you.</li>
 <li>Open its note in <code>docs/plan/tasks/</code>. Read the description, "Needs first", "Done when" and "Read first".</li>
 <li>Make a branch from <code>main</code>. Do the work. Obey the code rules in <a href="standards/_index.md">docs/standards/</a>.</li>
 <li>Open one pull request. Put the task ID in the title.</li>
-<li>When a "Done when" item is true, tick its box in the task note, not in the GitHub issue.</li>
+<li>When a "Done when" item is true, tick its box in the task note, not in the GitHub issue. Then run <code>python3 tools/build-obsidian-plan.py</code>, and commit <code>Progress.md</code> in the same PR.</li>
 <li>Merge when all the items are true. Then start the next task.</li>
 </ol>
 <p>If you have spare hours, tell the team. If a person is late, P4, P5 and P2 are the first to help.</p>
@@ -174,9 +165,8 @@ details.callout[open] summary{color:var(--fg)}
 <hr />
 <h2 id="what-this-costs">What this costs</h2>
 <ul>
-<li><strong>We build all screens in Phase B.</strong> Thus, UI problems show in the first week of October.</li>
-<li><strong>Phase A has almost no slack.</strong></li>
-<li><strong>One thing decides if the launch stays on 12 October: if the designs arrive on 30 September.</strong></li>
+<li><strong>We build all screens after the designs arrive.</strong> Thus, UI problems show late.</li>
+<li><strong>The launch date depends on the date of the designs.</strong> The team selects it when they arrive.</li>
 </ul>
 <p>Why: <a href="decisions/pd-12-team-plan.md">PD12</a></p>
 </main>

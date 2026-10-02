@@ -35,7 +35,7 @@ Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error
 | Move analytics to a larger store, for example ClickHouse | At scale | Change the sink in `track()`. Export and import the rows | Events go through one `track()`. Each event has an `event_version` from `packages/contract`. Product code does not read or join the events table | T-24, T-39 |
 | Change the auth provider | If necessary | Link `users.auth_provider_id` again | The Firebase UID is only in that column | T-05, T-06 |
 | Change error tracking to GlitchTip | v1 | In `reportError` | Only one function reports errors | T-07 ✓ |
-| Move photo storage | If necessary | Change the storage module and the base URL | Store object keys, not full URLs. Uploads use presigned URLs | T-16 ✓ |
+| Move photo storage | If necessary | Change the storage module and the base URL | Store object keys, not full URLs. Uploads use presigned URLs | T-16a ✓ |
 | Property listings | After v0 | A new `listings` module and table. Results get a second kind | Results in the contract are a tagged union, `kind: "person"`, from day one | T-08 |
 | In-app messaging | v1 | A new `messaging` module, with Supabase Realtime broadcast | Only rule 5 | — |
 | DigiLocker verification | v1 | A new `verification` module. The server makes the blur | Profiles have `visibility` at launch | T-06 ✓ |

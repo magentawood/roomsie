@@ -1,6 +1,6 @@
 # PD12 — Team plan: five lanes, two phases
 
-**Status:** Settled. Cut again on 2026-09-25. · **Date:** 2026-09-25 · **Deciders:** Yash
+**Status:** Settled. Cut again on 2026-09-25. Amended on 2026-10-03. · **Date:** 2026-09-25 · **Deciders:** Yash
 
 ## Context
 
@@ -11,7 +11,7 @@
 
 ## Decision
 
-**In one line:** Five engineering lanes work in two phases, and designs D-02, D-03 and D-04 must be complete by the end of Wednesday 30 September.
+**In one line:** All design-free work comes first, in waves, and the screens come when designs D-02, D-03 and D-04 arrive.
 
 **All the work that needs no design comes first. We build all screens when the designs are available.**
 
@@ -29,7 +29,19 @@ There are **five engineering lanes, P1 to P5**, and two phases.
   generated from docs/team-plan.json.
 - After Phase A, no task in a person's list waits for a different person.
 - Design, marketing and the founder keep their roles.
-- Rules: work your list in order, one task at a time. Open one PR for each task. Never push to `main`. In the first week, merge on the day that you finish.
+- Rules: one task at a time for each person. Open one PR for each task. Never push to `main`. In the first week, merge on the day that you finish.
+
+### Amendment, 2026-10-03: design-free waves
+
+The designs were not complete on 30 September, and they have no new date. Until they arrive:
+
+- **Waves replace the lane lists and the dates.** The build script calculates the waves from the `deps` in `docs/team-plan.json`. Wave 0 waits on no open task. `Progress.md` shows the waves.
+- **Many people can work on one wave.** To take a task, a person assigns its GitHub issue to themselves.
+- **Founder and marketing tasks that gate a build task join the waves.** F-04 (accounts and keys) gates T-04, T-05, T-07, T-11 and T-40. F-06, F-07 and M-05 gate T-22a, T-23b and T-38.
+- **A task with a large screen part has two halves.** T-16 is T-16a (API) and T-16b (screens). T-22 is T-22a and T-22b.
+- **The team builds a small screen part plain, with no design.** The screen tasks of D-02, D-03 and D-04 then apply the design to it.
+- **Each ticket PR rebuilds `Progress.md`.** A check fails when the file is stale.
+- **The team selects the launch date when the designs arrive,** and records it in [PD11](pd-11-launch.md).
 
 | Checkpoint | Date |
 |---|---|
@@ -73,7 +85,6 @@ Why the designer gets a design review (`design-review.md`):
 
 ## Consequences
 
-- **For each day after 30 September that a design is late, the launch is one day late.** Phase A has no slack.
 - We build all screens in Phase B. Thus, UI problems show in the first week of October. These late problems are the cost of no designs, not a mistake in the order of tasks.
 - During Phase A, no person owns a vertical from end to end. We get resilience, but we lose clean ownership.
 - If there are only four engineers, plan for 14 October from day one.
