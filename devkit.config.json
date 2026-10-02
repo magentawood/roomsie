@@ -25,5 +25,28 @@
       "docs/decisions/0005-managed-platform-split.md": 1333,
       "docs/research/hinglish-model-report.md": 1756
     }
+  },
+  "docArchitecture": {
+    "ledgers": {
+      "product": "docs/product-base.md",
+      "tech": "docs/tech-base.md"
+    },
+    "renderPages": [
+      "docs/tech-base.md",
+      "docs/product-base.md",
+      "docs/how-to-work.md",
+      "docs/journal/2026-09.md",
+      "docs/design-review.md"
+    ],
+    "toolsVersion": "0.5.1",
+    "toolCopies": {
+      "tools/doc-budget.py": "1a4e1f7ffb6c",
+      "tools/doc-links.py": "2468e4ec8342",
+      "tools/build-decision-ledger.py": "9109b454f89c",
+      "tools/render-docs.py": "7beb8860603a",
+      ".githooks/pre-commit": "af5b5b154fcd",
+      ".github/workflows/docs-check.yml": "fcb7e6254ef4",
+      "tools/devkit-defaults.json": "64bf72f35be1"
+    }
   }
 }
