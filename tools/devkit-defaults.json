@@ -1,0 +1,82 @@
+{
+  "vaultPath": ".",
+  "standardsPath": "docs/standards",
+  "decisionsPath": "docs/decisions",
+  "journalPath": "docs/journal/{yyyy}-{mm}.md",
+  "plan": {
+    "tasksPath": "docs/plan/tasks",
+    "progressNote": "docs/plan/Progress.md"
+  },
+  "approvalGates": [
+    "spec",
+    "pr"
+  ],
+  "mergeMode": "ask",
+  "reviewRounds": 2,
+  "statusLabels": [
+    "status:spec",
+    "status:in-progress",
+    "status:in-review",
+    "status:done"
+  ],
+  "ste": {
+    "spelling": "american",
+    "allowWords": []
+  },
+  "docBudget": {
+    "exclude": [
+      "**/archive/**",
+      "**/journal/**"
+    ],
+    "rules": [
+      {
+        "glob": "CONTEXT.md",
+        "maxTokens": 1500
+      },
+      {
+        "glob": "**/decisions/*.md",
+        "maxWords": 1200
+      },
+      {
+        "glob": "**/research/*.md",
+        "maxWords": 1500
+      },
+      {
+        "glob": "**/specs/*.md",
+        "maxWords": 1200
+      },
+      {
+        "glob": "*.md",
+        "maxWords": 1200
+      }
+    ],
+    "overrides": {}
+  },
+  "docArchitecture": {
+    "parts": {
+      "index": true,
+      "records": true,
+      "productRecords": true,
+      "ledgers": true,
+      "specs": true,
+      "journal": true,
+      "archive": true,
+      "html": true,
+      "hook": true,
+      "ci": true
+    },
+    "indexFile": "CONTEXT.md",
+    "specPath": "docs/specs",
+    "archivePath": "docs/archive",
+    "ledgers": {
+      "product": "docs/product-ledger.md",
+      "tech": "docs/tech-ledger.md"
+    },
+    "settledStatuses": [
+      "Settled",
+      "Accepted",
+      "Superseded"
+    ],
+    "renderPages": []
+  }
+}
