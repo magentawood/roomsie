@@ -32,15 +32,16 @@ Open, with no record yet: the elevator pitch.
 | The schema, migrations, ids | [ADR-0006](docs/decisions/0006-drizzle.md), [ADR-0015](docs/decisions/0015-primary-key-strategy.md), [ADR-0012](docs/decisions/0012-analytics-event-store.md) |
 | The API, auth, tokens | [ADR-0002](docs/decisions/0002-api-boundary.md), [ADR-0004](docs/decisions/0004-api-stack-typescript-fastify.md), [ADR-0007](docs/decisions/0007-web-rendering-and-auth-transport.md) |
 | Secrets, env vars, logging PII | [ADR-0016](docs/decisions/0016-credentials-and-secrets.md), [ADR-0014](docs/decisions/0014-error-tracking.md) |
-| Web UI, styling, tokens | [ADR-0008](docs/decisions/0008-web-stack.md), [ADR-0011](docs/decisions/0011-design-system-token-pipeline.md), [interface-shape.md](docs/interface-shape.md) |
-| The assistant, prompts, models | [PD7](docs/decisions/pd-07-models.md), [PD7a](docs/decisions/pd-07a-agent-architecture.md), [PD10](docs/decisions/pd-10-scope-bands.md), [ai-agent-design.md](docs/ai-agent-design.md) |
+| Web UI, styling, tokens | [ADR-0008](docs/decisions/0008-web-stack.md), [ADR-0011](docs/decisions/0011-design-system-token-pipeline.md), [PD6a](docs/decisions/pd-06a-mobile-split-view.md), [interface-shape.md](docs/interface-shape.md) |
+| The assistant, prompts, models | [PD7](docs/decisions/pd-07-models.md), [PD7a](docs/decisions/pd-07a-agent-architecture.md), [PD10](docs/decisions/pd-10-scope-bands.md), [ai-agent-design.md](docs/ai-agent-design.md), [agent-architecture.md](docs/agent-architecture.md), [scope-policy.md](docs/scope-policy.md) |
 | Matching and preferences | [PD3b](docs/decisions/pd-03b-interview-vs-chips.md), [PD3c](docs/decisions/pd-03c-exclusionary-preferences.md), [PD6c](docs/decisions/pd-06c-interface-holes.md) |
-| Limits, abuse, spend | [PD9](docs/decisions/pd-09-pre-login-limits.md), [pre-login-limits.md](docs/pre-login-limits.md) |
+| Limits, abuse, spend, cost | [PD9](docs/decisions/pd-09-pre-login-limits.md), [pre-login-limits.md](docs/pre-login-limits.md), [PD5](docs/decisions/pd-05-team-and-budget.md), [cost-and-team.md](docs/cost-and-team.md) |
 | Login gate, SEO, public pages | [PD6b](docs/decisions/pd-06b-login-gate-and-search.md), [seo-with-gated-products.md](docs/seo-with-gated-products.md) |
 | Verification, trust, safety | [PD8](docs/decisions/pd-08-verification.md), [verification.md](docs/verification.md), [assistant-risks.md](docs/assistant-risks.md) |
 | Hosting, deploy, CI, backups | [ADR-0009](docs/decisions/0009-hosting-and-region.md), [ADR-0013](docs/decisions/0013-ci-gate-and-testing.md), [PD13](docs/decisions/pd-13-databases-and-backups.md) |
-| A new vendor or feature | [extensibility.md](docs/extensibility.md), [repo-layout.md](docs/repo-layout.md) |
-| The plan, dates, owners | [how-to-work.md](docs/how-to-work.md), [Progress.md](docs/plan/Progress.md), [PD12](docs/decisions/pd-12-team-plan.md) |
+| A new vendor or feature | [extensibility.md](docs/extensibility.md), [repo-layout.md](docs/repo-layout.md), [ADR-0005](docs/decisions/0005-managed-platform-split.md), [ADR-0010](docs/decisions/0010-monorepo-tooling.md) |
+| Articles, the advisor corpus | [corpus-plan.md](docs/content/corpus-plan.md), [PD10](docs/decisions/pd-10-scope-bands.md) |
+| The plan, dates, owners | [how-to-work.md](docs/how-to-work.md), [Progress.md](docs/plan/Progress.md), [PD11](docs/decisions/pd-11-launch.md), [PD12](docs/decisions/pd-12-team-plan.md) |
 
 ## Where things live
 
