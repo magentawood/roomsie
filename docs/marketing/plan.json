@@ -1,0 +1,1000 @@
+{
+ "launch": "2026-10-11",
+ "fallback_launch": "2026-10-18",
+ "roles": {
+  "DV": "Devashish",
+  "RT": "Ritvij",
+  "MK": "Devashish + Ritvij"
+ },
+ "milestones": [
+  [
+   "M0",
+   "Workspace ready",
+   "2026-10-04"
+  ],
+  [
+   "M1",
+   "Form live",
+   "2026-10-05"
+  ],
+  [
+   "M2",
+   "Articles in",
+   "2026-10-10"
+  ],
+  [
+   "M3",
+   "Launch",
+   "2026-10-11"
+  ],
+  [
+   "M4",
+   "First-week review",
+   "2026-10-19"
+  ],
+  [
+   "M5",
+   "Monthly review",
+   "2026-11-08"
+  ]
+ ],
+ "tasks": [
+  {
+   "id": "MK-01",
+   "title": "Set up the marketing workspace",
+   "plain": "Install the marketing agent and connect it to roomsie.",
+   "role": "MK",
+   "start": "2026-10-03",
+   "end": "2026-10-03",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "The agentic-marketing plugin is installed on both laptops",
+    "`/marketing doctor` shows no missing key, or lists each missing key with its owner",
+    "Both people can run `/task next`"
+   ],
+   "read": [
+    "docs/marketing/CONTEXT.md"
+   ],
+   "cp": "M0",
+   "tech": {
+    "marketing": "Install the plugin, run `/marketing setup`, put the keys in the local `.env`",
+    "tech": "Create the `marketing` branch, give GitHub access, create the Google service account, share keys through the password manager"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-02",
+   "title": "Create the tracking sheets",
+   "plain": "One KPI sheet, one spend log and one outreach sheet.",
+   "role": "RT",
+   "start": "2026-10-03",
+   "end": "2026-10-03",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "The KPI sheet, spend log and outreach sheet exist from the plugin templates",
+    "The service account can read all three and write to the outreach sheet",
+    "Both people and Yash can open all three"
+   ],
+   "read": [],
+   "cp": "M0",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-03",
+   "title": "Write the roomsie voice guide",
+   "plain": "How roomsie sounds in Hinglish, and what it never claims.",
+   "role": "DV",
+   "start": "2026-10-03",
+   "end": "2026-10-04",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "`docs/marketing/voice-guide.md` has tone, sample lines, words to use and words to avoid",
+    "It lists the claims we cannot make at launch: verified profiles, women-only, \"thousands of users\"",
+    "Yash approves it in its merge request"
+   ],
+   "read": [
+    "docs/product-base.md"
+   ],
+   "cp": "M0",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-04",
+   "title": "Canva template kit with Holkar",
+   "plain": "Templates so daily posts look the same.",
+   "role": "MK",
+   "start": "2026-10-03",
+   "end": "2026-10-04",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "Templates exist for a Reel cover, a carousel, a Story, a poll and a countdown",
+    "They use the colours and fonts of the V3 prototype (D-01)",
+    "Holkar approves the kit"
+   ],
+   "read": [],
+   "cp": "M0",
+   "tech": {
+    "marketing": "Make the templates in Canva",
+    "tech": "Holkar (design) supervises and approves"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-05",
+   "title": "Set up Instagram, Facebook and WhatsApp",
+   "plain": "The three Meta accounts, ready to post.",
+   "role": "DV",
+   "start": "2026-10-03",
+   "end": "2026-10-03",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "Instagram professional account and Facebook page exist with the same handle",
+    "WhatsApp Business account and a WhatsApp Channel exist",
+    "Each bio links to the seeding form with a UTM tag"
+   ],
+   "read": [],
+   "cp": "M0",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-06",
+   "title": "Build the seeding form",
+   "plain": "A Google Form that collects people before the app opens.",
+   "role": "MK",
+   "start": "2026-10-03",
+   "end": "2026-10-05",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "Fields: name, Gmail, WhatsApp number, area, budget, room or flatmate, move date, where you heard of us",
+    "Niruv's consent text is at the top",
+    "The Gmail field is required, because the invite gate uses it",
+    "Responses go to a Google Sheet that the service account can read"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": {
+    "marketing": "Build the form and the responses sheet",
+    "tech": "Niruv writes the consent text"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-07",
+   "title": "Seeding posts and messages ready",
+   "plain": "Everything to send the moment the form opens.",
+   "role": "DV",
+   "start": "2026-10-03",
+   "end": "2026-10-04",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "Five post packs for Instagram and Facebook are approved",
+    "Message drafts exist for WhatsApp groups, Facebook flat groups, colleges, co-working spaces and companies",
+    "Each link has its own UTM tag"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-08",
+   "title": "Form live and outreach starts",
+   "plain": "Open the form and send the first wave.",
+   "role": "MK",
+   "start": "2026-10-05",
+   "end": "2026-10-05",
+   "fallback": null,
+   "deps": [
+    "MK-06",
+    "MK-07"
+   ],
+   "done": [
+    "The form is live",
+    "The first wave of posts and messages is out",
+    "The KPI sheet shows the first sign-ups"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-09",
+   "title": "Seeding: Devashish's channels",
+   "plain": "Own networks, Instagram, Facebook and WhatsApp groups.",
+   "role": "DV",
+   "start": "2026-10-05",
+   "end": "2026-10-11",
+   "fallback": "2026-10-18",
+   "deps": [
+    "MK-08"
+   ],
+   "done": [
+    "250 sign-ups come from these channels (source column)",
+    "Each group post follows the group's rules",
+    "No post or detail of another person is copied"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-10",
+   "title": "Seeding: Ritvij's channels",
+   "plain": "Colleges, co-working spaces and companies.",
+   "role": "RT",
+   "start": "2026-10-05",
+   "end": "2026-10-11",
+   "fallback": "2026-10-18",
+   "deps": [
+    "MK-08"
+   ],
+   "done": [
+    "250 sign-ups come from these channels (source column)",
+    "Each contact is in the outreach sheet"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-11",
+   "title": "Send the invite list to tech every day",
+   "plain": "New Gmails go on the invite allowlist.",
+   "role": "RT",
+   "start": "2026-10-06",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-08"
+   ],
+   "done": [
+    "Each day, the new Gmail addresses go to tech in one `/ask-tech` issue",
+    "Tech confirms they are on the allowlist"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": {
+    "marketing": "Export the new Gmails from the responses sheet each day",
+    "tech": "Add them to the invite-only allowlist (T-33)"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-12",
+   "title": "Beta invites and profile help",
+   "plain": "Get sign-ups to finish a profile.",
+   "role": "DV",
+   "start": "2026-10-07",
+   "end": "2026-10-11",
+   "fallback": "2026-10-18",
+   "deps": [
+    "MK-11"
+   ],
+   "done": [
+    "Each invited person gets a WhatsApp message with the link and two lines of help",
+    "300 profiles exist on 11 October",
+    "Every person who gets stuck gets an answer the same day"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": {
+    "marketing": "Send invites and help people finish profiles",
+    "tech": "Confirm profile creation works (T-16) and the invite gate is open for the allowlist"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-13",
+   "title": "Article interviews",
+   "plain": "Real people's questions become the article headings.",
+   "role": "MK",
+   "start": "2026-10-03",
+   "end": "2026-10-06",
+   "fallback": "2026-10-13",
+   "deps": [],
+   "done": [
+    "Three to five people are interviewed for each topic group with `/call`",
+    "Each transcript is checked by a person and is in `transcripts/`",
+    "Each interviewee agreed to the recording at the start"
+   ],
+   "read": [
+    "docs/content/corpus-plan.md"
+   ],
+   "cp": "M2",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-14",
+   "title": "Article drafts 1, 2, 3, 7, 8",
+   "plain": "Leave and licence, registration, stamp duty, police verification, society NOC.",
+   "role": "DV",
+   "start": "2026-10-05",
+   "end": "2026-10-09",
+   "fallback": "2026-10-16",
+   "deps": [
+    "MK-13"
+   ],
+   "done": [
+    "Five drafts are made with `/article` from the transcripts",
+    "Each draft has a heavy human edit, a named author and one fact only a local knows",
+    "Each draft states its date for any rate or fee"
+   ],
+   "read": [
+    "docs/content/corpus-plan.md"
+   ],
+   "cp": "M2",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-15",
+   "title": "Article drafts 4, 5, 6, 9, 10",
+   "plain": "Deposits, deductions, notice periods, brokerage, deposit cost by area.",
+   "role": "RT",
+   "start": "2026-10-05",
+   "end": "2026-10-09",
+   "fallback": "2026-10-16",
+   "deps": [
+    "MK-13"
+   ],
+   "done": [
+    "Five drafts are made with `/article` from the transcripts",
+    "Each draft has a heavy human edit, a named author and one fact only a local knows",
+    "Each draft states its date for any rate or fee"
+   ],
+   "read": [
+    "docs/content/corpus-plan.md"
+   ],
+   "cp": "M2",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-16",
+   "title": "Keyword list",
+   "plain": "One main keyword for each article and for the brand.",
+   "role": "RT",
+   "start": "2026-10-04",
+   "end": "2026-10-05",
+   "fallback": "2026-10-12",
+   "deps": [],
+   "done": [
+    "Each of the 10 articles has one main keyword and two to three related ones",
+    "The list is in `docs/marketing/keywords.md`"
+   ],
+   "read": [],
+   "cp": "M2",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-17",
+   "title": "SEO pass on all 10 articles",
+   "plain": "Titles, descriptions, headings and links.",
+   "role": "RT",
+   "start": "2026-10-07",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-14",
+    "MK-15",
+    "MK-16"
+   ],
+   "done": [
+    "Each article has a title under 60 characters and a description under 155",
+    "Headings are questions in the words people use",
+    "Each article links to two other articles and to the chat"
+   ],
+   "read": [],
+   "cp": "M2",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-18",
+   "title": "Articles go live",
+   "plain": "The 10 articles reach `roomsie.com/blog` and the Advisor.",
+   "role": "RT",
+   "start": "2026-10-09",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-17"
+   ],
+   "done": [
+    "One merge request into `main` holds the 10 article files",
+    "Yash approves it",
+    "The articles show on the blog and the Advisor can answer from them"
+   ],
+   "read": [],
+   "cp": "M2",
+   "tech": {
+    "marketing": "Open the merge request with the article files and their SEO fields",
+    "tech": "Yash approves; T-37 loads the files into the articles table and the blog"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-19",
+   "title": "Search Console",
+   "plain": "See how Google finds roomsie.",
+   "role": "RT",
+   "start": "2026-10-08",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [],
+   "done": [
+    "Ritvij has access to the Search Console property",
+    "The sitemap is submitted on launch day"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": {
+    "marketing": "Request access; submit the sitemap; read the reports",
+    "tech": "Verify the domain through DNS and make the sitemap"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-20",
+   "title": "Meta tags and schema on articles",
+   "plain": "So search results show the right title and details.",
+   "role": "RT",
+   "start": "2026-10-09",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-17"
+   ],
+   "done": [
+    "Each article file has its title, description and Article schema fields",
+    "Google's Rich Results Test shows no error on two sample pages after launch"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": {
+    "marketing": "Write the SEO fields in each article file",
+    "tech": "Render them into the page head and schema"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-21",
+   "title": "Google Business Profile",
+   "plain": "roomsie on Google Search and Maps.",
+   "role": "RT",
+   "start": "2026-10-06",
+   "end": "2026-10-09",
+   "fallback": "2026-10-16",
+   "deps": [],
+   "done": [
+    "The profile is submitted as a service-area business for Mumbai",
+    "Name, phone and website match the site footer exactly",
+    "Verification is started (it can take days)"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-22",
+   "title": "Justdial and Sulekha listings",
+   "plain": "Two local directories.",
+   "role": "RT",
+   "start": "2026-10-07",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-21"
+   ],
+   "done": [
+    "Both listings are live or submitted",
+    "Name, phone and website match the Google profile"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-23",
+   "title": "Pre-launch posts",
+   "plain": "A post every day and Stories, in Hinglish.",
+   "role": "MK",
+   "start": "2026-10-05",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-04",
+    "MK-05"
+   ],
+   "done": [
+    "One feed post and two to three Stories go out each day",
+    "Each post comes from a post pack that a person approved",
+    "No team member's face appears"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-24",
+   "title": "Find people for Reels and ads",
+   "plain": "People outside the team who agree to appear.",
+   "role": "DV",
+   "start": "2026-10-04",
+   "end": "2026-10-06",
+   "fallback": "2026-10-13",
+   "deps": [],
+   "done": [
+    "The team decides who appears",
+    "Each person signs a short consent for their face in posts and ads"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-25",
+   "title": "Launch posts",
+   "plain": "Written before launch day.",
+   "role": "DV",
+   "start": "2026-10-07",
+   "end": "2026-10-09",
+   "fallback": "2026-10-16",
+   "deps": [],
+   "done": [
+    "Launch posts, the founder story and the list of groups and channels exist",
+    "They are scheduled in Meta Business Suite on 10 October"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-26",
+   "title": "Launch visuals",
+   "plain": "Images for the launch-day posts.",
+   "role": "DV",
+   "start": "2026-10-09",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [],
+   "done": [
+    "Post images and link preview images are ready"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": {
+    "marketing": "Ask for them with `/ask-design` and add them to the launch post packs",
+    "tech": "Holkar makes them (D-06)"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-27",
+   "title": "Ad plan and budget split",
+   "plain": "Where each rupee goes.",
+   "role": "DV",
+   "start": "2026-10-04",
+   "end": "2026-10-05",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "The plan splits ₹10,000–20,000: about ₹3,000 before launch to the form, the rest from launch day",
+    "Each ad set has a fixed amount",
+    "Yash or Niruv approved any spend over ₹2,000"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-28",
+   "title": "Pre-launch seeding ads",
+   "plain": "Small Mumbai ads that point to the form.",
+   "role": "DV",
+   "start": "2026-10-06",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-27",
+    "MK-08"
+   ],
+   "done": [
+    "Ads run in Mumbai, ages 20–30, with UTM-tagged links",
+    "Each spend is in the spend log with the sign-ups it brought"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-29",
+   "title": "Launch ads",
+   "plain": "Most of the budget, from launch day.",
+   "role": "DV",
+   "start": "2026-10-11",
+   "end": "2026-10-19",
+   "fallback": "2026-10-26",
+   "deps": [
+    "MK-27"
+   ],
+   "done": [
+    "Ads point to roomsie with UTM-tagged links",
+    "Weak ads stop within two days",
+    "Each spend is in the spend log"
+   ],
+   "read": [],
+   "cp": "M4",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-30",
+   "title": "Weekly ads export",
+   "plain": "Results back into the spend log.",
+   "role": "DV",
+   "start": "2026-10-12",
+   "end": "2026-10-19",
+   "fallback": "2026-10-26",
+   "deps": [],
+   "done": [
+    "Each Monday the Ads Manager export is in the spend log",
+    "Cost per sign-up is in the KPI sheet"
+   ],
+   "read": [],
+   "cp": "M4",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-31",
+   "title": "Tracking and UTM list",
+   "plain": "What marketing must be able to see.",
+   "role": "RT",
+   "start": "2026-10-04",
+   "end": "2026-10-05",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "A list of marketing questions and the event or field that answers each one",
+    "UTM rules: source, medium and campaign names",
+    "Tech confirms that the sign-up stores its UTM source"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": {
+    "marketing": "Write the questions and the UTM rules",
+    "tech": "Implement GA4, Vercel Analytics and the roomsie events, and store the UTM source on sign-up"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-32",
+   "title": "Meta Pixel decision",
+   "plain": "Can ads see sign-ups?",
+   "role": "RT",
+   "start": "2026-10-05",
+   "end": "2026-10-06",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "Yash decides yes or no on the Meta Pixel",
+    "The decision is in `docs/marketing/decisions.md`"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": {
+    "marketing": "Bring the question and the trade-off to Yash",
+    "tech": "Yash decides; if yes, tech installs it"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-33",
+   "title": "Looker Studio dashboard",
+   "plain": "One free dashboard for all the numbers.",
+   "role": "RT",
+   "start": "2026-10-08",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-31"
+   ],
+   "done": [
+    "It shows GA4, the Supabase events, the form responses, the spend log and the outreach sheet",
+    "Both marketing people can open and edit it",
+    "No raw rows are downloaded outside Looker Studio"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": {
+    "marketing": "Build the dashboard",
+    "tech": "Give GA4 access and a read-only Supabase login"
+   },
+   "light": false
+  },
+  {
+   "id": "MK-34",
+   "title": "Daily dashboard check",
+   "plain": "Read the numbers every day.",
+   "role": "MK",
+   "start": "2026-10-11",
+   "end": "2026-10-19",
+   "fallback": "2026-10-26",
+   "deps": [
+    "MK-33"
+   ],
+   "done": [
+    "Each day the numbers go into `/standup`",
+    "A drop of 30% or more gets a `/ask-tech` issue the same day"
+   ],
+   "read": [],
+   "cp": "M4",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-35",
+   "title": "Partner target list",
+   "plain": "Colleges, co-working spaces and companies.",
+   "role": "RT",
+   "start": "2026-10-03",
+   "end": "2026-10-04",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "30 targets are in the outreach sheet with a contact person for each"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-36",
+   "title": "Partner offer",
+   "plain": "What partners get. Marketing decides.",
+   "role": "MK",
+   "start": "2026-10-04",
+   "end": "2026-10-05",
+   "fallback": null,
+   "deps": [],
+   "done": [
+    "The offer for colleges, co-working spaces and companies is written",
+    "It needs no money from the ad budget, or the approval rule applies"
+   ],
+   "read": [],
+   "cp": "M1",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-37",
+   "title": "Partner outreach",
+   "plain": "Ask partners to share the form.",
+   "role": "RT",
+   "start": "2026-10-05",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [
+    "MK-35",
+    "MK-36"
+   ],
+   "done": [
+    "All 30 targets are contacted",
+    "Each reply and next step is in the outreach sheet"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-38",
+   "title": "Broker calls before launch",
+   "plain": "Learn how brokers would list on roomsie.",
+   "role": "DV",
+   "start": "2026-10-07",
+   "end": "2026-10-10",
+   "fallback": "2026-10-17",
+   "deps": [],
+   "done": [
+    "Five broker calls are done with `/call`",
+    "The notes are in `docs/research/`"
+   ],
+   "read": [
+    "docs/research/supply-and-broker-model.md"
+   ],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-39",
+   "title": "Broker calls after launch",
+   "plain": "The remaining calls, split.",
+   "role": "MK",
+   "start": "2026-10-12",
+   "end": "2026-10-19",
+   "fallback": "2026-10-26",
+   "deps": [
+    "MK-38"
+   ],
+   "done": [
+    "Five more calls each",
+    "The notes are in `docs/research/`",
+    "If seeding is behind, drop this task first"
+   ],
+   "read": [],
+   "cp": "M4",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-40",
+   "title": "Launch day",
+   "plain": "Open to the public.",
+   "role": "MK",
+   "start": "2026-10-11",
+   "end": "2026-10-11",
+   "fallback": "2026-10-18",
+   "deps": [
+    "MK-25"
+   ],
+   "done": [
+    "The launch posts go out",
+    "Each comment and DM gets a reply",
+    "Each bug report becomes a `/ask-tech` issue"
+   ],
+   "read": [],
+   "cp": "M3",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-41",
+   "title": "First-week push",
+   "plain": "Keep the posts, groups and partners going.",
+   "role": "MK",
+   "start": "2026-10-12",
+   "end": "2026-10-18",
+   "fallback": "2026-10-25",
+   "deps": [],
+   "done": [
+    "A post every day",
+    "New groups and partners each day",
+    "Sign-in rate at the 5-message wall is checked daily"
+   ],
+   "read": [],
+   "cp": "M4",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-42",
+   "title": "First-week review",
+   "plain": "Read the numbers and set the next order.",
+   "role": "MK",
+   "start": "2026-10-19",
+   "end": "2026-10-19",
+   "fallback": "2026-10-26",
+   "deps": [],
+   "done": [
+    "Each KPI is compared with its target",
+    "Each channel is marked keep, change or stop",
+    "The light plan to 8 November is updated"
+   ],
+   "read": [],
+   "cp": "M4",
+   "tech": null,
+   "light": false
+  },
+  {
+   "id": "MK-43",
+   "title": "Articles 11 to 20",
+   "plain": "The next ten corpus articles.",
+   "role": "MK",
+   "start": "2026-10-20",
+   "end": "2026-11-08",
+   "fallback": "2026-11-15",
+   "deps": [],
+   "done": [
+    "Two articles a week go live"
+   ],
+   "read": [],
+   "cp": "M5",
+   "tech": null,
+   "light": true
+  },
+  {
+   "id": "MK-44",
+   "title": "Micro-creator plan for v1",
+   "plain": "Paid Mumbai creators, 5K–50K followers.",
+   "role": "DV",
+   "start": "2026-10-20",
+   "end": "2026-10-31",
+   "fallback": "2026-11-07",
+   "deps": [],
+   "done": [
+    "A creator list, a price range and a measurement plan exist"
+   ],
+   "read": [],
+   "cp": "M5",
+   "tech": null,
+   "light": true
+  },
+  {
+   "id": "MK-45",
+   "title": "Referral plan for v1",
+   "plain": "The reward that was cut from launch.",
+   "role": "RT",
+   "start": "2026-10-20",
+   "end": "2026-11-01",
+   "fallback": "2026-11-08",
+   "deps": [],
+   "done": [
+    "A referral design goes to tech as a `/ask-tech` issue"
+   ],
+   "read": [],
+   "cp": "M5",
+   "tech": null,
+   "light": true
+  },
+  {
+   "id": "MK-46",
+   "title": "Partner follow-ups and testimonials",
+   "plain": "Turn partners and users into proof.",
+   "role": "RT",
+   "start": "2026-10-20",
+   "end": "2026-11-08",
+   "fallback": "2026-11-15",
+   "deps": [],
+   "done": [
+    "Five real testimonials with consent"
+   ],
+   "read": [],
+   "cp": "M5",
+   "tech": null,
+   "light": true
+  },
+  {
+   "id": "MK-47",
+   "title": "Monthly review",
+   "plain": "One month of numbers.",
+   "role": "MK",
+   "start": "2026-11-08",
+   "end": "2026-11-08",
+   "fallback": "2026-11-15",
+   "deps": [],
+   "done": [
+    "Each KPI and each channel is reviewed"
+   ],
+   "read": [],
+   "cp": "M5",
+   "tech": null,
+   "light": true
+  }
+ ]
+}

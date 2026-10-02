@@ -1,0 +1,12 @@
+{
+  "repo": "magentawood/roomsie",
+  "baseBranch": "marketing",
+  "liveBranch": "main",
+  "planSource": "docs/marketing/plan.json",
+  "contextFile": "docs/marketing/CONTEXT.md",
+  "voiceGuide": "docs/marketing/voice-guide.md",
+  "articlesPath": "docs/marketing/articles",
+  "transcriptsPath": "transcripts",
+  "launch": "2026-10-11",
+  "fallbackLaunch": "2026-10-18"
+}
