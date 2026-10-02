@@ -1,11 +1,14 @@
 import { existsSync } from 'node:fs'
 import { randomUUID } from 'node:crypto'
+import { fileURLToPath } from 'node:url'
 import postgres from 'postgres'
-import { drizzle } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
-import * as schema from '../src/db/schema'
+import { createDb } from '../src/db/client'
 
 export const adminUrl = process.env.TEST_DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/postgres'
+const migrationsFolder = fileURLToPath(new URL('../drizzle', import.meta.url))
+
+export type TestDb = Awaited<ReturnType<typeof createTestDb>>
 
 /** A fresh database with every committed migration applied. Call drop() when done. */
 export async function createTestDb() {
@@ -15,14 +18,13 @@ export async function createTestDb() {
 
   const url = new URL(adminUrl)
   url.pathname = `/${name}`
-  const client = postgres(url.toString(), { max: 1, onnotice: () => {} })
-  const db = drizzle(client, { schema })
-  if (existsSync('drizzle/meta/_journal.json')) await migrate(db, { migrationsFolder: 'drizzle' })
+  const db = createDb(url.toString())
+  if (existsSync(`${migrationsFolder}/meta/_journal.json`)) await migrate(db, { migrationsFolder })
 
   async function drop() {
-    await client.end()
+    await db.$client.end()
     await admin.unsafe(`drop database ${name}`)
     await admin.end()
   }
-  return { db, client, drop }
+  return { db, drop }
 }
