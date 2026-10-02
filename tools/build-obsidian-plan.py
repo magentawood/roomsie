@@ -10,15 +10,24 @@ Writes, under docs/plan/:
 and .obsidian/graph.json with colours by owner.
 
 Generated. Edit docs/team-plan.json, then run: python3 tools/build-obsidian-plan.py
+With --check, it writes nothing and exits 1 when a generated file is stale.
 GitHub issues stay the live tracker.
 """
-import json, os, re, shutil, datetime as dt
+import json, os, re, shutil, sys, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PLAN = os.path.join(ROOT, "docs", "plan")
 P = json.load(open(os.path.join(ROOT, "docs", "team-plan.json")))
 T = P["tasks"]
 REPO = "https://github.com/magentawood/roomsie/issues/"
+CHECK = "--check" in sys.argv
+
+# --check builds in place, compares, then puts every file back as it was.
+def snapshot():
+    files = [os.path.join(ROOT, "docs", "team-plan.md")]
+    for d, _, fs in os.walk(PLAN): files += [os.path.join(d, x) for x in fs]
+    return {f: open(f, "rb").read() for f in files if os.path.isfile(f)}
+BEFORE = snapshot() if CHECK else None
 
 SHORT = {
  "T-02":"Scaffold monorepo","T-05":"Google sign-in","T-04":"Deploy to Mumbai","T-03":"CI checks",
@@ -26,9 +35,9 @@ SHORT = {
  "T-25":"Uptime and spend alerts","T-29":"Abuse test","T-08":"Form A contract","T-11":"Model wrapper",
  "T-12":"Extraction","T-13":"Reply writer","T-21":"Turn cap and spend ceiling","T-27":"Eval run",
  "T-10":"Chat screen and split view","T-09":"Chip flow","T-17":"Carry chat into account",
- "T-23a":"Landing page","T-22":"Launch areas and waitlist","T-06":"Database schema","T-14":"Match query",
+ "T-23a":"Landing page","T-22a":"Waitlist API","T-22b":"Waitlist screen","T-06":"Database schema","T-14":"Match query",
  "T-19":"Report and block","T-20":"Account deletion","T-18b":"Person and connect screens",
- "T-15":"Results panel","T-16":"Profiles and photos","T-18a":"Connect API",
+ "T-15":"Results panel","T-16a":"Profile API","T-16b":"Profile screens","T-18a":"Connect API",
  "D-01":"Styling decision","D-02":"Chat screen designs","D-03":"Results and profile designs",
  "D-04":"Landing and waitlist designs","D-05":"Design QA","D-06":"Launch visuals",
  "M-04":"Article interviews","M-03":"Eval sentences","M-05":"Article drafts","M-07":"Launch posts",
@@ -458,6 +467,81 @@ for k in ORDER:
         body.append(f"> ![[{name(t['id'])}#^done]]" if its else "> _This task has no done-when list._")
         body.append("")
 
+# ── design-free work: what the team does until the designs arrive ───────────
+# Derived, not planned: a build task is design-free when no D- task is in its
+# dependency chain. The founder and marketing tasks that gate such a task join
+# the same queue. Status comes from the tick state, so the waves move as boxes
+# are ticked. Wave 0 can start; wave n waits on wave n-1. Who works a task is
+# the assignee of its GitHub issue, never this file, so the output stays a pure
+# function of the repo and --check can compare it exactly.
+ENG = [t for t in T if t["role"] in LANES]
+def upstream(tid):
+    return {u for d in by[tid]["deps"] for u in {d} | upstream(d)}
+def needs_design(tid): return any(u.startswith("D-") for u in upstream(tid))
+def status(tid):
+    its = FINAL.get(tid, [])
+    dn = sum(1 for _,ok,_ in its if ok)
+    return "done" if its and dn == len(its) else ("doing" if dn else "todo")
+def downstream(tid):
+    out, todo = set(), [tid]
+    while todo:
+        for u in unblocks[todo.pop()]:
+            if u not in out: out.add(u); todo.append(u)
+    return out
+free = [t for t in ENG if not needs_design(t["id"])]
+gates = [by[u] for u in sorted({u for t in free for u in upstream(t["id"])})
+         if by[u]["role"] not in LANES and not u.startswith("D-")]
+queue = gates + free
+waiting = [t for t in ENG if needs_design(t["id"])]
+open_ = {t["id"] for t in queue if status(t["id"]) != "done"}
+wave = {}
+def wave_of(tid):
+    if tid not in wave:
+        wave[tid] = max([wave_of(d) + 1 for d in by[tid]["deps"] if d in open_], default=0)
+    return wave[tid]
+for tid in open_: wave_of(tid)
+nid = lambda tid: tid.replace("-", "")
+G = ["```mermaid", "flowchart LR"]
+for t in queue + waiting:
+    tid = t["id"]
+    cls = "design" if t in waiting else status(tid)
+    if cls == "todo" and wave.get(tid) == 0: cls = "ready"
+    G.append(f"  {nid(tid)}[\"{tid}{' ⚑' if t['critical'] else ''}<br/>{SHORT[tid]}\"]:::{cls}")
+for dtid in sorted({d for t in waiting for d in t["deps"] if d.startswith("D-")}):
+    G.append(f"  {nid(dtid)}([\"{dtid}<br/>{SHORT[dtid]}\"]):::dtask")
+for t in queue + waiting:
+    for d in t["deps"]:
+        G.append(f"  {nid(d)} {'-.->' if d.startswith('D-') else '-->'} {nid(t['id'])}")
+G += ["  classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f",
+      "  classDef doing fill:#e3b341,color:#000,stroke:#e3b341",
+      "  classDef ready fill:#3b82f6,color:#fff,stroke:#3b82f6",
+      "  classDef todo fill:#fff,color:#000,stroke:#8b949e",
+      "  classDef design fill:#eee,color:#888,stroke:#bbb,stroke-dasharray:4",
+      "  classDef dtask fill:#ff87ac,color:#000,stroke:#ff87ac", "```"]
+free_h = sum(t["hours"] or 0 for t in queue if t["id"] in open_)
+DF = ["\n---\n", "## Design-free work\n",
+      "Until the designs arrive, take tasks from this section only. "
+      "No task here waits on a design. This list comes from the `deps` in `docs/team-plan.json`.\n",
+      "- **You can start wave 0 at this time.** Its tasks wait on no open task.",
+      "- **Wave n waits on wave n−1.** When a wave is complete, you can start the next wave.",
+      "- **Many people can work on one wave.** Each person does one task at a time.",
+      "- **To take a task, assign its issue to you.** First, make sure that the issue has no assignee.",
+      "- **In a wave, take the ⚑ tasks first.** Then take the task that unblocks the most tasks.",
+      "- **When the designs arrive,** the tasks in \"Waits on the designs\" join the waves.\n",
+      f"**{len(open_)} design-free tasks are open · {free_h} build hours.**\n",
+      "| Wave | Task | Owner | Hours | State | Unblocks | Issue |", "|---|---|---|---|---|---|---|"]
+key = lambda t: (wave[t["id"]], not t["critical"], -len(downstream(t["id"])), t["id"])
+for t in sorted([t for t in queue if t["id"] in open_], key=key):
+    st = {"doing": "🟡 in progress", "todo": "⬜ can start" if wave[t["id"]] == 0 else "⬜ waits"}[status(t["id"])]
+    DF.append(f"| {wave[t['id']]} | {link(t['id'])} | {t['role']} | {hrs(t)} | {st} | {len(downstream(t['id']))} | {issue_md(t)} |")
+DF += ["", "### Waits on the designs\n", "| Task | Owner | Hours | Waits on | Issue |", "|---|---|---|---|---|"]
+for t in sorted(waiting, key=lambda t: (not t["critical"], t["id"])):
+    ds = sorted(u for u in upstream(t["id"]) if u.startswith("D-") and u != "D-01")
+    DF.append(f"| {link(t['id'])} | {t['role']} | {hrs(t)} | {', '.join(ds)} | {issue_md(t)} |")
+DF += ["", "### Graph\n",
+       "Blue can start. Yellow is in progress. Green is done. White waits on a different task. "
+       "Grey waits on a design. Pink is a design task.\n", *G]
+
 P_ = ["---","tags:","  - progress","---", HEADER,
       "# Progress\n",
       "**The vault is the source of truth for progress.** You can open every task",
@@ -470,8 +554,21 @@ P_ = ["---","tags:","  - progress","---", HEADER,
       f"`{bar(tot_d, tot_n)}`\n",
       "This note is part of [[roomsie launch]].\n",
       "| Lane | Tasks complete | Items | Done |","|---|---|---|---|", *lane_rows,
-      "\n---", *body]
+      *DF, "\n---", *body]
 write(None, "Progress.md", "\n".join(P_) + "\n")
+
+if CHECK:
+    AFTER = snapshot()
+    stale = sorted(os.path.relpath(f, ROOT) for f in BEFORE.keys() | AFTER.keys()
+                   if BEFORE.get(f) != AFTER.get(f))
+    for f in AFTER.keys() - BEFORE.keys(): os.remove(f)
+    for f, data in BEFORE.items():
+        os.makedirs(os.path.dirname(f), exist_ok=True)
+        open(f, "wb").write(data)
+    if stale:
+        print("The plan files are stale. Run: python3 tools/build-obsidian-plan.py", *stale, sep="\n  ")
+        sys.exit(1)
+    print("The plan files are current."); sys.exit(0)
 
 print(f"{len(T)} task notes, {len(OWN)} owner notes, {len(ms)} checkpoints, "
       f"canvas with {len(nodes)} nodes and {len(edges)} edges, graph colours set, team-plan.md rebuilt,\n"
