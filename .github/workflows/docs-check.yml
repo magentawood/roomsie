@@ -1,6 +1,6 @@
-# The cheap docs checks: limits, links, ledger drift, render drift, and tool copies.
+# The cheap docs checks: limits, links, ledger drift, render drift, plan drift, and tool copies.
 # Master: agentic-devkit skills/doc-architecture/templates/docs-check.yml. sync-tools copies it here.
-# TOOL_VERSION = "0.1.0"
+# TOOL_VERSION = "0.1.1"
 name: docs-check
 on:
   pull_request:
