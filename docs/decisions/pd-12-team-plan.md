@@ -16,6 +16,8 @@
 - **Waves replace the lane lists and the dates.** The plan build calculates the waves from the dependencies in `docs/team-plan.json`. Wave 0 waits on no open task. `docs/plan/Progress.md` shows the waves.
 - **Many people can work on one wave.** Each person does one task at a time. To take a task, a person assigns its GitHub issue to themselves.
 - **A founder or marketing task that gates a build task is a dependency in the plan.** It joins the waves.
+- **Open product calls are founder tasks, F-11 to F-14, one for each area.** Each is a grill session with the product team, from a question file in `docs/product-calls/`. A task that needs an answer to build correctly depends on its product-call task.
+- **A task that needs only a number, a list or one rule from a product call starts on a default.** The default is in config or seed data. The product-call task confirms it.
 - **A task with a large screen part has two halves.** The API half needs no design. The screen half waits on a design.
 - **The team builds a small screen part plain, with no design.** The screen task of the design then applies the design to it.
 - **Each ticket PR rebuilds the plan files.** A check fails when they are stale.
@@ -30,6 +32,8 @@
 - An API half that waits on a design wastes build hours on the critical path (⚑). T-16 and T-22 had such halves.
 - A small screen part must not block the backend tasks after it. A plain button first, with the design subsequently, costs a small amount.
 - A stale `Progress.md` shows the incorrect next task. A check stops this.
+- The schema, Form A and the matching rules rested on product calls that nobody made. A guess in a contract that 17 tasks share costs more than a grill session.
+- T-06 waits for F-11, although a migration before launch is cheap. The user preferred one correct first migration.
 
 ## Alternatives rejected
 
