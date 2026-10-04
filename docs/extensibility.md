@@ -31,7 +31,7 @@ Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error
 | Add an assistant handler | At any time | A new folder in `assistant/handlers/`, and one router label | The assistant has one entry point. The router selects handlers by label |
 | Teach the observer a new thing | At any time | Run the backfill again on the stored turns | **We store all free-text turns** |
 | Change the web search provider | At any time | In `adapters/llm` | The advisor asks the wrapper for a search, not a vendor directly |
-| Move the two Supabase projects into one paid organisation | When we start to pay | A project transfer in Supabase. No code changes | The connection details of each database are only in environment settings |
+| Change the Supabase organisation to a paid plan | When we start to pay | A plan change in Supabase. No code changes | The connection details of each database are only in environment settings |
 | Move analytics to a larger store, for example ClickHouse | At scale | Change the sink in `track()`. Export and import the rows | Events go through one `track()`. Each event has an `event_version` from `packages/contract`. Product code does not read or join the events table |
 | Change the auth provider | If necessary | Link `users.auth_provider_id` again | The Firebase UID is only in that column |
 | Change error tracking to GlitchTip | v1 | In `reportError` | Only one function reports errors |

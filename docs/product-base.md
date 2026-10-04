@@ -33,5 +33,5 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 | [PD10](decisions/pd-10-scope-bands.md) | Five scope bands for the assistant | Settled | The router puts each question in one of five scope bands by the cost of an incorrect answer, and band 2b is corpus only. |
 | [PD11](decisions/pd-11-launch.md) | Public launch on 12 October | Settled. The date moved on 2026-09-26. | The public launch is on Monday 12 October, with Wednesday 14 October as the fallback, and the go/no-go list is the quality bar. |
 | [PD12](decisions/pd-12-team-plan.md) | Team plan: design-free waves, then screens | Settled. Cut again on 2026-09-25. Changed on 2026-10-03. | All design-free work comes first, in waves, and the screens come when designs D-02, D-03 and D-04 arrive. |
-| [PD13](decisions/pd-13-databases-and-backups.md) | Databases and backups | Settled, as an exception | The main and analytics databases are on two free Supabase accounts, with a nightly dump of the two databases to R2. |
+| [PD13](decisions/pd-13-databases-and-backups.md) | Databases and backups | Settled, as an exception. Changed on 2026-10-04. | The main and analytics databases are two free projects in one Supabase account, with a nightly dump of both to R2. |
 <!-- ledger:end -->

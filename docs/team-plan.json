@@ -68,7 +68,7 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on two free accounts (PD13)",
+    "Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)",
     "Both AI accounts have hard monthly caps"
    ],
    "read": [
@@ -1542,9 +1542,9 @@
     "T-24"
    ],
    "done": [
-    "The same track() function writes events to their own Supabase project, on the second account",
+    "The same track() function writes events to their own Supabase project, in the same account",
     "pg_cron in that project deletes events past the retention period and creates next month's partition",
-    "The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation",
+    "The main database keeps no events. The connection details of each project are only in environment settings, thus a paid plan later needs no code change",
     "Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it"
    ],
    "read": [
