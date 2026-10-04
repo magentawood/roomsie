@@ -7,6 +7,7 @@ start: 2026-10-04
 end: 2026-10-06
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/106
 tags:
   - task
   - founder
@@ -18,7 +19,7 @@ tags:
 **Owner:** [[Founder]], task 13 of 14  
 **When:** Sun 4 Oct → Tue 6 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#106](https://github.com/magentawood/roomsie/issues/106)
 
 Decide how the assistant behaves, and the numbers of the limits.
 

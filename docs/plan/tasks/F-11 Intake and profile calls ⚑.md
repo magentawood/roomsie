@@ -7,6 +7,7 @@ start: 2026-10-04
 end: 2026-10-06
 checkpoint: CP3
 critical: true
+issue: https://github.com/magentawood/roomsie/issues/103
 tags:
   - task
   - founder
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[Founder]], task 10 of 14  
 **When:** Sun 4 Oct → Tue 6 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#103](https://github.com/magentawood/roomsie/issues/103)
 
 > [!warning] Critical path
 > If this task is late, the launch is late.

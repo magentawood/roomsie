@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** F-11, F-12, F-13, F-14.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
 
 ---
 
@@ -257,10 +257,10 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Founder | 7 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | Founder | 8 | F-09 | Write down the three ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
 | Founder | 9 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
-| Founder | 10 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
-| Founder | 11 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
-| Founder | 12 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
-| Founder | 13 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
+| Founder | 10 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#103](https://github.com/magentawood/roomsie/issues/103) |
+| Founder | 11 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#104](https://github.com/magentawood/roomsie/issues/104) |
+| Founder | 12 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#105](https://github.com/magentawood/roomsie/issues/105) |
+| Founder | 13 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | Founder | 14 | F-10 | Go/no-go meeting |  | Sat 10 Oct | Sat 10 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
 | Everyone | 1 | A-01 | Bug fix day |  | Sun 11 Oct | Sun 11 Oct | CP4 | — | [#53](https://github.com/magentawood/roomsie/issues/53) |
 | Everyone | 2 | A-02 | Launch |  | Mon 12 Oct | Mon 12 Oct | CP4 | — | [#54](https://github.com/magentawood/roomsie/issues/54) |
