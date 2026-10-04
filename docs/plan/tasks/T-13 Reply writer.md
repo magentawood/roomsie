@@ -35,6 +35,7 @@ The assistant writes its answers and stays on the topic.
 - [ ] It replies in the language that the person used
 - [ ] It never states a fact about a specific person
 - [ ] An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-12 and F-13 confirms it
 
 ^done
 

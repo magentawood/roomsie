@@ -2,7 +2,7 @@
 id: F-08
 title: "Name the moderator"
 owner: "Founder"
-sequence: "9 of 10"
+sequence: "9 of 14"
 start: 2026-09-30
 end: 2026-10-02
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # F-08 · Name the moderator
 
-**Owner:** [[Founder]], task 9 of 10  
+**Owner:** [[Founder]], task 9 of 14  
 **When:** Wed 30 Sep → Fri 2 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#34](https://github.com/magentawood/roomsie/issues/34)

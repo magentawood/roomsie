@@ -2,7 +2,7 @@
 id: F-02
 title: "Secure the domain"
 owner: "Founder"
-sequence: "2 of 10"
+sequence: "2 of 14"
 start: 2026-09-24
 end: 2026-09-24
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # F-02 · Secure the domain
 
-**Owner:** [[Founder]], task 2 of 10  
+**Owner:** [[Founder]], task 2 of 14  
 **When:** Thu 24 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#3](https://github.com/magentawood/roomsie/issues/3)

@@ -110,7 +110,9 @@
    "hours": 2,
    "start": "2026-09-24",
    "end": "2026-09-24",
-   "deps": [],
+   "deps": [
+    "F-11"
+   ],
    "done": [
     "A Zod schema for Form A is in packages/contract",
     "The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty",
@@ -156,7 +158,9 @@
    "hours": null,
    "start": "2026-09-24",
    "end": "2026-09-25",
-   "deps": [],
+   "deps": [
+    "F-11"
+   ],
    "done": [
     "It says what the system collects, that other roomsie users will see the profile, and how to delete it",
     "It is short enough to read on a phone"
@@ -184,7 +188,8 @@
    ],
    "cp": "CP0",
    "critical": false,
-   "issue": 9
+   "issue": 9,
+   "gate": "product"
   },
   {
    "id": "T-02",
@@ -222,7 +227,8 @@
    "start": "2026-10-08",
    "end": "2026-10-10",
    "deps": [
-    "D-03"
+    "D-03",
+    "F-13"
    ],
    "done": [
     "The first version uses the detail sheet of the V3 prototype, against a mock of the connect API. It connects to T-18a when T-18a lands on Sun 4 Oct",
@@ -244,7 +250,9 @@
    "hours": 8,
    "start": "2026-09-24",
    "end": "2026-09-29",
-   "deps": [],
+   "deps": [
+    "F-11"
+   ],
    "done": [
     "Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist",
     "Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility",
@@ -322,7 +330,8 @@
    "done": [
     "The form is live with the consent text",
     "Outreach uses the team's own networks, college and company groups, and flat-hunting groups",
-    "The team invites people to sign up. The team never copies the posts or details of any person"
+    "The team invites people to sign up. The team never copies the posts or details of any person",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it"
    ],
    "read": [
     "docs/decisions/pd-11-launch.md"
@@ -386,7 +395,9 @@
    "hours": null,
    "start": "2026-09-25",
    "end": "2026-09-30",
-   "deps": [],
+   "deps": [
+    "F-13"
+   ],
    "done": [
     "It says what the system collects, why, for how long, how to delete it, and who to contact",
     "There is a named grievance contact",
@@ -455,7 +466,8 @@
    "end": "2026-10-08",
    "deps": [
     "T-08",
-    "D-03"
+    "D-03",
+    "F-12"
    ],
    "done": [
     "A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query",
@@ -482,7 +494,8 @@
    "done": [
     "The set has 50 sentences that people really type, in English, Hinglish and Marathi",
     "Mumbai areas, 20k, bees hazaar, next month end",
-    "The set includes 10 sentences that are vague on purpose. T1 labels the correct answers"
+    "The set includes 10 sentences that are vague on purpose. T1 labels the correct answers",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
     "docs/model-selection.md"
@@ -527,7 +540,8 @@
     "The Mumbai area list and number and date forms are in the cached prompt",
     "Code parses numbers and dates, not the model",
     "All vague input becomes `unclear`, never a guess. An inferred value never fills a slot silently",
-    "The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure"
+    "The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
     "docs/research/hinglish-model-report.md",
@@ -593,7 +607,8 @@
    "end": "2026-10-03",
    "deps": [
     "T-06",
-    "T-08"
+    "T-08",
+    "F-12"
    ],
    "done": [
     "It returns the matching people for a form state",
@@ -642,7 +657,8 @@
    "end": "2026-10-10",
    "deps": [
     "T-05",
-    "T-06"
+    "T-06",
+    "F-11"
    ],
    "done": [
     "The API creates and edits a profile with name, age, work, intent, budget, areas, move date and lifestyle answers",
@@ -740,7 +756,8 @@
     "It writes the reply from the form and the last two turns, never from the full chat",
     "It replies in the language that the person used",
     "It never states a fact about a specific person",
-    "An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source"
+    "An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-12 and F-13 confirms it"
    ],
    "read": [
     "docs/scope-policy.md"
@@ -828,7 +845,8 @@
    "done": [
     "When a visitor signs in, the account gets what the visitor told the assistant before sign-in",
     "Nothing is lost, and the assistant never asks the same thing two times",
-    "The stored chat turns move to the account with the session"
+    "The stored chat turns move to the account with the session",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
     "docs/seo-with-gated-products.md",
@@ -854,7 +872,8 @@
     "The API for the report and block buttons exists. The buttons are in T-18b",
     "A block hides both people from each other. This also applies in the match query",
     "A saved query in Supabase lists open reports",
-    "Suspend sets `tokens_valid_after` to now and hides the profile"
+    "Suspend sets `tokens_valid_after` to now and hides the profile",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it"
    ],
    "read": [
     "docs/scope-policy.md"
@@ -949,7 +968,8 @@
     "A visitor gets five typed turns before sign-in. Chip taps do not count",
     "The sign-in wall never appears before results show. The results stay visible behind the wall",
     "Limits apply per device and per network",
-    "At the daily spend ceiling, the chat changes to chips only"
+    "At the daily spend ceiling, the chat changes to chips only",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it"
    ],
    "read": [
     "docs/pre-login-limits.md"
@@ -989,7 +1009,8 @@
    "end": "2026-10-04",
    "deps": [
     "T-05",
-    "T-06"
+    "T-06",
+    "F-13"
    ],
    "done": [
     "A user can send, accept or decline a connect request",
@@ -1153,7 +1174,8 @@
    "done": [
     "The 50 test sentences go through extraction",
     "The results record the fraction of correct slots and how frequently vague sentences get the mark unclear",
-    "The team tunes the prompt and saves the results in docs/research/"
+    "The team tunes the prompt and saves the results in docs/research/",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
     "docs/model-selection.md"
@@ -1181,6 +1203,98 @@
    "cp": "CP3",
    "critical": false,
    "issue": 50
+  },
+  {
+   "id": "F-11",
+   "title": "Product calls: intake, Form A and profile data",
+   "plain": "Decide what the assistant asks, and what a profile holds.",
+   "role": "F",
+   "hours": null,
+   "start": "2026-10-04",
+   "end": "2026-10-06",
+   "deps": [],
+   "done": [
+    "Each call in docs/product-calls/intake-and-profile.md has an answer from the product team",
+    "Each answer is in its decision record, and the call is not in the file"
+   ],
+   "read": [
+    "docs/product-calls/intake-and-profile.md",
+    "docs/decisions/pd-00-v0-scope.md",
+    "docs/decisions/pd-03b-interview-vs-chips.md"
+   ],
+   "cp": "CP3",
+   "critical": true,
+   "issue": null,
+   "gate": "product"
+  },
+  {
+   "id": "F-12",
+   "title": "Product calls: matching rules",
+   "plain": "Decide who matches whom, and what the results show.",
+   "role": "F",
+   "hours": null,
+   "start": "2026-10-04",
+   "end": "2026-10-06",
+   "deps": [],
+   "done": [
+    "Each call in docs/product-calls/matching-rules.md has an answer from the product team",
+    "Each answer is in its decision record, and the call is not in the file"
+   ],
+   "read": [
+    "docs/product-calls/matching-rules.md",
+    "docs/decisions/pd-03a-flatmate-matching.md",
+    "docs/decisions/pd-06c-interface-holes.md"
+   ],
+   "cp": "CP3",
+   "critical": true,
+   "issue": null,
+   "gate": "product"
+  },
+  {
+   "id": "F-13",
+   "title": "Product calls: connect, trust and safety",
+   "plain": "Decide how two people connect, and how we keep them safe.",
+   "role": "F",
+   "hours": null,
+   "start": "2026-10-04",
+   "end": "2026-10-06",
+   "deps": [],
+   "done": [
+    "Each call in docs/product-calls/connect-and-trust.md has an answer from the product team",
+    "Each answer is in its decision record, and the call is not in the file"
+   ],
+   "read": [
+    "docs/product-calls/connect-and-trust.md",
+    "docs/decisions/pd-03c-exclusionary-preferences.md",
+    "docs/decisions/pd-08-verification.md"
+   ],
+   "cp": "CP3",
+   "critical": true,
+   "issue": null,
+   "gate": "product"
+  },
+  {
+   "id": "F-14",
+   "title": "Product calls: assistant and limits",
+   "plain": "Decide how the assistant behaves, and the numbers of the limits.",
+   "role": "F",
+   "hours": null,
+   "start": "2026-10-04",
+   "end": "2026-10-06",
+   "deps": [],
+   "done": [
+    "Each call in docs/product-calls/assistant-and-limits.md has an answer from the product team",
+    "Each answer is in its decision record, and the call is not in the file"
+   ],
+   "read": [
+    "docs/product-calls/assistant-and-limits.md",
+    "docs/decisions/pd-09-pre-login-limits.md",
+    "docs/decisions/pd-10-scope-bands.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null,
+   "gate": "product"
   },
   {
    "id": "T-29",
@@ -1323,7 +1437,8 @@
    ],
    "done": [
     "Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible",
-    "An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it"
+    "An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -1350,7 +1465,8 @@
     "The observer turns personal context into Form B observations",
     "Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation",
     "A one-off job backfills Form B from the stored chat turns",
-    "It is tested on the eval sentences, and the rejection rate is recorded"
+    "It is tested on the eval sentences, and the rejection rate is recorded",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -1402,7 +1518,8 @@
     "Answers to consulting questions come from the articles first, and give the name of the article",
     "If the articles do not answer a general question, signed-in users get a web_search answer from DeepSeek, or from Gemini Google Search grounding as fallback. A visitor who has not signed in gets a hedged general answer",
     "The assistant answers law, tax, area safety and claims about a person only from articles, or hands them off. It never uses the web for them",
-    "Web searches count toward the daily spend ceiling"
+    "Web searches count toward the daily spend ceiling",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it"
    ],
    "read": [
     "docs/scope-policy.md",
@@ -1426,7 +1543,8 @@
    "done": [
     "The same track() function writes events to their own Supabase project, on the second account",
     "pg_cron in that project deletes events past the retention period and creates next month's partition",
-    "The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation"
+    "The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation",
+    "Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",

@@ -38,6 +38,7 @@ Answers housing questions from our articles first, then from the web, for signed
 - [ ] If the articles do not answer a general question, signed-in users get a web_search answer from DeepSeek, or from Gemini Google Search grounding as fallback. A visitor who has not signed in gets a hedged general answer
 - [ ] The assistant answers law, tax, area safety and claims about a person only from articles, or hands them off. It never uses the web for them
 - [ ] Web searches count toward the daily spend ceiling
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 
 ^done
 

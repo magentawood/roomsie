@@ -31,6 +31,7 @@ The server side of a connect request. Shows phone numbers only when the two peop
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]
+- [[F-13 Connect and trust calls ⚑]]
 
 ## Unblocks
 - [[T-18b Person and connect screens ⚑]]

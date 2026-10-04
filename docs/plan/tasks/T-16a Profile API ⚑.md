@@ -31,6 +31,7 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]
+- [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
 - [[T-16b Profile screens ⚑]]

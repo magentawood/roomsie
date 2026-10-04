@@ -34,6 +34,7 @@ Keeps analytics writes off the main database.
 - [ ] The same track() function writes events to their own Supabase project, on the second account
 - [ ] pg_cron in that project deletes events past the retention period and creates next month's partition
 - [ ] The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
 
 ^done
 

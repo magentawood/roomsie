@@ -34,6 +34,7 @@ Realistic sentences to test the assistant.
 - [ ] The set has 50 sentences that people really type, in English, Hinglish and Marathi
 - [ ] Mumbai areas, 20k, bees hazaar, next month end
 - [ ] The set includes 10 sentences that are vague on purpose. T1 labels the correct answers
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 
 ^done
 

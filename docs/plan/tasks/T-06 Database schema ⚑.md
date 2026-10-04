@@ -29,7 +29,7 @@ tags:
 The exact shape of all stored data: people, flats, messages, matches.
 
 ## Needs first
-- Nothing. You can start this task at any time.
+- [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
 - [[T-14 Match query ⚑]]

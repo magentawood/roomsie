@@ -36,6 +36,7 @@ The safety tools.
 - [ ] A block hides both people from each other. This also applies in the match query
 - [ ] A saved query in Supabase lists open reports
 - [ ] Suspend sets `tokens_valid_after` to now and hides the profile
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
 
 ^done
 

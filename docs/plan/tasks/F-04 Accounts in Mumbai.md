@@ -2,7 +2,7 @@
 id: F-04
 title: "Create accounts in Mumbai regions"
 owner: "Founder"
-sequence: "4 of 10"
+sequence: "4 of 14"
 start: 2026-09-24
 end: 2026-09-24
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # F-04 · Create accounts in Mumbai regions
 
-**Owner:** [[Founder]], task 4 of 10  
+**Owner:** [[Founder]], task 4 of 14  
 **When:** Thu 24 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#5](https://github.com/magentawood/roomsie/issues/5)

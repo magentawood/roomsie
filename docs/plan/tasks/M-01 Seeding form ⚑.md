@@ -38,6 +38,7 @@ A simple sign-up form, and tell people about it.
 - [ ] The form is live with the consent text
 - [ ] Outreach uses the team's own networks, college and company groups, and flat-hunting groups
 - [ ] The team invites people to sign up. The team never copies the posts or details of any person
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it
 
 ^done
 

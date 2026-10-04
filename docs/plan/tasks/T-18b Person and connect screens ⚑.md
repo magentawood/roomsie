@@ -30,6 +30,7 @@ Read the full profile of a person and send a connect request.
 
 ## Needs first
 - [[D-03 Results and profile designs]]
+- [[F-13 Connect and trust calls ⚑]]
 - [[T-18a Connect API ⚑]], at a later time. It goes into main on Thu 1 Oct, before you start.
 
 ## Unblocks

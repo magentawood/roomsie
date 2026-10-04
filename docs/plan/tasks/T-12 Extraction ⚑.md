@@ -44,6 +44,7 @@ Changes a typed sentence into tidy form slots.
 - [ ] Code parses numbers and dates, not the model
 - [ ] All vague input becomes `unclear`, never a guess. An inferred value never fills a slot silently
 - [ ] The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 
 ^done
 

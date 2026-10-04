@@ -2,7 +2,7 @@
 id: F-05
 title: "Consent text for the seeding form"
 owner: "Founder"
-sequence: "5 of 10"
+sequence: "5 of 14"
 start: 2026-09-24
 end: 2026-09-25
 checkpoint: CP0
@@ -17,7 +17,7 @@ tags:
 
 # F-05 · Consent text for the seeding form
 
-**Owner:** [[Founder]], task 5 of 10  
+**Owner:** [[Founder]], task 5 of 14  
 **When:** Thu 24 Sep → Fri 25 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#8](https://github.com/magentawood/roomsie/issues/8)
@@ -28,7 +28,7 @@ tags:
 What we will do with their data.
 
 ## Needs first
-- Nothing. You can start this task at any time.
+- [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
 - [[M-01 Seeding form ⚑]]
