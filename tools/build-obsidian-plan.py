@@ -45,6 +45,7 @@ SHORT = {
  "F-01":"Kickoff","F-02":"Domain","F-03":"Billing and caps","F-04":"Accounts in Mumbai",
  "F-05":"Seeding consent text","F-06":"Launch areas picked","F-07":"Privacy and terms draft",
  "F-09":"ADR exceptions","F-08":"Moderator named","F-10":"Go-no-go meeting",
+ "F-11":"Intake and profile calls","F-12":"Matching calls","F-13":"Connect and trust calls","F-14":"Assistant and limits calls",
  "A-01":"Bug fix day","A-02":"Launch day",
  "T-34":"Router","T-35":"Form B contract","T-36":"Observer","T-37":"Articles and search",
  "T-38":"Advisor","T-39":"Analytics database","T-40":"Nightly backups",
@@ -486,8 +487,13 @@ def downstream(tid):
         for u in unblocks[todo.pop()]:
             if u not in out: out.add(u); todo.append(u)
     return out
-free = [t for t in ENG if not needs_design(t["id"])]
-gates = [by[u] for u in sorted({u for t in free for u in upstream(t["id"])})
+# A product-call task ("gate": "product") is a grill session with the product
+# team. While it is open, the tasks after it wait on product, not on a design.
+calls = {t["id"] for t in T if t.get("gate") == "product" and status(t["id"]) != "done"}
+def open_calls(tid): return sorted(u for u in upstream(tid) if u in calls)
+free = [t for t in ENG if not needs_design(t["id"]) and not open_calls(t["id"])]
+on_product = [t for t in ENG if not needs_design(t["id"]) and open_calls(t["id"])]
+gates = [by[u] for u in sorted({u for t in free for u in upstream(t["id"])} | calls)
          if by[u]["role"] not in LANES and not u.startswith("D-")]
 queue = gates + free
 waiting = [t for t in ENG if needs_design(t["id"])]
@@ -500,14 +506,14 @@ def wave_of(tid):
 for tid in open_: wave_of(tid)
 nid = lambda tid: tid.replace("-", "")
 G = ["```mermaid", "flowchart LR"]
-for t in queue + waiting:
+for t in queue + on_product + waiting:
     tid = t["id"]
-    cls = "design" if t in waiting else status(tid)
+    cls = "design" if t in waiting else "product" if t in on_product else status(tid)
     if cls == "todo" and wave.get(tid) == 0: cls = "ready"
     G.append(f"  {nid(tid)}[\"{tid}{' ⚑' if t['critical'] else ''}<br/>{SHORT[tid]}\"]:::{cls}")
 for dtid in sorted({d for t in waiting for d in t["deps"] if d.startswith("D-")}):
     G.append(f"  {nid(dtid)}([\"{dtid}<br/>{SHORT[dtid]}\"]):::dtask")
-for t in queue + waiting:
+for t in queue + on_product + waiting:
     for d in t["deps"]:
         G.append(f"  {nid(d)} {'-.->' if d.startswith('D-') else '-->'} {nid(t['id'])}")
 G += ["  classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f",
@@ -515,30 +521,36 @@ G += ["  classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f",
       "  classDef ready fill:#3b82f6,color:#fff,stroke:#3b82f6",
       "  classDef todo fill:#fff,color:#000,stroke:#8b949e",
       "  classDef design fill:#eee,color:#888,stroke:#bbb,stroke-dasharray:4",
+      "  classDef product fill:#f3e8ff,color:#6b21a8,stroke:#a855f7,stroke-dasharray:4",
       "  classDef dtask fill:#ff87ac,color:#000,stroke:#ff87ac", "```"]
 free_h = sum(t["hours"] or 0 for t in queue if t["id"] in open_)
 DF = ["\n---\n", "## Design-free work\n",
       "Until the designs arrive, take tasks from this section only. "
-      "No task here waits on a design. This list comes from the `deps` in `docs/team-plan.json`.\n",
+      "No task here waits on a design or on an open product call. This list comes from the `deps` in `docs/team-plan.json`.\n",
       "- **You can start wave 0 at this time.** Its tasks wait on no open task.",
       "- **Wave n waits on wave n−1.** When a wave is complete, you can start the next wave.",
       "- **Many people can work on one wave.** Each person does one task at a time.",
       "- **To take a task, assign its issue to you.** First, make sure that the issue has no assignee.",
       "- **In a wave, take the ⚑ tasks first.** Then take the task that unblocks the most tasks.",
+      "- **The F- tasks with the word \"calls\" are grill sessions with the product team.** Each one has a question file in `docs/product-calls/`.",
+      "- **When the product team completes a product-call task,** the tasks in \"Waits on product calls\" that wait on it join the waves.",
       "- **When the designs arrive,** the tasks in \"Waits on the designs\" join the waves.\n",
-      f"**{len(open_)} design-free tasks are open · {free_h} build hours.**\n",
+      f"**{len(open_)} free tasks are open · {free_h} build hours.**\n",
       "| Wave | Task | Owner | Hours | State | Unblocks | Issue |", "|---|---|---|---|---|---|---|"]
 key = lambda t: (wave[t["id"]], not t["critical"], -len(downstream(t["id"])), t["id"])
 for t in sorted([t for t in queue if t["id"] in open_], key=key):
     st = {"doing": "🟡 in progress", "todo": "⬜ can start" if wave[t["id"]] == 0 else "⬜ waits"}[status(t["id"])]
     DF.append(f"| {wave[t['id']]} | {link(t['id'])} | {t['role']} | {hrs(t)} | {st} | {len(downstream(t['id']))} | {issue_md(t)} |")
+DF += ["", "### Waits on product calls\n", "| Task | Owner | Hours | Waits on | Issue |", "|---|---|---|---|---|"]
+for t in sorted(on_product, key=lambda t: (not t["critical"], t["id"])):
+    DF.append(f"| {link(t['id'])} | {t['role']} | {hrs(t)} | {', '.join(open_calls(t['id']))} | {issue_md(t)} |")
 DF += ["", "### Waits on the designs\n", "| Task | Owner | Hours | Waits on | Issue |", "|---|---|---|---|---|"]
 for t in sorted(waiting, key=lambda t: (not t["critical"], t["id"])):
-    ds = sorted(u for u in upstream(t["id"]) if u.startswith("D-") and u != "D-01")
+    ds = sorted(u for u in upstream(t["id"]) if u.startswith("D-") and u != "D-01") + open_calls(t["id"])
     DF.append(f"| {link(t['id'])} | {t['role']} | {hrs(t)} | {', '.join(ds)} | {issue_md(t)} |")
 DF += ["", "### Graph\n",
        "Blue can start. Yellow is in progress. Green is done. White waits on a different task. "
-       "Grey waits on a design. Pink is a design task.\n", *G]
+       "Purple waits on a product call. Grey waits on a design. Pink is a design task.\n", *G]
 
 P_ = ["---","tags:","  - progress","---", HEADER,
       "# Progress\n",
