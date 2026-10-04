@@ -55,7 +55,7 @@ Do the tasks from top to bottom. Finish and merge one task before you start the 
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
 | 1 | T-02 ⚑ · Scaffold the monorepo in this repo | 4 | Thu 24 Sep → Sat 26 Sep | — |
-| 2 | T-05 ⚑ · Google sign-in and token checks in the API | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04 |
+| 2 | T-05 ⚑ · Google sign-in and token checks in the API | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04, T-06 |
 | 3 | T-04 · Deploy web and API to Mumbai | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
 | 4 | T-07 · Error reporting wrapper and Sentry | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
 | 5 | T-25 · Uptime monitor and spend alerts | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
@@ -197,7 +197,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Owner | # | ID | Task | Hours | Start | End | Checkpoint | Waits on | Issue |
 |---|---|---|---|---|---|---|---|---|---|
 | P1 Platform | 1 | T-02 ⚑ | Scaffold the monorepo in this repo | 4 | Thu 24 Sep | Sat 26 Sep | CP1 | — | [#10](https://github.com/magentawood/roomsie/issues/10) |
-| P1 Platform | 2 | T-05 ⚑ | Google sign-in and token checks in the API | 6 | Sat 26 Sep | Thu 1 Oct | CP2 | T-02, F-04 | [#20](https://github.com/magentawood/roomsie/issues/20) |
+| P1 Platform | 2 | T-05 ⚑ | Google sign-in and token checks in the API | 6 | Sat 26 Sep | Thu 1 Oct | CP2 | T-02, F-04, T-06 | [#20](https://github.com/magentawood/roomsie/issues/20) |
 | P1 Platform | 3 | T-04 | Deploy web and API to Mumbai | 3 | Thu 1 Oct | Sat 3 Oct | CP3 | T-02, F-04 | [#30](https://github.com/magentawood/roomsie/issues/30) |
 | P1 Platform | 4 | T-07 | Error reporting wrapper and Sentry | 1 | Sat 3 Oct | Sun 4 Oct | CP3 | T-02, F-04 | [#28](https://github.com/magentawood/roomsie/issues/28) |
 | P1 Platform | 5 | T-25 | Uptime monitor and spend alerts | 2 | Sun 4 Oct | Mon 5 Oct | CP3 | T-04 | [#43](https://github.com/magentawood/roomsie/issues/43) |
@@ -410,7 +410,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - The team shares DNS access with T4
 
 **F-03 · Billing and hard spend caps** — done when:
-- Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
+- Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on two free accounts (PD13)
 - Both AI accounts have hard monthly caps
 - Read first: `docs/cost-and-team.md`
 
@@ -536,7 +536,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 | T-06 ⚑ | Database schema v1 | P3 | 8 | Thu 24 Sep → Tue 29 Sep | F-11 |
 | F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | F-13 |
 | M-02 | Seeding target: 100 sign-ups | M2 |  | Sat 26 Sep → Wed 30 Sep | M-01 |
-| T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04 |
+| T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04, T-06 |
 | T-03 | CI: typecheck, lint, build, secret scan | P5 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
 | T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | P2 | 6 | Sun 27 Sep → Tue 29 Sep | T-12, T-06 |

@@ -1120,6 +1120,14 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-06-T-05",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-05",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
    "id": "e-T-08-T-15",
    "fromNode": "task-T-08",
    "fromSide": "right",

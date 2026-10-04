@@ -30,8 +30,9 @@ tags:
 - [[F-04 Accounts in Mumbai]]
 
 ## Done when
-- [ ] Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
+- [ ] Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on two free accounts (PD13)
 - [ ] Both AI accounts have hard monthly caps
+- [ ] Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini
 
 ^done
 
