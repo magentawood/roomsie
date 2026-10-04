@@ -2,7 +2,7 @@
 id: F-03
 title: "Billing and hard spend caps"
 owner: "Founder"
-sequence: "3 of 10"
+sequence: "3 of 14"
 start: 2026-09-24
 end: 2026-09-24
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # F-03 · Billing and hard spend caps
 
-**Owner:** [[Founder]], task 3 of 10  
+**Owner:** [[Founder]], task 3 of 14  
 **When:** Thu 24 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#4](https://github.com/magentawood/roomsie/issues/4)

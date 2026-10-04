@@ -2,7 +2,7 @@
 id: F-01
 title: "Kickoff: names on every role"
 owner: "Founder"
-sequence: "1 of 10"
+sequence: "1 of 14"
 start: 2026-09-24
 end: 2026-09-24
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # F-01 · Kickoff: names on every role
 
-**Owner:** [[Founder]], task 1 of 10  
+**Owner:** [[Founder]], task 1 of 14  
 **When:** Thu 24 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#2](https://github.com/magentawood/roomsie/issues/2)

@@ -29,6 +29,10 @@ This note is part of [[roomsie launch]].
 - [[T-19 Report and block]] — P4 Content and moderation
 - [[T-25 Uptime and spend alerts]] — P1 Platform
 - [[T-38 Advisor]] — P2 Chat
+- [[F-11 Intake and profile calls ⚑]] — Founder
+- [[F-12 Matching calls ⚑]] — Founder
+- [[F-13 Connect and trust calls ⚑]] — Founder
+- [[F-14 Assistant and limits calls]] — Founder
 - [[T-27 Eval run]] — P2 Chat
 - [[T-33 Invite-only gate]] — P1 Platform
 - [[T-17 Carry chat into account]] — P2 Chat

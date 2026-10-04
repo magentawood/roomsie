@@ -36,6 +36,7 @@ Keeps a chat from before sign-up when the person signs up.
 - [ ] When a visitor signs in, the account gets what the visitor told the assistant before sign-in
 - [ ] Nothing is lost, and the assistant never asks the same thing two times
 - [ ] The stored chat turns move to the account with the session
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 
 ^done
 

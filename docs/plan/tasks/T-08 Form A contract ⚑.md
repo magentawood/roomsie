@@ -29,7 +29,7 @@ tags:
 The exact things that the assistant tries to learn, and the exact allowed answers. "intent" is one of the four prototype cards (a flat and flatmates, just a flat, just a flatmate, renting out a flat) or `unclear`. Nine lifestyle axes: smoking, alcohol, guests, pets, hours, tidiness, at home, daytime, kitchen. Everyone builds against this fixed list.
 
 ## Needs first
-- Nothing. You can start this task at any time.
+- [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
 - [[T-11 Model wrapper ⚑]]

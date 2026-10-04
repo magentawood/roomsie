@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** F-11, F-12, F-13, F-14.
 
 ---
 
@@ -70,7 +70,7 @@ Finish line: Sat 10 Oct. 23 hours.
 
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
-| 1 | T-08 ⚑ · Form A contract: slots and enums | 2 | Thu 24 Sep | — |
+| 1 | T-08 ⚑ · Form A contract: slots and enums | 2 | Thu 24 Sep | F-11 |
 | 2 | T-11 ⚑ · Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
 | 3 | T-35 · Form B contract and table | 3 | Fri 25 Sep → Sat 26 Sep | T-06, T-08 |
 | 4 | T-12 ⚑ · Extraction: free text to form slots | 6 | Sat 26 Sep → Sun 27 Sep | T-11 |
@@ -90,10 +90,10 @@ Finish line: Sat 10 Oct. 64 hours.
 
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
-| 1 | T-06 ⚑ · Database schema v1 | 8 | Thu 24 Sep → Tue 29 Sep | — |
-| 2 | T-14 ⚑ · Match query API | 6 | Tue 29 Sep → Sat 3 Oct | T-06, T-08 |
-| 3 | T-15 ⚑ · Results panel, built against the contract | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03 |
-| 4 | T-18b ⚑ · Person detail and connect screens | 4 | Thu 8 Oct → Sat 10 Oct | D-03 |
+| 1 | T-06 ⚑ · Database schema v1 | 8 | Thu 24 Sep → Tue 29 Sep | F-11 |
+| 2 | T-14 ⚑ · Match query API | 6 | Tue 29 Sep → Sat 3 Oct | T-06, T-08, F-12 |
+| 3 | T-15 ⚑ · Results panel, built against the contract | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03, F-12 |
+| 4 | T-18b ⚑ · Person detail and connect screens | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
 
 Finish line: Sat 10 Oct. 24 hours.
 
@@ -118,8 +118,8 @@ Finish line: Sat 10 Oct. 20 hours.
 | 1 | M-03 · Write the eval sentences | 4 | Thu 24 Sep → Sun 27 Sep | — |
 | 2 | T-03 · CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
 | 3 | T-24 · Event logging table | 2 | Tue 29 Sep → Wed 30 Sep | T-06 |
-| 4 | T-18a ⚑ · Connect request and contact reveal API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06 |
-| 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06 |
+| 4 | T-18a ⚑ · Connect request and contact reveal API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
+| 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
 | 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
 
 Finish line: Sat 10 Oct. 20 hours.
@@ -166,12 +166,16 @@ Finish line: Mon 19 Oct.
 | 2 | F-02 · Secure the domain | Thu 24 Sep | — |
 | 3 | F-03 · Billing and hard spend caps | Thu 24 Sep | — |
 | 4 | F-04 · Create accounts in Mumbai regions | Thu 24 Sep | F-03 |
-| 5 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | — |
+| 5 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | F-11 |
 | 6 | F-06 · Pick the three launch areas | Thu 24 Sep → Fri 25 Sep | — |
-| 7 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | — |
+| 7 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
 | 8 | F-09 · Write down the three ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
 | 9 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
-| 10 | F-10 · Go/no-go meeting | Sat 10 Oct | — |
+| 10 | F-11 ⚑ · Product calls: intake, Form A and profile data | Sun 4 Oct → Tue 6 Oct | — |
+| 11 | F-12 ⚑ · Product calls: matching rules | Sun 4 Oct → Tue 6 Oct | — |
+| 12 | F-13 ⚑ · Product calls: connect, trust and safety | Sun 4 Oct → Tue 6 Oct | — |
+| 13 | F-14 · Product calls: assistant and limits | Sun 4 Oct → Tue 6 Oct | — |
+| 14 | F-10 · Go/no-go meeting | Sat 10 Oct | — |
 
 Finish line: Sat 10 Oct.
 
@@ -201,7 +205,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04, F-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | P1 Platform | 9 | T-29 | Abuse test: 100 fake sessions | 1 | Sat 10 Oct | Sat 10 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
-| P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#6](https://github.com/magentawood/roomsie/issues/6) |
+| P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | F-11 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08, F-04 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | P2 Chat | 4 | T-12 ⚑ | Extraction: free text to form slots | 6 | Sat 26 Sep | Sun 27 Sep | CP1 | T-11 | [#23](https://github.com/magentawood/roomsie/issues/23) |
@@ -214,10 +218,10 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P2 Chat | 11 | T-17 | Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct | Wed 7 Oct | CP3 | T-05, T-06, T-12 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | P2 Chat | 13 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Fri 9 Oct | Sat 10 Oct | CP3 | T-10, T-08, D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
-| P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | — | [#11](https://github.com/magentawood/roomsie/issues/11) |
-| P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08 | [#27](https://github.com/magentawood/roomsie/issues/27) |
-| P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03 | [#16](https://github.com/magentawood/roomsie/issues/16) |
-| P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03 | [#44](https://github.com/magentawood/roomsie/issues/44) |
+| P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
+| P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
+| P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
+| P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03, F-13 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
@@ -228,8 +232,8 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | T-06 | [#37](https://github.com/magentawood/roomsie/issues/37) |
-| P5 Accounts and people | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06 | [#36](https://github.com/magentawood/roomsie/issues/36) |
+| P5 Accounts and people | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06, F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06, F-11 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
 | Design | 2 | D-02 ⚑ | Design the chat screens |  | Thu 24 Sep | Fri 25 Sep | CP0 | D-01 | [#7](https://github.com/magentawood/roomsie/issues/7) |
@@ -248,12 +252,16 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Founder | 2 | F-02 | Secure the domain |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#3](https://github.com/magentawood/roomsie/issues/3) |
 | Founder | 3 | F-03 | Billing and hard spend caps |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#4](https://github.com/magentawood/roomsie/issues/4) |
 | Founder | 4 | F-04 | Create accounts in Mumbai regions |  | Thu 24 Sep | Thu 24 Sep | CP0 | F-03 | [#5](https://github.com/magentawood/roomsie/issues/5) |
-| Founder | 5 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#8](https://github.com/magentawood/roomsie/issues/8) |
+| Founder | 5 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | F-11 | [#8](https://github.com/magentawood/roomsie/issues/8) |
 | Founder | 6 | F-06 | Pick the three launch areas |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
-| Founder | 7 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | — | [#17](https://github.com/magentawood/roomsie/issues/17) |
+| Founder | 7 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | Founder | 8 | F-09 | Write down the three ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
 | Founder | 9 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
-| Founder | 10 | F-10 | Go/no-go meeting |  | Sat 10 Oct | Sat 10 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
+| Founder | 10 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
+| Founder | 11 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
+| Founder | 12 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
+| Founder | 13 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | no issue at this time |
+| Founder | 14 | F-10 | Go/no-go meeting |  | Sat 10 Oct | Sat 10 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
 | Everyone | 1 | A-01 | Bug fix day |  | Sun 11 Oct | Sun 11 Oct | CP4 | — | [#53](https://github.com/magentawood/roomsie/issues/53) |
 | Everyone | 2 | A-02 | Launch |  | Mon 12 Oct | Mon 12 Oct | CP4 | — | [#54](https://github.com/magentawood/roomsie/issues/54) |
 
@@ -356,6 +364,10 @@ gantt
     F-07 Draft privacy policy terms grievance contact :f07, 2026-09-25, 6d
     F-09 Write down the three ADR exceptions :f09, 2026-09-26, 2d
     F-08 Name the moderator :f08, 2026-09-30, 3d
+    F-11 Product calls - intake Form A and profile data :crit, f11, 2026-10-04, 3d
+    F-12 Product calls - matching rules :crit, f12, 2026-10-04, 3d
+    F-13 Product calls - connect trust and safety :crit, f13, 2026-10-04, 3d
+    F-14 Product calls - assistant and limits :f14, 2026-10-04, 3d
     F-10 Go/no-go meeting :f10, 2026-10-10, 1d
     section Everyone
     A-01 Bug fix day :a01, 2026-10-11, 1d
@@ -377,9 +389,9 @@ Every role has a name. The accounts and billing are live. The styling is decided
 | F-02 | Secure the domain | F |  | Thu 24 Sep | — |
 | F-03 | Billing and hard spend caps | F |  | Thu 24 Sep | — |
 | F-04 | Create accounts in Mumbai regions | F |  | Thu 24 Sep | F-03 |
-| T-08 ⚑ | Form A contract: slots and enums | P2 | 2 | Thu 24 Sep | — |
+| T-08 ⚑ | Form A contract: slots and enums | P2 | 2 | Thu 24 Sep | F-11 |
 | D-02 ⚑ | Design the chat screens | D |  | Thu 24 Sep → Fri 25 Sep | D-01 |
-| F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | — |
+| F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | F-11 |
 | F-06 | Pick the three launch areas | F |  | Thu 24 Sep → Fri 25 Sep | — |
 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
 
@@ -466,6 +478,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The set has 50 sentences that people really type, in English, Hinglish and Marathi
 - Mumbai areas, 20k, bees hazaar, next month end
 - The set includes 10 sentences that are vague on purpose. T1 labels the correct answers
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/model-selection.md`
 
 **T-23a · Landing page from the Figma design** — done when:
@@ -484,11 +497,13 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The form is live with the consent text
 - Outreach uses the team's own networks, college and company groups, and flat-hunting groups
 - The team invites people to sign up. The team never copies the posts or details of any person
+- Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it
 - Read first: `docs/decisions/pd-11-launch.md`
 
 **T-35 · Form B contract and table** — done when:
 - Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
 - An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/agent-architecture.md`, `docs/extensibility.md`
 
 **D-03 · Design results, profile and connect screens** — done when:
@@ -509,6 +524,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - Code parses numbers and dates, not the model
 - All vague input becomes `unclear`, never a guess. An inferred value never fills a slot silently
 - The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/research/hinglish-model-report.md`, `docs/agent-architecture.md`, `docs/extensibility.md`
 
 ### CP2 · Core loop live — Thu 1 Oct
@@ -517,8 +533,8 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
-| T-06 ⚑ | Database schema v1 | P3 | 8 | Thu 24 Sep → Tue 29 Sep | — |
-| F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | — |
+| T-06 ⚑ | Database schema v1 | P3 | 8 | Thu 24 Sep → Tue 29 Sep | F-11 |
+| F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | F-13 |
 | M-02 | Seeding target: 100 sign-ups | M2 |  | Sat 26 Sep → Wed 30 Sep | M-01 |
 | T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04 |
 | T-03 | CI: typecheck, lint, build, secret scan | P5 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
@@ -579,6 +595,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - It replies in the language that the person used
 - It never states a fact about a specific person
 - An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
+- Each open product call that this task uses has a default in config or seed data, not in code. F-12 and F-13 confirms it
 - Read first: `docs/scope-policy.md`
 
 **T-24 · Event logging table** — done when:
@@ -600,20 +617,24 @@ Every screen and every assistant handler is merged, and is live behind the invit
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
-| T-14 ⚑ | Match query API | P3 | 6 | Tue 29 Sep → Sat 3 Oct | T-06, T-08 |
+| T-14 ⚑ | Match query API | P3 | 6 | Tue 29 Sep → Sat 3 Oct | T-06, T-08, F-12 |
 | M-05 | Drafts of articles 1 to 10 | M1 |  | Tue 29 Sep → Mon 5 Oct | M-04 |
 | F-08 | Name the moderator | F |  | Wed 30 Sep → Fri 2 Oct | — |
 | T-36 | Observer: Form B from free text, with the quote check | P2 | 8 | Wed 30 Sep → Fri 2 Oct | T-35, T-12, T-06 |
 | M-07 | Draft launch posts | M1 |  | Wed 30 Sep → Sat 3 Oct | — |
-| T-18a ⚑ | Connect request and contact reveal API | P5 | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06 |
+| T-18a ⚑ | Connect request and contact reveal API | P5 | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | T-04 | Deploy web and API to Mumbai | P1 | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
 | T-19 | Report, block, suspend, and a saved moderation query | P4 | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | T-21 | Five-turn cap, rate limits, spend ceiling | P2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12, T-06, T-05 |
 | T-07 | Error reporting wrapper and Sentry | P1 | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
-| T-15 ⚑ | Results panel, built against the contract | P3 | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03 |
+| T-15 ⚑ | Results panel, built against the contract | P3 | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03, F-12 |
 | T-25 | Uptime monitor and spend alerts | P1 | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
 | T-38 | Advisor: articles first, then web search after sign-in | P2 | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05, M-05 |
-| T-16a ⚑ | Profile and photo upload API | P5 | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06 |
+| F-11 ⚑ | Product calls: intake, Form A and profile data | F |  | Sun 4 Oct → Tue 6 Oct | — |
+| F-12 ⚑ | Product calls: matching rules | F |  | Sun 4 Oct → Tue 6 Oct | — |
+| F-13 ⚑ | Product calls: connect, trust and safety | F |  | Sun 4 Oct → Tue 6 Oct | — |
+| F-14 | Product calls: assistant and limits | F |  | Sun 4 Oct → Tue 6 Oct | — |
+| T-16a ⚑ | Profile and photo upload API | P5 | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
 | T-16b ⚑ | Profile create and edit screens | P5 | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
 | T-27 | Run the eval set and tune the prompt | P2 | 3 | Mon 5 Oct → Tue 6 Oct | T-12 |
 | T-33 | Invite-only gate until launch | P1 | 1 | Mon 5 Oct → Tue 6 Oct | T-05 |
@@ -622,7 +643,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-17 | Carry anonymous chat into the account on sign-in | P2 | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06, T-12 |
 | T-39 | Analytics in its own database, with scheduled jobs | P1 | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
-| T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03 |
+| T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
 | T-22a | Launch areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
 | T-22b | Launch areas and waitlist screen | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | T-40 | Nightly database backups to R2 | P1 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
@@ -654,6 +675,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation
 - A one-off job backfills Form B from the stored chat turns
 - It is tested on the eval sentences, and the rejection rate is recorded
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/agent-architecture.md`, `docs/ai-agent-design.md`
 
 **M-07 · Draft launch posts** — done when:
@@ -676,6 +698,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A block hides both people from each other. This also applies in the match query
 - A saved query in Supabase lists open reports
 - Suspend sets `tokens_valid_after` to now and hides the profile
+- Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
 - Read first: `docs/scope-policy.md`
 
 **T-21 · Five-turn cap, rate limits, spend ceiling** — done when:
@@ -683,6 +706,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The sign-in wall never appears before results show. The results stay visible behind the wall
 - Limits apply per device and per network
 - At the daily spend ceiling, the chat changes to chips only
+- Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 - Read first: `docs/pre-login-limits.md`
 
 **T-07 · Error reporting wrapper and Sentry** — done when:
@@ -708,7 +732,28 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - If the articles do not answer a general question, signed-in users get a web_search answer from DeepSeek, or from Gemini Google Search grounding as fallback. A visitor who has not signed in gets a hedged general answer
 - The assistant answers law, tax, area safety and claims about a person only from articles, or hands them off. It never uses the web for them
 - Web searches count toward the daily spend ceiling
+- Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 - Read first: `docs/scope-policy.md`, `docs/extensibility.md`
+
+**F-11 · Product calls: intake, Form A and profile data** — done when:
+- Each call in docs/product-calls/intake-and-profile.md has an answer from the product team
+- Each answer is in its decision record, and the call is not in the file
+- Read first: `docs/product-calls/intake-and-profile.md`, `docs/decisions/pd-00-v0-scope.md`, `docs/decisions/pd-03b-interview-vs-chips.md`
+
+**F-12 · Product calls: matching rules** — done when:
+- Each call in docs/product-calls/matching-rules.md has an answer from the product team
+- Each answer is in its decision record, and the call is not in the file
+- Read first: `docs/product-calls/matching-rules.md`, `docs/decisions/pd-03a-flatmate-matching.md`, `docs/decisions/pd-06c-interface-holes.md`
+
+**F-13 · Product calls: connect, trust and safety** — done when:
+- Each call in docs/product-calls/connect-and-trust.md has an answer from the product team
+- Each answer is in its decision record, and the call is not in the file
+- Read first: `docs/product-calls/connect-and-trust.md`, `docs/decisions/pd-03c-exclusionary-preferences.md`, `docs/decisions/pd-08-verification.md`
+
+**F-14 · Product calls: assistant and limits** — done when:
+- Each call in docs/product-calls/assistant-and-limits.md has an answer from the product team
+- Each answer is in its decision record, and the call is not in the file
+- Read first: `docs/product-calls/assistant-and-limits.md`, `docs/decisions/pd-09-pre-login-limits.md`, `docs/decisions/pd-10-scope-bands.md`
 
 **T-16a · Profile and photo upload API** — done when:
 - The API creates and edits a profile with name, age, work, intent, budget, areas, move date and lifestyle answers
@@ -726,6 +771,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The 50 test sentences go through extraction
 - The results record the fraction of correct slots and how frequently vague sentences get the mark unclear
 - The team tunes the prompt and saves the results in docs/research/
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/model-selection.md`
 
 **T-33 · Invite-only gate until launch** — done when:
@@ -747,12 +793,14 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - When a visitor signs in, the account gets what the visitor told the assistant before sign-in
 - Nothing is lost, and the assistant never asks the same thing two times
 - The stored chat turns move to the account with the session
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/seo-with-gated-products.md`, `docs/extensibility.md`
 
 **T-39 · Analytics in its own database, with scheduled jobs** — done when:
 - The same track() function writes events to their own Supabase project, on the second account
 - pg_cron in that project deletes events past the retention period and creates next month's partition
 - The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation
+- Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **T-10 · Chat screen and split view** — done when:

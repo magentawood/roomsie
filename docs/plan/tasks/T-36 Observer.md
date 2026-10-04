@@ -37,6 +37,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
 - [ ] Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation
 - [ ] A one-off job backfills Form B from the stored chat turns
 - [ ] It is tested on the eval sentences, and the rejection rate is recorded
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 
 ^done
 

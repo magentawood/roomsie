@@ -34,6 +34,7 @@ Test the assistant on real sentences. Fix what it gets wrong.
 - [ ] The 50 test sentences go through extraction
 - [ ] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear
 - [ ] The team tunes the prompt and saves the results in docs/research/
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 
 ^done
 

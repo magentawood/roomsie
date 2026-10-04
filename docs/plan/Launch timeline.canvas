@@ -914,6 +914,45 @@
    "height": 84
   },
   {
+   "id": "task-F-11",
+   "type": "text",
+   "text": "**[[F-11 Intake and profile calls ⚑|F-11 Intake and profile calls]]**\nSun 4 Oct → Tue 6 Oct",
+   "x": 2200,
+   "y": 2742,
+   "width": 652,
+   "height": 84,
+   "color": "1"
+  },
+  {
+   "id": "task-F-12",
+   "type": "text",
+   "text": "**[[F-12 Matching calls ⚑|F-12 Matching calls]]**\nSun 4 Oct → Tue 6 Oct",
+   "x": 2200,
+   "y": 2838,
+   "width": 652,
+   "height": 84,
+   "color": "1"
+  },
+  {
+   "id": "task-F-13",
+   "type": "text",
+   "text": "**[[F-13 Connect and trust calls ⚑|F-13 Connect and trust calls]]**\nSun 4 Oct → Tue 6 Oct",
+   "x": 2200,
+   "y": 2934,
+   "width": 652,
+   "height": 84,
+   "color": "1"
+  },
+  {
+   "id": "task-F-14",
+   "type": "text",
+   "text": "**[[F-14 Assistant and limits calls|F-14 Assistant and limits calls]]**\nSun 4 Oct → Tue 6 Oct",
+   "x": 2200,
+   "y": 3030,
+   "width": 652,
+   "height": 84
+  },
+  {
    "id": "task-F-10",
    "type": "text",
    "text": "**[[F-10 Go-no-go meeting|F-10 Go-no-go meeting]]**\nSat 10 Oct",
@@ -960,11 +999,27 @@
    "toSide": "left"
   },
   {
+   "id": "e-F-11-T-08",
+   "fromNode": "task-F-11",
+   "fromSide": "right",
+   "toNode": "task-T-08",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
    "id": "e-D-01-D-02",
    "fromNode": "task-D-01",
    "fromSide": "right",
    "toNode": "task-D-02",
    "toSide": "left"
+  },
+  {
+   "id": "e-F-11-F-05",
+   "fromNode": "task-F-11",
+   "fromSide": "right",
+   "toNode": "task-F-05",
+   "toSide": "left",
+   "color": "1"
   },
   {
    "id": "e-D-03-T-18b",
@@ -974,12 +1029,28 @@
    "toSide": "left"
   },
   {
+   "id": "e-F-13-T-18b",
+   "fromNode": "task-F-13",
+   "fromSide": "right",
+   "toNode": "task-T-18b",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
    "id": "e-T-18a-T-18b",
    "fromNode": "task-T-18a",
    "fromSide": "bottom",
    "toNode": "task-T-18b",
    "toSide": "bottom",
    "label": "connect"
+  },
+  {
+   "id": "e-F-11-T-06",
+   "fromNode": "task-F-11",
+   "fromSide": "right",
+   "toNode": "task-T-06",
+   "toSide": "left",
+   "color": "1"
   },
   {
    "id": "e-D-02-T-10",
@@ -1027,6 +1098,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-F-13-F-07",
+   "fromNode": "task-F-13",
+   "fromSide": "right",
+   "toNode": "task-F-07",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-02-T-05",
    "fromNode": "task-T-02",
    "fromSide": "right",
@@ -1055,6 +1133,14 @@
    "fromSide": "right",
    "toNode": "task-T-15",
    "toSide": "left"
+  },
+  {
+   "id": "e-F-12-T-15",
+   "fromNode": "task-F-12",
+   "fromSide": "right",
+   "toNode": "task-T-15",
+   "toSide": "left",
+   "color": "1"
   },
   {
    "id": "e-T-14-T-15",
@@ -1127,6 +1213,14 @@
    "color": "1"
   },
   {
+   "id": "e-F-12-T-14",
+   "fromNode": "task-F-12",
+   "fromSide": "right",
+   "toNode": "task-T-14",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
    "id": "e-T-02-T-04",
    "fromNode": "task-T-02",
    "fromSide": "right",
@@ -1151,6 +1245,14 @@
   {
    "id": "e-T-06-T-16a",
    "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-16a",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
+   "id": "e-F-11-T-16a",
+   "fromNode": "task-F-11",
    "fromSide": "right",
    "toNode": "task-T-16a",
    "toSide": "left",
@@ -1308,6 +1410,14 @@
   {
    "id": "e-T-06-T-18a",
    "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-18a",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
+   "id": "e-F-13-T-18a",
+   "fromNode": "task-F-13",
    "fromSide": "right",
    "toNode": "task-T-18a",
    "toSide": "left",

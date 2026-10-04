@@ -31,6 +31,7 @@ Shows matches as cards. In v0, each card is a person, never a property listing.
 ## Needs first
 - [[T-08 Form A contract ⚑]]
 - [[D-03 Results and profile designs]]
+- [[F-12 Matching calls ⚑]]
 - [[T-14 Match query ⚑]], at a later time. It goes into main on Wed 30 Sep, before you start.
 
 ## Unblocks
