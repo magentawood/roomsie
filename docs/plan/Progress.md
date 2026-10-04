@@ -52,12 +52,12 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
-| 0 | [[F-11 Intake and profile calls ⚑]] | F |  | ⬜ can start | 31 | no issue at this time |
-| 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 5 | no issue at this time |
-| 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 4 | no issue at this time |
+| 0 | [[F-11 Intake and profile calls ⚑]] | F |  | ⬜ can start | 31 | [#103](https://github.com/magentawood/roomsie/issues/103) |
+| 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 5 | [#104](https://github.com/magentawood/roomsie/issues/104) |
+| 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 4 | [#105](https://github.com/magentawood/roomsie/issues/105) |
 | 0 | [[F-03 Billing and caps]] | F |  | ⬜ can start | 22 | [#4](https://github.com/magentawood/roomsie/issues/4) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
-| 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | no issue at this time |
+| 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-03 CI checks]] | P5 | 2 | ⬜ can start | 0 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | 1 | [[F-04 Accounts in Mumbai]] | F |  | ⬜ waits | 21 | [#5](https://github.com/magentawood/roomsie/issues/5) |
