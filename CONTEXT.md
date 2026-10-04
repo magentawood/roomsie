@@ -2,13 +2,13 @@
 
 Every agent session loads this file. It is an index: it tells you what roomsie is, where each fact lives, and what to read before a task. It holds no reasoning. **When your task touches an area in the routing table, read the files for that area before you act.**
 
-**Owner:** Yash Mangal · **Org:** magentawood · **Limit:** 1,500 tokens (`doc-budget`)
+**Owner:** Yash Mangal · **Org:** magentawood · **Limit:** 1,500 tokens
 
 ## What roomsie is
 
 - An AI-native platform to find flats and flatmates in Mumbai. An assistant interviews the user, then recommends. Browsing comes after the conversation.
 - v0 is flatmate matching only, open to all genders, and free.
-- Launch: Monday 12 October, fallback Wednesday 14 October. Go or no-go: Saturday 10 October, 8 pm ([PD11](docs/decisions/pd-11-launch.md)).
+- Launch date: set when the designs arrive ([PD11](docs/decisions/pd-11-launch.md), [PD12](docs/decisions/pd-12-team-plan.md)).
 - roomsie is a pivot of femmeflats, a women-only swipe app. Its PRD is deprecated: do not cite it.
 
 ## Decisions
@@ -41,7 +41,7 @@ Open, with no record yet: the elevator pitch.
 | Hosting, deploy, CI, backups | [ADR-0009](docs/decisions/0009-hosting-and-region.md), [ADR-0013](docs/decisions/0013-ci-gate-and-testing.md), [PD13](docs/decisions/pd-13-databases-and-backups.md) |
 | A new vendor or feature | [extensibility.md](docs/extensibility.md), [repo-layout.md](docs/repo-layout.md), [ADR-0005](docs/decisions/0005-managed-platform-split.md), [ADR-0010](docs/decisions/0010-monorepo-tooling.md) |
 | Articles, the advisor corpus | [corpus-plan.md](docs/content/corpus-plan.md), [PD10](docs/decisions/pd-10-scope-bands.md) |
-| The plan, dates, owners | [how-to-work.md](docs/how-to-work.md), [Progress.md](docs/plan/Progress.md), [PD11](docs/decisions/pd-11-launch.md), [PD12](docs/decisions/pd-12-team-plan.md) |
+| The plan, owners, product calls | [how-to-work.md](docs/how-to-work.md), [Progress.md](docs/plan/Progress.md), [PD11](docs/decisions/pd-11-launch.md), [PD12](docs/decisions/pd-12-team-plan.md), `docs/product-calls/` |
 
 ## Where things live
 

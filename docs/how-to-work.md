@@ -20,6 +20,8 @@ The work goes in waves, not in dates.
 - **Many people can work on one wave.** To take a task, assign its GitHub issue to you. First, make sure that the issue has no assignee.
 - In a wave, take the ⚑ tasks first. Then take the task that unblocks the most tasks.
 - Founder and marketing tasks that gate a build task are in the waves too. F-03 and F-04 come first.
+- F-11 to F-14 are grill sessions for the open product calls. Their questions are in `docs/product-calls/`. "Waits on product calls" shows the tasks that wait on them.
+- A task can need only a number or a list from an open call. Then put a default in config or seed data, not in the code.
 - A small screen part, for example a sign-in button, is plain. It has no design. The screen tasks apply the design to it.
 - When the designs arrive, the tasks in "Waits on the designs" join the waves. Then the team selects the launch date.
 
