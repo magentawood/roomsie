@@ -31,6 +31,7 @@ Log in with Google. The server checks the user on each request.
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 - [[F-04 Accounts in Mumbai]]
+- [[T-06 Database schema ⚑]]
 
 ## Unblocks
 - [[T-16a Profile API ⚑]]

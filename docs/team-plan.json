@@ -68,7 +68,7 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "Billing is on for Supabase Pro, Fly, Vercel, Cloudflare, DeepSeek and Gemini",
+    "Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on two free accounts (PD13)",
     "Both AI accounts have hard monthly caps"
    ],
    "read": [
@@ -441,7 +441,8 @@
    "end": "2026-10-01",
    "deps": [
     "T-02",
-    "F-04"
+    "F-04",
+    "T-06"
    ],
    "done": [
     "Google sign-in works through Firebase on the web. The token stays in memory",

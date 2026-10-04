@@ -32,6 +32,7 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
+- [[T-05 Google sign-in ⚑]]
 - [[T-14 Match query ⚑]]
 - [[T-16a Profile API ⚑]]
 - [[T-17 Carry chat into account]]
