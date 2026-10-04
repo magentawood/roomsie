@@ -410,7 +410,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - The team shares DNS access with T4
 
 **F-03 · Billing and hard spend caps** — done when:
-- Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on two free accounts (PD13)
+- Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)
 - Both AI accounts have hard monthly caps
 - Read first: `docs/cost-and-team.md`
 
@@ -797,9 +797,9 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/seo-with-gated-products.md`, `docs/extensibility.md`
 
 **T-39 · Analytics in its own database, with scheduled jobs** — done when:
-- The same track() function writes events to their own Supabase project, on the second account
+- The same track() function writes events to their own Supabase project, in the same account
 - pg_cron in that project deletes events past the retention period and creates next month's partition
-- The main database keeps no events. The connection details of each project are only in environment settings, thus both can later move into one paid organisation
+- The main database keeps no events. The connection details of each project are only in environment settings, thus a paid plan later needs no code change
 - Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
@@ -935,7 +935,7 @@ Examine the numbers and the bug list. Then set the order of v1.
 | There are only four engineers | Plan for 14 October from day one. Apply the cut order. |
 | The DeepSeek or Gemini sign-up is late | Use the provider that works. The wrapper, T-11, makes the provider a setting. |
 | Jev access arrives before launch | Test Jev on the eval set, behind the adapter of the router. Change to Jev only if it is better than DeepSeek on Hinglish and Marathi. |
-| The app reaches a free Supabase limit | Upgrade that account. Or, move the two projects into one paid organisation before the planned time. This needs no code changes. |
+| The app reaches a free Supabase limit | Change the Supabase organisation to a paid plan before the planned time. This needs no code changes. |
 | Seeding is short | Launch in fewer areas. Never launch into an empty panel. |
 | A checkpoint is more than a day late | On that checkpoint call, decide if 14 October becomes the plan. Do not wait for 10 October. |
 
