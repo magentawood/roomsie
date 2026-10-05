@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**13 of 217 done · 6%**
+**19 of 216 done · 9%**
 
-`█░░░░░░░░░░░░░░░░░░░░░░░`
+`██░░░░░░░░░░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -30,7 +30,7 @@ This note is part of [[roomsie launch]].
 | [[Design]] | 0 / 6 | 0 / 12 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 12 | 0% |
-| [[Founder]] | 0 / 14 | 0 / 35 | 0% |
+| [[Founder]] | 2 / 14 | 6 / 34 | 18% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -48,23 +48,21 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When the designs arrive,** the tasks in "Waits on the designs" join the waves.
 
-**13 free tasks are open · 14 build hours.**
+**11 free tasks are open · 14 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[F-11 Intake and profile calls ⚑]] | F |  | ⬜ can start | 33 | [#103](https://github.com/magentawood/roomsie/issues/103) |
 | 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 5 | [#104](https://github.com/magentawood/roomsie/issues/104) |
 | 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 4 | [#105](https://github.com/magentawood/roomsie/issues/105) |
-| 0 | [[F-03 Billing and caps]] | F |  | ⬜ can start | 22 | [#4](https://github.com/magentawood/roomsie/issues/4) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| 0 | [[T-04 Deploy to Mumbai]] | P1 | 3 | ⬜ can start | 2 | [#30](https://github.com/magentawood/roomsie/issues/30) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-03 CI checks]] | P5 | 2 | ⬜ can start | 0 | [#24](https://github.com/magentawood/roomsie/issues/24) |
-| 1 | [[F-04 Accounts in Mumbai]] | F |  | ⬜ waits | 21 | [#5](https://github.com/magentawood/roomsie/issues/5) |
-| 2 | [[T-04 Deploy to Mumbai]] | P1 | 3 | ⬜ waits | 2 | [#30](https://github.com/magentawood/roomsie/issues/30) |
-| 2 | [[T-07 Error reporting]] | P1 | 1 | ⬜ waits | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
-| 3 | [[T-25 Uptime and spend alerts]] | P1 | 2 | ⬜ waits | 0 | [#43](https://github.com/magentawood/roomsie/issues/43) |
-| 3 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ waits | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
+| 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
+| 1 | [[T-25 Uptime and spend alerts]] | P1 | 2 | ⬜ waits | 0 | [#43](https://github.com/magentawood/roomsie/issues/43) |
+| 1 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ waits | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 
 ### Waits on product calls
 
@@ -114,8 +112,8 @@ Blue can start. Yellow is in progress. Green is done. White waits on a different
 
 ```mermaid
 flowchart LR
-  F03["F-03<br/>Billing and caps"]:::ready
-  F04["F-04<br/>Accounts in Mumbai"]:::todo
+  F03["F-03<br/>Billing and caps"]:::done
+  F04["F-04<br/>Accounts in Mumbai"]:::done
   F06["F-06<br/>Launch areas picked"]:::ready
   F11["F-11 ⚑<br/>Intake and profile calls"]:::ready
   F12["F-12 ⚑<br/>Matching calls"]:::ready
@@ -123,9 +121,9 @@ flowchart LR
   F14["F-14<br/>Assistant and limits calls"]:::ready
   T02["T-02 ⚑<br/>Scaffold monorepo"]:::done
   M03["M-03<br/>Eval sentences"]:::ready
-  T04["T-04<br/>Deploy to Mumbai"]:::todo
+  T04["T-04<br/>Deploy to Mumbai"]:::ready
   T03["T-03<br/>CI checks"]:::ready
-  T07["T-07<br/>Error reporting"]:::todo
+  T07["T-07<br/>Error reporting"]:::ready
   T25["T-25<br/>Uptime and spend alerts"]:::todo
   T40["T-40<br/>Nightly backups"]:::todo
   T08["T-08 ⚑<br/>Form A contract"]:::product
@@ -425,7 +423,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 0/35
+## Founder — 6/34
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -433,10 +431,10 @@ flowchart LR
 > [!todo]- ⬜ [[F-02 Domain]] · 0/2
 > ![[F-02 Domain#^done]]
 
-> [!todo]- ⬜ [[F-03 Billing and caps]] · 0/3
+> [!todo]- ✅ [[F-03 Billing and caps]] · 2/2
 > ![[F-03 Billing and caps#^done]]
 
-> [!todo]- ⬜ [[F-04 Accounts in Mumbai]] · 0/4
+> [!todo]- ✅ [[F-04 Accounts in Mumbai]] · 4/4
 > ![[F-04 Accounts in Mumbai#^done]]
 
 > [!todo]- ⬜ [[F-05 Seeding consent text ⚑]] · 0/2
