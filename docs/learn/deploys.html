@@ -87,7 +87,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li>Add a new API secret in two places: <code>.env.deploy</code> and GitHub secrets. Then add its name to the Deploy step of the deploy workflow. If you do not, the API does not get it.</li>
+<li>Add a new API secret to <code>.env.deploy</code>, to GitHub secrets, and with a dummy value to <code>apps/api/.env.example</code>. Then add it to the Deploy step of the deploy workflow, with the prefix <code>API_</code>. If you do not, the API does not get it.</li>
 <li>The image builds from the repo root, because the API needs the workspace packages. The install skips scripts, because the root <code>prepare</code> script needs <code>git</code>.</li>
 <li>A deployment takes approximately 3 to 5 minutes. Lightsail keeps the previous version until the new version passes the health check.</li>
 <li>Lightsail shows the environment of each deployment in the AWS console. Only give AWS console access to people who can see the secrets.</li>

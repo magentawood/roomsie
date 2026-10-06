@@ -32,7 +32,7 @@ and no release correlation. Its retention is short and depends on the plan.
 | | |
 |---|---|
 | Instrumentation | Sentry SDK in `apps/web` and `apps/api` |
-| Destination now | **Self-hosted GlitchTip**, ~$5/month |
+| Destination now | **Self-hosted GlitchTip** on Fly, ~$5/month |
 | Destination later | **Firebase Crashlytics for web, when it reaches GA.** This is the preferred destination. The fallback is Sentry paid. |
 | Mobile (month 4) | **Firebase Crashlytics**: free, best in class, and we already use Firebase |
 | Uptime | A free-tier monitor on the single API machine |
