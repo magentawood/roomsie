@@ -44,4 +44,4 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 
 ## Tickets
 
-- T-04: the first deploy of the web and the API.
+- T-04: [#110](https://github.com/magentawood/roomsie/pull/110), 2026-10-06. The first deploy of the web and the API, and the move from Fly to Lightsail.

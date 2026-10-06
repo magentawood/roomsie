@@ -91,9 +91,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
+- [Deploys](learn/deploys.md)
 - [Building the API](learn/building-the-api.md)
 - [Local development with Docker](learn/local-dev-with-docker.md)
 - [OpenAPI from Zod](learn/openapi-from-zod.md)
 - [pnpm, Corepack and Turborepo](learn/pnpm-and-corepack.md)
-- [Postgres drivers](learn/postgres-drivers.md)
 <!-- learn-newest:end -->

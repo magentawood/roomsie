@@ -33,9 +33,9 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 - [[T-40 Nightly backups]]
 
 ## Done when
-- [ ] Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile
-- [ ] Secrets are set in both
-- [ ] A merge to main deploys automatically
+- [x] Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile · [#110](https://github.com/magentawood/roomsie/pull/110)
+- [x] Secrets are set in both · [#110](https://github.com/magentawood/roomsie/pull/110)
+- [x] A merge to main deploys automatically · [#110](https://github.com/magentawood/roomsie/pull/110)
 
 ^done
 
@@ -72,3 +72,13 @@ Real machines in Mumbai, so anyone on the internet can use the site.
     - F-04: "Fly is in bom" becomes "the API host is Lightsail in ap-south-1".
     - F-03: "Billing is on for Fly" becomes "Billing is on for AWS".
 - **Out of scope:** the CI checks (T-03), error reports and Sentry (T-07), the database migrations (T-06), a staging API for previews, a custom domain, the uptime monitor (T-25) and the backups (T-40).
+
+## Log
+
+- **2026-10-06 · [#110](https://github.com/magentawood/roomsie/pull/110)**
+  - **Change:** the API runs as a Docker image on Lightsail in `ap-south-1`, and a workflow deploys it after each merge. Vercel publishes the web, which reads the API address from its production settings.
+  - **Why:** [ADR-0009](../../decisions/0009-hosting-and-region.md). Fly accepts no new machines in `bom`, so the API host is Lightsail.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Deploys](../../learn/deploys.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-06--t-04-the-web-and-the-api-are-live-in-mumbai)
