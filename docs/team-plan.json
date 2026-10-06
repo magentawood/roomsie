@@ -68,7 +68,7 @@
    "end": "2026-09-24",
    "deps": [],
    "done": [
-    "Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)",
+    "Billing is on for AWS, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)",
     "Both AI accounts have hard monthly caps"
    ],
    "read": [
@@ -90,7 +90,7 @@
     "F-03"
    ],
    "done": [
-    "Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1",
+    "Supabase is in ap-south-1, the API host is Lightsail in ap-south-1, and Vercel functions are in bom1",
     "The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist",
     "A Sentry project exists for the web and the API",
     "The team shares keys through a password manager, never in chat or in the repo"
@@ -637,7 +637,7 @@
     "F-04"
    ],
    "done": [
-    "Web is on Vercel, pinned to bom1. The API is on Fly in bom, built from a Dockerfile",
+    "Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile",
     "Secrets are set in both",
     "A merge to main deploys automatically"
    ],
@@ -733,7 +733,8 @@
    "done": [
     "Every pull request runs typecheck, lint, build and gitleaks",
     "Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`",
-    "It finishes in less than five minutes"
+    "It finishes in less than five minutes",
+    "`main` accepts a merge only when CI passes"
    ],
    "read": [
     "docs/decisions/0013-ci-gate-and-testing.md"

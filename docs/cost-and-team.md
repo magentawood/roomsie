@@ -59,7 +59,7 @@ The current base is approximately $50 to $80 a month.
 | Item | Note |
 |---|---|
 | Inference | The variable cost. It scales with conversations, not users. |
-| A second Fly machine | ADR 0009 accepts a single machine today. This decision is worth a new review. |
+| A second API machine | ADR 0009 accepts a single machine today. This decision is worth a new review. |
 | Vector store | **Not necessary.** Retrieval is SQL. The assistant does not search documents. It fills a form and runs a query. |
 
 Why: [PD5](decisions/pd-05-team-and-budget.md)

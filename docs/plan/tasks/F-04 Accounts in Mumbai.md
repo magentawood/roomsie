@@ -34,7 +34,7 @@ Hosting and database accounts.
 - [[T-40 Nightly backups]]
 
 ## Done when
-- [x] Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1 · [#109](https://github.com/magentawood/roomsie/pull/109)
+- [x] Supabase is in ap-south-1, the API host is Lightsail in ap-south-1, and Vercel functions are in bom1 · [#109](https://github.com/magentawood/roomsie/pull/109)
 - [x] The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist · [#109](https://github.com/magentawood/roomsie/pull/109)
 - [x] A Sentry project exists for the web and the API · [#109](https://github.com/magentawood/roomsie/pull/109)
 - [x] The team shares keys through a password manager, never in chat or in the repo · [#109](https://github.com/magentawood/roomsie/pull/109)

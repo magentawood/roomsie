@@ -11,12 +11,12 @@
 
 ## Decision
 
-**In one line:** Postgres, `apps/api` and the `apps/web` functions all run in Mumbai: Supabase `ap-south-1`, Fly.io `bom` and Vercel `bom1`.
+**In one line:** Postgres, `apps/api` and the `apps/web` functions all run in Mumbai: Supabase `ap-south-1`, AWS Lightsail containers `ap-south-1` and Vercel `bom1`.
 
 | Component | Where |
 |---|---|
 | Postgres (Supabase) | **Mumbai — `ap-south-1`** |
-| `apps/api` | **Fly.io — `bom` (Mumbai)** |
+| `apps/api` | **AWS Lightsail containers — `ap-south-1` (Mumbai)** |
 | `apps/web` | **Vercel — functions pinned to `bom1` (Mumbai)** |
 
 ## Rationale
@@ -40,13 +40,13 @@ latency is not user→API. It is **API→database**.
   follows it.** To move `apps/api` to a different host takes an afternoon. To
   move a Supabase project to a different region is a dump-and-restore, with
   downtime.
-- Of the candidate hosts, only Fly.io has an Indian region. Render has none.
-  Railway has no confirmed Indian region. Vercel does offer `bom1`. Thus,
-  latency alone does not make Fly different from Vercel.
+- Fly.io, Render and Railway accept no new machines in India. Vercel does
+  offer `bom1`. Lightsail containers run in `ap-south-1`, the AWS region of
+  Supabase. Thus, latency alone does not make Lightsail different from Vercel.
 
 ### 2. Runtime — the argument that actually decided it
 
-| | Fly.io | Vercel |
+| | Lightsail container | Vercel |
 |---|---|---|
 | Model | Always-on container | Function instances (Fluid reuse) |
 | Cold starts | None | Fewer, not zero |
@@ -55,7 +55,7 @@ latency is not user→API. It is **API→database**.
 | DB connections | Long-lived pool | Supabase pooler |
 | Fastify | Native | Adapter |
 | Portability | Runs anywhere | Vercel-shaped code |
-| Cost | ~$5–10/mo fixed | For each invocation |
+| Cost | ~$7/mo fixed | For each invocation |
 
 Serverless functions have **no shared memory between requests**. Thus, no
 function can buffer, batch, throttle or cache data across requests. This is the
@@ -109,25 +109,15 @@ ADR 0007 already divides the work along this line. Vercel server-renders the
 public pages, and the CDN caches them. All write-heavy work goes behind
 `apps/api`.
 
-### 4. Vendor risk versus coupling risk (mid-2026)
+### 4. Vendor risk versus coupling risk
 
-| | Fly.io | Vercel |
-|---|---|---|
-| Revenue | $11.2M (2024) | $340M ARR (Feb 2026) |
-| Employees | ~60 | ~1,011 |
-| Customers | 37,000 | 1M+ monthly Next.js devs |
-| Latest round | $25M Series D, Aug 2026 | Series F, Sept 2025, $9.3B |
-
-- **Fly's risk is real.** In its Series D statements, Fly reports that
-  agent-native customers are approximately two-thirds of the revenue from its
-  largest customers, and they grow ~12× year on year. Fly changes into an
-  AI-agent infrastructure company, and its attention to general web hosting
-  decreases.
-- **But the artefact that we deploy is a Docker container.** If Fly is not
-  satisfactory, the same image runs with no change on Railway, Render, AWS or a
-  VPS, in an afternoon.
-- **Vercel is the much safer company,** but it produces code that runs on no
-  other platform.
+- **The artefact that we deploy is a Docker container.** It runs with no
+  change on Lightsail, Fly, Railway, Render or a VPS.
+- **This portability already paid.** The first choice was Fly.io `bom`. In
+  October 2026, Fly accepted no new machines in `bom`, and the same image moved
+  to Lightsail in one ticket (T-04).
+- **Vercel is a safe company,** but it produces code that runs on no other
+  platform.
 
 **The safer vendor carries the riskier coupling.** Of the two risks, only
 coupling costs engineering time, because portability is the thing that lets you
@@ -135,12 +125,14 @@ respond to vendor risk at all. This is the same posture as ADR 0001.
 
 ## Consequences
 
-- `apps/api` needs a `Dockerfile` and `fly.toml`. When it does not operate
-  correctly, a person reads the container logs. This is the deliberate ops
+- `apps/api` needs a `Dockerfile` and a deploy workflow. When it does not
+  operate correctly, a person reads the container logs. This is the deliberate ops
   learning that ADR 0001 deferred.
 - At first, there is a single machine. If it stops, we are down until it starts
   again. Before launch, we accept this. Subsequently, to run two machines is
   a one-line config change.
+- Lightsail has no secret store. Each deployment carries the API secrets from
+  the CI secret store ([ADR-0016](0016-credentials-and-secrets.md)).
 - You must explicitly pin the Vercel function region to `bom1`. If you do not,
   SSR calls cross regions, and they silently bring back the 55ms problem.
 - You must create the Supabase project in `ap-south-1` at the start. A
@@ -157,10 +149,17 @@ respond to vendor risk at all. This is the same posture as ADR 0001.
   simplicity, from vendors that continue to focus on general app hosting.
   Rejected because of the region: the user latency is ~50–70ms, not ~10–20ms,
   and this is permanent.
+- **Fly.io `sin` with Supabase and Vercel also in Singapore.** API and database
+  stay together, but each user request gets the same ~50–70ms. Rejected for the
+  same reason.
+- **Google Cloud Run in Mumbai.** A CPU that is always on costs ~$50/month.
+  Rejected because of the budget ([PD5](pd-05-team-and-budget.md)).
 
 ## Revisit when
 
-- The reliability or the direction of Fly becomes a problem.
+- The reliability or the price of Lightsail becomes a problem.
 - The traffic justifies more than one machine.
 
 Superseded (2026-09-20): the product has no swipe stack or swipe queue. It starts with the assistant ([PD6](pd-06-interface-shape.md)). The region and hosting choice does not change.
+
+Superseded (2026-10-06): Fly.io `bom` for `apps/api`. Fly accepts no new machines in `bom`, so the API moved to Lightsail in `ap-south-1` (T-04).

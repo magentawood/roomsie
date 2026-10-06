@@ -45,7 +45,7 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 
 - **The move gets back the router, the observer and the advisor for launch.** It also gets back analytics in its own database, and nightly backups.
 - On the go/no-go evening, the remaining work is clear. A date that you announce and then miss costs more than a second date announced at the start.
-- A public launch needs items that a closed beta can omit. Strangers see contact details, so there must be a way out. The DPDP Act requires account deletion, a clear data notice and a named grievance contact. There is one Fly machine and an open chat, so you must know first.
+- A public launch needs items that a closed beta can omit. Strangers see contact details, so there must be a way out. The DPDP Act requires account deletion, a clear data notice and a named grievance contact. There is one API machine and an open chat, so you must know first.
 - A visitor who sees an empty panel leaves. The waitlist makes an empty result into a demand signal, and tells marketing where to seed next.
 - **Cold start is the real risk, not code.** A matching product with no people shows an empty panel on day one. Many people in Powai is better than a small number in all areas.
 - v0 is free because there is nothing to charge for.

@@ -50,7 +50,7 @@ Turborepo, in our conditions:
   **remote caching with zero configuration**. Thus, the team and CI share a
   build cache for free. Nx would need Nx Cloud, with its own configuration.
 - There is one config file. In the same month, the team learns Fastify, Zod,
-  Drizzle, TanStack Query, Fly.io and Docker. Thus, at this time, Turborepo is
+  Drizzle, TanStack Query and Docker. Thus, at this time, Turborepo is
   a smaller thing to have opinions about.
 
 **The genuine advantage of Nx is `affected`,** not code generation. Nx makes a

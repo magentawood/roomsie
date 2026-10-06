@@ -33,7 +33,7 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 - [[T-40 Nightly backups]]
 
 ## Done when
-- [ ] Web is on Vercel, pinned to bom1. The API is on Fly in bom, built from a Dockerfile
+- [ ] Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile
 - [ ] Secrets are set in both
 - [ ] A merge to main deploys automatically
 
@@ -41,3 +41,34 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 
 ## Read first
 - [0009-hosting-and-region.md](../../decisions/0009-hosting-and-region.md)
+
+## Spec
+
+**Approved:** 2026-10-06, by Yash (revised for Lightsail)
+
+- **Modules:**
+  - `apps/api`: a new Docker image. The image builds the API from the repo root and installs only the production libraries. The HTTP interface does not change. (why: [ADR-0009](../../decisions/0009-hosting-and-region.md))
+  - The deploy workflow of the API: new. A push to `main` that changes the API, a package, the lockfile or the workflow builds the image and deploys it to Lightsail. Only one deploy runs at a time. A person can also start it by hand.
+  - The Lightsail container service `roomsie-api`: one node in `ap-south-1`.
+  - The AWS account: new. It has a budget alert and one deploy user that can change only Lightsail containers.
+  - The Vercel project `roomsie`: one new production value, the public URL of the API. The web code does not change.
+  - The docs: [ADR-0009](../../decisions/0009-hosting-and-region.md) and each doc that names Fly as the host of the API.
+  - The plan: T-03 gets one new done item. Three done items change from Fly to Lightsail.
+- **Seams for the tests:**
+  - The Docker image, built on the laptop. It starts and its health check gives `ok`.
+  - The health check of the production API, after each deploy. The workflow fails if the check does not give `ok`.
+  - No new unit tests. The API code does not change.
+- **Decisions:**
+  - Fly has no Indian region for new machines. The API runs on AWS Lightsail containers in `ap-south-1`, the same AWS region as Supabase. ADR-0009 gets the change and a Superseded line. We delete the Fly app.
+  - The web deploys through the Git link of Vercel. It builds a preview for each pull request and publishes `main` to production. No GitHub workflow deploys the web.
+  - T-03 gets the done item "`main` accepts a merge only when CI passes". Vercel then publishes only code that passed CI.
+  - The API runs on one Nano node: 0.25 vCPU and 512 MB, always on. (why: [ADR-0009](../../decisions/0009-hosting-and-region.md))
+  - The API accepts browser calls only from the production web address. Calls from previews fail. The team examines this again after the launch.
+  - Lightsail has no secret store. The API secrets are in the CI secret store, and the workflow gives them to each deployment. No command prints a value. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
+  - The deploy user has an access key in the CI secret store. Its policy allows only the Lightsail container actions. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
+  - The image uses Node 22 and `pnpm deploy --prod`, as the T-02 review selected. GitHub builds the image.
+  - Changed done items:
+    - T-04: "The API is on Fly in bom" becomes "The API is on AWS Lightsail in ap-south-1".
+    - F-04: "Fly is in bom" becomes "the API host is Lightsail in ap-south-1".
+    - F-03: "Billing is on for Fly" becomes "Billing is on for AWS".
+- **Out of scope:** the CI checks (T-03), error reports and Sentry (T-07), the database migrations (T-06), a staging API for previews, a custom domain, the uptime monitor (T-25) and the backups (T-40).

@@ -18,7 +18,7 @@ One file for each decision. Each file records:
 | [0006](0006-drizzle.md) | Drizzle as the database layer | Accepted |
 | [0007](0007-web-rendering-and-auth-transport.md) | Hybrid rendering, Bearer tokens, instant revocation | Accepted |
 | [0008](0008-web-stack.md) | apps/web: Next 16 + Tailwind v4 + TanStack Query | Accepted |
-| [0009](0009-hosting-and-region.md) | Fly.io Mumbai for the API, Vercel for web, Supabase Mumbai | Accepted |
+| [0009](0009-hosting-and-region.md) | Lightsail Mumbai for the API, Vercel for web, Supabase Mumbai | Accepted |
 | [0010](0010-monorepo-tooling.md) | pnpm workspaces + Turborepo | Accepted |
 | [0011](0011-design-system-token-pipeline.md) | Design system: Untitled UI + generated theme.css from Figma | Accepted |
 | [0012](0012-analytics-event-store.md) | Analytics events in our own Postgres, no vendor | Accepted |
