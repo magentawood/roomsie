@@ -1,4 +1,3 @@
-# Deploys apps/api to Lightsail in ap-south-1 after a merge to main.
 name: deploy-api
 on:
   push:
@@ -13,6 +12,7 @@ concurrency:
   group: deploy-api
 env:
   SERVICE: roomsie-api
+  WEB_ORIGIN: https://roomsie.vercel.app
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -34,6 +34,7 @@ jobs:
           test -n "$image"
           echo "IMAGE=$image" >> "$GITHUB_ENV"
       # Lightsail has no secret store, so each deployment carries the API secrets (ADR-0016).
+      # jq passes each API_* variable to the container without the prefix.
       - name: Deploy
         env:
           API_DATABASE_URL: ${{ secrets.DATABASE_URL }}
@@ -55,7 +56,7 @@ jobs:
             containers: { api: {
               image: $image,
               ports: { "8080": "HTTP" },
-              environment: ({ WEB_ORIGIN: "https://roomsie.vercel.app" }
+              environment: ({ WEB_ORIGIN: $ENV.WEB_ORIGIN }
                 + ($ENV | with_entries(select(.key | startswith("API_")) | .key |= ltrimstr("API_"))))
             } },
             publicEndpoint: { containerName: "api", containerPort: 8080, healthCheck: { path: "/v1/health" } }
