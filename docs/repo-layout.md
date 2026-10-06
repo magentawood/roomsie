@@ -16,7 +16,7 @@ roomsie/
 │   │   │   └── waitlist/       launch areas and waitlist
 │   │   ├── components/         Figma look, theme tokens only
 │   │   └── lib/                API client typed from packages/contract, Firebase sign-in
-│   └── api/                    Fastify · Zod · Drizzle → Fly.io Mumbai
+│   └── api/                    Fastify · Zod · Drizzle → AWS Lightsail, Mumbai
 │       ├── src/
 │       │   ├── server.ts       mounts every module under /v1
 │       │   ├── plugins/        auth check, rate limits, invite gate
@@ -42,8 +42,7 @@ roomsie/
 │       │                       own schema file
 │       ├── drizzle/            generated SQL migrations                  ADR 0006
 │       ├── eval/               eval sentences and the runner
-│       ├── Dockerfile
-│       └── fly.toml
+│       └── Dockerfile
 ├── packages/
 │   ├── contract/               Zod: Form A, every API route, analytics
 │   │                           events. OpenAPI is generated from it      ADR 0004 0012

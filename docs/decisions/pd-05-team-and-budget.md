@@ -51,7 +51,7 @@ The cost of inference depends on the turn type:
 - For each turn, log tokens in, tokens out and the model. Tie the log to the session. Cost for each completed interview is a launch metric.
 - One completed interview costs approximately ₹1–2 (PD7).
 - Inference is the cost that changes. It scales with conversations, not users.
-- A second Fly machine is worth a new review, because long in-flight agent requests make restarts much easier to see.
+- A second API machine is worth a new review, because long in-flight agent requests make restarts much easier to see.
 - The 2 marketing people can start at this time. Nothing blocks them. The broker calls have the highest value, because PD3 waits on them. The blog starts immediately, because SEO compounds slowly and articles need no users.
 - The designer's first task is to choose between the V3 prototype palette and the Untitled UI `theme.css` of ADR 0011. It blocks frontend work.
   - Superseded (2026-10-02): the launch look comes from the Figma designs ([PD12](pd-12-team-plan.md)).

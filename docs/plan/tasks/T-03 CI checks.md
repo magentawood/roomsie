@@ -34,6 +34,7 @@ Checks each pull request automatically.
 - [ ] Every pull request runs typecheck, lint, build and gitleaks
 - [ ] Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`
 - [ ] It finishes in less than five minutes
+- [ ] `main` accepts a merge only when CI passes
 
 ^done
 

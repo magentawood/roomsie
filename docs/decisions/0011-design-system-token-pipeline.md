@@ -134,7 +134,7 @@ We commit `theme.css` and all other generated artefacts. Each one has a
 `generated — do not edit` header. CI runs the generator again, and it **fails
 if the output is different from the committed files**.
 
-- Vercel and Fly builds need no Figma access and no generator step.
+- Vercel and API builds need no Figma access and no generator step.
 - A Figma change shows as a CSS diff in the pull request that you can review.
 - If a person edits a generated file by hand, CI finds it at that time, not
   subsequently. Decision 3 exists to prevent this drift.

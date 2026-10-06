@@ -4,14 +4,14 @@
 
 ## Context
 
-`apps/web` runs on Vercel, and `apps/api` runs on Fly (ADR 0009). The
+`apps/web` runs on Vercel, and `apps/api` runs on Lightsail (ADR 0009). The
 authenticated app is client-rendered (ADR 0007). The budget is tight:
 approximately $50–80/month for all infrastructure. Thus, a $26/month line item
 is a third of the bill.
 
 **Vercel's own logging does not cover this system.** It has two structural gaps:
 
-- It sees only `apps/web`. The business logic is in the API on Fly, and Vercel
+- It sees only `apps/web`. The business logic is in the API on Lightsail, and Vercel
   logging cannot see the API.
 - It logs only what runs on Vercel's servers. Thus, **browser errors do not
   appear at all**. These errors are most of the breakage that users see.
@@ -32,10 +32,10 @@ and no release correlation. Its retention is short and depends on the plan.
 | | |
 |---|---|
 | Instrumentation | Sentry SDK in `apps/web` and `apps/api` |
-| Destination now | **Self-hosted GlitchTip** on Fly, ~$5/month |
+| Destination now | **Self-hosted GlitchTip**, ~$5/month |
 | Destination later | **Firebase Crashlytics for web, when it reaches GA.** This is the preferred destination. The fallback is Sentry paid. |
 | Mobile (month 4) | **Firebase Crashlytics**: free, best in class, and we already use Firebase |
-| Uptime | A free-tier monitor on the single Fly machine |
+| Uptime | A free-tier monitor on the single API machine |
 
 GlitchTip is protocol-compatible with the Sentry SDK. Thus, **where errors go is
 a DSN, not a vendor commitment.**
@@ -93,8 +93,8 @@ that this project consistently chose to avoid.
   locations. Redact `Authorization` as `docs/security/credentials.md` specifies.
   This is less urgent while the data stays on our own GlitchTip. But it must be
   correct before the DSN ever points at a vendor.
-- ⚠️ **Error tracking runs on the infrastructure that it monitors.** If the Fly
-  account or region has a problem, GlitchTip can be down exactly when we need it.
+- ⚠️ **Error tracking runs on the infrastructure that it monitors.** If the API
+  host or region has a problem, GlitchTip can be down exactly when we need it.
   We accept this knowingly. Hosted Sentry would not have this weakness. This is
   one more reason why the DSN switch must stay trivial.
 - GlitchTip is a service that we operate. This is in mild tension with the

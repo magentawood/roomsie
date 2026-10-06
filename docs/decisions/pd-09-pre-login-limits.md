@@ -52,7 +52,7 @@ At the ceiling:
 
 ## Consequences
 
-- The API is a single Fly machine. It keeps the counters in-process. **This fails at two machines**, because each machine has its own counters, and two machines double the limit.
+- The API is a single machine. It keeps the counters in-process. **This fails at two machines**, because each machine has its own counters, and two machines double the limit.
 - Thus, a second machine is not a one-line config change, which ADR 0009 says. Record this dependency.
 - Measure from day one. If you do not measure it, you cannot see it:
   - Cost for each completed interview, for each handler. This is the unit that matters.

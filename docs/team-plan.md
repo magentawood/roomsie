@@ -410,12 +410,12 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - The team shares DNS access with T4
 
 **F-03 · Billing and hard spend caps** — done when:
-- Billing is on for Fly, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)
+- Billing is on for AWS, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)
 - Both AI accounts have hard monthly caps
 - Read first: `docs/cost-and-team.md`
 
 **F-04 · Create accounts in Mumbai regions** — done when:
-- Supabase is in ap-south-1, Fly is in bom, and Vercel functions are in bom1
+- Supabase is in ap-south-1, the API host is Lightsail in ap-south-1, and Vercel functions are in bom1
 - The Firebase project, R2 buckets for public photos and private files, and DeepSeek and Gemini keys exist
 - A Sentry project exists for the web and the API
 - The team shares keys through a password manager, never in chat or in the repo
@@ -573,6 +573,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - Every pull request runs typecheck, lint, build and gitleaks
 - Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`
 - It finishes in less than five minutes
+- `main` accepts a merge only when CI passes
 - Read first: `docs/decisions/0013-ci-gate-and-testing.md`
 
 **T-23b · Privacy, terms and grievance pages** — done when:
@@ -688,7 +689,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them
 
 **T-04 · Deploy web and API to Mumbai** — done when:
-- Web is on Vercel, pinned to bom1. The API is on Fly in bom, built from a Dockerfile
+- Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile
 - Secrets are set in both
 - A merge to main deploys automatically
 - Read first: `docs/decisions/0009-hosting-and-region.md`

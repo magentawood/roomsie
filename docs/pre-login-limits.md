@@ -64,7 +64,7 @@ Why: [PD9](decisions/pd-09-pre-login-limits.md)
 **Where these live:**
 
 - ADR 0009 rejected serverless.
-- The API is a single Fly machine that runs for a long time. It keeps the counters in-process.
+- The API is a single machine that runs for a long time. It keeps the counters in-process.
 - This works today. **It fails at two machines.**
 - When counters exist, a second machine is not a one-line config change.
 - Record this dependency today.

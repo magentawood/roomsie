@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**19 of 216 done · 9%**
+**19 of 217 done · 9%**
 
 `██░░░░░░░░░░░░░░░░░░░░░░`
 
@@ -26,7 +26,7 @@ This note is part of [[roomsie launch]].
 | [[P2 Chat]] | 0 / 13 | 0 / 57 | 0% |
 | [[P3 Data and trust]] | 0 / 4 | 7 / 19 | 37% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
-| [[P5 Accounts and people]] | 0 / 6 | 0 / 20 | 0% |
+| [[P5 Accounts and people]] | 0 / 6 | 0 / 21 | 0% |
 | [[Design]] | 0 / 6 | 0 / 12 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 12 | 0% |
@@ -354,12 +354,12 @@ flowchart LR
 > ![[T-22b Waitlist screen#^done]]
 
 
-## P5 Accounts and people — 0/20
+## P5 Accounts and people — 0/21
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
 
-> [!todo]- ⬜ [[T-03 CI checks]] · 0/3
+> [!todo]- ⬜ [[T-03 CI checks]] · 0/4
 > ![[T-03 CI checks#^done]]
 
 > [!todo]- ⬜ [[T-24 Event logging]] · 0/4
