@@ -1,7 +1,7 @@
 name: deploy-api
 on:
   push:
-    branches: [main]
+    branches: [main, feat/t-04-deploy]
     paths:
       - apps/api/**
       - packages/**
