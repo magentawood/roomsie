@@ -37,7 +37,7 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 
 ## Gotchas
 
-- Add a new API secret in two places: `.env.deploy` and GitHub secrets. Then add its name to the Deploy step of the deploy workflow. If you do not, the API does not get it.
+- Add a new API secret to `.env.deploy`, to GitHub secrets, and with a dummy value to `apps/api/.env.example`. Then add it to the Deploy step of the deploy workflow, with the prefix `API_`. If you do not, the API does not get it.
 - The image builds from the repo root, because the API needs the workspace packages. The install skips scripts, because the root `prepare` script needs `git`.
 - A deployment takes approximately 3 to 5 minutes. Lightsail keeps the previous version until the new version passes the health check.
 - Lightsail shows the environment of each deployment in the AWS console. Only give AWS console access to people who can see the secrets.

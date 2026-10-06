@@ -1,4 +1,4 @@
-# Deploys apps/api to Lightsail in ap-south-1 after a merge to main. Vercel deploys apps/web through its Git link.
+# Deploys apps/api to Lightsail in ap-south-1 after a merge to main.
 name: deploy-api
 on:
   push:
@@ -11,13 +11,11 @@ on:
   workflow_dispatch:
 concurrency:
   group: deploy-api
-  cancel-in-progress: false
 env:
   SERVICE: roomsie-api
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v6
@@ -29,7 +27,6 @@ jobs:
         run: |
           sudo curl -sSfL -o /usr/local/bin/lightsailctl https://s3.us-west-2.amazonaws.com/lightsailctl/latest/linux-amd64/lightsailctl
           sudo chmod +x /usr/local/bin/lightsailctl
-      # The repo root is the build context, because the image needs the workspace packages.
       - run: docker build -f apps/api/Dockerfile -t "$SERVICE:$GITHUB_SHA" .
       - name: Push the image
         run: |
@@ -39,30 +36,27 @@ jobs:
       # Lightsail has no secret store, so each deployment carries the API secrets (ADR-0016).
       - name: Deploy
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          ANALYTICS_DATABASE_URL: ${{ secrets.ANALYTICS_DATABASE_URL }}
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-          R2_BUCKET_PHOTOS: ${{ secrets.R2_BUCKET_PHOTOS }}
-          R2_BUCKET_PRIVATE: ${{ secrets.R2_BUCKET_PRIVATE }}
-          R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
-          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          SENTRY_DSN_API: ${{ secrets.SENTRY_DSN_API }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          API_DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          API_ANALYTICS_DATABASE_URL: ${{ secrets.ANALYTICS_DATABASE_URL }}
+          API_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          API_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          API_R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          API_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          API_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          API_R2_BUCKET_PHOTOS: ${{ secrets.R2_BUCKET_PHOTOS }}
+          API_R2_BUCKET_PRIVATE: ${{ secrets.R2_BUCKET_PRIVATE }}
+          API_R2_PUBLIC_URL: ${{ secrets.R2_PUBLIC_URL }}
+          API_DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          API_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          API_SENTRY_DSN_API: ${{ secrets.SENTRY_DSN_API }}
+          API_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
           jq -n --arg image "$IMAGE" '{
             containers: { api: {
               image: $image,
               ports: { "8080": "HTTP" },
-              environment: ({ WEB_ORIGIN: "https://roomsie.vercel.app" } + ($ENV | with_entries(select(.key | IN(
-                "DATABASE_URL", "ANALYTICS_DATABASE_URL", "SUPABASE_URL", "SUPABASE_SERVICE_ROLE_KEY",
-                "R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET_PHOTOS",
-                "R2_BUCKET_PRIVATE", "R2_PUBLIC_URL", "DEEPSEEK_API_KEY", "GEMINI_API_KEY",
-                "SENTRY_DSN_API", "FIREBASE_PROJECT_ID")))))
+              environment: ({ WEB_ORIGIN: "https://roomsie.vercel.app" }
+                + ($ENV | with_entries(select(.key | startswith("API_")) | .key |= ltrimstr("API_"))))
             } },
             publicEndpoint: { containerName: "api", containerPort: 8080, healthCheck: { path: "/v1/health" } }
           }' > deployment.json
