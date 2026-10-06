@@ -113,7 +113,7 @@ public pages, and the CDN caches them. All write-heavy work goes behind
 
 - **The artefact that we deploy is a Docker container.** It runs with no
   change on Lightsail, Fly, Railway, Render or a VPS.
-- **This portability already paid.** The first choice was Fly.io `bom`. In
+- **This portability helped us in T-04.** The first choice was Fly.io `bom`. In
   October 2026, Fly accepted no new machines in `bom`, and the same image moved
   to Lightsail in one ticket (T-04).
 - **Vercel is a safe company,** but it produces code that runs on no other
