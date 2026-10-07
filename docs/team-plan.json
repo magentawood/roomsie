@@ -42,18 +42,27 @@
   },
   {
    "id": "F-02",
-   "title": "Secure the domain",
-   "plain": "Buy it before a different person does.",
+   "title": "Secure the domain and put the app on it",
+   "plain": "The real address: roomsie.in for the site, api.roomsie.in for the API.",
    "role": "F",
-   "hours": null,
-   "start": "2026-09-24",
-   "end": "2026-09-24",
-   "deps": [],
-   "done": [
-    "The team owns roomsie.com or the chosen alternative",
-    "The team shares DNS access with T4"
+   "hours": 2,
+   "start": "2026-10-07",
+   "end": "2026-10-08",
+   "deps": [
+    "T-04"
    ],
-   "read": [],
+   "done": [
+    "The team owns roomsie.in",
+    "The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy",
+    "roomsie.in serves the web, and www.roomsie.in redirects to roomsie.in",
+    "api.roomsie.in serves the API over HTTPS",
+    "The API accepts browser calls only from https://roomsie.in",
+    "The team shares DNS access (Cloudflare and GoDaddy) through the password manager"
+   ],
+   "read": [
+    "docs/decisions/0009-hosting-and-region.md",
+    "docs/learn/deploys.md"
+   ],
    "cp": "CP0",
    "critical": false,
    "issue": 3

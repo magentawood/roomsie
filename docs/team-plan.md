@@ -163,18 +163,18 @@ Finish line: Mon 19 Oct.
 | # | Task | When | Waits on |
 |---|---|---|---|
 | 1 | F-01 · Kickoff: names on every role | Thu 24 Sep | — |
-| 2 | F-02 · Secure the domain | Thu 24 Sep | — |
-| 3 | F-03 · Billing and hard spend caps | Thu 24 Sep | — |
-| 4 | F-04 · Create accounts in Mumbai regions | Thu 24 Sep | F-03 |
-| 5 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | F-11 |
-| 6 | F-06 · Pick the three launch areas | Thu 24 Sep → Fri 25 Sep | — |
-| 7 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
-| 8 | F-09 · Write down the three ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
-| 9 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
-| 10 | F-11 ⚑ · Product calls: intake, Form A and profile data | Sun 4 Oct → Tue 6 Oct | — |
-| 11 | F-12 ⚑ · Product calls: matching rules | Sun 4 Oct → Tue 6 Oct | — |
-| 12 | F-13 ⚑ · Product calls: connect, trust and safety | Sun 4 Oct → Tue 6 Oct | — |
-| 13 | F-14 · Product calls: assistant and limits | Sun 4 Oct → Tue 6 Oct | — |
+| 2 | F-03 · Billing and hard spend caps | Thu 24 Sep | — |
+| 3 | F-04 · Create accounts in Mumbai regions | Thu 24 Sep | F-03 |
+| 4 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | F-11 |
+| 5 | F-06 · Pick the three launch areas | Thu 24 Sep → Fri 25 Sep | — |
+| 6 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
+| 7 | F-09 · Write down the three ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
+| 8 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
+| 9 | F-11 ⚑ · Product calls: intake, Form A and profile data | Sun 4 Oct → Tue 6 Oct | — |
+| 10 | F-12 ⚑ · Product calls: matching rules | Sun 4 Oct → Tue 6 Oct | — |
+| 11 | F-13 ⚑ · Product calls: connect, trust and safety | Sun 4 Oct → Tue 6 Oct | — |
+| 12 | F-14 · Product calls: assistant and limits | Sun 4 Oct → Tue 6 Oct | — |
+| 13 | F-02 · Secure the domain and put the app on it | Wed 7 Oct → Thu 8 Oct | T-04 |
 | 14 | F-10 · Go/no-go meeting | Sat 10 Oct | — |
 
 Finish line: Sat 10 Oct.
@@ -249,18 +249,18 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | M2 Community | 3 | M-06 ⚑ | Beta invites to seeded sign-ups |  | Sat 3 Oct | Sun 11 Oct | CP4 | M-02, T-16b | [#49](https://github.com/magentawood/roomsie/issues/49) |
 | M2 Community | 4 | M-09 | Broker calls |  | Mon 12 Oct | Mon 19 Oct | CP5 | — | [#55](https://github.com/magentawood/roomsie/issues/55) |
 | Founder | 1 | F-01 | Kickoff: names on every role |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#2](https://github.com/magentawood/roomsie/issues/2) |
-| Founder | 2 | F-02 | Secure the domain |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#3](https://github.com/magentawood/roomsie/issues/3) |
-| Founder | 3 | F-03 | Billing and hard spend caps |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#4](https://github.com/magentawood/roomsie/issues/4) |
-| Founder | 4 | F-04 | Create accounts in Mumbai regions |  | Thu 24 Sep | Thu 24 Sep | CP0 | F-03 | [#5](https://github.com/magentawood/roomsie/issues/5) |
-| Founder | 5 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | F-11 | [#8](https://github.com/magentawood/roomsie/issues/8) |
-| Founder | 6 | F-06 | Pick the three launch areas |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
-| Founder | 7 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
-| Founder | 8 | F-09 | Write down the three ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
-| Founder | 9 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
-| Founder | 10 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#103](https://github.com/magentawood/roomsie/issues/103) |
-| Founder | 11 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#104](https://github.com/magentawood/roomsie/issues/104) |
-| Founder | 12 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#105](https://github.com/magentawood/roomsie/issues/105) |
-| Founder | 13 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#106](https://github.com/magentawood/roomsie/issues/106) |
+| Founder | 2 | F-03 | Billing and hard spend caps |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#4](https://github.com/magentawood/roomsie/issues/4) |
+| Founder | 3 | F-04 | Create accounts in Mumbai regions |  | Thu 24 Sep | Thu 24 Sep | CP0 | F-03 | [#5](https://github.com/magentawood/roomsie/issues/5) |
+| Founder | 4 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | F-11 | [#8](https://github.com/magentawood/roomsie/issues/8) |
+| Founder | 5 | F-06 | Pick the three launch areas |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| Founder | 6 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
+| Founder | 7 | F-09 | Write down the three ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
+| Founder | 8 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
+| Founder | 9 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#103](https://github.com/magentawood/roomsie/issues/103) |
+| Founder | 10 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#104](https://github.com/magentawood/roomsie/issues/104) |
+| Founder | 11 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#105](https://github.com/magentawood/roomsie/issues/105) |
+| Founder | 12 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#106](https://github.com/magentawood/roomsie/issues/106) |
+| Founder | 13 | F-02 | Secure the domain and put the app on it | 2 | Wed 7 Oct | Thu 8 Oct | CP0 | T-04 | [#3](https://github.com/magentawood/roomsie/issues/3) |
 | Founder | 14 | F-10 | Go/no-go meeting |  | Sat 10 Oct | Sat 10 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
 | Everyone | 1 | A-01 | Bug fix day |  | Sun 11 Oct | Sun 11 Oct | CP4 | — | [#53](https://github.com/magentawood/roomsie/issues/53) |
 | Everyone | 2 | A-02 | Launch |  | Mon 12 Oct | Mon 12 Oct | CP4 | — | [#54](https://github.com/magentawood/roomsie/issues/54) |
@@ -356,7 +356,6 @@ gantt
     M-09 Broker calls :m09, 2026-10-12, 8d
     section Founder
     F-01 Kickoff - names on every role :f01, 2026-09-24, 1d
-    F-02 Secure the domain :f02, 2026-09-24, 1d
     F-03 Billing and hard spend caps :f03, 2026-09-24, 1d
     F-04 Create accounts in Mumbai regions :f04, 2026-09-24, 1d
     F-05 Consent text for the seeding form :crit, f05, 2026-09-24, 2d
@@ -368,6 +367,7 @@ gantt
     F-12 Product calls - matching rules :crit, f12, 2026-10-04, 3d
     F-13 Product calls - connect trust and safety :crit, f13, 2026-10-04, 3d
     F-14 Product calls - assistant and limits :f14, 2026-10-04, 3d
+    F-02 Secure the domain and put the app on it :f02, 2026-10-07, 2d
     F-10 Go/no-go meeting :f10, 2026-10-10, 1d
     section Everyone
     A-01 Bug fix day :a01, 2026-10-11, 1d
@@ -386,7 +386,6 @@ Every role has a name. The accounts and billing are live. The styling is decided
 |---|---|---|---|---|---|
 | D-01 | Styling decision for launch | D |  | Thu 24 Sep | — |
 | F-01 | Kickoff: names on every role | F |  | Thu 24 Sep | — |
-| F-02 | Secure the domain | F |  | Thu 24 Sep | — |
 | F-03 | Billing and hard spend caps | F |  | Thu 24 Sep | — |
 | F-04 | Create accounts in Mumbai regions | F |  | Thu 24 Sep | F-03 |
 | T-08 ⚑ | Form A contract: slots and enums | P2 | 2 | Thu 24 Sep | F-11 |
@@ -394,6 +393,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 | F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | F-11 |
 | F-06 | Pick the three launch areas | F |  | Thu 24 Sep → Fri 25 Sep | — |
 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
+| F-02 | Secure the domain and put the app on it | F | 2 | Wed 7 Oct → Thu 8 Oct | T-04 |
 
 **D-01 · Styling decision for launch** — done when:
 - The launch uses the look of the Figma designs, not the V3 prototype
@@ -404,10 +404,6 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - Everyone has access to the repo and the issues
 - A team channel exists, and it has a written standup by 10 am every day
 - Read first: `docs/team-plan.md`
-
-**F-02 · Secure the domain** — done when:
-- The team owns roomsie.com or the chosen alternative
-- The team shares DNS access with T4
 
 **F-03 · Billing and hard spend caps** — done when:
 - Billing is on for AWS, Vercel, Cloudflare, DeepSeek and Gemini. Supabase stays on the free plan, with two projects in one account (PD13)
@@ -448,6 +444,15 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - If output fails Zod, the call retries one time, then goes to Gemini
 - It logs tokens in, tokens out and the model for every call. The system prompt is cached
 - Read first: `docs/model-selection.md`
+
+**F-02 · Secure the domain and put the app on it** — done when:
+- The team owns roomsie.in
+- The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy
+- roomsie.in serves the web, and www.roomsie.in redirects to roomsie.in
+- api.roomsie.in serves the API over HTTPS
+- The API accepts browser calls only from https://roomsie.in
+- The team shares DNS access (Cloudflare and GoDaddy) through the password manager
+- Read first: `docs/decisions/0009-hosting-and-region.md`, `docs/learn/deploys.md`
 
 ### CP1 · Foundation — Mon 28 Sep
 

@@ -2,7 +2,7 @@
 id: F-06
 title: "Pick the three launch areas"
 owner: "Founder"
-sequence: "6 of 14"
+sequence: "5 of 14"
 start: 2026-09-24
 end: 2026-09-25
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # F-06 · Pick the three launch areas
 
-**Owner:** [[Founder]], task 6 of 14  
+**Owner:** [[Founder]], task 5 of 14  
 **When:** Thu 24 Sep → Fri 25 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#9](https://github.com/magentawood/roomsie/issues/9)

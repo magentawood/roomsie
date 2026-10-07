@@ -18,7 +18,6 @@ This note is part of [[roomsie launch]].
 
 - [[D-01 Styling decision]] — Design
 - [[F-01 Kickoff]] — Founder
-- [[F-02 Domain]] — Founder
 - [[F-03 Billing and caps]] — Founder
 - [[F-04 Accounts in Mumbai]] — Founder
 - [[T-08 Form A contract ⚑]] — P2 Chat
@@ -26,3 +25,4 @@ This note is part of [[roomsie launch]].
 - [[F-05 Seeding consent text ⚑]] — Founder
 - [[F-06 Launch areas picked]] — Founder
 - [[T-11 Model wrapper ⚑]] — P2 Chat
+- [[F-02 Domain]] — Founder

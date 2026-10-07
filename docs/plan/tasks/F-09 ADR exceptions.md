@@ -2,7 +2,7 @@
 id: F-09
 title: "Write down the three ADR exceptions"
 owner: "Founder"
-sequence: "8 of 14"
+sequence: "7 of 14"
 start: 2026-09-26
 end: 2026-09-27
 checkpoint: CP1
@@ -16,7 +16,7 @@ tags:
 
 # F-09 · Write down the three ADR exceptions
 
-**Owner:** [[Founder]], task 8 of 14  
+**Owner:** [[Founder]], task 7 of 14  
 **When:** Sat 26 Sep → Sun 27 Sep  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#18](https://github.com/magentawood/roomsie/issues/18)

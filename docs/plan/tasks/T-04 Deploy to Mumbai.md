@@ -29,6 +29,7 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 - [[F-04 Accounts in Mumbai]]
 
 ## Unblocks
+- [[F-02 Domain]]
 - [[T-25 Uptime and spend alerts]]
 - [[T-40 Nightly backups]]
 

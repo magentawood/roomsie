@@ -2,7 +2,7 @@
 id: F-11
 title: "Product calls: intake, Form A and profile data"
 owner: "Founder"
-sequence: "10 of 14"
+sequence: "9 of 14"
 start: 2026-10-04
 end: 2026-10-06
 checkpoint: CP3
@@ -17,7 +17,7 @@ tags:
 
 # F-11 · Product calls: intake, Form A and profile data
 
-**Owner:** [[Founder]], task 10 of 14  
+**Owner:** [[Founder]], task 9 of 14  
 **When:** Sun 4 Oct → Tue 6 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#103](https://github.com/magentawood/roomsie/issues/103)
