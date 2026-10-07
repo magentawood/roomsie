@@ -2,7 +2,7 @@
 id: F-07
 title: "Draft privacy policy, terms, grievance contact"
 owner: "Founder"
-sequence: "7 of 14"
+sequence: "6 of 14"
 start: 2026-09-25
 end: 2026-09-30
 checkpoint: CP2
@@ -16,7 +16,7 @@ tags:
 
 # F-07 · Draft privacy policy, terms, grievance contact
 
-**Owner:** [[Founder]], task 7 of 14  
+**Owner:** [[Founder]], task 6 of 14  
 **When:** Fri 25 Sep → Wed 30 Sep  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#17](https://github.com/magentawood/roomsie/issues/17)

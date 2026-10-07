@@ -828,7 +828,7 @@
    "x": -20,
    "y": 2712,
    "width": 4652,
-   "height": 624,
+   "height": 528,
    "color": "#B07B4F"
   },
   {
@@ -841,20 +841,11 @@
    "height": 84
   },
   {
-   "id": "task-F-02",
-   "type": "text",
-   "text": "**[[F-02 Domain|F-02 Domain]]**\nThu 24 Sep",
-   "x": 0,
-   "y": 2838,
-   "width": 212,
-   "height": 84
-  },
-  {
    "id": "task-F-03",
    "type": "text",
    "text": "**[[F-03 Billing and caps|F-03 Billing and caps]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2934,
+   "y": 2838,
    "width": 212,
    "height": 84
   },
@@ -863,7 +854,7 @@
    "type": "text",
    "text": "**[[F-04 Accounts in Mumbai|F-04 Accounts in Mumbai]]**\nThu 24 Sep",
    "x": 0,
-   "y": 3030,
+   "y": 2934,
    "width": 212,
    "height": 84
   },
@@ -872,7 +863,7 @@
    "type": "text",
    "text": "**[[F-05 Seeding consent text ⚑|F-05 Seeding consent text]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 3126,
+   "y": 3030,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -882,7 +873,7 @@
    "type": "text",
    "text": "**[[F-06 Launch areas picked|F-06 Launch areas picked]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 3222,
+   "y": 3126,
    "width": 432,
    "height": 84
   },
@@ -953,6 +944,15 @@
    "height": 84
   },
   {
+   "id": "task-F-02",
+   "type": "text",
+   "text": "**[[F-02 Domain|F-02 Domain]]**\n2h · Wed 7 Oct → Thu 8 Oct",
+   "x": 2860,
+   "y": 2742,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "task-F-10",
    "type": "text",
    "text": "**[[F-10 Go-no-go meeting|F-10 Go-no-go meeting]]**\nSat 10 Oct",
@@ -966,7 +966,7 @@
    "type": "group",
    "label": "Everyone",
    "x": -20,
-   "y": 3386,
+   "y": 3290,
    "width": 4652,
    "height": 144,
    "color": "#9CC3E6"
@@ -976,7 +976,7 @@
    "type": "text",
    "text": "**[[A-01 Bug fix day|A-01 Bug fix day]]**\nSun 11 Oct",
    "x": 3740,
-   "y": 3416,
+   "y": 3320,
    "width": 212,
    "height": 84
   },
@@ -985,12 +985,19 @@
    "type": "text",
    "text": "**[[A-02 Launch day|A-02 Launch day]]**\nMon 12 Oct",
    "x": 3960,
-   "y": 3416,
+   "y": 3320,
    "width": 212,
    "height": 84
   }
  ],
  "edges": [
+  {
+   "id": "e-T-04-F-02",
+   "fromNode": "task-T-04",
+   "fromSide": "right",
+   "toNode": "task-F-02",
+   "toSide": "left"
+  },
   {
    "id": "e-F-03-F-04",
    "fromNode": "task-F-03",
