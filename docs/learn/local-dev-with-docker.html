@@ -83,10 +83,12 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>"Postgres is not running and Docker could not start it":</strong> open Docker Desktop, wait until it runs, then run the command again.</li>
 <li><strong>Docker Desktop does not start, and its log says "cannot resize Docker.raw":</strong> the disk file of Docker belongs to <code>root</code>. Run <code>sudo chown $USER:staff ~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw</code>, then start Docker again.</li>
-<li><strong>Port 5432 is in use:</strong> a different Postgres runs on your laptop. Stop it, or change the port in <code>docker-compose.yml</code> and in your <code>.env</code>.</li>
+<li><strong>Port 5432 is in use:</strong> a different Postgres runs on your laptop. Stop it, or change the port in <code>docker-compose.yml</code> and in your <code>.env</code>. For a Postgres from Homebrew, run <code>brew services stop postgresql@14</code> (use your version).</li>
+<li><strong>The tests fail with <code>role "postgres" does not exist</code>:</strong> the tests connect to a different Postgres on port 5432, not to Docker. Stop the other Postgres.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-02: <a href="https://github.com/magentawood/roomsie/pull/94">#94</a>, 2026-10-03. The local Postgres, the commands and the test harness.</li>
+<li>T-03: <a href="https://github.com/magentawood/roomsie/pull/112">#112</a>, 2026-10-08. The fix for a Homebrew Postgres on port 5432. CI uses the same Postgres 17: see <a href="ci-checks.html">CI checks</a>.</li>
 </ul>
 </main>

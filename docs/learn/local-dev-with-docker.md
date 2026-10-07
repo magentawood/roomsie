@@ -35,8 +35,10 @@ apps/web (Next.js, port 3000) → apps/api (Fastify, port 8080) → Postgres (Do
 
 - **"Postgres is not running and Docker could not start it":** open Docker Desktop, wait until it runs, then run the command again.
 - **Docker Desktop does not start, and its log says "cannot resize Docker.raw":** the disk file of Docker belongs to `root`. Run `sudo chown $USER:staff ~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw`, then start Docker again.
-- **Port 5432 is in use:** a different Postgres runs on your laptop. Stop it, or change the port in `docker-compose.yml` and in your `.env`.
+- **Port 5432 is in use:** a different Postgres runs on your laptop. Stop it, or change the port in `docker-compose.yml` and in your `.env`. For a Postgres from Homebrew, run `brew services stop postgresql@14` (use your version).
+- **The tests fail with `role "postgres" does not exist`:** the tests connect to a different Postgres on port 5432, not to Docker. Stop the other Postgres.
 
 ## Tickets
 
 - T-02: [#94](https://github.com/magentawood/roomsie/pull/94), 2026-10-03. The local Postgres, the commands and the test harness.
+- T-03: [#112](https://github.com/magentawood/roomsie/pull/112), 2026-10-08. The fix for a Homebrew Postgres on port 5432. CI uses the same Postgres 17: see [CI checks](ci-checks.md).
