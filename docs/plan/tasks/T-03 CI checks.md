@@ -70,4 +70,5 @@ Checks each pull request automatically.
   - Each pull request needs one approval from a teammate, also when all checks pass. The author cannot approve their own pull request.
   - The docs check stays in its own workflow. It is a devkit tool copy, so T-03 does not change it. Its job name, `docs`, is one of the required checks.
   - The `[tool: planned T-03]` marks in the standards become `[tool]`.
+  - The "never push to `main`" line of `CONTEXT.md` also names `pnpm secrets`. Each agent loads `CONTEXT.md`, so the agent sees the scan before each pull request. The rule itself stays in the standards.
 - **Out of scope:** `check-tokens.mjs` and the generated-file check (they start when the token pipeline ships). Also gitleaks before each commit, changes to the devkit tool copies, Playwright tests, and the visibility of the repo.
