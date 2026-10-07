@@ -58,7 +58,8 @@ Handling rules:
   values.
 - Real values are in the env store of the provider and in CI secrets, **never
   in Slack or WhatsApp.**
-- `gitleaks` runs as a pre-commit hook.
+- Before each pull request, the developer runs `gitleaks` with `pnpm secrets`. CI also
+  runs `gitleaks` on each pull request.
 - API logs redact `Authorization` headers.
 - Before launch, rotate all values that anybody ever pasted into a chat, a
   screenshot or a shared laptop.
@@ -70,10 +71,12 @@ code.**
 
 **A shared vault.** With four people, a shared vault is worth the setup time.
 
-**gitleaks.** It finds the paste-into-the-wrong-file mistake before it becomes
-permanent git history.
+**gitleaks.** It finds the paste-into-the-wrong-file mistake before the secret
+goes into the shared git history.
 
 **Log redaction.** To log a token is to log a password.
 
 **Sources:** old tech base, `docs/tech-base.md` (before this change), section
 "§ · Credentials".
+
+Superseded (2026-10-08): `gitleaks` does not run before each commit. It runs with `pnpm secrets` before each pull request, and in CI (T-03).

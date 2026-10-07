@@ -12,7 +12,7 @@ Each rule is one line:
 
 - The link at the end is the source of the rule. Cite an ADR as `ADR-0004`, a product decision as `PD7a`, and a schema phase as `S1` to `S7`.
 - `[tool]`: a record names a tool check for the rule. Until the tool runs, reviewers check the rule.
-- `[tool: planned T-03]`: task T-03 sets up the tool check.
+- `[tool: planned T-nn]`: task T-nn sets up the tool check.
 - `OPEN`: the rule is not settled. Reviewers do not enforce an OPEN rule.
 
 ## How to add a rule
@@ -59,7 +59,7 @@ These rules apply to all code.
 - Deploy tokens are only in the CI secret store. Why: a deploy token gives control of production. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - Git ignores `.env*`. A committed `.env.example` documents each key with dummy values. Why: each key has a record, and no secret goes into git. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - Database connection details are only in environment settings. Why: a move of a database is then a transfer, not a code change. ([PD13](../decisions/pd-13-databases-and-backups.md))
-- `gitleaks` runs before each commit and on each PR [tool: planned T-03]. Why: it finds a pasted secret before the secret becomes permanent history. ([ADR-0016](../decisions/0016-credentials-and-secrets.md), [ADR-0013](../decisions/0013-ci-gate-and-testing.md))
+- Before each PR, run `pnpm secrets`. CI also runs `gitleaks` on each PR [tool]. Why: it finds a pasted secret before the secret becomes permanent history. ([ADR-0016](../decisions/0016-credentials-and-secrets.md), [ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 
 ### Privacy
 
