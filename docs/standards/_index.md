@@ -12,7 +12,6 @@ Each rule is one line:
 
 - The link at the end is the source of the rule. Cite an ADR as `ADR-0004`, a product decision as `PD7a`, and a schema phase as `S1` to `S7`.
 - `[tool]`: a record names a tool check for the rule. Until the tool runs, reviewers check the rule.
-- `[tool: planned T-nn]`: task T-nn sets up the tool check.
 - `OPEN`: the rule is not settled. Reviewers do not enforce an OPEN rule.
 
 ## How to add a rule

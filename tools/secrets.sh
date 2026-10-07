@@ -1,7 +1,6 @@
 #!/bin/sh
-# Scan the commits of this branch that are not on main. Run it before you open a pull request (ADR-0016).
+# Run it before you open a pull request (ADR-0016).
 set -e
-cd "$(git rev-parse --show-toplevel)"
 git fetch --quiet origin main
 range="origin/main..HEAD"
 if command -v gitleaks >/dev/null 2>&1; then
