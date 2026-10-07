@@ -31,10 +31,10 @@ Checks each pull request automatically.
 - No task waits on this task.
 
 ## Done when
-- [ ] Every pull request runs typecheck, lint, build and gitleaks
-- [ ] Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`
-- [ ] It finishes in less than five minutes
-- [ ] `main` accepts a merge only when CI passes
+- [x] Every pull request runs typecheck, lint, build and gitleaks · [#112](https://github.com/magentawood/roomsie/pull/112)
+- [x] Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check` · [#112](https://github.com/magentawood/roomsie/pull/112)
+- [x] It finishes in less than five minutes · [#112](https://github.com/magentawood/roomsie/pull/112)
+- [x] `main` accepts a merge only when CI passes · [#112](https://github.com/magentawood/roomsie/pull/112)
 
 ^done
 
@@ -72,3 +72,13 @@ Checks each pull request automatically.
   - The `[tool: planned T-03]` marks in the standards become `[tool]`.
   - The "never push to `main`" line of `CONTEXT.md` also names `pnpm secrets`. Each agent loads `CONTEXT.md`, so the agent sees the scan before each pull request. The rule itself stays in the standards.
 - **Out of scope:** `check-tokens.mjs` and the generated-file check (they start when the token pipeline ships). Also gitleaks before each commit, changes to the devkit tool copies, Playwright tests, and the visibility of the repo.
+
+## Log
+
+- **2026-10-08 · [#112](https://github.com/magentawood/roomsie/pull/112)**
+  - **Change:** each pull request runs typecheck, lint, build, the API tests against Postgres 17, and gitleaks. `pnpm secrets` scans a branch before its pull request. The `protect-main` ruleset needs a pull request, one approval and the checks `check`, `secrets` and `docs`.
+  - **Why:** [ADR-0013](../../decisions/0013-ci-gate-and-testing.md) and [ADR-0016](../../decisions/0016-credentials-and-secrets.md).
+  - **Ticked:** all four items. The first CI run took 45 seconds for `check`, 13 seconds for `secrets` and 19 seconds for `docs`.
+  - **Not done:** none. The remote cache waits for the `TURBO_TOKEN` secret and the `TURBO_TEAM` variable.
+  - **Learn:** [CI checks](../../learn/ci-checks.md), [Secret scanning](../../learn/secret-scanning.md), [pnpm, Corepack and Turborepo](../../learn/pnpm-and-corepack.md), [Local development with Docker](../../learn/local-dev-with-docker.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-08--t-03-each-pull-request-runs-the-ci-gate)
