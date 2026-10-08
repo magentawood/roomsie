@@ -13,7 +13,8 @@ To **deploy** is to put a new version of an app on the servers of the users. roo
 
 ```
 merge to main ─┬─▶ Vercel ──────────────▶ roomsie.in (bom1)
-               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ api.roomsie.in
+               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
+                                                                        (api.roomsie.in)
 ```
 
 | Item | Where |

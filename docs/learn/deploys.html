@@ -44,7 +44,8 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>merge to main ─┬─▶ Vercel ──────────────▶ roomsie.in (bom1)
-               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ api.roomsie.in
+               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
+                                                                        (api.roomsie.in)
 </code></pre>
 <table>
 <thead>
