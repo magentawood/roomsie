@@ -31,12 +31,12 @@ The real address: roomsie.in for the site, api.roomsie.in for the API.
 - No task waits on this task.
 
 ## Done when
-- [ ] The team owns roomsie.in
-- [ ] The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy
-- [ ] roomsie.in serves the web, and www.roomsie.in redirects to roomsie.in
-- [ ] api.roomsie.in serves the API over HTTPS
-- [ ] The API accepts browser calls only from https://roomsie.in
-- [ ] The team shares DNS access (Cloudflare and GoDaddy) through the password manager
+- [x] The team owns roomsie.in · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] roomsie.in serves the web, and www.roomsie.in redirects to roomsie.in · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] api.roomsie.in serves the API over HTTPS · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] The API accepts browser calls only from https://roomsie.in · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] The team shares DNS access (Cloudflare and GoDaddy) through the password manager · [#113](https://github.com/magentawood/roomsie/pull/113)
 
 ^done
 
@@ -67,3 +67,13 @@ The real address: roomsie.in for the site, api.roomsie.in for the API.
   - The policy of the deploy user also allows the Lightsail certificate actions.
   - The user shares the Cloudflare and GoDaddy access through the password manager, and confirms it at the PR gate.
 - **Out of scope:** the authorized domains of Firebase (T-05), an address for photos from R2, email records, and a transfer of the registration to Cloudflare.
+
+## Log
+
+- **2026-10-08 · [#113](https://github.com/magentawood/roomsie/pull/113)**
+  - **Change:** the web is on roomsie.in, and `www.roomsie.in` and `roomsie.vercel.app` redirect to it. The API is on `api.roomsie.in` with a Lightsail certificate. The DNS of roomsie.in is on Cloudflare, and the API accepts browser calls only from `https://roomsie.in`.
+  - **Why:** [ADR-0009](../../decisions/0009-hosting-and-region.md)
+  - **Ticked:** all six items.
+  - **Not done:** none.
+  - **Learn:** [Deploys](../../learn/deploys.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-08--f-02-roomsiein-is-live)
