@@ -1,6 +1,6 @@
 # roomsie — context index
 
-Every agent session loads this file. It is an index: it tells you what roomsie is, where each fact lives, and what to read before a task. It holds no reasoning. **When your task touches an area in the routing table, read the files for that area before you act.**
+This file is an index for each agent session: what roomsie is, where each fact lives, and what to read before a task. **Before a task, read the files that the routing table gives for its area.**
 
 **Owner:** Yash Mangal · **Org:** magentawood · **Limit:** 1,500 tokens
 
@@ -48,13 +48,14 @@ Open, with no record yet: the elevator pitch.
 - **The plan:** edit only `docs/team-plan.json`, then run `python3 tools/build-obsidian-plan.py`. It writes the task notes, `Progress.md` and `team-plan.md`. `python3 tools/sync-issues.py --apply` updates the GitHub issues.
 - **Decision ledgers:** `python3 tools/build-decision-ledger.py` writes the lists in this file, `product-base.md` and `tech-base.md` from the records.
 - **Browser pages:** `python3 tools/render-docs.py` writes each `.html` from its `.md`.
-- **Learn pages:** `docs/learn/` has one plain-language page for each technical topic. [The list](docs/learn/README.md) is generated.
-- **History:** `docs/journal/` (one file each month, append only) and `docs/archive/`. The index never links them.
+- **Learn pages:** `docs/learn/`, one plain page for each technical topic ([list](docs/learn/README.md)).
+- **Tools:** the agentic-devkit plugin. If it is missing, tell the user to run `/plugin marketplace add magentawood/agentic-devkit` and `/plugin install agentic-devkit@agentic-devkit`.
+- **History:** `docs/journal/` (monthly, append only) and `docs/archive/`. The index never links them.
 
 ## Conventions
 
 - **Never push to `main`.** Each change goes in through a PR, after `pnpm secrets`.
 - Write all Markdown in STE with the `ste-writing` skill.
 - One fact, one home. Link to it; do not copy it. When a decision changes, update its record and remove the replaced text.
-- Keep each doc inside its limit. The hook turns on by itself in Claude Code, and on `pnpm install`. If it is off, run `git config core.hooksPath .githooks`. It runs `tools/doc-budget.py` and the generated-file checks.
+- Keep each doc inside its limit. The hook checks the limits and the generated files. If it is off, run `git config core.hooksPath .githooks`.
 - Remote Control stays off. The repo is private: its history holds a session transcript with personal data.
