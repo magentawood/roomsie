@@ -17,7 +17,7 @@ The work goes in waves, not in dates.
 
 - Open "Design-free work" in `docs/plan/Progress.md`. No task there waits on a design.
 - **Wave 0 waits on no open task.** When a wave is complete, the next wave can start.
-- **Many people can work on one wave.** To take a task, assign its GitHub issue to you. First, make sure that the issue has no assignee.
+- **Many people can work on one wave.** Ask the agent what you can pick up next. The `next-task` skill shows the free tasks, and does not show the tasks that a different person claimed.
 - In a wave, take the ⚑ tasks first. Then take the task that unblocks the most tasks.
 - Founder and marketing tasks that gate a build task are in the waves too. F-03 and F-04 come first.
 - F-11 to F-14 are grill sessions for the open product calls. Their questions are in `docs/product-calls/`. "Waits on product calls" shows the tasks that wait on them.
@@ -50,7 +50,7 @@ Open "Design-free work" in `docs/plan/Progress.md`. It comes from `docs/team-pla
 ## How to do a task
 
 0. The hook turns on by itself when you open the repo in Claude Code, and on `pnpm install` after T-02. If it is off, run `git config core.hooksPath .githooks` one time in the clone. The hook checks the doc limits and the generated files before each commit.
-1. Take the next task from the waves. Assign its issue to you.
+1. Take the next free task. Start it with `/agentic-devkit:build-feature <ID>`. It assigns the issue to you before its first question.
 2. Open its note in `docs/plan/tasks/`. Read the description, "Needs first", "Done when" and "Read first".
 3. Make a branch from `main`. Do the work. Obey the code rules in [docs/standards/](standards/_index.md).
 4. Open one pull request. Put the task ID in the title.
