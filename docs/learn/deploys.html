@@ -39,12 +39,12 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <p>To <strong>deploy</strong> is to put a new version of an app on the servers of the users. roomsie has two apps. Each app deploys in a different way.</p>
 <ul>
-<li><strong>The web</strong> (<code>apps/web</code>) is on Vercel. Vercel watches the GitHub repo through its <strong>Git link</strong>. When a pull request opens, Vercel builds a <strong>preview</strong>: a copy of the site at its own address. When the pull request merges, Vercel publishes the new version to <code>roomsie.vercel.app</code>.</li>
+<li><strong>The web</strong> (<code>apps/web</code>) is on Vercel. Vercel watches the GitHub repo through its <strong>Git link</strong>. When a pull request opens, Vercel builds a <strong>preview</strong>: a copy of the site at its own address. When the pull request merges, Vercel publishes the new version to <code>roomsie.in</code>.</li>
 <li><strong>The API</strong> (<code>apps/api</code>) is a <strong>Docker image</strong>: a sealed box with Node, our built code and the production libraries. AWS <strong>Lightsail containers</strong> runs the image on one small machine in Mumbai, all the time.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
-<pre><code>merge to main ─┬─▶ Vercel ──────────────▶ roomsie.vercel.app (bom1)
-               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
+<pre><code>merge to main ─┬─▶ Vercel ──────────────▶ roomsie.in (bom1)
+               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ api.roomsie.in
 </code></pre>
 <table>
 <thead>
@@ -56,15 +56,19 @@ details.callout[open] summary{color:var(--fg)}
 <tbody>
 <tr>
 <td>The web</td>
-<td>Vercel, functions in <code>bom1</code></td>
+<td>Vercel, functions in <code>bom1</code>, at <code>roomsie.in</code></td>
 </tr>
 <tr>
 <td>The API</td>
-<td>Lightsail service <code>roomsie-api</code>, Nano power (0.25 vCPU, 512 MB), <code>ap-south-1</code></td>
+<td>Lightsail service <code>roomsie-api</code>, Nano power (0.25 vCPU, 512 MB), <code>ap-south-1</code>, at <code>api.roomsie.in</code></td>
 </tr>
 <tr>
 <td>The database</td>
 <td>Supabase, <code>ap-south-1</code></td>
+</tr>
+<tr>
+<td>The DNS of roomsie.in</td>
+<td>Cloudflare. GoDaddy keeps the registration.</td>
 </tr>
 <tr>
 <td>The API secrets</td>
@@ -75,18 +79,23 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>The API and the database are in the same AWS region, so each query takes approximately 1 ms (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</li>
 <li>The workflow runs only when a merge changes the API, a package, the lockfile or the workflow. You can also start it by hand: GitHub → Actions → deploy-api → Run workflow.</li>
-<li><strong>CORS</strong> is the browser rule that lets a page on one site call an API on a different site. The API allows only <code>https://roomsie.vercel.app</code>. Thus, a preview loads, but its calls to the API fail.</li>
+<li><strong>CORS</strong> is the browser rule that lets a page on one site call an API on a different site. The API allows only <code>https://roomsie.in</code>. Thus, a preview loads, but its calls to the API fail.</li>
 <li>Previews open only for members of the Vercel team. Vercel turns this protection on by default.</li>
+<li><code>www.roomsie.in</code> and <code>roomsie.vercel.app</code> redirect to <code>roomsie.in</code>. Thus, a browser uses one address for the site and for the login.</li>
+<li><strong>DNS</strong> tells a browser which server has a name. Each record in Cloudflare is "DNS only". The browser connects to Vercel or Lightsail directly.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>The web deploys through the Git link of Vercel, not a GitHub workflow. The link gives a free preview of each pull request. T-03 makes <code>main</code> accept a merge only when CI passes.</li>
 <li>The API was first on Fly.io in <code>bom</code>. Fly accepts no new machines in India, so the same image moved to Lightsail (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</li>
 <li>Lightsail has no secret store. Thus, the secrets are in the CI secret store (<a href="../decisions/0016-credentials-and-secrets.md">ADR-0016</a>).</li>
+<li>The DNS is on Cloudflare, and GoDaddy keeps the registration (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</li>
 <li>Previews do not call the production API. The team examines this again after the launch. A staging API needs a third Supabase project, and the free plan allows two.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
+<li>A new domain cannot move to a different registrar for 60 days after the purchase. You can change its name servers immediately.</li>
+<li>GoDaddy can put a new domain on "Registrar Hold" (<code>clientHold</code>). Then the domain does not work, and no setting can change. Only GoDaddy support can remove the hold.</li>
 <li>Add a new API secret to <code>.env.deploy</code>, to GitHub secrets, and with a dummy value to <code>apps/api/.env.example</code>. Then add it to the Deploy step of the deploy workflow, with the prefix <code>API_</code>. If you do not, the API does not get it.</li>
 <li>The image builds from the repo root, because the API needs the workspace packages. The install skips scripts, because the root <code>prepare</code> script needs <code>git</code>.</li>
 <li>A deployment takes approximately 3 to 5 minutes. Lightsail keeps the previous version until the new version passes the health check.</li>

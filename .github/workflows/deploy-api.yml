@@ -12,7 +12,7 @@ concurrency:
   group: deploy-api
 env:
   SERVICE: roomsie-api
-  WEB_ORIGIN: https://roomsie.vercel.app
+  WEB_ORIGIN: https://roomsie.in
 jobs:
   deploy:
     runs-on: ubuntu-latest

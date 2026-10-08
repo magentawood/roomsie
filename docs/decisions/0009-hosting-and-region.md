@@ -18,6 +18,7 @@
 | Postgres (Supabase) | **Mumbai — `ap-south-1`** |
 | `apps/api` | **AWS Lightsail containers — `ap-south-1` (Mumbai)** |
 | `apps/web` | **Vercel — functions pinned to `bom1` (Mumbai)** |
+| DNS of `roomsie.in` | **Cloudflare, "DNS only"**. GoDaddy keeps the registration. |
 
 ## Rationale
 
@@ -122,6 +123,16 @@ public pages, and the CDN caches them. All write-heavy work goes behind
 **The safer vendor carries the riskier coupling.** Of the two risks, only
 coupling costs engineering time, because portability is the thing that lets you
 respond to vendor risk at all. This is the same posture as ADR 0001.
+
+### 5. DNS
+
+- Cloudflare has an API for DNS records on its free plan. Thus, the deploy
+  tools can add a record, and a person does not edit records by hand. GoDaddy
+  gives its DNS API only to large accounts.
+- DNS is not on the web host. A move from Vercel does not change DNS.
+- A custom address for the R2 photos needs the domain on Cloudflare DNS.
+- The proxy of Cloudflare is off. Vercel and Lightsail give HTTPS and
+  protection, and the API gets the IP address of each user (PD9).
 
 ## Consequences
 

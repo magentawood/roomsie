@@ -43,3 +43,27 @@ The real address: roomsie.in for the site, api.roomsie.in for the API.
 ## Read first
 - [0009-hosting-and-region.md](../../decisions/0009-hosting-and-region.md)
 - [deploys.md](../../learn/deploys.md)
+
+## Spec
+
+**Approved:** 2026-10-08, by Yash
+
+- **Modules:**
+  - The Cloudflare zone of roomsie.in: new records for the web, the API and the certificate check of the API.
+  - The Vercel project `roomsie`: roomsie.in is the main address. `www.roomsie.in` and `roomsie.vercel.app` redirect to it. The production value of the API address changes. The web code does not change.
+  - The Lightsail service `roomsie-api`: a certificate for `api.roomsie.in`, and the custom domain on the service.
+  - The deploy workflow of the API: the allowed browser address changes. The API code does not change.
+  - The docs: [ADR-0009](../../decisions/0009-hosting-and-region.md) gets a DNS row. The [deploys](../../learn/deploys.md) learn page and the notes that name `roomsie.vercel.app` change.
+- **Seams for the tests:**
+  - Live checks after the change: `https://roomsie.in` gives 200. `www.roomsie.in` and `roomsie.vercel.app` give a redirect to `https://roomsie.in`. `https://api.roomsie.in/v1/health` gives `ok`. The CORS header names `https://roomsie.in`. The production web bundle calls `https://api.roomsie.in`.
+  - No new unit tests. The code does not change.
+- **Decisions:**
+  - roomsie.in is the main address. `www.roomsie.in` and `roomsie.vercel.app` redirect to it. Previews stay open only to the Vercel team.
+  - The DNS of roomsie.in is on Cloudflare, because the deploy tools can change it through an API. The registration stays at GoDaddy.
+  - Each record is "DNS only". The Cloudflare proxy is off. The team can turn it on for one record if abuse makes it necessary.
+  - The API address is `api.roomsie.in`, with a Lightsail certificate. The record for the certificate check goes into Cloudflare.
+  - The API accepts browser calls only from `https://roomsie.in`. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
+  - The production web reads the API address `https://api.roomsie.in`.
+  - The policy of the deploy user also allows the Lightsail certificate actions.
+  - The user shares the Cloudflare and GoDaddy access through the password manager, and confirms it at the PR gate.
+- **Out of scope:** the authorized domains of Firebase (T-05), an address for photos from R2, email records, and a transfer of the registration to Cloudflare.
