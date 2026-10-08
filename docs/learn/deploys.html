@@ -68,7 +68,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The DNS of roomsie.in</td>
-<td>Cloudflare. GoDaddy keeps the registration.</td>
+<td>Cloudflare. GoDaddy keeps the registration (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</td>
 </tr>
 <tr>
 <td>The API secrets</td>
@@ -89,7 +89,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>The web deploys through the Git link of Vercel, not a GitHub workflow. The link gives a free preview of each pull request. T-03 makes <code>main</code> accept a merge only when CI passes.</li>
 <li>The API was first on Fly.io in <code>bom</code>. Fly accepts no new machines in India, so the same image moved to Lightsail (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</li>
 <li>Lightsail has no secret store. Thus, the secrets are in the CI secret store (<a href="../decisions/0016-credentials-and-secrets.md">ADR-0016</a>).</li>
-<li>The DNS is on Cloudflare, and GoDaddy keeps the registration (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</li>
 <li>Previews do not call the production API. The team examines this again after the launch. A staging API needs a third Supabase project, and the free plan allows two.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>

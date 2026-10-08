@@ -59,7 +59,7 @@ The real address: roomsie.in for the site, api.roomsie.in for the API.
   - No new unit tests. The code does not change.
 - **Decisions:**
   - roomsie.in is the main address. `www.roomsie.in` and `roomsie.vercel.app` redirect to it. Previews stay open only to the Vercel team.
-  - The DNS of roomsie.in is on Cloudflare, because the deploy tools can change it through an API. The registration stays at GoDaddy.
+  - The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy. (why: [ADR-0009](../../decisions/0009-hosting-and-region.md))
   - Each record is "DNS only". The Cloudflare proxy is off. The team can turn it on for one record if abuse makes it necessary.
   - The API address is `api.roomsie.in`, with a Lightsail certificate. The record for the certificate check goes into Cloudflare.
   - The API accepts browser calls only from `https://roomsie.in`. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))

@@ -21,7 +21,7 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 | The web | Vercel, functions in `bom1`, at `roomsie.in` |
 | The API | Lightsail service `roomsie-api`, Nano power (0.25 vCPU, 512 MB), `ap-south-1`, at `api.roomsie.in` |
 | The database | Supabase, `ap-south-1` |
-| The DNS of roomsie.in | Cloudflare. GoDaddy keeps the registration. |
+| The DNS of roomsie.in | Cloudflare. GoDaddy keeps the registration ([ADR-0009](../decisions/0009-hosting-and-region.md)). |
 | The API secrets | GitHub secrets. The workflow gives them to each deployment. |
 
 - The API and the database are in the same AWS region, so each query takes approximately 1 ms ([ADR-0009](../decisions/0009-hosting-and-region.md)).
@@ -36,7 +36,6 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 - The web deploys through the Git link of Vercel, not a GitHub workflow. The link gives a free preview of each pull request. T-03 makes `main` accept a merge only when CI passes.
 - The API was first on Fly.io in `bom`. Fly accepts no new machines in India, so the same image moved to Lightsail ([ADR-0009](../decisions/0009-hosting-and-region.md)).
 - Lightsail has no secret store. Thus, the secrets are in the CI secret store ([ADR-0016](../decisions/0016-credentials-and-secrets.md)).
-- The DNS is on Cloudflare, and GoDaddy keeps the registration ([ADR-0009](../decisions/0009-hosting-and-region.md)).
 - Previews do not call the production API. The team examines this again after the launch. A staging API needs a third Supabase project, and the free plan allows two.
 
 ## Gotchas
