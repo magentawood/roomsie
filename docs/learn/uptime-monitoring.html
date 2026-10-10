@@ -37,8 +37,7 @@ details.callout[open] summary{color:var(--fg)}
 <h1 id="uptime-monitoring">Uptime monitoring</h1>
 <p><strong>In one line:</strong> HetrixTools calls the health check of the API each minute. When the API stops, it sends an alert to the Telegram group of the team.</p>
 <h2 id="what-it-is">What it is</h2>
-<p>An <strong>uptime monitor</strong> is a service on a different network. It calls an address at a fixed interval. When the address does not reply correctly, the monitor sends an alert. When the address replies correctly again, the monitor sends a second alert.</p>
-<p>Thus, the team knows about a stopped API before users tell the team.</p>
+<p>An <strong>uptime monitor</strong> is a service on a different network. It calls an address at a fixed interval. When the address does not reply correctly, the monitor sends an alert. When the address replies correctly again, the monitor sends a second alert. Thus, the team knows about a stopped API before users tell the team.</p>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>HetrixTools ── each minute ──▶ https://api.roomsie.in/v1/health ──▶ {&quot;status&quot;:&quot;ok&quot;}
      │
@@ -76,18 +75,17 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li>The deploy workflow calls the same health check after each deploy (<a href="deploys.html">Deploys</a>).</li>
-<li>The monitor waits for some failed checks before it sends an alert.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li><strong>A hosted monitor, not a monitor on our servers.</strong> A monitor on the API host can stop at the same time as the API (<a href="../decisions/0014-error-tracking.md">ADR-0014</a>).</li>
-<li><strong>HetrixTools.</strong> Its free plan checks each minute and sends alerts to Telegram. Other free plans check each 3 or 5 minutes.</li>
+<li><strong>HetrixTools.</strong> Its free plan checks each minute. The free plan of Better Stack checks each 3 minutes, and UptimeRobot each 5 minutes.</li>
 <li><strong>Telegram.</strong> The team reads the group, and each phone gets a notification.</li>
-<li><strong>A sub-account for each team member.</strong> The team does not share one login (<a href="../decisions/0014-error-tracking.md">ADR-0014</a>).</li>
+<li><strong>A sub-account for each team member.</strong> The team does not share one login.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li>To test the alerts, change the address to a wrong port, for example <code>https://api.roomsie.in:81/v1/health</code>. Wait for the "down" alert. It comes in 2 to 3 minutes. Then put the correct address back, and wait for the "up" alert.</li>
+<li>To test the alerts, change the address to a wrong port, for example <code>https://api.roomsie.in:81/v1/health</code>. Wait for the "down" alert. It comes in 2 to 3 minutes, because the monitor makes sure of the failure first. Then put the correct address back, and wait for the "up" alert.</li>
 <li>A deploy of the API can give a short "down" alert and then an "up" alert. This is usual.</li>
 <li>The monitor does not check the web at <code>roomsie.in</code>. A problem with Vercel or with the DNS records of the web gives no alert.</li>
 </ul>

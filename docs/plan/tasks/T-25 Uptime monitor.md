@@ -44,12 +44,12 @@ An automatic warning if the API stops.
 
 - **Modules:**
   - The HetrixTools account "Roomsie": new, on the free plan. It has one uptime monitor for `https://api.roomsie.in/v1/health`. The monitor checks each minute.
-  - The Telegram group of the team: it gets the alerts. HetrixTools has the chat ID of the group.
+  - The Telegram group of the team: it gets the alerts.
   - The docs: a new learn page, "Uptime monitoring".
   - The plan: T-25 changes its title to "Uptime monitor".
   - No code changes. The API already has its health check.
 - **Seams for the tests:**
-  - A test by hand: a monitor with a wrong port (`:81`) sends a "down" alert to the group in 2 to 3 minutes. The correct address then sends an "up" alert. Ankit did this test on 2026-10-09.
+  - A test by hand: Ankit changed the address of the monitor to a wrong port (`:81`). A "down" alert came to the group in 2 to 3 minutes. The correct address then gave an "up" alert. Ankit did this test on 2026-10-09.
   - No unit tests, because no code changes.
 - **Decisions:**
   - The spend alert at 70% moves to T-21. T-21 makes the spend counter and the ceiling, and PC-10 gives the amount. (why: [PD9](../../decisions/pd-09-pre-login-limits.md))
@@ -57,7 +57,7 @@ An automatic warning if the API stops.
   - The monitor is not on our own servers. A monitor on the API host can stop at the same time as the API. (why: [ADR-0014](../../decisions/0014-error-tracking.md))
   - The "team channel" is the Telegram group of the team.
   - The monitor checks the HTTP status only. The free plan has no keyword check.
-  - Ankit made the account. Each team member gets a sub-account, not a shared login. (why: [ADR-0014](../../decisions/0014-error-tracking.md))
+  - Ankit made the account. Each team member gets a sub-account, not a shared login.
   - Changed done items:
     - T-25: "An alert starts when the daily model spend is more than 70% of the ceiling" moves to T-21 with no change.
 - **Out of scope:** the spend alert (T-21), a monitor for the web, a status page, the error reports (T-07) and the backups (T-40).
