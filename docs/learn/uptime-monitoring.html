@@ -76,20 +76,19 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li>The deploy workflow calls the same health check after each deploy (<a href="deploys.html">Deploys</a>).</li>
-<li>The monitor waits for some failed checks before it sends an alert. In the test, the "down" alert came in 2 to 3 minutes.</li>
-<li>The spend alert is not part of this monitor. T-21 makes it (<a href="../decisions/pd-09-pre-login-limits.md">PD9</a>).</li>
+<li>The monitor waits for some failed checks before it sends an alert.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li><strong>A hosted monitor, not a monitor on our servers.</strong> A monitor on the API host can stop at the same time as the API (<a href="../decisions/0014-error-tracking.md">ADR-0014</a>).</li>
 <li><strong>HetrixTools.</strong> Its free plan checks each minute and sends alerts to Telegram. Other free plans check each 3 or 5 minutes.</li>
 <li><strong>Telegram.</strong> The team reads the group, and each phone gets a notification.</li>
-<li><strong>A sub-account for each team member.</strong> The team does not share one login (<a href="../decisions/0016-credentials-and-secrets.md">ADR-0016</a>).</li>
+<li><strong>A sub-account for each team member.</strong> The team does not share one login (<a href="../decisions/0014-error-tracking.md">ADR-0014</a>).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li>To test the alerts, change the address to a wrong port, for example <code>https://api.roomsie.in:81/v1/health</code>. Wait for the "down" alert. Then put the correct address back, and wait for the "up" alert.</li>
+<li>To test the alerts, change the address to a wrong port, for example <code>https://api.roomsie.in:81/v1/health</code>. Wait for the "down" alert. It comes in 2 to 3 minutes. Then put the correct address back, and wait for the "up" alert.</li>
 <li>A deploy of the API can give a short "down" alert and then an "up" alert. This is usual.</li>
-<li>The monitor does not check the web at <code>roomsie.in</code>. A problem with Vercel or the DNS gives no alert.</li>
+<li>The monitor does not check the web at <code>roomsie.in</code>. A problem with Vercel or with the DNS records of the web gives no alert.</li>
 </ul>
 </main>
