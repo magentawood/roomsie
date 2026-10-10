@@ -40,11 +40,13 @@ details.callout[open] summary{color:var(--fg)}
 <!-- learn:start -->
 <ul>
 <li><a href="building-the-api.html">Building the API</a>: <code>tsx</code> runs the TypeScript API in development, and <code>tsup</code> builds our code into one JavaScript file. The Docker image installs the libraries next to it.</li>
+<li><a href="ci-checks.html">CI checks</a>: GitHub checks each pull request automatically, and <code>main</code> accepts a merge only when the checks pass and a teammate approves.</li>
 <li><a href="deploys.html">Deploys</a>: Vercel publishes the web from <code>main</code> and builds a preview for each pull request. A GitHub workflow deploys the API as a Docker image to AWS Lightsail in Mumbai.</li>
 <li><a href="local-dev-with-docker.html">Local development with Docker</a>: a local Postgres 17 runs in Docker. <code>pnpm db:up</code> starts it, and <code>pnpm test</code> starts it if necessary and gives each test run a fresh database.</li>
 <li><a href="openapi-from-zod.html">OpenAPI from Zod</a>: the API makes its OpenAPI document from the Zod schemas in <code>packages/contract</code>. The document is committed, and a test fails when it is out of date.</li>
 <li><a href="pnpm-and-corepack.html">pnpm, Corepack and Turborepo</a>: pnpm installs the packages of the monorepo, Corepack gives each developer the same pnpm version, and Turborepo runs the tasks of all packages with one command.</li>
 <li><a href="postgres-drivers.html">Postgres drivers</a>: a driver is the library that connects the API to Postgres. We use postgres.js under Drizzle, with prepared statements off for the Supabase pooler.</li>
+<li><a href="secret-scanning.html">Secret scanning</a>: gitleaks finds a password or a key in the code before the secret goes into the shared git history. Run <code>pnpm secrets</code> before each pull request.</li>
 </ul>
 <!-- learn:end -->
 </main>

@@ -31,12 +31,54 @@ Checks each pull request automatically.
 - No task waits on this task.
 
 ## Done when
-- [ ] Every pull request runs typecheck, lint, build and gitleaks
-- [ ] Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check`
-- [ ] It finishes in less than five minutes
-- [ ] `main` accepts a merge only when CI passes
+- [x] Every pull request runs typecheck, lint, build and gitleaks · [#112](https://github.com/magentawood/roomsie/pull/112)
+- [x] Every pull request also runs the doc checks: `tools/doc-budget.py`, `tools/build-decision-ledger.py --check` and `tools/render-docs.py --check` · [#112](https://github.com/magentawood/roomsie/pull/112)
+- [x] It finishes in less than five minutes · [#112](https://github.com/magentawood/roomsie/pull/112)
+- [x] `main` accepts a merge only when CI passes · [#112](https://github.com/magentawood/roomsie/pull/112)
 
 ^done
 
 ## Read first
 - [0013-ci-gate-and-testing.md](../../decisions/0013-ci-gate-and-testing.md)
+
+## Spec
+
+**Approved:** 2026-10-07, by Pulkit
+
+- **Modules:**
+  - The CI workflow: new, in `.github/workflows/`. Each pull request starts two jobs at the same time. (why: [ADR-0013](../../decisions/0013-ci-gate-and-testing.md))
+    - The `check` job installs the packages, then runs typecheck, lint, build and the tests. A Postgres 17 service container gives the tests a disposable database.
+    - The `secrets` job runs gitleaks on the full git history.
+  - The workspace root: a new `pnpm secrets` command and its script in `tools/`. The command runs gitleaks on the commits of the branch that are not on `main`. If gitleaks is not on the laptop, the script runs the gitleaks Docker image.
+  - The `protect-main` ruleset of the repo: it applies to `main`. It accepts a change only through a pull request. It accepts a merge only when one teammate approves the pull request and `check`, `secrets` and `docs` pass.
+  - The CI secret store: one new secret, `TURBO_TOKEN`, and one new variable, `TURBO_TEAM`, for the Turborepo remote cache. (why: [ADR-0010](../../decisions/0010-monorepo-tooling.md))
+  - The docs: [ADR-0016](../../decisions/0016-credentials-and-secrets.md), the standards files `_index.md` and `testing.md`, and `CONTEXT.md`.
+  - No application code changes. No interface changes.
+- **Seams for the tests:**
+  - The CI run of the T-03 pull request. All three jobs pass in less than five minutes.
+  - `pnpm secrets` on the laptop. It passes on the T-03 branch. It fails on a local commit with a fake key. Nobody pushes that commit.
+  - The ruleset, read through the GitHub API after the first CI run. It targets `main`, names the three checks and needs one approval.
+  - No new unit tests. The application code does not change.
+- **Decisions:**
+  - CI also runs the unit tests and the API integration tests against a disposable Postgres. The done items name only typecheck, lint, build and gitleaks. (why: [ADR-0013](../../decisions/0013-ci-gate-and-testing.md))
+  - gitleaks does not run before each commit. A developer runs `pnpm secrets` one time, before the pull request. The agent runs it at the PR stage of `build-feature`. ADR-0016 and the standards rule change to this text.
+  - gitleaks also runs in CI on each pull request.
+  - CI runs the gitleaks Docker image at a fixed version, not the gitleaks GitHub Action. The Action needs a licence key for an organisation repo.
+  - CI uses Node 22, the same version as the API image.
+  - CI uses the Turborepo remote cache of Vercel. Without `TURBO_TOKEN`, CI runs with no remote cache and does not fail. (why: [ADR-0010](../../decisions/0010-monorepo-tooling.md))
+  - The ruleset accepts a change to `main` only through a pull request. This enforces the "never push to `main`" convention of `CONTEXT.md`. Nobody can bypass it.
+  - Each pull request needs one approval from a teammate, also when all checks pass. The author cannot approve their own pull request.
+  - The docs check stays in its own workflow. It is a devkit tool copy, so T-03 does not change it. Its job name, `docs`, is one of the required checks.
+  - The `[tool: planned T-03]` marks in the standards become `[tool]`.
+  - The "never push to `main`" line of `CONTEXT.md` also names `pnpm secrets`. Each agent loads `CONTEXT.md`, so the agent sees the scan before each pull request. The rule itself stays in the standards.
+- **Out of scope:** `check-tokens.mjs` and the generated-file check (they start when the token pipeline ships). Also gitleaks before each commit, changes to the devkit tool copies, Playwright tests, and the visibility of the repo.
+
+## Log
+
+- **2026-10-08 · [#112](https://github.com/magentawood/roomsie/pull/112)**
+  - **Change:** each pull request runs typecheck, lint, build, the API tests against Postgres 17, and gitleaks. `pnpm secrets` scans a branch before its pull request. The `protect-main` ruleset needs a pull request, one approval and the checks `check`, `secrets` and `docs`.
+  - **Why:** [ADR-0013](../../decisions/0013-ci-gate-and-testing.md) and [ADR-0016](../../decisions/0016-credentials-and-secrets.md).
+  - **Ticked:** all four items. The first CI run took 45 seconds for `check`, 13 seconds for `secrets` and 19 seconds for `docs`.
+  - **Not done:** none. The remote cache waits for the `TURBO_TOKEN` secret and the `TURBO_TEAM` variable.
+  - **Learn:** [CI checks](../../learn/ci-checks.md), [Secret scanning](../../learn/secret-scanning.md), [pnpm, Corepack and Turborepo](../../learn/pnpm-and-corepack.md), [Local development with Docker](../../learn/local-dev-with-docker.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-08--t-03-each-pull-request-runs-the-ci-gate)
