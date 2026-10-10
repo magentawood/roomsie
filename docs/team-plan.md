@@ -30,7 +30,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
-| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime and spend alerts, Invite-only gate, Analytics database, Nightly backups, Abuse test | 23 | 11 | _name_ |
+| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test | 23 | 11 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens | 24 | 10 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen | 20 | 14 | _name_ |
@@ -58,7 +58,7 @@ Do the tasks from top to bottom. Finish and merge one task before you start the 
 | 2 | T-05 ⚑ · Google sign-in and token checks in the API | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04, T-06 |
 | 3 | T-04 · Deploy web and API to Mumbai | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
 | 4 | T-07 · Error reporting wrapper and Sentry | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
-| 5 | T-25 · Uptime monitor and spend alerts | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
+| 5 | T-25 · Uptime monitor | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
 | 6 | T-33 · Invite-only gate until launch | 1 | Mon 5 Oct → Tue 6 Oct | T-05 |
 | 7 | T-39 · Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | 8 | T-40 · Nightly database backups to R2 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
@@ -200,7 +200,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P1 Platform | 2 | T-05 ⚑ | Google sign-in and token checks in the API | 6 | Sat 26 Sep | Thu 1 Oct | CP2 | T-02, F-04, T-06 | [#20](https://github.com/magentawood/roomsie/issues/20) |
 | P1 Platform | 3 | T-04 | Deploy web and API to Mumbai | 3 | Thu 1 Oct | Sat 3 Oct | CP3 | T-02, F-04 | [#30](https://github.com/magentawood/roomsie/issues/30) |
 | P1 Platform | 4 | T-07 | Error reporting wrapper and Sentry | 1 | Sat 3 Oct | Sun 4 Oct | CP3 | T-02, F-04 | [#28](https://github.com/magentawood/roomsie/issues/28) |
-| P1 Platform | 5 | T-25 | Uptime monitor and spend alerts | 2 | Sun 4 Oct | Mon 5 Oct | CP3 | T-04 | [#43](https://github.com/magentawood/roomsie/issues/43) |
+| P1 Platform | 5 | T-25 | Uptime monitor | 2 | Sun 4 Oct | Mon 5 Oct | CP3 | T-04 | [#43](https://github.com/magentawood/roomsie/issues/43) |
 | P1 Platform | 6 | T-33 | Invite-only gate until launch | 1 | Mon 5 Oct | Tue 6 Oct | CP3 | T-05 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04, F-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
@@ -299,7 +299,7 @@ gantt
     T-05 Google sign-in and token checks in the API :crit, t05, 2026-09-26, 6d
     T-04 Deploy web and API to Mumbai :t04, 2026-10-01, 3d
     T-07 Error reporting wrapper and Sentry :t07, 2026-10-03, 2d
-    T-25 Uptime monitor and spend alerts :t25, 2026-10-04, 2d
+    T-25 Uptime monitor :t25, 2026-10-04, 2d
     T-33 Invite-only gate until launch :t33, 2026-10-05, 2d
     T-39 Analytics in its own database with scheduled jobs :t39, 2026-10-06, 3d
     T-40 Nightly database backups to R2 :t40, 2026-10-08, 3d
@@ -634,7 +634,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-21 | Five-turn cap, rate limits, spend ceiling | P2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12, T-06, T-05 |
 | T-07 | Error reporting wrapper and Sentry | P1 | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
 | T-15 ⚑ | Results panel, built against the contract | P3 | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03, F-12 |
-| T-25 | Uptime monitor and spend alerts | P1 | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
+| T-25 | Uptime monitor | P1 | 2 | Sun 4 Oct → Mon 5 Oct | T-04 |
 | T-38 | Advisor: articles first, then web search after sign-in | P2 | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05, M-05 |
 | F-11 ⚑ | Product calls: intake, Form A and profile data | F |  | Sun 4 Oct → Tue 6 Oct | — |
 | F-12 ⚑ | Product calls: matching rules | F |  | Sun 4 Oct → Tue 6 Oct | — |
@@ -712,6 +712,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The sign-in wall never appears before results show. The results stay visible behind the wall
 - Limits apply per device and per network
 - At the daily spend ceiling, the chat changes to chips only
+- An alert starts when the daily model spend is more than 70% of the ceiling
 - Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 - Read first: `docs/pre-login-limits.md`
 
@@ -728,10 +729,9 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The match score is hidden until lifestyle answers exist
 - Read first: `docs/interface-shape.md`
 
-**T-25 · Uptime monitor and spend alerts** — done when:
+**T-25 · Uptime monitor** — done when:
 - A monitor checks the API every minute and sends alerts to the team channel
-- An alert starts when the daily model spend is more than 70% of the ceiling
-- Read first: `docs/pre-login-limits.md`
+- Read first: `docs/decisions/0014-error-tracking.md`
 
 **T-38 · Advisor: articles first, then web search after sign-in** — done when:
 - Answers to consulting questions come from the articles first, and give the name of the article

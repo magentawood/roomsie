@@ -31,7 +31,7 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 - **Today:** no value. PD9 settles the mechanism, not the numbers (`docs/decisions/pd-09-pre-login-limits.md:27-39`). F-03 gives only a monthly example of ₹20,000 (`docs/team-plan.json`). The alert starts at 70% of the ceiling. Web searches count in it (`docs/team-plan.json`).
 - **Options:** a) ₹300 a day. b) ₹500 a day. c) ₹1,000 a day. For the rate limits: strict values, or large values that we make tighter from the logs.
-- **Blocks:** T-21, T-25, T-29 (soft: config values).
+- **Blocks:** T-21, T-29 (soft: config values).
 - **Record:** [PD9](../decisions/pd-09-pre-login-limits.md)
 
 ➡️ **Recommended:** b, with large rate limits. ₹500 pays for 250 to 500 interviews a day at ₹1 to ₹2 each (PD5). Thirty days at ₹500 stay below the F-03 example. Many Indian mobile users share one IP address. PD9 says that a limit which blocks human users is worse than the abuse.

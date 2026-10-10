@@ -27,7 +27,7 @@ This note is part of [[roomsie launch]].
 - [[T-21 Turn cap and spend ceiling]] — P2 Chat
 - [[M-05 Article drafts]] — M1 Content
 - [[T-19 Report and block]] — P4 Content and moderation
-- [[T-25 Uptime and spend alerts]] — P1 Platform
+- [[T-25 Uptime monitor]] — P1 Platform
 - [[T-38 Advisor]] — P2 Chat
 - [[F-11 Intake and profile calls ⚑]] — Founder
 - [[F-12 Matching calls ⚑]] — Founder

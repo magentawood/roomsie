@@ -32,7 +32,7 @@ BEFORE = snapshot() if CHECK else None
 SHORT = {
  "T-02":"Scaffold monorepo","T-05":"Google sign-in","T-04":"Deploy to Mumbai","T-03":"CI checks",
  "T-07":"Error reporting","T-33":"Invite-only gate","T-24":"Event logging","T-23b":"Legal pages",
- "T-25":"Uptime and spend alerts","T-29":"Abuse test","T-08":"Form A contract","T-11":"Model wrapper",
+ "T-25":"Uptime monitor","T-29":"Abuse test","T-08":"Form A contract","T-11":"Model wrapper",
  "T-12":"Extraction","T-13":"Reply writer","T-21":"Turn cap and spend ceiling","T-27":"Eval run",
  "T-10":"Chat screen and split view","T-09":"Chip flow","T-17":"Carry chat into account",
  "T-23a":"Landing page","T-22a":"Waitlist API","T-22b":"Waitlist screen","T-06":"Database schema","T-14":"Match query",
