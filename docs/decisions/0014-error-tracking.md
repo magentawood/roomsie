@@ -35,7 +35,7 @@ and no release correlation. Its retention is short and depends on the plan.
 | Destination now | **Self-hosted GlitchTip** on Fly, ~$5/month |
 | Destination later | **Firebase Crashlytics for web, when it reaches GA.** This is the preferred destination. The fallback is Sentry paid. |
 | Mobile (month 4) | **Firebase Crashlytics**: free, best in class, and we already use Firebase |
-| Uptime | A free-tier monitor on the single API machine |
+| Uptime | A hosted free-tier monitor of the single API machine. It does not run on the API host. |
 
 GlitchTip is protocol-compatible with the Sentry SDK. Thus, **where errors go is
 a DSN, not a vendor commitment.**
