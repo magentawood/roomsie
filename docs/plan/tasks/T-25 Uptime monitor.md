@@ -31,7 +31,7 @@ An automatic warning if the API stops.
 - No task waits on this task.
 
 ## Done when
-- [ ] A monitor checks the API every minute and sends alerts to the team channel
+- [x] A monitor checks the API every minute and sends alerts to the team channel · [#115](https://github.com/magentawood/roomsie/pull/115)
 
 ^done
 
@@ -61,3 +61,13 @@ An automatic warning if the API stops.
   - Changed done items:
     - T-25: "An alert starts when the daily model spend is more than 70% of the ceiling" moves to T-21 with no change.
 - **Out of scope:** the spend alert (T-21), a monitor for the web, a status page, the error reports (T-07) and the backups (T-40).
+
+## Log
+
+- **2026-10-11 · [#115](https://github.com/magentawood/roomsie/pull/115)**
+  - **Change:** HetrixTools checks the health check of the API each minute and sends alerts to the Telegram group of the team. The 70% spend alert moves to T-21.
+  - **Why:** [ADR-0014](../../decisions/0014-error-tracking.md) needs an uptime monitor. T-21 makes the spend counter and the ceiling that the spend alert needs.
+  - **Ticked:** "A monitor checks the API every minute and sends alerts to the team channel".
+  - **Not done:** none.
+  - **Learn:** [Uptime monitoring](../../learn/uptime-monitoring.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-11--t-25-an-uptime-monitor-watches-the-api)
