@@ -4,7 +4,7 @@ These rules apply to the CI gate, tests and assistant evals. The rules in [_inde
 
 ## The CI gate
 
-- Each PR runs typecheck, lint, build and `gitleaks` [tool: planned T-03]. Why: these checks find the cheap mistakes before a merge. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
+- Each PR runs typecheck, lint, build and `gitleaks` [tool]. Why: these checks find the cheap mistakes before a merge. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Each PR also runs unit tests, API integration tests and `check-tokens.mjs` [tool]. The generated-file check starts when the token pipeline ships [tool]. Why: the rule areas need tests, and generated files and tokens must stay correct. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Typecheck is strict across the full monorepo. Lint uses the shared config from `packages/config`. Why: all packages obey the same checks. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - CI finishes in approximately five minutes. If the suite becomes too large, run it in parallel or divide it. Why: after five minutes, people merge on hope. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))

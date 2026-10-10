@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**28 of 221 done · 13%**
+**32 of 221 done · 14%**
 
 `███░░░░░░░░░░░░░░░░░░░░░`
 
@@ -26,7 +26,7 @@ This note is part of [[roomsie launch]].
 | [[P2 Chat]] | 0 / 13 | 0 / 57 | 0% |
 | [[P3 Data and trust]] | 0 / 4 | 7 / 19 | 37% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
-| [[P5 Accounts and people]] | 0 / 6 | 0 / 21 | 0% |
+| [[P5 Accounts and people]] | 1 / 6 | 4 / 21 | 19% |
 | [[Design]] | 0 / 6 | 0 / 12 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 12 | 0% |
@@ -48,7 +48,7 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When the designs arrive,** the tasks in "Waits on the designs" join the waves.
 
-**10 free tasks are open · 11 build hours.**
+**9 free tasks are open · 9 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -58,7 +58,6 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
-| 0 | [[T-03 CI checks]] | P5 | 2 | ⬜ can start | 0 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
 | 0 | [[T-25 Uptime and spend alerts]] | P1 | 2 | ⬜ can start | 0 | [#43](https://github.com/magentawood/roomsie/issues/43) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
@@ -121,7 +120,7 @@ flowchart LR
   T02["T-02 ⚑<br/>Scaffold monorepo"]:::done
   M03["M-03<br/>Eval sentences"]:::ready
   T04["T-04<br/>Deploy to Mumbai"]:::done
-  T03["T-03<br/>CI checks"]:::ready
+  T03["T-03<br/>CI checks"]:::done
   T07["T-07<br/>Error reporting"]:::ready
   T25["T-25<br/>Uptime and spend alerts"]:::ready
   T40["T-40<br/>Nightly backups"]:::ready
@@ -353,12 +352,12 @@ flowchart LR
 > ![[T-22b Waitlist screen#^done]]
 
 
-## P5 Accounts and people — 0/21
+## P5 Accounts and people — 4/21
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
 
-> [!todo]- ⬜ [[T-03 CI checks]] · 0/4
+> [!todo]- ✅ [[T-03 CI checks]] · 4/4
 > ![[T-03 CI checks#^done]]
 
 > [!todo]- ⬜ [[T-24 Event logging]] · 0/4

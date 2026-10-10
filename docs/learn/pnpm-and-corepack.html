@@ -40,7 +40,8 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>pnpm</strong> is the package manager. A package can import only the packages that it declares, so a missing dependency fails on your laptop, not in production.</li>
 <li><strong>Corepack</strong> comes with Node. It reads <code>"packageManager": "pnpm@11.28.2"</code> in the root <code>package.json</code> and runs that exact pnpm version.</li>
-<li><strong>Turborepo</strong> runs a task, such as <code>build</code> or <code>test</code>, in each package, in the correct order, and keeps a cache.</li>
+<li><strong>Turborepo</strong> runs a task, such as <code>build</code> or <code>test</code>, in each package, in the correct order, and keeps a cache. When the files of a package do not change, Turborepo uses the result from the cache and does not run the task again.</li>
+<li>The <strong>remote cache</strong> keeps these results on Vercel, so CI and each laptop can use them.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <ol>
@@ -53,6 +54,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>pnpm workspaces and Turborepo: <a href="../decisions/0010-monorepo-tooling.md">ADR-0010</a>.</li>
 <li>pnpm 11.28.2, not 12, and TypeScript 6.0, not 7. The reasons are in the T-02 PR: <a href="https://github.com/magentawood/roomsie/pull/94">#94</a>.</li>
+<li>CI uses the remote cache of Vercel, with the <code>TURBO_TOKEN</code> secret and the <code>TURBO_TEAM</code> variable: <a href="../decisions/0010-monorepo-tooling.md">ADR-0010</a>.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
@@ -63,9 +65,12 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>"Ignored build scripts":</strong> pnpm 11 blocks install scripts. Approve a package only if it needs its script, with <code>pnpm approve-builds &lt;name&gt;</code>. At this time only esbuild is approved.</li>
 <li><strong>An <code>AGENTS.md</code> file appears:</strong> Turborepo writes it when an AI agent runs it. <code>turbo.json</code> turns this off. If the file appears, delete it.</li>
 <li><strong>TypeScript 7 breaks the ESLint tools.</strong> Keep TypeScript at 6.0 until typescript-eslint supports 7.</li>
+<li><strong>A task does not see an env var:</strong> Turborepo gives a task only the env vars that <code>turbo.json</code> names. Add the name to the <code>env</code> list of the task.</li>
+<li><strong>CI shows no remote cache hits:</strong> a person with access to Vercel must add <code>TURBO_TOKEN</code> and <code>TURBO_TEAM</code> in the GitHub settings of the repo. Without them, CI works, but it builds each package each time.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-02: <a href="https://github.com/magentawood/roomsie/pull/94">#94</a>, 2026-10-03. The workspace, the versions and the commands.</li>
+<li>T-03: <a href="https://github.com/magentawood/roomsie/pull/112">#112</a>, 2026-10-08. The remote cache in CI, and the env vars of a task.</li>
 </ul>
 </main>

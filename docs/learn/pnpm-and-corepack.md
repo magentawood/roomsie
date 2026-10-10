@@ -6,7 +6,8 @@
 
 - **pnpm** is the package manager. A package can import only the packages that it declares, so a missing dependency fails on your laptop, not in production.
 - **Corepack** comes with Node. It reads `"packageManager": "pnpm@11.28.2"` in the root `package.json` and runs that exact pnpm version.
-- **Turborepo** runs a task, such as `build` or `test`, in each package, in the correct order, and keeps a cache.
+- **Turborepo** runs a task, such as `build` or `test`, in each package, in the correct order, and keeps a cache. When the files of a package do not change, Turborepo uses the result from the cache and does not run the task again.
+- The **remote cache** keeps these results on Vercel, so CI and each laptop can use them.
 
 ## How it fits our project
 
@@ -19,6 +20,7 @@
 
 - pnpm workspaces and Turborepo: [ADR-0010](../decisions/0010-monorepo-tooling.md).
 - pnpm 11.28.2, not 12, and TypeScript 6.0, not 7. The reasons are in the T-02 PR: [#94](https://github.com/magentawood/roomsie/pull/94).
+- CI uses the remote cache of Vercel, with the `TURBO_TOKEN` secret and the `TURBO_TEAM` variable: [ADR-0010](../decisions/0010-monorepo-tooling.md).
 
 ## Gotchas
 
@@ -29,7 +31,10 @@
 - **"Ignored build scripts":** pnpm 11 blocks install scripts. Approve a package only if it needs its script, with `pnpm approve-builds <name>`. At this time only esbuild is approved.
 - **An `AGENTS.md` file appears:** Turborepo writes it when an AI agent runs it. `turbo.json` turns this off. If the file appears, delete it.
 - **TypeScript 7 breaks the ESLint tools.** Keep TypeScript at 6.0 until typescript-eslint supports 7.
+- **A task does not see an env var:** Turborepo gives a task only the env vars that `turbo.json` names. Add the name to the `env` list of the task.
+- **CI shows no remote cache hits:** a person with access to Vercel must add `TURBO_TOKEN` and `TURBO_TEAM` in the GitHub settings of the repo. Without them, CI works, but it builds each package each time.
 
 ## Tickets
 
 - T-02: [#94](https://github.com/magentawood/roomsie/pull/94), 2026-10-03. The workspace, the versions and the commands.
+- T-03: [#112](https://github.com/magentawood/roomsie/pull/112), 2026-10-08. The remote cache in CI, and the env vars of a task.

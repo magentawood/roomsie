@@ -19,7 +19,10 @@
     "typecheck": {},
     "lint": {},
     "test": {
-      "cache": false
+      "cache": false,
+      "env": [
+        "TEST_DATABASE_URL"
+      ]
     }
   }
 }

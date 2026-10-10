@@ -53,8 +53,8 @@ Open, with no record yet: the elevator pitch.
 
 ## Conventions
 
-- **Never push to `main`.** Each change goes in through a pull request.
+- **Never push to `main`.** Each change goes in through a PR, after `pnpm secrets`.
 - Write all Markdown in STE with the `ste-writing` skill.
 - One fact, one home. Link to it; do not copy it. When a decision changes, update its record and remove the replaced text.
-- Keep each doc inside its limit. The hook turns on by itself in Claude Code, and on `pnpm install` after T-02. If it is off, run `git config core.hooksPath .githooks`. It runs `tools/doc-budget.py` and the generated-file checks.
+- Keep each doc inside its limit. The hook turns on by itself in Claude Code, and on `pnpm install`. If it is off, run `git config core.hooksPath .githooks`. It runs `tools/doc-budget.py` and the generated-file checks.
 - Remote Control stays off. The repo is private: its history holds a session transcript with personal data.
