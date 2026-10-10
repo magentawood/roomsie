@@ -31,15 +31,49 @@ The real address: roomsie.in for the site, api.roomsie.in for the API.
 - No task waits on this task.
 
 ## Done when
-- [ ] The team owns roomsie.in
-- [ ] The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy
-- [ ] roomsie.in serves the web, and www.roomsie.in redirects to roomsie.in
-- [ ] api.roomsie.in serves the API over HTTPS
-- [ ] The API accepts browser calls only from https://roomsie.in
-- [ ] The team shares DNS access (Cloudflare and GoDaddy) through the password manager
+- [x] The team owns roomsie.in · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] roomsie.in serves the web, and www.roomsie.in redirects to roomsie.in · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] api.roomsie.in serves the API over HTTPS · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] The API accepts browser calls only from https://roomsie.in · [#113](https://github.com/magentawood/roomsie/pull/113)
+- [x] The team shares DNS access (Cloudflare and GoDaddy) through the password manager · [#113](https://github.com/magentawood/roomsie/pull/113)
 
 ^done
 
 ## Read first
 - [0009-hosting-and-region.md](../../decisions/0009-hosting-and-region.md)
 - [deploys.md](../../learn/deploys.md)
+
+## Spec
+
+**Approved:** 2026-10-08, by Yash
+
+- **Modules:**
+  - The Cloudflare zone of roomsie.in: new records for the web, the API and the certificate check of the API.
+  - The Vercel project `roomsie`: roomsie.in is the main address. `www.roomsie.in` and `roomsie.vercel.app` redirect to it. The production value of the API address changes. The web code does not change.
+  - The Lightsail service `roomsie-api`: a certificate for `api.roomsie.in`, and the custom domain on the service.
+  - The deploy workflow of the API: the allowed browser address changes. The API code does not change.
+  - The docs: [ADR-0009](../../decisions/0009-hosting-and-region.md) gets a DNS row. The [deploys](../../learn/deploys.md) learn page and the notes that name `roomsie.vercel.app` change.
+- **Seams for the tests:**
+  - Live checks after the change: `https://roomsie.in` gives 200. `www.roomsie.in` and `roomsie.vercel.app` give a redirect to `https://roomsie.in`. `https://api.roomsie.in/v1/health` gives `ok`. The CORS header names `https://roomsie.in`. The production web bundle calls `https://api.roomsie.in`.
+  - No new unit tests. The code does not change.
+- **Decisions:**
+  - roomsie.in is the main address. `www.roomsie.in` and `roomsie.vercel.app` redirect to it. Previews stay open only to the Vercel team.
+  - The DNS of roomsie.in is on Cloudflare. The registration stays at GoDaddy. (why: [ADR-0009](../../decisions/0009-hosting-and-region.md))
+  - Each record is "DNS only". The Cloudflare proxy is off. The team can turn it on for one record if abuse makes it necessary.
+  - The API address is `api.roomsie.in`, with a Lightsail certificate. The record for the certificate check goes into Cloudflare.
+  - The API accepts browser calls only from `https://roomsie.in`. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
+  - The production web reads the API address `https://api.roomsie.in`.
+  - The policy of the deploy user also allows the Lightsail certificate actions.
+  - The user shares the Cloudflare and GoDaddy access through the password manager, and confirms it at the PR gate.
+- **Out of scope:** the authorized domains of Firebase (T-05), an address for photos from R2, email records, and a transfer of the registration to Cloudflare.
+
+## Log
+
+- **2026-10-08 · [#113](https://github.com/magentawood/roomsie/pull/113)**
+  - **Change:** the web is on roomsie.in, and `www.roomsie.in` and `roomsie.vercel.app` redirect to it. The API is on `api.roomsie.in` with a Lightsail certificate. The DNS of roomsie.in is on Cloudflare, and the API accepts browser calls only from `https://roomsie.in`.
+  - **Why:** [ADR-0009](../../decisions/0009-hosting-and-region.md)
+  - **Ticked:** all six items.
+  - **Not done:** none.
+  - **Learn:** [Deploys](../../learn/deploys.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-08--f-02-roomsiein-is-live)

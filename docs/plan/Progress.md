@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**26 of 221 done · 12%**
+**32 of 221 done · 14%**
 
 `███░░░░░░░░░░░░░░░░░░░░░`
 
@@ -30,7 +30,7 @@ This note is part of [[roomsie launch]].
 | [[Design]] | 0 / 6 | 0 / 12 | 0% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 12 | 0% |
-| [[Founder]] | 2 / 14 | 6 / 38 | 16% |
+| [[Founder]] | 3 / 14 | 12 / 38 | 32% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -421,7 +421,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 6/38
+## Founder — 12/38
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -459,7 +459,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-14 Assistant and limits calls]] · 0/2
 > ![[F-14 Assistant and limits calls#^done]]
 
-> [!todo]- ⬜ [[F-02 Domain]] · 0/6
+> [!todo]- ✅ [[F-02 Domain]] · 6/6
 > ![[F-02 Domain#^done]]
 
 > [!todo]- ⬜ [[F-10 Go-no-go meeting]] · 0/2
