@@ -980,6 +980,7 @@
     "The sign-in wall never appears before results show. The results stay visible behind the wall",
     "Limits apply per device and per network",
     "At the daily spend ceiling, the chat changes to chips only",
+    "An alert starts when the daily model spend is more than 70% of the ceiling",
     "Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it"
    ],
    "read": [
@@ -1151,8 +1152,8 @@
   },
   {
    "id": "T-25",
-   "title": "Uptime monitor and spend alerts",
-   "plain": "Automatic warnings if the site stops or costs increase quickly.",
+   "title": "Uptime monitor",
+   "plain": "An automatic warning if the API stops.",
    "role": "P1",
    "hours": 2,
    "start": "2026-10-04",
@@ -1161,11 +1162,10 @@
     "T-04"
    ],
    "done": [
-    "A monitor checks the API every minute and sends alerts to the team channel",
-    "An alert starts when the daily model spend is more than 70% of the ceiling"
+    "A monitor checks the API every minute and sends alerts to the team channel"
    ],
    "read": [
-    "docs/pre-login-limits.md"
+    "docs/decisions/0014-error-tracking.md"
    ],
    "cp": "CP3",
    "critical": false,

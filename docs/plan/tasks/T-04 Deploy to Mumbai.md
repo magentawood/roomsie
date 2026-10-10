@@ -30,7 +30,7 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 
 ## Unblocks
 - [[F-02 Domain]]
-- [[T-25 Uptime and spend alerts]]
+- [[T-25 Uptime monitor]]
 - [[T-40 Nightly backups]]
 
 ## Done when

@@ -47,6 +47,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><a href="pnpm-and-corepack.html">pnpm, Corepack and Turborepo</a>: pnpm installs the packages of the monorepo, Corepack gives each developer the same pnpm version, and Turborepo runs the tasks of all packages with one command.</li>
 <li><a href="postgres-drivers.html">Postgres drivers</a>: a driver is the library that connects the API to Postgres. We use postgres.js under Drizzle, with prepared statements off for the Supabase pooler.</li>
 <li><a href="secret-scanning.html">Secret scanning</a>: gitleaks finds a password or a key in the code before the secret goes into the shared git history. Run <code>pnpm secrets</code> before each pull request.</li>
+<li><a href="uptime-monitoring.html">Uptime monitoring</a>: HetrixTools calls the health check of the API each minute. When the API stops, it sends an alert to the Telegram group of the team.</li>
 </ul>
 <!-- learn:end -->
 </main>

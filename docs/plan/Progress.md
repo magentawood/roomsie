@@ -22,8 +22,8 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 2 / 9 | 9 / 29 | 31% |
-| [[P2 Chat]] | 0 / 13 | 0 / 57 | 0% |
+| [[P1 Platform]] | 2 / 9 | 9 / 28 | 32% |
+| [[P2 Chat]] | 0 / 13 | 0 / 58 | 0% |
 | [[P3 Data and trust]] | 0 / 4 | 7 / 19 | 37% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 21 | 19% |
@@ -59,7 +59,7 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
-| 0 | [[T-25 Uptime and spend alerts]] | P1 | 2 | ⬜ can start | 0 | [#43](https://github.com/magentawood/roomsie/issues/43) |
+| 0 | [[T-25 Uptime monitor]] | P1 | 2 | ⬜ can start | 0 | [#43](https://github.com/magentawood/roomsie/issues/43) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 
 ### Waits on product calls
@@ -122,7 +122,7 @@ flowchart LR
   T04["T-04<br/>Deploy to Mumbai"]:::done
   T03["T-03<br/>CI checks"]:::done
   T07["T-07<br/>Error reporting"]:::ready
-  T25["T-25<br/>Uptime and spend alerts"]:::ready
+  T25["T-25<br/>Uptime monitor"]:::ready
   T40["T-40<br/>Nightly backups"]:::ready
   T08["T-08 ⚑<br/>Form A contract"]:::product
   T06["T-06 ⚑<br/>Database schema"]:::product
@@ -241,7 +241,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 9/29
+## P1 Platform — 9/28
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -255,8 +255,8 @@ flowchart LR
 > [!todo]- ⬜ [[T-07 Error reporting]] · 0/3
 > ![[T-07 Error reporting#^done]]
 
-> [!todo]- ⬜ [[T-25 Uptime and spend alerts]] · 0/2
-> ![[T-25 Uptime and spend alerts#^done]]
+> [!todo]- ⬜ [[T-25 Uptime monitor]] · 0/1
+> ![[T-25 Uptime monitor#^done]]
 
 > [!todo]- ⬜ [[T-33 Invite-only gate]] · 0/2
 > ![[T-33 Invite-only gate#^done]]
@@ -271,7 +271,7 @@ flowchart LR
 > ![[T-29 Abuse test#^done]]
 
 
-## P2 Chat — 0/57
+## P2 Chat — 0/58
 
 > [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -294,7 +294,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-36 Observer]] · 0/5
 > ![[T-36 Observer#^done]]
 
-> [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/5
+> [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/6
 > ![[T-21 Turn cap and spend ceiling#^done]]
 
 > [!todo]- ⬜ [[T-38 Advisor]] · 0/5
