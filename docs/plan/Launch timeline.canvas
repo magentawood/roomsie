@@ -306,7 +306,7 @@
   {
    "id": "task-T-25",
    "type": "text",
-   "text": "**[[T-25 Uptime and spend alerts|T-25 Uptime and spend alerts]]**\n2h · Sun 4 Oct → Mon 5 Oct",
+   "text": "**[[T-25 Uptime monitor|T-25 Uptime monitor]]**\n2h · Sun 4 Oct → Mon 5 Oct",
    "x": 2200,
    "y": 230,
    "width": 432,

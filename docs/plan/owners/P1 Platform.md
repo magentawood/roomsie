@@ -19,7 +19,7 @@ This note is part of [[roomsie launch]].
 2. [[T-05 Google sign-in ⚑]] — Sat 26 Sep → Thu 1 Oct, 6h
 3. [[T-04 Deploy to Mumbai]] — Thu 1 Oct → Sat 3 Oct, 3h
 4. [[T-07 Error reporting]] — Sat 3 Oct → Sun 4 Oct, 1h
-5. [[T-25 Uptime and spend alerts]] — Sun 4 Oct → Mon 5 Oct, 2h
+5. [[T-25 Uptime monitor]] — Sun 4 Oct → Mon 5 Oct, 2h
 6. [[T-33 Invite-only gate]] — Mon 5 Oct → Tue 6 Oct, 1h
 7. [[T-39 Analytics database]] — Tue 6 Oct → Thu 8 Oct, 3h
 8. [[T-40 Nightly backups]] — Thu 8 Oct → Sat 10 Oct, 2h

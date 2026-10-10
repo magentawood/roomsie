@@ -37,6 +37,7 @@ Stops abuse of the AI and a very large bill.
 - [ ] The sign-in wall never appears before results show. The results stay visible behind the wall
 - [ ] Limits apply per device and per network
 - [ ] At the daily spend ceiling, the chat changes to chips only
+- [ ] An alert starts when the daily model spend is more than 70% of the ceiling
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 
 ^done
