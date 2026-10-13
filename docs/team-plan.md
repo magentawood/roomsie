@@ -906,7 +906,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-40 · Nightly database backups to R2** — done when:
 - A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
 - The system keeps fourteen days of dumps and deletes older dumps
-- The team tested a restore one time, into a scratch project
+- The team tested a restore one time, into a scratch database
 - Read first: `docs/extensibility.md`
 
 **D-06 · Launch visuals** — done when:

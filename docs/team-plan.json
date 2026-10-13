@@ -1617,7 +1617,7 @@
    "done": [
     "A scheduled GitHub Action dumps both databases to Cloudflare R2 every night",
     "The system keeps fourteen days of dumps and deletes older dumps",
-    "The team tested a restore one time, into a scratch project"
+    "The team tested a restore one time, into a scratch database"
    ],
    "read": [
     "docs/extensibility.md"

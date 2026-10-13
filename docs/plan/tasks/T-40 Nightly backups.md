@@ -34,9 +34,47 @@ Copies the two databases each night.
 ## Done when
 - [ ] A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
 - [ ] The system keeps fourteen days of dumps and deletes older dumps
-- [ ] The team tested a restore one time, into a scratch project
+- [ ] The team tested a restore one time, into a scratch database
 
 ^done
 
 ## Read first
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-10-13, by Pulkit
+
+- **Modules:**
+  - The backup workflow: new, in `.github/workflows/`. A schedule starts it each night at 03:00 IST (21:30 UTC). A person can also start it by hand. (why: [PD13](../../decisions/pd-13-databases-and-backups.md))
+  - The R2 bucket for backups: it exists. The workflow writes to it with the R2 key of the API.
+  - The Telegram group of the team: it gets a message when the workflow fails.
+  - The CI secret store: two new secrets, `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
+  - The team password manager: one new item, the private `age` key.
+  - The docs: a new learn page, "Backups", with the restore steps. `extensibility.md` gets one correction.
+  - The plan: one done item of T-40 changes.
+  - No change to `apps/` or `packages/`. No interface changes.
+- **Seams for the tests:**
+  - The restore check in the workflow. Each night, the workflow restores each dump into a temporary Postgres 17. If a restore fails, the workflow fails.
+  - A run by hand of the workflow, after the merge. Two encrypted dumps are in R2, and the run is green.
+  - A test of the failure message. A run with a bad connection string sends a message to the Telegram group.
+  - One restore by hand into the local Docker Postgres, with the private key from the password manager. The task note records the date and the person.
+  - No unit tests. No app code changes.
+- **Decisions:**
+  - The workflow dumps the main database and the analytics database. It connects with `DATABASE_URL_SESSION` and `ANALYTICS_DATABASE_URL_SESSION`, because GitHub runners have no IPv6.
+  - The dump has the `public` and `drizzle` schemas only. It has no owners and no grants. Thus, a dump restores into each Postgres 17. The Supabase schemas (`auth`, `storage` and others) are not in the dump.
+  - The workflow restores each dump before it encrypts it. The private key is never in the CI secret store.
+  - The workflow encrypts each dump with `age`. The public key is in the workflow file. The private key is only in the team password manager.
+  - The name of each file is `<database>/<UTC time>.dump.age`, for example `main/2026-10-13T2130Z.dump.age`.
+  - The workflow keeps the newest fourteen dumps of each database. It deletes older dumps only after the new dump uploads and its restore check passes.
+  - The workflow uses the R2 key of the API, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
+  - When a step fails, a Telegram bot sends a message to the team group. T-25 sends the uptime alerts to the same group.
+  - Changed done items:
+    - T-40: "into a scratch project" becomes "into a scratch database". The free plan allows two active projects, and the two databases use them.
+- **Out of scope:**
+  - The backups of the paid Supabase plan.
+  - A backup of the R2 photos.
+  - A restore into production.
+  - The `pg_cron` jobs of the analytics database (T-39).
+  - A separate R2 key for backups.
+  - The text about backups in the privacy notice.
