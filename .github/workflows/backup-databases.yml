@@ -7,7 +7,7 @@ on:
 permissions: {}
 env:
   # The private key is only in the team password manager, never in CI.
-  AGE_RECIPIENT: age1replace-with-the-public-key
+  AGE_RECIPIENT: age1zsh9cusq2y4049ad5exn2hxhr76lz7y4ejdjjkd2l5rg22ytj3rqjx9gq5
 jobs:
   backup:
     runs-on: ubuntu-latest
