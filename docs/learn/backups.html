@@ -40,7 +40,7 @@ details.callout[open] summary{color:var(--fg)}
 <p>A <strong>dump</strong> is one file that holds the tables and the rows of a database. <code>pg_dump</code> makes it, and <code>pg_restore</code> loads it into a database again. We use the custom format of <code>pg_dump</code>. This format compresses the data, and <code>pg_restore</code> can read it.</p>
 <p>A <strong>restore check</strong> loads a dump into an empty database. A dump that does not restore is not a backup. Thus, each night the workflow restores each dump into a temporary Postgres 17, and the workflow fails if the restore fails.</p>
 <p><strong><code>age</code></strong> is a small encryption tool. A <strong>public key</strong> can only lock a file. The <strong>private key</strong> unlocks the file. Thus, the public key can be in the repo, but the private key must stay secret.</p>
-<p><strong>Retention</strong> is the time that we keep a backup. We keep the newest fourteen dumps of each database.</p>
+<p><strong>Retention</strong> is the time that we keep a backup.</p>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <p>The free plan of Supabase makes no backups (<a href="../decisions/pd-13-databases-and-backups.md">PD13</a>). The workflow <code>backup-databases.yml</code> gives the backups. It starts each night at 03:00 IST, and a person can start it by hand from the Actions tab of GitHub.</p>
 <p>For each database, the workflow does these steps:</p>
@@ -54,6 +54,7 @@ details.callout[open] summary{color:var(--fg)}
 <p>The name of each file is <code>&lt;database&gt;/&lt;UTC time&gt;.dump.age</code>, for example <code>main/2026-10-13T2130Z.dump.age</code>.</p>
 <h2 id="restore-a-dump-on-your-laptop">Restore a dump on your laptop</h2>
 <p>You need Docker, <code>age</code> (<code>brew install age</code>), access to R2 in the Cloudflare dashboard, and the private backup key from the team password manager.</p>
+<p>CAUTION: Delete the key file and the decrypted dump after the restore. The dump holds the personal data of all users.</p>
 <ol>
 <li>Start the local Postgres: <code>pnpm db:up</code>.</li>
 <li>In the Cloudflare dashboard, open R2, then the backups bucket. Download the dump that you need.</li>
@@ -65,7 +66,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>Delete the key file and the dump: <code>rm ~/backup-key.txt main.dump</code></li>
 <li>Delete the scratch database: <code>docker compose exec postgres dropdb -U postgres restore_check</code></li>
 </ol>
-<p>CAUTION: Delete the key file and the decrypted dump after the restore. The dump holds the personal data of all users.</p>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>Nightly dumps to R2, because the free plan has no backups: <a href="../decisions/pd-13-databases-and-backups.md">PD13</a>.</li>
