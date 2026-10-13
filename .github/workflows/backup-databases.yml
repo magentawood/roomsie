@@ -4,10 +4,7 @@ on:
   schedule:
     - cron: '30 21 * * *' # 03:00 IST
   workflow_dispatch:
-concurrency:
-  group: backup-databases
-permissions:
-  contents: read
+permissions: {}
 env:
   # The private key is only in the team password manager, never in CI.
   AGE_RECIPIENT: age1replace-with-the-public-key
@@ -20,9 +17,9 @@ jobs:
       matrix:
         include:
           - database: main
-            secret: DATABASE_URL_SESSION
+            url_secret: DATABASE_URL_SESSION
           - database: analytics
-            secret: ANALYTICS_DATABASE_URL_SESSION
+            url_secret: ANALYTICS_DATABASE_URL_SESSION
     services:
       restore:
         image: postgres:17
@@ -51,7 +48,7 @@ jobs:
       # The runner has an older pg_dump than Supabase, so the Postgres 17 image runs it.
       - name: Dump
         env:
-          SOURCE_URL: ${{ secrets[matrix.secret] }}
+          SOURCE_URL: ${{ secrets[matrix.url_secret] }}
         run: |
           docker run --rm -e SOURCE_URL -v "$PWD:/work" postgres:17 \
             sh -c 'pg_dump --dbname="$SOURCE_URL" --format=custom --schema=public --schema=drizzle --no-owner --no-acl --file=/work/db.dump'

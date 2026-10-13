@@ -49,9 +49,9 @@ Copies the two databases each night.
   - The backup workflow: new, in `.github/workflows/`. A schedule starts it each night at 03:00 IST (21:30 UTC). A person can also start it by hand. (why: [PD13](../../decisions/pd-13-databases-and-backups.md))
   - The R2 bucket for backups: it exists. The workflow writes to it with the R2 key of the API.
   - The Telegram group of the team: it gets a message when the workflow fails.
-  - The CI secret store: two new secrets, `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`.
+  - The CI secret store: two new secrets, `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. The workflow also reads three secrets that exist: `R2_BUCKET_BACKUPS`, `DATABASE_URL_SESSION` and `ANALYTICS_DATABASE_URL_SESSION`.
   - The team password manager: one new item, the private `age` key.
-  - The docs: a new learn page, "Backups", with the restore steps. `extensibility.md` gets one correction.
+  - The docs: a new learn page, "Backups", with the restore steps. One paragraph of `extensibility.md` gets a correction.
   - The plan: one done item of T-40 changes.
   - No change to `apps/` or `packages/`. No interface changes.
 - **Seams for the tests:**
