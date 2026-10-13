@@ -39,6 +39,7 @@ details.callout[open] summary{color:var(--fg)}
 <p>Each page tells what the topic is, how it fits roomsie, the choice we made, and the gotchas. When a later ticket adds to a topic, the team updates its page. The list below is generated from the pages.</p>
 <!-- learn:start -->
 <ul>
+<li><a href="backups.html">Backups</a>: each night, a GitHub workflow dumps the two databases, checks each restore, and keeps fourteen encrypted dumps in R2.</li>
 <li><a href="building-the-api.html">Building the API</a>: <code>tsx</code> runs the TypeScript API in development, and <code>tsup</code> builds our code into one JavaScript file. The Docker image installs the libraries next to it.</li>
 <li><a href="ci-checks.html">CI checks</a>: GitHub checks each pull request automatically, and <code>main</code> accepts a merge only when the checks pass and a teammate approves.</li>
 <li><a href="deploys.html">Deploys</a>: Vercel publishes the web from <code>main</code> and builds a preview for each pull request. A GitHub workflow deploys the API as a Docker image to AWS Lightsail in Mumbai.</li>

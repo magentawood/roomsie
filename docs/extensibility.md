@@ -46,11 +46,11 @@ Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error
 
 Each condition is in the done-when list of the task that builds the part. `docs/team-plan.json` holds the tasks.
 
-**One intentional exception:** the two databases use free Supabase accounts until we pay.
+**One intentional exception:** the two databases are two free projects in one Supabase account until we pay.
 
-- Result: no backups, and a policy risk.
+- Result: no backups from Supabase.
 - Nightly dumps to R2 (T-40) give the backups.
-- Refer to PD13 in `CONTEXT.md`.
+- Refer to [PD13](decisions/pd-13-databases-and-backups.md).
 
 Why: [ADR 0002](decisions/0002-api-boundary.md)
 
