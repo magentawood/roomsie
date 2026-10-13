@@ -1,0 +1,88 @@
+# Nightly dumps of the two databases to R2 (PD13). The restore steps are in docs/learn/backups.md.
+name: backup-databases
+on:
+  schedule:
+    - cron: '30 21 * * *' # 03:00 IST
+  workflow_dispatch:
+concurrency:
+  group: backup-databases
+permissions:
+  contents: read
+env:
+  # The private key is only in the team password manager, never in CI.
+  AGE_RECIPIENT: age1replace-with-the-public-key
+  KEEP: 14
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - database: main
+            url: DATABASE_URL_SESSION
+          - database: analytics
+            url: ANALYTICS_DATABASE_URL_SESSION
+    services:
+      restore:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      # R2 rejects the default checksums of new AWS CLI versions.
+      AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+      AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+      R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+      BUCKET: ${{ secrets.R2_BUCKET_BACKUPS }}
+      PREFIX: ${{ matrix.database }}/
+    steps:
+      # GitHub runners have no IPv6, so the dump goes through the session pooler.
+      # The runner has an older pg_dump than Supabase, so the Postgres 17 image runs it.
+      - name: Dump
+        env:
+          SOURCE_URL: ${{ secrets[matrix.url] }}
+        run: |
+          docker run --rm -e SOURCE_URL -v "$PWD:/work" postgres:17 \
+            sh -c 'pg_dump --dbname="$SOURCE_URL" --format=custom --schema=public --schema=drizzle --no-owner --no-acl --file=/work/db.dump'
+      # The dump creates the public schema, so the restore drops the empty one first.
+      - name: Restore check
+        run: |
+          docker run --rm --network host -v "$PWD:/work" postgres:17 \
+            pg_restore --exit-on-error --clean --if-exists --dbname=postgres://postgres:postgres@localhost:5432/postgres /work/db.dump
+      - name: Encrypt and upload
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq age
+          age --recipient "$AGE_RECIPIENT" --output db.dump.age db.dump
+          aws s3 cp db.dump.age "s3://$BUCKET/$PREFIX$(date -u +%Y-%m-%dT%H%MZ).dump.age" --endpoint-url "$R2_ENDPOINT"
+      # Runs only after a good upload, so failed nights never delete the last good dumps.
+      - name: Delete old dumps
+        run: |
+          aws s3api list-objects-v2 --bucket "$BUCKET" --prefix "$PREFIX" --query 'Contents[].Key' --output text --endpoint-url "$R2_ENDPOINT" \
+            | tr '\t' '\n' | sort | head -n -"$KEEP" \
+            | while read -r key; do aws s3 rm "s3://$BUCKET/$key" --endpoint-url "$R2_ENDPOINT"; done
+  alert:
+    needs: backup
+    if: failure()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Tell the team group
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          curl --fail --silent --show-error --output /dev/null "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage" \
+            --data-urlencode "chat_id=$TELEGRAM_CHAT_ID" \
+            --data-urlencode "text=The nightly database backup failed: $RUN_URL"
