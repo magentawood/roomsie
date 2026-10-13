@@ -10,7 +10,7 @@ A **restore check** loads a dump into an empty database. A dump that does not re
 
 **`age`** is a small encryption tool. A **public key** can only lock a file. The **private key** unlocks the file. Thus, the public key can be in the repo, but the private key must stay secret.
 
-**Retention** is the time that we keep a backup. We keep the newest fourteen dumps of each database.
+**Retention** is the time that we keep a backup.
 
 ## How it fits our project
 
@@ -31,6 +31,8 @@ The name of each file is `<database>/<UTC time>.dump.age`, for example `main/202
 
 You need Docker, `age` (`brew install age`), access to R2 in the Cloudflare dashboard, and the private backup key from the team password manager.
 
+CAUTION: Delete the key file and the decrypted dump after the restore. The dump holds the personal data of all users.
+
 1. Start the local Postgres: `pnpm db:up`.
 2. In the Cloudflare dashboard, open R2, then the backups bucket. Download the dump that you need.
 3. Save the private key from the password manager to a file outside the repo, for example `~/backup-key.txt`.
@@ -40,8 +42,6 @@ You need Docker, `age` (`brew install age`), access to R2 in the Cloudflare dash
 7. Look at the tables: `docker compose exec postgres psql -U postgres -d restore_check -c '\dt public.*'`
 8. Delete the key file and the dump: `rm ~/backup-key.txt main.dump`
 9. Delete the scratch database: `docker compose exec postgres dropdb -U postgres restore_check`
-
-CAUTION: Delete the key file and the decrypted dump after the restore. The dump holds the personal data of all users.
 
 ## The choice we made
 
