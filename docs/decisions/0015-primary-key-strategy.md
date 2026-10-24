@@ -132,6 +132,8 @@ To overwrite another row is structurally impossible:
 - ~1 GB of added index on a 144M-row events table. This cost is
   important, and we examine it again at S7.
 
+Superseded (2026-10-24): catalogues and answer tables do not use a UUIDv7 `id` ([ADR-0017](0017-schema-v1-shape.md)).
+
 ## Revisit when
 
 A single table passes ~500M rows, and its index size becomes the limiting

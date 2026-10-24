@@ -124,9 +124,8 @@ At this time, the interview runs **before login**.
 
 **Anonymous state:**
 
-- The form exists before there is a user row. Thus, it needs an anonymous session id.
-- At login, this state has to merge into the user record.
-- The schema ledger's S1 to S7 do not include this state. You must add it.
+- The form exists before there is a user row. Thus, it lives on a goal of the anonymous session.
+- At login, the goals move to the account ([ADR-0017](decisions/0017-schema-v1-shape.md)).
 
 **Anyone can spend your inference budget.** Before launch, these items are necessary:
 

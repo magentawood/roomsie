@@ -1,12 +1,8 @@
 import type { intentEnum } from '../db/schema'
 
-/**
- * Which seeker intents see which people. Room, PG and whole-flat seekers see
- * listings, not people. `unclear` sees nobody until intent is known.
- * Provisional until F-12 decides the matrix (matching-rules.md).
- */
 export type Intent = (typeof intentEnum.enumValues)[number]
 
+// Provisional until F-12. Room, PG and whole-flat seekers see listings, not people.
 export const INTENT_MATCHES: Record<Intent, readonly Intent[]> = {
   room: [],
   pg: [],

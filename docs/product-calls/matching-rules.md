@@ -27,18 +27,18 @@
 ❓ Are dealbreakers mutual? If a candidate will not live with a smoker and the searcher smokes, does each person disappear for the other?
 
 - **Today:** One-way. The mutual check is out until this call maps the must-haves to the lifestyle answers (T-14, [ADR-0017](../decisions/0017-schema-v1-shape.md)).
-- **Options:** a) Mutual, as built. b) One-way only: only the searcher's dealbreakers filter.
+- **Options:** a) Mutual. b) One-way only: only the searcher's dealbreakers filter.
 - **Blocks:** T-14.
 - **Record:** PD3a.
 
-➡️ **Recommended:** a) Mutual, but use the PC-25 rule in the two directions. A one-way match gives a connect request that the candidate will decline. Today, an unanswered axis on the searcher's side also hides the candidate.
+➡️ **Recommended:** a) Mutual, but use the PC-25 rule in the two directions. A one-way match gives a connect request that the candidate will decline.
 
 ### PC-20 · Which intents match which
 
 ❓ Who sees whom for each intent? For example, do two people who each want a full flat see each other, so that they can rent together?
 
 - **Today, provisional:** only `flatmates` sees `flatmates`. Room, PG and whole-flat seekers see listings (`apps/api/src/match/intent.ts`).
-- **Options:** a) Keep the matrix as built. b) Remove `wants_flat` to `wants_flat`. c) Change the matrix to follow the intent values of [PD15](../decisions/pd-15-form-a-contract.md).
+- **Options:** a) Keep the provisional matrix. b) Let `flatmates` seekers also see room listings. c) A row for each listing kind, from the intent values of [PD15](../decisions/pd-15-form-a-contract.md).
 - **Blocks:** T-14.
 - **Record:** PD3a.
 
