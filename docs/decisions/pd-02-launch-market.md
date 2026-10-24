@@ -31,7 +31,6 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
 
 - Brokers control most of the supply.
 - Visitors from outside the launch areas go to a waitlist.
-- An area slug is a permanent URL. The nine groups are the slugs.
 
 Superseded (2026-10-24): three neighbourhoods. The designs use the nine area groups ([PD14](pd-14-v0-is-the-figma-designs.md)).
 

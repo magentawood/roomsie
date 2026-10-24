@@ -582,11 +582,11 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 
 **T-06 · Database schema v1** — done when:
 - Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
-- Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility
+- Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility
 - IDs are UUIDv7 with no database default. `created_at` comes from the server clock
 - Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id`
 - A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B
-- Read first: `docs/decisions/0015-primary-key-strategy.md`, `docs/decisions/0006-drizzle.md`, `docs/agent-architecture.md`, `docs/extensibility.md`
+- Read first: `docs/decisions/0015-primary-key-strategy.md`, `docs/decisions/0006-drizzle.md`, `docs/agent-architecture.md`, `docs/extensibility.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **F-07 · Draft privacy policy, terms, grievance contact** — done when:
 - It says what the system collects, why, for how long, how to delete it, and who to contact

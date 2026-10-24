@@ -26,7 +26,7 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
-The exact things that the assistant tries to learn, and the exact allowed answers, from PD15: intent, room type, who is moving, eight lifestyle questions and seven must-haves. Everyone builds against this fixed list.
+The exact things that the assistant tries to learn, and the exact allowed answers (PD15). Everyone builds against this fixed list.
 
 ## Needs first
 - [[F-11 Intake and profile calls ⚑]]

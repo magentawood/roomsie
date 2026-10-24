@@ -16,8 +16,7 @@ A published listing is a different case. For example, a roomsie listing that say
 
 **In one line:** A listing shows the "Who is welcome" choices of the listing flow, and free text waits for PC-37.
 
-- **A listing shows its "Who is welcome" choices:** students, working professionals, couples, families and bachelors. The listing flow says: "Seekers see it as your promise."
-- The same choices filter the results of a seeker on the server (PD15).
+- **A listing shows its "Who is welcome" choices:** students, working professionals, couples, families and bachelors (the filter: [PD15](pd-15-form-a-contract.md)). The listing flow says: "Seekers see it as your promise."
 - The listing flow has no community or religion choice.
 - **"Who can move in" (men, women, any) waits for F-13 (PC-30).**
 - **Free text waits for F-13 (PC-37).** A description or a bio can name a community.
@@ -31,18 +30,17 @@ PD3d is a different decision from PD3c. PD3c decided only the private-filter cas
 - An advertisement is a different position from a private filter.
 - "Decide the listing side independently" is mitigation 5 of PD3c.
 
+## Alternatives rejected
+
+- **Filter, but never show the choices.** The designs show them ([PD14](pd-14-v0-is-the-figma-designs.md)).
+
 ## Consequences
 
 - A listing that says "Families only" is an advertisement. The public policy page of PD3c names this case.
 
-## Alternatives rejected
-
-- **Filter, but never show the choices.** The designs show them to seekers: "Seekers see it as your promise."
-
 ## Revisit when
 
 - A complaint or a news story names a "Families only" or "No bachelors" listing.
-- F-13 decides PC-30 (gender) or PC-37 (free text).
 
 ## Sources
 

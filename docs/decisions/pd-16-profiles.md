@@ -4,20 +4,20 @@
 
 ## Context
 
-- PD14 made v0 the product in the Figma designs. The "Profile and settings" screen shows the fields of a profile.
+- The "Profile and settings" screen of the designs ([PD14](pd-14-v0-is-the-figma-designs.md)) shows the fields of a profile.
 - "Who's moving" has the answer "Looking for my son or daughter". A parent signs in, and a different person moves.
 - No record set a minimum age. Age was optional in the schema and in the designs.
 - DPDP gives a data principal the right to consent. It has extra rules for children under 18.
 
 ## Decision
 
-**In one line:** roomsie is for people of 18 or more, a profile has the fields of the designs, a parent can run the card of an adult son or daughter, and a card is visible when its required fields are complete.
+**In one line:** roomsie is for adults; a parent can run the card of an adult child; a card is visible when its required fields are complete.
 
 - **Fields.** Full name, age, job role (the role only, never the company), commute address, a free-text bio ("What I want the others to know"), and the Form A fields of PD15. Gender waits for F-13 (PC-30).
 - **Adults only.** roomsie is for people of 18 or more. Age is required. The terms page states the rule.
 - **A profile for a son or daughter.** A parent can make a full profile, with name, age and photos, for a son or daughter of 18 or more. The card goes live on the word of the parent. It always shows "Managed by a parent". The parent sends and gets the messages.
 - **A child under 18.** The parent searches and contacts listings only. The child gets no card.
-- **Visibility.** A card becomes visible when its required fields are complete: name, age, "What best describes you", areas and budget. Settings has a "Hide my card" switch.
+- **Visibility.** A card becomes visible when its required fields are complete: name, age, who is moving, areas and budget. Settings has a "Hide my card" switch.
 - **Photos.** A maximum of four, and a photo is optional. A card with no photo shows initials.
 
 ## Rationale
@@ -38,6 +38,7 @@
 
 - **A DPDP risk that we accept:** we show the name, age and photos of an adult who did not consent. The adult can ask us to delete the card through the grievance contact (T-23b). A complaint is possible.
 - The designer adds a required mark to Age, and the "Hide my card" switch.
+- A phone no longer gates visibility (verification.md). PC-05 decides how we collect a phone.
 - F-13 decides how sign-in checks the age (PC-34), and what free text can say (PC-37).
 
 ## Revisit when

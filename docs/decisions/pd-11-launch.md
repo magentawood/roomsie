@@ -16,7 +16,7 @@
 - **Go or no-go: Saturday 10 October, 8 pm.** Sunday 11 October is a bug-fix day.
 - **It is a public launch, not a closed beta.** This adds about 15 hours: report and block, account deletion, a waitlist, alerts and legal pages.
 - **v0 is free.** PD4 moves to v1.
-- Launch in three named area groups, for example "Powai–Vikhroli, Andheri–Goregaon and Bandra–Santacruz" (PD2).
+- Launch in the three named area groups of PD2.
 
 | Ships 12 Oct | After launch |
 |---|---|
@@ -41,7 +41,7 @@ Engineering go/no-go checks (from `team-plan.md`):
 
 Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum of 40 in each launch area. If one area fails, launch in the other two. Do not move the date.
 
-- The seeding form collects the full profile of PD16. A thin profile drops out of the results, because the match query hides a person with no answer on a dealbreaker.
+- The seeding form collects the full profile of PD16.
 - Marketing also seeds listings from owners, PG operators and brokers. The founders set the number of listings.
 
 ## Rationale
@@ -53,6 +53,7 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - **Cold start is the real risk, not code.** A matching product with no people shows an empty panel on day one. Many people in Powai is better than a small number in all areas.
 - v0 is free because there is nothing to charge for.
 - SEO area pages need data that does not exist. We do not abandon a cut item. Each has a slot in v1.
+- Today, the match query hides a person with no answer on a dealbreaker. Thus, a thin seeded profile drops out of the results.
 
 ## Consequences
 
@@ -60,7 +61,9 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - If the team is late, the launch moves to 14 October. The scope stays the same.
 - If a checkpoint is more than a day late, decide on that checkpoint call if 14 October becomes the plan.
 - **Still open (deferred): the master launch document.** All its inputs are settled.
-- Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls, which also ask brokers to list. They make the broker calls at this time, because the answers take time.
+- Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls. They make the broker calls at this time, because the answers take time.
+
+Superseded (2026-10-24): in-app chat and DigiLocker verification were cut. [PD14](pd-14-v0-is-the-figma-designs.md) brings them into v0. **Open:** blurred cards were cut because they need verification. The founders decide if they ship at launch.
 
 Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October. That plan had no margin.
 

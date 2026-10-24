@@ -111,7 +111,7 @@ sign-in.
 
 - **Multi-agent** and **one large model.** The two cost more.
 - **A vector store.** The corpus is dozens of documents, not millions.
-- **A list of Form B notes on the profile, with an edit and a delete for each note.** The designs have no such screen, and the product team selected the chat.
+- **A list of Form B notes on the profile, with an edit and a delete for each note.** The product team selected the chat.
 
 ## Revisit when
 
