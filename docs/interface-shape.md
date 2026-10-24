@@ -67,8 +67,7 @@ Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 budget. This takes approximately three turns.
 
 - Show results early and honestly.
-- Do not show the match score until it has a meaning.
-- The V3 prototype does this: with no lifestyle filters, it hides the match tag.
+- Show the "Best match" label only when it has a meaning ([PD3a](decisions/pd-03a-flatmate-matching.md)).
 
 **Headers by state:**
 
@@ -77,7 +76,7 @@ budget. This takes approximately three turns.
 | Intent only | "Everything in Mumbai" |
 | Plus area | "Flats in Powai" with the count |
 | Plus budget | "Flats in Powai under 20,000" |
-| Enough lifestyle answers | Match score shows on cards |
+| Three or more preferences | The "Best match" label can show on cards |
 
 **The first three turns are chip-driven.**
 
@@ -93,7 +92,7 @@ budget. This takes approximately three turns.
 
 - The open questions start when results are on the screen.
 - They continue while the user browses.
-- The completeness gate in `ai-agent-design.md` section 3.3 controls when the match score shows, not when the conversation stops.
+- The completeness gate in `ai-agent-design.md` section 3.3 controls when the conversation can stop.
 
 Why: [PD6c](decisions/pd-06c-interface-holes.md)
 

@@ -34,6 +34,7 @@ Show the three open areas, and a waitlist form to visitors from other areas.
 ## Done when
 - [ ] The site gives the names of the three launch areas
 - [ ] A visitor from a different area gets a waitlist form, not an empty panel
+- [ ] A search with launch and other areas shows the launch results and one waitlist line (PD6c)
 
 ^done
 

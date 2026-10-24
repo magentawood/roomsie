@@ -33,7 +33,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
   verbatim span, the system rejects the observation. The user sees and
   corrects Form B in the chat only: "What do you know about me?" A delete is a
   direct database action, never an edit by the model. A formal access request
-  goes to the grievance contact, which sends a data export.
+  goes to the grievance contact, which sends a data export. Form B notes break
+  ties in the ranking, and never show to others ([PD3a](pd-03a-flatmate-matching.md)).
 - **The advisor** answers from our articles first, with Postgres full-text
   search and **no vector store**. For a general question with no article:
   - signed-in users get the DeepSeek `web_search` tool, with Gemini Google

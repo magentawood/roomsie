@@ -71,7 +71,7 @@ The model does not rank, and must not imply that it can. Off-topic and prompt-le
 
 ### 4.9 Ending the interview
 
-No defined end is the most probable reason for abandonment. The completeness gate in [section 3.3](ai-agent-design.md#33-confidence-right-goal-wrong-mechanism) controls when the match score shows. It does not end the interview ([PD6c](decisions/pd-06c-interface-holes.md)).
+No defined end is the most probable reason for abandonment. The completeness gate in [section 3.3](ai-agent-design.md#33-confidence-right-goal-wrong-mechanism) controls when the interview can end ([PD6c](decisions/pd-06c-interface-holes.md)).
 
 - Show progress.
 - Always let the user skip to results with the slots filled so far. Label these results as not complete.

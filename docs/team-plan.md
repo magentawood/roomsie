@@ -701,11 +701,13 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-14 · Match query API** — done when:
 - It returns the matching people for a form state
 - It returns the matching listings too, as the `listing` kind of the results
-- The hard filters are area, budget, move date, compatible intent and dealbreakers
-- The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist
+- The hard filters are area, budget with 10% leeway, move date, intent and the dealbreaker must-haves of PD3a
+- The results come in the Best Matches order of PD3a, with its Best match label
 - Blocked and suspended people never appear
-- The must-haves of the candidate apply back to the searcher, with the mapping of F-12
-- Read first: `docs/interface-shape.md`
+- The must-haves of the candidate apply back to the searcher, with the mapping of PD3a
+- A card with an unanswered dealbreaker shows below the full matches, with what is missing
+- The suggested posts use the next budget band or a neighbouring area group, from a seeded list
+- Read first: `docs/interface-shape.md`, `docs/decisions/pd-03a-flatmate-matching.md`
 
 **M-05 · Drafts of articles 1 to 10** — done when:
 - Ten drafts from the interviews are written
@@ -769,8 +771,9 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 - The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
 - It updates only when a form value or weight changes. It never changes the order during a scroll
-- The match score is hidden until lifestyle answers exist
-- Read first: `docs/interface-shape.md`
+- A card shows the Best match label and the Didn't say label of PD3a
+- The empty panel shows No relevant results and the suggested posts (PD6c)
+- Read first: `docs/interface-shape.md`, `docs/decisions/pd-03a-flatmate-matching.md`
 
 **T-25 · Uptime monitor** — done when:
 - A monitor checks the API every minute and sends alerts to the team channel
@@ -878,6 +881,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-22b · Launch areas and waitlist screen** — done when:
 - The site gives the names of the three launch areas
 - A visitor from a different area gets a waitlist form, not an empty panel
+- A search with launch and other areas shows the launch results and one waitlist line (PD6c)
 - Read first: `docs/decisions/pd-11-launch.md`
 
 **T-40 · Nightly database backups to R2** — done when:

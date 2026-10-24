@@ -1,25 +1,85 @@
-# PD3a — Flatmate matching design
+# PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Open (active track) · **Deciders:** Yash
+**Status:** Settled on 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
-PD3 (where listing supply comes from at launch) waits for the broker interviews. PD14 puts listings into v0, next to flatmate matching.
+- PD15 gives a seeker one of five place types, and puts the dealbreakers on seven must-haves. PD14 puts listings into v0.
+- The designs show no score number. Results sort by "Best Matches". A chip in the chat widens a search, for example "Show some PGs too".
+- Seeded profiles will have gaps, and PD11 needs a full panel in each launch area.
 
 ## Decision
 
-**In one line:** Open: the flatmate matching design, an active track that the team works on in parallel with PD3.
+**In one line:** Each place type sees its own kind of card, must-haves filter both ways between people, gaps rank lower, and a plain "Best match" label marks the cards that meet every preference.
 
-**Active track.** The team works on the flatmate matching design in parallel with PD3.
+**Who sees what (PC-20)**
+
+| The seeker wants | The seeker sees |
+|---|---|
+| `room` | room-in-a-flat listings |
+| `pg` | PG listings |
+| `whole_flat` | owner flats and broker flats |
+| `flatmates` | other `flatmates` seekers |
+| `unclear` | nothing, until the assistant asks |
+
+A chip widens a search by one kind.
+
+**What each must-have checks (PC-47)**
+
+| Must-have | On a person | On a listing |
+|---|---|---|
+| Veg kitchen | Food is Veg. Jain is a different category. | The kitchen is "Veg Only" |
+| Non-smokers | Smoking is Non-smoker | "No Smoking" |
+| No alcohol at home | Drinks is "None at home" | "No Alcohol at home" |
+| Tidy flatmates | Tidiness is Very tidy or Tidy enough | Does not apply |
+| Couple friendly | Does not apply | "Who is welcome" has Couples |
+
+Women only and Men only wait for F-13 (PC-30).
+
+**Filters**
+
+- **Between people, the dealbreakers are mutual (PC-24).** Each person's dealbreakers apply to the other.
+- **A listing filters on "Who is welcome" (PD15) and on the searcher's must-haves.** Its house rules show on the card. They do not hide it from a seeker.
+- **A gap does not hide a card (PC-25).** A card with an unanswered dealbreaker shows below the full matches, with the label "Didn't say: …".
+- **Budget (PC-26).** The budget is compared with the rent. A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
+- **Move date (PC-26).** It passes in a window of 30 days before or after. An empty move date passes.
+
+**Order and label (PC-23, PC-33, PC-28)**
+
+- "Best Matches" order: full matches, then in budget, then the most preferences met, then Form B notes as a tie-break, then the nearest move date, then newest.
+- A "Best match" label shows when the searcher stated three or more preferences and the card meets all of them. There is no score number and no sentence.
+- Form B notes only break ties. They never show to others (PD7a).
 
 ## Rationale
 
-The matching design mostly does not depend on PD3.
+- One kind of card for each place type gives the results that the person asked for. The chips of the designs widen them.
+- A strict mapping reads as most people in Mumbai mean it. For example, a veg kitchen is not a Jain kitchen.
+- Mutual dealbreakers between people stop connect requests that the other person will decline. A house rule is the promise of the lister. The seeker decides.
+- Seeded profiles have gaps. A hidden gap empties the panel, and a label stays honest.
+- The leeway keeps near-misses in a sparse launch, below the cards that fit.
+- With one or two preferences, a score is noise. A label for a card that meets all of three or more preferences is true and simple.
+
+## Alternatives rejected
+
+- **Wider results by default.** Mixed results that the person did not ask for. The chips of the designs do this on request.
+- **A loose mapping.** An egg-eater meets a strict veg household.
+- **Mutual for listings too.** "Smokes" does not mean "smokes indoors". Good matches disappear.
+- **Hide a card with a gap.** Seeded profiles disappear at launch.
+- **No budget leeway.** A ₹15,500 room is hidden from an "Under ₹15k" seeker.
+- **A score number, or a sentence from the model.** A number reads 70% for no preference met. A sentence from the model can state a false fact about a person (scope-policy.md).
+- **Form B neither shown nor ranked.** The product team wants the context of the chat in the order.
 
 ## Consequences
 
-The team works on the matching design in parallel with PD3.
+- T-14 builds the filters and the order. T-15 shows the two labels. The designer adds a "Didn't say" label, and changes "A great match" into a "Best match" label.
+- A Form B note that is not correct can move a card down. The user corrects notes in the chat (PD7a).
+
+## Revisit when
+
+- F-13 decides PC-30 (gender).
+- The launch shows many empty panels, or many declined connect requests.
 
 ## Sources
 
-- [CONTEXT.md](../../CONTEXT.md): "Open decisions" table, row PD3a, and its "Why" callout
+- [matching-rules.md](../product-calls/matching-rules.md), F-12
+- [PD15](pd-15-form-a-contract.md), [PD14](pd-14-v0-is-the-figma-designs.md), [PD11](pd-11-launch.md)

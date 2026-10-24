@@ -44,3 +44,28 @@ Decide who matches whom, and what the results show.
 - [matching-rules.md](../../product-calls/matching-rules.md)
 - [pd-03a-flatmate-matching.md](../../decisions/pd-03a-flatmate-matching.md)
 - [pd-06c-interface-holes.md](../../decisions/pd-06c-interface-holes.md)
+
+## Spec
+
+**Approved:** 2026-10-25, by n3rxv
+
+- **Modules:**
+  - Decision records: PD3a gets the matching rules and becomes settled. PD6c gets the empty state. PD7a gets the audience of Form B. The ledgers come from the records.
+  - Product calls: `matching-rules.md` loses each answered call. `connect-and-trust.md` gets new facts for PC-22 and PC-30.
+  - The plan: the done lists of T-14, T-15 and T-22b change. The F-12 items get their ticks.
+  - `apps/api/src/match/intent.ts`: the comment names PD3a, not "provisional". The matrix does not change.
+- **Seams for the tests:** the doc checks, and the type check and lint for the comment. No new tests.
+- **Decisions:**
+  - PC-20: `room` sees room-in-a-flat listings. `pg` sees PG listings. `whole_flat` sees owner flats and broker flats. `flatmates` sees other `flatmates` seekers. `unclear` sees nothing until the assistant asks. A chip widens a search by one kind. (PD3a)
+  - PC-47: the strict must-have mapping. Veg kitchen: Food is Veg, or the kitchen of the listing is "Veg Only". Jain is a different category. Non-smokers: Smoking is Non-smoker, or "No Smoking". No alcohol at home: Drinks is "None at home", or "No Alcohol at home". Tidy flatmates: Tidiness is Very tidy or Tidy enough, and it does not apply to listings. Couple friendly: "Who is welcome" has Couples, and it does not apply to people. Women only and Men only wait for F-13. (PD3a)
+  - PC-24: the dealbreakers are mutual between people. A listing filters on "Who is welcome" and on the must-haves of the searcher. A listing shows its house rules on the card. (PD3a)
+  - PC-25: a card with an unanswered dealbreaker shows below the full matches, with the label "Didn't say: …". (PD3a)
+  - PC-26: the budget is compared with the rent. A rent up to 10% over the budget passes, and ranks below the rents in the budget. A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. The budgets of two `flatmates` seekers must overlap. The move date passes in a window of 30 days before or after. An empty move date passes. Maintenance and deposit do not filter. (PD3a)
+  - PC-23 and PC-33: the "Best Matches" order is full matches, then in budget, then the most preferences met, then the Form B tie-break, then the nearest move date, then newest. A "Best match" label shows when the searcher stated three or more preferences and the card meets all of them. No score number and no sentence. (PD3a)
+  - PC-28: Form B notes break ties in the ranking. They never show to others. (PD3a, PD7a)
+  - PC-36: the empty panel shows "No relevant results" and the suggested posts: the next budget band, or a neighbouring area group. The chips of the assistant relax the budget, the area, or the dealbreaker that removes the most cards. A search with launch and other areas shows the launch results and one waitlist line. A search with no launch area shows the waitlist screen. The alerts go by email. A seeded list gives the neighbours of each area group. (PD6c)
+  - Done-list changes:
+    - T-14: "The hard filters are area, budget, move date, compatible intent and dealbreakers" becomes "The hard filters are area, budget with 10% leeway, move date, intent and the dealbreaker must-haves of PD3a". "The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist" becomes "The results come in the Best Matches order of PD3a, with its Best match label". "…with the mapping of F-12" becomes "…with the mapping of PD3a". New items: "A card with an unanswered dealbreaker shows below the full matches, with what is missing". "The suggested posts use the next budget band or a neighbouring area group, from a seeded list".
+    - T-15: "The match score is hidden until lifestyle answers exist" becomes "A card shows the Best match label and the Didn't say label of PD3a". New item: "The empty panel shows No relevant results and the suggested posts (PD6c)".
+    - T-22b: new item: "A search with launch and other areas shows the launch results and one waitlist line (PD6c)".
+- **Out of scope:** the matching code (T-14, T-15), the gender must-haves (F-13, PC-30), the notification channel (F-13, PC-22), and the changes in Figma (the list for the designer goes in the PR).

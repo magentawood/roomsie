@@ -53,7 +53,7 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - **Cold start is the real risk, not code.** A matching product with no people shows an empty panel on day one. Many people in Powai is better than a small number in all areas.
 - v0 is free because there is nothing to charge for.
 - SEO area pages need data that does not exist. We do not abandon a cut item. Each has a slot in v1.
-- Today, the match query hides a person with no answer on a dealbreaker. Thus, a thin seeded profile drops out of the results.
+- A card with an unanswered dealbreaker ranks below the full matches ([PD3a](pd-03a-flatmate-matching.md)). Thus, a thin seeded profile sinks in the results.
 
 ## Consequences
 
