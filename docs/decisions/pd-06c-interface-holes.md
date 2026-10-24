@@ -66,7 +66,6 @@ search with no launch area shows the waitlist screen. The alerts go by email.
 
 - **The empty state follows the designs** (PD14). Suggested posts and chips
   stop a dead end, and PD2 sends visitors from other areas to the waitlist.
-
 - **Form, not turn.** A turn that changes no slot changes nothing on the
   screen. Ten turns can give only three panel updates.
 - **A pure function is deterministic and testable.** No other part of this
@@ -117,8 +116,7 @@ search with no launch area shows the waitlist screen. The alerts go by email.
 
 - The panel must not wait for the model. Run the query from the current form
   state.
-- The completeness gate no longer gates a score ([PD3a](pd-03a-flatmate-matching.md)).
-  F-14 (PC-39) decides what it gates.
+- F-14 (PC-39) decides what the completeness gate gates. PD3a uses no score.
 - Mobile rule (hole 1): do not change the chat size while the user types or
   reads. An automatic shrink in the middle of a sentence is the same defect as
   a silent reorder.

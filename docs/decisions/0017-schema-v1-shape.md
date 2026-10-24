@@ -54,10 +54,6 @@
 - **A required address, with the area group from the pincode.** We maintain a pincode table, and a pincode can cross area groups.
 - **Flatmates with no consent tick.** We store faces of people who never agreed.
 
-## Consequences
-
-- [PD3a](pd-03a-flatmate-matching.md) sets the matching rules.
-
 ## Revisit when
 
 - The designer changes the listing flow, the profile or the goals.

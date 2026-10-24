@@ -54,7 +54,7 @@ export const guestsRuleEnum = pgEnum('guests_rule', ['none', 'welcome', 'day_vis
 export const walkTimeEnum = pgEnum('walk_time', ['5_min', '10_min', '15_min', '30_min', 'not_close'])
 export const bedsFreeEnum = pgEnum('beds_free', ['1', '2', '3', '4', '5', '5_plus'])
 
-/** A dealbreaker hides a card; a preference only moves it down the ranking. */
+/** A dealbreaker filters; a preference ranks (PD3a). */
 export const mustHaveWeightEnum = pgEnum('must_have_weight', ['prefer', 'dealbreaker'])
 
 /** Where a value came from. T-08's fourth state, `empty`, is the absence of a

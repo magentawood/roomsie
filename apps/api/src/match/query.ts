@@ -66,15 +66,7 @@ export type MatchResult = {
 export const resultsUnlocked = (f: FormA) =>
   f.intent !== 'unclear' && f.areas.length > 0 && (f.budgetMax != null || f.budgetMin != null)
 
-/** The score is 70 + 30 × share of preferences met, so it is meaningless
- *  without at least one preference to measure.
- *
- *  ⚠️  The two source documents disagree on this gate. T-14's checklist says
- *      "once lifestyle answers exist"; ai-agent-design.md §3.3 requires "at
- *      least 2 dealbreakers" before the first recommendation. Those measure
- *      different things — dealbreakers filter, preferences rank — so both are
- *      implemented: this gates the score, minimumSlotSetMet gates the
- *      assistant's interview. Worth confirming which was intended. */
+// TODO(T-14): PD3a replaces the score with the Best match label.
 export const scoreShown = (f: FormA) => f.lifestyle.some((a) => a.weight === 'prefer')
 
 /** The completeness gate that ends the interview (ai-agent-design.md §3.3).

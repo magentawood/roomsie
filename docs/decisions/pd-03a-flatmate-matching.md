@@ -5,7 +5,7 @@
 ## Context
 
 - PD15 gives a seeker one of five place types, and puts the dealbreakers on seven must-haves. PD14 puts listings into v0.
-- The designs show no score number. Results sort by "Best Matches". A chip in the chat widens a search, for example "Show some PGs too".
+- The designs show no score number. Results sort by "Best Matches".
 - Seeded profiles will have gaps, and PD11 needs a full panel in each launch area.
 
 ## Decision
@@ -22,7 +22,7 @@
 | `flatmates` | other `flatmates` seekers |
 | `unclear` | nothing, until the assistant asks |
 
-A chip widens a search by one kind.
+A chip widens a search by one kind, for example "Show some PGs too".
 
 **What each must-have checks (PC-47)**
 
@@ -39,7 +39,7 @@ Women only and Men only wait for F-13 (PC-30).
 **Filters**
 
 - **Between people, the dealbreakers are mutual (PC-24).**
-- **A listing filters on "Who is welcome" (PD15) and on the searcher's must-haves.** Its house rules show on the card. They do not hide it from a seeker.
+- **A listing filters on "Who is welcome" (PD15) and on the searcher's must-haves.** Its house rules show on the card.
 - **A gap does not hide a card (PC-25).** A card with an unanswered dealbreaker shows below the full matches, with the label "Didn't say: …".
 - **Budget (PC-26).** The query compares the budget with the rent. A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
 - **Move date (PC-26).** It passes in a window of 30 days before or after. An empty move date passes.
@@ -60,16 +60,16 @@ Women only and Men only wait for F-13 (PC-30).
 - A strict mapping reads as most people in Mumbai mean it.
 - Mutual dealbreakers between people stop connect requests that the other person will decline. A house rule is the promise of the lister. The seeker decides.
 - A hidden gap empties the panel, and a label stays honest.
-- With one or two preferences, a score is noise. A label for a card that meets all of three or more preferences is true and simple.
+- With one or two preferences, a score is noise. A label is true and simple.
 
 ## Alternatives rejected
 
-- **Wider results by default.** Mixed results that the person did not ask for. The chips of the designs do this on request.
+- **Wider results by default.** It mixes in results that the person did not ask for. The chips of the designs do this on request.
 - **A loose mapping.** An egg-eater meets a strict veg household.
 - **Mutual for listings too.** "Smokes" does not mean "smokes indoors". Good matches disappear.
 - **Hide a card with a gap.** Seeded profiles disappear at launch.
 - **No budget leeway.** The filter hides a ₹15,500 room from an "Under ₹15k" seeker.
-- **A score number, or a sentence from the model.** A number reads 70% for no preference met. A sentence from the model can state a false fact about a person (scope-policy.md).
+- **A score number, or a sentence beside the label.** A number reads 70% for no preference met. The product team wants a plain label.
 - **Form B neither shown nor ranked.** The product team wants the context of the chat in the order.
 
 ## Consequences
@@ -83,5 +83,5 @@ Women only and Men only wait for F-13 (PC-30).
 
 ## Sources
 
-- [matching-rules.md](../product-calls/matching-rules.md), F-12
+- The F-12 grill ([#104](https://github.com/magentawood/roomsie/issues/104)), and the Product file: results, cards and "No relevant results"
 - [PD15](pd-15-form-a-contract.md), [PD14](pd-14-v0-is-the-figma-designs.md), [PD11](pd-11-launch.md)
