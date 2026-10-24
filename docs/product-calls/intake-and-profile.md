@@ -11,5 +11,3 @@ Each call of this file has an answer. The answers are in their records:
 - [PD2](../decisions/pd-02-launch-market.md): the nine area groups (PC-21).
 - [PD11](../decisions/pd-11-launch.md): the seeding form (PC-40), and the seeded listings.
 - [PD3d](../decisions/pd-03d-listing-identity-restrictions.md): a listing shows "Who is welcome".
-
-The calls that came up and belong to F-13 are in [connect-and-trust.md](connect-and-trust.md): PC-08 (the DigiLocker selfie), PC-30, PC-34, PC-37, PC-41 and PC-42.

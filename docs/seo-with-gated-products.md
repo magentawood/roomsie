@@ -58,7 +58,7 @@ Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 | Number of people who search this month | Count, rounded |
 | Usual move-in window | Aggregate |
 | Rent bands, for each room type | Aggregate of the listings |
-| Usual lifestyle mix in the area | Aggregate of the nine axes |
+| Usual lifestyle mix in the area | Aggregate of the eight lifestyle questions |
 | Nearby areas that people also search | Co-occurrence |
 | Commute and area description | Written one time, evergreen |
 

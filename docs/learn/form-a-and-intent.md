@@ -4,10 +4,10 @@
 
 ## What it is
 
-- **Form A** is a set of slots, for example intent, areas, budget and the lifestyle answers. The chat, the chips and the onboarding screens fill the slots. The match query reads only Form A ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD3b](../decisions/pd-03b-interview-vs-chips.md)).
+- **Form A** is a set of slots, for example intent, areas, budget and the lifestyle answers. The chat, the chips and the onboarding screens fill the slots. The match query filters on Form A ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD3b](../decisions/pd-03b-interview-vs-chips.md)).
 - **An enum** is a fixed list of the values that a slot can hold. The database keeps the list. A new value needs a migration, so we fix the list before the first migration (T-06).
-- **Each slot has a source:** stated, inferred, default or empty. An inferred value never fills a slot silently.
-- **Form B** is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat.
+- **Each slot has a source:** stated, inferred, default or empty. An inferred value never fills a slot silently ([PD3b](../decisions/pd-03b-interview-vs-chips.md)).
+- **Form B** is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat ([PD7a](../decisions/pd-07a-agent-architecture.md)).
 
 ## How it fits our project
 
@@ -34,6 +34,10 @@ The designs ask two questions. The answers go to Form A:
 
 ## Gotchas
 
-- **Do not add a seeker value for a lister.** The old enum had `has_flat`. With listings, the same room then shows two times: as a listing and as a person card.
+- **Do not add a seeker value for a lister** ([PD15](../decisions/pd-15-form-a-contract.md)).
 - **A slot that the screens do not show can still exist.** Only the chat fills room type, for example "private room only".
 - **"Who's moving" has two parts:** a type and a household. The listing filter uses only the parts that we know ([PD15](../decisions/pd-15-form-a-contract.md)).
+
+## Tickets
+
+- F-11: [#128](https://github.com/magentawood/roomsie/pull/128), 2026-10-24. The intake calls, and the Form A contract of PD15.

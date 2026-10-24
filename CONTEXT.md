@@ -34,7 +34,7 @@ Open, with no record yet: the elevator pitch.
 | Secrets, env vars, logging PII | [ADR-0016](docs/decisions/0016-credentials-and-secrets.md), [ADR-0014](docs/decisions/0014-error-tracking.md) |
 | Web UI, styling, tokens | [ADR-0008](docs/decisions/0008-web-stack.md), [ADR-0011](docs/decisions/0011-design-system-token-pipeline.md), [PD6a](docs/decisions/pd-06a-mobile-split-view.md), [interface-shape.md](docs/interface-shape.md) |
 | The assistant, prompts, models | [PD7](docs/decisions/pd-07-models.md), [PD7a](docs/decisions/pd-07a-agent-architecture.md), [PD10](docs/decisions/pd-10-scope-bands.md), [ai-agent-design.md](docs/ai-agent-design.md), [agent-architecture.md](docs/agent-architecture.md), [scope-policy.md](docs/scope-policy.md) |
-| Matching and preferences | [PD3b](docs/decisions/pd-03b-interview-vs-chips.md), [PD3c](docs/decisions/pd-03c-exclusionary-preferences.md), [PD6c](docs/decisions/pd-06c-interface-holes.md) |
+| Matching, Form A, profiles | [PD15](docs/decisions/pd-15-form-a-contract.md), [PD16](docs/decisions/pd-16-profiles.md), [PD3b](docs/decisions/pd-03b-interview-vs-chips.md), [PD3c](docs/decisions/pd-03c-exclusionary-preferences.md), [PD6c](docs/decisions/pd-06c-interface-holes.md) |
 | Limits, abuse, spend, cost | [PD9](docs/decisions/pd-09-pre-login-limits.md), [pre-login-limits.md](docs/pre-login-limits.md), [PD5](docs/decisions/pd-05-team-and-budget.md), [cost-and-team.md](docs/cost-and-team.md) |
 | Login gate, SEO, public pages | [PD6b](docs/decisions/pd-06b-login-gate-and-search.md), [seo-with-gated-products.md](docs/seo-with-gated-products.md) |
 | Verification, trust, safety | [PD8](docs/decisions/pd-08-verification.md), [verification.md](docs/verification.md), [assistant-risks.md](docs/assistant-risks.md) |

@@ -50,7 +50,7 @@ These mitigations stay with the decision:
 - Housing discrimination in India is a current subject in the media. A conversational product makes a more vivid story than a checkbox.
 - The data connects to a person. We keep each stated exclusion against a named, phone-verified user. It is discoverable, and a DPDP access request can export it.
 - The data shares a database with the analytics corpus. ADR 0012 makes that corpus the future training data.
-- `community` is one of the nine provisional axes in `seed-axes.ts`, because PD3c says so. If someone revisits PD3c, the removal of `community` is one line.
+- [PD15](pd-15-form-a-contract.md) removes `community` from the asked questions. T-06 removes it from `seed-axes.ts`.
 - PD3c locks design review item 1.8: we never offer these preferences as chips.
 - Still open, with PD8: gender-based preferences come through the interview, and PD3c records them. Is that sufficient for the trust story? When we removed women-only (PD1), we removed a safety story, but the safety problem stays.
 

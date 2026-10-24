@@ -42,7 +42,7 @@
 - **Record:** a new PD record for moderation.
 ➡️ **Recommended:** c). Reasons: fake profile, broker or spam, harassment, discriminatory text, age below 18, other. Hide a profile on a safety report, or on reports from two people. Then review it.
 
-### PC-42 · A guest and "Say hi"
+### PC-46 · A guest and "Say hi"
 ❓ Can a guest see a person card and tap "Say hi"?
 - **Today:** [PD6b](../decisions/pd-06b-login-gate-and-search.md) puts a person behind sign-in. The flatmate card of the designs shows "Say hi" to a guest.
 - **Options:** a) a guest sees the card, and "Say hi" opens sign-in b) sign-in before a card opens.
@@ -69,7 +69,7 @@
 ➡️ **Recommended:** a). PD11 says the DPDP Act requires "a clear data notice". People type before sign-in.
 
 ### PC-30 · Gender: field, preference filter, trust story
-❓ Does a profile hold gender, and can a stated preference filter on it? What replaces the women-only trust story? Needs PC-19.
+❓ Does a profile hold gender, and can a stated preference filter on it? What replaces the women-only trust story?
 - **Today:** PD3c records gender preferences, but no profile has gender (`apps/api/src/db/schema.ts:61-91`). [PD1](../decisions/pd-01-audience.md) and PD8 keep the trust story open.
 - **The designs:** a required gender field, the must-haves "Women only" and "Men only", and "Who can move in" on a listing.
 - **Options:** a) an optional field that a stated preference filters b) no field, record only c) a women-only mode.
@@ -115,7 +115,7 @@
 ### PC-41 · Response to fake interviews that harvest contacts
 ❓ What stops a person, for example a broker, from the collection of contacts with fake interviews and requests?
 - **Today:** "no response yet" (`docs/assistant-risks.md:70`). Only the daily cap exists.
-- **Options:** a) the cap only b) a sender needs a live card ([PD16](../decisions/pd-16-profiles.md)) c) moderator review of heavy senders d) phone OTP.
+- **Options:** a) the cap only b) a sender needs a visible card ([PD16](../decisions/pd-16-profiles.md)) c) moderator review of heavy senders d) phone OTP.
 - **Blocks:** T-18a, T-19.
 - **Record:** the PD record for connect and contact.
 ➡️ **Recommended:** b) and c). A number shows only after an accept, so a harvester needs accepts. "Broker or spam" is a report reason (PC-14).

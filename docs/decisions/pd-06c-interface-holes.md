@@ -25,9 +25,8 @@ filters. The design had five holes:
   provenance is not a form change.
 
 **First results (hole 3).** The panel shows first after intent, area and
-budget, approximately three turns. These turns are chip-driven: the four intent
-cards, the top five or six areas plus "somewhere else", and budget bands (below
-15, 15 to 20, 20 to 25, above 25). The match score stays hidden until the user
+budget, approximately three turns. These turns are chip-driven: the place types of
+PD15, the area groups of PD2, and the budget bands of the designs. The match score stays hidden until the user
 gives sufficient lifestyle answers. The interview does not end: open questions
 continue while the user browses.
 
@@ -116,6 +115,8 @@ The banners, the undo and the scroll rules come in v1.
 
 The mobile split view (hole 1, PD6a) gets its last design. We settled the
 mechanics, but not the appearance.
+
+Superseded (2026-10-24): the four intent cards, the top five or six areas and the old budget bands. [PD15](pd-15-form-a-contract.md) and [PD2](pd-02-launch-market.md) replace them.
 
 ## Sources
 

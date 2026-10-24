@@ -98,7 +98,7 @@ All other slots are optional. The assistant can collect them during browsing.
 
 Chips are genuine, and worth the work. **The real cost is anchoring.** Thus: **suggestions on closed questions, never on open ones.**
 
-- Closed: the nine lifestyle axes. Offer chips.
+- Closed: the eight lifestyle questions of [PD15](decisions/pd-15-form-a-contract.md). Offer chips.
 - Open: the questions that give the product its reason to exist. No chips. Ask these with no suggestions:
   - Why the last flatshare ended
   - What would make you leave a flat

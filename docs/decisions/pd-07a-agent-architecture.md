@@ -73,8 +73,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
   a different name. One turn at a time costs less. Form B is then available
   during the session. Thus, it can inform the ranking while the user browses.
 - **Form B in the chat.** The designs have no screen for Form B notes. The
-  chat gives access and correction with no new screen. The grievance contact
-  gives the formal DPDP access.
+  chat gives access and correction with no new screen.
 - **The advisor needs a base in our articles.** A general model hallucinates
   on legal rental questions, where an incorrect answer does the most damage.
   Postgres full-text search suits dozens of documents and keeps to ADR 0001.
@@ -112,6 +111,7 @@ sign-in.
 
 - **Multi-agent** and **one large model.** The two cost more.
 - **A vector store.** The corpus is dozens of documents, not millions.
+- **A list of Form B notes on the profile, with an edit and a delete for each note.** The designs have no such screen, and the product team selected the chat.
 
 ## Revisit when
 
