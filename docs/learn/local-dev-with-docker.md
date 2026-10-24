@@ -37,8 +37,11 @@ apps/web (Next.js, port 3000) → apps/api (Fastify, port 8080) → Postgres (Do
 - **Docker Desktop does not start, and its log says "cannot resize Docker.raw":** the disk file of Docker belongs to `root`. Run `sudo chown $USER:staff ~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw`, then start Docker again.
 - **Port 5432 is in use:** a different Postgres runs on your laptop. Stop it, or change the port in `docker-compose.yml` and in your `.env`. For a Postgres from Homebrew, run `brew services stop postgresql@14` (use your version).
 - **The tests fail with `role "postgres" does not exist`:** the tests connect to a different Postgres on port 5432, not to Docker. Stop the other Postgres.
+- **No Docker on the laptop:** install Postgres 17 with Homebrew (`brew install postgresql@17`). Start a test copy on a free port, for example `pg_ctl -D <folder> -o "-p 5433" start` after `initdb -U postgres --auth=trust`. Then run `TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5433/postgres pnpm test`. The tests check for version 17.
+- **`pnpm db:generate` stops with an error about `DATABASE_URL`:** `drizzle.config.ts` reads the variable, but `generate` does not connect. Set any Postgres URL for the command.
 
 ## Tickets
 
 - T-02: [#94](https://github.com/magentawood/roomsie/pull/94), 2026-10-03. The local Postgres, the commands and the test harness.
 - T-03: [#112](https://github.com/magentawood/roomsie/pull/112), 2026-10-08. The fix for a Homebrew Postgres on port 5432. CI uses the same Postgres 17: see [CI checks](ci-checks.md).
+- T-06: [#129](https://github.com/magentawood/roomsie/pull/129), 2026-10-24. Tests without Docker, and the first migration.

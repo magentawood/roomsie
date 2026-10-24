@@ -85,10 +85,13 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Docker Desktop does not start, and its log says "cannot resize Docker.raw":</strong> the disk file of Docker belongs to <code>root</code>. Run <code>sudo chown $USER:staff ~/Library/Containers/com.docker.docker/Data/vms/0/data/Docker.raw</code>, then start Docker again.</li>
 <li><strong>Port 5432 is in use:</strong> a different Postgres runs on your laptop. Stop it, or change the port in <code>docker-compose.yml</code> and in your <code>.env</code>. For a Postgres from Homebrew, run <code>brew services stop postgresql@14</code> (use your version).</li>
 <li><strong>The tests fail with <code>role "postgres" does not exist</code>:</strong> the tests connect to a different Postgres on port 5432, not to Docker. Stop the other Postgres.</li>
+<li><strong>No Docker on the laptop:</strong> install Postgres 17 with Homebrew (<code>brew install postgresql@17</code>). Start a test copy on a free port, for example <code>pg_ctl -D &lt;folder&gt; -o "-p 5433" start</code> after <code>initdb -U postgres --auth=trust</code>. Then run <code>TEST_DATABASE_URL=postgres://postgres:postgres@localhost:5433/postgres pnpm test</code>. The tests check for version 17.</li>
+<li><strong><code>pnpm db:generate</code> stops with an error about <code>DATABASE_URL</code>:</strong> <code>drizzle.config.ts</code> reads the variable, but <code>generate</code> does not connect. Set any Postgres URL for the command.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-02: <a href="https://github.com/magentawood/roomsie/pull/94">#94</a>, 2026-10-03. The local Postgres, the commands and the test harness.</li>
 <li>T-03: <a href="https://github.com/magentawood/roomsie/pull/112">#112</a>, 2026-10-08. The fix for a Homebrew Postgres on port 5432. CI uses the same Postgres 17: see <a href="ci-checks.html">CI checks</a>.</li>
+<li>T-06: <a href="https://github.com/magentawood/roomsie/pull/129">#129</a>, 2026-10-24. Tests without Docker, and the first migration.</li>
 </ul>
 </main>

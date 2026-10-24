@@ -50,12 +50,12 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-47 Saved]]
 
 ## Done when
-- [ ] Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist
-- [ ] Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility
+- [x] Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist · [#129](https://github.com/magentawood/roomsie/pull/129)
+- [x] Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility · [#129](https://github.com/magentawood/roomsie/pull/129)
 - [x] IDs are UUIDv7 with no database default. `created_at` comes from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
 - [x] Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [ ] A `chat_turns` table stores both sides of the chat of each goal. Thus, the observer can backfill Form B
-- [ ] The listings tables hold the fields of the eight steps of flow 04
+- [x] A `chat_turns` table stores both sides of the chat of each goal. Thus, the observer can backfill Form B · [#129](https://github.com/magentawood/roomsie/pull/129)
+- [x] The listings tables hold the fields of the eight steps of flow 04 · [#129](https://github.com/magentawood/roomsie/pull/129)
 - [x] An `areas` catalogue and a `listings` table exist, thus area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
 
 ^done
@@ -106,3 +106,13 @@ The exact shape of all stored data: people, flats, messages, matches.
     - F-09: the item "0012: one events table replaces a second database" goes. PD13 replaced it.
     - T-14: new item: "The must-haves of the candidate apply back to the searcher, with the mapping of F-12".
 - **Out of scope:** the API routes, the contract code (the who's-moving mapping and the keys of the pick-many lists: T-08, T-41), the matching rules (F-12, T-14), the tables for messages (T-44), verification (T-46) and saved cards (T-47), the gender field (F-13), the seed of the area groups (F-06, T-22a), the analytics database (T-39), and the changes in Figma (the list for the designer goes in the PR).
+
+## Log
+
+- **2026-10-24 · [#129](https://github.com/magentawood/roomsie/pull/129)**
+  - **Change:** schema v1 follows PD14 to PD16, and the first migration is committed. New: goals, chat turns, the must-haves, and the full listing with its rents and flatmates. `events` leaves the main database. The match query gets a provisional intent matrix.
+  - **Why:** [ADR-0017](../../decisions/0017-schema-v1-shape.md), [PD15](../../decisions/pd-15-form-a-contract.md), [PD16](../../decisions/pd-16-profiles.md)
+  - **Ticked:** the four open items. All seven items are done.
+  - **Not done:** none.
+  - **Learn:** [Local development with Docker](../../learn/local-dev-with-docker.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-24--t-06-schema-v1-and-the-first-migration)
