@@ -146,11 +146,7 @@ Why: [PD6c](decisions/pd-06c-interface-holes.md)
 **Latency.** The panel must not wait for the model. Run the query from the
 current form state.
 
-**Cold start.** No skip and an empty panel give a dead end. Define the empty
-state before launch:
-
-- Make the area larger.
-- Relax a dealbreaker.
-- Offer a notification.
+**Cold start.** No skip and an empty panel give a dead end. [PD6c](decisions/pd-06c-interface-holes.md) defines
+the empty state.
 
 Why: [PD6](decisions/pd-06-interface-shape.md)

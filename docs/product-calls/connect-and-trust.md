@@ -53,8 +53,8 @@
 ## Round 2
 
 ### PC-22 · How people get notified
-❓ How does a person learn of a connect request, an accept or a waitlist opening?
-- **Today:** no channel. The designs have "Email alerts".
+❓ How does a person learn of a connect request or an accept?
+- **Today:** waitlist alerts go by email ([PD6c](../decisions/pd-06c-interface-holes.md)). Requests and accepts have no channel.
 - **Options:** a) email b) WhatsApp c) SMS d) web push e) nothing.
 - **Blocks:** T-18a, T-18b, T-22a, PC-35.
 - **Record:** the PD record for connect and contact.
