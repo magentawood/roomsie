@@ -31,7 +31,6 @@ Where we knowingly broke our own architecture rules, and why.
 
 ## Done when
 - [ ] 0011: the launch uses the prototype styles
-- [ ] 0012: one events table replaces a second database
 - [ ] 0014: the product uses the Sentry free tier, not GlitchTip
 
 ^done

@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**40 of 260 done · 15%**
+**40 of 261 done · 15%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -24,13 +24,13 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 3 / 9 | 10 / 28 | 36% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 0 / 14 | 6 / 53 | 11% |
+| [[P3 Data and trust]] | 0 / 14 | 6 / 55 | 11% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 24 | 17% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 4 / 14 | 14 / 38 | 37% |
+| [[Founder]] | 4 / 14 | 14 / 37 | 38% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -52,13 +52,14 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
-| 0 | [[T-06 Database schema ⚑]] | P3 | 8 | 🟡 in progress | 33 | [#11](https://github.com/magentawood/roomsie/issues/11) |
+| 0 | [[T-06 Database schema ⚑]] | P3 | 8 | 🟡 in progress | 31 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 7 | [#104](https://github.com/magentawood/roomsie/issues/104) |
 | 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 7 | [#105](https://github.com/magentawood/roomsie/issues/105) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
+| 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
@@ -66,18 +67,17 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[T-05 Google sign-in ⚑]] | P1 | 6 | ⬜ waits | 18 | [#20](https://github.com/magentawood/roomsie/issues/20) |
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
-| 1 | [[T-24 Event logging]] | P5 | 2 | ⬜ waits | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-35 Form B contract]] | P2 | 3 | ⬜ waits | 1 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | 1 | [[T-37 Articles and search]] | P4 | 3 | ⬜ waits | 1 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | 1 | [[T-20 Account deletion]] | P4 | 3 | ⬜ waits | 0 | [#46](https://github.com/magentawood/roomsie/issues/46) |
+| 1 | [[T-39 Analytics database]] | P1 | 3 | ⬜ waits | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 2 | [[T-16a Profile API ⚑]] | P5 | 5 | ⬜ waits | 2 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | 2 | [[T-41 Listings API]] | P3 | 8 | ⬜ waits | 3 | [#117](https://github.com/magentawood/roomsie/issues/117) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 2 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ waits | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
-| 2 | [[T-39 Analytics database]] | P1 | 3 | ⬜ waits | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 2 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ waits | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 3 | [[T-34 Router ⚑]] | P2 | 6 | ⬜ waits | 0 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | 3 | [[T-21 Turn cap and spend ceiling]] | P2 | 5 | ⬜ waits | 1 | [#41](https://github.com/magentawood/roomsie/issues/41) |
@@ -145,7 +145,7 @@ flowchart LR
   T07["T-07<br/>Error reporting"]:::ready
   T17["T-17<br/>Carry chat into account"]:::todo
   T33["T-33<br/>Invite-only gate"]:::todo
-  T24["T-24<br/>Event logging"]:::todo
+  T24["T-24<br/>Event logging"]:::ready
   T21["T-21<br/>Turn cap and spend ceiling"]:::todo
   T20["T-20<br/>Account deletion"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
@@ -207,7 +207,6 @@ flowchart LR
   T06 --> T17
   T12 --> T17
   T05 --> T33
-  T06 --> T24
   T12 --> T21
   T06 --> T21
   T05 --> T21
@@ -359,12 +358,12 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 6/53
+## P3 Data and trust — 6/55
 
-> [!todo]- 🟡 [[T-06 Database schema ⚑]] · 3/6
+> [!todo]- 🟡 [[T-06 Database schema ⚑]] · 3/7
 > ![[T-06 Database schema ⚑#^done]]
 
-> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/5
+> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/6
 > ![[T-14 Match query ⚑#^done]]
 
 > [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/5
@@ -497,7 +496,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 14/38
+## Founder — 14/37
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -517,7 +516,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/3
 > ![[F-07 Privacy and terms draft#^done]]
 
-> [!todo]- ⬜ [[F-09 ADR exceptions]] · 0/3
+> [!todo]- ⬜ [[F-09 ADR exceptions]] · 0/2
 > ![[F-09 ADR exceptions#^done]]
 
 > [!todo]- ⬜ [[F-08 Moderator named]] · 0/3

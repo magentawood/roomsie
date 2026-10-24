@@ -44,6 +44,7 @@ Takes what a person wants and returns the people who fit.
 - [x] The hard filters are area, budget, move date, compatible intent and dealbreakers · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
+- [ ] The must-haves of the candidate apply back to the searcher, with the mapping of F-12
 
 ^done
 

@@ -36,7 +36,7 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
 
 ## Done when
 - [ ] The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing
-- [ ] A listing holds the fields of the eight steps of flow 04 in the Product file
+- [ ] The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores
 - [ ] The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
 - [ ] Only the lister can edit, pause or delete a listing
 

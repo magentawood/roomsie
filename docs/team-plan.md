@@ -127,7 +127,7 @@ Finish line: Sat 10 Oct. 20 hours.
 |---|---|---|---|---|
 | 1 | M-03 · Write the eval sentences | 4 | Thu 24 Sep → Sun 27 Sep | — |
 | 2 | T-03 · CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
-| 3 | T-24 · Event logging table | 2 | Tue 29 Sep → Wed 30 Sep | T-06 |
+| 3 | T-24 · Event logging table | 2 | Tue 29 Sep → Wed 30 Sep | — |
 | 4 | T-18a ⚑ · Connect request and contact reveal API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
 | 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
@@ -251,7 +251,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
-| P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | T-06 | [#37](https://github.com/magentawood/roomsie/issues/37) |
+| P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | P5 Accounts and people | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06, F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06, F-11 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | [#98](https://github.com/magentawood/roomsie/issues/98) |
@@ -549,7 +549,6 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 
 **F-09 · Write down the three ADR exceptions** — done when:
 - 0011: the launch uses the prototype styles
-- 0012: one events table replaces a second database
 - 0014: the product uses the Sentry free tier, not GlitchTip
 - Read first: `docs/decisions/pd-11-launch.md`
 
@@ -577,16 +576,17 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | P2 | 6 | Sun 27 Sep → Tue 29 Sep | T-12, T-06 |
 | D-04 | Design landing, wall and waitlist | D |  | Mon 28 Sep → Tue 29 Sep | D-01 |
 | T-13 | Reply writer with scope rules | P2 | 4 | Tue 29 Sep → Wed 30 Sep | T-11 |
-| T-24 | Event logging table | P5 | 2 | Tue 29 Sep → Wed 30 Sep | T-06 |
+| T-24 | Event logging table | P5 | 2 | Tue 29 Sep → Wed 30 Sep | — |
 | T-37 | Articles table and full-text search | P4 | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
 
 **T-06 · Database schema v1** — done when:
-- Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
+- Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist
 - Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility
 - IDs are UUIDv7 with no database default. `created_at` comes from the server clock
 - Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id`
-- A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B
-- Read first: `docs/decisions/0015-primary-key-strategy.md`, `docs/decisions/0006-drizzle.md`, `docs/agent-architecture.md`, `docs/extensibility.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
+- A `chat_turns` table stores both sides of the chat of each goal. Thus, the observer can backfill Form B
+- The listings tables hold the fields of the eight steps of flow 04
+- Read first: `docs/decisions/0015-primary-key-strategy.md`, `docs/decisions/0006-drizzle.md`, `docs/agent-architecture.md`, `docs/extensibility.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`, `docs/decisions/0017-schema-v1-shape.md`
 
 **F-07 · Draft privacy policy, terms, grievance contact** — done when:
 - It says what the system collects, why, for how long, how to delete it, and who to contact
@@ -635,10 +635,10 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - Read first: `docs/scope-policy.md`
 
 **T-24 · Event logging table** — done when:
-- One events table holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
+- One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
 - No message text is stored
 - Code writes events only through one `track()` function in apps/api
-- Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus v1 can move it to its own database
+- Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **T-37 · Articles table and full-text search** — done when:
@@ -704,6 +704,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The hard filters are area, budget, move date, compatible intent and dealbreakers
 - The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist
 - Blocked and suspended people never appear
+- The must-haves of the candidate apply back to the searcher, with the mapping of F-12
 - Read first: `docs/interface-shape.md`
 
 **M-05 · Drafts of articles 1 to 10** — done when:
@@ -843,7 +844,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-17 · Carry anonymous chat into the account on sign-in** — done when:
 - When a visitor signs in, the account gets what the visitor told the assistant before sign-in
 - Nothing is lost, and the assistant never asks the same thing two times
-- The stored chat turns move to the account with the session
+- The goals of the session, with their chat turns, move to the account
 - Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/seo-with-gated-products.md`, `docs/extensibility.md`
 
@@ -907,7 +908,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 
 **T-41 · Listings API: four kinds of lister** — done when:
 - The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing
-- A listing holds the fields of the eight steps of flow 04 in the Product file
+- The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores
 - The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
 - Only the lister can edit, pause or delete a listing
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-03-listing-supply.md`, `docs/extensibility.md`
