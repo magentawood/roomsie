@@ -16,6 +16,7 @@
 **Form A**
 
 - The lifestyle questions and the must-haves are seed data (`lifestyle_axes`, `must_haves`). A person's answers are rows (`profile_lifestyle`, `profile_must_haves`). Only a must-have has a weight.
+- ADR 0015 exception: a catalogue has a text key, as `areas` does, and an answer table has the two-column key of the person and the question.
 - "Who's moving" stores the choice of the person. The contract maps a choice to a type and a household (PD15).
 - `profiles.age` can be empty, and a check rejects an age below 18.
 
@@ -23,7 +24,7 @@
 
 - One `listings` table has a `kind`: `room_in_flat`, `owner_flat`, `pg` or `broker_flat`. A broker flat has the fields of an owner flat, and a brokerage.
 - A draft can be incomplete. From `live`, a check requires an area group, the name of a PG, and the brokerage of a broker flat.
-- Each rent is a row in `listing_rates`: one row for a room or a flat, and one row for each sharing type of a PG.
+- Each rent is a row in `listing_rates`: one row for a room or a flat, and one row for each sharing type of a PG. The row copies the kind of its listing in a two-column key, so a check ties a sharing type to PGs only.
 - A pick-many list (what is inside, the building and society, the sharing types, who is welcome) is an array of fixed keys. The contract checks the keys. A GIN index makes each list a fast filter.
 - The address is optional and private until the lister turns on `share_address`. Seekers see the area group, the landmark and the building.
 - `listing_flatmates` holds the flatmates of a room listing. `flatmates_consent` records that the lister confirmed "My flatmates agreed to be shown".
@@ -55,10 +56,7 @@
 
 ## Consequences
 
-- The first migration creates 17 tables. Row Level Security is on for each table (database.md).
-- `events` is not in the main database (ADR 0012, PD13).
 - The match query has a provisional intent matrix until F-12. It does not apply the must-haves of a candidate back to the searcher until T-14 adds them.
-- Nothing applies the migrations or the seed to a live database yet.
 
 ## Revisit when
 

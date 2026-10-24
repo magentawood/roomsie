@@ -205,7 +205,7 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ## What this changes elsewhere
 
-- **Schema.** Form A and Form B each need a home. Neither form is in S1 to S7 of the ledger. Form B is personal data that comes from free text. Thus, account deletion must purge it.
+- **Schema.** Form A lives on goals and profiles ([ADR-0017](decisions/0017-schema-v1-shape.md)). Form B needs a home (T-35). Form B is personal data that comes from free text. Thus, account deletion must purge it.
 - **Evals.** Each handler gets its own score: router accuracy, extractor accuracy, observer evidence validity, advisor grounding and refusal rate.
 - **`packages/contract`.** Handler inputs and outputs are Zod schemas with versions. They are next to the analytics event schemas in the package.
 - **Model choice (PD7).** This design needs a small fast model and a good model.

@@ -1,5 +1,5 @@
 {
-  "id": "ab6f70f4-c678-48cc-b1a8-5fe9d70dc3a3",
+  "id": "0a202c8a-bc42-4c46-8a32-89a83719cd0f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -560,12 +560,6 @@
           "notNull": true,
           "default": "'open'"
         },
-        "found_at": {
-          "name": "found_at",
-          "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -824,6 +818,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "listing_kind": {
+          "name": "listing_kind",
+          "type": "listing_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
         "sharing": {
           "name": "sharing",
           "type": "text",
@@ -868,18 +869,20 @@
         }
       },
       "foreignKeys": {
-        "listing_rates_listing_id_listings_id_fk": {
-          "name": "listing_rates_listing_id_listings_id_fk",
+        "listing_rates_listing_id_listing_kind_listings_id_kind_fk": {
+          "name": "listing_rates_listing_id_listing_kind_listings_id_kind_fk",
           "tableFrom": "listing_rates",
           "tableTo": "listings",
           "columnsFrom": [
-            "listing_id"
+            "listing_id",
+            "listing_kind"
           ],
           "columnsTo": [
-            "id"
+            "id",
+            "kind"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
@@ -894,7 +897,12 @@
         }
       },
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "listing_rates_sharing_check": {
+          "name": "listing_rates_sharing_check",
+          "value": "(\"listing_rates\".\"listing_kind\" = 'pg') = (\"listing_rates\".\"sharing\" is not null)"
+        }
+      },
       "isRLSEnabled": true
     },
     "public.listings": {
@@ -1060,7 +1068,8 @@
         },
         "beds_free": {
           "name": "beds_free",
-          "type": "integer",
+          "type": "beds_free",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": false
         },
@@ -1091,8 +1100,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "inside": {
-          "name": "inside",
+        "inside_items": {
+          "name": "inside_items",
           "type": "text[]",
           "primaryKey": false,
           "notNull": true,
@@ -1174,8 +1183,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "welcome": {
-          "name": "welcome",
+        "who_is_welcome": {
+          "name": "who_is_welcome",
           "type": "text[]",
           "primaryKey": false,
           "notNull": true,
@@ -1265,11 +1274,26 @@
           "method": "btree",
           "with": {}
         },
-        "listings_inside_idx": {
-          "name": "listings_inside_idx",
+        "listings_inside_items_idx": {
+          "name": "listings_inside_items_idx",
           "columns": [
             {
-              "expression": "inside",
+              "expression": "inside_items",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "gin",
+          "with": {}
+        },
+        "listings_sharing_idx": {
+          "name": "listings_sharing_idx",
+          "columns": [
+            {
+              "expression": "sharing",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1295,11 +1319,11 @@
           "method": "gin",
           "with": {}
         },
-        "listings_welcome_idx": {
-          "name": "listings_welcome_idx",
+        "listings_who_is_welcome_idx": {
+          "name": "listings_who_is_welcome_idx",
           "columns": [
             {
-              "expression": "welcome",
+              "expression": "who_is_welcome",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -1340,7 +1364,16 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "listings_id_kind_unique": {
+          "name": "listings_id_kind_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "id",
+            "kind"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {
         "listings_photo_limit_check": {
@@ -1527,7 +1560,7 @@
         },
         "weight": {
           "name": "weight",
-          "type": "answer_weight",
+          "type": "must_have_weight",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -2070,6 +2103,18 @@
         "shared"
       ]
     },
+    "public.beds_free": {
+      "name": "beds_free",
+      "schema": "public",
+      "values": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "5_plus"
+      ]
+    },
     "public.connection_status": {
       "name": "connection_status",
       "schema": "public",
@@ -2177,6 +2222,14 @@
         "flexible"
       ]
     },
+    "public.must_have_weight": {
+      "name": "must_have_weight",
+      "schema": "public",
+      "values": [
+        "prefer",
+        "dealbreaker"
+      ]
+    },
     "public.place_type": {
       "name": "place_type",
       "schema": "public",
@@ -2253,14 +2306,6 @@
         "15_min",
         "30_min",
         "not_close"
-      ]
-    },
-    "public.answer_weight": {
-      "name": "answer_weight",
-      "schema": "public",
-      "values": [
-        "prefer",
-        "dealbreaker"
       ]
     },
     "public.whos_moving": {

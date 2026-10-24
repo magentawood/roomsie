@@ -1,5 +1,6 @@
 CREATE TYPE "public"."account_status" AS ENUM('active', 'suspended', 'deleted');--> statement-breakpoint
 CREATE TYPE "public"."bathroom" AS ENUM('attached', 'shared');--> statement-breakpoint
+CREATE TYPE "public"."beds_free" AS ENUM('1', '2', '3', '4', '5', '5_plus');--> statement-breakpoint
 CREATE TYPE "public"."connection_status" AS ENUM('pending', 'accepted', 'declined', 'withdrawn');--> statement-breakpoint
 CREATE TYPE "public"."curfew" AS ENUM('none', '10pm', '10_30pm', '11pm', 'midnight');--> statement-breakpoint
 CREATE TYPE "public"."electricity" AS ENUM('included', 'as_per_meter', 'split_equally');--> statement-breakpoint
@@ -11,6 +12,7 @@ CREATE TYPE "public"."listing_kind" AS ENUM('room_in_flat', 'owner_flat', 'pg', 
 CREATE TYPE "public"."listing_status" AS ENUM('draft', 'live', 'inactive', 'filled');--> statement-breakpoint
 CREATE TYPE "public"."meals" AS ENUM('veg_included', 'veg_non_veg', 'breakfast_only', 'none');--> statement-breakpoint
 CREATE TYPE "public"."min_stay" AS ENUM('3_months', '6_months', '12_months', 'flexible');--> statement-breakpoint
+CREATE TYPE "public"."must_have_weight" AS ENUM('prefer', 'dealbreaker');--> statement-breakpoint
 CREATE TYPE "public"."place_type" AS ENUM('1rk', '1bhk', '2bhk', '3bhk', '4bhk', 'studio', 'independent_house', 'bungalow_villa', 'penthouse');--> statement-breakpoint
 CREATE TYPE "public"."report_status" AS ENUM('open', 'actioned', 'dismissed');--> statement-breakpoint
 CREATE TYPE "public"."room_type" AS ENUM('private', 'shared', 'unclear');--> statement-breakpoint
@@ -19,7 +21,6 @@ CREATE TYPE "public"."turn_input" AS ENUM('typed', 'chip');--> statement-breakpo
 CREATE TYPE "public"."turn_role" AS ENUM('user', 'assistant');--> statement-breakpoint
 CREATE TYPE "public"."visibility" AS ENUM('draft', 'live', 'hidden');--> statement-breakpoint
 CREATE TYPE "public"."walk_time" AS ENUM('5_min', '10_min', '15_min', '30_min', 'not_close');--> statement-breakpoint
-CREATE TYPE "public"."answer_weight" AS ENUM('prefer', 'dealbreaker');--> statement-breakpoint
 CREATE TYPE "public"."whos_moving" AS ENUM('student', 'first_job', 'working', 'couple', 'family', 'friends', 'unclear');--> statement-breakpoint
 CREATE TABLE "anonymous_sessions" (
 	"id" uuid PRIMARY KEY NOT NULL,
@@ -81,7 +82,6 @@ CREATE TABLE "goals" (
 	"title" text,
 	"form" jsonb DEFAULT '{}'::jsonb NOT NULL,
 	"status" "goal_status" DEFAULT 'open' NOT NULL,
-	"found_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "goals_one_owner_check" CHECK (num_nonnulls("goals"."user_id", "goals"."anonymous_session_id") = 1)
@@ -114,11 +114,13 @@ ALTER TABLE "listing_flatmates" ENABLE ROW LEVEL SECURITY;--> statement-breakpoi
 CREATE TABLE "listing_rates" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"listing_id" uuid NOT NULL,
+	"listing_kind" "listing_kind" NOT NULL,
 	"sharing" text,
 	"rent" integer NOT NULL,
 	"deposit" integer,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "listing_rates_sharing_unique" UNIQUE NULLS NOT DISTINCT("listing_id","sharing")
+	CONSTRAINT "listing_rates_sharing_unique" UNIQUE NULLS NOT DISTINCT("listing_id","sharing"),
+	CONSTRAINT "listing_rates_sharing_check" CHECK (("listing_rates"."listing_kind" = 'pg') = ("listing_rates"."sharing" is not null))
 );
 --> statement-breakpoint
 ALTER TABLE "listing_rates" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -147,12 +149,12 @@ CREATE TABLE "listings" (
 	"floor" integer,
 	"carpet_area_sqft" integer,
 	"sharing" text[] DEFAULT '{}' NOT NULL,
-	"beds_free" integer,
+	"beds_free" "beds_free",
 	"meals" "meals",
 	"curfew" "curfew",
 	"bathroom" "bathroom",
 	"balcony" boolean,
-	"inside" text[] DEFAULT '{}' NOT NULL,
+	"inside_items" text[] DEFAULT '{}' NOT NULL,
 	"amenities" text[] DEFAULT '{}' NOT NULL,
 	"maintenance" integer,
 	"maintenance_included" boolean,
@@ -165,13 +167,14 @@ CREATE TABLE "listings" (
 	"smoking_allowed" boolean,
 	"alcohol_allowed" boolean,
 	"guests" "guests_rule",
-	"welcome" text[] DEFAULT '{}' NOT NULL,
+	"who_is_welcome" text[] DEFAULT '{}' NOT NULL,
 	"flatmates_consent" boolean DEFAULT false NOT NULL,
 	"photo_keys" text[] DEFAULT '{}' NOT NULL,
 	"description" text,
 	"expires_at" timestamp with time zone,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "listings_id_kind_unique" UNIQUE("id","kind"),
 	CONSTRAINT "listings_photo_limit_check" CHECK (cardinality("listings"."photo_keys") <= 5),
 	CONSTRAINT "listings_live_fields_check" CHECK ("listings"."status" = 'draft' or (
     "listings"."area_slug" is not null
@@ -203,7 +206,7 @@ ALTER TABLE "profile_lifestyle" ENABLE ROW LEVEL SECURITY;--> statement-breakpoi
 CREATE TABLE "profile_must_haves" (
 	"profile_id" uuid NOT NULL,
 	"must_have_key" text NOT NULL,
-	"weight" "answer_weight" DEFAULT 'prefer' NOT NULL,
+	"weight" "must_have_weight" DEFAULT 'prefer' NOT NULL,
 	"source" "answer_source" DEFAULT 'stated' NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	"updated_at" timestamp with time zone DEFAULT now() NOT NULL,
@@ -275,7 +278,7 @@ ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_to_profile
 ALTER TABLE "goals" ADD CONSTRAINT "goals_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "goals" ADD CONSTRAINT "goals_anonymous_session_id_anonymous_sessions_id_fk" FOREIGN KEY ("anonymous_session_id") REFERENCES "public"."anonymous_sessions"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "listing_flatmates" ADD CONSTRAINT "listing_flatmates_listing_id_listings_id_fk" FOREIGN KEY ("listing_id") REFERENCES "public"."listings"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "listing_rates" ADD CONSTRAINT "listing_rates_listing_id_listings_id_fk" FOREIGN KEY ("listing_id") REFERENCES "public"."listings"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "listing_rates" ADD CONSTRAINT "listing_rates_listing_id_listing_kind_listings_id_kind_fk" FOREIGN KEY ("listing_id","listing_kind") REFERENCES "public"."listings"("id","kind") ON DELETE cascade ON UPDATE cascade;--> statement-breakpoint
 ALTER TABLE "listings" ADD CONSTRAINT "listings_owner_user_id_users_id_fk" FOREIGN KEY ("owner_user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "listings" ADD CONSTRAINT "listings_area_slug_areas_slug_fk" FOREIGN KEY ("area_slug") REFERENCES "public"."areas"("slug") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "profile_lifestyle" ADD CONSTRAINT "profile_lifestyle_profile_id_profiles_id_fk" FOREIGN KEY ("profile_id") REFERENCES "public"."profiles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
@@ -299,9 +302,10 @@ CREATE INDEX "listing_flatmates_listing_idx" ON "listing_flatmates" USING btree 
 CREATE INDEX "listing_rates_rent_idx" ON "listing_rates" USING btree ("rent");--> statement-breakpoint
 CREATE INDEX "listings_area_status_idx" ON "listings" USING btree ("area_slug","status","expires_at");--> statement-breakpoint
 CREATE INDEX "listings_owner_idx" ON "listings" USING btree ("owner_user_id");--> statement-breakpoint
-CREATE INDEX "listings_inside_idx" ON "listings" USING gin ("inside");--> statement-breakpoint
+CREATE INDEX "listings_inside_items_idx" ON "listings" USING gin ("inside_items");--> statement-breakpoint
+CREATE INDEX "listings_sharing_idx" ON "listings" USING gin ("sharing");--> statement-breakpoint
 CREATE INDEX "listings_amenities_idx" ON "listings" USING gin ("amenities");--> statement-breakpoint
-CREATE INDEX "listings_welcome_idx" ON "listings" USING gin ("welcome");--> statement-breakpoint
+CREATE INDEX "listings_who_is_welcome_idx" ON "listings" USING gin ("who_is_welcome");--> statement-breakpoint
 CREATE INDEX "profile_lifestyle_axis_value_idx" ON "profile_lifestyle" USING btree ("axis_key","value");--> statement-breakpoint
 CREATE UNIQUE INDEX "profiles_user_id_idx" ON "profiles" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "profiles_live_idx" ON "profiles" USING btree ("visibility","intent");--> statement-breakpoint
