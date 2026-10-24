@@ -12,7 +12,7 @@
 
 ## Round 1
 
-Prerequisites: PC-02, PC-04, PC-07 and PC-18 in [intake-and-profile.md](intake-and-profile.md).
+Prerequisites: PC-02, PC-04, PC-07 and PC-18 have answers in [PD15](../decisions/pd-15-form-a-contract.md), [PD7a](../decisions/pd-07a-agent-architecture.md) and [PD14](../decisions/pd-14-v0-is-the-figma-designs.md).
 
 ### PC-25 · Does an unanswered axis fail a dealbreaker
 
@@ -78,11 +78,11 @@ Prerequisites: PC-02, PC-04, PC-07 and PC-18 in [intake-and-profile.md](intake-a
 - **Blocks:** T-15, T-35, D-03.
 - **Record:** PD3a, and PD7a for the audience of Form B.
 
-➡️ **Recommended:** a) Neither at launch. PC-07 is not settled, so a user cannot correct the notes at this time. Do not show them to others or rank on them until users can correct them. PD7a says "can", not "must".
+➡️ **Reopened by [PD7a](../decisions/pd-07a-agent-architecture.md):** the old answer rested on "a user cannot correct the notes". Now a user sees and corrects them in the chat only.
 
 ## Round 2
 
-Prerequisites: PC-23, PC-24 and PC-25 in Round 1. For PC-36, also PC-01 (task F-06), PC-21 in [intake-and-profile.md](intake-and-profile.md) and PC-22 in [connect-and-trust.md](connect-and-trust.md).
+Prerequisites: PC-23, PC-24 and PC-25 in Round 1. For PC-36, also PC-01 (task F-06), PC-21 (answered in [PD2](../decisions/pd-02-launch-market.md)) and PC-22 in [connect-and-trust.md](connect-and-trust.md).
 
 ### PC-33 · Score formula and how it reads
 

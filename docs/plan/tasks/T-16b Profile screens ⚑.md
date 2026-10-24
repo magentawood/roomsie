@@ -39,8 +39,10 @@ The screens where a person says who they are and adds photos.
 - [ ] A user can create and edit a profile on the web, with the fields of T-16a
 - [ ] A user can upload a maximum of four photos from the profile screen
 - [ ] The delete button of T-20 uses the design of D-03
+- [ ] Settings has a "Hide my card" switch
 
 ^done
 
 ## Read first
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
+- [pd-16-profiles.md](../../decisions/pd-16-profiles.md)

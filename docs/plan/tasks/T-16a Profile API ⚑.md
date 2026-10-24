@@ -37,11 +37,15 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 - [[T-16b Profile screens ⚑]]
 
 ## Done when
-- [ ] The API creates and edits a profile with name, age, work, intent, budget, areas, move date and lifestyle answers
+- [ ] The API creates and edits a profile with the fields of PD16 and the Form A fields of PD15. Age is required, and is 18 or more
 - [ ] The API gives a presigned URL, thus a user uploads a maximum of four photos directly to R2
 - [ ] Photo bytes never pass through the API
+- [ ] A parent can create a profile for a son or daughter of 18 or more. The card shows "Managed by a parent"
+- [ ] A card becomes visible when its required fields are complete, unless the user hides it
 
 ^done
 
 ## Read first
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
+- [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
+- [pd-16-profiles.md](../../decisions/pd-16-profiles.md)

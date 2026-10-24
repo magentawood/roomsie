@@ -35,12 +35,15 @@ A simple sign-up form, and tell people about it.
 - [[M-02 100 sign-ups]]
 
 ## Done when
-- [ ] The form is live with the consent text
+- [ ] The form is live with the consent text, and asks the full profile of PD16
 - [ ] Outreach uses the team's own networks, college and company groups, and flat-hunting groups
 - [ ] The team invites people to sign up. The team never copies the posts or details of any person
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it
+- [ ] Marketing also collects listings from owners, PG operators and brokers. The founders set the number (PD11)
 
 ^done
 
 ## Read first
 - [pd-11-launch.md](../../decisions/pd-11-launch.md)
+- [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
+- [pd-16-profiles.md](../../decisions/pd-16-profiles.md)
