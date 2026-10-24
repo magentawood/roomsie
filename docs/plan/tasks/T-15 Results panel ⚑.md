@@ -42,10 +42,12 @@ Shows matches as cards: people and places.
 - [ ] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 - [ ] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
 - [ ] It updates only when a form value or weight changes. It never changes the order during a scroll
-- [ ] The match score is hidden until lifestyle answers exist
+- [ ] A card shows the Best match label and the Didn't say label of PD3a
+- [ ] The empty panel shows No relevant results and the suggested posts (PD6c)
 - [ ] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 
 ^done
 
 ## Read first
 - [interface-shape.md](../../interface-shape.md)
+- [pd-03a-flatmate-matching.md](../../decisions/pd-03a-flatmate-matching.md)

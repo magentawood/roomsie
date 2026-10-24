@@ -77,11 +77,11 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 1. **The empty slot is the confidence signal** ([PD3b](decisions/pd-03b-interview-vs-chips.md)).
 2. **Token probability on the extracted span has much better calibration.** For a constrained choice (for example, four enum values), the probability mass on the selected value is a usable threshold. Below it, ask, and do not fill ([PD7](decisions/pd-07-models.md)).
 3. **Never let inference fill a slot.**
-4. **A completeness gate, not a confidence gate, controls the match score.** Results show after intent, area and budget. The match score shows only when the minimum slot set is full. This rule is deterministic and readable by all ([PD6c](decisions/pd-06c-interface-holes.md)).
+4. **A completeness gate, not a confidence gate, controls the end of the interview.** Results show after intent, area and budget. The interview can end only when the minimum slot set is full. This rule is deterministic and readable by all ([PD6c](decisions/pd-06c-interface-holes.md)).
 
 **The minimum slot set before the first recommendation** (a proposal, for discussion):
 
-Per [PD6c](decisions/pd-06c-interface-holes.md), this set gates the match score, not the first results.
+Per [PD6c](decisions/pd-06c-interface-holes.md), this set gates the end of the interview, not the first results.
 
 | Required | Why |
 |---|---|

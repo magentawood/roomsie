@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**44 of 261 done · 17%**
+**44 of 265 done · 17%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -24,8 +24,8 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 3 / 9 | 10 / 28 | 36% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 1 / 14 | 10 / 55 | 18% |
-| [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
+| [[P3 Data and trust]] | 1 / 14 | 10 / 58 | 17% |
+| [[P4 Content and moderation]] | 0 / 7 | 0 / 23 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 24 | 17% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -357,15 +357,15 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 10/55
+## P3 Data and trust — 10/58
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
 
-> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/6
+> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/8
 > ![[T-14 Match query ⚑#^done]]
 
-> [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/5
+> [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/6
 > ![[T-15 Results panel ⚑#^done]]
 
 > [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/5
@@ -402,7 +402,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 0/22
+## P4 Content and moderation — 0/23
 
 > [!todo]- ⬜ [[T-23a Landing page]] · 0/4
 > ![[T-23a Landing page#^done]]
@@ -422,7 +422,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-22a Waitlist API]] · 0/2
 > ![[T-22a Waitlist API#^done]]
 
-> [!todo]- ⬜ [[T-22b Waitlist screen]] · 0/2
+> [!todo]- ⬜ [[T-22b Waitlist screen]] · 0/3
 > ![[T-22b Waitlist screen#^done]]
 
 

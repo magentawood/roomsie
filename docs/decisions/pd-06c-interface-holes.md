@@ -1,6 +1,6 @@
 # PD6c — The panel follows the form
 
-**Status:** Settled. Four holes closed, one provisional · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Four holes closed, one provisional. Changed on 2026-10-25. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -26,8 +26,8 @@ filters. The design had five holes:
 
 **First results (hole 3).** The panel shows first after intent, area and
 budget, approximately three turns. These turns are chip-driven: the place types of
-PD15, the area groups of PD2, and the budget bands of the designs. The match score stays hidden until the user
-gives sufficient lifestyle answers. The interview does not end: open questions
+PD15, the area groups of PD2, and the budget bands of the designs. The "Best match" label waits for three
+or more preferences ([PD3a](pd-03a-flatmate-matching.md)). The interview does not end: open questions
 continue while the user browses.
 
 **Direction of change (hole 4):**
@@ -64,7 +64,7 @@ The banners, the undo and the scroll rules come in v1.
 - **Filters and rank are different.** Filters need area and budget. A
   compatibility rank needs lifestyle answers, which take much more time. The
   panel header shows what the panel knows. Example: "Everything in Mumbai" →
-  "Powai" → "Powai, under ₹20,000" → match scores appear.
+  "Powai" → "Powai, under ₹20,000" → "Best match" labels appear.
 - **Budget is in the first three turns.** Budget is the most frequent cause of
   wasted results.
 - **Chips for closed slots.** Intent, area and budget have a closed set of
@@ -102,11 +102,15 @@ The banners, the undo and the scroll rules come in v1.
 
 - The panel must not wait for the model. Run the query from the current form
   state.
-- Define the empty state before launch: make the area larger, relax a
-  dealbreaker, or offer a notification. If Mumbai supply is small, a forced
-  interview makes the dead end worse.
-- The completeness gate controls when the match score shows, not when the
-  conversation stops.
+- **The empty state (PC-36).** The panel shows "No relevant results" and the
+  suggested posts: the next budget band, or a neighbouring area group. A seeded
+  list gives the neighbours of each area group. The chips of the assistant
+  relax the budget, the area, or the dealbreaker that removes the most cards.
+  A search with launch and other areas shows the launch results and one
+  waitlist line. A search with no launch area shows the waitlist screen. The
+  alerts go by email.
+- The completeness gate controls when the conversation can end, not the
+  results.
 - Mobile rule (hole 1): do not change the chat size while the user types or
   reads. An automatic shrink in the middle of a sentence is the same defect as
   a silent reorder.

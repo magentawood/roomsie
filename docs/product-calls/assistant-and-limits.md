@@ -95,4 +95,4 @@ Ask this round when these calls have answers: PC-23 in [matching-rules.md](match
 - **Blocks:** T-09 scripted next question, T-13 (soft: the default is option a).
 - **Record:** [PD6c](../decisions/pd-06c-interface-holes.md)
 
-➡️ **Recommended:** a, with a step count and no market defaults. Move date and two dealbreakers gate the match score (`docs/ai-agent-design.md:80-92`). The chips show results before these questions. Thus, defaults add nothing.
+➡️ **Recommended:** a, with a step count and no market defaults. Move date and two dealbreakers end the interview (`docs/ai-agent-design.md`, section 3.3). The chips show results before these questions. Thus, defaults add nothing.
