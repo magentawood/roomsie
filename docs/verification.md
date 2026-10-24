@@ -5,17 +5,10 @@
 
 ## The v0 scope decision
 
-- **v0 is flatmate matching only.** It has no property listing objects.
-- A person with a spare room is a person card, not a listing.
+- **v0 is the product in the Figma designs.** It has listings from owners, flatmates, PG operators and brokers.
+- The listing flow has a DigiLocker step. Thus, listing and broker verification are in v0.
 
-Results:
-
-- The broker work (PD3 and PD4) moves out of v0. It stays blocked on the calls. No work waits on it.
-- The post-a-listing wizard from the V3 prototype is out of v0.
-- The SEO area pages continue to work.
-- Cold start is easier.
-
-Why: [PD0](decisions/pd-00-v0-scope.md)
+Why: [PD14](decisions/pd-14-v0-is-the-figma-designs.md)
 
 ## The design as proposed
 
@@ -124,7 +117,7 @@ Why: [PD8](decisions/pd-08-verification.md)
 | Message someone | Phone, at minimum |
 | Be discoverable at all | Phone |
 
-Listing and broker verification are out of v0 and come back with PD3.
+Listing and broker verification are in v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)).
 
 ## Sources
 

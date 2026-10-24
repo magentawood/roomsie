@@ -1,17 +1,17 @@
-# How to work — no-designs plan
+# How to work
 
-- **The launch date is not fixed.** The team selects it when the designs arrive.
+- **The launch date is not fixed.** The designs arrived on 24 October. The founders select the date now.
 - Work two hours each day, on all days, weekends included, from **Thursday 24 September**.
 - **Quality comes before the date.** The quality bar is the go/no-go list in `docs/team-plan.md`.
 - If a check fails, the date moves by a small number of days. We do not release below the bar.
 - If your task will be late, tell the team.
-- **We do not have designs at this time.**
+- **The designs are in Figma.** [PD14](decisions/pd-14-v0-is-the-figma-designs.md) gives the three files.
 
 Why: [PD11](decisions/pd-11-launch.md), [PD12](decisions/pd-12-team-plan.md)
 
 ---
 
-## Until the designs arrive: waves
+## Waves
 
 The work goes in waves, not in dates.
 
@@ -23,7 +23,7 @@ The work goes in waves, not in dates.
 - F-11 to F-14 are grill sessions for the open product calls. Their questions are in `docs/product-calls/`. "Waits on product calls" shows the tasks that wait on them.
 - A task can need only a number or a list from an open call. Then put a default in config or seed data, not in the code.
 - A small screen part, for example a sign-in button, is plain. It has no design. The screen tasks apply the design to it.
-- When the designs arrive, the tasks in "Waits on the designs" join the waves. Then the team selects the launch date.
+- When a design task is done, the tasks in "Waits on the designs" that need it join the waves.
 
 Why: [PD12](decisions/pd-12-team-plan.md)
 

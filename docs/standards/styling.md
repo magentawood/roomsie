@@ -2,10 +2,10 @@
 
 These rules apply to Tailwind CSS v4, theme tokens and the Untitled UI pipeline. The rules in [_index.md](_index.md) also apply.
 
-The launch look comes from the Figma designs, which are not available at this time ([PD12](../decisions/pd-12-team-plan.md)). Thus, this file has two parts:
+The launch look comes from the Figma designs. The tokens are in the Figma file "Roomsie design system (extended)" ([PD14](../decisions/pd-14-v0-is-the-figma-designs.md)). This file has two parts:
 
 - **Launch rules** apply to all styles from today.
-- **Token pipeline rules** are OPEN until the team replans with the Figma designs. Reviewers do not enforce them until then.
+- **Token pipeline rules** apply when the v1 token generator is in the repo ([extensibility.md](../extensibility.md)). Reviewers do not enforce them until then.
 
 The launch rules are the ADR-0011 rules that do not need the Figma pipeline.
 

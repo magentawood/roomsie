@@ -28,5 +28,5 @@ These rules apply to `apps/web`: Next.js 16, React 19 and TanStack Query. The ru
 
 ## Pages and content
 
-- Build each page from its Figma design. Do not make the pages from `create-next-app`. Why: the Figma designs are the launch look. ([PD12](../decisions/pd-12-team-plan.md))
+- Build each page from its Figma design. Do not make the pages from `create-next-app`. Why: the Figma designs are the launch look. ([PD12](../decisions/pd-12-team-plan.md), [PD14](../decisions/pd-14-v0-is-the-figma-designs.md))
 - Never blur a photo with CSS. Show the blurred copy that the server made. Why: a CSS blur gives no protection. ([PD8](../decisions/pd-08-verification.md))

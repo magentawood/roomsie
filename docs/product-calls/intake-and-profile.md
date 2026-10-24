@@ -1,13 +1,13 @@
 # Product calls: intake, Form A and profile data
 
-**Task:** F-11 · **Status:** open · **Updated:** 2026-10-04
+**Task:** F-11 · **Status:** open · **Updated:** 2026-10-24
 
 ## How to run this session
 
 - Ask the questions in rounds. Start a round when the rounds before it have answers.
 - Ask one question at a time.
 - Write each answer in the named record. Then delete the question from this file.
-- Do not ask again about a settled record, for example PD0, PD3b, PD3c, PD6c or PD7a.
+- Do not ask again about a settled record, for example PD14, PD3b, PD3c, PD6c or PD7a.
 
 ## Round 1
 
@@ -18,9 +18,9 @@
 - **Today:** T-08 names the four prototype cards (`docs/team-plan.json`). The schema uses a different set: `has_flat`, `wants_flat`, `wants_room`, `open`, `unclear` (`apps/api/src/db/schema.ts:28`).
 - **Options:** a) all four cards b) hide "just a flat" and "I'm renting out a flat" c) three person cards that map to the schema enum
 - **Blocks:** T-06, T-08, T-09, T-14, T-16a, T-16b, M-06
-- **Record:** [PD0](../decisions/pd-00-v0-scope.md), its "Open" item
+- **Record:** [PD14](../decisions/pd-14-v0-is-the-figma-designs.md)
 
-➡️ **Recommended:** c) "I have a room to share" (`has_flat`), "I need a room" (`wants_room`) and "Find flatmates to rent a flat together" (`wants_flat`). PD0 rules out property listings, so "just a flat" goes. A person with a spare room is a person card. The enum does not change.
+➡️ **Reopened by [PD14](../decisions/pd-14-v0-is-the-figma-designs.md):** the old answer rested on PD0, which is superseded. Take the cards from the "Purpose" and "Place type" screens in flow 01 of the Product file.
 
 ### PC-03 · The lifestyle axes and their answers
 
@@ -77,9 +77,9 @@
 - **Today:** a `listings` table holds rent, deposit, date and photos (`apps/api/src/db/schema.ts:177-218`). The match query uses the budget of a `has_flat` person as the rent (`apps/api/src/match/query.ts:129-132`).
 - **Options:** a) room fields on the profile b) a hidden `listings` row c) no room details at launch
 - **Blocks:** T-06, T-15, T-16a, T-16b
-- **Record:** [PD0](../decisions/pd-00-v0-scope.md)
+- **Record:** [PD14](../decisions/pd-14-v0-is-the-figma-designs.md)
 
-➡️ **Recommended:** a) Rent, deposit, available-from date and room type go on the profile. PD0 says that a person with a spare room is a person card, not a listing.
+➡️ **Recommended:** b) a `listings` row that people can see, not a hidden one. Flow 04 of the designs makes "A room in my flat" a listing of its own ([PD14](../decisions/pd-14-v0-is-the-figma-designs.md)).
 
 ## Round 3
 
@@ -105,7 +105,7 @@
 - **Blocks:** T-06, T-08, T-12
 - **Record:** new PD (Form A contract)
 
-➡️ **Recommended:** b) Keep the slot with `private` and `shared`. The `wants_flat` intent says "a whole flat", and PD0 has no property objects.
+➡️ **Reopened by [PD14](../decisions/pd-14-v0-is-the-figma-designs.md):** the old answer rested on PD0. Take the values from the "Place type" screen in flow 01 and from the five card kinds.
 
 ## Round 4
 

@@ -31,7 +31,7 @@ The public home page and the waitlist page.
 - [[T-22b Waitlist screen]]
 
 ## Done when
-- [ ] The landing page is for all genders
+- [x] The landing page is for all genders · [#117](https://github.com/magentawood/roomsie/pull/117)
 - [ ] The design has a legal page template, the sign-in wall, the waitlist and empty states
 
 ^done

@@ -26,7 +26,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 119 of the 151 build hours need no designs. The other 32 hours are screens, and these cannot start without designs.
 
-**Until the designs arrive, the work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
+**The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
@@ -744,7 +744,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **F-11 · Product calls: intake, Form A and profile data** — done when:
 - Each call in docs/product-calls/intake-and-profile.md has an answer from the product team
 - Each answer is in its decision record, and the call is not in the file
-- Read first: `docs/product-calls/intake-and-profile.md`, `docs/decisions/pd-00-v0-scope.md`, `docs/decisions/pd-03b-interview-vs-chips.md`
+- Read first: `docs/product-calls/intake-and-profile.md`, `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-03b-interview-vs-chips.md`
 
 **F-12 · Product calls: matching rules** — done when:
 - Each call in docs/product-calls/matching-rules.md has an answer from the product team

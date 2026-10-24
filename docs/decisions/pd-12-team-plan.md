@@ -1,11 +1,11 @@
 # PD12 — Team plan: design-free waves, then screens
 
-**Status:** Settled. Cut again on 2026-09-25. Changed on 2026-10-03. · **Date:** 2026-10-03 · **Deciders:** Yash
+**Status:** Settled. Cut again on 2026-09-25. Changed on 2026-10-03. The designs arrived on 2026-10-24. · **Date:** 2026-10-03 · **Deciders:** Yash
 
 ## Context
 
 - The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer (PD5).
-- The designs D-02, D-03 and D-04 were due on 30 September. They were not complete on that date, and they have no new date.
+- The designs D-02, D-03 and D-04 were due on 30 September. They were not complete on that date. They arrived on 24 October ([PD14](pd-14-v0-is-the-figma-designs.md)).
 - Most of the build hours need no design. The screens need the designs.
 - No accounts or keys exist at this time. Sign-in, the model wrapper, the deploy and error reports need them.
 
@@ -52,7 +52,7 @@
 
 ## Revisit when
 
-- The designs arrive. Then select the launch date in PD11.
+- The designs arrived on 24 October. Select the launch date in PD11 now.
 - The team becomes more than one or two people with agents. Then the lanes can return.
 
 Superseded (2026-10-03): five lanes in two phases, from 24 September to 10 October. The designs had a hard deadline of 30 September.
