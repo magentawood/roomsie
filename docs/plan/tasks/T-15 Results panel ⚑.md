@@ -2,7 +2,7 @@
 id: T-15
 title: "Results panel, built against the contract"
 owner: "P3 Data and trust"
-sequence: "3 of 4"
+sequence: "3 of 14"
 hours: 6
 start: 2026-10-03
 end: 2026-10-08
@@ -18,7 +18,7 @@ tags:
 
 # T-15 · Results panel, built against the contract
 
-**Owner:** [[P3 Data and trust]], task 3 of 4  
+**Owner:** [[P3 Data and trust]], task 3 of 14  
 **When:** Sat 3 Oct → Thu 8 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#16](https://github.com/magentawood/roomsie/issues/16)
@@ -26,7 +26,7 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
-Shows matches as cards. In v0, each card is a person, never a property listing.
+Shows matches as cards: people and places.
 
 ## Needs first
 - [[T-08 Form A contract ⚑]]
@@ -35,13 +35,15 @@ Shows matches as cards. In v0, each card is a person, never a property listing.
 - [[T-14 Match query ⚑]], at a later time. It goes into main on Wed 30 Sep, before you start.
 
 ## Unblocks
-- No task waits on this task.
+- [[T-49 Compare cards]]
+- [[T-50 Found a place, share, feedback]]
 
 ## Done when
-- [ ] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
+- [ ] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 - [ ] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
 - [ ] It updates only when a form value or weight changes. It never changes the order during a scroll
 - [ ] The match score is hidden until lifestyle answers exist
+- [ ] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 
 ^done
 

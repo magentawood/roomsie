@@ -2,7 +2,7 @@
 id: T-14
 title: "Match query API"
 owner: "P3 Data and trust"
-sequence: "2 of 4"
+sequence: "2 of 14"
 hours: 6
 start: 2026-09-29
 end: 2026-10-03
@@ -18,7 +18,7 @@ tags:
 
 # T-14 · Match query API
 
-**Owner:** [[P3 Data and trust]], task 2 of 4  
+**Owner:** [[P3 Data and trust]], task 2 of 14  
 **When:** Tue 29 Sep → Sat 3 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#27](https://github.com/magentawood/roomsie/issues/27)
@@ -40,6 +40,7 @@ Takes what a person wants and returns the people who fit.
 
 ## Done when
 - [ ] It returns the matching people for a form state
+- [ ] It returns the matching listings too, as the `listing` kind of the results
 - [x] The hard filters are area, budget, move date, compatible intent and dealbreakers · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)

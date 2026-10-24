@@ -36,7 +36,7 @@ Before anyone builds them.
 - [[D-05 Design QA]]
 
 ## Done when
-- [x] The chat with chips, the split view and the phone chat bar exist · [#117](https://github.com/magentawood/roomsie/pull/117)
+- [x] The chat with chips, the split view and the phone chat bar exist · [#127](https://github.com/magentawood/roomsie/pull/127)
 - [ ] These have no equivalent in the prototype. V3 starts to build them on Thursday
 
 ^done

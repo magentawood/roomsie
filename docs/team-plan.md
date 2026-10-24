@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-119 of the 151 build hours need no designs. The other 32 hours are screens, and these cannot start without designs.
+174 of the 211 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
@@ -32,7 +32,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test | 23 | 11 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens | 24 | 10 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 84 | -50 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen | 20 | 14 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Connect API, Profile API, Profile screens | 20 | 14 | _name_ |
 
@@ -94,8 +94,18 @@ Finish line: Sat 10 Oct. 64 hours.
 | 2 | T-14 ⚑ · Match query API | 6 | Tue 29 Sep → Sat 3 Oct | T-06, T-08, F-12 |
 | 3 | T-15 ⚑ · Results panel, built against the contract | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03, F-12 |
 | 4 | T-18b ⚑ · Person detail and connect screens | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
+| 5 | T-41 · Listings API: four kinds of lister | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
+| 6 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
+| 7 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
+| 8 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13 |
+| 9 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| 10 | T-46 · DigiLocker verification | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 11 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| 12 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| 13 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| 14 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
 
-Finish line: Sat 10 Oct. 24 hours.
+Finish line: Tue 24 Nov. 84 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -222,6 +232,16 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03, F-13 | [#44](https://github.com/magentawood/roomsie/issues/44) |
+| P3 Data and trust | 5 | T-41 | Listings API: four kinds of lister | 8 | Sun 25 Oct | Wed 28 Oct | CP3 | T-05, T-06, F-11 | [#117](https://github.com/magentawood/roomsie/issues/117) |
+| P3 Data and trust | 6 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
+| P3 Data and trust | 7 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
+| P3 Data and trust | 8 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| P3 Data and trust | 9 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| P3 Data and trust | 10 | T-46 | DigiLocker verification | 8 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 11 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| P3 Data and trust | 12 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| P3 Data and trust | 13 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| P3 Data and trust | 14 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
@@ -323,6 +343,16 @@ gantt
     T-14 Match query API :crit, t14, 2026-09-29, 5d
     T-15 Results panel built against the contract :crit, t15, 2026-10-03, 6d
     T-18b Person detail and connect screens :crit, t18b, 2026-10-08, 3d
+    T-41 Listings API - four kinds of lister :t41, 2026-10-25, 4d
+    T-42 Listing flow and My listings screens :t42, 2026-10-29, 4d
+    T-43 Listing detail screens :t43, 2026-11-02, 3d
+    T-44 Messages API :t44, 2026-11-05, 4d
+    T-45 Messages screens :t45, 2026-11-09, 3d
+    T-46 DigiLocker verification :t46, 2026-11-12, 4d
+    T-47 Saved :t47, 2026-11-16, 2d
+    T-48 Onboarding questions :t48, 2026-11-18, 3d
+    T-49 Compare selected cards :t49, 2026-11-21, 2d
+    T-50 Found a place share and feedback :t50, 2026-11-23, 2d
     section P4 Content and moderation
     T-23a Landing page from the Figma design :t23a, 2026-09-24, 4d
     T-23b Privacy terms and grievance pages :t23b, 2026-09-27, 3d
@@ -421,12 +451,11 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - A Zod schema for Form A is in packages/contract
 - The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty
 - Every enum has an `unclear` value
-- Results are a tagged union with `kind: "person"` for v0. Thus, a later change can add property listings and not break clients
+- Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14)
 - Read first: `docs/agent-architecture.md`, `docs/ai-agent-design.md`, `docs/extensibility.md`
 
 **D-02 · Design the chat screens** — done when:
 - The chat with chips, the split view and the phone chat bar exist
-- These have no equivalent in the prototype. V3 starts to build them on Thursday
 - Read first: `docs/interface-shape.md`
 
 **F-05 · Consent text for the seeding form** — done when:
@@ -657,9 +686,20 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-09 ⚑ | Chip flow for intent, area, budget | P2 | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
 | F-10 | Go/no-go meeting | F |  | Sat 10 Oct | — |
 | T-29 | Abuse test: 100 fake sessions | P1 | 1 | Sat 10 Oct | T-21 |
+| T-41 | Listings API: four kinds of lister | P3 | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
+| T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
+| T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
+| T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13 |
+| T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| T-46 | DigiLocker verification | P3 | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| T-47 | Saved | P3 | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| T-48 | Onboarding questions | P3 | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| T-49 | Compare selected cards | P3 | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| T-50 | Found a place, share and feedback | P3 | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
 
 **T-14 · Match query API** — done when:
 - It returns the matching people for a form state
+- It returns the matching listings too, as the `listing` kind of the results
 - The hard filters are area, budget, move date, compatible intent and dealbreakers
 - The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist
 - Blocked and suspended people never appear
@@ -723,7 +763,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/0014-error-tracking.md`
 
 **T-15 · Results panel, built against the contract** — done when:
-- A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
+- The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 - The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
 - It updates only when a form value or weight changes. It never changes the order during a scroll
 - The match score is hidden until lifestyle answers exist
@@ -859,6 +899,68 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The per-device and per-network limits stop the requests when a device or network goes over them
 - When spend reaches the ceiling, the chat changes to chips only and shows no error page
 - Read first: `docs/pre-login-limits.md`
+
+**T-41 · Listings API: four kinds of lister** — done when:
+- The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing
+- A listing holds the fields of the eight steps of flow 04 in the Product file
+- The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
+- Only the lister can edit, pause or delete a listing
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-03-listing-supply.md`, `docs/extensibility.md`
+
+**T-42 · Listing flow and My listings screens** — done when:
+- The eight steps of flow 04 work for the four kinds of lister, as in the Product file
+- My listings shows each listing of the user, with edit, pause and delete, and the empty state
+- The DigiLocker step of the flow opens the verification of T-46
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
+
+**T-43 · Listing detail screens** — done when:
+- The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat
+- A detail screen needs sign-in
+- Report, share and save are on each detail screen
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
+
+**T-44 · Messages API** — done when:
+- Who can message whom follows the answers of F-13
+- Messages arrive live through Supabase Realtime broadcast
+- The API never gives a message to a user who is not in the conversation
+- A blocked user cannot send a message to the user who blocked them
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/product-calls/connect-and-trust.md`
+
+**T-45 · Messages screens** — done when:
+- The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone
+- The Messages item in the sidebar shows the unread count
+- Report and block are in the menu of the conversation
+- The empty inbox uses the empty state of the designs
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
+
+**T-46 · DigiLocker verification** — done when:
+- Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback
+- The system stores the result and its date, never the document
+- The DigiLocker modal of flow 04 and the Verified badge on the cards use the result
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-08-verification.md`, `docs/verification.md`
+
+**T-47 · Saved** — done when:
+- A signed-in user saves and unsaves a card from the results and from a detail screen
+- Saved in the sidebar lists the saved cards, with the empty state of the designs
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
+
+**T-48 · Onboarding questions** — done when:
+- The screens of flow 01 ask the area, the monthly budget, the place type, who is moving and the purpose, as in the Product file
+- The answers fill the same Form A slots that the chat fills
+- The profile completion card shows the percentage, as in the designs
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/product-calls/intake-and-profile.md`
+
+**T-49 · Compare selected cards** — done when:
+- A user selects two or more cards, and the chat shows them above the input, as in "Listings selected"
+- The assistant compares only the selected cards, and only from their database fields
+- scope-policy.md allows the comparison before the build starts. Today, the assistant states no facts about listings
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/scope-policy.md`
+
+**T-50 · Found a place, share and feedback** — done when:
+- "I found a place" closes the goal, as in its popover, and logs an event
+- Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate
+- The feedback popover saves the feedback of the user
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
 
 ### CP4 · Launch — Mon 12 Oct
 

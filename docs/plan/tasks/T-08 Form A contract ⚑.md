@@ -37,11 +37,13 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 - [[T-09 Chip flow ⚑]]
 - [[T-14 Match query ⚑]]
 - [[T-35 Form B contract]]
+- [[T-48 Onboarding questions]]
 
 ## Done when
 - [ ] A Zod schema for Form A is in packages/contract
 - [ ] The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty
 - [ ] Every enum has an `unclear` value
+- [ ] Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14)
 - [ ] Results are a tagged union with `kind: "person"` for v0. Thus, a later change can add property listings and not break clients
 
 ^done

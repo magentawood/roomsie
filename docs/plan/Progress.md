@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**39 of 221 done · 18%**
+**39 of 256 done · 15%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -23,8 +23,8 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 3 / 9 | 10 / 28 | 36% |
-| [[P2 Chat]] | 0 / 13 | 0 / 58 | 0% |
-| [[P3 Data and trust]] | 0 / 4 | 7 / 19 | 37% |
+| [[P2 Chat]] | 0 / 13 | 0 / 59 | 0% |
+| [[P3 Data and trust]] | 0 / 14 | 7 / 53 | 13% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 21 | 19% |
 | [[Design]] | 1 / 6 | 6 / 12 | 50% |
@@ -52,9 +52,9 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
-| 0 | [[F-11 Intake and profile calls ⚑]] | F |  | ⬜ can start | 33 | [#103](https://github.com/magentawood/roomsie/issues/103) |
-| 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 5 | [#104](https://github.com/magentawood/roomsie/issues/104) |
-| 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 4 | [#105](https://github.com/magentawood/roomsie/issues/105) |
+| 0 | [[F-11 Intake and profile calls ⚑]] | F |  | ⬜ can start | 43 | [#103](https://github.com/magentawood/roomsie/issues/103) |
+| 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 7 | [#104](https://github.com/magentawood/roomsie/issues/104) |
+| 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 7 | [#105](https://github.com/magentawood/roomsie/issues/105) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
@@ -90,6 +90,13 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | [[T-37 Articles and search]] | P4 | 3 | F-11 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | [[T-38 Advisor]] | P2 | 7 | F-11 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | [[T-39 Analytics database]] | P1 | 3 | F-11 | [#68](https://github.com/magentawood/roomsie/issues/68) |
+| [[T-41 Listings API]] | P3 | 8 | F-11 | [#117](https://github.com/magentawood/roomsie/issues/117) |
+| [[T-42 Listing flow screens]] | P3 | 8 | F-11 | [#118](https://github.com/magentawood/roomsie/issues/118) |
+| [[T-44 Messages API]] | P3 | 8 | F-11, F-13 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| [[T-45 Messages screens]] | P3 | 6 | F-11, F-13 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| [[T-46 DigiLocker verification]] | P3 | 8 | F-11, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| [[T-47 Saved]] | P3 | 4 | F-11 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| [[T-48 Onboarding questions]] | P3 | 5 | F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 
 ### Waits on the designs
 
@@ -102,6 +109,9 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | [[T-18b Person and connect screens ⚑]] | P3 | 4 | D-03, F-13 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | [[T-22b Waitlist screen]] | P4 | 1 | D-04, F-06, F-11, F-12 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | [[T-23a Landing page]] | P4 | 4 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
+| [[T-43 Listing detail screens]] | P3 | 5 | D-03, F-11 | [#119](https://github.com/magentawood/roomsie/issues/119) |
+| [[T-49 Compare cards]] | P3 | 4 | D-03, F-11, F-12 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| [[T-50 Found a place, share, feedback]] | P3 | 4 | D-03, F-11, F-12 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 
 ### Graph
 
@@ -148,6 +158,13 @@ flowchart LR
   T37["T-37<br/>Articles and search"]:::product
   T38["T-38<br/>Advisor"]:::product
   T39["T-39<br/>Analytics database"]:::product
+  T41["T-41<br/>Listings API"]:::product
+  T42["T-42<br/>Listing flow screens"]:::product
+  T44["T-44<br/>Messages API"]:::product
+  T45["T-45<br/>Messages screens"]:::product
+  T46["T-46<br/>DigiLocker verification"]:::product
+  T47["T-47<br/>Saved"]:::product
+  T48["T-48<br/>Onboarding questions"]:::product
   T18b["T-18b ⚑<br/>Person and connect screens"]:::design
   T10["T-10 ⚑<br/>Chat screen and split view"]:::design
   T15["T-15 ⚑<br/>Results panel"]:::design
@@ -155,6 +172,9 @@ flowchart LR
   T16b["T-16b ⚑<br/>Profile screens"]:::design
   T23a["T-23a<br/>Landing page"]:::design
   T22b["T-22b<br/>Waitlist screen"]:::design
+  T43["T-43<br/>Listing detail screens"]:::design
+  T49["T-49<br/>Compare cards"]:::design
+  T50["T-50<br/>Found a place, share, feedback"]:::design
   D02(["D-02<br/>Chat screen designs"]):::dtask
   D03(["D-03<br/>Results and profile designs"]):::dtask
   D04(["D-04<br/>Landing and waitlist designs"]):::dtask
@@ -215,6 +235,24 @@ flowchart LR
   T05 --> T38
   M05 --> T38
   T24 --> T39
+  T05 --> T41
+  T06 --> T41
+  F11 --> T41
+  T41 --> T42
+  T05 --> T44
+  T06 --> T44
+  T18a --> T44
+  F13 --> T44
+  T44 --> T45
+  T05 --> T46
+  T06 --> T46
+  F13 --> T46
+  T41 --> T47
+  T05 --> T47
+  T06 --> T47
+  T05 --> T48
+  T08 --> T48
+  F11 --> T48
   D03 -.-> T18b
   F13 --> T18b
   D02 -.-> T10
@@ -229,6 +267,12 @@ flowchart LR
   D04 -.-> T23a
   T22a --> T22b
   D04 -.-> T22b
+  T41 --> T43
+  D03 -.-> T43
+  T13 --> T49
+  T15 --> T49
+  T15 --> T50
+  T24 --> T50
   classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f
   classDef doing fill:#e3b341,color:#000,stroke:#e3b341
   classDef ready fill:#3b82f6,color:#fff,stroke:#3b82f6
@@ -270,9 +314,9 @@ flowchart LR
 > ![[T-29 Abuse test#^done]]
 
 
-## P2 Chat — 0/58
+## P2 Chat — 0/59
 
-> [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/4
+> [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/5
 > ![[T-08 Form A contract ⚑#^done]]
 
 > [!todo]- ⬜ [[T-11 Model wrapper ⚑]] · 0/4
@@ -312,19 +356,49 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 7/19
+## P3 Data and trust — 7/53
 
 > [!todo]- 🟡 [[T-06 Database schema ⚑]] · 4/6
 > ![[T-06 Database schema ⚑#^done]]
 
-> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/4
+> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/5
 > ![[T-14 Match query ⚑#^done]]
 
-> [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/4
+> [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/5
 > ![[T-15 Results panel ⚑#^done]]
 
 > [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/5
 > ![[T-18b Person and connect screens ⚑#^done]]
+
+> [!todo]- ⬜ [[T-41 Listings API]] · 0/4
+> ![[T-41 Listings API#^done]]
+
+> [!todo]- ⬜ [[T-42 Listing flow screens]] · 0/3
+> ![[T-42 Listing flow screens#^done]]
+
+> [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/3
+> ![[T-43 Listing detail screens#^done]]
+
+> [!todo]- ⬜ [[T-44 Messages API]] · 0/4
+> ![[T-44 Messages API#^done]]
+
+> [!todo]- ⬜ [[T-45 Messages screens]] · 0/4
+> ![[T-45 Messages screens#^done]]
+
+> [!todo]- ⬜ [[T-46 DigiLocker verification]] · 0/3
+> ![[T-46 DigiLocker verification#^done]]
+
+> [!todo]- ⬜ [[T-47 Saved]] · 0/2
+> ![[T-47 Saved#^done]]
+
+> [!todo]- ⬜ [[T-48 Onboarding questions]] · 0/3
+> ![[T-48 Onboarding questions#^done]]
+
+> [!todo]- ⬜ [[T-49 Compare cards]] · 0/3
+> ![[T-49 Compare cards#^done]]
+
+> [!todo]- ⬜ [[T-50 Found a place, share, feedback]] · 0/3
+> ![[T-50 Found a place, share, feedback#^done]]
 
 
 ## P4 Content and moderation — 0/22

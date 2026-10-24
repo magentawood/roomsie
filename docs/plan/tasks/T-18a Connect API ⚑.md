@@ -35,6 +35,7 @@ The server side of a connect request. Shows phone numbers only when the two peop
 
 ## Unblocks
 - [[T-18b Person and connect screens ⚑]]
+- [[T-44 Messages API]]
 
 ## Done when
 - [ ] A user can send, accept or decline a connect request

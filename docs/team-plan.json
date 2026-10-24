@@ -126,7 +126,7 @@
     "A Zod schema for Form A is in packages/contract",
     "The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty",
     "Every enum has an `unclear` value",
-    "Results are a tagged union with `kind: \"person\"` for v0. Thus, a later change can add property listings and not break clients"
+    "Results are a tagged union with `kind: \"person\"` and `kind: \"listing\"`. Listings are in v0 (PD14)"
    ],
    "read": [
     "docs/agent-architecture.md",
@@ -149,8 +149,7 @@
     "D-01"
    ],
    "done": [
-    "The chat with chips, the split view and the phone chat bar exist",
-    "These have no equivalent in the prototype. V3 starts to build them on Thursday"
+    "The chat with chips, the split view and the phone chat bar exist"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -469,7 +468,7 @@
   {
    "id": "T-15",
    "title": "Results panel, built against the contract",
-   "plain": "Shows matches as cards. In v0, each card is a person, never a property listing.",
+   "plain": "Shows matches as cards: people and places.",
    "role": "P3",
    "hours": 6,
    "start": "2026-10-03",
@@ -480,7 +479,7 @@
     "F-12"
    ],
    "done": [
-    "A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query",
+    "The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query",
     "The header says what it shows, from Everything in Mumbai down to People in Powai under 20k",
     "It updates only when a form value or weight changes. It never changes the order during a scroll",
     "The match score is hidden until lifestyle answers exist"
@@ -622,6 +621,7 @@
    ],
    "done": [
     "It returns the matching people for a form state",
+    "It returns the matching listings too, as the `listing` kind of the results",
     "The hard filters are area, budget, move date, compatible intent and dealbreakers",
     "The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist",
     "Blocked and suspended people never appear"
@@ -1588,6 +1588,262 @@
    "cp": "CP3",
    "critical": false,
    "issue": 69
+  },
+  {
+   "id": "T-41",
+   "title": "Listings API: four kinds of lister",
+   "plain": "The server part of listings: owners, flatmates, PG operators and brokers save a place.",
+   "role": "P3",
+   "hours": 8,
+   "start": "2026-10-25",
+   "end": "2026-10-28",
+   "deps": [
+    "T-05",
+    "T-06",
+    "F-11"
+   ],
+   "done": [
+    "The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing",
+    "A listing holds the fields of the eight steps of flow 04 in the Product file",
+    "The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API",
+    "Only the lister can edit, pause or delete a listing"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/decisions/pd-03-listing-supply.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 117
+  },
+  {
+   "id": "T-42",
+   "title": "Listing flow and My listings screens",
+   "plain": "The screens where a lister adds a place, and sees and edits their places.",
+   "role": "P3",
+   "hours": 8,
+   "start": "2026-10-29",
+   "end": "2026-11-01",
+   "deps": [
+    "T-41"
+   ],
+   "done": [
+    "The eight steps of flow 04 work for the four kinds of lister, as in the Product file",
+    "My listings shows each listing of the user, with edit, pause and delete, and the empty state",
+    "The DigiLocker step of the flow opens the verification of T-46"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 118
+  },
+  {
+   "id": "T-43",
+   "title": "Listing detail screens",
+   "plain": "Read the full detail of a room, flat, PG or broker listing.",
+   "role": "P3",
+   "hours": 5,
+   "start": "2026-11-02",
+   "end": "2026-11-04",
+   "deps": [
+    "T-41",
+    "D-03"
+   ],
+   "done": [
+    "The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat",
+    "A detail screen needs sign-in",
+    "Report, share and save are on each detail screen"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/decisions/pd-06b-login-gate-and-search.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 119
+  },
+  {
+   "id": "T-44",
+   "title": "Messages API",
+   "plain": "The server part of in-app messages between two users.",
+   "role": "P3",
+   "hours": 8,
+   "start": "2026-11-05",
+   "end": "2026-11-08",
+   "deps": [
+    "T-05",
+    "T-06",
+    "T-18a",
+    "F-13"
+   ],
+   "done": [
+    "Who can message whom follows the answers of F-13",
+    "Messages arrive live through Supabase Realtime broadcast",
+    "The API never gives a message to a user who is not in the conversation",
+    "A blocked user cannot send a message to the user who blocked them"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/extensibility.md",
+    "docs/product-calls/connect-and-trust.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 120
+  },
+  {
+   "id": "T-45",
+   "title": "Messages screens",
+   "plain": "The inbox and the conversation.",
+   "role": "P3",
+   "hours": 6,
+   "start": "2026-11-09",
+   "end": "2026-11-11",
+   "deps": [
+    "T-44"
+   ],
+   "done": [
+    "The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone",
+    "The Messages item in the sidebar shows the unread count",
+    "Report and block are in the menu of the conversation",
+    "The empty inbox uses the empty state of the designs"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 121
+  },
+  {
+   "id": "T-46",
+   "title": "DigiLocker verification",
+   "plain": "Verify a person with DigiLocker, and keep only the result.",
+   "role": "P3",
+   "hours": 8,
+   "start": "2026-11-12",
+   "end": "2026-11-15",
+   "deps": [
+    "T-05",
+    "T-06",
+    "F-13"
+   ],
+   "done": [
+    "Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback",
+    "The system stores the result and its date, never the document",
+    "The DigiLocker modal of flow 04 and the Verified badge on the cards use the result"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/decisions/pd-08-verification.md",
+    "docs/verification.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 122
+  },
+  {
+   "id": "T-47",
+   "title": "Saved",
+   "plain": "Save a person or a place, and see them again under Saved.",
+   "role": "P3",
+   "hours": 4,
+   "start": "2026-11-16",
+   "end": "2026-11-17",
+   "deps": [
+    "T-41",
+    "T-05",
+    "T-06"
+   ],
+   "done": [
+    "A signed-in user saves and unsaves a card from the results and from a detail screen",
+    "Saved in the sidebar lists the saved cards, with the empty state of the designs"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 123
+  },
+  {
+   "id": "T-48",
+   "title": "Onboarding questions",
+   "plain": "The first questions after sign-in: area, budget, place type, who is moving and purpose.",
+   "role": "P3",
+   "hours": 5,
+   "start": "2026-11-18",
+   "end": "2026-11-20",
+   "deps": [
+    "T-05",
+    "T-08",
+    "F-11"
+   ],
+   "done": [
+    "The screens of flow 01 ask the area, the monthly budget, the place type, who is moving and the purpose, as in the Product file",
+    "The answers fill the same Form A slots that the chat fills",
+    "The profile completion card shows the percentage, as in the designs"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/product-calls/intake-and-profile.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 124
+  },
+  {
+   "id": "T-49",
+   "title": "Compare selected cards",
+   "plain": "Select some cards, and the assistant compares them in the chat.",
+   "role": "P3",
+   "hours": 4,
+   "start": "2026-11-21",
+   "end": "2026-11-22",
+   "deps": [
+    "T-13",
+    "T-15"
+   ],
+   "done": [
+    "A user selects two or more cards, and the chat shows them above the input, as in \"Listings selected\"",
+    "The assistant compares only the selected cards, and only from their database fields",
+    "scope-policy.md allows the comparison before the build starts. Today, the assistant states no facts about listings"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/scope-policy.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 125
+  },
+  {
+   "id": "T-50",
+   "title": "Found a place, share and feedback",
+   "plain": "Close a search when the user finds a place, share a card, and send feedback.",
+   "role": "P3",
+   "hours": 4,
+   "start": "2026-11-23",
+   "end": "2026-11-24",
+   "deps": [
+    "T-15",
+    "T-24"
+   ],
+   "done": [
+    "\"I found a place\" closes the goal, as in its popover, and logs an event",
+    "Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate",
+    "The feedback popover saves the feedback of the user"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/decisions/pd-06b-login-gate-and-search.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 126
   }
  ],
  "milestones": [

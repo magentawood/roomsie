@@ -40,6 +40,11 @@ Log in with Google. The server checks the user on each request.
 - [[T-21 Turn cap and spend ceiling]]
 - [[T-18a Connect API ⚑]]
 - [[T-38 Advisor]]
+- [[T-41 Listings API]]
+- [[T-44 Messages API]]
+- [[T-46 DigiLocker verification]]
+- [[T-47 Saved]]
+- [[T-48 Onboarding questions]]
 
 ## Done when
 - [ ] Google sign-in works through Firebase on the web. The token stays in memory

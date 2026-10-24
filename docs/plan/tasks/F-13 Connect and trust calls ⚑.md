@@ -34,6 +34,8 @@ Decide how two people connect, and how we keep them safe.
 - [[T-18b Person and connect screens ⚑]]
 - [[F-07 Privacy and terms draft]]
 - [[T-18a Connect API ⚑]]
+- [[T-44 Messages API]]
+- [[T-46 DigiLocker verification]]
 
 ## Done when
 - [ ] Each call in docs/product-calls/connect-and-trust.md has an answer from the product team
