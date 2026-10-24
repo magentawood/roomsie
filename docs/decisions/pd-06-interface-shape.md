@@ -41,7 +41,7 @@ The flow opened five holes. `interface-shape.md` records each one:
 - Browse, chat and the two-panel view are public. Thus, there was no conflict with the no-skip rule.
 - A visitor from search starts in the two-panel view, with the page filters applied and some form fields filled.
 - **Latency.** The panel must not wait for the model. Run the query from the current form state.
-- **Cold start.** No skip and an empty panel give a dead end. Define the empty state before launch: make the area larger, relax a dealbreaker, or offer a notification.
+- **Cold start.** No skip and an empty panel give a dead end. [PD6c](pd-06c-interface-holes.md) defines the empty state.
 - If Mumbai supply is small, a forced interview makes the dead end worse. The user did work for no result.
 
 ## Sources

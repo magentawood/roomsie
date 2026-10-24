@@ -53,6 +53,8 @@ observation: {
 }
 ```
 
+`visible` means that the user sees the note in the chat. Other users never see it ([PD7a](decisions/pd-07a-agent-architecture.md)).
+
 - **Each observation must contain the user's actual words.** If the model cannot give a verbatim span from the turn, the system rejects the observation.
 - **Build Form B one turn at a time, not in one pass at the end.**
 - **The user sees and corrects Form B in the chat.**

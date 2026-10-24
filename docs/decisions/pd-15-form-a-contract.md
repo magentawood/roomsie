@@ -29,7 +29,7 @@
   | Pets | No pets, Fine with pets |
 
 - **No community question** ([PD3c](pd-03c-exclusionary-preferences.md)).
-- **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly. A dealbreaker hides a card. A preference moves it down. Women only and Men only wait for F-13 (PC-30).
+- **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly. A dealbreaker filters, and a preference ranks ([PD3a](pd-03a-flatmate-matching.md)). Women only and Men only wait for F-13 (PC-30).
 - **Who's moving.** Each answer has a type and a household:
 
   | Who's moving | Type | Household |

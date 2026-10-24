@@ -1,6 +1,6 @@
 # Product calls: connect, trust and safety
 
-**Task:** F-13 · **Status:** open · **Updated:** 2026-10-24
+**Task:** F-13 · **Status:** open · **Updated:** 2026-10-25
 
 ## How to run this session
 
@@ -56,7 +56,7 @@
 ❓ How does a person learn of a connect request, an accept or a waitlist opening?
 - **Today:** no channel. The designs have "Email alerts".
 - **Options:** a) email b) WhatsApp c) SMS d) web push e) nothing.
-- **Blocks:** T-18a, T-18b, T-22a, PC-35, PC-36.
+- **Blocks:** T-18a, T-18b, T-22a, PC-35.
 - **Record:** the PD record for connect and contact.
 ➡️ **Recommended:** a). Google sign-in gives each user a verified email. WhatsApp and SMS need sender approval.
 
@@ -71,7 +71,7 @@
 ### PC-30 · Gender: field, preference filter, trust story
 ❓ Does a profile hold gender, and can a stated preference filter on it? What replaces the women-only trust story?
 - **Today:** PD3c records gender preferences, but no profile has gender (`apps/api/src/db/schema.ts`). [PD1](../decisions/pd-01-audience.md) and PD8 keep the trust story open.
-- **The designs:** a required gender field, the must-haves "Women only" and "Men only" (public), and "Who can move in" on a listing.
+- **The designs:** a required gender field, the must-haves "Women only" and "Men only" (on the card), and "Who can move in" on a listing.
 - **Options:** a) an optional field that a stated preference filters b) no field, record only c) a women-only mode.
 - **Blocks:** T-06, T-08, T-14, T-16a, T-16b, M-06, D-04, PC-39.
 - **Record:** [PD8](../decisions/pd-08-verification.md), "Revisit when".

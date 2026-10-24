@@ -1,6 +1,6 @@
 # PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Settled on 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -10,7 +10,7 @@
 
 ## Decision
 
-**In one line:** Each place type sees its own kind of card, must-haves filter both ways between people, gaps rank lower, and a plain "Best match" label marks the cards that meet every preference.
+**In one line:** Each place type sees its own kind; must-haves filter both ways between people; gaps rank lower; a plain "Best match" label marks full fits.
 
 **Who sees what (PC-20)**
 
@@ -38,25 +38,28 @@ Women only and Men only wait for F-13 (PC-30).
 
 **Filters**
 
-- **Between people, the dealbreakers are mutual (PC-24).** Each person's dealbreakers apply to the other.
+- **Between people, the dealbreakers are mutual (PC-24).**
 - **A listing filters on "Who is welcome" (PD15) and on the searcher's must-haves.** Its house rules show on the card. They do not hide it from a seeker.
 - **A gap does not hide a card (PC-25).** A card with an unanswered dealbreaker shows below the full matches, with the label "Didn't say: …".
-- **Budget (PC-26).** The budget is compared with the rent. A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
+- **Budget (PC-26).** The query compares the budget with the rent. A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
 - **Move date (PC-26).** It passes in a window of 30 days before or after. An empty move date passes.
 
 **Order and label (PC-23, PC-33, PC-28)**
 
-- "Best Matches" order: full matches, then in budget, then the most preferences met, then Form B notes as a tie-break, then the nearest move date, then newest.
+- The "Best Matches" order:
+  1. Full matches.
+  2. In budget.
+  3. The most preferences met.
+  4. Form B notes, as a tie-break.
+  5. The nearest move date.
+  6. Newest.
 - A "Best match" label shows when the searcher stated three or more preferences and the card meets all of them. There is no score number and no sentence.
-- Form B notes only break ties. They never show to others (PD7a).
 
 ## Rationale
 
-- One kind of card for each place type gives the results that the person asked for. The chips of the designs widen them.
-- A strict mapping reads as most people in Mumbai mean it. For example, a veg kitchen is not a Jain kitchen.
+- A strict mapping reads as most people in Mumbai mean it.
 - Mutual dealbreakers between people stop connect requests that the other person will decline. A house rule is the promise of the lister. The seeker decides.
-- Seeded profiles have gaps. A hidden gap empties the panel, and a label stays honest.
-- The leeway keeps near-misses in a sparse launch, below the cards that fit.
+- A hidden gap empties the panel, and a label stays honest.
 - With one or two preferences, a score is noise. A label for a card that meets all of three or more preferences is true and simple.
 
 ## Alternatives rejected
@@ -65,14 +68,13 @@ Women only and Men only wait for F-13 (PC-30).
 - **A loose mapping.** An egg-eater meets a strict veg household.
 - **Mutual for listings too.** "Smokes" does not mean "smokes indoors". Good matches disappear.
 - **Hide a card with a gap.** Seeded profiles disappear at launch.
-- **No budget leeway.** A ₹15,500 room is hidden from an "Under ₹15k" seeker.
+- **No budget leeway.** The filter hides a ₹15,500 room from an "Under ₹15k" seeker.
 - **A score number, or a sentence from the model.** A number reads 70% for no preference met. A sentence from the model can state a false fact about a person (scope-policy.md).
 - **Form B neither shown nor ranked.** The product team wants the context of the chat in the order.
 
 ## Consequences
 
-- T-14 builds the filters and the order. T-15 shows the two labels. The designer adds a "Didn't say" label, and changes "A great match" into a "Best match" label.
-- A Form B note that is not correct can move a card down. The user corrects notes in the chat (PD7a).
+- A Form B note that is not correct can move a card down (PD7a).
 
 ## Revisit when
 
