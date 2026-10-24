@@ -35,8 +35,8 @@ Decide who matches whom, and what the results show.
 - [[T-14 Match query ⚑]]
 
 ## Done when
-- [ ] Each call in docs/product-calls/matching-rules.md has an answer from the product team
-- [ ] Each answer is in its decision record, and the call is not in the file
+- [x] Each call in docs/product-calls/matching-rules.md has an answer from the product team · [#130](https://github.com/magentawood/roomsie/pull/130)
+- [x] Each answer is in its decision record, and the call is not in the file · [#130](https://github.com/magentawood/roomsie/pull/130)
 
 ^done
 
@@ -70,3 +70,13 @@ Decide who matches whom, and what the results show.
     - T-22b: new item: "A search with launch and other areas shows the launch results and one waitlist line (PD6c)".
     - T-14 (review finding, decided by the user): the two reworded items lose the ticks of #59, because the code does not do them yet.
 - **Out of scope:** the matching code (T-14, T-15), the gender must-haves (F-13, PC-30), the notification channel (F-13, PC-22), and the changes in Figma (the list for the designer goes in the PR).
+
+## Log
+
+- **2026-10-25 · [#130](https://github.com/magentawood/roomsie/pull/130)**
+  - **Change:** each matching call has an answer. PD3a is settled: who sees what, the must-have mapping, the filters, the "Best Matches" order and the "Best match" label. PD6c holds the empty state, and PD7a the audience of Form B. T-14, T-15 and T-22b follow the answers.
+  - **Why:** [PD3a](../../decisions/pd-03a-flatmate-matching.md), [PD6c](../../decisions/pd-06c-interface-holes.md)
+  - **Ticked:** both items.
+  - **Not done:** none.
+  - **Learn:** none.
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-25--f-12-the-matching-calls-have-answers)
