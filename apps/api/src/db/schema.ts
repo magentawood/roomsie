@@ -9,9 +9,10 @@
  * a person lives in `profiles`. The per-request auth check then reads a tiny
  * row, and editing a profile never touches the auth row.
  */
+import { sql } from 'drizzle-orm'
 import {
   pgTable, pgEnum, uuid, text, integer, boolean, date, timestamp, jsonb,
-  primaryKey, uniqueIndex, index,
+  primaryKey, uniqueIndex, index, check, unique,
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 
@@ -25,15 +26,35 @@ const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull(
  * know. Lifecycle enums (account status, request status) do not — those are
  * facts the system owns, not answers a person gave.
  */
-export const intentEnum = pgEnum('intent', ['has_flat', 'wants_flat', 'wants_room', 'open', 'unclear'])
-export const roomTypeEnum = pgEnum('room_type', ['private', 'shared', 'whole_flat', 'unclear'])
+/** The place type a seeker picks (PD15). A lister is a listing, not a seeker. */
+export const intentEnum = pgEnum('intent', ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'])
+/** Only the chat fills this (PD15). */
+export const roomTypeEnum = pgEnum('room_type', ['private', 'shared', 'unclear'])
+/** The choice itself; the contract maps it to a type and a household (PD15). */
+export const whosMovingEnum = pgEnum('whos_moving', ['student', 'first_job', 'working', 'couple', 'family', 'friends', 'unclear'])
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn'])
 export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
 export const visibilityEnum = pgEnum('visibility', ['draft', 'live', 'hidden'])
+export const goalStatusEnum = pgEnum('goal_status', ['open', 'found'])
+export const turnRoleEnum = pgEnum('turn_role', ['user', 'assistant'])
+export const turnInputEnum = pgEnum('turn_input', ['typed', 'chip'])
 
-/** How much an answer counts. A dealbreaker filters people out; a preference
- *  only moves them down the ranking. */
+/* The single choices of the listing flow (flow 04 of the designs). */
+export const listingKindEnum = pgEnum('listing_kind', ['room_in_flat', 'owner_flat', 'pg', 'broker_flat'])
+export const listingStatusEnum = pgEnum('listing_status', ['draft', 'live', 'inactive', 'filled'])
+export const placeTypeEnum = pgEnum('place_type', ['1rk', '1bhk', '2bhk', '3bhk', '4bhk', 'studio', 'independent_house', 'bungalow_villa', 'penthouse'])
+export const furnishingEnum = pgEnum('furnishing', ['fully', 'semi', 'unfurnished'])
+export const bathroomEnum = pgEnum('bathroom', ['attached', 'shared'])
+export const mealsEnum = pgEnum('meals', ['veg_included', 'veg_non_veg', 'breakfast_only', 'none'])
+export const curfewEnum = pgEnum('curfew', ['none', '10pm', '10_30pm', '11pm', 'midnight'])
+export const electricityEnum = pgEnum('electricity', ['included', 'as_per_meter', 'split_equally'])
+export const minStayEnum = pgEnum('min_stay', ['3_months', '6_months', '12_months', 'flexible'])
+export const guestsRuleEnum = pgEnum('guests_rule', ['none', 'welcome', 'day_visits'])
+export const walkTimeEnum = pgEnum('walk_time', ['5_min', '10_min', '15_min', '30_min', 'not_close'])
+
+/** How much a must-have counts. A dealbreaker hides a card; a preference only
+ *  moves it down the ranking. */
 export const weightEnum = pgEnum('answer_weight', ['prefer', 'dealbreaker'])
 
 /** Where a value came from. T-08's fourth state, `empty`, is the absence of a
@@ -54,7 +75,7 @@ export const users = pgTable('users', {
   updatedAt: updatedAt(),
 }, (t) => ({
   authProviderIdx: uniqueIndex('users_auth_provider_id_idx').on(t.authProviderId),
-}))
+})).enableRLS()
 
 /* ── the person ─────────────────────────────────────────────────────────── */
 
@@ -62,13 +83,20 @@ export const profiles = pgTable('profiles', {
   id: id(),
   userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
 
-  displayName: text('display_name').notNull(),
+  fullName: text('full_name').notNull(),
+  /** Empty until the person gives it; a card stays hidden until then (PD16). */
   age: integer('age'),
-  work: text('work'),
+  /** The role only, never the company (PD16). */
+  jobRole: text('job_role'),
+  commuteAddress: text('commute_address'),
+  bio: text('bio'),
+  /** A parent runs this card for an adult son or daughter (PD16). */
+  managedByParent: boolean('managed_by_parent').notNull().default(false),
 
   // Form A — the hard constraints that drive the match query (T-14).
   intent: intentEnum('intent').notNull().default('unclear'),
   roomType: roomTypeEnum('room_type').notNull().default('unclear'),
+  whosMoving: whosMovingEnum('whos_moving').notNull().default('unclear'),
   /** Rupees per month. A band in the UI, a range here. */
   budgetMin: integer('budget_min'),
   budgetMax: integer('budget_max'),
@@ -81,6 +109,7 @@ export const profiles = pgTable('profiles', {
 
   /** Object keys in R2. Photo bytes never pass through the API (T-16). */
   photoKeys: text('photo_keys').array().notNull().default([]),
+  /** `hidden` is the "Hide my card" switch (PD16). */
   visibility: visibilityEnum('visibility').notNull().default('draft'),
 
   createdAt: createdAt(),
@@ -88,24 +117,15 @@ export const profiles = pgTable('profiles', {
 }, (t) => ({
   userIdx: uniqueIndex('profiles_user_id_idx').on(t.userId),
   liveIdx: index('profiles_live_idx').on(t.visibility, t.intent),
-}))
+  adultCheck: check('profiles_adult_check', sql`${t.age} >= 18`),
+  photoLimitCheck: check('profiles_photo_limit_check', sql`cardinality(${t.photoKeys}) <= 4`),
+})).enableRLS()
 
-/* ── the axis catalogue ─────────────────────────────────────────────────────
- *
- *  ⚠️  THE NINE AXIS NAMES BELOW ARE PROVISIONAL — CHOSEN BY ENGINEERING.
- *
- *  Every planning document says "the nine lifestyle axes" and not one of them
- *  says what the nine are. Rather than block, the axes are stored as DATA in
- *  `lifestyle_axes`, not as nine columns here.
- *
- *  Adding, renaming, dropping or re-valuing an axis is therefore a seed edit
- *  and a re-seed — no migration, no backfill, no deploy. See seed-axes.ts.
- *
- *  That only stays true if three things hold:
- *    1. packages/contract generates Form A from this table, never hardcodes it
- *    2. the match query (T-14) joins through it, never `WHERE smoking = ...`
- *    3. the extraction prompt (T-12) is built from it, never typed out
- *  One and three are P2's lane. This is a shared contract, like Form A itself.
+/* ── the lifestyle catalogue ───────────────────────────────────────────────
+ * The eight questions of PD15 are DATA in `lifestyle_axes`, not columns, so a
+ * new or changed question is a seed edit with no migration (seed-axes.ts).
+ * That holds only while the contract, the extraction prompt and the match
+ * query all read this table, never a typed-out list.
  */
 export const lifestyleAxes = pgTable('lifestyle_axes', {
   /** Stable machine key, e.g. `smoking`. Referenced by contract and prompts. */
@@ -118,7 +138,7 @@ export const lifestyleAxes = pgTable('lifestyle_axes', {
   /** Retire an axis without deleting anyone's answers. */
   active: boolean('active').notNull().default(true),
   createdAt: createdAt(),
-})
+}).enableRLS()
 
 /** One row per person per axis they have answered. No row means unanswered —
  *  that is T-08's `empty`. */
@@ -129,15 +149,35 @@ export const profileLifestyle = pgTable('profile_lifestyle', {
    *  not by a CHECK, because the allowed set is data and changes without a
    *  migration. */
   value: text('value').notNull(),
-  weight: weightEnum('weight').notNull().default('prefer'),
   source: sourceEnum('source').notNull().default('stated'),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => ({
   pk: primaryKey({ columns: [t.profileId, t.axisKey] }),
-  /** The match query filters on dealbreakers first — this is its index. */
-  axisValueIdx: index('profile_lifestyle_axis_value_idx').on(t.axisKey, t.value, t.weight),
-}))
+  /** Must-haves filter on lifestyle answers; this is their index. */
+  axisValueIdx: index('profile_lifestyle_axis_value_idx').on(t.axisKey, t.value),
+})).enableRLS()
+
+/** The seven must-haves of PD15, as data like the lifestyle questions. */
+export const mustHaves = pgTable('must_haves', {
+  key: text('key').primaryKey(),
+  label: text('label').notNull(),
+  sortOrder: integer('sort_order').notNull(),
+  /** Women only and Men only stay inactive until F-13 decides PC-30. */
+  active: boolean('active').notNull().default(true),
+  createdAt: createdAt(),
+}).enableRLS()
+
+export const profileMustHaves = pgTable('profile_must_haves', {
+  profileId: uuid('profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+  mustHaveKey: text('must_have_key').notNull().references(() => mustHaves.key),
+  weight: weightEnum('weight').notNull().default('prefer'),
+  source: sourceEnum('source').notNull().default('stated'),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.profileId, t.mustHaveKey] }),
+})).enableRLS()
 
 /* ── areas ──────────────────────────────────────────────────────────────────
  * A controlled vocabulary, not free text.
@@ -172,50 +212,122 @@ export const areas = pgTable('areas', {
   updatedAt: updatedAt(),
 }, (t) => ({
   launchIdx: index('areas_launch_idx').on(t.isLaunchArea, t.sortOrder),
-}))
+})).enableRLS()
 
 /* ── listings ───────────────────────────────────────────────────────────────
- * A flat or a room being offered, posted by someone whose intent is has_flat.
- *
- * Named as a table by ADR 0015's client-vs-API minting split, and required by
- * seo-with-gated-products.md, which aggregates rent bands by room type across
- * listings and states that listings expire after 30 days.
- *
- * Distinct from `profiles` on purpose: a profile is a person, a listing is a
- * property. One person can post more than one, and a listing outlives any
- * single conversation about it.
+ * A place that a lister offers, with the fields of the eight steps of the
+ * listing flow. A lister is a listing, not a seeker (PD15), so a listing
+ * belongs to a user. A draft can be incomplete; the checks apply from `live`.
+ * The pick-many lists hold fixed keys that the contract checks, like `areas`.
  */
 export const listings = pgTable('listings', {
   id: id(),
-  profileId: uuid('profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+  ownerUserId: uuid('owner_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  kind: listingKindEnum('kind').notNull(),
+  status: listingStatusEnum('status').notNull().default('draft'),
 
-  title: text('title').notNull(),
-  description: text('description'),
-  /** References areas.slug. Not a text array — a listing is in one place. */
-  areaSlug: text('area_slug').notNull().references(() => areas.slug),
-  roomType: roomTypeEnum('room_type').notNull().default('unclear'),
+  // Where is it?
+  pgName: text('pg_name'),
+  areaSlug: text('area_slug').references(() => areas.slug),
+  /** Private until the lister turns on shareAddress. */
+  address: text('address'),
+  shareAddress: boolean('share_address').notNull().default(false),
+  building: text('building'),
+  street: text('street'),
+  landmark: text('landmark'),
+  pincode: text('pincode'),
 
-  /** Rupees per month. A listing states a rent; a seeker states a budget. */
-  rent: integer('rent').notNull(),
-  deposit: integer('deposit'),
+  // What's nearby?
+  nearestStation: text('nearest_station'),
+  walkStation: walkTimeEnum('walk_station'),
+  walkBus: walkTimeEnum('walk_bus'),
+  walkMarket: walkTimeEnum('walk_market'),
+  walkGym: walkTimeEnum('walk_gym'),
+  walkMall: walkTimeEnum('walk_mall'),
+
+  // What's the place?
+  placeType: placeTypeEnum('place_type'),
+  furnishing: furnishingEnum('furnishing'),
+  roomType: roomTypeEnum('room_type'),
+  floor: integer('floor'),
+  carpetAreaSqft: integer('carpet_area_sqft'),
+  sharing: text('sharing').array().notNull().default([]),
+  /** 5 means five or more, as the designs offer "5+". */
+  bedsFree: integer('beds_free'),
+  meals: mealsEnum('meals'),
+  curfew: curfewEnum('curfew'),
+  bathroom: bathroomEnum('bathroom'),
+  balcony: boolean('balcony'),
+  inside: text('inside').array().notNull().default([]),
+  amenities: text('amenities').array().notNull().default([]),
+
+  // Rent, deposit and dates. The rents are in listing_rates.
+  maintenance: integer('maintenance'),
+  maintenanceIncluded: boolean('maintenance_included'),
+  electricity: electricityEnum('electricity'),
+  rentNegotiable: boolean('rent_negotiable'),
+  brokerage: integer('brokerage'),
   availableFrom: date('available_from'),
+  minStay: minStayEnum('min_stay'),
+
+  // House rules and who's welcome
+  vegOnlyKitchen: boolean('veg_only_kitchen'),
+  smokingAllowed: boolean('smoking_allowed'),
+  alcoholAllowed: boolean('alcohol_allowed'),
+  guests: guestsRuleEnum('guests'),
+  welcome: text('welcome').array().notNull().default([]),
+
+  /** The lister confirmed "My flatmates agreed to be shown". */
+  flatmatesConsent: boolean('flatmates_consent').notNull().default(false),
 
   photoKeys: text('photo_keys').array().notNull().default([]),
-  visibility: visibilityEnum('visibility').notNull().default('draft'),
-  /** Listings go stale and Google demotes link decay, so they expire rather
-   *  than 404. Thirty days, per seo-with-gated-products.md. */
-  expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+  description: text('description'),
+  /** Set when the listing goes live: stale listings expire, not 404 (seo-with-gated-products.md). */
+  expiresAt: timestamp('expires_at', { withTimezone: true }),
 
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => ({
-  /** The area-page aggregate: rent bands by room type, per area. */
-  areaRentIdx: index('listings_area_rent_idx').on(t.areaSlug, t.roomType, t.rent),
-  /** Live listings only — expired ones vanish from results but stay queryable
-   *  for the aggregates, which is why they are dated rather than deleted. */
-  liveIdx: index('listings_live_idx').on(t.visibility, t.expiresAt),
-  ownerIdx: index('listings_owner_idx').on(t.profileId),
-}))
+  areaStatusIdx: index('listings_area_status_idx').on(t.areaSlug, t.status, t.expiresAt),
+  ownerIdx: index('listings_owner_idx').on(t.ownerUserId),
+  insideIdx: index('listings_inside_idx').using('gin', t.inside),
+  amenitiesIdx: index('listings_amenities_idx').using('gin', t.amenities),
+  welcomeIdx: index('listings_welcome_idx').using('gin', t.welcome),
+  photoLimitCheck: check('listings_photo_limit_check', sql`cardinality(${t.photoKeys}) <= 5`),
+  liveFieldsCheck: check('listings_live_fields_check', sql`${t.status} = 'draft' or (
+    ${t.areaSlug} is not null
+    and (${t.kind} <> 'pg' or ${t.pgName} is not null)
+    and (${t.kind} <> 'broker_flat' or ${t.brokerage} is not null))`),
+})).enableRLS()
+
+/** One rent for a room or a flat; one for each sharing type of a PG. */
+export const listingRates = pgTable('listing_rates', {
+  id: id(),
+  listingId: uuid('listing_id').notNull().references(() => listings.id, { onDelete: 'cascade' }),
+  /** Empty except for a PG. */
+  sharing: text('sharing'),
+  rent: integer('rent').notNull(),
+  deposit: integer('deposit'),
+  createdAt: createdAt(),
+}, (t) => ({
+  sharingUnique: unique('listing_rates_sharing_unique').on(t.listingId, t.sharing).nullsNotDistinct(),
+  rentIdx: index('listing_rates_rent_idx').on(t.rent),
+})).enableRLS()
+
+/** "Who lives here" of a room listing: people who never sign up. */
+export const listingFlatmates = pgTable('listing_flatmates', {
+  id: id(),
+  listingId: uuid('listing_id').notNull().references(() => listings.id, { onDelete: 'cascade' }),
+  name: text('name').notNull(),
+  age: integer('age'),
+  whatTheyDo: text('what_they_do'),
+  food: text('food'),
+  photoKey: text('photo_key'),
+  sortOrder: integer('sort_order').notNull().default(0),
+  createdAt: createdAt(),
+}, (t) => ({
+  listingIdx: index('listing_flatmates_listing_idx').on(t.listingId),
+})).enableRLS()
 
 /* ── the anonymous visitor ──────────────────────────────────────────────── */
 
@@ -223,8 +335,6 @@ export const anonymousSessions = pgTable('anonymous_sessions', {
   id: id(),
   /** Per-device, per-network hash. Feeds the rate limits in T-21. */
   deviceHash: text('device_hash').notNull(),
-  /** Form A so far, as the assistant has filled it. Partial by definition. */
-  form: jsonb('form').notNull().default({}),
   /** Typed turns only — chip taps are free and do not count (T-21). */
   turnCount: integer('turn_count').notNull().default(0),
   /** Set when the visitor signs in and the chat is carried over (T-17). */
@@ -235,7 +345,44 @@ export const anonymousSessions = pgTable('anonymous_sessions', {
 }, (t) => ({
   deviceIdx: index('anonymous_sessions_device_idx').on(t.deviceHash),
   claimedIdx: index('anonymous_sessions_claimed_idx').on(t.claimedByUserId),
-}))
+})).enableRLS()
+
+/* ── goals and the chat ─────────────────────────────────────────────────────
+ * A goal is one move, with its own chat and search ("Same move?" in the
+ * designs). A visitor's goals move to the account at sign-in (T-17).
+ */
+
+export const goals = pgTable('goals', {
+  id: id(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  anonymousSessionId: uuid('anonymous_session_id').references(() => anonymousSessions.id, { onDelete: 'cascade' }),
+  title: text('title'),
+  /** Form A of this move, as the assistant has filled it. Partial by definition. */
+  form: jsonb('form').notNull().default({}),
+  status: goalStatusEnum('status').notNull().default('open'),
+  foundAt: timestamp('found_at', { withTimezone: true }),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+}, (t) => ({
+  userIdx: index('goals_user_idx').on(t.userId, t.status),
+  sessionIdx: index('goals_session_idx').on(t.anonymousSessionId),
+  oneOwnerCheck: check('goals_one_owner_check', sql`num_nonnulls(${t.userId}, ${t.anonymousSessionId}) = 1`),
+})).enableRLS()
+
+/** Both sides of a goal's chat. The observer reads only the typed user turns. */
+export const chatTurns = pgTable('chat_turns', {
+  id: id(),
+  goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
+  role: turnRoleEnum('role').notNull(),
+  input: turnInputEnum('input'),
+  text: text('text').notNull(),
+  /** The cards and chips an assistant turn showed, to redraw a reopened goal. */
+  parts: jsonb('parts'),
+  createdAt: createdAt(),
+}, (t) => ({
+  goalIdx: index('chat_turns_goal_idx').on(t.goalId, t.createdAt),
+  inputCheck: check('chat_turns_input_check', sql`(${t.role} = 'user') = (${t.input} is not null)`),
+})).enableRLS()
 
 /* ── connecting ─────────────────────────────────────────────────────────── */
 
@@ -251,7 +398,7 @@ export const connectionRequests = pgTable('connection_requests', {
    *  reaches `accepted` (T-18a). */
   pairIdx: uniqueIndex('connection_requests_pair_idx').on(t.fromProfileId, t.toProfileId),
   inboxIdx: index('connection_requests_inbox_idx').on(t.toProfileId, t.status),
-}))
+})).enableRLS()
 
 /* ── safety ─────────────────────────────────────────────────────────────────
  * ADR 0015: reports and blocks are client-mintable, so their endpoints accept
@@ -271,7 +418,7 @@ export const reports = pgTable('reports', {
   /** The moderator's saved query: open reports, oldest first (T-19). */
   queueIdx: index('reports_queue_idx').on(t.status, t.createdAt),
   subjectIdx: index('reports_subject_idx').on(t.subjectUserId),
-}))
+})).enableRLS()
 
 export const blocks = pgTable('blocks', {
   id: id(),
@@ -283,23 +430,9 @@ export const blocks = pgTable('blocks', {
   /** The match query subtracts blocks in BOTH directions — a block hides each
    *  person from the other, not just one way. */
   blockedIdx: index('blocks_blocked_idx').on(t.blockedUserId),
-}))
+})).enableRLS()
 
-/* ── measurement ────────────────────────────────────────────────────────── */
-
-export const events = pgTable('events', {
-  id: id(),
-  /** Exactly one of these is set. Anonymous events matter most — they are how
-   *  you see people who start a chat and never sign up (T-24). */
-  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
-  anonymousSessionId: uuid('anonymous_session_id').references(() => anonymousSessions.id, { onDelete: 'set null' }),
-  name: text('name').notNull(),
-  props: jsonb('props').notNull().default({}),
-  occurredAt: timestamp('occurred_at', { withTimezone: true }).notNull(),
-  createdAt: createdAt(),
-}, (t) => ({
-  funnelIdx: index('events_name_occurred_idx').on(t.name, t.occurredAt),
-}))
+/* ── waitlist ───────────────────────────────────────────────────────────── */
 
 export const waitlist = pgTable('waitlist', {
   id: id(),
@@ -310,4 +443,4 @@ export const waitlist = pgTable('waitlist', {
   invitedAt: timestamp('invited_at', { withTimezone: true }),
 }, (t) => ({
   emailIdx: uniqueIndex('waitlist_email_idx').on(t.email),
-}))
+})).enableRLS()

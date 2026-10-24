@@ -1,85 +1,45 @@
 /**
- * The nine lifestyle axes — PROVISIONAL NAMES.
- *
- * ⚠️  Engineering chose these. No planning document enumerates the nine; they
- *     are referenced in six docs and defined in none. These are a placeholder
- *     so T-06, T-08, T-12 and T-14 can be built against something real.
- *
- * Changing them is a seed edit and a re-seed. No migration. No backfill.
- * Add one, drop one, rename one, change its answers — all data, not schema.
- *
- * Grounding, such as it is:
- *   · `smoking`  appears by name in ai-agent-design.md §3
- *   · `guests`   appears as the example key `guest_frequency` in
- *                agent-architecture.md, and as the worked example
- *                "my ex basically lived there, that's what killed it"
- *   · `diet`     carries jain and eggetarian because the launch market is Mumbai
- *   · `community` exists because decision PD3c (2026-09-20) explicitly chose to
- *                record and filter on community and religion. It is the one
- *                axis with press exposure attached — see ai-agent-design.md
- *                §4.1, which documents that exposure at length. Dropping it is
- *                a one-line change here if that decision is revisited.
- *
- * Every axis is a CLOSED question, so the UI derives chips from allowedValues
- * (ai-agent-design.md §3: "suggestions on closed questions, never on open
- * ones"). The open questions that earn the product its existence are Form B
- * observations and are deliberately not here.
+ * The catalogues of Form A: the eight lifestyle questions and the seven
+ * must-haves of PD15. They are data, so a change here is a re-seed with no
+ * migration. The values are the keys of the answers in the designs.
  */
+import { sql } from 'drizzle-orm'
+import type { Db } from './client'
+import { lifestyleAxes, mustHaves } from './schema'
+
 export const LIFESTYLE_AXES = [
-  {
-    key: 'smoking',
-    question: 'Smoking in the flat?',
-    allowedValues: ['never', 'outside_only', 'fine_anywhere'],
-    sortOrder: 1,
-  },
-  {
-    key: 'drinking',
-    question: 'Drinking at home?',
-    allowedValues: ['never', 'occasionally', 'often'],
-    sortOrder: 2,
-  },
-  {
-    key: 'diet',
-    question: 'Food in the kitchen?',
-    allowedValues: ['vegetarian_only', 'eggetarian', 'jain', 'no_restriction'],
-    sortOrder: 3,
-  },
-  {
-    key: 'sleep_schedule',
-    question: 'When does your day end?',
-    allowedValues: ['early', 'average', 'late'],
-    sortOrder: 4,
-  },
-  {
-    key: 'guests',
-    question: 'How often do guests stay over?',
-    allowedValues: ['rarely', 'sometimes', 'often', 'partner_lives_here'],
-    sortOrder: 5,
-  },
-  {
-    key: 'cleanliness',
-    question: 'How tidy do shared spaces need to be?',
-    allowedValues: ['relaxed', 'average', 'very_tidy'],
-    sortOrder: 6,
-  },
-  {
-    key: 'work_from_home',
-    question: 'Are you home during the working day?',
-    allowedValues: ['rarely', 'some_days', 'most_days'],
-    sortOrder: 7,
-  },
-  {
-    key: 'pets',
-    question: 'Pets in the flat?',
-    allowedValues: ['none', 'have_one', 'happy_to_live_with', 'allergic'],
-    sortOrder: 8,
-  },
-  {
-    key: 'community',
-    question: 'Any community or religious preference for who you live with?',
-    allowedValues: ['no_preference', 'prefer_same', 'specific'],
-    sortOrder: 9,
-  },
+  { key: 'food', question: 'What do you eat?', allowedValues: ['veg', 'non_veg', 'eggetarian', 'jain'], sortOrder: 1 },
+  { key: 'smoking', question: 'Do you smoke?', allowedValues: ['non_smoker', 'smoker', 'smoke_outside'], sortOrder: 2 },
+  { key: 'drinks', question: 'Drinks at home?', allowedValues: ['none_at_home', 'fine_at_home'], sortOrder: 3 },
+  { key: 'guests', question: 'How often do guests come?', allowedValues: ['weekends_only', 'guests_welcome', 'guests_rarely'], sortOrder: 4 },
+  { key: 'your_days', question: 'What are your days like?', allowedValues: ['out_most_days', 'home_most_days', 'night_shifts', 'student'], sortOrder: 5 },
+  { key: 'sleep', question: 'Night owl or early bird?', allowedValues: ['night_owl', 'early_bird'], sortOrder: 6 },
+  { key: 'tidiness', question: 'How tidy are you?', allowedValues: ['very_tidy', 'tidy_enough', 'relaxed_about_mess'], sortOrder: 7 },
+  { key: 'pets', question: 'Pets?', allowedValues: ['no_pets', 'fine_with_pets'], sortOrder: 8 },
 ] as const
 
 export type LifestyleAxisKey = (typeof LIFESTYLE_AXES)[number]['key']
+
+export const MUST_HAVES = [
+  { key: 'veg_kitchen', label: 'Veg kitchen', sortOrder: 1, active: true },
+  { key: 'non_smokers', label: 'Non-smokers', sortOrder: 2, active: true },
+  { key: 'no_alcohol', label: 'No alcohol at home', sortOrder: 3, active: true },
+  { key: 'women_only', label: 'Women only', sortOrder: 4, active: false },
+  { key: 'men_only', label: 'Men only', sortOrder: 5, active: false },
+  { key: 'tidy_flatmates', label: 'Tidy flatmates', sortOrder: 6, active: true },
+  { key: 'couple_friendly', label: 'Couple friendly', sortOrder: 7, active: true },
+] as const
+
+/** Upserts both catalogues; safe to run again after an edit. */
+export async function seedCatalogues(db: Db) {
+  await db.insert(lifestyleAxes).values(LIFESTYLE_AXES.map((a) => ({ ...a, allowedValues: [...a.allowedValues] })))
+    .onConflictDoUpdate({
+      target: lifestyleAxes.key,
+      set: { question: sql`excluded.question`, allowedValues: sql`excluded.allowed_values`, sortOrder: sql`excluded.sort_order` },
+    })
+  await db.insert(mustHaves).values([...MUST_HAVES])
+    .onConflictDoUpdate({
+      target: mustHaves.key,
+      set: { label: sql`excluded.label`, sortOrder: sql`excluded.sort_order`, active: sql`excluded.active` },
+    })
+}
