@@ -12,7 +12,7 @@
 
 ### PC-05 · What contact is revealed, and how we collect it
 ❓ After a mutual accept, what contact does each person see? Where do we collect it, and do we verify it?
-- **Today:** T-18a says "both people see the number" (`docs/team-plan.json`). No table has a phone field (`apps/api/src/db/schema.ts:45-91`). Sign-in is Google only, and phone OTP waits (`docs/decisions/0005-managed-platform-split.md:13`). Go/no-go check 1 needs "sees a number".
+- **Today:** T-18a says "both people see the number" (`docs/team-plan.json`). No table has a phone field (`apps/api/src/db/schema.ts`). Sign-in is Google only, and phone OTP waits (`docs/decisions/0005-managed-platform-split.md:13`). Go/no-go check 1 needs "sees a number".
 - **Options:** a) a typed mobile number, not verified b) phone OTP at launch c) the Google email d) a WhatsApp link.
 - **Blocks:** T-06, T-16a, T-16b, T-18a, T-18b, F-05, F-07, M-06.
 - **Record:** a new PD record for connect and contact.
@@ -20,7 +20,7 @@
 
 ### PC-08 · Retention windows
 ❓ How long do we keep anonymous sessions, their typed turns, Form B notes, raw events and the DigiLocker selfie?
-- **Today:** `anonymous_sessions.expiresAt` has no rule (`apps/api/src/db/schema.ts:234`). T-39 has no period (`docs/team-plan.json`). Backups keep 14 days.
+- **Today:** `anonymous_sessions.expiresAt` has no rule (`apps/api/src/db/schema.ts`). T-39 has no period (`docs/team-plan.json`). Backups keep 14 days.
 - **Options:** a) sessions 30 days, events 12 months b) 7 days and 6 months c) until account deletion.
 - **Blocks:** F-07, T-39, T-46, PC-27.
 - **Record:** [ADR-0012](../decisions/0012-analytics-event-store.md) for events. A new PD record for the rest.
@@ -36,7 +36,7 @@
 
 ### PC-14 · Moderation rules
 ❓ Which report reasons does a user see? When do we suspend a person, and how fast do we respond?
-- **Today:** `reports.reason` is free text (`apps/api/src/db/schema.ts:266`). F-08 requires these rules (`docs/team-plan.json`).
+- **Today:** `reports.reason` is free text (`apps/api/src/db/schema.ts`). F-08 requires these rules (`docs/team-plan.json`).
 - **Options:** a) fixed reasons, 24 hours b) free text only c) fixed reasons, 4 hours for safety reports.
 - **Blocks:** F-08, T-19, go/no-go check 5.
 - **Record:** a new PD record for moderation.
@@ -54,7 +54,7 @@
 
 ### PC-22 · How people get notified
 ❓ How does a person learn of a connect request, an accept or a waitlist opening?
-- **Today:** no task or table has a channel (`apps/api/src/db/schema.ts:310`).
+- **Today:** no task or table has a channel (`apps/api/src/db/schema.ts`).
 - **Options:** a) email b) WhatsApp c) SMS d) web push e) nothing.
 - **Blocks:** T-18a, T-18b, T-22a, PC-35, PC-36.
 - **Record:** the PD record for connect and contact.
@@ -70,7 +70,7 @@
 
 ### PC-30 · Gender: field, preference filter, trust story
 ❓ Does a profile hold gender, and can a stated preference filter on it? What replaces the women-only trust story?
-- **Today:** PD3c records gender preferences, but no profile has gender (`apps/api/src/db/schema.ts:61-91`). [PD1](../decisions/pd-01-audience.md) and PD8 keep the trust story open.
+- **Today:** PD3c records gender preferences, but no profile has gender (`apps/api/src/db/schema.ts`). [PD1](../decisions/pd-01-audience.md) and PD8 keep the trust story open.
 - **The designs:** a required gender field, the must-haves "Women only" and "Men only", and "Who can move in" on a listing.
 - **Options:** a) an optional field that a stated preference filters b) no field, record only c) a women-only mode.
 - **Blocks:** T-06, T-08, T-14, T-16a, T-16b, M-06, D-04, PC-39.
@@ -104,7 +104,7 @@
 
 ### PC-35 · Connect rules
 ❓ Is 10 new requests a day correct? Do requests expire? After a decline, can the sender ask again? Can a request hold a note?
-- **Today:** 10 a day (`docs/team-plan.json`). One open request in each direction. Statuses: `pending`, `accepted`, `declined`, `withdrawn` (`apps/api/src/db/schema.ts:31`).
+- **Today:** 10 a day (`docs/team-plan.json`). One open request in each direction. Statuses: `pending`, `accepted`, `declined`, `withdrawn` (`apps/api/src/db/schema.ts`).
 - **Options:** a) 10 a day, 14-day expiry, no request after a decline b) 5 a day, no expiry c) retry after 30 days.
 - **Blocks:** T-18a, T-18b, PC-41.
 - **Record:** the PD record for connect and contact.

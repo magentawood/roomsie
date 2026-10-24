@@ -19,12 +19,8 @@ import type { Db } from '../db/client'
 import { profiles, users, profileLifestyle, blocks } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
 
-/* ── input ──────────────────────────────────────────────────────────────────
- * ⚠️  PROVISIONAL SHAPE. Form A is defined by T-08 in packages/contract,
- *     which has not landed. This mirrors it from agent-architecture.md so
- *     T-14 can be built; replace with the contract import when T-08 merges.
- *     Do not let this drift into a second source of truth.
- */
+/* ── input ──────────────────────────────────────────────────────────────── */
+// TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.
 export type LifestyleAnswer = {
   axisKey: string
   value: string

@@ -76,9 +76,8 @@ We do not use the gated-indexing route (`isAccessibleForFree: false` with
 
 ## Consequences
 
-- The interview runs before login. The form needs an anonymous session id. At
-  login, the form merges into the user record. S1 to S7 do not include this
-  state.
+- The interview runs before login. The form lives on a goal of the anonymous
+  session. At login, the goals move to the account ([ADR-0017](0017-schema-v1-shape.md)).
 - A user can chat before sign-up, and keep that conversation after sign-up.
   Thus, we store the typed messages.
 - Anyone can spend the inference budget, and bots will find an open chat. The

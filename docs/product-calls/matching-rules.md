@@ -15,7 +15,7 @@
 
 ❓ A searcher sets a dealbreaker on smoking. A candidate did not answer the smoking question. Do we hide the candidate?
 
-- **Today:** Yes, we hide the candidate (`apps/api/src/match/query.ts:140-152`).
+- **Today:** Yes, we hide the candidate (`findMatches` in `apps/api/src/match/query.ts`).
 - **Options:** a) Hide the candidate. b) Show the candidate below the full matches, with the label "did not answer: smoking". c) Show the candidate with no label.
 - **Blocks:** T-14, T-15, M-01 (the seeding form).
 - **Record:** PD3a.
@@ -26,7 +26,7 @@
 
 ❓ Are dealbreakers mutual? If a candidate will not live with a smoker and the searcher smokes, does each person disappear for the other?
 
-- **Today:** Mutual for a signed-in searcher with a profile. One-way for an anonymous searcher. The code flags this rule "for confirmation" (`apps/api/src/match/query.ts:154-176`).
+- **Today:** One-way. The mutual check is out until this call maps the must-haves to the lifestyle answers (T-14, [ADR-0017](../decisions/0017-schema-v1-shape.md)).
 - **Options:** a) Mutual, as built. b) One-way only: only the searcher's dealbreakers filter.
 - **Blocks:** T-14.
 - **Record:** PD3a.
@@ -37,7 +37,7 @@
 
 ❓ Who sees whom for each intent? For example, do two people who each want a full flat see each other, so that they can rent together?
 
-- **Today:** `has_flat` and `wants_room` see each other. `wants_flat` sees `wants_flat`. `open` sees everyone. `unclear` sees nobody (`apps/api/src/match/intent.ts:8-25`).
+- **Today, provisional:** only `flatmates` sees `flatmates`. Room, PG and whole-flat seekers see listings (`apps/api/src/match/intent.ts`).
 - **Options:** a) Keep the matrix as built. b) Remove `wants_flat` to `wants_flat`. c) Change the matrix to follow the intent values of [PD15](../decisions/pd-15-form-a-contract.md).
 - **Blocks:** T-14.
 - **Record:** PD3a.
@@ -48,7 +48,7 @@
 
 ❓ Do two budgets match when their ranges overlap? Is plus or minus 30 days the correct window for the move date?
 
-- **Today:** Ranges must overlap. The window is plus or minus 30 days. A candidate with no move date passes (`apps/api/src/match/query.ts:129-138`). For a `has_flat` person, the budget is the rent.
+- **Today:** Ranges must overlap. The window is plus or minus 30 days. A candidate with no move date passes (`findMatches` in `apps/api/src/match/query.ts`).
 - **Options:** a) Keep all three rules. b) Change the window, for example to 15 or 60 days. c) Hide a candidate with no move date.
 - **Blocks:** T-14.
 - **Record:** PD3a.
@@ -59,7 +59,7 @@
 
 ❓ When does the match score show on a card: after one preference, after more preferences, or after the full minimum slot set?
 
-- **Today:** The code has two gates. The score shows after one `prefer` answer (`apps/api/src/match/query.ts:73-82`). The minimum slot set (move date and two dealbreakers) ends the interview (`query.ts:84-91`). [ai-agent-design.md](../ai-agent-design.md) calls this set "a proposal, for discussion".
+- **Today:** The code has two gates. The score shows after one `prefer` answer (`scoreShown` in `apps/api/src/match/query.ts`). The minimum slot set (move date and two dealbreakers) ends the interview (`minimumSlotSetMet`). [ai-agent-design.md](../ai-agent-design.md) calls this set "a proposal, for discussion".
 - **Options:** a) One preference, as built. b) Three or more preferences. c) The minimum slot set.
 - **Blocks:** T-13, T-14, T-15.
 - **Record:** PD3a.
@@ -70,7 +70,7 @@
 
 ❓ Do the notes of the observer (Form B) show on a card to other users? Do they change the ranking at launch?
 
-- **Today:** The query uses Form A only (`apps/api/src/match/query.ts:22-41`). An observation has `visible: true` with no stated audience (`docs/agent-architecture.md:52`). [PD7a](../decisions/pd-07a-agent-architecture.md) says Form B "can inform the ranking".
+- **Today:** The query uses Form A only (the `FormA` type in `apps/api/src/match/query.ts`). An observation has `visible: true` with no stated audience (`docs/agent-architecture.md:52`). [PD7a](../decisions/pd-07a-agent-architecture.md) says Form B "can inform the ranking".
 - **Options:** a) Neither at launch. b) Ranking only. c) Show the notes to others and use them for ranking.
 - **Blocks:** T-15, T-35, D-03.
 - **Record:** PD3a, and PD7a for the audience of Form B.
@@ -85,7 +85,7 @@ Prerequisites: PC-23, PC-24 and PC-25 in Round 1. For PC-36, also PC-01 (task F-
 
 ❓ Is the score "70 + 30 × the share of preferences met"? Does it show as a percentage, a label or a sentence? With no score, is the order "newest first"?
 
-- **Today:** The formula is in `apps/api/src/match/query.ts:190-206`. The order is newest first when there is no score (`query.ts:222-224`).
+- **Today:** The formula and the order are in `findMatches` (`apps/api/src/match/query.ts`). The order is newest first when there is no score.
 - **Options:** a) A percentage, for example "85%". b) A label, for example "Strong match". c) A sentence, for example "Meets 3 of your 4 preferences".
 - **Blocks:** T-14, T-15.
 - **Record:** PD3a.

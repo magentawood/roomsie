@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestDb, type TestDb } from './db'
-import { eq } from 'drizzle-orm'
-import { anonymousSessions, areas, chatTurns, goals, lifestyleAxes, listingRates, listings, mustHaves, profileMustHaves, profiles, users } from '../src/db/schema'
+import { anonymousSessions, areas, chatTurns, goals, lifestyleAxes, listingRates, listings, mustHaves, profiles, users } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 
 let testDb: TestDb
@@ -14,13 +13,6 @@ afterAll(() => testDb.drop())
 const newUser = async () => {
   const [user] = await testDb.db.insert(users).values({ authProviderId: crypto.randomUUID() }).returning()
   return user!
-}
-
-const newSession = async () => {
-  const [session] = await testDb.db.insert(anonymousSessions)
-    .values({ deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) })
-    .returning()
-  return session!
 }
 
 describe('profiles', () => {
@@ -41,11 +33,13 @@ describe('profiles', () => {
 describe('goals', () => {
   it('belongs to exactly one owner: a visitor session or a user', async () => {
     const user = await newUser()
-    const session = await newSession()
+    const [session] = await testDb.db.insert(anonymousSessions)
+      .values({ deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) })
+      .returning()
     await expect(testDb.db.insert(goals).values({ userId: user.id })).resolves.toBeDefined()
-    await expect(testDb.db.insert(goals).values({ anonymousSessionId: session.id })).resolves.toBeDefined()
+    await expect(testDb.db.insert(goals).values({ anonymousSessionId: session!.id })).resolves.toBeDefined()
     await expect(testDb.db.insert(goals).values({})).rejects.toThrow()
-    await expect(testDb.db.insert(goals).values({ userId: user.id, anonymousSessionId: session.id })).rejects.toThrow()
+    await expect(testDb.db.insert(goals).values({ userId: user.id, anonymousSessionId: session!.id })).rejects.toThrow()
   })
 })
 
@@ -66,18 +60,9 @@ describe('catalogues', () => {
     await seedCatalogues(testDb.db)
     const axes = await testDb.db.select().from(lifestyleAxes)
     expect(axes.map((a) => a.key).sort()).toEqual(['drinks', 'food', 'guests', 'pets', 'sleep', 'smoking', 'tidiness', 'your_days'])
-    const active = await testDb.db.select().from(mustHaves).where(eq(mustHaves.active, true))
     const all = await testDb.db.select().from(mustHaves)
     expect(all).toHaveLength(7)
-    expect(active.map((m) => m.key)).not.toContain('women_only')
-    expect(active.map((m) => m.key)).not.toContain('men_only')
-  })
-
-  it('keeps a weight for each must-have of a profile, and rejects an unknown must-have', async () => {
-    await seedCatalogues(testDb.db)
-    const [profile] = await testDb.db.insert(profiles).values({ userId: (await newUser()).id, fullName: 'Kabir' }).returning()
-    await expect(testDb.db.insert(profileMustHaves).values({ profileId: profile!.id, mustHaveKey: 'non_smokers', weight: 'dealbreaker' })).resolves.toBeDefined()
-    await expect(testDb.db.insert(profileMustHaves).values({ profileId: profile!.id, mustHaveKey: 'no_such_thing', weight: 'prefer' })).rejects.toThrow()
+    expect(all.filter((m) => !m.active).map((m) => m.key).sort()).toEqual(['men_only', 'women_only'])
   })
 })
 
@@ -112,12 +97,18 @@ describe('listings', () => {
   it('has one rent without a sharing type, or one rent for each sharing type of a PG', async () => {
     const ownerUserId = (await newUser()).id
     const [flat] = await testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat' }).returning()
-    await expect(testDb.db.insert(listingRates).values({ listingId: flat!.id, rent: 25000, deposit: 50000 })).resolves.toBeDefined()
-    await expect(testDb.db.insert(listingRates).values({ listingId: flat!.id, rent: 26000 })).rejects.toThrow()
+    const flatRate = { listingId: flat!.id, listingKind: 'owner_flat' as const }
+    await expect(testDb.db.insert(listingRates).values({ ...flatRate, rent: 25000, deposit: 50000 })).resolves.toBeDefined()
+    await expect(testDb.db.insert(listingRates).values({ ...flatRate, rent: 26000 })).rejects.toThrow()
+    await expect(testDb.db.insert(listingRates).values({ ...flatRate, sharing: 'single', rent: 9000 })).rejects.toThrow()
+    await expect(testDb.db.insert(listingRates).values({ ...flatRate, listingKind: 'pg', sharing: 'single', rent: 9000 })).rejects.toThrow()
+
     const [pg] = await testDb.db.insert(listings).values({ ownerUserId, kind: 'pg' }).returning()
+    const pgRate = { listingId: pg!.id, listingKind: 'pg' as const }
     await expect(testDb.db.insert(listingRates).values([
-      { listingId: pg!.id, sharing: 'single', rent: 18000 },
-      { listingId: pg!.id, sharing: 'double', rent: 12000 },
+      { ...pgRate, sharing: 'single', rent: 18000 },
+      { ...pgRate, sharing: 'double', rent: 12000 },
     ])).resolves.toBeDefined()
+    await expect(testDb.db.insert(listingRates).values({ ...pgRate, rent: 15000 })).rejects.toThrow()
   })
 })
