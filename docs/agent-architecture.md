@@ -32,7 +32,7 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 - Form A drives the SQL query and the listings panel.
 - It holds hard constraints only.
-- It contains intent, budget, areas, move date, room type, and the nine lifestyle axes with weights.
+- It contains the slots of [PD15](decisions/pd-15-form-a-contract.md).
 - Each slot has a type and a fixed set of values.
 - `ai-agent-design.md` section 3.1 describes this form.
 
@@ -55,7 +55,7 @@ observation: {
 
 - **Each observation must contain the user's actual words.** If the model cannot give a verbatim span from the turn, the system rejects the observation.
 - **Build Form B one turn at a time, not in one pass at the end.**
-- **The user can see and edit Form B.** This is how we meet the DPDP access and correction obligations with no more work.
+- **The user sees and corrects Form B in the chat** ([PD7a](decisions/pd-07a-agent-architecture.md)).
 
 Why: [PD7a](decisions/pd-07a-agent-architecture.md), [PD3b](decisions/pd-03b-interview-vs-chips.md)
 

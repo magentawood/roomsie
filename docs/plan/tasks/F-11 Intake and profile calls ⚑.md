@@ -55,7 +55,7 @@ Decide what the assistant asks, and what a profile holds.
 
 - **Modules:**
   - Decision records: PD15 (new, the Form A contract), PD16 (new, profiles), PD2, PD3d, PD7a and PD11. The ledgers come from the records.
-  - Product calls: `intake-and-profile.md` loses each answered call. `connect-and-trust.md` gets one new call (PC-42, a guest and "Say hi"). The DigiLocker selfie goes into PC-08, and a visible card for a connect request goes into PC-41. PC-30, PC-31, PC-34 and PC-37 get new facts.
+  - Product calls: `intake-and-profile.md` loses each answered call. `connect-and-trust.md` gets one new call (PC-46, a guest and "Say hi"). The DigiLocker selfie goes into PC-08, and a visible card for a connect request goes into PC-41. PC-30, PC-31, PC-34 and PC-37 get new facts.
   - The plan: the done lists of T-08, T-09, T-16a, T-16b, T-36 and M-01 change. The F-11 items get their ticks.
   - No code changes. T-06 and T-08 change the schema and the contract.
 - **Seams for the tests:** the doc checks: doc-budget, doc-links, the decision ledger and the plan check. No new tests.
@@ -88,7 +88,7 @@ Decide what the assistant asks, and what a profile holds.
 ## Log
 
 - **2026-10-24 · [#128](https://github.com/magentawood/roomsie/pull/128)**
-  - **Change:** each intake call has an answer. PD15 records the Form A contract, and PD16 records the profiles. PD2, PD3d, PD7a and PD11 change. The done lists of T-08, T-09, T-16a, T-16b, T-36 and M-01 follow the answers. F-13 gets PC-42, and new facts for PC-08, PC-30, PC-31, PC-34, PC-37 and PC-41.
+  - **Change:** each intake call has an answer. PD15 records the Form A contract, and PD16 records the profiles. PD2, PD3d, PD7a and PD11 change. The done lists of T-08, T-09, T-16a, T-16b, T-36 and M-01 follow the answers. F-13 gets PC-46, and new facts for PC-08, PC-30, PC-31, PC-34, PC-37 and PC-41.
   - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md): the designs answer most calls. The product team decided the other calls in the grill.
   - **Ticked:** both items.
   - **Not done:** none.

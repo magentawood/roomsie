@@ -26,7 +26,7 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
-The exact things that the assistant tries to learn, and the exact allowed answers. "intent" is one of the four prototype cards (a flat and flatmates, just a flat, just a flatmate, renting out a flat) or `unclear`. Nine lifestyle axes: smoking, alcohol, guests, pets, hours, tidiness, at home, daytime, kitchen. Everyone builds against this fixed list.
+The exact things that the assistant tries to learn, and the exact allowed answers, from PD15: intent, room type, who is moving, eight lifestyle questions and seven must-haves. Everyone builds against this fixed list.
 
 ## Needs first
 - [[F-11 Intake and profile calls ⚑]]

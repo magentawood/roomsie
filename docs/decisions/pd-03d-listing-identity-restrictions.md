@@ -27,14 +27,22 @@ PD3d is a different decision from PD3c. PD3c decided only the private-filter cas
 ## Rationale
 
 - The designs show the choices on the listing (PD14).
-- A seeker who is not welcome does not spend a call.
+- A seeker who is not welcome does not phone a lister who refuses them.
 - An advertisement is a different position from a private filter.
 - "Decide the listing side independently" is mitigation 5 of PD3c.
 
 ## Consequences
 
 - A listing that says "Families only" is an advertisement. The public policy page of PD3c names this case.
-- PC-37 decides the free text.
+
+## Alternatives rejected
+
+- **Filter, but never show the choices.** The designs show them to seekers: "Seekers see it as your promise."
+
+## Revisit when
+
+- A complaint or a news story names a "Families only" or "No bachelors" listing.
+- F-13 decides PC-30 (gender) or PC-37 (free text).
 
 ## Sources
 

@@ -7,7 +7,7 @@
 - Form A holds the typed slots that drive the match query (PD7a, PD3b).
 - PD14 made v0 the product in the Figma designs. The designs ask what a person wants in two steps, and have listings from four kinds of lister.
 - The code had one intent enum, `has_flat`, `wants_flat`, `wants_room`, `open`, `unclear`, with no value for a PG or a whole flat. It seeded nine lifestyle axes, with `community` as one of them.
-- Listers state "Who is welcome" (students, working professionals, couples, families, bachelors). Seekers state "Who's moving". The two lists do not agree one to one.
+- Listers state "Who is welcome" ([PD3d](pd-03d-listing-identity-restrictions.md)). Seekers state "Who's moving". The two lists do not agree one to one.
 
 ## Decision
 
@@ -28,7 +28,7 @@
   | Tidiness | Very tidy, Tidy enough, Relaxed about mess |
   | Pets | No pets, Fine with pets |
 
-- **No community question.** PD3c records a community preference only when the user states it.
+- **No community question** ([PD3c](pd-03c-exclusionary-preferences.md)).
 - **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly. A dealbreaker hides a card. A preference moves it down. Women only and Men only wait for F-13 (PC-30).
 - **Who's moving.** Each answer has a type and a household:
 
@@ -41,12 +41,12 @@
   | Group of friends | not asked | bachelors |
   | Looking for my son or daughter | from the child (PD16) | bachelor |
 
-- **The listing filter.** A seeker sees a listing only if the listing welcomes the type and the household. A part that is not known does not filter. A group of "Who is welcome" that the lister left empty does not filter. The filter runs on the server, as PD3c requires. Each listing shows its "Who is welcome" (PD3d).
+- **The listing filter.** A seeker sees a listing only if the listing welcomes the type and the household. A part that is not known does not filter. A group of "Who is welcome" that the lister left empty does not filter. The filter runs on the server, as PD3c requires.
 - Each slot has a value and a source: stated, inferred, default or empty.
 
 ## Rationale
 
-- One intent value for each screen choice keeps the data and the screens the same. A lister who is also a seeker would show twice: as a listing and as a person card.
+- One intent value for each screen choice keeps the data and the screens the same.
 - "Private room only" is a frequent stated must-have. A chat-only slot keeps it with no change to the designs.
 - The designs set the lifestyle questions and the must-haves (PD14).
 - With one-to-one matching, a listing for "Working professionals, Families" shows to a single working person. Two parts keep the intent of the lister.

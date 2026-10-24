@@ -17,14 +17,14 @@
 - **Adults only.** roomsie is for people of 18 or more. Age is required. The terms page states the rule.
 - **A profile for a son or daughter.** A parent can make a full profile, with name, age and photos, for a son or daughter of 18 or more. The card goes live on the word of the parent. It always shows "Managed by a parent". The parent sends and gets the messages.
 - **A child under 18.** The parent searches and contacts listings only. The child gets no card.
-- **Visibility.** A card becomes visible when its required fields are complete: name, age, "What best describes you", areas and budget. Settings has a "Hide my card" switch. Only signed-in users see cards (PD6b).
+- **Visibility.** A card becomes visible when its required fields are complete: name, age, "What best describes you", areas and budget. Settings has a "Hide my card" switch.
 - **Photos.** A maximum of four, and a photo is optional. A card with no photo shows initials.
 
 ## Rationale
 
 - The designs set the fields (PD14).
 - An adults-only product keeps minors away from strangers, and keeps the DPDP rules for children out of matching.
-- Parents in Mumbai often find the room of a son or daughter. The product team wants the full card for them, with no wait for the child.
+- Parents in Mumbai often find the room of a son or daughter.
 - Automatic visibility gives the most cards on launch day. The "You're discoverable" banner and the "Hide my card" switch tell the user, and give control.
 
 ## Alternatives rejected
@@ -37,10 +37,8 @@
 ## Consequences
 
 - **A DPDP risk that we accept:** we show the name, age and photos of an adult who did not consent. The adult can ask us to delete the card through the grievance contact (T-23b). A complaint is possible.
-- People who message the card talk to the parent. The label "Managed by a parent" tells them.
 - The designer adds a required mark to Age, and the "Hide my card" switch.
 - F-13 decides how sign-in checks the age (PC-34), and what free text can say (PC-37).
-- The seeding form collects the full profile (PD11).
 
 ## Revisit when
 

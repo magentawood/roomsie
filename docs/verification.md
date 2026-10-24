@@ -115,7 +115,7 @@ Why: [PD8](decisions/pd-08-verification.md)
 | See unblurred photos of verified-only users | Verified |
 | Appear to verified-only users | Verified |
 | Message someone | Phone, at minimum |
-| Be discoverable at all | Phone |
+| Be discoverable at all | The required fields of [PD16](decisions/pd-16-profiles.md). PC-05 decides if a phone joins them |
 
 Listing and broker verification are in v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)).
 

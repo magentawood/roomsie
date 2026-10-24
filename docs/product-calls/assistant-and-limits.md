@@ -71,8 +71,6 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ## Round 2
 
-PC-07 has its answer: a user sees and corrects Form B in the chat only ([PD7a](../decisions/pd-07a-agent-architecture.md)).
-
 ### PC-17 · Vulnerable disclosures: storage and resources
 
 ❓ A user tells the assistant about violence, divorce, job loss or distress. What does the assistant say, and which resources does it show? Must the observer refuse to store it?
@@ -86,14 +84,14 @@ PC-07 has its answer: a user sees and corrects Form B in the chat only ([PD7a](.
 
 ## Round 3
 
-Ask this round when these calls have answers: PC-03 and PC-29 (answered in [PD15](../decisions/pd-15-form-a-contract.md)), PC-23 in [matching-rules.md](matching-rules.md) (F-12), and PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13).
+Ask this round when these calls have answers: PC-23 in [matching-rules.md](matching-rules.md) (F-12), and PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13).
 
 ### PC-39 · The interview script after the chips
 
 ❓ After intent, area and budget, in which order does the assistant ask the other questions? Which open questions does it ask? Is there a progress indicator? Does it ever use market defaults?
 
 - **Today:** no order. The open questions are in `docs/ai-agent-design.md:101-106`. The `default` source exists but nothing uses it (`docs/ai-agent-design.md:54`). "Show progress" is in `docs/assistant-risks.md:76`.
-- **Options:** a) Move date, room type, the nine axes, then the open questions during the results. b) The open questions first, then the axes. Progress: a step count, or nothing. Defaults: none, or with a label.
+- **Options:** a) Move date, the eight lifestyle questions, then the open questions during the results. Room type comes from the chat only (PD15). b) The open questions first, then the axes. Progress: a step count, or nothing. Defaults: none, or with a label.
 - **Blocks:** T-09 scripted next question, T-13 (soft: the default is option a).
 - **Record:** [PD6c](../decisions/pd-06c-interface-holes.md)
 

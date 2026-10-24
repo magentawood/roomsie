@@ -114,7 +114,7 @@
   {
    "id": "T-08",
    "title": "Form A contract: slots and enums",
-   "plain": "The exact things that the assistant tries to learn, and the exact allowed answers. \"intent\" is one of the four prototype cards (a flat and flatmates, just a flat, just a flatmate, renting out a flat) or `unclear`. Nine lifestyle axes: smoking, alcohol, guests, pets, hours, tidiness, at home, daytime, kitchen. Everyone builds against this fixed list.",
+   "plain": "The exact things that the assistant tries to learn, and the exact allowed answers, from PD15: intent, room type, who is moving, eight lifestyle questions and seven must-haves. Everyone builds against this fixed list.",
    "role": "P2",
    "hours": 2,
    "start": "2026-09-24",
@@ -182,7 +182,7 @@
   {
    "id": "F-06",
    "title": "Pick the three launch areas",
-   "plain": "Three Mumbai neighbourhoods.",
+   "plain": "Three of the nine area groups (PD2).",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",

@@ -38,10 +38,10 @@ details.callout[open] summary{color:var(--fg)}
 <p><strong>In one line:</strong> Form A is the set of typed answers that drives matching, and intent is its first answer: the kind of place that a seeker wants.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
-<li><strong>Form A</strong> is a set of slots, for example intent, areas, budget and the lifestyle answers. The chat, the chips and the onboarding screens fill the slots. The match query reads only Form A (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>, <a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>).</li>
+<li><strong>Form A</strong> is a set of slots, for example intent, areas, budget and the lifestyle answers. The chat, the chips and the onboarding screens fill the slots. The match query filters on Form A (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>, <a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>).</li>
 <li><strong>An enum</strong> is a fixed list of the values that a slot can hold. The database keeps the list. A new value needs a migration, so we fix the list before the first migration (T-06).</li>
-<li><strong>Each slot has a source:</strong> stated, inferred, default or empty. An inferred value never fills a slot silently.</li>
-<li><strong>Form B</strong> is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat.</li>
+<li><strong>Each slot has a source:</strong> stated, inferred, default or empty. An inferred value never fills a slot silently (<a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>).</li>
+<li><strong>Form B</strong> is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <p>The designs ask two questions. The answers go to Form A:</p>
@@ -64,8 +64,12 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>Do not add a seeker value for a lister.</strong> The old enum had <code>has_flat</code>. With listings, the same room then shows two times: as a listing and as a person card.</li>
+<li><strong>Do not add a seeker value for a lister</strong> (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
 <li><strong>A slot that the screens do not show can still exist.</strong> Only the chat fills room type, for example "private room only".</li>
 <li><strong>"Who's moving" has two parts:</strong> a type and a household. The listing filter uses only the parts that we know (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
+</ul>
+<h2 id="tickets">Tickets</h2>
+<ul>
+<li>F-11: <a href="https://github.com/magentawood/roomsie/pull/128">#128</a>, 2026-10-24. The intake calls, and the Form A contract of PD15.</li>
 </ul>
 </main>
