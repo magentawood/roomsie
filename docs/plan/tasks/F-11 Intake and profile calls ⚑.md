@@ -39,8 +39,8 @@ Decide what the assistant asks, and what a profile holds.
 - [[T-48 Onboarding questions]]
 
 ## Done when
-- [ ] Each call in docs/product-calls/intake-and-profile.md has an answer from the product team
-- [ ] Each answer is in its decision record, and the call is not in the file
+- [x] Each call in docs/product-calls/intake-and-profile.md has an answer from the product team · [#128](https://github.com/magentawood/roomsie/pull/128)
+- [x] Each answer is in its decision record, and the call is not in the file · [#128](https://github.com/magentawood/roomsie/pull/128)
 
 ^done
 
@@ -48,3 +48,49 @@ Decide what the assistant asks, and what a profile holds.
 - [intake-and-profile.md](../../product-calls/intake-and-profile.md)
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [pd-03b-interview-vs-chips.md](../../decisions/pd-03b-interview-vs-chips.md)
+
+## Spec
+
+**Approved:** 2026-10-24, by n3rxv
+
+- **Modules:**
+  - Decision records: PD15 (new, the Form A contract), PD16 (new, profiles), PD2, PD3d, PD7a and PD11. The ledgers come from the records.
+  - Product calls: `intake-and-profile.md` loses each answered call. `connect-and-trust.md` gets one new call (PC-42, a guest and "Say hi"). The DigiLocker selfie goes into PC-08, and a visible card for a connect request goes into PC-41. PC-30, PC-31, PC-34 and PC-37 get new facts.
+  - The plan: the done lists of T-08, T-09, T-16a, T-16b, T-36 and M-01 change. The F-11 items get their ticks.
+  - No code changes. T-06 and T-08 change the schema and the contract.
+- **Seams for the tests:** the doc checks: doc-budget, doc-links, the decision ledger and the plan check. No new tests.
+- **Decisions:**
+  - PC-02: the two steps of the designs. A lister goes to the listing flow. The intent values of a seeker are `room`, `pg`, `whole_flat`, `flatmates` and `unclear`. (PD15)
+  - PC-29: room type is a slot that only the chat fills: `private`, `shared` or `unclear`. `private` matches "Private room" and a PG with "Single". `shared` matches "Shared room" and a PG with "Double" or more. (PD15)
+  - PC-03: eight lifestyle questions with the answers of the designs: food, smoking, drinks, guests, your days, sleep, tidiness and pets. No community question. (PD15, PD3c)
+  - PC-04: prefer or dealbreaker on the seven must-haves of the designs. (PD15)
+  - Who's moving: it filters listings on the server, and each listing shows who is welcome. Each answer has a type and a household. The filter uses only the known parts. (PD15)
+  - PC-19: the profile fields of the designs: full name, age, job role, commute address and a free-text bio. Gender waits for F-13 (PC-30). (PD16)
+  - roomsie is for people of 18 or more. Age is required. (PD16)
+  - A parent can make a full profile for a son or daughter of 18 or more. It goes live on the word of the parent, with the label "Managed by a parent". For a child under 18, the parent searches listings only. (PD16)
+  - PC-32: a card becomes visible when its required fields are complete. Settings has a "Hide my card" switch. (PD16)
+  - PC-38: a maximum of four photos, and a photo is optional. A card with no photo shows initials. (PD16)
+  - PC-18: a room in the flat of a person is a listing. (PD14)
+  - PC-07: the user sees and corrects the Form B notes in the chat only. A delete is a direct database action. A formal access request goes to the grievance contact. (PD7a)
+  - PD3d: a listing shows its restrictions, for example "Families only". (PD3d)
+  - PC-21: the areas are the nine area groups of the designs. F-06 selects the three launch areas from them. (PD2)
+  - PC-40: the seeding form collects the full profile. (PD11)
+  - Marketing seeds listings before launch, from owners, PG operators and brokers. The founders set the number. (PD11)
+  - Done-list changes:
+    - T-08: "the nine lifestyle answers. Each has a value, a weight and a source" becomes "intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves. Each has a value and a source: stated, inferred, default or empty. Each must-have also has a weight: prefer or dealbreaker".
+    - T-09: "Intent shows as four cards, area as the top six plus search" becomes "Intent shows as the five place types, area as the nine area groups".
+    - T-16a: the profile fields become "the fields of PD16 and the Form A fields of PD15". New items: the profile of a son or daughter, with its label. A card becomes visible when its required fields are complete, unless the user hides it.
+    - T-16b: new item: Settings has a "Hide my card" switch.
+    - T-36: new item: the user asks the assistant what it noted, and corrects or deletes a note in the chat. A delete is a direct database action, never an edit by the model.
+    - M-01: the form asks the full profile. New item: marketing collects listings from owners, PG operators and brokers.
+- **Out of scope:** the calls of F-12 and F-13, the gender field, the launch date and the number of seeded listings (the founders, PD11), changes in Figma (the list for the designer goes in the PR), and the schema and contract code (T-06, T-08).
+
+## Log
+
+- **2026-10-24 · [#128](https://github.com/magentawood/roomsie/pull/128)**
+  - **Change:** each intake call has an answer. PD15 records the Form A contract, and PD16 records the profiles. PD2, PD3d, PD7a and PD11 change. The done lists of T-08, T-09, T-16a, T-16b, T-36 and M-01 follow the answers. F-13 gets PC-42, and new facts for PC-08, PC-30, PC-31, PC-34, PC-37 and PC-41.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md): the designs answer most calls. The product team decided the other calls in the grill.
+  - **Ticked:** both items.
+  - **Not done:** none.
+  - **Learn:** [Form A and intent](../../learn/form-a-and-intent.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-24--f-11-the-intake-calls-have-answers)

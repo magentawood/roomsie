@@ -37,7 +37,7 @@ Buttons under the chat. People tap and do not have to type.
 - No task waits on this task.
 
 ## Done when
-- [ ] Intent shows as four cards, area as the top six plus search, and budget as bands
+- [ ] Intent shows as the five place types of PD15, area as the nine area groups of PD2, and budget as bands
 - [ ] Each tap writes to the form. A tap never calls a model
 - [ ] If a person types and does not tap, the typed answer still works
 

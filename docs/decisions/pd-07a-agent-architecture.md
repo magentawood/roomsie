@@ -1,6 +1,6 @@
 # PD7a — Agent architecture: a router with small handlers
 
-**Status:** Settled · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-10-24. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -30,8 +30,10 @@ multi-agent, and not one large model. **All of it ships at launch.**
   Form B and the last two turns, **never the full transcript**.
 - **Two forms.** Form A holds typed filter slots and drives the SQL. Form B is
   a structured profile. **Each observation must quote the user.** Without a
-  verbatim span, the system rejects the observation. The user can see and edit
-  Form B.
+  verbatim span, the system rejects the observation. The user sees and
+  corrects Form B in the chat only: "What do you know about me?" A delete is a
+  direct database action, never an edit by the model. A formal access request
+  goes to the grievance contact, which sends a data export.
 - **The advisor** answers from our articles first, with Postgres full-text
   search and **no vector store**. For a general question with no article:
   - signed-in users get the DeepSeek `web_search` tool, with Gemini Google
@@ -70,9 +72,9 @@ multi-agent, and not one large model. **All of it ships at launch.**
 - **Form B must not be a text blob.** A blob that grows is the transcript with
   a different name. One turn at a time costs less. Form B is then available
   during the session. Thus, it can inform the ranking while the user browses.
-- **An editable profile.** A profile that the user can see and edit is good
-  product. It also meets the DPDP access and correction obligations with no
-  more work.
+- **Form B in the chat.** The designs have no screen for Form B notes. The
+  chat gives access and correction with no new screen. The grievance contact
+  gives the formal DPDP access.
 - **The advisor needs a base in our articles.** A general model hallucinates
   on legal rental questions, where an incorrect answer does the most damage.
   Postgres full-text search suits dozens of documents and keeps to ADR 0001.

@@ -41,7 +41,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 
 ## Done when
 - [ ] A Zod schema for Form A is in packages/contract
-- [ ] The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty
+- [ ] The fields are intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15. Each has a value and a source: stated, inferred, default or empty. Each must-have also has a weight: prefer or dealbreaker
 - [ ] Every enum has an `unclear` value
 - [ ] Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14)
 - [ ] Results are a tagged union with `kind: "person"` for v0. Thus, a later change can add property listings and not break clients
@@ -52,3 +52,4 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 - [agent-architecture.md](../../agent-architecture.md)
 - [ai-agent-design.md](../../ai-agent-design.md)
 - [extensibility.md](../../extensibility.md)
+- [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)

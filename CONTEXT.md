@@ -16,7 +16,7 @@ This file is an index for each agent session: what roomsie is, where each fact l
 Each decision has one record in `docs/decisions/`: ADRs (architecture) and `pd-*.md` (product). The record is the only home of the decision and its reasons. Cite it as `ADR-0006` or `PD7a`.
 
 <!-- decisions:start -->
-**Not settled yet:** [PD3](docs/decisions/pd-03-listing-supply.md) Where listing supply comes from at launch (deferred); [PD3a](docs/decisions/pd-03a-flatmate-matching.md) Flatmate matching design (open); [PD3d](docs/decisions/pd-03d-listing-identity-restrictions.md) Identity restrictions in published listings (open); [PD4](docs/decisions/pd-04-monetisation.md) Monetisation model and pricing (pending); [PD6a](docs/decisions/pd-06a-mobile-split-view.md) Mobile pattern for the split view (provisional).
+**Not settled yet:** [PD3](docs/decisions/pd-03-listing-supply.md) Where listing supply comes from at launch (deferred); [PD3a](docs/decisions/pd-03a-flatmate-matching.md) Flatmate matching design (open); [PD4](docs/decisions/pd-04-monetisation.md) Monetisation model and pricing (pending); [PD6a](docs/decisions/pd-06a-mobile-split-view.md) Mobile pattern for the split view (provisional).
 
 **All decisions:** product in [product-base.md](docs/product-base.md), architecture in [tech-base.md](docs/tech-base.md). Each links its record.
 <!-- decisions:end -->

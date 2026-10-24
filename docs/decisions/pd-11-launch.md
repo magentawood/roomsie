@@ -1,6 +1,6 @@
 # PD11 — Public launch on 12 October
 
-**Status:** Settled. The date moved on 2026-09-26. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-24. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -20,10 +20,10 @@
 
 | Ships 12 Oct | After launch |
 |---|---|
-| Chat with chips, the router, extraction, the observer, the reply writer | In-app chat |
-| The advisor: articles first, web search after sign-in | Verification, blurred cards |
-| Results panel, profiles with photos | SEO area pages |
-| Contact shown when the two people accept | Live-update banners and undo, mobile bottom sheet |
+| Chat with chips, the router, extraction, the observer, the reply writer | Blurred cards |
+| The advisor: articles first, web search after sign-in | SEO area pages |
+| Results panel, profiles with photos, listings | Live-update banners and undo |
+| Contact shown when the two people accept, in-app messages, DigiLocker verification ([PD14](pd-14-v0-is-the-figma-designs.md)) | Mobile bottom sheet |
 | Report, block, deletion, waitlist, legal pages | — |
 | Results queried again when the form changes, responsive mobile | — |
 | Analytics in its own database, nightly backups (PD13) | — |
@@ -41,6 +41,9 @@ Engineering go/no-go checks (from `team-plan.md`):
 
 Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum of 40 in each launch area. If one area fails, launch in the other two. Do not move the date.
 
+- The seeding form collects the full profile of PD16. A thin profile drops out of the results, because the match query hides a person with no answer on a dealbreaker.
+- Marketing also seeds listings from owners, PG operators and brokers. The broker calls (M-09) ask brokers to list. The founders set the number of listings.
+
 ## Rationale
 
 - **The move gets back the router, the observer and the advisor for launch.** It also gets back analytics in its own database, and nightly backups.
@@ -49,7 +52,8 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - A visitor who sees an empty panel leaves. The waitlist makes an empty result into a demand signal, and tells marketing where to seed next.
 - **Cold start is the real risk, not code.** A matching product with no people shows an empty panel on day one. Many people in Powai is better than a small number in all areas.
 - v0 is free because there is nothing to charge for.
-- In-app chat stays cut: realtime chat is the largest build item, and people in Mumbai use WhatsApp. DigiLocker onboarding takes more than two weeks. Blurred cards need verification. SEO area pages need data that does not exist. We do not abandon a cut item. Each has a slot in v1.
+- Blurred cards and SEO area pages wait. SEO area pages need data that does not exist. We do not abandon a cut item. Each has a slot in v1.
+- PD14 brought in-app messages and DigiLocker verification back into v0.
 
 ## Consequences
 

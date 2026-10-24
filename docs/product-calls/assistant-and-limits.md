@@ -1,6 +1,6 @@
 # Product calls: assistant and limits
 
-**Task:** F-14 · **Status:** open · **Updated:** 2026-10-04
+**Task:** F-14 · **Status:** open · **Updated:** 2026-10-24
 
 The product team (founder and product) settles these calls. Engineers do not.
 
@@ -71,7 +71,7 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ## Round 2
 
-Ask this round when PC-07 (where a user sees Form B) has an answer. PC-07 is in [intake-and-profile.md](intake-and-profile.md) (F-11).
+PC-07 has its answer: a user sees and corrects Form B in the chat only ([PD7a](../decisions/pd-07a-agent-architecture.md)).
 
 ### PC-17 · Vulnerable disclosures: storage and resources
 
@@ -86,7 +86,7 @@ Ask this round when PC-07 (where a user sees Form B) has an answer. PC-07 is in 
 
 ## Round 3
 
-Ask this round when these calls have answers: PC-03 and PC-29 in [intake-and-profile.md](intake-and-profile.md) (F-11), PC-23 in [matching-rules.md](matching-rules.md) (F-12), and PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13).
+Ask this round when these calls have answers: PC-03 and PC-29 (answered in [PD15](../decisions/pd-15-form-a-contract.md)), PC-23 in [matching-rules.md](matching-rules.md) (F-12), and PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13).
 
 ### PC-39 · The interview script after the chips
 

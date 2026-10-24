@@ -38,6 +38,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
 - [ ] A one-off job backfills Form B from the stored chat turns
 - [ ] It is tested on the eval sentences, and the rejection rate is recorded
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [ ] The user asks the assistant what it noted, and corrects or deletes a note in the chat. A delete is a direct database action, never an edit by the model
 
 ^done
 

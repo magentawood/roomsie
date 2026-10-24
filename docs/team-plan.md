@@ -449,10 +449,10 @@ Every role has a name. The accounts and billing are live. The styling is decided
 
 **T-08 · Form A contract: slots and enums** — done when:
 - A Zod schema for Form A is in packages/contract
-- The fields are intent, areas, budget, move date and the nine lifestyle answers. Each has a value, a weight and a source: stated, inferred, default or empty
+- The fields are intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15. Each has a value and a source: stated, inferred, default or empty. Each must-have also has a weight: prefer or dealbreaker
 - Every enum has an `unclear` value
 - Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14)
-- Read first: `docs/agent-architecture.md`, `docs/ai-agent-design.md`, `docs/extensibility.md`
+- Read first: `docs/agent-architecture.md`, `docs/ai-agent-design.md`, `docs/extensibility.md`, `docs/decisions/pd-15-form-a-contract.md`
 
 **D-02 · Design the chat screens** — done when:
 - The chat with chips, the split view and the phone chat bar exist
@@ -528,11 +528,12 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - Read first: `docs/content/corpus-plan.md`
 
 **M-01 · Seeding form live, outreach starts** — done when:
-- The form is live with the consent text
+- The form is live with the consent text, and asks the full profile of PD16
 - Outreach uses the team's own networks, college and company groups, and flat-hunting groups
 - The team invites people to sign up. The team never copies the posts or details of any person
 - Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it
-- Read first: `docs/decisions/pd-11-launch.md`
+- Marketing also collects listings from owners, PG operators and brokers. The founders set the number (PD11)
+- Read first: `docs/decisions/pd-11-launch.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-35 · Form B contract and table** — done when:
 - Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
@@ -722,6 +723,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A one-off job backfills Form B from the stored chat turns
 - It is tested on the eval sentences, and the rejection rate is recorded
 - Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- The user asks the assistant what it noted, and corrects or deletes a note in the chat. A delete is a direct database action, never an edit by the model
 - Read first: `docs/agent-architecture.md`, `docs/ai-agent-design.md`
 
 **M-07 · Draft launch posts** — done when:
@@ -802,16 +804,19 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/product-calls/assistant-and-limits.md`, `docs/decisions/pd-09-pre-login-limits.md`, `docs/decisions/pd-10-scope-bands.md`
 
 **T-16a · Profile and photo upload API** — done when:
-- The API creates and edits a profile with name, age, work, intent, budget, areas, move date and lifestyle answers
+- The API creates and edits a profile with the fields of PD16 and the Form A fields of PD15. Age is required, and is 18 or more
 - The API gives a presigned URL, thus a user uploads a maximum of four photos directly to R2
 - Photo bytes never pass through the API
-- Read first: `docs/decisions/0005-managed-platform-split.md`
+- A parent can create a profile for a son or daughter of 18 or more. The card shows "Managed by a parent"
+- A card becomes visible when its required fields are complete, unless the user hides it
+- Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-16b · Profile create and edit screens** — done when:
 - A user can create and edit a profile on the web, with the fields of T-16a
 - A user can upload a maximum of four photos from the profile screen
 - The delete button of T-20 uses the design of D-03
-- Read first: `docs/decisions/0005-managed-platform-split.md`
+- Settings has a "Hide my card" switch
+- Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-27 · Run the eval set and tune the prompt** — done when:
 - The 50 test sentences go through extraction
@@ -884,7 +889,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Social post images and link preview images exist
 
 **T-09 · Chip flow for intent, area, budget** — done when:
-- Intent shows as four cards, area as the top six plus search, and budget as bands
+- Intent shows as the five place types of PD15, area as the nine area groups of PD2, and budget as bands
 - Each tap writes to the form. A tap never calls a model
 - If a person types and does not tap, the typed answer still works
 - Read first: `docs/interface-shape.md`

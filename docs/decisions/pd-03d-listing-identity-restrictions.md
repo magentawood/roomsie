@@ -1,6 +1,6 @@
 # PD3d — Identity restrictions in published listings
 
-**Status:** Open · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled for the fields of the listing flow. Free text is open in PC-37. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -14,20 +14,27 @@ A published listing is a different case. For example, a roomsie listing that say
 
 ## Decision
 
-**In one line:** Open: if a published listing can show an identity restriction in the text that people see.
+**In one line:** A listing shows the "Who is welcome" choices of the listing flow, and free text waits for PC-37.
 
-No decision at this time. The question is: can a published listing show an identity restriction in the text that people see?
+- **A listing shows its "Who is welcome" choices:** students, working professionals, couples, families and bachelors. The listing flow says: "Seekers see it as your promise."
+- The same choices filter the results of a seeker on the server (PD15).
+- The listing flow has no community or religion choice.
+- **"Who can move in" (men, women, any) waits for F-13 (PC-30).**
+- **Free text waits for F-13 (PC-37).** A description or a bio can name a community.
 
-PD3d is a different decision from PD3c. We decide the two cases independently. PD3c decided only the private-filter case.
+PD3d is a different decision from PD3c. PD3c decided only the private-filter case.
 
 ## Rationale
 
+- The designs show the choices on the listing (PD14).
+- A seeker who is not welcome does not spend a call.
 - An advertisement is a different position from a private filter.
 - "Decide the listing side independently" is mitigation 5 of PD3c.
 
 ## Consequences
 
-- `product-base.md` keeps this question in its "Still open" list as "Identity text in a published listing".
+- A listing that says "Families only" is an advertisement. The public policy page of PD3c names this case.
+- PC-37 decides the free text.
 
 ## Sources
 
