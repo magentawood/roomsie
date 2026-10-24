@@ -479,7 +479,7 @@ for k in ORDER:
 ENG = [t for t in T if t["role"] in LANES]
 def upstream(tid):
     return {u for d in by[tid]["deps"] for u in {d} | upstream(d)}
-def needs_design(tid): return any(u.startswith("D-") for u in upstream(tid))
+def needs_design(tid): return any(u.startswith("D-") and status(u) != "done" for u in upstream(tid))
 def status(tid):
     its = FINAL.get(tid, [])
     dn = sum(1 for _,ok,_ in its if ok)

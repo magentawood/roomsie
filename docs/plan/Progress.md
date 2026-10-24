@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**39 of 256 done · 15%**
+**39 of 255 done · 15%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -27,7 +27,7 @@ This note is part of [[roomsie launch]].
 | [[P3 Data and trust]] | 0 / 14 | 7 / 53 | 13% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 21 | 19% |
-| [[Design]] | 1 / 6 | 6 / 12 | 50% |
+| [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 12 | 0% |
 | [[Founder]] | 3 / 14 | 12 / 38 | 32% |
@@ -48,13 +48,14 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**8 free tasks are open · 7 build hours.**
+**9 free tasks are open · 15 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[F-11 Intake and profile calls ⚑]] | F |  | ⬜ can start | 43 | [#103](https://github.com/magentawood/roomsie/issues/103) |
 | 0 | [[F-12 Matching calls ⚑]] | F |  | ⬜ can start | 7 | [#104](https://github.com/magentawood/roomsie/issues/104) |
 | 0 | [[F-13 Connect and trust calls ⚑]] | F |  | ⬜ can start | 7 | [#105](https://github.com/magentawood/roomsie/issues/105) |
+| 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
@@ -68,6 +69,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | [[T-05 Google sign-in ⚑]] | P1 | 6 | F-11 | [#20](https://github.com/magentawood/roomsie/issues/20) |
 | [[T-06 Database schema ⚑]] | P3 | 8 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | [[T-08 Form A contract ⚑]] | P2 | 2 | F-11 | [#6](https://github.com/magentawood/roomsie/issues/6) |
+| [[T-09 Chip flow ⚑]] | P2 | 6 | F-11 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | [[T-11 Model wrapper ⚑]] | P2 | 4 | F-11 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | [[T-12 Extraction ⚑]] | P2 | 6 | F-11 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | [[T-14 Match query ⚑]] | P3 | 6 | F-11, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
@@ -102,8 +104,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Task | Owner | Hours | Waits on | Issue |
 |---|---|---|---|---|
-| [[T-09 Chip flow ⚑]] | P2 | 6 | D-02, F-11 | [#26](https://github.com/magentawood/roomsie/issues/26) |
-| [[T-10 Chat screen and split view ⚑]] | P2 | 8 | D-02 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | [[T-15 Results panel ⚑]] | P3 | 6 | D-03, F-11, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | [[T-16b Profile screens ⚑]] | P5 | 3 | D-03, F-11 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | [[T-18b Person and connect screens ⚑]] | P3 | 4 | D-03, F-13 | [#44](https://github.com/magentawood/roomsie/issues/44) |
@@ -127,6 +127,7 @@ flowchart LR
   F13["F-13 ⚑<br/>Connect and trust calls"]:::ready
   F14["F-14<br/>Assistant and limits calls"]:::ready
   T02["T-02 ⚑<br/>Scaffold monorepo"]:::done
+  T10["T-10 ⚑<br/>Chat screen and split view"]:::ready
   M03["M-03<br/>Eval sentences"]:::ready
   T04["T-04<br/>Deploy to Mumbai"]:::done
   T03["T-03<br/>CI checks"]:::done
@@ -138,6 +139,7 @@ flowchart LR
   T11["T-11 ⚑<br/>Model wrapper"]:::product
   T05["T-05 ⚑<br/>Google sign-in"]:::product
   T12["T-12 ⚑<br/>Extraction"]:::product
+  T09["T-09 ⚑<br/>Chip flow"]:::product
   T14["T-14 ⚑<br/>Match query"]:::product
   T16a["T-16a ⚑<br/>Profile API"]:::product
   T13["T-13<br/>Reply writer"]:::product
@@ -166,19 +168,17 @@ flowchart LR
   T47["T-47<br/>Saved"]:::product
   T48["T-48<br/>Onboarding questions"]:::product
   T18b["T-18b ⚑<br/>Person and connect screens"]:::design
-  T10["T-10 ⚑<br/>Chat screen and split view"]:::design
   T15["T-15 ⚑<br/>Results panel"]:::design
-  T09["T-09 ⚑<br/>Chip flow"]:::design
   T16b["T-16b ⚑<br/>Profile screens"]:::design
   T23a["T-23a<br/>Landing page"]:::design
   T22b["T-22b<br/>Waitlist screen"]:::design
   T43["T-43<br/>Listing detail screens"]:::design
   T49["T-49<br/>Compare cards"]:::design
   T50["T-50<br/>Found a place, share, feedback"]:::design
-  D02(["D-02<br/>Chat screen designs"]):::dtask
   D03(["D-03<br/>Results and profile designs"]):::dtask
   D04(["D-04<br/>Landing and waitlist designs"]):::dtask
   F03 --> F04
+  D02 -.-> T10
   T02 --> T04
   F04 --> T04
   T02 --> T03
@@ -195,6 +195,9 @@ flowchart LR
   F04 --> T05
   T06 --> T05
   T11 --> T12
+  T10 --> T09
+  T08 --> T09
+  D02 -.-> T09
   T06 --> T14
   T08 --> T14
   F12 --> T14
@@ -255,13 +258,9 @@ flowchart LR
   F11 --> T48
   D03 -.-> T18b
   F13 --> T18b
-  D02 -.-> T10
   T08 --> T15
   D03 -.-> T15
   F12 --> T15
-  T10 --> T09
-  T08 --> T09
-  D02 -.-> T09
   T16a --> T16b
   D03 -.-> T16b
   D04 -.-> T23a
@@ -446,12 +445,12 @@ flowchart LR
 > ![[T-16b Profile screens ⚑#^done]]
 
 
-## Design — 6/12
+## Design — 6/11
 
 > [!todo]- ✅ [[D-01 Styling decision]] · 1/1
 > ![[D-01 Styling decision#^done]]
 
-> [!todo]- 🟡 [[D-02 Chat screen designs ⚑]] · 1/2
+> [!todo]- ✅ [[D-02 Chat screen designs ⚑]] · 1/1
 > ![[D-02 Chat screen designs ⚑#^done]]
 
 > [!todo]- 🟡 [[D-03 Results and profile designs]] · 3/4
