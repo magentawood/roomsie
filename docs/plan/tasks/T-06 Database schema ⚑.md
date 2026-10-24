@@ -37,7 +37,6 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-16a Profile API ⚑]]
 - [[T-17 Carry chat into account]]
 - [[T-19 Report and block]]
-- [[T-24 Event logging]]
 - [[T-21 Turn cap and spend ceiling]]
 - [[T-18a Connect API ⚑]]
 - [[T-20 Account deletion]]
@@ -51,11 +50,12 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-47 Saved]]
 
 ## Done when
-- [ ] Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
+- [ ] Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist
 - [ ] Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility
 - [x] IDs are UUIDv7 with no database default. `created_at` comes from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
 - [x] Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
-- [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B
+- [ ] A `chat_turns` table stores both sides of the chat of each goal. Thus, the observer can backfill Form B
+- [ ] The listings tables hold the fields of the eight steps of flow 04
 - [x] An `areas` catalogue and a `listings` table exist, thus area pages can aggregate rent bands · [#58](https://github.com/magentawood/roomsie/pull/58)
 
 ^done
@@ -67,3 +67,42 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [extensibility.md](../../extensibility.md)
 - [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
 - [pd-16-profiles.md](../../decisions/pd-16-profiles.md)
+- [0017-schema-v1-shape.md](../../decisions/0017-schema-v1-shape.md)
+
+## Spec
+
+**Approved:** 2026-10-24, by n3rxv
+
+- **Modules:**
+  - `apps/api/src/db/schema.ts`: the interface changes. New tables: `goals`, `chat_turns`, `must_haves`, `profile_must_haves`, `listing_rates` and `listing_flatmates`. Changed tables: `profiles`, `profile_lifestyle`, `listings` and `anonymous_sessions`. `events` goes. New and changed enums.
+  - `apps/api/src/db/seed-axes.ts`: the eight questions of PD15. A seed for the seven must-haves.
+  - `apps/api/drizzle/`: the first migration, from `drizzle-kit generate`.
+  - `apps/api/src/match/`: the interface does not change. A provisional intent matrix, the renamed column, and no mutual-dealbreaker check.
+  - `docs/team-plan.json`: the done lists of T-06, T-14, T-17, T-24, T-41 and F-09, and the dependencies of T-24.
+  - A new architecture record, ADR-0017, for the shape of the schema.
+- **Seams for the tests:** the disposable test database with the committed migrations (`apps/api/test/db.ts`). The tests insert rows, and check that the database rejects bad rows. No new seam.
+- **Decisions:**
+  - `events` is not in the main database. (why: ADR-0012, PD13)
+  - A `goals` table has one row for each move: a title, its own search state, a status (open or found), and one owner, a visitor's session or a user. The visitor's search moves from `anonymous_sessions` to the goal. (ADR-0017)
+  - `chat_turns` belongs to a goal, and stores both sides of the chat. An assistant row also keeps the cards and chips that it showed, as JSON. A user row records if the user typed it or tapped a chip. (ADR-0017)
+  - The must-haves are seed data in `must_haves`, and `profile_must_haves` holds a weight for each one: prefer or dealbreaker. "Women only" and "Men only" are inactive until F-13 decides PC-30. (PD15, ADR-0017)
+  - Lifestyle answers have no weight. The eight questions of PD15 replace the nine provisional axes. (PD15)
+  - Intent values: `room`, `pg`, `whole_flat`, `flatmates`, `unclear`. Room type values: `private`, `shared`, `unclear`. (PD15)
+  - "Who's moving" stores the choice: `student`, `first_job`, `working`, `couple`, `family`, `friends` or `unclear`, and a `managed_by_parent` flag. (PD15, PD16, ADR-0017)
+  - Age can be empty. A database check rejects an age below 18. (PD16)
+  - Profile fields: full name, age, job role, commute address and bio. "Hide my card" is the `hidden` visibility. A maximum of four profile photos. (PD16)
+  - T-06 holds the full listing of flow 04. One `listings` table has a `kind`: `room_in_flat`, `owner_flat`, `pg` or `broker_flat`. A database check enforces the fields that each kind must have. A broker listing has the fields of an owner flat, and a brokerage. (ADR-0017)
+  - Each rent is in `listing_rates`: one row for a room, a flat or a broker flat, and one row for each sharing type of a PG. (ADR-0017)
+  - A pick-many list is a column of fixed keys that the contract checks: what is inside, the building and society, the sharing types, and who is welcome. (ADR-0017)
+  - A listing has a required area group, and an optional address. The address is private until the lister turns on "share my full address". (ADR-0017)
+  - `listing_flatmates` holds the flatmates of a room listing, with a photo, a name, an age, what they do and food. A listing records that the lister confirmed "My flatmates agreed to be shown". (ADR-0017)
+  - A listing status is `draft`, `live`, `inactive` or `filled`. A listing has a maximum of five photos and five "close or far" walk times.
+  - The match query gets a provisional intent matrix: only `flatmates` matches `flatmates`. F-12 confirms it. The mutual-dealbreaker check goes until F-12 maps the must-haves to lifestyle answers.
+  - Done-list changes:
+    - T-06: "…reports, blocks, events and waitlist" becomes "…anonymous sessions, goals, connection requests, reports, blocks and waitlist". "A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B" becomes "A `chat_turns` table stores both sides of the chat of each goal. Thus, the observer can backfill Form B". New item: "The listings tables hold the fields of the eight steps of flow 04".
+    - T-41: "A listing holds the fields of the eight steps of flow 04 in the Product file" becomes "The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores".
+    - T-17: "The stored chat turns move to the account with the session" becomes "The goals of the session, with their chat turns, move to the account".
+    - T-24: "One events table holds…" becomes "One events table in the analytics database holds…". "…thus v1 can move it to its own database" becomes "…thus no product code depends on the analytics database". T-24 no longer waits for T-06.
+    - F-09: the item "0012: one events table replaces a second database" goes. PD13 replaced it.
+    - T-14: new item: "The must-haves of the candidate apply back to the searcher, with the mapping of F-12".
+- **Out of scope:** the API routes, the contract code (the who's-moving mapping and the keys of the pick-many lists: T-08, T-41), the matching rules (F-12, T-14), the tables for messages (T-44), verification (T-46) and saved cards (T-47), the gender field (F-13), the seed of the area groups (F-06, T-22a), the analytics database (T-39), and the changes in Figma (the list for the designer goes in the PR).

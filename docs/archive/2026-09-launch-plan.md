@@ -100,7 +100,7 @@ conflicts here. For each conflict, we propose an exception with a time limit.
 | ADR | Conflict | Proposal |
 |---|---|---|
 | ADR 0011 | The design token pipeline is blocked. | Superseded (2026-10-02): the launch look comes from the Figma designs ([PD12](../decisions/pd-12-team-plan.md)). |
-| ADR 0012 | The separate analytics instance | Use one events table in the primary database for launch. Migrate when the volume justifies a second project. |
+| ADR 0012 | The separate analytics instance | Superseded (2026-09-26): analytics has its own database for launch ([PD13](../decisions/pd-13-databases-and-backups.md)). |
 | ADR 0014 | Self-hosted GlitchTip | Use the free tier of Sentry for two weeks, behind the same `reportError` wrapper. |
 
 When the app repo exists, each conflict needs a one-line amendment in

@@ -263,11 +263,12 @@
     "F-11"
    ],
    "done": [
-    "Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist",
+    "Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist",
     "Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility",
     "IDs are UUIDv7 with no database default. `created_at` comes from the server clock",
     "Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id`",
-    "A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B"
+    "A `chat_turns` table stores both sides of the chat of each goal. Thus, the observer can backfill Form B",
+    "The listings tables hold the fields of the eight steps of flow 04"
    ],
    "read": [
     "docs/decisions/0015-primary-key-strategy.md",
@@ -275,7 +276,8 @@
     "docs/agent-architecture.md",
     "docs/extensibility.md",
     "docs/decisions/pd-15-form-a-contract.md",
-    "docs/decisions/pd-16-profiles.md"
+    "docs/decisions/pd-16-profiles.md",
+    "docs/decisions/0017-schema-v1-shape.md"
    ],
    "cp": "CP2",
    "critical": true,
@@ -435,7 +437,6 @@
    "deps": [],
    "done": [
     "0011: the launch uses the prototype styles",
-    "0012: one events table replaces a second database",
     "0014: the product uses the Sentry free tier, not GlitchTip"
    ],
    "read": [
@@ -630,7 +631,8 @@
     "It returns the matching listings too, as the `listing` kind of the results",
     "The hard filters are area, budget, move date, compatible intent and dealbreakers",
     "The match score is 70 plus 30 times the fraction of preferences met. It shows only when lifestyle answers exist",
-    "Blocked and suspended people never appear"
+    "Blocked and suspended people never appear",
+    "The must-haves of the candidate apply back to the searcher, with the mapping of F-12"
    ],
    "read": [
     "docs/interface-shape.md"
@@ -868,7 +870,7 @@
    "done": [
     "When a visitor signs in, the account gets what the visitor told the assistant before sign-in",
     "Nothing is lost, and the assistant never asks the same thing two times",
-    "The stored chat turns move to the account with the session",
+    "The goals of the session, with their chat turns, move to the account",
     "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it"
    ],
    "read": [
@@ -957,14 +959,12 @@
    "hours": 2,
    "start": "2026-09-29",
    "end": "2026-09-30",
-   "deps": [
-    "T-06"
-   ],
+   "deps": [],
    "done": [
-    "One events table holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed",
+    "One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed",
     "No message text is stored",
     "Code writes events only through one `track()` function in apps/api",
-    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus v1 can move it to its own database"
+    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",
@@ -1617,7 +1617,7 @@
    ],
    "done": [
     "The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing",
-    "A listing holds the fields of the eight steps of flow 04 in the Product file",
+    "The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores",
     "The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API",
     "Only the lister can edit, pause or delete a listing"
    ],

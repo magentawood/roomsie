@@ -25,17 +25,17 @@ tags:
 Records what people actually do, to show what works.
 
 ## Needs first
-- [[T-06 Database schema ⚑]]
+- Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[T-39 Analytics database]]
 - [[T-50 Found a place, share, feedback]]
 
 ## Done when
-- [ ] One events table holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
+- [ ] One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
 - [ ] No message text is stored
 - [ ] Code writes events only through one `track()` function in apps/api
-- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus v1 can move it to its own database
+- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database
 
 ^done
 

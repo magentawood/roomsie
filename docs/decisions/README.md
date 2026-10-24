@@ -26,6 +26,7 @@ One file for each decision. Each file records:
 | [0014](0014-error-tracking.md) | Sentry SDK, GlitchTip destination now, Crashlytics for mobile | Accepted |
 | [0015](0015-primary-key-strategy.md) | UUIDv7 primary keys, no DB default, client mints for offline writes | Accepted |
 | [0016](0016-credentials-and-secrets.md) | Credentials and secrets: public vs critical, secrets only in apps/api | Accepted |
+| [0017](0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted |
 
 > **Note on requirements sources.** `PRD.md` is **deprecated** (2026-09-14). You must not cite it.
 >

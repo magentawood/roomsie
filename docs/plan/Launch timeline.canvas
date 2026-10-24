@@ -1463,13 +1463,6 @@
    "toSide": "left"
   },
   {
-   "id": "e-T-06-T-24",
-   "fromNode": "task-T-06",
-   "fromSide": "right",
-   "toNode": "task-T-24",
-   "toSide": "left"
-  },
-  {
    "id": "e-T-12-T-21",
    "fromNode": "task-T-12",
    "fromSide": "right",
