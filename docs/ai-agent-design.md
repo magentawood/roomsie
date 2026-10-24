@@ -77,11 +77,9 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 1. **The empty slot is the confidence signal** ([PD3b](decisions/pd-03b-interview-vs-chips.md)).
 2. **Token probability on the extracted span has much better calibration.** For a constrained choice (for example, four enum values), the probability mass on the selected value is a usable threshold. Below it, ask, and do not fill ([PD7](decisions/pd-07-models.md)).
 3. **Never let inference fill a slot.**
-4. **A completeness gate, not a confidence gate, controls the end of the interview.** Results show after intent, area and budget. The interview can end only when the minimum slot set is full. This rule is deterministic and readable by all ([PD6c](decisions/pd-06c-interface-holes.md)).
+4. **A completeness gate, not a confidence gate.** Results show after intent, area and budget. The minimum slot set no longer gates a score ([PD3a](decisions/pd-03a-flatmate-matching.md)), and F-14 (PC-39) decides what it gates. This rule is deterministic and readable by all ([PD6c](decisions/pd-06c-interface-holes.md)).
 
 **The minimum slot set before the first recommendation** (a proposal, for discussion):
-
-Per [PD6c](decisions/pd-06c-interface-holes.md), this set gates the end of the interview, not the first results.
 
 | Required | Why |
 |---|---|
@@ -89,7 +87,7 @@ Per [PD6c](decisions/pd-06c-interface-holes.md), this set gates the end of the i
 | Budget | Hard filter |
 | Areas | Hard filter |
 | Move date | Hard filter |
-| At least 2 dealbreakers | Minimum for a useful ranking |
+| At least 2 dealbreakers | Dealbreakers filter the results ([PD3a](decisions/pd-03a-flatmate-matching.md)) |
 | Intent: one of the five place types (PD15) | Sets their feed |
 
 All other slots are optional. The assistant can collect them during browsing.

@@ -27,7 +27,7 @@
 | Injection | Adversarial listing text corpus. None of it changes behaviour. |
 | Discrimination | Stated exclusions recorded and filtered, never inferred or suggested ([PD3c](decisions/pd-03c-exclusionary-preferences.md)). Protected attributes never inferred. Proxies never suggested. |
 | Scope | Legal questions answered from the corpus or handed off ([PD10](decisions/pd-10-scope-bands.md), band 2b). Off-topic requests redirected. |
-| Completeness | The interview can end when the minimum slot set is full ([PD6c](decisions/pd-06c-interface-holes.md)). The "Best match" label follows [PD3a](decisions/pd-03a-flatmate-matching.md) |
+| Completeness | The minimum slot set is a fixed, readable gate ([PD6c](decisions/pd-06c-interface-holes.md)). The "Best match" label follows [PD3a](decisions/pd-03a-flatmate-matching.md) |
 | Length and cost | Turns and tokens to completion, as a distribution, not only the mean |
 | Language | All categories above, in Hindi, Marathi and code-switched input |
 

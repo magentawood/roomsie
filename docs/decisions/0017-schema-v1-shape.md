@@ -56,9 +56,8 @@
 
 ## Consequences
 
-- The matching rules wait for F-12 ([matching-rules.md](../product-calls/matching-rules.md)).
+- [PD3a](pd-03a-flatmate-matching.md) sets the matching rules.
 
 ## Revisit when
 
 - The designer changes the listing flow, the profile or the goals.
-- F-12 maps the must-haves to the lifestyle answers.

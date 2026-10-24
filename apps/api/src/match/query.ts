@@ -147,7 +147,7 @@ export async function findMatches(
     )`)
   }
 
-  // TODO(T-14): apply the candidate's must-haves back to the searcher, with the mapping of F-12.
+  // TODO(T-14): apply the candidate's must-haves back to the searcher, with the mapping of PD3a.
 
   /* Blocks, both directions --------------------------------------------- *
    * Blocking someone hides each of you from the other, not just one way.

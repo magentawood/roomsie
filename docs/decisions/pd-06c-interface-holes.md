@@ -26,8 +26,8 @@ filters. The design had five holes:
 
 **First results (hole 3).** The panel shows first after intent, area and
 budget, approximately three turns. These turns are chip-driven: the place types of
-PD15, the area groups of PD2, and the budget bands of the designs. The "Best match" label waits for three
-or more preferences ([PD3a](pd-03a-flatmate-matching.md)). The interview does not end: open questions
+PD15, the area groups of PD2, and the budget bands of the designs. The "Best match" label follows
+[PD3a](pd-03a-flatmate-matching.md). The interview does not end: open questions
 continue while the user browses.
 
 **Direction of change (hole 4):**
@@ -55,7 +55,17 @@ Manual edits are silent in the transcript by default.
 **At launch, only the basics.** The panel queries again when the form changes.
 The banners, the undo and the scroll rules come in v1.
 
+**The empty state (PC-36).** The panel shows "No relevant results" and the
+suggested posts: the next budget band, or a neighbouring area group. A seeded
+list gives the neighbours of each area group. The chips of the assistant relax
+the budget, the area, or the dealbreaker that removes the most cards. A search
+with launch and other areas shows the launch results and one waitlist line. A
+search with no launch area shows the waitlist screen. The alerts go by email.
+
 ## Rationale
+
+- **The empty state follows the designs** (PD14). Suggested posts and chips
+  stop a dead end, and PD2 sends visitors from other areas to the waitlist.
 
 - **Form, not turn.** A turn that changes no slot changes nothing on the
   screen. Ten turns can give only three panel updates.
@@ -98,19 +108,17 @@ The banners, the undo and the scroll rules come in v1.
   dialogs without a check.
 - **Inference never wins.** An inferred value never fills a slot silently.
 
+## Alternatives rejected
+
+- **An empty state with chips only.** The panel stays empty until the person
+  reads the chat.
+
 ## Consequences
 
 - The panel must not wait for the model. Run the query from the current form
   state.
-- **The empty state (PC-36).** The panel shows "No relevant results" and the
-  suggested posts: the next budget band, or a neighbouring area group. A seeded
-  list gives the neighbours of each area group. The chips of the assistant
-  relax the budget, the area, or the dealbreaker that removes the most cards.
-  A search with launch and other areas shows the launch results and one
-  waitlist line. A search with no launch area shows the waitlist screen. The
-  alerts go by email.
-- The completeness gate controls when the conversation can end, not the
-  results.
+- The completeness gate no longer gates a score ([PD3a](pd-03a-flatmate-matching.md)).
+  F-14 (PC-39) decides what it gates.
 - Mobile rule (hole 1): do not change the chat size while the user types or
   reads. An automatic shrink in the middle of a sentence is the same defect as
   a silent reorder.

@@ -1,6 +1,6 @@
 # Product calls: assistant and limits
 
-**Task:** F-14 · **Status:** open · **Updated:** 2026-10-24
+**Task:** F-14 · **Status:** open · **Updated:** 2026-10-25
 
 The product team (founder and product) settles these calls. Engineers do not.
 
@@ -84,7 +84,7 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ## Round 3
 
-Ask this round when these calls have answers: PC-23 in [matching-rules.md](matching-rules.md) (F-12), and PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13).
+Ask this round when PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13) has an answer.
 
 ### PC-39 · The interview script after the chips
 
@@ -95,4 +95,4 @@ Ask this round when these calls have answers: PC-23 in [matching-rules.md](match
 - **Blocks:** T-09 scripted next question, T-13 (soft: the default is option a).
 - **Record:** [PD6c](../decisions/pd-06c-interface-holes.md)
 
-➡️ **Recommended:** a, with a step count and no market defaults. Move date and two dealbreakers end the interview (`docs/ai-agent-design.md`, section 3.3). The chips show results before these questions. Thus, defaults add nothing.
+➡️ **Recommended:** a, with a step count and no market defaults. Move date and two dealbreakers make the minimum slot set (`docs/ai-agent-design.md`, section 3.3). The chips show results before these questions. Thus, defaults add nothing.

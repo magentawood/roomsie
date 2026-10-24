@@ -76,7 +76,6 @@ budget. This takes approximately three turns.
 | Intent only | "Everything in Mumbai" |
 | Plus area | "Flats in Powai" with the count |
 | Plus budget | "Flats in Powai under 20,000" |
-| Three or more preferences | The "Best match" label can show on cards |
 
 **The first three turns are chip-driven.**
 
@@ -92,7 +91,6 @@ budget. This takes approximately three turns.
 
 - The open questions start when results are on the screen.
 - They continue while the user browses.
-- The completeness gate in `ai-agent-design.md` section 3.3 controls when the conversation can stop.
 
 Why: [PD6c](decisions/pd-06c-interface-holes.md)
 
