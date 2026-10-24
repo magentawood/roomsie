@@ -29,8 +29,7 @@ The designs ask two questions. The answers go to Form A:
 
 ## The choice we made
 
-- Five intent values, one for each place type of the designs. A lister is a listing, not a seeker ([PD15](../decisions/pd-15-form-a-contract.md)).
-- Room type, who is moving, eight lifestyle answers and seven must-haves are also slots of Form A ([PD15](../decisions/pd-15-form-a-contract.md)).
+- Five intent values, one for each place type, and the other slots of Form A ([PD15](../decisions/pd-15-form-a-contract.md)).
 
 ## Gotchas
 

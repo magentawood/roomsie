@@ -43,7 +43,7 @@ slot: {
   evidence:   "I really can't be around cigarette smoke",
   turn:       7,
   confirmed:  true,
-  weight:     "must" | "nice" | null
+  weight:     null   // only a must-have has a weight: "prefer" | "dealbreaker" (PD15)
 }
 ```
 
@@ -90,7 +90,7 @@ Per [PD6c](decisions/pd-06c-interface-holes.md), this set gates the match score,
 | Areas | Hard filter |
 | Move date | Hard filter |
 | At least 2 dealbreakers | Minimum for a useful ranking |
-| Identity of the asker as a person or a spot holder | Sets their feed |
+| Intent: one of the five place types (PD15) | Sets their feed |
 
 All other slots are optional. The assistant can collect them during browsing.
 

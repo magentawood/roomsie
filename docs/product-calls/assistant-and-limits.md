@@ -91,7 +91,7 @@ Ask this round when these calls have answers: PC-23 in [matching-rules.md](match
 ❓ After intent, area and budget, in which order does the assistant ask the other questions? Which open questions does it ask? Is there a progress indicator? Does it ever use market defaults?
 
 - **Today:** no order. The open questions are in `docs/ai-agent-design.md:101-106`. The `default` source exists but nothing uses it (`docs/ai-agent-design.md:54`). "Show progress" is in `docs/assistant-risks.md:76`.
-- **Options:** a) Move date, the eight lifestyle questions, then the open questions during the results. Room type comes from the chat only (PD15). b) The open questions first, then the axes. Progress: a step count, or nothing. Defaults: none, or with a label.
+- **Options:** a) Move date, the eight lifestyle questions, then the open questions during the results. b) The open questions first, then the lifestyle questions. Progress: a step count, or nothing. Defaults: none, or with a label.
 - **Blocks:** T-09 scripted next question, T-13 (soft: the default is option a).
 - **Record:** [PD6c](../decisions/pd-06c-interface-holes.md)
 

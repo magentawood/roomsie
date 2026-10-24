@@ -83,6 +83,7 @@ Decide what the assistant asks, and what a profile holds.
     - T-16b: new item: Settings has a "Hide my card" switch.
     - T-36: new item: the user asks the assistant what it noted, and corrects or deletes a note in the chat. A delete is a direct database action, never an edit by the model.
     - M-01: the form asks the full profile. New item: marketing collects listings from owners, PG operators and brokers.
+    - T-06 (review finding, decided by the user): "Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility" becomes "Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility", with no tick until T-06 changes the schema.
 - **Out of scope:** the calls of F-12 and F-13, the gender field, the launch date and the number of seeded listings (the founders, PD11), changes in Figma (the list for the designer goes in the PR), and the schema and contract code (T-06, T-08).
 
 ## Log

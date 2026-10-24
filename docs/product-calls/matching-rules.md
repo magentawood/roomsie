@@ -4,7 +4,6 @@
 
 ## How to run this session
 
-- Run this session after the F-11 session ([intake-and-profile.md](intake-and-profile.md)).
 - Ask the questions in rounds. Put a question in a round when all its prerequisites have answers.
 - Ask one question at a time. Get one answer before you go to the next question.
 - Record each answer in the named record. Then delete the question from this file.
@@ -39,7 +38,7 @@
 ❓ Who sees whom for each intent? For example, do two people who each want a full flat see each other, so that they can rent together?
 
 - **Today:** `has_flat` and `wants_room` see each other. `wants_flat` sees `wants_flat`. `open` sees everyone. `unclear` sees nobody (`apps/api/src/match/intent.ts:8-25`).
-- **Options:** a) Keep the matrix as built. b) Remove `wants_flat` to `wants_flat`. c) Change the matrix to follow the PC-02 cards.
+- **Options:** a) Keep the matrix as built. b) Remove `wants_flat` to `wants_flat`. c) Change the matrix to follow the intent values of [PD15](../decisions/pd-15-form-a-contract.md).
 - **Blocks:** T-14.
 - **Record:** PD3a.
 
@@ -54,7 +53,7 @@
 - **Blocks:** T-14.
 - **Record:** PD3a.
 
-➡️ **Recommended:** a) Keep all three rules. Two fixed numbers or dates do not frequently meet, and a strict filter empties a sparse panel. Confirm that "budget" means rent, after PC-18.
+➡️ **Recommended:** a) Keep all three rules. Two fixed numbers or dates do not frequently meet, and a strict filter empties a sparse panel. Confirm that "budget" means rent: a room is a listing ([PD14](../decisions/pd-14-v0-is-the-figma-designs.md)).
 
 ### PC-23 · When the match score shows
 

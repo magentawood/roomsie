@@ -52,7 +52,7 @@ The exact shape of all stored data: people, flats, messages, matches.
 
 ## Done when
 - [ ] Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist
-- [x] Profiles hold intent, budget, areas, move date, the nine lifestyle answers with prefer or dealbreaker, photo keys and visibility · [#58](https://github.com/magentawood/roomsie/pull/58)
+- [ ] Profiles hold the Form A fields of PD15, the profile fields of PD16, photo keys and visibility
 - [x] IDs are UUIDv7 with no database default. `created_at` comes from the server clock · [#58](https://github.com/magentawood/roomsie/pull/58)
 - [x] Every table has a key to our own `users.id`. The Firebase UID is only in `users.auth_provider_id` · [#58](https://github.com/magentawood/roomsie/pull/58)
 - [ ] A `chat_turns` table stores every free-text turn against the anonymous session or the user. Thus, v1 can backfill Form B
@@ -65,3 +65,5 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [0006-drizzle.md](../../decisions/0006-drizzle.md)
 - [agent-architecture.md](../../agent-architecture.md)
 - [extensibility.md](../../extensibility.md)
+- [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
+- [pd-16-profiles.md](../../decisions/pd-16-profiles.md)
