@@ -151,29 +151,7 @@ export async function findMatches(
     )`)
   }
 
-  /* The candidate's dealbreakers, applied back at the searcher ----------- *
-   * Flatsharing is mutual: if they will not live with a smoker and the
-   * searcher smokes, neither should see the other. Only possible once the
-   * searcher has a profile of their own, so anonymous searchers get the
-   * one-way filter above and nothing more.
-   *
-   * ⚠️  The ticket says "Hard filters: ... dealbreakers" without saying
-   *     whose. Mutual is the reading that matches how flatshares work.
-   *     Flagged for confirmation.
-   */
-  if (opts.viewerProfileId) {
-    conditions.push(sql`not exists (
-      select 1 from ${profileLifestyle} theirs
-      where theirs.profile_id = ${profiles.id}
-        and theirs.weight     = 'dealbreaker'
-        and not exists (
-          select 1 from ${profileLifestyle} mine
-          where mine.profile_id = ${opts.viewerProfileId}
-            and mine.axis_key   = theirs.axis_key
-            and mine.value      = theirs.value
-        )
-    )`)
-  }
+  // TODO(T-14): apply the candidate's must-haves back to the searcher, with the mapping of F-12.
 
   /* Blocks, both directions --------------------------------------------- *
    * Blocking someone hides each of you from the other, not just one way.
@@ -208,7 +186,7 @@ export async function findMatches(
   const rows = await db
     .select({
       profileId: profiles.id,
-      displayName: profiles.displayName,
+      displayName: profiles.fullName,
       age: profiles.age,
       areas: profiles.areas,
       budgetMin: profiles.budgetMin,
