@@ -45,7 +45,7 @@
       "tools/build-decision-ledger.py": "26d43befb290",
       "tools/render-docs.py": "ab64bfbdd946",
       ".githooks/pre-commit": "da51ec76d9c6",
-      ".github/workflows/docs-check.yml": "dfe18224bcab",
+      ".github/workflows/docs-check.yml": "b400e0caa079",
       "tools/devkit-defaults.json": "6f32cd8ef941"
     },
     "learnIndex": "docs/learn/README.md"
