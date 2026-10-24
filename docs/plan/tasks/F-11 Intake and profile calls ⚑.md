@@ -44,5 +44,5 @@ Decide what the assistant asks, and what a profile holds.
 
 ## Read first
 - [intake-and-profile.md](../../product-calls/intake-and-profile.md)
-- [pd-00-v0-scope.md](../../decisions/pd-00-v0-scope.md)
+- [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [pd-03b-interview-vs-chips.md](../../decisions/pd-03b-interview-vs-chips.md)

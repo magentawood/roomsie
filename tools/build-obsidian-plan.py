@@ -374,7 +374,7 @@ L = [f"# Team plan: launch on {D(LAUNCH):%-d %B}", "",
  "**Quality comes before the date.** The go/no-go list at the end of this file is the bar. If a check fails, the date moves by a small amount. We do not ship something below the bar. Do not cut corners to meet a date. If your work takes more time, say so.", "",
  "---", "", "## Five lanes", "",
  f"{b_h - ui_h} of the {b_h} build hours need no designs. The other {ui_h} hours are screens, and these cannot start without designs.", "",
- "**Until the designs arrive, the work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).", "",
+ "**The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).", "",
  f"| Lane | Question it answers | Owns | Hours | Spare | Person |", "|---|---|---|---|---|---|"]
 for k in LANES:
     rs = rows_of(k); h = sum(t["hours"] or 0 for t in rs)
@@ -525,7 +525,7 @@ G += ["  classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f",
       "  classDef dtask fill:#ff87ac,color:#000,stroke:#ff87ac", "```"]
 free_h = sum(t["hours"] or 0 for t in queue if t["id"] in open_)
 DF = ["\n---\n", "## Design-free work\n",
-      "Until the designs arrive, take tasks from this section only. "
+      "Take tasks from this section. "
       "No task here waits on a design or on an open product call. This list comes from the `deps` in `docs/team-plan.json`.\n",
       "- **You can start wave 0 at this time.** Its tasks wait on no open task.",
       "- **Wave n waits on wave n−1.** When a wave is complete, you can start the next wave.",
@@ -534,7 +534,7 @@ DF = ["\n---\n", "## Design-free work\n",
       "- **In a wave, take the ⚑ tasks first.** Then take the task that unblocks the most tasks.",
       "- **The F- tasks with the word \"calls\" are grill sessions with the product team.** Each one has a question file in `docs/product-calls/`.",
       "- **When the product team completes a product-call task,** the tasks in \"Waits on product calls\" that wait on it join the waves.",
-      "- **When the designs arrive,** the tasks in \"Waits on the designs\" join the waves.\n",
+      "- **When a design task is done,** the tasks in \"Waits on the designs\" that need it join the waves.\n",
       f"**{len(open_)} free tasks are open · {free_h} build hours.**\n",
       "| Wave | Task | Owner | Hours | State | Unblocks | Issue |", "|---|---|---|---|---|---|---|"]
 key = lambda t: (wave[t["id"]], not t["critical"], -len(downstream(t["id"])), t["id"])

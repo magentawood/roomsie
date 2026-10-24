@@ -7,8 +7,8 @@ This file is an index for each agent session: what roomsie is, where each fact l
 ## What roomsie is
 
 - An AI-native platform to find flats and flatmates in Mumbai. An assistant interviews the user, then recommends. Browsing comes after the conversation.
-- v0 is flatmate matching only, open to all genders, and free.
-- Launch date: set when the designs arrive ([PD11](docs/decisions/pd-11-launch.md), [PD12](docs/decisions/pd-12-team-plan.md)).
+- v0 is the product in the Figma designs ([PD14](docs/decisions/pd-14-v0-is-the-figma-designs.md)).
+- Launch date: the founders select it now ([PD11](docs/decisions/pd-11-launch.md)).
 - roomsie is a pivot of femmeflats, a women-only swipe app. Its PRD is deprecated: do not cite it.
 
 ## Decisions

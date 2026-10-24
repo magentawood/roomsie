@@ -32,7 +32,7 @@ Pick the colours, fonts and general feel one time, and never argue about them ag
 - [[D-04 Landing and waitlist designs]]
 
 ## Done when
-- [ ] The launch uses the look of the Figma designs, not the V3 prototype
+- [x] The launch uses the look of the Figma designs, not the V3 prototype · [#117](https://github.com/magentawood/roomsie/pull/117)
 
 ^done
 

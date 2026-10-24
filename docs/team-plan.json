@@ -1230,7 +1230,7 @@
    ],
    "read": [
     "docs/product-calls/intake-and-profile.md",
-    "docs/decisions/pd-00-v0-scope.md",
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
     "docs/decisions/pd-03b-interview-vs-chips.md"
    ],
    "cp": "CP3",

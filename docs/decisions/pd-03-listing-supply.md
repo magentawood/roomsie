@@ -14,7 +14,7 @@
 
 **In one line:** Deferred until the broker interviews: the working hypothesis is that brokers list free and pay only for a qualified introduction.
 
-**Deferred until the broker interviews.** It is not in v0.
+**Deferred until the broker interviews.** In v0, listers supply the places, and brokers list free ([PD14](pd-14-v0-is-the-figma-designs.md)).
 
 **Working hypothesis:** brokers list free, and roomsie charges for a qualified introduction.
 
@@ -54,8 +54,8 @@ We will validate the hypothesis with calls to Mumbai brokers.
 
 - The broker pays no monthly subscription. The broker gets seekers who stated a budget, an area, a date and their dealbreakers.
 - The user pays no fee for the introduction.
-- The broker work (PD3 and PD4) is out of v0 (PD0). It stays blocked on the calls. No work waits on it.
-- Listing and broker verification are out of v0. They come back with PD3.
+- Listings and brokers are in v0 ([PD14](pd-14-v0-is-the-figma-designs.md)). The broker price stays blocked on the calls.
+- Listing and broker verification are in v0. PD8 gives the method.
 - The broker calls from marketing are the work with the highest value today.
 
 **Risks:**

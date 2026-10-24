@@ -1,6 +1,8 @@
 # PD0 — v0 is flatmate matching only
 
-**Status:** Settled · **Deciders:** Yash
+**Status:** Superseded by PD14 on 2026-10-24 · **Deciders:** Yash
+
+> Superseded (2026-10-24): v0 is the product in the Figma designs, with listings ([PD14](pd-14-v0-is-the-figma-designs.md)). This record is history. Do not cite it for the scope.
 
 ## Context
 

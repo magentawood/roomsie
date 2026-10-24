@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**33 of 221 done · 15%**
+**39 of 221 done · 18%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -27,7 +27,7 @@ This note is part of [[roomsie launch]].
 | [[P3 Data and trust]] | 0 / 4 | 7 / 19 | 37% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 22 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 21 | 19% |
-| [[Design]] | 0 / 6 | 0 / 12 | 0% |
+| [[Design]] | 1 / 6 | 6 / 12 | 50% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 12 | 0% |
 | [[Founder]] | 3 / 14 | 12 / 38 | 32% |
@@ -37,7 +37,7 @@ This note is part of [[roomsie launch]].
 
 ## Design-free work
 
-Until the designs arrive, take tasks from this section only. No task here waits on a design or on an open product call. This list comes from the `deps` in `docs/team-plan.json`.
+Take tasks from this section. No task here waits on a design or on an open product call. This list comes from the `deps` in `docs/team-plan.json`.
 
 - **You can start wave 0 at this time.** Its tasks wait on no open task.
 - **Wave n waits on wave n−1.** When a wave is complete, you can start the next wave.
@@ -46,7 +46,7 @@ Until the designs arrive, take tasks from this section only. No task here waits 
 - **In a wave, take the ⚑ tasks first.** Then take the task that unblocks the most tasks.
 - **The F- tasks with the word "calls" are grill sessions with the product team.** Each one has a question file in `docs/product-calls/`.
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
-- **When the designs arrive,** the tasks in "Waits on the designs" join the waves.
+- **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
 **8 free tasks are open · 7 build hours.**
 
@@ -372,18 +372,18 @@ flowchart LR
 > ![[T-16b Profile screens ⚑#^done]]
 
 
-## Design — 0/12
+## Design — 6/12
 
-> [!todo]- ⬜ [[D-01 Styling decision]] · 0/1
+> [!todo]- ✅ [[D-01 Styling decision]] · 1/1
 > ![[D-01 Styling decision#^done]]
 
-> [!todo]- ⬜ [[D-02 Chat screen designs ⚑]] · 0/2
+> [!todo]- 🟡 [[D-02 Chat screen designs ⚑]] · 1/2
 > ![[D-02 Chat screen designs ⚑#^done]]
 
-> [!todo]- ⬜ [[D-03 Results and profile designs]] · 0/4
+> [!todo]- 🟡 [[D-03 Results and profile designs]] · 3/4
 > ![[D-03 Results and profile designs#^done]]
 
-> [!todo]- ⬜ [[D-04 Landing and waitlist designs]] · 0/2
+> [!todo]- 🟡 [[D-04 Landing and waitlist designs]] · 1/2
 > ![[D-04 Landing and waitlist designs#^done]]
 
 > [!todo]- ⬜ [[D-05 Design QA]] · 0/2

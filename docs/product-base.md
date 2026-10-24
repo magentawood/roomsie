@@ -2,8 +2,8 @@
 
 What roomsie does, and why, at a glance. Each decision's full record is its PD file.
 
-roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the people that fit.
-v0 is flatmate matching only, open to all genders, in three Mumbai neighbourhoods.
+roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the flats, rooms and people that fit.
+v0 is the product in the Figma designs (PD14): flats, rooms, PGs and flatmates, open to all genders, in three Mumbai neighbourhoods.
 The public launch is on 12 October. The fallback is 14 October.
 The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roomsie is self-funded.
 
@@ -12,7 +12,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 <!-- ledger:start -->
 | ID | Decision | Status | In one line |
 |---|---|---|---|
-| [PD0](decisions/pd-00-v0-scope.md) | v0 is flatmate matching only | Settled | v0 is flatmate matching only, with no property listing objects: a person with a spare room is a person card. |
+| [PD0](decisions/pd-00-v0-scope.md) | v0 is flatmate matching only | Superseded by PD14 on 2026-10-24 | v0 is flatmate matching only, with no property listing objects: a person with a spare room is a person card. |
 | [PD1](decisions/pd-01-audience.md) | Open to all genders | Settled | roomsie is open to all genders and drops the women-only promise of femmeflats. |
 | [PD2](decisions/pd-02-launch-market.md) | Mumbai first | Settled | roomsie launches in Mumbai, only in the three neighbourhoods with the most seeded profiles, and all other visitors join a waitlist. |
 | [PD3](decisions/pd-03-listing-supply.md) | Where listing supply comes from at launch | Deferred | Deferred until the broker interviews: the working hypothesis is that brokers list free and pay only for a qualified introduction. |
@@ -32,6 +32,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 | [PD9](decisions/pd-09-pre-login-limits.md) | Abuse and cost limits on the pre-login chat | Settled | The pre-login chat uses a turn cap of 5 free-text turns and rate limits, with a global daily spend ceiling as the backstop. |
 | [PD10](decisions/pd-10-scope-bands.md) | Five scope bands for the assistant | Settled | The router puts each question in one of five scope bands by the cost of an incorrect answer, and band 2b is corpus only. |
 | [PD11](decisions/pd-11-launch.md) | Public launch on 12 October | Settled. The date moved on 2026-09-26. | The public launch is on Monday 12 October, with Wednesday 14 October as the fallback, and the go/no-go list is the quality bar. |
-| [PD12](decisions/pd-12-team-plan.md) | Team plan: design-free waves, then screens | Settled. Cut again on 2026-09-25. Changed on 2026-10-03. | All design-free work comes first, in waves, and the screens come when designs D-02, D-03 and D-04 arrive. |
+| [PD12](decisions/pd-12-team-plan.md) | Team plan: design-free waves, then screens | Settled. Cut again on 2026-09-25. Changed on 2026-10-03. The designs arrived on 2026-10-24. | All design-free work comes first, in waves, and the screens come when designs D-02, D-03 and D-04 arrive. |
 | [PD13](decisions/pd-13-databases-and-backups.md) | Databases and backups | Settled, as an exception. Changed on 2026-10-04. | The main and analytics databases are two free projects in one Supabase account, with a nightly dump of both to R2. |
+| [PD14](decisions/pd-14-v0-is-the-figma-designs.md) | v0 is the product in the Figma designs | Settled | v0 is the product that the three Figma files show, with listings from owners, flatmates, PG operators and brokers; this replaces PD0. |
 <!-- ledger:end -->

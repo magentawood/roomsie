@@ -33,9 +33,9 @@ Match cards, profile pages and the connect flow.
 - [[D-05 Design QA]]
 
 ## Done when
-- [ ] The results panel header states and the person card are ready for V5 on Sat 26 Sep
-- [ ] The profile create and edit screens, with photo upload, are ready for V5 on Tue 29 Sep
+- [x] The results panel header states and the person card are ready for V5 on Sat 26 Sep · [#117](https://github.com/magentawood/roomsie/pull/117)
+- [x] The profile create and edit screens, with photo upload, are ready for V5 on Tue 29 Sep · [#117](https://github.com/magentawood/roomsie/pull/117)
 - [ ] The design has connect and report states. They refine the prototype detail sheet that V5 builds first
-- [ ] There is a delete confirmation
+- [x] There is a delete confirmation · [#117](https://github.com/magentawood/roomsie/pull/117)
 
 ^done

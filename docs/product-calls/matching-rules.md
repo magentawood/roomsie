@@ -1,6 +1,6 @@
 # Product calls: matching rules
 
-**Task:** F-12 · **Status:** open · **Updated:** 2026-10-04
+**Task:** F-12 · **Status:** open · **Updated:** 2026-10-24
 
 ## How to run this session
 
@@ -45,7 +45,7 @@ Prerequisites: PC-02, PC-04, PC-07 and PC-18 in [intake-and-profile.md](intake-a
 - **Blocks:** T-14.
 - **Record:** PD3a.
 
-➡️ **Recommended:** a) Keep it, and remove the row of each intent that PC-02 drops. Two seekers who team up are flatmates, and [PD0](../decisions/pd-00-v0-scope.md) allows flatmate matching only.
+➡️ **Reopened by [PD14](../decisions/pd-14-v0-is-the-figma-designs.md):** the old answer rested on PD0. Listings are in v0, so the matrix also needs a row for each listing kind.
 
 ### PC-26 · Budget overlap and move-date window
 

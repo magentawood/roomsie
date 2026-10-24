@@ -36,9 +36,9 @@ Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error
 | Change the auth provider | If necessary | Link `users.auth_provider_id` again | The Firebase UID is only in that column |
 | Change error tracking to GlitchTip | v1 | In `reportError` | Only one function reports errors |
 | Move photo storage | If necessary | Change the storage module and the base URL | Store object keys, not full URLs. Uploads use presigned URLs |
-| Property listings | After v0 | A new `listings` module and table. Results get a second kind | Results in the contract are a tagged union, `kind: "person"`, from day one |
-| In-app messaging | v1 | A new `messaging` module, with Supabase Realtime broadcast | Only rule 5 |
-| DigiLocker verification | v1 | A new `verification` module. The server makes the blur | Profiles have `visibility` at launch |
+| Property listings | v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)) | A new `listings` module and table. Results get a second kind | Results in the contract are a tagged union, `kind: "person"`, from day one |
+| In-app messaging | v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)) | A new `messaging` module, with Supabase Realtime broadcast | Only rule 5 |
+| DigiLocker verification | v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)) | A new `verification` module. The server makes the blur | Profiles have `visibility` at launch |
 | A mobile app | Later | A new `apps/mobile` on the same API | Bearer tokens, the committed OpenAPI document, and **all routes under `/v1`** |
 | Untitled UI token pipeline | v1 | Replace the token values | Components use theme tokens, not raw colours, sizes or fonts |
 | Move the API host | If necessary | Deploy the container again | The API is a Docker image with no host-specific code |

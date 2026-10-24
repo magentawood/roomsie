@@ -4,7 +4,7 @@
 
 ## Context
 
-PD3 (where listing supply comes from at launch) waits for the broker interviews. PD0 makes v0 flatmate matching only.
+PD3 (where listing supply comes from at launch) waits for the broker interviews. PD14 puts listings into v0, next to flatmate matching.
 
 ## Decision
 
