@@ -41,8 +41,8 @@ Takes what a person wants and returns the people who fit.
 ## Done when
 - [ ] It returns the matching people for a form state
 - [ ] It returns the matching listings too, as the `listing` kind of the results
-- [x] The hard filters are area, budget with 10% leeway, move date, intent and the dealbreaker must-haves of PD3a · [#59](https://github.com/magentawood/roomsie/pull/59)
-- [x] The results come in the Best Matches order of PD3a, with its Best match label · [#59](https://github.com/magentawood/roomsie/pull/59)
+- [ ] The hard filters are area, budget with 10% leeway, move date, intent and the dealbreaker must-haves of PD3a
+- [ ] The results come in the Best Matches order of PD3a, with its Best match label
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
 - [ ] The must-haves of the candidate apply back to the searcher, with the mapping of PD3a
 - [ ] A card with an unanswered dealbreaker shows below the full matches, with what is missing
