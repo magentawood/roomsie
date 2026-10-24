@@ -1,5 +1,5 @@
 {
-  "id": "0a202c8a-bc42-4c46-8a32-89a83719cd0f",
+  "id": "1e4aad2d-f186-4ba0-9aaa-a85b725d71d5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -319,8 +319,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "input": {
-          "name": "input",
+        "input_method": {
+          "name": "input_method",
           "type": "turn_input",
           "typeSchema": "public",
           "primaryKey": false,
@@ -390,7 +390,7 @@
       "checkConstraints": {
         "chat_turns_input_check": {
           "name": "chat_turns_input_check",
-          "value": "(\"chat_turns\".\"role\" = 'user') = (\"chat_turns\".\"input\" is not null)"
+          "value": "(\"chat_turns\".\"role\" = 'user') = (\"chat_turns\".\"input_method\" is not null)"
         }
       },
       "isRLSEnabled": true
@@ -719,6 +719,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "listing_kind": {
+          "name": "listing_kind",
+          "type": "listing_kind",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
         "name": {
           "name": "name",
           "type": "text",
@@ -749,13 +756,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "sort_order": {
-          "name": "sort_order",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "default": 0
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp with time zone",
@@ -764,42 +764,33 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "listing_flatmates_listing_idx": {
-          "name": "listing_flatmates_listing_idx",
-          "columns": [
-            {
-              "expression": "listing_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
-        "listing_flatmates_listing_id_listings_id_fk": {
-          "name": "listing_flatmates_listing_id_listings_id_fk",
+        "listing_flatmates_listing_id_listing_kind_listings_id_kind_fk": {
+          "name": "listing_flatmates_listing_id_listing_kind_listings_id_kind_fk",
           "tableFrom": "listing_flatmates",
           "tableTo": "listings",
           "columnsFrom": [
-            "listing_id"
+            "listing_id",
+            "listing_kind"
           ],
           "columnsTo": [
-            "id"
+            "id",
+            "kind"
           ],
           "onDelete": "cascade",
-          "onUpdate": "no action"
+          "onUpdate": "cascade"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {},
+      "checkConstraints": {
+        "listing_flatmates_room_only_check": {
+          "name": "listing_flatmates_room_only_check",
+          "value": "\"listing_flatmates\".\"listing_kind\" = 'room_in_flat'"
+        }
+      },
       "isRLSEnabled": true
     },
     "public.listing_rates": {
@@ -851,23 +842,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "listing_rates_rent_idx": {
-          "name": "listing_rates_rent_idx",
-          "columns": [
-            {
-              "expression": "rent",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "listing_rates_listing_id_listing_kind_listings_id_kind_fk": {
           "name": "listing_rates_listing_id_listing_kind_listings_id_kind_fk",
@@ -1383,6 +1358,14 @@
         "listings_live_fields_check": {
           "name": "listings_live_fields_check",
           "value": "\"listings\".\"status\" = 'draft' or (\n    \"listings\".\"area_slug\" is not null\n    and (\"listings\".\"kind\" <> 'pg' or \"listings\".\"pg_name\" is not null)\n    and (\"listings\".\"kind\" <> 'broker_flat' or \"listings\".\"brokerage\" is not null))"
+        },
+        "listings_live_expiry_check": {
+          "name": "listings_live_expiry_check",
+          "value": "\"listings\".\"status\" <> 'live' or \"listings\".\"expires_at\" is not null"
+        },
+        "listings_room_type_check": {
+          "name": "listings_room_type_check",
+          "value": "\"listings\".\"room_type\" <> 'unclear'"
         }
       },
       "isRLSEnabled": true
@@ -1477,29 +1460,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "profile_lifestyle_axis_value_idx": {
-          "name": "profile_lifestyle_axis_value_idx",
-          "columns": [
-            {
-              "expression": "axis_key",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            },
-            {
-              "expression": "value",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "profile_lifestyle_profile_id_profiles_id_fk": {
           "name": "profile_lifestyle_profile_id_profiles_id_fk",

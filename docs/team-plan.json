@@ -428,7 +428,7 @@
   },
   {
    "id": "F-09",
-   "title": "Write down the three ADR exceptions",
+   "title": "Write down the two ADR exceptions",
    "plain": "Where we knowingly broke our own architecture rules, and why.",
    "role": "F",
    "hours": null,

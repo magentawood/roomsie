@@ -178,7 +178,7 @@ Finish line: Mon 19 Oct.
 | 4 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | F-11 |
 | 5 | F-06 · Pick the three launch areas | Thu 24 Sep → Fri 25 Sep | — |
 | 6 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
-| 7 | F-09 · Write down the three ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
+| 7 | F-09 · Write down the two ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
 | 8 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
 | 9 | F-11 ⚑ · Product calls: intake, Form A and profile data | Sun 4 Oct → Tue 6 Oct | — |
 | 10 | F-12 ⚑ · Product calls: matching rules | Sun 4 Oct → Tue 6 Oct | — |
@@ -274,7 +274,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Founder | 4 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | F-11 | [#8](https://github.com/magentawood/roomsie/issues/8) |
 | Founder | 5 | F-06 | Pick the three launch areas |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | Founder | 6 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
-| Founder | 7 | F-09 | Write down the three ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
+| Founder | 7 | F-09 | Write down the two ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
 | Founder | 8 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
 | Founder | 9 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#103](https://github.com/magentawood/roomsie/issues/103) |
 | Founder | 10 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#104](https://github.com/magentawood/roomsie/issues/104) |
@@ -391,7 +391,7 @@ gantt
     F-05 Consent text for the seeding form :crit, f05, 2026-09-24, 2d
     F-06 Pick the three launch areas :f06, 2026-09-24, 2d
     F-07 Draft privacy policy terms grievance contact :f07, 2026-09-25, 6d
-    F-09 Write down the three ADR exceptions :f09, 2026-09-26, 2d
+    F-09 Write down the two ADR exceptions :f09, 2026-09-26, 2d
     F-08 Name the moderator :f08, 2026-09-30, 3d
     F-11 Product calls - intake Form A and profile data :crit, f11, 2026-10-04, 3d
     F-12 Product calls - matching rules :crit, f12, 2026-10-04, 3d
@@ -496,7 +496,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 | M-01 ⚑ | Seeding form live, outreach starts | M2 |  | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
 | T-35 | Form B contract and table | P2 | 3 | Fri 25 Sep → Sat 26 Sep | T-06, T-08 |
 | D-03 | Design results, profile and connect screens | D |  | Fri 25 Sep → Sun 27 Sep | D-01 |
-| F-09 | Write down the three ADR exceptions | F |  | Sat 26 Sep → Sun 27 Sep | — |
+| F-09 | Write down the two ADR exceptions | F |  | Sat 26 Sep → Sun 27 Sep | — |
 | T-12 ⚑ | Extraction: free text to form slots | P2 | 6 | Sat 26 Sep → Sun 27 Sep | T-11 |
 
 **T-02 · Scaffold the monorepo in this repo** — done when:
@@ -547,7 +547,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The design has connect and report states. They refine the prototype detail sheet that V5 builds first
 - There is a delete confirmation
 
-**F-09 · Write down the three ADR exceptions** — done when:
+**F-09 · Write down the two ADR exceptions** — done when:
 - 0011: the launch uses the prototype styles
 - 0014: the product uses the Sentry free tier, not GlitchTip
 - Read first: `docs/decisions/pd-11-launch.md`

@@ -15,7 +15,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 ## Ids and time
 
-- Each table has `id uuid primary key`: a UUIDv7 with no database default. The API mints it through Drizzle `$defaultFn`. Catalogues and answer tables are the exception ([ADR-0017](../decisions/0017-schema-v1-shape.md)). Why: a UUIDv7 is not enumerable, and it keeps index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
+- Each table has `id uuid primary key`: a UUIDv7 with no database default. The API mints it through Drizzle `$defaultFn`. Catalogues and answer tables are the exception. Why: a UUIDv7 is not enumerable, and it keeps index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md), [ADR-0017](../decisions/0017-schema-v1-shape.md))
 - A client mints ids only for `messages`, `swipes`, `reports` and `blocks`. The API mints all other ids. Why: only these rows come from a self-contained action that can occur offline. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - For a client-minted id, Zod checks that the id is a UUIDv7. It also checks that the timestamp in it is in the range ±5 minutes of the server clock. Why: a spoofed timestamp destroys index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - Insert a client-minted row with `ON CONFLICT (id) DO NOTHING`. Why: a retried request is then safe. ([ADR-0015](../decisions/0015-primary-key-strategy.md))

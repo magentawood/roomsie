@@ -82,7 +82,7 @@ Clients hold a Firebase ID token and send requests to `apps/api`. They never ope
 | [ADR-0014](decisions/0014-error-tracking.md) | Error tracking and observability | Accepted | `apps/web` and `apps/api` send errors through the Sentry SDK to self-hosted GlitchTip, behind one `reportError` wrapper, until Firebase Crashlytics for web reaches GA. |
 | [ADR-0015](decisions/0015-primary-key-strategy.md) | UUIDv7 primary keys, minted by the client where possible | Accepted | Each table uses a UUIDv7 `id` primary key with no database default: the API mints it, or the client mints it for offline writes. |
 | [ADR-0016](decisions/0016-credentials-and-secrets.md) | Credentials and secrets | Accepted | Public credentials can ship in the clients, but critical credentials stay only in `apps/api` or the CI secret store. |
-| [ADR-0017](decisions/0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted | Each move is a goal with its own chat and search, a listing is one wide table with its rents in `listing_rates`, and Form A catalogues are data, not enums. |
+| [ADR-0017](decisions/0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted | A goal is one move with its own chat; a listing is one wide table; Form A catalogues are data. |
 <!-- ledger:end -->
 
 ## Learn

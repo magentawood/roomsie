@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestDb, type TestDb } from './db'
-import { anonymousSessions, areas, chatTurns, goals, lifestyleAxes, listingRates, listings, mustHaves, profiles, users } from '../src/db/schema'
+import { anonymousSessions, areas, chatTurns, goals, lifestyleAxes, listingFlatmates, listingRates, listings, mustHaves, profiles, users } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 
 let testDb: TestDb
@@ -17,8 +17,7 @@ const newUser = async () => {
 
 describe('profiles', () => {
   it('accepts an empty age and an age of 18, and rejects 17', async () => {
-    const user = await newUser()
-    await expect(testDb.db.insert(profiles).values({ userId: user.id, fullName: 'Asha' })).resolves.toBeDefined()
+    await expect(testDb.db.insert(profiles).values({ userId: (await newUser()).id, fullName: 'Asha' })).resolves.toBeDefined()
     await expect(testDb.db.insert(profiles).values({ userId: (await newUser()).id, fullName: 'Ravi', age: 18 })).resolves.toBeDefined()
     await expect(testDb.db.insert(profiles).values({ userId: (await newUser()).id, fullName: 'Kid', age: 17 })).rejects.toThrow()
   })
@@ -47,10 +46,10 @@ describe('chat turns', () => {
   it('records how a user turn came in, and never for an assistant turn', async () => {
     const [goal] = await testDb.db.insert(goals).values({ userId: (await newUser()).id }).returning()
     const goalId = goal!.id
-    await expect(testDb.db.insert(chatTurns).values({ goalId, role: 'user', input: 'typed', text: '2bhk in powai' })).resolves.toBeDefined()
+    await expect(testDb.db.insert(chatTurns).values({ goalId, role: 'user', inputMethod: 'typed', text: '2bhk in powai' })).resolves.toBeDefined()
     await expect(testDb.db.insert(chatTurns).values({ goalId, role: 'assistant', text: 'Found 24 rooms', parts: { cards: [] } })).resolves.toBeDefined()
     await expect(testDb.db.insert(chatTurns).values({ goalId, role: 'user', text: 'no input kind' })).rejects.toThrow()
-    await expect(testDb.db.insert(chatTurns).values({ goalId, role: 'assistant', input: 'chip', text: 'wrong' })).rejects.toThrow()
+    await expect(testDb.db.insert(chatTurns).values({ goalId, role: 'assistant', inputMethod: 'chip', text: 'wrong' })).rejects.toThrow()
   })
 })
 
@@ -68,6 +67,7 @@ describe('catalogues', () => {
 
 describe('listings', () => {
   const area = 'powai-vikhroli'
+  const expiresAt = new Date(Date.now() + 30 * 86_400_000)
   beforeAll(async () => {
     await testDb.db.insert(areas).values({ slug: area, name: 'Powai–Vikhroli' })
   })
@@ -76,15 +76,16 @@ describe('listings', () => {
     const ownerUserId = (await newUser()).id
     await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat' })).resolves.toBeDefined()
     await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat', status: 'live' })).rejects.toThrow()
-    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat', status: 'live', areaSlug: area })).resolves.toBeDefined()
+    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat', status: 'live', areaSlug: area, expiresAt })).resolves.toBeDefined()
+    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat', status: 'live', areaSlug: area })).rejects.toThrow()
   })
 
   it('needs a PG name for a live PG, and a brokerage for a live broker flat', async () => {
     const ownerUserId = (await newUser()).id
     await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'pg', status: 'live', areaSlug: area })).rejects.toThrow()
-    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'pg', status: 'live', areaSlug: area, pgName: 'Shivraj PG' })).resolves.toBeDefined()
+    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'pg', status: 'live', areaSlug: area, pgName: 'Shivraj PG', expiresAt })).resolves.toBeDefined()
     await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'broker_flat', status: 'live', areaSlug: area })).rejects.toThrow()
-    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'broker_flat', status: 'live', areaSlug: area, brokerage: 15000 })).resolves.toBeDefined()
+    await expect(testDb.db.insert(listings).values({ ownerUserId, kind: 'broker_flat', status: 'live', areaSlug: area, brokerage: 15000, expiresAt })).resolves.toBeDefined()
   })
 
   it('accepts five photos and rejects a sixth', async () => {
@@ -110,5 +111,13 @@ describe('listings', () => {
       { ...pgRate, sharing: 'double', rent: 12000 },
     ])).resolves.toBeDefined()
     await expect(testDb.db.insert(listingRates).values({ ...pgRate, rent: 15000 })).rejects.toThrow()
+  })
+
+  it('keeps flatmates on a room listing only', async () => {
+    const ownerUserId = (await newUser()).id
+    const [room] = await testDb.db.insert(listings).values({ ownerUserId, kind: 'room_in_flat' }).returning()
+    const [flat] = await testDb.db.insert(listings).values({ ownerUserId, kind: 'owner_flat' }).returning()
+    await expect(testDb.db.insert(listingFlatmates).values({ listingId: room!.id, listingKind: 'room_in_flat', name: 'Radhika' })).resolves.toBeDefined()
+    await expect(testDb.db.insert(listingFlatmates).values({ listingId: flat!.id, listingKind: 'owner_flat', name: 'Yash' })).rejects.toThrow()
   })
 })

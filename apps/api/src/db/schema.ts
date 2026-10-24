@@ -28,7 +28,7 @@ const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull(
  */
 /** The place type a seeker picks (PD15). A lister is a listing, not a seeker. */
 export const intentEnum = pgEnum('intent', ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'])
-/** A seeker's value comes only from the chat (PD15). */
+/** Private or shared room. A seeker's value comes only from the chat (PD15). */
 export const roomTypeEnum = pgEnum('room_type', ['private', 'shared', 'unclear'])
 /** The choice itself; the contract maps it to a type and a household (PD15). */
 export const whosMovingEnum = pgEnum('whos_moving', ['student', 'first_job', 'working', 'couple', 'family', 'friends', 'unclear'])
@@ -149,15 +149,12 @@ export const profileLifestyle = pgTable('profile_lifestyle', {
   updatedAt: updatedAt(),
 }, (t) => ({
   pk: primaryKey({ columns: [t.profileId, t.axisKey] }),
-  /** Must-haves filter on lifestyle answers; this is their index. */
-  axisValueIdx: index('profile_lifestyle_axis_value_idx').on(t.axisKey, t.value),
 })).enableRLS()
 
 export const mustHaves = pgTable('must_haves', {
   key: text('key').primaryKey(),
   label: text('label').notNull(),
   sortOrder: integer('sort_order').notNull(),
-  /** Women only and Men only stay inactive until F-13 decides PC-30. */
   active: boolean('active').notNull().default(true),
   createdAt: createdAt(),
 }).enableRLS()
@@ -288,6 +285,8 @@ export const listings = pgTable('listings', {
     ${t.areaSlug} is not null
     and (${t.kind} <> 'pg' or ${t.pgName} is not null)
     and (${t.kind} <> 'broker_flat' or ${t.brokerage} is not null))`),
+  liveExpiryCheck: check('listings_live_expiry_check', sql`${t.status} <> 'live' or ${t.expiresAt} is not null`),
+  roomTypeCheck: check('listings_room_type_check', sql`${t.roomType} <> 'unclear'`),
 })).enableRLS()
 
 /** One rent for a room or a flat; one for each sharing type of a PG. */
@@ -305,22 +304,23 @@ export const listingRates = pgTable('listing_rates', {
     .onDelete('cascade').onUpdate('cascade'),
   sharingUnique: unique('listing_rates_sharing_unique').on(t.listingId, t.sharing).nullsNotDistinct(),
   sharingCheck: check('listing_rates_sharing_check', sql`(${t.listingKind} = 'pg') = (${t.sharing} is not null)`),
-  rentIdx: index('listing_rates_rent_idx').on(t.rent),
 })).enableRLS()
 
 /** "Who lives here" of a room listing: people who never sign up. */
 export const listingFlatmates = pgTable('listing_flatmates', {
   id: id(),
-  listingId: uuid('listing_id').notNull().references(() => listings.id, { onDelete: 'cascade' }),
+  listingId: uuid('listing_id').notNull(),
+  listingKind: listingKindEnum('listing_kind').notNull(),
   name: text('name').notNull(),
   age: integer('age'),
   whatTheyDo: text('what_they_do'),
   food: text('food'),
   photoKey: text('photo_key'),
-  sortOrder: integer('sort_order').notNull().default(0),
   createdAt: createdAt(),
 }, (t) => ({
-  listingIdx: index('listing_flatmates_listing_idx').on(t.listingId),
+  listingFk: foreignKey({ columns: [t.listingId, t.listingKind], foreignColumns: [listings.id, listings.kind] })
+    .onDelete('cascade').onUpdate('cascade'),
+  roomOnlyCheck: check('listing_flatmates_room_only_check', sql`${t.listingKind} = 'room_in_flat'`),
 })).enableRLS()
 
 /* ── the anonymous visitor ──────────────────────────────────────────────── */
@@ -364,14 +364,14 @@ export const chatTurns = pgTable('chat_turns', {
   id: id(),
   goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
   role: turnRoleEnum('role').notNull(),
-  input: turnInputEnum('input'),
+  inputMethod: turnInputEnum('input_method'),
   text: text('text').notNull(),
   /** The cards and chips an assistant turn showed, to redraw a reopened goal. */
   parts: jsonb('parts'),
   createdAt: createdAt(),
 }, (t) => ({
   goalIdx: index('chat_turns_goal_idx').on(t.goalId, t.createdAt),
-  inputCheck: check('chat_turns_input_check', sql`(${t.role} = 'user') = (${t.input} is not null)`),
+  inputCheck: check('chat_turns_input_check', sql`(${t.role} = 'user') = (${t.inputMethod} is not null)`),
 })).enableRLS()
 
 /* ── connecting ─────────────────────────────────────────────────────────── */

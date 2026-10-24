@@ -3,7 +3,7 @@ import { sql } from 'drizzle-orm'
 import type { Db } from './client'
 import { lifestyleAxes, mustHaves } from './schema'
 
-export const LIFESTYLE_AXES = [
+const LIFESTYLE_AXES = [
   { key: 'food', question: 'What do you eat?', allowedValues: ['veg', 'non_veg', 'eggetarian', 'jain'], sortOrder: 1 },
   { key: 'smoking', question: 'Do you smoke?', allowedValues: ['non_smoker', 'smoker', 'smoke_outside'], sortOrder: 2 },
   { key: 'drinks', question: 'Drinks at home?', allowedValues: ['none_at_home', 'fine_at_home'], sortOrder: 3 },
@@ -14,10 +14,11 @@ export const LIFESTYLE_AXES = [
   { key: 'pets', question: 'Pets?', allowedValues: ['no_pets', 'fine_with_pets'], sortOrder: 8 },
 ]
 
-export const MUST_HAVES = [
+const MUST_HAVES = [
   { key: 'veg_kitchen', label: 'Veg kitchen', sortOrder: 1, active: true },
   { key: 'non_smokers', label: 'Non-smokers', sortOrder: 2, active: true },
   { key: 'no_alcohol', label: 'No alcohol at home', sortOrder: 3, active: true },
+  // Women only and Men only stay inactive until F-13 decides PC-30.
   { key: 'women_only', label: 'Women only', sortOrder: 4, active: false },
   { key: 'men_only', label: 'Men only', sortOrder: 5, active: false },
   { key: 'tidy_flatmates', label: 'Tidy flatmates', sortOrder: 6, active: true },
