@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**44 of 265 done · 17%**
+**42 of 265 done · 16%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 3 / 9 | 10 / 28 | 36% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 1 / 14 | 10 / 58 | 17% |
+| [[P3 Data and trust]] | 1 / 14 | 8 / 58 | 14% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 23 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 24 | 17% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
@@ -357,12 +357,12 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 10/58
+## P3 Data and trust — 8/58
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
 
-> [!todo]- 🟡 [[T-14 Match query ⚑]] · 3/8
+> [!todo]- 🟡 [[T-14 Match query ⚑]] · 1/8
 > ![[T-14 Match query ⚑#^done]]
 
 > [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/6
