@@ -2,7 +2,7 @@
 id: T-18b
 title: "Person detail and connect screens"
 owner: "P3 Data and trust"
-sequence: "4 of 4"
+sequence: "4 of 14"
 hours: 4
 start: 2026-10-08
 end: 2026-10-10
@@ -18,7 +18,7 @@ tags:
 
 # T-18b · Person detail and connect screens
 
-**Owner:** [[P3 Data and trust]], task 4 of 4  
+**Owner:** [[P3 Data and trust]], task 4 of 14  
 **When:** Thu 8 Oct → Sat 10 Oct · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#44](https://github.com/magentawood/roomsie/issues/44)

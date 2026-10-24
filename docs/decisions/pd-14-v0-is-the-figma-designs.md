@@ -37,7 +37,7 @@
 - PD3 is no longer only a hypothesis. Listers supply the places at launch. Its risks 3 to 5 are now launch risks: junk listings, duplicates, and the trust in brokers.
 - Listing, broker and DigiLocker verification come into v0. PD8 gives the method.
 - The product calls that rested on PD0 are open again. The designs answer many of them. F-11 asks them again with the designs.
-- The plan needs tasks for the screens that have no task, and for listings and messages. A ticket PR adds them.
+- T-41 to T-50 add the tasks for listings, messages, DigiLocker and the screens that had no task. T-08, T-14 and T-15 now include listings.
 - The launch date is now open for selection in PD11 (PD12).
 
 ## Revisit when

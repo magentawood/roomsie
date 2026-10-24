@@ -28,7 +28,7 @@ The assistant writes its answers and stays on the topic.
 - [[T-11 Model wrapper ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-49 Compare cards]]
 
 ## Done when
 - [ ] It writes the reply from the form and the last two turns, never from the full chat

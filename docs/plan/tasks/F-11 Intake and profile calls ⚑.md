@@ -35,6 +35,8 @@ Decide what the assistant asks, and what a profile holds.
 - [[F-05 Seeding consent text ⚑]]
 - [[T-06 Database schema ⚑]]
 - [[T-16a Profile API ⚑]]
+- [[T-41 Listings API]]
+- [[T-48 Onboarding questions]]
 
 ## Done when
 - [ ] Each call in docs/product-calls/intake-and-profile.md has an answer from the product team

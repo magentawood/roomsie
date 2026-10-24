@@ -2,7 +2,7 @@
 id: T-06
 title: "Database schema v1"
 owner: "P3 Data and trust"
-sequence: "1 of 4"
+sequence: "1 of 14"
 hours: 8
 start: 2026-09-24
 end: 2026-09-29
@@ -18,7 +18,7 @@ tags:
 
 # T-06 · Database schema v1
 
-**Owner:** [[P3 Data and trust]], task 1 of 4  
+**Owner:** [[P3 Data and trust]], task 1 of 14  
 **When:** Thu 24 Sep → Tue 29 Sep · 8 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#11](https://github.com/magentawood/roomsie/issues/11)
@@ -45,6 +45,10 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-35 Form B contract]]
 - [[T-36 Observer]]
 - [[T-37 Articles and search]]
+- [[T-41 Listings API]]
+- [[T-44 Messages API]]
+- [[T-46 DigiLocker verification]]
+- [[T-47 Saved]]
 
 ## Done when
 - [ ] Committed migrations exist for users, profiles, anonymous sessions, connection requests, reports, blocks, events and waitlist

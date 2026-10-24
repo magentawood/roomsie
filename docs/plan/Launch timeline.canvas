@@ -532,6 +532,96 @@
    "color": "1"
   },
   {
+   "id": "task-T-41",
+   "type": "text",
+   "text": "**[[T-41 Listings API|T-41 Listings API]]**\n8h · Sun 25 Oct → Wed 28 Oct",
+   "x": 6820,
+   "y": 810,
+   "width": 872,
+   "height": 84
+  },
+  {
+   "id": "task-T-42",
+   "type": "text",
+   "text": "**[[T-42 Listing flow screens|T-42 Listing flow screens]]**\n8h · Thu 29 Oct → Sun 1 Nov",
+   "x": 7700,
+   "y": 810,
+   "width": 872,
+   "height": 84
+  },
+  {
+   "id": "task-T-43",
+   "type": "text",
+   "text": "**[[T-43 Listing detail screens|T-43 Listing detail screens]]**\n5h · Mon 2 Nov → Wed 4 Nov",
+   "x": 8580,
+   "y": 810,
+   "width": 652,
+   "height": 84
+  },
+  {
+   "id": "task-T-44",
+   "type": "text",
+   "text": "**[[T-44 Messages API|T-44 Messages API]]**\n8h · Thu 5 Nov → Sun 8 Nov",
+   "x": 9240,
+   "y": 810,
+   "width": 872,
+   "height": 84
+  },
+  {
+   "id": "task-T-45",
+   "type": "text",
+   "text": "**[[T-45 Messages screens|T-45 Messages screens]]**\n6h · Mon 9 Nov → Wed 11 Nov",
+   "x": 10120,
+   "y": 810,
+   "width": 652,
+   "height": 84
+  },
+  {
+   "id": "task-T-46",
+   "type": "text",
+   "text": "**[[T-46 DigiLocker verification|T-46 DigiLocker verification]]**\n8h · Thu 12 Nov → Sun 15 Nov",
+   "x": 10780,
+   "y": 810,
+   "width": 872,
+   "height": 84
+  },
+  {
+   "id": "task-T-47",
+   "type": "text",
+   "text": "**[[T-47 Saved|T-47 Saved]]**\n4h · Mon 16 Nov → Tue 17 Nov",
+   "x": 11660,
+   "y": 810,
+   "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-T-48",
+   "type": "text",
+   "text": "**[[T-48 Onboarding questions|T-48 Onboarding questions]]**\n5h · Wed 18 Nov → Fri 20 Nov",
+   "x": 12100,
+   "y": 810,
+   "width": 652,
+   "height": 84
+  },
+  {
+   "id": "task-T-49",
+   "type": "text",
+   "text": "**[[T-49 Compare cards|T-49 Compare cards]]**\n4h · Sat 21 Nov → Sun 22 Nov",
+   "x": 12760,
+   "y": 810,
+   "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-T-50",
+   "type": "text",
+   "text": "**[[T-50 Found a place, share, feedback|T-50 Found a place, share, feedback]]**\n4h · Mon 23 Nov → Tue 24 Nov",
+   "x": 13200,
+   "y": 810,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "lane-P4",
    "type": "group",
    "label": "P4 Content and moderation",
@@ -1628,6 +1718,174 @@
    "fromNode": "task-F-04",
    "fromSide": "right",
    "toNode": "task-T-40",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-41",
+   "fromNode": "task-T-05",
+   "fromSide": "right",
+   "toNode": "task-T-41",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-06-T-41",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-41",
+   "toSide": "left"
+  },
+  {
+   "id": "e-F-11-T-41",
+   "fromNode": "task-F-11",
+   "fromSide": "right",
+   "toNode": "task-T-41",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-41-T-42",
+   "fromNode": "task-T-41",
+   "fromSide": "right",
+   "toNode": "task-T-42",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-41-T-43",
+   "fromNode": "task-T-41",
+   "fromSide": "right",
+   "toNode": "task-T-43",
+   "toSide": "left"
+  },
+  {
+   "id": "e-D-03-T-43",
+   "fromNode": "task-D-03",
+   "fromSide": "right",
+   "toNode": "task-T-43",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-44",
+   "fromNode": "task-T-05",
+   "fromSide": "right",
+   "toNode": "task-T-44",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-06-T-44",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-44",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-18a-T-44",
+   "fromNode": "task-T-18a",
+   "fromSide": "right",
+   "toNode": "task-T-44",
+   "toSide": "left"
+  },
+  {
+   "id": "e-F-13-T-44",
+   "fromNode": "task-F-13",
+   "fromSide": "right",
+   "toNode": "task-T-44",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-44-T-45",
+   "fromNode": "task-T-44",
+   "fromSide": "right",
+   "toNode": "task-T-45",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-46",
+   "fromNode": "task-T-05",
+   "fromSide": "right",
+   "toNode": "task-T-46",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-06-T-46",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-46",
+   "toSide": "left"
+  },
+  {
+   "id": "e-F-13-T-46",
+   "fromNode": "task-F-13",
+   "fromSide": "right",
+   "toNode": "task-T-46",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-41-T-47",
+   "fromNode": "task-T-41",
+   "fromSide": "right",
+   "toNode": "task-T-47",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-47",
+   "fromNode": "task-T-05",
+   "fromSide": "right",
+   "toNode": "task-T-47",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-06-T-47",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-47",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-05-T-48",
+   "fromNode": "task-T-05",
+   "fromSide": "right",
+   "toNode": "task-T-48",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-08-T-48",
+   "fromNode": "task-T-08",
+   "fromSide": "right",
+   "toNode": "task-T-48",
+   "toSide": "left"
+  },
+  {
+   "id": "e-F-11-T-48",
+   "fromNode": "task-F-11",
+   "fromSide": "right",
+   "toNode": "task-T-48",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-13-T-49",
+   "fromNode": "task-T-13",
+   "fromSide": "right",
+   "toNode": "task-T-49",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-15-T-49",
+   "fromNode": "task-T-15",
+   "fromSide": "right",
+   "toNode": "task-T-49",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-15-T-50",
+   "fromNode": "task-T-15",
+   "fromSide": "right",
+   "toNode": "task-T-50",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-24-T-50",
+   "fromNode": "task-T-24",
+   "fromSide": "right",
+   "toNode": "task-T-50",
    "toSide": "left"
   }
  ]
