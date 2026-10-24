@@ -1,6 +1,6 @@
 # The cheap docs checks: limits, links, ledger drift, render drift, plan drift, and tool copies.
 # Master: agentic-devkit skills/doc-architecture/templates/docs-check.yml. sync-tools copies it here.
-# TOOL_VERSION = "0.1.1"
+# TOOL_VERSION = "0.1.2"
 name: docs-check
 on:
   pull_request:
@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.9"
+          python-version: "3.12"
       - run: pip install markdown==3.9
       - run: sh .githooks/pre-commit
         env:
