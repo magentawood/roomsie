@@ -30,9 +30,7 @@ femmeflats was a women-only, swipe-stack discovery app. roomsie is its AI-native
   - all the women-only strings
   - the "For women. By women" hero
   - the "Only women see this" reassurance in the post wizard.
-- To replace them, roomsie needs a new trust story. The product scope section must supply this story.
-- At this time, gender preferences come through the interview, and PD3c records them.
-- **Open:** is that sufficient for the trust story? This question belongs with PD8.
+- [PD8](pd-08-verification.md) sets the trust story and the gender field that replace them.
 - Brokers break the all-genders trust story in a different way. Thus, roomsie must rebuild the safety argument (risk 5 of the broker model, PD3).
 
 ## Sources

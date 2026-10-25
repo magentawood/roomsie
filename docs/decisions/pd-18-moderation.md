@@ -10,18 +10,17 @@
 
 ## Decision
 
-**In one line:** Seven fixed report reasons; a safety report, or reports from two people, hide a profile at once; the moderator reviews a safety report in 4 hours.
+**In one line:** Seven fixed report reasons. A safety report, or reports from two people, hide a profile at once. Reviews take 4 or 24 hours.
 
 - **Report reasons:** fake profile, broker or spam, harassment, discriminatory text, under 18, shared contact details, and other (with a note).
 - **Hide at once:** a report of harassment or under 18, or reports from two different people, hide the profile until the moderator reviews it.
 - **Response times:** the moderator reviews a safety report (harassment, under 18) in 4 hours, and other reports in 24 hours.
 - **Suspension:** the moderator decides it, after a review.
-- **Free text:** a "Discriminatory text" report sends a bio or a description to the moderator, who removes the text and warns the person (PD3d).
-- **Confirmation:** the moderator confirms these rules when F-08 names the moderator, or changes them.
+- **Free text:** the moderator also warns the person who wrote it (PD3d).
 
 ## Rationale
 
-- A harasser is hidden fast. One report from a grudge cannot remove a person without a review.
+- The system hides a harasser fast. One report from a grudge cannot remove a person without a review.
 - Fixed reasons let the moderator sort the queue by risk.
 
 ## Alternatives rejected
@@ -32,7 +31,6 @@
 ## Consequences
 
 - A 4-hour response needs a person who checks reports often, also in the evening.
-- T-19 builds the reasons and the automatic hiding.
 
 ## Revisit when
 

@@ -26,7 +26,7 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
-The server side of a message request. No phone number is ever shown.
+The server side of a message request. It never shows a phone number.
 
 ## Needs first
 - [[T-05 Google sign-in ⚑]]

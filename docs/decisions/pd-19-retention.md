@@ -5,7 +5,6 @@
 ## Context
 
 - The DPDP Act needs a stated period for each kind of personal data. ADR 0012 needs a retention window for raw events.
-- PD8 keeps the result of a verification, never the document.
 - Visitors chat before sign-up. Most of them never come back.
 
 ## Decision
@@ -16,12 +15,11 @@
 |---|---|
 | The session, goals and chat turns of a visitor | 30 days after the last visit, unless the visitor signs in and the goals move to the account |
 | Raw analytics events | 12 months |
-| The chats, Form B notes, profile and messages of an account | Until the account is deleted |
+| The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
 | The DigiLocker selfie | Deleted right after the check |
-| Backups | 14 days (PD13) |
+| Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".
-- The privacy drafter confirms these periods when F-07 names the drafter, or changes them.
 
 ## Rationale
 
@@ -35,7 +33,6 @@
 
 ## Consequences
 
-- T-39 deletes raw events after 12 months. T-46 deletes the selfie after the check. T-20 shows "Deleted user".
 - A visitor who comes back after 31 days starts a new chat.
 
 ## Revisit when

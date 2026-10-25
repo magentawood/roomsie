@@ -1,6 +1,6 @@
 # PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Settled. Changed on 2026-10-25 for gender. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -33,8 +33,8 @@ A chip widens a search by one kind, for example "Show some PGs too".
 | No alcohol at home | Drinks is "None at home" | "No Alcohol at home" |
 | Tidy flatmates | Tidiness is Very tidy or Tidy enough | Does not apply |
 | Couple friendly | Does not apply | "Who is welcome" has Couples |
-| Women only | Gender is Female | "Who can move in" is Women |
-| Men only | Gender is Male | "Who can move in" is Men |
+| Women only | Gender is Female | Does not apply |
+| Men only | Gender is Male | Does not apply |
 
 A listing's "Who can move in" also filters the seekers: Women takes Female, Men takes Male, and Any takes each gender. Non-binary passes only Any (PD8).
 

@@ -23,9 +23,9 @@ Press and platform risk, not legal risk; published listings are a separate case 
 
 Seven mitigations, never infer to state it publicly: [PD3c](decisions/pd-03c-exclusionary-preferences.md).
 
-#### Related, and still open
+#### Related
 
-Gender preferences after women-only was removed: [PD1](decisions/pd-01-audience.md), [PD8](decisions/pd-08-verification.md), [PD3c](decisions/pd-03c-exclusionary-preferences.md).
+Gender and the trust story after women-only: [PD8](decisions/pd-08-verification.md).
 
 ### 4.2 Prompt injection through user-generated content
 
@@ -67,7 +67,7 @@ Residency, provider terms and deletion: [PD7](decisions/pd-07-models.md), [ADR 0
 
 ### 4.8 Gaming and misuse
 
-The model does not rank, and must not imply that it can. Off-topic and prompt-leak handling: [PD10](decisions/pd-10-scope-bands.md). Fake interviews to collect listings or broker contacts: no response yet.
+The model does not rank, and must not imply that it can. Off-topic and prompt-leak handling: [PD10](decisions/pd-10-scope-bands.md). Bulk "Say hi" and fake chats: the daily cap and reports ([PD17](decisions/pd-17-connect-and-contact.md)).
 
 ### 4.9 Ending the interview
 

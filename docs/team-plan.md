@@ -949,7 +949,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A blocked user cannot send a message to the user who blocked them
 - The API masks phone numbers and WhatsApp links as •••• in each message
 - A new request or message sends an email and a browser push, with no message text, unless the user turned them off
-- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/product-calls/connect-and-trust.md`, `docs/decisions/pd-17-connect-and-contact.md`
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-45 · Messages screens** — done when:
 - The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone
@@ -1031,14 +1031,14 @@ Examine the numbers and the bug list. Then set the order of v1.
 
 **Engineering. If a check fails, the launch moves to Wednesday 14 October.**
 
-1. This check is in production, on a phone and on a laptop. A person can go from chat to results to sign-in to connect, and then see a number, without help.
+1. This check is in production, on a phone and on a laptop. A person can go from chat to results to sign-in to a message request and an accepted chat, without help.
 2. Report, block and account deletion work.
 3. The abuse test trips the limits. The spend ceiling falls back to chips.
 4. There is no open P1 bug. A P1 bug is one of these:
    - A person sees data that they should not see.
    - Sign-in does not work.
    - The core flow does not work.
-   - The app shows the number of the incorrect person.
+   - The app shows a phone number.
 5. The privacy, terms and grievance pages are live. There is a named moderator.
 6. We have a record of the eval results. It is a no-go if extraction gets fewer than 7 in 10 slots correct. It is also a no-go if extraction fills slots on the vague sentences, and does not mark them unclear. These thresholds are a first estimate. Adjust them when you see the numbers.
 7. The router flags off-topic messages without a model call. The observer rejects every observation that does not quote the user. The advisor never answers law, tax or safety from the web.

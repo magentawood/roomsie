@@ -37,8 +37,9 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - Guard 1: at launch, the verified-only setting is **off**.
 - Guard 2: always show the **count** of hidden matches.
 - **Gender (F-13, PC-30).** A profile has a required gender: Male, Female or
-  Non-binary. "Women only" and "Men only" filter in the two directions between
-  people, and "Who can move in" filters listings (PD3a).
+  Non-binary. "Women only" and "Men only" filter between people, and "Who can
+  move in" on a listing filters the seekers. Non-binary passes only "Any". The
+  filters are in PD3a.
 - **The trust story replaces women-only.** No contact before an accept, no phone
   numbers (PD17), report and block, a 4-hour safety response (PD18), and the
   DigiLocker badge.
@@ -78,6 +79,15 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
   not truly verified. But monitor the manual route for fraud: a person who
   compares a selfie to a licence gives an opinion that a forger can deceive.
 
+- **Gender.** The designs ask for it, and a woman can keep her search
+  women-only. The trust story does not hang on one feature.
+
+## Alternatives rejected
+
+- **An optional gender, with "Prefer not to say".** A "Women only" search fills
+  with unknowns.
+- **A women-only mode.** PD1 removed women-only.
+
 ## Consequences
 
 Manual review needs answers before launch:
@@ -94,12 +104,10 @@ Also:
 
 - Selfies and identity documents go to a different non-public bucket, with
   short retention and signed-URL access only (ADR 0005, or stronger).
-- In v0, browse, chat and results need nothing. A message needs sign-in. No
-  phone number is collected or shown (PD17). Listing and broker verification
-  are in v0 (PD14).
-- DigiLocker verification is in v0 (PD14), and the selfie goes right after the
-  check (PD19). Blurred cards wait (PD11). Onboarding with a KYC provider takes
-  more than two weeks.
+- In v0, browse, chat and results need nothing. A message needs sign-in.
+  roomsie collects and shows no phone number (PD17).
+- Listing, broker and DigiLocker verification are in v0 (PD14). Blurred cards
+  wait (PD11).
 
 ## Revisit when
 

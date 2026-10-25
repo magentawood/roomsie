@@ -78,7 +78,7 @@ Items carried forward. We settled and recorded all architectural decisions.
 
 - **Token generator naming transform:** blocked on `npx untitledui@latest tailwind`. Read the real `theme.css`. ([ADR 0011](0011-design-system-token-pipeline.md))
 - **Rebrand:** the Brand ramp is still Untitled UI blue, and the fonts are Inter. The brand must stay different from `error`. ([ADR 0011](0011-design-system-token-pipeline.md))
-- **Event retention and deletion policy (DPDP):** design it with the schema, not after. ([ADR 0012](0012-analytics-event-store.md))
+- **Event deletion policy (DPDP):** [PD19](pd-19-retention.md) sets 12 months for raw events. The deletion of the events of a user stays open. ([ADR 0012](0012-analytics-event-store.md))
 - **Playwright E2E on critical paths:** after the UI is stable. ([ADR 0013](0013-ci-gate-and-testing.md))
 - **Product requirements:** we deprecated `PRD.md`. Requirement claims in ADRs [0007](0007-web-rendering-and-auth-transport.md), [0009](0009-hosting-and-region.md) and [0012](0012-analytics-event-store.md) need validation again.
 

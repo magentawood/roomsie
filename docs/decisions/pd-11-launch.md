@@ -1,6 +1,6 @@
 # PD11 — Public launch on 12 October
 
-**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-24. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-25. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -23,7 +23,7 @@
 | Chat with chips, the router, extraction, the observer, the reply writer | Blurred cards |
 | The advisor: articles first, web search after sign-in | SEO area pages |
 | Results panel, profiles with photos, listings | Live-update banners and undo |
-| Contact shown when the two people accept, in-app messages, DigiLocker verification ([PD14](pd-14-v0-is-the-figma-designs.md)) | Mobile bottom sheet |
+| Message requests and in-app messages ([PD17](pd-17-connect-and-contact.md)), DigiLocker verification ([PD14](pd-14-v0-is-the-figma-designs.md)) | Mobile bottom sheet |
 | Report, block, deletion, waitlist, legal pages | — |
 | Results queried again when the form changes, responsive mobile | — |
 | Analytics in its own database, nightly backups (PD13) | — |

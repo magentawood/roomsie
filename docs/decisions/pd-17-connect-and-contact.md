@@ -5,14 +5,12 @@
 ## Context
 
 - PD14 brought in-app messages into v0. The designs have "Say hi" on a card and a Messages inbox.
-- The old plan showed each phone number after a mutual accept (T-18a, go/no-go check 1).
-- A number that a person shares cannot come back after a bad experience.
 
 ## Decision
 
 **In one line:** People talk only in roomsie, through message requests, and the system masks every phone number.
 
-- **No phone numbers.** roomsie never reveals a phone number. The system masks phone numbers and WhatsApp links as •••• in messages, bios, listing descriptions and flatmate fields. The terms forbid them, and "Shared contact details" is a report reason (PD18).
+- **No phone numbers.** roomsie never reveals a phone number. The system masks phone numbers and WhatsApp links as •••• in messages, bios, listing descriptions and flatmate fields. The terms forbid them (PD18).
 - **Message requests.** "Say hi" sends one first note of up to 300 characters as a request. The receiver accepts or declines. Until an accept, the sender cannot write more.
 - **Limits.** A sender has 10 new requests a day. A request expires after 14 days. Only one request is open between two people at a time.
 - **After a decline.** The sender sees "Not available", never "Declined". The sender can send a new request later. Abuse goes to a report (PD18).
@@ -23,7 +21,6 @@
 
 - A masked number cannot leak, and a chat stays a record that a report can point to.
 - A note gives the receiver a reason to accept. A request that waits for an accept stops unwanted messages.
-- A sender can try again after a decline. The report stops a person who abuses this.
 - An alert with no text keeps messages out of inboxes and lock screens.
 
 ## Alternatives rejected
@@ -36,7 +33,6 @@
 
 ## Consequences
 
-- Go/no-go check 1 changes (PD11). T-18a becomes the message request API.
 - The masking pattern must not mask a rent or a flat number. T-44 tests it on real examples.
 - A spelled-out number ("nine eight…") can pass the pattern. The terms and the reports are the backstop.
 

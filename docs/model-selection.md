@@ -135,7 +135,7 @@ Why: [PD7](decisions/pd-07-models.md)
 - If the government ever notifies a list, a Chinese inference provider is a plausible entry.
 - This is worth a note, but not worth a plan.
 - **Also note:** DPDP obligations follow the data, not the server.
-- Before you send text from actual users, examine the retention terms and training terms of DeepSeek. Make sure that account deletion propagates.
+- [PD7](decisions/pd-07-models.md) records the examined terms of DeepSeek. Account deletion must propagate.
 
 Why: [PD7](decisions/pd-07-models.md)
 

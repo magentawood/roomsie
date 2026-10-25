@@ -75,9 +75,8 @@ if (decoded.iat * 1000 < user.tokens_valid_after.getTime()) throw unauthorized()
 
 If we set `tokens_valid_after = now()`, all the sessions of that user stop
 immediately, on all devices. This one-line write serves suspend, ban, "log out
-everywhere" and compromise response. It is also exactly what the auto-suspend
-needs, which the product requirements require when a user goes above the
-report-rate threshold.
+everywhere" and compromise response. It also serves a suspension that the moderator
+decides ([PD18](pd-18-moderation.md)).
 
 The cost is one column, ~3 lines of middleware, and approximately one hour.
 Firebase's `verifyIdToken(token, checkRevoked: true)` does a similar thing, but
