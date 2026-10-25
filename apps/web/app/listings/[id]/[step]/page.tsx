@@ -110,8 +110,8 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
         )}
         footer={(
           <>
-            <Button variant="secondary" size="sm" iconLeading={ArrowLeft} label="Previous step" disabled={busy} onClick={() => go('previous')} className="md:hidden" />
-            <Button variant="secondary" size="sm" iconLeading={ArrowLeft} disabled={busy} onClick={() => go('previous')} className="hidden md:inline-flex">Previous step</Button>
+            <span className="md:hidden"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} label="Previous step" disabled={busy} onClick={() => go('previous')} /></span>
+            <span className="hidden md:inline-flex"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} disabled={busy} onClick={() => go('previous')}>Previous step</Button></span>
             <span className="flex-1" />
             <Button variant="tertiary" size="lg" disabled={busy} onClick={() => go('draft')}>Save as Draft</Button>
             {last

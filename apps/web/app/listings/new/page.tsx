@@ -35,8 +35,8 @@ function NewListing() {
     <FlowFrame step={1} total={kind ? listingSteps(kind).length : 7} title={stepCopy.kind.title} helper={stepCopy.kind.helper} error={error}
       footer={(
         <>
-          <Button variant="secondary" size="sm" iconLeading={ArrowLeft} href="/listings" label="Previous step" className="md:hidden" />
-          <Button variant="secondary" size="sm" iconLeading={ArrowLeft} href="/listings" className="hidden md:inline-flex">Previous step</Button>
+          <span className="md:hidden"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} href="/listings" label="Previous step" /></span>
+          <span className="hidden md:inline-flex"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} href="/listings">Previous step</Button></span>
           <span className="flex-1" />
           <Button variant="tertiary" size="lg" disabled={!kind || busy} onClick={() => create('draft')}>Save as Draft</Button>
           <Button variant="primary" size="lg" iconTrailing={ArrowRight} disabled={!kind || busy} onClick={() => create('next')}>Next</Button>

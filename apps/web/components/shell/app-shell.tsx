@@ -20,7 +20,7 @@ function NavItem({ icon: ItemIcon, label, href, active }: { icon: Icon; label: s
 function Sidebar() {
   const { user } = useAuth()
   return (
-    <aside className="hidden w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-6 lg:flex">
+    <aside className="sticky top-0 hidden h-dvh w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-6 lg:flex">
       <div className="flex flex-col gap-6">
         <Link href="/" className="px-2 text-primary"><Logo className="h-6.5 w-auto" /></Link>
         <div className="flex gap-2">
