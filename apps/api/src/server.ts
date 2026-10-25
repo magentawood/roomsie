@@ -36,7 +36,7 @@ export function buildServer(options: { webOrigin: string; photos: PhotoStore } &
       )
       v1.withTypeProvider<ZodTypeProvider>().delete(
         '/me',
-        { preHandler: requireUser(options), schema: { response: { 204: deleteMeResponse } } },
+        { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: deleteMeResponse } } },
         async (req, reply) => {
           await deleteAccount(options.db, options.photos, req.user!.id)
           return reply.code(204).send(null)

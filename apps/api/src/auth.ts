@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { createRemoteJWKSet, errors, jwtVerify, type JWTVerifyGetKey } from 'jose'
 import { z } from 'zod'
 import type { MeResponse } from '@roomsie/contract'
-import { releaseTombstone } from './account'
+import { rejoin, tombstoneKey } from './account'
 import type { Db } from './db/client'
 import { users } from './db/schema'
 
@@ -33,7 +33,8 @@ function badToken(err: unknown) {
   throw err
 }
 
-export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions) {
+/** `allowSuspended` is for account deletion only: a suspended person can still remove their data (DPDP). */
+export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions, { allowSuspended = false } = {}) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const header = bearerHeader.safeParse(req.headers.authorization)
     if (!header.success) return reply.code(401).send({ error: 'unauthorized' })
@@ -54,13 +55,17 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
     const { sub: uid, auth_time: authTime } = claims.data
     const signedInAt = new Date(authTime * 1000)
     let user = await findUser(db, uid)
-    if (!user) user = await createUser(db, uid, signedInAt)
-    if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
-    if (user.status === 'deleted') {
-      await releaseTombstone(db, user.id)
-      user = await createUser(db, uid, signedInAt)
+    if (!user) {
+      // No account: a first sign-in, or a sign-in after a deletion (T-20).
+      const tombstone = await findUser(db, tombstoneKey(uid))
+      if (!tombstone) user = await createUser(db, uid, signedInAt)
+      else if (signedInAt < tombstone.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
+      else if ((await rejoin(db, tombstone.id, uid, signedInAt)) === 'blocked') return reply.code(403).send({ error: 'forbidden' })
+      else user = (await findUser(db, uid))!
     }
-    if (user.status !== 'active') return reply.code(403).send({ error: 'forbidden' })
+    if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
+    const allowed = user.status === 'active' || (allowSuspended && user.status === 'suspended')
+    if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status }
   }
 }

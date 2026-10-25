@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**57 of 286 done · 20%**
+**58 of 291 done · 20%**
 
 `█████░░░░░░░░░░░░░░░░░░░`
 
@@ -25,8 +25,8 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 1 / 14 | 8 / 63 | 13% |
-| [[P4 Content and moderation]] | 1 / 7 | 5 / 25 | 20% |
-| [[P5 Accounts and people]] | 1 / 6 | 4 / 28 | 14% |
+| [[P4 Content and moderation]] | 1 / 8 | 6 / 29 | 21% |
+| [[P5 Accounts and people]] | 1 / 6 | 4 / 29 | 14% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**39 free tasks are open · 153 build hours.**
+**40 free tasks are open · 155 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -69,6 +69,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-46 DigiLocker verification]] | P3 | 8 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | 0 | [[T-52 Web CSP]] | P1 | 3 | ⬜ can start | 0 | [#135](https://github.com/magentawood/roomsie/issues/135) |
+| 0 | [[T-53 Delete the Firebase user]] | P4 | 2 | ⬜ can start | 0 | no issue at this time |
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | 1 | [[T-14 Match query ⚑]] | P3 | 6 | 🟡 in progress | 6 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
@@ -149,6 +150,7 @@ flowchart LR
   T21["T-21<br/>Turn cap and spend ceiling"]:::todo
   T18a["T-18a ⚑<br/>Message request API"]:::ready
   T20["T-20<br/>Account deletion"]:::done
+  T53["T-53<br/>Delete the Firebase user"]:::ready
   T23b["T-23b<br/>Legal pages"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::todo
@@ -220,6 +222,7 @@ flowchart LR
   T06 --> T18a
   F13 --> T18a
   T06 --> T20
+  T20 --> T53
   T02 --> T23b
   F07 --> T23b
   T04 --> T25
@@ -415,7 +418,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 5/25
+## P4 Content and moderation — 6/29
 
 > [!todo]- ⬜ [[T-23a Landing page]] · 0/4
 > ![[T-23a Landing page#^done]]
@@ -429,7 +432,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-19 Report and block]] · 0/6
 > ![[T-19 Report and block#^done]]
 
-> [!todo]- ✅ [[T-20 Account deletion]] · 5/5
+> [!todo]- ✅ [[T-20 Account deletion]] · 6/6
 > ![[T-20 Account deletion#^done]]
 
 > [!todo]- ⬜ [[T-22a Waitlist API]] · 0/2
@@ -438,8 +441,11 @@ flowchart LR
 > [!todo]- ⬜ [[T-22b Waitlist screen]] · 0/3
 > ![[T-22b Waitlist screen#^done]]
 
+> [!todo]- ⬜ [[T-53 Delete the Firebase user]] · 0/3
+> ![[T-53 Delete the Firebase user#^done]]
 
-## P5 Accounts and people — 4/28
+
+## P5 Accounts and people — 4/29
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
@@ -453,7 +459,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-18a Message request API ⚑]] · 0/4
 > ![[T-18a Message request API ⚑#^done]]
 
-> [!todo]- ⬜ [[T-16a Profile API ⚑]] · 0/7
+> [!todo]- ⬜ [[T-16a Profile API ⚑]] · 0/8
 > ![[T-16a Profile API ⚑#^done]]
 
 > [!todo]- ⬜ [[T-16b Profile screens ⚑]] · 0/4

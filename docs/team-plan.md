@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-53.
 
 ---
 
@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-180 of the 217 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+182 of the 219 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
@@ -33,7 +33,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 84 | -50 | _name_ |
-| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen | 20 | 14 | _name_ |
+| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
 Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at two hours a day. Sunday 11 October is for bug fixes. **Monday 12 October is launch.** Wednesday 14 October is the fallback date.
@@ -120,8 +120,9 @@ Finish line: Tue 24 Nov. 84 hours.
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
 | 6 | T-22a · Launch areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
 | 7 | T-22b · Launch areas and waitlist screen | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
+| 8 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
 
-Finish line: Sat 10 Oct. 20 hours.
+Finish line: Wed 28 Oct. 22 hours.
 
 ### P5 · Accounts and people — cI, events and connections, then the chat screen and its chips
 
@@ -253,6 +254,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
 | P4 Content and moderation | 6 | T-22a | Launch areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
+| P4 Content and moderation | 8 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | no issue at this time |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
@@ -367,6 +369,7 @@ gantt
     T-20 Account deletion :t20, 2026-10-05, 4d
     T-22a Launch areas and waitlist API :t22a, 2026-10-08, 3d
     T-22b Launch areas and waitlist screen :t22b, 2026-10-08, 3d
+    T-53 Delete the Firebase user at account deletion :t53, 2026-10-27, 2d
     section P5 Accounts and people
     M-03 Write the eval sentences :m03, 2026-09-24, 4d
     T-03 CI - typecheck lint build secret scan :t03, 2026-09-27, 3d
@@ -700,6 +703,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-41 | Listings API: four kinds of lister | P3 | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
 | T-51 ⚑ | Apply migrations and the seed in the deploy | P1 | 3 | Mon 26 Oct → Tue 27 Oct | T-04, T-06 |
 | T-52 | Content-Security-Policy for the web | P1 | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
+| T-53 | Delete the Firebase user at account deletion | P4 | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
 | T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
@@ -830,6 +834,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A card becomes visible when its required fields are complete, unless the user hides it
 - A profile has a required gender: Male, Female or Non-binary
 - The API masks phone numbers in the bio
+- A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo
 - Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-16b · Profile create and edit screens** — done when:
@@ -855,7 +860,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44
 - `tokens_valid_after` is set to now, thus every session ends
 - The chat turns of the person are deleted too
-- The `users` row stays as a tombstone. A new sign-in after a deletion makes a new, empty account
+- The `users` row stays as a tombstone with a hash of the UID. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report
+- A suspended user can delete the account. Blocks against the old account move to the new account
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **D-05 · Design QA on the live build** — done when:
@@ -950,6 +956,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Google sign-in, the API and the photo storage still work under the policy
 - A test checks the header. A script without the nonce does not run
 - Read first: `docs/decisions/0007-web-rendering-and-auth-transport.md`, `docs/standards/web.md`, `docs/decisions/0008-web-stack.md`
+
+**T-53 · Delete the Firebase user at account deletion** — done when:
+- Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module
+- The service account key is only in the environment of apps/api, and a record names it (ADR-0016)
+- If the Firebase delete fails, a retry is safe
+- Read first: `docs/decisions/0016-credentials-and-secrets.md`, `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/0007-web-rendering-and-auth-transport.md`
 
 **T-42 · Listing flow and My listings screens** — done when:
 - The eight steps of flow 04 work for the four kinds of lister, as in the Product file

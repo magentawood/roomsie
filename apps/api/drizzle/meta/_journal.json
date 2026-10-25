@@ -8,6 +8,13 @@
       "when": 1792863693407,
       "tag": "0000_overrated_sally_floyd",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792958427636,
+      "tag": "0001_abnormal_zeigeist",
+      "breakpoints": true
     }
   ]
 }

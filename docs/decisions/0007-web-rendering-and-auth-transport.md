@@ -38,7 +38,17 @@ makes the row with `tokens_valid_after` at the `auth_time` of its token.
 
 **4. The auth middleware also rejects a user whose `status` is not `active`.**
 A suspended user can sign in again and get a new token. The new token passes
-the `tokens_valid_after` check, but the status check stops it.
+the `tokens_valid_after` check, but the status check stops it. One route is the
+exception: a suspended user can call `DELETE /v1/me`, because the DPDP Act lets
+each person remove their data.
+
+**5. A deleted account stays as a tombstone row.** The row keeps a hash of the
+Firebase UID, not the UID. Its `tokens_valid_after` moves to the deletion, in
+whole seconds, as `auth_time` is. Thus, a token from before the deletion gets
+401. A sign-in after the deletion makes a new, empty account. Two conditions
+stop it (403): the account had the `suspended` status at deletion, or a
+report against the account is open. Thus, a deletion does not undo a
+suspension or a block.
 
 ## Rationale
 
@@ -94,7 +104,8 @@ row that the API already loaded.
 ## Consequences
 
 - The API rejects a request with an invalid signature, or with an `auth_time`
-  older than `tokens_valid_after` (401). It rejects a user who is not active (403).
+  older than `tokens_valid_after` (401). It rejects a user who is not active (403),
+  except a suspended user who deletes the account.
 - We must configure CORS on `apps/api` for the web origin.
 - The ID token is in JavaScript, so it is XSS-reachable. The mitigations are a
   strict Content-Security-Policy, the 1-hour expiry, and the instant revocation

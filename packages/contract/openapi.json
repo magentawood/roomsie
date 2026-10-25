@@ -74,18 +74,7 @@
       "delete": {
         "responses": {
           "204": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "nullable": true,
-                  "enum": [
-                    null
-                  ]
-                }
-              }
-            }
+            "description": "Deleted. No body."
           }
         }
       }

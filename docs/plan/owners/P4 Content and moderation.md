@@ -9,7 +9,7 @@ tags:
 
 _Public pages and safety, then the observer._
 
-**20 hours** of build work, at 1.18h a day, with 14 hours spare. The last task ends on Sat 10 Oct.
+**22 hours** of build work, at 1.29h a day, with 12 hours spare. The last task ends on Wed 28 Oct.
 
 This note is part of [[roomsie launch]].
 
@@ -22,3 +22,4 @@ This note is part of [[roomsie launch]].
 5. [[T-20 Account deletion]] — Mon 5 Oct → Thu 8 Oct, 3h
 6. [[T-22a Waitlist API]] — Thu 8 Oct → Sat 10 Oct, 2h
 7. [[T-22b Waitlist screen]] — Thu 8 Oct → Sat 10 Oct, 1h
+8. [[T-53 Delete the Firebase user]] — Tue 27 Oct → Wed 28 Oct, 2h
