@@ -3,12 +3,11 @@
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { User } from 'firebase/auth'
 import { ArrowRight, Trash01 } from '@untitledui/icons'
 import { z } from 'zod'
-import { listingResponse, type AreasResponse, type GoLiveField, type ListingEdit, type ListingResponse } from '@roomsie/contract'
+import { listingResponse, type AreasResponse, type GoLiveField, type ListingEdit, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../../../lib/api'
-import { useAuth } from '../../../../lib/auth'
+import { useUser } from '../../../../lib/auth'
 import { listingSteps, stepBody, stepCopy, stepErrors, toEditValues, type StepId } from '../../../../lib/listing-steps'
 import { queryKeys, useAreas } from '../../../../lib/queries'
 import { FlowFrame } from '../../../../components/listings/flow-frame'
@@ -19,7 +18,8 @@ import { SignInGate } from '../../../../components/shell/sign-in-gate'
 import { Button } from '../../../../components/ui/button'
 import { Modal } from '../../../../components/ui/modal'
 
-function Step({ user, listing, areas, stepNumber }: { user: User; listing: ListingResponse; areas: AreasResponse['areas']; stepNumber: number }) {
+function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas: AreasResponse['areas']; stepNumber: number }) {
+  const user = useUser()
   const router = useRouter()
   const queryClient = useQueryClient()
   const steps = listingSteps(listing.kind)
@@ -45,7 +45,7 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
     },
   })
   const publish = useMutation({
-    mutationFn: () => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: 'live' } }),
+    mutationFn: () => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: 'live' } satisfies ListingStatusBody }),
   })
   const remove = useMutation({
     mutationFn: () => api(user, `/v1/listings/${listing.id}`, z.null(), { method: 'DELETE' }),
@@ -67,7 +67,7 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
     }
     try {
       if (stepId !== 'kind') await save.mutateAsync()
-      if (target === 'publish' && listing.status !== 'live') await publish.mutateAsync()
+      if (target === 'publish') await publish.mutateAsync()
       await queryClient.invalidateQueries({ queryKey: queryKeys.myListings })
       if (target === 'next') router.push(`/listings/${listing.id}/${stepNumber + 1}`)
       else if (target === 'previous') router.push(stepNumber > 1 ? `/listings/${listing.id}/${stepNumber - 1}` : '/listings')
@@ -82,7 +82,7 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
 
   const stepContent = (() => {
     const props = { kind: listing.kind, values, set, errors }
-    const uploads = { user, listingId: listing.id, previews, addPreview: (key: string, url: string) => setPreviews((p) => ({ ...p, [key]: url })) }
+    const uploads = { listingId: listing.id, previews, addPreview: (key: string, url: string) => setPreviews((p) => ({ ...p, [key]: url })) }
     switch (stepId) {
       case 'kind':
         return (
@@ -111,9 +111,10 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
         actions={(
           <>
             <Button variant="tertiary" size="lg" disabled={busy} onClick={() => saveAndGo('draft')}>Save as Draft</Button>
-            {last
-              ? <Button variant="primary" size="lg" disabled={busy} onClick={() => saveAndGo('publish')}>{listing.status === 'live' ? 'Save changes' : 'Publish my listing'}</Button>
-              : <Button variant="primary" size="lg" iconTrailing={ArrowRight} disabled={busy} onClick={() => saveAndGo('next')}>Next</Button>}
+            {/* A listing that has been live goes live again from its card, so its last step only saves. */}
+            {last && listing.status === 'draft' && <Button variant="primary" size="lg" disabled={busy} onClick={() => saveAndGo('publish')}>Publish my listing</Button>}
+            {last && listing.status !== 'draft' && <Button variant="primary" size="lg" disabled={busy} onClick={() => saveAndGo('draft')}>Save changes</Button>}
+            {!last && <Button variant="primary" size="lg" iconTrailing={ArrowRight} disabled={busy} onClick={() => saveAndGo('next')}>Next</Button>}
           </>
         )}>
         {stepContent}
@@ -137,16 +138,16 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
 }
 
 function ListingStep() {
-  const { user } = useAuth()
+  const user = useUser()
   const params = useParams<{ id: string; step: string }>()
   const stepNumber = Number(params.step)
-  const listing = useQuery({ queryKey: queryKeys.listing(params.id), queryFn: () => api(user!, `/v1/listings/${params.id}`, listingResponse), enabled: !!user })
-  const areas = useAreas(user)
+  const listing = useQuery({ queryKey: queryKeys.listing(params.id), queryFn: () => api(user, `/v1/listings/${params.id}`, listingResponse) })
+  const areas = useAreas()
   if (listing.isError) return <p className="p-6 text-sm text-error-primary">{errorText(listing.error)}</p>
-  if (!user || !listing.data || !areas.data) return <p className="p-6 text-sm text-tertiary">Loading…</p>
+  if (!listing.data || !areas.data) return <p className="p-6 text-sm text-tertiary">Loading…</p>
   const steps = listingSteps(listing.data.kind)
   if (!Number.isInteger(stepNumber) || stepNumber < 1 || stepNumber > steps.length) return <p className="p-6 text-sm text-tertiary">This step does not exist.</p>
-  return <Step key={`${listing.data.id}-${stepNumber}`} user={user} listing={listing.data} areas={areas.data.areas} stepNumber={stepNumber} />
+  return <Step key={`${listing.data.id}-${stepNumber}`} listing={listing.data} areas={areas.data.areas} stepNumber={stepNumber} />
 }
 
 export default function ListingStepPage() {

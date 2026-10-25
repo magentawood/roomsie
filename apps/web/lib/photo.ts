@@ -1,5 +1,5 @@
 /** The long side of a listing photo after the browser shrinks it (T-42 spec). */
-export const maxPhotoSide = 1600
+const maxPhotoSide = 1600
 
 export function fitWithin(width: number, height: number, max: number) {
   const scale = Math.min(1, max / Math.max(width, height))

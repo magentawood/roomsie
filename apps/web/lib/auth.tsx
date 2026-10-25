@@ -31,3 +31,10 @@ export function useAuth() {
   if (!auth) throw new Error('useAuth needs an AuthProvider')
   return auth
 }
+
+/** The signed-in user. SignInGate shows its children only with a user. */
+export function useUser() {
+  const { user } = useAuth()
+  if (!user) throw new Error('useUser needs a SignInGate')
+  return user
+}

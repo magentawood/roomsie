@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { listingResponse, type ListingKind, type ListingResponse } from '@roomsie/contract'
+import { listingResponse, type CreateListingBody, type ListingKind, type ListingResponse } from '@roomsie/contract'
 import { api, errorText } from '../../../lib/api'
-import { useAuth } from '../../../lib/auth'
+import { useUser } from '../../../lib/auth'
 import { listingSteps, stepCopy } from '../../../lib/listing-steps'
 import { FlowFrame } from '../../../components/listings/flow-frame'
 import { KindStep } from '../../../components/listings/steps'
@@ -16,11 +16,11 @@ import { Button } from '../../../components/ui/button'
 
 /** Step 1 of a new listing. "Next" makes the draft with its kind (T-41). */
 function NewListing() {
-  const { user } = useAuth()
+  const user = useUser()
   const router = useRouter()
   const [kind, setKind] = useState<ListingKind | null>(null)
   const create = useMutation<ListingResponse, Error, 'next' | 'draft'>({
-    mutationFn: () => api(user!, '/v1/listings', listingResponse, { method: 'POST', body: { kind } }),
+    mutationFn: () => api(user, '/v1/listings', listingResponse, { method: 'POST', body: { kind: kind! } satisfies CreateListingBody }),
     onSuccess: (listing, destination) => router.replace(destination === 'next' ? `/listings/${listing.id}/2` : '/listings'),
   })
   const blocked = !kind || create.isPending || create.isSuccess

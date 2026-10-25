@@ -1,6 +1,6 @@
 import type { User } from 'firebase/auth'
 import type { z } from 'zod'
-import { incompleteListingResponse, type GoLiveField } from '@roomsie/contract'
+import { errorResponse, incompleteListingResponse, type GoLiveField } from '@roomsie/contract'
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
 
@@ -32,10 +32,9 @@ export async function api<T>(user: User, path: string, schema: z.ZodType<T>, opt
   return schema.parse(json)
 }
 
-/** The `error` text of an API error body, for a message on the screen. */
 export function errorText(err: unknown) {
-  if (err instanceof ApiError && typeof err.body === 'object' && err.body && 'error' in err.body) return String(err.body.error)
-  return 'Something went wrong. Try again.'
+  const parsed = err instanceof ApiError ? errorResponse.safeParse(err.body) : null
+  return parsed?.success ? parsed.data.error : 'Something went wrong. Try again.'
 }
 
 /** The fields that a 422 lists as missing to go live (T-41), or null for a different error. */

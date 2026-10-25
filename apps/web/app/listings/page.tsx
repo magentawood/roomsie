@@ -1,13 +1,12 @@
 'use client'
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import type { User } from 'firebase/auth'
 import { ArrowRight, CheckSquare, Edit05, Home02, Key01, Plus, RefreshCw01, SlashCircle01 } from '@untitledui/icons'
-import { listingResponse, myListingsResponse, type ListingResponse } from '@roomsie/contract'
+import { listingResponse, myListingsResponse, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../lib/api'
-import { useAuth } from '../../lib/auth'
+import { useUser } from '../../lib/auth'
 import { queryKeys, useAreas } from '../../lib/queries'
-import { cardActions, listingTitle, rentLine, type CardAction } from '../../lib/listing-steps'
+import { cardActions, listingSteps, listingTitle, rentLine, resumeStep, stepCopy, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
 import { MissingNotice } from '../../components/listings/missing-notice'
@@ -21,19 +20,22 @@ const statusBadge: Record<ListingResponse['status'], { tone: Tone; label: string
   draft: { tone: 'gray', label: 'Draft' },
 }
 
-function ListingCard({ user, listing, areaName }: { user: User; listing: ListingResponse; areaName?: string }) {
+function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName?: string }) {
+  const user = useUser()
   const queryClient = useQueryClient()
   const status = useMutation({
-    mutationFn: (to: 'live' | 'inactive' | 'filled') => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: to } }),
+    mutationFn: (to: ListingStatusBody['status']) => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: to } satisfies ListingStatusBody }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.myListings }),
   })
   const missing = status.isError ? missingFields(status.error) : null
   const address = [listing.building, listing.street, areaName].filter(Boolean).join(', ')
+  const resume = listing.status === 'draft' ? resumeStep(listing) : null
+  const steps = listingSteps(listing.kind)
   const action = (a: CardAction) => {
     const common = { variant: 'secondary' as const, size: 'xs' as const, disabled: status.isPending }
     switch (a) {
       case 'edit': return <Button key={a} {...common} iconLeading={Edit05} href={`/listings/${listing.id}/1`}>Edit</Button>
-      case 'continue': return <Button key={a} {...common} iconLeading={ArrowRight} href={`/listings/${listing.id}/2`}>Continue</Button>
+      case 'continue': return <Button key={a} {...common} iconLeading={ArrowRight} href={`/listings/${listing.id}/${resume}`}>Continue</Button>
       case 'filled': return <Button key={a} {...common} iconLeading={CheckSquare} onClick={() => status.mutate('filled')}>Mark as filled</Button>
       case 'deactivate': return <Button key={a} {...common} iconLeading={SlashCircle01} onClick={() => status.mutate('inactive')}>Deactivate</Button>
       case 'live': return <Button key={a} {...common} iconLeading={RefreshCw01} onClick={() => status.mutate('live')}>Go live again</Button>
@@ -51,7 +53,9 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
             <span className="font-semibold text-secondary">{listingTitle(listing)}</span>
             <Badge tone={statusBadge[listing.status].tone}>{statusBadge[listing.status].label}</Badge>
           </div>
-          {address && <span className="font-medium text-secondary">{address}</span>}
+          {resume
+            ? <span className="font-medium text-secondary">Step {resume} of {steps.length} · {stepCopy[steps[resume - 1]!].title}</span>
+            : address && <span className="font-medium text-secondary">{address}</span>}
           <span className="font-medium text-secondary">{rentLine(listing)}</span>
         </div>
       </div>
@@ -63,9 +67,9 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
 }
 
 function MyListings() {
-  const { user } = useAuth()
-  const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user!, '/v1/listings/mine', myListingsResponse), enabled: !!user })
-  const areas = useAreas(user)
+  const user = useUser()
+  const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user, '/v1/listings/mine', myListingsResponse) })
+  const areas = useAreas()
   const areaNames = Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))
   return (
     <>
@@ -83,10 +87,10 @@ function MyListings() {
             <Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button>
           </div>
         )}
-        {mine.data && mine.data.listings.length > 0 && user && (
+        {mine.data && mine.data.listings.length > 0 && (
           <>
             <ul className="flex flex-col gap-3">
-              {mine.data.listings.map((l) => <ListingCard key={l.id} user={user} listing={l} areaName={l.areaSlug ? areaNames[l.areaSlug] : undefined} />)}
+              {mine.data.listings.map((l) => <ListingCard key={l.id} listing={l} areaName={l.areaSlug ? areaNames[l.areaSlug] : undefined} />)}
             </ul>
             <div><Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button></div>
           </>
