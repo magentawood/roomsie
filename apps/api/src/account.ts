@@ -3,7 +3,7 @@ import { and, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import type { Db } from './db/client'
 import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, reports, users } from './db/schema'
-import type { PhotoStore } from './storage'
+import type { Storage } from './storage'
 
 /** A tombstone keeps a hash of the Firebase uid, never the uid. Firebase uids are
  *  random, so a plain SHA-256 cannot be reversed by a guess. */
@@ -24,7 +24,7 @@ export const tombstoneKey = (uid: string) => `deleted:${createHash('sha256').upd
  *
  * Not here yet: events (T-24), Form B (T-35), messages (T-44), the Firebase user (T-53).
  */
-export async function deleteAccount(db: Db, photos: PhotoStore, userId: string) {
+export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, userId: string) {
   await db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
   await db.update(listings).set({ status: 'inactive', updatedAt: new Date() })
     .where(and(eq(listings.ownerUserId, userId), eq(listings.status, 'live')))
@@ -35,7 +35,7 @@ export async function deleteAccount(db: Db, photos: PhotoStore, userId: string) 
       .leftJoin(listingFlatmates, eq(listingFlatmates.listingId, listings.id))
       .where(eq(listings.ownerUserId, userId)),
   ])
-  await photos.deleteObjects([...new Set([
+  await storage.deleteObjects([...new Set([
     ...profilePhotos.flatMap((r) => r.keys),
     ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
   ])])

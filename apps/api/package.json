@@ -21,6 +21,7 @@
     "@fastify/cors": "^11.3.0",
     "@fastify/swagger": "^9.9.1",
     "@roomsie/contract": "workspace:*",
+    "aws4fetch": "^1.0.20",
     "drizzle-orm": "^0.45.3",
     "fastify": "^5.12.5",
     "fastify-type-provider-zod": "^7.0.0",

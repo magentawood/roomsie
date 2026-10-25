@@ -4,9 +4,9 @@ import { errors, generateKeyPair, type CryptoKey } from 'jose'
 import { meResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
+import { offlineStorage } from '../scripts/openapi'
 import { users } from '../src/db/schema'
 import { buildServer } from '../src/server'
-import { unconfiguredPhotoStore } from '../src/storage'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -18,7 +18,7 @@ beforeAll(async () => {
   const tokens = await testTokens()
   idToken = tokens.idToken
   otherKey = (await generateKeyPair('RS256')).privateKey
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, photos: unconfiguredPhotoStore })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: offlineStorage })
 })
 afterAll(async () => {
   await app.close()
@@ -85,11 +85,10 @@ describe('GET /v1/me', () => {
     expect((await me(await idToken('uid-revoked', { iat: now, authTime: now }))).statusCode).toBe(200)
   })
 
-  // A deleted user is in account.test.ts: a new sign-in makes a new account.
-  it('rejects a suspended user, also with a new token', async () => {
-    const uid = 'uid-suspended'
+  it.each(['suspended', 'deleted'] as const)('rejects a %s user, also with a new token', async (status) => {
+    const uid = `uid-${status}`
     expect((await me(await idToken(uid))).statusCode).toBe(200)
-    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.authProviderId, uid))
+    await testDb.db.update(users).set({ status }).where(eq(users.authProviderId, uid))
     expect((await me(await idToken(uid))).statusCode).toBe(403)
   })
 
@@ -98,8 +97,8 @@ describe('GET /v1/me', () => {
       webOrigin: 'http://localhost:3000',
       db: testDb.db,
       firebaseProjectId: projectId,
-      photos: unconfiguredPhotoStore,
       firebaseKeys: () => Promise.reject(new errors.JOSEError('Expected 200 OK from the JSON Web Key Set HTTP response')),
+      storage: offlineStorage,
     })
     const res = await down.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${await idToken('uid-keys-down')}` } })
     expect(res.statusCode).toBe(500)

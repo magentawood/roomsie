@@ -35,12 +35,12 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
 - [[T-47 Saved]]
 
 ## Done when
-- [ ] The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing
-- [ ] The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores
-- [ ] The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
-- [ ] Only the lister can edit, pause or delete a listing
-- [ ] A listing has Who can move in: men, women or any
-- [ ] The API masks phone numbers in the description and the flatmate fields
+- [x] The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] Only the lister can edit, pause or delete a listing · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] A listing has Who can move in: men, women or any · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] The API masks phone numbers in the description and the flatmate fields · [#141](https://github.com/magentawood/roomsie/pull/141)
 
 ^done
 
@@ -48,3 +48,54 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [pd-03-listing-supply.md](../../decisions/pd-03-listing-supply.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-10-25, by n3rxv
+
+- **Modules:**
+  - `packages/contract`: the interface changes. New schemas for listings: the kinds, the single choices, the key lists of the pick-many fields, the edit body of each kind, the rents, the flatmates, the status change, the upload request, and the listing responses.
+  - `apps/api`, a new listings module: seven routes under `/v1/listings`. The interface changes.
+  - `apps/api`, a new text module: it masks phone numbers and WhatsApp links. T-16a and T-44 use it again.
+  - `apps/api`, a new storage module: signed upload links and object deletes in R2, with `aws4fetch`. `buildServer` gets it as an option, as it gets the Firebase keys. T-16a uses it again.
+  - `apps/api/src/db/schema.ts` and `apps/api/drizzle/`: a new column, "Who can move in", in an add-only migration.
+  - `apps/api/src/env.ts`: the R2 settings of the photos bucket.
+  - `packages/contract/openapi.json`: generated again.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database. This seam exists. The tests give a storage double for the R2 deletes. The upload link is signed locally, so its test needs no network.
+  - The masking function, directly. It has many cases, and T-16a and T-44 use it.
+- **Decisions:**
+  - The API masks phone numbers and WhatsApp links at save, as ••••. It masks each free-text field that the lister writes: the description, the PG name, the address, the building, the street, the landmark, the nearest station, and the name and job of each flatmate. The database never stores the original. (PD17)
+  - The pattern masks Indian mobile numbers, with or without +91 or 0 and with spaces or dashes, landline numbers with an STD code, and WhatsApp links. It does not mask a rent, a flat number or a pincode. (PD17)
+  - A listing goes live only with: an area; a PG name for a PG; a brokerage for a broker flat; one rent or more, and for a PG, one rent for each sharing type that it offers; and the flatmate consent if a room listing shows flatmates. Otherwise the API gives 422 with the list of missing fields. (ADR-0017)
+  - The storage module signs with `aws4fetch`.
+  - When a lister deletes a listing or removes a photo, the API first deletes the photos in R2. If R2 fails, the API gives 502 and changes nothing. (PD19)
+  - T-41 has no DigiLocker check. T-46 adds it (T-46, done item 3).
+  - A listing detail needs sign-in. The lister sees all fields. Other users see only a live listing that has not expired, and the address only if the lister turned on "share address". Other users get 404 for a draft, a paused listing or a filled listing. (PD6b, ADR-0017)
+  - To publish sets the expiry to 30 days after. To publish again sets a new expiry. (seo-with-gated-products.md)
+  - "Who can move in" is a new column with the values men, women and any. The migration only adds, so it works with the API version before it. (PD3d, ADR-0018)
+  - The kind of a listing is fixed at create. The API accepts only the fields of the kind of the listing, and gives 400 for other fields. A broker flat has the fields of an owner flat and a brokerage. (ADR-0017)
+  - The routes:
+    - `POST /v1/listings` makes a draft of one kind.
+    - `GET /v1/listings/mine` gives the listings of the user.
+    - `GET /v1/listings/:id` gives one listing.
+    - `PATCH /v1/listings/:id` changes fields, one step at a time. When the body has the rents or the flatmates, it replaces the full set.
+    - `POST /v1/listings/:id/status` sets live, inactive or filled.
+    - `DELETE /v1/listings/:id` deletes the listing.
+    - `POST /v1/listings/:id/upload-urls` gives a signed upload link for a listing photo or a flatmate photo.
+  - Only the lister can change a listing. Each write has `WHERE owner_user_id = <id from the verified token>`. (ADR-0015)
+  - An upload is a JPEG, PNG or WebP file of 10 MB or less. The link is valid for 10 minutes. The link signs the content type and the size, so R2 rejects a different file. The key is `listings/<listing id>/<new id>.<extension>`. The API rejects a photo key of a different listing. A listing has 5 photos or fewer. (ADR-0005, ADR-0017)
+  - The pick-many fields are fixed key lists in `packages/contract`: what is inside, the building and society, the sharing types, and who is welcome. "Who is welcome" of a room in a flat has two keys only: students and working professionals. The food of a flatmate uses the food answers of the lifestyle questions. (ADR-0017, PD15)
+  - Money is whole rupees.
+  - Review round 1: "the address" covers the street and the pincode too. Other users see the area, the landmark and the building (ADR-0017).
+- **Out of scope:** the screens (T-42, T-43), the search and the results (T-14), Saved (T-47), the report on a listing (T-19), the events (T-24), the seed of the area groups (F-06, T-22a), the resize and the blurred copy of a photo, the cleanup of uploads that a lister never adds to a listing, the reminders before a listing expires, and the duplicate check.
+
+## Log
+
+- **2026-10-26 · [#141](https://github.com/magentawood/roomsie/pull/141)**
+  - **Change:** seven routes under `/v1/listings` create, edit, publish, pause, fill and delete a listing of four kinds. The API signs photo upload links for R2 and masks phone numbers at save. A migration adds "Who can move in" and the order of the flatmates.
+  - **Why:** the T-41 spec, [PD17](../../decisions/pd-17-connect-and-contact.md), [PD19](../../decisions/pd-19-retention.md) and [ADR-0017](../../decisions/0017-schema-v1-shape.md)
+  - **Ticked:** all six items
+  - **Not done:** none. No listing can go live in production until F-06 and T-22a add the launch areas.
+  - **Learn:** [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

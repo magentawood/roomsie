@@ -8,7 +8,8 @@ import {
   anonymousSessions, areas, blocks, chatTurns, connectionRequests, goals, listingFlatmates, listingRates, listings, profiles, reports, users,
 } from '../src/db/schema'
 import { buildServer } from '../src/server'
-import type { PhotoStore } from '../src/storage'
+import { offlineStorage } from '../scripts/openapi'
+import type { Storage } from '../src/storage'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -16,7 +17,8 @@ let idToken: Awaited<ReturnType<typeof testTokens>>['idToken']
 
 /** Records each delete. Set `down` to make R2 fail. */
 const photos = { deleted: [] as string[], down: false }
-const fakeStore: PhotoStore = {
+const fakeStore: Storage = {
+  ...offlineStorage,
   async deleteObjects(keys) {
     if (photos.down) throw new Error('R2 is down')
     photos.deleted.push(...keys)
@@ -28,7 +30,7 @@ beforeAll(async () => {
   await testDb.db.insert(areas).values({ slug: 'powai', name: 'Powai' })
   const tokens = await testTokens()
   idToken = tokens.idToken
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, photos: fakeStore })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore })
 })
 afterAll(async () => {
   await app.close()

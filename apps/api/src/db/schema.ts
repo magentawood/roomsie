@@ -15,6 +15,10 @@ import {
   primaryKey, uniqueIndex, index, check, unique, foreignKey,
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
+import {
+  amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, guestsRules, insideItems,
+  listingKinds, listingStatuses, meals, minStays, placeTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn,
+} from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
 const id = () => uuid('id').primaryKey().$defaultFn(() => uuidv7())
@@ -41,18 +45,19 @@ export const turnRoleEnum = pgEnum('turn_role', ['user', 'assistant'])
 export const turnInputEnum = pgEnum('turn_input', ['typed', 'chip'])
 
 /* The single choices of the listing flow (flow 04 of the designs). */
-export const listingKindEnum = pgEnum('listing_kind', ['room_in_flat', 'owner_flat', 'pg', 'broker_flat'])
-export const listingStatusEnum = pgEnum('listing_status', ['draft', 'live', 'inactive', 'filled'])
-export const placeTypeEnum = pgEnum('place_type', ['1rk', '1bhk', '2bhk', '3bhk', '4bhk', 'studio', 'independent_house', 'bungalow_villa', 'penthouse'])
-export const furnishingEnum = pgEnum('furnishing', ['fully', 'semi', 'unfurnished'])
-export const bathroomEnum = pgEnum('bathroom', ['attached', 'shared'])
-export const mealsEnum = pgEnum('meals', ['veg_included', 'veg_non_veg', 'breakfast_only', 'none'])
-export const curfewEnum = pgEnum('curfew', ['none', '10pm', '10_30pm', '11pm', 'midnight'])
-export const electricityEnum = pgEnum('electricity', ['included', 'as_per_meter', 'split_equally'])
-export const minStayEnum = pgEnum('min_stay', ['3_months', '6_months', '12_months', 'flexible'])
-export const guestsRuleEnum = pgEnum('guests_rule', ['none', 'welcome', 'day_visits'])
-export const walkTimeEnum = pgEnum('walk_time', ['5_min', '10_min', '15_min', '30_min', 'not_close'])
-export const bedsFreeEnum = pgEnum('beds_free', ['1', '2', '3', '4', '5', '5_plus'])
+export const listingKindEnum = pgEnum('listing_kind', listingKinds)
+export const listingStatusEnum = pgEnum('listing_status', listingStatuses)
+export const placeTypeEnum = pgEnum('place_type', placeTypes)
+export const furnishingEnum = pgEnum('furnishing', furnishings)
+export const bathroomEnum = pgEnum('bathroom', bathrooms)
+export const mealsEnum = pgEnum('meals', meals)
+export const curfewEnum = pgEnum('curfew', curfews)
+export const electricityEnum = pgEnum('electricity', electricityRules)
+export const minStayEnum = pgEnum('min_stay', minStays)
+export const guestsRuleEnum = pgEnum('guests_rule', guestsRules)
+export const walkTimeEnum = pgEnum('walk_time', walkTimes)
+export const bedsFreeEnum = pgEnum('beds_free', bedsFree)
+export const whoCanMoveInEnum = pgEnum('who_can_move_in', whoCanMoveIn)
 
 /** A dealbreaker filters; a preference ranks (PD3a). */
 export const mustHaveWeightEnum = pgEnum('must_have_weight', ['prefer', 'dealbreaker'])
@@ -240,14 +245,14 @@ export const listings = pgTable('listings', {
   roomType: roomTypeEnum('room_type'),
   floor: integer('floor'),
   carpetAreaSqft: integer('carpet_area_sqft'),
-  sharing: text('sharing').array().notNull().default([]),
+  sharing: text('sharing').array().$type<(typeof sharingTypes)[number][]>().notNull().default([]),
   bedsFree: bedsFreeEnum('beds_free'),
   meals: mealsEnum('meals'),
   curfew: curfewEnum('curfew'),
   bathroom: bathroomEnum('bathroom'),
   balcony: boolean('balcony'),
-  insideItems: text('inside_items').array().notNull().default([]),
-  amenities: text('amenities').array().notNull().default([]),
+  insideItems: text('inside_items').array().$type<(typeof insideItems)[number][]>().notNull().default([]),
+  amenities: text('amenities').array().$type<(typeof amenities)[number][]>().notNull().default([]),
 
   // Rent, deposit and dates. The rents are in listing_rates. Money is in rupees.
   maintenance: integer('maintenance'),
@@ -263,7 +268,8 @@ export const listings = pgTable('listings', {
   smokingAllowed: boolean('smoking_allowed'),
   alcoholAllowed: boolean('alcohol_allowed'),
   guests: guestsRuleEnum('guests'),
-  whoIsWelcome: text('who_is_welcome').array().notNull().default([]),
+  whoCanMoveIn: whoCanMoveInEnum('who_can_move_in'),
+  whoIsWelcome: text('who_is_welcome').array().$type<(typeof welcomeGroups)[number][]>().notNull().default([]),
 
   /** The lister confirmed "My flatmates agreed to be shown". */
   flatmatesConsent: boolean('flatmates_consent').notNull().default(false),
@@ -298,7 +304,7 @@ export const listingRates = pgTable('listing_rates', {
   listingId: uuid('listing_id').notNull(),
   /** Copies the listing's kind, so a check can tie `sharing` to PGs. */
   listingKind: listingKindEnum('listing_kind').notNull(),
-  sharing: text('sharing'),
+  sharing: text('sharing').$type<(typeof sharingTypes)[number]>(),
   rent: integer('rent').notNull(),
   deposit: integer('deposit'),
   createdAt: createdAt(),
@@ -317,8 +323,10 @@ export const listingFlatmates = pgTable('listing_flatmates', {
   name: text('name').notNull(),
   age: integer('age'),
   whatTheyDo: text('what_they_do'),
-  food: text('food'),
+  food: text('food').$type<(typeof foodAnswers)[number]>(),
   photoKey: text('photo_key'),
+  /** The order that the lister gave. */
+  position: integer('position').notNull().default(0),
   createdAt: createdAt(),
 }, (t) => ({
   listingFk: foreignKey({ columns: [t.listingId, t.listingKind], foreignColumns: [listings.id, listings.kind] })

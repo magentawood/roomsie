@@ -3,17 +3,22 @@ import { fileURLToPath } from 'node:url'
 import { googleKeys } from '../src/auth'
 import { createDb } from '../src/db/client'
 import { buildServer } from '../src/server'
-import { unconfiguredPhotoStore } from '../src/storage'
+import { r2Storage } from '../src/storage'
 
 export const openapiPath = fileURLToPath(new URL('../../../packages/contract/openapi.json', import.meta.url))
 
-/** For a server that serves no signed-in route: the database and the keys stay unused. */
+/** It signs links locally and is never asked to delete. */
+export const offlineStorage = r2Storage({
+  accountId: 'unused', accessKeyId: 'unused', secretAccessKey: 'unused', bucket: 'unused', publicUrl: 'https://photos.example.com',
+})
+
+/** For a server that serves no signed-in route: the database, the keys and the storage stay unused. */
 export const routesOnlyOptions = {
   webOrigin: 'http://localhost:3000',
   db: createDb('postgres://unused@localhost/unused'),
   firebaseProjectId: 'unused',
   firebaseKeys: googleKeys,
-  photos: unconfiguredPhotoStore,
+  storage: offlineStorage,
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

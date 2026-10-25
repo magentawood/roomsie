@@ -17,6 +17,7 @@
 | Raw analytics events | 12 months |
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
 | The DigiLocker selfie | Deleted right after the check |
+| The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). |
 | Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".

@@ -2,13 +2,12 @@ import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type CryptoKey 
 
 export const projectId = 'roomsie-test'
 
-export type TokenOptions = { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number; authTime?: number | null }
+type TokenOptions = { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number; authTime?: number | null }
 
-/** A local stand-in for Google's keys, and a signer for Firebase-shaped ID tokens. */
+/** A local key pair in place of Google's keys, and Firebase-shaped ID tokens signed with it. */
 export async function testTokens() {
   const pair = await generateKeyPair('RS256')
   const firebaseKeys = createLocalJWKSet({ keys: [{ ...(await exportJWK(pair.publicKey)), kid: 'test', alg: 'RS256' }] })
-
   function idToken(uid: string, opts: TokenOptions = {}) {
     const now = Math.floor(Date.now() / 1000)
     const audience = opts.audience ?? projectId

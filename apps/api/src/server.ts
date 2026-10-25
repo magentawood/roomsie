@@ -10,9 +10,10 @@ import {
 import { deleteMeResponse, healthResponse, meResponse } from '@roomsie/contract'
 import { deleteAccount } from './account'
 import { requireUser, type AuthOptions } from './auth'
-import type { PhotoStore } from './storage'
+import { listingRoutes } from './listings/routes'
+import type { Storage } from './storage'
 
-export function buildServer(options: { webOrigin: string; photos: PhotoStore } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -38,10 +39,11 @@ export function buildServer(options: { webOrigin: string; photos: PhotoStore } &
         '/me',
         { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: deleteMeResponse } } },
         async (req, reply) => {
-          await deleteAccount(options.db, options.photos, req.user!.id)
+          await deleteAccount(options.db, options.storage, req.user!.id)
           return reply.code(204).send(null)
         },
       )
+      listingRoutes(v1, options)
     },
     { prefix: '/v1' },
   )
