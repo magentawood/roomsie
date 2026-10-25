@@ -66,10 +66,10 @@ describe('catalogues', () => {
 })
 
 describe('listings', () => {
-  const area = 'powai-vikhroli'
+  const area = 'test-area'
   const expiresAt = new Date(Date.now() + 30 * 86_400_000)
   beforeAll(async () => {
-    await testDb.db.insert(areas).values({ slug: area, name: 'Powai–Vikhroli' })
+    await testDb.db.insert(areas).values({ slug: area, name: 'Test area' })
   })
 
   it('lets a draft stay incomplete, and needs an area to go live', async () => {

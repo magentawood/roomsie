@@ -7,8 +7,10 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { healthResponse, meResponse } from '@roomsie/contract'
+import { asc } from 'drizzle-orm'
+import { areasResponse, healthResponse, meResponse } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from './auth'
+import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
 import type { Storage } from './storage'
 
@@ -33,6 +35,14 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
         '/me',
         { preHandler: requireUser(options), schema: { response: { 200: meResponse } } },
         async (req) => req.user!,
+      )
+      v1.withTypeProvider<ZodTypeProvider>().get(
+        '/areas',
+        { schema: { response: { 200: areasResponse } } },
+        async () => ({
+          areas: await options.db.select({ slug: areas.slug, name: areas.name, isLaunchArea: areas.isLaunchArea })
+            .from(areas).orderBy(asc(areas.sortOrder)),
+        }),
       )
       listingRoutes(v1, options)
     },
