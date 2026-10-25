@@ -29,13 +29,13 @@ The name of each file is `<database>/<UTC time>.dump.age`, for example `main/202
 
 ## Restore a dump on your laptop
 
-You need Docker, `age` (`brew install age`), access to R2 in the Cloudflare dashboard, and the private backup key from the team password manager.
+You need Docker, `age` (`brew install age`), access to R2 in the Cloudflare dashboard, and the private backup key. Pulkit keeps the key in Bitwarden, in the secure note "roomsie – backup private key (age)". Ask Pulkit for it.
 
 CAUTION: Delete the key file and the decrypted dump after the restore. The dump holds the personal data of all users.
 
 1. Start the local Postgres: `pnpm db:up`.
 2. In the Cloudflare dashboard, open R2, then the backups bucket. Download the dump that you need.
-3. Save the private key from the password manager to a file outside the repo, for example `~/backup-key.txt`.
+3. Save the private key from the Bitwarden note to a file outside the repo, for example `~/backup-key.txt`.
 4. Decrypt the dump: `age --decrypt --identity ~/backup-key.txt --output main.dump 2026-10-13T2130Z.dump.age`
 5. Make a scratch database: `docker compose exec postgres createdb -U postgres restore_check`
 6. Restore the dump: `docker compose exec -T postgres pg_restore -U postgres --clean --if-exists --exit-on-error -d restore_check < main.dump`
@@ -46,7 +46,7 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 ## The choice we made
 
 - Nightly dumps to R2, because the free plan has no backups: [PD13](../decisions/pd-13-databases-and-backups.md).
-- The R2 key of the API, and the private key only in the password manager: [ADR-0016](../decisions/0016-credentials-and-secrets.md) and the T-40 spec.
+- The R2 key of the API, and the private key only in Bitwarden: [ADR-0016](../decisions/0016-credentials-and-secrets.md) and the T-40 spec.
 - The restore check, the retention, the encryption and the alert: the T-40 spec.
 
 ## Gotchas
@@ -56,7 +56,7 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 - **A restore needs `--clean --if-exists`.** The dump makes the `public` schema, and a new database has it already. Without the two options, the restore stops with "schema public already exists".
 - **The dump has no Supabase schemas, owners or grants.** Thus, it restores into each Postgres 17. The `pg_cron` jobs of the analytics database are not in the dump.
 - **Row Level Security does not hide rows from the dump.** The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds `FORCE ROW LEVEL SECURITY`, the dump stops with an error.
-- **If you lose the private key, nobody can read the dumps.** Keep the key in the team password manager only.
+- **If you lose the private key, nobody can read the dumps.** Keep the key only in the Bitwarden note. Never put it in GitHub, Vercel, `.env`, a chat or the repo.
 - **A deleted account stays in the dumps for fourteen days,** until the workflow deletes its newest dump.
 
 ## Tickets

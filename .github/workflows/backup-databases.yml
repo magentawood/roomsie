@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 permissions: {}
 env:
-  # The private key is only in the team password manager, never in CI.
+  # The private key is never in CI. docs/learn/backups.md tells where it is.
   AGE_RECIPIENT: age1zsh9cusq2y4049ad5exn2hxhr76lz7y4ejdjjkd2l5rg22ytj3rqjx9gq5
 jobs:
   backup:
