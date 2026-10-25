@@ -13,6 +13,7 @@
   "dependencies": {
     "@roomsie/contract": "workspace:*",
     "@tanstack/react-query": "^5.100.0",
+    "firebase": "^13.1.0",
     "next": "^16.3.8",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
