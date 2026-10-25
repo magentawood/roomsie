@@ -54,7 +54,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>Prepared statements must stay off.</strong> In production the API connects through the Supabase pooler in transaction mode. Many requests share a small number of connections, so the next query can go to a different connection. A prepared statement is a query plan that one connection keeps, so it fails there. The client sets <code>prepare: false</code>. Do not remove it.</li>
+<li><strong>Prepared statements must stay off.</strong> In production the API connects through the Supabase pooler in transaction mode. Many requests share a small number of connections, so the next query can go to a different connection. A prepared statement is a query plan that one connection keeps, so it fails there. The client sets <code>prepare: false</code>. Do not remove it. Migrations use session mode (<a href="migrations.html">Database migrations</a>).</li>
 <li>Do not make a second client in other code. Import <code>createDb</code>, so the setting stays in one place.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

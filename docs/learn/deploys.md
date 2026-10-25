@@ -13,8 +13,8 @@ To **deploy** is to put a new version of an app on the servers of the users. roo
 
 ```
 merge to main ─┬─▶ Vercel ──────────────▶ roomsie.in (bom1)
-               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
-                                                                        (api.roomsie.in)
+               └─▶ deploy-api workflow ─▶ build image ─▶ migrate ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
+                                                                                    (api.roomsie.in)
 ```
 
 | Item | Where |
@@ -26,7 +26,8 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 | The API secrets | GitHub secrets. The workflow gives them to each deployment. |
 
 - The API and the database are in the same AWS region, so each query takes approximately 1 ms ([ADR-0009](../decisions/0009-hosting-and-region.md)).
-- The workflow runs only when a merge changes the API, a package, the lockfile or the workflow. You can also start it by hand: GitHub → Actions → deploy-api → Run workflow.
+- The workflow runs only when a merge changes the API, a package, the lockfile or the workflow. You can also start it by hand from `main`: GitHub → Actions → deploy-api → Run workflow.
+- Before Lightsail starts the new API, the workflow applies the new migrations and the seed ([Database migrations](migrations.md)).
 - **CORS** is the browser rule that lets a page on one site call an API on a different site. The API allows only `https://roomsie.in`. Thus, a preview loads, but its calls to the API fail.
 - Previews open only for members of the Vercel team. Vercel turns this protection on by default.
 - `www.roomsie.in` and `roomsie.vercel.app` redirect to `roomsie.in`. Thus, a browser uses one address for the site and for the login.
@@ -51,3 +52,4 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 ## Tickets
 
 - T-04: [#110](https://github.com/magentawood/roomsie/pull/110), 2026-10-06. The first deploy of the web and the API, and the move from Fly to Lightsail.
+- T-51: [#137](https://github.com/magentawood/roomsie/pull/137), 2026-10-25. The migrate step, and runs only from `main`.
