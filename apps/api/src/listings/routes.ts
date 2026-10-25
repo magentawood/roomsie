@@ -92,7 +92,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const ratesChanged = newRates !== undefined || next.rates.length !== current.rates.length
     // The database checks each status after draft, so the API gives 422 for it, not 500.
     if (listing.status !== 'draft') {
-      const missing = missingToGoLive(next.listing, next)
+      const missing = missingToGoLive(next.listing, next, 'edit')
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
     }
 
@@ -134,7 +134,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const parts = (await partsOf(db, [listing.id]))(listing.id)
     let expiresAt = listing.expiresAt
     if (status === 'live') {
-      const missing = missingToGoLive(listing, parts)
+      const missing = missingToGoLive(listing, parts, 'publish')
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
       expiresAt = new Date(Date.now() + liveDays * 86_400_000)
     } else if (!allowedFrom[status].includes(listing.status)) {
@@ -213,13 +213,18 @@ async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj
   })
 }
 
-function missingToGoLive(listing: Listing, { rates, flatmates }: Parts) {
+/**
+ * A PG publishes with a rent for each sharing type. An edit of a PG that has been live needs one rent only,
+ * so step 4 can add a sharing type before step 5 gives its rent.
+ */
+function missingToGoLive(listing: Listing, { rates, flatmates }: Parts, check: 'publish' | 'edit') {
   const missing: (typeof goLiveFields)[number][] = []
   if (!listing.areaSlug) missing.push('areaSlug')
   if (listing.kind === 'pg' && !listing.pgName) missing.push('pgName')
   if (listing.kind === 'broker_flat' && listing.brokerage === null) missing.push('brokerage')
   const priced = new Set(rates.map((r) => r.sharing))
-  const unpriced = listing.kind === 'pg' ? !listing.sharing.length || listing.sharing.some((s) => !priced.has(s)) : !rates.length
+  const unpricedType = check === 'publish' ? listing.sharing.some((s) => !priced.has(s)) : !rates.length
+  const unpriced = listing.kind === 'pg' ? !listing.sharing.length || unpricedType : !rates.length
   if (unpriced) missing.push('rates')
   if (flatmates.length && !listing.flatmatesConsent) missing.push('flatmatesConsent')
   return missing

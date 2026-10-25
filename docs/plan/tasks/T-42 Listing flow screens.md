@@ -66,6 +66,7 @@ The screens where a lister adds a place, and sees and edits their places.
   - A room in a flat has eight steps, with "Who lives here". The other kinds have seven. The fields of each kind come from the T-41 contract and the Figma drafts. A broker flat has the owner-flat fields, and the brokerage on step 5.
   - Step 1 makes the draft with its kind. "Next" and "Previous step" save the step. "Save as Draft" saves the step and opens My listings.
   - A 422 at publish lists each missing field, with a link to its step. The required marks are the area, the PG name, the monthly rent, the brokerage, the flatmate name and the flatmate consent. The rent is required because a listing cannot go live without one (T-41).
+  - An edit of a PG that has been live needs one rent, not one for each sharing type, so step 4 can add a type before step 5 gives its rent. Publishing, and "Go live again", still need a rent for each type. (User decision, review round 2.)
   - Before each save, the step checks its values with the contract schema of its kind. A refused value gets a red line under its field, and the step does not save. A 400 of the API names the refused fields.
   - A photo uploads with the signed link of T-41, and then the step saves its key. A listing has 5 photos or fewer.
   - Under each free-text field, a short line says that phone numbers are hidden. After a save, the lister sees •••• in their text. (PD17)
