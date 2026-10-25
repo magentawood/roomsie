@@ -11,6 +11,7 @@
 **In one line:** People talk only in roomsie, through message requests, and the system masks every phone number.
 
 - **No phone numbers.** roomsie never reveals a phone number. The system masks phone numbers and WhatsApp links as •••• in messages, bios, listing descriptions and flatmate fields. The terms forbid them.
+- **Masked at save.** The API masks each free-text field before it saves it, so the database never stores the number (T-41).
 - **Message requests.** "Say hi" sends one first note of up to 300 characters as a request. The receiver accepts or declines. Until an accept, the sender cannot write more.
 - **Limits.** A sender has 10 new requests a day. A request expires after 14 days. Only one request is open between two people at a time.
 - **After a decline.** The sender sees "Not available", never "Declined". The sender can send a new request later. Abuse goes to a report (PD18).
