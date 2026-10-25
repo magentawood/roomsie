@@ -45,7 +45,7 @@ A stated community filter acts only on what candidates stated themselves. A cand
 - Filter server-side: the system does not tell a person that it excluded them.
 - Log each exclusion: someone can question this in the future. Then the difference between "we recorded what users told us" and "we cannot say where this came from" is the full defence.
 - State it publicly: a policy page is much better than a question about it in the future. Silence looks worse than a stated position.
-- A filter on stated answers only obeys mitigations 1, 2 and 4 (F-13, PC-31).
+- A filter that acts only on stated answers obeys mitigations 1, 2 and 4 (F-13, PC-31).
 
 ## Consequences
 
@@ -55,7 +55,6 @@ A stated community filter acts only on what candidates stated themselves. A cand
 - The data shares a database with the analytics corpus. ADR 0012 makes that corpus the future training data.
 - [PD15](pd-15-form-a-contract.md) removes `community` from the asked questions.
 - PD3c locks design review item 1.8: we never offer these preferences as chips.
-- [PD8](pd-08-verification.md) settles gender: a field, and two must-haves.
 
 ## Sources
 

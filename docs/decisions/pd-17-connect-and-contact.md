@@ -10,12 +10,12 @@
 
 **In one line:** People talk only in roomsie, through message requests, and the system masks every phone number.
 
-- **No phone numbers.** roomsie never reveals a phone number. The system masks phone numbers and WhatsApp links as •••• in messages, bios, listing descriptions and flatmate fields. The terms forbid them (PD18).
+- **No phone numbers.** roomsie never reveals a phone number. The system masks phone numbers and WhatsApp links as •••• in messages, bios, listing descriptions and flatmate fields. The terms forbid them.
 - **Message requests.** "Say hi" sends one first note of up to 300 characters as a request. The receiver accepts or declines. Until an accept, the sender cannot write more.
 - **Limits.** A sender has 10 new requests a day. A request expires after 14 days. Only one request is open between two people at a time.
 - **After a decline.** The sender sees "Not available", never "Declined". The sender can send a new request later. Abuse goes to a report (PD18).
 - **Alerts.** A new request or message sends an email and a browser push, with no message text: "Divya sent you a message". The "Email alerts" and "Push alerts" switches turn them off.
-- **Bulk senders.** The daily cap and the reports are the only checks.
+- **Bulk senders.** The cap and the reports only.
 
 ## Rationale
 
@@ -25,7 +25,7 @@
 
 ## Alternatives rejected
 
-- **The phone number after a mutual accept.** A harvester needs only accepts, and the number cannot come back.
+- **The phone number after a mutual accept.** A harvester needs only accepts, and the number cannot return.
 - **Block a message that has a number.** The product team prefers to send it with the number masked.
 - **No retry after a decline.** The product team prefers a second chance, and the report for abuse.
 - **A complete card before "Say hi", and a weekly review of heavy senders.** The product team keeps the cap and the reports only.
@@ -33,7 +33,7 @@
 
 ## Consequences
 
-- The masking pattern must not mask a rent or a flat number. T-44 tests it on real examples.
+- The masking pattern must not mask a rent or a flat number.
 - A spelled-out number ("nine eight…") can pass the pattern. The terms and the reports are the backstop.
 
 ## Revisit when

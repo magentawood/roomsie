@@ -5,7 +5,7 @@
 ## Context
 
 - The DPDP Act needs a stated period for each kind of personal data. ADR 0012 needs a retention window for raw events.
-- Visitors chat before sign-up. Most of them never come back.
+- Visitors chat before sign-up. Most of them never return.
 
 ## Decision
 

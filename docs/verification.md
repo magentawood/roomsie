@@ -80,7 +80,7 @@ passport, driving licence or voter ID. A person compares the selfie to the ID ph
 | Last 4 digits at most, and only if we store a value | |
 
 - Delete the document after the check.
-- For verification selfies, ADR 0005 requires a different non-public bucket, short retention, and signed-URL access only.
+- For verification selfies, ADR 0005 requires a different non-public bucket and signed-URL access only. The selfie goes right after the check ([PD19](decisions/pd-19-retention.md)).
 - Identity documents need the same rule or a stronger rule.
 
 Why: [PD8](decisions/pd-08-verification.md)
@@ -114,7 +114,7 @@ Why: [PD8](decisions/pd-08-verification.md)
 | Browse, chat with the assistant, see results | Nothing |
 | See unblurred photos of verified-only users | Verified |
 | Appear to verified-only users | Verified |
-| Message someone | Sign-in ([PD17](decisions/pd-17-connect-and-contact.md)) |
+| Message someone | Sign-in ([PD6b](decisions/pd-06b-login-gate-and-search.md)) |
 | Be discoverable at all | The required fields of [PD16](decisions/pd-16-profiles.md) |
 
 Listing and broker verification are in v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)).

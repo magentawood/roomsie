@@ -45,14 +45,11 @@ Three public layers, none of them the product:
 We do not use the gated-indexing route (`isAccessibleForFree: false` with
 `hasPart`). We keep it in reserve.
 
-**Notices and guests (F-13).** The privacy policy says that roomsie stores
-typed messages. The chat shows no notice (PC-27). A guest who taps a card gets
-the sign-in first (PC-46).
+**Notices (F-13).** The privacy policy says that roomsie stores typed
+messages. The chat shows no notice (PC-27).
 
 ## Rationale
 
-- A card shows the photos, age and job of a person. Only signed-in users see
-  them. The product team keeps the chat screen clear of notices.
 
 - **No conflict remains.** The results grid had no gate from the start. Browse,
   chat and the split view are public, so the no-skip rule and SEO agree.
