@@ -8,6 +8,7 @@ start: 2026-10-27
 end: 2026-10-28
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/143
 tags:
   - task
   - p4
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P4 Content and moderation]], task 8 of 8  
 **When:** Tue 27 Oct → Wed 28 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#143](https://github.com/magentawood/roomsie/issues/143)
 
 Removes the sign-in record at Google too, not only our data.
 
