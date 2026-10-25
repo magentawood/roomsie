@@ -10,7 +10,7 @@ export function Modal({ icon: ModalIcon, title, children, actions, onClose }: { 
   return (
     // A click on the backdrop has the dialog as its target. A click in the panel has a child as its target.
     <dialog ref={dialog} aria-labelledby="modal-title" onClose={onClose} onClick={(e) => e.target === e.currentTarget && onClose()}
-      className="mx-auto mt-auto mb-4 w-[calc(100%-2rem)] max-w-100 rounded-2xl bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm sm:my-auto">
+      className="inset-x-4 mx-auto mt-auto mb-4 w-auto max-w-100 rounded-2xl bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm sm:my-auto">
       <div className="flex flex-col gap-5 p-5 sm:p-6">
         <div className="flex items-start justify-between">
           <span className="flex size-10 items-center justify-center rounded-md border border-primary text-fg-error shadow-xs">

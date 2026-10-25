@@ -6,7 +6,7 @@ import { z } from 'zod'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
   listingStatusBody, myListingsResponse, photoTypes, sharingTypes, uploadUrlBody, uploadUrlResponse,
-  type goLiveFields, type ListingEdit, type ListingResponse,
+  type GoLiveField, type ListingEdit, type ListingResponse,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
@@ -69,7 +69,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const parsed = listingEdits[listing.kind].safeParse(req.body)
     if (!parsed.success) {
       const fields = new Set(parsed.error.issues.flatMap((i) => (i.code === 'unrecognized_keys' ? i.keys : [String(i.path[0])])))
-      return reply.code(400).send({ error: `not valid for a ${listing.kind} listing: ${[...fields].join(', ')}` })
+      return reply.code(400).send({ error: `not valid: ${[...fields].join(', ')}` })
     }
     const edit: ListingEdit = mask(parsed.data)
     const { rates: newRates, flatmates: newFlatmates, ...columns } = edit
@@ -82,11 +82,12 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
     const current = (await partsOf(db, [listing.id]))(listing.id)
     const nextListing = { ...listing, ...columns }
+    const hasType = (r: { sharing?: Rate['sharing'] }) => listing.kind !== 'pg' || nextListing.sharing.includes(r.sharing!)
+    if (newRates && !newRates.every(hasType)) return reply.code(400).send({ error: 'not valid: rates' })
     const next = {
       listing: nextListing,
-      // A PG keeps a rent only for the sharing types that it still has.
-      rates: (newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates)
-        .filter((r) => listing.kind !== 'pg' || nextListing.sharing.includes(r.sharing!)),
+      // A PG that drops a sharing type drops its rent too.
+      rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates.filter(hasType),
       flatmates: newFlatmates ?? current.flatmates,
     }
     const ratesChanged = newRates !== undefined || next.rates.length !== current.rates.length
@@ -218,13 +219,13 @@ async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj
  * so step 4 can add a sharing type before step 5 gives its rent.
  */
 function missingToGoLive(listing: Listing, { rates, flatmates }: Parts, check: 'publish' | 'edit') {
-  const missing: (typeof goLiveFields)[number][] = []
+  const missing: GoLiveField[] = []
   if (!listing.areaSlug) missing.push('areaSlug')
   if (listing.kind === 'pg' && !listing.pgName) missing.push('pgName')
   if (listing.kind === 'broker_flat' && listing.brokerage === null) missing.push('brokerage')
   const priced = new Set(rates.map((r) => r.sharing))
-  const unpricedType = check === 'publish' ? listing.sharing.some((s) => !priced.has(s)) : !rates.length
-  const unpriced = listing.kind === 'pg' ? !listing.sharing.length || unpricedType : !rates.length
+  const pgPriced = check === 'publish' ? listing.sharing.every((s) => priced.has(s)) : rates.length > 0
+  const unpriced = listing.kind === 'pg' ? !listing.sharing.length || !pgPriced : !rates.length
   if (unpriced) missing.push('rates')
   if (flatmates.length && !listing.flatmatesConsent) missing.push('flatmatesConsent')
   return missing

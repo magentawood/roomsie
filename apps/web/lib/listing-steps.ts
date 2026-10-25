@@ -3,7 +3,7 @@ import { listingEditBody, listingEdits, type GoLiveField, type ListingEdit, type
 
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
 export type StepId = 'kind' | 'where' | 'nearby' | 'place' | 'rent' | 'rules' | 'people' | 'photos'
-type Field = keyof ListingEdit
+type EditField = keyof ListingEdit
 
 /** Before the kind is picked, the flow shows the seven steps of most kinds. */
 export function listingSteps(kind: ListingKind | null): StepId[] {
@@ -26,7 +26,7 @@ export const stepCopy: Record<StepId, { title: string; helper: string }> = {
 export const isFlat = (kind: ListingKind) => kind !== 'pg'
 
 /** The fields that a step saves, for each kind (T-41 contract). */
-export function stepFields(kind: ListingKind, step: StepId): Field[] {
+export function stepFields(kind: ListingKind, step: StepId): EditField[] {
   switch (step) {
     case 'kind':
       return []
@@ -61,9 +61,7 @@ export function stepFields(kind: ListingKind, step: StepId): Field[] {
 
 /** The PATCH body of a step: only its fields, and only the ones that the form has. */
 export function stepBody(kind: ListingKind, step: StepId, values: ListingEdit): ListingEdit {
-  const body: Record<string, unknown> = {}
-  for (const field of stepFields(kind, step)) if (field in values) body[field] = values[field]
-  return body as ListingEdit
+  return Object.fromEntries(stepFields(kind, step).filter((f) => f in values).map((f) => [f, values[f]]))
 }
 
 /** The form values of a saved listing. A flat rent has no sharing type, so the strict edit schema accepts it. */
@@ -109,8 +107,17 @@ export function stepErrors(kind: ListingKind, body: ListingEdit): Record<string,
   return Object.fromEntries(parsed.error.issues.map((i) => [i.path.join('.'), checkLine(i)]))
 }
 
+const filled = (v: unknown) => v != null && v !== false && !(Array.isArray(v) && v.length === 0)
+
+/** Where a draft goes on: the step after the last step that has a value, as "Step 5 of 8" on its card. */
+export function resumeStep(listing: ListingResponse) {
+  const steps = listingSteps(listing.kind)
+  const values = toEditValues(listing)
+  const last = steps.findLastIndex((step) => stepFields(listing.kind, step).some((f) => filled(values[f])))
+  return Math.min(Math.max(last + 2, 2), steps.length)
+}
+
 export type CardAction = 'edit' | 'continue' | 'filled' | 'deactivate' | 'live'
-/** The buttons of a card in My listings, for each status. */
 export const cardActions: Record<ListingResponse['status'], CardAction[]> = {
   live: ['edit', 'filled', 'deactivate'],
   inactive: ['edit', 'live', 'filled'],
@@ -147,7 +154,7 @@ export const labels = {
   },
 } as const
 
-const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
+const rupees = (n: number) => `₹${inIndianDigits(n)}`
 
 /** The card title: "2 BHK, full flat", "Private room in 3 BHK" or the PG name. */
 export function listingTitle(listing: ListingResponse) {

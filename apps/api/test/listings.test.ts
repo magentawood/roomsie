@@ -71,12 +71,12 @@ describe('a draft', () => {
     expect(pg).toMatchObject({ pgName: 'Shivraj PG', sharing: ['double'], meals: 'veg_included', whoCanMoveIn: 'men' })
     const wrongKind = await call('lister', 'PATCH', `/${pg.id}`, { placeType: '2bhk' })
     expect(wrongKind.statusCode).toBe(400)
-    expect(wrongKind.json()).toEqual({ error: 'not valid for a pg listing: placeType' })
+    expect(wrongKind.json()).toEqual({ error: 'not valid: placeType' })
     const room = await draft('room_in_flat')
     expect((await call('lister', 'PATCH', `/${room.id}`, { meals: 'none' })).statusCode).toBe(400)
     const notForRoom = await call('lister', 'PATCH', `/${room.id}`, { whoIsWelcome: ['families'] })
     expect(notForRoom.statusCode).toBe(400)
-    expect(notForRoom.json()).toEqual({ error: 'not valid for a room_in_flat listing: whoIsWelcome' })
+    expect(notForRoom.json()).toEqual({ error: 'not valid: whoIsWelcome' })
   })
 
   it('names the field of a value that is not valid', async () => {
@@ -110,6 +110,8 @@ describe('a draft', () => {
     })
     const edited = listingResponse.parse((await call('lister', 'PATCH', `/${pg.id}`, { sharing: ['double'] })).json())
     expect(edited.rates).toEqual([{ sharing: 'double', rent: 9000, deposit: null }])
+    const otherType = await call('lister', 'PATCH', `/${pg.id}`, { rates: [{ sharing: 'triple', rent: 7000 }] })
+    expect(otherType.json()).toEqual({ error: 'not valid: rates' })
   })
 })
 

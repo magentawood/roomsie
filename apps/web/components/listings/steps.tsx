@@ -1,9 +1,9 @@
 'use client'
 
 import { useMutation } from '@tanstack/react-query'
-import type { User } from 'firebase/auth'
 import { Building07, Home02, Home03, Key01, Plus, Trash01, UploadCloud02 } from '@untitledui/icons'
 import { maxFlatmates, maxPhotos, roomWelcomeGroups, textLimits, type AreasResponse, type ListingEdit, type ListingKind } from '@roomsie/contract'
+import { useUser } from '../../lib/auth'
 import { isFlat, labels } from '../../lib/listing-steps'
 import { uploadPhoto } from '../../lib/upload'
 import { Button, type Icon } from '../ui/button'
@@ -15,9 +15,9 @@ import { Checkbox, Toggle } from '../ui/toggle'
 const maskedHint = 'Phone numbers are hidden.'
 
 /** `errors` has the line to show under each field that the check before the save refused, by field path. */
-export type StepProps = { kind: ListingKind; values: ListingEdit; set: (patch: ListingEdit) => void; errors: Record<string, string> }
+type StepProps = { kind: ListingKind; values: ListingEdit; set: (patch: ListingEdit) => void; errors: Record<string, string> }
 
-export const kindCards: { kind: ListingKind; icon: Icon; title: string; subtitle: string }[] = [
+const kindCards: { kind: ListingKind; icon: Icon; title: string; subtitle: string }[] = [
   { kind: 'room_in_flat', icon: Home03, title: 'A room in my flat', subtitle: 'You live there and have a spot to fill' },
   { kind: 'owner_flat', icon: Home02, title: 'A whole flat or house I own', subtitle: 'Studio to bungalow, rented directly' },
   { kind: 'pg', icon: Building07, title: 'A PG or hostel I run', subtitle: 'Beds, meals and house rules' },
@@ -78,12 +78,11 @@ export function NearbyStep({ values, set }: StepProps) {
   )
 }
 
-/** Two chips for a yes or no field, in the order of the designs. */
-function BoolChips({ label, first, second, value, onChange }: { label: string; first: [boolean, string]; second: [boolean, string]; value: boolean | null | undefined; onChange: (v: boolean | null) => void }) {
-  const key = (b: boolean) => (b === first[0] ? 'a' : 'b')
+/** Two chips for a yes or no field. They show in the order of `labels`, as in the designs. */
+function BoolChips({ label, labels, value, onChange }: { label: string; labels: Record<'true' | 'false', string>; value: boolean | null | undefined; onChange: (v: boolean | null) => void }) {
   return (
-    <ChoiceChips label={label} labels={{ a: first[1], b: second[1] }} value={value == null ? null : key(value)}
-      onChange={(v) => onChange(v === null ? null : v === 'a' ? first[0] : second[0])} />
+    <ChoiceChips label={label} labels={labels} value={value == null ? null : value ? 'true' : 'false'}
+      onChange={(v) => onChange(v === null ? null : v === 'true')} />
   )
 }
 
@@ -105,7 +104,7 @@ export function PlaceStep({ kind, values, set, errors }: StepProps) {
           <NumberInput label="Carpet area (sq ft)" error={errors.carpetAreaSqft} value={values.carpetAreaSqft} onChange={(carpetAreaSqft) => set({ carpetAreaSqft })} placeholder="eg. 750" />
         </div>
       )}
-      <BoolChips label="Balcony" first={[true, 'Yes']} second={[false, 'No']} value={values.balcony} onChange={(balcony) => set({ balcony })} />
+      <BoolChips label="Balcony" labels={{ true: 'Yes', false: 'No' }} value={values.balcony} onChange={(balcony) => set({ balcony })} />
       <MultiChips label="What’s inside" labels={labels.insideItems} value={values.insideItems} onChange={(insideItems) => set({ insideItems })} />
       <MultiChips label="Building and society" labels={labels.amenities} value={values.amenities} onChange={(amenities) => set({ amenities })} />
     </>
@@ -155,9 +154,9 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
           {kind === 'broker_flat' && <NumberInput label="Your Brokerage (₹)" required error={errors.brokerage} value={values.brokerage} onChange={(brokerage) => set({ brokerage })} placeholder="eg. 15000" />}
         </div>
       )}
-      <BoolChips label="Maintenance" first={[true, 'Included in rent']} second={[false, 'Extra each month']} value={values.maintenanceIncluded} onChange={(maintenanceIncluded) => set({ maintenanceIncluded })} />
+      <BoolChips label="Maintenance" labels={{ true: 'Included in rent', false: 'Extra each month' }} value={values.maintenanceIncluded} onChange={(maintenanceIncluded) => set({ maintenanceIncluded })} />
       <ChoiceChips label="Electricity" labels={labels.electricity} value={values.electricity} onChange={(electricity) => set({ electricity })} />
-      <BoolChips label="Rent" first={[false, 'Fixed']} second={[true, 'Open to offers']} value={values.rentNegotiable} onChange={(rentNegotiable) => set({ rentNegotiable })} />
+      <BoolChips label="Rent" labels={{ false: 'Fixed', true: 'Open to offers' }} value={values.rentNegotiable} onChange={(rentNegotiable) => set({ rentNegotiable })} />
       {isFlat(kind) && (
         <Field label="Available from">
           {(id) => <input id={id} type="date" className={inputClass} value={values.availableFrom ?? ''} onChange={(e) => set({ availableFrom: e.target.value || null })} />}
@@ -171,9 +170,9 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
 export function RulesStep({ kind, values, set }: StepProps) {
   return (
     <>
-      <BoolChips label="Kitchen" first={[true, 'Veg Only']} second={[false, 'Non veg allowed']} value={values.vegOnlyKitchen} onChange={(vegOnlyKitchen) => set({ vegOnlyKitchen })} />
-      <BoolChips label="Smoking" first={[false, 'No Smoking']} second={[true, 'Smoking is fine']} value={values.smokingAllowed} onChange={(smokingAllowed) => set({ smokingAllowed })} />
-      <BoolChips label="Alcohol" first={[false, 'No Alcohol at home']} second={[true, 'Fine at home']} value={values.alcoholAllowed} onChange={(alcoholAllowed) => set({ alcoholAllowed })} />
+      <BoolChips label="Kitchen" labels={{ true: 'Veg Only', false: 'Non veg allowed' }} value={values.vegOnlyKitchen} onChange={(vegOnlyKitchen) => set({ vegOnlyKitchen })} />
+      <BoolChips label="Smoking" labels={{ false: 'No Smoking', true: 'Smoking is fine' }} value={values.smokingAllowed} onChange={(smokingAllowed) => set({ smokingAllowed })} />
+      <BoolChips label="Alcohol" labels={{ false: 'No Alcohol at home', true: 'Fine at home' }} value={values.alcoholAllowed} onChange={(alcoholAllowed) => set({ alcoholAllowed })} />
       <ChoiceChips label="Guests" labels={labels.guests} value={values.guests} onChange={(guests) => set({ guests })} />
       <ChoiceChips label="Who can move in" labels={labels.whoCanMoveIn} value={values.whoCanMoveIn} onChange={(whoCanMoveIn) => set({ whoCanMoveIn })} />
       <MultiChips label="Who is welcome" labels={labels.whoIsWelcome} only={kind === 'room_in_flat' ? roomWelcomeGroups : undefined}
@@ -182,9 +181,10 @@ export function RulesStep({ kind, values, set }: StepProps) {
   )
 }
 
-export type Uploads = { user: User; listingId: string; previews: Record<string, string>; addPreview: (key: string, url: string) => void }
+type Uploads = { listingId: string; previews: Record<string, string>; addPreview: (key: string, url: string) => void }
 
-function PhotoPicker({ user, listingId, label, onUploaded }: { user: User; listingId: string; label: string; onUploaded: (key: string, preview: string) => void }) {
+function PhotoPicker({ listingId, label, onUploaded }: { listingId: string; label: string; onUploaded: (key: string, preview: string) => void }) {
+  const user = useUser()
   const upload = useMutation({
     mutationFn: (file: File) => uploadPhoto(user, listingId, file),
     onSuccess: ({ key, preview }) => onUploaded(key, preview),
@@ -216,7 +216,7 @@ function Thumb({ src, onRemove, label }: { src?: string; onRemove: () => void; l
   )
 }
 
-export function PeopleStep({ values, set, errors, user, listingId, previews, addPreview }: StepProps & Uploads) {
+export function PeopleStep({ values, set, errors, listingId, previews, addPreview }: StepProps & Uploads) {
   const mates = values.flatmates ?? []
   const update = (i: number, patch: Partial<(typeof mates)[number]>) => set({ flatmates: mates.map((m, j) => (j === i ? { ...m, ...patch } : m)) })
   return (
@@ -226,7 +226,7 @@ export function PeopleStep({ values, set, errors, user, listingId, previews, add
           {mate.photoKey ? (
             <div className="w-24"><Thumb src={previews[mate.photoKey]} label={`Remove the photo of ${mate.name || 'this flatmate'}`} onRemove={() => update(i, { photoKey: null })} /></div>
           ) : (
-            <PhotoPicker user={user} listingId={listingId} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
+            <PhotoPicker listingId={listingId} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
           )}
           <div className="grid gap-5 md:grid-cols-2 md:gap-8">
             <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" hint={maskedHint} maxLength={textLimits.flatmateName} />
@@ -252,14 +252,14 @@ export function PeopleStep({ values, set, errors, user, listingId, previews, add
   )
 }
 
-export function PhotosStep({ values, set, user, listingId, previews, addPreview }: StepProps & Uploads) {
+export function PhotosStep({ values, set, listingId, previews, addPreview }: StepProps & Uploads) {
   const keys = values.photoKeys ?? []
   return (
     <>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {keys.map((key, i) => <Thumb key={key} src={previews[key]} label={`Remove photo ${i + 1}`} onRemove={() => set({ photoKeys: keys.filter((k) => k !== key) })} />)}
       </div>
-      {keys.length < maxPhotos && <PhotoPicker user={user} listingId={listingId} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
+      {keys.length < maxPhotos && <PhotoPicker listingId={listingId} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
       <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" hint={maskedHint} maxLength={textLimits.description} />
     </>
   )

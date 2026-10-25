@@ -44,10 +44,8 @@ export const photoKey = z.string().regex(
 
 const pickMany = <T extends readonly [string, ...string[]]>(keys: T) =>
   z.array(z.enum(keys)).refine((list) => new Set(list).size === list.length, 'Each key once')
-/** The most photos of a listing, and the most flatmates that it shows. */
 export const maxPhotos = 5
 export const maxFlatmates = 8
-/** The most characters of each free-text field. */
 export const textLimits = {
   pgName: 80, address: 200, building: 120, street: 120, landmark: 120, nearestStation: 120, description: 2000, flatmateName: 60, whatTheyDo: 80,
 } as const
@@ -144,9 +142,12 @@ export const listingEditBody = z.strictObject({
 export type ListingEdit = z.infer<typeof listingEditBody>
 
 export const createListingBody = z.strictObject({ kind: listingKind })
+export type CreateListingBody = z.infer<typeof createListingBody>
 export const listingStatusBody = z.strictObject({ status: z.enum(['live', 'inactive', 'filled']) })
+export type ListingStatusBody = z.infer<typeof listingStatusBody>
 /** Upload with these two values as the content-type and content-length headers. The link signs them. */
 export const uploadUrlBody = z.strictObject({ contentType: photoType, size: z.int().min(1).max(10 * 1024 * 1024) })
+export type UploadUrlBody = z.infer<typeof uploadUrlBody>
 export const uploadUrlResponse = z.object({ key: photoKey, url: z.url(), expiresAt: z.iso.datetime() })
 
 export const listingResponse = z.object({
