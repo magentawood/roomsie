@@ -47,3 +47,24 @@ The live database gets each new table before the new server starts.
 - [0009-hosting-and-region.md](../../decisions/0009-hosting-and-region.md)
 - [0016-credentials-and-secrets.md](../../decisions/0016-credentials-and-secrets.md)
 - [pd-13-databases-and-backups.md](../../decisions/pd-13-databases-and-backups.md)
+
+## Spec
+
+**Approved:** 2026-10-25, by n3rxv
+
+- **Modules:**
+  - `apps/api`: a new `migrate` entry point. It applies the committed migrations, then runs the catalogue seed. The image also gets the migration files. The HTTP interface does not change.
+  - `.github/workflows/deploy-api.yml`: a new step after the image push and before the deploy. It runs the `migrate` entry in a container from the new image.
+  - `docs/standards/database.md`: a new rule. Each migration works with the API version before it.
+  - A new architecture record, ADR-0018, for migrations in the deploy.
+- **Seams for the tests:** the migrate function, against a disposable test database (`apps/api/test/db.ts`). No new seam. No test covers the order of the workflow steps. The review checks it.
+- **Decisions:**
+  - The migration runs in the deploy workflow, in a one-off container from the image that the workflow built. It runs before Lightsail starts the new API. (ADR-0018)
+  - It uses the `DATABASE_URL_SESSION` secret, through the session pooler. The API keeps the transaction pooler. (ADR-0018)
+  - The catalogue seed runs after the migrations, on each deploy. It is an upsert, so a second run changes nothing.
+  - Drizzle applies all new migrations in one transaction. A failed migration rolls back, the step fails, and the workflow stops before the deploy. The old API keeps running.
+  - Each migration works with the API version before it: expand, then contract. A drop or a rename takes two PRs. (ADR-0018)
+  - A test checks that the dates in the migration journal increase. Drizzle skips a migration that is older than the last applied migration.
+  - The deploy workflow runs one deploy at a time. Thus, two migrations cannot run together.
+  - The first run applies the T-06 migration to the live database. If tables are already there, the step fails. Then we repair it by hand.
+- **Out of scope:** a backup before each migration (T-40 makes the nightly backups), the migrations of the analytics database (T-39), the seed of the area groups (F-06, T-22a), a migration that cannot run in a transaction (for example `CREATE INDEX CONCURRENTLY`), and a test against a copy of the live data.
