@@ -18,5 +18,5 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 |---|---|---|
 | 2026-09-30 | — (source: standards extraction) | A module owns its tables. Other modules call its functions and never use its tables. Source: [extensibility.md](../extensibility.md), proposed. |
 | 2026-09-30 | — (source: standards extraction) | Code writes analytics events only through one `track()` function. Source: [T-24 task note](<../plan/tasks/T-24 Event logging.md>). |
-| 2026-10-08 | [#112](https://github.com/magentawood/roomsie/pull/112) | CI used the database address that the test code gives as a default. CI must set each connection detail in an env var. → rule in `testing.md` (T-40) |
-| 2026-10-13 | T-40 | A workflow reads secrets that no spec or inventory names. Each secret that a workflow reads needs a record that names it. |
+| 2026-10-08 | [#112](https://github.com/magentawood/roomsie/pull/112) | CI used the database address that the test code gives as a default. CI must set each connection detail in an env var. → rule in `testing.md` ([#131](https://github.com/magentawood/roomsie/pull/131)) |
+| 2026-10-13 | [#131](https://github.com/magentawood/roomsie/pull/131) | A workflow reads secrets that no spec or inventory names. Each secret that a workflow reads needs a record that names it. |

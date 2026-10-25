@@ -55,9 +55,10 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 - **The workflow runs `pg_dump` from the Postgres 17 image.** The `pg_dump` of the runner is older than the Postgres of Supabase, and an older `pg_dump` cannot dump a newer server.
 - **A restore needs `--clean --if-exists`.** The dump makes the `public` schema, and a new database has it already. Without the two options, the restore stops with "schema public already exists".
 - **The dump has no Supabase schemas, owners or grants.** Thus, it restores into each Postgres 17. The `pg_cron` jobs of the analytics database are not in the dump.
+- **Row Level Security does not hide rows from the dump.** The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds `FORCE ROW LEVEL SECURITY`, the dump stops with an error.
 - **If you lose the private key, nobody can read the dumps.** Keep the key in the team password manager only.
 - **A deleted account stays in the dumps for fourteen days,** until the workflow deletes its newest dump.
 
 ## Tickets
 
-- T-40: the nightly backup workflow, the restore check and the retention.
+- T-40: [#131](https://github.com/magentawood/roomsie/pull/131), 2026-10-25. The nightly backup workflow, the restore check and the retention.

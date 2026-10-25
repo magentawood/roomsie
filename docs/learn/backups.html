@@ -78,11 +78,12 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The workflow runs <code>pg_dump</code> from the Postgres 17 image.</strong> The <code>pg_dump</code> of the runner is older than the Postgres of Supabase, and an older <code>pg_dump</code> cannot dump a newer server.</li>
 <li><strong>A restore needs <code>--clean --if-exists</code>.</strong> The dump makes the <code>public</code> schema, and a new database has it already. Without the two options, the restore stops with "schema public already exists".</li>
 <li><strong>The dump has no Supabase schemas, owners or grants.</strong> Thus, it restores into each Postgres 17. The <code>pg_cron</code> jobs of the analytics database are not in the dump.</li>
+<li><strong>Row Level Security does not hide rows from the dump.</strong> The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds <code>FORCE ROW LEVEL SECURITY</code>, the dump stops with an error.</li>
 <li><strong>If you lose the private key, nobody can read the dumps.</strong> Keep the key in the team password manager only.</li>
 <li><strong>A deleted account stays in the dumps for fourteen days,</strong> until the workflow deletes its newest dump.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
-<li>T-40: the nightly backup workflow, the restore check and the retention.</li>
+<li>T-40: <a href="https://github.com/magentawood/roomsie/pull/131">#131</a>, 2026-10-25. The nightly backup workflow, the restore check and the retention.</li>
 </ul>
 </main>
