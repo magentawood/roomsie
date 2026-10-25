@@ -23,8 +23,12 @@ const bearerHeader = z.string().regex(/^Bearer \S+$/)
 const firebaseClaims = z.object({ sub: z.string().min(1), iat: z.number().int() })
 
 /** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
+const tokenErrors = [
+  errors.JWTClaimValidationFailed, errors.JWTExpired, errors.JWTInvalid, errors.JWSInvalid,
+  errors.JWSSignatureVerificationFailed, errors.JOSEAlgNotAllowed, errors.JOSENotSupported, errors.JWKSNoMatchingKey,
+]
 function badToken(err: unknown) {
-  if (err instanceof errors.JOSEError && !(err instanceof errors.JWKSTimeout)) return null
+  if (tokenErrors.some((type) => err instanceof type)) return null
   throw err
 }
 
@@ -40,6 +44,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
       requiredClaims: ['exp'],
       // Also rejects an iat in the future. A Firebase ID token lives one hour.
       maxTokenAge: '1h',
+      clockTolerance: '5s',
     }).catch(badToken)
     const claims = firebaseClaims.safeParse(verified?.payload)
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
@@ -48,7 +53,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
     const issuedAt = new Date(iat * 1000)
     let user = await findUser(db, uid)
     if (!user) {
-      // The first token is older than the new row, so tokens_valid_after starts at its iat.
+      // tokens_valid_after starts at the first token's iat (ADR-0007).
       await db.insert(users).values({ authProviderId: uid, tokensValidAfter: issuedAt }).onConflictDoNothing()
       user = (await findUser(db, uid))!
     }

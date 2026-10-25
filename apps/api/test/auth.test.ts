@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type CryptoKey } from 'jose'
+import { createLocalJWKSet, errors, exportJWK, generateKeyPair, SignJWT, type CryptoKey } from 'jose'
 import { meResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { users } from '../src/db/schema'
@@ -60,7 +60,7 @@ describe('GET /v1/me', () => {
 
   it('rejects a token issued in the future', async () => {
     const later = Math.floor(Date.now() / 1000) + 600
-    expect((await me(await idToken('uid-future', { iat: later, exp: later + 3600 }))).statusCode).toBe(401)
+    expect((await me(await idToken('uid-future', { iat: later }))).statusCode).toBe(401)
   })
 
   it('rejects a token with an empty uid', async () => {
@@ -95,5 +95,17 @@ describe('GET /v1/me', () => {
     expect((await me(await idToken(uid))).statusCode).toBe(200)
     await testDb.db.update(users).set({ status }).where(eq(users.authProviderId, uid))
     expect((await me(await idToken(uid))).statusCode).toBe(403)
+  })
+
+  it("gives 500, not 401, when Google's keys cannot be fetched", async () => {
+    const down = buildServer({
+      webOrigin: 'http://localhost:3000',
+      db: testDb.db,
+      firebaseProjectId: projectId,
+      firebaseKeys: () => Promise.reject(new errors.JOSEError('Expected 200 OK from the JSON Web Key Set HTTP response')),
+    })
+    const res = await down.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${await idToken('uid-keys-down')}` } })
+    expect(res.statusCode).toBe(500)
+    await down.close()
   })
 })
