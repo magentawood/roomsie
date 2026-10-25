@@ -22,12 +22,12 @@ function Group({ label, required, children }: { label: string; required?: boolea
 }
 
 /** Pick one, as the Tag chips of the designs. A second tap clears it. */
-export function ChoiceChips<T extends string>({ label, labels, only, value, onChange, required }: {
-  label: string; labels: Record<T, string>; only?: readonly T[]; value: T | null | undefined; onChange: (value: T | null) => void; required?: boolean
+export function ChoiceChips<T extends string>({ label, labels, value, onChange, required }: {
+  label: string; labels: Record<T, string>; value: T | null | undefined; onChange: (value: T | null) => void; required?: boolean
 }) {
   return (
     <Group label={label} required={required}>
-      {options(labels, only).map((o) => {
+      {options(labels).map((o) => {
         const selected = value === o.value
         return (
           <button key={o.value} type="button" role="radio" aria-checked={selected} className={chip(selected)} onClick={() => onChange(selected ? null : o.value)}>
@@ -51,7 +51,7 @@ export function MultiChips<T extends string>({ label, labels, only, value, onCha
         return (
           <button key={o.value} type="button" role="checkbox" aria-checked={selected} className={chip(selected)}
             onClick={() => onChange(selected ? picked.filter((v) => v !== o.value) : [...picked, o.value])}>
-            <span className={mark(selected, false)}>{selected && <svg viewBox="0 0 12 12" className="size-3 text-white" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2.5 6l2.5 2.5 4.5-5" /></svg>}</span>
+            <span className={mark(selected, false)}>{selected && <svg viewBox="0 0 12 12" className="size-3 text-primary_on-brand" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2.5 6l2.5 2.5 4.5-5" /></svg>}</span>
             {o.label}
           </button>
         )

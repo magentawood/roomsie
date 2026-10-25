@@ -68,12 +68,8 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const parsed = listingEdits[listing.kind].safeParse(req.body)
     if (!parsed.success) {
-      const issue = parsed.error.issues[0]!
-      return reply.code(400).send({
-        error: issue.code === 'unrecognized_keys'
-          ? `not a field of a ${listing.kind} listing: ${issue.keys.join(', ')}`
-          : `not valid for a ${listing.kind} listing: ${String(issue.path[0])}`,
-      })
+      const fields = new Set(parsed.error.issues.flatMap((i) => (i.code === 'unrecognized_keys' ? i.keys : [String(i.path[0])])))
+      return reply.code(400).send({ error: `not valid for a ${listing.kind} listing: ${[...fields].join(', ')}` })
     }
     const edit: ListingEdit = mask(parsed.data)
     const { rates: newRates, flatmates: newFlatmates, ...columns } = edit
@@ -85,11 +81,15 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     }
 
     const current = (await partsOf(db, [listing.id]))(listing.id)
+    const nextListing = { ...listing, ...columns }
     const next = {
-      listing: { ...listing, ...columns },
-      rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates,
+      listing: nextListing,
+      // A PG keeps a rent only for the sharing types that it still has.
+      rates: (newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates)
+        .filter((r) => listing.kind !== 'pg' || nextListing.sharing.includes(r.sharing!)),
       flatmates: newFlatmates ?? current.flatmates,
     }
+    const ratesChanged = newRates !== undefined || next.rates.length !== current.rates.length
     // The database checks each status after draft, so the API gives 422 for it, not 500.
     if (listing.status !== 'draft') {
       const missing = missingToGoLive(next.listing, next)
@@ -104,7 +104,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       const [row] = await tx.update(listings).set({ ...columns, updatedAt: new Date() })
         .where(listingOfOwner(listing.id, req.user!.id)).returning()
       if (!row) return undefined
-      if (newRates) {
+      if (ratesChanged) {
         await tx.delete(listingRates).where(eq(listingRates.listingId, row.id))
         if (next.rates.length) await tx.insert(listingRates).values(next.rates.map((r) => ({ ...r, listingId: row.id, listingKind: row.kind })))
       }

@@ -32,7 +32,7 @@ export function TextInput({ label, value, onChange, placeholder, required, hint,
   )
 }
 
-export function TextArea({ label, value, onChange, placeholder, hint, maxLength }: TextProps) {
+export function TextArea({ label, value, onChange, placeholder, hint, maxLength }: Omit<TextProps, 'required' | 'error'>) {
   return (
     <Field label={label} hint={hint}>
       {(id) => (
@@ -43,13 +43,13 @@ export function TextArea({ label, value, onChange, placeholder, hint, maxLength 
   )
 }
 
-type NumberProps = { label: string; value: number | null | undefined; onChange: (value: number | null) => void; placeholder?: string; required?: boolean; error?: string; min?: number; max?: number }
+type NumberProps = { label: string; value: number | null | undefined; onChange: (value: number | null) => void; placeholder?: string; required?: boolean; error?: string }
 
-export function NumberInput({ label, value, onChange, placeholder, required, error, min, max }: NumberProps) {
+export function NumberInput({ label, value, onChange, placeholder, required, error }: NumberProps) {
   return (
     <Field label={label} required={required} error={error}>
       {(id) => (
-        <input id={id} type="number" inputMode="numeric" className={inputClass} value={value ?? ''} placeholder={placeholder} min={min} max={max}
+        <input id={id} type="number" inputMode="numeric" className={inputClass} value={value ?? ''} placeholder={placeholder}
           aria-invalid={error ? true : undefined}
           onChange={(e) => onChange(e.target.value === '' ? null : Math.trunc(Number(e.target.value)))} />
       )}

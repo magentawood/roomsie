@@ -5,9 +5,8 @@ import { useQuery } from '@tanstack/react-query'
 import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
 import { healthResponse, meResponse } from '@roomsie/contract'
+import { apiUrl } from '../lib/api'
 import { firebaseAuth } from '../lib/firebase'
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null)

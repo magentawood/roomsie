@@ -4,24 +4,19 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
 import type { Icon } from './button'
 
-/** A dialog over the page. Escape and the close button call onClose. Destructive modals show the icon in the error colour. */
-export function Modal({ icon: ModalIcon, title, children, actions, onClose, destructive }: { icon: Icon; title: string; children: ReactNode; actions: ReactNode; onClose: () => void; destructive?: boolean }) {
-  const panel = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    panel.current?.querySelector<HTMLElement>('button')?.focus()
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose()
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [onClose])
+export function Modal({ icon: ModalIcon, title, children, actions, onClose }: { icon: Icon; title: string; children: ReactNode; actions: ReactNode; onClose: () => void }) {
+  const dialog = useRef<HTMLDialogElement>(null)
+  useEffect(() => dialog.current?.showModal(), [])
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center">
-      <div className="absolute inset-0 bg-overlay/70 backdrop-blur-sm" onClick={onClose} aria-hidden />
-      <div ref={panel} role="dialog" aria-modal aria-labelledby="modal-title" className="relative flex w-full max-w-100 flex-col gap-5 rounded-2xl bg-primary p-5 shadow-xl sm:p-6">
+    // A click on the backdrop has the dialog as its target. A click in the panel has a child as its target.
+    <dialog ref={dialog} aria-labelledby="modal-title" onClose={onClose} onClick={(e) => e.target === e.currentTarget && onClose()}
+      className="mx-auto mt-auto mb-4 w-[calc(100%-2rem)] max-w-100 rounded-2xl bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm sm:my-auto">
+      <div className="flex flex-col gap-5 p-5 sm:p-6">
         <div className="flex items-start justify-between">
-          <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${destructive ? 'text-fg-error' : 'text-fg-quaternary'}`}>
+          <span className="flex size-10 items-center justify-center rounded-md border border-primary text-fg-error shadow-xs">
             <ModalIcon size={20} aria-hidden />
           </span>
-          <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary hover:bg-primary_hover hover:text-fg-quaternary_hover">
+          <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover focus-visible:outline-2">
             <XClose size={20} aria-hidden />
           </button>
         </div>
@@ -31,6 +26,6 @@ export function Modal({ icon: ModalIcon, title, children, actions, onClose, dest
         </div>
         <div className="flex flex-col-reverse gap-3 sm:flex-row">{actions}</div>
       </div>
-    </div>
+    </dialog>
   )
 }

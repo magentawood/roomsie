@@ -6,11 +6,11 @@ type Variant = 'primary' | 'secondary' | 'tertiary' | 'link-error' | 'destructiv
 type Size = 'xs' | 'sm' | 'md' | 'lg'
 
 const variants: Record<Variant, string> = {
-  primary: 'bg-brand-solid text-white shadow-xs-skeuomorphic hover:bg-brand-solid_hover',
+  primary: 'bg-brand-solid text-primary_on-brand shadow-xs-skeuomorphic hover:bg-brand-solid_hover',
   secondary: 'border border-primary bg-primary text-secondary shadow-xs hover:bg-primary_hover hover:text-secondary_hover',
   tertiary: 'text-tertiary hover:bg-primary_hover hover:text-tertiary_hover',
   'link-error': 'text-error-primary hover:underline',
-  destructive: 'bg-error-solid text-white shadow-xs-skeuomorphic hover:bg-error-solid_hover',
+  destructive: 'bg-error-solid text-primary_on-brand shadow-xs-skeuomorphic hover:bg-error-solid_hover',
 }
 const sizes: Record<Size, string> = {
   xs: 'gap-1 rounded-md px-2.5 py-1.5 text-sm',

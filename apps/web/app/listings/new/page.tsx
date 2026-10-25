@@ -19,10 +19,9 @@ function NewListing() {
   const { user } = useAuth()
   const router = useRouter()
   const [kind, setKind] = useState<ListingKind | null>(null)
-  // The variable is where to go after the draft is made.
   const create = useMutation<ListingResponse, Error, 'next' | 'draft'>({
     mutationFn: () => api(user!, '/v1/listings', listingResponse, { method: 'POST', body: { kind } }),
-    onSuccess: (listing, then) => router.replace(then === 'next' ? `/listings/${listing.id}/2` : '/listings'),
+    onSuccess: (listing, destination) => router.replace(destination === 'next' ? `/listings/${listing.id}/2` : '/listings'),
   })
   const blocked = !kind || create.isPending || create.isSuccess
   return (
