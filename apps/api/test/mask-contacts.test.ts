@@ -14,6 +14,8 @@ describe('maskContacts', () => {
     ['https://chat.whatsapp.com/AbCdEf123 for the group', '•••• for the group'],
     ['api.whatsapp.com/send?phone=919820012345', '••••'],
     ['Text wa.me/919820012345.', 'Text ••••.'],
+    ['(022) 2345 6789', '••••'],
+    ['98200  12345', '••••'],
   ])('masks %j', (text, masked) => {
     expect(maskContacts(text)).toBe(masked)
   })
@@ -21,6 +23,8 @@ describe('maskContacts', () => {
   it.each([
     'Rent ₹15,000, deposit 30000',
     'Single 15000 12000 double',
+    'Rent 65000-70000 negotiable',
+    'Rent 70000 75000',
     'Flat 1203, Wing B, 7th floor',
     'Pincode 400050',
     '2 BHK, 750 sq ft',
