@@ -44,8 +44,8 @@ describe('migrateAndSeed', () => {
       await expect(migrateAndSeed(testDb.db, folder)).rejects.toThrow()
       expect((await testDb.db.execute(sql`select to_regclass('half_done') as t`))[0]!.t).toBeNull()
     } finally {
-      rmSync(folder, { recursive: true })
       await testDb.drop()
+      rmSync(folder, { recursive: true })
     }
   })
 })
