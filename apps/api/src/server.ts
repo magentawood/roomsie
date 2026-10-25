@@ -9,8 +9,10 @@ import {
 } from 'fastify-type-provider-zod'
 import { healthResponse, meResponse } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from './auth'
+import { listingRoutes } from './listings/routes'
+import type { Storage } from './storage'
 
-export function buildServer(options: { webOrigin: string } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -32,6 +34,7 @@ export function buildServer(options: { webOrigin: string } & AuthOptions) {
         { preHandler: requireUser(options), schema: { response: { 200: meResponse } } },
         async (req) => req.user!,
       )
+      listingRoutes(v1, options)
     },
     { prefix: '/v1' },
   )
