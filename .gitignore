@@ -14,3 +14,7 @@ session/transcript/*.bak.*
 .obsidian/
 *.tsbuildinfo
 next-env.d.ts
+
+# next dev writes these when an AI agent runs it. CONTEXT.md is the one agent file.
+apps/web/AGENTS.md
+apps/web/CLAUDE.md

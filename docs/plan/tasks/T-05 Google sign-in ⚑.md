@@ -47,9 +47,9 @@ Log in with Google. The server checks the user on each request.
 - [[T-48 Onboarding questions]]
 
 ## Done when
-- [ ] Google sign-in works through Firebase on the web. The token stays in memory
-- [ ] The API verifies the ID token locally, with no call to Firebase
-- [ ] The first sign-in creates a users row. `tokens_valid_after` is in the first migration
+- [x] Google sign-in works through Firebase on the web. The token stays in memory · [#131](https://github.com/magentawood/roomsie/pull/131)
+- [x] The API verifies the ID token locally, with no call to Firebase · [#131](https://github.com/magentawood/roomsie/pull/131)
+- [x] The first sign-in creates a users row. `tokens_valid_after` is in the first migration · [#131](https://github.com/magentawood/roomsie/pull/131)
 
 ^done
 
@@ -87,3 +87,13 @@ Log in with Google. The server checks the user on each request.
   - the design of the button (T-10), the sign-in wall (T-21) and the invite-only gate (T-33)
   - phone OTP and the age declaration (PC-34)
   - a Content-Security-Policy, and calls from Vercel previews to the API
+
+## Log
+
+- **2026-10-25 · [#131](https://github.com/magentawood/roomsie/pull/131)**
+  - **Change:** the web signs in with Google through Firebase. The API verifies the ID token locally with `jose`, makes the `users` row at the first sign-in, and serves `GET /v1/me`.
+  - **Why:** [ADR-0007](../../decisions/0007-web-rendering-and-auth-transport.md). The grill added the status check and told what "in memory" means.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Sign-in and tokens](../../learn/sign-in-and-tokens.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-25--t-05-google-sign-in-works)
