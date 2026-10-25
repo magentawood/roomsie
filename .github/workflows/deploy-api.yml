@@ -15,6 +15,8 @@ env:
   WEB_ORIGIN: https://roomsie.in
 jobs:
   deploy:
+    # A run by hand from a branch would apply its unmerged migrations to the live database.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
