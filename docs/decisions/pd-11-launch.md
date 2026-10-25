@@ -30,7 +30,7 @@
 
 Engineering go/no-go checks (from `team-plan.md`):
 
-1. In production, on a phone and a laptop, a person goes from chat to connect and sees a number.
+1. In production, on a phone and a laptop, a person goes from the chat to a message request and an accepted chat (PD17).
 2. Report, block and account deletion work.
 3. The abuse test trips the limits. The spend ceiling falls back to chips.
 4. No open P1 bug.

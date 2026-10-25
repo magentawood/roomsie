@@ -38,7 +38,7 @@ Log in with Google. The server checks the user on each request.
 - [[T-17 Carry chat into account]]
 - [[T-33 Invite-only gate]]
 - [[T-21 Turn cap and spend ceiling]]
-- [[T-18a Connect API ⚑]]
+- [[T-18a Message request API ⚑]]
 - [[T-38 Advisor]]
 - [[T-41 Listings API]]
 - [[T-44 Messages API]]

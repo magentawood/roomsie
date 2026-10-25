@@ -31,10 +31,11 @@ Who handles reports and abuse.
 
 ## Done when
 - [ ] The team names a moderator and a backup
-- [ ] Rules exist for when to suspend a person and how fast to respond
+- [ ] The moderator confirms the rules of PD18, or changes them
 - [ ] The team checks reports every day from launch
 
 ^done
 
 ## Read first
 - [scope-policy.md](../../scope-policy.md)
+- [pd-18-moderation.md](../../decisions/pd-18-moderation.md)

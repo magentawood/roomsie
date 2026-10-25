@@ -27,17 +27,19 @@ The server part of in-app messages between two users.
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
 - [[T-06 Database schema ⚑]]
-- [[T-18a Connect API ⚑]]
+- [[T-18a Message request API ⚑]]
 - [[F-13 Connect and trust calls ⚑]]
 
 ## Unblocks
 - [[T-45 Messages screens]]
 
 ## Done when
-- [ ] Who can message whom follows the answers of F-13
+- [ ] Who can message whom follows PD17
 - [ ] Messages arrive live through Supabase Realtime broadcast
 - [ ] The API never gives a message to a user who is not in the conversation
 - [ ] A blocked user cannot send a message to the user who blocked them
+- [ ] The API masks phone numbers and WhatsApp links as •••• in each message
+- [ ] A new request or message sends an email and a browser push, with no message text, unless the user turned them off
 
 ^done
 
@@ -45,3 +47,4 @@ The server part of in-app messages between two users.
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [extensibility.md](../../extensibility.md)
 - [connect-and-trust.md](../../product-calls/connect-and-trust.md)
+- [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)

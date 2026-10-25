@@ -47,7 +47,7 @@ The working hypothesis:
 - The hypothesis is unproven. It waits for the broker calls from marketing.
 - Brokers list free in v0, and v0 has no payments ([PD14](pd-14-v0-is-the-figma-designs.md)). The price stays blocked on the calls.
 - Brokers may not pay for each lead, because Indian brokers expect subscriptions and free listing. Test the price during the Mumbai pilot, before you build billing.
-- Keep phone numbers hidden until the introduction.
+- roomsie never reveals a phone number ([PD17](pd-17-connect-and-contact.md)).
 - A free listing tier attracts junk. Thus, broker verification becomes load-bearing.
 - `product-base.md` keeps "Brokers and monetisation" in its "Still open" list as **[Testing]**.
 

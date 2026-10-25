@@ -75,7 +75,7 @@ own.** We use no third-party analytics vendor.
   - Events reference `users.id`. Thus, they are personal data in the scope of
     India's DPDP Act.
   - Account deletion must purge or pseudonymise the event history of the user.
-  - Raw events need a defined retention window.
+  - Raw events go after 12 months ([PD19](pd-19-retention.md)).
   - We must design this policy with the schema, and not attach it subsequently.
     It is the one part where to own the data is genuinely harder than to rent it.
 

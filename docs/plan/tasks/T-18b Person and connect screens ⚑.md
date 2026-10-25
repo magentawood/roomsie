@@ -26,21 +26,24 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
-Read the full profile of a person and send a connect request.
+Read the full profile of a person and send a message request.
 
 ## Needs first
 - [[D-03 Results and profile designs]]
 - [[F-13 Connect and trust calls ⚑]]
-- [[T-18a Connect API ⚑]], at a later time. It goes into main on Thu 1 Oct, before you start.
+- [[T-18a Message request API ⚑]], at a later time. It goes into main on Thu 1 Oct, before you start.
 
 ## Unblocks
 - No task waits on this task.
 
 ## Done when
-- [ ] The first version uses the detail sheet of the V3 prototype, against a mock of the connect API. It connects to T-18a when T-18a lands on Sun 4 Oct
+- [ ] The detail screen follows the designs, against a mock of the API. It connects to T-18a when T-18a lands
 - [ ] The person screen needs sign-in
-- [ ] The connect button has sent, accepted and declined states
-- [ ] The number shows only after both accept
+- [ ] The Say hi button has request sent, accepted and not available states
+- [ ] No phone number shows
 - [ ] Report and block need only one tap
 
 ^done
+
+## Read first
+- [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)

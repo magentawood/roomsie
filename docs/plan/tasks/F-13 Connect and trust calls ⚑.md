@@ -33,7 +33,7 @@ Decide how two people connect, and how we keep them safe.
 ## Unblocks
 - [[T-18b Person and connect screens ⚑]]
 - [[F-07 Privacy and terms draft]]
-- [[T-18a Connect API ⚑]]
+- [[T-18a Message request API ⚑]]
 - [[T-44 Messages API]]
 - [[T-46 DigiLocker verification]]
 
@@ -47,3 +47,42 @@ Decide how two people connect, and how we keep them safe.
 - [connect-and-trust.md](../../product-calls/connect-and-trust.md)
 - [pd-03c-exclusionary-preferences.md](../../decisions/pd-03c-exclusionary-preferences.md)
 - [pd-08-verification.md](../../decisions/pd-08-verification.md)
+
+## Spec
+
+**Approved:** 2026-10-25, by n3rxv
+
+- **Modules:**
+  - Decision records: PD17 (new, connect and contact), PD18 (new, moderation) and PD19 (new, retention). PD3a, PD3c, PD3d, PD6b, PD7, PD8, PD11, PD16 and ADR-0012 change. The ledgers come from the records.
+  - Product calls: `connect-and-trust.md` loses each answered call.
+  - `apps/api/src/db/seed-axes.ts`: "Women only" and "Men only" become active. The seed test changes with it.
+  - The plan: the done lists of T-16a, T-18a, T-18b, T-19, T-20, T-39, T-41, T-44, T-46, F-07 and F-08 change, and the title of T-18a. The F-13 items get their ticks.
+- **Seams for the tests:** the doc checks, and the seed test on the disposable test database.
+- **Decisions:**
+  - PC-05: people talk in roomsie only. A phone number is never revealed. The system masks phone numbers and WhatsApp links as •••• in messages, bios, listing descriptions and flatmate fields. The terms forbid them. (PD17)
+  - PC-22: a new request or message sends an email and a browser push, with no message text. The "Email alerts" and "Push alerts" switches turn them off. (PD17)
+  - PC-35: "Say hi" sends one first note of up to 300 characters as a request. The receiver accepts or declines. A sender has 10 new requests a day. A request expires after 14 days. A decline shows as "Not available", and the sender can send a new request. Only one request is open between two people at a time. Abuse goes to a report. (PD17)
+  - PC-41: the daily cap and the reports. No more checks. (PD17)
+  - PC-14: seven report reasons: fake profile, broker or spam, harassment, discriminatory text, under 18, shared contact details, other. A harassment or under-18 report, or reports from two people, hide the profile at once. The moderator reviews a safety report in 4 hours, and other reports in 24 hours. The moderator decides a suspension. F-08 confirms these rules. (PD18)
+  - PC-37: free text cannot restrict by community, religion or caste. The terms forbid it, and the moderator removes it on a report. (PD3d)
+  - PC-08: the session, goals and chat turns of a visitor go 30 days after the last visit, unless the visitor signs in. Raw events go after 12 months. The data of an account stays until deletion. Then the other person sees "Deleted user". The DigiLocker selfie goes right after the check. F-07 confirms the periods. (PD19, ADR-0012)
+  - PC-12: user text goes to the DeepSeek API. The team opts out of training by email. The privacy policy says that DeepSeek stores the text in China. F-07 confirms the text. (PD7)
+  - PC-27: the notice about stored messages is in the privacy policy only. (PD6b)
+  - PC-46: a guest signs in before a card opens. (PD6b)
+  - PC-30: a profile has a required gender: Male, Female or Non-binary. "Women only" and "Men only" filter on the gender of the other person, in the two directions between people. "Who can move in" on a listing filters the seekers. Non-binary passes only "Any". The trust story: no contact before an accept, no phone numbers, report and block, a 4-hour safety response, and DigiLocker. (PD8, PD3a)
+  - PC-31: a community filter acts only on what candidates stated. A candidate who stated nothing stays in the results, with no label. (PD3c)
+  - PC-34: the age field only. No declaration at sign-in. (PD16)
+  - Go/no-go check 1 becomes: "a person goes from the chat to a message request and an accepted chat". (PD11)
+  - Done-list changes:
+    - T-18a: the title becomes "Message request API". "A user can send, accept or decline a connect request" becomes "A user can send, accept or decline a message request, with one first note of up to 300 characters". "After a mutual accept, both people see the number of the other person" becomes "After an accept, the two people chat in roomsie. No phone number is ever revealed". New item: "A request expires after 14 days, and only one request is open between two people at a time".
+    - T-18b: "The first version uses the detail sheet of the V3 prototype, against a mock of the connect API. It connects to T-18a when T-18a lands on Sun 4 Oct" becomes "The detail screen follows the designs, against a mock of the API. It connects to T-18a when T-18a lands". "The connect button has sent, accepted and declined states" becomes "The Say hi button has request sent, accepted and not available states". "The number shows only after both accept" becomes "No phone number shows".
+    - T-19: new item: "The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once".
+    - T-20: new item: "The other person sees Deleted user in their messages".
+    - T-39: new item: "Raw events are deleted after 12 months (PD19)".
+    - T-44: "Who can message whom follows the answers of F-13" becomes "Who can message whom follows PD17". New items: "The API masks phone numbers and WhatsApp links as •••• in each message". "A new request or message sends an email and a browser push, with no message text, unless the user turned them off".
+    - T-46: "The system stores the result and its date, never the document" becomes "The system stores the result and its date, never the document. It deletes the selfie right after the check".
+    - T-16a: new items: "A profile has a required gender: Male, Female or Non-binary". "The API masks phone numbers in the bio".
+    - T-41: new items: "A listing has Who can move in: men, women or any". "The API masks phone numbers in the description and the flatmate fields".
+    - F-07: new items: "It says that chat text goes to DeepSeek, which stores it in China". "The team emails DeepSeek to opt out of training before launch". "The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them".
+    - F-08: "Rules exist for when to suspend a person and how fast to respond" becomes "The moderator confirms the rules of PD18, or changes them".
+- **Out of scope:** the code of the tasks above (T-16a, T-18a, T-19, T-41, T-44, T-46), the schema columns for gender and "Who can move in" (T-16a, T-41), and the designs (the drafts page of the Product file).

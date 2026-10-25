@@ -39,6 +39,8 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
 - [ ] The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores
 - [ ] The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
 - [ ] Only the lister can edit, pause or delete a listing
+- [ ] A listing has Who can move in: men, women or any
+- [ ] The API masks phone numbers in the description and the flatmate fields
 
 ^done
 

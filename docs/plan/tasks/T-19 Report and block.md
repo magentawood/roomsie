@@ -37,8 +37,10 @@ The safety tools.
 - [ ] A saved query in Supabase lists open reports
 - [ ] Suspend sets `tokens_valid_after` to now and hides the profile
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
+- [ ] The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once
 
 ^done
 
 ## Read first
 - [scope-policy.md](../../scope-policy.md)
+- [pd-18-moderation.md](../../decisions/pd-18-moderation.md)

@@ -1,6 +1,6 @@
 # PD3d — Identity restrictions in published listings
 
-**Status:** Settled for the fields of the listing flow. Free text is open in PC-37. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-25. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -14,12 +14,12 @@ A published listing is a different case. For example, a roomsie listing that say
 
 ## Decision
 
-**In one line:** A listing shows the "Who is welcome" choices of the listing flow, and free text waits for PC-37.
+**In one line:** A listing shows its "Who is welcome" and "Who can move in" choices, and free text cannot restrict by community, religion or caste.
 
 - **A listing shows its "Who is welcome" choices:** students, working professionals, couples, families and bachelors (the filter: [PD15](pd-15-form-a-contract.md)). The listing flow says: "Seekers see it as your promise."
 - The listing flow has no community or religion choice.
-- **"Who can move in" (men, women, any) waits for F-13 (PC-30).**
-- **Free text waits for F-13 (PC-37).** A description or a bio can name a community.
+- **A listing shows "Who can move in": men, women or any.** It filters the seekers (PD3a, PD8).
+- **Free text cannot restrict by community, religion or caste.** This covers a bio, a description and the flatmate fields. The terms forbid it, and the moderator removes it on a report (PD18).
 
 PD3d is a different decision from PD3c. PD3c decided only the private-filter case.
 
@@ -32,6 +32,8 @@ PD3d is a different decision from PD3c. PD3c decided only the private-filter cas
 
 ## Alternatives rejected
 
+- **Allow free text to restrict.** A public ad that excludes a community is the press risk of PD3c.
+- **A model check before free text goes live.** A model call for each edit, false flags, and more text to DeepSeek in China (PD7).
 - **Filter, but never show the choices.** The designs show them ([PD14](pd-14-v0-is-the-figma-designs.md)).
 
 ## Consequences

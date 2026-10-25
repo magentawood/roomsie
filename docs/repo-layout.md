@@ -34,7 +34,7 @@ roomsie/
 │       │   │   │               spend ceiling
 │       │   │   ├── matching/   the match query
 │       │   │   ├── profiles/   profiles and photos
-│       │   │   ├── connections/ connect request, contact reveal
+│       │   │   ├── connections/ message requests (PD17)
 │       │   │   ├── moderation/ report, block, suspend
 │       │   │   ├── account/    first sign-in, deletion
 │       │   │   └── waitlist/   launch areas and waitlist

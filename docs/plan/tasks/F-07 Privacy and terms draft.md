@@ -33,8 +33,13 @@ The text for the legal pages.
 - [ ] It says what the system collects, why, for how long, how to delete it, and who to contact
 - [ ] There is a named grievance contact
 - [ ] It says that the system stores chat messages, and that account deletion deletes them
+- [ ] It says that chat text goes to DeepSeek, which stores it in China
+- [ ] The team emails DeepSeek to opt out of training before launch
+- [ ] The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
 
 ^done
 
 ## Read first
 - [extensibility.md](../../extensibility.md)
+- [pd-19-retention.md](../../decisions/pd-19-retention.md)
+- [pd-07-models.md](../../decisions/pd-07-models.md)

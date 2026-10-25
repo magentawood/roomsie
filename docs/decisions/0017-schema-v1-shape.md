@@ -33,7 +33,7 @@
 
 - **Goals.** The designs show a list of moves and ask "Is this the same move?". "I found a place" closes one move. One search for each person cannot show two moves.
 - **Both sides of the chat.** A reopened goal shows the replies and the cards of the assistant. The reply writer needs the last two turns ([agent-architecture.md](../agent-architecture.md)).
-- **Catalogues as data.** A new question or must-have is a re-seed, with no migration. Women only and Men only can wait for F-13 as inactive rows.
+- **Catalogues as data.** A new question or must-have is a re-seed, with no migration. An inactive row can wait for a decision.
 - **The choice, not its parts.** The profile shows the exact choice. A change to the mapping is a code change, with no stored rows to fix.
 - **Age can be empty.** Onboarding saves a profile before the person gives an age. The database still rejects 17.
 - **One listings table.** One query finds every listing, and each filter is a plain column.

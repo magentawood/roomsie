@@ -34,7 +34,7 @@ Verify a person with DigiLocker, and keep only the result.
 
 ## Done when
 - [ ] Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback
-- [ ] The system stores the result and its date, never the document
+- [ ] The system stores the result and its date, never the document. It deletes the selfie right after the check
 - [ ] The DigiLocker modal of flow 04 and the Verified badge on the cards use the result
 
 ^done

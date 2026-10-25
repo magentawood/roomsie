@@ -35,6 +35,7 @@ Delete the account and data correctly: profile, photos and messages are really r
 - [ ] The profile, the photos in R2 and the form state are removed. Events are pseudonymised
 - [ ] `tokens_valid_after` is set to now, thus every session ends
 - [ ] The chat turns of the person are deleted too
+- [ ] The other person sees Deleted user in their messages
 
 ^done
 
