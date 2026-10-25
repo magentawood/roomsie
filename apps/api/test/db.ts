@@ -10,7 +10,7 @@ export const migrationsFolder = fileURLToPath(new URL('../drizzle', import.meta.
 
 export type TestDb = Awaited<ReturnType<typeof createTestDb>>
 
-/** A fresh database, with every committed migration applied unless `migrated` is false. Call drop() when done. */
+/** A fresh database, migrated unless `migrated` is false. Call drop() when done. */
 export async function createTestDb({ migrated = true } = {}) {
   const name = `test_${randomUUID().replaceAll('-', '')}`
   const admin = postgres(adminUrl, { max: 1, onnotice: () => {} })

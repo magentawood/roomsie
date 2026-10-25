@@ -67,4 +67,5 @@ The live database gets each new table before the new server starts.
   - A test checks that the dates in the migration journal increase. Drizzle skips a migration that is older than the last applied migration.
   - The deploy workflow runs one deploy at a time. Thus, two migrations cannot run together.
   - The first run applies the T-06 migration to the live database. If tables are already there, the step fails. Then we repair it by hand.
+  - The deploy job runs only from `main`. A run by hand from a branch does nothing. (decided in the review; ADR-0018)
 - **Out of scope:** a backup before each migration (T-40 makes the nightly backups), the migrations of the analytics database (T-39), the seed of the area groups (F-06, T-22a), a migration that cannot run in a transaction (for example `CREATE INDEX CONCURRENTLY`), and a test against a copy of the live data.
