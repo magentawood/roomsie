@@ -3,3 +3,6 @@ packages:
   - packages/*
 allowBuilds:
   esbuild: true
+  # Firebase gets its settings in code, so these install scripts are not needed.
+  '@firebase/util': false
+  protobufjs: false
