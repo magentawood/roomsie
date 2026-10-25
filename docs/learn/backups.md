@@ -61,4 +61,4 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 
 ## Tickets
 
-- T-40: [#131](https://github.com/magentawood/roomsie/pull/131), 2026-10-25. The nightly backup workflow, the restore check and the retention.
+- T-40: [#138](https://github.com/magentawood/roomsie/pull/138), 2026-10-25. The nightly backup workflow, the restore check and the retention.

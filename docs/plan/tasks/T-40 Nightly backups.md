@@ -81,7 +81,7 @@ Copies the two databases each night.
 
 ## Log
 
-- **2026-10-25 · [#131](https://github.com/magentawood/roomsie/pull/131)**
+- **2026-10-25 · [#138](https://github.com/magentawood/roomsie/pull/138)**
   - **Change:** a workflow dumps the main and the analytics databases each night at 03:00 IST. It restores each dump into a temporary Postgres 17, encrypts it with `age`, and uploads it to R2. Then it keeps the newest fourteen dumps. A failure sends a message to the Telegram group of the team.
   - **Why:** [PD13](../../decisions/pd-13-databases-and-backups.md). The free plan of Supabase makes no backups.
   - **Ticked:** none. Each item needs the workflow on `main` first.
