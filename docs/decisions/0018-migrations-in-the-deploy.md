@@ -17,13 +17,15 @@
 - **What:** all new migrations in one transaction, then the catalogue seed. The seed is an upsert, so a second run changes nothing.
 - **Connection:** the session pooler, from the `DATABASE_URL_SESSION` secret. The API keeps the transaction pooler.
 - **Failure:** the transaction rolls back, and the job stops. Lightsail keeps the old API.
-- **Expand, then contract:** each migration works with the API version before it. To drop or rename a column or a table, first merge a PR that stops its use. Then drop it in a second PR.
+- **Only from `main`:** the job runs only from `main`. A run by hand from a branch does nothing.
+- **Expand, then contract:** each migration works with the API version before it. To rename a column or a table, first add the new one, and use it. To drop one, first stop its use. Then drop the old one in a second PR.
 
 ## Rationale
 
 - The container runs the code that ships, with no second install.
 - A failure stops the job before Lightsail changes. The old API stays up, and the failed step shows the error.
 - The workflow runs one deploy at a time. Thus, two migrations cannot run together.
+- A run from a branch would apply its unmerged migrations to the live database. A later merge could then skip or repeat them.
 - Supabase advises a session connection for schema changes. GitHub runners have no IPv6, and the direct connection of the free plan needs IPv6.
 - The old API runs on the new schema until the new API starts. If the Lightsail step fails, the old API runs on the new schema until the next deploy. An additive migration keeps the old API correct.
 

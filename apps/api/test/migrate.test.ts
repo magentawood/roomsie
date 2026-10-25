@@ -1,4 +1,4 @@
-import { cpSync, mkdtempSync, writeFileSync } from 'node:fs'
+import { cpSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { sql } from 'drizzle-orm'
@@ -8,7 +8,7 @@ import { createTestDb, migrationsFolder, type TestDb } from './db'
 import { migrateAndSeed } from '../src/db/migrate-and-seed'
 import { lifestyleAxes, mustHaves } from '../src/db/schema'
 
-const snapshot = async ({ db }: TestDb) => ({
+const dbState = async ({ db }: TestDb) => ({
   migrations: (await db.execute(sql`select count(*)::int as n from drizzle.__drizzle_migrations`))[0]!.n,
   axes: await db.select().from(lifestyleAxes).orderBy(lifestyleAxes.key),
   mustHaves: await db.select().from(mustHaves).orderBy(mustHaves.key),
@@ -19,13 +19,13 @@ describe('migrateAndSeed', () => {
     const testDb = await createTestDb({ migrated: false })
     try {
       await migrateAndSeed(testDb.db, migrationsFolder)
-      const first = await snapshot(testDb)
+      const first = await dbState(testDb)
       expect(first.migrations).toBe(journal.entries.length)
       expect(first.axes).not.toHaveLength(0)
       expect(first.mustHaves).not.toHaveLength(0)
 
       await migrateAndSeed(testDb.db, migrationsFolder)
-      expect(await snapshot(testDb)).toEqual(first)
+      expect(await dbState(testDb)).toEqual(first)
     } finally {
       await testDb.drop()
     }
@@ -44,6 +44,7 @@ describe('migrateAndSeed', () => {
       await expect(migrateAndSeed(testDb.db, folder)).rejects.toThrow()
       expect((await testDb.db.execute(sql`select to_regclass('half_done') as t`))[0]!.t).toBeNull()
     } finally {
+      rmSync(folder, { recursive: true })
       await testDb.drop()
     }
   })
