@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**44 of 265 done · 17%**
+**44 of 278 done · 16%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -22,15 +22,15 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 3 / 9 | 10 / 28 | 36% |
+| [[P1 Platform]] | 3 / 9 | 10 / 29 | 34% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 1 / 14 | 8 / 58 | 14% |
-| [[P4 Content and moderation]] | 0 / 7 | 0 / 23 | 0% |
-| [[P5 Accounts and people]] | 1 / 6 | 4 / 24 | 17% |
+| [[P3 Data and trust]] | 1 / 14 | 8 / 62 | 13% |
+| [[P4 Content and moderation]] | 0 / 7 | 0 / 25 | 0% |
+| [[P5 Accounts and people]] | 1 / 6 | 4 / 27 | 15% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 5 / 14 | 16 / 37 | 43% |
+| [[Founder]] | 5 / 14 | 16 / 40 | 40% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -92,7 +92,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Task | Owner | Hours | Waits on | Issue |
 |---|---|---|---|---|
-| [[T-18a Connect API ⚑]] | P5 | 4 | F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| [[T-18a Message request API ⚑]] | P5 | 4 | F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | [[T-22a Waitlist API]] | P4 | 2 | F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | [[T-23b Legal pages]] | P4 | 2 | F-13 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | [[T-44 Messages API]] | P3 | 8 | F-13 | [#120](https://github.com/magentawood/roomsie/issues/120) |
@@ -162,7 +162,7 @@ flowchart LR
   T42["T-42<br/>Listing flow screens"]:::todo
   T47["T-47<br/>Saved"]:::todo
   T48["T-48<br/>Onboarding questions"]:::todo
-  T18a["T-18a ⚑<br/>Connect API"]:::product
+  T18a["T-18a ⚑<br/>Message request API"]:::product
   T23b["T-23b<br/>Legal pages"]:::product
   T22a["T-22a<br/>Waitlist API"]:::product
   T44["T-44<br/>Messages API"]:::product
@@ -284,7 +284,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 10/28
+## P1 Platform — 10/29
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -304,7 +304,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-33 Invite-only gate]] · 0/2
 > ![[T-33 Invite-only gate#^done]]
 
-> [!todo]- ⬜ [[T-39 Analytics database]] · 0/4
+> [!todo]- ⬜ [[T-39 Analytics database]] · 0/5
 > ![[T-39 Analytics database#^done]]
 
 > [!todo]- ⬜ [[T-40 Nightly backups]] · 0/3
@@ -356,7 +356,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 8/58
+## P3 Data and trust — 8/62
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -370,7 +370,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/5
 > ![[T-18b Person and connect screens ⚑#^done]]
 
-> [!todo]- ⬜ [[T-41 Listings API]] · 0/4
+> [!todo]- ⬜ [[T-41 Listings API]] · 0/6
 > ![[T-41 Listings API#^done]]
 
 > [!todo]- ⬜ [[T-42 Listing flow screens]] · 0/3
@@ -379,7 +379,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/3
 > ![[T-43 Listing detail screens#^done]]
 
-> [!todo]- ⬜ [[T-44 Messages API]] · 0/4
+> [!todo]- ⬜ [[T-44 Messages API]] · 0/6
 > ![[T-44 Messages API#^done]]
 
 > [!todo]- ⬜ [[T-45 Messages screens]] · 0/4
@@ -401,7 +401,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 0/23
+## P4 Content and moderation — 0/25
 
 > [!todo]- ⬜ [[T-23a Landing page]] · 0/4
 > ![[T-23a Landing page#^done]]
@@ -412,10 +412,10 @@ flowchart LR
 > [!todo]- ⬜ [[T-37 Articles and search]] · 0/3
 > ![[T-37 Articles and search#^done]]
 
-> [!todo]- ⬜ [[T-19 Report and block]] · 0/5
+> [!todo]- ⬜ [[T-19 Report and block]] · 0/6
 > ![[T-19 Report and block#^done]]
 
-> [!todo]- ⬜ [[T-20 Account deletion]] · 0/4
+> [!todo]- ⬜ [[T-20 Account deletion]] · 0/5
 > ![[T-20 Account deletion#^done]]
 
 > [!todo]- ⬜ [[T-22a Waitlist API]] · 0/2
@@ -425,7 +425,7 @@ flowchart LR
 > ![[T-22b Waitlist screen#^done]]
 
 
-## P5 Accounts and people — 4/24
+## P5 Accounts and people — 4/27
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
@@ -436,10 +436,10 @@ flowchart LR
 > [!todo]- ⬜ [[T-24 Event logging]] · 0/4
 > ![[T-24 Event logging#^done]]
 
-> [!todo]- ⬜ [[T-18a Connect API ⚑]] · 0/3
-> ![[T-18a Connect API ⚑#^done]]
+> [!todo]- ⬜ [[T-18a Message request API ⚑]] · 0/4
+> ![[T-18a Message request API ⚑#^done]]
 
-> [!todo]- ⬜ [[T-16a Profile API ⚑]] · 0/5
+> [!todo]- ⬜ [[T-16a Profile API ⚑]] · 0/7
 > ![[T-16a Profile API ⚑#^done]]
 
 > [!todo]- ⬜ [[T-16b Profile screens ⚑]] · 0/4
@@ -494,7 +494,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 16/37
+## Founder — 16/40
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -511,7 +511,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-06 Launch areas picked]] · 0/2
 > ![[F-06 Launch areas picked#^done]]
 
-> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/3
+> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/6
 > ![[F-07 Privacy and terms draft#^done]]
 
 > [!todo]- ⬜ [[F-09 ADR exceptions]] · 0/2

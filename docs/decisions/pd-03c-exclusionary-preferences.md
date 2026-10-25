@@ -1,6 +1,6 @@
 # PD3c — Record stated exclusionary preferences
 
-**Status:** Settled · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-10-25. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -32,6 +32,8 @@ These mitigations stay with the decision:
 | 6 | Log all stated exclusions, and make them available again | Log each with its turn. |
 | 7 | State it publicly | A policy page: what roomsie filters on, and why. |
 
+A stated community filter acts only on what candidates stated themselves. A candidate who stated nothing stays in the results, with no label (F-13, PC-31).
+
 ## Rationale
 
 - It is the user's home.
@@ -48,11 +50,11 @@ These mitigations stay with the decision:
 
 - The risk is press and platform risk, not legal risk. The realistic bad result is a news story about a housing app that filters by religion, not a court case.
 - Housing discrimination in India is a current subject in the media. A conversational product makes a more vivid story than a checkbox.
-- The data connects to a person. We keep each stated exclusion against a named, phone-verified user. It is discoverable, and a DPDP access request can export it.
+- The data connects to a person. We keep each stated exclusion against a named, signed-in user. It is discoverable, and a DPDP access request can export it.
 - The data shares a database with the analytics corpus. ADR 0012 makes that corpus the future training data.
 - [PD15](pd-15-form-a-contract.md) removes `community` from the asked questions.
 - PD3c locks design review item 1.8: we never offer these preferences as chips.
-- Still open, with PD8: gender-based preferences come through the interview, and PD3c records them. Is that sufficient for the trust story? When we removed women-only (PD1), we removed a safety story, but the safety problem stays.
+- [PD8](pd-08-verification.md) settles gender: a field, and two must-haves.
 
 ## Sources
 

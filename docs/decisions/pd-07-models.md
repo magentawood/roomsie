@@ -1,6 +1,6 @@
 # PD7 — Models: DeepSeek for all roles, Gemini as fallback
 
-**Status:** Settled · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-10-25. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -122,9 +122,13 @@ life. One reason for ADR 0012 was to keep a behavioural stream in the control
 of the company. To send interview transcripts to an external inference
 provider is a larger version of the same action.
 
-Thus, examine the DeepSeek retention and training terms before we send user
-text. Account deletion must propagate. DPDP obligations follow the data, not
-the server.
+The terms, examined on 2026-10-25 (F-13, PC-12): DeepSeek stores data in China,
+can train on API inputs unless we opt out by email, and states no retention
+period. The decision: user text goes to the DeepSeek API, the team opts out of
+training by email, and the privacy policy says that DeepSeek stores the text in
+China. Account deletion must propagate. DPDP obligations follow the data, not
+the server. Rejected: DeepSeek V3.2 on Amazon Bedrock in Mumbai (four to five
+times the cost), and Gemini for all user text (a new main model).
 
 Superseded:
 

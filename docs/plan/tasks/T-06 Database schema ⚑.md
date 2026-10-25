@@ -38,7 +38,7 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-17 Carry chat into account]]
 - [[T-19 Report and block]]
 - [[T-21 Turn cap and spend ceiling]]
-- [[T-18a Connect API ⚑]]
+- [[T-18a Message request API ⚑]]
 - [[T-20 Account deletion]]
 - [[T-34 Router ⚑]]
 - [[T-35 Form B contract]]

@@ -114,7 +114,7 @@ Why: [PD8](decisions/pd-08-verification.md)
 | Browse, chat with the assistant, see results | Nothing |
 | See unblurred photos of verified-only users | Verified |
 | Appear to verified-only users | Verified |
-| Message someone | Phone, at minimum |
+| Message someone | Sign-in ([PD17](decisions/pd-17-connect-and-contact.md)) |
 | Be discoverable at all | The required fields of [PD16](decisions/pd-16-profiles.md) |
 
 Listing and broker verification are in v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)).

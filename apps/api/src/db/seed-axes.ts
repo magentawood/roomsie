@@ -18,9 +18,8 @@ const MUST_HAVES = [
   { key: 'veg_kitchen', label: 'Veg kitchen', sortOrder: 1, active: true },
   { key: 'non_smokers', label: 'Non-smokers', sortOrder: 2, active: true },
   { key: 'no_alcohol', label: 'No alcohol at home', sortOrder: 3, active: true },
-  // Women only and Men only stay inactive until F-13 decides PC-30.
-  { key: 'women_only', label: 'Women only', sortOrder: 4, active: false },
-  { key: 'men_only', label: 'Men only', sortOrder: 5, active: false },
+  { key: 'women_only', label: 'Women only', sortOrder: 4, active: true },
+  { key: 'men_only', label: 'Men only', sortOrder: 5, active: true },
   { key: 'tidy_flatmates', label: 'Tidy flatmates', sortOrder: 6, active: true },
   { key: 'couple_friendly', label: 'Couple friendly', sortOrder: 7, active: true },
 ]

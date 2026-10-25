@@ -54,14 +54,14 @@ describe('chat turns', () => {
 })
 
 describe('catalogues', () => {
-  it('seeds the eight lifestyle questions and the seven must-haves, with the gender pair off', async () => {
+  it('seeds the eight lifestyle questions and the seven must-haves, all active', async () => {
     await seedCatalogues(testDb.db)
     await seedCatalogues(testDb.db)
     const axes = await testDb.db.select().from(lifestyleAxes)
     expect(axes.map((a) => a.key).sort()).toEqual(['drinks', 'food', 'guests', 'pets', 'sleep', 'smoking', 'tidiness', 'your_days'])
     const all = await testDb.db.select().from(mustHaves)
     expect(all).toHaveLength(7)
-    expect(all.filter((m) => !m.active).map((m) => m.key).sort()).toEqual(['men_only', 'women_only'])
+    expect(all.filter((m) => !m.active)).toEqual([])
   })
 })
 

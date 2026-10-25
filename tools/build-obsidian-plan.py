@@ -37,7 +37,7 @@ SHORT = {
  "T-10":"Chat screen and split view","T-09":"Chip flow","T-17":"Carry chat into account",
  "T-23a":"Landing page","T-22a":"Waitlist API","T-22b":"Waitlist screen","T-06":"Database schema","T-14":"Match query",
  "T-19":"Report and block","T-20":"Account deletion","T-18b":"Person and connect screens",
- "T-15":"Results panel","T-16a":"Profile API","T-16b":"Profile screens","T-18a":"Connect API",
+ "T-15":"Results panel","T-16a":"Profile API","T-16b":"Profile screens","T-18a":"Message request API",
  "D-01":"Styling decision","D-02":"Chat screen designs","D-03":"Results and profile designs",
  "D-04":"Landing and waitlist designs","D-05":"Design QA","D-06":"Launch visuals",
  "M-04":"Article interviews","M-03":"Eval sentences","M-05":"Article drafts","M-07":"Launch posts",

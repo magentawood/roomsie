@@ -42,6 +42,8 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 - [ ] Photo bytes never pass through the API
 - [ ] A parent can create a profile for a son or daughter of 18 or more. The card shows "Managed by a parent"
 - [ ] A card becomes visible when its required fields are complete, unless the user hides it
+- [ ] A profile has a required gender: Male, Female or Non-binary
+- [ ] The API masks phone numbers in the bio
 
 ^done
 

@@ -1,6 +1,6 @@
 # PD8 — Verification: DigiLocker, not Aadhaar copies
 
-**Status:** Settled with one change · **Date:** 2026-09-22 · **Deciders:** Yash
+**Status:** Settled with one change. Changed on 2026-10-25. · **Date:** 2026-09-22 · **Deciders:** Yash
 
 ## Context
 
@@ -36,6 +36,12 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **Show one badge. Record the route internally.**
 - Guard 1: at launch, the verified-only setting is **off**.
 - Guard 2: always show the **count** of hidden matches.
+- **Gender (F-13, PC-30).** A profile has a required gender: Male, Female or
+  Non-binary. "Women only" and "Men only" filter in the two directions between
+  people, and "Who can move in" filters listings (PD3a).
+- **The trust story replaces women-only.** No contact before an accept, no phone
+  numbers (PD17), report and block, a 4-hour safety response (PD18), and the
+  DigiLocker badge.
 
 ## Rationale
 
@@ -88,17 +94,17 @@ Also:
 
 - Selfies and identity documents go to a different non-public bucket, with
   short retention and signed-URL access only (ADR 0005, or stronger).
-- In v0, browse, chat and results need nothing. A message needs a phone
-  number, at minimum. Listing and broker verification come back with PD3.
-- **Verification and blurred cards are not in the 12 October launch. They ship
-  in v1.** Onboarding with a KYC provider takes more than two weeks.
+- In v0, browse, chat and results need nothing. A message needs sign-in. No
+  phone number is collected or shown (PD17). Listing and broker verification
+  are in v0 (PD14).
+- DigiLocker verification is in v0 (PD14), and the selfie goes right after the
+  check (PD19). Blurred cards wait (PD11). Onboarding with a KYC provider takes
+  more than two weeks.
 
 ## Revisit when
 
 - The verified pool is sufficiently large for the verified-only setting.
-- Open, and belongs with PD8: we removed women-only (PD1). Is a gender
-  preference from the interview (PD3c) sufficient for the trust story? We
-  removed a safety story, but the safety problem stays.
+- Reports show that the trust story does not keep women safe enough.
 
 ## Sources
 

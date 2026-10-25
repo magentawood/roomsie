@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 - [[T-04 Deploy to Mumbai]] — P1 Platform
 - [[T-14 Match query ⚑]] — P3 Data and trust
 - [[T-07 Error reporting]] — P1 Platform
-- [[T-18a Connect API ⚑]] — P5 Accounts and people
+- [[T-18a Message request API ⚑]] — P5 Accounts and people
 - [[T-21 Turn cap and spend ceiling]] — P2 Chat
 - [[M-05 Article drafts]] — M1 Content
 - [[T-19 Report and block]] — P4 Content and moderation

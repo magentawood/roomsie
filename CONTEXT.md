@@ -37,7 +37,7 @@ Open, with no record yet: the elevator pitch.
 | Matching, Form A, profiles | [PD3a](docs/decisions/pd-03a-flatmate-matching.md), [PD15](docs/decisions/pd-15-form-a-contract.md), [PD16](docs/decisions/pd-16-profiles.md), [PD3b](docs/decisions/pd-03b-interview-vs-chips.md), [PD3c](docs/decisions/pd-03c-exclusionary-preferences.md), [PD6c](docs/decisions/pd-06c-interface-holes.md) |
 | Limits, abuse, spend, cost | [PD9](docs/decisions/pd-09-pre-login-limits.md), [pre-login-limits.md](docs/pre-login-limits.md), [PD5](docs/decisions/pd-05-team-and-budget.md), [cost-and-team.md](docs/cost-and-team.md) |
 | Login gate, SEO, public pages | [PD6b](docs/decisions/pd-06b-login-gate-and-search.md), [seo-with-gated-products.md](docs/seo-with-gated-products.md) |
-| Verification, trust, safety | [PD8](docs/decisions/pd-08-verification.md), [verification.md](docs/verification.md), [assistant-risks.md](docs/assistant-risks.md) |
+| Verification, trust, safety | [PD8](docs/decisions/pd-08-verification.md), [PD17](docs/decisions/pd-17-connect-and-contact.md), [verification.md](docs/verification.md), [assistant-risks.md](docs/assistant-risks.md) |
 | Hosting, deploy, CI, backups | [ADR-0009](docs/decisions/0009-hosting-and-region.md), [ADR-0013](docs/decisions/0013-ci-gate-and-testing.md), [PD13](docs/decisions/pd-13-databases-and-backups.md) |
 | A new vendor or feature | [extensibility.md](docs/extensibility.md), [repo-layout.md](docs/repo-layout.md), [ADR-0005](docs/decisions/0005-managed-platform-split.md), [ADR-0010](docs/decisions/0010-monorepo-tooling.md) |
 | Articles, the advisor corpus | [corpus-plan.md](docs/content/corpus-plan.md), [PD10](docs/decisions/pd-10-scope-bands.md) |

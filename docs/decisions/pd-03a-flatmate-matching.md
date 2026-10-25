@@ -1,6 +1,6 @@
 # PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Settled · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-25 for gender. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -33,8 +33,10 @@ A chip widens a search by one kind, for example "Show some PGs too".
 | No alcohol at home | Drinks is "None at home" | "No Alcohol at home" |
 | Tidy flatmates | Tidiness is Very tidy or Tidy enough | Does not apply |
 | Couple friendly | Does not apply | "Who is welcome" has Couples |
+| Women only | Gender is Female | "Who can move in" is Women |
+| Men only | Gender is Male | "Who can move in" is Men |
 
-Women only and Men only wait for F-13 (PC-30).
+A listing's "Who can move in" also filters the seekers: Women takes Female, Men takes Male, and Any takes each gender. Non-binary passes only Any (PD8).
 
 **Filters**
 
@@ -58,7 +60,7 @@ Women only and Men only wait for F-13 (PC-30).
 ## Rationale
 
 - A strict mapping reads as most people in Mumbai mean it.
-- Mutual dealbreakers between people stop connect requests that the other person will decline. A house rule is the promise of the lister. The seeker decides.
+- Mutual dealbreakers between people stop message requests that the other person will decline. A house rule is the promise of the lister. The seeker decides.
 - A hidden gap empties the panel, and a label stays honest.
 - With one or two preferences, a score is noise. A label is true and simple.
 
@@ -78,8 +80,7 @@ Women only and Men only wait for F-13 (PC-30).
 
 ## Revisit when
 
-- F-13 decides PC-30 (gender).
-- The launch shows many empty panels, or many declined connect requests.
+- The launch shows many empty panels, or many declined message requests.
 
 ## Sources
 

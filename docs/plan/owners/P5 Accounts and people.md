@@ -18,6 +18,6 @@ This note is part of [[roomsie launch]].
 1. [[M-03 Eval sentences]] — Thu 24 Sep → Sun 27 Sep, 4h
 2. [[T-03 CI checks]] — Sun 27 Sep → Tue 29 Sep, 2h
 3. [[T-24 Event logging]] — Tue 29 Sep → Wed 30 Sep, 2h
-4. [[T-18a Connect API ⚑]] — Wed 30 Sep → Sun 4 Oct, 4h
+4. [[T-18a Message request API ⚑]] — Wed 30 Sep → Sun 4 Oct, 4h
 5. [[T-16a Profile API ⚑]] — Sun 4 Oct → Sat 10 Oct, 5h
 6. [[T-16b Profile screens ⚑]] — Sun 4 Oct → Sat 10 Oct, 3h

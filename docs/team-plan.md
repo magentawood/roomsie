@@ -34,7 +34,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 84 | -50 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen | 20 | 14 | _name_ |
-| **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Connect API, Profile API, Profile screens | 20 | 14 | _name_ |
+| **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
 Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at two hours a day. Sunday 11 October is for bug fixes. **Monday 12 October is launch.** Wednesday 14 October is the fallback date.
 
@@ -128,7 +128,7 @@ Finish line: Sat 10 Oct. 20 hours.
 | 1 | M-03 · Write the eval sentences | 4 | Thu 24 Sep → Sun 27 Sep | — |
 | 2 | T-03 · CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
 | 3 | T-24 · Event logging table | 2 | Tue 29 Sep → Wed 30 Sep | — |
-| 4 | T-18a ⚑ · Connect request and contact reveal API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
+| 4 | T-18a ⚑ · Message request API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
 | 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
 
@@ -252,7 +252,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
-| P5 Accounts and people | 4 | T-18a ⚑ | Connect request and contact reveal API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06, F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| P5 Accounts and people | 4 | T-18a ⚑ | Message request API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06, F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06, F-11 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
@@ -293,7 +293,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 |---|---|---|
 | **CP0 · Kickoff** | Fri 25 Sep | Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete. |
 | **CP1 · Foundation** | Mon 28 Sep | The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and the legal pages are live. There are no product screens at this time, because the designs are still in progress. The article interviews are complete. The seeding form is live. |
-| **CP2 · Core loop live** | Thu 1 Oct | The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. Connect with contact reveal also works. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written. |
+| **CP2 · Core loop live** | Thu 1 Oct | The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. A message request and an accepted chat also work. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written. |
 | **CP3 · Feature freeze and go/no-go** | Sat 10 Oct | Every screen and every assistant handler is merged, and is live behind the invite gate. The seeded people make their profiles. At 8 pm, the go/no-go meeting selects 12 October or 14 October. |
 | **CP4 · Launch** | Mon 12 Oct | Public launch. The fallback date is Wednesday 14 October. |
 | **CP5 · First-week review** | Mon 19 Oct | Examine the numbers and the bug list. Then set the order of v1. |
@@ -365,7 +365,7 @@ gantt
     M-03 Write the eval sentences :m03, 2026-09-24, 4d
     T-03 CI - typecheck lint build secret scan :t03, 2026-09-27, 3d
     T-24 Event logging table :t24, 2026-09-29, 2d
-    T-18a Connect request and contact reveal API :crit, t18a, 2026-09-30, 5d
+    T-18a Message request API :crit, t18a, 2026-09-30, 5d
     T-16a Profile and photo upload API :crit, t16a, 2026-10-04, 7d
     T-16b Profile create and edit screens :crit, t16b, 2026-10-04, 7d
     section Design
@@ -563,7 +563,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 
 ### CP2 · Core loop live — Thu 1 Oct
 
-The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. Connect with contact reveal also works. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written.
+The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. A message request and an accepted chat also work. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
@@ -592,7 +592,10 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - It says what the system collects, why, for how long, how to delete it, and who to contact
 - There is a named grievance contact
 - It says that the system stores chat messages, and that account deletion deletes them
-- Read first: `docs/extensibility.md`
+- It says that chat text goes to DeepSeek, which stores it in China
+- The team emails DeepSeek to opt out of training before launch
+- The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
+- Read first: `docs/extensibility.md`, `docs/decisions/pd-19-retention.md`, `docs/decisions/pd-07-models.md`
 
 **M-02 · Seeding target: 100 sign-ups** — done when:
 - There are 100 sign-ups by Wednesday 30 September
@@ -658,7 +661,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | F-08 | Name the moderator | F |  | Wed 30 Sep → Fri 2 Oct | — |
 | T-36 | Observer: Form B from free text, with the quote check | P2 | 8 | Wed 30 Sep → Fri 2 Oct | T-35, T-12, T-06 |
 | M-07 | Draft launch posts | M1 |  | Wed 30 Sep → Sat 3 Oct | — |
-| T-18a ⚑ | Connect request and contact reveal API | P5 | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
+| T-18a ⚑ | Message request API | P5 | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | T-04 | Deploy web and API to Mumbai | P1 | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
 | T-19 | Report, block, suspend, and a saved moderation query | P4 | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | T-21 | Five-turn cap, rate limits, spend ceiling | P2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12, T-06, T-05 |
@@ -716,9 +719,9 @@ Every screen and every assistant handler is merged, and is live behind the invit
 
 **F-08 · Name the moderator** — done when:
 - The team names a moderator and a backup
-- Rules exist for when to suspend a person and how fast to respond
+- The moderator confirms the rules of PD18, or changes them
 - The team checks reports every day from launch
-- Read first: `docs/scope-policy.md`
+- Read first: `docs/scope-policy.md`, `docs/decisions/pd-18-moderation.md`
 
 **T-36 · Observer: Form B from free text, with the quote check** — done when:
 - The observer turns personal context into Form B observations
@@ -733,10 +736,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Launch posts, the founder story, and a list of groups and channels exist
 - It is scheduled on Sunday 11 October
 
-**T-18a · Connect request and contact reveal API** — done when:
-- A user can send, accept or decline a connect request
-- After a mutual accept, both people see the number of the other person
+**T-18a · Message request API** — done when:
+- A user can send, accept or decline a message request, with one first note of up to 300 characters
+- After an accept, the two people chat in roomsie. No phone number is ever revealed
 - A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them
+- A request expires after 14 days, and only one request is open between two people at a time
+- Read first: `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-04 · Deploy web and API to Mumbai** — done when:
 - Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile
@@ -750,7 +755,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A saved query in Supabase lists open reports
 - Suspend sets `tokens_valid_after` to now and hides the profile
 - Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
-- Read first: `docs/scope-policy.md`
+- The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once
+- Read first: `docs/scope-policy.md`, `docs/decisions/pd-18-moderation.md`
 
 **T-21 · Five-turn cap, rate limits, spend ceiling** — done when:
 - A visitor gets five typed turns before sign-in. Chip taps do not count
@@ -813,6 +819,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Photo bytes never pass through the API
 - A parent can create a profile for a son or daughter of 18 or more. The card shows "Managed by a parent"
 - A card becomes visible when its required fields are complete, unless the user hides it
+- A profile has a required gender: Male, Female or Non-binary
+- The API masks phone numbers in the bio
 - Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-16b · Profile create and edit screens** — done when:
@@ -838,6 +846,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The profile, the photos in R2 and the form state are removed. Events are pseudonymised
 - `tokens_valid_after` is set to now, thus every session ends
 - The chat turns of the person are deleted too
+- The other person sees Deleted user in their messages
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **D-05 · Design QA on the live build** — done when:
@@ -856,7 +865,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - pg_cron in that project deletes events past the retention period and creates next month's partition
 - The main database keeps no events. The connection details of each project are only in environment settings, thus a paid plan later needs no code change
 - Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
-- Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
+- Raw events are deleted after 12 months (PD19)
+- Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`, `docs/decisions/pd-19-retention.md`
 
 **T-10 · Chat screen and split view** — done when:
 - The landing button opens a full-screen chat
@@ -867,11 +877,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/interface-shape.md`
 
 **T-18b · Person detail and connect screens** — done when:
-- The first version uses the detail sheet of the V3 prototype, against a mock of the connect API. It connects to T-18a when T-18a lands on Sun 4 Oct
+- The detail screen follows the designs, against a mock of the API. It connects to T-18a when T-18a lands
 - The person screen needs sign-in
-- The connect button has sent, accepted and declined states
-- The number shows only after both accept
+- The Say hi button has request sent, accepted and not available states
+- No phone number shows
 - Report and block need only one tap
+- Read first: `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-22a · Launch areas and waitlist API** — done when:
 - The API gives the names of the three launch areas
@@ -915,6 +926,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores
 - The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
 - Only the lister can edit, pause or delete a listing
+- A listing has Who can move in: men, women or any
+- The API masks phone numbers in the description and the flatmate fields
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-03-listing-supply.md`, `docs/extensibility.md`
 
 **T-42 · Listing flow and My listings screens** — done when:
@@ -930,11 +943,13 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
 
 **T-44 · Messages API** — done when:
-- Who can message whom follows the answers of F-13
+- Who can message whom follows PD17
 - Messages arrive live through Supabase Realtime broadcast
 - The API never gives a message to a user who is not in the conversation
 - A blocked user cannot send a message to the user who blocked them
-- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/product-calls/connect-and-trust.md`
+- The API masks phone numbers and WhatsApp links as •••• in each message
+- A new request or message sends an email and a browser push, with no message text, unless the user turned them off
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/product-calls/connect-and-trust.md`, `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-45 · Messages screens** — done when:
 - The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone
@@ -945,7 +960,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 
 **T-46 · DigiLocker verification** — done when:
 - Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback
-- The system stores the result and its date, never the document
+- The system stores the result and its date, never the document. It deletes the selfie right after the check
 - The DigiLocker modal of flow 04 and the Verified badge on the cards use the result
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-08-verification.md`, `docs/verification.md`
 

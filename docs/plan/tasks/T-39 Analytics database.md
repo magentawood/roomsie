@@ -35,9 +35,11 @@ Keeps analytics writes off the main database.
 - [ ] pg_cron in that project deletes events past the retention period and creates next month's partition
 - [ ] The main database keeps no events. The connection details of each project are only in environment settings, thus a paid plan later needs no code change
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
+- [ ] Raw events are deleted after 12 months (PD19)
 
 ^done
 
 ## Read first
 - [0012-analytics-event-store.md](../../decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)
+- [pd-19-retention.md](../../decisions/pd-19-retention.md)
