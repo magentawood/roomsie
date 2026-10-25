@@ -25,7 +25,7 @@ afterAll(async () => {
   await testDb.drop()
 })
 
-/** A Firebase-shaped ID token. `iat` and `exp` are seconds since the epoch. */
+// iat and exp are epoch seconds.
 function idToken(uid: string, opts: { key?: CryptoKey; audience?: string; iat?: number; exp?: number } = {}) {
   const now = Math.floor(Date.now() / 1000)
   const audience = opts.audience ?? projectId
@@ -53,6 +53,10 @@ describe('GET /v1/me', () => {
 
   it('rejects a token for a different Firebase project', async () => {
     expect((await me(await idToken('uid-other-project', { audience: 'someone-else' }))).statusCode).toBe(401)
+  })
+
+  it('rejects a token with an empty uid', async () => {
+    expect((await me(await idToken(''))).statusCode).toBe(401)
   })
 
   it('rejects an expired token', async () => {

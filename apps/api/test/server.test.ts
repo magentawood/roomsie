@@ -1,18 +1,10 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { healthResponse } from '@roomsie/contract'
-import { googleKeys } from '../src/auth'
-import { createDb } from '../src/db/client'
 import { buildServer } from '../src/server'
-import { openapiPath } from '../scripts/openapi'
+import { openapiPath, routesOnlyOptions } from '../scripts/openapi'
 
-// These tests call no signed-in route, so the database and the keys are never used.
-const app = buildServer({
-  webOrigin: 'http://localhost:3000',
-  db: createDb('postgres://unused@localhost/unused'),
-  firebaseProjectId: 'unused',
-  firebaseKeys: googleKeys,
-})
+const app = buildServer(routesOnlyOptions)
 
 describe('the API', () => {
   it('serves the health check under /v1 in the contract shape', async () => {
