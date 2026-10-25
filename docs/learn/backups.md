@@ -46,7 +46,7 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 ## The choice we made
 
 - Nightly dumps to R2, because the free plan has no backups: [PD13](../decisions/pd-13-databases-and-backups.md).
-- The R2 key of the API, and where the private key lives: [ADR-0016](../decisions/0016-credentials-and-secrets.md) and the T-40 spec.
+- The R2 key for the backups bucket only, and where the private key lives: [ADR-0016](../decisions/0016-credentials-and-secrets.md) and the T-40 spec.
 - The restore check, the retention, the encryption and the alert: the T-40 spec.
 
 ## Gotchas
@@ -58,6 +58,8 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 - **Row Level Security does not hide rows from the dump.** The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds `FORCE ROW LEVEL SECURITY`, the dump stops with an error.
 - **If you lose the private key, nobody can read the dumps.** Keep the key only in the Bitwarden note. Never put it in GitHub, Vercel, `.env`, a chat or the repo.
 - **A deleted account stays in the dumps for fourteen days,** until the workflow deletes its newest dump.
+- **A run by hand adds a dump.** The workflow keeps the newest fourteen dumps, so each run by hand makes the window one night shorter.
+- **A policy for a Supabase role stops the restore check.** A plain Postgres has no `anon`, `authenticated` or `service_role` role. If a migration adds a policy `TO authenticated`, create these roles in the restore step first.
 
 ## Tickets
 
