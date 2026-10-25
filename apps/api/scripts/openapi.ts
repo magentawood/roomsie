@@ -8,7 +8,7 @@ import { r2Storage } from '../src/storage'
 export const openapiPath = fileURLToPath(new URL('../../../packages/contract/openapi.json', import.meta.url))
 
 /** It signs links locally and is never asked to delete. */
-export const unusedStorage = r2Storage({
+export const offlineStorage = r2Storage({
   accountId: 'unused', accessKeyId: 'unused', secretAccessKey: 'unused', bucket: 'unused', publicUrl: 'https://photos.example.com',
 })
 
@@ -18,7 +18,7 @@ export const routesOnlyOptions = {
   db: createDb('postgres://unused@localhost/unused'),
   firebaseProjectId: 'unused',
   firebaseKeys: googleKeys,
-  storage: unusedStorage,
+  storage: offlineStorage,
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
