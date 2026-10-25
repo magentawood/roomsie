@@ -46,7 +46,7 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 ## The choice we made
 
 - Nightly dumps to R2, because the free plan has no backups: [PD13](../decisions/pd-13-databases-and-backups.md).
-- The R2 key of the API, and the private key only in Bitwarden: [ADR-0016](../decisions/0016-credentials-and-secrets.md) and the T-40 spec.
+- The R2 key of the API, and where the private key lives: [ADR-0016](../decisions/0016-credentials-and-secrets.md) and the T-40 spec.
 - The restore check, the retention, the encryption and the alert: the T-40 spec.
 
 ## Gotchas
