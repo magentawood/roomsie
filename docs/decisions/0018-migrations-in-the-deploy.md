@@ -18,7 +18,7 @@
 - **Connection:** the session pooler, from the `DATABASE_URL_SESSION` secret. The API keeps the transaction pooler.
 - **Failure:** the transaction rolls back, and the job stops. Lightsail keeps the old API.
 - **Only from `main`:** the job runs only from `main`. A run by hand from a branch does nothing.
-- **Expand, then contract:** each migration works with the API version before it. To rename a column or a table, first add the new one, and use it. To drop one, first stop its use. Then drop the old one in a second PR.
+- **Expand, then contract:** each migration works with the API version before it. To rename a column or a table, first add the new one, and use it. To drop a column or a table, first stop its use. In a second PR, drop the old column or table.
 
 ## Rationale
 
