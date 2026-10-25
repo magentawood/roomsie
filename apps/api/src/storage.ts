@@ -31,7 +31,7 @@ export function r2Storage(options: { accountId: string; accessKeyId: string; sec
     async deleteObjects(keys) {
       await Promise.all(keys.map(async (key) => {
         const res = await client.fetch(objectUrl(key), { method: 'DELETE' })
-        // R2 answers 204 for a key that is not there, so any other status is a failure.
+        // R2 answers 204 for a missing key.
         if (!res.ok) throw new Error(`R2 delete failed with ${res.status}`)
       }))
     },

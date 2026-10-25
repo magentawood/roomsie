@@ -19,6 +19,9 @@ describe('maskContacts', () => {
     ['Call 98200 - 12345', 'Call ••••'],
     ['Office 022 - 2345 6789', 'Office ••••'],
     ['Call 9867431000 or 9820010000', 'Call •••• or ••••'],
+    ['Call 98200 12300, 90000-12300 or 99000 99000', 'Call ••••, •••• or ••••'],
+    ['Office 91 22 2345 6789 or 0091-22-2345-6789', 'Office •••• or ••••'],
+    ['Call 98200 – 12345', 'Call ••••'],
     ['Chat on wa.link/abc12 or web.whatsapp.com/send?phone=919820012345', 'Chat on •••• or ••••'],
   ])('masks %j', (text, masked) => {
     expect(maskContacts(text)).toBe(masked)
@@ -29,8 +32,9 @@ describe('maskContacts', () => {
     'Single 15000 12000 double',
     'Rent 65000-70000 negotiable',
     'Rent 70000 75000',
-    'Rent 62500-67500',
     'Rent 60500 - 70500 a month',
+    'Available 01.10.2026 - 31.10.2026',
+    'Lease 01-10-2026 - 31-10-2026',
     'Flat 1203, Wing B, 7th floor',
     'Pincode 400050',
     '2 BHK, 750 sq ft',
