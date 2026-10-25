@@ -4,14 +4,14 @@
 
 ## Context
 
-- ADR 0006 says that CI applies each committed migration. Until T-51, no step applied them, so the live database had no tables.
+- ADR 0006 said that CI applies each committed migration. Until T-51, no step applied them, so the live database had no tables.
 - The deploy workflow builds a Docker image on a GitHub runner, pushes it to Lightsail, and starts it (ADR 0009).
 - The API connects through the Supabase pooler in transaction mode.
 - Drizzle applies all new migrations in one transaction. It skips a migration that is older than the last applied migration.
 
 ## Decision
 
-**In one line:** The deploy applies the migrations and the catalogue seed from the new image before Lightsail starts the new API, and each migration works with the API before it.
+**In one line:** The deploy applies the migrations and the seed before the new API starts. Each migration works with the API before it.
 
 - **Where:** a step of the deploy workflow runs the `migrate` entry of the new image in a one-off container. The step comes after the image push and before the Lightsail deploy.
 - **What:** all new migrations in one transaction, then the catalogue seed. The seed is an upsert, so a second run changes nothing.
@@ -25,7 +25,7 @@
 - A failure stops the job before Lightsail changes. The old API stays up, and the failed step shows the error.
 - The workflow runs one deploy at a time. Thus, two migrations cannot run together.
 - Supabase advises a session connection for schema changes. GitHub runners have no IPv6, and the direct connection of the free plan needs IPv6.
-- The old API runs on the new schema until the new API starts. If the Lightsail step fails, it runs on it until the next deploy. An additive migration keeps it correct.
+- The old API runs on the new schema until the new API starts. If the Lightsail step fails, the old API runs on the new schema until the next deploy. An additive migration keeps the old API correct.
 
 ## Alternatives rejected
 

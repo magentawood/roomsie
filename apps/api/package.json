@@ -15,7 +15,6 @@
     "lint": "eslint .",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx --env-file-if-exists=.env src/migrate.ts",
     "openapi": "tsx scripts/openapi.ts"
   },
   "dependencies": {
