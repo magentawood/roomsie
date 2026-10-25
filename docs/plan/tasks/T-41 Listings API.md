@@ -35,12 +35,12 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
 - [[T-47 Saved]]
 
 ## Done when
-- [ ] The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing
-- [ ] The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores
-- [ ] The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API
-- [ ] Only the lister can edit, pause or delete a listing
-- [ ] A listing has Who can move in: men, women or any
-- [ ] The API masks phone numbers in the description and the flatmate fields
+- [x] The API creates, edits, pauses and deletes a listing of one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, and a broker listing · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] The API accepts and returns the fields of the eight steps of flow 04, which T-06 stores · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] The API gives presigned URLs for listing photos, as T-16a does. Photo bytes never pass through the API · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] Only the lister can edit, pause or delete a listing · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] A listing has Who can move in: men, women or any · [#141](https://github.com/magentawood/roomsie/pull/141)
+- [x] The API masks phone numbers in the description and the flatmate fields · [#141](https://github.com/magentawood/roomsie/pull/141)
 
 ^done
 
@@ -89,3 +89,13 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
   - Money is whole rupees.
   - Review round 1: "the address" covers the street and the pincode too. Other users see the area, the landmark and the building (ADR-0017).
 - **Out of scope:** the screens (T-42, T-43), the search and the results (T-14), Saved (T-47), the report on a listing (T-19), the events (T-24), the seed of the area groups (F-06, T-22a), the resize and the blurred copy of a photo, the cleanup of uploads that a lister never adds to a listing, the reminders before a listing expires, and the duplicate check.
+
+## Log
+
+- **2026-10-26 · [#141](https://github.com/magentawood/roomsie/pull/141)**
+  - **Change:** seven routes under `/v1/listings` create, edit, publish, pause, fill and delete a listing of four kinds. The API signs photo upload links for R2 and masks phone numbers at save. A migration adds "Who can move in" and the order of the flatmates.
+  - **Why:** the T-41 spec, [PD17](../../decisions/pd-17-connect-and-contact.md), [PD19](../../decisions/pd-19-retention.md) and [ADR-0017](../../decisions/0017-schema-v1-shape.md)
+  - **Ticked:** all six items
+  - **Not done:** none. No listing can go live in production until F-06 and T-22a add the launch areas.
+  - **Learn:** [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
