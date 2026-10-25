@@ -78,3 +78,16 @@ Copies the two databases each night.
   - The `pg_cron` jobs of the analytics database (T-39).
   - A separate R2 key for backups.
   - The text about backups in the privacy notice.
+
+## Log
+
+- **2026-10-25 · [#131](https://github.com/magentawood/roomsie/pull/131)**
+  - **Change:** a workflow dumps the main and the analytics databases each night at 03:00 IST. It restores each dump into a temporary Postgres 17, encrypts it with `age`, and uploads it to R2. Then it keeps the newest fourteen dumps. A failure sends a message to the Telegram group of the team.
+  - **Why:** [PD13](../../decisions/pd-13-databases-and-backups.md). The free plan of Supabase makes no backups.
+  - **Ticked:** none. Each item needs the workflow on `main` first.
+  - **Not done:**
+    - "A scheduled GitHub Action dumps both databases to Cloudflare R2 every night": the first run by hand comes after the merge.
+    - "The system keeps fourteen days of dumps and deletes older dumps": the retention step runs after each upload. The proof comes after fifteen nights.
+    - "The team tested a restore one time, into a scratch database": a person does it after the first run, with the steps in the learn page.
+  - **Learn:** [Backups](../../learn/backups.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-25--t-40-nightly-backups-of-the-two-databases)
