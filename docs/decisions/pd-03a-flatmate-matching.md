@@ -36,7 +36,7 @@ A chip widens a search by one kind, for example "Show some PGs too".
 | Women only | Gender is Female | Does not apply |
 | Men only | Gender is Male | Does not apply |
 
-A listing's "Who can move in" also filters the seekers: Women takes Female, Men takes Male, and Any takes each gender. Non-binary passes only Any (PD8).
+A listing's "Who can move in" also filters the seekers: Women takes Female, Men takes Male, and Any takes each gender. Non-binary passes only Any (F-13, PC-30).
 
 **Filters**
 

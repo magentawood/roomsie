@@ -41,12 +41,14 @@ simpler.
 **Quality is not a fallback trigger.** No reliable runtime signal shows low
 quality. The eval set and the primary model settle quality.
 
+**User text (F-13, PC-12).** The DeepSeek terms, examined on 2026-10-25:
 
-**User text (F-13, PC-12).** We examined the terms on 2026-10-25. DeepSeek
-stores data in China. It can train on API inputs, unless we opt out by email. It
-states no retention period. User text goes to the DeepSeek API. The team
-opts out of training by email. The privacy policy says that DeepSeek stores the
-text in China. F-07 confirms the text.
+- DeepSeek stores data in China, and states no retention period.
+- It trains on API inputs, unless we opt out by email.
+
+The decision: user text goes to DeepSeek. The team opts out by email, and the
+privacy policy names the storage in China. F-07 confirms the text.
+
 ## Rationale
 
 - **We chose the model for how correctly it reads Hinglish, not for price.**

@@ -73,7 +73,7 @@ Why: [ADR 0001](decisions/0001-rent-infrastructure.md), [ADR 0006](decisions/000
 - On 26 September, the router, the observer, the advisor and the isolated analytics database came back into v0.
 - The launch moved to 12 October to give time for them.
 - **Only one item stays out of v0 intentionally: a mobile app.**
-- In-app messaging, verification and SEO area pages stay v1 items ([PD11](decisions/pd-11-launch.md)). Each is a new module and changes no other thing.
+- SEO area pages stay a v1 item ([PD11](decisions/pd-11-launch.md)). In-app messaging and verification are in v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)). Each is a new module and changes no other thing.
 - **Vector store: not planned at all.**
 - Postgres full-text search processes the corpus of the advisor.
 - If we ever need embeddings, `pgvector` would run in the same Postgres. This needs an ADR 0001 amendment, but it does not add a service.

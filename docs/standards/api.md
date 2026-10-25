@@ -22,7 +22,7 @@ These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and
 ## Storage and realtime
 
 - Image bytes never go through the API. The API gives a short-lived presigned R2 upload URL. Then the client uploads and reports the key. Why: the API does not carry image traffic. ([ADR-0005](../decisions/0005-managed-platform-split.md))
-- Verification selfies and ID documents go in an isolated bucket that is not public, with short retention. Give access only through short-lived signed URLs, after an authorisation check. Why: one bad bucket policy must not expose biometric data. ([ADR-0005](../decisions/0005-managed-platform-split.md), [PD8](../decisions/pd-08-verification.md))
+- Verification selfies and ID documents go in an isolated, private bucket. Delete the selfie after the check. Give access only through short-lived signed URLs, after a check. Why: one bad bucket policy must not expose biometric data. ([ADR-0005](../decisions/0005-managed-platform-split.md), [PD8](../decisions/pd-08-verification.md), [PD19](../decisions/pd-19-retention.md))
 - Make the blurred copy of a photo on the server, at upload. Never give a viewer the address of the initial image without permission. Why: anyone can read the initial image in the network tab. ([PD8](../decisions/pd-08-verification.md))
 - Realtime is `broadcast` only. The API writes the message, applies the rules, then publishes to a channel. Never use `postgres_changes`. Why: a client that subscribes to a table learns the schema. ([ADR-0005](../decisions/0005-managed-platform-split.md))
 

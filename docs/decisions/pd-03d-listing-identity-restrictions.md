@@ -18,7 +18,7 @@ A published listing is a different case. For example, a roomsie listing that say
 
 - **A listing shows its "Who is welcome" choices:** students, working professionals, couples, families and bachelors (the filter: [PD15](pd-15-form-a-contract.md)). The listing flow says: "Seekers see it as your promise."
 - The listing flow has no community or religion choice.
-- **A listing shows "Who can move in": men, women or any.** It filters the seekers (PD3a, PD8).
+- **A listing shows "Who can move in": men, women or any.** It filters the seekers (PD3a).
 - **Free text cannot restrict by community, religion or caste.** This covers a bio, a description and the flatmate fields. The terms forbid it, and the moderator removes it on a report (PD18).
 
 PD3d is a different decision from PD3c. PD3c decided only the private-filter case.
@@ -26,7 +26,7 @@ PD3d is a different decision from PD3c. PD3c decided only the private-filter cas
 ## Rationale
 
 - The designs show the choices on the listing (PD14).
-- A seeker who is not welcome does not phone a lister who refuses them.
+- A seeker who is not welcome does not message a lister who refuses them.
 - An advertisement is a different position from a private filter.
 - "Decide the listing side independently" is mitigation 5 of PD3c.
 

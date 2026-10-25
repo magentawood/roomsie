@@ -84,8 +84,6 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ## Round 3
 
-PD8 answers PC-30, so this round can start.
-
 ### PC-39 · The interview script after the chips
 
 ❓ After intent, area and budget, in which order does the assistant ask the other questions? Which open questions does it ask? Is there a progress indicator? Does it ever use market defaults?
