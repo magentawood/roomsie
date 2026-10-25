@@ -1,6 +1,8 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { eq } from 'drizzle-orm'
 import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from 'jose'
+import { z } from 'zod'
+import type { MeResponse } from '@roomsie/contract'
 import type { Db } from './db/client'
 import { users } from './db/schema'
 
@@ -10,35 +12,32 @@ export const googleKeys = createRemoteJWKSet(
 )
 
 export type AuthOptions = { db: Db; firebaseProjectId: string; firebaseKeys: JWTVerifyGetKey }
-export type AuthUser = { id: string; status: 'active' | 'suspended' | 'deleted' }
 
 declare module 'fastify' {
   interface FastifyRequest {
-    user: AuthUser | null
+    user: MeResponse | null
   }
 }
 
-/** A preHandler for signed-in routes: it verifies the Firebase ID token and loads the user. */
+const bearerHeader = z.string().regex(/^Bearer \S+$/)
+const firebaseClaims = z.object({ sub: z.string().min(1), iat: z.number().int() })
+
 export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
-    const token = /^Bearer (\S+)$/.exec(req.headers.authorization ?? '')?.[1]
-    if (!token) return reply.code(401).send({ error: 'unauthorized' })
+    const header = bearerHeader.safeParse(req.headers.authorization)
+    if (!header.success) return reply.code(401).send({ error: 'unauthorized' })
 
-    let uid: string
-    let issuedAt: Date
-    try {
-      const { payload } = await jwtVerify(token, firebaseKeys, {
-        issuer: `https://securetoken.google.com/${firebaseProjectId}`,
-        audience: firebaseProjectId,
-        algorithms: ['RS256'],
-        requiredClaims: ['sub', 'iat', 'exp'],
-      })
-      uid = payload.sub!
-      issuedAt = new Date(payload.iat! * 1000)
-    } catch {
-      return reply.code(401).send({ error: 'unauthorized' })
-    }
+    const verified = await jwtVerify(header.data.slice('Bearer '.length), firebaseKeys, {
+      issuer: `https://securetoken.google.com/${firebaseProjectId}`,
+      audience: firebaseProjectId,
+      algorithms: ['RS256'],
+      requiredClaims: ['exp'],
+    }).catch(() => null)
+    const claims = firebaseClaims.safeParse(verified?.payload)
+    if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
+    const uid = claims.data.sub
+    const issuedAt = new Date(claims.data.iat * 1000)
     const user = (await findUser(db, uid)) ?? (await createUser(db, uid, issuedAt))
     if (issuedAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     if (user.status !== 'active') return reply.code(403).send({ error: 'forbidden' })
@@ -57,7 +56,5 @@ async function findUser(db: Db, uid: string) {
 async function createUser(db: Db, uid: string, issuedAt: Date) {
   // The first token is older than the new row, so tokens_valid_after starts at its iat.
   await db.insert(users).values({ authProviderId: uid, tokensValidAfter: issuedAt }).onConflictDoNothing()
-  const user = await findUser(db, uid)
-  if (!user) throw new Error(`users row for ${uid} is missing after insert`)
-  return user
+  return (await findUser(db, uid))!
 }

@@ -25,8 +25,9 @@ export default function Home() {
     queryKey: ['me', user?.uid],
     enabled: user !== null,
     queryFn: async () => {
+      if (!user) throw new Error('Signed out')
       // getIdToken() gives the cached token, or a new one near its expiry. We never store it.
-      const res = await fetch(`${apiUrl}/v1/me`, { headers: { authorization: `Bearer ${await user!.getIdToken()}` } })
+      const res = await fetch(`${apiUrl}/v1/me`, { headers: { authorization: `Bearer ${await user.getIdToken()}` } })
       if (!res.ok) throw new Error(`/v1/me failed: ${res.status}`)
       return meResponse.parse(await res.json())
     },
