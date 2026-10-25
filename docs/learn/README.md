@@ -21,4 +21,5 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Secret scanning](secret-scanning.md): gitleaks finds a password or a key in the code before the secret goes into the shared git history. Run `pnpm secrets` before each pull request.
 - [Sign-in and tokens](sign-in-and-tokens.md): the web signs in with Google through Firebase. The API checks the ID token locally and loads the `users` row.
 - [Uptime monitoring](uptime-monitoring.md): HetrixTools calls the health check of the API each minute. When the API stops, it sends an alert to the Telegram group of the team.
+- [The web UI base](web-ui-base.md): the web app takes its colours, type and spacing from theme tokens of the design system, builds each screen from a small set of shared components, and calls the API through one helper that sends the sign-in token.
 <!-- learn:end -->

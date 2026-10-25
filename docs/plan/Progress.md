@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**58 of 284 done · 20%**
+**60 of 284 done · 21%**
 
 `█████░░░░░░░░░░░░░░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 2 / 14 | 14 / 62 | 23% |
+| [[P3 Data and trust]] | 2 / 14 | 16 / 62 | 26% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 25 | 0% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 27 | 15% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
@@ -67,7 +67,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-20 Account deletion]] | P4 | 3 | ⬜ can start | 0 | [#46](https://github.com/magentawood/roomsie/issues/46) |
 | 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
-| 0 | [[T-42 Listing flow screens]] | P3 | 8 | ⬜ can start | 0 | [#118](https://github.com/magentawood/roomsie/issues/118) |
+| 0 | [[T-42 Listing flow screens]] | P3 | 8 | 🟡 in progress | 0 | [#118](https://github.com/magentawood/roomsie/issues/118) |
 | 0 | [[T-46 DigiLocker verification]] | P3 | 8 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | 0 | [[T-47 Saved]] | P3 | 4 | ⬜ can start | 0 | [#123](https://github.com/magentawood/roomsie/issues/123) |
 | 0 | [[T-52 Web CSP]] | P1 | 3 | ⬜ can start | 0 | [#135](https://github.com/magentawood/roomsie/issues/135) |
@@ -161,7 +161,7 @@ flowchart LR
   T39["T-39<br/>Analytics database"]:::todo
   T40["T-40<br/>Nightly backups"]:::ready
   T41["T-41<br/>Listings API"]:::done
-  T42["T-42<br/>Listing flow screens"]:::ready
+  T42["T-42<br/>Listing flow screens"]:::doing
   T44["T-44<br/>Messages API"]:::todo
   T45["T-45<br/>Messages screens"]:::todo
   T46["T-46<br/>DigiLocker verification"]:::ready
@@ -368,7 +368,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 14/62
+## P3 Data and trust — 16/62
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -385,7 +385,7 @@ flowchart LR
 > [!todo]- ✅ [[T-41 Listings API]] · 6/6
 > ![[T-41 Listings API#^done]]
 
-> [!todo]- ⬜ [[T-42 Listing flow screens]] · 0/3
+> [!todo]- 🟡 [[T-42 Listing flow screens]] · 2/3
 > ![[T-42 Listing flow screens#^done]]
 
 > [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/3
