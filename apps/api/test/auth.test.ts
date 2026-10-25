@@ -1,42 +1,29 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { createLocalJWKSet, errors, exportJWK, generateKeyPair, SignJWT, type CryptoKey } from 'jose'
+import { errors, generateKeyPair, type CryptoKey } from 'jose'
 import { meResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
+import { projectId, testTokens } from './tokens'
 import { users } from '../src/db/schema'
 import { buildServer } from '../src/server'
+import { unconfiguredPhotoStore } from '../src/storage'
 
-const projectId = 'roomsie-test'
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
-let signingKey: CryptoKey
+let idToken: Awaited<ReturnType<typeof testTokens>>['idToken']
 let otherKey: CryptoKey
 
 beforeAll(async () => {
   testDb = await createTestDb()
-  const pair = await generateKeyPair('RS256')
-  signingKey = pair.privateKey
+  const tokens = await testTokens()
+  idToken = tokens.idToken
   otherKey = (await generateKeyPair('RS256')).privateKey
-  const firebaseKeys = createLocalJWKSet({ keys: [{ ...(await exportJWK(pair.publicKey)), kid: 'test', alg: 'RS256' }] })
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, photos: unconfiguredPhotoStore })
 })
 afterAll(async () => {
   await app.close()
   await testDb.drop()
 })
-
-function idToken(uid: string, opts: { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number; authTime?: number | null } = {}) {
-  const now = Math.floor(Date.now() / 1000)
-  const audience = opts.audience ?? projectId
-  return new SignJWT(opts.authTime === null ? {} : { auth_time: opts.authTime ?? opts.iat ?? now })
-    .setProtectedHeader({ alg: 'RS256', kid: 'test' })
-    .setIssuer(opts.issuer ?? `https://securetoken.google.com/${audience}`)
-    .setAudience(audience)
-    .setSubject(uid)
-    .setIssuedAt(opts.iat ?? now)
-    .setExpirationTime(opts.exp ?? now + 3600)
-    .sign(opts.key ?? signingKey)
-}
 
 const me = (token?: string) =>
   app.inject({ method: 'GET', url: '/v1/me', headers: token ? { authorization: `Bearer ${token}` } : {} })
@@ -98,10 +85,11 @@ describe('GET /v1/me', () => {
     expect((await me(await idToken('uid-revoked', { iat: now, authTime: now }))).statusCode).toBe(200)
   })
 
-  it.each(['suspended', 'deleted'] as const)('rejects a %s user, also with a new token', async (status) => {
-    const uid = `uid-${status}`
+  // A deleted user is in account.test.ts: a new sign-in makes a new account.
+  it('rejects a suspended user, also with a new token', async () => {
+    const uid = 'uid-suspended'
     expect((await me(await idToken(uid))).statusCode).toBe(200)
-    await testDb.db.update(users).set({ status }).where(eq(users.authProviderId, uid))
+    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.authProviderId, uid))
     expect((await me(await idToken(uid))).statusCode).toBe(403)
   })
 
@@ -110,6 +98,7 @@ describe('GET /v1/me', () => {
       webOrigin: 'http://localhost:3000',
       db: testDb.db,
       firebaseProjectId: projectId,
+      photos: unconfiguredPhotoStore,
       firebaseKeys: () => Promise.reject(new errors.JOSEError('Expected 200 OK from the JSON Web Key Set HTTP response')),
     })
     const res = await down.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${await idToken('uid-keys-down')}` } })

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { googleKeys } from '../src/auth'
 import { createDb } from '../src/db/client'
 import { buildServer } from '../src/server'
+import { unconfiguredPhotoStore } from '../src/storage'
 
 export const openapiPath = fileURLToPath(new URL('../../../packages/contract/openapi.json', import.meta.url))
 
@@ -12,6 +13,7 @@ export const routesOnlyOptions = {
   db: createDb('postgres://unused@localhost/unused'),
   firebaseProjectId: 'unused',
   firebaseKeys: googleKeys,
+  photos: unconfiguredPhotoStore,
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

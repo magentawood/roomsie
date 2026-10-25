@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**52 of 284 done · 18%**
+**57 of 286 done · 20%**
 
-`████░░░░░░░░░░░░░░░░░░░░`
+`█████░░░░░░░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -24,9 +24,9 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 1 / 14 | 8 / 62 | 13% |
-| [[P4 Content and moderation]] | 0 / 7 | 0 / 25 | 0% |
-| [[P5 Accounts and people]] | 1 / 6 | 4 / 27 | 15% |
+| [[P3 Data and trust]] | 1 / 14 | 8 / 63 | 13% |
+| [[P4 Content and moderation]] | 1 / 7 | 5 / 25 | 20% |
+| [[P5 Accounts and people]] | 1 / 6 | 4 / 28 | 14% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**40 free tasks are open · 156 build hours.**
+**39 free tasks are open · 153 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -65,7 +65,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
-| 0 | [[T-20 Account deletion]] | P4 | 3 | ⬜ can start | 0 | [#46](https://github.com/magentawood/roomsie/issues/46) |
 | 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-46 DigiLocker verification]] | P3 | 8 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
@@ -149,7 +148,7 @@ flowchart LR
   T24["T-24<br/>Event logging"]:::ready
   T21["T-21<br/>Turn cap and spend ceiling"]:::todo
   T18a["T-18a ⚑<br/>Message request API"]:::ready
-  T20["T-20<br/>Account deletion"]:::ready
+  T20["T-20<br/>Account deletion"]:::done
   T23b["T-23b<br/>Legal pages"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::todo
@@ -249,6 +248,7 @@ flowchart LR
   T06 --> T44
   T18a --> T44
   F13 --> T44
+  T20 --> T44
   T44 --> T45
   T05 --> T46
   T06 --> T46
@@ -271,6 +271,7 @@ flowchart LR
   F12 --> T15
   T16a --> T16b
   D03 -.-> T16b
+  T20 --> T16b
   D04 -.-> T23a
   T22a --> T22b
   D04 -.-> T22b
@@ -369,7 +370,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 8/62
+## P3 Data and trust — 8/63
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -392,7 +393,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/3
 > ![[T-43 Listing detail screens#^done]]
 
-> [!todo]- ⬜ [[T-44 Messages API]] · 0/6
+> [!todo]- ⬜ [[T-44 Messages API]] · 0/7
 > ![[T-44 Messages API#^done]]
 
 > [!todo]- ⬜ [[T-45 Messages screens]] · 0/4
@@ -414,7 +415,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 0/25
+## P4 Content and moderation — 5/25
 
 > [!todo]- ⬜ [[T-23a Landing page]] · 0/4
 > ![[T-23a Landing page#^done]]
@@ -428,7 +429,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-19 Report and block]] · 0/6
 > ![[T-19 Report and block#^done]]
 
-> [!todo]- ⬜ [[T-20 Account deletion]] · 0/5
+> [!todo]- ✅ [[T-20 Account deletion]] · 5/5
 > ![[T-20 Account deletion#^done]]
 
 > [!todo]- ⬜ [[T-22a Waitlist API]] · 0/2
@@ -438,7 +439,7 @@ flowchart LR
 > ![[T-22b Waitlist screen#^done]]
 
 
-## P5 Accounts and people — 4/27
+## P5 Accounts and people — 4/28
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
@@ -446,7 +447,7 @@ flowchart LR
 > [!todo]- ✅ [[T-03 CI checks]] · 4/4
 > ![[T-03 CI checks#^done]]
 
-> [!todo]- ⬜ [[T-24 Event logging]] · 0/4
+> [!todo]- ⬜ [[T-24 Event logging]] · 0/5
 > ![[T-24 Event logging#^done]]
 
 > [!todo]- ⬜ [[T-18a Message request API ⚑]] · 0/4

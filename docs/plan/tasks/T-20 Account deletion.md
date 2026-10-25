@@ -28,14 +28,15 @@ Delete the account and data correctly: profile, photos and messages are really r
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-16b Profile screens ⚑]]
+- [[T-44 Messages API]]
 
 ## Done when
-- [ ] A person can delete their account from settings
-- [ ] The profile, the photos in R2 and the form state are removed. Events are pseudonymised
-- [ ] `tokens_valid_after` is set to now, thus every session ends
-- [ ] The chat turns of the person are deleted too
-- [ ] The other person sees Deleted user in their messages
+- [x] `DELETE /v1/me` deletes the account. The settings button is in T-16b
+- [x] The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44
+- [x] `tokens_valid_after` is set to now, thus every session ends
+- [x] The chat turns of the person are deleted too
+- [x] The `users` row stays as a tombstone. A new sign-in after a deletion makes a new, empty account
 
 ^done
 

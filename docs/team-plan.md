@@ -99,7 +99,7 @@ Finish line: Sat 10 Oct. 64 hours.
 | 5 | T-41 · Listings API: four kinds of lister | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
 | 6 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
 | 7 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
-| 8 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13 |
+| 8 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | 9 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | 10 | T-46 · DigiLocker verification | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
 | 11 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
@@ -132,7 +132,7 @@ Finish line: Sat 10 Oct. 20 hours.
 | 3 | T-24 · Event logging table | 2 | Tue 29 Sep → Wed 30 Sep | — |
 | 4 | T-18a ⚑ · Message request API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
-| 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
+| 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03, T-20 |
 
 Finish line: Sat 10 Oct. 20 hours.
 
@@ -239,7 +239,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 5 | T-41 | Listings API: four kinds of lister | 8 | Sun 25 Oct | Wed 28 Oct | CP3 | T-05, T-06, F-11 | [#117](https://github.com/magentawood/roomsie/issues/117) |
 | P3 Data and trust | 6 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
 | P3 Data and trust | 7 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
-| P3 Data and trust | 8 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| P3 Data and trust | 8 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
 | P3 Data and trust | 9 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
 | P3 Data and trust | 10 | T-46 | DigiLocker verification | 8 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | P3 Data and trust | 11 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
@@ -258,7 +258,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | P5 Accounts and people | 4 | T-18a ⚑ | Message request API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06, F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06, F-11 | [#36](https://github.com/magentawood/roomsie/issues/36) |
-| P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03 | [#98](https://github.com/magentawood/roomsie/issues/98) |
+| P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03, T-20 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
 | Design | 2 | D-02 ⚑ | Design the chat screens |  | Thu 24 Sep | Fri 25 Sep | CP0 | D-01 | [#7](https://github.com/magentawood/roomsie/issues/7) |
 | Design | 3 | D-03 | Design results, profile and connect screens |  | Fri 25 Sep | Sun 27 Sep | CP1 | D-01 | [#19](https://github.com/magentawood/roomsie/issues/19) |
@@ -648,6 +648,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - No message text is stored
 - Code writes events only through one `track()` function in apps/api
 - Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database
+- Account deletion (`deleteAccount` of T-20) pseudonymises the events of the user
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **T-37 · Articles table and full-text search** — done when:
@@ -680,7 +681,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | F-13 ⚑ | Product calls: connect, trust and safety | F |  | Sun 4 Oct → Tue 6 Oct | — |
 | F-14 | Product calls: assistant and limits | F |  | Sun 4 Oct → Tue 6 Oct | — |
 | T-16a ⚑ | Profile and photo upload API | P5 | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
-| T-16b ⚑ | Profile create and edit screens | P5 | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03 |
+| T-16b ⚑ | Profile create and edit screens | P5 | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03, T-20 |
 | T-27 | Run the eval set and tune the prompt | P2 | 3 | Mon 5 Oct → Tue 6 Oct | T-12 |
 | T-33 | Invite-only gate until launch | P1 | 1 | Mon 5 Oct → Tue 6 Oct | T-05 |
 | T-20 | Account deletion | P4 | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
@@ -701,7 +702,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-52 | Content-Security-Policy for the web | P1 | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
 | T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
-| T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13 |
+| T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-46 | DigiLocker verification | P3 | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
 | T-47 | Saved | P3 | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
@@ -834,7 +835,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-16b · Profile create and edit screens** — done when:
 - A user can create and edit a profile on the web, with the fields of T-16a
 - A user can upload a maximum of four photos from the profile screen
-- The delete button of T-20 uses the design of D-03
+- A person can delete their account from settings: the button of D-03 calls `DELETE /v1/me` of T-20
 - Settings has a "Hide my card" switch
 - Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-16-profiles.md`
 
@@ -850,11 +851,11 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - One setting disables the gate on launch day
 
 **T-20 · Account deletion** — done when:
-- A person can delete their account from settings
-- The profile, the photos in R2 and the form state are removed. Events are pseudonymised
+- `DELETE /v1/me` deletes the account. The settings button is in T-16b
+- The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44
 - `tokens_valid_after` is set to now, thus every session ends
 - The chat turns of the person are deleted too
-- The other person sees Deleted user in their messages
+- The `users` row stays as a tombstone. A new sign-in after a deletion makes a new, empty account
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
 **D-05 · Design QA on the live build** — done when:
@@ -969,6 +970,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A blocked user cannot send a message to the user who blocked them
 - The API masks phone numbers and WhatsApp links as •••• in each message
 - A new request or message sends an email and a browser push, with no message text, unless the user turned them off
+- After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-45 · Messages screens** — done when:

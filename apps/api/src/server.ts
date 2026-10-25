@@ -7,10 +7,12 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { healthResponse, meResponse } from '@roomsie/contract'
+import { deleteMeResponse, healthResponse, meResponse } from '@roomsie/contract'
+import { deleteAccount } from './account'
 import { requireUser, type AuthOptions } from './auth'
+import type { PhotoStore } from './storage'
 
-export function buildServer(options: { webOrigin: string } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; photos: PhotoStore } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -31,6 +33,14 @@ export function buildServer(options: { webOrigin: string } & AuthOptions) {
         '/me',
         { preHandler: requireUser(options), schema: { response: { 200: meResponse } } },
         async (req) => req.user!,
+      )
+      v1.withTypeProvider<ZodTypeProvider>().delete(
+        '/me',
+        { preHandler: requireUser(options), schema: { response: { 204: deleteMeResponse } } },
+        async (req, reply) => {
+          await deleteAccount(options.db, options.photos, req.user!.id)
+          return reply.code(204).send(null)
+        },
       )
     },
     { prefix: '/v1' },

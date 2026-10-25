@@ -1398,6 +1398,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-20-T-16b",
+   "fromNode": "task-T-20",
+   "fromSide": "right",
+   "toNode": "task-T-16b",
+   "toSide": "left"
+  },
+  {
    "id": "e-M-04-M-05",
    "fromNode": "task-M-04",
    "fromSide": "right",
@@ -1798,6 +1805,13 @@
   {
    "id": "e-F-13-T-44",
    "fromNode": "task-F-13",
+   "fromSide": "right",
+   "toNode": "task-T-44",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-20-T-44",
+   "fromNode": "task-T-20",
    "fromSide": "right",
    "toNode": "task-T-44",
    "toSide": "left"

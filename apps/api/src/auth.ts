@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { createRemoteJWKSet, errors, jwtVerify, type JWTVerifyGetKey } from 'jose'
 import { z } from 'zod'
 import type { MeResponse } from '@roomsie/contract'
+import { releaseTombstone } from './account'
 import type { Db } from './db/client'
 import { users } from './db/schema'
 
@@ -53,14 +54,21 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
     const { sub: uid, auth_time: authTime } = claims.data
     const signedInAt = new Date(authTime * 1000)
     let user = await findUser(db, uid)
-    if (!user) {
-      await db.insert(users).values({ authProviderId: uid, tokensValidAfter: signedInAt }).onConflictDoNothing()
-      user = (await findUser(db, uid))!
-    }
+    if (!user) user = await createUser(db, uid, signedInAt)
     if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
+    if (user.status === 'deleted') {
+      await releaseTombstone(db, user.id)
+      user = await createUser(db, uid, signedInAt)
+    }
     if (user.status !== 'active') return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status }
   }
+}
+
+/** ON CONFLICT: two first requests at the same time make one user. */
+async function createUser(db: Db, uid: string, signedInAt: Date) {
+  await db.insert(users).values({ authProviderId: uid, tokensValidAfter: signedInAt }).onConflictDoNothing()
+  return (await findUser(db, uid))!
 }
 
 async function findUser(db: Db, uid: string) {
