@@ -32,6 +32,7 @@ export const welcomeGroups = ['students', 'working_professionals', 'couples', 'f
 const roomWelcomeGroups = ['students', 'working_professionals'] as const
 
 export const listingKind = z.enum(listingKinds)
+export type ListingKind = z.infer<typeof listingKind>
 
 /** The photo types that an upload accepts, and the extension of each in the key. */
 export const photoTypes = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as const
