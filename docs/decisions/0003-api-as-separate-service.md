@@ -32,7 +32,7 @@ contain no business logic.
   directly because it works, and then that rule exists only in the web client.
   Nobody can go around a network boundary by accident.
 - **The runtime model agrees with the workload.** The spec needs background
-  jobs (auto-suspend on report threshold, ghost-profile decay at 30/60 days,
+  jobs (retention cleanup, ghost-profile decay at 30/60 days,
   analytics aggregation), scheduled work and a persistent Postgres connection
   pool. Serverless route handlers need a workaround for each. A service that
   runs continuously has them with no workaround.

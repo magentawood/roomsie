@@ -45,7 +45,14 @@ Three public layers, none of them the product:
 We do not use the gated-indexing route (`isAccessibleForFree: false` with
 `hasPart`). We keep it in reserve.
 
+**Notices and guests (F-13).** The privacy policy says that roomsie stores
+typed messages. The chat shows no notice (PC-27). A guest who taps a card gets
+the sign-in first (PC-46).
+
 ## Rationale
+
+- A card shows the photos, age and job of a person. Only signed-in users see
+  them. The product team keeps the chat screen clear of notices.
 
 - **No conflict remains.** The results grid had no gate from the start. Browse,
   chat and the split view are public, so the no-skip rule and SEO agree.
@@ -79,10 +86,8 @@ We do not use the gated-indexing route (`isAccessibleForFree: false` with
 - The interview runs before login. The form lives on a goal of the anonymous
   session. At login, the goals move to the account ([ADR-0017](0017-schema-v1-shape.md)).
 - A user can chat before sign-up, and keep that conversation after sign-up.
-  Thus, we store the typed messages. The privacy policy says so. The chat
-  shows no notice (F-13, PC-27).
-- A guest who taps a card gets the sign-in first. The guest view of the
-  detailed card in the designs changes (F-13, PC-46).
+  Thus, we store the typed messages.
+- The guest view of the detailed card in the designs changes (F-13, PC-46).
 - Anyone can spend the inference budget, and bots will find an open chat. The
   cost risk is volume and abuse, not unit cost. PD9 owns the controls:
   - rate limits for each device and network, because there is no user
@@ -97,6 +102,8 @@ We do not use the gated-indexing route (`isAccessibleForFree: false` with
 
 ## Alternatives rejected
 
+- **A fixed notice line above the composer.** The product team keeps the screen clear.
+- **A guest opens a card, and "Say hi" asks for sign-in.** Anyone could see and copy the details of a person.
 - **Index individual listing pages.**
 - **Structured-data gated indexing.** Cloaking risk, and the incorrect pages.
 - **A blog subdomain.** It does not pass full rank strength.

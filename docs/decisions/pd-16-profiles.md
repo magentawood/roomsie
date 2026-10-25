@@ -13,7 +13,7 @@
 
 **In one line:** roomsie is for adults; a parent can run the card of an adult child; a card is visible when its required fields are complete.
 
-- **Fields.** Full name, age, job role (the role only, never the company), commute address, a free-text bio ("What I want the others to know"), and the Form A fields of PD15. A required gender: Male, Female or Non-binary (PD8).
+- **Fields.** Full name, age, job role (the role only, never the company), commute address, a free-text bio ("What I want the others to know"), and the Form A fields of PD15. A required gender (PD8).
 - **Adults only.** roomsie is for people of 18 or more. Age is required. The terms page states the rule. Sign-in has no 18+ tick (F-13, PC-34).
 - **A profile for a son or daughter.** A parent can make a full profile, with name, age and photos, for a son or daughter of 18 or more. The card goes live on the word of the parent. It always shows "Managed by a parent". The parent sends and gets the messages.
 - **A child under 18.** The parent searches and contacts listings only. The child gets no card.
@@ -39,7 +39,7 @@
 
 - **A DPDP risk that we accept:** we show the name, age and photos of an adult who did not consent. The adult can ask us to delete the card through the grievance contact (T-23b). A complaint is possible.
 - The designer adds a required mark to Age, and the "Hide my card" switch.
-- A phone no longer gates visibility (verification.md). PC-05 decides how we collect a phone.
+- A phone does not gate visibility. roomsie collects no phone number (PD17).
 
 ## Revisit when
 

@@ -84,7 +84,7 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ## Round 3
 
-Ask this round when PC-30 in [connect-and-trust.md](connect-and-trust.md) (F-13) has an answer.
+PD8 answers PC-30, so this round can start.
 
 ### PC-39 · The interview script after the chips
 

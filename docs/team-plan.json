@@ -1043,7 +1043,7 @@
   {
    "id": "T-18a",
    "title": "Message request API",
-   "plain": "The server side of a message request. No phone number is ever shown.",
+   "plain": "The server side of a message request. It never shows a phone number.",
    "role": "P5",
    "hours": 4,
    "start": "2026-09-30",
@@ -1729,7 +1729,6 @@
    "read": [
     "docs/decisions/pd-14-v0-is-the-figma-designs.md",
     "docs/extensibility.md",
-    "docs/product-calls/connect-and-trust.md",
     "docs/decisions/pd-17-connect-and-contact.md"
    ],
    "cp": "CP3",

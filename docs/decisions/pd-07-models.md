@@ -41,6 +41,12 @@ simpler.
 **Quality is not a fallback trigger.** No reliable runtime signal shows low
 quality. The eval set and the primary model settle quality.
 
+
+**User text (F-13, PC-12).** We examined the terms on 2026-10-25. DeepSeek
+stores data in China. It can train on API inputs, unless we opt out by email. It
+states no retention period. User text goes to the DeepSeek API. The team
+opts out of training by email. The privacy policy says that DeepSeek stores the
+text in China. F-07 confirms the text.
 ## Rationale
 
 - **We chose the model for how correctly it reads Hinglish, not for price.**
@@ -122,13 +128,8 @@ life. One reason for ADR 0012 was to keep a behavioural stream in the control
 of the company. To send interview transcripts to an external inference
 provider is a larger version of the same action.
 
-The terms, examined on 2026-10-25 (F-13, PC-12): DeepSeek stores data in China,
-can train on API inputs unless we opt out by email, and states no retention
-period. The decision: user text goes to the DeepSeek API, the team opts out of
-training by email, and the privacy policy says that DeepSeek stores the text in
-China. Account deletion must propagate. DPDP obligations follow the data, not
-the server. Rejected: DeepSeek V3.2 on Amazon Bedrock in Mumbai (four to five
-times the cost), and Gemini for all user text (a new main model).
+Account deletion must propagate. DPDP obligations follow the data, not the
+server.
 
 Superseded:
 
@@ -138,6 +139,8 @@ Superseded:
 
 ## Alternatives rejected
 
+- **DeepSeek V3.2 on Amazon Bedrock in Mumbai, for user text.** It costs four to five times more.
+- **Gemini for all user text.** It changes the main model, and the evals start again.
 - **Qwen3.6:** its Apache licence keeps self-hosting open. With no residency
   need, that door has small value.
 - **A choice on price or from a leaderboard.** Pick from our own eval.

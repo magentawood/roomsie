@@ -88,9 +88,10 @@ in our spec conflict with this limit.
 long-running process keeps a counter in the process. Serverless needs a round
 trip to an external store each time a user sends a message.
 
-**Auto-suspend on report threshold.** This function needs a process that
-monitors continuously. On serverless, it becomes Cron → function → queue →
-function, and duration limits control its shape.
+**Scheduled jobs.** Retention and cleanup need a process that runs on a
+schedule ([PD19](pd-19-retention.md)). On serverless, it becomes Cron → function
+→ queue → function, and duration limits control its shape. A report hides a
+profile when it arrives ([PD18](pd-18-moderation.md)).
 
 ### 3. Where serverless is genuinely better, and we use it there
 

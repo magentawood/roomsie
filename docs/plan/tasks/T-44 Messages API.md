@@ -46,5 +46,4 @@ The server part of in-app messages between two users.
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [extensibility.md](../../extensibility.md)
-- [connect-and-trust.md](../../product-calls/connect-and-trust.md)
 - [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)

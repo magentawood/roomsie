@@ -384,8 +384,7 @@ export const connectionRequests = pgTable('connection_requests', {
   createdAt: createdAt(),
   respondedAt: timestamp('responded_at', { withTimezone: true }),
 }, (t) => ({
-  /** One open request per direction. Contact is revealed only when a row here
-   *  reaches `accepted` (T-18a). */
+  // TODO(T-18a): one open request between two people, in either direction (PD17).
   pairIdx: uniqueIndex('connection_requests_pair_idx').on(t.fromProfileId, t.toProfileId),
   inboxIdx: index('connection_requests_inbox_idx').on(t.toProfileId, t.status),
 })).enableRLS()

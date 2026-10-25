@@ -19,7 +19,7 @@ These calls wait until after the launch on 12 October. No session is necessary b
 ## PC-44 · Does the assistant speak to the other side of a match
 
 - **Question:** Does the assistant ever send a message to the other person for the user?
-- **Waits on:** nothing. [PD17](../decisions/pd-17-connect-and-contact.md) answers PC-05 and PC-35. This change has a large effect on the architecture (`docs/ai-agent-design.md:137`).
+- **Waits on:** nothing. This change has a large effect on the architecture (`docs/ai-agent-design.md:137`).
 - **Record:** [PD7a](../decisions/pd-07a-agent-architecture.md)
 
 ## PC-45 · The master launch document

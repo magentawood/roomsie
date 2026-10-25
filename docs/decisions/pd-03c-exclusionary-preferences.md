@@ -45,6 +45,7 @@ A stated community filter acts only on what candidates stated themselves. A cand
 - Filter server-side: the system does not tell a person that it excluded them.
 - Log each exclusion: someone can question this in the future. Then the difference between "we recorded what users told us" and "we cannot say where this came from" is the full defence.
 - State it publicly: a policy page is much better than a question about it in the future. Silence looks worse than a stated position.
+- A filter on stated answers only obeys mitigations 1, 2 and 4 (F-13, PC-31).
 
 ## Consequences
 
