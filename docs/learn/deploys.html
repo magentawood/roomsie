@@ -44,8 +44,8 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>merge to main ─┬─▶ Vercel ──────────────▶ roomsie.in (bom1)
-               └─▶ deploy-api workflow ─▶ build image ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
-                                                                        (api.roomsie.in)
+               └─▶ deploy-api workflow ─▶ build image ─▶ migrate ─▶ Lightsail (ap-south-1) ─▶ /v1/health check
+                                                                                    (api.roomsie.in)
 </code></pre>
 <table>
 <thead>
@@ -79,7 +79,8 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li>The API and the database are in the same AWS region, so each query takes approximately 1 ms (<a href="../decisions/0009-hosting-and-region.md">ADR-0009</a>).</li>
-<li>The workflow runs only when a merge changes the API, a package, the lockfile or the workflow. You can also start it by hand: GitHub → Actions → deploy-api → Run workflow.</li>
+<li>The workflow runs only when a merge changes the API, a package, the lockfile or the workflow. You can also start it by hand from <code>main</code>: GitHub → Actions → deploy-api → Run workflow.</li>
+<li>Before Lightsail starts the new API, the workflow applies the new migrations and the seed (<a href="migrations.html">Database migrations</a>).</li>
 <li><strong>CORS</strong> is the browser rule that lets a page on one site call an API on a different site. The API allows only <code>https://roomsie.in</code>. Thus, a preview loads, but its calls to the API fail.</li>
 <li>Previews open only for members of the Vercel team. Vercel turns this protection on by default.</li>
 <li><code>www.roomsie.in</code> and <code>roomsie.vercel.app</code> redirect to <code>roomsie.in</code>. Thus, a browser uses one address for the site and for the login.</li>
@@ -104,5 +105,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-04: <a href="https://github.com/magentawood/roomsie/pull/110">#110</a>, 2026-10-06. The first deploy of the web and the API, and the move from Fly to Lightsail.</li>
+<li>T-51: <a href="https://github.com/magentawood/roomsie/pull/137">#137</a>, 2026-10-25. The migrate step, and runs only from <code>main</code>.</li>
 </ul>
 </main>

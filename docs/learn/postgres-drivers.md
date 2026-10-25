@@ -24,7 +24,7 @@ route handler → Drizzle (typed query) → driver (connection and protocol) →
 
 ## Gotchas
 
-- **Prepared statements must stay off.** In production the API connects through the Supabase pooler in transaction mode. Many requests share a small number of connections, so the next query can go to a different connection. A prepared statement is a query plan that one connection keeps, so it fails there. The client sets `prepare: false`. Do not remove it.
+- **Prepared statements must stay off.** In production the API connects through the Supabase pooler in transaction mode. Many requests share a small number of connections, so the next query can go to a different connection. A prepared statement is a query plan that one connection keeps, so it fails there. The client sets `prepare: false`. Do not remove it. Migrations use session mode ([Database migrations](migrations.md)).
 - Do not make a second client in other code. Import `createDb`, so the setting stays in one place.
 
 ## Tickets

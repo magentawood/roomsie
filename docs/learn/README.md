@@ -11,6 +11,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Form A and intent](form-a-and-intent.md): Form A is the set of typed answers that drives matching, and intent is its first answer: the kind of place that a seeker wants.
 - [Local development with Docker](local-dev-with-docker.md): a local Postgres 17 runs in Docker. `pnpm db:up` starts it, and `pnpm test` starts it if necessary and gives each test run a fresh database.
 - [Message requests](message-requests.md): "Say hi" sends a request with a short note, the other person accepts or declines, and only then can the two people chat; a phone number never shows.
+- [Database migrations](migrations.md): a migration is a committed SQL file that changes the shape of the database. The deploy applies the new migrations and the catalogue seed before the new API starts.
 - [Model hosting and where user text goes](model-hosting-and-data.md): each chat message goes to a model provider, and the provider decides where the text is stored and if it trains on it; roomsie sends user text to the DeepSeek API.
 - [OpenAPI from Zod](openapi-from-zod.md): the API makes its OpenAPI document from the Zod schemas in `packages/contract`. The document is committed, and a test fails when it is out of date.
 - [pnpm, Corepack and Turborepo](pnpm-and-corepack.md): pnpm installs the packages of the monorepo, Corepack gives each developer the same pnpm version, and Turborepo runs the tasks of all packages with one command.
