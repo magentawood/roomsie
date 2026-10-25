@@ -25,13 +25,12 @@ afterAll(async () => {
   await testDb.drop()
 })
 
-// iat and exp are epoch seconds.
-function idToken(uid: string, opts: { key?: CryptoKey; audience?: string; iat?: number; exp?: number } = {}) {
+function idToken(uid: string, opts: { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number } = {}) {
   const now = Math.floor(Date.now() / 1000)
   const audience = opts.audience ?? projectId
   return new SignJWT({})
     .setProtectedHeader({ alg: 'RS256', kid: 'test' })
-    .setIssuer(`https://securetoken.google.com/${audience}`)
+    .setIssuer(opts.issuer ?? `https://securetoken.google.com/${audience}`)
     .setAudience(audience)
     .setSubject(uid)
     .setIssuedAt(opts.iat ?? now)
@@ -53,6 +52,15 @@ describe('GET /v1/me', () => {
 
   it('rejects a token for a different Firebase project', async () => {
     expect((await me(await idToken('uid-other-project', { audience: 'someone-else' }))).statusCode).toBe(401)
+  })
+
+  it('rejects a token from a different issuer', async () => {
+    expect((await me(await idToken('uid-other-issuer', { issuer: 'https://accounts.google.com' }))).statusCode).toBe(401)
+  })
+
+  it('rejects a token issued in the future', async () => {
+    const later = Math.floor(Date.now() / 1000) + 600
+    expect((await me(await idToken('uid-future', { iat: later, exp: later + 3600 }))).statusCode).toBe(401)
   })
 
   it('rejects a token with an empty uid', async () => {
@@ -82,9 +90,10 @@ describe('GET /v1/me', () => {
     expect((await me(await idToken('uid-revoked', { iat: issued }))).statusCode).toBe(401)
   })
 
-  it('rejects a suspended user, also with a new token', async () => {
-    expect((await me(await idToken('uid-suspended'))).statusCode).toBe(200)
-    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.authProviderId, 'uid-suspended'))
-    expect((await me(await idToken('uid-suspended'))).statusCode).toBe(403)
+  it.each(['suspended', 'deleted'] as const)('rejects a %s user, also with a new token', async (status) => {
+    const uid = `uid-${status}`
+    expect((await me(await idToken(uid))).statusCode).toBe(200)
+    await testDb.db.update(users).set({ status }).where(eq(users.authProviderId, uid))
+    expect((await me(await idToken(uid))).statusCode).toBe(403)
   })
 })

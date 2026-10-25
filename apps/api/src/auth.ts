@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
 import { eq } from 'drizzle-orm'
-import { createRemoteJWKSet, jwtVerify, type JWTVerifyGetKey } from 'jose'
+import { createRemoteJWKSet, errors, jwtVerify, type JWTVerifyGetKey } from 'jose'
 import { z } from 'zod'
 import type { MeResponse } from '@roomsie/contract'
 import type { Db } from './db/client'
@@ -22,6 +22,12 @@ declare module 'fastify' {
 const bearerHeader = z.string().regex(/^Bearer \S+$/)
 const firebaseClaims = z.object({ sub: z.string().min(1), iat: z.number().int() })
 
+/** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
+function badToken(err: unknown) {
+  if (err instanceof errors.JOSEError && !(err instanceof errors.JWKSTimeout)) return null
+  throw err
+}
+
 export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const header = bearerHeader.safeParse(req.headers.authorization)
@@ -32,13 +38,20 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
       audience: firebaseProjectId,
       algorithms: ['RS256'],
       requiredClaims: ['exp'],
-    }).catch(() => null)
+      // Also rejects an iat in the future. A Firebase ID token lives one hour.
+      maxTokenAge: '1h',
+    }).catch(badToken)
     const claims = firebaseClaims.safeParse(verified?.payload)
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
-    const uid = claims.data.sub
-    const issuedAt = new Date(claims.data.iat * 1000)
-    const user = (await findUser(db, uid)) ?? (await createUser(db, uid, issuedAt))
+    const { sub: uid, iat } = claims.data
+    const issuedAt = new Date(iat * 1000)
+    let user = await findUser(db, uid)
+    if (!user) {
+      // The first token is older than the new row, so tokens_valid_after starts at its iat.
+      await db.insert(users).values({ authProviderId: uid, tokensValidAfter: issuedAt }).onConflictDoNothing()
+      user = (await findUser(db, uid))!
+    }
     if (issuedAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     if (user.status !== 'active') return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status }
@@ -51,10 +64,4 @@ async function findUser(db: Db, uid: string) {
     .from(users)
     .where(eq(users.authProviderId, uid))
   return user
-}
-
-async function createUser(db: Db, uid: string, issuedAt: Date) {
-  // The first token is older than the new row, so tokens_valid_after starts at its iat.
-  await db.insert(users).values({ authProviderId: uid, tokensValidAfter: issuedAt }).onConflictDoNothing()
-  return (await findUser(db, uid))!
 }

@@ -10,6 +10,7 @@ const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null)
+  const [signInError, setSignInError] = useState<string | null>(null)
   useEffect(() => onAuthStateChanged(firebaseAuth(), setUser), [])
 
   const health = useQuery({
@@ -43,9 +44,20 @@ export default function Home() {
           <button type="button" onClick={() => signOut(firebaseAuth())}>Sign out</button>
         </>
       ) : (
-        <button type="button" onClick={() => signInWithPopup(firebaseAuth(), new GoogleAuthProvider())}>
-          Sign in with Google
-        </button>
+        <>
+          <button
+            type="button"
+            onClick={() =>
+              signInWithPopup(firebaseAuth(), new GoogleAuthProvider()).then(
+                () => setSignInError(null),
+                (err: Error) => setSignInError(err.message),
+              )
+            }
+          >
+            Sign in with Google
+          </button>
+          {signInError && <p>{signInError}</p>}
+        </>
       )}
     </main>
   )
