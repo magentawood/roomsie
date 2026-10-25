@@ -33,6 +33,11 @@ jobs:
           image=$(aws lightsail push-container-image --service-name "$SERVICE" --label api --image "$SERVICE:$GITHUB_SHA" | grep -o ":$SERVICE\.api\.[0-9]*" | head -1)
           test -n "$image"
           echo "IMAGE=$image" >> "$GITHUB_ENV"
+      # Before the new API starts. A failure stops the job, and the old API keeps running (ADR-0018).
+      - name: Migrate and seed
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_SESSION }}
+        run: docker run --rm -e DATABASE_URL "$SERVICE:$GITHUB_SHA" node dist/migrate.js
       # Lightsail has no secret store, so each deployment carries the API secrets (ADR-0016).
       # jq passes each API_* variable to the container without the prefix.
       - name: Deploy
