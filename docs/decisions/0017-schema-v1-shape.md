@@ -24,6 +24,7 @@
 
 - One `listings` table has a `kind`: `room_in_flat`, `owner_flat`, `pg` or `broker_flat`. A broker flat has the fields of an owner flat, and a brokerage.
 - A draft can be incomplete. From `live`, a check requires an area group, the name of a PG, and the brokerage of a broker flat. A live listing has an expiry date.
+- To go live, the API also requires one rent or more, with one rent for each sharing type of a PG, and the flatmate consent if a room shows flatmates (T-41).
 - Each rent is a row in `listing_rates`: one row for a room or a flat, and one row for each sharing type of a PG. The row copies the kind of its listing in a two-column key, so a check ties a sharing type to PGs only.
 - A pick-many list (what is inside, the building and society, the sharing types, who is welcome) is an array of fixed keys. The contract checks the keys. A GIN index makes each list a fast filter.
 - The address is optional and private until the lister turns on `share_address`. Seekers see the area group, the landmark and the building.
