@@ -13,6 +13,16 @@ describe('the API', () => {
     expect(healthResponse.parse(res.json())).toEqual({ status: 'ok' })
   })
 
+  it('lets the web origin send PATCH and DELETE, which the listing flow uses', async () => {
+    const res = await app.inject({
+      method: 'OPTIONS', url: '/v1/listings/0199e4b0-0000-7000-8000-000000000001',
+      headers: { origin: 'http://localhost:3000', 'access-control-request-method': 'PATCH', 'access-control-request-headers': 'authorization,content-type' },
+    })
+    expect(res.statusCode).toBe(204)
+    expect(String(res.headers['access-control-allow-methods'])).toContain('PATCH')
+    expect(String(res.headers['access-control-allow-methods'])).toContain('DELETE')
+  })
+
   it('serves no route without the /v1 prefix', async () => {
     const res = await app.inject({ method: 'GET', url: '/health' })
     expect(res.statusCode).toBe(404)
