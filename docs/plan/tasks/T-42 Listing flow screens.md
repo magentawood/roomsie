@@ -39,3 +39,34 @@ The screens where a lister adds a place, and sees and edits their places.
 
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `apps/web`, the shared base: the theme tokens of the file "Roomsie design system (extended)" with the Figtree font, the components that flow 04 and My listings use, the signed-in app shell with the sidebar of the designs, and one API helper. The interface is new. T-10, T-45 and T-47 use it again.
+  - `apps/web`, the listing screens: the steps of flow 04 for the four kinds, and My listings with its empty state. The interface is new.
+  - `apps/api`: the catalogue seed adds the nine area groups of PD2, and a new route `GET /v1/areas` lists them. The interface changes.
+  - `packages/contract`: the areas response.
+  - The Figma drafts page: the phone frames of the listing flow and My listings, and "Delete listing" with its confirmation.
+- **Seams for the tests:**
+  - New: unit tests with Vitest in `apps/web` for the pure modules. These are the steps of each kind, the API body from a step, and the photo size.
+  - The areas route, through `app.inject`, against a disposable test database. This seam exists.
+  - No component tests and no end-to-end tests (testing standard). Puppeteer screenshots of each screen at 390 px and 1440 px against local dev check the screens before the PR.
+- **Decisions:**
+  - T-42 builds the shared web base that its screens need: the tokens (styling launch rules), the components, the app shell and the API helper. The sidebar shows the goals, New Goal, Messages and Saved as inactive.
+  - The API helper sends the Firebase ID token from `getIdToken()` on each call, through TanStack Query. (ADR-0007, ADR-0008)
+  - The seed adds the nine area groups of PD2, with the launch flag off. `GET /v1/areas` lists them, and the area pick of step 2 shows all nine. (PD2)
+  - "Publish my listing" makes the listing live, with no DigiLocker step. T-46 adds the modal and the gate. The done item about the DigiLocker step stays open, blocked by T-46.
+  - "Delete listing" is a link at the bottom of step 1 of a listing that exists. It opens a confirmation: "Its photos are deleted too. You can't undo this." It never looks like a primary action. (styling standard)
+  - We design the phone screens on the Figma drafts page before the build: a step, the My listings card and the delete confirmation. Phones use the floating navigation of the designs, not the sidebar. Each screen is checked at 390 px and at 1440 px.
+  - The browser makes each photo 1600 px or less on its long side, as WebP, before the upload. This also removes the EXIF data and its GPS location.
+  - The actions of a card follow its status. A live listing: Edit, Mark as filled and Deactivate. An inactive listing: Edit, Go live again and Mark as filled. A filled listing: Edit and Go live again. A draft: Continue.
+  - A room in a flat has eight steps, with "Who lives here". The other kinds have seven. The fields of each kind come from the T-41 contract and the Figma drafts. A broker flat has the owner-flat fields, and the brokerage on step 5.
+  - Step 1 makes the draft with its kind. "Next" and "Previous step" save the step. "Save as Draft" saves the step and opens My listings.
+  - A 422 at publish lists each missing field, with a link to its step. The required marks are the area, the PG name, the brokerage, the flatmate name and the flatmate consent.
+  - A photo uploads with the signed link of T-41, and then the step saves its key. A listing has 5 photos or fewer.
+  - Under each free-text field, a short line says that phone numbers are hidden. After a save, the lister sees •••• in their text. (PD17)
+  - The listing screens need sign-in. A signed-out user sees the Google sign-in of T-05.
+- **Out of scope:** the DigiLocker modal and gate (T-46), the goals, Messages and Saved screens, the landing page (T-23a), the results and the listing detail screens (T-15, T-43), the pick of the launch areas (F-06), a resize on the server, dark mode, and the Content-Security-Policy (T-52).
