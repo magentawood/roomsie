@@ -5,9 +5,9 @@
 ## Context
 
 - The designs arrived on 24 October. They are in three Figma files in "Roomsie's team":
-  - **Product:** the page "Product screens", with four flows: 01 Entry and onboarding, 02 Search in chat, 03 Profile and settings, 04 Listing flow and my listings.
-  - **Website:** the section "Final screens" is the master landing page, at desktop, tablet and mobile widths. The "Website" page of the Product file is a copy. Do not build from the copy.
-  - **Roomsie design system (extended):** an Untitled UI kit (ADR-0011). Figtree type, a black and grey brand, and the Tailwind status colours.
+  - **[Product](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=5-2):** the page "Product screens", with four flows: 01 Entry and onboarding, 02 Search in chat, 03 Profile and settings, 04 Listing flow and my listings.
+  - **[Website](https://www.figma.com/design/qp9jcZmIhy26ty3ysqsHcv/Website?node-id=0-1):** the section "Final screens" is the master landing page, at desktop, tablet and mobile widths. The "Website" page of the Product file is a copy. Do not build from the copy.
+  - **[Roomsie design system (extended)](https://www.figma.com/design/uIuJWfzf3zGiOg3IqdDaxF/Roomsie-design-system--extended-?node-id=1480-0):** an Untitled UI kit (ADR-0011). Figtree type, a black and grey brand, and the Tailwind status colours.
 - The designs show more than PD0 allowed. Flow 04 lets owners, flatmates, PG operators and brokers list a place. The results show five card kinds: flatmate, room in a flat, owner flat, PG or hostel, and broker flat.
 - The designs also show in-app messages and a DigiLocker step. The plan had both after v0.
 
