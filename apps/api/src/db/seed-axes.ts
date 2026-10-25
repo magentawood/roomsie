@@ -1,10 +1,11 @@
 /** Form A catalogues of PD15; the values are the answer keys of the designs. */
 import { sql } from 'drizzle-orm'
+import { foodAnswers } from '@roomsie/contract'
 import type { Db } from './client'
 import { lifestyleAxes, mustHaves } from './schema'
 
 const LIFESTYLE_AXES = [
-  { key: 'food', question: 'What do you eat?', allowedValues: ['veg', 'non_veg', 'eggetarian', 'jain'], sortOrder: 1 },
+  { key: 'food', question: 'What do you eat?', allowedValues: [...foodAnswers], sortOrder: 1 },
   { key: 'smoking', question: 'Do you smoke?', allowedValues: ['non_smoker', 'smoker', 'smoke_outside'], sortOrder: 2 },
   { key: 'drinks', question: 'Drinks at home?', allowedValues: ['none_at_home', 'fine_at_home'], sortOrder: 3 },
   { key: 'guests', question: 'How often do guests come?', allowedValues: ['weekends_only', 'guests_welcome', 'guests_rarely'], sortOrder: 4 },
