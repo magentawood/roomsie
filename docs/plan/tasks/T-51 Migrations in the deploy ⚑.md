@@ -36,9 +36,9 @@ The live database gets each new table before the new server starts.
 - No task waits on this task.
 
 ## Done when
-- [ ] A merge to main applies the committed migrations to the main database before the new API starts
-- [ ] The deploy runs the catalogue seed. A second run changes nothing
-- [ ] A failed migration stops the deploy. The API stays on the version before
+- [x] A merge to main applies the committed migrations to the main database before the new API starts · [#137](https://github.com/magentawood/roomsie/pull/137)
+- [x] The deploy runs the catalogue seed. A second run changes nothing · [#137](https://github.com/magentawood/roomsie/pull/137)
+- [x] A failed migration stops the deploy. The API stays on the version before · [#137](https://github.com/magentawood/roomsie/pull/137)
 
 ^done
 
@@ -69,3 +69,13 @@ The live database gets each new table before the new server starts.
   - The first run applies the T-06 migration to the live database. If tables are already there, the step fails. Then we repair it by hand.
   - The deploy job runs only from `main`. A run by hand from a branch does nothing. (decided in the review; ADR-0018)
 - **Out of scope:** a backup before each migration (T-40 makes the nightly backups), the migrations of the analytics database (T-39), the seed of the area groups (F-06, T-22a), a migration that cannot run in a transaction (for example `CREATE INDEX CONCURRENTLY`), and a test against a copy of the live data.
+
+## Log
+
+- **2026-10-25 · [#137](https://github.com/magentawood/roomsie/pull/137)**
+  - **Change:** the deploy runs a `migrate` entry from the new image before Lightsail starts the new API. It applies the committed migrations in one transaction, then the catalogue seed. The deploy runs only from `main`.
+  - **Why:** [ADR-0018](../../decisions/0018-migrations-in-the-deploy.md)
+  - **Ticked:** "A merge to main applies the committed migrations to the main database before the new API starts", "The deploy runs the catalogue seed. A second run changes nothing", "A failed migration stops the deploy. The API stays on the version before"
+  - **Not done:** none
+  - **Learn:** [Database migrations](../../learn/migrations.md), [Deploys](../../learn/deploys.md), [Postgres drivers](../../learn/postgres-drivers.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

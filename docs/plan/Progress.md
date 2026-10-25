@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**49 of 284 done · 17%**
+**52 of 284 done · 18%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -22,7 +22,7 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 4 / 11 | 13 / 35 | 37% |
+| [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 1 / 14 | 8 / 62 | 13% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 25 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**41 free tasks are open · 159 build hours.**
+**40 free tasks are open · 156 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -56,7 +56,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | ⬜ can start | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-16a Profile API ⚑]] | P5 | 5 | ⬜ can start | 2 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
-| 0 | [[T-51 Migrations in the deploy ⚑]] | P1 | 3 | ⬜ can start | 0 | [#134](https://github.com/magentawood/roomsie/issues/134) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[T-41 Listings API]] | P3 | 8 | ⬜ can start | 3 | [#117](https://github.com/magentawood/roomsie/issues/117) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
@@ -169,7 +168,7 @@ flowchart LR
   T46["T-46<br/>DigiLocker verification"]:::ready
   T47["T-47<br/>Saved"]:::todo
   T48["T-48<br/>Onboarding questions"]:::todo
-  T51["T-51 ⚑<br/>Migrations in the deploy"]:::ready
+  T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::ready
   T22a["T-22a<br/>Waitlist API"]:::product
   T18b["T-18b ⚑<br/>Person and connect screens"]:::design
@@ -292,7 +291,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 13/35
+## P1 Platform — 16/35
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -321,7 +320,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-29 Abuse test]] · 0/3
 > ![[T-29 Abuse test#^done]]
 
-> [!todo]- ⬜ [[T-51 Migrations in the deploy ⚑]] · 0/3
+> [!todo]- ✅ [[T-51 Migrations in the deploy ⚑]] · 3/3
 > ![[T-51 Migrations in the deploy ⚑#^done]]
 
 > [!todo]- ⬜ [[T-52 Web CSP]] · 0/3
