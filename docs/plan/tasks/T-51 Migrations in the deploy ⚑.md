@@ -8,6 +8,7 @@ start: 2026-10-26
 end: 2026-10-27
 checkpoint: CP3
 critical: true
+issue: https://github.com/magentawood/roomsie/issues/134
 tags:
   - task
   - p1
@@ -20,7 +21,7 @@ tags:
 **Owner:** [[P1 Platform]], task 10 of 11  
 **When:** Mon 26 Oct → Tue 27 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#134](https://github.com/magentawood/roomsie/issues/134)
 
 > [!warning] Critical path
 > If this task is late, the launch is late.

@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-51, T-52.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
 
 ---
 
@@ -217,8 +217,8 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04, F-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | P1 Platform | 9 | T-29 | Abuse test: 100 fake sessions | 1 | Sat 10 Oct | Sat 10 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
-| P1 Platform | 10 | T-51 ⚑ | Apply migrations and the seed in the deploy | 3 | Mon 26 Oct | Tue 27 Oct | CP3 | T-04, T-06 | no issue at this time |
-| P1 Platform | 11 | T-52 | Content-Security-Policy for the web | 3 | Tue 27 Oct | Wed 28 Oct | CP3 | T-05 | no issue at this time |
+| P1 Platform | 10 | T-51 ⚑ | Apply migrations and the seed in the deploy | 3 | Mon 26 Oct | Tue 27 Oct | CP3 | T-04, T-06 | [#134](https://github.com/magentawood/roomsie/issues/134) |
+| P1 Platform | 11 | T-52 | Content-Security-Policy for the web | 3 | Tue 27 Oct | Wed 28 Oct | CP3 | T-05 | [#135](https://github.com/magentawood/roomsie/issues/135) |
 | P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | F-11 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08, F-04 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
