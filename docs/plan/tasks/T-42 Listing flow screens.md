@@ -31,8 +31,8 @@ The screens where a lister adds a place, and sees and edits their places.
 - No task waits on this task.
 
 ## Done when
-- [ ] The eight steps of flow 04 work for the four kinds of lister, as in the Product file
-- [ ] My listings shows each listing of the user, with edit, pause and delete, and the empty state
+- [x] The eight steps of flow 04 work for the four kinds of lister, as in the Product file · [#144](https://github.com/magentawood/roomsie/pull/144)
+- [x] My listings shows each listing of the user, with edit, pause and delete, and the empty state · [#144](https://github.com/magentawood/roomsie/pull/144)
 - [ ] The DigiLocker step of the flow opens the verification of T-46
 
 ^done
@@ -73,3 +73,13 @@ The screens where a lister adds a place, and sees and edits their places.
   - Under each free-text field, a short line says that phone numbers are hidden. After a save, the lister sees •••• in their text. (PD17)
   - The listing screens need sign-in. A signed-out user sees the Google sign-in of T-05.
 - **Out of scope:** the DigiLocker modal and gate (T-46), the goals, Messages and Saved screens, the landing page (T-23a), the results and the listing detail screens (T-15, T-43), the pick of the launch areas (F-06), a resize on the server, dark mode, and the Content-Security-Policy (T-52).
+
+## Log
+
+- **2026-10-26 · [#144](https://github.com/magentawood/roomsie/pull/144)**
+  - **Change:** the web gets its base (the tokens, Figtree, the shared components, the app shell and the API helper) and the listing flow: the steps of the four kinds, My listings and the delete confirmation. The API seeds the nine area groups of PD2 and lists them at `GET /v1/areas`.
+  - **Why:** the T-42 spec and [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md)
+  - **Ticked:** "The eight steps of flow 04 work for the four kinds of lister, as in the Product file" and "My listings shows each listing of the user, with edit, pause and delete, and the empty state"
+  - **Not done:** "The DigiLocker step of the flow opens the verification of T-46": blocked by T-46.
+  - **Learn:** [The web UI base](../../learn/web-ui-base.md), [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
