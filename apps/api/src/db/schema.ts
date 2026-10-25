@@ -20,8 +20,6 @@ import {
   listingKinds, listingStatuses, meals, minStays, placeTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn,
 } from '@roomsie/contract'
 
-/** A text column that holds the keys of one contract list. */
-type KeyOf<T extends readonly string[]> = T[number]
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
 const id = () => uuid('id').primaryKey().$defaultFn(() => uuidv7())
@@ -245,14 +243,14 @@ export const listings = pgTable('listings', {
   roomType: roomTypeEnum('room_type'),
   floor: integer('floor'),
   carpetAreaSqft: integer('carpet_area_sqft'),
-  sharing: text('sharing').array().$type<KeyOf<typeof sharingTypes>[]>().notNull().default([]),
+  sharing: text('sharing').array().$type<(typeof sharingTypes)[number][]>().notNull().default([]),
   bedsFree: bedsFreeEnum('beds_free'),
   meals: mealsEnum('meals'),
   curfew: curfewEnum('curfew'),
   bathroom: bathroomEnum('bathroom'),
   balcony: boolean('balcony'),
-  insideItems: text('inside_items').array().$type<KeyOf<typeof insideItems>[]>().notNull().default([]),
-  amenities: text('amenities').array().$type<KeyOf<typeof amenities>[]>().notNull().default([]),
+  insideItems: text('inside_items').array().$type<(typeof insideItems)[number][]>().notNull().default([]),
+  amenities: text('amenities').array().$type<(typeof amenities)[number][]>().notNull().default([]),
 
   // Rent, deposit and dates. The rents are in listing_rates. Money is in rupees.
   maintenance: integer('maintenance'),
@@ -269,7 +267,7 @@ export const listings = pgTable('listings', {
   alcoholAllowed: boolean('alcohol_allowed'),
   guests: guestsRuleEnum('guests'),
   whoCanMoveIn: whoCanMoveInEnum('who_can_move_in'),
-  whoIsWelcome: text('who_is_welcome').array().$type<KeyOf<typeof welcomeGroups>[]>().notNull().default([]),
+  whoIsWelcome: text('who_is_welcome').array().$type<(typeof welcomeGroups)[number][]>().notNull().default([]),
 
   /** The lister confirmed "My flatmates agreed to be shown". */
   flatmatesConsent: boolean('flatmates_consent').notNull().default(false),
@@ -304,7 +302,7 @@ export const listingRates = pgTable('listing_rates', {
   listingId: uuid('listing_id').notNull(),
   /** Copies the listing's kind, so a check can tie `sharing` to PGs. */
   listingKind: listingKindEnum('listing_kind').notNull(),
-  sharing: text('sharing').$type<KeyOf<typeof sharingTypes>>(),
+  sharing: text('sharing').$type<(typeof sharingTypes)[number]>(),
   rent: integer('rent').notNull(),
   deposit: integer('deposit'),
   createdAt: createdAt(),
@@ -323,8 +321,10 @@ export const listingFlatmates = pgTable('listing_flatmates', {
   name: text('name').notNull(),
   age: integer('age'),
   whatTheyDo: text('what_they_do'),
-  food: text('food').$type<KeyOf<typeof foodAnswers>>(),
+  food: text('food').$type<(typeof foodAnswers)[number]>(),
   photoKey: text('photo_key'),
+  /** The order that the lister gave. */
+  position: integer('position').notNull().default(0),
   createdAt: createdAt(),
 }, (t) => ({
   listingFk: foreignKey({ columns: [t.listingId, t.listingKind], foreignColumns: [listings.id, listings.kind] })

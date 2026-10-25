@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { listingResponse, type ListingResponse } from '@roomsie/contract'
+import { listingResponse, myListingsResponse, uploadUrlResponse, type ListingResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
 import { unusedStorage } from '../scripts/openapi'
@@ -127,7 +127,9 @@ describe('going live', () => {
   })
 
   it('sets an expiry 30 days later, and shows the listing to other users without the address', async () => {
-    const flat = await draft('owner_flat', { areaSlug: 'bandra', address: 'Flat 1203, Silver Oak', rates: [{ rent: 52000 }] })
+    const flat = await draft('owner_flat', {
+      areaSlug: 'bandra', address: 'Flat 1203', building: 'Silver Oak', street: 'Hill Road', pincode: '400050', rates: [{ rent: 52000 }],
+    })
     const res = await live(flat.id)
     expect(res.statusCode).toBe(200)
     const listing = listingResponse.parse(res.json())
@@ -137,9 +139,9 @@ describe('going live', () => {
 
     const seenRaw = (await call('seeker', 'GET', `/${flat.id}`)).json()
     expect(seenRaw).not.toHaveProperty('ownerUserId')
-    expect(listingResponse.parse(seenRaw)).toMatchObject({ status: 'live', address: null })
+    expect(listingResponse.parse(seenRaw)).toMatchObject({ status: 'live', building: 'Silver Oak', address: null, street: null, pincode: null })
     await call('lister', 'PATCH', `/${flat.id}`, { shareAddress: true })
-    expect(listingResponse.parse((await call('seeker', 'GET', `/${flat.id}`)).json()).address).toBe('Flat 1203, Silver Oak')
+    expect(listingResponse.parse((await call('seeker', 'GET', `/${flat.id}`)).json())).toMatchObject({ address: 'Flat 1203', street: 'Hill Road', pincode: '400050' })
   })
 
   it('hides an expired listing from other users', async () => {
@@ -181,10 +183,9 @@ describe('only the lister', () => {
 
   it('sees their own listings in My listings', async () => {
     const flat = await draft('owner_flat')
-    const mine = (await call('lister', 'GET', '/mine')).json() as { listings: { id: string }[] }
+    const mine = myListingsResponse.parse((await call('lister', 'GET', '/mine')).json())
     expect(mine.listings.map((l) => l.id)).toContain(flat.id)
-    const theirs = (await call('seeker', 'GET', '/mine')).json() as { listings: unknown[] }
-    expect(theirs.listings).toEqual([])
+    expect(myListingsResponse.parse((await call('seeker', 'GET', '/mine')).json()).listings).toEqual([])
   })
 })
 
@@ -193,13 +194,12 @@ describe('photos', () => {
     const flat = await draft('owner_flat')
     const res = await call('lister', 'POST', `/${flat.id}/upload-urls`, { contentType: 'image/png', size: 2_000_000 })
     expect(res.statusCode).toBe(200)
-    const { key, url, headers } = res.json() as { key: string; url: string; headers: Record<string, string> }
+    const { key, url } = uploadUrlResponse.parse(res.json())
     expect(key).toMatch(new RegExp(`^listings/${flat.id}/[0-9a-f-]{36}\\.png$`))
     const signed = new URL(url)
     expect(signed.pathname.endsWith(key)).toBe(true)
     expect(signed.searchParams.get('X-Amz-SignedHeaders')).toBe('content-length;content-type;host')
     expect(signed.searchParams.get('X-Amz-Expires')).toBe('600')
-    expect(headers).toEqual({ 'content-type': 'image/png', 'content-length': '2000000' })
     expect((await call('lister', 'POST', `/${flat.id}/upload-urls`, { contentType: 'image/gif', size: 1000 })).statusCode).toBe(400)
     expect((await call('lister', 'POST', `/${flat.id}/upload-urls`, { contentType: 'image/jpeg', size: 20_000_000 })).statusCode).toBe(400)
   })

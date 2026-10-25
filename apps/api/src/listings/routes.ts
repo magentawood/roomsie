@@ -4,8 +4,9 @@ import { and, asc, desc, eq, inArray } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { z } from 'zod'
 import {
-  createListingBody, incompleteListingResponse, listingEditBody, listingEdits, listingResponse, listingStatusBody,
-  myListingsResponse, sharingTypes, uploadUrlBody, uploadUrlResponse, type ListingEdit, type ListingResponse,
+  createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
+  listingStatusBody, myListingsResponse, photoTypes, sharingTypes, uploadUrlBody, uploadUrlResponse,
+  type goLiveFields, type ListingEdit, type ListingResponse,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
@@ -15,14 +16,13 @@ import { maskContacts } from '../text/mask-contacts'
 
 type Listing = typeof listings.$inferSelect
 type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
-type Flatmate = Omit<typeof listingFlatmates.$inferInsert, 'listingId' | 'listingKind'>
+type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
+type Parts = { rates: Rate[]; flatmates: Flatmate[] }
 
 const liveDays = 30
 /** Each free-text field that the lister writes (PD17). */
 const maskedFields = ['pgName', 'address', 'building', 'street', 'landmark', 'nearestStation', 'description'] as const
-const extensions = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as const
 const idParams = z.object({ id: z.uuid() })
-const error = z.object({ error: z.string() })
 
 export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options
@@ -34,30 +34,33 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     schema: { body: createListingBody, response: { 201: listingResponse } },
   }, async (req, reply) => {
     const [listing] = await db.insert(listings).values({ ownerUserId: req.user!.id, kind: req.body.kind }).returning()
-    return reply.code(201).send(view(listing!, [], [], storage, true))
+    return reply.code(201).send(view(listing!, { rates: [], flatmates: [] }, storage, true))
   })
 
   app.get('/listings/mine', { preHandler, schema: { response: { 200: myListingsResponse } } }, async (req) => {
     const mine = await db.select().from(listings).where(eq(listings.ownerUserId, req.user!.id)).orderBy(desc(listings.createdAt))
     const parts = await partsOf(db, mine.map((l) => l.id))
-    return { listings: mine.map((l) => view(l, parts.rates(l.id), parts.flatmates(l.id), storage, true)) }
+    return { listings: mine.map((l) => view(l, parts(l.id), storage, true)) }
   })
 
   app.get('/listings/:id', {
     preHandler,
-    schema: { params: idParams, response: { 200: listingResponse, 404: error } },
+    schema: { params: idParams, response: { 200: listingResponse, 404: errorResponse } },
   }, async (req, reply) => {
     const [listing] = await db.select().from(listings).where(eq(listings.id, req.params.id))
     const isOwner = listing?.ownerUserId === req.user!.id
     const visible = listing?.status === 'live' && listing.expiresAt! > new Date()
     if (!listing || (!isOwner && !visible)) return reply.code(404).send({ error: 'not found' })
-    const parts = await partsOf(db, [listing.id])
-    return view(listing, parts.rates(listing.id), parts.flatmates(listing.id), storage, isOwner)
+    return view(listing, (await partsOf(db, [listing.id]))(listing.id), storage, isOwner)
   })
 
   app.patch('/listings/:id', {
     preHandler,
-    schema: { params: idParams, body: listingEditBody, response: { 200: listingResponse, 400: error, 404: error, 422: incompleteListingResponse, 502: error } },
+    schema: {
+      params: idParams,
+      body: listingEditBody,
+      response: { 200: listingResponse, 400: errorResponse, 404: errorResponse, 422: incompleteListingResponse, 502: errorResponse },
+    },
   }, async (req, reply) => {
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
@@ -67,56 +70,62 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const { rates: newRates, flatmates: newFlatmates, ...columns } = edit
 
     const newKeys = [...(edit.photoKeys ?? []), ...photoKeysOf(newFlatmates ?? [])]
-    if (newKeys.some((key) => !isKeyOf(listing.id, key))) return reply.code(400).send({ error: 'a photo of a different listing' })
+    if (newKeys.some((key) => !key.startsWith(`listings/${listing.id}/`))) return reply.code(400).send({ error: 'a photo of a different listing' })
     if (edit.areaSlug && !(await db.select().from(areas).where(eq(areas.slug, edit.areaSlug))).length) {
       return reply.code(400).send({ error: 'unknown area' })
     }
 
-    const parts = await partsOf(db, [listing.id])
-    const rates = newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? parts.rates(listing.id)
-    const flatmates = newFlatmates ?? parts.flatmates(listing.id)
-    const next = { ...listing, ...columns }
+    const current = (await partsOf(db, [listing.id]))(listing.id)
+    const next = {
+      listing: { ...listing, ...columns },
+      rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates,
+      flatmates: newFlatmates ?? current.flatmates,
+    }
+    // The database checks each status after draft, so the API gives 422 for it, not 500.
     if (listing.status !== 'draft') {
-      const missing = missingToGoLive(next, rates, flatmates)
+      const missing = missingToGoLive(next.listing, next)
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
     }
 
-    const kept = new Set(photoKeysOf(flatmates).concat(next.photoKeys))
-    const removed = [...listing.photoKeys, ...photoKeysOf(parts.flatmates(listing.id))].filter((key) => !kept.has(key))
-    if (!(await deleted(storage, removed, req.log))) return reply.code(502).send({ error: 'photo storage failed' })
+    const kept = new Set([...next.listing.photoKeys, ...photoKeysOf(next.flatmates)])
+    const removed = [...listing.photoKeys, ...photoKeysOf(current.flatmates)].filter((key) => !kept.has(key))
+    if (!(await deletePhotos(storage, removed, req.log))) return reply.code(502).send({ error: 'photo storage failed' })
 
-    const [saved] = await db.transaction(async (tx) => {
+    const saved = await db.transaction(async (tx) => {
+      const [row] = await tx.update(listings).set({ ...columns, updatedAt: new Date() })
+        .where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id))).returning()
+      if (!row) return undefined
       if (newRates) {
-        await tx.delete(listingRates).where(eq(listingRates.listingId, listing.id))
-        if (rates.length) await tx.insert(listingRates).values(rates.map((r) => ({ ...r, listingId: listing.id, listingKind: listing.kind })))
+        await tx.delete(listingRates).where(eq(listingRates.listingId, row.id))
+        if (next.rates.length) await tx.insert(listingRates).values(next.rates.map((r) => ({ ...r, listingId: row.id, listingKind: row.kind })))
       }
       if (newFlatmates) {
-        await tx.delete(listingFlatmates).where(eq(listingFlatmates.listingId, listing.id))
-        // One millisecond apart, so created_at keeps the order of the lister.
-        const now = Date.now()
-        if (flatmates.length) {
-          await tx.insert(listingFlatmates).values(flatmates.map((f, i) => ({
-            ...f, listingId: listing.id, listingKind: listing.kind, createdAt: new Date(now + i),
-          })))
+        await tx.delete(listingFlatmates).where(eq(listingFlatmates.listingId, row.id))
+        if (next.flatmates.length) {
+          await tx.insert(listingFlatmates).values(next.flatmates.map((f, position) => ({ ...f, position, listingId: row.id, listingKind: row.kind })))
         }
       }
-      return tx.update(listings).set({ ...columns, updatedAt: new Date() })
-        .where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id))).returning()
+      return row
     })
-    return view(saved!, rates, flatmates, storage, true)
+    if (!saved) return reply.code(404).send({ error: 'not found' })
+    return view(saved, next, storage, true)
   })
 
   app.post('/listings/:id/status', {
     preHandler,
-    schema: { params: idParams, body: listingStatusBody, response: { 200: listingResponse, 404: error, 409: error, 422: incompleteListingResponse } },
+    schema: {
+      params: idParams,
+      body: listingStatusBody,
+      response: { 200: listingResponse, 404: errorResponse, 409: errorResponse, 422: incompleteListingResponse },
+    },
   }, async (req, reply) => {
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const { status } = req.body
-    const parts = await partsOf(db, [listing.id])
+    const parts = (await partsOf(db, [listing.id]))(listing.id)
     let expiresAt = listing.expiresAt
     if (status === 'live') {
-      const missing = missingToGoLive(listing, parts.rates(listing.id), parts.flatmates(listing.id))
+      const missing = missingToGoLive(listing, parts)
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
       expiresAt = new Date(Date.now() + liveDays * 86_400_000)
     } else if (status === 'inactive' ? listing.status !== 'live' : !['live', 'inactive'].includes(listing.status)) {
@@ -124,32 +133,34 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     }
     const [saved] = await db.update(listings).set({ status, expiresAt, updatedAt: new Date() })
       .where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id))).returning()
-    return view(saved!, parts.rates(listing.id), parts.flatmates(listing.id), storage, true)
+    if (!saved) return reply.code(404).send({ error: 'not found' })
+    return view(saved, parts, storage, true)
   })
 
   app.delete('/listings/:id', {
     preHandler,
-    schema: { params: idParams, response: { 204: z.null(), 404: error, 502: error } },
+    schema: { params: idParams, response: { 204: z.null(), 404: errorResponse, 502: errorResponse } },
   }, async (req, reply) => {
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
-    const parts = await partsOf(db, [listing.id])
-    const keys = [...listing.photoKeys, ...photoKeysOf(parts.flatmates(listing.id))]
-    if (!(await deleted(storage, keys, req.log))) return reply.code(502).send({ error: 'photo storage failed' })
+    const { flatmates } = (await partsOf(db, [listing.id]))(listing.id)
+    if (!(await deletePhotos(storage, [...listing.photoKeys, ...photoKeysOf(flatmates)], req.log))) {
+      return reply.code(502).send({ error: 'photo storage failed' })
+    }
     await db.delete(listings).where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id)))
     return reply.code(204).send(null)
   })
 
   app.post('/listings/:id/upload-urls', {
     preHandler,
-    schema: { params: idParams, body: uploadUrlBody, response: { 200: uploadUrlResponse, 404: error } },
+    schema: { params: idParams, body: uploadUrlBody, response: { 200: uploadUrlResponse, 404: errorResponse } },
   }, async (req, reply) => {
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const { contentType, size } = req.body
-    const key = `listings/${listing.id}/${uuidv7()}.${extensions[contentType]}`
+    const key = `listings/${listing.id}/${uuidv7()}.${photoTypes[contentType]}`
     const { url, expiresAt } = await storage.uploadUrl(key, contentType, size)
-    return { key, url, expiresAt: expiresAt.toISOString(), headers: { 'content-type': contentType, 'content-length': String(size) } }
+    return { key, url, expiresAt: expiresAt.toISOString() }
   })
 }
 
@@ -158,15 +169,14 @@ async function ownedListing(db: Db, id: string, ownerUserId: string) {
   return listing
 }
 
+/** The rents and the flatmates of each listing, from two queries. */
 async function partsOf(db: Db, ids: string[]) {
-  const rates = ids.length ? await db.select().from(listingRates).where(inArray(listingRates.listingId, ids)) : []
-  const flatmates = ids.length
-    ? await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.createdAt))
-    : []
-  return {
-    rates: (id: string): Rate[] => rates.filter((r) => r.listingId === id),
-    flatmates: (id: string): Flatmate[] => flatmates.filter((f) => f.listingId === id),
-  }
+  const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))
+  const flatmates = await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.position))
+  return (id: string): Parts => ({
+    rates: rates.filter((r) => r.listingId === id),
+    flatmates: flatmates.filter((f) => f.listingId === id),
+  })
 }
 
 function mask(edit: ListingEdit): ListingEdit {
@@ -175,26 +185,24 @@ function mask(edit: ListingEdit): ListingEdit {
     const value = edit[field]
     if (value) masked[field] = maskContacts(value)
   }
-  masked.flatmates = edit.flatmates?.map((f) => ({ ...f, name: maskContacts(f.name), whatTheyDo: f.whatTheyDo && maskContacts(f.whatTheyDo) }))
-  if (!edit.flatmates) delete masked.flatmates
+  if (edit.flatmates) {
+    masked.flatmates = edit.flatmates.map((f) => ({ ...f, name: maskContacts(f.name), whatTheyDo: f.whatTheyDo && maskContacts(f.whatTheyDo) }))
+  }
   return masked
 }
 
-const photoKeysOf = (flatmates: Flatmate[]) => flatmates.flatMap((f) => (f.photoKey ? [f.photoKey] : []))
-const isKeyOf = (listingId: string, key: string) => new RegExp(`^listings/${listingId}/[0-9a-f-]{36}\\.(jpg|png|webp)$`).test(key)
+const photoKeysOf = (flatmates: Pick<Flatmate, 'photoKey'>[]) => flatmates.flatMap((f) => (f.photoKey ? [f.photoKey] : []))
 
 /** False when R2 fails. Then the caller changes nothing (PD19). */
-async function deleted(storage: Storage, keys: string[], log: { error: (obj: unknown) => void }) {
-  if (!keys.length) return true
+async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj: unknown) => void }) {
   return storage.deleteObjects(keys).then(() => true, (err: unknown) => {
     log.error(err)
     return false
   })
 }
 
-/** What a listing lacks to go live (T-41 spec). */
-function missingToGoLive(listing: Listing, rates: Rate[], flatmates: Flatmate[]) {
-  const missing: string[] = []
+function missingToGoLive(listing: Listing, { rates, flatmates }: Parts) {
+  const missing: (typeof goLiveFields)[number][] = []
   if (!listing.areaSlug) missing.push('areaSlug')
   if (listing.kind === 'pg' && !listing.pgName) missing.push('pgName')
   if (listing.kind === 'broker_flat' && listing.brokerage === null) missing.push('brokerage')
@@ -205,24 +213,19 @@ function missingToGoLive(listing: Listing, rates: Rate[], flatmates: Flatmate[])
   return missing
 }
 
-function view(listing: Listing, rates: Rate[], flatmates: Flatmate[], storage: Storage, isOwner: boolean): ListingResponse {
-  // The serializer parses each reply with the contract schema, which drops ownerUserId.
-  const { photoKeys, roomType, address, expiresAt, createdAt, updatedAt, ...fields } = listing
+function view(listing: Listing, { rates, flatmates }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
+  // The serializer parses each reply with the contract schema, which drops ownerUserId and the row ids.
+  const { photoKeys, roomType, expiresAt, createdAt, updatedAt, ...fields } = listing
+  const hideAddress = !isOwner && !listing.shareAddress
   const sharingOrder = (r: Rate) => (r.sharing ? sharingTypes.indexOf(r.sharing) : -1)
   return {
     ...fields,
+    // ADR-0017: until the lister shares the address, other users see the area, the landmark and the building.
+    ...(hideAddress && { address: null, street: null, pincode: null }),
     roomType: roomType === 'unclear' ? null : roomType,
-    address: isOwner || listing.shareAddress ? address : null,
     photos: photoKeys.map((key) => ({ key, url: storage.publicUrl(key) })),
-    rates: [...rates].sort((a, b) => sharingOrder(a) - sharingOrder(b)).map(({ sharing, rent, deposit }) => ({ sharing, rent, deposit })),
-    flatmates: flatmates.map((f) => ({
-      name: f.name,
-      age: f.age ?? null,
-      whatTheyDo: f.whatTheyDo ?? null,
-      food: f.food ?? null,
-      photoKey: f.photoKey ?? null,
-      photoUrl: f.photoKey ? storage.publicUrl(f.photoKey) : null,
-    })),
+    rates: [...rates].sort((a, b) => sharingOrder(a) - sharingOrder(b)),
+    flatmates: flatmates.map((f) => ({ ...f, photoUrl: f.photoKey && storage.publicUrl(f.photoKey) })),
     expiresAt: expiresAt?.toISOString() ?? null,
     createdAt: createdAt.toISOString(),
     updatedAt: updatedAt.toISOString(),
