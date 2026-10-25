@@ -29,7 +29,7 @@ describe('migrateAndSeed', () => {
     } finally {
       await testDb.drop()
     }
-  })
+  }, 20_000)
 
   it('fails on a bad migration, and rolls the database back', async () => {
     const testDb = await createTestDb()

@@ -2,7 +2,7 @@
 import { sql } from 'drizzle-orm'
 import { foodAnswers } from '@roomsie/contract'
 import type { Db } from './client'
-import { lifestyleAxes, mustHaves } from './schema'
+import { areas, lifestyleAxes, mustHaves } from './schema'
 
 const LIFESTYLE_AXES = [
   { key: 'food', question: 'What do you eat?', allowedValues: [...foodAnswers], sortOrder: 1 },
@@ -25,6 +25,13 @@ const MUST_HAVES = [
   { key: 'couple_friendly', label: 'Couple friendly', sortOrder: 7, active: true },
 ]
 
+/** The nine area groups of PD2, in the order of the designs. */
+const AREA_GROUPS = [
+  ['andheri-goregaon', 'Andheri–Goregaon'], ['bandra-santacruz', 'Bandra–Santacruz'], ['powai-vikhroli', 'Powai–Vikhroli'],
+  ['lower-parel-worli', 'Lower Parel–Worli'], ['south-mumbai', 'South Mumbai'], ['malad-borivali', 'Malad–Borivali'],
+  ['chembur-ghatkopar', 'Chembur–Ghatkopar'], ['thane', 'Thane'], ['navi-mumbai', 'Navi Mumbai'],
+].map(([slug, name], i) => ({ slug: slug!, name: name!, sortOrder: i + 1 }))
+
 export async function seedCatalogues(db: Db) {
   await db.insert(lifestyleAxes).values(LIFESTYLE_AXES)
     .onConflictDoUpdate({
@@ -36,4 +43,7 @@ export async function seedCatalogues(db: Db) {
       target: mustHaves.key,
       set: { label: sql`excluded.label`, sortOrder: sql`excluded.sort_order`, active: sql`excluded.active` },
     })
+  // The launch flag is not in the update: F-06 sets it, and a deploy must keep it.
+  await db.insert(areas).values(AREA_GROUPS)
+    .onConflictDoUpdate({ target: areas.slug, set: { name: sql`excluded.name`, sortOrder: sql`excluded.sort_order` } })
 }
