@@ -2315,16 +2315,6 @@
                     "items": {
                       "type": "object",
                       "properties": {
-                        "sharing": {
-                          "type": "string",
-                          "enum": [
-                            "single",
-                            "double",
-                            "triple",
-                            "four",
-                            "four_plus"
-                          ]
-                        },
                         "rent": {
                           "type": "integer",
                           "minimum": 0,
@@ -2336,6 +2326,16 @@
                           "type": "integer",
                           "minimum": 0,
                           "maximum": 100000000
+                        },
+                        "sharing": {
+                          "type": "string",
+                          "enum": [
+                            "single",
+                            "double",
+                            "triple",
+                            "four",
+                            "four_plus"
+                          ]
                         }
                       },
                       "required": [

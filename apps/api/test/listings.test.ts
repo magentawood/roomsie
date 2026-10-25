@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm'
 import { listingResponse, myListingsResponse, uploadUrlResponse, type ListingResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
-import { unusedStorage } from '../scripts/openapi'
+import { offlineStorage } from '../scripts/openapi'
 import { areas, listingFlatmates, listings } from '../src/db/schema'
 import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
@@ -15,7 +15,7 @@ const deleted: string[] = []
 let r2Down = false
 
 const storage: Storage = {
-  ...unusedStorage,
+  ...offlineStorage,
   async deleteObjects(keys) {
     if (r2Down) throw new Error('R2 is down')
     deleted.push(...keys)

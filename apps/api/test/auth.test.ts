@@ -4,7 +4,7 @@ import { errors, generateKeyPair, type CryptoKey } from 'jose'
 import { meResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
-import { unusedStorage } from '../scripts/openapi'
+import { offlineStorage } from '../scripts/openapi'
 import { users } from '../src/db/schema'
 import { buildServer } from '../src/server'
 
@@ -18,7 +18,7 @@ beforeAll(async () => {
   const tokens = await testTokens()
   idToken = tokens.idToken
   otherKey = (await generateKeyPair('RS256')).privateKey
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: unusedStorage })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: offlineStorage })
 })
 afterAll(async () => {
   await app.close()
@@ -98,7 +98,7 @@ describe('GET /v1/me', () => {
       db: testDb.db,
       firebaseProjectId: projectId,
       firebaseKeys: () => Promise.reject(new errors.JOSEError('Expected 200 OK from the JSON Web Key Set HTTP response')),
-      storage: unusedStorage,
+      storage: offlineStorage,
     })
     const res = await down.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${await idToken('uid-keys-down')}` } })
     expect(res.statusCode).toBe(500)

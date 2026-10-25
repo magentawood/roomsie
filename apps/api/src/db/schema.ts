@@ -20,7 +20,6 @@ import {
   listingKinds, listingStatuses, meals, minStays, placeTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn,
 } from '@roomsie/contract'
 
-
 /** ADR 0015: app-minted UUIDv7, no database default. */
 const id = () => uuid('id').primaryKey().$defaultFn(() => uuidv7())
 const createdAt = () => timestamp('created_at', { withTimezone: true }).notNull().defaultNow()

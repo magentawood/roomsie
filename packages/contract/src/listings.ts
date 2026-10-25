@@ -47,7 +47,7 @@ const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable
 const rupees = z.int().min(0).max(100_000_000)
 
 export const listingRate = z.strictObject({ rent: rupees, deposit: rupees.nullable().default(null) })
-export const pgRate = z.strictObject({ sharing: z.enum(sharingTypes), rent: rupees, deposit: rupees.nullable().default(null) })
+export const pgRate = listingRate.extend({ sharing: z.enum(sharingTypes) })
 export const listingFlatmate = z.strictObject({
   name: z.string().trim().min(1).max(60),
   age: z.int().min(18).max(99).nullable().default(null),
@@ -126,11 +126,11 @@ export const listingEdits = {
   }).partial(),
 }
 
-/** All fields of all kinds. The route documents it; listingEdits checks the kind of the listing. */
+/** All fields of all kinds, for the OpenAPI document. It is less strict than listingEdits, which the route also runs. */
 export const listingEditBody = z.strictObject({
   ...commonFields, ...flatFields, ...pgFields, ...roomFields, brokerage,
   whoIsWelcome: pickMany(welcomeGroups),
-  rates: z.array(z.strictObject({ sharing: z.enum(sharingTypes).optional(), rent: rupees, deposit: rupees.nullable().default(null) })),
+  rates: z.array(pgRate.partial({ sharing: true })),
 }).partial()
 export type ListingEdit = z.infer<typeof listingEditBody>
 

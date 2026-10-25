@@ -23,6 +23,8 @@ const liveDays = 30
 /** Each free-text field that the lister writes (PD17). */
 const maskedFields = ['pgName', 'address', 'building', 'street', 'landmark', 'nearestStation', 'description'] as const
 const idParams = z.object({ id: z.uuid() })
+/** The statuses that each status can come from. To go live has its own check. */
+const allowedFrom: Record<'inactive' | 'filled', string[]> = { inactive: ['live'], filled: ['live', 'inactive'] }
 
 export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options
@@ -93,7 +95,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
     const saved = await db.transaction(async (tx) => {
       const [row] = await tx.update(listings).set({ ...columns, updatedAt: new Date() })
-        .where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id))).returning()
+        .where(ownedBy(listing.id, req.user!.id)).returning()
       if (!row) return undefined
       if (newRates) {
         await tx.delete(listingRates).where(eq(listingRates.listingId, row.id))
@@ -128,11 +130,11 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       const missing = missingToGoLive(listing, parts)
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
       expiresAt = new Date(Date.now() + liveDays * 86_400_000)
-    } else if (status === 'inactive' ? listing.status !== 'live' : !['live', 'inactive'].includes(listing.status)) {
+    } else if (!allowedFrom[status].includes(listing.status)) {
       return reply.code(409).send({ error: `a ${listing.status} listing cannot become ${status}` })
     }
     const [saved] = await db.update(listings).set({ status, expiresAt, updatedAt: new Date() })
-      .where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id))).returning()
+      .where(ownedBy(listing.id, req.user!.id)).returning()
     if (!saved) return reply.code(404).send({ error: 'not found' })
     return view(saved, parts, storage, true)
   })
@@ -147,7 +149,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     if (!(await deletePhotos(storage, [...listing.photoKeys, ...photoKeysOf(flatmates)], req.log))) {
       return reply.code(502).send({ error: 'photo storage failed' })
     }
-    await db.delete(listings).where(and(eq(listings.id, listing.id), eq(listings.ownerUserId, req.user!.id)))
+    await db.delete(listings).where(ownedBy(listing.id, req.user!.id))
     return reply.code(204).send(null)
   })
 
@@ -164,8 +166,11 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   })
 }
 
+/** Each write on a listing has the owner from the verified token (ADR-0015). */
+const ownedBy = (id: string, ownerUserId: string) => and(eq(listings.id, id), eq(listings.ownerUserId, ownerUserId))
+
 async function ownedListing(db: Db, id: string, ownerUserId: string) {
-  const [listing] = await db.select().from(listings).where(and(eq(listings.id, id), eq(listings.ownerUserId, ownerUserId)))
+  const [listing] = await db.select().from(listings).where(ownedBy(id, ownerUserId))
   return listing
 }
 
