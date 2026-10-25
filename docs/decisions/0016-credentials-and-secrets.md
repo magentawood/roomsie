@@ -36,6 +36,7 @@ The table gives the class of each credential and where it lives:
 | Supabase service_role key | **[Critical]** | apps/api only |
 | Postgres connection string | **[Critical]** | apps/api only |
 | R2 access key + secret | **[Critical]** | apps/api only |
+| R2 backups key + secret (backups bucket only) | **[Critical]** | CI secret store only |
 | Firebase Admin service account | **[Critical]** | apps/api only |
 | Deploy tokens | **[Critical]** | CI secret store |
 

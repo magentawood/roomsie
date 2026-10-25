@@ -47,9 +47,9 @@ Copies the two databases each night.
 
 - **Modules:**
   - The backup workflow: new, in `.github/workflows/`. A schedule starts it each night at 03:00 IST (21:30 UTC). A person can also start it by hand. (why: [PD13](../../decisions/pd-13-databases-and-backups.md))
-  - The R2 bucket for backups: it exists. The workflow writes to it with the R2 key of the API.
+  - The R2 bucket for backups: it exists. The workflow writes to it with its own R2 key, which reaches only that bucket.
   - The Telegram group of the team: it gets a message when the workflow fails.
-  - The CI secret store: two new secrets, `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`. The workflow also reads three secrets that exist: `R2_BUCKET_BACKUPS`, `DATABASE_URL_SESSION` and `ANALYTICS_DATABASE_URL_SESSION`.
+  - The CI secret store: four new secrets, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `R2_BACKUPS_ACCESS_KEY_ID` and `R2_BACKUPS_SECRET_ACCESS_KEY`. The workflow also reads four secrets that exist: `R2_ACCOUNT_ID`, `R2_BUCKET_BACKUPS`, `DATABASE_URL_SESSION` and `ANALYTICS_DATABASE_URL_SESSION`.
   - Pulkit's Bitwarden: one new secure note, the private `age` key.
   - The docs: a new learn page, "Backups", with the restore steps. One paragraph of `extensibility.md` gets a correction.
   - The plan: one done item of T-40 changes.
@@ -67,7 +67,7 @@ Copies the two databases each night.
   - The workflow encrypts each dump with `age`. The public key is in the workflow file. The private key is only in Pulkit's Bitwarden, until the team selects a long-term home.
   - The name of each file is `<database>/<UTC time>.dump.age`, for example `main/2026-10-13T2130Z.dump.age`.
   - The workflow keeps the newest fourteen dumps of each database. It deletes older dumps only after the new dump uploads and its restore check passes.
-  - The workflow uses the R2 key of the API, `R2_ACCESS_KEY_ID` and `R2_SECRET_ACCESS_KEY`. (why: [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
+  - The workflow uses its own R2 key, `R2_BACKUPS_ACCESS_KEY_ID` and `R2_BACKUPS_SECRET_ACCESS_KEY`. The key reaches only the backups bucket, and only the CI secret store has it. Thus, a leaked API key cannot delete the backups. (decided in the review by n3rxv, 2026-10-25; [ADR-0016](../../decisions/0016-credentials-and-secrets.md))
   - When a step fails, a Telegram bot sends a message to the team group. T-25 sends the uptime alerts to the same group.
   - Changed done items:
     - T-40: "into a scratch project" becomes "into a scratch database". The free plan allows two active projects, and the two databases use them.
@@ -76,7 +76,6 @@ Copies the two databases each night.
   - A backup of the R2 photos.
   - A restore into production.
   - The `pg_cron` jobs of the analytics database (T-39).
-  - A separate R2 key for backups.
   - The text about backups in the privacy notice.
 
 ## Log
