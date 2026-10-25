@@ -56,3 +56,34 @@ Log in with Google. The server checks the user on each request.
 ## Read first
 - [0007-web-rendering-and-auth-transport.md](../../decisions/0007-web-rendering-and-auth-transport.md)
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
+
+## Spec
+
+**Approved:** 2026-10-25, by Ankit
+
+- **Modules:**
+  - `packages/contract`: a new schema for the `/v1/me` reply: the user id and the status.
+  - `apps/api`, the auth check: new. It reads the Bearer token, verifies it, and loads the user. If the user has no row, it creates the row. Signed-in routes use it. The interface of the health route does not change.
+  - `apps/api`, the route `GET /v1/me`: new. It gives the id and the status of the signed-in user.
+  - `apps/api`, the settings: `FIREBASE_PROJECT_ID` and `DATABASE_URL` become required.
+  - `apps/web`: new. Firebase starts from four public `NEXT_PUBLIC_FIREBASE_*` settings. A plain button signs in with Google. Each call to the API sends the ID token. The home page shows the result of `/v1/me`.
+  - The docs: [ADR-0007](../../decisions/0007-web-rendering-and-auth-transport.md) tells what "in memory" means, and adds the status check. `docs/standards/api.md` gets the status rule. A new learn page tells how sign-in and the token check work.
+- **Seams for the tests:**
+  - The API, through `inject`, with a test key. The tests sign their own tokens. The API gets the test keys in place of the Google keys. The tests use the test database.
+  - The cases:
+    - no token, a bad signature, a token for a different project, an expired token
+    - the first sign-in and a second sign-in
+    - a token before `tokens_valid_after`, and a suspended user
+  - The web: a test by hand on the laptop. Sign in with Google, then `/v1/me` shows the user.
+- **Decisions:**
+  - Firebase keeps its default session store, so a user stays signed in after a reload. Our code keeps the ID token only in memory, and never in `localStorage`. (why: [ADR-0007](../../decisions/0007-web-rendering-and-auth-transport.md))
+  - The `jose` library verifies the token locally, with the cached public keys of Google. It checks the signature, the expiry, the issuer and the audience.
+  - The auth check makes the `users` row at the first signed-in request. `GET /v1/me` gives the id and the status.
+  - A user with the status `suspended` or `deleted` gets 403, also with a new token.
+  - A token with an `iat` before `tokens_valid_after` gets 401. (why: [ADR-0007](../../decisions/0007-web-rendering-and-auth-transport.md))
+  - The sign-in button has no design in T-05. T-10 gives it the design of D-02.
+  - The first migration already has `tokens_valid_after` (T-06). T-05 adds no migration.
+- **Out of scope:**
+  - the design of the button (T-10), the sign-in wall (T-21) and the invite-only gate (T-33)
+  - phone OTP and the age declaration (PC-34)
+  - a Content-Security-Policy, and calls from Vercel previews to the API
