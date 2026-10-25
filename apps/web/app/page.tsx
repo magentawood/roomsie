@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
 import { healthResponse, meResponse } from '@roomsie/contract'
 import { firebaseAuth } from './firebase'
@@ -50,7 +51,10 @@ export default function Home() {
             onClick={() =>
               signInWithPopup(firebaseAuth(), new GoogleAuthProvider()).then(
                 () => setSignInError(null),
-                (err: Error) => setSignInError(err.message),
+                (err: unknown) =>
+                  setSignInError(
+                    err instanceof FirebaseError && err.code === 'auth/popup-closed-by-user' ? null : String(err),
+                  ),
               )
             }
           >
