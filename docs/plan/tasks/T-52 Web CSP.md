@@ -8,6 +8,7 @@ start: 2026-10-27
 end: 2026-10-28
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/135
 tags:
   - task
   - p1
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P1 Platform]], task 11 of 11  
 **When:** Tue 27 Oct → Wed 28 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#135](https://github.com/magentawood/roomsie/issues/135)
 
 The browser runs only our own scripts, so an injected script cannot steal a sign-in.
 
