@@ -18,7 +18,7 @@ browser ── Google popup ──▶ Firebase ──▶ ID token (in memory)
           │
           API: verify with the cached Google keys
              ─▶ find the users row by the Firebase uid, or make it
-             ─▶ iat before tokens_valid_after?  401
+             ─▶ auth_time before tokens_valid_after?  401
              ─▶ status not active?               403
              ─▶ 200 { id, status }
 ```
@@ -37,8 +37,9 @@ browser ── Google popup ──▶ Firebase ──▶ ID token (in memory)
 
 ## Gotchas
 
-- The first sign-in makes the `users` row with `tokens_valid_after` at the `iat` of its token. With the default `now()`, the first token gets 401.
-- `iat` is in seconds, and `tokens_valid_after` is in milliseconds. A token from the same second as a revocation gets 401. The next token works.
+- Compare `auth_time`, not `iat`. Firebase refreshes the ID token each hour with a new `iat`, so an `iat` check lets a revoked session back in.
+- The first sign-in makes the `users` row with `tokens_valid_after` at the `auth_time` of its token. With the default `now()`, the first token gets 401.
+- `auth_time` is in seconds, and `tokens_valid_after` is in milliseconds. A sign-in in the same second as a revocation gets 401. The next sign-in works.
 - If the API cannot get the keys of Google, it gives 500, not 401. A 401 tells the user to sign in again, and that does not help.
 - `next build` runs without the Firebase settings, because Firebase starts only in the browser.
 - A new domain must be in the authorized domains of Firebase. If not, the popup gives `auth/unauthorized-domain`.

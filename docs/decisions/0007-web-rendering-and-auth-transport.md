@@ -30,9 +30,11 @@
 mechanism.** It is the same on web, Android and iOS. We use no session cookies.
 
 **3. `users.tokens_valid_after timestamptz not null default now()` ships in the
-first migration.** The check is in the auth middleware from day one. The
-first sign-in makes the row with `tokens_valid_after` at the `iat` of its
-token, because that token is older than the row.
+first migration.** The check is in the auth middleware from day one. It
+compares the `auth_time` of the token, the time of the sign-in. Firebase
+refreshes the ID token each hour with a new `iat`, but the same `auth_time`.
+Thus, a revocation holds until the person signs in again. The first sign-in
+makes the row with `tokens_valid_after` at the `auth_time` of its token.
 
 **4. The auth middleware also rejects a user whose `status` is not `active`.**
 A suspended user can sign in again and get a new token. The new token passes
@@ -76,7 +78,7 @@ table (ADR 0005 Rule 1), so we add one column and one check:
 
 ```ts
 // after verifying the JWT signature
-if (decoded.iat * 1000 < user.tokens_valid_after.getTime()) throw unauthorized()
+if (decoded.auth_time * 1000 < user.tokens_valid_after.getTime()) throw unauthorized()
 ```
 
 If we set `tokens_valid_after = now()`, all the sessions of that user stop
@@ -91,8 +93,8 @@ row that the API already loaded.
 
 ## Consequences
 
-- The API rejects a request with an invalid signature, or with an `iat` older
-  than `tokens_valid_after` (401). It rejects a user who is not active (403).
+- The API rejects a request with an invalid signature, or with an `auth_time`
+  older than `tokens_valid_after` (401). It rejects a user who is not active (403).
 - We must configure CORS on `apps/api` for the web origin.
 - The ID token is in JavaScript, so it is XSS-reachable. The mitigations are a
   strict Content-Security-Policy, the 1-hour expiry, and the instant revocation
