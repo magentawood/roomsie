@@ -92,9 +92,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
+- [Message requests](learn/message-requests.md)
+- [Model hosting and where user text goes](learn/model-hosting-and-data.md)
 - [Form A and intent](learn/form-a-and-intent.md)
 - [Local development with Docker](learn/local-dev-with-docker.md)
 - [CI checks](learn/ci-checks.md)
-- [pnpm, Corepack and Turborepo](learn/pnpm-and-corepack.md)
-- [Secret scanning](learn/secret-scanning.md)
 <!-- learn-newest:end -->

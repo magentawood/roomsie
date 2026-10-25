@@ -38,8 +38,8 @@ Decide how two people connect, and how we keep them safe.
 - [[T-46 DigiLocker verification]]
 
 ## Done when
-- [ ] Each call in docs/product-calls/connect-and-trust.md has an answer from the product team
-- [ ] Each answer is in its decision record, and the call is not in the file
+- [x] Each call in docs/product-calls/connect-and-trust.md has an answer from the product team · [#132](https://github.com/magentawood/roomsie/pull/132)
+- [x] Each answer is in its decision record, and the call is not in the file · [#132](https://github.com/magentawood/roomsie/pull/132)
 
 ^done
 
@@ -86,3 +86,13 @@ Decide how two people connect, and how we keep them safe.
     - F-07: new items: "It says that chat text goes to DeepSeek, which stores it in China". "The team emails DeepSeek to opt out of training before launch". "The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them".
     - F-08: "Rules exist for when to suspend a person and how fast to respond" becomes "The moderator confirms the rules of PD18, or changes them".
 - **Out of scope:** the code of the tasks above (T-16a, T-18a, T-19, T-41, T-44, T-46), the schema columns for gender and "Who can move in" (T-16a, T-41), and the designs (the drafts page of the Product file).
+
+## Log
+
+- **2026-10-25 · [#132](https://github.com/magentawood/roomsie/pull/132)**
+  - **Change:** each connect, trust and safety call has an answer. PD17 (message requests, no phone numbers), PD18 (moderation) and PD19 (retention) are new. PD7, PD8 and seven more records follow the answers. T-18a becomes the message request API, and eleven tasks follow.
+  - **Why:** [PD17](../../decisions/pd-17-connect-and-contact.md), [PD18](../../decisions/pd-18-moderation.md), [PD19](../../decisions/pd-19-retention.md), [PD7](../../decisions/pd-07-models.md), [PD8](../../decisions/pd-08-verification.md)
+  - **Ticked:** both items.
+  - **Not done:** none. The moderator (F-08) and the privacy drafter (F-07) confirm their decisions later.
+  - **Learn:** [Message requests](../../learn/message-requests.md), [Model hosting and where user text goes](../../learn/model-hosting-and-data.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md#2026-10-25--f-13-the-connect-trust-and-safety-calls-have-answers)
