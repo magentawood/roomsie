@@ -32,11 +32,11 @@ Delete the account and data correctly: profile, photos and messages are really r
 - [[T-44 Messages API]]
 
 ## Done when
-- [x] `DELETE /v1/me` deletes the account. The settings button is in T-16b
-- [x] The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44
-- [x] `tokens_valid_after` is set to now, thus every session ends
-- [x] The chat turns of the person are deleted too
-- [x] The `users` row stays as a tombstone. A new sign-in after a deletion makes a new, empty account
+- [x] `DELETE /v1/me` deletes the account. The settings button is in T-16b · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44 · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] `tokens_valid_after` is set to now, thus every session ends · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The chat turns of the person are deleted too · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The `users` row stays as a tombstone. A new sign-in after a deletion makes a new, empty account · [#142](https://github.com/magentawood/roomsie/pull/142)
 
 ^done
 
