@@ -5,7 +5,6 @@ const tones: Record<Tone, { pill: string; dot: string }> = {
   gray: { pill: 'border-badge-gray bg-badge-gray text-badge-gray', dot: 'bg-dot-gray' },
 }
 
-/** A small pill with a dot, as "Live" and "Inactive". */
 export function Badge({ tone, children }: { tone: Tone; children: string }) {
   return (
     <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${tones[tone].pill}`}>

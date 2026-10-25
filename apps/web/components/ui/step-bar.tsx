@@ -1,4 +1,3 @@
-/** "Step 2/7" and one segment for each step. */
 export function StepBar({ step, total }: { step: number; total: number }) {
   return (
     <div className="flex flex-col gap-1.5">

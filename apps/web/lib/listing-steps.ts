@@ -1,10 +1,11 @@
-import { listingEditBody, type goLiveFields, type ListingEdit, type ListingKind, type ListingResponse } from '@roomsie/contract'
+import { listingEditBody, listingEdits, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse } from '@roomsie/contract'
 
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
 export type StepId = 'kind' | 'where' | 'nearby' | 'place' | 'rent' | 'rules' | 'people' | 'photos'
 type Field = keyof ListingEdit
 
-export function listingSteps(kind: ListingKind): StepId[] {
+/** Before the kind is picked, the flow shows the seven steps of most kinds. */
+export function listingSteps(kind: ListingKind | null): StepId[] {
   return kind === 'room_in_flat'
     ? ['kind', 'where', 'nearby', 'place', 'rent', 'rules', 'people', 'photos']
     : ['kind', 'where', 'nearby', 'place', 'rent', 'rules', 'photos']
@@ -34,8 +35,7 @@ export function stepFields(kind: ListingKind, step: StepId): Field[] {
       return ['nearestStation', 'walkStation', 'walkBus', 'walkMarket', 'walkGym', 'walkMall']
     case 'place':
       return [
-        ...(isFlat(kind) ? ['placeType' as const, 'furnishing' as const] : ['sharing' as const, 'bedsFree' as const, 'meals' as const, 'curfew' as const]),
-        ...(kind === 'room_in_flat' ? ['roomType' as const] : []),
+        ...(isFlat(kind) ? ['placeType' as const, 'furnishing' as const, 'roomType' as const] : ['sharing' as const, 'bedsFree' as const, 'meals' as const, 'curfew' as const]),
         'bathroom',
         ...(isFlat(kind) ? ['floor' as const, 'carpetAreaSqft' as const] : []),
         'balcony', 'insideItems', 'amenities',
@@ -77,19 +77,42 @@ export function toEditValues(listing: ListingResponse): ListingEdit {
   }
 }
 
-const missingSteps: Record<(typeof goLiveFields)[number], StepId> = {
+/** The step of each field that a 422 lists. */
+export const missingStep: Record<GoLiveField, StepId> = {
   areaSlug: 'where', pgName: 'where', brokerage: 'rent', rates: 'rent', flatmatesConsent: 'people',
 }
-export const stepForMissing = (field: (typeof goLiveFields)[number]) => missingSteps[field]
+
+const amount = 'Enter an amount from ₹0 to ₹10 crore.'
+const checkText: Record<string, string> = {
+  pincode: 'A pincode has 6 digits.',
+  name: 'Add a name.',
+  age: 'Enter an age from 18 to 99.',
+  floor: 'Enter a floor from -3 to 200.',
+  carpetAreaSqft: 'Enter an area from 1 to 1,00,000 sq ft.',
+  rent: amount,
+  deposit: amount,
+  maintenance: amount,
+  brokerage: amount,
+}
+
+/**
+ * The values of a step that the API would refuse, checked with the schema of the kind before the save.
+ * Each key is a field path, as "pincode" or "flatmates.0.name", and each value is the line to show under the field.
+ */
+export function stepErrors(kind: ListingKind, body: ListingEdit): Record<string, string> {
+  const parsed = listingEdits[kind].safeParse(body)
+  if (parsed.success) return {}
+  return Object.fromEntries(parsed.error.issues.map((i) => [i.path.join('.'), checkText[String(i.path.at(-1))] ?? 'Check this value.']))
+}
 
 export type CardAction = 'edit' | 'continue' | 'filled' | 'deactivate' | 'live'
-const actions: Record<ListingResponse['status'], CardAction[]> = {
+/** The buttons of a card in My listings, for each status. */
+export const cardActions: Record<ListingResponse['status'], CardAction[]> = {
   live: ['edit', 'filled', 'deactivate'],
   inactive: ['edit', 'live', 'filled'],
   filled: ['edit', 'live'],
   draft: ['continue'],
 }
-export const cardActions = (status: ListingResponse['status']) => actions[status]
 
 /* Labels of the single and pick-many choices, as the designs write them. */
 export const labels = {

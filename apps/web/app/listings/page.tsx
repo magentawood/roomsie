@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowRight, CheckSquare, Edit05, Home02, Key01, Plus, RefreshCw01, SlashCircle01 } from '@untitledui/icons'
-import { areasResponse, incompleteListingResponse, listingResponse, myListingsResponse, type ListingResponse } from '@roomsie/contract'
-import { api, ApiError, errorText } from '../../lib/api'
+import { listingResponse, myListingsResponse, type ListingResponse } from '@roomsie/contract'
+import { api, errorText, missingFields } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
+import { queryKeys, useAreas } from '../../lib/queries'
 import { cardActions, listingTitle, rentLine, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
@@ -22,15 +22,11 @@ const statusBadge: Record<ListingResponse['status'], { tone: 'success' | 'error'
 
 function ListingCard({ user, listing, areaName }: { user: User; listing: ListingResponse; areaName?: string }) {
   const queryClient = useQueryClient()
-  const [error, setError] = useState<string | null>(null)
   const status = useMutation({
     mutationFn: (to: 'live' | 'inactive' | 'filled') => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: to } }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['listings', 'mine'] }),
-    onError: (err) => {
-      const incomplete = err instanceof ApiError && err.status === 422 ? incompleteListingResponse.safeParse(err.body) : null
-      setError(incomplete?.success ? 'Some details are missing. Open Edit, then publish it again.' : errorText(err))
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.myListings }),
   })
+  const error = status.isError && (missingFields(status.error) ? 'Some details are missing. Open Edit, then publish it again.' : errorText(status.error))
   const address = [listing.building, listing.street, areaName].filter(Boolean).join(', ')
   const action = (a: CardAction) => {
     const common = { variant: 'secondary' as const, size: 'xs' as const, disabled: status.isPending }
@@ -58,7 +54,7 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
           <span className="font-medium text-secondary">{rentLine(listing)}</span>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">{cardActions(listing.status).map(action)}</div>
+      <div className="flex flex-wrap gap-2">{cardActions[listing.status].map(action)}</div>
       {error && <p role="alert" className="text-sm text-error-primary md:basis-full">{error}</p>}
     </li>
   )
@@ -66,8 +62,8 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
 
 function MyListings() {
   const { user } = useAuth()
-  const mine = useQuery({ queryKey: ['listings', 'mine'], queryFn: () => api(user!, '/v1/listings/mine', myListingsResponse), enabled: !!user })
-  const areas = useQuery({ queryKey: ['areas'], queryFn: () => api(user!, '/v1/areas', areasResponse), enabled: !!user, staleTime: Infinity })
+  const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user!, '/v1/listings/mine', myListingsResponse), enabled: !!user })
+  const areas = useAreas(user)
   const areaNames = Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))
   return (
     <>

@@ -67,7 +67,14 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const parsed = listingEdits[listing.kind].safeParse(req.body)
-    if (!parsed.success) return reply.code(400).send({ error: `not a field of a ${listing.kind} listing` })
+    if (!parsed.success) {
+      const issue = parsed.error.issues[0]!
+      return reply.code(400).send({
+        error: issue.code === 'unrecognized_keys'
+          ? `not a field of a ${listing.kind} listing: ${issue.keys.join(', ')}`
+          : `not valid for a ${listing.kind} listing: ${String(issue.path[0])}`,
+      })
+    }
     const edit: ListingEdit = mask(parsed.data)
     const { rates: newRates, flatmates: newFlatmates, ...columns } = edit
 

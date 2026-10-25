@@ -1,9 +1,8 @@
 'use client'
 
-import { useEffect, useRef, type ComponentType, type ReactNode, type SVGProps } from 'react'
+import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
-
-type Icon = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>
+import type { Icon } from './button'
 
 /** A dialog over the page. Escape and the close button call onClose. Destructive modals show the icon in the error colour. */
 export function Modal({ icon: ModalIcon, title, children, actions, onClose, destructive }: { icon: Icon; title: string; children: ReactNode; actions: ReactNode; onClose: () => void; destructive?: boolean }) {
