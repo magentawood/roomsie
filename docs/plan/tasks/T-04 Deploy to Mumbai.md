@@ -2,7 +2,7 @@
 id: T-04
 title: "Deploy web and API to Mumbai"
 owner: "P1 Platform"
-sequence: "3 of 9"
+sequence: "3 of 11"
 hours: 3
 start: 2026-10-01
 end: 2026-10-03
@@ -17,7 +17,7 @@ tags:
 
 # T-04 · Deploy web and API to Mumbai
 
-**Owner:** [[P1 Platform]], task 3 of 9  
+**Owner:** [[P1 Platform]], task 3 of 11  
 **When:** Thu 1 Oct → Sat 3 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#30](https://github.com/magentawood/roomsie/issues/30)
@@ -32,6 +32,7 @@ Real machines in Mumbai, so anyone on the internet can use the site.
 - [[F-02 Domain]]
 - [[T-25 Uptime monitor]]
 - [[T-40 Nightly backups]]
+- [[T-51 Migrations in the deploy ⚑]]
 
 ## Done when
 - [x] Web is on Vercel, pinned to bom1. The API is on AWS Lightsail in ap-south-1, built from a Dockerfile · [#110](https://github.com/magentawood/roomsie/pull/110)

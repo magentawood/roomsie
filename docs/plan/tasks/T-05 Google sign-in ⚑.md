@@ -2,7 +2,7 @@
 id: T-05
 title: "Google sign-in and token checks in the API"
 owner: "P1 Platform"
-sequence: "2 of 9"
+sequence: "2 of 11"
 hours: 6
 start: 2026-09-26
 end: 2026-10-01
@@ -18,7 +18,7 @@ tags:
 
 # T-05 · Google sign-in and token checks in the API
 
-**Owner:** [[P1 Platform]], task 2 of 9  
+**Owner:** [[P1 Platform]], task 2 of 11  
 **When:** Sat 26 Sep → Thu 1 Oct · 6 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#20](https://github.com/magentawood/roomsie/issues/20)
@@ -45,6 +45,7 @@ Log in with Google. The server checks the user on each request.
 - [[T-46 DigiLocker verification]]
 - [[T-47 Saved]]
 - [[T-48 Onboarding questions]]
+- [[T-52 Web CSP]]
 
 ## Done when
 - [x] Google sign-in works through Firebase on the web. The token stays in memory · [#131](https://github.com/magentawood/roomsie/pull/131)

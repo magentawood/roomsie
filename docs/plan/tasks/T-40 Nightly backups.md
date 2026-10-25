@@ -2,7 +2,7 @@
 id: T-40
 title: "Nightly database backups to R2"
 owner: "P1 Platform"
-sequence: "8 of 9"
+sequence: "8 of 11"
 hours: 2
 start: 2026-10-08
 end: 2026-10-10
@@ -17,7 +17,7 @@ tags:
 
 # T-40 · Nightly database backups to R2
 
-**Owner:** [[P1 Platform]], task 8 of 9  
+**Owner:** [[P1 Platform]], task 8 of 11  
 **When:** Thu 8 Oct → Sat 10 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#69](https://github.com/magentawood/roomsie/issues/69)

@@ -2,7 +2,7 @@
 id: T-39
 title: "Analytics in its own database, with scheduled jobs"
 owner: "P1 Platform"
-sequence: "7 of 9"
+sequence: "7 of 11"
 hours: 3
 start: 2026-10-06
 end: 2026-10-08
@@ -17,7 +17,7 @@ tags:
 
 # T-39 · Analytics in its own database, with scheduled jobs
 
-**Owner:** [[P1 Platform]], task 7 of 9  
+**Owner:** [[P1 Platform]], task 7 of 11  
 **When:** Tue 6 Oct → Thu 8 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#68](https://github.com/magentawood/roomsie/issues/68)
