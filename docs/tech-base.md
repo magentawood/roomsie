@@ -94,7 +94,7 @@ These are the newest learn pages. The full list is in [the Learn index](learn/RE
 
 - [Message requests](learn/message-requests.md)
 - [Model hosting and where user text goes](learn/model-hosting-and-data.md)
+- [Sign-in and tokens](learn/sign-in-and-tokens.md)
 - [Form A and intent](learn/form-a-and-intent.md)
 - [Local development with Docker](learn/local-dev-with-docker.md)
-- [CI checks](learn/ci-checks.md)
 <!-- learn-newest:end -->

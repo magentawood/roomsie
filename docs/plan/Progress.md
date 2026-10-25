@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**46 of 278 done · 17%**
+**49 of 278 done · 18%**
 
 `████░░░░░░░░░░░░░░░░░░░░`
 
@@ -22,7 +22,7 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 3 / 9 | 10 / 29 | 34% |
+| [[P1 Platform]] | 4 / 9 | 13 / 29 | 45% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 1 / 14 | 8 / 62 | 13% |
 | [[P4 Content and moderation]] | 0 / 7 | 0 / 25 | 0% |
@@ -48,14 +48,16 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**40 free tasks are open · 159 build hours.**
+**39 free tasks are open · 153 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
-| 0 | [[T-05 Google sign-in ⚑]] | P1 | 6 | ⬜ can start | 18 | [#20](https://github.com/magentawood/roomsie/issues/20) |
+| 0 | [[T-18a Message request API ⚑]] | P5 | 4 | ⬜ can start | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| 0 | [[T-16a Profile API ⚑]] | P5 | 5 | ⬜ can start | 2 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| 0 | [[T-41 Listings API]] | P3 | 8 | ⬜ can start | 3 | [#117](https://github.com/magentawood/roomsie/issues/117) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
@@ -64,33 +66,30 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
 | 0 | [[T-20 Account deletion]] | P4 | 3 | ⬜ can start | 0 | [#46](https://github.com/magentawood/roomsie/issues/46) |
+| 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
+| 0 | [[T-46 DigiLocker verification]] | P3 | 8 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | 1 | [[T-14 Match query ⚑]] | P3 | 6 | 🟡 in progress | 6 | [#27](https://github.com/magentawood/roomsie/issues/27) |
-| 1 | [[T-18a Message request API ⚑]] | P5 | 4 | ⬜ waits | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| 1 | [[T-16a Profile API ⚑]] | P5 | 5 | ⬜ waits | 2 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
-| 1 | [[T-41 Listings API]] | P3 | 8 | ⬜ waits | 3 | [#117](https://github.com/magentawood/roomsie/issues/117) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-35 Form B contract]] | P2 | 3 | ⬜ waits | 1 | [#64](https://github.com/magentawood/roomsie/issues/64) |
+| 1 | [[T-44 Messages API]] | P3 | 8 | ⬜ waits | 1 | [#120](https://github.com/magentawood/roomsie/issues/120) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
-| 1 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ waits | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 1 | [[T-39 Analytics database]] | P1 | 3 | ⬜ waits | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
-| 1 | [[T-46 DigiLocker verification]] | P3 | 8 | ⬜ waits | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| 1 | [[T-42 Listing flow screens]] | P3 | 8 | ⬜ waits | 0 | [#118](https://github.com/magentawood/roomsie/issues/118) |
+| 1 | [[T-47 Saved]] | P3 | 4 | ⬜ waits | 0 | [#123](https://github.com/magentawood/roomsie/issues/123) |
 | 1 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ waits | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| 2 | [[T-44 Messages API]] | P3 | 8 | ⬜ waits | 1 | [#120](https://github.com/magentawood/roomsie/issues/120) |
 | 2 | [[T-19 Report and block]] | P4 | 5 | ⬜ waits | 0 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
-| 2 | [[T-42 Listing flow screens]] | P3 | 8 | ⬜ waits | 0 | [#118](https://github.com/magentawood/roomsie/issues/118) |
-| 2 | [[T-47 Saved]] | P3 | 4 | ⬜ waits | 0 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| 2 | [[T-45 Messages screens]] | P3 | 6 | ⬜ waits | 0 | [#121](https://github.com/magentawood/roomsie/issues/121) |
 | 3 | [[T-34 Router ⚑]] | P2 | 6 | ⬜ waits | 0 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | 3 | [[T-21 Turn cap and spend ceiling]] | P2 | 5 | ⬜ waits | 1 | [#41](https://github.com/magentawood/roomsie/issues/41) |
 | 3 | [[T-17 Carry chat into account]] | P2 | 2 | ⬜ waits | 0 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | 3 | [[T-27 Eval run]] | P2 | 3 | ⬜ waits | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | 3 | [[T-36 Observer]] | P2 | 8 | ⬜ waits | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
-| 3 | [[T-45 Messages screens]] | P3 | 6 | ⬜ waits | 0 | [#121](https://github.com/magentawood/roomsie/issues/121) |
 | 4 | [[T-29 Abuse test]] | P1 | 1 | ⬜ waits | 0 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 
 ### Waits on product calls
@@ -133,22 +132,22 @@ flowchart LR
   T06["T-06 ⚑<br/>Database schema"]:::done
   T10["T-10 ⚑<br/>Chat screen and split view"]:::ready
   T11["T-11 ⚑<br/>Model wrapper"]:::todo
-  T05["T-05 ⚑<br/>Google sign-in"]:::ready
+  T05["T-05 ⚑<br/>Google sign-in"]:::done
   M03["M-03<br/>Eval sentences"]:::ready
   T12["T-12 ⚑<br/>Extraction"]:::todo
   T09["T-09 ⚑<br/>Chip flow"]:::todo
   T14["T-14 ⚑<br/>Match query"]:::doing
   T04["T-04<br/>Deploy to Mumbai"]:::done
-  T16a["T-16a ⚑<br/>Profile API"]:::todo
+  T16a["T-16a ⚑<br/>Profile API"]:::ready
   T03["T-03<br/>CI checks"]:::done
   T13["T-13<br/>Reply writer"]:::todo
   T07["T-07<br/>Error reporting"]:::ready
   T17["T-17<br/>Carry chat into account"]:::todo
   T19["T-19<br/>Report and block"]:::todo
-  T33["T-33<br/>Invite-only gate"]:::todo
+  T33["T-33<br/>Invite-only gate"]:::ready
   T24["T-24<br/>Event logging"]:::ready
   T21["T-21<br/>Turn cap and spend ceiling"]:::todo
-  T18a["T-18a ⚑<br/>Message request API"]:::todo
+  T18a["T-18a ⚑<br/>Message request API"]:::ready
   T20["T-20<br/>Account deletion"]:::ready
   T23b["T-23b<br/>Legal pages"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
@@ -161,11 +160,11 @@ flowchart LR
   T38["T-38<br/>Advisor"]:::todo
   T39["T-39<br/>Analytics database"]:::todo
   T40["T-40<br/>Nightly backups"]:::ready
-  T41["T-41<br/>Listings API"]:::todo
+  T41["T-41<br/>Listings API"]:::ready
   T42["T-42<br/>Listing flow screens"]:::todo
   T44["T-44<br/>Messages API"]:::todo
   T45["T-45<br/>Messages screens"]:::todo
-  T46["T-46<br/>DigiLocker verification"]:::todo
+  T46["T-46<br/>DigiLocker verification"]:::ready
   T47["T-47<br/>Saved"]:::todo
   T48["T-48<br/>Onboarding questions"]:::todo
   T22a["T-22a<br/>Waitlist API"]:::product
@@ -286,12 +285,12 @@ flowchart LR
 
 ---
 
-## P1 Platform — 10/29
+## P1 Platform — 13/29
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
 
-> [!todo]- ⬜ [[T-05 Google sign-in ⚑]] · 0/3
+> [!todo]- ✅ [[T-05 Google sign-in ⚑]] · 3/3
 > ![[T-05 Google sign-in ⚑#^done]]
 
 > [!todo]- ✅ [[T-04 Deploy to Mumbai]] · 3/3
