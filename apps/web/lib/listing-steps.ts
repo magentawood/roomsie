@@ -1,3 +1,4 @@
+import type { z } from 'zod'
 import { listingEditBody, listingEdits, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse } from '@roomsie/contract'
 
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
@@ -22,7 +23,7 @@ export const stepCopy: Record<StepId, { title: string; helper: string }> = {
   photos: { title: 'Photos and description', helper: 'People decide most from the photos. Add up to 5.' },
 }
 
-const isFlat = (kind: ListingKind) => kind !== 'pg'
+export const isFlat = (kind: ListingKind) => kind !== 'pg'
 
 /** The fields that a step saves, for each kind (T-41 contract). */
 export function stepFields(kind: ListingKind, step: StepId): Field[] {
@@ -77,22 +78,25 @@ export function toEditValues(listing: ListingResponse): ListingEdit {
   }
 }
 
-/** The step of each field that a 422 lists. */
-export const missingStep: Record<GoLiveField, StepId> = {
-  areaSlug: 'where', pgName: 'where', brokerage: 'rent', rates: 'rent', flatmatesConsent: 'people',
+/** The line and the step of each field that a 422 lists. */
+export const missingFieldLinks: Record<GoLiveField, { label: string; step: StepId }> = {
+  areaSlug: { label: 'The area', step: 'where' },
+  pgName: { label: 'The name of the PG', step: 'where' },
+  brokerage: { label: 'Your brokerage', step: 'rent' },
+  rates: { label: 'The rent', step: 'rent' },
+  flatmatesConsent: { label: 'The tick "My flatmates agreed to be shown"', step: 'people' },
 }
 
-const amount = 'Enter an amount from ₹0 to ₹10 crore.'
-const checkText: Record<string, string> = {
-  pincode: 'A pincode has 6 digits.',
-  name: 'Add a name.',
-  age: 'Enter an age from 18 to 99.',
-  floor: 'Enter a floor from -3 to 200.',
-  carpetAreaSqft: 'Enter an area from 1 to 1,00,000 sq ft.',
-  rent: amount,
-  deposit: amount,
-  maintenance: amount,
-  brokerage: amount,
+const inIndianDigits = (n: number | bigint) => n.toLocaleString('en-IN')
+
+/** The line under a refused field. The limits come from the issue, so they follow the contract. */
+function checkLine(issue: z.core.$ZodIssue) {
+  const field = issue.path.at(-1)
+  if (field === 'name') return 'Add a name.'
+  if (field === 'pincode') return 'A pincode has 6 digits.'
+  if (issue.code === 'too_small') return `Enter ${inIndianDigits(issue.minimum)} or more.`
+  if (issue.code === 'too_big') return `Enter ${inIndianDigits(issue.maximum)} or less.`
+  return 'Check this value.'
 }
 
 /**
@@ -102,7 +106,7 @@ const checkText: Record<string, string> = {
 export function stepErrors(kind: ListingKind, body: ListingEdit): Record<string, string> {
   const parsed = listingEdits[kind].safeParse(body)
   if (parsed.success) return {}
-  return Object.fromEntries(parsed.error.issues.map((i) => [i.path.join('.'), checkText[String(i.path.at(-1))] ?? 'Check this value.']))
+  return Object.fromEntries(parsed.error.issues.map((i) => [i.path.join('.'), checkLine(i)]))
 }
 
 export type CardAction = 'edit' | 'continue' | 'filled' | 'deactivate' | 'live'

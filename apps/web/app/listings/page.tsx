@@ -10,10 +10,11 @@ import { queryKeys, useAreas } from '../../lib/queries'
 import { cardActions, listingTitle, rentLine, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
-import { Badge } from '../../components/ui/badge'
+import { MissingNotice } from '../../components/listings/missing-notice'
+import { Badge, type Tone } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 
-const statusBadge: Record<ListingResponse['status'], { tone: 'success' | 'error' | 'gray'; label: string }> = {
+const statusBadge: Record<ListingResponse['status'], { tone: Tone; label: string }> = {
   live: { tone: 'success', label: 'Live' },
   inactive: { tone: 'error', label: 'Inactive' },
   filled: { tone: 'gray', label: 'Filled' },
@@ -26,7 +27,7 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
     mutationFn: (to: 'live' | 'inactive' | 'filled') => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: to } }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.myListings }),
   })
-  const error = status.isError && (missingFields(status.error) ? 'Some details are missing. Open Edit, then publish it again.' : errorText(status.error))
+  const missing = status.isError ? missingFields(status.error) : null
   const address = [listing.building, listing.street, areaName].filter(Boolean).join(', ')
   const action = (a: CardAction) => {
     const common = { variant: 'secondary' as const, size: 'xs' as const, disabled: status.isPending }
@@ -40,7 +41,7 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
   }
   const photo = listing.photos[0]
   return (
-    <li className="flex flex-col gap-3 rounded-md border border-secondary bg-primary p-4 md:flex-row md:items-center md:gap-5 md:p-5">
+    <li className="flex flex-col gap-3 rounded-md border border-secondary bg-primary p-4 md:flex-row md:flex-wrap md:items-center md:gap-5 md:p-5">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {photo
           ? <img src={photo.url} alt="" className="size-16 shrink-0 rounded-sm border border-primary object-cover" />
@@ -55,7 +56,8 @@ function ListingCard({ user, listing, areaName }: { user: User; listing: Listing
         </div>
       </div>
       <div className="flex flex-wrap gap-2">{cardActions[listing.status].map(action)}</div>
-      {error && <p role="alert" className="text-sm text-error-primary md:basis-full">{error}</p>}
+      {missing && <div className="md:basis-full"><MissingNotice listing={listing} missing={missing} /></div>}
+      {status.isError && !missing && <p role="alert" className="text-sm text-error-primary md:basis-full">{errorText(status.error)}</p>}
     </li>
   )
 }

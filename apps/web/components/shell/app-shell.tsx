@@ -13,9 +13,9 @@ const navLooks = {
 }
 
 function NavItem({ icon: ItemIcon, label, href, active, look }: { icon: Icon; label: string; href?: string; active?: boolean; look: keyof typeof navLooks }) {
-  const l = navLooks[look]
-  const classes = `flex items-center font-medium ${l.item} ${active ? l.active : href ? l.link : 'text-quaternary'}`
-  const content = (<><ItemIcon size={20} aria-hidden className={l.icon} />{label}</>)
+  const style = navLooks[look]
+  const classes = `flex items-center font-medium ${style.item} ${active ? style.active : href ? style.link : 'text-quaternary'}`
+  const content = (<><ItemIcon size={20} aria-hidden className={style.icon} />{label}</>)
   if (href) return <Link href={href} className={classes} aria-current={active ? 'page' : undefined}>{content}</Link>
   // A screen that a later task builds: it shows, but it does nothing yet.
   return <span className={classes} aria-disabled title="Coming soon">{content}</span>

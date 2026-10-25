@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
@@ -10,18 +9,15 @@ import { z } from 'zod'
 import { listingResponse, type AreasResponse, type GoLiveField, type ListingEdit, type ListingResponse } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../../../lib/api'
 import { useAuth } from '../../../../lib/auth'
-import { listingSteps, missingStep, stepBody, stepCopy, stepErrors, toEditValues, type StepId } from '../../../../lib/listing-steps'
+import { listingSteps, stepBody, stepCopy, stepErrors, toEditValues, type StepId } from '../../../../lib/listing-steps'
 import { queryKeys, useAreas } from '../../../../lib/queries'
 import { FlowFrame } from '../../../../components/listings/flow-frame'
+import { MissingNotice } from '../../../../components/listings/missing-notice'
 import { KindStep, NearbyStep, PeopleStep, PhotosStep, PlaceStep, RentStep, RulesStep, WhereStep } from '../../../../components/listings/steps'
 import { AppShell } from '../../../../components/shell/app-shell'
 import { SignInGate } from '../../../../components/shell/sign-in-gate'
 import { Button } from '../../../../components/ui/button'
 import { Modal } from '../../../../components/ui/modal'
-
-const missingLabels: Record<GoLiveField, string> = {
-  areaSlug: 'The area', pgName: 'The name of the PG', brokerage: 'Your brokerage', rates: 'The rent', flatmatesConsent: 'The tick "My flatmates agreed to be shown"',
-}
 
 function Step({ user, listing, areas, stepNumber }: { user: User; listing: ListingResponse; areas: AreasResponse['areas']; stepNumber: number }) {
   const router = useRouter()
@@ -39,11 +35,14 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
   const [checked, setChecked] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const set = (patch: ListingEdit) => setValues((v) => ({ ...v, ...patch }))
-  const stepHref = (id: StepId) => `/listings/${listing.id}/${steps.indexOf(id) + 1}`
 
   const save = useMutation({
     mutationFn: () => api(user, `/v1/listings/${listing.id}`, listingResponse, { method: 'PATCH', body: stepBody(listing.kind, stepId, values) }),
-    onSuccess: (saved) => queryClient.setQueryData(queryKeys.listing(listing.id), saved),
+    // The saved text is masked (PD17), so the form shows the saved values if the step stays open.
+    onSuccess: (saved) => {
+      queryClient.setQueryData(queryKeys.listing(listing.id), saved)
+      setValues(toEditValues(saved))
+    },
   })
   const publish = useMutation({
     mutationFn: () => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: 'live' } }),
@@ -58,12 +57,6 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
   const errors = checked ? refused : {}
   const hasErrors = Object.keys(errors).length > 0
 
-  /** A 422 lists what is missing (T-41). Each line links to its step. */
-  const showSaveError = (err: unknown) => {
-    const fields = missingFields(err)
-    if (fields) setMissing(fields)
-    setError(fields ? null : errorText(err))
-  }
   const saveAndGo = async (target: 'next' | 'previous' | 'draft' | 'publish') => {
     setError(null)
     if (Object.keys(refused).length) {
@@ -80,7 +73,9 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
       else if (target === 'previous') router.push(stepNumber > 1 ? `/listings/${listing.id}/${stepNumber - 1}` : '/listings')
       else router.push('/listings')
     } catch (err) {
-      showSaveError(err)
+      const fields = missingFields(err)
+      if (fields) setMissing(fields)
+      setError(fields ? null : errorText(err))
     }
   }
   const busy = save.isPending || publish.isPending
@@ -111,14 +106,7 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
       <FlowFrame step={stepNumber} total={steps.length} title={stepCopy[stepId].title}
         helper={stepId === 'kind' ? 'The kind of a listing can’t change. To list a different kind, make a new listing.' : stepCopy[stepId].helper}
         error={error ?? (hasErrors ? 'Fix the fields in red, then try again.' : null)}
-        notice={missing.length > 0 && (
-          <div role="alert" className="flex flex-col gap-2 rounded-md border border-error bg-badge-error p-3 text-sm text-error-primary">
-            <p className="font-semibold">Add these before your listing goes live:</p>
-            <ul className="flex flex-col gap-1">
-              {missing.map((field) => <li key={field}><Link className="underline" href={stepHref(missingStep[field])}>{missingLabels[field]}</Link></li>)}
-            </ul>
-          </div>
-        )}
+        notice={missing.length > 0 && <MissingNotice listing={listing} missing={missing} />}
         previous={{ disabled: busy, onClick: () => saveAndGo('previous') }}
         actions={(
           <>
@@ -131,7 +119,7 @@ function Step({ user, listing, areas, stepNumber }: { user: User; listing: Listi
         {stepContent}
       </FlowFrame>
       {confirmDelete && (
-        <Modal icon={Trash01} destructive title="Delete this listing?" onClose={() => setConfirmDelete(false)}
+        <Modal icon={Trash01} title="Delete this listing?" onClose={() => setConfirmDelete(false)}
           actions={(
             <>
               <Button variant="secondary" size="lg" className="flex-1" onClick={() => setConfirmDelete(false)}>Keep listing</Button>

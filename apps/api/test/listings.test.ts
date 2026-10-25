@@ -71,7 +71,7 @@ describe('a draft', () => {
     expect(pg).toMatchObject({ pgName: 'Shivraj PG', sharing: ['double'], meals: 'veg_included', whoCanMoveIn: 'men' })
     const wrongKind = await call('lister', 'PATCH', `/${pg.id}`, { placeType: '2bhk' })
     expect(wrongKind.statusCode).toBe(400)
-    expect(wrongKind.json()).toEqual({ error: 'not a field of a pg listing: placeType' })
+    expect(wrongKind.json()).toEqual({ error: 'not valid for a pg listing: placeType' })
     const room = await draft('room_in_flat')
     expect((await call('lister', 'PATCH', `/${room.id}`, { meals: 'none' })).statusCode).toBe(400)
     const notForRoom = await call('lister', 'PATCH', `/${room.id}`, { whoIsWelcome: ['families'] })
@@ -101,6 +101,15 @@ describe('a draft', () => {
     const edited = listingResponse.parse((await call('lister', 'PATCH', `/${room.id}`, { rates: [{ rent: 17000 }], flatmates: [{ name: 'Yash' }] })).json())
     expect(edited.rates).toEqual([{ sharing: null, rent: 17000, deposit: null }])
     expect(edited.flatmates.map((f) => f.name)).toEqual(['Yash'])
+  })
+
+  it('drops the rent of a sharing type that a PG no longer has', async () => {
+    const pg = await draft('pg', {
+      sharing: ['single', 'double'],
+      rates: [{ sharing: 'single', rent: 15000 }, { sharing: 'double', rent: 9000 }],
+    })
+    const edited = listingResponse.parse((await call('lister', 'PATCH', `/${pg.id}`, { sharing: ['double'] })).json())
+    expect(edited.rates).toEqual([{ sharing: 'double', rent: 9000, deposit: null }])
   })
 })
 

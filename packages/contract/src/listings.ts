@@ -29,7 +29,7 @@ export const amenities = [
   'piped_gas', 'intercom', 'wifi', 'housekeeping', 'maid', 'cook', 'laundry', 'car_parking', 'rooftop_terrace',
 ] as const
 export const welcomeGroups = ['students', 'working_professionals', 'couples', 'families', 'bachelors'] as const
-const roomWelcomeGroups = ['students', 'working_professionals'] as const
+export const roomWelcomeGroups = ['students', 'working_professionals'] as const
 
 export const listingKind = z.enum(listingKinds)
 export type ListingKind = z.infer<typeof listingKind>
@@ -47,6 +47,10 @@ const pickMany = <T extends readonly [string, ...string[]]>(keys: T) =>
 /** The most photos of a listing, and the most flatmates that it shows. */
 export const maxPhotos = 5
 export const maxFlatmates = 8
+/** The most characters of each free-text field. */
+export const textLimits = {
+  pgName: 80, address: 200, building: 120, street: 120, landmark: 120, nearestStation: 120, description: 2000, flatmateName: 60, whatTheyDo: 80,
+} as const
 
 const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable()
 const rupees = z.int().min(0).max(100_000_000)
@@ -54,22 +58,22 @@ const rupees = z.int().min(0).max(100_000_000)
 export const listingRate = z.strictObject({ rent: rupees, deposit: rupees.nullable().default(null) })
 export const pgRate = listingRate.extend({ sharing: z.enum(sharingTypes) })
 export const listingFlatmate = z.strictObject({
-  name: z.string().trim().min(1).max(60),
+  name: z.string().trim().min(1).max(textLimits.flatmateName),
   age: z.int().min(18).max(99).nullable().default(null),
-  whatTheyDo: optionalText(80).default(null),
+  whatTheyDo: optionalText(textLimits.whatTheyDo).default(null),
   food: z.enum(foodAnswers).nullable().default(null),
   photoKey: photoKey.nullable().default(null),
 })
 
 const commonFields = {
   areaSlug: z.string().min(1).max(60).nullable(),
-  address: optionalText(200),
+  address: optionalText(textLimits.address),
   shareAddress: z.boolean(),
-  building: optionalText(120),
-  street: optionalText(120),
-  landmark: optionalText(120),
+  building: optionalText(textLimits.building),
+  street: optionalText(textLimits.street),
+  landmark: optionalText(textLimits.landmark),
   pincode: z.string().regex(/^\d{6}$/).nullable(),
-  nearestStation: optionalText(120),
+  nearestStation: optionalText(textLimits.nearestStation),
   walkStation: z.enum(walkTimes).nullable(),
   walkBus: z.enum(walkTimes).nullable(),
   walkMarket: z.enum(walkTimes).nullable(),
@@ -89,7 +93,7 @@ const commonFields = {
   guests: z.enum(guestsRules).nullable(),
   whoCanMoveIn: z.enum(whoCanMoveIn).nullable(),
   photoKeys: z.array(photoKey).max(maxPhotos),
-  description: optionalText(2000),
+  description: optionalText(textLimits.description),
 }
 const flatFields = {
   placeType: z.enum(placeTypes).nullable(),
@@ -101,7 +105,7 @@ const flatFields = {
   availableFrom: z.iso.date().nullable(),
 }
 const pgFields = {
-  pgName: optionalText(80),
+  pgName: optionalText(textLimits.pgName),
   sharing: pickMany(sharingTypes),
   bedsFree: z.enum(bedsFree).nullable(),
   meals: z.enum(meals).nullable(),

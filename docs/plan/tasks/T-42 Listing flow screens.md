@@ -61,7 +61,7 @@ The screens where a lister adds a place, and sees and edits their places.
   - "Publish my listing" makes the listing live, with no DigiLocker step. T-46 adds the modal and the gate. The done item about the DigiLocker step stays open, blocked by T-46.
   - "Delete listing" is a link at the bottom of step 1 of a listing that exists. It opens a confirmation: "Its photos are deleted too. You can't undo this." It never looks like a primary action. (styling standard)
   - We design the phone screens on the Figma drafts page before the build: a step, the My listings card and the delete confirmation. Phones use the floating navigation of the designs, not the sidebar. Each screen is checked at 390 px and at 1440 px.
-  - The browser makes each photo 1600 px or less on its long side, as WebP, before the upload. This also removes the EXIF data and its GPS location.
+  - The browser makes each photo 1600 px or less on its long side, as WebP, before the upload. Safari cannot make WebP, so there the photo is a JPEG. This also removes the EXIF data and its GPS location.
   - The actions of a card follow its status. A live listing: Edit, Mark as filled and Deactivate. An inactive listing: Edit, Go live again and Mark as filled. A filled listing: Edit and Go live again. A draft: Continue.
   - A room in a flat has eight steps, with "Who lives here". The other kinds have seven. The fields of each kind come from the T-41 contract and the Figma drafts. A broker flat has the owner-flat fields, and the brokerage on step 5.
   - Step 1 makes the draft with its kind. "Next" and "Previous step" save the step. "Save as Draft" saves the step and opens My listings.

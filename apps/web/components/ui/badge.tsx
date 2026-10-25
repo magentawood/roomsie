@@ -1,4 +1,4 @@
-type Tone = 'success' | 'error' | 'gray'
+export type Tone = 'success' | 'error' | 'gray'
 const tones: Record<Tone, { pill: string; dot: string }> = {
   success: { pill: 'border-badge-success bg-badge-success text-badge-success', dot: 'bg-dot-success' },
   error: { pill: 'border-badge-error bg-badge-error text-badge-error', dot: 'bg-dot-error' },

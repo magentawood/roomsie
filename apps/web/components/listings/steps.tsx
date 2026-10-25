@@ -3,8 +3,8 @@
 import { useMutation } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { Building07, Home02, Home03, Key01, Plus, Trash01, UploadCloud02 } from '@untitledui/icons'
-import { maxFlatmates, maxPhotos, type AreasResponse, type ListingEdit, type ListingKind } from '@roomsie/contract'
-import { labels } from '../../lib/listing-steps'
+import { maxFlatmates, maxPhotos, roomWelcomeGroups, textLimits, type AreasResponse, type ListingEdit, type ListingKind } from '@roomsie/contract'
+import { isFlat, labels } from '../../lib/listing-steps'
 import { uploadPhoto } from '../../lib/upload'
 import { Button, type Icon } from '../ui/button'
 import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
@@ -39,13 +39,13 @@ export function WhereStep({ kind, values, set, errors, areas }: StepProps & { ar
   const areaLabels = Object.fromEntries(areas.map((a) => [a.slug, a.name]))
   return (
     <>
-      {kind === 'pg' && <TextInput label="PG/Hostel Name" required value={values.pgName} onChange={(pgName) => set({ pgName })} placeholder="Name of your PG/Hostel" hint={maskedHint} maxLength={80} />}
+      {kind === 'pg' && <TextInput label="PG/Hostel Name" required value={values.pgName} onChange={(pgName) => set({ pgName })} placeholder="Name of your PG/Hostel" hint={maskedHint} maxLength={textLimits.pgName} />}
       <ChoiceChips label="Area" required labels={areaLabels} value={values.areaSlug} onChange={(areaSlug) => set({ areaSlug })} />
-      <TextInput label="Address" value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint={`Only you see it, unless you share it below. ${maskedHint}`} maxLength={200} />
+      <TextInput label="Address" value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint={`Only you see it, unless you share it below. ${maskedHint}`} maxLength={textLimits.address} />
       <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-        <TextInput label="Building or society" value={values.building} onChange={(building) => set({ building })} placeholder="eg. Silver oak residency" hint={maskedHint} maxLength={120} />
-        <TextInput label="Street" value={values.street} onChange={(street) => set({ street })} placeholder="eg. lokhandwala road" hint={maskedHint} maxLength={120} />
-        <TextInput label="Nearest landmark" value={values.landmark} onChange={(landmark) => set({ landmark })} placeholder="eg. Opposite infinity mall, near lokhandwala" hint={maskedHint} maxLength={120} />
+        <TextInput label="Building or society" value={values.building} onChange={(building) => set({ building })} placeholder="eg. Silver oak residency" hint={maskedHint} maxLength={textLimits.building} />
+        <TextInput label="Street" value={values.street} onChange={(street) => set({ street })} placeholder="eg. lokhandwala road" hint={maskedHint} maxLength={textLimits.street} />
+        <TextInput label="Nearest landmark" value={values.landmark} onChange={(landmark) => set({ landmark })} placeholder="eg. Opposite infinity mall, near lokhandwala" hint={maskedHint} maxLength={textLimits.landmark} />
         <Field label="Pincode" error={errors.pincode}>
           {(id) => (
             <input id={id} className={inputClass} inputMode="numeric" maxLength={6} placeholder="eg. 411028" value={values.pincode ?? ''} aria-invalid={errors.pincode ? true : undefined}
@@ -64,7 +64,7 @@ export function NearbyStep({ values, set }: StepProps) {
   )
   return (
     <>
-      <TextInput label="Nearest Railway/Metro/Bus station" value={values.nearestStation} onChange={(nearestStation) => set({ nearestStation })} placeholder="eg. Andheri station, DN nagar metro" hint={maskedHint} maxLength={120} />
+      <TextInput label="Nearest Railway/Metro/Bus station" value={values.nearestStation} onChange={(nearestStation) => set({ nearestStation })} placeholder="eg. Andheri station, DN nagar metro" hint={maskedHint} maxLength={textLimits.nearestStation} />
       <div className="flex flex-col gap-1 border-t border-secondary pt-5">
         <h3 className="text-md font-semibold text-primary">Close or far?</h3>
         <p className="text-sm text-tertiary">The most asked question on roomsie.</p>
@@ -88,7 +88,7 @@ function BoolChips({ label, first, second, value, onChange }: { label: string; f
 }
 
 export function PlaceStep({ kind, values, set, errors }: StepProps) {
-  const flat = kind !== 'pg'
+  const flat = isFlat(kind)
   return (
     <>
       {flat && <ChoiceChips label="Place type" labels={labels.placeType} value={values.placeType} onChange={(placeType) => set({ placeType })} />}
@@ -101,8 +101,8 @@ export function PlaceStep({ kind, values, set, errors }: StepProps) {
       <ChoiceChips label="Bathroom for this room" labels={labels.bathroom} value={values.bathroom} onChange={(bathroom) => set({ bathroom })} />
       {flat && (
         <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-          <NumberInput label="Floor" error={errors.floor} value={values.floor} onChange={(floor) => set({ floor })} placeholder="eg. 7" min={-3} max={200} />
-          <NumberInput label="Carpet area (sq ft)" error={errors.carpetAreaSqft} value={values.carpetAreaSqft} onChange={(carpetAreaSqft) => set({ carpetAreaSqft })} placeholder="eg. 750" min={1} />
+          <NumberInput label="Floor" error={errors.floor} value={values.floor} onChange={(floor) => set({ floor })} placeholder="eg. 7" />
+          <NumberInput label="Carpet area (sq ft)" error={errors.carpetAreaSqft} value={values.carpetAreaSqft} onChange={(carpetAreaSqft) => set({ carpetAreaSqft })} placeholder="eg. 750" />
         </div>
       )}
       <BoolChips label="Balcony" first={[true, 'Yes']} second={[false, 'No']} value={values.balcony} onChange={(balcony) => set({ balcony })} />
@@ -137,8 +137,8 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
                 <div key={sharing} className="flex flex-col gap-4 rounded-xl border border-secondary p-4">
                   <h3 className="text-sm font-semibold text-primary">For {labels.sharing[sharing]} sharing</h3>
                   <div className="grid gap-4 md:grid-cols-2">
-                    <NumberInput label="Monthly rent (₹)" required error={rateError(rate, 'rent')} value={rate?.rent} onChange={(rent) => setRate(sharing, { rent })} placeholder="eg. 15000" min={0} />
-                    <NumberInput label="Security Deposit (₹)" error={rateError(rate, 'deposit')} value={rate?.deposit} onChange={(deposit) => setRate(sharing, { deposit })} placeholder="eg. 30000" min={0} />
+                    <NumberInput label="Monthly rent (₹)" required error={rateError(rate, 'rent')} value={rate?.rent} onChange={(rent) => setRate(sharing, { rent })} placeholder="eg. 15000" />
+                    <NumberInput label="Security Deposit (₹)" error={rateError(rate, 'deposit')} value={rate?.deposit} onChange={(deposit) => setRate(sharing, { deposit })} placeholder="eg. 30000" />
                   </div>
                 </div>
               )
@@ -149,16 +149,16 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
         )
       ) : (
         <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-          <NumberInput label="Monthly rent (₹)" required error={rateError(flatRate, 'rent')} value={flatRate?.rent} onChange={(rent) => setRate(undefined, { rent })} placeholder="eg. 15000" min={0} />
-          <NumberInput label="Security Deposit (₹)" error={rateError(flatRate, 'deposit')} value={flatRate?.deposit} onChange={(deposit) => setRate(undefined, { deposit })} placeholder="eg. 30000" min={0} />
-          <NumberInput label="Maintenance per month (₹)" error={errors.maintenance} value={values.maintenance} onChange={(maintenance) => set({ maintenance })} placeholder="eg. 3000" min={0} />
-          {kind === 'broker_flat' && <NumberInput label="Your Brokerage (₹)" required error={errors.brokerage} value={values.brokerage} onChange={(brokerage) => set({ brokerage })} placeholder="eg. 15000" min={0} />}
+          <NumberInput label="Monthly rent (₹)" required error={rateError(flatRate, 'rent')} value={flatRate?.rent} onChange={(rent) => setRate(undefined, { rent })} placeholder="eg. 15000" />
+          <NumberInput label="Security Deposit (₹)" error={rateError(flatRate, 'deposit')} value={flatRate?.deposit} onChange={(deposit) => setRate(undefined, { deposit })} placeholder="eg. 30000" />
+          <NumberInput label="Maintenance per month (₹)" error={errors.maintenance} value={values.maintenance} onChange={(maintenance) => set({ maintenance })} placeholder="eg. 3000" />
+          {kind === 'broker_flat' && <NumberInput label="Your Brokerage (₹)" required error={errors.brokerage} value={values.brokerage} onChange={(brokerage) => set({ brokerage })} placeholder="eg. 15000" />}
         </div>
       )}
       <BoolChips label="Maintenance" first={[true, 'Included in rent']} second={[false, 'Extra each month']} value={values.maintenanceIncluded} onChange={(maintenanceIncluded) => set({ maintenanceIncluded })} />
       <ChoiceChips label="Electricity" labels={labels.electricity} value={values.electricity} onChange={(electricity) => set({ electricity })} />
       <BoolChips label="Rent" first={[false, 'Fixed']} second={[true, 'Open to offers']} value={values.rentNegotiable} onChange={(rentNegotiable) => set({ rentNegotiable })} />
-      {kind !== 'pg' && (
+      {isFlat(kind) && (
         <Field label="Available from">
           {(id) => <input id={id} type="date" className={inputClass} value={values.availableFrom ?? ''} onChange={(e) => set({ availableFrom: e.target.value || null })} />}
         </Field>
@@ -176,16 +176,14 @@ export function RulesStep({ kind, values, set }: StepProps) {
       <BoolChips label="Alcohol" first={[false, 'No Alcohol at home']} second={[true, 'Fine at home']} value={values.alcoholAllowed} onChange={(alcoholAllowed) => set({ alcoholAllowed })} />
       <ChoiceChips label="Guests" labels={labels.guests} value={values.guests} onChange={(guests) => set({ guests })} />
       <ChoiceChips label="Who can move in" labels={labels.whoCanMoveIn} value={values.whoCanMoveIn} onChange={(whoCanMoveIn) => set({ whoCanMoveIn })} />
-      <MultiChips label="Who is welcome" labels={labels.whoIsWelcome} only={kind === 'room_in_flat' ? ['students', 'working_professionals'] : undefined}
+      <MultiChips label="Who is welcome" labels={labels.whoIsWelcome} only={kind === 'room_in_flat' ? roomWelcomeGroups : undefined}
         value={values.whoIsWelcome} onChange={(whoIsWelcome) => set({ whoIsWelcome })} />
     </>
   )
 }
 
-/** What the photo steps need to upload: the user, the listing, and a preview of each photo key. */
 export type Uploads = { user: User; listingId: string; previews: Record<string, string>; addPreview: (key: string, url: string) => void }
 
-/** One photo slot that uploads to R2 and shows the result. */
 function PhotoPicker({ user, listingId, label, onUploaded }: { user: User; listingId: string; label: string; onUploaded: (key: string, preview: string) => void }) {
   const upload = useMutation({
     mutationFn: (file: File) => uploadPhoto(user, listingId, file),
@@ -231,9 +229,9 @@ export function PeopleStep({ values, set, errors, user, listingId, previews, add
             <PhotoPicker user={user} listingId={listingId} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
           )}
           <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-            <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" hint={maskedHint} maxLength={60} />
-            <NumberInput label="Age" error={errors[`flatmates.${i}.age`]} value={mate.age} onChange={(age) => update(i, { age })} placeholder="eg. 24" min={18} max={99} />
-            <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" hint={maskedHint} maxLength={80} />
+            <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" hint={maskedHint} maxLength={textLimits.flatmateName} />
+            <NumberInput label="Age" error={errors[`flatmates.${i}.age`]} value={mate.age} onChange={(age) => update(i, { age })} placeholder="eg. 24" />
+            <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" hint={maskedHint} maxLength={textLimits.whatTheyDo} />
             <Field label="Food">
               {(id) => (
                 <select id={id} className={inputClass} value={mate.food ?? ''} onChange={(e) => update(i, { food: (e.target.value || null) as typeof mate.food })}>
@@ -262,7 +260,7 @@ export function PhotosStep({ values, set, user, listingId, previews, addPreview 
         {keys.map((key, i) => <Thumb key={key} src={previews[key]} label={`Remove photo ${i + 1}`} onRemove={() => set({ photoKeys: keys.filter((k) => k !== key) })} />)}
       </div>
       {keys.length < maxPhotos && <PhotoPicker user={user} listingId={listingId} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
-      <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" hint={maskedHint} maxLength={2000} />
+      <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" hint={maskedHint} maxLength={textLimits.description} />
     </>
   )
 }
