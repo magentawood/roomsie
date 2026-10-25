@@ -32,6 +32,10 @@ mechanism.** It is the same on web, Android and iOS. We use no session cookies.
 **3. `users.tokens_valid_after timestamptz not null default now()` ships in the
 first migration.** The check is in the auth middleware from day one.
 
+**4. The auth middleware also rejects a user whose `status` is not `active`.**
+A suspended user can sign in again and get a new token. The new token passes
+the `tokens_valid_after` check, but the status check stops it.
+
 ## Rationale
 
 **Why Bearer and not session cookies.** Mobile clients cannot use cookies, so a
@@ -86,12 +90,13 @@ row that the API already loaded.
 ## Consequences
 
 - The API rejects a request with an invalid signature, or with an `iat` older
-  than `tokens_valid_after`.
+  than `tokens_valid_after` (401). It rejects a user who is not active (403).
 - We must configure CORS on `apps/api` for the web origin.
 - The ID token is in JavaScript, so it is XSS-reachable. The mitigations are a
-  strict Content-Security-Policy, the in-memory token storage of the Firebase
-  SDK (not `localStorage`), the 1-hour expiry, and the instant revocation above.
-  All mobile apps accept this same exposure.
+  strict Content-Security-Policy, the 1-hour expiry, and the instant revocation
+  above. Our code keeps the ID token only in memory, never in `localStorage`.
+  The Firebase SDK keeps its refresh token in IndexedDB, so a user stays signed
+  in after a reload. All mobile apps accept this same exposure.
 - Public pages must not require identity, so the API needs unauthenticated read
   endpoints for listings and landing content.
 
