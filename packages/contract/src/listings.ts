@@ -126,7 +126,7 @@ export const listingEdits = {
   }).partial(),
 }
 
-/** All fields of all kinds, for the OpenAPI document. It is less strict than listingEdits, which the route also runs. */
+/** OpenAPI only: all fields of all kinds. The route also runs the stricter listingEdits. */
 export const listingEditBody = z.strictObject({
   ...commonFields, ...flatFields, ...pgFields, ...roomFields, brokerage,
   whoIsWelcome: pickMany(welcomeGroups),
