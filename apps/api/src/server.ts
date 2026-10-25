@@ -19,7 +19,8 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
-  app.register(cors, { origin: options.webOrigin })
+  // The listing flow saves with PATCH and deletes with DELETE. The default allows only GET, HEAD and POST.
+  app.register(cors, { origin: options.webOrigin, methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'] })
   app.register(swagger, {
     openapi: { info: { title: 'roomsie API', version: '1' } },
     transform: jsonSchemaTransform,
