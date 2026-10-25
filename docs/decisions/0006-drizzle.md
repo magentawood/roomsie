@@ -87,7 +87,8 @@ is relevant because of how this team builds.
 ## Consequences
 
 - `apps/api` owns the schema. Other code must not import the schema.
-- Each schema change ships as a committed `.sql` migration, which CI applies.
+- Each schema change ships as a committed `.sql` migration. The deploy applies it
+  before the new API starts (ADR 0018).
 - We write complex analytical queries as raw SQL through Drizzle, not through
   the query builder.
 

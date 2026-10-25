@@ -83,6 +83,7 @@ Clients hold a Firebase ID token and send requests to `apps/api`. They never ope
 | [ADR-0015](decisions/0015-primary-key-strategy.md) | UUIDv7 primary keys, minted by the client where possible | Accepted | Each table uses a UUIDv7 `id` primary key with no database default: the API mints it, or the client mints it for offline writes. |
 | [ADR-0016](decisions/0016-credentials-and-secrets.md) | Credentials and secrets | Accepted | Public credentials can ship in the clients, but critical credentials stay only in `apps/api` or the CI secret store. |
 | [ADR-0017](decisions/0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted | A goal is one move with its own chat; a listing is one wide table; Form A catalogues are data. |
+| [ADR-0018](decisions/0018-migrations-in-the-deploy.md) | Migrations run in the deploy, before the new API | Accepted | The deploy applies the migrations and the catalogue seed from the new image before Lightsail starts the new API, and each migration works with the API before it. |
 <!-- ledger:end -->
 
 ## Learn
