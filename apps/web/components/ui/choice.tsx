@@ -1,4 +1,4 @@
-import type { ComponentType, SVGProps } from 'react'
+import type { Icon } from './button'
 
 type Option<T extends string> = { value: T; label: string }
 const options = <T extends string>(labels: Record<T, string>, only?: readonly T[]): Option<T>[] =>
@@ -40,7 +40,6 @@ export function ChoiceChips<T extends string>({ label, labels, only, value, onCh
   )
 }
 
-/** Pick many. */
 export function MultiChips<T extends string>({ label, labels, only, value, onChange }: {
   label: string; labels: Record<T, string>; only?: readonly T[]; value: readonly T[] | undefined; onChange: (value: T[]) => void
 }) {
@@ -60,15 +59,6 @@ export function MultiChips<T extends string>({ label, labels, only, value, onCha
     </Group>
   )
 }
-
-/** A yes or no question as two chips. */
-export function YesNoChips({ label, yes, no, value, onChange }: { label: string; yes: string; no: string; value: boolean | null | undefined; onChange: (value: boolean | null) => void }) {
-  return (
-    <ChoiceChips label={label} labels={{ yes, no }} value={value == null ? null : value ? 'yes' : 'no'} onChange={(v) => onChange(v === null ? null : v === 'yes')} />
-  )
-}
-
-type Icon = ComponentType<SVGProps<SVGSVGElement> & { size?: number }>
 
 /** A large radio card with an icon, as step 1 of the listing flow. */
 export function ChoiceCard({ icon: CardIcon, title, subtitle, selected, disabled, onSelect }: { icon: Icon; title: string; subtitle: string; selected: boolean; disabled?: boolean; onSelect: () => void }) {

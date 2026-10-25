@@ -2,8 +2,9 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, ArrowRight } from '@untitledui/icons'
-import { listingResponse, type ListingKind } from '@roomsie/contract'
+import { useMutation } from '@tanstack/react-query'
+import { ArrowRight } from '@untitledui/icons'
+import { listingResponse, type ListingKind, type ListingResponse } from '@roomsie/contract'
 import { api, errorText } from '../../../lib/api'
 import { useAuth } from '../../../lib/auth'
 import { listingSteps, stepCopy } from '../../../lib/listing-steps'
@@ -18,28 +19,20 @@ function NewListing() {
   const { user } = useAuth()
   const router = useRouter()
   const [kind, setKind] = useState<ListingKind | null>(null)
-  const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const create = async (then: 'next' | 'draft') => {
-    if (!user || !kind) return
-    setBusy(true)
-    try {
-      const listing = await api(user, '/v1/listings', listingResponse, { method: 'POST', body: { kind } })
-      router.replace(then === 'next' ? `/listings/${listing.id}/2` : '/listings')
-    } catch (err) {
-      setError(errorText(err))
-      setBusy(false)
-    }
-  }
+  // The variable is where to go after the draft is made.
+  const create = useMutation<ListingResponse, Error, 'next' | 'draft'>({
+    mutationFn: () => api(user!, '/v1/listings', listingResponse, { method: 'POST', body: { kind } }),
+    onSuccess: (listing, then) => router.replace(then === 'next' ? `/listings/${listing.id}/2` : '/listings'),
+  })
+  const blocked = !kind || create.isPending || create.isSuccess
   return (
-    <FlowFrame step={1} total={kind ? listingSteps(kind).length : 7} title={stepCopy.kind.title} helper={stepCopy.kind.helper} error={error}
-      footer={(
+    <FlowFrame step={1} total={listingSteps(kind).length} title={stepCopy.kind.title} helper={stepCopy.kind.helper}
+      error={create.isError ? errorText(create.error) : null}
+      previous={{ href: '/listings' }}
+      actions={(
         <>
-          <span className="md:hidden"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} href="/listings" label="Previous step" /></span>
-          <span className="hidden md:inline-flex"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} href="/listings">Previous step</Button></span>
-          <span className="flex-1" />
-          <Button variant="tertiary" size="lg" disabled={!kind || busy} onClick={() => create('draft')}>Save as Draft</Button>
-          <Button variant="primary" size="lg" iconTrailing={ArrowRight} disabled={!kind || busy} onClick={() => create('next')}>Next</Button>
+          <Button variant="tertiary" size="lg" disabled={blocked} onClick={() => create.mutate('draft')}>Save as Draft</Button>
+          <Button variant="primary" size="lg" iconTrailing={ArrowRight} disabled={blocked} onClick={() => create.mutate('next')}>Next</Button>
         </>
       )}>
       <KindStep kind={kind} onPick={setKind} />

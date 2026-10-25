@@ -1,4 +1,3 @@
-/** A switch with a title and a line of help, as "Share my full address". */
 export function Toggle({ title, help, checked, onChange }: { title: string; help: string; checked: boolean; onChange: (checked: boolean) => void }) {
   return (
     <label className="flex cursor-pointer items-start justify-between gap-4">
@@ -14,7 +13,6 @@ export function Toggle({ title, help, checked, onChange }: { title: string; help
   )
 }
 
-/** A checkbox with a label, as "My flatmates agreed to be shown". */
 export function Checkbox({ label, checked, onChange, required }: { label: string; checked: boolean; onChange: (checked: boolean) => void; required?: boolean }) {
   return (
     <label className="flex cursor-pointer items-start gap-3 text-sm font-medium text-secondary">

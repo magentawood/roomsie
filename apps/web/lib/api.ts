@@ -1,5 +1,6 @@
 import type { User } from 'firebase/auth'
 import type { z } from 'zod'
+import { incompleteListingResponse, type GoLiveField } from '@roomsie/contract'
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
 
@@ -25,7 +26,8 @@ export async function api<T>(user: User, path: string, schema: z.ZodType<T>, opt
     },
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   })
-  const json: unknown = res.status === 204 ? null : await res.json().catch(() => null)
+  // A 204 has no body, so json() fails and gives null.
+  const json: unknown = await res.json().catch(() => null)
   if (!res.ok) throw new ApiError(res.status, json)
   return schema.parse(json)
 }
@@ -34,4 +36,10 @@ export async function api<T>(user: User, path: string, schema: z.ZodType<T>, opt
 export function errorText(err: unknown) {
   if (err instanceof ApiError && typeof err.body === 'object' && err.body && 'error' in err.body) return String(err.body.error)
   return 'Something went wrong. Try again.'
+}
+
+/** The fields that a 422 lists as missing to go live (T-41), or null for a different error. */
+export function missingFields(err: unknown): GoLiveField[] | null {
+  const incomplete = err instanceof ApiError && err.status === 422 ? incompleteListingResponse.safeParse(err.body) : null
+  return incomplete?.success ? incomplete.data.missing : null
 }

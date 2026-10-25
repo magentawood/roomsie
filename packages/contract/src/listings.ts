@@ -44,6 +44,10 @@ export const photoKey = z.string().regex(
 
 const pickMany = <T extends readonly [string, ...string[]]>(keys: T) =>
   z.array(z.enum(keys)).refine((list) => new Set(list).size === list.length, 'Each key once')
+/** The most photos of a listing, and the most flatmates that it shows. */
+export const maxPhotos = 5
+export const maxFlatmates = 8
+
 const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable()
 const rupees = z.int().min(0).max(100_000_000)
 
@@ -84,7 +88,7 @@ const commonFields = {
   alcoholAllowed: z.boolean().nullable(),
   guests: z.enum(guestsRules).nullable(),
   whoCanMoveIn: z.enum(whoCanMoveIn).nullable(),
-  photoKeys: z.array(photoKey).max(5),
+  photoKeys: z.array(photoKey).max(maxPhotos),
   description: optionalText(2000),
 }
 const flatFields = {
@@ -105,7 +109,7 @@ const pgFields = {
 }
 const brokerage = rupees.nullable()
 const roomFields = {
-  flatmates: z.array(listingFlatmate).max(8),
+  flatmates: z.array(listingFlatmate).max(maxFlatmates),
   flatmatesConsent: z.boolean(),
 }
 const nonPgRates = z.array(listingRate).max(1)
@@ -160,6 +164,7 @@ export const myListingsResponse = z.object({ listings: z.array(listingResponse) 
 
 /** What a listing needs to go live (T-41). */
 export const goLiveFields = ['areaSlug', 'pgName', 'brokerage', 'rates', 'flatmatesConsent'] as const
+export type GoLiveField = (typeof goLiveFields)[number]
 /** 422 when a listing cannot go live. */
 export const incompleteListingResponse = z.object({ error: z.literal('incomplete'), missing: z.array(z.enum(goLiveFields)) })
 export const errorResponse = z.object({ error: z.string() })

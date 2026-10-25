@@ -2,10 +2,10 @@
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { FirebaseError } from 'firebase/app'
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, type User } from 'firebase/auth'
 import { firebaseAuth } from './firebase'
 
-type Auth = { user: User | null; loading: boolean; signIn: () => Promise<void>; signOut: () => Promise<void> }
+type Auth = { user: User | null; loading: boolean; signIn: () => Promise<void> }
 
 const AuthContext = createContext<Auth | null>(null)
 
@@ -22,7 +22,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           throw err
         },
       ),
-    signOut: () => signOut(firebaseAuth()),
   }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

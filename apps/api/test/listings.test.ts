@@ -69,10 +69,22 @@ describe('a draft', () => {
   it('accepts the fields of its kind, and rejects the fields of a different kind', async () => {
     const pg = await draft('pg', { pgName: 'Shivraj PG', sharing: ['double'], meals: 'veg_included', whoCanMoveIn: 'men' })
     expect(pg).toMatchObject({ pgName: 'Shivraj PG', sharing: ['double'], meals: 'veg_included', whoCanMoveIn: 'men' })
-    expect((await call('lister', 'PATCH', `/${pg.id}`, { placeType: '2bhk' })).statusCode).toBe(400)
+    const wrongKind = await call('lister', 'PATCH', `/${pg.id}`, { placeType: '2bhk' })
+    expect(wrongKind.statusCode).toBe(400)
+    expect(wrongKind.json()).toEqual({ error: 'not a field of a pg listing: placeType' })
     const room = await draft('room_in_flat')
     expect((await call('lister', 'PATCH', `/${room.id}`, { meals: 'none' })).statusCode).toBe(400)
-    expect((await call('lister', 'PATCH', `/${room.id}`, { whoIsWelcome: ['families'] })).statusCode).toBe(400)
+    const notForRoom = await call('lister', 'PATCH', `/${room.id}`, { whoIsWelcome: ['families'] })
+    expect(notForRoom.statusCode).toBe(400)
+    expect(notForRoom.json()).toEqual({ error: 'not valid for a room_in_flat listing: whoIsWelcome' })
+  })
+
+  it('names the field of a value that is not valid', async () => {
+    const room = await draft('room_in_flat')
+    const res = await call('lister', 'PATCH', `/${room.id}`, { pincode: '4000', flatmates: [{ name: '' }] })
+    expect(res.statusCode).toBe(400)
+    expect(res.json()).toEqual({ error: 'not valid: pincode, flatmates' })
+    expect((await call('lister', 'PATCH', '/not-a-uuid', {})).json()).toEqual({ error: 'not valid: id' })
   })
 
   it('rejects an area that does not exist', async () => {
