@@ -51,7 +51,9 @@ This note is part of [[roomsie launch]].
 - [[T-22b Waitlist screen]] — P4 Content and moderation
 - [[T-29 Abuse test]] — P1 Platform
 - [[T-40 Nightly backups]] — P1 Platform
+- [[T-51 Migrations in the deploy ⚑]] — P1 Platform
 - [[T-41 Listings API]] — P3 Data and trust
+- [[T-52 Web CSP]] — P1 Platform
 - [[T-42 Listing flow screens]] — P3 Data and trust
 - [[T-43 Listing detail screens]] — P3 Data and trust
 - [[T-44 Messages API]] — P3 Data and trust

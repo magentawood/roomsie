@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-51, T-52.
 
 ---
 
@@ -24,13 +24,13 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-174 of the 211 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+180 of the 217 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
-| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test | 23 | 11 | _name_ |
+| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 84 | -50 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen | 20 | 14 | _name_ |
@@ -63,8 +63,10 @@ Do the tasks from top to bottom. Finish and merge one task before you start the 
 | 7 | T-39 · Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | 8 | T-40 · Nightly database backups to R2 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
 | 9 | T-29 · Abuse test: 100 fake sessions | 1 | Sat 10 Oct | T-21 |
+| 10 | T-51 ⚑ · Apply migrations and the seed in the deploy | 3 | Mon 26 Oct → Tue 27 Oct | T-04, T-06 |
+| 11 | T-52 · Content-Security-Policy for the web | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
 
-Finish line: Sat 10 Oct. 23 hours.
+Finish line: Wed 28 Oct. 29 hours.
 
 ### P2 · Chat — what the assistant understands and says, and the router in front of it
 
@@ -215,6 +217,8 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P1 Platform | 7 | T-39 | Analytics in its own database, with scheduled jobs | 3 | Tue 6 Oct | Thu 8 Oct | CP3 | T-24 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | P1 Platform | 8 | T-40 | Nightly database backups to R2 | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-04, F-04 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | P1 Platform | 9 | T-29 | Abuse test: 100 fake sessions | 1 | Sat 10 Oct | Sat 10 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
+| P1 Platform | 10 | T-51 ⚑ | Apply migrations and the seed in the deploy | 3 | Mon 26 Oct | Tue 27 Oct | CP3 | T-04, T-06 | no issue at this time |
+| P1 Platform | 11 | T-52 | Content-Security-Policy for the web | 3 | Tue 27 Oct | Wed 28 Oct | CP3 | T-05 | no issue at this time |
 | P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | F-11 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08, F-04 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
@@ -324,6 +328,8 @@ gantt
     T-39 Analytics in its own database with scheduled jobs :t39, 2026-10-06, 3d
     T-40 Nightly database backups to R2 :t40, 2026-10-08, 3d
     T-29 Abuse test - 100 fake sessions :t29, 2026-10-10, 1d
+    T-51 Apply migrations and the seed in the deploy :crit, t51, 2026-10-26, 2d
+    T-52 Content-Security-Policy for the web :t52, 2026-10-27, 2d
     section P2 Chat
     T-08 Form A contract - slots and enums :crit, t08, 2026-09-24, 1d
     T-11 Model wrapper - DeepSeek with Gemini fallback :crit, t11, 2026-09-24, 2d
@@ -691,6 +697,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | F-10 | Go/no-go meeting | F |  | Sat 10 Oct | — |
 | T-29 | Abuse test: 100 fake sessions | P1 | 1 | Sat 10 Oct | T-21 |
 | T-41 | Listings API: four kinds of lister | P3 | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
+| T-51 ⚑ | Apply migrations and the seed in the deploy | P1 | 3 | Mon 26 Oct → Tue 27 Oct | T-04, T-06 |
+| T-52 | Content-Security-Policy for the web | P1 | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
 | T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13 |
@@ -929,6 +937,18 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A listing has Who can move in: men, women or any
 - The API masks phone numbers in the description and the flatmate fields
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-03-listing-supply.md`, `docs/extensibility.md`
+
+**T-51 · Apply migrations and the seed in the deploy** — done when:
+- A merge to main applies the committed migrations to the main database before the new API starts
+- The deploy runs the catalogue seed. A second run changes nothing
+- A failed migration stops the deploy. The API stays on the version before
+- Read first: `docs/decisions/0006-drizzle.md`, `docs/decisions/0009-hosting-and-region.md`, `docs/decisions/0016-credentials-and-secrets.md`, `docs/decisions/pd-13-databases-and-backups.md`
+
+**T-52 · Content-Security-Policy for the web** — done when:
+- Each page serves a strict Content-Security-Policy, with a new nonce for each request
+- Google sign-in, the API and the photo storage still work under the policy
+- A test checks the header. A script without the nonce does not run
+- Read first: `docs/decisions/0007-web-rendering-and-auth-transport.md`, `docs/standards/web.md`, `docs/decisions/0008-web-stack.md`
 
 **T-42 · Listing flow and My listings screens** — done when:
 - The eight steps of flow 04 work for the four kinds of lister, as in the Product file

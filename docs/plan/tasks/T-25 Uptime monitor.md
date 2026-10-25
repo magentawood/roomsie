@@ -2,7 +2,7 @@
 id: T-25
 title: "Uptime monitor"
 owner: "P1 Platform"
-sequence: "5 of 9"
+sequence: "5 of 11"
 hours: 2
 start: 2026-10-04
 end: 2026-10-05
@@ -17,7 +17,7 @@ tags:
 
 # T-25 · Uptime monitor
 
-**Owner:** [[P1 Platform]], task 5 of 9  
+**Owner:** [[P1 Platform]], task 5 of 11  
 **When:** Sun 4 Oct → Mon 5 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#43](https://github.com/magentawood/roomsie/issues/43)

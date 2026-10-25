@@ -1885,6 +1885,58 @@
    "cp": "CP3",
    "critical": false,
    "issue": 126
+  },
+  {
+   "id": "T-51",
+   "title": "Apply migrations and the seed in the deploy",
+   "plain": "The live database gets each new table before the new server starts.",
+   "role": "P1",
+   "hours": 3,
+   "start": "2026-10-26",
+   "end": "2026-10-27",
+   "deps": [
+    "T-04",
+    "T-06"
+   ],
+   "done": [
+    "A merge to main applies the committed migrations to the main database before the new API starts",
+    "The deploy runs the catalogue seed. A second run changes nothing",
+    "A failed migration stops the deploy. The API stays on the version before"
+   ],
+   "read": [
+    "docs/decisions/0006-drizzle.md",
+    "docs/decisions/0009-hosting-and-region.md",
+    "docs/decisions/0016-credentials-and-secrets.md",
+    "docs/decisions/pd-13-databases-and-backups.md"
+   ],
+   "cp": "CP3",
+   "critical": true,
+   "issue": null
+  },
+  {
+   "id": "T-52",
+   "title": "Content-Security-Policy for the web",
+   "plain": "The browser runs only our own scripts, so an injected script cannot steal a sign-in.",
+   "role": "P1",
+   "hours": 3,
+   "start": "2026-10-27",
+   "end": "2026-10-28",
+   "deps": [
+    "T-05"
+   ],
+   "done": [
+    "Each page serves a strict Content-Security-Policy, with a new nonce for each request",
+    "Google sign-in, the API and the photo storage still work under the policy",
+    "A test checks the header. A script without the nonce does not run"
+   ],
+   "read": [
+    "docs/decisions/0007-web-rendering-and-auth-transport.md",
+    "docs/standards/web.md",
+    "docs/decisions/0008-web-stack.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   }
  ],
  "milestones": [

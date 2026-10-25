@@ -48,6 +48,7 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-44 Messages API]]
 - [[T-46 DigiLocker verification]]
 - [[T-47 Saved]]
+- [[T-51 Migrations in the deploy ⚑]]
 
 ## Done when
 - [x] Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist · [#129](https://github.com/magentawood/roomsie/pull/129)

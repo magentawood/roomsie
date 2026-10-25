@@ -349,6 +349,25 @@
    "height": 84
   },
   {
+   "id": "task-T-51",
+   "type": "text",
+   "text": "**[[T-51 Migrations in the deploy ⚑|T-51 Migrations in the deploy]]**\n3h · Mon 26 Oct → Tue 27 Oct",
+   "x": 7040,
+   "y": 230,
+   "width": 432,
+   "height": 84,
+   "color": "1"
+  },
+  {
+   "id": "task-T-52",
+   "type": "text",
+   "text": "**[[T-52 Web CSP|T-52 Web CSP]]**\n3h · Tue 27 Oct → Wed 28 Oct",
+   "x": 7260,
+   "y": 326,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "lane-P2",
    "type": "group",
    "label": "P2 Chat",
@@ -1879,6 +1898,28 @@
    "fromNode": "task-T-24",
    "fromSide": "right",
    "toNode": "task-T-50",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-04-T-51",
+   "fromNode": "task-T-04",
+   "fromSide": "right",
+   "toNode": "task-T-51",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-06-T-51",
+   "fromNode": "task-T-06",
+   "fromSide": "right",
+   "toNode": "task-T-51",
+   "toSide": "left",
+   "color": "1"
+  },
+  {
+   "id": "e-T-05-T-52",
+   "fromNode": "task-T-05",
+   "fromSide": "right",
+   "toNode": "task-T-52",
    "toSide": "left"
   }
  ]
