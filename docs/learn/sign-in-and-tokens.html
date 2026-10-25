@@ -50,7 +50,7 @@ details.callout[open] summary{color:var(--fg)}
           │
           API: verify with the cached Google keys
              ─▶ find the users row by the Firebase uid, or make it
-             ─▶ iat before tokens_valid_after?  401
+             ─▶ auth_time before tokens_valid_after?  401
              ─▶ status not active?               403
              ─▶ 200 { id, status }
 </code></pre>
@@ -69,8 +69,9 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li>The first sign-in makes the <code>users</code> row with <code>tokens_valid_after</code> at the <code>iat</code> of its token. With the default <code>now()</code>, the first token gets 401.</li>
-<li><code>iat</code> is in seconds, and <code>tokens_valid_after</code> is in milliseconds. A token from the same second as a revocation gets 401. The next token works.</li>
+<li>Compare <code>auth_time</code>, not <code>iat</code>. Firebase refreshes the ID token each hour with a new <code>iat</code>, so an <code>iat</code> check lets a revoked session back in.</li>
+<li>The first sign-in makes the <code>users</code> row with <code>tokens_valid_after</code> at the <code>auth_time</code> of its token. With the default <code>now()</code>, the first token gets 401.</li>
+<li><code>auth_time</code> is in seconds, and <code>tokens_valid_after</code> is in milliseconds. A sign-in in the same second as a revocation gets 401. The next sign-in works.</li>
 <li>If the API cannot get the keys of Google, it gives 500, not 401. A 401 tells the user to sign in again, and that does not help.</li>
 <li><code>next build</code> runs without the Firebase settings, because Firebase starts only in the browser.</li>
 <li>A new domain must be in the authorized domains of Firebase. If not, the popup gives <code>auth/unauthorized-domain</code>.</li>

@@ -25,10 +25,10 @@ afterAll(async () => {
   await testDb.drop()
 })
 
-function idToken(uid: string, opts: { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number } = {}) {
+function idToken(uid: string, opts: { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number; authTime?: number | null } = {}) {
   const now = Math.floor(Date.now() / 1000)
   const audience = opts.audience ?? projectId
-  return new SignJWT({})
+  return new SignJWT(opts.authTime === null ? {} : { auth_time: opts.authTime ?? opts.iat ?? now })
     .setProtectedHeader({ alg: 'RS256', kid: 'test' })
     .setIssuer(opts.issuer ?? `https://securetoken.google.com/${audience}`)
     .setAudience(audience)
@@ -63,6 +63,10 @@ describe('GET /v1/me', () => {
     expect((await me(await idToken('uid-future', { iat: later }))).statusCode).toBe(401)
   })
 
+  it('rejects a token with no auth_time', async () => {
+    expect((await me(await idToken('uid-no-auth-time', { authTime: null }))).statusCode).toBe(401)
+  })
+
   it('rejects a token with an empty uid', async () => {
     expect((await me(await idToken(''))).statusCode).toBe(401)
   })
@@ -83,11 +87,15 @@ describe('GET /v1/me', () => {
     expect(await testDb.db.select().from(users).where(eq(users.authProviderId, 'uid-new'))).toHaveLength(1)
   })
 
-  it('rejects a token issued before tokens_valid_after', async () => {
-    const issued = Math.floor(Date.now() / 1000) - 60
-    expect((await me(await idToken('uid-revoked', { iat: issued }))).statusCode).toBe(200)
-    await testDb.db.update(users).set({ tokensValidAfter: new Date() }).where(eq(users.authProviderId, 'uid-revoked'))
-    expect((await me(await idToken('uid-revoked', { iat: issued }))).statusCode).toBe(401)
+  it('rejects a session that signed in before tokens_valid_after, also with a refreshed token', async () => {
+    const now = Math.floor(Date.now() / 1000)
+    const signedIn = now - 60
+    expect((await me(await idToken('uid-revoked', { iat: signedIn }))).statusCode).toBe(200)
+    await testDb.db.update(users).set({ tokensValidAfter: new Date((now - 30) * 1000) }).where(eq(users.authProviderId, 'uid-revoked'))
+    expect((await me(await idToken('uid-revoked', { iat: signedIn }))).statusCode).toBe(401)
+    // Firebase refreshes the ID token with a new iat, but the same auth_time.
+    expect((await me(await idToken('uid-revoked', { iat: now, authTime: signedIn }))).statusCode).toBe(401)
+    expect((await me(await idToken('uid-revoked', { iat: now, authTime: now }))).statusCode).toBe(200)
   })
 
   it.each(['suspended', 'deleted'] as const)('rejects a %s user, also with a new token', async (status) => {

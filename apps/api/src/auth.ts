@@ -20,7 +20,7 @@ declare module 'fastify' {
 }
 
 const bearerHeader = z.string().regex(/^Bearer \S+$/)
-const firebaseClaims = z.object({ sub: z.string().min(1), iat: z.number().int() })
+const firebaseClaims = z.object({ sub: z.string().min(1), auth_time: z.number().int() })
 
 /** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
 const tokenErrors = [
@@ -49,15 +49,15 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
     const claims = firebaseClaims.safeParse(verified?.payload)
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
-    const { sub: uid, iat } = claims.data
-    const issuedAt = new Date(iat * 1000)
+    // auth_time is the sign-in. A refreshed token keeps it, so a revocation holds (ADR-0007).
+    const { sub: uid, auth_time: authTime } = claims.data
+    const signedInAt = new Date(authTime * 1000)
     let user = await findUser(db, uid)
     if (!user) {
-      // tokens_valid_after starts at the first token's iat (ADR-0007).
-      await db.insert(users).values({ authProviderId: uid, tokensValidAfter: issuedAt }).onConflictDoNothing()
+      await db.insert(users).values({ authProviderId: uid, tokensValidAfter: signedInAt }).onConflictDoNothing()
       user = (await findUser(db, uid))!
     }
-    if (issuedAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
+    if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     if (user.status !== 'active') return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status }
   }
