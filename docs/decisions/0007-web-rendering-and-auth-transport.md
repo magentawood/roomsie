@@ -30,7 +30,9 @@
 mechanism.** It is the same on web, Android and iOS. We use no session cookies.
 
 **3. `users.tokens_valid_after timestamptz not null default now()` ships in the
-first migration.** The check is in the auth middleware from day one.
+first migration.** The check is in the auth middleware from day one. The
+first sign-in makes the row with `tokens_valid_after` at the `iat` of its
+token, because that token is older than the row.
 
 **4. The auth middleware also rejects a user whose `status` is not `active`.**
 A suspended user can sign in again and get a new token. The new token passes

@@ -20,7 +20,6 @@ export function buildServer(options: { webOrigin: string } & AuthOptions) {
     openapi: { info: { title: 'roomsie API', version: '1' } },
     transform: jsonSchemaTransform,
   })
-  const signedIn = requireUser(options)
   app.register(
     async (v1) => {
       v1.withTypeProvider<ZodTypeProvider>().get(
@@ -30,7 +29,7 @@ export function buildServer(options: { webOrigin: string } & AuthOptions) {
       )
       v1.withTypeProvider<ZodTypeProvider>().get(
         '/me',
-        { preHandler: signedIn, schema: { response: { 200: meResponse } } },
+        { preHandler: requireUser(options), schema: { response: { 200: meResponse } } },
         async (req) => req.user!,
       )
     },
