@@ -147,6 +147,15 @@ describe('going live', () => {
     expect((await live(room.id)).json()).toEqual({ error: 'incomplete', missing: ['flatmatesConsent'] })
   })
 
+  it('lets a live PG add a sharing type before its rent, and needs a rent for each type to go live again', async () => {
+    const pg = await draft('pg', { areaSlug: 'bandra', pgName: 'Shivraj PG', sharing: ['single'], rates: [{ sharing: 'single', rent: 15000 }] })
+    expect((await live(pg.id)).statusCode).toBe(200)
+    expect((await call('lister', 'PATCH', `/${pg.id}`, { sharing: ['single', 'double'] })).statusCode).toBe(200)
+    expect((await call('lister', 'PATCH', `/${pg.id}`, { rates: [] })).json()).toEqual({ error: 'incomplete', missing: ['rates'] })
+    expect((await call('lister', 'POST', `/${pg.id}/status`, { status: 'inactive' })).statusCode).toBe(200)
+    expect((await live(pg.id)).json()).toEqual({ error: 'incomplete', missing: ['rates'] })
+  })
+
   it('sets an expiry 30 days later, and shows the listing to other users without the address', async () => {
     const flat = await draft('owner_flat', {
       areaSlug: 'bandra', address: 'Flat 1203', building: 'Silver Oak', street: 'Hill Road', pincode: '400050', rates: [{ rent: 52000 }],
