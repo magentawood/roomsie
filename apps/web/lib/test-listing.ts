@@ -9,7 +9,7 @@ export const listing = (patch: Partial<ListingResponse>): ListingResponse => ({
   sharing: [], bedsFree: null, meals: null, curfew: null, bathroom: null, balcony: null, insideItems: [], amenities: [],
   maintenance: null, maintenanceIncluded: null, electricity: null, rentNegotiable: null, brokerage: null, availableFrom: null, minStay: null,
   vegOnlyKitchen: null, smokingAllowed: null, alcoholAllowed: null, guests: null, whoCanMoveIn: null, whoIsWelcome: [],
-  flatmatesConsent: false, description: null, photos: [], rates: [], flatmates: [], mine: false, hidden: false,
+  flatmatesConsent: false, description: null, photos: [], rates: [], flatmates: [], mine: false, hidden: false, lister: null,
   expiresAt: null, createdAt: '2026-10-26T10:00:00.000Z', updatedAt: '2026-10-26T10:00:00.000Z',
   ...patch,
 })

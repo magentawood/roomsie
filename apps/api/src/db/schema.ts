@@ -16,8 +16,8 @@ import {
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import {
-  amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, guestsRules, insideItems,
-  listingKinds, listingStatuses, meals, minStays, placeTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn,
+  amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
+  listingKinds, listingStatuses, meals, minStays, placeTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -31,11 +31,13 @@ const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull(
  * facts the system owns, not answers a person gave.
  */
 /** The place type a seeker picks (PD15). A lister is a listing, not a seeker. */
-export const intentEnum = pgEnum('intent', ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'])
+export const intentEnum = pgEnum('intent', intents)
 /** Private or shared room. A seeker's value comes only from the chat (PD15). */
 export const roomTypeEnum = pgEnum('room_type', ['private', 'shared', 'unclear'])
 /** The choice itself; the contract maps it to a type and a household (PD15). */
-export const whosMovingEnum = pgEnum('whos_moving', ['student', 'first_job', 'working', 'couple', 'family', 'friends', 'unclear'])
+export const whosMovingEnum = pgEnum('whos_moving', whosMovingAnswers)
+/** A required answer of a profile (PD8). */
+export const genderEnum = pgEnum('gender', genders)
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn'])
 export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
@@ -100,6 +102,8 @@ export const profiles = pgTable('profiles', {
   bio: text('bio'),
   /** A parent runs this card for an adult son or daughter (PD16). */
   managedByParent: boolean('managed_by_parent').notNull().default(false),
+  /** Required when the profile is made (PD8). Null only in rows from before T-16a. */
+  gender: genderEnum('gender'),
 
   // Form A — the hard constraints that drive the match query (T-14).
   intent: intentEnum('intent').notNull().default('unclear'),

@@ -10,7 +10,7 @@ import {
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { areas, listingFlatmates, listingRates, listings } from '../db/schema'
-import type { Storage } from '../storage'
+import { deletePhotos, type Storage } from '../storage'
 import { maskContacts } from '../text/mask-contacts'
 import { isVisible, listingView, partsOf, type Flatmate, type Listing, type Parts, type Rate } from './read'
 import { idParams } from '../params'
@@ -32,7 +32,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     schema: { body: createListingBody, response: { 201: listingResponse } },
   }, async (req, reply) => {
     const [listing] = await db.insert(listings).values({ ownerUserId: req.user!.id, kind: req.body.kind }).returning()
-    return reply.code(201).send(listingView(listing!, { rates: [], flatmates: [] }, storage, true))
+    return reply.code(201).send(listingView(listing!, (await partsOf(db, [listing!.id]))(listing!.id), storage, true))
   })
 
   app.get('/listings/mine', { preHandler, schema: { response: { 200: myListingsResponse } } }, async (req) => {
@@ -80,6 +80,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const hasType = (r: { sharing?: Rate['sharing'] }) => listing.kind !== 'pg' || nextListing.sharing.includes(r.sharing!)
     if (newRates && !newRates.every(hasType)) return reply.code(400).send({ error: 'not valid: rates' })
     const next = {
+      lister: current.lister,
       listing: nextListing,
       // A PG that drops a sharing type drops its rent too.
       rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates.filter(hasType),
@@ -192,13 +193,6 @@ function mask(edit: ListingEdit): ListingEdit {
 const photoKeysOf = (flatmates: Pick<Flatmate, 'photoKey'>[]) => flatmates.flatMap((f) => (f.photoKey ? [f.photoKey] : []))
 
 /** False when R2 fails. Then the caller changes nothing (PD19). */
-async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj: unknown) => void }) {
-  return storage.deleteObjects(keys).then(() => true, (err: unknown) => {
-    log.error(err)
-    return false
-  })
-}
-
 /**
  * A PG publishes with a rent for each sharing type. An edit of a PG that has been live needs one rent only,
  * so step 4 can add a sharing type before step 5 gives its rent.

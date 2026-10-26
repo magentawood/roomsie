@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { foodAnswers, listerResponse } from './profiles'
 
 /* The values of the listing flow (flow 04 of the designs). The database enums use the same lists. */
 export const listingKinds = ['room_in_flat', 'owner_flat', 'pg', 'broker_flat'] as const
@@ -15,8 +16,6 @@ export const guestsRules = ['none', 'welcome', 'day_visits'] as const
 export const walkTimes = ['5_min', '10_min', '15_min', '30_min', 'not_close'] as const
 export const bedsFree = ['1', '2', '3', '4', '5', '5_plus'] as const
 export const whoCanMoveIn = ['men', 'women', 'any'] as const
-/** The answers of the lifestyle question "What do you eat?" (PD15). */
-export const foodAnswers = ['veg', 'non_veg', 'eggetarian', 'jain'] as const
 
 /* The keys of the pick-many fields (ADR-0017). */
 export const sharingTypes = ['single', 'double', 'triple', 'four', 'four_plus'] as const
@@ -162,6 +161,7 @@ export const listingResponse = z.object({
   flatmates: z.array(z.object({ ...listingFlatmate.shape, photoUrl: z.url().nullable() })),
   /** The listing belongs to the user who asks. */
   mine: z.boolean(),
+  lister: listerResponse,
   /** Reports hid the listing until the moderator acts (PD18). Only the owner sees a hidden listing. */
   hidden: z.boolean(),
   expiresAt: z.iso.datetime().nullable(),

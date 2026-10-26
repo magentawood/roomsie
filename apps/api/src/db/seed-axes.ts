@@ -1,29 +1,21 @@
 /** Form A catalogues of PD15; the values are the answer keys of the designs. */
 import { sql } from 'drizzle-orm'
-import { foodAnswers } from '@roomsie/contract'
+import { lifestyleAnswers, mustHaveKeys, type LifestyleAxis } from '@roomsie/contract'
 import type { Db } from './client'
 import { areas, lifestyleAxes, mustHaves } from './schema'
 
-const LIFESTYLE_AXES = [
-  { key: 'food', question: 'What do you eat?', allowedValues: [...foodAnswers], sortOrder: 1 },
-  { key: 'smoking', question: 'Do you smoke?', allowedValues: ['non_smoker', 'smoker', 'smoke_outside'], sortOrder: 2 },
-  { key: 'drinks', question: 'Drinks at home?', allowedValues: ['none_at_home', 'fine_at_home'], sortOrder: 3 },
-  { key: 'guests', question: 'How often do guests come?', allowedValues: ['weekends_only', 'guests_welcome', 'guests_rarely'], sortOrder: 4 },
-  { key: 'your_days', question: 'What are your days like?', allowedValues: ['out_most_days', 'home_most_days', 'night_shifts', 'student'], sortOrder: 5 },
-  { key: 'sleep', question: 'Night owl or early bird?', allowedValues: ['night_owl', 'early_bird'], sortOrder: 6 },
-  { key: 'tidiness', question: 'How tidy are you?', allowedValues: ['very_tidy', 'tidy_enough', 'relaxed_about_mess'], sortOrder: 7 },
-  { key: 'pets', question: 'Pets?', allowedValues: ['no_pets', 'fine_with_pets'], sortOrder: 8 },
-]
+const questions: Record<LifestyleAxis, string> = {
+  food: 'What do you eat?', smoking: 'Do you smoke?', drinks: 'Drinks at home?', guests: 'How often do guests come?',
+  your_days: 'What are your days like?', sleep: 'Night owl or early bird?', tidiness: 'How tidy are you?', pets: 'Pets?',
+}
+const LIFESTYLE_AXES = (Object.keys(questions) as LifestyleAxis[])
+  .map((key, i) => ({ key, question: questions[key], allowedValues: [...lifestyleAnswers[key]], sortOrder: i + 1 }))
 
-const MUST_HAVES = [
-  { key: 'veg_kitchen', label: 'Veg kitchen', sortOrder: 1, active: true },
-  { key: 'non_smokers', label: 'Non-smokers', sortOrder: 2, active: true },
-  { key: 'no_alcohol', label: 'No alcohol at home', sortOrder: 3, active: true },
-  { key: 'women_only', label: 'Women only', sortOrder: 4, active: true },
-  { key: 'men_only', label: 'Men only', sortOrder: 5, active: true },
-  { key: 'tidy_flatmates', label: 'Tidy flatmates', sortOrder: 6, active: true },
-  { key: 'couple_friendly', label: 'Couple friendly', sortOrder: 7, active: true },
-]
+const mustHaveLabels: Record<(typeof mustHaveKeys)[number], string> = {
+  veg_kitchen: 'Veg kitchen', non_smokers: 'Non-smokers', no_alcohol: 'No alcohol at home', women_only: 'Women only',
+  men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly',
+}
+const MUST_HAVES = mustHaveKeys.map((key, i) => ({ key, label: mustHaveLabels[key], sortOrder: i + 1, active: true }))
 
 /** The nine area groups of PD2, in the order of the designs. */
 const AREA_GROUPS = [
