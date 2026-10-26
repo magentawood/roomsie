@@ -24,7 +24,9 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **A listing goes live at once.** The Verified pill shows after the reviewer
   approves. The review does not hold the listing.
 - **v1 route: DigiLocker**, through a registered KYC provider (such as
-  Surepass, AuthBridge, Sandbox or IDfy) or as a direct requester. The v0
+  Surepass, AuthBridge, Sandbox or IDfy) or as a direct requester, **and
+  Aadhaar through the signed QR of the Aadhaar app**, after roomsie registers
+  with UIDAI as an offline verification entity (OVSE). We keep no copy. The v0
   route stays as the fallback.
 - **Store the result, never the document:**
 
@@ -127,7 +129,8 @@ Also:
 
 ## Revisit when
 
-- v1 starts: DigiLocker through a provider, or as a direct requester.
+- v1 starts: DigiLocker through a provider, or as a direct requester, and the
+  OVSE registration for the Aadhaar app QR. Both need a registered company.
 - The verified pool is sufficiently large for the verified-only setting.
 - Reports show that the trust story does not keep women safe enough.
 
