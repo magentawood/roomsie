@@ -6,7 +6,7 @@
 
 - The **place detail** is the page `/places/<id>`. It shows the four kinds of the Product file: a room in a flat, an owner flat, a PG or hostel, and a broker flat.
 - A **listing report** gives one of the seven reasons of PD18, and a detail. "Other" needs the detail.
-- A **hidden listing** has a hide time. Other users do not see it, and the owner sees "Hidden for review". Only the moderator clears the hide time.
+- A **hidden listing** has a hide time. Other users do not see it, and the owner sees "Hidden for review". Only the moderator clears the hide time, on the admin screen ([Moderation](moderation.md)).
 
 ## How it fits our project
 

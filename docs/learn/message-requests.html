@@ -91,6 +91,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>"Not available" is the same for a decline and an expiry.</strong> Thus, a sender never learns which one it was.</li>
 <li><strong>An expiry needs no job.</strong> After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.</li>
 <li><strong>A 404 hides a block.</strong> A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.</li>
+<li><strong>A block declines an open request.</strong> Its sender sees "Not available", as after a decline (<a href="moderation.html">Moderation</a>).</li>
 <li><strong>The note waits for the chat.</strong> T-44 makes the note of an accepted request the first message of the chat.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

@@ -43,6 +43,7 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 - **"Not available" is the same for a decline and an expiry.** Thus, a sender never learns which one it was.
 - **An expiry needs no job.** After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.
 - **A 404 hides a block.** A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.
+- **A block declines an open request.** Its sender sees "Not available", as after a decline ([Moderation](moderation.md)).
 - **The note waits for the chat.** T-44 makes the note of an accepted request the first message of the chat.
 
 ## Tickets
