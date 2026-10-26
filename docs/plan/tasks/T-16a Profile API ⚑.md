@@ -53,3 +53,38 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
 - [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
 - [pd-16-profiles.md](../../decisions/pd-16-profiles.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `packages/contract`:
+    - The Form A fields of PD15 for a profile: intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves. The lists of the answers and the must-haves move here from the seed of the API.
+    - The profile create body, the edit body, the reply of the own profile, the reply of a card, and the lister on the listing reply.
+    - The interface is new.
+  - `apps/api`:
+    - New routes: create, edit and read the own profile, the upload link of a profile photo, and read one card.
+    - A gender column, with its migration.
+    - The listing reply gets the lister.
+    - The interface changes.
+  - `apps/web`: "Listed by" of the listing detail shows the name and the photo.
+  - The plan: T-16a gets one item. PD15 says how a parent gives the type of the son or daughter.
+  - The Figma drafts page: the follow-up choice of a parent in section 15.
+  - Docs: a learn page.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database, with the test app of T-43. This seam exists.
+  - The deletion of an account, through `DELETE /v1/me`. This seam exists.
+  - No new web test: "Listed by" uses data that the API tests check.
+- **Decisions:**
+  - T-16a adds the schemas of the Form A fields to the contract. A value from the profile form is always "stated". T-08 builds the Form A of the chat, with its sources, on top of them (the comment on #6).
+  - A parent who picks "Looking for my son or daughter" turns on "Managed by a parent", and answers one more choice: Student, Starting my first job or Working. That answer is who is moving ([PD15](../../decisions/pd-15-form-a-contract.md), [PD16](../../decisions/pd-16-profiles.md)).
+  - `GET /v1/people/:id` reads one card: a live card of an active account, not the own card, with no block in either direction. Each other card gets 404. T-16a gets the item "The API reads one live card for a signed-in user".
+  - "Listed by" shows the full name and the first photo of the profile of the lister, in each state of the card. A card that a parent manages, and no profile, give the kind of lister only.
+  - `POST /v1/me/profile` makes the profile, with the name, the age (18 or more) and the gender. An account has one profile. `PATCH /v1/me/profile` edits it, and `GET /v1/me/profile` reads it.
+  - The gender is Male, Female or Non-binary ([PD8](../../decisions/pd-08-verification.md)). The migration only adds.
+  - A card is live when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on ([PD16](../../decisions/pd-16-profiles.md)). The reply of the own profile lists the fields that are missing.
+  - Photos follow the photos of a listing: a signed upload link to R2, at most four photos, and a removed photo leaves R2 before its row ([PD19](../../decisions/pd-19-retention.md)). A change of the photos locks the row of the account and checks that the account is active, so a deletion does not miss a photo (T-20).
+  - The edit holds the eight lifestyle answers, and the seven must-haves with their weight: prefer or dealbreaker ([PD3a](../../decisions/pd-03a-flatmate-matching.md)).
+  - Each area is an area of the database. The highest budget is not below the lowest. The bio, the job role and the commute address hide phone numbers ([PD17](../../decisions/pd-17-connect-and-contact.md)).
+- **Out of scope:** the profile screens (T-16b), the person detail and the People tab of Saved (T-18b), the Form A of the chat with its sources (T-08), the match query (T-14), and verification (T-46).
