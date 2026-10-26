@@ -95,7 +95,7 @@ These are the newest learn pages. The full list is in [the Learn index](learn/RE
 
 - [Listings and photo uploads](learn/listings.md)
 - [Place detail and listing reports](learn/place-detail.md)
+- [Profiles and cards](learn/profiles.md)
 - [Saved](learn/saved.md)
 - [The web UI base](learn/web-ui-base.md)
-- [Backups](learn/backups.md)
 <!-- learn-newest:end -->
