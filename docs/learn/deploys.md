@@ -45,6 +45,7 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 - A new domain cannot move to a different registrar for 60 days after the purchase. You can change its name servers immediately.
 - GoDaddy can put a new domain on "Registrar Hold" (`clientHold`). Then the domain does not work, and no setting can change. Only GoDaddy support can remove the hold.
 - Add a new API secret to `.env.deploy`, to GitHub secrets, and with a dummy value to `apps/api/.env.example`. Then add it to the Deploy step of the deploy workflow, with the prefix `API_`. If you do not, the API does not get it.
+- **A pull names the missing CI secrets.** After `git pull`, the hooks `post-merge` and `post-rewrite` in `.githooks/` run `tools/missing-ci-secrets.sh`. It compares the secrets that the workflows read with the secrets in GitHub, and it names each missing one and its workflow. Only an admin can list the secrets, so the check is quiet for other people.
 - The image builds from the repo root, because the API needs the workspace packages. The install skips scripts, because the root `prepare` script needs `git`.
 - The Supabase dashboard can show only general regions, and "Asia-Pacific" can put a project in Seoul. Make a project with the CLI: `supabase projects create <name> --region ap-south-1`.
 - A deployment takes approximately 3 to 5 minutes. Lightsail keeps the previous version until the new version passes the health check.

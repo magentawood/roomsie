@@ -1,0 +1,3 @@
+#!/bin/sh
+# After a pull, tell the person which CI secrets GitHub still needs.
+exec sh "$(git rev-parse --show-toplevel)/tools/missing-ci-secrets.sh"
