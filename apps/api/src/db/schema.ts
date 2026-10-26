@@ -422,7 +422,6 @@ export const reports = pgTable('reports', {
   /** The moderator's saved query: open reports, oldest first (T-19). */
   queueIdx: index('reports_queue_idx').on(t.status, t.createdAt),
   subjectIdx: index('reports_subject_idx').on(t.subjectUserId),
-  /** A user reports a listing one time. */
   listingReporterIdx: uniqueIndex('reports_listing_reporter_idx').on(t.listingId, t.reporterUserId),
 })).enableRLS()
 

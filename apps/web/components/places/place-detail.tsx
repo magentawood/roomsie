@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Cube01, DotsVertical, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
@@ -8,7 +8,9 @@ import {
 } from '@untitledui/icons'
 import type { ListingResponse } from '@roomsie/contract'
 import { labels, listingTitle } from '../../lib/listing-steps'
-import { flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type Line } from '../../lib/place-detail'
+import {
+  flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
+} from '../../lib/place-detail'
 import { useAreaNames } from '../../lib/queries'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
@@ -16,11 +18,18 @@ import { ReportSheet } from './report-sheet'
 import { useShare } from './use-share'
 
 /** The icon of each line, as the designs draw them. */
-const lineIcons: Record<string, Icon> = {
+const lineIcons: Record<FactLabel, Icon> = {
   'Place type': Home02, Floor: LayersThree01, 'The room': Key01, 'Carpet area': Ruler, Bathroom: Droplets01, 'Bathroom for this room': Droplets01,
   Balcony: Sun, Furnishing: Cube01, 'Beds free right now': Users01, Meals: ShoppingBag01, Curfew: Moon01,
   Kitchen: ShoppingCart01, Guests: Users01, Smoking: SlashCircle01, 'Who can move in': UsersCheck, Alcohol: SlashCircle01, 'Who’s welcome': Heart,
   'Railway or metro station': Train, 'Bus stop': Bus, 'Market or groceries': ShoppingCart01, Gym: Activity, Mall: ShoppingBag01,
+}
+
+const ownerLines: Record<ListingResponse['status'], string> = {
+  live: 'This is how others see it.',
+  draft: 'It is a draft. Others can’t see it until you publish it.',
+  inactive: 'It is paused. Others can’t see it.',
+  filled: 'It is filled. Others can’t see it.',
 }
 
 function Part({ title, children }: { title: string; children: ReactNode }) {
@@ -32,7 +41,6 @@ function Part({ title, children }: { title: string; children: ReactNode }) {
   )
 }
 
-/** The rows of money and terms: the label left, the value right. */
 function Rows({ lines, total }: { lines: Line[]; total?: string }) {
   return (
     <dl className="flex flex-col gap-2 rounded-xl border border-secondary bg-secondary p-4 text-sm">
@@ -44,14 +52,14 @@ function Rows({ lines, total }: { lines: Line[]; total?: string }) {
   )
 }
 
-function Facts({ lines }: { lines: Line[] }) {
+function Facts({ lines }: { lines: Line<FactLabel>[] }) {
   return (
     <dl className="grid border-t border-secondary sm:grid-cols-2">
       {lines.map((l) => {
         const LineIcon = lineIcons[l.label]
         return (
           <div key={l.label} className="flex gap-3 border-b border-secondary px-1 py-3 sm:odd:border-r sm:even:pl-4">
-            {LineIcon && <LineIcon size={20} aria-hidden className="mt-0.5 shrink-0 text-fg-quaternary" />}
+            <LineIcon size={20} aria-hidden className="mt-0.5 shrink-0 text-fg-quaternary" />
             <div className="flex flex-col text-sm"><dt className="font-medium text-secondary">{l.label}</dt><dd className="text-tertiary">{l.value}</dd></div>
           </div>
         )
@@ -68,10 +76,20 @@ function Chips({ items }: { items: string[] }) {
   )
 }
 
-function Photos({ listing }: { listing: ListingResponse }) {
+function Person({ photoUrl, name, about }: { photoUrl: string | null; name: string; about?: string | null }) {
+  return (
+    <div className="flex items-center gap-4 rounded-xl border border-secondary bg-secondary p-4">
+      {photoUrl
+        ? <img src={photoUrl} alt="" className="size-14 rounded-full object-cover" />
+        : <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary"><User01 size={24} aria-hidden /></span>}
+      <div className="flex flex-col text-sm"><span className="font-medium text-primary">{name}</span>{about && <span className="text-tertiary">{about}</span>}</div>
+    </div>
+  )
+}
+
+function Photos({ photos }: { photos: ListingResponse['photos'] }) {
   const [shown, setShown] = useState(0)
-  const { photos } = listing
-  if (!photos.length) return <div className="flex aspect-3/2 items-center justify-center rounded-xl bg-tertiary text-fg-quaternary"><Home02 size={40} aria-hidden /></div>
+  if (!photos.length) return null
   return (
     <div className="flex flex-col gap-2 md:flex-row">
       <img src={photos[shown]!.url} alt={`Photo ${shown + 1} of ${photos.length}`} className="aspect-3/2 w-full rounded-xl object-cover md:min-w-0 md:flex-1" />
@@ -92,25 +110,18 @@ function Photos({ listing }: { listing: ListingResponse }) {
 }
 
 function OwnerBar({ listing }: { listing: ListingResponse }) {
-  const edit = <Button variant="secondary" size="xs" iconLeading={Edit05} href={`/listings/${listing.id}/1`}>Edit</Button>
-  return listing.hidden
-    ? (
-      <div className="flex items-start justify-between gap-3 rounded-xl border border-badge-error bg-badge-error p-4 text-sm text-badge-error">
-        <div><p className="font-semibold">Hidden for review</p><p>Reports hid this listing. We review it within 24 hours.</p></div>
-        {edit}
+  return (
+    <div className="flex items-start justify-between gap-3 rounded-xl border border-secondary bg-secondary p-4 text-sm">
+      <div>
+        <p className="font-semibold text-primary">{listing.hidden ? 'Hidden for review' : 'Your listing'}</p>
+        <p className="text-tertiary">{listing.hidden ? 'Reports hid it from others. We review it within 24 hours.' : ownerLines[listing.status]}</p>
       </div>
-    )
-    : (
-      <div className="flex items-start justify-between gap-3 rounded-xl border border-secondary bg-secondary p-4 text-sm">
-        <div><p className="font-semibold text-primary">Your listing</p><p className="text-tertiary">This is how others see it.</p></div>
-        {edit}
-      </div>
-    )
+      <Button variant="secondary" size="xs" iconLeading={Edit05} href={`/listings/${listing.id}/1`}>Edit</Button>
+    </div>
+  )
 }
 
-/** The ⋮ menu of a phone: Report, Share and Save. */
 function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onReport: () => void; share: () => void }) {
-  const menu = useRef<HTMLDivElement>(null)
   const saved = useSaved('places', listing.id)
   const items: { label: string; icon: Icon; onClick: () => void }[] = [
     ...(listing.mine ? [] : [{ label: 'Report', icon: Flag01, onClick: onReport }]),
@@ -122,9 +133,9 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
       <button type="button" popoverTarget="place-menu" aria-label="More" className="rounded-md border border-primary p-1.5 text-fg-quaternary shadow-xs outline-focus-ring focus-visible:outline-2">
         <DotsVertical size={20} aria-hidden />
       </button>
-      <div ref={menu} id="place-menu" popover="auto" className="fixed inset-auto top-14 right-4 m-0 w-48 rounded-md border border-secondary bg-primary p-1 shadow-xl">
+      <div id="place-menu" popover="auto" className="fixed inset-auto top-14 right-4 m-0 w-48 rounded-md border border-secondary bg-primary p-1 shadow-xl">
         {items.map((item) => (
-          <button key={item.label} type="button" onClick={() => { menu.current?.hidePopover(); item.onClick() }}
+          <button key={item.label} type="button" popoverTarget="place-menu" popoverTargetAction="hide" onClick={item.onClick}
             className="flex w-full items-center gap-2 rounded-sm px-2.5 py-2 text-sm font-medium text-secondary hover:bg-primary_hover">
             <item.icon size={16} aria-hidden className="text-fg-quaternary" />{item.label}
           </button>
@@ -142,22 +153,27 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
   const { share, copied } = useShare(title)
   const [reporting, setReporting] = useState(false)
   const back = () => (window.history.length > 1 ? router.back() : router.push('/saved'))
+  const where = whereLine(listing, listing.areaSlug ? areaNames[listing.areaSlug] : undefined)
   const money = moveIn(listing)
   const terms = termLines(listing)
-  const where = whereLine(listing, listing.areaSlug ? areaNames[listing.areaSlug] : undefined)
-  const flatmates = listing.kind === 'room_in_flat' ? listing.flatmates : []
   const rates = pgRateLines(listing)
   const place = placeLines(listing)
   const rules = ruleLines(listing)
   const nearby = nearbyLines(listing)
-  // Each part with no data does not show.
   const parts: [string, ReactNode][] = [
+    ['Money to move in', (money || terms.length > 0) && <>{money && <Rows lines={money.lines} total={money.total} />}{terms.length > 0 && <Rows lines={terms} />}</>],
+    ['Who lives here', listing.flatmates.length > 0 && (
+      <ul className="flex flex-col gap-3">
+        {listing.flatmates.map((f) => <li key={`${f.name}-${f.age}`}><Person photoUrl={f.photoUrl} {...flatmateLines(f)} /></li>)}
+      </ul>
+    )],
     ['The place', (rates.length > 0 || place.length > 0) && <>{rates.length > 0 && <Rows lines={rates} />}{place.length > 0 && <Facts lines={place} />}</>],
     ['House rules', rules.length > 0 && <Facts lines={rules} />],
     ['What’s inside', listing.insideItems.length > 0 && <Chips items={listing.insideItems.map((i) => labels.insideItems[i])} />],
     ['Building and society', listing.amenities.length > 0 && <Chips items={listing.amenities.map((a) => labels.amenities[a])} />],
     ['What’s nearby', nearby.length > 0 && <Facts lines={nearby} />],
     ['About this place', listing.description && <p className="text-sm whitespace-pre-line text-tertiary">{listing.description}</p>],
+    ['Listed by', <Person photoUrl={null} name={listerLabel(listing.kind)} />],
   ]
 
   return (
@@ -177,42 +193,12 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
         </div>
         {copied && <p role="status" className="text-sm text-tertiary lg:hidden">Link copied</p>}
         {listing.mine && <OwnerBar listing={listing} />}
-        <Photos listing={listing} />
+        <Photos photos={listing.photos} />
         <header className="flex flex-col gap-1 border-b border-secondary pb-5">
           <h1 className="text-lg font-semibold text-primary">{title}</h1>
           {where && <p className="text-md text-tertiary">{where}</p>}
         </header>
-        {(money || terms.length > 0) && (
-          <Part title="Money to move in">
-            {money && <Rows lines={money.lines} total={money.total} />}
-            {terms.length > 0 && <Rows lines={terms} />}
-          </Part>
-        )}
-        {flatmates.length > 0 && (
-          <Part title="Who lives here">
-            <ul className="flex flex-col gap-3">
-              {flatmates.map((f) => {
-                const { name, about } = flatmateLines(f)
-                return (
-                  <li key={`${f.name}-${f.age}`} className="flex items-center gap-4 rounded-xl border border-secondary bg-secondary p-4">
-                    {f.photoUrl
-                      ? <img src={f.photoUrl} alt="" className="size-14 rounded-full object-cover" />
-                      : <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary"><User01 size={24} aria-hidden /></span>}
-                    <div className="flex flex-col text-sm"><span className="font-medium text-primary">{name}</span>{about && <span className="text-tertiary">{about}</span>}</div>
-                  </li>
-                )
-              })}
-            </ul>
-          </Part>
-        )}
         {parts.map(([partTitle, body]) => body && <Part key={partTitle} title={partTitle}>{body}</Part>)}
-        <Part title="Listed by">
-          {/* TODO(T-16a): the name and the photo of the lister. */}
-          <div className="flex items-center gap-4 rounded-xl border border-secondary bg-secondary p-4">
-            <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary"><User01 size={24} aria-hidden /></span>
-            <span className="text-sm font-medium text-primary">{listerLabel(listing.kind)}</span>
-          </div>
-        </Part>
       </article>
       {!listing.mine && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary p-4 lg:hidden">

@@ -139,6 +139,8 @@ export const labels = {
   electricity: { included: 'Included', as_per_meter: 'As per meter', split_equally: 'Split equally' },
   minStay: { '3_months': '3 months', '6_months': '6 months', '12_months': '12 months', flexible: 'Flexible' },
   guests: { none: 'No Guests welcome', welcome: 'Guests Welcome', day_visits: 'Day Visits only' },
+  /** The guests rule as the listing detail says it. */
+  guestsRule: { none: 'No guests', welcome: 'Guests welcome', day_visits: 'Day visits only' },
   whoCanMoveIn: { men: 'Men', women: 'Women', any: 'Any' },
   whoIsWelcome: { students: 'Students', working_professionals: 'Working professionals', couples: 'Couples', families: 'Families', bachelors: 'Bachelors' },
   food: { veg: 'Veg', non_veg: 'Non-veg', eggetarian: 'Eggetarian', jain: 'Jain' },
@@ -154,7 +156,7 @@ export const labels = {
   },
 } as const
 
-const rupees = (n: number) => `₹${inIndianDigits(n)}`
+export const rupees = (n: number) => `₹${inIndianDigits(n)}`
 
 /** The card title: "2 BHK, full flat", "Private room in 3 BHK" or the PG name. */
 export function listingTitle(listing: ListingResponse) {

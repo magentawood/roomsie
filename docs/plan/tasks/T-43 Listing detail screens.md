@@ -79,4 +79,5 @@ Read the full detail of a room, flat, PG or broker listing.
   - The owner of the listing sees the bar "Your listing" with Edit, and no Report and no Save.
   - A listing that is not live, or that is hidden, gives the page "This place is no longer listed.", with links to Saved and to "Start looking".
   - On a phone: one column, a top bar with Back and a menu (Report, Share, Save), and a bottom bar with Save, as the person detail of section 16.
+  - A confirmation dialog has its two buttons side by side, of equal width, on a phone too, as the drafts show. This changes the "Delete this listing?" dialog of T-42 (review decision of the user).
 - **Out of scope:** the "Verified" pill (T-46), messages (T-44, T-45), "Ask in chat" and the detail in the results panel (T-15), the name and photo of the lister (T-16a), the reports of a person and the block (T-19), the moderator's tools, a full-screen photo viewer, and a "Best match" label on the detail.
