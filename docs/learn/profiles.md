@@ -6,7 +6,7 @@
 
 - A **profile** holds the fields of PD16 and the Form A fields of PD15: who is moving, the areas, the budget, the move date, the eight lifestyle answers and the seven must-haves. The room type is a Form A field that only the chat fills.
 - A **card** is what other users see of a profile. It has no gender: the designs do not show it, and the filters that use it run on the server.
-- A card is **live** when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on. If not, it is a draft, or hidden.
+- A card is **live** when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on. If not, it is a draft, or hidden. A budget is complete when its lowest or its highest amount is set, so the band "Above ₹35k" counts.
 - A **parent** can run the card of a son or daughter of 18 or more. The parent says what the son or daughter does, and the card shows "Managed by a parent".
 
 ## How it fits our project
@@ -17,12 +17,17 @@
 | The routes | `apps/api/src/profiles/routes.ts`: `POST`, `PATCH` and `GET /v1/me/profile`, `POST /v1/me/profile/upload-urls` and `GET /v1/people/:id` |
 | The replies | `apps/api/src/profiles/read.ts`: the card, the own profile, and the fields that a card still needs |
 | The lister on a listing | `partsOf` and `listingView` in `apps/api/src/listings/read.ts` |
+| The screens | `apps/web/app/profile/page.tsx`, and `apps/web/components/profile/`: the page, the create dialog and the delete dialog |
+| The pure parts of the screens | `apps/web/lib/profile-form.ts`: the budget bands, "What best describes you?", the edit body and the labels |
 
 - An edit sends only the fields that change. `null` clears a field, and in `lifestyle` and `mustHaves` it clears one answer.
 - A value from the profile form is "stated". T-08 adds the values that the chat infers.
 - The reply of the own profile has `visibility` and `missing`, so the profile screens can tell why a card is not live.
 - `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`).
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.
+- After a sign-in, the app shell opens the create dialog when the account has no profile. "Explore for now" closes it until the browser tab closes.
+- The page saves its fields with one Save button, and sends only the fields that changed. A photo saves at once, so no uploaded photo waits for a Save.
+- "Delete my account" calls `DELETE /v1/me`, then signs out.
 
 ## The choice we made
 
@@ -39,3 +44,4 @@
 ## Tickets
 
 - T-16a: [#155](https://github.com/magentawood/roomsie/pull/155), 2026-10-26. The profile API, the photos, one card, the gender and the lister on a listing.
+- T-16b: [#156](https://github.com/magentawood/roomsie/pull/156), 2026-10-26. The profile page, the create and delete dialogs, and the budget rule of the bands.
