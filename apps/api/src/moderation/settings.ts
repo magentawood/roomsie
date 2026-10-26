@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { reportReasons } from '@roomsie/contract'
 
-/** "a, b" gives ['a', 'b']. */
 const commaList = <T extends z.ZodType>(item: T) =>
   z.preprocess((v) => (typeof v === 'string' ? v.split(',').map((s) => s.trim()).filter(Boolean) : v), z.array(item))
 

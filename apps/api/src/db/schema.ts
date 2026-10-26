@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, placeTypes, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, placeTypes, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -122,7 +122,7 @@ export const profiles = pgTable('profiles', {
   photoKeys: text('photo_keys').array().notNull().default([]),
   /** `hidden` is the "Hide my card" switch (PD16). */
   visibility: visibilityEnum('visibility').notNull().default('draft'),
-  /** Set when reports hide the card (PD18). Only the moderator clears it, so the switch cannot bring the card back. */
+  /** Set when reports or a moderator hide the card (PD18). Only the moderator clears it, so the switch cannot bring the card back. */
   hiddenAt: timestamp('hidden_at', { withTimezone: true }),
 
   createdAt: createdAt(),
@@ -283,7 +283,7 @@ export const listings = pgTable('listings', {
   description: text('description'),
   /** Set when the listing goes live: stale listings expire, not 404 (seo-with-gated-products.md). */
   expiresAt: timestamp('expires_at', { withTimezone: true }),
-  /** Set when reports hide the listing (PD18). Only the moderator clears it. */
+  /** Set when reports or a moderator hide the listing (PD18). Only the moderator clears it. */
   hiddenAt: timestamp('hidden_at', { withTimezone: true }),
 
   createdAt: createdAt(),
@@ -431,7 +431,7 @@ export const reports = pgTable('reports', {
   listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'set null' }),
   /** The reported person (T-19). The report stays when the person deletes the profile. */
   profileId: uuid('profile_id').references(() => profiles.id, { onDelete: 'set null' }),
-  reason: text('reason').notNull(),
+  reason: text('reason', { enum: reportReasons }).notNull(),
   detail: text('detail'),
   status: reportStatusEnum('status').notNull().default('open'),
   createdAt: createdAt(),

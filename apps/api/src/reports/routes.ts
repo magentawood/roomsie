@@ -21,27 +21,32 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
     const found = await db.transaction(async (tx) => {
       // The lock makes two reports at the same time count each other. A person can be reported in each state of the card,
       // so that the recipient of a request can report its sender.
-      const [target] = 'listingId' in body
-        ? await tx.select({ subjectUserId: listings.ownerUserId }).from(listings)
-          .where(and(eq(listings.id, body.listingId), visibleListing(reporterUserId), ne(listings.ownerUserId, reporterUserId))).for('update')
-        : await tx.select({ subjectUserId: profiles.userId }).from(profiles)
-          .where(and(eq(profiles.id, body.profileId), ne(profiles.userId, reporterUserId))).for('update')
-      if (!target) return false
-      const [listingId, profileId] = 'listingId' in body ? [body.listingId, null] : [null, body.profileId]
+      const target = 'listingId' in body
+        ? {
+            columns: { listingId: body.listingId, profileId: null },
+            subject: () => tx.select({ userId: listings.ownerUserId }).from(listings)
+              .where(and(eq(listings.id, body.listingId), visibleListing(reporterUserId), ne(listings.ownerUserId, reporterUserId))).for('update'),
+            reports: eq(reports.listingId, body.listingId),
+            hide: () => tx.update(listings).set({ hiddenAt: new Date() }).where(and(eq(listings.id, body.listingId), isNull(listings.hiddenAt))),
+          }
+        : {
+            columns: { listingId: null, profileId: body.profileId },
+            subject: () => tx.select({ userId: profiles.userId }).from(profiles)
+              .where(and(eq(profiles.id, body.profileId), ne(profiles.userId, reporterUserId))).for('update'),
+            reports: eq(reports.profileId, body.profileId),
+            hide: () => tx.update(profiles).set({ hiddenAt: new Date() }).where(and(eq(profiles.id, body.profileId), isNull(profiles.hiddenAt))),
+          }
+      const [subject] = await target.subject()
+      if (!subject) return false
       // ADR-0015: a retried tap, or a second report of the same user, files nothing.
       const filed = await tx.insert(reports).values({
-        id: body.id, reporterUserId, subjectUserId: target.subjectUserId, listingId, profileId, reason: body.reason,
+        id: body.id, reporterUserId, subjectUserId: subject.userId, ...target.columns, reason: body.reason,
         detail: body.detail && maskContacts(body.detail),
       }).onConflictDoNothing().returning({ id: reports.id })
       if (!filed.length) return true
-      const [open] = await tx.select({ reporters: count() }).from(reports)
-        .where(and(listingId ? eq(reports.listingId, listingId) : eq(reports.profileId, profileId!), eq(reports.status, 'open')))
+      const [open] = await tx.select({ reporters: count() }).from(reports).where(and(target.reports, eq(reports.status, 'open')))
       // PD18: a safety report, or reports from this number of people, hide the listing or the card at once.
-      if (moderation.safetyReasons.includes(body.reason) || open!.reporters >= moderation.hideAtReporters) {
-        const now = new Date()
-        if (listingId) await tx.update(listings).set({ hiddenAt: now }).where(and(eq(listings.id, listingId), isNull(listings.hiddenAt)))
-        else await tx.update(profiles).set({ hiddenAt: now }).where(and(eq(profiles.id, profileId!), isNull(profiles.hiddenAt)))
-      }
+      if (moderation.safetyReasons.includes(body.reason) || open!.reporters >= moderation.hideAtReporters) await target.hide()
       return true
     })
     if (!found) return reply.code(404).send({ error: 'not found' })

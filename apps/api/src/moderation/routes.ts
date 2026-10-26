@@ -1,29 +1,25 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, asc, eq, isNull, sql } from 'drizzle-orm'
-import {
-  errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem, type ReportReason,
-} from '@roomsie/contract'
+import { and, asc, eq, isNull } from 'drizzle-orm'
+import { errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
-import type { Db } from '../db/client'
+import type { Tx } from '../db/client'
 import { connectionRequests, listings, profiles, reports, users } from '../db/schema'
 import { listingView, partsOf } from '../listings/read'
 import { idParams } from '../params'
 import { answersOf, cardView } from '../profiles/read'
 import type { Storage } from '../storage'
 
-type Tx = Parameters<Parameters<Db['transaction']>[0]>[0]
-
-/** Keeps the time of an earlier hide. */
-const hideNow = <T extends typeof listings.hiddenAt | typeof profiles.hiddenAt>(column: T) => sql`coalesce(${column}, now())`
-
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
 async function suspend(tx: Tx, userId: string) {
-  await tx.update(users).set({ status: 'suspended', tokensValidAfter: new Date() }).where(eq(users.id, userId))
-  await tx.update(profiles).set({ hiddenAt: hideNow(profiles.hiddenAt) }).where(eq(profiles.userId, userId))
-  await tx.update(listings).set({ hiddenAt: hideNow(listings.hiddenAt) }).where(eq(listings.ownerUserId, userId))
-  await tx.update(connectionRequests).set({ status: 'withdrawn' })
-    .where(and(eq(connectionRequests.fromUserId, userId), eq(connectionRequests.status, 'pending')))
+  const now = new Date()
+  await tx.update(users).set({ status: 'suspended', tokensValidAfter: now }).where(eq(users.id, userId))
+  await tx.update(profiles).set({ hiddenAt: now }).where(eq(profiles.userId, userId))
+  await tx.update(listings).set({ hiddenAt: now }).where(eq(listings.ownerUserId, userId))
+  const open = eq(connectionRequests.status, 'pending')
+  await tx.update(connectionRequests).set({ status: 'withdrawn' }).where(and(eq(connectionRequests.fromUserId, userId), open))
+  // The senders of the open requests to the person see "not available", as after a decline.
+  await tx.update(connectionRequests).set({ status: 'declined', respondedAt: now }).where(and(eq(connectionRequests.toUserId, userId), open))
   await tx.update(reports).set({ status: 'actioned' }).where(and(eq(reports.subjectUserId, userId), eq(reports.status, 'open')))
 }
 
@@ -51,8 +47,10 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
             kind: 'person' as const, userId: report.subjectUserId, hidden: profile?.hiddenAt != null, reports: [],
             card: profile && cardView(profile, await answersOf(db, profile.id), storage),
           })
-      const reason = report.reason as ReportReason
-      item.reports.push({ id: report.id, reason, safety: moderation.safetyReasons.includes(reason), detail: report.detail, createdAt: report.createdAt.toISOString() })
+      item.reports.push({
+        id: report.id, reason: report.reason, safety: moderation.safetyReasons.includes(report.reason), detail: report.detail,
+        createdAt: report.createdAt.toISOString(),
+      })
       items.set(key, item)
     }
     const safety = (item: ReportQueueItem) => item.reports.some((r) => r.safety)
@@ -74,11 +72,9 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
         const closed = await tx.update(reports).set({ status: action === 'dismiss' ? 'dismissed' : 'actioned' })
           .where(and(ofItem, eq(reports.status, 'open'))).returning({ subjectUserId: reports.subjectUserId })
         if (!closed.length) return false
-        if (kind === 'listings') {
-          await tx.update(listings).set({ hiddenAt: action === 'dismiss' ? null : hideNow(listings.hiddenAt) }).where(eq(listings.id, id))
-        } else {
-          await tx.update(profiles).set({ hiddenAt: action === 'dismiss' ? null : hideNow(profiles.hiddenAt) }).where(eq(profiles.userId, id))
-        }
+        const hiddenAt = action === 'dismiss' ? null : new Date()
+        if (kind === 'listings') await tx.update(listings).set({ hiddenAt }).where(eq(listings.id, id))
+        else await tx.update(profiles).set({ hiddenAt }).where(eq(profiles.userId, id))
         if (action === 'suspend') await suspend(tx, closed[0]!.subjectUserId)
         return true
       })

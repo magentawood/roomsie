@@ -87,7 +87,7 @@ describe('DELETE /v1/me', () => {
       { fromUserId: stays.id, fromProfileId: staysSeed.profile.id, toUserId: gone.id, toProfileId: goneSeed.profile.id, note: 'Hi' },
       { fromUserId: stays.id, fromProfileId: staysSeed.profile.id, toUserId: gone.id, listingId: goneSeed.listingId, note: 'Hi', status: 'declined' },
     ])
-    await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'spam' })
+    await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'broker_or_spam' })
     await db.insert(blocks).values({ blockerUserId: gone.id, blockedUserId: stays.id })
     // Each saved the other's place and card (T-47).
     await db.insert(saves).values([
