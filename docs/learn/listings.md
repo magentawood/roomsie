@@ -56,12 +56,12 @@ The screens (T-42):
 - **The kind is fixed.** To change the kind, delete the listing and make a new one.
 - **Rents and flatmates replace the full set.** A `PATCH` with `rates` or `flatmates` deletes the old rows. Send the full list each time.
 - **Upload with the type and the size that you asked for.** The link signs the `content-type` and the `content-length`. A different file type or size gets 403 from R2.
-- **A removed photo is gone.** The API deletes it in R2 before it saves the edit. If R2 fails, the API gives 502 and saves nothing.
+- **A removed photo is gone from R2.** The API deletes it in R2 before it saves the edit. If R2 fails, the API gives 502 and saves nothing. A copy at Cloudflare or in a browser can still show it for a short time ([PD19](../decisions/pd-19-retention.md)).
 - **A live listing needs an area.** Without one, the publish gets 422, and the screen links step 2.
 - **A live edit is checked again.** An edit that removes the last rent of a live listing gets 422. A PG that has been live can add a sharing type before its rent, but it goes live again only with a rent for each type.
 - **A PG keeps a rent only for its sharing types.** An edit that removes a sharing type deletes its rent. A rent for a type that the PG does not have gets 400.
 - **The lister sees `••••` in their own text.** The original is never stored, so it cannot come back.
-- **Photos load from `https://photos.roomsie.in`.** The deploy workflow sets `R2_PUBLIC_URL` to it, and the photos bucket serves it as a custom domain. Cloudflare keeps a copy of each photo for 10 minutes, so a deleted photo can show for 10 minutes or less ([PD19](../decisions/pd-19-retention.md)).
+- **Photos load from `R2_PUBLIC_URL`.** The deploy workflow sets it, and the photos bucket serves that address as a custom domain. A cache rule for that host, in the Cloudflare dashboard under Caching → Cache Rules, sets how long the copies stay.
 - **The photos bucket needs a CORS rule.** The browser uploads each photo straight to R2, so the bucket must allow `PUT` from `https://roomsie.in` with the `content-type` header. Without the rule, R2 refuses the preflight with 403, and each upload fails. A local dev API with fake R2 settings does not show this.
 - **CORS must allow `PATCH` and `DELETE`.** The default of `@fastify/cors` allows only GET, HEAD and POST, so a browser cannot save a step. The API sets the methods (T-42).
 - **A flat rent has no sharing type.** The edit schema of a room, a flat and a broker flat rejects `sharing`. `toEditValues` drops it.

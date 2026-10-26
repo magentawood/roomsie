@@ -13,8 +13,6 @@ concurrency:
 env:
   SERVICE: roomsie-api
   WEB_ORIGIN: https://roomsie.in
-  # Public, so not a secret: each photo address shows it (T-54).
-  R2_PUBLIC_URL: https://photos.roomsie.in
 jobs:
   deploy:
     # A run by hand from a branch would apply its unmerged migrations to the live database.
@@ -55,6 +53,7 @@ jobs:
           API_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           API_R2_BUCKET_PHOTOS: ${{ secrets.R2_BUCKET_PHOTOS }}
           API_R2_BUCKET_PRIVATE: ${{ secrets.R2_BUCKET_PRIVATE }}
+          API_R2_PUBLIC_URL: https://photos.roomsie.in
           API_DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           API_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           API_SENTRY_DSN_API: ${{ secrets.SENTRY_DSN_API }}
@@ -64,7 +63,7 @@ jobs:
             containers: { api: {
               image: $image,
               ports: { "8080": "HTTP" },
-              environment: ({ WEB_ORIGIN: $ENV.WEB_ORIGIN, R2_PUBLIC_URL: $ENV.R2_PUBLIC_URL }
+              environment: ({ WEB_ORIGIN: $ENV.WEB_ORIGIN }
                 + ($ENV | with_entries(select(.key | startswith("API_")) | .key |= ltrimstr("API_"))))
             } },
             publicEndpoint: { containerName: "api", containerPort: 8080, healthCheck: { path: "/v1/health" } }
