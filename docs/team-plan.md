@@ -530,6 +530,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 **T-23a · Landing page from the Figma design** — done when:
 - The landing page uses the Figma design of D-04
 - The page has a hero, a how-it-works section, and a button into the chat
+- The hero plays the product film "roomsie-product-film-v5" from the Website page of the Product file (Figma node 256:23029)
 - Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
 - The footer links of T-23b use the design of D-04
 - Read first: `docs/extensibility.md`
