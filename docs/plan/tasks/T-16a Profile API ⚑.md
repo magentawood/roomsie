@@ -37,16 +37,16 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 - [[T-16b Profile screens ⚑]]
 
 ## Done when
-- [ ] The API creates and edits a profile with the fields of PD16 and the Form A fields of PD15. Age is required, and is 18 or more
-- [ ] The API gives a presigned URL, thus a user uploads a maximum of four photos directly to R2
-- [ ] Photo bytes never pass through the API
-- [ ] A parent can create a profile for a son or daughter of 18 or more. The card shows "Managed by a parent"
-- [ ] A card becomes visible when its required fields are complete, unless the user hides it
-- [ ] A profile has a required gender: Male, Female or Non-binary
-- [ ] The API masks phone numbers in the bio
-- [ ] A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo
-- [ ] The listing reply gives the name and the photo of the lister from the profile, and the listing detail shows them
-- [ ] The API reads one live card for a signed-in user
+- [x] The API creates and edits a profile with the fields of PD16 and the Form A fields of PD15. Age is required, and is 18 or more · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] The API gives a presigned URL, thus a user uploads a maximum of four photos directly to R2 · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] Photo bytes never pass through the API · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] A parent can create a profile for a son or daughter of 18 or more. The card shows "Managed by a parent" · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] A card becomes visible when its required fields are complete, unless the user hides it · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] A profile has a required gender: Male, Female or Non-binary · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] The API masks phone numbers in the bio · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] The listing reply gives the name and the photo of the lister from the profile, and the listing detail shows them · [#155](https://github.com/magentawood/roomsie/pull/155)
+- [x] The API reads one live card for a signed-in user · [#155](https://github.com/magentawood/roomsie/pull/155)
 
 ^done
 
@@ -89,3 +89,13 @@ The server part of profiles: save who a person is, and give a safe link to uploa
   - The edit holds the eight lifestyle answers, and the seven must-haves with their weight: prefer or dealbreaker ([PD3a](../../decisions/pd-03a-flatmate-matching.md)).
   - Each area is an area of the database. The highest budget is not below the lowest. The bio, the job role and the commute address hide phone numbers ([PD17](../../decisions/pd-17-connect-and-contact.md)).
 - **Out of scope:** the profile screens (T-16b), the person detail and the People tab of Saved (T-18b), the Form A of the chat with its sources (T-08), the match query (T-14), and verification (T-46).
+
+## Log
+
+- **2026-10-26 · [#155](https://github.com/magentawood/roomsie/pull/155)**
+  - **Change:** the profile API: make, edit and read the own profile, the photos with a signed upload link, one card for other users, a gender column, and the name and the photo of the lister on a listing. A card goes live by itself when it is complete. A photo change and the deletion of an account lock the same row.
+  - **Why:** the T-16a spec, [PD16](../../decisions/pd-16-profiles.md), [PD15](../../decisions/pd-15-form-a-contract.md)
+  - **Ticked:** all ten items, from "The API creates and edits a profile with the fields of PD16 and the Form A fields of PD15. Age is required, and is 18 or more" to "The API reads one live card for a signed-in user"
+  - **Not done:** none
+  - **Learn:** [Profiles and cards](../../learn/profiles.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
