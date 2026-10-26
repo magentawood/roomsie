@@ -41,3 +41,23 @@ Listing photos load from our own address, not the test address of Cloudflare.
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
 - [0016-credentials-and-secrets.md](../../decisions/0016-credentials-and-secrets.md)
 - [listings.md](../../learn/listings.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - The Cloudflare account: the custom domain photos.roomsie.in on the bucket `roomsie-photos`, one cache rule for that host, and the r2.dev address of the bucket set to off. The user makes each change, from a command or dashboard steps that we give.
+  - `.github/workflows/deploy-api.yml`: the API gets its photo address from a plain value, not from the secret `R2_PUBLIC_URL`. The interface of the API does not change.
+  - The GitHub secrets: `R2_PUBLIC_URL` goes, after the check on roomsie.in.
+  - Docs: the listings learn page and PD19.
+- **Seams for the tests:**
+  - No new seam, because the app code does not change.
+  - The smoke check of the deploy, and one check on roomsie.in: a photo of a draft listing loads from photos.roomsie.in, its cache header gives 10 minutes, and the r2.dev address gives no photo.
+- **Decisions:**
+  - The photo address `https://photos.roomsie.in` is a plain value in the deploy workflow, as the web origin is. It is public, so it is not a secret (ADR-0016). The merge of the PR deploys it.
+  - Cloudflare keeps a copy of each photo for 10 minutes, at the edge and in the browser. Thus a deleted photo can show for 10 minutes or less (why: PD19).
+  - The order: the domain and the cache rule, then the merge and the deploy, then the check on roomsie.in, then r2.dev off and the secret deleted. Thus no photo address breaks.
+  - The CORS rule of the bucket stays as it is. Uploads go to the storage address of R2, not to photos.roomsie.in.
+  - The user makes each change in the settings of Cloudflare and GitHub, from our commands.
+- **Out of scope:** a purge of the Cloudflare copies when the API deletes a photo, image resizing, and the Content-Security-Policy (T-52). T-52 must allow images from photos.roomsie.in.
