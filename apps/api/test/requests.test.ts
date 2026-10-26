@@ -88,6 +88,13 @@ describe('a request to a person', () => {
     expect((await sayHi('stranger', 'friend')).statusCode).toBe(409)
   })
 
+  it('lets a sender with a draft card ask', async () => {
+    await t.db.update(profiles).set({ visibility: 'draft' }).where(eq(profiles.id, profileIds.seeker!))
+    expect((await sayHi('seeker', 'friend')).statusCode).toBe(201)
+    await t.db.update(profiles).set({ visibility: 'live' }).where(eq(profiles.id, profileIds.seeker!))
+    await t.db.delete(connectionRequests)
+  })
+
   it('checks the note and the target', async () => {
     expect((await send('seeker', { toProfileId: profileIds.friend, note: '   ' })).statusCode).toBe(400)
     expect((await send('seeker', { toProfileId: profileIds.friend, note: 'x'.repeat(301) })).statusCode).toBe(400)
@@ -105,6 +112,14 @@ describe('a request to a lister', () => {
     expect(outgoingRequest.parse(sent.json())).toMatchObject({ toProfileId: null, listingId: id, state: 'open' })
     expect((await incoming('lister'))[0]).toMatchObject({ listingId: id, from: { name: 'Rahul Verma' } })
     expect((await send('seeker', { listingId: id, note: 'Again?' })).statusCode).toBe(409)
+    await t.db.delete(connectionRequests)
+  })
+
+  it('counts a card and a listing of the same person as one pair', async () => {
+    const id = await t.liveListing()
+    await t.db.update(listings).set({ ownerUserId: t.ids.friend }).where(eq(listings.id, id))
+    expect((await sayHi('seeker', 'friend')).statusCode).toBe(201)
+    expect((await send('seeker', { listingId: id, note: 'Hi' })).statusCode).toBe(409)
     await t.db.delete(connectionRequests)
   })
 

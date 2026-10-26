@@ -1,12 +1,10 @@
 import { z } from 'zod'
+import { requiredText } from './shared'
 
 export const requestNoteLimit = 300
 
-export const sendRequestBody = z.strictObject({
-  toProfileId: z.uuid().optional(),
-  listingId: z.uuid().optional(),
-  note: z.string().trim().min(1).max(requestNoteLimit),
-}).refine((b) => (b.toProfileId === undefined) !== (b.listingId === undefined), 'Give a person or a listing')
+const note = requiredText(requestNoteLimit)
+export const sendRequestBody = z.union([z.strictObject({ toProfileId: z.uuid(), note }), z.strictObject({ listingId: z.uuid(), note })])
 export type SendRequestBody = z.infer<typeof sendRequestBody>
 
 /** What the sender sees. A decline and an expiry are both "not_available" (PD17). */

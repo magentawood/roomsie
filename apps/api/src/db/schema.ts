@@ -400,7 +400,7 @@ export const connectionRequests = pgTable('connection_requests', {
   toUserId: uuid('to_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   toProfileId: uuid('to_profile_id').references(() => profiles.id, { onDelete: 'cascade' }),
   listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
-  /** The first note. T-44 makes it the first message of the chat after an accept. */
+  /** T-44 makes it the first message of the chat after an accept. */
   note: text('note').notNull(),
   status: connectionStatusEnum('status').notNull().default('pending'),
   createdAt: createdAt(),
