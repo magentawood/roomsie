@@ -45,7 +45,7 @@ Match cards, profile pages and the connect flow.
 
 - **2026-10-26 · [#153](https://github.com/magentawood/roomsie/pull/153)**
   - **Change:** a check of the designs and the drafts against the records, and new drafts for each gap on the Figma drafts page. Section 14: the header states of the results and the person card variants. Section 15: the Age field, the profile states, the photo upload states and the account delete. Section 16: connect and report on a phone, and Block and "Not available" on a desktop. The older drafts of sections 05, 08, 09 and 10 follow PD3a, PD17 and PD18.
-  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md) puts a missing screen in the drafts. T-15, T-16b, T-18b and T-43 need these states.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md) puts a missing screen in the drafts.
   - **Ticked:** "The design has connect and report states. They refine the prototype detail sheet that V5 builds first"
   - **Not done:** none
   - **Journal:** [2026-10](../../journal/2026-10.md)
