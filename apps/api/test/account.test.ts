@@ -5,7 +5,7 @@ import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
 import { tombstoneKey } from '../src/account'
 import {
-  anonymousSessions, areas, blocks, chatTurns, connectionRequests, goals, listingFlatmates, listingRates, listings, profiles, reports, users,
+  anonymousSessions, areas, blocks, chatTurns, connectionRequests, goals, listingFlatmates, listingRates, listings, profiles, reports, saves, users,
 } from '../src/db/schema'
 import { buildServer } from '../src/server'
 import { offlineStorage } from '../scripts/openapi'
@@ -84,6 +84,11 @@ describe('DELETE /v1/me', () => {
     await db.insert(connectionRequests).values({ fromProfileId: staysSeed.profile.id, toProfileId: goneSeed.profile.id })
     await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'spam' })
     await db.insert(blocks).values({ blockerUserId: gone.id, blockedUserId: stays.id })
+    // Each saved the other's place and card (T-47).
+    await db.insert(saves).values([
+      { userId: gone.id, listingId: staysSeed.listingId }, { userId: gone.id, profileId: staysSeed.profile.id },
+      { userId: stays.id, listingId: goneSeed.listingId }, { userId: stays.id, profileId: goneSeed.profile.id },
+    ])
 
     expect((await call('DELETE', gone.token)).statusCode).toBe(204)
 
@@ -96,6 +101,8 @@ describe('DELETE /v1/me', () => {
     expect(await db.select().from(listingFlatmates).where(eq(listingFlatmates.listingId, goneSeed.listingId))).toHaveLength(0)
     expect(await db.select().from(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, gone.id))).toHaveLength(0)
     expect(await db.select().from(connectionRequests).where(eq(connectionRequests.toProfileId, goneSeed.profile.id))).toHaveLength(0)
+    expect(await db.select().from(saves).where(eq(saves.userId, gone.id))).toHaveLength(0)
+    expect(await db.select().from(saves).where(eq(saves.userId, stays.id))).toHaveLength(0)
     // The other person keeps all of theirs.
     expect(await db.select().from(goals).where(inArray(goals.id, staysSeed.goalIds))).toHaveLength(2)
     expect(await db.select().from(chatTurns).where(inArray(chatTurns.goalId, staysSeed.goalIds))).toHaveLength(1)

@@ -434,6 +434,22 @@ export const blocks = pgTable('blocks', {
 
 /* ── waitlist ───────────────────────────────────────────────────────────── */
 
+/** A place or a person that a user keeps under Saved (T-47). Each row has exactly one of the two. */
+export const saves = pgTable('saves', {
+  id: id(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
+  profileId: uuid('profile_id').references(() => profiles.id, { onDelete: 'cascade' }),
+  createdAt: createdAt(),
+}, (t) => ({
+  userListingIdx: uniqueIndex('saves_user_listing_idx').on(t.userId, t.listingId),
+  userProfileIdx: uniqueIndex('saves_user_profile_idx').on(t.userId, t.profileId),
+  // The delete of a listing or a profile finds its saves through these.
+  listingIdx: index('saves_listing_idx').on(t.listingId),
+  profileIdx: index('saves_profile_idx').on(t.profileId),
+  oneTargetCheck: check('saves_one_target_check', sql`num_nonnulls(${t.listingId}, ${t.profileId}) = 1`),
+})).enableRLS()
+
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
