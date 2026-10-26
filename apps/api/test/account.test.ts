@@ -82,7 +82,10 @@ describe('DELETE /v1/me', () => {
     const goneSeed = await seedAccount(gone.id, 'gone')
     const staysSeed = await seedAccount(stays.id, 'stays')
     const db = testDb.db
-    await db.insert(connectionRequests).values({ fromUserId: stays.id, fromProfileId: staysSeed.profile.id, toUserId: gone.id, toProfileId: goneSeed.profile.id, note: 'Hi' })
+    await db.insert(connectionRequests).values([
+      { fromUserId: stays.id, fromProfileId: staysSeed.profile.id, toUserId: gone.id, toProfileId: goneSeed.profile.id, note: 'Hi' },
+      { fromUserId: stays.id, fromProfileId: staysSeed.profile.id, toUserId: gone.id, listingId: goneSeed.listingId, note: 'Hi', status: 'declined' },
+    ])
     await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'spam' })
     await db.insert(blocks).values({ blockerUserId: gone.id, blockedUserId: stays.id })
     // Each saved the other's place and card (T-47).
@@ -101,7 +104,7 @@ describe('DELETE /v1/me', () => {
     expect(await db.select().from(listingRates).where(eq(listingRates.listingId, goneSeed.listingId))).toHaveLength(0)
     expect(await db.select().from(listingFlatmates).where(eq(listingFlatmates.listingId, goneSeed.listingId))).toHaveLength(0)
     expect(await db.select().from(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, gone.id))).toHaveLength(0)
-    expect(await db.select().from(connectionRequests).where(eq(connectionRequests.toProfileId, goneSeed.profile.id))).toHaveLength(0)
+    expect(await db.select().from(connectionRequests).where(eq(connectionRequests.fromUserId, stays.id))).toHaveLength(0)
     expect(await db.select().from(saves).where(eq(saves.userId, gone.id))).toHaveLength(0)
     expect(await db.select().from(saves).where(eq(saves.userId, stays.id))).toHaveLength(0)
     // The other person keeps all of theirs.

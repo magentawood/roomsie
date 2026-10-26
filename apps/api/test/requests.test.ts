@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { and, eq, or } from 'drizzle-orm'
+import { eq } from 'drizzle-orm'
 import { incomingRequestsResponse, outgoingRequest, outgoingRequestsResponse, profileResponse } from '@roomsie/contract'
-import { blocks, connectionRequests, listings, profiles } from '../src/db/schema'
+import { blocks, connectionRequests, listings, profiles, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'lister' | 'seeker' | 'friend' | 'stranger'
@@ -23,11 +23,6 @@ const send = (who: Who, body: object) => t.call(who, 'POST', '/v1/requests', bod
 const sayHi = (who: Who, to: Who, note = 'Hi, I saw your card. I work in BKC.') => send(who, { toProfileId: profileIds[to], note })
 const outgoing = async (who: Who) => outgoingRequestsResponse.parse((await t.call(who, 'GET', '/v1/requests/outgoing')).json()).requests
 const incoming = async (who: Who) => incomingRequestsResponse.parse((await t.call(who, 'GET', '/v1/requests/incoming')).json()).requests
-/** Removes each request between two people, so the next test starts clean. */
-const clearBetween = (a: string, b: string) => t.db.delete(connectionRequests).where(or(
-  and(eq(connectionRequests.fromUserId, a), eq(connectionRequests.toUserId, b)),
-  and(eq(connectionRequests.fromUserId, b), eq(connectionRequests.toUserId, a)),
-))
 
 describe('a request to a person', () => {
   it('sends a note to a live card; the recipient sees the sender and the note, and the sender sees it open', async () => {
@@ -53,7 +48,7 @@ describe('a request to a person', () => {
     expect((await outgoing('seeker'))[0]).toMatchObject({ state: 'accepted' })
     expect(await incoming('friend')).toEqual([])
     expect((await sayHi('seeker', 'friend')).statusCode).toBe(409)
-    await clearBetween(t.ids.seeker, t.ids.friend)
+    await t.db.delete(connectionRequests)
   })
 
   it('shows a decline as "not available", and the sender can ask again', async () => {
@@ -62,7 +57,7 @@ describe('a request to a person', () => {
     expect((await t.call('friend', 'POST', `/v1/requests/${got!.id}/decline`)).statusCode).toBe(204)
     expect((await outgoing('seeker'))[0]).toMatchObject({ state: 'not_available' })
     expect((await sayHi('seeker', 'friend')).statusCode).toBe(201)
-    await clearBetween(t.ids.seeker, t.ids.friend)
+    await t.db.delete(connectionRequests)
   })
 
   it('expires a request after 14 days: "not available" for the sender, gone for the recipient, and a new request is open', async () => {
@@ -73,14 +68,17 @@ describe('a request to a person', () => {
     const [stale] = await t.db.select().from(connectionRequests).where(eq(connectionRequests.fromUserId, t.ids.seeker))
     expect((await t.call('friend', 'POST', `/v1/requests/${stale!.id}/accept`)).statusCode).toBe(404)
     expect((await sayHi('seeker', 'friend')).statusCode).toBe(201)
-    await clearBetween(t.ids.seeker, t.ids.friend)
+    await t.db.delete(connectionRequests)
   })
 
-  it('refuses the own card, a hidden card, a block in either direction, an unknown card, and a sender with no profile', async () => {
+  it('refuses the own card, a hidden card, a suspended account, a block in either direction, an unknown card, and a sender with no profile', async () => {
     expect((await sayHi('seeker', 'seeker')).statusCode).toBe(404)
     await t.db.update(profiles).set({ visibility: 'hidden' }).where(eq(profiles.id, profileIds.friend!))
     expect((await sayHi('seeker', 'friend')).statusCode).toBe(404)
     await t.db.update(profiles).set({ visibility: 'live' }).where(eq(profiles.id, profileIds.friend!))
+    await t.db.update(users).set({ status: 'suspended' }).where(eq(users.id, t.ids.friend))
+    expect((await sayHi('seeker', 'friend')).statusCode).toBe(404)
+    await t.db.update(users).set({ status: 'active' }).where(eq(users.id, t.ids.friend))
     for (const [blocker, blocked] of [[t.ids.friend, t.ids.seeker], [t.ids.seeker, t.ids.friend]] as const) {
       await t.db.insert(blocks).values({ blockerUserId: blocker, blockedUserId: blocked })
       expect((await sayHi('seeker', 'friend')).statusCode).toBe(404)
@@ -107,29 +105,39 @@ describe('a request to a lister', () => {
     expect(outgoingRequest.parse(sent.json())).toMatchObject({ toProfileId: null, listingId: id, state: 'open' })
     expect((await incoming('lister'))[0]).toMatchObject({ listingId: id, from: { name: 'Rahul Verma' } })
     expect((await send('seeker', { listingId: id, note: 'Again?' })).statusCode).toBe(409)
-    await clearBetween(t.ids.seeker, t.ids.lister)
+    await t.db.delete(connectionRequests)
   })
 
-  it('refuses a listing that is not live, and a block in either direction', async () => {
+  it('refuses a listing that is not live, the own listing, a suspended owner, and a block in either direction', async () => {
     const id = await t.liveListing()
+    const sayHiTo = () => send('seeker', { listingId: id, note: 'Hi' })
     await t.db.update(listings).set({ status: 'inactive' }).where(eq(listings.id, id))
-    expect((await send('seeker', { listingId: id, note: 'Hi' })).statusCode).toBe(404)
-    await t.db.update(listings).set({ status: 'live' }).where(eq(listings.id, id))
-    await t.db.insert(blocks).values({ blockerUserId: t.ids.lister, blockedUserId: t.ids.seeker })
-    expect((await send('seeker', { listingId: id, note: 'Hi' })).statusCode).toBe(404)
-    await t.db.delete(blocks)
+    expect((await sayHiTo()).statusCode).toBe(404)
+    await t.db.update(listings).set({ status: 'live', ownerUserId: t.ids.seeker }).where(eq(listings.id, id))
+    expect((await sayHiTo()).statusCode).toBe(404)
+    await t.db.update(listings).set({ ownerUserId: t.ids.lister }).where(eq(listings.id, id))
+    await t.db.update(users).set({ status: 'suspended' }).where(eq(users.id, t.ids.lister))
+    expect((await sayHiTo()).statusCode).toBe(404)
+    await t.db.update(users).set({ status: 'active' }).where(eq(users.id, t.ids.lister))
+    for (const [blocker, blocked] of [[t.ids.lister, t.ids.seeker], [t.ids.seeker, t.ids.lister]] as const) {
+      await t.db.insert(blocks).values({ blockerUserId: blocker, blockedUserId: blocked })
+      expect((await sayHiTo()).statusCode).toBe(404)
+      await t.db.delete(blocks)
+    }
   })
 })
 
 describe('the daily limit', () => {
   it('lets a sender start 10 requests in a day of India time, and refuses the eleventh', async () => {
-    const yesterday = new Date(Date.now() - 25 * 3_600_000)
+    // India is 5 h 30 min ahead of UTC, with no summer time.
+    const indiaOffset = 5.5 * 3_600_000
+    const lastMinuteOfYesterday = new Date(Math.floor((Date.now() + indiaOffset) / 86_400_000) * 86_400_000 - indiaOffset - 60_000)
     const today = new Date()
     const row = (createdAt: Date) => ({
       fromUserId: t.ids.seeker, fromProfileId: profileIds.seeker!, toUserId: t.ids.friend, toProfileId: profileIds.friend!,
       note: 'Hi', status: 'declined' as const, createdAt,
     })
-    await t.db.insert(connectionRequests).values([row(yesterday), ...Array.from({ length: 9 }, () => row(today))])
+    await t.db.insert(connectionRequests).values([row(lastMinuteOfYesterday), ...Array.from({ length: 9 }, () => row(today))])
     expect((await sayHi('seeker', 'friend')).statusCode).toBe(201)
     const id = await t.liveListing()
     const eleventh = await send('seeker', { listingId: id, note: 'Hi' })

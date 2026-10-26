@@ -31,7 +31,6 @@ export function visiblePeople(viewerUserId?: string) {
   ]
 }
 
-/** No block between the viewer and the other person, in either direction. */
 export const noBlockBetween = (viewerUserId: string, otherUserId: SQLWrapper) => sql`not exists (
   select 1 from ${blocks} b
   where (b.blocker_user_id = ${viewerUserId} and b.blocked_user_id = ${otherUserId})
