@@ -33,8 +33,8 @@ Save a person or a place, and see them again under Saved.
 - No task waits on this task.
 
 ## Done when
-- [ ] A signed-in user saves and unsaves a place or a person, with the Save button of the designs
-- [ ] Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs
+- [x] A signed-in user saves and unsaves a place or a person, with the Save button of the designs · [#150](https://github.com/magentawood/roomsie/pull/150)
+- [x] Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs · [#150](https://github.com/magentawood/roomsie/pull/150)
 
 ^done
 
@@ -70,3 +70,13 @@ Save a person or a place, and see them again under Saved.
   - The deletion of an account also deletes the saves of the user, because the tombstone of T-20 keeps the `users` row (PD19).
   - The changed items: T-47 item 1 is now "A signed-in user saves and unsaves a place or a person, with the Save button of the designs". T-47 item 2 is now "Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs". T-43 gets "The listing detail has the Save button of T-47, and a saved place opens its detail". T-18b gets "The person detail has the Save button of T-47, and the People tab of Saved lists the saved people".
 - **Out of scope:** the Save button on the detail screens (T-43, T-18b), the person cards in the People tab (T-18b), compare (T-49), the "+" button of the phone bar, a limit on the number of saves, and a count of saves for the lister.
+
+## Log
+
+- **2026-10-26 · [#150](https://github.com/magentawood/roomsie/pull/150)**
+  - **Change:** saves of places and people in the API, the Save button, the place card, and the Saved page with the tabs Places and People. The phone bar is now the bar of the designer: Messages, Saved, My Listings and Profile. The deletion of an account deletes the saves of the user.
+  - **Why:** the T-47 spec and [PD19](../../decisions/pd-19-retention.md)
+  - **Ticked:** "A signed-in user saves and unsaves a place or a person, with the Save button of the designs" and "Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs"
+  - **Not done:** none. T-43 and T-18b put the Save button on their detail screens, and T-18b adds the person cards.
+  - **Learn:** [Saved](../../learn/saved.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
