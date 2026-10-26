@@ -24,7 +24,7 @@
 - An edit sends only the fields that change. `null` clears a field, and in `lifestyle` and `mustHaves` it clears one answer.
 - A value from the profile form is "stated". T-08 adds the values that the chat infers.
 - The reply of the own profile has `visibility` and `missing`, so the profile screens can tell why a card is not live.
-- `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`).
+- `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`). It also gives the connection with the viewer for the person detail at `/people/[id]` ([Message requests](message-requests.md)).
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.
 - After a sign-in, the app shell opens the create dialog when the account has no profile. "Explore for now" closes it until the browser tab closes.
 - The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.
@@ -47,3 +47,4 @@
 
 - T-16a: [#155](https://github.com/magentawood/roomsie/pull/155), 2026-10-26. The profile API, the photos, one card, the gender and the lister on a listing.
 - T-16b: [#156](https://github.com/magentawood/roomsie/pull/156), 2026-10-26. The profile page, the create and delete dialogs, and the budget rule of the bands.
+- T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and the connection with the viewer.

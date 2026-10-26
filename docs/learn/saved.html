@@ -72,7 +72,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404. The match query uses the same rule for people (<code>visiblePeople</code>).</li>
 <li>The web keeps the two lists in the cache keys <code>['saved', 'places']</code> and <code>['saved', 'people']</code>. The button reads them to know if an item is saved.</li>
-<li>T-43 and T-18b put the button on the detail screens. T-18b also adds the person cards to the People tab.</li>
+<li>T-43 and T-18b put the button on the detail screens. <code>GET /v1/saved/people</code> gives the person cards, and the People tab lists them; each card opens its person detail.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -88,5 +88,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-47: <a href="https://github.com/magentawood/roomsie/pull/150">#150</a>, 2026-10-26. The table, the routes, the Save button, the place card, the Saved page, and the phone bar of the designer.</li>
+<li>T-18b: <a href="https://github.com/magentawood/roomsie/pull/159">#159</a>, 2026-10-26. The person cards of the People tab.</li>
 </ul>
 </main>
