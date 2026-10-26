@@ -83,7 +83,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>An edit sends only the fields that change. <code>null</code> clears a field, and in <code>lifestyle</code> and <code>mustHaves</code> it clears one answer.</li>
 <li>A value from the profile form is "stated". T-08 adds the values that the chat infers.</li>
 <li>The reply of the own profile has <code>visibility</code> and <code>missing</code>, so the profile screens can tell why a card is not live.</li>
-<li><code>GET /v1/people/:id</code> uses the rule that Saved and the match query use (<code>visiblePeople</code>).</li>
+<li><code>GET /v1/people/:id</code> uses the rule that Saved and the match query use (<code>visiblePeople</code>). It also gives the connection with the viewer for the person detail at <code>/people/[id]</code> (<a href="message-requests.html">Message requests</a>).</li>
 <li>A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.</li>
 <li>After a sign-in, the app shell opens the create dialog when the account has no profile. "Explore for now" closes it until the browser tab closes.</li>
 <li>The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.</li>
@@ -106,5 +106,6 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>T-16a: <a href="https://github.com/magentawood/roomsie/pull/155">#155</a>, 2026-10-26. The profile API, the photos, one card, the gender and the lister on a listing.</li>
 <li>T-16b: <a href="https://github.com/magentawood/roomsie/pull/156">#156</a>, 2026-10-26. The profile page, the create and delete dialogs, and the budget rule of the bands.</li>
+<li>T-18b: <a href="https://github.com/magentawood/roomsie/pull/159">#159</a>, 2026-10-26. The person detail and the connection with the viewer.</li>
 </ul>
 </main>

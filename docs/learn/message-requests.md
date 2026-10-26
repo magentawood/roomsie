@@ -30,6 +30,9 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 | `GET /v1/requests/incoming` | Gives the open requests to you: the name and the photo of the sender, the note, and the time of the expiry. |
 | `GET /v1/requests/outgoing` | Gives your requests, each with its state: open, accepted or not available. |
 | `POST /v1/requests/:id/accept` and `/decline` | The recipient answers an open request. |
+| `GET /v1/people/:id` | Gives the card, the connection with you (none, sent, received with the note, accepted, or not available), and the new requests that you can still send today. |
+
+The person detail at `/people/[id]` shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or "Not available" with "Say hi again".
 
 ## The choice we made
 
@@ -50,3 +53,4 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 
 - F-13: [#132](https://github.com/magentawood/roomsie/pull/132), 2026-10-25. The rules of message requests.
 - T-18a: [#157](https://github.com/magentawood/roomsie/pull/157), 2026-10-26. The API of message requests.
+- T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and its connect states.

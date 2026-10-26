@@ -19,7 +19,7 @@
 
 - Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404. The match query uses the same rule for people (`visiblePeople`).
 - The web keeps the two lists in the cache keys `['saved', 'places']` and `['saved', 'people']`. The button reads them to know if an item is saved.
-- T-43 and T-18b put the button on the detail screens. T-18b also adds the person cards to the People tab.
+- T-43 and T-18b put the button on the detail screens. `GET /v1/saved/people` gives the person cards, and the People tab lists them; each card opens its person detail.
 
 ## The choice we made
 
@@ -35,3 +35,4 @@
 ## Tickets
 
 - T-47: [#150](https://github.com/magentawood/roomsie/pull/150), 2026-10-26. The table, the routes, the Save button, the place card, the Saved page, and the phone bar of the designer.
+- T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person cards of the People tab.

@@ -77,8 +77,13 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>POST /v1/requests/:id/accept</code> and <code>/decline</code></td>
 <td>The recipient answers an open request.</td>
 </tr>
+<tr>
+<td><code>GET /v1/people/:id</code></td>
+<td>Gives the card, the connection with you (none, sent, received with the note, accepted, or not available), and the new requests that you can still send today.</td>
+</tr>
 </tbody>
 </table>
+<p>The person detail at <code>/people/[id]</code> shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or "Not available" with "Say hi again".</p>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>Message requests, no phone numbers, and the limits: <a href="../decisions/pd-17-connect-and-contact.md">PD17</a>.</li>
@@ -98,5 +103,6 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>F-13: <a href="https://github.com/magentawood/roomsie/pull/132">#132</a>, 2026-10-25. The rules of message requests.</li>
 <li>T-18a: <a href="https://github.com/magentawood/roomsie/pull/157">#157</a>, 2026-10-26. The API of message requests.</li>
+<li>T-18b: <a href="https://github.com/magentawood/roomsie/pull/159">#159</a>, 2026-10-26. The person detail and its connect states.</li>
 </ul>
 </main>
