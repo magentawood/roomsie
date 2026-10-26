@@ -18,8 +18,9 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
   serve its URL. Never give the address of the initial image to a viewer
   without permission.
 - **We drop the manual Aadhaar upload route.** We never accept an Aadhaar copy.
-- **v0 route: a non-Aadhaar government ID** (passport, driving licence or
-  voter ID) and a selfie. A named reviewer compares the selfie to the ID photo.
+- **v0 route: a non-Aadhaar government ID** (passport, driving licence, voter
+  ID or PAN card) and a selfie. A named reviewer compares the selfie to the ID
+  photo.
 - **A listing goes live at once.** The Verified pill shows after the reviewer
   approves. The review does not hold the listing.
 - **v1 route: DigiLocker**, through a registered KYC provider (such as
@@ -78,6 +79,8 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
   leave. The pill, not the listing, waits for the review.
 - **The v0 route avoids the legal problem.** The Aadhaar Act restrictions do
   not apply to these IDs.
+- **The PAN card is on the list.** Many students and first-job movers have no
+  passport or driving licence, but a bank account needs a PAN.
 - **DigiLocker in v1.** It is instant and needs no person. Manual review is a
   job, not a feature. At a hundred signups a day, it takes most of the morning
   of one person.
