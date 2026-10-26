@@ -1,0 +1,40 @@
+import { and, count, desc, eq, gt, gte, or, sql } from 'drizzle-orm'
+import type { Connection } from '@roomsie/contract'
+import type { Db, Tx } from '../db/client'
+import { connectionRequests } from '../db/schema'
+
+export type RequestRow = typeof connectionRequests.$inferSelect
+
+/** The limits of PD17. */
+export const expiryMs = 14 * 86_400_000
+export const dailyLimit = 10
+export const expiryCutoff = () => new Date(Date.now() - expiryMs)
+
+/** A request with no answer, younger than 14 days. `openRequest` is the same rule in SQL. */
+export const isOpen = (r: RequestRow) => r.status === 'pending' && r.createdAt > expiryCutoff()
+export const openRequest = () => and(eq(connectionRequests.status, 'pending'), gt(connectionRequests.createdAt, expiryCutoff()))
+
+/** The requests between two people, in either direction. */
+export const betweenUsers = (a: string, b: string) => or(
+  and(eq(connectionRequests.fromUserId, a), eq(connectionRequests.toUserId, b)),
+  and(eq(connectionRequests.fromUserId, b), eq(connectionRequests.toUserId, a)),
+)
+
+/** The new requests of a sender in the calendar day of India time. */
+export async function sentToday(db: Db | Tx, userId: string) {
+  const [today] = await db.select({ requests: count() }).from(connectionRequests)
+    .where(and(eq(connectionRequests.fromUserId, userId), gte(connectionRequests.createdAt, sql`date_trunc('day', now(), 'Asia/Kolkata')`)))
+  return today!.requests
+}
+
+/** The connection between the viewer and a person, from the newest request between them (T-18b). */
+export async function connectionWith(db: Db, viewerUserId: string, otherUserId: string): Promise<Connection> {
+  const [newest] = await db.select().from(connectionRequests)
+    .where(betweenUsers(viewerUserId, otherUserId)).orderBy(desc(connectionRequests.createdAt)).limit(1)
+  const mine = newest?.fromUserId === viewerUserId
+  if (!newest) return { state: 'none' }
+  if (newest.status === 'accepted') return { state: 'accepted' }
+  if (isOpen(newest)) return mine ? { state: 'sent' } : { state: 'received', requestId: newest.id, note: newest.note }
+  // A decline and an expiry look the same to the sender, and a closed request to the viewer leaves no trace.
+  return { state: mine ? 'not_available' : 'none' }
+}

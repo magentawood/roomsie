@@ -4,7 +4,7 @@ import { and, eq, ne } from 'drizzle-orm'
 import { blockBody, errorResponse, noContent } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import { blocks, connectionRequests, profiles } from '../db/schema'
-import { betweenUsers } from '../requests/routes'
+import { betweenUsers } from '../requests/read'
 
 export function blockRoutes(v1: FastifyInstance, options: AuthOptions) {
   const { db } = options

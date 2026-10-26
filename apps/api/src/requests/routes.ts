@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, count, desc, eq, gt, gte, lte, ne, or, sql } from 'drizzle-orm'
+import { and, desc, eq, lte, ne } from 'drizzle-orm'
 import {
   errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, sendRequestBody,
   type SendRequestBody,
@@ -13,27 +13,12 @@ import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import type { Storage } from '../storage'
 import { maskContacts } from '../text/mask-contacts'
+import { betweenUsers, dailyLimit, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
 
-type RequestRow = typeof connectionRequests.$inferSelect
-
-/** The limits of PD17. */
-const expiryMs = 14 * 86_400_000
-const dailyLimit = 10
-const expiryCutoff = () => new Date(Date.now() - expiryMs)
-
-/** A request with no answer, younger than 14 days. `openRequest` is the same rule in SQL. */
-const isOpen = (r: RequestRow) => r.status === 'pending' && r.createdAt > expiryCutoff()
-const openRequest = () => and(eq(connectionRequests.status, 'pending'), gt(connectionRequests.createdAt, expiryCutoff()))
 const outgoingView = (r: RequestRow) => ({
   id: r.id, toProfileId: r.toProfileId, listingId: r.listingId, createdAt: r.createdAt.toISOString(),
   state: r.status === 'accepted' ? 'accepted' as const : isOpen(r) ? 'open' as const : 'not_available' as const,
 })
-
-/** The requests between two people, in either direction. */
-export const betweenUsers = (a: string, b: string) => or(
-  and(eq(connectionRequests.fromUserId, a), eq(connectionRequests.toUserId, b)),
-  and(eq(connectionRequests.fromUserId, b), eq(connectionRequests.toUserId, a)),
-)
 
 /** The user who gets the request, or nothing when the target is not visible to the sender. */
 async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) {
@@ -68,9 +53,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const made = await db.transaction(async (tx) => {
       // The lock makes two requests at the same time count each other.
       await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for('update')
-      const [today] = await tx.select({ requests: count() }).from(connectionRequests)
-        .where(and(eq(connectionRequests.fromUserId, userId), gte(connectionRequests.createdAt, sql`date_trunc('day', now(), 'Asia/Kolkata')`)))
-      if (today!.requests >= dailyLimit) return 'limit' as const
+      if (await sentToday(tx, userId) >= dailyLimit) return 'limit' as const
       // An expired request frees the pair for a new one.
       await tx.update(connectionRequests).set({ status: 'expired' })
         .where(and(pair, eq(connectionRequests.status, 'pending'), lte(connectionRequests.createdAt, expiryCutoff())))
