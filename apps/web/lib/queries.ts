@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { areasResponse, listingResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind } from '@roomsie/contract'
+import { areasResponse, listingResponse, profileResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { useUser } from './auth'
 
@@ -9,6 +9,7 @@ export const queryKeys = {
   listing: (id: string) => ['listing', id],
   areas: ['areas'],
   saved: (kind: SavedKind) => ['saved', kind],
+  profile: ['profile'],
 } as const
 
 export function useListing(id: string) {
@@ -18,6 +19,18 @@ export function useListing(id: string) {
     queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
     // A 404 means no longer listed. Only 5xx and network errors retry.
     retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
+  })
+}
+
+/** The own profile, or null when the account has none yet. */
+export function useProfile() {
+  const user = useUser()
+  return useQuery({
+    queryKey: queryKeys.profile,
+    queryFn: () => api(user, '/v1/me/profile', profileResponse).catch((err: unknown) => {
+      if (err instanceof ApiError && err.status === 404) return null
+      throw err
+    }),
   })
 }
 

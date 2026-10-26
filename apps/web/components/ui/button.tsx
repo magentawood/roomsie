@@ -33,10 +33,12 @@ export type ButtonProps = {
   pressed?: boolean
   disabled?: boolean
   onClick?: () => void
+  /** "submit" sends the form that holds the button. */
+  type?: 'button' | 'submit'
   className?: string
 }
 
-export function Button({ children, variant = 'secondary', size = 'sm', iconLeading: Leading, iconTrailing: Trailing, label, href, pressed, disabled, onClick, className = '' }: ButtonProps) {
+export function Button({ children, variant = 'secondary', size = 'sm', iconLeading: Leading, iconTrailing: Trailing, label, href, pressed, disabled, onClick, type = 'button', className = '' }: ButtonProps) {
   const shape = variant === 'link-error' ? 'gap-1 text-sm' : children ? sizes[size] : iconOnlySizes[size]
   const classes = `inline-flex items-center justify-center font-semibold whitespace-nowrap transition-colors outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${shape} ${className}`
   const content = (
@@ -47,5 +49,5 @@ export function Button({ children, variant = 'secondary', size = 'sm', iconLeadi
     </>
   )
   if (href && !disabled) return <Link href={href} aria-label={label} className={classes}>{content}</Link>
-  return <button type="button" aria-label={label} aria-pressed={pressed} disabled={disabled} onClick={onClick} className={classes}>{content}</button>
+  return <button type={type} aria-label={label} aria-pressed={pressed} disabled={disabled} onClick={onClick} className={classes}>{content}</button>
 }

@@ -53,6 +53,12 @@ describe('the own profile', () => {
     expect((await edit('lister', { areas: ['bandra'] })).statusCode).toBe(200)
   })
 
+  it('counts a budget with only the lowest amount, as the band "Above ₹35k"', async () => {
+    expect(profileResponse.parse((await edit('lister', { budgetMin: 35000, budgetMax: null })).json())).toMatchObject({ visibility: 'live', missing: [] })
+    expect(profileResponse.parse((await edit('lister', { budgetMin: null })).json())).toMatchObject({ visibility: 'draft', missing: ['budget'] })
+    expect((await edit('lister', { budgetMax: 20000 })).statusCode).toBe(200)
+  })
+
   it('refuses an unknown area, a budget the wrong way round, and an edit with no profile', async () => {
     expect((await edit('lister', { areas: ['pune'] })).statusCode).toBe(400)
     expect((await edit('lister', { budgetMin: 25000, budgetMax: 15000 })).statusCode).toBe(400)
