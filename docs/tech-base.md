@@ -95,7 +95,7 @@ These are the newest learn pages. The full list is in [the Learn index](learn/RE
 
 - [Listings and photo uploads](learn/listings.md)
 - [Message requests](learn/message-requests.md)
+- [Moderation: reports, blocks and the admin screen](learn/moderation.md)
 - [Place detail and listing reports](learn/place-detail.md)
 - [Profiles and cards](learn/profiles.md)
-- [Saved](learn/saved.md)
 <!-- learn-newest:end -->
