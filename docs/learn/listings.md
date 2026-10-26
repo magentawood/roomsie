@@ -70,3 +70,4 @@ The screens (T-42):
 
 - T-41: [#141](https://github.com/magentawood/roomsie/pull/141), 2026-10-26. The listings API, the signed photo uploads and the masking.
 - T-42: [#144](https://github.com/magentawood/roomsie/pull/144), 2026-10-26. The screens, the photo shrink, the area list, the CORS methods, the 400 that names the fields, and the rent rules of a PG.
+- T-54: [#148](https://github.com/magentawood/roomsie/pull/148), 2026-10-26. Photos on photos.roomsie.in, and the 10-minute copies.

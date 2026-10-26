@@ -32,7 +32,7 @@ Listing photos load from our own address, not the test address of Cloudflare.
 
 ## Done when
 - [ ] The photos bucket serves photos.roomsie.in, and its r2.dev address is off
-- [ ] `R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it
+- [x] `R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it · [#148](https://github.com/magentawood/roomsie/pull/148)
 - [ ] A listing photo on roomsie.in loads from photos.roomsie.in
 
 ^done
@@ -61,3 +61,13 @@ Listing photos load from our own address, not the test address of Cloudflare.
   - The CORS rule of the bucket stays as it is. Uploads go to the storage address of R2, not to photos.roomsie.in.
   - The user makes each change in the settings of Cloudflare and GitHub, from our commands.
 - **Out of scope:** a purge of the Cloudflare copies when the API deletes a photo, image resizing, and the Content-Security-Policy (T-52). T-52 must allow images from photos.roomsie.in.
+
+## Log
+
+- **2026-10-26 · [#148](https://github.com/magentawood/roomsie/pull/148)**
+  - **Change:** listing photos move from the r2.dev address to photos.roomsie.in. The deploy workflow gives the API the address as a plain value, and a Cloudflare cache rule keeps each copy for 10 minutes.
+  - **Why:** Cloudflare rate-limits the r2.dev address and tells to use it only for development. [PD19](../../decisions/pd-19-retention.md) gives the 10 minutes.
+  - **Ticked:** "`R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it"
+  - **Not done:** "The photos bucket serves photos.roomsie.in, and its r2.dev address is off" and "A listing photo on roomsie.in loads from photos.roomsie.in": the merge starts the deploy, then the live check runs, then r2.dev goes off. A follow-up PR ticks them.
+  - **Learn:** [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
