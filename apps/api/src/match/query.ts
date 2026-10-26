@@ -14,18 +14,19 @@
  * So we show results early and honestly, and withhold the score until it
  * means something.
  */
-import { and, eq, ne, inArray, sql, desc, type SQLWrapper } from 'drizzle-orm'
+import { and, eq, ne, inArray, isNull, sql, desc, type SQLWrapper } from 'drizzle-orm'
 import type { Db } from '../db/client'
 import { profiles, users, profileLifestyle, blocks } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
 
 /**
- * The people that a viewer can see: a live card of an active account, so suspended and deleted people never appear.
+ * The people that a viewer can see: a live card of an active account that reports did not hide, so suspended and deleted people never appear.
  * With a viewer: not the viewer, and no block in either direction, because a block hides each person from the other.
  */
 export function visiblePeople(viewerUserId?: string) {
   return [
     eq(profiles.visibility, 'live'),
+    isNull(profiles.hiddenAt),
     eq(users.status, 'active'),
     ...(viewerUserId ? [ne(profiles.userId, viewerUserId), noBlockBetween(viewerUserId, profiles.userId)] : []),
   ]

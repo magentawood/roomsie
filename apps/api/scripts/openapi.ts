@@ -4,6 +4,7 @@ import { googleKeys } from '../src/auth'
 import { createDb } from '../src/db/client'
 import { buildServer } from '../src/server'
 import { r2Storage } from '../src/storage'
+import { moderationSettings } from '../src/moderation/settings'
 
 export const openapiPath = fileURLToPath(new URL('../../../packages/contract/openapi.json', import.meta.url))
 
@@ -19,6 +20,7 @@ export const routesOnlyOptions = {
   firebaseProjectId: 'unused',
   firebaseKeys: googleKeys,
   storage: offlineStorage,
+  moderation: moderationSettings.parse({}),
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

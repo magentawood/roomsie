@@ -12,8 +12,10 @@ import { asc } from 'drizzle-orm'
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { deleteAccount } from './account'
 import { requireUser, type AuthOptions } from './auth'
+import { blockRoutes } from './blocks/routes'
 import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
+import { moderationRoutes } from './moderation/routes'
 import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
 import { requestRoutes } from './requests/routes'
@@ -71,6 +73,8 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
       reportRoutes(v1, options)
       profileRoutes(v1, options)
       requestRoutes(v1, options)
+      blockRoutes(v1, options)
+      moderationRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

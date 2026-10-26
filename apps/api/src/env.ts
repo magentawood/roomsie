@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { moderationSettings } from './moderation/settings'
 
 const envSchema = z.object({
   PORT: z.coerce.number().int().default(8080),
@@ -12,4 +13,4 @@ const envSchema = z.object({
   R2_PUBLIC_URL: z.url(),
 })
 
-export const env = envSchema.parse(process.env)
+export const env = { ...envSchema.parse(process.env), moderation: moderationSettings.parse(process.env) }

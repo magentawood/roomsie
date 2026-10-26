@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const healthResponse = z.object({ status: z.literal('ok') })
 export type HealthResponse = z.infer<typeof healthResponse>
 
-export const meResponse = z.object({ id: z.uuid(), status: z.enum(['active', 'suspended', 'deleted']) })
+export const meResponse = z.object({ id: z.uuid(), status: z.enum(['active', 'suspended', 'deleted']), moderator: z.boolean() })
 export type MeResponse = z.infer<typeof meResponse>
 /** The area groups of PD2. F-06 sets the launch flag of three. */
 export const areasResponse = z.object({
@@ -12,6 +12,7 @@ export const areasResponse = z.object({
 export type AreasResponse = z.infer<typeof areasResponse>
 
 export * from './listings'
+export * from './moderation'
 export * from './profiles'
 export * from './reports'
 export * from './requests'

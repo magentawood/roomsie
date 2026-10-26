@@ -122,6 +122,8 @@ export const profiles = pgTable('profiles', {
   photoKeys: text('photo_keys').array().notNull().default([]),
   /** `hidden` is the "Hide my card" switch (PD16). */
   visibility: visibilityEnum('visibility').notNull().default('draft'),
+  /** Set when reports hide the card (PD18). Only the moderator clears it, so the switch cannot bring the card back. */
+  hiddenAt: timestamp('hidden_at', { withTimezone: true }),
 
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -427,6 +429,8 @@ export const reports = pgTable('reports', {
   subjectUserId: uuid('subject_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   /** The reported listing. The report stays for the moderator when the owner deletes the listing (T-43). */
   listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'set null' }),
+  /** The reported person (T-19). The report stays when the person deletes the profile. */
+  profileId: uuid('profile_id').references(() => profiles.id, { onDelete: 'set null' }),
   reason: text('reason').notNull(),
   detail: text('detail'),
   status: reportStatusEnum('status').notNull().default('open'),
@@ -436,6 +440,8 @@ export const reports = pgTable('reports', {
   queueIdx: index('reports_queue_idx').on(t.status, t.createdAt),
   subjectIdx: index('reports_subject_idx').on(t.subjectUserId),
   listingReporterIdx: uniqueIndex('reports_listing_reporter_idx').on(t.listingId, t.reporterUserId),
+  profileReporterIdx: uniqueIndex('reports_profile_reporter_idx').on(t.profileId, t.reporterUserId),
+  targetCheck: check('reports_target_check', sql`num_nonnulls(${t.listingId}, ${t.profileId}) <= 1`),
 })).enableRLS()
 
 export const blocks = pgTable('blocks', {

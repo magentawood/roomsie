@@ -9,7 +9,7 @@ import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { connectionRequests, listings, profiles, users } from '../db/schema'
 import { visibleListing } from '../listings/read'
-import { noBlockBetween, visiblePeople } from '../match/query'
+import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import type { Storage } from '../storage'
 import { maskContacts } from '../text/mask-contacts'
@@ -29,6 +29,12 @@ const outgoingView = (r: RequestRow) => ({
   state: r.status === 'accepted' ? 'accepted' as const : isOpen(r) ? 'open' as const : 'not_available' as const,
 })
 
+/** The requests between two people, in either direction. */
+export const betweenUsers = (a: string, b: string) => or(
+  and(eq(connectionRequests.fromUserId, a), eq(connectionRequests.toUserId, b)),
+  and(eq(connectionRequests.fromUserId, b), eq(connectionRequests.toUserId, a)),
+)
+
 /** The user who gets the request, or nothing when the target is not visible to the sender. */
 async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) {
   const [to] = 'toProfileId' in body
@@ -36,8 +42,7 @@ async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) 
       .where(and(eq(profiles.id, body.toProfileId), ...visiblePeople(senderUserId)))
     : await db.select({ userId: listings.ownerUserId }).from(listings).innerJoin(users, eq(users.id, listings.ownerUserId))
       .where(and(
-        eq(listings.id, body.listingId), visibleListing(), eq(users.status, 'active'),
-        ne(listings.ownerUserId, senderUserId), noBlockBetween(senderUserId, listings.ownerUserId),
+        eq(listings.id, body.listingId), visibleListing(senderUserId), eq(users.status, 'active'), ne(listings.ownerUserId, senderUserId),
       ))
   return to?.userId
 }
@@ -57,10 +62,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     if (!senderProfile) return reply.code(409).send({ error: 'no profile' })
     const toUserId = await recipientOf(db, userId, req.body)
     if (!toUserId) return reply.code(404).send({ error: 'not found' })
-    const pair = or(
-      and(eq(connectionRequests.fromUserId, userId), eq(connectionRequests.toUserId, toUserId)),
-      and(eq(connectionRequests.fromUserId, toUserId), eq(connectionRequests.toUserId, userId)),
-    )
+    const pair = betweenUsers(userId, toUserId)
     const made = await db.transaction(async (tx) => {
       // The lock makes two requests at the same time count each other.
       await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for('update')

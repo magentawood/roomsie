@@ -10,6 +10,7 @@ import {
 import { buildServer } from '../src/server'
 import { offlineStorage } from '../scripts/openapi'
 import type { Storage } from '../src/storage'
+import { testModeration } from './app'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -31,7 +32,7 @@ beforeAll(async () => {
   await testDb.db.insert(areas).values({ slug: 'powai', name: 'Powai' })
   const tokens = await testTokens()
   idToken = tokens.idToken
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore, moderation: testModeration() })
 })
 afterAll(async () => {
   await app.close()

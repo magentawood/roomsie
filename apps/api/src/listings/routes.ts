@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, desc, eq, or } from 'drizzle-orm'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
   listingStatusBody, myListingsResponse, noContent, uploadUrlBody, uploadUrlResponse,
@@ -11,7 +11,7 @@ import type { Db } from '../db/client'
 import { areas, listingFlatmates, listingRates, listings } from '../db/schema'
 import { deletePhotos, photoUploadLink, type Storage } from '../storage'
 import { maskContacts, maskFields } from '../text/mask-contacts'
-import { isVisible, listingView, partsOf, type Flatmate, type Listing, type Parts, type Rate } from './read'
+import { listingView, partsOf, visibleListing, type Flatmate, type Listing, type Parts, type Rate } from './read'
 import { idParams } from '../params'
 
 type ListingStatus = Listing['status']
@@ -44,10 +44,11 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     preHandler,
     schema: { params: idParams, response: { 200: listingResponse, 404: errorResponse } },
   }, async (req, reply) => {
-    const [listing] = await db.select().from(listings).where(eq(listings.id, req.params.id))
-    const isOwner = listing?.ownerUserId === req.user!.id
-    if (!listing || (!isOwner && !isVisible(listing))) return reply.code(404).send({ error: 'not found' })
-    return listingView(listing, (await partsOf(db, [listing.id]))(listing.id), storage, isOwner)
+    const userId = req.user!.id
+    const [listing] = await db.select().from(listings)
+      .where(and(eq(listings.id, req.params.id), or(eq(listings.ownerUserId, userId), visibleListing(userId))))
+    if (!listing) return reply.code(404).send({ error: 'not found' })
+    return listingView(listing, (await partsOf(db, [listing.id]))(listing.id), storage, listing.ownerUserId === userId)
   })
 
   app.patch('/listings/:id', {
