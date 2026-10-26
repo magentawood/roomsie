@@ -37,10 +37,10 @@ The screens where a person says who they are and adds photos.
 - [[M-06 Beta invites ⚑]]
 
 ## Done when
-- [ ] A user can create and edit a profile on the web, with the fields of T-16a
-- [ ] A user can upload a maximum of four photos from the profile screen
-- [ ] A person can delete their account from settings: the button of D-03 calls `DELETE /v1/me` of T-20
-- [ ] Settings has a "Hide my card" switch
+- [x] A user can create and edit a profile on the web, with the fields of T-16a · [#156](https://github.com/magentawood/roomsie/pull/156)
+- [x] A user can upload a maximum of four photos from the profile screen · [#156](https://github.com/magentawood/roomsie/pull/156)
+- [x] A person can delete their account from settings: the button of D-03 calls `DELETE /v1/me` of T-20 · [#156](https://github.com/magentawood/roomsie/pull/156)
+- [x] Settings has a "Hide my card" switch · [#156](https://github.com/magentawood/roomsie/pull/156)
 
 ^done
 
@@ -78,3 +78,13 @@ The screens where a person says who they are and adds photos.
   - "Hide my card" is a switch in the settings.
   - "Delete my account" opens the confirmation of section 15 and calls `DELETE /v1/me`. After the delete, the dialog says "Your account is deleted.", then it signs out and opens the home page. A failure keeps the dialog open with "We could not delete your account. Try again."
 - **Out of scope:** the verification of T-46, the alerts of T-44 and T-45, the chat that fills the profile, the place type (intent) of a profile, the landing page (T-23a), and the deletion of the Firebase user (T-53).
+
+## Log
+
+- **2026-10-26 · [#156](https://github.com/magentawood/roomsie/pull/156)**
+  - **Change:** the page "Profile and Settings" at `/profile`, the create dialog after a sign-in, photos that save at once, the "Hide my card" switch and the delete of the account. The API counts a budget when either amount is set, for the band "Above ₹35k".
+  - **Why:** the T-16b spec, [PD16](../../decisions/pd-16-profiles.md)
+  - **Ticked:** all four items, from "A user can create and edit a profile on the web, with the fields of T-16a" to "Settings has a "Hide my card" switch"
+  - **Not done:** none
+  - **Learn:** [Profiles and cards](../../learn/profiles.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

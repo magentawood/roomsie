@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**87 of 305 done · 29%**
+**91 of 305 done · 30%**
 
 `███████░░░░░░░░░░░░░░░░░`
 
@@ -26,7 +26,7 @@ This note is part of [[roomsie launch]].
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 5 / 15 | 25 / 72 | 35% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 31 | 19% |
-| [[P5 Accounts and people]] | 2 / 6 | 14 / 31 | 45% |
+| [[P5 Accounts and people]] | 3 / 6 | 18 / 31 | 58% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
@@ -48,14 +48,13 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**43 free tasks are open · 167 build hours.**
+**42 free tasks are open · 164 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | ⬜ can start | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
-| 0 | [[T-16b Profile screens ⚑]] | P5 | 3 | ⬜ can start | 1 | [#98](https://github.com/magentawood/roomsie/issues/98) |
 | 0 | [[T-18b Person and connect screens ⚑]] | P3 | 4 | ⬜ can start | 0 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
@@ -138,7 +137,7 @@ flowchart LR
   T14["T-14 ⚑<br/>Match query"]:::doing
   T04["T-04<br/>Deploy to Mumbai"]:::done
   T16a["T-16a ⚑<br/>Profile API"]:::done
-  T16b["T-16b ⚑<br/>Profile screens"]:::ready
+  T16b["T-16b ⚑<br/>Profile screens"]:::done
   T03["T-03<br/>CI checks"]:::done
   T13["T-13<br/>Reply writer"]:::todo
   T07["T-07<br/>Error reporting"]:::ready
@@ -444,7 +443,7 @@ flowchart LR
 > ![[T-53 Delete the Firebase user#^done]]
 
 
-## P5 Accounts and people — 14/31
+## P5 Accounts and people — 18/31
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
@@ -461,7 +460,7 @@ flowchart LR
 > [!todo]- ✅ [[T-16a Profile API ⚑]] · 10/10
 > ![[T-16a Profile API ⚑#^done]]
 
-> [!todo]- ⬜ [[T-16b Profile screens ⚑]] · 0/4
+> [!todo]- ✅ [[T-16b Profile screens ⚑]] · 4/4
 > ![[T-16b Profile screens ⚑#^done]]
 
 
