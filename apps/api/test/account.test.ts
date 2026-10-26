@@ -178,8 +178,10 @@ describe('DELETE /v1/me', () => {
     const user = await signIn('uid-double-tap')
     await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, user.id))
 
+    // The second request waits on the lock of the first, or arrives after the deletion and gets 401.
     const replies = await Promise.all([call('DELETE', user.token), call('DELETE', user.token)])
-    expect(replies.map((r) => r.statusCode)).toEqual([204, 204])
+    expect(replies.map((r) => r.statusCode)).toContain(204)
+    for (const r of replies) expect([204, 401]).toContain(r.statusCode)
     expect(await userRow(user.id)).toMatchObject({ status: 'deleted', authProviderId: tombstoneKey(user.uid), rejoinBlocked: true })
     expect((await call('GET', await freshToken(user.uid))).statusCode).toBe(403)
   })

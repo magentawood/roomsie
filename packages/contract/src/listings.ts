@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { foodAnswers, listerResponse } from './profiles'
+import { foodAnswers, listerResponse, rupees } from './profiles'
 
 /* The values of the listing flow (flow 04 of the designs). The database enums use the same lists. */
 export const listingKinds = ['room_in_flat', 'owner_flat', 'pg', 'broker_flat'] as const
@@ -50,7 +50,6 @@ export const textLimits = {
 } as const
 
 const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable()
-const rupees = z.int().min(0).max(100_000_000)
 
 export const listingRate = z.strictObject({ rent: rupees, deposit: rupees.nullable().default(null) })
 export const pgRate = listingRate.extend({ sharing: z.enum(sharingTypes) })

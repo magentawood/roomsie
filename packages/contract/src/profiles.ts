@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
-/* The Form A fields of PD15 that a profile holds. The database enums use the same lists. A value from the profile form is "stated"; T-08 adds the sources of the chat. */
+/* The Form A fields of PD15. The database enums use the same lists. */
 export const intents = ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'] as const
+/** Private or shared room. Only the chat fills it (PD15), so the profile form has no room type. */
+export const roomTypes = ['private', 'shared', 'unclear'] as const
 export const whosMovingAnswers = ['student', 'first_job', 'working', 'couple', 'family', 'friends', 'unclear'] as const
 /** The answers of a parent about a son or daughter (PD15, PD16). */
 export const childTypes = ['student', 'first_job', 'working'] as const
@@ -23,22 +25,22 @@ export const mustHaveKeys = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_
 export const mustHaveWeights = ['prefer', 'dealbreaker'] as const
 export const maxProfilePhotos = 4
 export const profileTextLimits = { fullName: 80, jobRole: 80, commuteAddress: 200, bio: 1000 } as const
-/** The fields that a card needs to go live, other than the name (PD16). */
-export const cardFields = ['age', 'whosMoving', 'areas', 'budget'] as const
+/** The fields that a card needs to go live, other than the name and the age, which a profile always has (PD16). */
+export const cardFields = ['whosMoving', 'areas', 'budget'] as const
 
 const text = (max: number) => z.string().trim().min(1).max(max)
-const rupees = z.int().min(0).max(100_000_000)
+export const rupees = z.int().min(0).max(100_000_000)
 const age = z.int().min(18).max(99)
 const answer = <A extends LifestyleAxis>(axis: A) => z.enum(lifestyleAnswers[axis])
-const lifestyle = z.strictObject({
+const answers = {
   food: answer('food'), smoking: answer('smoking'), drinks: answer('drinks'), guests: answer('guests'),
   your_days: answer('your_days'), sleep: answer('sleep'), tidiness: answer('tidiness'), pets: answer('pets'),
-}).partial()
-const lifestyleEdit = z.strictObject({
-  food: answer('food').nullable(), smoking: answer('smoking').nullable(), drinks: answer('drinks').nullable(), guests: answer('guests').nullable(),
-  your_days: answer('your_days').nullable(), sleep: answer('sleep').nullable(), tidiness: answer('tidiness').nullable(), pets: answer('pets').nullable(),
-}).partial()
-const mustHaves = z.partialRecord(z.enum(mustHaveKeys), z.enum(mustHaveWeights))
+}
+const lifestyle = z.strictObject(answers).partial()
+type NullableAnswers = { [A in LifestyleAxis]: z.ZodNullable<(typeof answers)[A]> }
+const lifestyleEdit = z.strictObject(Object.fromEntries(Object.entries(answers).map(([axis, s]) => [axis, s.nullable()])) as NullableAnswers).partial()
+const weight = z.enum(mustHaveWeights)
+const mustHaves = z.partialRecord(z.enum(mustHaveKeys), weight)
 /** profiles/<profile id>/<photo id>.<extension>. The API also checks the profile id. */
 export const profilePhotoKey = z.string().regex(/^profiles\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|png|webp)$/)
 
@@ -47,9 +49,7 @@ export type CreateProfileBody = z.infer<typeof createProfileBody>
 
 /** null clears a field. In `lifestyle` and `mustHaves`, null clears one answer. */
 export const profileEditBody = z.strictObject({
-  fullName: text(profileTextLimits.fullName),
-  age,
-  gender: z.enum(genders),
+  ...createProfileBody.shape,
   jobRole: text(profileTextLimits.jobRole).nullable(),
   commuteAddress: text(profileTextLimits.commuteAddress).nullable(),
   bio: text(profileTextLimits.bio).nullable(),
@@ -64,7 +64,7 @@ export const profileEditBody = z.strictObject({
   /** The "Hide my card" switch (PD16). */
   hidden: z.boolean(),
   lifestyle: lifestyleEdit,
-  mustHaves: z.partialRecord(z.enum(mustHaveKeys), z.enum(mustHaveWeights).nullable()),
+  mustHaves: z.partialRecord(z.enum(mustHaveKeys), weight.nullable()),
 }).partial()
 export type ProfileEditBody = z.infer<typeof profileEditBody>
 
@@ -90,7 +90,6 @@ export const cardResponse = z.object({
 })
 export type CardResponse = z.infer<typeof cardResponse>
 
-/** The own profile: the card, the gender, and if the card is live. */
 export const profileResponse = cardResponse.extend({
   gender: z.enum(genders),
   visibility: z.enum(['draft', 'live', 'hidden']),
@@ -100,5 +99,5 @@ export const profileResponse = cardResponse.extend({
 export type ProfileResponse = z.infer<typeof profileResponse>
 export const profileUploadUrlResponse = z.object({ key: profilePhotoKey, url: z.url(), expiresAt: z.iso.datetime() })
 
-/** The lister on a listing: the name and the first photo of the profile, if the lister has one that is not a card of a son or daughter. */
+/** Null when the lister has no profile, or a parent manages it. */
 export const listerResponse = z.object({ name: z.string(), photoUrl: z.url().nullable() }).nullable()

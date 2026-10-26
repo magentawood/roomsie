@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
+import { cardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import type { Storage } from '../storage'
@@ -7,17 +7,10 @@ import type { Storage } from '../storage'
 export type Profile = typeof profiles.$inferSelect
 type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves'>
 
-/** The fields that the card still needs before it goes live (PD16). */
-export function missingFields(p: Profile): ProfileResponse['missing'] {
-  return [
-    ...(p.age === null ? ['age' as const] : []),
-    ...(p.whosMoving === 'unclear' ? ['whosMoving' as const] : []),
-    ...(p.areas.length === 0 ? ['areas' as const] : []),
-    ...(p.budgetMax === null ? ['budget' as const] : []),
-  ]
-}
+export const missingFields = (p: Profile): ProfileResponse['missing'] =>
+  cardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMax === null })[f])
 
-/** The lifestyle answers and the must-haves of a profile. The keys and the values are text in the database, so the contract parses them. */
+/** Keys and values are text in the database, so the contract parses them. */
 export async function answersOf(db: Db, profileId: string): Promise<Answers> {
   const [lifestyle, mustHaves] = await Promise.all([
     db.select().from(profileLifestyle).where(eq(profileLifestyle.profileId, profileId)),

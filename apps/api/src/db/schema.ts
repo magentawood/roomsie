@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, placeTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, placeTypes, roomTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -33,7 +33,7 @@ const updatedAt = () => timestamp('updated_at', { withTimezone: true }).notNull(
 /** The place type a seeker picks (PD15). A lister is a listing, not a seeker. */
 export const intentEnum = pgEnum('intent', intents)
 /** Private or shared room. A seeker's value comes only from the chat (PD15). */
-export const roomTypeEnum = pgEnum('room_type', ['private', 'shared', 'unclear'])
+export const roomTypeEnum = pgEnum('room_type', roomTypes)
 /** The choice itself; the contract maps it to a type and a household (PD15). */
 export const whosMovingEnum = pgEnum('whos_moving', whosMovingAnswers)
 /** A required answer of a profile (PD8). */

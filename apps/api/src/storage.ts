@@ -39,7 +39,7 @@ export function r2Storage(options: { accountId: string; accessKeyId: string; sec
   }
 }
 
-/** Deletes photos in R2, and logs a failure. It gives false when R2 fails, so the caller changes nothing (PD19). */
+/** False when R2 fails, so the caller changes nothing (PD19). */
 export async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj: unknown) => void }) {
   return storage.deleteObjects(keys).then(() => true, (err: unknown) => {
     log.error(err)

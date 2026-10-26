@@ -22,3 +22,13 @@ export function maskContacts(text: string) {
     .replace(mobile, (match) => (isRentRange(match) ? match : '••••'))
     .replace(landline, '••••')
 }
+
+/** A copy of `fields` with `maskContacts` on each text value that the keys name (PD17). */
+export function maskFields<T extends Partial<Record<K, string | null>>, K extends string>(fields: T, keys: readonly K[]): T {
+  const masked = { ...fields }
+  for (const key of keys) {
+    const value = fields[key]
+    if (value) masked[key] = maskContacts(value) as T[K]
+  }
+  return masked
+}
