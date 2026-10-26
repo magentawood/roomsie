@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-182 of the 219 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+183 of the 220 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
@@ -32,7 +32,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 84 | -50 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 85 | -51 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
@@ -97,17 +97,18 @@ Finish line: Sat 10 Oct. 64 hours.
 | 3 | T-15 ⚑ · Results panel, built against the contract | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03, F-12 |
 | 4 | T-18b ⚑ · Person detail and connect screens | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
 | 5 | T-41 · Listings API: four kinds of lister | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
-| 6 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
-| 7 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
-| 8 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
-| 9 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| 10 | T-46 · DigiLocker verification | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
-| 11 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
-| 12 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
-| 13 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
-| 14 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| 6 | T-54 · Photos on photos.roomsie.in | 1 | Tue 27 Oct | T-41 |
+| 7 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
+| 8 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
+| 9 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
+| 10 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| 11 | T-46 · DigiLocker verification | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 12 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| 13 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| 14 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| 15 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
 
-Finish line: Tue 24 Nov. 84 hours.
+Finish line: Tue 24 Nov. 85 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -238,15 +239,16 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03, F-13 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | P3 Data and trust | 5 | T-41 | Listings API: four kinds of lister | 8 | Sun 25 Oct | Wed 28 Oct | CP3 | T-05, T-06, F-11 | [#117](https://github.com/magentawood/roomsie/issues/117) |
-| P3 Data and trust | 6 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
-| P3 Data and trust | 7 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
-| P3 Data and trust | 8 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
-| P3 Data and trust | 9 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 10 | T-46 | DigiLocker verification | 8 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
-| P3 Data and trust | 11 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
-| P3 Data and trust | 12 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
-| P3 Data and trust | 13 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| P3 Data and trust | 14 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| P3 Data and trust | 6 | T-54 | Photos on photos.roomsie.in | 1 | Tue 27 Oct | Tue 27 Oct | CP3 | T-41 | [#146](https://github.com/magentawood/roomsie/issues/146) |
+| P3 Data and trust | 7 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
+| P3 Data and trust | 8 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
+| P3 Data and trust | 9 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| P3 Data and trust | 10 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| P3 Data and trust | 11 | T-46 | DigiLocker verification | 8 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 12 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| P3 Data and trust | 13 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| P3 Data and trust | 14 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| P3 Data and trust | 15 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
@@ -352,6 +354,7 @@ gantt
     T-15 Results panel built against the contract :crit, t15, 2026-10-03, 6d
     T-18b Person detail and connect screens :crit, t18b, 2026-10-08, 3d
     T-41 Listings API - four kinds of lister :t41, 2026-10-25, 4d
+    T-54 Photos on photos.roomsie.in :t54, 2026-10-27, 1d
     T-42 Listing flow and My listings screens :t42, 2026-10-29, 4d
     T-43 Listing detail screens :t43, 2026-11-02, 3d
     T-44 Messages API :t44, 2026-11-05, 4d
@@ -702,6 +705,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-29 | Abuse test: 100 fake sessions | P1 | 1 | Sat 10 Oct | T-21 |
 | T-41 | Listings API: four kinds of lister | P3 | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
 | T-51 ⚑ | Apply migrations and the seed in the deploy | P1 | 3 | Mon 26 Oct → Tue 27 Oct | T-04, T-06 |
+| T-54 | Photos on photos.roomsie.in | P3 | 1 | Tue 27 Oct | T-41 |
 | T-52 | Content-Security-Policy for the web | P1 | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
 | T-53 | Delete the Firebase user at account deletion | P4 | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
 | T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
@@ -950,6 +954,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The deploy runs the catalogue seed. A second run changes nothing
 - A failed migration stops the deploy. The API stays on the version before
 - Read first: `docs/decisions/0006-drizzle.md`, `docs/decisions/0009-hosting-and-region.md`, `docs/decisions/0016-credentials-and-secrets.md`, `docs/decisions/pd-13-databases-and-backups.md`
+
+**T-54 · Photos on photos.roomsie.in** — done when:
+- The photos bucket serves photos.roomsie.in, and its r2.dev address is off
+- `R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it
+- A listing photo on roomsie.in loads from photos.roomsie.in
+- Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/0016-credentials-and-secrets.md`, `docs/learn/listings.md`
 
 **T-52 · Content-Security-Policy for the web** — done when:
 - Each page serves a strict Content-Security-Policy, with a new nonce for each request

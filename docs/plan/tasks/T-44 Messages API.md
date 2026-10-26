@@ -2,7 +2,7 @@
 id: T-44
 title: "Messages API"
 owner: "P3 Data and trust"
-sequence: "8 of 14"
+sequence: "9 of 15"
 hours: 8
 start: 2026-11-05
 end: 2026-11-08
@@ -17,7 +17,7 @@ tags:
 
 # T-44 · Messages API
 
-**Owner:** [[P3 Data and trust]], task 8 of 14  
+**Owner:** [[P3 Data and trust]], task 9 of 15  
 **When:** Thu 5 Nov → Sun 8 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#120](https://github.com/magentawood/roomsie/issues/120)

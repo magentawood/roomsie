@@ -2,7 +2,7 @@
 id: T-42
 title: "Listing flow and My listings screens"
 owner: "P3 Data and trust"
-sequence: "6 of 14"
+sequence: "7 of 15"
 hours: 8
 start: 2026-10-29
 end: 2026-11-01
@@ -17,7 +17,7 @@ tags:
 
 # T-42 · Listing flow and My listings screens
 
-**Owner:** [[P3 Data and trust]], task 6 of 14  
+**Owner:** [[P3 Data and trust]], task 7 of 15  
 **When:** Thu 29 Oct → Sun 1 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#118](https://github.com/magentawood/roomsie/issues/118)

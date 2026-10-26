@@ -2,7 +2,7 @@
 id: T-49
 title: "Compare selected cards"
 owner: "P3 Data and trust"
-sequence: "13 of 14"
+sequence: "14 of 15"
 hours: 4
 start: 2026-11-21
 end: 2026-11-22
@@ -17,7 +17,7 @@ tags:
 
 # T-49 · Compare selected cards
 
-**Owner:** [[P3 Data and trust]], task 13 of 14  
+**Owner:** [[P3 Data and trust]], task 14 of 15  
 **When:** Sat 21 Nov → Sun 22 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#125](https://github.com/magentawood/roomsie/issues/125)

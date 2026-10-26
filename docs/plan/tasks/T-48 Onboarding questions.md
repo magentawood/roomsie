@@ -2,7 +2,7 @@
 id: T-48
 title: "Onboarding questions"
 owner: "P3 Data and trust"
-sequence: "12 of 14"
+sequence: "13 of 15"
 hours: 5
 start: 2026-11-18
 end: 2026-11-20
@@ -17,7 +17,7 @@ tags:
 
 # T-48 · Onboarding questions
 
-**Owner:** [[P3 Data and trust]], task 12 of 14  
+**Owner:** [[P3 Data and trust]], task 13 of 15  
 **When:** Wed 18 Nov → Fri 20 Nov · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#124](https://github.com/magentawood/roomsie/issues/124)
