@@ -35,6 +35,11 @@ describe('the body of an edit', () => {
       .toEqual({ fullName: 'Divya S', areas: ['bandra-santacruz', 'thane'], hidden: true })
   })
 
+  it('sends nothing for an answer that was set and cleared again before a Save', () => {
+    const form = formOf({ ...saved, lifestyle: {}, mustHaves: {} })
+    expect(editBody(form, { ...form, lifestyle: { food: null }, mustHaves: { men_only: null } })).toEqual({})
+  })
+
   it('sends a changed or cleared lifestyle answer or must-have, with null for a cleared one', () => {
     const form = formOf(saved)
     expect(editBody(form, { ...form, lifestyle: { smoking: 'non_smoker' }, mustHaves: { veg_kitchen: 'prefer', no_alcohol: 'dealbreaker' } })).toEqual({

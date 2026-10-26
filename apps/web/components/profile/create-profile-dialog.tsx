@@ -11,7 +11,7 @@ import { queryKeys, useProfile } from '../../lib/queries'
 import { Logo } from '../shell/logo'
 import { Button } from '../ui/button'
 import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
-import { Dialog } from '../ui/modal'
+import { ModalFrame } from '../ui/modal'
 
 /** "Explore for now" closes the dialog for this visit of the browser tab. */
 const skipKey = 'roomsie:skip-profile'
@@ -31,17 +31,16 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
     },
   })
   const [tried, setTried] = useState(false)
-  const ageError = !tried ? undefined
-    : age === null ? 'Enter your age.'
+  const ageError = age === null ? 'Enter your age.'
     : age < minAge ? `You must be ${minAge} or older to use roomsie.`
     : age > maxAge ? `Enter an age of ${maxAge} or less.` : undefined
   const ready = fullName !== null && gender !== null
   return (
-    <Dialog labelledBy="create-profile-title" onClose={onClose}>
+    <ModalFrame labelledBy="create-profile-title" onClose={onClose}>
       <form className="flex flex-col gap-5 p-5 sm:p-6" onSubmit={(e) => {
         e.preventDefault()
         setTried(true)
-        if (ready && age !== null && age >= minAge && age <= maxAge) create.mutate({ fullName, age, gender })
+        if (ready && age !== null && !ageError) create.mutate({ fullName, age, gender })
       }}>
         <div className="flex flex-col items-center gap-3 text-center">
           <Logo className="h-7 w-auto text-primary" />
@@ -51,7 +50,7 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <TextInput label="Full Name" required value={fullName} onChange={setFullName} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />
-        <NumberInput label="Age" required value={age} onChange={setAge} placeholder="eg. 24" error={ageError} />
+        <NumberInput label="Age" required value={age} onChange={setAge} placeholder="eg. 24" error={tried ? ageError : undefined} />
         <Field label="Email">{(id) => <input id={id} className={inputClass} value={user.email ?? ''} disabled />}</Field>
         <Field label="Gender" required>
           {(id) => (
@@ -67,7 +66,7 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
           <Button variant="secondary" size="lg" onClick={onClose}>Explore for now</Button>
         </div>
       </form>
-    </Dialog>
+    </ModalFrame>
   )
 }
 
