@@ -1,16 +1,15 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq } from 'drizzle-orm'
-import { uuidv7 } from 'uuidv7'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
-  listingStatusBody, myListingsResponse, noContent, photoTypes, uploadUrlBody, uploadUrlResponse,
+  listingStatusBody, myListingsResponse, noContent, uploadUrlBody, uploadUrlResponse,
   type GoLiveField, type ListingEdit,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { areas, listingFlatmates, listingRates, listings } from '../db/schema'
-import { deletePhotos, type Storage } from '../storage'
+import { deletePhotos, photoUploadLink, type Storage } from '../storage'
 import { maskContacts, maskFields } from '../text/mask-contacts'
 import { isVisible, listingView, partsOf, type Flatmate, type Listing, type Parts, type Rate } from './read'
 import { idParams } from '../params'
@@ -163,10 +162,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   }, async (req, reply) => {
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
-    const { contentType, size } = req.body
-    const key = `listings/${listing.id}/${uuidv7()}.${photoTypes[contentType]}`
-    const { url, expiresAt } = await storage.uploadUrl(key, contentType, size)
-    return { key, url, expiresAt: expiresAt.toISOString() }
+    return photoUploadLink(storage, 'listings', listing.id, req.body)
   })
 }
 

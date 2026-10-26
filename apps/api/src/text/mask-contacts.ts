@@ -23,7 +23,6 @@ export function maskContacts(text: string) {
     .replace(landline, '••••')
 }
 
-/** A copy of `fields` with `maskContacts` on each text value that the keys name (PD17). */
 export function maskFields<T extends Partial<Record<K, string | null>>, K extends string>(fields: T, keys: readonly K[]): T {
   const masked = { ...fields }
   for (const key of keys) {

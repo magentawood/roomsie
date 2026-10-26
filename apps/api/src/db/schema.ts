@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, placeTypes, roomTypes, sharingTypes, walkTimes, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, placeTypes, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -36,12 +36,11 @@ export const intentEnum = pgEnum('intent', intents)
 export const roomTypeEnum = pgEnum('room_type', roomTypes)
 /** The choice itself; the contract maps it to a type and a household (PD15). */
 export const whosMovingEnum = pgEnum('whos_moving', whosMovingAnswers)
-/** A required answer of a profile (PD8). */
 export const genderEnum = pgEnum('gender', genders)
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn'])
 export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
-export const visibilityEnum = pgEnum('visibility', ['draft', 'live', 'hidden'])
+export const visibilityEnum = pgEnum('visibility', visibilities)
 export const goalStatusEnum = pgEnum('goal_status', ['open', 'found'])
 export const turnRoleEnum = pgEnum('turn_role', ['user', 'assistant'])
 export const turnInputEnum = pgEnum('turn_input', ['typed', 'chip'])

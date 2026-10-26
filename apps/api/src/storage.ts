@@ -1,3 +1,5 @@
+import { uuidv7 } from 'uuidv7'
+import { photoTypes, type UploadUrlBody } from '@roomsie/contract'
 import { AwsClient } from 'aws4fetch'
 
 /** Photo bytes never pass through the API (ADR-0005). The client uploads to R2 with a signed link. */
@@ -46,3 +48,11 @@ export async function deletePhotos(storage: Storage, keys: string[], log: { erro
     return false
   })
 }
+
+/** A signed link that uploads one photo to <folder>/<owner id>/<photo id>.<extension>. */
+export async function photoUploadLink(storage: Storage, folder: string, ownerId: string, body: UploadUrlBody) {
+  const key = `${folder}/${ownerId}/${uuidv7()}.${photoTypes[body.contentType]}`
+  const { url, expiresAt } = await storage.uploadUrl(key, body.contentType, body.size)
+  return { key, url, expiresAt: expiresAt.toISOString() }
+}
+
