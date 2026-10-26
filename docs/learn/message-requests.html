@@ -47,9 +47,38 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>Divya gets an email and a browser push: "Rahul sent you a message". Neither shows the note.</li>
 <li>Until Divya accepts, Rahul cannot write more.</li>
-<li>A sender has 10 new requests a day. Only one request is open between two people at a time.</li>
+<li>Rahul can also say hi through a listing. The request goes to the owner of the listing, who needs no profile. The rules are the same.</li>
+<li>A sender has 10 new requests in a day of India time.</li>
+<li>Between two people, one request is open at a time, in either direction. After an accept, neither person can send a new request.</li>
 <li>After a decline, Rahul can send a new request later. If this becomes abuse, Divya reports it.</li>
 </ul>
+<h2 id="the-api">The API</h2>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /v1/requests</code></td>
+<td>Sends a request to a card (<code>toProfileId</code>) or to a listing (<code>listingId</code>), with the note. The sender needs a profile.</td>
+</tr>
+<tr>
+<td><code>GET /v1/requests/incoming</code></td>
+<td>Gives the open requests to you: the name and the photo of the sender, the note, and the time of the expiry.</td>
+</tr>
+<tr>
+<td><code>GET /v1/requests/outgoing</code></td>
+<td>Gives your requests, each with its state: open, accepted or not available.</td>
+</tr>
+<tr>
+<td><code>POST /v1/requests/:id/accept</code> and <code>/decline</code></td>
+<td>The recipient answers an open request.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>Message requests, no phone numbers, and the limits: <a href="../decisions/pd-17-connect-and-contact.md">PD17</a>.</li>
@@ -60,9 +89,13 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Masking:</strong> the API masks phone numbers and WhatsApp links as ••••. The pattern must not mask a rent ("15000") or a flat number ("1203").</li>
 <li><strong>A spelled-out number</strong> ("nine eight two…") can pass the pattern. The terms and the reports are the backstop.</li>
 <li><strong>"Not available" is the same for a decline and an expiry.</strong> Thus, a sender never learns which one it was.</li>
+<li><strong>An expiry needs no job.</strong> After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.</li>
+<li><strong>A 404 hides a block.</strong> A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.</li>
+<li><strong>The note waits for the chat.</strong> T-44 makes the note of an accepted request the first message of the chat.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>F-13: <a href="https://github.com/magentawood/roomsie/pull/132">#132</a>, 2026-10-25. The rules of message requests.</li>
+<li>T-18a: <a href="https://github.com/magentawood/roomsie/pull/157">#157</a>, 2026-10-26. The API of message requests.</li>
 </ul>
 </main>

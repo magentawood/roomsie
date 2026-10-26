@@ -38,7 +38,7 @@ export const roomTypeEnum = pgEnum('room_type', roomTypes)
 export const whosMovingEnum = pgEnum('whos_moving', whosMovingAnswers)
 export const genderEnum = pgEnum('gender', genders)
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
-export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn'])
+export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn', 'expired'])
 export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
 export const visibilityEnum = pgEnum('visibility', visibilities)
 export const goalStatusEnum = pgEnum('goal_status', ['open', 'found'])
@@ -392,17 +392,27 @@ export const chatTurns = pgTable('chat_turns', {
 
 /* ── connecting ─────────────────────────────────────────────────────────── */
 
+/** A message request (PD17): to a card, or to the owner of a listing, who needs no profile (T-18a). */
 export const connectionRequests = pgTable('connection_requests', {
   id: id(),
+  fromUserId: uuid('from_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   fromProfileId: uuid('from_profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
-  toProfileId: uuid('to_profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+  toUserId: uuid('to_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  toProfileId: uuid('to_profile_id').references(() => profiles.id, { onDelete: 'cascade' }),
+  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
+  /** The first note. T-44 makes it the first message of the chat after an accept. */
+  note: text('note').notNull(),
   status: connectionStatusEnum('status').notNull().default('pending'),
   createdAt: createdAt(),
   respondedAt: timestamp('responded_at', { withTimezone: true }),
 }, (t) => ({
-  // TODO(T-18a): one open request between two people, in either direction (PD17).
-  pairIdx: uniqueIndex('connection_requests_pair_idx').on(t.fromProfileId, t.toProfileId),
-  inboxIdx: index('connection_requests_inbox_idx').on(t.toProfileId, t.status),
+  /** One open or accepted request between two people, in either direction and for any target (PD17). */
+  pairIdx: uniqueIndex('connection_requests_pair_idx')
+    .on(sql`least(${t.fromUserId}, ${t.toUserId})`, sql`greatest(${t.fromUserId}, ${t.toUserId})`)
+    .where(sql`${t.status} in ('pending', 'accepted')`),
+  inboxIdx: index('connection_requests_inbox_idx').on(t.toUserId, t.status),
+  senderDayIdx: index('connection_requests_sender_day_idx').on(t.fromUserId, t.createdAt),
+  targetCheck: check('connection_requests_target_check', sql`num_nonnulls(${t.toProfileId}, ${t.listingId}) = 1`),
 })).enableRLS()
 
 /* ── safety ─────────────────────────────────────────────────────────────────
