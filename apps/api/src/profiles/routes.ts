@@ -12,50 +12,52 @@ import { areas, profileLifestyle, profileMustHaves, profiles, users } from '../d
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import { deletePhotos, type Storage } from '../storage'
-import { maskContacts } from '../text/mask-contacts'
+import { maskFields } from '../text/mask-contacts'
 import { answersOf, cardView, missingFields, profileView, type Profile } from './read'
 
-/** Each free-text field that the person writes (PD17). The name is not masked. */
-const maskedFields = ['bio', 'jobRole', 'commuteAddress'] as const
+/** Each free-text field that the person writes (PD17). */
+const maskedFields = ['fullName', 'bio', 'jobRole', 'commuteAddress'] as const
+const noProfile = { ok: false, code: 404, error: 'no profile' } as const
+const profilePhotoPrefix = (profileId: string) => `profiles/${profileId}/`
 
 export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
   const ownProfile = async (userId: string) => (await db.select().from(profiles).where(eq(profiles.userId, userId)))[0]
-  const reply = async (p: Profile) => profileView(p, await answersOf(db, p.id), storage)
+  const ownProfileView = async (p: Profile) => profileView(p, await answersOf(db, p.id), storage)
 
   app.post('/me/profile', {
     preHandler,
     schema: { body: createProfileBody, response: { 201: profileResponse, 409: errorResponse } },
   }, async (req, res) => {
-    const [made] = await db.insert(profiles).values({ userId: req.user!.id, ...req.body }).onConflictDoNothing().returning()
+    const [made] = await db.insert(profiles).values({ userId: req.user!.id, ...maskFields(req.body, ['fullName']) }).onConflictDoNothing().returning()
     if (!made) return res.code(409).send({ error: 'the profile exists' })
-    return res.code(201).send(await reply(made))
+    return res.code(201).send(await ownProfileView(made))
   })
 
   app.get('/me/profile', { preHandler, schema: { response: { 200: profileResponse, 404: errorResponse } } }, async (req, res) => {
     const p = await ownProfile(req.user!.id)
-    return p ? reply(p) : res.code(404).send({ error: 'no profile' })
+    return p ? ownProfileView(p) : res.code(404).send({ error: 'no profile' })
   })
 
   app.patch('/me/profile', {
     preHandler,
     schema: { body: profileEditBody, response: { 200: profileResponse, 400: errorResponse, 404: errorResponse, 502: errorResponse } },
   }, async (req, res) => {
-    const { lifestyle, mustHaves, hidden, photoKeys, ...fields } = mask(req.body)
+    const { lifestyle, mustHaves, hidden, photoKeys, ...fields } = maskFields(req.body, maskedFields)
     if (fields.areas?.length) {
       const known = await db.select({ slug: areas.slug }).from(areas).where(inArray(areas.slug, fields.areas))
       if (known.length !== fields.areas.length) return res.code(400).send({ error: 'not valid: areas' })
     }
     const result = await db.transaction(async (tx) => {
-      // T-20: the deletion of an account locks this row first, so a photo change cannot slip between its read of the photos and its delete.
+      // The deletion of an account (T-20) locks this row too, so a photo change cannot race it.
       const [user] = await tx.select({ status: users.status }).from(users).where(eq(users.id, req.user!.id)).for('update')
-      if (user?.status !== 'active') return { ok: false as const, code: 404 as const, error: 'no profile' }
+      if (user?.status !== 'active') return noProfile
       const [p] = await tx.select().from(profiles).where(eq(profiles.userId, req.user!.id)).for('update')
-      if (!p) return { ok: false as const, code: 404 as const, error: 'no profile' }
+      if (!p) return noProfile
       const next: Profile = { ...p, ...fields, photoKeys: photoKeys ?? p.photoKeys }
-      const invalid = check(next, photoKeys)
+      const invalid = crossFieldError(next, photoKeys)
       if (invalid) return { ok: false as const, code: 400 as const, error: `not valid: ${invalid}` }
       const removed = p.photoKeys.filter((key) => !next.photoKeys.includes(key))
       // PD19: a photo leaves R2 before its row. If R2 fails, the transaction changes nothing.
@@ -66,7 +68,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       await saveAnswers(tx, p.id, lifestyle, mustHaves)
       return { ok: true as const, saved: saved! }
     })
-    return result.ok ? reply(result.saved) : res.code(result.code).send({ error: result.error })
+    return result.ok ? ownProfileView(result.saved) : res.code(result.code).send({ error: result.error })
   })
 
   app.post('/me/profile/upload-urls', {
@@ -75,7 +77,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   }, async (req, res) => {
     const p = await ownProfile(req.user!.id)
     if (!p) return res.code(404).send({ error: 'no profile' })
-    const key = `profiles/${p.id}/${uuidv7()}.${photoTypes[req.body.contentType]}`
+    const key = `${profilePhotoPrefix(p.id)}${uuidv7()}.${photoTypes[req.body.contentType]}`
     const { url, expiresAt } = await storage.uploadUrl(key, req.body.contentType, req.body.size)
     return { key, url, expiresAt: expiresAt.toISOString() }
   })
@@ -91,21 +93,12 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   })
 }
 
-function mask(edit: ProfileEditBody): ProfileEditBody {
-  const masked = { ...edit }
-  for (const field of maskedFields) {
-    const value = masked[field]
-    if (value) masked[field] = maskContacts(value)
-  }
-  return masked
-}
-
 /** The rules across fields, on the profile after the edit. The name of the first field that breaks one, or null. */
-function check(p: Profile, photoKeys: string[] | undefined) {
+function crossFieldError(p: Profile, photoKeys: string[] | undefined) {
   if (p.budgetMin !== null && p.budgetMax !== null && p.budgetMin > p.budgetMax) return 'budgetMax'
   // PD15: a parent gives the type of the son or daughter.
   if (p.managedByParent && !(childTypes as readonly string[]).includes(p.whosMoving) && p.whosMoving !== 'unclear') return 'whosMoving'
-  if (photoKeys?.some((key) => !key.startsWith(`profiles/${p.id}/`))) return 'photoKeys'
+  if (photoKeys?.some((key) => !key.startsWith(profilePhotoPrefix(p.id)))) return 'photoKeys'
   return null
 }
 

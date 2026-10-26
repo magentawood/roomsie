@@ -17,10 +17,10 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * and the other person in a thread can still show "Deleted user". Reports and
  * blocks keep their ids for moderation.
  *
- * Order: hide, then the photos, then the rows. R2 deletes are idempotent, so if
- * the database step fails, a retry is safe, and the hidden card shows no broken
- * image meanwhile. If the photos went last, a failure would leave photos that no
- * row points to.
+ * Order: hide, then lock the users row, then the photos, then the rows. A profile
+ * photo change locks the same row (T-16a), so no photo is added after the read. R2
+ * deletes are idempotent, so if the database step fails, a retry is safe. If the
+ * photos went last, a failure would leave photos that no row points to.
  *
  * Not here yet: events (T-24), Form B (T-35), messages (T-44), the Firebase user (T-53).
  */
@@ -29,22 +29,21 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
   await db.update(listings).set({ status: 'inactive', updatedAt: new Date() })
     .where(and(eq(listings.ownerUserId, userId), eq(listings.status, 'live')))
 
-  const [profilePhotos, listingPhotos] = await Promise.all([
-    db.select({ keys: profiles.photoKeys }).from(profiles).where(eq(profiles.userId, userId)),
-    db.select({ keys: listings.photoKeys, flatmate: listingFlatmates.photoKey }).from(listings)
-      .leftJoin(listingFlatmates, eq(listingFlatmates.listingId, listings.id))
-      .where(eq(listings.ownerUserId, userId)),
-  ])
-  await storage.deleteObjects([...new Set([
-    ...profilePhotos.flatMap((r) => r.keys),
-    ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
-  ])])
-
   await db.transaction(async (tx) => {
     const [user] = await tx.select({ status: users.status }).from(users).where(eq(users.id, userId)).for('update')
     // A second request at the same time (a double tap) waited on the lock. Without this stop, it would
     // hash the tombstone key again and clear rejoin_blocked, so a suspended person could sign in again.
     if (user!.status === 'deleted') return
+    const [profilePhotos, listingPhotos] = await Promise.all([
+      tx.select({ keys: profiles.photoKeys }).from(profiles).where(eq(profiles.userId, userId)),
+      tx.select({ keys: listings.photoKeys, flatmate: listingFlatmates.photoKey }).from(listings)
+        .leftJoin(listingFlatmates, eq(listingFlatmates.listingId, listings.id))
+        .where(eq(listings.ownerUserId, userId)),
+    ])
+    await storage.deleteObjects([...new Set([
+      ...profilePhotos.flatMap((r) => r.keys),
+      ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
+    ])])
     // The cascades remove the rates, the flatmates, the chat turns, the goals of a
     // claimed visitor session and the connection requests.
     await tx.delete(listings).where(eq(listings.ownerUserId, userId))

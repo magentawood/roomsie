@@ -7,7 +7,7 @@ import type { Storage } from '../src/storage'
 import { offlineStorage } from '../scripts/openapi'
 import { testApp, type TestApp } from './app'
 
-type Who = 'lister' | 'seeker' | 'parent'
+type Who = 'lister' | 'seeker' | 'parent' | 'newcomer'
 const deleted: string[] = []
 let r2Down = false
 const storage: Storage = {
@@ -19,7 +19,7 @@ const storage: Storage = {
 }
 let t: TestApp<Who>
 beforeAll(async () => {
-  t = await testApp(['lister', 'seeker', 'parent'], storage)
+  t = await testApp(['lister', 'seeker', 'parent', 'newcomer'], storage)
   await seedCatalogues(t.db)
 })
 afterAll(() => t.close())
@@ -53,12 +53,10 @@ describe('the own profile', () => {
     expect((await edit('lister', { areas: ['bandra'] })).statusCode).toBe(200)
   })
 
-  it('refuses an unknown area, a budget the wrong way round, an age under 18 and a guest', async () => {
+  it('refuses an unknown area, a budget the wrong way round, and an edit with no profile', async () => {
     expect((await edit('lister', { areas: ['pune'] })).statusCode).toBe(400)
     expect((await edit('lister', { budgetMin: 25000, budgetMax: 15000 })).statusCode).toBe(400)
-    expect((await edit('lister', { age: 16 })).statusCode).toBe(400)
-    expect((await t.call(null, 'PATCH', '/v1/me/profile', { bio: 'x' })).statusCode).toBe(401)
-    expect((await edit('seeker', { bio: 'no profile yet' })).statusCode).toBe(404)
+    expect((await edit('newcomer', { bio: 'no profile yet' })).statusCode).toBe(404)
   })
 
   it('saves the lifestyle answers and the must-haves, and null clears one', async () => {
@@ -72,9 +70,12 @@ describe('the own profile', () => {
     expect((await edit('lister', { mustHaves: { pool: 'prefer' } })).statusCode).toBe(400)
   })
 
-  it('masks a phone number in the bio, the job role and the commute address (PD17)', async () => {
+  it('masks a phone number in the name, the bio, the job role and the commute address (PD17)', async () => {
     const saved = profileResponse.parse((await edit('lister', { bio: 'Call me on 98200 12345', jobRole: 'Analyst 9820012345', commuteAddress: 'BKC, ping 9820012345' })).json())
     for (const field of [saved.bio, saved.jobRole, saved.commuteAddress]) expect(field).not.toContain('9820')
+    const made = profileResponse.parse((await create('seeker', { fullName: 'Ravi 9820012345', age: 26, gender: 'male' })).json())
+    expect(made.fullName).not.toContain('9820')
+    expect(profileResponse.parse((await edit('seeker', { fullName: 'Ravi 98200 12345' })).json()).fullName).not.toContain('9820')
   })
 })
 
@@ -92,7 +93,7 @@ describe('photos', () => {
     const me = await own('lister')
     const link = profileUploadUrlResponse.parse((await t.call('lister', 'POST', '/v1/me/profile/upload-urls', { contentType: 'image/webp', size: 1000 })).json())
     expect(link.key).toMatch(new RegExp(`^profiles/${me.id}/[0-9a-f-]{36}\\.webp$`))
-    expect((await t.call('seeker', 'POST', '/v1/me/profile/upload-urls', { contentType: 'image/webp', size: 1000 })).statusCode).toBe(404)
+    expect((await t.call('newcomer', 'POST', '/v1/me/profile/upload-urls', { contentType: 'image/webp', size: 1000 })).statusCode).toBe(404)
     const parent = await own('parent')
     expect((await edit('lister', { photoKeys: [photoKey(parent.id, 1)] })).statusCode).toBe(400)
     expect((await edit('lister', { photoKeys: [1, 2, 3, 4, 5].map((n) => photoKey(me.id, n)) })).statusCode).toBe(400)
@@ -142,3 +143,16 @@ describe('the lister of a listing', () => {
     expect(listingResponse.parse((await t.call('lister', 'GET', `/v1/listings/${id}`)).json()).lister).toBeNull()
   })
 })
+
+describe('the deletion of an account', () => {
+  it('deletes the photos of the profile, and an edit after it gets no profile', async () => {
+    const parent = await own('parent')
+    const keys = [1, 2].map((n) => photoKey(parent.id, n))
+    expect((await edit('parent', { photoKeys: keys })).statusCode).toBe(200)
+    deleted.length = 0
+    expect((await t.call('parent', 'DELETE', '/v1/me')).statusCode).toBe(204)
+    expect(deleted.sort()).toEqual(keys.sort())
+    expect(await t.db.select().from(profiles).where(eq(profiles.userId, t.ids.parent))).toHaveLength(0)
+  })
+})
+

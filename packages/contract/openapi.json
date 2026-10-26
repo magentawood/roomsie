@@ -5159,7 +5159,6 @@
                       "items": {
                         "type": "string",
                         "enum": [
-                          "age",
                           "whosMoving",
                           "areas",
                           "budget"
@@ -5419,7 +5418,6 @@
                       "items": {
                         "type": "string",
                         "enum": [
-                          "age",
                           "whosMoving",
                           "areas",
                           "budget"
@@ -5879,7 +5877,6 @@
                       "items": {
                         "type": "string",
                         "enum": [
-                          "age",
                           "whosMoving",
                           "areas",
                           "budget"

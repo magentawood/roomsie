@@ -11,7 +11,7 @@ import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { areas, listingFlatmates, listingRates, listings } from '../db/schema'
 import { deletePhotos, type Storage } from '../storage'
-import { maskContacts } from '../text/mask-contacts'
+import { maskContacts, maskFields } from '../text/mask-contacts'
 import { isVisible, listingView, partsOf, type Flatmate, type Listing, type Parts, type Rate } from './read'
 import { idParams } from '../params'
 
@@ -179,11 +179,7 @@ async function ownedListing(db: Db, id: string, ownerUserId: string) {
 }
 
 function mask(edit: ListingEdit): ListingEdit {
-  const masked = { ...edit }
-  for (const field of maskedFields) {
-    const value = edit[field]
-    if (value) masked[field] = maskContacts(value)
-  }
+  const masked = maskFields(edit, maskedFields)
   if (edit.flatmates) {
     masked.flatmates = edit.flatmates.map((f) => ({ ...f, name: maskContacts(f.name), whatTheyDo: f.whatTheyDo && maskContacts(f.whatTheyDo) }))
   }
@@ -192,7 +188,6 @@ function mask(edit: ListingEdit): ListingEdit {
 
 const photoKeysOf = (flatmates: Pick<Flatmate, 'photoKey'>[]) => flatmates.flatMap((f) => (f.photoKey ? [f.photoKey] : []))
 
-/** False when R2 fails. Then the caller changes nothing (PD19). */
 /**
  * A PG publishes with a rent for each sharing type. An edit of a PG that has been live needs one rent only,
  * so step 4 can add a sharing type before step 5 gives its rent.

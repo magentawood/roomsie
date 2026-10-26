@@ -172,9 +172,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
     ['Building and society', listing.amenities.length > 0 && <Chips items={listing.amenities.map((a) => labels.amenities[a])} />],
     ['What’s nearby', nearby.length > 0 && <Facts lines={nearby} />],
     ['About this place', listing.description && <p className="text-sm whitespace-pre-line text-tertiary">{listing.description}</p>],
-    ['Listed by', listing.lister
-      ? <Person photoUrl={listing.lister.photoUrl} name={listing.lister.name} about={listerLabel(listing.kind)} />
-      : <Person photoUrl={null} name={listerLabel(listing.kind)} />],
+    ['Listed by', <Person photoUrl={listing.lister?.photoUrl ?? null} name={listing.lister?.name ?? listerLabel(listing.kind)} about={listing.lister && listerLabel(listing.kind)} />],
   ]
 
   return (

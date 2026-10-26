@@ -14,7 +14,6 @@ export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Lister | nul
 export const isVisible = (listing: Listing) => listing.status === 'live' && listing.expiresAt! > new Date() && !listing.hiddenAt
 export const visibleListing = () => and(eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt))
 
-/** The rents, the flatmates and the lister of each listing, from three queries. */
 export async function partsOf(db: Db, ids: string[]) {
   const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))
   const flatmates = await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.position))

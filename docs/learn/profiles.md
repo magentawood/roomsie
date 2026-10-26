@@ -4,8 +4,8 @@
 
 ## What it is
 
-- A **profile** holds the fields of PD16 and the Form A fields of PD15: who is moving, the areas, the budget, the move date, the eight lifestyle answers and the seven must-haves.
-- A **card** is what other users see of a profile. It has no gender.
+- A **profile** holds the fields of PD16 and the Form A fields of PD15: who is moving, the areas, the budget, the move date, the eight lifestyle answers and the seven must-haves. The room type is a Form A field that only the chat fills.
+- A **card** is what other users see of a profile. It has no gender: the designs do not show it, and the filters that use it run on the server.
 - A card is **live** when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on. Else it is a draft, or hidden.
 - A **parent** can run the card of a son or daughter of 18 or more. The parent says what the son or daughter does, and the card shows "Managed by a parent".
 
@@ -32,7 +32,7 @@
 ## Gotchas
 
 - **The catalogues must exist.** A lifestyle answer and a must-have refer to the rows that the seed of the deploy makes. A test database needs `seedCatalogues`.
-- **A photo change locks the account row.** The deletion of an account (T-20) locks the same row first, so a new photo cannot slip in after it read the photos.
+- **A photo change and the deletion of an account lock the same account row.** The deletion reads and deletes the photos while it holds the lock, so a new photo cannot slip in after it read them.
 - **R2 fails, nothing changes.** A removed photo leaves R2 before its row. If R2 fails, the edit gives 502.
 - **One profile for each account.** A second create gives 409.
 
