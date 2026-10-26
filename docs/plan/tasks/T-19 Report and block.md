@@ -32,12 +32,12 @@ The safety tools.
 - No task waits on this task.
 
 ## Done when
-- [ ] The API for the report and block buttons exists. The buttons are in T-18b
-- [ ] A block hides both people from each other. This also applies in the match query
-- [ ] The admin screen lists open reports
-- [ ] Suspend sets `tokens_valid_after` to now and hides the profile
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
-- [ ] The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once
+- [x] The API for the report and block buttons exists. The buttons are in T-18b · [#158](https://github.com/magentawood/roomsie/pull/158)
+- [x] A block hides both people from each other. This also applies in the match query · [#158](https://github.com/magentawood/roomsie/pull/158)
+- [x] The admin screen lists open reports · [#158](https://github.com/magentawood/roomsie/pull/158)
+- [x] Suspend sets `tokens_valid_after` to now and hides the profile · [#158](https://github.com/magentawood/roomsie/pull/158)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it · [#158](https://github.com/magentawood/roomsie/pull/158)
+- [x] The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once · [#158](https://github.com/magentawood/roomsie/pull/158)
 
 ^done
 
@@ -82,3 +82,13 @@ The safety tools.
   - Item 3 changed: "A saved query in Supabase lists open reports" → "The admin screen lists open reports". The user approved it.
   - Review round 2, the user decided: a person whose card reports hid cannot send a new request until a moderator reviews the card. The requests that the person sent before stay.
 - **Out of scope:** the report and block buttons on the person screen (T-18b), report and block in a conversation (T-45), the messages after a block (T-44), unblock, the end of a suspension, the name of the moderator (F-08).
+
+## Log
+
+- **2026-10-26 · [#158](https://github.com/magentawood/roomsie/pull/158)**
+  - **Change:** person reports and blocks, the rules of PD18 as API settings, the moderator list, and the admin screen at `/admin` with Dismiss, Keep hidden and Suspend. A block hides two people from each other, also their listings. The owner of a card that reports hid sees "Hidden for review", and cannot send a new request.
+  - **Why:** the T-19 spec, [PD18](../../decisions/pd-18-moderation.md)
+  - **Ticked:** all six items, from "The API for the report and block buttons exists. The buttons are in T-18b" to "The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once"
+  - **Not done:** none
+  - **Learn:** [Moderation: reports, blocks and the admin screen](../../learn/moderation.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
