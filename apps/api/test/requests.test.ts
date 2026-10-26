@@ -1,21 +1,17 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { incomingRequestsResponse, outgoingRequest, outgoingRequestsResponse, profileResponse } from '@roomsie/contract'
+import { incomingRequestsResponse, outgoingRequest, outgoingRequestsResponse } from '@roomsie/contract'
 import { blocks, connectionRequests, listings, profiles, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'lister' | 'seeker' | 'friend' | 'stranger'
 let t: TestApp<Who>
 const profileIds: Partial<Record<Who, string>> = {}
-const card = { whosMoving: 'working', areas: ['bandra'], budgetMax: 20000 }
 
 beforeAll(async () => {
   t = await testApp(['lister', 'seeker', 'friend', 'stranger'])
-  for (const who of ['seeker', 'friend'] as const) {
-    const made = profileResponse.parse((await t.call(who, 'POST', '/v1/me/profile', { fullName: who === 'seeker' ? 'Rahul Verma' : 'Divya Sharma', age: 25, gender: 'female' })).json())
-    expect((await t.call(who, 'PATCH', '/v1/me/profile', card)).statusCode).toBe(200)
-    profileIds[who] = made.id
-  }
+  profileIds.seeker = await t.liveCard('seeker', 'Rahul Verma')
+  profileIds.friend = await t.liveCard('friend')
 })
 afterAll(() => t.close())
 

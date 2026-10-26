@@ -6,13 +6,14 @@ import type { MeResponse } from '@roomsie/contract'
 import { rejoin, tombstoneKey } from './account'
 import type { Db } from './db/client'
 import { users } from './db/schema'
+import type { Moderation } from './moderation/settings'
 
 /** jose caches these keys and fetches them again only when Google rotates them. */
 export const googleKeys = createRemoteJWKSet(
   new URL('https://www.googleapis.com/service_accounts/v1/jwk/securetoken@system.gserviceaccount.com'),
 )
 
-export type AuthOptions = { db: Db; firebaseProjectId: string; firebaseKeys: JWTVerifyGetKey }
+export type AuthOptions = { db: Db; firebaseProjectId: string; firebaseKeys: JWTVerifyGetKey; moderation: Moderation }
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -40,7 +41,7 @@ function badToken(err: unknown) {
 }
 
 /** `allowSuspended` is for account deletion only: a suspended person can still remove their data (DPDP). */
-export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions, { allowSuspended = false } = {}) {
+export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }: AuthOptions, { allowSuspended = false } = {}) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const header = bearerHeader.safeParse(req.headers.authorization)
     if (!header.success) return reply.code(401).send({ error: 'unauthorized' })
@@ -74,7 +75,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
     if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     const allowed = user.status === 'active' || (allowSuspended && user.status === 'suspended')
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
-    req.user = { id: user.id, status: user.status }
+    req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid) }
     req.identity = identity
   }
 }

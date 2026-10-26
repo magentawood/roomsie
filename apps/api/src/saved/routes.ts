@@ -18,7 +18,7 @@ export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storag
   const preHandler = requireUser(options)
 
   app.put('/saved/places/:id', { preHandler, schema: saveSchema }, async (req, reply) => {
-    const [listing] = await db.select({ id: listings.id }).from(listings).where(and(eq(listings.id, req.params.id), visibleListing()))
+    const [listing] = await db.select({ id: listings.id }).from(listings).where(and(eq(listings.id, req.params.id), visibleListing(req.user!.id)))
     if (!listing) return reply.code(404).send({ error: 'not found' })
     await db.insert(saves).values({ userId: req.user!.id, listingId: listing.id }).onConflictDoNothing()
     return reply.code(204).send(null)
@@ -42,7 +42,7 @@ export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storag
   app.get('/saved/places', { preHandler, schema: { response: { 200: savedPlacesResponse } } }, async (req) => {
     const rows = await db.select({ listing: listings }).from(saves)
       .innerJoin(listings, eq(saves.listingId, listings.id))
-      .where(and(eq(saves.userId, req.user!.id), visibleListing()))
+      .where(and(eq(saves.userId, req.user!.id), visibleListing(req.user!.id)))
       .orderBy(desc(saves.createdAt))
     const parts = await partsOf(db, rows.map((r) => r.listing.id))
     return { places: rows.map((r) => listingView(r.listing, parts(r.listing.id), storage, false)) }

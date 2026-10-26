@@ -28,5 +28,5 @@ export function cardView(p: Profile, answers: Answers, storage: Storage): CardRe
 }
 
 export function profileView(p: Profile, answers: Answers, storage: Storage): ProfileResponse {
-  return { ...cardView(p, answers, storage), gender: p.gender!, visibility: p.visibility, missing: missingFields(p) }
+  return { ...cardView(p, answers, storage), gender: p.gender!, visibility: p.visibility, missing: missingFields(p), hiddenForReview: p.hiddenAt !== null }
 }

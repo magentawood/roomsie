@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { optionalText } from './shared'
 
 /** The seven report reasons of PD18. */
 export const reportReasons = ['fake', 'broker_or_spam', 'harassment', 'discriminatory_text', 'under_18', 'contact_details', 'other'] as const
@@ -14,10 +15,11 @@ const uuidv7Time = (id: string) => parseInt(id.replaceAll('-', '').slice(0, 12),
 export const clientId = z.uuid({ version: 'v7' })
   .refine((id) => Math.abs(Date.now() - uuidv7Time(id)) <= idClockSkew, 'The time in the id is more than 5 minutes off')
 
-export const reportBody = z.strictObject({
-  id: clientId,
-  listingId: z.uuid(),
-  reason: z.enum(reportReasons),
-  detail: z.string().trim().min(1).max(reportDetailLimit).nullable().default(null),
-}).refine((r) => !needsDetail(r.reason) || r.detail !== null, { message: 'Other needs a detail', path: ['detail'] })
+const report = { id: clientId, reason: z.enum(reportReasons), detail: optionalText(reportDetailLimit).default(null) }
+/** A report of a listing, or of a person through the profile id (T-19). */
+export const reportBody = z.union([z.strictObject({ ...report, listingId: z.uuid() }), z.strictObject({ ...report, profileId: z.uuid() })])
+  .refine((r) => !needsDetail(r.reason) || r.detail !== null, { message: 'Other needs a detail', path: ['detail'] })
 export type ReportBody = z.input<typeof reportBody>
+
+export const blockBody = z.strictObject({ id: clientId, profileId: z.uuid() })
+export type BlockBody = z.infer<typeof blockBody>

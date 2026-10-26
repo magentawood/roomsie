@@ -2,6 +2,7 @@ import { and, asc, eq, gt, inArray, isNull } from 'drizzle-orm'
 import { sharingTypes, type ListingResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { listingFlatmates, listingRates, listings, profiles } from '../db/schema'
+import { noBlockBetween } from '../match/query'
 import type { Storage } from '../storage'
 
 export type Listing = typeof listings.$inferSelect
@@ -9,9 +10,11 @@ export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | '
 export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
 export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'> | null }
 
-/** A listing that other users can see: live, not expired, and not hidden by reports. `visibleListing` is the same rule in SQL. */
-export const isVisible = (listing: Listing) => listing.status === 'live' && listing.expiresAt! > new Date() && !listing.hiddenAt
-export const visibleListing = () => and(eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt))
+/** A listing that other users can see: live, not expired, and not hidden by reports. With a viewer: no block between the viewer and the owner. */
+export const visibleListing = (viewerUserId?: string) => and(
+  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt),
+  viewerUserId ? noBlockBetween(viewerUserId, listings.ownerUserId) : undefined,
+)
 
 export async function partsOf(db: Db, ids: string[]) {
   const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))

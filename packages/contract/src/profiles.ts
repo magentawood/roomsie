@@ -90,6 +90,8 @@ export const profileResponse = cardResponse.extend({
   visibility: z.enum(visibilities),
   /** The fields that the card needs before it goes live. */
   missing: z.array(z.enum(liveCardFields)),
+  /** Reports hid the card until a moderator reviews it (PD18). */
+  hiddenForReview: z.boolean(),
 })
 export type ProfileResponse = z.infer<typeof profileResponse>
 export const profileUploadUrlResponse = uploadUrlReply(profilePhotoKey)

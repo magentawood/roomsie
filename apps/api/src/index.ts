@@ -9,6 +9,7 @@ const app = buildServer({
   db: createDb(env.DATABASE_URL),
   firebaseProjectId: env.FIREBASE_PROJECT_ID,
   firebaseKeys: googleKeys,
+  moderation: env.moderation,
   storage: r2Storage({
     accountId: env.R2_ACCOUNT_ID,
     accessKeyId: env.R2_ACCESS_KEY_ID,

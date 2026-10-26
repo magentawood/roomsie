@@ -1,8 +1,8 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { listingResponse, myListingsResponse, savedPlacesResponse } from '@roomsie/contract'
-import { reports } from '../src/db/schema'
+import { listingResponse, myListingsResponse, profileResponse, savedPeopleResponse, savedPlacesResponse } from '@roomsie/contract'
+import { profiles, reports } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'lister' | 'seeker' | 'other'
@@ -104,3 +104,82 @@ describe('listing reports', () => {
     expect(kept).toMatchObject({ listingId: null, subjectUserId: t.ids.lister, reason: 'fake' })
   })
 })
+
+describe('person reports', () => {
+  let card: string
+  beforeAll(async () => {
+    card = await t.liveCard('other', 'Karan Shah')
+    await t.liveCard('seeker', 'Rahul Verma')
+  })
+  beforeEach(async () => {
+    await t.db.delete(reports)
+    await t.db.update(profiles).set({ hiddenAt: null })
+  })
+  const reportPerson = (who: Who, reason: string, extra: object = {}) =>
+    t.call(who, 'POST', '/v1/reports', { id: uuidv7(), profileId: card, reason, ...extra })
+  const cardSeen = async (who: Who) => (await t.call(who, 'GET', `/v1/people/${card}`)).statusCode
+  const personReports = () => t.db.select().from(reports).where(eq(reports.profileId, card))
+
+  it('files one report for each user and person, masks the detail, and a retried tap or a second report files nothing', async () => {
+    const body = { id: uuidv7(), profileId: card, reason: 'other', detail: 'He asked me to call 98200 12345' }
+    expect((await t.call('seeker', 'POST', '/v1/reports', body)).statusCode).toBe(204)
+    expect((await t.call('seeker', 'POST', '/v1/reports', body)).statusCode).toBe(204)
+    expect((await reportPerson('seeker', 'fake')).statusCode).toBe(204)
+    const filed = await personReports()
+    expect(filed).toMatchObject([{ reporterUserId: t.ids.seeker, subjectUserId: t.ids.other, listingId: null, reason: 'other', status: 'open' }])
+    expect(filed[0]!.detail).not.toContain('98200')
+  })
+
+  it('takes a card that is not live, and refuses the own card, an unknown card, two targets and a guest', async () => {
+    await t.db.update(profiles).set({ visibility: 'draft' }).where(eq(profiles.id, card))
+    expect((await reportPerson('seeker', 'fake')).statusCode).toBe(204)
+    await t.db.update(profiles).set({ visibility: 'live' }).where(eq(profiles.id, card))
+    expect((await reportPerson('other', 'fake')).statusCode).toBe(404)
+    expect((await t.call('seeker', 'POST', '/v1/reports', { id: uuidv7(), profileId: '0199e4b0-0000-7000-8000-000000000099', reason: 'fake' })).statusCode).toBe(404)
+    const listingId = await t.liveListing()
+    expect((await t.call('seeker', 'POST', '/v1/reports', { id: uuidv7(), profileId: card, listingId, reason: 'fake' })).statusCode).toBe(400)
+    expect((await t.call(null, 'POST', '/v1/reports', { id: uuidv7(), profileId: card, reason: 'fake' })).statusCode).toBe(401)
+  })
+
+  it('a harassment or under-18 report hides the card at once; the owner sees "hidden for review", and the switch does not bring it back', async () => {
+    for (const reason of ['harassment', 'under_18']) {
+      await t.db.update(profiles).set({ hiddenAt: null })
+      await t.db.delete(reports)
+      expect((await t.call('seeker', 'PUT', `/v1/saved/people/${card}`)).statusCode).toBe(204)
+      expect((await reportPerson('lister', reason)).statusCode).toBe(204)
+      expect(await cardSeen('seeker')).toBe(404)
+      expect(savedPeopleResponse.parse((await t.call('seeker', 'GET', '/v1/saved/people')).json()).people).not.toContain(card)
+      expect((await t.call('seeker', 'POST', '/v1/requests', { toProfileId: card, note: 'Hi' })).statusCode).toBe(404)
+      expect(profileResponse.parse((await t.call('other', 'GET', '/v1/me/profile')).json())).toMatchObject({ hiddenForReview: true })
+      expect((await t.call('other', 'PATCH', '/v1/me/profile', { hidden: true })).statusCode).toBe(200)
+      expect((await t.call('other', 'PATCH', '/v1/me/profile', { hidden: false })).statusCode).toBe(200)
+      expect(await cardSeen('seeker')).toBe(404)
+    }
+  })
+
+  it('one other report keeps the card up, and reports from two people hide it', async () => {
+    expect((await reportPerson('seeker', 'broker_or_spam')).statusCode).toBe(204)
+    expect(await cardSeen('lister')).toBe(200)
+    expect((await reportPerson('lister', 'fake')).statusCode).toBe(204)
+    expect(await cardSeen('seeker')).toBe(404)
+  })
+})
+
+describe('the settings of PD18', () => {
+  it('change the number of reporters and the safety reasons, for listings and for people', async () => {
+    const s = await testApp(['lister', 'a', 'b', 'c'], undefined, { REPORT_HIDE_AT_REPORTERS: '3', REPORT_SAFETY_REASONS: 'fake' })
+    const id = await s.liveListing()
+    const reportListing = (who: 'a' | 'b' | 'c', reason: string) => s.call(who, 'POST', '/v1/reports', { id: uuidv7(), listingId: id, reason })
+    const listingSeen = async () => (await s.call('c', 'GET', `/v1/listings/${id}`)).statusCode
+    expect((await reportListing('a', 'harassment')).statusCode).toBe(204)
+    expect((await reportListing('b', 'broker_or_spam')).statusCode).toBe(204)
+    expect(await listingSeen()).toBe(200)
+    expect((await reportListing('c', 'broker_or_spam')).statusCode).toBe(204)
+    expect(await listingSeen()).toBe(404)
+    const card = await s.liveCard('b')
+    expect((await s.call('a', 'POST', '/v1/reports', { id: uuidv7(), profileId: card, reason: 'fake' })).statusCode).toBe(204)
+    expect((await s.call('c', 'GET', `/v1/people/${card}`)).statusCode).toBe(404)
+    await s.close()
+  })
+})
+
