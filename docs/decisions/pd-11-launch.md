@@ -1,6 +1,6 @@
 # PD11 — Public launch on 12 October
 
-**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-25. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-26. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -23,7 +23,7 @@
 | Chat with chips, the router, extraction, the observer, the reply writer | Blurred cards |
 | The advisor: articles first, web search after sign-in | SEO area pages |
 | Results panel, profiles with photos, listings | Live-update banners and undo |
-| Message requests and in-app messages ([PD17](pd-17-connect-and-contact.md)), DigiLocker verification ([PD14](pd-14-v0-is-the-figma-designs.md)) | Mobile bottom sheet |
+| Message requests and in-app messages ([PD17](pd-17-connect-and-contact.md)), ID verification ([PD8](pd-08-verification.md)) | Mobile bottom sheet, DigiLocker |
 | Report, block, deletion, waitlist, legal pages | — |
 | Results queried again when the form changes, responsive mobile | — |
 | Analytics in its own database, nightly backups (PD13) | — |
@@ -63,7 +63,7 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum o
 - **Still open (deferred): the master launch document.** All its inputs are settled.
 - Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls. They make the broker calls at this time, because the answers take time.
 
-Superseded (2026-10-24): in-app chat and DigiLocker verification were cut. [PD14](pd-14-v0-is-the-figma-designs.md) brings them into v0. **Open:** blurred cards were cut because they need verification. The founders decide if they ship at launch.
+Superseded (2026-10-24): in-app chat and DigiLocker verification were cut. [PD14](pd-14-v0-is-the-figma-designs.md) brings them into v0, and [PD8](pd-08-verification.md) moves DigiLocker to v1. **Open:** blurred cards were cut because they need verification. The founders decide if they ship at launch.
 
 Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October. That plan had no margin.
 

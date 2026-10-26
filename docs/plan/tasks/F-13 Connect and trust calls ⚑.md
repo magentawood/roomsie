@@ -35,7 +35,7 @@ Decide how two people connect, and how we keep them safe.
 - [[F-07 Privacy and terms draft]]
 - [[T-18a Message request API ⚑]]
 - [[T-44 Messages API]]
-- [[T-46 DigiLocker verification]]
+- [[T-46 ID verification]]
 
 ## Done when
 - [x] Each call in docs/product-calls/connect-and-trust.md has an answer from the product team · [#132](https://github.com/magentawood/roomsie/pull/132)

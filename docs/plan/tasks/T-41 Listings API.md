@@ -71,7 +71,7 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
   - A listing goes live only with: an area; a PG name for a PG; a brokerage for a broker flat; one rent or more, and for a PG, one rent for each sharing type that it offers; and the flatmate consent if a room listing shows flatmates. Otherwise the API gives 422 with the list of missing fields. (ADR-0017)
   - The storage module signs with `aws4fetch`.
   - When a lister deletes a listing or removes a photo, the API first deletes the photos in R2. If R2 fails, the API gives 502 and changes nothing. (PD19)
-  - T-41 has no DigiLocker check. T-46 adds it (T-46, done item 3).
+  - T-41 has no ID check. T-46 adds it, and a listing does not wait for it (PD8).
   - A listing detail needs sign-in. The lister sees all fields. Other users see only a live listing that has not expired, and the address only if the lister turned on "share address". Other users get 404 for a draft, a paused listing or a filled listing. (PD6b, ADR-0017)
   - To publish sets the expiry to 30 days after. To publish again sets a new expiry. (seo-with-gated-products.md)
   - "Who can move in" is a new column with the values men, women and any. The migration only adds, so it works with the API version before it. (PD3d, ADR-0018)

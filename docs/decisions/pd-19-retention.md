@@ -1,6 +1,6 @@
 # PD19 — Retention: how long roomsie keeps each kind of data
 
-**Status:** Settled. The privacy drafter (F-07) confirms it. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-10-26. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -9,14 +9,14 @@
 
 ## Decision
 
-**In one line:** Visitor data goes after 30 days, raw events after 12 months, the DigiLocker selfie right after the check, and account data at deletion.
+**In one line:** Visitor data goes after 30 days, raw events after 12 months, the ID photo and the selfie right after the review, and account data at deletion.
 
 | Data | Kept for |
 |---|---|
 | The session, goals and chat turns of a visitor | 30 days after the last visit, unless the visitor signs in and the goals move to the account |
 | Raw analytics events | 12 months |
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
-| The DigiLocker selfie | Deleted right after the check |
+| The ID photo and the selfie of a verification | Deleted right after the review |
 | The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
 | The saved places and people of an account | Until the user unsaves them or deletes the account. The deletion of a listing or of an account deletes its saves (T-47). |
 | Backups | See PD13 |

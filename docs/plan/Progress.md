@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**71 of 298 done · 24%**
+**71 of 301 done · 24%**
 
 `██████░░░░░░░░░░░░░░░░░░`
 
@@ -24,13 +24,13 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 4 / 15 | 21 / 68 | 31% |
+| [[P3 Data and trust]] | 4 / 15 | 21 / 70 | 30% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 31 | 19% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 29 | 14% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 6 / 14 | 18 / 40 | 45% |
+| [[Founder]] | 6 / 14 | 18 / 41 | 44% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**38 free tasks are open · 143 build hours.**
+**38 free tasks are open · 147 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -67,7 +67,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-42 Listing flow screens]] | P3 | 8 | 🟡 in progress | 0 | [#118](https://github.com/magentawood/roomsie/issues/118) |
-| 0 | [[T-46 DigiLocker verification]] | P3 | 8 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| 0 | [[T-46 ID verification]] | P3 | 12 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | 0 | [[T-52 Web CSP]] | P1 | 3 | ⬜ can start | 0 | [#135](https://github.com/magentawood/roomsie/issues/135) |
 | 0 | [[T-53 Delete the Firebase user]] | P4 | 2 | ⬜ can start | 0 | [#143](https://github.com/magentawood/roomsie/issues/143) |
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
@@ -165,7 +165,7 @@ flowchart LR
   T42["T-42<br/>Listing flow screens"]:::doing
   T44["T-44<br/>Messages API"]:::todo
   T45["T-45<br/>Messages screens"]:::todo
-  T46["T-46<br/>DigiLocker verification"]:::ready
+  T46["T-46<br/>ID verification"]:::ready
   T47["T-47<br/>Saved"]:::done
   T48["T-48<br/>Onboarding questions"]:::todo
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
@@ -373,7 +373,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 21/68
+## P3 Data and trust — 21/70
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -405,8 +405,8 @@ flowchart LR
 > [!todo]- ⬜ [[T-45 Messages screens]] · 0/4
 > ![[T-45 Messages screens#^done]]
 
-> [!todo]- ⬜ [[T-46 DigiLocker verification]] · 0/3
-> ![[T-46 DigiLocker verification#^done]]
+> [!todo]- ⬜ [[T-46 ID verification]] · 0/5
+> ![[T-46 ID verification#^done]]
 
 > [!todo]- ✅ [[T-47 Saved]] · 2/2
 > ![[T-47 Saved#^done]]
@@ -517,7 +517,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 18/40
+## Founder — 18/41
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -540,7 +540,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-09 ADR exceptions]] · 0/2
 > ![[F-09 ADR exceptions#^done]]
 
-> [!todo]- ⬜ [[F-08 Moderator named]] · 0/3
+> [!todo]- ⬜ [[F-08 Moderator named]] · 0/4
 > ![[F-08 Moderator named#^done]]
 
 > [!todo]- ✅ [[F-11 Intake and profile calls ⚑]] · 2/2

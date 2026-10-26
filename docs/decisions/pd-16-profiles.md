@@ -43,7 +43,7 @@
 ## Revisit when
 
 - A complaint comes from a son or daughter about a card that a parent made.
-- DigiLocker verification (T-46) can check age.
+- The ID check of T-46 can check age.
 
 ## Sources
 
