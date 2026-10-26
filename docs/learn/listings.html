@@ -138,6 +138,7 @@ browser ─▶ PATCH {photoKeys: [..., key]} ─▶ API checks that the key is o
 <li><strong>A PG keeps a rent only for its sharing types.</strong> An edit that removes a sharing type deletes its rent. A rent for a type that the PG does not have gets 400.</li>
 <li><strong>The lister sees <code>••••</code> in their own text.</strong> The original is never stored, so it cannot come back.</li>
 <li><strong>Photo addresses use <code>R2_PUBLIC_URL</code>.</strong> The photos bucket must serve that address, or the photos do not load.</li>
+<li><strong>The photos bucket needs a CORS rule.</strong> The browser uploads each photo straight to R2, so the bucket must allow <code>PUT</code> from <code>https://roomsie.in</code> with the <code>content-type</code> header. Without the rule, R2 refuses the preflight with 403, and each upload fails. A local dev API with fake R2 settings does not show this.</li>
 <li><strong>CORS must allow <code>PATCH</code> and <code>DELETE</code>.</strong> The default of <code>@fastify/cors</code> allows only GET, HEAD and POST, so a browser cannot save a step. The API sets the methods (T-42).</li>
 <li><strong>A flat rent has no sharing type.</strong> The edit schema of a room, a flat and a broker flat rejects <code>sharing</code>. <code>toEditValues</code> drops it.</li>
 </ul>
