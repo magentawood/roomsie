@@ -16,6 +16,7 @@ import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
 import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
+import { requestRoutes } from './requests/routes'
 import { savedRoutes } from './saved/routes'
 import type { Storage } from './storage'
 
@@ -69,6 +70,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
       savedRoutes(v1, options)
       reportRoutes(v1, options)
       profileRoutes(v1, options)
+      requestRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

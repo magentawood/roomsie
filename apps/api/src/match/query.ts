@@ -14,7 +14,7 @@
  * So we show results early and honestly, and withhold the score until it
  * means something.
  */
-import { and, eq, ne, inArray, sql, desc } from 'drizzle-orm'
+import { and, eq, ne, inArray, sql, desc, type SQLWrapper } from 'drizzle-orm'
 import type { Db } from '../db/client'
 import { profiles, users, profileLifestyle, blocks } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
@@ -27,15 +27,16 @@ export function visiblePeople(viewerUserId?: string) {
   return [
     eq(profiles.visibility, 'live'),
     eq(users.status, 'active'),
-    ...(viewerUserId
-      ? [ne(profiles.userId, viewerUserId), sql`not exists (
-          select 1 from ${blocks} b
-          where (b.blocker_user_id = ${viewerUserId} and b.blocked_user_id = ${profiles.userId})
-             or (b.blocked_user_id = ${viewerUserId} and b.blocker_user_id = ${profiles.userId})
-        )`]
-      : []),
+    ...(viewerUserId ? [ne(profiles.userId, viewerUserId), noBlockBetween(viewerUserId, profiles.userId)] : []),
   ]
 }
+
+/** No block between the viewer and the other person, in either direction. */
+export const noBlockBetween = (viewerUserId: string, otherUserId: SQLWrapper) => sql`not exists (
+  select 1 from ${blocks} b
+  where (b.blocker_user_id = ${viewerUserId} and b.blocked_user_id = ${otherUserId})
+     or (b.blocked_user_id = ${viewerUserId} and b.blocker_user_id = ${otherUserId})
+)`
 
 /* ── input ──────────────────────────────────────────────────────────────── */
 // TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.

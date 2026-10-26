@@ -43,6 +43,13 @@
       "when": 1793014545136,
       "tag": "0005_profile_gender",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793020425983,
+      "tag": "0006_message_requests",
+      "breakpoints": true
     }
   ]
 }

@@ -82,7 +82,7 @@ describe('DELETE /v1/me', () => {
     const goneSeed = await seedAccount(gone.id, 'gone')
     const staysSeed = await seedAccount(stays.id, 'stays')
     const db = testDb.db
-    await db.insert(connectionRequests).values({ fromProfileId: staysSeed.profile.id, toProfileId: goneSeed.profile.id })
+    await db.insert(connectionRequests).values({ fromUserId: stays.id, fromProfileId: staysSeed.profile.id, toUserId: gone.id, toProfileId: goneSeed.profile.id, note: 'Hi' })
     await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'spam' })
     await db.insert(blocks).values({ blockerUserId: gone.id, blockedUserId: stays.id })
     // Each saved the other's place and card (T-47).
