@@ -2,7 +2,8 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { Calendar, SearchMd, Wallet02 } from '@untitledui/icons'
 import type { CardResponse } from '@roomsie/contract'
-import { aboutLine, budgetLine, initials, lifestyleSummary, lookingFor, moveLine } from '../../lib/person'
+import { aboutLine, budgetLine, initials, lifestyleSummary, lookingFor } from '../../lib/person'
+import { shortDate } from '../../lib/place-detail'
 import { Badge } from '../ui/badge'
 
 /** The person card of sections 14 and 19 of the drafts, with no match details (T-18b). TODO(T-15): the match badges. TODO(T-46): "Verified". */
@@ -11,8 +12,8 @@ export function PersonCard({ card, action }: { card: CardResponse; action?: Reac
   const photo = card.photos[0]
   const facts = [
     [SearchMd, lookingFor(card) && `Looking for: ${lookingFor(card)}`],
-    [Wallet02, budgetLine(card.budgetMin, card.budgetMax)],
-    [Calendar, card.moveDate && `Available from: ${moveLine(card.moveDate)}`],
+    [Wallet02, budgetLine(card)],
+    [Calendar, card.moveDate && `Available from: ${shortDate(card.moveDate)}`],
   ] as const
   const lifestyle = lifestyleSummary(card)
   return (

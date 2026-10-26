@@ -1,8 +1,8 @@
-import { mustHaveKeys, requestDailyLimit, requestExpiryDays, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
+import { mustHaveKeys, requestCapMessage, requestExpiryDays, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
+import { rupees } from './listing-steps'
 import { profileLabels } from './profile-form'
 
 export const initials = (fullName: string) => fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
-/** "Business analyst • 26 yrs". */
 export const aboutLine = (card: Pick<CardResponse, 'jobRole' | 'age'>) => [card.jobRole, card.age && `${card.age} yrs`].filter(Boolean).join(' • ')
 
 const intentLabels: Record<Exclude<CardResponse['intent'], 'unclear'>, string> = {
@@ -10,16 +10,11 @@ const intentLabels: Record<Exclude<CardResponse['intent'], 'unclear'>, string> =
 }
 export const lookingFor = (card: CardResponse) => (card.intent === 'unclear' ? null : intentLabels[card.intent])
 
-const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN')}`
-export function budgetLine(min: number | null, max: number | null) {
+export function budgetLine({ budgetMin: min, budgetMax: max }: Pick<CardResponse, 'budgetMin' | 'budgetMax'>) {
   if (min !== null && max !== null) return `${rupees(min)} to ${rupees(max)}`
-  if (max !== null) return `Up to ${rupees(max)}`
+  if (max !== null) return `Under ${rupees(max)}`
   return min === null ? null : `From ${rupees(min)}`
 }
-
-/** "1 Nov 26". The date has no time, so the time zone of the browser must not move it. */
-export const moveLine = (date: string) =>
-  new Date(`${date}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit', timeZone: 'UTC' })
 
 /** The answers of another person: the designs say "Their days", not "Your days". */
 const axisLabel = (axis: LifestyleAxis) => (axis === 'your_days' ? 'Their days' : profileLabels.axes[axis])
@@ -45,7 +40,7 @@ export const mustHaveGroups = (card: CardResponse) => ({
 /** The line under the connect button (PD17). A viewer at the daily cap learns why Say hi is disabled. */
 export function connectLine(connection: Connection, requestsLeftToday: number, name: string) {
   const canSayHi = connection.state === 'none' || connection.state === 'not_available'
-  if (canSayHi && requestsLeftToday === 0) return `You can send ${requestDailyLimit} new requests a day. Try again tomorrow.`
+  if (canSayHi && requestsLeftToday === 0) return requestCapMessage
   switch (connection.state) {
     case 'none': return null
     case 'not_available': return `${name} isn’t available right now. You can send ${name} a new request later.`

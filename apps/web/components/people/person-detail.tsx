@@ -6,10 +6,11 @@ import {
   ShoppingCart01, SlashCircle01, Sun, Users01, Wallet02,
 } from '@untitledui/icons'
 import type { LifestyleAxis, PersonResponse } from '@roomsie/contract'
-import { aboutLine, budgetLine, initials, lifestyleLines, lookingFor, moveLine, mustHaveGroups } from '../../lib/person'
+import { aboutLine, budgetLine, initials, lifestyleLines, lookingFor, mustHaveGroups } from '../../lib/person'
+import { shortDate } from '../../lib/place-detail'
 import { firstName } from '../../lib/profile-form'
 import { useAreaNames } from '../../lib/queries'
-import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare, type Fact } from '../detail/parts'
+import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Badge } from '../ui/badge'
@@ -18,7 +19,6 @@ import { BlockSheet } from './block-sheet'
 import { Connect } from './connect'
 import { SayHiSheet } from './say-hi-sheet'
 
-/** The icon of each lifestyle answer, as the designs draw them. */
 const lifestyleIcons: Record<LifestyleAxis, Icon> = {
   food: ShoppingCart01, smoking: SlashCircle01, drinks: Droplets01, guests: Users01, your_days: Sun, sleep: Moon01, tidiness: Brush01, pets: Heart,
 }
@@ -30,18 +30,19 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
   const { share, copied } = useShare(person.fullName)
   const [sheet, setSheet] = useState<'say_hi' | 'report' | 'block' | null>(null)
   const name = firstName(person.fullName)
+  const target = { profileId: person.id, firstName: name }
   const back = useBack()
   const close = () => setSheet(null)
 
-  const looking = [
-    ['Looking for', lookingFor(person), SearchMd],
-    ['Areas', person.areas.map((a) => areaNames[a] ?? a).join(', '), Home02],
-    ['Budget', budgetLine(person.budgetMin, person.budgetMax), Wallet02],
-    ['Moving', person.moveDate && moveLine(person.moveDate), Calendar],
-    ['Commute to', person.commuteAddress, Car01],
-  ].flatMap(([label, value, icon]) => (value ? [{ label, value, icon } as Fact] : []))
-  const like = lifestyleLines(person).map((l) => ({ label: l.label, value: l.value, icon: lifestyleIcons[l.axis] }))
-  const needs = mustHaveGroups(person)
+  const lookingForFacts = [
+    { label: 'Looking for', value: lookingFor(person), icon: SearchMd },
+    { label: 'Areas', value: person.areas.map((a) => areaNames[a] ?? a).join(', '), icon: Home02 },
+    { label: 'Budget', value: budgetLine(person), icon: Wallet02 },
+    { label: 'Moving', value: person.moveDate && shortDate(person.moveDate), icon: Calendar },
+    { label: 'Commute to', value: person.commuteAddress, icon: Car01 },
+  ].flatMap((f) => (f.value ? [{ ...f, value: f.value }] : []))
+  const lifestyleFacts = lifestyleLines(person).map((l) => ({ label: l.label, value: l.value, icon: lifestyleIcons[l.axis] }))
+  const mustHaves = mustHaveGroups(person)
 
   return (
     <>
@@ -76,13 +77,13 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
           <p className="text-md text-tertiary">{aboutLine(person)}</p>
         </header>
         {person.bio && <p className="rounded-xl border border-secondary bg-secondary p-4 text-sm text-tertiary">“{person.bio}”</p>}
-        {looking.length > 0 && <Section title={`What ${name} is looking for`}><Facts lines={looking} /></Section>}
-        {like.length > 0 && <Section title={`What ${name} is like`}><Facts lines={like} /></Section>}
-        {(needs.dealbreakers.length > 0 || needs.prefers.length > 0) && (
+        {lookingForFacts.length > 0 && <Section title={`What ${name} is looking for`}><Facts lines={lookingForFacts} /></Section>}
+        {lifestyleFacts.length > 0 && <Section title={`What ${name} is like`}><Facts lines={lifestyleFacts} /></Section>}
+        {(mustHaves.dealbreakers.length > 0 || mustHaves.prefers.length > 0) && (
           <Section title={`What ${name} needs from flatmates`}>
             <dl className="grid grid-cols-2 border-y border-secondary">
-              <div className="flex flex-col gap-2 border-r border-secondary p-4"><dt className="text-sm font-medium text-secondary">Dealbreakers</dt><dd><Chips items={needs.dealbreakers} className="border-badge-error bg-badge-error text-badge-error" /></dd></div>
-              <div className="flex flex-col gap-2 p-4"><dt className="text-sm font-medium text-secondary">Prefers</dt><dd><Chips items={needs.prefers} /></dd></div>
+              <div className="flex flex-col gap-2 border-r border-secondary p-4"><dt className="text-sm font-medium text-secondary">Dealbreakers</dt><dd><Chips items={mustHaves.dealbreakers} className="border-badge-error bg-badge-error text-badge-error" /></dd></div>
+              <div className="flex flex-col gap-2 p-4"><dt className="text-sm font-medium text-secondary">Prefers</dt><dd><Chips items={mustHaves.prefers} /></dd></div>
             </dl>
           </Section>
         )}
@@ -91,9 +92,9 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary p-4 lg:hidden">
         <Connect person={person} name={name} onSayHi={() => setSheet('say_hi')} save={<SaveButton kind="people" id={person.id} className="py-2.5" />} />
       </div>
-      {sheet === 'say_hi' && <SayHiSheet profileId={person.id} name={name} onClose={close} />}
-      {sheet === 'report' && <ReportSheet target={{ profileId: person.id, name }} onClose={close} />}
-      {sheet === 'block' && <BlockSheet profileId={person.id} name={name} onClose={close} onBlocked={back} />}
+      {sheet === 'say_hi' && <SayHiSheet target={target} onClose={close} />}
+      {sheet === 'report' && <ReportSheet target={target} onClose={close} />}
+      {sheet === 'block' && <BlockSheet target={target} onClose={close} onBlocked={back} />}
     </>
   )
 }

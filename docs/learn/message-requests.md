@@ -32,7 +32,7 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 | `POST /v1/requests/:id/accept` and `/decline` | The recipient answers an open request. |
 | `GET /v1/people/:id` | Gives the card, the connection with you (none, sent, received with the note, accepted, or not available), and the new requests that you can still send today. |
 
-The person detail at `/people/[id]` shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or "Not available" with "Say hi again".
+The person detail at `/people/[id]` shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or the line of "Not available" under a new "Say hi".
 
 ## The choice we made
 
