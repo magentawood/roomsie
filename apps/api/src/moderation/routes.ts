@@ -7,7 +7,7 @@ import type { Tx } from '../db/client'
 import { connectionRequests, listings, profiles, reports, users } from '../db/schema'
 import { listingView, partsOf } from '../listings/read'
 import { idParams } from '../params'
-import { answersOf, cardView } from '../profiles/read'
+import { answersFor, cardView } from '../profiles/read'
 import type { Storage } from '../storage'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
@@ -31,12 +31,13 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
     if (!req.user!.moderator) return reply.code(404).send({ error: 'not found' })
   }]
 
-  app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse } } }, async () => {
+  app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse, 404: errorResponse } } }, async () => {
     const open = await db.select({ report: reports, listing: listings, profile: profiles }).from(reports)
       .leftJoin(listings, eq(listings.id, reports.listingId))
       .leftJoin(profiles, eq(profiles.userId, reports.subjectUserId))
       .where(eq(reports.status, 'open')).orderBy(asc(reports.createdAt))
     const parts = await partsOf(db, open.flatMap((r) => (r.listing ? [r.listing.id] : [])))
+    const answers = await answersFor(db, open.flatMap((r) => (r.profile ? [r.profile.id] : [])))
     // One item for each listing. The reports of a person, and of a listing that its owner deleted, go to the person.
     const items = new Map<string, ReportQueueItem>()
     for (const { report, listing, profile } of open) {
@@ -44,8 +45,8 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
       const item = items.get(key) ?? (listing
         ? { kind: 'listing' as const, listing: listingView(listing, parts(listing.id), storage, false), reports: [] }
         : {
-            kind: 'person' as const, userId: report.subjectUserId, hidden: profile?.hiddenAt != null, reports: [],
-            card: profile && cardView(profile, await answersOf(db, profile.id), storage),
+            kind: 'person' as const, userId: report.subjectUserId, hiddenForReview: profile?.hiddenAt != null, reports: [],
+            card: profile && cardView(profile, answers(profile.id), storage),
           })
       item.reports.push({
         id: report.id, reason: report.reason, safety: moderation.safetyReasons.includes(report.reason), detail: report.detail,
@@ -60,7 +61,7 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
     }
   })
 
-  for (const kind of ['people', 'listings'] as const) {
+  for (const kind of ['users', 'listings'] as const) {
     app.post(`/admin/${kind}/:id/review`, {
       preHandler,
       schema: { params: idParams, body: reviewBody, response: { 204: noContent, 404: errorResponse } },

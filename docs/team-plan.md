@@ -117,7 +117,7 @@ Finish line: Tue 24 Nov. 89 hours.
 | 1 | T-23a · Landing page from the Figma design | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
 | 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
-| 4 | T-19 · Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
+| 4 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
 | 6 | T-22a · Launch areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
 | 7 | T-22b · Launch areas and waitlist screen | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
@@ -252,7 +252,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
-| P4 Content and moderation | 4 | T-19 | Report, block, suspend, and a saved moderation query | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
+| P4 Content and moderation | 4 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
 | P4 Content and moderation | 6 | T-22a | Launch areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
@@ -368,7 +368,7 @@ gantt
     T-23a Landing page from the Figma design :t23a, 2026-09-24, 4d
     T-23b Privacy terms and grievance pages :t23b, 2026-09-27, 3d
     T-37 Articles table and full-text search :t37, 2026-09-29, 3d
-    T-19 Report block suspend and a saved moderation query :t19, 2026-10-01, 5d
+    T-19 Report block suspend and the admin screen :t19, 2026-10-01, 5d
     T-20 Account deletion :t20, 2026-10-05, 4d
     T-22a Launch areas and waitlist API :t22a, 2026-10-08, 3d
     T-22b Launch areas and waitlist screen :t22b, 2026-10-08, 3d
@@ -677,7 +677,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | M-07 | Draft launch posts | M1 |  | Wed 30 Sep → Sat 3 Oct | — |
 | T-18a ⚑ | Message request API | P5 | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | T-04 | Deploy web and API to Mumbai | P1 | 3 | Thu 1 Oct → Sat 3 Oct | T-02, F-04 |
-| T-19 | Report, block, suspend, and a saved moderation query | P4 | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
+| T-19 | Report, block, suspend, and the admin screen | P4 | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | T-21 | Five-turn cap, rate limits, spend ceiling | P2 | 5 | Fri 2 Oct → Sun 4 Oct | T-12, T-06, T-05 |
 | T-07 | Error reporting wrapper and Sentry | P1 | 1 | Sat 3 Oct → Sun 4 Oct | T-02, F-04 |
 | T-15 ⚑ | Results panel, built against the contract | P3 | 6 | Sat 3 Oct → Thu 8 Oct | T-08, D-03, F-12 |
@@ -768,7 +768,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A merge to main deploys automatically
 - Read first: `docs/decisions/0009-hosting-and-region.md`
 
-**T-19 · Report, block, suspend, and a saved moderation query** — done when:
+**T-19 · Report, block, suspend, and the admin screen** — done when:
 - The API for the report and block buttons exists. The buttons are in T-18b
 - A block hides both people from each other. This also applies in the match query
 - The admin screen lists open reports

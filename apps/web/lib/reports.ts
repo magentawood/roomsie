@@ -1,6 +1,5 @@
 import type { ReportQueueItem, ReportReason } from '@roomsie/contract'
 
-/** The seven reasons of PD18. */
 export const reasonLabels = (kind: ReportQueueItem['kind']): Record<ReportReason, string> => ({
   fake: kind === 'person' ? 'Fake profile' : 'Fake listing', broker_or_spam: 'Broker or spam', harassment: 'Harassment',
   discriminatory_text: 'Discriminatory text', under_18: 'Under 18', contact_details: 'Shared contact details', other: 'Other',

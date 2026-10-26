@@ -1,6 +1,6 @@
 # API standards
 
-These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and the assistant. The rules in [_index.md](_index.md) also apply.
+These rules apply to `apps/api`. The rules in [_index.md](_index.md) also apply.
 
 ## Contract and input
 
@@ -16,7 +16,7 @@ These rules apply to `apps/api`: Fastify, Zod, auth, storage, errors, limits and
 - The only auth mechanism is `Authorization: Bearer <Firebase ID token>`. Use no session cookies. Why: web, Android and iOS share one verification path. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Verify the token signature locally, with the cached public keys of Google. Do not call Firebase for each request. Why: the check then needs no network call and no database lookup. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Reject an `auth_time` before `tokens_valid_after` (401) and a user who is not `active` (403), except `DELETE /v1/me`. Why: one write stops all sessions, also new ones. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
-- An `UPDATE` on a client-supplied id always has `WHERE user_id = <id from the verified JWT>`. Why: a client that guesses an id cannot change the row of a different user. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
+- An `UPDATE` on a client-supplied id always has `WHERE user_id = <id from the verified JWT>`, except the hide of PD18 and the moderator routes. Why: a guessed id cannot change the row of a different user. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - When phone OTP ships, put it behind our own endpoints, `POST /auth/phone/start` and `/auth/phone/verify`. Why: we can change the SMS provider. ([ADR-0005](../decisions/0005-managed-platform-split.md))
 
 ## Storage and realtime

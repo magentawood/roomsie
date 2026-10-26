@@ -23,14 +23,12 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
       // so that the recipient of a request can report its sender.
       const target = 'listingId' in body
         ? {
-            columns: { listingId: body.listingId, profileId: null },
             subject: () => tx.select({ userId: listings.ownerUserId }).from(listings)
               .where(and(eq(listings.id, body.listingId), visibleListing(reporterUserId), ne(listings.ownerUserId, reporterUserId))).for('update'),
             reports: eq(reports.listingId, body.listingId),
             hide: () => tx.update(listings).set({ hiddenAt: new Date() }).where(and(eq(listings.id, body.listingId), isNull(listings.hiddenAt))),
           }
         : {
-            columns: { listingId: null, profileId: body.profileId },
             subject: () => tx.select({ userId: profiles.userId }).from(profiles)
               .where(and(eq(profiles.id, body.profileId), ne(profiles.userId, reporterUserId))).for('update'),
             reports: eq(reports.profileId, body.profileId),
@@ -40,8 +38,7 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
       if (!subject) return false
       // ADR-0015: a retried tap, or a second report of the same user, files nothing.
       const filed = await tx.insert(reports).values({
-        id: body.id, reporterUserId, subjectUserId: subject.userId, ...target.columns, reason: body.reason,
-        detail: body.detail && maskContacts(body.detail),
+        ...body, reporterUserId, subjectUserId: subject.userId, detail: body.detail && maskContacts(body.detail),
       }).onConflictDoNothing().returning({ id: reports.id })
       if (!filed.length) return true
       const [open] = await tx.select({ reporters: count() }).from(reports).where(and(target.reports, eq(reports.status, 'open')))

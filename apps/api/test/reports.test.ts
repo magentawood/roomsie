@@ -107,9 +107,10 @@ describe('listing reports', () => {
 
 describe('person reports', () => {
   let card: string
+  let seekerCard: string
   beforeAll(async () => {
     card = await t.liveCard('other', 'Karan Shah')
-    await t.liveCard('seeker', 'Rahul Verma')
+    seekerCard = await t.liveCard('seeker', 'Rahul Verma')
   })
   beforeEach(async () => {
     await t.db.delete(reports)
@@ -155,6 +156,13 @@ describe('person reports', () => {
       expect((await t.call('other', 'PATCH', '/v1/me/profile', { hidden: false })).statusCode).toBe(200)
       expect(await cardSeen('seeker')).toBe(404)
     }
+  })
+
+  it('a person whose card reports hid sends no new request until the review', async () => {
+    await reportPerson('lister', 'harassment')
+    const sent = await t.call('other', 'POST', '/v1/requests', { toProfileId: seekerCard, note: 'Hi' })
+    expect(sent.statusCode).toBe(403)
+    expect(sent.json()).toEqual({ error: 'Your card is hidden for review.' })
   })
 
   it('one other report keeps the card up, and reports from two people hide it', async () => {

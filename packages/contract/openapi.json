@@ -6507,6 +6507,25 @@
               }
             }
           },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
           "404": {
             "description": "Default Response",
             "content": {
@@ -7096,7 +7115,7 @@
                                 ],
                                 "additionalProperties": false
                               },
-                              "hidden": {
+                              "hiddenForReview": {
                                 "type": "boolean"
                               },
                               "reports": {
@@ -7149,7 +7168,7 @@
                               "kind",
                               "userId",
                               "card",
-                              "hidden",
+                              "hiddenForReview",
                               "reports"
                             ],
                             "additionalProperties": false
@@ -7825,11 +7844,30 @@
                 }
               }
             }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
     },
-    "/v1/admin/people/{id}/review": {
+    "/v1/admin/users/{id}/review": {
       "post": {
         "requestBody": {
           "required": true,

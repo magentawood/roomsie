@@ -97,7 +97,6 @@ function crossFieldError(p: Profile, photoKeys: string[] | undefined): keyof Pro
   return null
 }
 
-
 /** A null answer clears it. Each saved answer is "stated", because it comes from the form. */
 async function saveAnswers(tx: Tx, profileId: string, { lifestyle, mustHaves }: Pick<ProfileEditBody, 'lifestyle' | 'mustHaves'>) {
   for (const [axisKey, value] of Object.entries(lifestyle ?? {})) {
