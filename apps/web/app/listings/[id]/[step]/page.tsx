@@ -2,13 +2,13 @@
 
 import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, Trash01 } from '@untitledui/icons'
 import { listingResponse, noContent, type AreasResponse, type GoLiveField, type ListingEdit, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../../../lib/api'
 import { useUser } from '../../../../lib/auth'
 import { listingSteps, stepBody, stepCopy, stepErrors, toEditValues, type StepId } from '../../../../lib/listing-steps'
-import { queryKeys, useAreas } from '../../../../lib/queries'
+import { queryKeys, useAreas, useListing } from '../../../../lib/queries'
 import { FlowFrame } from '../../../../components/listings/flow-frame'
 import { MissingNotice } from '../../../../components/listings/missing-notice'
 import { KindStep, NearbyStep, PeopleStep, PhotosStep, PlaceStep, RentStep, RulesStep, WhereStep } from '../../../../components/listings/steps'
@@ -137,10 +137,9 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
 }
 
 function ListingStep() {
-  const user = useUser()
   const params = useParams<{ id: string; step: string }>()
   const stepNumber = Number(params.step)
-  const listing = useQuery({ queryKey: queryKeys.listing(params.id), queryFn: () => api(user, `/v1/listings/${params.id}`, listingResponse) })
+  const listing = useListing(params.id)
   const areas = useAreas()
   if (listing.isError) return <p className="p-6 text-sm text-error-primary">{errorText(listing.error)}</p>
   if (!listing.data || !areas.data) return <p className="p-6 text-sm text-tertiary">Loading…</p>

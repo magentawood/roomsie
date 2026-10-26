@@ -52,7 +52,9 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
         <div className="flex min-w-0 flex-col gap-1 text-sm">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="font-semibold text-secondary">{listingTitle(listing)}</span>
-            <Badge tone={statusBadge[listing.status].tone}>{statusBadge[listing.status].label}</Badge>
+            {listing.hidden
+              ? <Badge tone="error">Hidden for review</Badge>
+              : <Badge tone={statusBadge[listing.status].tone}>{statusBadge[listing.status].label}</Badge>}
           </div>
           {resume
             ? <span className="font-medium text-secondary">Step {resume} of {steps.length} · {stepCopy[steps[resume - 1]!].title}</span>

@@ -24,7 +24,7 @@ export function Modal({ icon: ModalIcon, title, children, actions, onClose }: { 
           <h2 id="modal-title" className="text-md font-semibold text-primary">{title}</h2>
           <div className="text-sm text-tertiary">{children}</div>
         </div>
-        <div className="flex flex-col-reverse gap-3 sm:flex-row">{actions}</div>
+        <div className="flex gap-3">{actions}</div>
       </div>
     </dialog>
   )

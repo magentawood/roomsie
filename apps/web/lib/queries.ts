@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
-import { areasResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind } from '@roomsie/contract'
-import { api } from './api'
+import { areasResponse, listingResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind } from '@roomsie/contract'
+import { api, ApiError } from './api'
 import { useUser } from './auth'
 
 /** The cache keys of the API data. A change sets or refreshes its key. */
@@ -10,6 +10,16 @@ export const queryKeys = {
   areas: ['areas'],
   saved: (kind: SavedKind) => ['saved', kind],
 } as const
+
+export function useListing(id: string) {
+  const user = useUser()
+  return useQuery({
+    queryKey: queryKeys.listing(id),
+    queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
+    // A 404 is the answer: a listing that is no longer listed. Only a failure of the server or the network gets a retry.
+    retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
+  })
+}
 
 /** The area groups change only with a deploy, so one fetch serves the visit. */
 export function useAreas() {
