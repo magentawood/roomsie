@@ -5,15 +5,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Eye, EyeOff, InfoCircle, Trash01 } from '@untitledui/icons'
 import {
   childTypes, lifestyleAnswers, maxProfilePhotos, mustHaveKeys, profileResponse, profileTextLimits, profileUploadUrlResponse,
-  type LifestyleAxis, type MustHaveWeight, type ProfileEditBody, type ProfileResponse,
+  type LifestyleAxis, type ProfileEditBody, type ProfileResponse,
 } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import {
-  ages, bandOf, budgetBands, describesYou, editBody, formOf, pickDescribesYou, profileLabels, type BudgetBand, type DescribesYou, type ProfileForm,
+  ages, bandOf, budgetBands, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, type ProfileForm,
 } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
 import { PhotoPicker } from '../photos'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips, MultiChips } from '../ui/choice'
 import { Field, TextArea, TextInput, inputClass } from '../ui/field'
@@ -35,21 +36,22 @@ function Section({ title, helper, children }: { title: string; helper: string; c
 }
 
 function CardBanner({ profile }: { profile: ProfileResponse }) {
-  const firstName = profile.fullName.split(/\s+/)[0]
   const [title, text, BannerIcon] = profile.visibility === 'live'
     ? profile.managedByParent
-      ? [`${firstName}’s card is discoverable`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]
+      ? [`${firstName(profile.fullName)}’s card is discoverable`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]
       : ['You’re discoverable', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
     : profile.visibility === 'hidden'
       ? ['Your card is hidden', 'People can’t find you in their results. Turn off “Hide my card” in the settings to show it again.', EyeOff]
       : ['Your card is not visible yet', 'Add these to show it:', InfoCircle]
   return (
     <div role="status" className="flex items-start gap-3 rounded-xl border border-secondary p-4">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-fg-quaternary"><BannerIcon size={20} aria-hidden /></span>
+      <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${profile.visibility === 'live' ? 'bg-badge-success text-badge-success' : 'bg-secondary text-fg-quaternary'}`}><BannerIcon size={20} aria-hidden /></span>
       <div className="text-sm">
         <p className="font-semibold text-primary">{title}</p>
         <p className="text-tertiary">{text}</p>
-        {profile.visibility === 'draft' && <ul className="mt-1 list-disc pl-5 text-tertiary">{profile.missing.map((m) => <li key={m}>{profileLabels.missing[m]}</li>)}</ul>}
+        {profile.visibility === 'draft' && <ul className="mt-1 list-disc pl-5 text-tertiary">{profile.missing.map((m) => (
+          <li key={m}>{m === 'whosMoving' && profile.managedByParent ? profileLabels.missingChildType : profileLabels.missing[m]}</li>
+        ))}</ul>}
       </div>
     </div>
   )
@@ -66,7 +68,7 @@ function Header({ profile }: { profile: ProfileResponse }) {
       <div className="flex min-w-0 flex-col">
         <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-primary">
           <span className="truncate">{profile.fullName}</span>
-          {profile.managedByParent && <span className="rounded-full border border-badge-gray bg-badge-gray px-2 py-0.5 text-xs font-medium text-badge-gray">Managed by a parent</span>}
+          {profile.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
         </p>
         <p className="text-md text-tertiary">{[profile.age && `${profile.age} years`, profile.jobRole].filter(Boolean).join(' • ')}</p>
       </div>
@@ -80,11 +82,11 @@ function Photos({ profile, save }: { profile: ProfileResponse; save: (body: Prof
   return (
     <div className="flex flex-col gap-3 md:flex-row">
       {keys.length < maxProfilePhotos && (
-        <div className="md:w-64 md:shrink-0">
-          <PhotoPicker target={profileUpload} label="Click to upload" hint="PNG, JPG or WebP" onUploaded={(key) => save({ photoKeys: [...keys, key] })} />
+        <div className="md:w-64 md:shrink-0 md:border-r md:border-secondary md:pr-3">
+          <PhotoPicker target={profileUpload} label="Click to upload" onUploaded={(key) => save({ photoKeys: [...keys, key] })} />
         </div>
       )}
-      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4">
         {profile.photos.map((p, i) => (
           <li key={p.key} className="flex flex-col items-center gap-2 rounded-xl border border-secondary p-2">
             <img src={p.url} alt={`Photo ${i + 1}`} className="aspect-square w-full rounded-md object-cover" />
@@ -112,8 +114,6 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
     },
   })
   const changes = editBody(formOf(profile), draft)
-  const describes = describesYou(draft)
-  const band = bandOf(draft.budgetMin, draft.budgetMax)
 
   return (
     <div className="mx-auto flex w-full max-w-240 flex-col gap-8 px-5 py-5 md:px-6 md:py-8">
@@ -142,22 +142,24 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
       </Section>
 
       <Section title="Your search" helper="Shown on your card so people can rule themselves in or out.">
-        <ChoiceChips label="What best describes you?" labels={profileLabels.describesYou} value={describes}
-          onChange={(choice: DescribesYou | null) => choice && set(pickDescribesYou(choice, draft))} />
+        <ChoiceChips label="What best describes you?" labels={profileLabels.describesYou} value={describesYou(draft)}
+          onChange={(choice) => choice && set(pickDescribesYou(choice, draft))} />
         {draft.managedByParent && (
-          <ChoiceChips label="What does your son or daughter do?" required labels={profileLabels.childType}
-            value={childTypes.find((c) => c === draft.whosMoving) ?? null}
-            onChange={(whosMoving) => set({ whosMoving: whosMoving ?? 'unclear' })} />
+          <>
+            <ChoiceChips label="What does your son or daughter do?" required labels={profileLabels.childType}
+              value={childTypes.find((c) => c === draft.whosMoving) ?? null}
+              onChange={(whosMoving) => set({ whosMoving: whosMoving ?? 'unclear' })} />
+            <p className="text-sm text-tertiary">You make the card for your son or daughter. They must be 18 or older. Their card shows “Managed by a parent”, and you send and get the messages.</p>
+          </>
         )}
-        {draft.managedByParent && <p className="text-sm text-tertiary">You make the card for your son or daughter. They must be 18 or older. Their card shows “Managed by a parent”, and you send and get the messages.</p>}
         <MultiChips label="Areas you are looking for" labels={Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))}
           value={draft.areas} onChange={(picked) => set({ areas: picked })} />
-        <ChoiceChips label="Budget" labels={profileLabels.budget} value={band}
-          onChange={(id: BudgetBand | null) => {
+        <ChoiceChips label="Budget" labels={profileLabels.budget} value={bandOf(draft.budgetMin, draft.budgetMax)}
+          onChange={(id) => {
             const picked = budgetBands.find((b) => b.id === id)
             set({ budgetMin: picked?.min ?? null, budgetMax: picked?.max ?? null })
           }} />
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-5">
           <Field label="Moving Date">
             {(id) => <input id={id} type="date" className={inputClass} value={draft.moveDate ?? ''} onChange={(e) => set({ moveDate: e.target.value || null })} />}
           </Field>
@@ -176,7 +178,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <div className="grid gap-5 md:grid-cols-3">
           {mustHaveKeys.map((key) => (
             <ChoiceChips key={key} label={profileLabels.mustHaves[key]} labels={profileLabels.weights}
-              value={draft.mustHaves[key] ?? null} onChange={(weight: MustHaveWeight | null) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
+              value={draft.mustHaves[key] ?? null} onChange={(weight) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
           ))}
         </div>
       </Section>

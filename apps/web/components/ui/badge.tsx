@@ -5,10 +5,10 @@ const tones: Record<Tone, { pill: string; dot: string }> = {
   gray: { pill: 'border-badge-gray bg-badge-gray text-badge-gray', dot: 'bg-dot-gray' },
 }
 
-export function Badge({ tone, children }: { tone: Tone; children: string }) {
+export function Badge({ tone, dot = true, children }: { tone: Tone; dot?: boolean; children: string }) {
   return (
     <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${tones[tone].pill}`}>
-      <span className={`size-1.5 rounded-full ${tones[tone].dot}`} aria-hidden />
+      {dot && <span className={`size-1.5 rounded-full ${tones[tone].dot}`} aria-hidden />}
       {children}
     </span>
   )

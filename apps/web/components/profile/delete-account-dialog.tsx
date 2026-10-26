@@ -16,7 +16,7 @@ export function DeleteAccountDialog({ onClose }: { onClose: () => void }) {
   const router = useRouter()
   const remove = useMutation({ mutationFn: () => api(user, '/v1/me', noContent, { method: 'DELETE' }) })
   if (remove.isSuccess) {
-    // The account is gone, so its token is no longer valid: sign out, then the home page.
+    // A deleted account has no valid token, so sign out.
     const leave = () => signOut(firebaseAuth()).then(() => router.replace('/'))
     return (
       <Modal icon={Trash01} title="Your account is deleted." onClose={leave} actions={<Button variant="secondary" size="lg" className="flex-1" onClick={leave}>OK</Button>}>
