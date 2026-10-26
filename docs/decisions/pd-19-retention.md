@@ -18,6 +18,7 @@
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
 | The DigiLocker selfie | Deleted right after the check |
 | The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
+| The saved places and people of an account | Until the user unsaves them or deletes the account. The deletion of a listing or of an account deletes its saves (T-47). |
 | Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".
