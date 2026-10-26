@@ -36,7 +36,9 @@ function Section({ title, helper, children }: { title: string; helper: string; c
 }
 
 function CardBanner({ profile }: { profile: ProfileResponse }) {
-  const [title, text, BannerIcon] = profile.visibility === 'live'
+  const [title, text, BannerIcon] = profile.hiddenForReview
+    ? ['Hidden for review', 'Reports hid your card from others. We review it within 24 hours.', EyeOff]
+    : profile.visibility === 'live'
     ? profile.managedByParent
       ? [`${firstName(profile.fullName)}’s card is discoverable`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]
       : ['You’re discoverable', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
@@ -45,11 +47,11 @@ function CardBanner({ profile }: { profile: ProfileResponse }) {
       : ['Your card is not visible yet', 'Add these to show it:', InfoCircle]
   return (
     <div role="status" className="flex items-start gap-3 rounded-xl border border-secondary p-4">
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${profile.visibility === 'live' ? 'bg-badge-success text-badge-success' : 'bg-secondary text-fg-quaternary'}`}><BannerIcon size={20} aria-hidden /></span>
+      <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${profile.visibility === 'live' && !profile.hiddenForReview ? 'bg-badge-success text-badge-success' : 'bg-secondary text-fg-quaternary'}`}><BannerIcon size={20} aria-hidden /></span>
       <div className="text-sm">
         <p className="font-semibold text-primary">{title}</p>
         <p className="text-tertiary">{text}</p>
-        {profile.visibility === 'draft' && <ul className="mt-1 list-disc pl-5 text-tertiary">{profile.missing.map((m) => (
+        {profile.visibility === 'draft' && !profile.hiddenForReview && <ul className="mt-1 list-disc pl-5 text-tertiary">{profile.missing.map((m) => (
           <li key={m}>{m === 'whosMoving' && profile.managedByParent ? profileLabels.missingChildType : profileLabels.missing[m]}</li>
         ))}</ul>}
       </div>

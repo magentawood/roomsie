@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { areasResponse, listingResponse, profileResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind } from '@roomsie/contract'
+import {
+  areasResponse, listingResponse, meResponse, profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
+} from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { useUser } from './auth'
 
@@ -10,7 +12,20 @@ export const queryKeys = {
   areas: ['areas'],
   saved: (kind: SavedKind) => ['saved', kind],
   profile: ['profile'],
+  me: ['me'],
+  reportQueue: ['admin', 'reports'],
 } as const
+
+export function useMe() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.me, queryFn: () => api(user, '/v1/me', meResponse) })
+}
+
+/** Only a moderator gets the queue. */
+export function useReportQueue(enabled: boolean) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueResponse), enabled })
+}
 
 export function useListing(id: string) {
   const user = useUser()

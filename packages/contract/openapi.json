@@ -7121,6 +7121,9 @@
                                         "other"
                                       ]
                                     },
+                                    "safety": {
+                                      "type": "boolean"
+                                    },
                                     "detail": {
                                       "nullable": true,
                                       "type": "string"
@@ -7134,6 +7137,7 @@
                                   "required": [
                                     "id",
                                     "reason",
+                                    "safety",
                                     "detail",
                                     "createdAt"
                                   ],
@@ -7779,6 +7783,9 @@
                                         "other"
                                       ]
                                     },
+                                    "safety": {
+                                      "type": "boolean"
+                                    },
                                     "detail": {
                                       "nullable": true,
                                       "type": "string"
@@ -7792,6 +7799,7 @@
                                   "required": [
                                     "id",
                                     "reason",
+                                    "safety",
                                     "detail",
                                     "createdAt"
                                   ],
