@@ -17,11 +17,17 @@ export type AuthOptions = { db: Db; firebaseProjectId: string; firebaseKeys: JWT
 declare module 'fastify' {
   interface FastifyRequest {
     user: MeResponse | null
+    /** The person at the sign-in provider: the Google account id, or the Firebase uid if the token has none. */
+    identity: string | null
   }
 }
 
 const bearerHeader = z.string().regex(/^Bearer \S+$/)
-const firebaseClaims = z.object({ sub: z.string().min(1), auth_time: z.number().int() })
+const firebaseClaims = z.object({
+  sub: z.string().min(1),
+  auth_time: z.number().int(),
+  firebase: z.object({ identities: z.record(z.string(), z.array(z.string())) }).partial().optional(),
+})
 
 /** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
 const tokenErrors = [
@@ -52,21 +58,24 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys }: AuthOptions
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
     // auth_time is the sign-in. A refreshed token keeps it, so a revocation holds (ADR-0007).
-    const { sub: uid, auth_time: authTime } = claims.data
+    const { sub: uid, auth_time: authTime, firebase } = claims.data
     const signedInAt = new Date(authTime * 1000)
+    // A tombstone keys on the Google account id: it stays when T-53 deletes the Firebase user, and the uid does not.
+    const identity = firebase?.identities?.['google.com']?.[0] ?? uid
     let user = await findUser(db, uid)
     if (!user) {
       // No account: a first sign-in, or a sign-in after a deletion (T-20).
-      const tombstone = await findUser(db, tombstoneKey(uid))
+      const tombstone = await findUser(db, tombstoneKey(identity))
       if (!tombstone) user = await createUser(db, uid, signedInAt)
       else if (signedInAt < tombstone.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
-      else if ((await rejoin(db, tombstone.id, uid, signedInAt)) === 'blocked') return reply.code(403).send({ error: 'forbidden' })
+      else if ((await rejoin(db, tombstone.id, uid, identity, signedInAt)) === 'blocked') return reply.code(403).send({ error: 'forbidden' })
       else user = (await findUser(db, uid))!
     }
     if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     const allowed = user.status === 'active' || (allowSuspended && user.status === 'suspended')
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status }
+    req.identity = identity
   }
 }
 

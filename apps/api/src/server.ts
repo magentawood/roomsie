@@ -21,6 +21,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
+  app.decorateRequest('identity', null)
   // A 400 names the fields, so a client can show which value is wrong. Other errors keep the default reply.
   app.setErrorHandler((err, _req, reply) => {
     if (!hasZodFastifySchemaValidationErrors(err)) throw err
@@ -49,7 +50,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
         '/me',
         { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: deleteMeResponse } } },
         async (req, reply) => {
-          await deleteAccount(options.db, options.storage, req.user!.id)
+          await deleteAccount(options.db, options.storage, req.user!.id, req.identity!)
           return reply.code(204).send(null)
         },
       )

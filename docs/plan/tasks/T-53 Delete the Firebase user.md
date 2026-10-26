@@ -34,6 +34,7 @@ Removes the sign-in record at Google too, not only our data.
 - [ ] Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module
 - [ ] The service account key is only in the environment of apps/api, and a record names it (ADR-0016)
 - [ ] If the Firebase delete fails, a retry is safe
+- [ ] After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20
 
 ^done
 

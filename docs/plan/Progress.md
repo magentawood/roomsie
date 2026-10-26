@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**66 of 291 done · 23%**
+**66 of 292 done · 23%**
 
 `█████░░░░░░░░░░░░░░░░░░░`
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 2 / 14 | 16 / 63 | 25% |
-| [[P4 Content and moderation]] | 1 / 8 | 6 / 29 | 21% |
+| [[P4 Content and moderation]] | 1 / 8 | 6 / 30 | 20% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 29 | 14% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -417,7 +417,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 6/29
+## P4 Content and moderation — 6/30
 
 > [!todo]- ⬜ [[T-23a Landing page]] · 0/4
 > ![[T-23a Landing page#^done]]
@@ -440,7 +440,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-22b Waitlist screen]] · 0/3
 > ![[T-22b Waitlist screen#^done]]
 
-> [!todo]- ⬜ [[T-53 Delete the Firebase user]] · 0/3
+> [!todo]- ⬜ [[T-53 Delete the Firebase user]] · 0/4
 > ![[T-53 Delete the Firebase user#^done]]
 
 

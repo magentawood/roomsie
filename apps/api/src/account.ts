@@ -5,15 +5,15 @@ import type { Db } from './db/client'
 import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, reports, users } from './db/schema'
 import type { Storage } from './storage'
 
-/** A tombstone keeps a hash of the Firebase uid, never the uid. Firebase uids are
- *  random, so a plain SHA-256 cannot be reversed by a guess. */
-export const tombstoneKey = (uid: string) => `deleted:${createHash('sha256').update(uid).digest('hex')}`
+/** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
+ *  stays the same when T-53 deletes the Firebase user, so a returning person meets the checks. */
+export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256').update(identity).digest('hex')}`
 
 /**
  * Removes the data of an account (PD19) and ends every session (ADR-0007).
  *
  * The `users` row stays as a tombstone: `status = 'deleted'`, a new
- * `tokens_valid_after`, and the hash of the uid. Thus an old token gets a 401,
+ * `tokens_valid_after`, and the hash of the identity. Thus an old token gets a 401,
  * and the other person in a thread can still show "Deleted user". Reports and
  * blocks keep their ids for moderation.
  *
@@ -24,7 +24,7 @@ export const tombstoneKey = (uid: string) => `deleted:${createHash('sha256').upd
  *
  * Not here yet: events (T-24), Form B (T-35), messages (T-44), the Firebase user (T-53).
  */
-export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, userId: string) {
+export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, userId: string, identity: string) {
   await db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
   await db.update(listings).set({ status: 'inactive', updatedAt: new Date() })
     .where(and(eq(listings.ownerUserId, userId), eq(listings.status, 'live')))
@@ -41,7 +41,7 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
   ])])
 
   await db.transaction(async (tx) => {
-    const [user] = await tx.select({ uid: users.authProviderId, status: users.status }).from(users).where(eq(users.id, userId)).for('update')
+    const [user] = await tx.select({ status: users.status }).from(users).where(eq(users.id, userId)).for('update')
     // A second request at the same time (a double tap) waited on the lock. Without this stop, it would
     // hash the tombstone key again and clear rejoin_blocked, so a suspended person could sign in again.
     if (user!.status === 'deleted') return
@@ -53,7 +53,7 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
     await tx.delete(profiles).where(eq(profiles.userId, userId))
     await tx.update(users).set({
       status: 'deleted',
-      authProviderId: tombstoneKey(user!.uid),
+      authProviderId: tombstoneKey(identity),
       // Whole seconds, like auth_time: a sign-in in the same second as the deletion counts as after it.
       tokensValidAfter: new Date(Math.floor(Date.now() / 1000) * 1000),
       rejoinBlocked: user!.status === 'suspended',
@@ -63,17 +63,17 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
 }
 
 /**
- * A fresh sign-in with the uid of a tombstone. A tombstone of a suspended account,
+ * A fresh sign-in with the identity of a tombstone. A tombstone of a suspended account,
  * or one with an open report, cannot rejoin. Otherwise the person gets a new, empty
  * account, and each block against the old account moves to it. The tombstone lets go
- * of the uid hash, so the old `users.id` never comes back to life.
+ * of the hash, so the old `users.id` never comes back to life.
  */
-export async function rejoin(db: Db, tombstoneId: string, uid: string, signedInAt: Date) {
+export async function rejoin(db: Db, tombstoneId: string, uid: string, identity: string, signedInAt: Date) {
   return db.transaction(async (tx) => {
     const [tombstone] = await tx.select({ key: users.authProviderId, rejoinBlocked: users.rejoinBlocked })
       .from(users).where(eq(users.id, tombstoneId)).for('update')
     // A second request at the same time waited on the lock: the first one already rejoined.
-    if (tombstone?.key !== tombstoneKey(uid)) return 'rejoined' as const
+    if (tombstone?.key !== tombstoneKey(identity)) return 'rejoined' as const
     const [openReport] = await tx.select({ id: reports.id }).from(reports)
       .where(and(eq(reports.subjectUserId, tombstoneId), eq(reports.status, 'open'))).limit(1)
     if (tombstone.rejoinBlocked || openReport) return 'blocked' as const

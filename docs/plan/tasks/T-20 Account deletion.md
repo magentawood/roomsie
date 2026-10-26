@@ -37,7 +37,7 @@ Delete the account and data correctly: profile, photos and messages are really r
 - [x] The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44 · [#142](https://github.com/magentawood/roomsie/pull/142)
 - [x] `tokens_valid_after` is set to now, thus every session ends · [#142](https://github.com/magentawood/roomsie/pull/142)
 - [x] The chat turns of the person are deleted too · [#142](https://github.com/magentawood/roomsie/pull/142)
-- [x] The `users` row stays as a tombstone with a hash of the UID. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The `users` row stays as a tombstone with a hash of the Google account id. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report · [#142](https://github.com/magentawood/roomsie/pull/142)
 - [x] A suspended user can delete the account. Blocks against the old account move to the new account · [#142](https://github.com/magentawood/roomsie/pull/142)
 
 ^done

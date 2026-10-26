@@ -155,6 +155,18 @@ describe('DELETE /v1/me', () => {
     expect(await testDb.db.select().from(users).where(eq(users.authProviderId, user.uid))).toHaveLength(0)
   })
 
+  it('knows a returning person by the Google account id, so a new Firebase uid after T-53 still meets the checks', async () => {
+    const before = await idToken('uid-before-t53', { authTime: Math.floor(Date.now() / 1000) - 60, googleId: 'google-1' })
+    const { id } = meResponse.parse((await call('GET', before)).json())
+    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, id))
+    expect((await call('DELETE', before)).statusCode).toBe(204)
+    expect(await userRow(id)).toMatchObject({ authProviderId: tombstoneKey('google-1'), rejoinBlocked: true })
+
+    // T-53 deletes the Firebase user, so the next Google sign-in has a new uid.
+    const after = await idToken('uid-after-t53', { authTime: Math.floor(Date.now() / 1000), googleId: 'google-1' })
+    expect((await call('GET', after)).statusCode).toBe(403)
+  })
+
   it('makes one tombstone from two deletes at the same time, so a suspended person stays out', async () => {
     const user = await signIn('uid-double-tap')
     await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, user.id))

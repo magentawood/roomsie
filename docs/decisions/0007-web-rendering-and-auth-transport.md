@@ -43,7 +43,9 @@ exception: a suspended user can call `DELETE /v1/me`, because the DPDP Act lets
 each person remove their data.
 
 **5. A deleted account stays as a tombstone row.** The row keeps a hash of the
-Firebase UID, not the UID. Its `tokens_valid_after` moves to the deletion, in
+Google account id of the token, not the id. The Google account id stays when
+T-53 deletes the Firebase user, and the Firebase UID does not. A token with no
+Google account id uses the UID. Its `tokens_valid_after` moves to the deletion, in
 whole seconds, as `auth_time` is. Thus, a token from before the deletion gets
 401. A sign-in after the deletion makes a new, empty account. Two conditions
 stop it (403): the account had the `suspended` status at deletion, or a

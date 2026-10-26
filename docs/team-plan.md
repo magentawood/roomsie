@@ -860,7 +860,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44
 - `tokens_valid_after` is set to now, thus every session ends
 - The chat turns of the person are deleted too
-- The `users` row stays as a tombstone with a hash of the UID. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report
+- The `users` row stays as a tombstone with a hash of the Google account id. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report
 - A suspended user can delete the account. Blocks against the old account move to the new account
 - Read first: `docs/decisions/0012-analytics-event-store.md`, `docs/extensibility.md`
 
@@ -961,6 +961,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module
 - The service account key is only in the environment of apps/api, and a record names it (ADR-0016)
 - If the Firebase delete fails, a retry is safe
+- After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20
 - Read first: `docs/decisions/0016-credentials-and-secrets.md`, `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/0007-web-rendering-and-auth-transport.md`
 
 **T-42 · Listing flow and My listings screens** — done when:
