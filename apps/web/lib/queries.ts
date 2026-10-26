@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import {
-  areasResponse, listingResponse, meResponse, profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
+  areasResponse, listingResponse, meResponse, personResponse, profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { useUser } from './auth'
@@ -9,6 +9,7 @@ import { useUser } from './auth'
 export const queryKeys = {
   myListings: ['listings', 'mine'],
   listing: (id: string) => ['listing', id],
+  person: (id: string) => ['person', id],
   areas: ['areas'],
   saved: (kind: SavedKind) => ['saved', kind],
   profile: ['profile'],
@@ -32,6 +33,16 @@ export function useListing(id: string) {
     queryKey: queryKeys.listing(id),
     queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
     // A 404 means no longer listed. Only 5xx and network errors retry.
+    retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
+  })
+}
+
+export function usePerson(id: string) {
+  const user = useUser()
+  return useQuery({
+    queryKey: queryKeys.person(id),
+    queryFn: () => api(user, `/v1/people/${id}`, personResponse),
+    // A 404 means the card is not available. Only 5xx and network errors retry.
     retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
   })
 }

@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Cube01, DotsVertical, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
+  Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
   LayersThree01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
 } from '@untitledui/icons'
 import type { ListingResponse } from '@roomsie/contract'
@@ -12,9 +12,10 @@ import {
   addressLine, flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
 import { useAreaNames } from '../../lib/queries'
+import { Chips, DetailMenu, Facts, Photos, useShare } from '../detail/parts'
+import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
-import { ReportSheet } from './report-sheet'
 
 /** The icon of each line, as the designs draw them. */
 const lineIcons: Record<FactLabel, Icon> = {
@@ -23,6 +24,8 @@ const lineIcons: Record<FactLabel, Icon> = {
   Kitchen: ShoppingCart01, Guests: Users01, Smoking: SlashCircle01, 'Who can move in': UsersCheck, Alcohol: SlashCircle01, 'Who’s welcome': Heart,
   'Railway or metro station': Train, 'Bus stop': Bus, 'Market or groceries': ShoppingCart01, Gym: Activity, Mall: ShoppingBag01,
 }
+
+const withIcons = (lines: Line<FactLabel>[]) => lines.map((l) => ({ ...l, icon: lineIcons[l.label] }))
 
 const ownerLines: Record<ListingResponse['status'], string> = {
   live: 'This is how others see it.',
@@ -42,30 +45,6 @@ function Rows({ lines, total }: { lines: Line[]; total?: string }) {
   )
 }
 
-function Facts({ lines }: { lines: Line<FactLabel>[] }) {
-  return (
-    <dl className="grid grid-cols-2 border-t border-secondary">
-      {lines.map((l) => {
-        const LineIcon = lineIcons[l.label]
-        return (
-          <div key={l.label} className="flex gap-3 border-b border-secondary px-1 py-3 odd:border-r even:pl-4">
-            <LineIcon size={20} aria-hidden className="mt-0.5 shrink-0 text-fg-quaternary" />
-            <div className="flex flex-col text-sm"><dt className="font-medium text-secondary">{l.label}</dt><dd className="text-tertiary">{l.value}</dd></div>
-          </div>
-        )
-      })}
-    </dl>
-  )
-}
-
-function Chips({ items }: { items: string[] }) {
-  return (
-    <ul className="flex flex-wrap gap-2">
-      {items.map((item) => <li key={item} className="rounded-full border border-secondary bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary">{item}</li>)}
-    </ul>
-  )
-}
-
 function Person({ photoUrl, name, about }: { photoUrl: string | null; name: string; about?: string | null }) {
   return (
     <div className="flex items-center gap-4 rounded-xl border border-secondary bg-secondary p-4">
@@ -73,28 +52,6 @@ function Person({ photoUrl, name, about }: { photoUrl: string | null; name: stri
         ? <img src={photoUrl} alt="" className="size-14 rounded-full object-cover" />
         : <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary"><User01 size={24} aria-hidden /></span>}
       <div className="flex flex-col text-sm"><span className="font-medium text-primary">{name}</span>{about && <span className="text-tertiary">{about}</span>}</div>
-    </div>
-  )
-}
-
-function Photos({ photos }: { photos: ListingResponse['photos'] }) {
-  const [shown, setShown] = useState(0)
-  if (!photos.length) return null
-  return (
-    <div className="flex flex-col gap-2 md:flex-row">
-      <img src={photos[shown]!.url} alt={`Photo ${shown + 1} of ${photos.length}`} className="aspect-3/2 w-full rounded-xl object-cover md:min-w-0 md:flex-1" />
-      {photos.length > 1 && (
-        <ul className="flex gap-2 md:w-28 md:flex-col">
-          {photos.map((p, i) => (
-            <li key={p.key}>
-              <button type="button" aria-label={`Show photo ${i + 1}`} aria-pressed={i === shown} onClick={() => setShown(i)}
-                className={`block overflow-hidden rounded-md outline-focus-ring focus-visible:outline-2 ${i === shown ? 'ring-2 ring-brand' : ''}`}>
-                <img src={p.url} alt="" className="aspect-square w-16 object-cover md:aspect-4/3 md:w-full" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
     </div>
   )
 }
@@ -113,25 +70,12 @@ function OwnerBar({ listing }: { listing: ListingResponse }) {
 
 function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onReport: () => void; share: () => void }) {
   const saved = useSaved('places', listing.id)
-  const items: { label: string; icon: Icon; onClick: () => void }[] = [
-    ...(listing.mine ? [] : [{ label: 'Report', icon: Flag01, onClick: onReport }]),
-    { label: 'Share', icon: Share07, onClick: share },
-    ...(listing.mine ? [] : [{ label: saved.shown ? 'Saved' : 'Save', icon: saved.shown ? BookmarkCheck : Bookmark, onClick: saved.toggle }]),
-  ]
   return (
-    <>
-      <button type="button" popoverTarget="place-menu" aria-label="More" className="rounded-md border border-primary p-1.5 text-fg-quaternary shadow-xs outline-focus-ring focus-visible:outline-2">
-        <DotsVertical size={20} aria-hidden />
-      </button>
-      <div id="place-menu" popover="auto" className="fixed inset-auto top-14 right-4 m-0 w-48 rounded-md border border-secondary bg-primary p-1 shadow-xl">
-        {items.map((item) => (
-          <button key={item.label} type="button" popoverTarget="place-menu" popoverTargetAction="hide" onClick={item.onClick}
-            className="flex w-full items-center gap-2 rounded-sm px-2.5 py-2 text-sm font-medium text-secondary hover:bg-primary_hover">
-            <item.icon size={16} aria-hidden className="text-fg-quaternary" />{item.label}
-          </button>
-        ))}
-      </div>
-    </>
+    <DetailMenu id="place-menu" items={[
+      ...(listing.mine ? [] : [{ label: 'Report', icon: Flag01, onClick: onReport }]),
+      { label: 'Share', icon: Share07, onClick: share },
+      ...(listing.mine ? [] : [{ label: saved.shown ? 'Saved' : 'Save', icon: saved.shown ? BookmarkCheck : Bookmark, onClick: saved.toggle }]),
+    ]} />
   )
 }
 
@@ -141,15 +85,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
   const areaNames = useAreaNames()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
-  const [copied, setCopied] = useState(false)
-  // A browser with no share sheet copies the link. A closed share sheet rejects, and that is no error.
-  const share = async () => {
-    const url = window.location.href
-    if (navigator.share) return navigator.share({ title, url }).catch(() => undefined)
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
+  const { share, copied } = useShare(title)
   const back = () => (window.history.length > 1 ? router.back() : router.push('/saved'))
   const where = whereLine(listing, listing.areaSlug ? areaNames[listing.areaSlug] : undefined)
   const address = addressLine(listing)
@@ -166,11 +102,11 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
         {listing.flatmates.map((f) => <li key={`${f.name}-${f.age}`}><Person photoUrl={f.photoUrl} {...flatmateLines(f)} /></li>)}
       </ul>
     )],
-    ['The place', (rates.length > 0 || place.length > 0) && <>{rates.length > 0 && <Rows lines={rates} />}{place.length > 0 && <Facts lines={place} />}</>],
-    ['House rules', rules.length > 0 && <Facts lines={rules} />],
+    ['The place', (rates.length > 0 || place.length > 0) && <>{rates.length > 0 && <Rows lines={rates} />}{place.length > 0 && <Facts lines={withIcons(place)} />}</>],
+    ['House rules', rules.length > 0 && <Facts lines={withIcons(rules)} />],
     ['What’s inside', listing.insideItems.length > 0 && <Chips items={listing.insideItems.map((i) => labels.insideItems[i])} />],
     ['Building and society', listing.amenities.length > 0 && <Chips items={listing.amenities.map((a) => labels.amenities[a])} />],
-    ['What’s nearby', nearby.length > 0 && <Facts lines={nearby} />],
+    ['What’s nearby', nearby.length > 0 && <Facts lines={withIcons(nearby)} />],
     ['About this place', listing.description && <p className="text-sm whitespace-pre-line text-tertiary">{listing.description}</p>],
     ['Listed by', <Person photoUrl={listing.lister?.photoUrl ?? null} name={listing.lister?.name ?? listerLabel(listing.kind)} about={listing.lister && listerLabel(listing.kind)} />],
   ]
@@ -210,7 +146,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
           <SaveButton kind="places" id={listing.id} className="w-full py-2.5" />
         </div>
       )}
-      {reporting && <ReportSheet listingId={listing.id} onClose={() => setReporting(false)} />}
+      {reporting && <ReportSheet target={{ listingId: listing.id }} onClose={() => setReporting(false)} />}
     </>
   )
 }
