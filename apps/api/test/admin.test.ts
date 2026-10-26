@@ -26,7 +26,7 @@ const report = async (who: Who, target: { listingId: string } | { profileId: str
   await t.db.update(reports).set({ createdAt: new Date(Date.now() - hoursAgo * 3_600_000) }).where(eq(reports.id, id))
 }
 const queue = async () => reportQueueResponse.parse((await t.call('moderator', 'GET', '/v1/admin/reports')).json()).items
-const review = (kind: 'people' | 'listings', id: string, action: string, who: Who = 'moderator') =>
+const review = (kind: 'users' | 'listings', id: string, action: string, who: Who = 'moderator') =>
   t.call(who, 'POST', `/v1/admin/${kind}/${id}/review`, { action })
 const cardSeen = async (card: string, who: Who = 'other') => (await t.call(who, 'GET', `/v1/people/${card}`)).statusCode
 const statusesOf = async (subjectUserId: string) =>
@@ -38,7 +38,7 @@ describe('the admin routes', () => {
     expect(meResponse.parse((await t.call('seeker', 'GET', '/v1/me')).json()).moderator).toBe(false)
     await report('seeker', { profileId: cards.other }, 'fake')
     expect((await t.call('seeker', 'GET', '/v1/admin/reports')).statusCode).toBe(404)
-    expect((await review('people', t.ids.other, 'hide', 'seeker')).statusCode).toBe(404)
+    expect((await review('users', t.ids.other, 'hide', 'seeker')).statusCode).toBe(404)
     expect((await t.call(null, 'GET', '/v1/admin/reports')).statusCode).toBe(401)
     expect(await statusesOf(t.ids.other)).toEqual(['open'])
   })
@@ -51,9 +51,9 @@ describe('the admin routes', () => {
     await report('other', { profileId: cards.seeker }, 'harassment', 0.5)
     const items = await queue()
     expect(items.map((i) => (i.kind === 'person' ? i.userId : i.listing.id))).toEqual([t.ids.seeker, listingId, t.ids.other])
-    expect(items[0]).toMatchObject({ kind: 'person', hidden: true, card: { id: cards.seeker, fullName: 'Rahul Verma' }, reports: [{ reason: 'harassment', safety: true }] })
+    expect(items[0]).toMatchObject({ kind: 'person', hiddenForReview: true, card: { id: cards.seeker, fullName: 'Rahul Verma' }, reports: [{ reason: 'harassment', safety: true }] })
     expect(items[1]).toMatchObject({ kind: 'listing', listing: { id: listingId, hidden: true }, reports: [{ reason: 'broker_or_spam' }, { reason: 'fake' }] })
-    expect(items[2]).toMatchObject({ kind: 'person', hidden: false, reports: [{ reason: 'other', detail: 'He asked for my number' }] })
+    expect(items[2]).toMatchObject({ kind: 'person', hiddenForReview: false, reports: [{ reason: 'other', detail: 'He asked for my number' }] })
   })
 
   it('dismiss closes the reports and brings back the card or the listing', async () => {
@@ -61,7 +61,7 @@ describe('the admin routes', () => {
     await report('seeker', { listingId }, 'harassment')
     await report('other', { profileId: cards.seeker }, 'under_18')
     expect(await cardSeen(cards.seeker)).toBe(404)
-    expect((await review('people', t.ids.seeker, 'dismiss')).statusCode).toBe(204)
+    expect((await review('users', t.ids.seeker, 'dismiss')).statusCode).toBe(204)
     expect((await review('listings', listingId, 'dismiss')).statusCode).toBe(204)
     expect(await cardSeen(cards.seeker)).toBe(200)
     expect((await t.call('other', 'GET', `/v1/listings/${listingId}`)).statusCode).toBe(200)
@@ -72,7 +72,7 @@ describe('the admin routes', () => {
   it('hide closes the reports and hides a card that was visible', async () => {
     await report('seeker', { profileId: cards.other }, 'discriminatory_text')
     expect(await cardSeen(cards.other, 'seeker')).toBe(200)
-    expect((await review('people', t.ids.other, 'hide')).statusCode).toBe(204)
+    expect((await review('users', t.ids.other, 'hide')).statusCode).toBe(204)
     expect(await cardSeen(cards.other, 'seeker')).toBe(404)
     expect(profileResponse.parse((await t.call('other', 'GET', '/v1/me/profile')).json()).hiddenForReview).toBe(true)
     expect(await statusesOf(t.ids.other)).toEqual(['actioned'])
@@ -105,8 +105,8 @@ describe('the admin routes', () => {
   })
 
   it('a review of an item with no open reports gives 404', async () => {
-    expect((await review('people', t.ids.other, 'dismiss')).statusCode).toBe(404)
+    expect((await review('users', t.ids.other, 'dismiss')).statusCode).toBe(404)
     expect((await review('listings', '0199e4b0-0000-7000-8000-000000000099', 'hide')).statusCode).toBe(404)
-    expect((await review('people', t.ids.other, 'ban')).statusCode).toBe(400)
+    expect((await review('users', t.ids.other, 'ban')).statusCode).toBe(400)
   })
 })

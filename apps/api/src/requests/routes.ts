@@ -55,11 +55,13 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
   app.post('/requests', {
     preHandler,
-    schema: { body: sendRequestBody, response: { 201: outgoingRequest, 404: errorResponse, 409: errorResponse, 429: errorResponse } },
+    schema: { body: sendRequestBody, response: { 201: outgoingRequest, 403: errorResponse, 404: errorResponse, 409: errorResponse, 429: errorResponse } },
   }, async (req, reply) => {
     const userId = req.user!.id
-    const [senderProfile] = await db.select({ id: profiles.id }).from(profiles).where(eq(profiles.userId, userId))
+    const [senderProfile] = await db.select({ id: profiles.id, hiddenAt: profiles.hiddenAt }).from(profiles).where(eq(profiles.userId, userId))
     if (!senderProfile) return reply.code(409).send({ error: 'no profile' })
+    // T-19: reports hid the card, so the person reaches nobody new until a moderator reviews it.
+    if (senderProfile.hiddenAt) return reply.code(403).send({ error: 'Your card is hidden for review.' })
     const toUserId = await recipientOf(db, userId, req.body)
     if (!toUserId) return reply.code(404).send({ error: 'not found' })
     const pair = betweenUsers(userId, toUserId)

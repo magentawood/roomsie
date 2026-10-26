@@ -11,7 +11,7 @@ export type ReviewAction = z.infer<typeof reviewBody>['action']
 const queuedReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), safety: z.boolean(), detail: z.string().nullable(), createdAt: z.iso.datetime() })
 /** The open reports of one person or one listing. The card is null after the person deleted it. */
 export const reportQueueItem = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('person'), userId: z.uuid(), card: cardResponse.nullable(), hidden: z.boolean(), reports: z.array(queuedReport) }),
+  z.object({ kind: z.literal('person'), userId: z.uuid(), card: cardResponse.nullable(), hiddenForReview: z.boolean(), reports: z.array(queuedReport) }),
   z.object({ kind: z.literal('listing'), listing: listingResponse, reports: z.array(queuedReport) }),
 ])
 export type ReportQueueItem = z.infer<typeof reportQueueItem>

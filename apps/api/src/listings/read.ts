@@ -10,10 +10,9 @@ export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | '
 export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
 export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'> | null }
 
-/** A listing that other users can see: live, not expired, and not hidden by reports. With a viewer: no block between the viewer and the owner. */
-export const visibleListing = (viewerUserId?: string) => and(
-  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt),
-  viewerUserId ? noBlockBetween(viewerUserId, listings.ownerUserId) : undefined,
+/** A listing that the viewer can see: live, not expired, not hidden by reports, and no block between the viewer and the owner. */
+export const visibleListing = (viewerUserId: string) => and(
+  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt), noBlockBetween(viewerUserId, listings.ownerUserId),
 )
 
 export async function partsOf(db: Db, ids: string[]) {

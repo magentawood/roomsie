@@ -15,7 +15,7 @@ import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { Modal } from '../ui/modal'
 
-/** The name, the photo and the text that the moderator reviews, and the person that a suspension suspends. */
+/** `owner` is the person that Suspend suspends. */
 function subjectOf(item: ReportQueueItem) {
   if (item.kind === 'listing') {
     const { listing } = item
@@ -29,7 +29,7 @@ function subjectOf(item: ReportQueueItem) {
   const { card } = item
   return {
     name: card ? [card.fullName, card.age].filter(Boolean).join(', ') : 'Deleted profile', photo: card?.photos[0]?.url,
-    hidden: item.hidden, text: card?.bio, line: card?.jobRole, owner: card?.fullName,
+    hidden: item.hiddenForReview, text: card?.bio, line: card?.jobRole, owner: card?.fullName,
   }
 }
 
@@ -39,7 +39,7 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
   const [confirming, setConfirming] = useState(false)
   const review = useMutation({
     mutationFn: (action: ReviewAction) => api(
-      user, `/v1/admin/${item.kind === 'person' ? `people/${item.userId}` : `listings/${item.listing.id}`}/review`, noContent,
+      user, `/v1/admin/${item.kind === 'person' ? `users/${item.userId}` : `listings/${item.listing.id}`}/review`, noContent,
       { method: 'POST', body: { action } },
     ),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.reportQueue }),
