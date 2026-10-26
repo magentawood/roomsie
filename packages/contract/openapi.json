@@ -654,6 +654,12 @@
                         "additionalProperties": false
                       }
                     },
+                    "mine": {
+                      "type": "boolean"
+                    },
+                    "hidden": {
+                      "type": "boolean"
+                    },
                     "expiresAt": {
                       "nullable": true,
                       "type": "string",
@@ -720,6 +726,8 @@
                     "photos",
                     "rates",
                     "flatmates",
+                    "mine",
+                    "hidden",
                     "expiresAt",
                     "createdAt",
                     "updatedAt"
@@ -1242,6 +1250,12 @@
                               "additionalProperties": false
                             }
                           },
+                          "mine": {
+                            "type": "boolean"
+                          },
+                          "hidden": {
+                            "type": "boolean"
+                          },
                           "expiresAt": {
                             "nullable": true,
                             "type": "string",
@@ -1308,6 +1322,8 @@
                           "photos",
                           "rates",
                           "flatmates",
+                          "mine",
+                          "hidden",
                           "expiresAt",
                           "createdAt",
                           "updatedAt"
@@ -1844,6 +1860,12 @@
                         "additionalProperties": false
                       }
                     },
+                    "mine": {
+                      "type": "boolean"
+                    },
+                    "hidden": {
+                      "type": "boolean"
+                    },
                     "expiresAt": {
                       "nullable": true,
                       "type": "string",
@@ -1910,6 +1932,8 @@
                     "photos",
                     "rates",
                     "flatmates",
+                    "mine",
+                    "hidden",
                     "expiresAt",
                     "createdAt",
                     "updatedAt"
@@ -2917,6 +2941,12 @@
                         "additionalProperties": false
                       }
                     },
+                    "mine": {
+                      "type": "boolean"
+                    },
+                    "hidden": {
+                      "type": "boolean"
+                    },
                     "expiresAt": {
                       "nullable": true,
                       "type": "string",
@@ -2983,6 +3013,8 @@
                     "photos",
                     "rates",
                     "flatmates",
+                    "mine",
+                    "hidden",
                     "expiresAt",
                     "createdAt",
                     "updatedAt"
@@ -3686,6 +3718,12 @@
                         "additionalProperties": false
                       }
                     },
+                    "mine": {
+                      "type": "boolean"
+                    },
+                    "hidden": {
+                      "type": "boolean"
+                    },
                     "expiresAt": {
                       "nullable": true,
                       "type": "string",
@@ -3752,6 +3790,8 @@
                     "photos",
                     "rates",
                     "flatmates",
+                    "mine",
+                    "hidden",
                     "expiresAt",
                     "createdAt",
                     "updatedAt"
@@ -4559,6 +4599,12 @@
                               "additionalProperties": false
                             }
                           },
+                          "mine": {
+                            "type": "boolean"
+                          },
+                          "hidden": {
+                            "type": "boolean"
+                          },
                           "expiresAt": {
                             "nullable": true,
                             "type": "string",
@@ -4625,6 +4671,8 @@
                           "photos",
                           "rates",
                           "flatmates",
+                          "mine",
+                          "hidden",
                           "expiresAt",
                           "createdAt",
                           "updatedAt"
@@ -4665,6 +4713,81 @@
                   },
                   "required": [
                     "people"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/reports": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-7[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12})$"
+                  },
+                  "listingId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "enum": [
+                      "fake",
+                      "broker_or_spam",
+                      "harassment",
+                      "discriminatory_text",
+                      "under_18",
+                      "contact_details",
+                      "other"
+                    ]
+                  },
+                  "detail": {
+                    "default": null,
+                    "nullable": true,
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 500
+                  }
+                },
+                "required": [
+                  "id",
+                  "listingId",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "No body."
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
                   ],
                   "additionalProperties": false
                 }

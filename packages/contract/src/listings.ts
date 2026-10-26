@@ -160,6 +160,10 @@ export const listingResponse = z.object({
   photos: z.array(z.object({ key: photoKey, url: z.url() })),
   rates: z.array(z.object({ sharing: z.enum(sharingTypes).nullable(), rent: rupees, deposit: rupees.nullable() })),
   flatmates: z.array(z.object({ ...listingFlatmate.shape, photoUrl: z.url().nullable() })),
+  /** The listing belongs to the user who asks. */
+  mine: z.boolean(),
+  /** Reports hid the listing until the moderator acts (PD18). Only the owner sees a hidden listing. */
+  hidden: z.boolean(),
   expiresAt: z.iso.datetime().nullable(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
