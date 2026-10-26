@@ -34,7 +34,7 @@ The safety tools.
 ## Done when
 - [ ] The API for the report and block buttons exists. The buttons are in T-18b
 - [ ] A block hides both people from each other. This also applies in the match query
-- [ ] A saved query in Supabase lists open reports
+- [ ] The admin screen lists open reports
 - [ ] Suspend sets `tokens_valid_after` to now and hides the profile
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
 - [ ] The report reasons are the seven of PD18. A harassment or under-18 report, or reports from two people, hide the profile at once
@@ -44,3 +44,40 @@ The safety tools.
 ## Read first
 - [scope-policy.md](../../scope-policy.md)
 - [pd-18-moderation.md](../../decisions/pd-18-moderation.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `packages/contract`: the body of a report (a listing report or a person report), the body of a block, the queue and the actions of the admin screen, and the moderator flag of the account. The interface changes.
+  - `apps/api`:
+    - The settings: the number of reporters that hides a card or a listing, the safety reasons, and the list of moderators. Each setting has a default.
+    - Reports: a report of a person, and the hide of a card at once. The listing reports use the same settings.
+    - New: the block. New: the admin routes, for moderators only.
+    - Each view of people and listings obeys a hidden card and a block.
+    - The table of the profiles gets the time of a hide by reports. One report for each reporter and person. One migration.
+    - The interface changes.
+  - `apps/web`: the admin screen, and the "Hidden for review" banner on the profile page.
+  - The deploy of the API: the list of moderators comes from a GitHub secret.
+  - The Figma drafts page: a new section for the admin screen, on a desktop and on a phone. The build uses it at once ([PD14](../../decisions/pd-14-v0-is-the-figma-designs.md)).
+  - Docs: a learn page for moderation.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database, with the test app. This seam exists.
+  - The pure modules of the web, with Vitest. This seam exists.
+- **Decisions:**
+  - T-19 comes before T-18b, in its own PR. T-18b adds the report and block buttons to the person screen.
+  - A user reports a person or a listing. A user can report each profile but the own profile, also a profile that is not live, so that the recipient of a request can report its sender. An unknown profile gets 404. A second report of the same person by the same user files nothing, and gives 204.
+  - A report with a safety reason, or open reports from two different people, hide the card at once ([PD18](../../decisions/pd-18-moderation.md)). A hidden card leaves the results, the person detail and Saved, and it cannot get a request. The owner sees "Hidden for review" on the profile page. The "Hide my card" switch does not bring it back.
+  - The number of reporters (default 2) and the safety reasons (default harassment and under 18) are API settings, not code. The listing reports and the person reports use them. This is item 5.
+  - A user blocks a person through the profile id, with an id that the client makes. A user can block each profile but the own profile. A second block of the same person does nothing, and gives 204. There is no unblock in v0, because the designs have none.
+  - A block hides the two people from each other: in the results, the person detail, Saved (people and places) and listings (the place detail and the listing requests). An open request between them becomes declined, so its sender sees "Not available". The blocked person is not told.
+  - The moderators are a list of Firebase uids in the API settings. The list comes from a GitHub secret. With no list, nobody is a moderator. The account reply tells the web if the user is a moderator.
+  - The admin routes are for moderators only. Each other user gets 404.
+    - The queue lists the open reports, together for each reported person or listing. The safety reasons come first, then the oldest. Each item has the reasons, the details, and the card or the listing for the review.
+    - "Dismiss" closes the reports, and brings back the card or the listing.
+    - "Keep hidden" closes the reports, and keeps the card or the listing hidden.
+    - "Suspend" closes the reports and suspends the account. Suspend sets `tokens_valid_after` to now, hides the card and the listings, and withdraws the open requests of the person.
+  - The admin screen is at `/admin`, for moderators only. Each other user sees "not found". It shows the queue with the three actions. It follows a new section of the Figma drafts page.
+  - Item 3 changed: "A saved query in Supabase lists open reports" → "The admin screen lists open reports". The user approved it.
+- **Out of scope:** the report and block buttons on the person screen (T-18b), report and block in a conversation (T-45), the messages after a block (T-44), unblock, the end of a suspension, the name of the moderator (F-08).
