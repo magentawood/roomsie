@@ -7,7 +7,6 @@ import { uuidv7 } from 'uuidv7'
 import { needsDetail, noContent, reportDetailLimit, type ReportBody, type ReportReason } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { firstName } from '../../lib/profile-form'
 import { queryKeys } from '../../lib/queries'
 import { reasonLabels, reviewTimes } from '../../lib/reports'
 import { Button } from '../ui/button'
@@ -15,6 +14,7 @@ import { ChoiceChips } from '../ui/choice'
 import { TextArea } from '../ui/field'
 import { Modal } from '../ui/modal'
 
+/** `name` is the first name of the person. */
 type Target = { listingId: string } | { profileId: string; name: string }
 
 /** The report of a listing or of a person (PD18). */
@@ -44,7 +44,7 @@ export function ReportSheet({ target, onClose }: { target: Target; onClose: () =
   const ready = reason !== null && (!needsDetail(reason) || detail !== null)
   const [title, intro, ids, kind] = 'listingId' in target
     ? ['Report this listing', 'Pick one reason. The lister is not told who reported.', { listingId: target.listingId }, 'listing' as const]
-    : ['What’s the issue?', `Pick one reason. ${firstName(target.name)} is not told who reported.`, { profileId: target.profileId }, 'person' as const]
+    : ['What’s the issue?', `Pick one reason. ${target.name} is not told who reported.`, { profileId: target.profileId }, 'person' as const]
   return (
     <Modal icon={Flag01} title={title} onClose={onClose}
       actions={(

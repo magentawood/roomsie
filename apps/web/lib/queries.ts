@@ -27,13 +27,15 @@ export function useReportQueue() {
   return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueResponse) })
 }
 
+/** A 4xx is final, for example a listing or a card that is gone. Only 5xx and network errors retry. */
+const retryOnServerErrors = (count: number, err: Error) => count < 3 && !(err instanceof ApiError && err.status < 500)
+
 export function useListing(id: string) {
   const user = useUser()
   return useQuery({
     queryKey: queryKeys.listing(id),
     queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
-    // A 404 means no longer listed. Only 5xx and network errors retry.
-    retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
+    retry: retryOnServerErrors,
   })
 }
 
@@ -42,8 +44,7 @@ export function usePerson(id: string) {
   return useQuery({
     queryKey: queryKeys.person(id),
     queryFn: () => api(user, `/v1/people/${id}`, personResponse),
-    // A 404 means the card is not available. Only 5xx and network errors retry.
-    retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
+    retry: retryOnServerErrors,
   })
 }
 

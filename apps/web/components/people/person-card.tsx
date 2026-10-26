@@ -2,14 +2,13 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { Calendar, SearchMd, Wallet02 } from '@untitledui/icons'
 import type { CardResponse } from '@roomsie/contract'
-import { budgetLine, lifestyleSummary, lookingFor, moveLine } from '../../lib/person'
+import { aboutLine, budgetLine, initials, lifestyleSummary, lookingFor, moveLine } from '../../lib/person'
 import { Badge } from '../ui/badge'
 
 /** The person card of sections 14 and 19 of the drafts, with no match details (T-18b). TODO(T-15): the match badges. TODO(T-46): "Verified". */
 export function PersonCard({ card, action }: { card: CardResponse; action?: ReactNode }) {
   const href = `/people/${card.id}`
   const photo = card.photos[0]
-  const initials = card.fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
   const facts = [
     [SearchMd, lookingFor(card) && `Looking for: ${lookingFor(card)}`],
     [Wallet02, budgetLine(card.budgetMin, card.budgetMax)],
@@ -22,14 +21,14 @@ export function PersonCard({ card, action }: { card: CardResponse; action?: Reac
       <Link href={href} tabIndex={-1} aria-hidden className="flex aspect-3/2 items-center justify-center bg-secondary">
         {photo
           ? <img src={photo.url} alt="" className="size-full object-cover" />
-          : <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials}</span>}
+          : <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials(card.fullName)}</span>}
       </Link>
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-md font-medium text-primary"><Link href={href} className="outline-focus-ring hover:underline focus-visible:outline-2">{card.fullName}</Link></h3>
           {card.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
         </div>
-        <p className="text-sm text-tertiary">{[card.jobRole, card.age && `${card.age} yrs`].filter(Boolean).join(' • ')}</p>
+        <p className="text-sm text-tertiary">{aboutLine(card)}</p>
         <ul className="flex flex-col gap-1 text-sm text-secondary">
           {facts.map(([FactIcon, text]) => text && <li key={text} className="flex items-center gap-2"><FactIcon size={16} aria-hidden className="shrink-0 text-fg-quaternary" />{text}</li>)}
         </ul>

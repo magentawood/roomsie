@@ -1,13 +1,11 @@
 import { and, count, desc, eq, gt, gte, or, sql } from 'drizzle-orm'
-import type { Connection } from '@roomsie/contract'
+import { requestExpiryDays, type Connection } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { connectionRequests } from '../db/schema'
 
 export type RequestRow = typeof connectionRequests.$inferSelect
 
-/** The limits of PD17. */
-export const expiryMs = 14 * 86_400_000
-export const dailyLimit = 10
+export const expiryMs = requestExpiryDays * 86_400_000
 export const expiryCutoff = () => new Date(Date.now() - expiryMs)
 
 /** A request with no answer, younger than 14 days. `openRequest` is the same rule in SQL. */

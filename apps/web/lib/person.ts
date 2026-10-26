@@ -1,5 +1,9 @@
-import { mustHaveKeys, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
+import { mustHaveKeys, requestDailyLimit, requestExpiryDays, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
 import { profileLabels } from './profile-form'
+
+export const initials = (fullName: string) => fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+/** "Business analyst • 26 yrs". */
+export const aboutLine = (card: Pick<CardResponse, 'jobRole' | 'age'>) => [card.jobRole, card.age && `${card.age} yrs`].filter(Boolean).join(' • ')
 
 const intentLabels: Record<Exclude<CardResponse['intent'], 'unclear'>, string> = {
   room: 'Room in a flat', pg: 'PG', whole_flat: 'A whole flat', flatmates: 'Flat with flatmates',
@@ -22,15 +26,15 @@ const axisLabel = (axis: LifestyleAxis) => (axis === 'your_days' ? 'Their days' 
 export const lifestyleLines = (card: CardResponse) => (Object.keys(profileLabels.axes) as LifestyleAxis[])
   .flatMap((axis) => {
     const answer = card.lifestyle[axis]
-    return answer ? [{ label: axisLabel(axis), value: (profileLabels.answers[axis] as Record<string, string>)[answer]! }] : []
+    return answer ? [{ axis, label: axisLabel(axis), value: (profileLabels.answers[axis] as Record<string, string>)[answer]! }] : []
   })
 
 /** "Veg • Non-smoker • Home most days +2", for the person card. */
-export function lifestyleSummary(card: CardResponse, shown = 3) {
+export function lifestyleSummary(card: CardResponse) {
   const values = lifestyleLines(card).map((l) => l.value)
   if (!values.length) return null
-  const more = values.length - shown
-  return values.slice(0, shown).join(' • ') + (more > 0 ? ` +${more}` : '')
+  const more = values.length - 3
+  return values.slice(0, 3).join(' • ') + (more > 0 ? ` +${more}` : '')
 }
 
 export const mustHaveGroups = (card: CardResponse) => ({
@@ -38,16 +42,15 @@ export const mustHaveGroups = (card: CardResponse) => ({
   prefers: mustHaveKeys.filter((k) => card.mustHaves[k] === 'prefer').map((k) => profileLabels.mustHaves[k]),
 })
 
-export type ConnectView = { kind: 'say_hi' | 'say_hi_again' | 'sent' | 'received' | 'chat'; disabled: boolean; line: string | null }
-/** The connect button of the person detail, and the line under it (PD17). */
-export function connectView(connection: Connection, requestsLeftToday: number, name: string): ConnectView {
-  const capped = requestsLeftToday === 0
-  const capLine = 'You can send 10 new requests a day. Try again tomorrow.'
+/** The line under the connect button (PD17). A viewer at the daily cap learns why Say hi is disabled. */
+export function connectLine(connection: Connection, requestsLeftToday: number, name: string) {
+  const canSayHi = connection.state === 'none' || connection.state === 'not_available'
+  if (canSayHi && requestsLeftToday === 0) return `You can send ${requestDailyLimit} new requests a day. Try again tomorrow.`
   switch (connection.state) {
-    case 'none': return { kind: 'say_hi', disabled: capped, line: capped ? capLine : null }
-    case 'not_available': return { kind: 'say_hi_again', disabled: capped, line: `${name} isn’t available right now. You can send ${name} a new request later.` }
-    case 'sent': return { kind: 'sent', disabled: true, line: `Waiting for ${name} to accept. Requests close after 14 days.` }
-    case 'received': return { kind: 'received', disabled: false, line: `${name} sent you a request` }
-    case 'accepted': return { kind: 'chat', disabled: true, line: 'You’re connected. The chat opens here when Messages is ready.' }
+    case 'none': return null
+    case 'not_available': return `${name} isn’t available right now. You can send ${name} a new request later.`
+    case 'sent': return `Waiting for ${name} to accept. Requests close after ${requestExpiryDays} days.`
+    case 'received': return `${name} sent you a request`
+    case 'accepted': return 'You’re connected. The chat opens here when Messages is ready.'
   }
 }

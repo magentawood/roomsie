@@ -3,6 +3,9 @@ import { cardResponse } from './profiles'
 import { requiredText } from './shared'
 
 export const requestNoteLimit = 300
+/** PD17: a sender starts this many requests a day, and a request with no answer expires after this many days. */
+export const requestDailyLimit = 10
+export const requestExpiryDays = 14
 
 const note = requiredText(requestNoteLimit)
 export const sendRequestBody = z.union([z.strictObject({ toProfileId: z.uuid(), note }), z.strictObject({ listingId: z.uuid(), note })])
@@ -37,4 +40,3 @@ export type Connection = z.infer<typeof connection>
 /** The person detail: the card, the connection with the viewer, and the new requests that the viewer can send today. */
 export const personResponse = cardResponse.extend({ connection, requestsLeftToday: z.int().min(0) })
 export type PersonResponse = z.infer<typeof personResponse>
-

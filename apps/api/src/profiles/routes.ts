@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, eq, inArray } from 'drizzle-orm'
 import {
-  childTypes, createProfileBody, errorResponse, personResponse, profileEditBody, profileResponse, profileUploadUrlResponse,
+  childTypes, createProfileBody, errorResponse, personResponse, requestDailyLimit, profileEditBody, profileResponse, profileUploadUrlResponse,
   uploadUrlBody, type ProfileEditBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
@@ -11,7 +11,7 @@ import { areas, profileLifestyle, profileMustHaves, profiles, users } from '../d
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import { deletePhotos, photoUploadLink, type Storage } from '../storage'
-import { connectionWith, dailyLimit, sentToday } from '../requests/read'
+import { connectionWith, sentToday } from '../requests/read'
 import { maskFields } from '../text/mask-contacts'
 import { answersOf, cardView, missingFields, profileView, type Profile } from './read'
 
@@ -90,7 +90,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     return {
       ...cardView(row.profile, await answersOf(db, row.profile.id), storage),
       connection: await connectionWith(db, viewerUserId, row.profile.userId),
-      requestsLeftToday: Math.max(0, dailyLimit - await sentToday(db, viewerUserId)),
+      requestsLeftToday: Math.max(0, requestDailyLimit - await sentToday(db, viewerUserId)),
     }
   })
 }
