@@ -37,12 +37,12 @@ Read the full profile of a person and send a message request.
 - No task waits on this task.
 
 ## Done when
-- [ ] The detail screen follows the designs, against a mock of the API. It connects to T-18a when T-18a lands
-- [ ] The person screen needs sign-in
-- [ ] The Say hi button has request sent, accepted and not available states
-- [ ] No phone number shows
-- [ ] Report and block need only one tap
-- [ ] The person detail has the Save button of T-47, and the People tab of Saved lists the saved people
+- [x] The detail screen follows the designs, against a mock of the API. It connects to T-18a when T-18a lands · [#159](https://github.com/magentawood/roomsie/pull/159)
+- [x] The person screen needs sign-in · [#159](https://github.com/magentawood/roomsie/pull/159)
+- [x] The Say hi button has request sent, accepted and not available states · [#159](https://github.com/magentawood/roomsie/pull/159)
+- [x] No phone number shows · [#159](https://github.com/magentawood/roomsie/pull/159)
+- [x] Report and block need only one tap · [#159](https://github.com/magentawood/roomsie/pull/159)
+- [x] The person detail has the Save button of T-47, and the People tab of Saved lists the saved people · [#159](https://github.com/magentawood/roomsie/pull/159)
 
 ^done
 
@@ -81,3 +81,13 @@ Read the full profile of a person and send a message request.
   - No phone number shows. The API masks the note and the text fields, and the screen adds no contact detail.
   - The person detail has the Save button of T-47. The saved people reply gives cards, not ids. The People tab lists the person cards of sections 14 and 19, with no match details, and each card opens its person detail.
 - **Out of scope:** the results panel and the match badges (T-15), the inbox of the requests and the chat (T-44, T-45), the "Verified" pill (T-46), unblock.
+
+## Log
+
+- **2026-10-26 · [#159](https://github.com/magentawood/roomsie/pull/159)**
+  - **Change:** the person detail at `/people/[id]`, with Say hi, Request sent, the daily cap, the note of a request to the viewer with Accept and Decline, the chat button after an accept, and Not available. Report and Block open their sheets. The People tab of Saved lists person cards. The card reply gives the connection with the viewer and the requests left today.
+  - **Why:** the T-18b spec, [PD17](../../decisions/pd-17-connect-and-contact.md)
+  - **Ticked:** all six items, from "The detail screen follows the designs, against a mock of the API. It connects to T-18a when T-18a lands" to "The person detail has the Save button of T-47, and the People tab of Saved lists the saved people"
+  - **Not done:** none
+  - **Learn:** [Message requests](../../learn/message-requests.md), [Saved](../../learn/saved.md), [Profiles and cards](../../learn/profiles.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

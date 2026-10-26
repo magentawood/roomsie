@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**100 of 305 done · 33%**
+**106 of 305 done · 35%**
 
 `████████░░░░░░░░░░░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 5 / 15 | 25 / 72 | 35% |
+| [[P3 Data and trust]] | 6 / 15 | 31 / 72 | 43% |
 | [[P4 Content and moderation]] | 2 / 8 | 12 / 31 | 39% |
 | [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -48,14 +48,13 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**41 free tasks are open · 159 build hours.**
+**40 free tasks are open · 155 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
-| 0 | [[T-18b Person and connect screens ⚑]] | P3 | 4 | ⬜ can start | 0 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
@@ -124,7 +123,7 @@ flowchart LR
   M05["M-05<br/>Article drafts"]:::todo
   T08["T-08 ⚑<br/>Form A contract"]:::ready
   T02["T-02 ⚑<br/>Scaffold monorepo"]:::done
-  T18b["T-18b ⚑<br/>Person and connect screens"]:::ready
+  T18b["T-18b ⚑<br/>Person and connect screens"]:::done
   T06["T-06 ⚑<br/>Database schema"]:::done
   T10["T-10 ⚑<br/>Chat screen and split view"]:::ready
   T11["T-11 ⚑<br/>Model wrapper"]:::todo
@@ -367,7 +366,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 25/72
+## P3 Data and trust — 31/72
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -378,7 +377,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/7
 > ![[T-15 Results panel ⚑#^done]]
 
-> [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/6
+> [!todo]- ✅ [[T-18b Person and connect screens ⚑]] · 6/6
 > ![[T-18b Person and connect screens ⚑#^done]]
 
 > [!todo]- ✅ [[T-41 Listings API]] · 6/6
