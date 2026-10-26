@@ -7,8 +7,7 @@ import type { Storage } from '../storage'
 export type Listing = typeof listings.$inferSelect
 export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
 export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
-type Lister = Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'>
-export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Lister | null }
+export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'> | null }
 
 /** A listing that other users can see: live, not expired, and not hidden by reports. `visibleListing` is the same rule in SQL. */
 export const isVisible = (listing: Listing) => listing.status === 'live' && listing.expiresAt! > new Date() && !listing.hiddenAt

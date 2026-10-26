@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm'
-import { cardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
+import { liveCardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import type { Storage } from '../storage'
@@ -8,7 +8,7 @@ export type Profile = typeof profiles.$inferSelect
 type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves'>
 
 export const missingFields = (p: Profile): ProfileResponse['missing'] =>
-  cardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMax === null })[f])
+  liveCardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMax === null })[f])
 
 /** Keys and values are text in the database, so the contract parses them. */
 export async function answersOf(db: Db, profileId: string): Promise<Answers> {

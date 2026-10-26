@@ -79,7 +79,7 @@ The server part of profiles: save who a person is, and give a safe link to uploa
   - No new web test: "Listed by" uses data that the API tests check.
 - **Decisions:**
   - T-16a adds the schemas of the Form A fields to the contract. A value from the profile form is always "stated". T-08 builds the Form A of the chat, with its sources, on top of them (the comment on #6).
-  - A parent who picks "Looking for my son or daughter" turns on "Managed by a parent", and answers one more choice: Student, Starting my first job or Working. That answer is who is moving ([PD15](../../decisions/pd-15-form-a-contract.md), [PD16](../../decisions/pd-16-profiles.md)).
+  - A parent who picks "Looking for my son or daughter" turns on "Managed by a parent", and answers one more choice: Student, Starting their first job or Working. That answer is who is moving ([PD15](../../decisions/pd-15-form-a-contract.md), [PD16](../../decisions/pd-16-profiles.md)).
   - `GET /v1/people/:id` reads one card: a live card of an active account, not the own card, with no block in either direction. Each other card gets 404. T-16a gets the item "The API reads one live card for a signed-in user".
   - "Listed by" shows the full name and the first photo of the profile of the lister, in each state of the card. A card that a parent manages, and no profile, give the kind of lister only.
   - `POST /v1/me/profile` makes the profile, with the name, the age (18 or more) and the gender. An account has one profile. `PATCH /v1/me/profile` edits it, and `GET /v1/me/profile` reads it.

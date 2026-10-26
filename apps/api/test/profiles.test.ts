@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { cardResponse, listingResponse, profileResponse, profileUploadUrlResponse } from '@roomsie/contract'
-import { blocks, profiles } from '../src/db/schema'
+import { blocks, profiles, users } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import type { Storage } from '../src/storage'
 import { offlineStorage } from '../scripts/openapi'
@@ -114,7 +114,7 @@ describe('photos', () => {
 })
 
 describe('a card', () => {
-  it('shows a live card to others, with no gender, and refuses the own card, a hidden card and a block', async () => {
+  it('shows a live card to others, with no gender, and refuses the own card, a hidden card, a block either way, a draft and a suspended account', async () => {
     const lister = await own('lister')
     const seen = cardResponse.parse((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).json())
     expect(seen).toMatchObject({ id: lister.id, fullName: 'Shruti Rao', lifestyle: { food: 'veg' } })
@@ -123,9 +123,18 @@ describe('a card', () => {
     await edit('lister', { hidden: true })
     expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(404)
     await edit('lister', { hidden: false })
-    await t.db.insert(blocks).values({ blockerUserId: t.ids.lister, blockedUserId: t.ids.seeker })
+    for (const [blocker, blocked] of [[t.ids.lister, t.ids.seeker], [t.ids.seeker, t.ids.lister]] as const) {
+      await t.db.insert(blocks).values({ blockerUserId: blocker, blockedUserId: blocked })
+      expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(404)
+      await t.db.delete(blocks)
+    }
+    await edit('lister', { areas: [] })
     expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(404)
-    await t.db.delete(blocks)
+    await edit('lister', { areas: ['bandra'] })
+    await t.db.update(users).set({ status: 'suspended' }).where(eq(users.id, t.ids.lister))
+    expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(404)
+    await t.db.update(users).set({ status: 'active' }).where(eq(users.id, t.ids.lister))
+    expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(200)
     expect((await t.call('seeker', 'GET', '/v1/people/0199e4b0-0000-7000-8000-000000000099')).statusCode).toBe(404)
   })
 })
@@ -145,7 +154,7 @@ describe('the lister of a listing', () => {
 })
 
 describe('the deletion of an account', () => {
-  it('deletes the photos of the profile, and an edit after it gets no profile', async () => {
+  it('deletes the photos and the profile', async () => {
     const parent = await own('parent')
     const keys = [1, 2].map((n) => photoKey(parent.id, n))
     expect((await edit('parent', { photoKeys: keys })).statusCode).toBe(200)
@@ -155,4 +164,3 @@ describe('the deletion of an account', () => {
     expect(await t.db.select().from(profiles).where(eq(profiles.userId, t.ids.parent))).toHaveLength(0)
   })
 })
-

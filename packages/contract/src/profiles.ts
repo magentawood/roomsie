@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { optionalText, photoKeyIn, rupees, uploadUrlReply } from './shared'
 
 /* The Form A fields of PD15. The database enums use the same lists. */
 export const intents = ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'] as const
@@ -26,10 +27,10 @@ export const mustHaveWeights = ['prefer', 'dealbreaker'] as const
 export const maxProfilePhotos = 4
 export const profileTextLimits = { fullName: 80, jobRole: 80, commuteAddress: 200, bio: 1000 } as const
 /** The fields that a card needs to go live, other than the name and the age, which a profile always has (PD16). */
-export const cardFields = ['whosMoving', 'areas', 'budget'] as const
+export const liveCardFields = ['whosMoving', 'areas', 'budget'] as const
+export const visibilities = ['draft', 'live', 'hidden'] as const
 
 const text = (max: number) => z.string().trim().min(1).max(max)
-export const rupees = z.int().min(0).max(100_000_000)
 const age = z.int().min(18).max(99)
 const answer = <A extends LifestyleAxis>(axis: A) => z.enum(lifestyleAnswers[axis])
 const answers = {
@@ -41,8 +42,7 @@ type NullableAnswers = { [A in LifestyleAxis]: z.ZodNullable<(typeof answers)[A]
 const lifestyleEdit = z.strictObject(Object.fromEntries(Object.entries(answers).map(([axis, s]) => [axis, s.nullable()])) as NullableAnswers).partial()
 const weight = z.enum(mustHaveWeights)
 const mustHaves = z.partialRecord(z.enum(mustHaveKeys), weight)
-/** profiles/<profile id>/<photo id>.<extension>. The API also checks the profile id. */
-export const profilePhotoKey = z.string().regex(/^profiles\/[0-9a-f-]{36}\/[0-9a-f-]{36}\.(jpg|png|webp)$/)
+export const profilePhotoKey = photoKeyIn('profiles')
 
 export const createProfileBody = z.strictObject({ fullName: text(profileTextLimits.fullName), age, gender: z.enum(genders) })
 export type CreateProfileBody = z.infer<typeof createProfileBody>
@@ -50,9 +50,9 @@ export type CreateProfileBody = z.infer<typeof createProfileBody>
 /** null clears a field. In `lifestyle` and `mustHaves`, null clears one answer. */
 export const profileEditBody = z.strictObject({
   ...createProfileBody.shape,
-  jobRole: text(profileTextLimits.jobRole).nullable(),
-  commuteAddress: text(profileTextLimits.commuteAddress).nullable(),
-  bio: text(profileTextLimits.bio).nullable(),
+  jobRole: optionalText(profileTextLimits.jobRole),
+  commuteAddress: optionalText(profileTextLimits.commuteAddress),
+  bio: optionalText(profileTextLimits.bio),
   managedByParent: z.boolean(),
   intent: z.enum(intents),
   whosMoving: z.enum(whosMovingAnswers),
@@ -72,18 +72,8 @@ const photo = z.object({ key: profilePhotoKey, url: z.url() })
 /** What other users see on a card. */
 export const cardResponse = z.object({
   id: z.uuid(),
-  fullName: z.string(),
+  ...profileEditBody.required().omit({ gender: true, photoKeys: true, hidden: true, lifestyle: true, mustHaves: true }).shape,
   age: age.nullable(),
-  jobRole: z.string().nullable(),
-  commuteAddress: z.string().nullable(),
-  bio: z.string().nullable(),
-  managedByParent: z.boolean(),
-  intent: z.enum(intents),
-  whosMoving: z.enum(whosMovingAnswers),
-  areas: z.array(z.string()),
-  budgetMin: rupees.nullable(),
-  budgetMax: rupees.nullable(),
-  moveDate: z.iso.date().nullable(),
   photos: z.array(photo),
   lifestyle,
   mustHaves,
@@ -92,12 +82,12 @@ export type CardResponse = z.infer<typeof cardResponse>
 
 export const profileResponse = cardResponse.extend({
   gender: z.enum(genders),
-  visibility: z.enum(['draft', 'live', 'hidden']),
+  visibility: z.enum(visibilities),
   /** The fields that the card needs before it goes live. */
-  missing: z.array(z.enum(cardFields)),
+  missing: z.array(z.enum(liveCardFields)),
 })
 export type ProfileResponse = z.infer<typeof profileResponse>
-export const profileUploadUrlResponse = z.object({ key: profilePhotoKey, url: z.url(), expiresAt: z.iso.datetime() })
+export const profileUploadUrlResponse = uploadUrlReply(profilePhotoKey)
 
 /** Null when the lister has no profile, or a parent manages it. */
 export const listerResponse = z.object({ name: z.string(), photoUrl: z.url().nullable() }).nullable()

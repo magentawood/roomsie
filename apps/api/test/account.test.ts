@@ -15,11 +15,12 @@ let testDb: TestDb
 let app: ReturnType<typeof buildServer>
 let idToken: Awaited<ReturnType<typeof testTokens>>['idToken']
 
-/** Records each delete. Set `down` to make R2 fail. */
-const photos = { deleted: [] as string[], down: false }
+/** Records each delete. Set `down` to make R2 fail, and `slowMs` to make it slow. */
+const photos = { deleted: [] as string[], down: false, slowMs: 0 }
 const fakeStore: Storage = {
   ...offlineStorage,
   async deleteObjects(keys) {
+    if (photos.slowMs) await new Promise((done) => setTimeout(done, photos.slowMs))
     if (photos.down) throw new Error('R2 is down')
     photos.deleted.push(...keys)
   },
@@ -178,10 +179,11 @@ describe('DELETE /v1/me', () => {
     const user = await signIn('uid-double-tap')
     await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, user.id))
 
-    // The second request waits on the lock of the first, or arrives after the deletion and gets 401.
+    // A slow R2 holds the lock of the first request, so the second passes the sign-in check and waits on the lock.
+    photos.slowMs = 300
     const replies = await Promise.all([call('DELETE', user.token), call('DELETE', user.token)])
-    expect(replies.map((r) => r.statusCode)).toContain(204)
-    for (const r of replies) expect([204, 401]).toContain(r.statusCode)
+    photos.slowMs = 0
+    expect(replies.map((r) => r.statusCode)).toEqual([204, 204])
     expect(await userRow(user.id)).toMatchObject({ status: 'deleted', authProviderId: tombstoneKey(user.uid), rejoinBlocked: true })
     expect((await call('GET', await freshToken(user.uid))).statusCode).toBe(403)
   })

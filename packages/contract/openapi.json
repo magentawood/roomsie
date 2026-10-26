@@ -4969,7 +4969,9 @@
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
                     "fullName": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "age": {
                       "nullable": true,
@@ -4979,15 +4981,21 @@
                     },
                     "jobRole": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "commuteAddress": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
                     },
                     "bio": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
                     },
                     "managedByParent": {
                       "type": "boolean"
@@ -5015,9 +5023,12 @@
                       ]
                     },
                     "areas": {
+                      "maxItems": 9,
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
                       }
                     },
                     "budgetMin": {
@@ -5228,7 +5239,9 @@
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
                     "fullName": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "age": {
                       "nullable": true,
@@ -5238,15 +5251,21 @@
                     },
                     "jobRole": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "commuteAddress": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
                     },
                     "bio": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
                     },
                     "managedByParent": {
                       "type": "boolean"
@@ -5274,9 +5293,12 @@
                       ]
                     },
                     "areas": {
+                      "maxItems": 9,
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
                       }
                     },
                     "budgetMin": {
@@ -5687,7 +5709,9 @@
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
                     "fullName": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "age": {
                       "nullable": true,
@@ -5697,15 +5721,21 @@
                     },
                     "jobRole": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "commuteAddress": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
                     },
                     "bio": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
                     },
                     "managedByParent": {
                       "type": "boolean"
@@ -5733,9 +5763,12 @@
                       ]
                     },
                     "areas": {
+                      "maxItems": 9,
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
                       }
                     },
                     "budgetMin": {
@@ -6084,7 +6117,9 @@
                       "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                     },
                     "fullName": {
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "age": {
                       "nullable": true,
@@ -6094,15 +6129,21 @@
                     },
                     "jobRole": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 80
                     },
                     "commuteAddress": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 200
                     },
                     "bio": {
                       "nullable": true,
-                      "type": "string"
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 1000
                     },
                     "managedByParent": {
                       "type": "boolean"
@@ -6130,9 +6171,12 @@
                       ]
                     },
                     "areas": {
+                      "maxItems": 9,
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 60
                       }
                     },
                     "budgetMin": {
