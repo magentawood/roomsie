@@ -4,13 +4,22 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
 import type { Icon } from './button'
 
-export function Modal({ icon: ModalIcon, title, children, actions, onClose }: { icon: Icon; title: string; children: ReactNode; actions: ReactNode; onClose: () => void }) {
+/** A native modal dialog. A click on the backdrop, or Escape, closes it. */
+export function Dialog({ labelledBy, onClose, children }: { labelledBy: string; onClose: () => void; children: ReactNode }) {
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => dialog.current?.showModal(), [])
   return (
     // A click on the backdrop has the dialog as its target. A click in the panel has a child as its target.
-    <dialog ref={dialog} aria-labelledby="modal-title" onClose={onClose} onClick={(e) => e.target === e.currentTarget && onClose()}
+    <dialog ref={dialog} aria-labelledby={labelledBy} onClose={onClose} onClick={(e) => e.target === e.currentTarget && onClose()}
       className="inset-x-4 mx-auto mt-auto mb-4 w-auto max-w-100 rounded-2xl bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm sm:my-auto">
+      {children}
+    </dialog>
+  )
+}
+
+export function Modal({ icon: ModalIcon, title, children, actions, onClose }: { icon: Icon; title: string; children: ReactNode; actions: ReactNode; onClose: () => void }) {
+  return (
+    <Dialog labelledBy="modal-title" onClose={onClose}>
       <div className="flex flex-col gap-5 p-5 sm:p-6">
         <div className="flex items-start justify-between">
           <span className="flex size-10 items-center justify-center rounded-md border border-primary text-fg-error shadow-xs">
@@ -26,6 +35,6 @@ export function Modal({ icon: ModalIcon, title, children, actions, onClose }: { 
         </div>
         <div className="flex gap-3">{actions}</div>
       </div>
-    </dialog>
+    </Dialog>
   )
 }

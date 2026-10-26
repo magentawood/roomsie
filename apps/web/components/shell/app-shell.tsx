@@ -6,6 +6,7 @@ import type { ReactNode } from 'react'
 import { Bookmark, ChevronLeft, Key01, MessageCircle01, Plus, User01 } from '@untitledui/icons'
 import { useAuth } from '../../lib/auth'
 import { Button, type Icon } from '../ui/button'
+import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { Logo } from './logo'
 
 const navLooks = {
@@ -42,7 +43,7 @@ function Sidebar() {
           <NavItem look="sidebar" icon={Key01} label="My listings" href="/listings" />
         </nav>
         {user && (
-          <div className="flex items-center gap-3 rounded-xl border border-secondary p-3">
+          <Link href="/profile" className="flex items-center gap-3 rounded-xl border border-secondary p-3 outline-focus-ring hover:bg-primary_hover focus-visible:outline-2">
             {user.photoURL
               ? <img src={user.photoURL} alt="" className="size-10 rounded-full" referrerPolicy="no-referrer" />
               : <span className="flex size-10 items-center justify-center rounded-full bg-tertiary text-fg-quaternary"><User01 size={20} aria-hidden /></span>}
@@ -50,7 +51,7 @@ function Sidebar() {
               <span className="truncate font-semibold text-secondary">{user.displayName}</span>
               <span className="truncate text-tertiary">{user.email}</span>
             </span>
-          </div>
+          </Link>
         )}
       </div>
     </aside>
@@ -66,7 +67,7 @@ function MobileNav() {
         <NavItem look="phone" icon={MessageCircle01} label="Messages" />
         <NavItem look="phone" icon={Bookmark} label="Saved" href="/saved" />
         <NavItem look="phone" icon={Key01} label="My Listings" href="/listings" />
-        <NavItem look="phone" icon={User01} label="Profile" />
+        <NavItem look="phone" icon={User01} label="Profile" href="/profile" />
       </div>
       <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-primary text-quaternary shadow-sm" aria-disabled title="Coming soon">
         <Plus size={24} aria-hidden />
@@ -82,6 +83,7 @@ export function AppShell({ children, mobileNav = true }: { children: ReactNode; 
       <Sidebar />
       <div className={`flex min-w-0 flex-1 flex-col ${mobileNav ? 'pb-24 lg:pb-0' : ''}`}>{children}</div>
       {mobileNav && <MobileNav />}
+      <CreateProfileGate />
     </div>
   )
 }

@@ -8,7 +8,7 @@ export type Profile = typeof profiles.$inferSelect
 type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves'>
 
 export const missingFields = (p: Profile): ProfileResponse['missing'] =>
-  liveCardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMax === null })[f])
+  liveCardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMin === null && p.budgetMax === null })[f])
 
 /** Keys and values are text in the database, so the contract parses them. */
 export async function answersOf(db: Db, profileId: string): Promise<Answers> {

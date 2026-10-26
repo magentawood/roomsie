@@ -1,11 +1,9 @@
 'use client'
 
-import { useMutation } from '@tanstack/react-query'
-import { Building07, Home02, Home03, Key01, Plus, Trash01, UploadCloud02 } from '@untitledui/icons'
-import { maxFlatmates, maxPhotos, roomWelcomeGroups, textLimits, type AreasResponse, type ListingEdit, type ListingKind } from '@roomsie/contract'
-import { useUser } from '../../lib/auth'
+import { Building07, Home02, Home03, Key01, Plus, Trash01 } from '@untitledui/icons'
+import { maxFlatmates, maxPhotos, roomWelcomeGroups, textLimits, uploadUrlResponse, type AreasResponse, type ListingEdit, type ListingKind } from '@roomsie/contract'
 import { isFlat, labels } from '../../lib/listing-steps'
-import { uploadPhoto } from '../../lib/upload'
+import { PhotoPicker, Thumb } from '../photos'
 import { Button, type Icon } from '../ui/button'
 import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
 import { Field, NumberInput, TextArea, TextInput, inputClass } from '../ui/field'
@@ -183,38 +181,7 @@ export function RulesStep({ kind, values, set }: StepProps) {
 
 type Uploads = { listingId: string; previews: Record<string, string>; addPreview: (key: string, url: string) => void }
 
-function PhotoPicker({ listingId, label, onUploaded }: { listingId: string; label: string; onUploaded: (key: string, preview: string) => void }) {
-  const user = useUser()
-  const upload = useMutation({
-    mutationFn: (file: File) => uploadPhoto(user, listingId, file),
-    onSuccess: ({ key, preview }) => onUploaded(key, preview),
-  })
-  return (
-    <label className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-primary p-5 text-center hover:bg-primary_hover ${upload.isPending ? 'opacity-60' : ''}`}>
-      <span className="flex size-10 items-center justify-center rounded-md border border-primary text-fg-quaternary shadow-xs"><UploadCloud02 size={20} aria-hidden /></span>
-      <span className="text-sm"><span className="font-semibold text-secondary">{upload.isPending ? 'Uploading…' : label}</span></span>
-      <span className="text-xs text-tertiary">PNG, JPG or WebP. We shrink it before the upload.</span>
-      {upload.isError && <span className="text-xs text-error-primary">The upload failed. Try again.</span>}
-      <input type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" disabled={upload.isPending}
-        onChange={(e) => {
-          const file = e.target.files?.[0]
-          e.target.value = ''
-          if (file) upload.mutate(file)
-        }} />
-    </label>
-  )
-}
-
-function Thumb({ src, onRemove, label }: { src?: string; onRemove: () => void; label: string }) {
-  return (
-    <div className="relative aspect-square overflow-hidden rounded-xl border border-secondary bg-tertiary">
-      {src && <img src={src} alt="" className="size-full object-cover" />}
-      <button type="button" aria-label={label} onClick={onRemove} className="absolute top-2 right-2 rounded-md bg-primary p-1.5 text-fg-quaternary shadow-sm hover:text-fg-error">
-        <Trash01 size={16} aria-hidden />
-      </button>
-    </div>
-  )
-}
+const listingUpload = (listingId: string) => ({ path: `/v1/listings/${listingId}/upload-urls`, reply: uploadUrlResponse })
 
 export function PeopleStep({ values, set, errors, listingId, previews, addPreview }: StepProps & Uploads) {
   const mates = values.flatmates ?? []
@@ -226,7 +193,7 @@ export function PeopleStep({ values, set, errors, listingId, previews, addPrevie
           {mate.photoKey ? (
             <div className="w-24"><Thumb src={previews[mate.photoKey]} label={`Remove the photo of ${mate.name || 'this flatmate'}`} onRemove={() => update(i, { photoKey: null })} /></div>
           ) : (
-            <PhotoPicker listingId={listingId} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
+            <PhotoPicker target={listingUpload(listingId)} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
           )}
           <div className="grid gap-5 md:grid-cols-2 md:gap-8">
             <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" hint={maskedHint} maxLength={textLimits.flatmateName} />
@@ -259,7 +226,7 @@ export function PhotosStep({ values, set, listingId, previews, addPreview }: Ste
       <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {keys.map((key, i) => <Thumb key={key} src={previews[key]} label={`Remove photo ${i + 1}`} onRemove={() => set({ photoKeys: keys.filter((k) => k !== key) })} />)}
       </div>
-      {keys.length < maxPhotos && <PhotoPicker listingId={listingId} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
+      {keys.length < maxPhotos && <PhotoPicker target={listingUpload(listingId)} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
       <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" hint={maskedHint} maxLength={textLimits.description} />
     </>
   )

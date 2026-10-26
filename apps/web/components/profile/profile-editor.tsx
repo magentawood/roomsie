@@ -1,0 +1,189 @@
+'use client'
+
+import { useState, type ReactNode } from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { Eye, EyeOff, InfoCircle } from '@untitledui/icons'
+import {
+  childTypes, lifestyleAnswers, maxProfilePhotos, mustHaveKeys, mustHaveWeights, profileResponse, profileTextLimits, profileUploadUrlResponse,
+  type LifestyleAxis, type ProfileEditBody, type ProfileResponse,
+} from '@roomsie/contract'
+import { api, errorText } from '../../lib/api'
+import { useUser } from '../../lib/auth'
+import {
+  bandOf, budgetBands, describesYou, editBody, formOf, pickDescribesYou, profileLabels, type BudgetBand, type DescribesYou, type ProfileForm,
+} from '../../lib/profile-form'
+import { queryKeys, useAreas } from '../../lib/queries'
+import { PhotoPicker, Thumb } from '../photos'
+import { Button } from '../ui/button'
+import { ChoiceChips, MultiChips } from '../ui/choice'
+import { Field, TextArea, TextInput, inputClass } from '../ui/field'
+import { Toggle } from '../ui/toggle'
+import { DeleteAccountDialog } from './delete-account-dialog'
+
+const ages = Array.from({ length: 82 }, (_, i) => i + 18)
+const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
+
+function Section({ title, helper, children }: { title: string; helper: string; children: ReactNode }) {
+  return (
+    <section className="flex flex-col gap-5">
+      <div className="border-b border-secondary pb-4">
+        <h2 className="text-md font-semibold text-primary">{title}</h2>
+        <p className="text-sm text-tertiary">{helper}</p>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+/** "You're discoverable", "Your card is hidden" or "Your card is not visible yet" (PD16, drafts of section 15). */
+function CardBanner({ profile }: { profile: ProfileResponse }) {
+  const [title, text, BannerIcon] = profile.visibility === 'live'
+    ? ['You’re discoverable', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
+    : profile.visibility === 'hidden'
+      ? ['Your card is hidden', 'Turn off “Hide my card” in the settings to show it again.', EyeOff]
+      : ['Your card is not visible yet', `Add these to show it: ${profile.missing.map((m) => profileLabels.missing[m]).join(', ')}.`, InfoCircle]
+  return (
+    <div role="status" className="flex items-start gap-3 rounded-xl border border-secondary p-4">
+      <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-fg-quaternary"><BannerIcon size={20} aria-hidden /></span>
+      <div className="text-sm"><p className="font-semibold text-primary">{title}</p><p className="text-tertiary">{text}</p></div>
+    </div>
+  )
+}
+
+function Header({ profile }: { profile: ProfileResponse }) {
+  const photo = profile.photos[0]
+  const initials = profile.fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
+  return (
+    <div className="flex items-center gap-4 rounded-xl bg-secondary p-4 md:p-6">
+      {photo
+        ? <img src={photo.url} alt="" className="size-16 rounded-full object-cover md:size-20" />
+        : <span className="flex size-16 items-center justify-center rounded-full bg-tertiary text-lg font-semibold text-tertiary md:size-20">{initials}</span>}
+      <div className="flex min-w-0 flex-col">
+        <p className="truncate text-lg font-semibold text-primary">{profile.fullName}</p>
+        <p className="text-md text-tertiary">{[profile.age && `${profile.age} years`, profile.jobRole].filter(Boolean).join(' • ')}</p>
+      </div>
+    </div>
+  )
+}
+
+/** A photo saves at once, so a key never waits in R2 for a Save (T-16b spec). */
+function Photos({ profile, save }: { profile: ProfileResponse; save: (body: ProfileEditBody) => void }) {
+  const keys = profile.photos.map((p) => p.key)
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        {profile.photos.map((p, i) => <Thumb key={p.key} src={p.url} label={`Delete photo ${i + 1}`} onRemove={() => save({ photoKeys: keys.filter((k) => k !== p.key) })} />)}
+      </div>
+      {keys.length < maxProfilePhotos
+        ? <PhotoPicker target={profileUpload} label="Click to upload a photo" onUploaded={(key) => save({ photoKeys: [...keys, key] })} />
+        : <p className="text-sm text-tertiary">{maxProfilePhotos} of {maxProfilePhotos} photos. Delete one to add another.</p>}
+    </div>
+  )
+}
+
+/** "Profile and Settings": the drafts of sections 10 and 15. */
+export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
+  const user = useUser()
+  const queryClient = useQueryClient()
+  const areas = useAreas()
+  const [draft, setDraft] = useState<ProfileForm>(() => formOf(profile))
+  const [deleting, setDeleting] = useState(false)
+  const set = (patch: Partial<ProfileForm>) => setDraft((d) => ({ ...d, ...patch }))
+  const patch = useMutation({
+    mutationFn: (body: ProfileEditBody) => api(user, '/v1/me/profile', profileResponse, { method: 'PATCH', body }),
+    onSuccess: (saved, body) => {
+      queryClient.setQueryData(queryKeys.profile, saved)
+      // A photo saves alone, so it keeps the other unsaved changes of the page.
+      if (!('photoKeys' in body)) setDraft(formOf(saved))
+    },
+  })
+  const changes = editBody(formOf(profile), draft)
+  const describes = describesYou(draft)
+  const band = bandOf(draft.budgetMin, draft.budgetMax)
+
+  return (
+    <div className="mx-auto flex w-full max-w-240 flex-col gap-8 px-5 py-5 md:px-6 md:py-8">
+      <Header profile={profile} />
+      <CardBanner profile={profile} />
+
+      <Section title="The Basics" helper="Role only, never the company.">
+        <div className="grid gap-5 md:grid-cols-3">
+          <TextInput label="Full Name" required value={draft.fullName} onChange={(fullName) => set({ fullName: fullName ?? '' })} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />
+          <Field label="Age" required>
+            {(id) => (
+              <select id={id} className={inputClass} value={draft.age} onChange={(e) => set({ age: Number(e.target.value) })}>
+                {ages.map((a) => <option key={a} value={a}>{a}</option>)}
+              </select>
+            )}
+          </Field>
+          <TextInput label="Job Role" value={draft.jobRole} onChange={(jobRole) => set({ jobRole })} placeholder="eg. Product designer" maxLength={profileTextLimits.jobRole} />
+        </div>
+        <ChoiceChips label="Gender" required labels={profileLabels.gender} value={draft.gender} onChange={(gender) => gender && set({ gender })} />
+      </Section>
+
+      <Section title="Photos" helper={`Two or more gets you far more replies. Up to ${maxProfilePhotos}.`}>
+        <Photos profile={profile} save={(body) => patch.mutate(body)} />
+      </Section>
+
+      <Section title="Your search" helper="Shown on your card so people can rule themselves in or out.">
+        <ChoiceChips label="What best describes you?" labels={profileLabels.describesYou} value={describes}
+          onChange={(choice: DescribesYou | null) => choice && set(pickDescribesYou(choice, draft))} />
+        {draft.managedByParent && (
+          <ChoiceChips label="What does your son or daughter do?" required labels={profileLabels.childType}
+            value={childTypes.find((c) => c === draft.whosMoving) ?? null}
+            onChange={(whosMoving) => set({ whosMoving: whosMoving ?? 'unclear' })} />
+        )}
+        {draft.managedByParent && <p className="text-sm text-tertiary">You make the card for your son or daughter. They must be 18 or older. Their card shows “Managed by a parent”, and you send and get the messages.</p>}
+        <MultiChips label="Areas you are looking for" labels={Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))}
+          value={draft.areas} onChange={(picked) => set({ areas: picked })} />
+        <ChoiceChips label="Budget" labels={profileLabels.budget} value={band}
+          onChange={(id: BudgetBand | null) => {
+            const picked = budgetBands.find((b) => b.id === id)
+            set({ budgetMin: picked?.min ?? null, budgetMax: picked?.max ?? null })
+          }} />
+        <div className="grid gap-5 md:grid-cols-2">
+          <Field label="Moving Date">
+            {(id) => <input id={id} type="date" className={inputClass} value={draft.moveDate ?? ''} onChange={(e) => set({ moveDate: e.target.value || null })} />}
+          </Field>
+          <TextInput label="Commute Address" value={draft.commuteAddress} onChange={(commuteAddress) => set({ commuteAddress })} placeholder="Eg: Building A, Chandni chowk, Andheri…" maxLength={profileTextLimits.commuteAddress} />
+        </div>
+      </Section>
+
+      <Section title="What you are" helper="Facts about how you live. Other people’s must-haves check these.">
+        {(Object.keys(lifestyleAnswers) as LifestyleAxis[]).map((axis) => (
+          <ChoiceChips key={axis} label={profileLabels.axes[axis]} labels={profileLabels.answers[axis] as Record<string, string>}
+            value={draft.lifestyle[axis] ?? null} onChange={(answer) => set({ lifestyle: { ...draft.lifestyle, [axis]: answer } })} />
+        ))}
+      </Section>
+
+      <Section title="What you need from other seekers" helper="Choose Prefer or Dealbreaker. I hide anything that breaks a dealbreaker.">
+        <div className="grid gap-5 md:grid-cols-3">
+          {mustHaveKeys.map((key) => (
+            <ChoiceChips key={key} label={profileLabels.mustHaves[key]} labels={profileLabels.weights}
+              value={draft.mustHaves[key] ?? null} onChange={(weight: (typeof mustHaveWeights)[number] | null) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
+          ))}
+        </div>
+      </Section>
+
+      <Section title="Your thoughts" helper="Some info about you that you want others to see. This shows on your card.">
+        <TextArea label="What I want the others to know" value={draft.bio} onChange={(bio) => set({ bio })} placeholder="Say how you’d say it to a friend" maxLength={profileTextLimits.bio} />
+      </Section>
+
+      <Section title="Settings" helper="Card visibility and your account.">
+        <Toggle title="Hide my card" help="Your card stops showing in other people’s results." checked={draft.hidden} onChange={(hidden) => set({ hidden })} />
+        <div className="flex items-start justify-between gap-4">
+          <span className="flex flex-col"><span className="text-md font-medium text-primary">Delete your account</span><span className="text-sm text-tertiary">Your profile, photos and listings go for good.</span></span>
+          <Button variant="secondary" size="sm" onClick={() => setDeleting(true)}>Delete my account</Button>
+        </div>
+      </Section>
+
+      <div className="flex flex-col items-end gap-2 border-t border-secondary pt-5">
+        {patch.isError && <p role="alert" className="text-sm text-error-primary">{errorText(patch.error)}</p>}
+        {patch.isSuccess && !Object.keys(changes).length && <p role="status" className="text-sm text-tertiary">Saved.</p>}
+        <Button variant="primary" size="lg" disabled={!Object.keys(changes).length || !draft.fullName.trim() || patch.isPending} onClick={() => patch.mutate(changes)}>Save</Button>
+      </div>
+      {deleting && <DeleteAccountDialog onClose={() => setDeleting(false)} />}
+    </div>
+  )
+}
+
