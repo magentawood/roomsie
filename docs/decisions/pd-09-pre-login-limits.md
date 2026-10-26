@@ -53,6 +53,10 @@ At the ceiling:
 - At the ceiling, the product continues to work. But it does not understand sentences until the window resets. The alert lets a person look before users see an effect.
 - The budget risk remains abuse, not legitimate use. A thousand interviews a month cost 12 to 25 dollars, against a base of 50 to 80 dollars a month.
 
+## Alternatives rejected
+
+- **A locked chat input with a line of text as the wall** (the first plan). The designs use a modal, and the designs set v0 ([PD14](pd-14-v0-is-the-figma-designs.md)).
+
 ## Consequences
 
 - The API is a single machine. It keeps the counters in-process. **This fails at two machines**, because each machine has its own counters, and two machines double the limit.

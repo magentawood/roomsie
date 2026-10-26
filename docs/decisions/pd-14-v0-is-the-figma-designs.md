@@ -26,7 +26,7 @@
 
 - The designs are complete for four flows. The team builds what they show.
 - One source for the scope stops the conflicts between the plan and the designs.
-- The drafts use the patterns of the designs. A later change costs less than screen tasks that wait for a review.
+- A later change costs less than screen tasks that wait for a review.
 
 ## Alternatives rejected
 

@@ -5,7 +5,7 @@
 - **Quality comes before the date.** The quality bar is the go/no-go list in `docs/team-plan.md`.
 - If a check fails, the date moves by a small number of days. We do not release below the bar.
 - If your task will be late, tell the team.
-- **The designs are in Figma.** [PD14](decisions/pd-14-v0-is-the-figma-designs.md) gives the three files.
+- **The designs are in Figma.** [PD14](decisions/pd-14-v0-is-the-figma-designs.md) links them.
 
 Why: [PD11](decisions/pd-11-launch.md), [PD12](decisions/pd-12-team-plan.md)
 
