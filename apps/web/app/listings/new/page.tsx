@@ -11,7 +11,7 @@ import { listingSteps, stepCopy } from '../../../lib/listing-steps'
 import { FlowFrame } from '../../../components/listings/flow-frame'
 import { KindStep } from '../../../components/listings/steps'
 import { AppShell } from '../../../components/shell/app-shell'
-import { SignInGate } from '../../../components/shell/sign-in-gate'
+import { listingSignIn, SignInGate } from '../../../components/shell/sign-in-gate'
 import { Button } from '../../../components/ui/button'
 
 /** Step 1 of a new listing. "Next" makes the draft with its kind (T-41). */
@@ -41,7 +41,7 @@ function NewListing() {
 
 export default function NewListingPage() {
   return (
-    <SignInGate>
+    <SignInGate {...listingSignIn}>
       <AppShell mobileNav={false}>
         <NewListing />
       </AppShell>

@@ -5,10 +5,10 @@ import { ArrowRight, CheckSquare, Edit05, Home02, Key01, Plus, RefreshCw01, Slas
 import { listingResponse, myListingsResponse, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { queryKeys, useAreas } from '../../lib/queries'
+import { queryKeys, useAreaNames } from '../../lib/queries'
 import { cardActions, listingSteps, listingTitle, rentLine, resumeStep, stepCopy, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
-import { SignInGate } from '../../components/shell/sign-in-gate'
+import { listingSignIn, SignInGate } from '../../components/shell/sign-in-gate'
 import { MissingNotice } from '../../components/listings/missing-notice'
 import { Badge, type Tone } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
@@ -70,8 +70,7 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
 function MyListings() {
   const user = useUser()
   const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user, '/v1/listings/mine', myListingsResponse) })
-  const areas = useAreas()
-  const areaNames = Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))
+  const areaNames = useAreaNames()
   return (
     <>
       <PageHeader title="My Listings" backHref="/" />
@@ -98,7 +97,7 @@ function MyListings() {
 
 export default function MyListingsPage() {
   return (
-    <SignInGate>
+    <SignInGate {...listingSignIn}>
       <AppShell>
         <MyListings />
       </AppShell>

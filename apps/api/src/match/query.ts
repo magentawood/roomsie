@@ -21,6 +21,25 @@ import { compatibleIntents, type Intent } from './intent'
 
 /* ── input ──────────────────────────────────────────────────────────────── */
 // TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.
+/**
+ * The people that a viewer can see: a live card of an active account, so suspended and deleted people never appear.
+ * With a viewer: not the viewer, and no block in either direction, because a block hides each person from the other.
+ * Saved (T-47) uses it too.
+ */
+export function visiblePeople(viewerUserId?: string) {
+  return [
+    eq(profiles.visibility, 'live'),
+    eq(users.status, 'active'),
+    ...(viewerUserId
+      ? [ne(profiles.userId, viewerUserId), sql`not exists (
+          select 1 from ${blocks} b
+          where (b.blocker_user_id = ${viewerUserId} and b.blocked_user_id = ${profiles.userId})
+             or (b.blocked_user_id = ${viewerUserId} and b.blocker_user_id = ${profiles.userId})
+        )`]
+      : []),
+  ]
+}
+
 export type LifestyleAnswer = {
   axisKey: string
   value: string
@@ -106,9 +125,7 @@ export async function findMatches(
 
   /* Hard filters -------------------------------------------------------- */
   const conditions = [
-    eq(profiles.visibility, 'live'),
-    /** Suspended and deleted people never appear. */
-    eq(users.status, 'active'),
+    ...visiblePeople(opts.viewerUserId),
     inArray(profiles.intent, compatibleIntents(form.intent)),
     /** Areas overlap. `&&` is Postgres array intersection. */
     sql`${profiles.areas} && ${form.areas}`,
@@ -140,18 +157,6 @@ export async function findMatches(
   }
 
   // TODO(T-14): apply the candidate's must-haves back to the searcher, with the mapping of PD3a.
-
-  /* Blocks, both directions --------------------------------------------- *
-   * Blocking someone hides each of you from the other, not just one way.
-   */
-  if (opts.viewerUserId) {
-    conditions.push(sql`not exists (
-      select 1 from ${blocks} b
-      where (b.blocker_user_id = ${opts.viewerUserId} and b.blocked_user_id = ${profiles.userId})
-         or (b.blocked_user_id = ${opts.viewerUserId} and b.blocker_user_id = ${profiles.userId})
-    )`)
-    conditions.push(ne(profiles.userId, opts.viewerUserId))
-  }
 
   /* Score ---------------------------------------------------------------- *
    * 70 + 30 × (share of the searcher's preferences the candidate meets).

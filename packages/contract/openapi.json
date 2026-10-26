@@ -3996,665 +3996,6 @@
             }
           }
         }
-      },
-      "delete": {
-        "parameters": [
-          {
-            "schema": {
-              "type": "string",
-              "format": "uuid",
-              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-            },
-            "in": "path",
-            "name": "id",
-            "required": true
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "string",
-                  "nullable": true,
-                  "enum": [
-                    null
-                  ]
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "error": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "error"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/saved/places": {
-      "get": {
-        "responses": {
-          "200": {
-            "description": "Default Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "places": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "savedAt": {
-                            "type": "string",
-                            "format": "date-time",
-                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                          },
-                          "listing": {
-                            "type": "object",
-                            "properties": {
-                              "id": {
-                                "type": "string",
-                                "format": "uuid",
-                                "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                              },
-                              "kind": {
-                                "type": "string",
-                                "enum": [
-                                  "room_in_flat",
-                                  "owner_flat",
-                                  "pg",
-                                  "broker_flat"
-                                ]
-                              },
-                              "status": {
-                                "type": "string",
-                                "enum": [
-                                  "draft",
-                                  "live",
-                                  "inactive",
-                                  "filled"
-                                ]
-                              },
-                              "areaSlug": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 60
-                              },
-                              "address": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 200
-                              },
-                              "shareAddress": {
-                                "type": "boolean"
-                              },
-                              "building": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "street": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "landmark": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "pincode": {
-                                "nullable": true,
-                                "type": "string",
-                                "pattern": "^\\d{6}$"
-                              },
-                              "nearestStation": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 120
-                              },
-                              "walkStation": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "5_min",
-                                  "10_min",
-                                  "15_min",
-                                  "30_min",
-                                  "not_close"
-                                ]
-                              },
-                              "walkBus": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "5_min",
-                                  "10_min",
-                                  "15_min",
-                                  "30_min",
-                                  "not_close"
-                                ]
-                              },
-                              "walkMarket": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "5_min",
-                                  "10_min",
-                                  "15_min",
-                                  "30_min",
-                                  "not_close"
-                                ]
-                              },
-                              "walkGym": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "5_min",
-                                  "10_min",
-                                  "15_min",
-                                  "30_min",
-                                  "not_close"
-                                ]
-                              },
-                              "walkMall": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "5_min",
-                                  "10_min",
-                                  "15_min",
-                                  "30_min",
-                                  "not_close"
-                                ]
-                              },
-                              "bathroom": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "attached",
-                                  "shared"
-                                ]
-                              },
-                              "balcony": {
-                                "nullable": true,
-                                "type": "boolean"
-                              },
-                              "insideItems": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "bed",
-                                    "mattress",
-                                    "wardrobe",
-                                    "study_table",
-                                    "chair",
-                                    "sofa",
-                                    "dining_table",
-                                    "tv",
-                                    "fridge",
-                                    "washing_machine",
-                                    "microwave",
-                                    "ac",
-                                    "geyser",
-                                    "water_purifier",
-                                    "gas_stove",
-                                    "curtains",
-                                    "fans_and_lights",
-                                    "modular_kitchen",
-                                    "inverter"
-                                  ]
-                                }
-                              },
-                              "amenities": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "lift",
-                                    "cctv",
-                                    "security_24x7",
-                                    "power_backup",
-                                    "gym",
-                                    "swimming_pool",
-                                    "clubhouse",
-                                    "garden",
-                                    "water_24x7",
-                                    "piped_gas",
-                                    "intercom",
-                                    "wifi",
-                                    "housekeeping",
-                                    "maid",
-                                    "cook",
-                                    "laundry",
-                                    "car_parking",
-                                    "rooftop_terrace"
-                                  ]
-                                }
-                              },
-                              "maintenanceIncluded": {
-                                "nullable": true,
-                                "type": "boolean"
-                              },
-                              "electricity": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "included",
-                                  "as_per_meter",
-                                  "split_equally"
-                                ]
-                              },
-                              "rentNegotiable": {
-                                "nullable": true,
-                                "type": "boolean"
-                              },
-                              "minStay": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "3_months",
-                                  "6_months",
-                                  "12_months",
-                                  "flexible"
-                                ]
-                              },
-                              "vegOnlyKitchen": {
-                                "nullable": true,
-                                "type": "boolean"
-                              },
-                              "smokingAllowed": {
-                                "nullable": true,
-                                "type": "boolean"
-                              },
-                              "alcoholAllowed": {
-                                "nullable": true,
-                                "type": "boolean"
-                              },
-                              "guests": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "none",
-                                  "welcome",
-                                  "day_visits"
-                                ]
-                              },
-                              "whoCanMoveIn": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "men",
-                                  "women",
-                                  "any"
-                                ]
-                              },
-                              "description": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 2000
-                              },
-                              "placeType": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "1rk",
-                                  "1bhk",
-                                  "2bhk",
-                                  "3bhk",
-                                  "4bhk",
-                                  "studio",
-                                  "independent_house",
-                                  "bungalow_villa",
-                                  "penthouse"
-                                ]
-                              },
-                              "furnishing": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "fully",
-                                  "semi",
-                                  "unfurnished"
-                                ]
-                              },
-                              "roomType": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "private",
-                                  "shared"
-                                ]
-                              },
-                              "floor": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": -3,
-                                "maximum": 200
-                              },
-                              "carpetAreaSqft": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": 1,
-                                "maximum": 100000
-                              },
-                              "maintenance": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 100000000
-                              },
-                              "availableFrom": {
-                                "nullable": true,
-                                "type": "string",
-                                "format": "date",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-                              },
-                              "pgName": {
-                                "nullable": true,
-                                "type": "string",
-                                "minLength": 1,
-                                "maxLength": 80
-                              },
-                              "sharing": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "single",
-                                    "double",
-                                    "triple",
-                                    "four",
-                                    "four_plus"
-                                  ]
-                                }
-                              },
-                              "bedsFree": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "1",
-                                  "2",
-                                  "3",
-                                  "4",
-                                  "5",
-                                  "5_plus"
-                                ]
-                              },
-                              "meals": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "veg_included",
-                                  "veg_non_veg",
-                                  "breakfast_only",
-                                  "none"
-                                ]
-                              },
-                              "curfew": {
-                                "nullable": true,
-                                "type": "string",
-                                "enum": [
-                                  "none",
-                                  "10pm",
-                                  "10_30pm",
-                                  "11pm",
-                                  "midnight"
-                                ]
-                              },
-                              "brokerage": {
-                                "nullable": true,
-                                "type": "integer",
-                                "minimum": 0,
-                                "maximum": 100000000
-                              },
-                              "whoIsWelcome": {
-                                "type": "array",
-                                "items": {
-                                  "type": "string",
-                                  "enum": [
-                                    "students",
-                                    "working_professionals",
-                                    "couples",
-                                    "families",
-                                    "bachelors"
-                                  ]
-                                }
-                              },
-                              "flatmatesConsent": {
-                                "type": "boolean"
-                              },
-                              "photos": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "key": {
-                                      "type": "string",
-                                      "pattern": "^listings\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
-                                    },
-                                    "url": {
-                                      "type": "string",
-                                      "format": "uri"
-                                    }
-                                  },
-                                  "required": [
-                                    "key",
-                                    "url"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "rates": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "sharing": {
-                                      "nullable": true,
-                                      "type": "string",
-                                      "enum": [
-                                        "single",
-                                        "double",
-                                        "triple",
-                                        "four",
-                                        "four_plus"
-                                      ]
-                                    },
-                                    "rent": {
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 100000000
-                                    },
-                                    "deposit": {
-                                      "nullable": true,
-                                      "type": "integer",
-                                      "minimum": 0,
-                                      "maximum": 100000000
-                                    }
-                                  },
-                                  "required": [
-                                    "sharing",
-                                    "rent",
-                                    "deposit"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "flatmates": {
-                                "type": "array",
-                                "items": {
-                                  "type": "object",
-                                  "properties": {
-                                    "name": {
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 60
-                                    },
-                                    "age": {
-                                      "default": null,
-                                      "nullable": true,
-                                      "type": "integer",
-                                      "minimum": 18,
-                                      "maximum": 99
-                                    },
-                                    "whatTheyDo": {
-                                      "default": null,
-                                      "nullable": true,
-                                      "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 80
-                                    },
-                                    "food": {
-                                      "default": null,
-                                      "nullable": true,
-                                      "type": "string",
-                                      "enum": [
-                                        "veg",
-                                        "non_veg",
-                                        "eggetarian",
-                                        "jain"
-                                      ]
-                                    },
-                                    "photoKey": {
-                                      "default": null,
-                                      "nullable": true,
-                                      "type": "string",
-                                      "pattern": "^listings\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
-                                    },
-                                    "photoUrl": {
-                                      "nullable": true,
-                                      "type": "string",
-                                      "format": "uri"
-                                    }
-                                  },
-                                  "required": [
-                                    "name",
-                                    "age",
-                                    "whatTheyDo",
-                                    "food",
-                                    "photoKey",
-                                    "photoUrl"
-                                  ],
-                                  "additionalProperties": false
-                                }
-                              },
-                              "expiresAt": {
-                                "nullable": true,
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              },
-                              "createdAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              },
-                              "updatedAt": {
-                                "type": "string",
-                                "format": "date-time",
-                                "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                              }
-                            },
-                            "required": [
-                              "id",
-                              "kind",
-                              "status",
-                              "areaSlug",
-                              "address",
-                              "shareAddress",
-                              "building",
-                              "street",
-                              "landmark",
-                              "pincode",
-                              "nearestStation",
-                              "walkStation",
-                              "walkBus",
-                              "walkMarket",
-                              "walkGym",
-                              "walkMall",
-                              "bathroom",
-                              "balcony",
-                              "insideItems",
-                              "amenities",
-                              "maintenanceIncluded",
-                              "electricity",
-                              "rentNegotiable",
-                              "minStay",
-                              "vegOnlyKitchen",
-                              "smokingAllowed",
-                              "alcoholAllowed",
-                              "guests",
-                              "whoCanMoveIn",
-                              "description",
-                              "placeType",
-                              "furnishing",
-                              "roomType",
-                              "floor",
-                              "carpetAreaSqft",
-                              "maintenance",
-                              "availableFrom",
-                              "pgName",
-                              "sharing",
-                              "bedsFree",
-                              "meals",
-                              "curfew",
-                              "brokerage",
-                              "whoIsWelcome",
-                              "flatmatesConsent",
-                              "photos",
-                              "rates",
-                              "flatmates",
-                              "expiresAt",
-                              "createdAt",
-                              "updatedAt"
-                            ],
-                            "additionalProperties": false
-                          }
-                        },
-                        "required": [
-                          "savedAt",
-                          "listing"
-                        ],
-                        "additionalProperties": false
-                      }
-                    }
-                  },
-                  "required": [
-                    "places"
-                  ],
-                  "additionalProperties": false
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/v1/saved/people/{id}": {
@@ -4706,7 +4047,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/v1/saved/{kind}/{id}": {
       "delete": {
         "parameters": [
           {
@@ -4717,6 +4060,18 @@
             },
             "in": "path",
             "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "places",
+                "people"
+              ]
+            },
+            "in": "path",
+            "name": "kind",
             "required": true
           }
         ],
@@ -4734,20 +4089,596 @@
                 }
               }
             }
-          },
-          "404": {
+          }
+        }
+      }
+    },
+    "/v1/saved/places": {
+      "get": {
+        "responses": {
+          "200": {
             "description": "Default Response",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "error": {
-                      "type": "string"
+                    "places": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "room_in_flat",
+                              "owner_flat",
+                              "pg",
+                              "broker_flat"
+                            ]
+                          },
+                          "status": {
+                            "type": "string",
+                            "enum": [
+                              "draft",
+                              "live",
+                              "inactive",
+                              "filled"
+                            ]
+                          },
+                          "areaSlug": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 60
+                          },
+                          "address": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "shareAddress": {
+                            "type": "boolean"
+                          },
+                          "building": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "street": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "landmark": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "pincode": {
+                            "nullable": true,
+                            "type": "string",
+                            "pattern": "^\\d{6}$"
+                          },
+                          "nearestStation": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 120
+                          },
+                          "walkStation": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "5_min",
+                              "10_min",
+                              "15_min",
+                              "30_min",
+                              "not_close"
+                            ]
+                          },
+                          "walkBus": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "5_min",
+                              "10_min",
+                              "15_min",
+                              "30_min",
+                              "not_close"
+                            ]
+                          },
+                          "walkMarket": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "5_min",
+                              "10_min",
+                              "15_min",
+                              "30_min",
+                              "not_close"
+                            ]
+                          },
+                          "walkGym": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "5_min",
+                              "10_min",
+                              "15_min",
+                              "30_min",
+                              "not_close"
+                            ]
+                          },
+                          "walkMall": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "5_min",
+                              "10_min",
+                              "15_min",
+                              "30_min",
+                              "not_close"
+                            ]
+                          },
+                          "bathroom": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "attached",
+                              "shared"
+                            ]
+                          },
+                          "balcony": {
+                            "nullable": true,
+                            "type": "boolean"
+                          },
+                          "insideItems": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "bed",
+                                "mattress",
+                                "wardrobe",
+                                "study_table",
+                                "chair",
+                                "sofa",
+                                "dining_table",
+                                "tv",
+                                "fridge",
+                                "washing_machine",
+                                "microwave",
+                                "ac",
+                                "geyser",
+                                "water_purifier",
+                                "gas_stove",
+                                "curtains",
+                                "fans_and_lights",
+                                "modular_kitchen",
+                                "inverter"
+                              ]
+                            }
+                          },
+                          "amenities": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "lift",
+                                "cctv",
+                                "security_24x7",
+                                "power_backup",
+                                "gym",
+                                "swimming_pool",
+                                "clubhouse",
+                                "garden",
+                                "water_24x7",
+                                "piped_gas",
+                                "intercom",
+                                "wifi",
+                                "housekeeping",
+                                "maid",
+                                "cook",
+                                "laundry",
+                                "car_parking",
+                                "rooftop_terrace"
+                              ]
+                            }
+                          },
+                          "maintenanceIncluded": {
+                            "nullable": true,
+                            "type": "boolean"
+                          },
+                          "electricity": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "included",
+                              "as_per_meter",
+                              "split_equally"
+                            ]
+                          },
+                          "rentNegotiable": {
+                            "nullable": true,
+                            "type": "boolean"
+                          },
+                          "minStay": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "3_months",
+                              "6_months",
+                              "12_months",
+                              "flexible"
+                            ]
+                          },
+                          "vegOnlyKitchen": {
+                            "nullable": true,
+                            "type": "boolean"
+                          },
+                          "smokingAllowed": {
+                            "nullable": true,
+                            "type": "boolean"
+                          },
+                          "alcoholAllowed": {
+                            "nullable": true,
+                            "type": "boolean"
+                          },
+                          "guests": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "none",
+                              "welcome",
+                              "day_visits"
+                            ]
+                          },
+                          "whoCanMoveIn": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "men",
+                              "women",
+                              "any"
+                            ]
+                          },
+                          "description": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 2000
+                          },
+                          "placeType": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "1rk",
+                              "1bhk",
+                              "2bhk",
+                              "3bhk",
+                              "4bhk",
+                              "studio",
+                              "independent_house",
+                              "bungalow_villa",
+                              "penthouse"
+                            ]
+                          },
+                          "furnishing": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "fully",
+                              "semi",
+                              "unfurnished"
+                            ]
+                          },
+                          "roomType": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "private",
+                              "shared"
+                            ]
+                          },
+                          "floor": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": -3,
+                            "maximum": 200
+                          },
+                          "carpetAreaSqft": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 100000
+                          },
+                          "maintenance": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100000000
+                          },
+                          "availableFrom": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "pgName": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 80
+                          },
+                          "sharing": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "single",
+                                "double",
+                                "triple",
+                                "four",
+                                "four_plus"
+                              ]
+                            }
+                          },
+                          "bedsFree": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "1",
+                              "2",
+                              "3",
+                              "4",
+                              "5",
+                              "5_plus"
+                            ]
+                          },
+                          "meals": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "veg_included",
+                              "veg_non_veg",
+                              "breakfast_only",
+                              "none"
+                            ]
+                          },
+                          "curfew": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "none",
+                              "10pm",
+                              "10_30pm",
+                              "11pm",
+                              "midnight"
+                            ]
+                          },
+                          "brokerage": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100000000
+                          },
+                          "whoIsWelcome": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "enum": [
+                                "students",
+                                "working_professionals",
+                                "couples",
+                                "families",
+                                "bachelors"
+                              ]
+                            }
+                          },
+                          "flatmatesConsent": {
+                            "type": "boolean"
+                          },
+                          "photos": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^listings\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                                },
+                                "url": {
+                                  "type": "string",
+                                  "format": "uri"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "url"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "rates": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "sharing": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "enum": [
+                                    "single",
+                                    "double",
+                                    "triple",
+                                    "four",
+                                    "four_plus"
+                                  ]
+                                },
+                                "rent": {
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 100000000
+                                },
+                                "deposit": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": 0,
+                                  "maximum": 100000000
+                                }
+                              },
+                              "required": [
+                                "sharing",
+                                "rent",
+                                "deposit"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "flatmates": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "name": {
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 60
+                                },
+                                "age": {
+                                  "default": null,
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": 18,
+                                  "maximum": 99
+                                },
+                                "whatTheyDo": {
+                                  "default": null,
+                                  "nullable": true,
+                                  "type": "string",
+                                  "minLength": 1,
+                                  "maxLength": 80
+                                },
+                                "food": {
+                                  "default": null,
+                                  "nullable": true,
+                                  "type": "string",
+                                  "enum": [
+                                    "veg",
+                                    "non_veg",
+                                    "eggetarian",
+                                    "jain"
+                                  ]
+                                },
+                                "photoKey": {
+                                  "default": null,
+                                  "nullable": true,
+                                  "type": "string",
+                                  "pattern": "^listings\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                                },
+                                "photoUrl": {
+                                  "nullable": true,
+                                  "type": "string",
+                                  "format": "uri"
+                                }
+                              },
+                              "required": [
+                                "name",
+                                "age",
+                                "whatTheyDo",
+                                "food",
+                                "photoKey",
+                                "photoUrl"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "expiresAt": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "kind",
+                          "status",
+                          "areaSlug",
+                          "address",
+                          "shareAddress",
+                          "building",
+                          "street",
+                          "landmark",
+                          "pincode",
+                          "nearestStation",
+                          "walkStation",
+                          "walkBus",
+                          "walkMarket",
+                          "walkGym",
+                          "walkMall",
+                          "bathroom",
+                          "balcony",
+                          "insideItems",
+                          "amenities",
+                          "maintenanceIncluded",
+                          "electricity",
+                          "rentNegotiable",
+                          "minStay",
+                          "vegOnlyKitchen",
+                          "smokingAllowed",
+                          "alcoholAllowed",
+                          "guests",
+                          "whoCanMoveIn",
+                          "description",
+                          "placeType",
+                          "furnishing",
+                          "roomType",
+                          "floor",
+                          "carpetAreaSqft",
+                          "maintenance",
+                          "availableFrom",
+                          "pgName",
+                          "sharing",
+                          "bedsFree",
+                          "meals",
+                          "curfew",
+                          "brokerage",
+                          "whoIsWelcome",
+                          "flatmatesConsent",
+                          "photos",
+                          "rates",
+                          "flatmates",
+                          "expiresAt",
+                          "createdAt",
+                          "updatedAt"
+                        ],
+                        "additionalProperties": false
+                      }
                     }
                   },
                   "required": [
-                    "error"
+                    "places"
                   ],
                   "additionalProperties": false
                 }
@@ -4770,24 +4701,9 @@
                     "people": {
                       "type": "array",
                       "items": {
-                        "type": "object",
-                        "properties": {
-                          "savedAt": {
-                            "type": "string",
-                            "format": "date-time",
-                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
-                          },
-                          "profileId": {
-                            "type": "string",
-                            "format": "uuid",
-                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
-                          }
-                        },
-                        "required": [
-                          "savedAt",
-                          "profileId"
-                        ],
-                        "additionalProperties": false
+                        "type": "string",
+                        "format": "uuid",
+                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                       }
                     }
                   },

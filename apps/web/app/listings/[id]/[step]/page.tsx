@@ -14,7 +14,7 @@ import { FlowFrame } from '../../../../components/listings/flow-frame'
 import { MissingNotice } from '../../../../components/listings/missing-notice'
 import { KindStep, NearbyStep, PeopleStep, PhotosStep, PlaceStep, RentStep, RulesStep, WhereStep } from '../../../../components/listings/steps'
 import { AppShell } from '../../../../components/shell/app-shell'
-import { SignInGate } from '../../../../components/shell/sign-in-gate'
+import { listingSignIn, SignInGate } from '../../../../components/shell/sign-in-gate'
 import { Button } from '../../../../components/ui/button'
 import { Modal } from '../../../../components/ui/modal'
 
@@ -152,7 +152,7 @@ function ListingStep() {
 
 export default function ListingStepPage() {
   return (
-    <SignInGate>
+    <SignInGate {...listingSignIn}>
       <AppShell mobileNav={false}>
         <ListingStep />
       </AppShell>

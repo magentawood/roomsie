@@ -13,21 +13,7 @@ const navLooks = {
   phone: { item: 'flex-1 flex-col gap-0.5 rounded-full px-1 py-1.5 text-xs whitespace-nowrap', active: 'bg-tertiary text-primary', link: 'text-secondary', icon: '' },
 }
 
-type NavEntry = { icon: Icon; label: string; href?: string }
-const sidebarItems: NavEntry[] = [
-  { icon: MessageCircle01, label: 'Messages' },
-  { icon: Bookmark, label: 'Saved', href: '/saved' },
-  { icon: Key01, label: 'My listings', href: '/listings' },
-]
-/** The bar of the designer: Messages, Saved, My Listings and Profile. The chat is the home screen behind it (T-47). */
-const phoneItems: NavEntry[] = [
-  { icon: MessageCircle01, label: 'Messages' },
-  { icon: Bookmark, label: 'Saved', href: '/saved' },
-  { icon: Key01, label: 'My Listings', href: '/listings' },
-  { icon: User01, label: 'Profile' },
-]
-
-function NavItem({ icon: ItemIcon, label, href, look }: NavEntry & { look: keyof typeof navLooks }) {
+function NavItem({ icon: ItemIcon, label, href, look }: { icon: Icon; label: string; href?: string; look: keyof typeof navLooks }) {
   const pathname = usePathname()
   const active = !!href && pathname.startsWith(href)
   const style = navLooks[look]
@@ -51,7 +37,9 @@ function Sidebar() {
       </div>
       <div className="flex flex-col gap-4">
         <nav className="flex flex-col gap-1">
-          {sidebarItems.map((item) => <NavItem key={item.label} look="sidebar" {...item} />)}
+          <NavItem look="sidebar" icon={MessageCircle01} label="Messages" />
+          <NavItem look="sidebar" icon={Bookmark} label="Saved" href="/saved" />
+          <NavItem look="sidebar" icon={Key01} label="My listings" href="/listings" />
         </nav>
         {user && (
           <div className="flex items-center gap-3 rounded-xl border border-secondary p-3">
@@ -74,7 +62,11 @@ function MobileNav() {
   return (
     <nav className="fixed inset-x-4 bottom-4 z-40 flex items-center gap-2 lg:hidden">
       <div className="flex flex-1 items-center rounded-full border border-secondary bg-primary p-1 shadow-sm">
-        {phoneItems.map((item) => <NavItem key={item.label} look="phone" {...item} />)}
+        {/* The bar of the designer. The chat is the home screen behind it, so it has no tab. */}
+        <NavItem look="phone" icon={MessageCircle01} label="Messages" />
+        <NavItem look="phone" icon={Bookmark} label="Saved" href="/saved" />
+        <NavItem look="phone" icon={Key01} label="My Listings" href="/listings" />
+        <NavItem look="phone" icon={User01} label="Profile" />
       </div>
       <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-primary text-quaternary shadow-sm" aria-disabled title="Coming soon">
         <Plus size={24} aria-hidden />
