@@ -2,7 +2,7 @@
 id: T-46
 title: "DigiLocker verification"
 owner: "P3 Data and trust"
-sequence: "10 of 14"
+sequence: "11 of 15"
 hours: 8
 start: 2026-11-12
 end: 2026-11-15
@@ -17,7 +17,7 @@ tags:
 
 # T-46 · DigiLocker verification
 
-**Owner:** [[P3 Data and trust]], task 10 of 14  
+**Owner:** [[P3 Data and trust]], task 11 of 15  
 **When:** Thu 12 Nov → Sun 15 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#122](https://github.com/magentawood/roomsie/issues/122)

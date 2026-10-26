@@ -1123,6 +1123,31 @@
    "issue": 143
   },
   {
+   "id": "T-54",
+   "title": "Photos on photos.roomsie.in",
+   "plain": "Listing photos load from our own address, not the test address of Cloudflare.",
+   "role": "P3",
+   "hours": 1,
+   "start": "2026-10-27",
+   "end": "2026-10-27",
+   "deps": [
+    "T-41"
+   ],
+   "done": [
+    "The photos bucket serves photos.roomsie.in, and its r2.dev address is off",
+    "`R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it",
+    "A listing photo on roomsie.in loads from photos.roomsie.in"
+   ],
+   "read": [
+    "docs/decisions/0005-managed-platform-split.md",
+    "docs/decisions/0016-credentials-and-secrets.md",
+    "docs/learn/listings.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 146
+  },
+  {
    "id": "T-23b",
    "title": "Privacy, terms and grievance pages",
    "plain": "The legal pages that each Indian site must have.",

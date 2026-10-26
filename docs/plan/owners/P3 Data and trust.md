@@ -9,7 +9,7 @@ tags:
 
 _The data and the matching, then the screens that show them and the advisor._
 
-**84 hours** of build work, at 4.94h a day. The last task ends on Tue 24 Nov.
+**85 hours** of build work, at 5h a day. The last task ends on Tue 24 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -20,12 +20,13 @@ This note is part of [[roomsie launch]].
 3. [[T-15 Results panel ⚑]] — Sat 3 Oct → Thu 8 Oct, 6h
 4. [[T-18b Person and connect screens ⚑]] — Thu 8 Oct → Sat 10 Oct, 4h
 5. [[T-41 Listings API]] — Sun 25 Oct → Wed 28 Oct, 8h
-6. [[T-42 Listing flow screens]] — Thu 29 Oct → Sun 1 Nov, 8h
-7. [[T-43 Listing detail screens]] — Mon 2 Nov → Wed 4 Nov, 5h
-8. [[T-44 Messages API]] — Thu 5 Nov → Sun 8 Nov, 8h
-9. [[T-45 Messages screens]] — Mon 9 Nov → Wed 11 Nov, 6h
-10. [[T-46 DigiLocker verification]] — Thu 12 Nov → Sun 15 Nov, 8h
-11. [[T-47 Saved]] — Mon 16 Nov → Tue 17 Nov, 4h
-12. [[T-48 Onboarding questions]] — Wed 18 Nov → Fri 20 Nov, 5h
-13. [[T-49 Compare cards]] — Sat 21 Nov → Sun 22 Nov, 4h
-14. [[T-50 Found a place, share, feedback]] — Mon 23 Nov → Tue 24 Nov, 4h
+6. [[T-54 Photos domain]] — Tue 27 Oct, 1h
+7. [[T-42 Listing flow screens]] — Thu 29 Oct → Sun 1 Nov, 8h
+8. [[T-43 Listing detail screens]] — Mon 2 Nov → Wed 4 Nov, 5h
+9. [[T-44 Messages API]] — Thu 5 Nov → Sun 8 Nov, 8h
+10. [[T-45 Messages screens]] — Mon 9 Nov → Wed 11 Nov, 6h
+11. [[T-46 DigiLocker verification]] — Thu 12 Nov → Sun 15 Nov, 8h
+12. [[T-47 Saved]] — Mon 16 Nov → Tue 17 Nov, 4h
+13. [[T-48 Onboarding questions]] — Wed 18 Nov → Fri 20 Nov, 5h
+14. [[T-49 Compare cards]] — Sat 21 Nov → Sun 22 Nov, 4h
+15. [[T-50 Found a place, share, feedback]] — Mon 23 Nov → Tue 24 Nov, 4h

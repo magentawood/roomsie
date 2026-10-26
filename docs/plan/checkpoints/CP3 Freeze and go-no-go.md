@@ -52,6 +52,7 @@ This note is part of [[roomsie launch]].
 - [[T-29 Abuse test]] — P1 Platform
 - [[T-40 Nightly backups]] — P1 Platform
 - [[T-51 Migrations in the deploy ⚑]] — P1 Platform
+- [[T-54 Photos domain]] — P3 Data and trust
 - [[T-41 Listings API]] — P3 Data and trust
 - [[T-52 Web CSP]] — P1 Platform
 - [[T-53 Delete the Firebase user]] — P4 Content and moderation

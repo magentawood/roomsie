@@ -2,7 +2,7 @@
 id: T-41
 title: "Listings API: four kinds of lister"
 owner: "P3 Data and trust"
-sequence: "5 of 14"
+sequence: "5 of 15"
 hours: 8
 start: 2026-10-25
 end: 2026-10-28
@@ -17,7 +17,7 @@ tags:
 
 # T-41 · Listings API: four kinds of lister
 
-**Owner:** [[P3 Data and trust]], task 5 of 14  
+**Owner:** [[P3 Data and trust]], task 5 of 15  
 **When:** Sun 25 Oct → Wed 28 Oct · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#117](https://github.com/magentawood/roomsie/issues/117)
@@ -30,6 +30,7 @@ The server part of listings: owners, flatmates, PG operators and brokers save a 
 - [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
+- [[T-54 Photos domain]]
 - [[T-42 Listing flow screens]]
 - [[T-43 Listing detail screens]]
 - [[T-47 Saved]]

@@ -560,6 +560,15 @@
    "height": 84
   },
   {
+   "id": "task-T-54",
+   "type": "text",
+   "text": "**[[T-54 Photos domain|T-54 Photos domain]]**\n1h · Tue 27 Oct",
+   "x": 7260,
+   "y": 906,
+   "width": 212,
+   "height": 84
+  },
+  {
    "id": "task-T-42",
    "type": "text",
    "text": "**[[T-42 Listing flow screens|T-42 Listing flow screens]]**\n8h · Thu 29 Oct → Sun 1 Nov",
@@ -1568,6 +1577,13 @@
    "fromNode": "task-T-20",
    "fromSide": "right",
    "toNode": "task-T-53",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-41-T-54",
+   "fromNode": "task-T-41",
+   "fromSide": "right",
+   "toNode": "task-T-54",
    "toSide": "left"
   },
   {
