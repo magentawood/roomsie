@@ -29,7 +29,7 @@ function Places() {
     <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {places.data.places.map((listing) => (
         <li key={listing.id}>
-          <PlaceCard listing={listing} areaName={listing.areaSlug ? areaNames[listing.areaSlug] : undefined} action={<SaveButton kind="places" id={listing.id} />} />
+          <PlaceCard listing={listing} areaName={listing.areaSlug ? areaNames[listing.areaSlug] : undefined} href={`/places/${listing.id}`} action={<SaveButton kind="places" id={listing.id} />} />
         </li>
       ))}
     </ul>

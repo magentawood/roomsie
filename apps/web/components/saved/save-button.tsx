@@ -8,7 +8,8 @@ import { useUser } from '../../lib/auth'
 import { queryKeys, useSavedIds } from '../../lib/queries'
 import { Button } from '../ui/button'
 
-export function SaveButton({ kind, id }: { kind: SavedKind; id: string }) {
+/** The saved state of one item, and its toggle. While the request runs, `shown` is already the new state. */
+export function useSaved(kind: SavedKind, id: string) {
   const user = useUser()
   const queryClient = useQueryClient()
   const saved = useSavedIds(kind).has(id)
@@ -16,11 +17,14 @@ export function SaveButton({ kind, id }: { kind: SavedKind; id: string }) {
     mutationFn: (save: boolean) => api(user, `/v1/saved/${kind}/${id}`, noContent, { method: save ? 'PUT' : 'DELETE' }),
     onSettled: () => queryClient.invalidateQueries({ queryKey: queryKeys.saved(kind) }),
   })
-  // While the request runs, the button already shows the new state.
-  const shown = toggle.isPending ? toggle.variables : saved
+  return { shown: toggle.isPending ? toggle.variables : saved, pending: toggle.isPending, toggle: () => toggle.mutate(!saved) }
+}
+
+export function SaveButton({ kind, id, className }: { kind: SavedKind; id: string; className?: string }) {
+  const { shown, pending, toggle } = useSaved(kind, id)
   return (
     <Button variant="secondary" size="xs" iconTrailing={shown ? BookmarkCheck : Bookmark} pressed={shown}
-      disabled={toggle.isPending} onClick={() => toggle.mutate(!saved)}>
+      disabled={pending} onClick={toggle} className={className}>
       {shown ? 'Saved' : 'Save'}
     </Button>
   )
