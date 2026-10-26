@@ -100,6 +100,9 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
   and the yearly audit is a cost.
 - **The listing waits for the review.** A new lister can wait up to 24 hours.
 - **Only brokers and PGs wait.** Anyone can pick "owner" to skip the wait.
+- **An Aadhaar upload in v0.** The Aadhaar Act forbids copies.
+- **The Aadhaar app QR in v0.** The UIDAI approval takes weeks, and it needs a
+  registered company.
 - **An optional gender, with "Prefer not to say".** A "Women only" search fills
   with unknowns.
 - **A women-only mode.** PD1 removed women-only.
