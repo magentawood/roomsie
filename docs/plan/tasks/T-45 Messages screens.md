@@ -35,6 +35,7 @@ The inbox and the conversation.
 - [ ] The Messages item in the sidebar shows the unread count
 - [ ] Report and block are in the menu of the conversation
 - [ ] The empty inbox uses the empty state of the designs
+- [ ] The listing detail has the button "Message the lister" of the designs
 
 ^done
 
