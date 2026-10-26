@@ -5,18 +5,19 @@ import { projectId, testTokens } from './tokens'
 import { offlineStorage } from '../scripts/openapi'
 import { areas } from '../src/db/schema'
 import { buildServer } from '../src/server'
+import type { Storage } from '../src/storage'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
 
 /** A server on a disposable database with the area "bandra" and one signed-in user for each name. The first user lists. Call close() when done. */
-export async function testApp<U extends string>(users: readonly [U, ...U[]]) {
+export async function testApp<U extends string>(users: readonly [U, ...U[]], storage: Storage = offlineStorage) {
   const testDb = await createTestDb()
   await testDb.db.insert(areas).values({ slug: 'bandra', name: 'Bandra' })
   const { firebaseKeys, idToken } = await testTokens()
   const tokens = {} as Record<U, string>
   for (const user of users) tokens[user] = await idToken(`uid-${user}`)
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage: offlineStorage })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage })
   const call = (who: U | null, method: Method, url: string, payload?: object) =>
     app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${tokens[who]}` } : {} })
   const ids = {} as Record<U, string>

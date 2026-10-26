@@ -1,29 +1,35 @@
 import { and, asc, eq, gt, inArray, isNull } from 'drizzle-orm'
 import { sharingTypes, type ListingResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
-import { listingFlatmates, listingRates, listings } from '../db/schema'
+import { listingFlatmates, listingRates, listings, profiles } from '../db/schema'
 import type { Storage } from '../storage'
 
 export type Listing = typeof listings.$inferSelect
 export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
 export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
-export type Parts = { rates: Rate[]; flatmates: Flatmate[] }
+type Lister = Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'>
+export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Lister | null }
 
 /** A listing that other users can see: live, not expired, and not hidden by reports. `visibleListing` is the same rule in SQL. */
 export const isVisible = (listing: Listing) => listing.status === 'live' && listing.expiresAt! > new Date() && !listing.hiddenAt
 export const visibleListing = () => and(eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt))
 
-/** The rents and the flatmates of each listing, from two queries. */
+/** The rents, the flatmates and the lister of each listing, from three queries. */
 export async function partsOf(db: Db, ids: string[]) {
   const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))
   const flatmates = await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.position))
+  // The profile of the lister, in each state of the card. A card of a son or daughter is not the lister (T-16a).
+  const listers = await db.select({ listingId: listings.id, fullName: profiles.fullName, photoKeys: profiles.photoKeys }).from(listings)
+    .innerJoin(profiles, and(eq(profiles.userId, listings.ownerUserId), eq(profiles.managedByParent, false)))
+    .where(inArray(listings.id, ids))
   return (id: string): Parts => ({
     rates: rates.filter((r) => r.listingId === id),
     flatmates: flatmates.filter((f) => f.listingId === id),
+    lister: listers.find((l) => l.listingId === id) ?? null,
   })
 }
 
-export function listingView(listing: Listing, { rates, flatmates }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
+export function listingView(listing: Listing, { rates, flatmates, lister }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
   // The serializer parses each reply with the contract schema, which drops ownerUserId and the row ids.
   const { photoKeys, roomType, expiresAt, hiddenAt, createdAt, updatedAt, ...fields } = listing
   const hideAddress = !isOwner && !listing.shareAddress
@@ -37,6 +43,7 @@ export function listingView(listing: Listing, { rates, flatmates }: Parts, stora
     rates: [...rates].sort((a, b) => sharingOrder(a) - sharingOrder(b)),
     flatmates: flatmates.map((f) => ({ ...f, photoUrl: f.photoKey && storage.publicUrl(f.photoKey) })),
     mine: isOwner,
+    lister: lister && { name: lister.fullName, photoUrl: lister.photoKeys[0] ? storage.publicUrl(lister.photoKeys[0]) : null },
     hidden: hiddenAt !== null,
     expiresAt: expiresAt?.toISOString() ?? null,
     createdAt: createdAt.toISOString(),

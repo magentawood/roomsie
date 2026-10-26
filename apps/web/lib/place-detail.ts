@@ -108,6 +108,6 @@ export function whereLine(listing: ListingResponse, areaName: string | undefined
 /** The API sends the address, the street and the pincode only when the lister shares them (ADR-0017). */
 export const addressLine = (listing: ListingResponse) => [listing.address, listing.street, listing.pincode].filter(Boolean).join(', ') || null
 
-/** TODO(T-16a): the name and the photo of the lister. */
+/** The kind of lister, under the name, or alone when the lister has no profile. */
 export const listerLabel = (kind: ListingKind) =>
   ({ owner_flat: 'Owner', broker_flat: 'Broker', pg: 'PG operator', room_in_flat: 'Flatmate' })[kind]

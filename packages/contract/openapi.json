@@ -657,6 +657,25 @@
                     "mine": {
                       "type": "boolean"
                     },
+                    "lister": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "photoUrl"
+                      ],
+                      "additionalProperties": false
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -727,6 +746,7 @@
                     "rates",
                     "flatmates",
                     "mine",
+                    "lister",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -1253,6 +1273,25 @@
                           "mine": {
                             "type": "boolean"
                           },
+                          "lister": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "photoUrl": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "photoUrl"
+                            ],
+                            "additionalProperties": false
+                          },
                           "hidden": {
                             "type": "boolean"
                           },
@@ -1323,6 +1362,7 @@
                           "rates",
                           "flatmates",
                           "mine",
+                          "lister",
                           "hidden",
                           "expiresAt",
                           "createdAt",
@@ -1863,6 +1903,25 @@
                     "mine": {
                       "type": "boolean"
                     },
+                    "lister": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "photoUrl"
+                      ],
+                      "additionalProperties": false
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -1933,6 +1992,7 @@
                     "rates",
                     "flatmates",
                     "mine",
+                    "lister",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -2944,6 +3004,25 @@
                     "mine": {
                       "type": "boolean"
                     },
+                    "lister": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "photoUrl"
+                      ],
+                      "additionalProperties": false
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -3014,6 +3093,7 @@
                     "rates",
                     "flatmates",
                     "mine",
+                    "lister",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -3721,6 +3801,25 @@
                     "mine": {
                       "type": "boolean"
                     },
+                    "lister": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "uri"
+                        }
+                      },
+                      "required": [
+                        "name",
+                        "photoUrl"
+                      ],
+                      "additionalProperties": false
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -3791,6 +3890,7 @@
                     "rates",
                     "flatmates",
                     "mine",
+                    "lister",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -4602,6 +4702,25 @@
                           "mine": {
                             "type": "boolean"
                           },
+                          "lister": {
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "photoUrl": {
+                                "nullable": true,
+                                "type": "string",
+                                "format": "uri"
+                              }
+                            },
+                            "required": [
+                              "name",
+                              "photoUrl"
+                            ],
+                            "additionalProperties": false
+                          },
                           "hidden": {
                             "type": "boolean"
                           },
@@ -4672,6 +4791,7 @@
                           "rates",
                           "flatmates",
                           "mine",
+                          "lister",
                           "hidden",
                           "expiresAt",
                           "createdAt",
@@ -4774,6 +4894,1391 @@
         "responses": {
           "204": {
             "description": "No body."
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/profile": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "age": {
+                    "type": "integer",
+                    "minimum": 18,
+                    "maximum": 99
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "male",
+                      "female",
+                      "non_binary"
+                    ]
+                  }
+                },
+                "required": [
+                  "fullName",
+                  "age",
+                  "gender"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "fullName": {
+                      "type": "string"
+                    },
+                    "age": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 18,
+                      "maximum": 99
+                    },
+                    "jobRole": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "commuteAddress": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "bio": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "managedByParent": {
+                      "type": "boolean"
+                    },
+                    "intent": {
+                      "type": "string",
+                      "enum": [
+                        "room",
+                        "pg",
+                        "whole_flat",
+                        "flatmates",
+                        "unclear"
+                      ]
+                    },
+                    "whosMoving": {
+                      "type": "string",
+                      "enum": [
+                        "student",
+                        "first_job",
+                        "working",
+                        "couple",
+                        "family",
+                        "friends",
+                        "unclear"
+                      ]
+                    },
+                    "areas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "budgetMin": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "budgetMax": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "moveDate": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    },
+                    "photos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                          },
+                          "url": {
+                            "type": "string",
+                            "format": "uri"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "lifestyle": {
+                      "type": "object",
+                      "properties": {
+                        "food": {
+                          "type": "string",
+                          "enum": [
+                            "veg",
+                            "non_veg",
+                            "eggetarian",
+                            "jain"
+                          ]
+                        },
+                        "smoking": {
+                          "type": "string",
+                          "enum": [
+                            "non_smoker",
+                            "smoker",
+                            "smoke_outside"
+                          ]
+                        },
+                        "drinks": {
+                          "type": "string",
+                          "enum": [
+                            "none_at_home",
+                            "fine_at_home"
+                          ]
+                        },
+                        "guests": {
+                          "type": "string",
+                          "enum": [
+                            "weekends_only",
+                            "guests_welcome",
+                            "guests_rarely"
+                          ]
+                        },
+                        "your_days": {
+                          "type": "string",
+                          "enum": [
+                            "out_most_days",
+                            "home_most_days",
+                            "night_shifts",
+                            "student"
+                          ]
+                        },
+                        "sleep": {
+                          "type": "string",
+                          "enum": [
+                            "night_owl",
+                            "early_bird"
+                          ]
+                        },
+                        "tidiness": {
+                          "type": "string",
+                          "enum": [
+                            "very_tidy",
+                            "tidy_enough",
+                            "relaxed_about_mess"
+                          ]
+                        },
+                        "pets": {
+                          "type": "string",
+                          "enum": [
+                            "no_pets",
+                            "fine_with_pets"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "mustHaves": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "prefer",
+                          "dealbreaker"
+                        ]
+                      }
+                    },
+                    "gender": {
+                      "type": "string",
+                      "enum": [
+                        "male",
+                        "female",
+                        "non_binary"
+                      ]
+                    },
+                    "visibility": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "live",
+                        "hidden"
+                      ]
+                    },
+                    "missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "age",
+                          "whosMoving",
+                          "areas",
+                          "budget"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "fullName",
+                    "age",
+                    "jobRole",
+                    "commuteAddress",
+                    "bio",
+                    "managedByParent",
+                    "intent",
+                    "whosMoving",
+                    "areas",
+                    "budgetMin",
+                    "budgetMax",
+                    "moveDate",
+                    "photos",
+                    "lifestyle",
+                    "mustHaves",
+                    "gender",
+                    "visibility",
+                    "missing"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "fullName": {
+                      "type": "string"
+                    },
+                    "age": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 18,
+                      "maximum": 99
+                    },
+                    "jobRole": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "commuteAddress": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "bio": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "managedByParent": {
+                      "type": "boolean"
+                    },
+                    "intent": {
+                      "type": "string",
+                      "enum": [
+                        "room",
+                        "pg",
+                        "whole_flat",
+                        "flatmates",
+                        "unclear"
+                      ]
+                    },
+                    "whosMoving": {
+                      "type": "string",
+                      "enum": [
+                        "student",
+                        "first_job",
+                        "working",
+                        "couple",
+                        "family",
+                        "friends",
+                        "unclear"
+                      ]
+                    },
+                    "areas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "budgetMin": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "budgetMax": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "moveDate": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    },
+                    "photos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                          },
+                          "url": {
+                            "type": "string",
+                            "format": "uri"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "lifestyle": {
+                      "type": "object",
+                      "properties": {
+                        "food": {
+                          "type": "string",
+                          "enum": [
+                            "veg",
+                            "non_veg",
+                            "eggetarian",
+                            "jain"
+                          ]
+                        },
+                        "smoking": {
+                          "type": "string",
+                          "enum": [
+                            "non_smoker",
+                            "smoker",
+                            "smoke_outside"
+                          ]
+                        },
+                        "drinks": {
+                          "type": "string",
+                          "enum": [
+                            "none_at_home",
+                            "fine_at_home"
+                          ]
+                        },
+                        "guests": {
+                          "type": "string",
+                          "enum": [
+                            "weekends_only",
+                            "guests_welcome",
+                            "guests_rarely"
+                          ]
+                        },
+                        "your_days": {
+                          "type": "string",
+                          "enum": [
+                            "out_most_days",
+                            "home_most_days",
+                            "night_shifts",
+                            "student"
+                          ]
+                        },
+                        "sleep": {
+                          "type": "string",
+                          "enum": [
+                            "night_owl",
+                            "early_bird"
+                          ]
+                        },
+                        "tidiness": {
+                          "type": "string",
+                          "enum": [
+                            "very_tidy",
+                            "tidy_enough",
+                            "relaxed_about_mess"
+                          ]
+                        },
+                        "pets": {
+                          "type": "string",
+                          "enum": [
+                            "no_pets",
+                            "fine_with_pets"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "mustHaves": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "prefer",
+                          "dealbreaker"
+                        ]
+                      }
+                    },
+                    "gender": {
+                      "type": "string",
+                      "enum": [
+                        "male",
+                        "female",
+                        "non_binary"
+                      ]
+                    },
+                    "visibility": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "live",
+                        "hidden"
+                      ]
+                    },
+                    "missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "age",
+                          "whosMoving",
+                          "areas",
+                          "budget"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "fullName",
+                    "age",
+                    "jobRole",
+                    "commuteAddress",
+                    "bio",
+                    "managedByParent",
+                    "intent",
+                    "whosMoving",
+                    "areas",
+                    "budgetMin",
+                    "budgetMax",
+                    "moveDate",
+                    "photos",
+                    "lifestyle",
+                    "mustHaves",
+                    "gender",
+                    "visibility",
+                    "missing"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "fullName": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "age": {
+                    "type": "integer",
+                    "minimum": 18,
+                    "maximum": 99
+                  },
+                  "gender": {
+                    "type": "string",
+                    "enum": [
+                      "male",
+                      "female",
+                      "non_binary"
+                    ]
+                  },
+                  "jobRole": {
+                    "nullable": true,
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 80
+                  },
+                  "commuteAddress": {
+                    "nullable": true,
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 200
+                  },
+                  "bio": {
+                    "nullable": true,
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000
+                  },
+                  "managedByParent": {
+                    "type": "boolean"
+                  },
+                  "intent": {
+                    "type": "string",
+                    "enum": [
+                      "room",
+                      "pg",
+                      "whole_flat",
+                      "flatmates",
+                      "unclear"
+                    ]
+                  },
+                  "whosMoving": {
+                    "type": "string",
+                    "enum": [
+                      "student",
+                      "first_job",
+                      "working",
+                      "couple",
+                      "family",
+                      "friends",
+                      "unclear"
+                    ]
+                  },
+                  "areas": {
+                    "maxItems": 9,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 60
+                    }
+                  },
+                  "budgetMin": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000000
+                  },
+                  "budgetMax": {
+                    "nullable": true,
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 100000000
+                  },
+                  "moveDate": {
+                    "nullable": true,
+                    "type": "string",
+                    "format": "date",
+                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                  },
+                  "photoKeys": {
+                    "maxItems": 4,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                    }
+                  },
+                  "hidden": {
+                    "type": "boolean"
+                  },
+                  "lifestyle": {
+                    "type": "object",
+                    "properties": {
+                      "food": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "veg",
+                          "non_veg",
+                          "eggetarian",
+                          "jain"
+                        ]
+                      },
+                      "smoking": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "non_smoker",
+                          "smoker",
+                          "smoke_outside"
+                        ]
+                      },
+                      "drinks": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "none_at_home",
+                          "fine_at_home"
+                        ]
+                      },
+                      "guests": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "weekends_only",
+                          "guests_welcome",
+                          "guests_rarely"
+                        ]
+                      },
+                      "your_days": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "out_most_days",
+                          "home_most_days",
+                          "night_shifts",
+                          "student"
+                        ]
+                      },
+                      "sleep": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "night_owl",
+                          "early_bird"
+                        ]
+                      },
+                      "tidiness": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "very_tidy",
+                          "tidy_enough",
+                          "relaxed_about_mess"
+                        ]
+                      },
+                      "pets": {
+                        "nullable": true,
+                        "type": "string",
+                        "enum": [
+                          "no_pets",
+                          "fine_with_pets"
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "mustHaves": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "prefer",
+                        "dealbreaker"
+                      ]
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "fullName": {
+                      "type": "string"
+                    },
+                    "age": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 18,
+                      "maximum": 99
+                    },
+                    "jobRole": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "commuteAddress": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "bio": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "managedByParent": {
+                      "type": "boolean"
+                    },
+                    "intent": {
+                      "type": "string",
+                      "enum": [
+                        "room",
+                        "pg",
+                        "whole_flat",
+                        "flatmates",
+                        "unclear"
+                      ]
+                    },
+                    "whosMoving": {
+                      "type": "string",
+                      "enum": [
+                        "student",
+                        "first_job",
+                        "working",
+                        "couple",
+                        "family",
+                        "friends",
+                        "unclear"
+                      ]
+                    },
+                    "areas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "budgetMin": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "budgetMax": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "moveDate": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    },
+                    "photos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                          },
+                          "url": {
+                            "type": "string",
+                            "format": "uri"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "lifestyle": {
+                      "type": "object",
+                      "properties": {
+                        "food": {
+                          "type": "string",
+                          "enum": [
+                            "veg",
+                            "non_veg",
+                            "eggetarian",
+                            "jain"
+                          ]
+                        },
+                        "smoking": {
+                          "type": "string",
+                          "enum": [
+                            "non_smoker",
+                            "smoker",
+                            "smoke_outside"
+                          ]
+                        },
+                        "drinks": {
+                          "type": "string",
+                          "enum": [
+                            "none_at_home",
+                            "fine_at_home"
+                          ]
+                        },
+                        "guests": {
+                          "type": "string",
+                          "enum": [
+                            "weekends_only",
+                            "guests_welcome",
+                            "guests_rarely"
+                          ]
+                        },
+                        "your_days": {
+                          "type": "string",
+                          "enum": [
+                            "out_most_days",
+                            "home_most_days",
+                            "night_shifts",
+                            "student"
+                          ]
+                        },
+                        "sleep": {
+                          "type": "string",
+                          "enum": [
+                            "night_owl",
+                            "early_bird"
+                          ]
+                        },
+                        "tidiness": {
+                          "type": "string",
+                          "enum": [
+                            "very_tidy",
+                            "tidy_enough",
+                            "relaxed_about_mess"
+                          ]
+                        },
+                        "pets": {
+                          "type": "string",
+                          "enum": [
+                            "no_pets",
+                            "fine_with_pets"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "mustHaves": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "prefer",
+                          "dealbreaker"
+                        ]
+                      }
+                    },
+                    "gender": {
+                      "type": "string",
+                      "enum": [
+                        "male",
+                        "female",
+                        "non_binary"
+                      ]
+                    },
+                    "visibility": {
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "live",
+                        "hidden"
+                      ]
+                    },
+                    "missing": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "age",
+                          "whosMoving",
+                          "areas",
+                          "budget"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "fullName",
+                    "age",
+                    "jobRole",
+                    "commuteAddress",
+                    "bio",
+                    "managedByParent",
+                    "intent",
+                    "whosMoving",
+                    "areas",
+                    "budgetMin",
+                    "budgetMax",
+                    "moveDate",
+                    "photos",
+                    "lifestyle",
+                    "mustHaves",
+                    "gender",
+                    "visibility",
+                    "missing"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/profile/upload-urls": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "contentType": {
+                    "type": "string",
+                    "enum": [
+                      "image/jpeg",
+                      "image/png",
+                      "image/webp"
+                    ]
+                  },
+                  "size": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10485760
+                  }
+                },
+                "required": [
+                  "contentType",
+                  "size"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "key": {
+                      "type": "string",
+                      "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                    },
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "key",
+                    "url",
+                    "expiresAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/people/{id}": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "fullName": {
+                      "type": "string"
+                    },
+                    "age": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 18,
+                      "maximum": 99
+                    },
+                    "jobRole": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "commuteAddress": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "bio": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "managedByParent": {
+                      "type": "boolean"
+                    },
+                    "intent": {
+                      "type": "string",
+                      "enum": [
+                        "room",
+                        "pg",
+                        "whole_flat",
+                        "flatmates",
+                        "unclear"
+                      ]
+                    },
+                    "whosMoving": {
+                      "type": "string",
+                      "enum": [
+                        "student",
+                        "first_job",
+                        "working",
+                        "couple",
+                        "family",
+                        "friends",
+                        "unclear"
+                      ]
+                    },
+                    "areas": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "budgetMin": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "budgetMax": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100000000
+                    },
+                    "moveDate": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                    },
+                    "photos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                          },
+                          "url": {
+                            "type": "string",
+                            "format": "uri"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "url"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "lifestyle": {
+                      "type": "object",
+                      "properties": {
+                        "food": {
+                          "type": "string",
+                          "enum": [
+                            "veg",
+                            "non_veg",
+                            "eggetarian",
+                            "jain"
+                          ]
+                        },
+                        "smoking": {
+                          "type": "string",
+                          "enum": [
+                            "non_smoker",
+                            "smoker",
+                            "smoke_outside"
+                          ]
+                        },
+                        "drinks": {
+                          "type": "string",
+                          "enum": [
+                            "none_at_home",
+                            "fine_at_home"
+                          ]
+                        },
+                        "guests": {
+                          "type": "string",
+                          "enum": [
+                            "weekends_only",
+                            "guests_welcome",
+                            "guests_rarely"
+                          ]
+                        },
+                        "your_days": {
+                          "type": "string",
+                          "enum": [
+                            "out_most_days",
+                            "home_most_days",
+                            "night_shifts",
+                            "student"
+                          ]
+                        },
+                        "sleep": {
+                          "type": "string",
+                          "enum": [
+                            "night_owl",
+                            "early_bird"
+                          ]
+                        },
+                        "tidiness": {
+                          "type": "string",
+                          "enum": [
+                            "very_tidy",
+                            "tidy_enough",
+                            "relaxed_about_mess"
+                          ]
+                        },
+                        "pets": {
+                          "type": "string",
+                          "enum": [
+                            "no_pets",
+                            "fine_with_pets"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "mustHaves": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "type": "string",
+                        "enum": [
+                          "prefer",
+                          "dealbreaker"
+                        ]
+                      }
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "fullName",
+                    "age",
+                    "jobRole",
+                    "commuteAddress",
+                    "bio",
+                    "managedByParent",
+                    "intent",
+                    "whosMoving",
+                    "areas",
+                    "budgetMin",
+                    "budgetMax",
+                    "moveDate",
+                    "photos",
+                    "lifestyle",
+                    "mustHaves"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
             "description": "Default Response",
