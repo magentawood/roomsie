@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flatmateLines, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine } from './place-detail'
+import { addressLine, flatmateLines, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine } from './place-detail'
 import { listing } from './test-listing'
 
 describe('the money to move in', () => {
@@ -91,6 +91,8 @@ describe('the lines of each part', () => {
       { label: 'Bus stop', value: '10 minute walk' },
       { label: 'Mall', value: 'Not close' },
     ])
+    const all = listing({ walkStation: '5_min', walkBus: '5_min', walkMarket: '5_min', walkGym: '5_min', walkMall: '5_min' })
+    expect(nearbyLines(all).map((l) => l.label)).toEqual(['Railway or metro station', 'Gym', 'Bus stop', 'Mall', 'Market or groceries'])
   })
 
   it('gives the people who live there', () => {
@@ -102,11 +104,14 @@ describe('the lines of each part', () => {
 })
 
 describe('where it is', () => {
-  it('gives the building and the area, then the landmark, and the full address in place of the building when the API sends it', () => {
+  it('gives the building and the area, then the landmark', () => {
     expect(whereLine(listing({ building: 'Orchid Residency', landmark: 'Next to the municipal school' }), 'Andheri–Goregaon'))
       .toBe('Orchid Residency, Andheri–Goregaon • Next to the municipal school')
-    expect(whereLine(listing({ address: 'Flat 12, Orchid Residency', building: 'Orchid Residency' }), 'Andheri–Goregaon'))
-      .toBe('Flat 12, Orchid Residency, Andheri–Goregaon')
     expect(whereLine(listing({}), undefined)).toBeNull()
+  })
+
+  it('gives the address, the street and the pincode when the API sends them', () => {
+    expect(addressLine(listing({ address: 'Flat 12, B wing', street: 'SV Road', pincode: '400102' }))).toBe('Flat 12, B wing, SV Road, 400102')
+    expect(addressLine(listing({ building: 'Orchid Residency' }))).toBeNull()
   })
 })

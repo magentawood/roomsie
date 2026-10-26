@@ -71,6 +71,14 @@ describe('listing reports', () => {
     }
   })
 
+  it('a second report of the same user files nothing, and so cannot hide the listing with a safety reason', async () => {
+    const id = await t.liveListing()
+    expect((await report('seeker', id, 'fake')).statusCode).toBe(204)
+    expect((await report('seeker', id, 'harassment')).statusCode).toBe(204)
+    expect(await seen('other', id)).toBe(200)
+    expect(await reportsOf(id)).toMatchObject([{ reason: 'fake' }])
+  })
+
   it('one other report keeps the listing up, and reports from two people hide it', async () => {
     const id = await t.liveListing()
     expect((await report('seeker', id, 'broker_or_spam')).statusCode).toBe(204)

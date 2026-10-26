@@ -3,8 +3,8 @@ import { z } from 'zod'
 /** The seven report reasons of PD18. */
 export const reportReasons = ['fake', 'broker_or_spam', 'harassment', 'discriminatory_text', 'under_18', 'contact_details', 'other'] as const
 export type ReportReason = (typeof reportReasons)[number]
-/** A report with one of these reasons hides its subject at once (PD18). */
-export const safetyReasons: readonly ReportReason[] = ['harassment', 'under_18']
+/** "Other" needs a detail (PD18). */
+export const needsDetail = (reason: ReportReason) => reason === 'other'
 export const reportDetailLimit = 500
 
 const idClockSkew = 5 * 60_000
@@ -19,5 +19,5 @@ export const reportBody = z.strictObject({
   listingId: z.uuid(),
   reason: z.enum(reportReasons),
   detail: z.string().trim().min(1).max(reportDetailLimit).nullable().default(null),
-}).refine((r) => r.reason !== 'other' || r.detail !== null, { message: 'Other needs a detail', path: ['detail'] })
+}).refine((r) => !needsDetail(r.reason) || r.detail !== null, { message: 'Other needs a detail', path: ['detail'] })
 export type ReportBody = z.input<typeof reportBody>

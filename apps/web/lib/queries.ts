@@ -16,7 +16,7 @@ export function useListing(id: string) {
   return useQuery({
     queryKey: queryKeys.listing(id),
     queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
-    // A 404 is the answer: a listing that is no longer listed. Only a failure of the server or the network gets a retry.
+    // A 404 means no longer listed. Only 5xx and network errors retry.
     retry: (count, err) => count < 3 && !(err instanceof ApiError && err.status < 500),
   })
 }

@@ -9,13 +9,12 @@ import {
 import type { ListingResponse } from '@roomsie/contract'
 import { labels, listingTitle } from '../../lib/listing-steps'
 import {
-  flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
+  addressLine, flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
 import { useAreaNames } from '../../lib/queries'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
 import { ReportSheet } from './report-sheet'
-import { useShare } from './use-share'
 
 /** The icon of each line, as the designs draw them. */
 const lineIcons: Record<FactLabel, Icon> = {
@@ -32,15 +31,6 @@ const ownerLines: Record<ListingResponse['status'], string> = {
   filled: 'It is filled. Others can’t see it.',
 }
 
-function Part({ title, children }: { title: string; children: ReactNode }) {
-  return (
-    <section className="flex flex-col gap-3">
-      <h2 className="text-md font-semibold text-primary">{title}</h2>
-      {children}
-    </section>
-  )
-}
-
 function Rows({ lines, total }: { lines: Line[]; total?: string }) {
   return (
     <dl className="flex flex-col gap-2 rounded-xl border border-secondary bg-secondary p-4 text-sm">
@@ -54,11 +44,11 @@ function Rows({ lines, total }: { lines: Line[]; total?: string }) {
 
 function Facts({ lines }: { lines: Line<FactLabel>[] }) {
   return (
-    <dl className="grid border-t border-secondary sm:grid-cols-2">
+    <dl className="grid grid-cols-2 border-t border-secondary">
       {lines.map((l) => {
         const LineIcon = lineIcons[l.label]
         return (
-          <div key={l.label} className="flex gap-3 border-b border-secondary px-1 py-3 sm:odd:border-r sm:even:pl-4">
+          <div key={l.label} className="flex gap-3 border-b border-secondary px-1 py-3 odd:border-r even:pl-4">
             <LineIcon size={20} aria-hidden className="mt-0.5 shrink-0 text-fg-quaternary" />
             <div className="flex flex-col text-sm"><dt className="font-medium text-secondary">{l.label}</dt><dd className="text-tertiary">{l.value}</dd></div>
           </div>
@@ -150,10 +140,19 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
   const router = useRouter()
   const areaNames = useAreaNames()
   const title = listingTitle(listing)
-  const { share, copied } = useShare(title)
   const [reporting, setReporting] = useState(false)
+  const [copied, setCopied] = useState(false)
+  // A browser with no share sheet copies the link. A closed share sheet rejects, and that is no error.
+  const share = async () => {
+    const url = window.location.href
+    if (navigator.share) return navigator.share({ title, url }).catch(() => undefined)
+    await navigator.clipboard.writeText(url)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
   const back = () => (window.history.length > 1 ? router.back() : router.push('/saved'))
   const where = whereLine(listing, listing.areaSlug ? areaNames[listing.areaSlug] : undefined)
+  const address = addressLine(listing)
   const money = moveIn(listing)
   const terms = termLines(listing)
   const rates = pgRateLines(listing)
@@ -197,8 +196,14 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
         <header className="flex flex-col gap-1 border-b border-secondary pb-5">
           <h1 className="text-lg font-semibold text-primary">{title}</h1>
           {where && <p className="text-md text-tertiary">{where}</p>}
+          {address && <p className="text-sm text-tertiary">{address}</p>}
         </header>
-        {parts.map(([partTitle, body]) => body && <Part key={partTitle} title={partTitle}>{body}</Part>)}
+        {parts.map(([partTitle, body]) => body && (
+          <section key={partTitle} className="flex flex-col gap-3">
+            <h2 className="text-md font-semibold text-primary">{partTitle}</h2>
+            {body}
+          </section>
+        ))}
       </article>
       {!listing.mine && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary p-4 lg:hidden">

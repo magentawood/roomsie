@@ -1,13 +1,14 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, count, eq, isNull, ne } from 'drizzle-orm'
-import { errorResponse, noContent, reportBody, safetyReasons } from '@roomsie/contract'
+import { errorResponse, noContent, reportBody, type ReportReason } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import { listings, reports } from '../db/schema'
 import { visibleListing } from '../listings/read'
 import { maskContacts } from '../text/mask-contacts'
 
-/** Reports from this number of people hide a listing at once (PD18). */
+/** PD18: one report with a safety reason, or reports from this number of people, hide a listing at once. */
+const safetyReasons: readonly ReportReason[] = ['harassment', 'under_18']
 const hideAtReporters = 2
 
 export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
@@ -27,9 +28,10 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
         .where(and(eq(listings.id, listingId), visibleListing(), ne(listings.ownerUserId, reporterUserId))).for('update')
       if (!listing) return false
       // ADR-0015: a retried tap, or a second report of the same user, files nothing.
-      await tx.insert(reports).values({
+      const filed = await tx.insert(reports).values({
         id, reporterUserId, subjectUserId: listing.ownerUserId, listingId, reason, detail: detail && maskContacts(detail),
-      }).onConflictDoNothing()
+      }).onConflictDoNothing().returning({ id: reports.id })
+      if (!filed.length) return true
       const [open] = await tx.select({ reporters: count() }).from(reports)
         .where(and(eq(reports.listingId, listingId), eq(reports.status, 'open')))
       if (safetyReasons.includes(reason) || open!.reporters >= hideAtReporters) {

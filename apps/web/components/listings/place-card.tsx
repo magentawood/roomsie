@@ -11,7 +11,7 @@ export function PlaceCard({ listing, areaName, action }: { listing: ListingRespo
   const rent = rentAmount(listing)
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
-      {/* The photo opens the detail too. The title link is the one that a keyboard and a screen reader get. */}
+      {/* Keyboard and screen readers use the title link. */}
       <Link href={href} tabIndex={-1} aria-hidden className="block aspect-3/2 bg-tertiary">
         {photo
           ? <img src={photo.url} alt="" className="size-full object-cover" />
