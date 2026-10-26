@@ -47,3 +47,28 @@ The server side of a message request. It never shows a phone number.
 
 ## Read first
 - [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `packages/contract`: the body of a request, and the replies of the incoming and the outgoing requests. The interface is new.
+  - `apps/api`:
+    - New routes: send a request, list the incoming and the outgoing requests, and accept or decline one.
+    - The table of the requests gets the user ids of the two people, a listing, and the note. One open request between two people replaces one row for each pair. The status "expired" is new. One migration.
+    - The interface changes.
+  - Docs: the learn page of message requests.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database, with the test app. This seam exists.
+- **Decisions:**
+  - A request goes to a person (the card) or to a lister (through a listing, to the owner, who needs no profile). The rules are the same for the two kinds.
+  - Item 2 stays open, blocked by T-44. The accept is saved, and the note stays for T-44, which makes it the first message.
+  - The sender needs a profile, in any state, so the other person sees who asks. With no profile, the API gives 409. A complete card is not needed ([PD17](../../decisions/pd-17-connect-and-contact.md)).
+  - The note is required: 1 to 300 characters, with phone numbers masked (PD17).
+  - A person can get a request when the card is live, the account is active, it is not the own card, and no block exists in either direction. A listing can get a request when it is live and it is not the own listing. Each other target gets 404, so a block does not show.
+  - A sender has 10 new requests in a calendar day of India time. The eleventh gets 429: "You can send 10 new requests a day. Try again tomorrow."
+  - A request with no answer expires after 14 days. The sender sees "Not available" for a decline and for an expiry, and can send a new request after it ([message requests](../../learn/message-requests.md)).
+  - One request is open between two people, in each direction and for each target. The database checks it. A new request while one is open, or after an accept between them, gets 409.
+  - The recipient accepts or declines. Only an open request can be answered.
+- **Out of scope:** the messages and the chat (T-44), the alerts by email and push (T-44), the threads after a deletion (T-44), the screens (T-18b, T-45), the reports of a person and the block (T-19).
