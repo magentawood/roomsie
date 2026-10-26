@@ -278,6 +278,8 @@ export const listings = pgTable('listings', {
   description: text('description'),
   /** Set when the listing goes live: stale listings expire, not 404 (seo-with-gated-products.md). */
   expiresAt: timestamp('expires_at', { withTimezone: true }),
+  /** Set when reports hide the listing (PD18). Only the moderator clears it. */
+  hiddenAt: timestamp('hidden_at', { withTimezone: true }),
 
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -410,6 +412,8 @@ export const reports = pgTable('reports', {
   id: id(),
   reporterUserId: uuid('reporter_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   subjectUserId: uuid('subject_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  /** The reported listing. The report stays for the moderator when the owner deletes the listing (T-43). */
+  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'set null' }),
   reason: text('reason').notNull(),
   detail: text('detail'),
   status: reportStatusEnum('status').notNull().default('open'),
@@ -418,6 +422,8 @@ export const reports = pgTable('reports', {
   /** The moderator's saved query: open reports, oldest first (T-19). */
   queueIdx: index('reports_queue_idx').on(t.status, t.createdAt),
   subjectIdx: index('reports_subject_idx').on(t.subjectUserId),
+  /** A user reports a listing one time. */
+  listingReporterIdx: uniqueIndex('reports_listing_reporter_idx').on(t.listingId, t.reporterUserId),
 })).enableRLS()
 
 export const blocks = pgTable('blocks', {

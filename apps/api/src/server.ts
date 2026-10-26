@@ -14,6 +14,7 @@ import { deleteAccount } from './account'
 import { requireUser, type AuthOptions } from './auth'
 import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
+import { reportRoutes } from './reports/routes'
 import { savedRoutes } from './saved/routes'
 import type { Storage } from './storage'
 
@@ -65,6 +66,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
       )
       listingRoutes(v1, options)
       savedRoutes(v1, options)
+      reportRoutes(v1, options)
     },
     { prefix: '/v1' },
   )
