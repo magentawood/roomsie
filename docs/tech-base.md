@@ -94,8 +94,8 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
 - [Listings and photo uploads](learn/listings.md)
+- [Saved](learn/saved.md)
 - [The web UI base](learn/web-ui-base.md)
 - [Backups](learn/backups.md)
 - [Database migrations](learn/migrations.md)
-- [Deploys](learn/deploys.md)
 <!-- learn-newest:end -->
