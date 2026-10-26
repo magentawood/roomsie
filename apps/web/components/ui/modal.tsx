@@ -4,7 +4,6 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
 import type { Icon } from './button'
 
-/** A native modal dialog. A click on the backdrop, or Escape, closes it. */
 export function Dialog({ labelledBy, onClose, children }: { labelledBy: string; onClose: () => void; children: ReactNode }) {
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => dialog.current?.showModal(), [])

@@ -33,7 +33,6 @@ export type ButtonProps = {
   pressed?: boolean
   disabled?: boolean
   onClick?: () => void
-  /** "submit" sends the form that holds the button. */
   type?: 'button' | 'submit'
   className?: string
 }

@@ -22,8 +22,11 @@ export const lifestyleAnswers = {
   pets: ['no_pets', 'fine_with_pets'],
 } as const
 export type LifestyleAxis = keyof typeof lifestyleAnswers
+export type WhosMoving = (typeof whosMovingAnswers)[number]
 export const mustHaveKeys = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates', 'couple_friendly'] as const
 export const mustHaveWeights = ['prefer', 'dealbreaker'] as const
+export type MustHaveKey = (typeof mustHaveKeys)[number]
+export type MustHaveWeight = (typeof mustHaveWeights)[number]
 export const maxProfilePhotos = 4
 export const profileTextLimits = { fullName: 80, jobRole: 80, commuteAddress: 200, bio: 1000 } as const
 /** The fields that a card needs to go live, other than the name and the age, which a profile always has (PD16). */
@@ -31,7 +34,10 @@ export const liveCardFields = ['whosMoving', 'areas', 'budget'] as const
 export const visibilities = ['draft', 'live', 'hidden'] as const
 
 const text = (max: number) => z.string().trim().min(1).max(max)
-const age = z.int().min(18).max(99)
+/** roomsie is for adults (PD16). */
+export const minAge = 18
+export const maxAge = 99
+const age = z.int().min(minAge).max(maxAge)
 const answer = <A extends LifestyleAxis>(axis: A) => z.enum(lifestyleAnswers[axis])
 const answers = {
   food: answer('food'), smoking: answer('smoking'), drinks: answer('drinks'), guests: answer('guests'),

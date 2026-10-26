@@ -11,7 +11,6 @@ import { firebaseAuth } from '../../lib/firebase'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
 
-/** The delete of an account (T-20), with the copy of section 15 of the drafts. */
 export function DeleteAccountDialog({ onClose }: { onClose: () => void }) {
   const user = useUser()
   const router = useRouter()
@@ -21,7 +20,7 @@ export function DeleteAccountDialog({ onClose }: { onClose: () => void }) {
     const leave = () => signOut(firebaseAuth()).then(() => router.replace('/'))
     return (
       <Modal icon={Trash01} title="Your account is deleted." onClose={leave} actions={<Button variant="secondary" size="lg" className="flex-1" onClick={leave}>OK</Button>}>
-        You are signed out now.
+        Your profile, photos and listings are gone. OK signs you out.
       </Modal>
     )
   }

@@ -2,25 +2,24 @@
 
 import { useState, type ReactNode } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Eye, EyeOff, InfoCircle } from '@untitledui/icons'
+import { Eye, EyeOff, InfoCircle, Trash01 } from '@untitledui/icons'
 import {
-  childTypes, lifestyleAnswers, maxProfilePhotos, mustHaveKeys, mustHaveWeights, profileResponse, profileTextLimits, profileUploadUrlResponse,
-  type LifestyleAxis, type ProfileEditBody, type ProfileResponse,
+  childTypes, lifestyleAnswers, maxProfilePhotos, mustHaveKeys, profileResponse, profileTextLimits, profileUploadUrlResponse,
+  type LifestyleAxis, type MustHaveWeight, type ProfileEditBody, type ProfileResponse,
 } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import {
-  bandOf, budgetBands, describesYou, editBody, formOf, pickDescribesYou, profileLabels, type BudgetBand, type DescribesYou, type ProfileForm,
+  ages, bandOf, budgetBands, describesYou, editBody, formOf, pickDescribesYou, profileLabels, type BudgetBand, type DescribesYou, type ProfileForm,
 } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
-import { PhotoPicker, Thumb } from '../photos'
+import { PhotoPicker } from '../photos'
 import { Button } from '../ui/button'
 import { ChoiceChips, MultiChips } from '../ui/choice'
 import { Field, TextArea, TextInput, inputClass } from '../ui/field'
 import { Toggle } from '../ui/toggle'
 import { DeleteAccountDialog } from './delete-account-dialog'
 
-const ages = Array.from({ length: 82 }, (_, i) => i + 18)
 const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
 
 function Section({ title, helper, children }: { title: string; helper: string; children: ReactNode }) {
@@ -35,17 +34,23 @@ function Section({ title, helper, children }: { title: string; helper: string; c
   )
 }
 
-/** "You're discoverable", "Your card is hidden" or "Your card is not visible yet" (PD16, drafts of section 15). */
 function CardBanner({ profile }: { profile: ProfileResponse }) {
+  const firstName = profile.fullName.split(/\s+/)[0]
   const [title, text, BannerIcon] = profile.visibility === 'live'
-    ? ['You’re discoverable', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
+    ? profile.managedByParent
+      ? [`${firstName}’s card is discoverable`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]
+      : ['You’re discoverable', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
     : profile.visibility === 'hidden'
-      ? ['Your card is hidden', 'Turn off “Hide my card” in the settings to show it again.', EyeOff]
-      : ['Your card is not visible yet', `Add these to show it: ${profile.missing.map((m) => profileLabels.missing[m]).join(', ')}.`, InfoCircle]
+      ? ['Your card is hidden', 'People can’t find you in their results. Turn off “Hide my card” in the settings to show it again.', EyeOff]
+      : ['Your card is not visible yet', 'Add these to show it:', InfoCircle]
   return (
     <div role="status" className="flex items-start gap-3 rounded-xl border border-secondary p-4">
       <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-secondary text-fg-quaternary"><BannerIcon size={20} aria-hidden /></span>
-      <div className="text-sm"><p className="font-semibold text-primary">{title}</p><p className="text-tertiary">{text}</p></div>
+      <div className="text-sm">
+        <p className="font-semibold text-primary">{title}</p>
+        <p className="text-tertiary">{text}</p>
+        {profile.visibility === 'draft' && <ul className="mt-1 list-disc pl-5 text-tertiary">{profile.missing.map((m) => <li key={m}>{profileLabels.missing[m]}</li>)}</ul>}
+      </div>
     </div>
   )
 }
@@ -59,29 +64,38 @@ function Header({ profile }: { profile: ProfileResponse }) {
         ? <img src={photo.url} alt="" className="size-16 rounded-full object-cover md:size-20" />
         : <span className="flex size-16 items-center justify-center rounded-full bg-tertiary text-lg font-semibold text-tertiary md:size-20">{initials}</span>}
       <div className="flex min-w-0 flex-col">
-        <p className="truncate text-lg font-semibold text-primary">{profile.fullName}</p>
+        <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-primary">
+          <span className="truncate">{profile.fullName}</span>
+          {profile.managedByParent && <span className="rounded-full border border-badge-gray bg-badge-gray px-2 py-0.5 text-xs font-medium text-badge-gray">Managed by a parent</span>}
+        </p>
         <p className="text-md text-tertiary">{[profile.age && `${profile.age} years`, profile.jobRole].filter(Boolean).join(' • ')}</p>
       </div>
     </div>
   )
 }
 
-/** A photo saves at once, so a key never waits in R2 for a Save (T-16b spec). */
+/** A photo saves at once, so a key never waits in R2 for a Save. */
 function Photos({ profile, save }: { profile: ProfileResponse; save: (body: ProfileEditBody) => void }) {
   const keys = profile.photos.map((p) => p.key)
   return (
-    <div className="flex flex-col gap-3">
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        {profile.photos.map((p, i) => <Thumb key={p.key} src={p.url} label={`Delete photo ${i + 1}`} onRemove={() => save({ photoKeys: keys.filter((k) => k !== p.key) })} />)}
-      </div>
-      {keys.length < maxProfilePhotos
-        ? <PhotoPicker target={profileUpload} label="Click to upload a photo" onUploaded={(key) => save({ photoKeys: [...keys, key] })} />
-        : <p className="text-sm text-tertiary">{maxProfilePhotos} of {maxProfilePhotos} photos. Delete one to add another.</p>}
+    <div className="flex flex-col gap-3 md:flex-row">
+      {keys.length < maxProfilePhotos && (
+        <div className="md:w-64 md:shrink-0">
+          <PhotoPicker target={profileUpload} label="Click to upload" hint="PNG, JPG or WebP" onUploaded={(key) => save({ photoKeys: [...keys, key] })} />
+        </div>
+      )}
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {profile.photos.map((p, i) => (
+          <li key={p.key} className="flex flex-col items-center gap-2 rounded-xl border border-secondary p-2">
+            <img src={p.url} alt={`Photo ${i + 1}`} className="aspect-square w-full rounded-md object-cover" />
+            <Button variant="tertiary" size="xs" iconLeading={Trash01} onClick={() => save({ photoKeys: keys.filter((k) => k !== p.key) })}>Delete</Button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
 
-/** "Profile and Settings": the drafts of sections 10 and 15. */
 export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
   const user = useUser()
   const queryClient = useQueryClient()
@@ -89,11 +103,11 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
   const [draft, setDraft] = useState<ProfileForm>(() => formOf(profile))
   const [deleting, setDeleting] = useState(false)
   const set = (patch: Partial<ProfileForm>) => setDraft((d) => ({ ...d, ...patch }))
-  const patch = useMutation({
+  const save = useMutation({
     mutationFn: (body: ProfileEditBody) => api(user, '/v1/me/profile', profileResponse, { method: 'PATCH', body }),
     onSuccess: (saved, body) => {
       queryClient.setQueryData(queryKeys.profile, saved)
-      // A photo saves alone, so it keeps the other unsaved changes of the page.
+      // A photo saves alone, so the other unsaved changes of the page stay.
       if (!('photoKeys' in body)) setDraft(formOf(saved))
     },
   })
@@ -121,8 +135,10 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <ChoiceChips label="Gender" required labels={profileLabels.gender} value={draft.gender} onChange={(gender) => gender && set({ gender })} />
       </Section>
 
-      <Section title="Photos" helper={`Two or more gets you far more replies. Up to ${maxProfilePhotos}.`}>
-        <Photos profile={profile} save={(body) => patch.mutate(body)} />
+      <Section title="Photos" helper={profile.photos.length < maxProfilePhotos
+        ? `Two or more gets you far more replies. Up to ${maxProfilePhotos}.`
+        : `${maxProfilePhotos} of ${maxProfilePhotos} photos. Delete one to add another.`}>
+        <Photos profile={profile} save={(body) => save.mutate(body)} />
       </Section>
 
       <Section title="Your search" helper="Shown on your card so people can rule themselves in or out.">
@@ -160,7 +176,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <div className="grid gap-5 md:grid-cols-3">
           {mustHaveKeys.map((key) => (
             <ChoiceChips key={key} label={profileLabels.mustHaves[key]} labels={profileLabels.weights}
-              value={draft.mustHaves[key] ?? null} onChange={(weight: (typeof mustHaveWeights)[number] | null) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
+              value={draft.mustHaves[key] ?? null} onChange={(weight: MustHaveWeight | null) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
           ))}
         </div>
       </Section>
@@ -172,15 +188,14 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
       <Section title="Settings" helper="Card visibility and your account.">
         <Toggle title="Hide my card" help="Your card stops showing in other people’s results." checked={draft.hidden} onChange={(hidden) => set({ hidden })} />
         <div className="flex items-start justify-between gap-4">
-          <span className="flex flex-col"><span className="text-md font-medium text-primary">Delete your account</span><span className="text-sm text-tertiary">Your profile, photos and listings go for good.</span></span>
+          <span className="flex flex-col"><span className="text-md font-medium text-primary">Delete Account</span><span className="text-sm text-tertiary">Delete your account.</span></span>
           <Button variant="secondary" size="sm" onClick={() => setDeleting(true)}>Delete my account</Button>
         </div>
       </Section>
 
       <div className="flex flex-col items-end gap-2 border-t border-secondary pt-5">
-        {patch.isError && <p role="alert" className="text-sm text-error-primary">{errorText(patch.error)}</p>}
-        {patch.isSuccess && !Object.keys(changes).length && <p role="status" className="text-sm text-tertiary">Saved.</p>}
-        <Button variant="primary" size="lg" disabled={!Object.keys(changes).length || !draft.fullName.trim() || patch.isPending} onClick={() => patch.mutate(changes)}>Save</Button>
+        {save.isError && <p role="alert" className="text-sm text-error-primary">{errorText(save.error)}</p>}
+        <Button variant="primary" size="lg" disabled={!Object.keys(changes).length || !draft.fullName.trim() || save.isPending} onClick={() => save.mutate(changes)}>Save</Button>
       </div>
       {deleting && <DeleteAccountDialog onClose={() => setDeleting(false)} />}
     </div>
