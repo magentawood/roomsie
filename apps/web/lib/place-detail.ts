@@ -19,7 +19,8 @@ export function moveIn(listing: ListingResponse) {
   }
 }
 
-const date = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })
+/** "1 Nov 26". */
+export const shortDate = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })
 
 export function termLines(listing: ListingResponse) {
   const electricity = listing.electricity === 'included' ? 'Included in rent' : ifSet(listing.electricity, (e) => labels.electricity[e])
@@ -29,7 +30,7 @@ export function termLines(listing: ListingResponse) {
     ['Maintenance', maintenance],
     ['Rent', ifSet(listing.rentNegotiable, (n) => (n ? 'Negotiable' : 'Fixed'))],
     ['Minimum stay', ifSet(listing.minStay, (m) => labels.minStay[m])],
-    ['Available from', ifSet(listing.availableFrom, date)],
+    ['Available from', ifSet(listing.availableFrom, shortDate)],
   ])
 }
 

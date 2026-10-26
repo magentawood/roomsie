@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CardResponse } from '@roomsie/contract'
-import { aboutLine, budgetLine, connectLine, initials, lifestyleLines, lifestyleSummary, lookingFor, moveLine, mustHaveGroups } from './person'
+import { budgetLine, connectLine, lifestyleLines, lifestyleSummary, mustHaveGroups } from './person'
 
 const card: CardResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 26, jobRole: 'Business analyst', commuteAddress: 'Goregaon', bio: null,
@@ -10,17 +10,11 @@ const card: CardResponse = {
 }
 
 describe('the lines of a card', () => {
-  it('gives what the person looks for, the budget and the moving date', () => {
-    expect(lookingFor(card)).toBe('Flat with flatmates')
-    expect(lookingFor({ ...card, intent: 'unclear' })).toBeNull()
-    expect(budgetLine(null, 15000)).toBe('Up to ₹15,000')
-    expect(budgetLine(35000, null)).toBe('From ₹35,000')
-    expect(budgetLine(12000, 18000)).toBe('₹12,000 to ₹18,000')
-    expect(budgetLine(null, null)).toBeNull()
-    expect(moveLine('2026-11-01')).toBe('1 Nov 26')
-    expect(aboutLine(card)).toBe('Business analyst • 26 yrs')
-    expect(aboutLine({ jobRole: null, age: null })).toBe('')
-    expect(initials('Divya Sharma Rao')).toBe('DS')
+  it('gives the budget as the designs write it', () => {
+    expect(budgetLine({ budgetMin: null, budgetMax: 15000 })).toBe('Under ₹15,000')
+    expect(budgetLine({ budgetMin: 35000, budgetMax: null })).toBe('From ₹35,000')
+    expect(budgetLine({ budgetMin: 12000, budgetMax: 18000 })).toBe('₹12,000 to ₹18,000')
+    expect(budgetLine({ budgetMin: null, budgetMax: null })).toBeNull()
   })
 
   it('names the lifestyle answers in the order of the designs, with "Their days"', () => {

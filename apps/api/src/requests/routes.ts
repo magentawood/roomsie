@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq, lte, ne } from 'drizzle-orm'
 import {
-  errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, requestDailyLimit, sendRequestBody,
+  errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, requestCapMessage, requestDailyLimit, sendRequestBody,
   type SendRequestBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
@@ -62,7 +62,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       }).onConflictDoNothing().returning()
       return row
     })
-    if (made === 'limit') return reply.code(429).send({ error: `You can send ${requestDailyLimit} new requests a day. Try again tomorrow.` })
+    if (made === 'limit') return reply.code(429).send({ error: requestCapMessage })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
     return reply.code(201).send(outgoingView(made))
   })

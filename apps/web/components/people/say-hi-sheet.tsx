@@ -7,12 +7,13 @@ import { outgoingRequest, requestNoteLimit } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { queryKeys } from '../../lib/queries'
+import type { PersonTarget } from '../reports/report-sheet'
 import { Button } from '../ui/button'
 import { TextArea } from '../ui/field'
 import { Modal } from '../ui/modal'
 
 /** "Say hi" sends one note as a message request (PD17). */
-export function SayHiSheet({ profileId, name, onClose }: { profileId: string; name: string; onClose: () => void }) {
+export function SayHiSheet({ target: { profileId, firstName: name }, onClose }: { target: PersonTarget; onClose: () => void }) {
   const user = useUser()
   const queryClient = useQueryClient()
   const [note, setNote] = useState<string | null>(null)

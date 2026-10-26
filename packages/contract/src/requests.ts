@@ -6,6 +6,7 @@ export const requestNoteLimit = 300
 /** PD17: a sender starts this many requests a day, and a request with no answer expires after this many days. */
 export const requestDailyLimit = 10
 export const requestExpiryDays = 14
+export const requestCapMessage = `You can send ${requestDailyLimit} new requests a day. Try again tomorrow.`
 
 const note = requiredText(requestNoteLimit)
 export const sendRequestBody = z.union([z.strictObject({ toProfileId: z.uuid(), note }), z.strictObject({ listingId: z.uuid(), note })])

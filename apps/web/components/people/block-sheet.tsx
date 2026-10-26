@@ -8,11 +8,12 @@ import { noContent } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { queryKeys } from '../../lib/queries'
+import type { PersonTarget } from '../reports/report-sheet'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
 
 /** A block hides the two people from each other. The other person is not told (T-19). */
-export function BlockSheet({ profileId, name, onClose, onBlocked }: { profileId: string; name: string; onClose: () => void; onBlocked: () => void }) {
+export function BlockSheet({ target: { profileId, firstName: name }, onClose, onBlocked }: { target: PersonTarget; onClose: () => void; onBlocked: () => void }) {
   const user = useUser()
   const queryClient = useQueryClient()
   // ADR-0015: the id comes from the first tap, so a retry blocks one time.
