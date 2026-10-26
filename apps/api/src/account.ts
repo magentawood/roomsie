@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { and, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import type { Db } from './db/client'
-import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, reports, users } from './db/schema'
+import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, reports, saves, users } from './db/schema'
 import type { Storage } from './storage'
 
 /** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
@@ -51,6 +51,8 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
     await tx.delete(goals).where(eq(goals.userId, userId))
     await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
     await tx.delete(profiles).where(eq(profiles.userId, userId))
+    // The tombstone keeps the users row, so its cascade does not remove the saves of the user (T-47).
+    await tx.delete(saves).where(eq(saves.userId, userId))
     await tx.update(users).set({
       status: 'deleted',
       authProviderId: tombstoneKey(identity),

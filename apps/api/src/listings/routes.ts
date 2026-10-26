@@ -183,7 +183,7 @@ async function ownedListing(db: Db, id: string, ownerUserId: string) {
 }
 
 /** The rents and the flatmates of each listing, from two queries. */
-async function partsOf(db: Db, ids: string[]) {
+export async function partsOf(db: Db, ids: string[]) {
   const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))
   const flatmates = await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.position))
   return (id: string): Parts => ({
@@ -231,7 +231,7 @@ function missingToGoLive(listing: Listing, { rates, flatmates }: Parts, check: '
   return missing
 }
 
-function view(listing: Listing, { rates, flatmates }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
+export function view(listing: Listing, { rates, flatmates }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
   // The serializer parses each reply with the contract schema, which drops ownerUserId and the row ids.
   const { photoKeys, roomType, expiresAt, createdAt, updatedAt, ...fields } = listing
   const hideAddress = !isOwner && !listing.shareAddress
