@@ -31,9 +31,9 @@ Listing photos load from our own address, not the test address of Cloudflare.
 - No task waits on this task.
 
 ## Done when
-- [ ] The photos bucket serves photos.roomsie.in, and its r2.dev address is off
+- [x] The photos bucket serves photos.roomsie.in, and its r2.dev address is off · [#149](https://github.com/magentawood/roomsie/pull/149)
 - [x] `R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it · [#148](https://github.com/magentawood/roomsie/pull/148)
-- [ ] A listing photo on roomsie.in loads from photos.roomsie.in
+- [x] A listing photo on roomsie.in loads from photos.roomsie.in · [#149](https://github.com/magentawood/roomsie/pull/149)
 
 ^done
 
@@ -70,4 +70,11 @@ Listing photos load from our own address, not the test address of Cloudflare.
   - **Ticked:** "`R2_PUBLIC_URL` of the API is `https://photos.roomsie.in`, and the deploy uses it"
   - **Not done:** "The photos bucket serves photos.roomsie.in, and its r2.dev address is off" and "A listing photo on roomsie.in loads from photos.roomsie.in": the merge starts the deploy, then the live check runs, then r2.dev goes off. A follow-up PR ticks them.
   - **Learn:** [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
+- **2026-10-26 · [#149](https://github.com/magentawood/roomsie/pull/149)**
+  - **Change:** the live check after the deploy of #148. A draft listing on roomsie.in shows its photo from photos.roomsie.in, with the 10-minute cache. After the delete of the listing, the photo is gone from R2. Then the r2.dev address went off, and the `R2_PUBLIC_URL` secret went.
+  - **Why:** the order of the spec: no photo address breaks.
+  - **Ticked:** "The photos bucket serves photos.roomsie.in, and its r2.dev address is off" and "A listing photo on roomsie.in loads from photos.roomsie.in"
+  - **Not done:** none
+  - **Learn:** none
   - **Journal:** [2026-10](../../journal/2026-10.md)

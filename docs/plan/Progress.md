@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**67 of 295 done · 23%**
+**69 of 295 done · 23%**
 
-`█████░░░░░░░░░░░░░░░░░░░`
+`██████░░░░░░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 2 / 15 | 17 / 66 | 26% |
+| [[P3 Data and trust]] | 3 / 15 | 19 / 66 | 29% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 30 | 20% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 29 | 14% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**40 free tasks are open · 148 build hours.**
+**39 free tasks are open · 147 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -71,7 +71,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-47 Saved]] | P3 | 4 | ⬜ can start | 0 | [#123](https://github.com/magentawood/roomsie/issues/123) |
 | 0 | [[T-52 Web CSP]] | P1 | 3 | ⬜ can start | 0 | [#135](https://github.com/magentawood/roomsie/issues/135) |
 | 0 | [[T-53 Delete the Firebase user]] | P4 | 2 | ⬜ can start | 0 | [#143](https://github.com/magentawood/roomsie/issues/143) |
-| 0 | [[T-54 Photos domain]] | P3 | 1 | 🟡 in progress | 0 | [#146](https://github.com/magentawood/roomsie/issues/146) |
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | 1 | [[T-14 Match query ⚑]] | P3 | 6 | 🟡 in progress | 6 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
@@ -151,7 +150,7 @@ flowchart LR
   T18a["T-18a ⚑<br/>Message request API"]:::ready
   T20["T-20<br/>Account deletion"]:::done
   T53["T-53<br/>Delete the Firebase user"]:::ready
-  T54["T-54<br/>Photos domain"]:::doing
+  T54["T-54<br/>Photos domain"]:::done
   T23b["T-23b<br/>Legal pages"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::todo
@@ -375,7 +374,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 17/66
+## P3 Data and trust — 19/66
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -392,7 +391,7 @@ flowchart LR
 > [!todo]- ✅ [[T-41 Listings API]] · 6/6
 > ![[T-41 Listings API#^done]]
 
-> [!todo]- 🟡 [[T-54 Photos domain]] · 1/3
+> [!todo]- ✅ [[T-54 Photos domain]] · 3/3
 > ![[T-54 Photos domain#^done]]
 
 > [!todo]- 🟡 [[T-42 Listing flow screens]] · 2/3
