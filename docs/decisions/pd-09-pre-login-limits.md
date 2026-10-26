@@ -1,6 +1,6 @@
 # PD9 — Abuse and cost limits on the pre-login chat
 
-**Status:** Settled · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-10-26. · **Date:** 2026-09-20 · **Deciders:** Yash; the look of the wall: n3rxv, for the founders
 
 ## Context
 
@@ -19,7 +19,9 @@ The turn cap:
 - After five free-text turns, the user must sign in to continue.
 - Intent, area and budget are chip-driven. **Chip taps do not count.**
 - **Hard rule: the cap cannot stop the chat until the panel renders a minimum of one time.** If slots are missing at turn five, continue until results exist. Then stop.
-- **The listings stay on the screen.** Gate the chat, not the results. The wall replaces the chat input with a request to sign in. The user can continue to scroll and filter the panel.
+- **The listings stay on the screen.** Gate the chat, not the results.
+- The wall is the sign-in modal of the designs (Figma `218:21361`), over the blurred screen. On a phone, the modal is a sheet.
+- The user can close the modal, then scroll and filter the panel. The chat input stays locked, and each new message opens the modal again.
 - Put the cap value in config, not in code. When there is traffic, do an A/B test of it.
 
 Rate limits:
@@ -45,6 +47,7 @@ At the ceiling:
 - **Chips have no cost.** A chip tap runs no model. The turn budget controls model cost. Thus, it is incorrect to count chip taps. That also penalises the users with the lowest cost. A user who taps chips for intent, area and budget gets to the results with all five turns available.
 - A user who types can use turns on clarification and get to five turns with no results. The user gave effort, got nothing, and left. We paid for the tokens and got no conversion. That is the worst possible result.
 - If you remove results that the user saw, it looks like a trick. Manual filters have no cost.
+- The modal asks at the moment of the cap, and its close button gives the results back. A locked input with a line of text was the first plan, but the designs use the modal.
 - The cap is a conversion lever, and it is cheap to change. If it is too low, users leave before they invest effort. If it is too high, we pay for tyre-kickers.
 - The device limit stops one browser that starts fifty interviews.
 - At the ceiling, the product continues to work. But it does not understand sentences until the window resets. The alert lets a person look before users see an effect.

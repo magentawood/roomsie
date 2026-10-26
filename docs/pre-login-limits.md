@@ -34,8 +34,8 @@ Why: [PD9](decisions/pd-09-pre-login-limits.md)
 ### What the wall looks like
 
 - **The listings stay on the screen.** Gate the chat, not the results.
-- The wall replaces the chat input with a request to sign in.
-- The user can continue to scroll and filter the panel.
+- The wall is the sign-in modal of the designs, over the blurred screen. On a phone, it is a sheet.
+- The user can close the modal, then scroll and filter the panel. Each new message opens the modal again.
 
 Why: [PD9](decisions/pd-09-pre-login-limits.md)
 

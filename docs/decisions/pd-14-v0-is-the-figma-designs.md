@@ -4,16 +4,16 @@
 
 ## Context
 
-- The designs arrived on 24 October. They are in three Figma files in "Roomsie's team":
+- The designs arrived on 24 October. They are in two Figma files in "Roomsie's team", with a page of the Product file for the website:
   - **[Product](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=5-2):** the page "Product screens", with four flows: 01 Entry and onboarding, 02 Search in chat, 03 Profile and settings, 04 Listing flow and my listings.
-  - **[Website](https://www.figma.com/design/qp9jcZmIhy26ty3ysqsHcv/Website?node-id=0-1):** the section "Final screens" is the master landing page, at desktop, tablet and mobile widths. The "Website" page of the Product file is a copy. Do not build from the copy.
+  - **[Website](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=256-18546):** the page "Website" of the Product file. Its section "Final screens" is the landing page, at desktop, tablet and mobile widths, and it has the product film. The separate file "Website" is a copy. Do not build from the copy.
   - **[Roomsie design system (extended)](https://www.figma.com/design/uIuJWfzf3zGiOg3IqdDaxF/Roomsie-design-system--extended-?node-id=1480-0):** an Untitled UI kit (ADR-0011). Figtree type, a black and grey brand, and the Tailwind status colours.
 - The designs show more than PD0 allowed. Flow 04 lets owners, flatmates, PG operators and brokers list a place. The results show five card kinds: flatmate, room in a flat, owner flat, PG or hostel, and broker flat.
 - The designs also show in-app messages and a DigiLocker step. The plan had both after v0.
 
 ## Decision
 
-**In one line:** v0 is the product that the three Figma files show, with listings from owners, flatmates, PG operators and brokers; this replaces PD0.
+**In one line:** v0 is the product that the Figma designs show, with listings from owners, flatmates, PG operators and brokers; this replaces PD0.
 
 - **The Figma designs set the scope of v0.** If a doc or a task disagrees with the designs, the designs win. Change the doc or the task.
 - **v0 has listing objects.** A lister selects one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, or "I'm a broker".
