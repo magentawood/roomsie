@@ -62,7 +62,12 @@ voter ID or PAN card. A named reviewer compares the selfie to the ID photo.
 
 - If a user sends an Aadhaar, reject it and delete it at once.
 
-**v1 route: DigiLocker.**
+**v1 routes: DigiLocker, and the Aadhaar app QR.**
+
+- The Aadhaar app gives a QR that UIDAI signs. roomsie checks the signature
+  and keeps no copy. It needs a UIDAI registration as an offline verification
+  entity (OVSE): no published fee, and a public certificate with two years of
+  validity.
 
 - After OTP authentication by the user, DigiLocker returns a signed Aadhaar XML.
 - You at no time hold the document.
