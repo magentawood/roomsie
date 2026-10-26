@@ -57,8 +57,8 @@ Why: [PD8](decisions/pd-08-verification.md)
 
 ### What to do instead
 
-**v0 route: a government ID that is not Aadhaar**, for example a passport,
-driving licence or voter ID. A named reviewer compares the selfie to the ID photo.
+**v0 route: a government ID that is not Aadhaar**: a passport, driving licence,
+voter ID or PAN card. A named reviewer compares the selfie to the ID photo.
 
 - If a user sends an Aadhaar, reject it and delete it at once.
 
