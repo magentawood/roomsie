@@ -12,6 +12,7 @@ import { useUser } from '../../lib/auth'
 import {
   ages, bandOf, budgetBands, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, type ProfileForm,
 } from '../../lib/profile-form'
+import { initials } from '../../lib/person'
 import { queryKeys, useAreas } from '../../lib/queries'
 import { PhotoPicker } from '../photos'
 import { Badge } from '../ui/badge'
@@ -61,12 +62,11 @@ function CardBanner({ profile }: { profile: ProfileResponse }) {
 
 function Header({ profile }: { profile: ProfileResponse }) {
   const photo = profile.photos[0]
-  const initials = profile.fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
   return (
     <div className="flex items-center gap-4 rounded-xl bg-secondary p-4 md:p-6">
       {photo
         ? <img src={photo.url} alt="" className="size-16 rounded-full object-cover md:size-20" />
-        : <span className="flex size-16 items-center justify-center rounded-full bg-tertiary text-lg font-semibold text-tertiary md:size-20">{initials}</span>}
+        : <span className="flex size-16 items-center justify-center rounded-full bg-tertiary text-lg font-semibold text-tertiary md:size-20">{initials(profile.fullName)}</span>}
       <div className="flex min-w-0 flex-col">
         <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-primary">
           <span className="truncate">{profile.fullName}</span>

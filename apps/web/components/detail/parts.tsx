@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
+import { useRouter } from 'next/navigation'
 import { DotsVertical } from '@untitledui/icons'
 import type { Icon } from '../ui/button'
-
-/** The parts that the detail of a place and the detail of a person share (T-43, T-18b). */
 
 export type Fact = { label: string; value: string; icon: Icon }
 
@@ -29,12 +28,16 @@ export function Chips({ items, className = 'border-secondary bg-secondary text-s
   )
 }
 
-export function Photos({ photos, shape = 'aspect-3/2' }: { photos: { key: string; url: string }[]; shape?: string }) {
+export function Section({ title, children }: { title: string; children: ReactNode }) {
+  return <section className="flex flex-col gap-3"><h2 className="text-md font-semibold text-primary">{title}</h2>{children}</section>
+}
+
+export function Photos({ photos }: { photos: { key: string; url: string }[] }) {
   const [shown, setShown] = useState(0)
   if (!photos.length) return null
   return (
     <div className="flex flex-col gap-2 md:flex-row">
-      <img src={photos[shown]!.url} alt={`Photo ${shown + 1} of ${photos.length}`} className={`${shape} w-full rounded-xl object-cover md:min-w-0 md:flex-1`} />
+      <img src={photos[shown]!.url} alt={`Photo ${shown + 1} of ${photos.length}`} className="aspect-3/2 w-full rounded-xl object-cover md:min-w-0 md:flex-1" />
       {photos.length > 1 && (
         <ul className="flex gap-2 md:w-28 md:flex-col">
           {photos.map((p, i) => (
@@ -51,9 +54,8 @@ export function Photos({ photos, shape = 'aspect-3/2' }: { photos: { key: string
   )
 }
 
-export type MenuItem = { label: string; icon: Icon; onClick: () => void; danger?: boolean }
+type MenuItem = { label: string; icon: Icon; onClick: () => void; danger?: boolean }
 
-/** The ⋮ menu of the phone bar of a detail. */
 export function DetailMenu({ id, items }: { id: string; items: MenuItem[] }) {
   return (
     <>
@@ -83,4 +85,10 @@ export function useShare(title: string) {
     setTimeout(() => setCopied(false), 2000)
   }
   return { share, copied }
+}
+
+/** Back, or Saved when the detail opened in a new tab. */
+export function useBack() {
+  const router = useRouter()
+  return () => (window.history.length > 1 ? router.back() : router.push('/saved'))
 }

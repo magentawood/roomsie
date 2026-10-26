@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
   LayersThree01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
@@ -12,7 +11,7 @@ import {
   addressLine, flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
 import { useAreaNames } from '../../lib/queries'
-import { Chips, DetailMenu, Facts, Photos, useShare } from '../detail/parts'
+import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
@@ -81,12 +80,11 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
 
 /** The detail of a place: the four kinds of the Product file (T-43). TODO(T-46): the "Verified" pill. */
 export function PlaceDetail({ listing }: { listing: ListingResponse }) {
-  const router = useRouter()
   const areaNames = useAreaNames()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
   const { share, copied } = useShare(title)
-  const back = () => (window.history.length > 1 ? router.back() : router.push('/saved'))
+  const back = useBack()
   const where = whereLine(listing, listing.areaSlug ? areaNames[listing.areaSlug] : undefined)
   const address = addressLine(listing)
   const money = moveIn(listing)
@@ -134,12 +132,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
           {where && <p className="text-md text-tertiary">{where}</p>}
           {address && <p className="text-sm text-tertiary">{address}</p>}
         </header>
-        {parts.map(([partTitle, body]) => body && (
-          <section key={partTitle} className="flex flex-col gap-3">
-            <h2 className="text-md font-semibold text-primary">{partTitle}</h2>
-            {body}
-          </section>
-        ))}
+        {parts.map(([partTitle, body]) => body && <Section key={partTitle} title={partTitle}>{body}</Section>)}
       </article>
       {!listing.mine && (
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary p-4 lg:hidden">

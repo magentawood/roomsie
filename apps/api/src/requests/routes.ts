@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq, lte, ne } from 'drizzle-orm'
 import {
-  errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, sendRequestBody,
+  errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, requestDailyLimit, sendRequestBody,
   type SendRequestBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
@@ -13,7 +13,7 @@ import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import type { Storage } from '../storage'
 import { maskContacts } from '../text/mask-contacts'
-import { betweenUsers, dailyLimit, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
+import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
 
 const outgoingView = (r: RequestRow) => ({
   id: r.id, toProfileId: r.toProfileId, listingId: r.listingId, createdAt: r.createdAt.toISOString(),
@@ -53,7 +53,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const made = await db.transaction(async (tx) => {
       // The lock makes two requests at the same time count each other.
       await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for('update')
-      if (await sentToday(tx, userId) >= dailyLimit) return 'limit' as const
+      if (await sentToday(tx, userId) >= requestDailyLimit) return 'limit' as const
       // An expired request frees the pair for a new one.
       await tx.update(connectionRequests).set({ status: 'expired' })
         .where(and(pair, eq(connectionRequests.status, 'pending'), lte(connectionRequests.createdAt, expiryCutoff())))
@@ -62,7 +62,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       }).onConflictDoNothing().returning()
       return row
     })
-    if (made === 'limit') return reply.code(429).send({ error: `You can send ${dailyLimit} new requests a day. Try again tomorrow.` })
+    if (made === 'limit') return reply.code(429).send({ error: `You can send ${requestDailyLimit} new requests a day. Try again tomorrow.` })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
     return reply.code(201).send(outgoingView(made))
   })
