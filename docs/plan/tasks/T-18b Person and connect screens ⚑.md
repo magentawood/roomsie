@@ -42,6 +42,7 @@ Read the full profile of a person and send a message request.
 - [ ] The Say hi button has request sent, accepted and not available states
 - [ ] No phone number shows
 - [ ] Report and block need only one tap
+- [ ] The person detail has the Save button of T-47, and the People tab of Saved lists the saved people
 
 ^done
 
