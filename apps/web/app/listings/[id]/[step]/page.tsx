@@ -4,8 +4,7 @@ import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, Trash01 } from '@untitledui/icons'
-import { z } from 'zod'
-import { listingResponse, type AreasResponse, type GoLiveField, type ListingEdit, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
+import { listingResponse, noContent, type AreasResponse, type GoLiveField, type ListingEdit, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../../../lib/api'
 import { useUser } from '../../../../lib/auth'
 import { listingSteps, stepBody, stepCopy, stepErrors, toEditValues, type StepId } from '../../../../lib/listing-steps'
@@ -48,7 +47,7 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
     mutationFn: () => api(user, `/v1/listings/${listing.id}/status`, listingResponse, { method: 'POST', body: { status: 'live' } satisfies ListingStatusBody }),
   })
   const remove = useMutation({
-    mutationFn: () => api(user, `/v1/listings/${listing.id}`, z.null(), { method: 'DELETE' }),
+    mutationFn: () => api(user, `/v1/listings/${listing.id}`, noContent, { method: 'DELETE' }),
     onSuccess: () => queryClient.removeQueries({ queryKey: queryKeys.listing(listing.id) }),
   })
 

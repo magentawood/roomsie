@@ -5,7 +5,6 @@ import { useAuth } from '../../lib/auth'
 import { Button } from '../ui/button'
 import { Logo } from './logo'
 
-/** The text of the gate on the listing screens. */
 export const listingSignIn = { title: 'Sign in to list your place', text: 'Your listings stay in your account, and only you can change them.' }
 
 /** A screen behind sign-in (PD6b). A signed-out user sees the Google sign-in of T-05, with the title and text of the screen. */

@@ -4,14 +4,16 @@ import type { Db } from '../db/client'
 import { listingFlatmates, listingRates, listings } from '../db/schema'
 import type { Storage } from '../storage'
 
-type Listing = typeof listings.$inferSelect
-type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
-type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
+export type Listing = typeof listings.$inferSelect
+export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
+export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
 export type Parts = { rates: Rate[]; flatmates: Flatmate[] }
 
-/** A listing that other users can see. */
+/** A listing that other users can see: live, and not expired. `visibleListing` is the same rule in SQL. */
+export const isVisible = (listing: Listing) => listing.status === 'live' && listing.expiresAt! > new Date()
 export const visibleListing = () => and(eq(listings.status, 'live'), gt(listings.expiresAt, new Date()))
 
+/** The rents and the flatmates of each listing, from two queries. */
 export async function partsOf(db: Db, ids: string[]) {
   const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))
   const flatmates = await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.position))

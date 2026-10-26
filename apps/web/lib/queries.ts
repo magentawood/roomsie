@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { areasResponse, savedPeopleResponse, savedPlacesResponse } from '@roomsie/contract'
+import { areasResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind } from '@roomsie/contract'
 import { api } from './api'
 import { useUser } from './auth'
 
@@ -10,8 +10,6 @@ export const queryKeys = {
   areas: ['areas'],
   saved: (kind: SavedKind) => ['saved', kind],
 } as const
-
-export type SavedKind = 'places' | 'people'
 
 /** The area groups change only with a deploy, so one fetch serves the visit. */
 export function useAreas() {
@@ -40,4 +38,3 @@ export function useSavedIds(kind: SavedKind) {
   const people = useSavedPeople(kind === 'people')
   return new Set(kind === 'places' ? (places.data?.places ?? []).map((l) => l.id) : (people.data?.people ?? []))
 }
-

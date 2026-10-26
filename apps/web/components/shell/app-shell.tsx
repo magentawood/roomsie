@@ -62,7 +62,7 @@ function MobileNav() {
   return (
     <nav className="fixed inset-x-4 bottom-4 z-40 flex items-center gap-2 lg:hidden">
       <div className="flex flex-1 items-center rounded-full border border-secondary bg-primary p-1 shadow-sm">
-        {/* The bar of the designer. The chat is the home screen behind it, so it has no tab. */}
+        {/* The chat is the home screen, so it has no tab. */}
         <NavItem look="phone" icon={MessageCircle01} label="Messages" />
         <NavItem look="phone" icon={Bookmark} label="Saved" href="/saved" />
         <NavItem look="phone" icon={Key01} label="My Listings" href="/listings" />
@@ -86,10 +86,13 @@ export function AppShell({ children, mobileNav = true }: { children: ReactNode; 
   )
 }
 
-export function PageHeader({ title, backHref }: { title: string; backHref: string }) {
+/** `inPhoneBar`: the page is a tab of the phone bar, so phones show no back button. */
+export function PageHeader({ title, backHref, inPhoneBar }: { title: string; backHref: string; inPhoneBar?: boolean }) {
   return (
     <header className="flex items-center gap-3 border-b border-secondary px-5 py-4 md:px-6">
-      <Button variant="secondary" size="xs" iconLeading={ChevronLeft} href={backHref} label="Back" />
+      <span className={inPhoneBar ? 'hidden lg:inline-flex' : 'inline-flex'}>
+        <Button variant="secondary" size="xs" iconLeading={ChevronLeft} href={backHref} label="Back" />
+      </span>
       <h1 className="text-md font-medium text-primary">{title}</h1>
     </header>
   )
