@@ -4,8 +4,9 @@ import { useState } from 'react'
 import { Bookmark } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import type { SavedKind } from '@roomsie/contract'
-import { useAreaNames, useSavedPlaces } from '../../lib/queries'
+import { useAreaNames, useSavedPeople, useSavedPlaces } from '../../lib/queries'
 import { PlaceCard } from '../../components/listings/place-card'
+import { PersonCard } from '../../components/people/person-card'
 import { SaveButton } from '../../components/saved/save-button'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
@@ -36,6 +37,18 @@ function Places() {
   )
 }
 
+function People() {
+  const people = useSavedPeople()
+  if (people.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(people.error)}</p>
+  if (people.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (!people.data.people.length) return <EmptyState icon={Bookmark} title="No people saved yet">Select Save on a person to keep them here.</EmptyState>
+  return (
+    <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {people.data.people.map((card) => <li key={card.id}><PersonCard card={card} action={<SaveButton kind="people" id={card.id} />} /></li>)}
+    </ul>
+  )
+}
+
 function Saved() {
   const [tab, setTab] = useState<SavedKind>('places')
   return (
@@ -44,10 +57,7 @@ function Saved() {
       <main className="flex flex-1 flex-col gap-5 px-5 py-5 md:px-6 md:py-8">
         <Tabs label="Saved" tabs={{ places: 'Places', people: 'People' }} value={tab} onChange={setTab} />
         <div role="tabpanel" className="flex flex-1 flex-col">
-          {tab === 'places'
-            ? <Places />
-            // TODO(T-18b): the person cards.
-            : <EmptyState icon={Bookmark} title="No people saved yet">Select Save on a person to keep them here.</EmptyState>}
+          {tab === 'places' ? <Places /> : <People />}
         </div>
       </main>
     </>
