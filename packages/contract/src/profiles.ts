@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { optionalText, photoKeyIn, rupees, uploadUrlReply } from './shared'
+import { optionalText, photoKeyIn, requiredText, rupees, uploadUrlReply } from './shared'
 
 /* The Form A fields of PD15. The database enums use the same lists. */
 export const intents = ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'] as const
@@ -33,7 +33,6 @@ export const profileTextLimits = { fullName: 80, jobRole: 80, commuteAddress: 20
 export const liveCardFields = ['whosMoving', 'areas', 'budget'] as const
 export const visibilities = ['draft', 'live', 'hidden'] as const
 
-const text = (max: number) => z.string().trim().min(1).max(max)
 /** roomsie is for adults (PD16). */
 export const minAge = 18
 export const maxAge = 99
@@ -50,7 +49,7 @@ const weight = z.enum(mustHaveWeights)
 const mustHaves = z.partialRecord(z.enum(mustHaveKeys), weight)
 export const profilePhotoKey = photoKeyIn('profiles')
 
-export const createProfileBody = z.strictObject({ fullName: text(profileTextLimits.fullName), age, gender: z.enum(genders) })
+export const createProfileBody = z.strictObject({ fullName: requiredText(profileTextLimits.fullName), age, gender: z.enum(genders) })
 export type CreateProfileBody = z.infer<typeof createProfileBody>
 
 /** null clears a field. In `lifestyle` and `mustHaves`, null clears one answer. */

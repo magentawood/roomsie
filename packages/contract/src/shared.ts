@@ -12,4 +12,5 @@ export type UploadUrlBody = z.infer<typeof uploadUrlBody>
 export const uploadUrlReply = (key: ReturnType<typeof photoKeyIn>) => z.object({ key, url: z.url(), expiresAt: z.iso.datetime() })
 
 export const rupees = z.int().min(0).max(100_000_000)
-export const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable()
+export const requiredText = (max: number) => z.string().trim().min(1).max(max)
+export const optionalText = (max: number) => requiredText(max).nullable()
