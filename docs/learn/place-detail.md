@@ -23,6 +23,7 @@
 - A part of the page with no data does not show.
 - The cards of Saved open the detail.
 - Share opens the share sheet of the phone. Where a browser has no share sheet, it copies the link.
+- A confirmation dialog has its two buttons side by side, also on a phone.
 
 ## The choice we made
 
@@ -33,6 +34,7 @@
 ## Gotchas
 
 - **The client makes the id of a report.** It is a UUIDv7, and its time must be at most 5 minutes from the server clock (ADR-0015). The sheet makes the id at the first tap and keeps it, so a retry files no second report. A user reports a listing one time.
+- **A second report of the same user files nothing.** So it cannot hide the listing either, also with a safety reason.
 - **Two reports at the same time.** The route locks the listing row, so each report counts the other one.
 - **A delete keeps the report.** When the owner deletes a reported listing, the report stays for the moderator, with no listing.
 - **A status change does not undo a hide.** The owner can pause and go live again, and the listing stays hidden.
@@ -40,4 +42,4 @@
 
 ## Tickets
 
-- T-43: the place detail, listing reports and the hide rule, 2026-10-26.
+- T-43: [#154](https://github.com/magentawood/roomsie/pull/154), 2026-10-26. The place detail, listing reports and the hide rule.

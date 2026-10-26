@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**73 of 304 done · 24%**
+**77 of 304 done · 25%**
 
 `██████░░░░░░░░░░░░░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 4 / 15 | 21 / 72 | 29% |
+| [[P3 Data and trust]] | 5 / 15 | 25 / 72 | 35% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 31 | 19% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 30 | 13% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**45 free tasks are open · 177 build hours.**
+**44 free tasks are open · 172 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -69,7 +69,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-42 Listing flow screens]] | P3 | 8 | 🟡 in progress | 0 | [#118](https://github.com/magentawood/roomsie/issues/118) |
-| 0 | [[T-43 Listing detail screens]] | P3 | 5 | ⬜ can start | 0 | [#119](https://github.com/magentawood/roomsie/issues/119) |
 | 0 | [[T-46 ID verification]] | P3 | 12 | ⬜ can start | 0 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | 0 | [[T-52 Web CSP]] | P1 | 3 | ⬜ can start | 0 | [#135](https://github.com/magentawood/roomsie/issues/135) |
 | 0 | [[T-53 Delete the Firebase user]] | P4 | 2 | ⬜ can start | 0 | [#143](https://github.com/magentawood/roomsie/issues/143) |
@@ -167,7 +166,7 @@ flowchart LR
   T40["T-40<br/>Nightly backups"]:::ready
   T41["T-41<br/>Listings API"]:::done
   T42["T-42<br/>Listing flow screens"]:::doing
-  T43["T-43<br/>Listing detail screens"]:::ready
+  T43["T-43<br/>Listing detail screens"]:::done
   T44["T-44<br/>Messages API"]:::todo
   T45["T-45<br/>Messages screens"]:::todo
   T46["T-46<br/>ID verification"]:::ready
@@ -371,7 +370,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 21/72
+## P3 Data and trust — 25/72
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -394,7 +393,7 @@ flowchart LR
 > [!todo]- 🟡 [[T-42 Listing flow screens]] · 2/3
 > ![[T-42 Listing flow screens#^done]]
 
-> [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/4
+> [!todo]- ✅ [[T-43 Listing detail screens]] · 4/4
 > ![[T-43 Listing detail screens#^done]]
 
 > [!todo]- ⬜ [[T-44 Messages API]] · 0/7

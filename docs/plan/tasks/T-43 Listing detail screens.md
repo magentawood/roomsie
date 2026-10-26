@@ -32,10 +32,10 @@ Read the full detail of a room, flat, PG or broker listing.
 - No task waits on this task.
 
 ## Done when
-- [ ] The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat
-- [ ] A detail screen needs sign-in
-- [ ] Report, share and save are on each detail screen
-- [ ] The listing detail has the Save button of T-47, and a saved place opens its detail
+- [x] The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat · [#154](https://github.com/magentawood/roomsie/pull/154)
+- [x] A detail screen needs sign-in · [#154](https://github.com/magentawood/roomsie/pull/154)
+- [x] Report, share and save are on each detail screen · [#154](https://github.com/magentawood/roomsie/pull/154)
+- [x] The listing detail has the Save button of T-47, and a saved place opens its detail · [#154](https://github.com/magentawood/roomsie/pull/154)
 
 ^done
 
@@ -81,3 +81,13 @@ Read the full detail of a room, flat, PG or broker listing.
   - On a phone: one column, a top bar with Back and a menu (Report, Share, Save), and a bottom bar with Save, as the person detail of section 16.
   - A confirmation dialog has its two buttons side by side, of equal width, on a phone too, as the drafts show. This changes the "Delete this listing?" dialog of T-42 (review decision of the user).
 - **Out of scope:** the "Verified" pill (T-46), messages (T-44, T-45), "Ask in chat" and the detail in the results panel (T-15), the name and photo of the lister (T-16a), the reports of a person and the block (T-19), the moderator's tools, a full-screen photo viewer, and a "Best match" label on the detail.
+
+## Log
+
+- **2026-10-26 · [#154](https://github.com/magentawood/roomsie/pull/154)**
+  - **Change:** the page `/places/<id>` shows the four kinds of the Product file, with Report, Share and Save. A listing report has the seven reasons of PD18, and a safety report or reports from two people hide the listing at once. The owner sees the bar "Your listing", Saved opens the detail, and My listings marks a hidden listing. Section 20 of the drafts page has the phone screens.
+  - **Why:** the T-43 spec, [PD18](../../decisions/pd-18-moderation.md), [PD6b](../../decisions/pd-06b-login-gate-and-search.md)
+  - **Ticked:** "The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat", "A detail screen needs sign-in", "Report, share and save are on each detail screen" and "The listing detail has the Save button of T-47, and a saved place opens its detail"
+  - **Not done:** none. T-46 adds the "Verified" pill, T-45 "Message the lister", T-15 "Ask in chat", and T-16a the name and the photo of the lister.
+  - **Learn:** [Place detail and listing reports](../../learn/place-detail.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
