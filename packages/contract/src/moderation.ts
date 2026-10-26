@@ -7,7 +7,8 @@ import { reportReasons } from './reports'
 export const reviewBody = z.strictObject({ action: z.enum(['dismiss', 'hide', 'suspend']) })
 export type ReviewAction = z.infer<typeof reviewBody>['action']
 
-const queuedReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), createdAt: z.iso.datetime() })
+/** `safety`: the reason is a safety reason of the settings (PD18). */
+const queuedReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), safety: z.boolean(), detail: z.string().nullable(), createdAt: z.iso.datetime() })
 /** The open reports of one person or one listing. The card is null after the person deleted it. */
 export const reportQueueItem = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('person'), userId: z.uuid(), card: cardResponse.nullable(), hidden: z.boolean(), reports: z.array(queuedReport) }),

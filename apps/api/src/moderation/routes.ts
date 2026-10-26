@@ -51,10 +51,11 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
             kind: 'person' as const, userId: report.subjectUserId, hidden: profile?.hiddenAt != null, reports: [],
             card: profile && cardView(profile, await answersOf(db, profile.id), storage),
           })
-      item.reports.push({ id: report.id, reason: report.reason as ReportReason, detail: report.detail, createdAt: report.createdAt.toISOString() })
+      const reason = report.reason as ReportReason
+      item.reports.push({ id: report.id, reason, safety: moderation.safetyReasons.includes(reason), detail: report.detail, createdAt: report.createdAt.toISOString() })
       items.set(key, item)
     }
-    const safety = (item: ReportQueueItem) => item.reports.some((r) => moderation.safetyReasons.includes(r.reason))
+    const safety = (item: ReportQueueItem) => item.reports.some((r) => r.safety)
     // The reports come oldest first, so the first report of an item is its oldest.
     return {
       items: [...items.values()].sort((a, b) => Number(safety(b)) - Number(safety(a)) || a.reports[0]!.createdAt.localeCompare(b.reports[0]!.createdAt)),

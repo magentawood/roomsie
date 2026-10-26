@@ -51,7 +51,7 @@ describe('the admin routes', () => {
     await report('other', { profileId: cards.seeker }, 'harassment', 0.5)
     const items = await queue()
     expect(items.map((i) => (i.kind === 'person' ? i.userId : i.listing.id))).toEqual([t.ids.seeker, listingId, t.ids.other])
-    expect(items[0]).toMatchObject({ kind: 'person', hidden: true, card: { id: cards.seeker, fullName: 'Rahul Verma' }, reports: [{ reason: 'harassment' }] })
+    expect(items[0]).toMatchObject({ kind: 'person', hidden: true, card: { id: cards.seeker, fullName: 'Rahul Verma' }, reports: [{ reason: 'harassment', safety: true }] })
     expect(items[1]).toMatchObject({ kind: 'listing', listing: { id: listingId, hidden: true }, reports: [{ reason: 'broker_or_spam' }, { reason: 'fake' }] })
     expect(items[2]).toMatchObject({ kind: 'person', hidden: false, reports: [{ reason: 'other', detail: 'He asked for my number' }] })
   })
