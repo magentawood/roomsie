@@ -33,10 +33,40 @@ Save a person or a place, and see them again under Saved.
 - No task waits on this task.
 
 ## Done when
-- [ ] A signed-in user saves and unsaves a card from the results and from a detail screen
-- [ ] Saved in the sidebar lists the saved cards, with the empty state of the designs
+- [ ] A signed-in user saves and unsaves a place or a person, with the Save button of the designs
+- [ ] Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs
 
 ^done
 
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `apps/api`: a new table for saves, with its migration. New routes save, unsave and list the saved places and people of the signed-in user. The deletion of an account also deletes the saves of the user. The interface changes.
+  - `packages/contract`: the shapes of the saved places and the saved people.
+  - `apps/web`: the Save button, the card of a saved place, and the Saved page with the tabs Places and People. The sidebar item Saved and the phone bar open the page. The phone bar becomes Messages, Saved, My Listings and Profile. The interface is new.
+  - The plan: two items of T-47 change, and T-43 and T-18b get one item each.
+  - The Figma drafts page: the Saved page with its tabs on a desktop and a phone, the Saved state of the Save button, and the phone bar with Saved.
+  - Docs: PD19, and a learn page.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database. This seam exists.
+  - The deletion of an account, through `DELETE /v1/me`. This seam exists.
+  - Vitest for a pure module of the web, if the change makes one.
+  - No component tests (testing standard). Puppeteer screenshots of the Saved page at 390 px and 1440 px, against local dev.
+- **Decisions:**
+  - T-47 builds saving in the API for places and for people, the Save button, and the Saved page. T-43 and T-18b put the button on their detail screens. Nobody can save from the app until then.
+  - The Save button is only on the detail screens, as in the designs. A result card has no Save button.
+  - The phone bar is the bar of the designer: Messages, Saved, My Listings and Profile, and "+". T-42 read the wrong label in the second slot. The chat is the home screen behind the bar, so it has no tab.
+  - The Saved page has two tabs: Places and People. Each tab shows the newest first. The People tab shows the empty state until T-18b adds the person cards.
+  - A save is for one live listing, or for one live person who is not the user and has no block with the user. Each other save gets 404. A second save of the same item changes nothing.
+  - A saved listing that is filled, paused or expired, and a saved person who hid the card, do not show until they are live again. The deletion of a listing or of an account deletes its saves.
+  - The Save button says "Save", with the bookmark icon. After a save, it says "Saved", with the bookmark-check icon, and a second press unsaves. We design the Saved state on the drafts page.
+  - The card of a saved place comes from the result card of the designs for a place: the photo, the title, the area and the rent, with the Saved button. It opens the listing detail when T-43 exists. T-15 can use the card again.
+  - The empty state is the draft "Nothing saved yet". Its button "Start looking" opens the chat.
+  - The deletion of an account also deletes the saves of the user, because the tombstone of T-20 keeps the `users` row (PD19).
+  - The changed items: T-47 item 1 is now "A signed-in user saves and unsaves a place or a person, with the Save button of the designs". T-47 item 2 is now "Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs". T-43 gets "The listing detail has the Save button of T-47, and a saved place opens its detail". T-18b gets "The person detail has the Save button of T-47, and the People tab of Saved lists the saved people".
+- **Out of scope:** the Save button on the detail screens (T-43, T-18b), the person cards in the People tab (T-18b), compare (T-49), the "+" button of the phone bar, a limit on the number of saves, and a count of saves for the lister.

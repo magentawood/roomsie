@@ -244,7 +244,8 @@
     "The person screen needs sign-in",
     "The Say hi button has request sent, accepted and not available states",
     "No phone number shows",
-    "Report and block need only one tap"
+    "Report and block need only one tap",
+    "The person detail has the Save button of T-47, and the People tab of Saved lists the saved people"
    ],
    "read": [
     "docs/decisions/pd-17-connect-and-contact.md"
@@ -1749,7 +1750,8 @@
    "done": [
     "The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat",
     "A detail screen needs sign-in",
-    "Report, share and save are on each detail screen"
+    "Report, share and save are on each detail screen",
+    "The listing detail has the Save button of T-47, and a saved place opens its detail"
    ],
    "read": [
     "docs/decisions/pd-14-v0-is-the-figma-designs.md",
@@ -1857,8 +1859,8 @@
     "T-06"
    ],
    "done": [
-    "A signed-in user saves and unsaves a card from the results and from a detail screen",
-    "Saved in the sidebar lists the saved cards, with the empty state of the designs"
+    "A signed-in user saves and unsaves a place or a person, with the Save button of the designs",
+    "Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs"
    ],
    "read": [
     "docs/decisions/pd-14-v0-is-the-figma-designs.md"

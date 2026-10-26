@@ -901,6 +901,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The Say hi button has request sent, accepted and not available states
 - No phone number shows
 - Report and block need only one tap
+- The person detail has the Save button of T-47, and the People tab of Saved lists the saved people
 - Read first: `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-22a · Launch areas and waitlist API** — done when:
@@ -984,6 +985,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat
 - A detail screen needs sign-in
 - Report, share and save are on each detail screen
+- The listing detail has the Save button of T-47, and a saved place opens its detail
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
 
 **T-44 · Messages API** — done when:
@@ -1010,8 +1012,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-08-verification.md`, `docs/verification.md`
 
 **T-47 · Saved** — done when:
-- A signed-in user saves and unsaves a card from the results and from a detail screen
-- Saved in the sidebar lists the saved cards, with the empty state of the designs
+- A signed-in user saves and unsaves a place or a person, with the Save button of the designs
+- Saved in the sidebar and in the phone bar lists the saved places, with the empty state of the designs
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
 **T-48 · Onboarding questions** — done when:

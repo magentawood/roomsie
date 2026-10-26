@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**69 of 295 done · 23%**
+**69 of 297 done · 23%**
 
 `██████░░░░░░░░░░░░░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 3 / 15 | 19 / 66 | 29% |
+| [[P3 Data and trust]] | 3 / 15 | 19 / 68 | 28% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 30 | 20% |
 | [[P5 Accounts and people]] | 1 / 6 | 4 / 29 | 14% |
 | [[Design]] | 2 / 6 | 6 / 11 | 55% |
@@ -374,7 +374,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 19/66
+## P3 Data and trust — 19/68
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -385,7 +385,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/6
 > ![[T-15 Results panel ⚑#^done]]
 
-> [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/5
+> [!todo]- ⬜ [[T-18b Person and connect screens ⚑]] · 0/6
 > ![[T-18b Person and connect screens ⚑#^done]]
 
 > [!todo]- ✅ [[T-41 Listings API]] · 6/6
@@ -397,7 +397,7 @@ flowchart LR
 > [!todo]- 🟡 [[T-42 Listing flow screens]] · 2/3
 > ![[T-42 Listing flow screens#^done]]
 
-> [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/3
+> [!todo]- ⬜ [[T-43 Listing detail screens]] · 0/4
 > ![[T-43 Listing detail screens#^done]]
 
 > [!todo]- ⬜ [[T-44 Messages API]] · 0/7

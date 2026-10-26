@@ -35,6 +35,7 @@ Read the full detail of a room, flat, PG or broker listing.
 - [ ] The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat
 - [ ] A detail screen needs sign-in
 - [ ] Report, share and save are on each detail screen
+- [ ] The listing detail has the Save button of T-47, and a saved place opens its detail
 
 ^done
 
