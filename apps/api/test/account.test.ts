@@ -155,6 +155,16 @@ describe('DELETE /v1/me', () => {
     expect(await testDb.db.select().from(users).where(eq(users.authProviderId, user.uid))).toHaveLength(0)
   })
 
+  it('makes one tombstone from two deletes at the same time, so a suspended person stays out', async () => {
+    const user = await signIn('uid-double-tap')
+    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, user.id))
+
+    const replies = await Promise.all([call('DELETE', user.token), call('DELETE', user.token)])
+    expect(replies.map((r) => r.statusCode)).toEqual([204, 204])
+    expect(await userRow(user.id)).toMatchObject({ status: 'deleted', authProviderId: tombstoneKey(user.uid), rejoinBlocked: true })
+    expect((await call('GET', await freshToken(user.uid))).statusCode).toBe(403)
+  })
+
   it('stops a new sign-in while a report against the old account is open', async () => {
     const user = await signIn('uid-reported')
     const reporter = await signIn('uid-reporter')

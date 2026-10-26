@@ -41,13 +41,16 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
   ])])
 
   await db.transaction(async (tx) => {
+    const [user] = await tx.select({ uid: users.authProviderId, status: users.status }).from(users).where(eq(users.id, userId)).for('update')
+    // A second request at the same time (a double tap) waited on the lock. Without this stop, it would
+    // hash the tombstone key again and clear rejoin_blocked, so a suspended person could sign in again.
+    if (user!.status === 'deleted') return
     // The cascades remove the rates, the flatmates, the chat turns, the goals of a
     // claimed visitor session and the connection requests.
     await tx.delete(listings).where(eq(listings.ownerUserId, userId))
     await tx.delete(goals).where(eq(goals.userId, userId))
     await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
     await tx.delete(profiles).where(eq(profiles.userId, userId))
-    const [user] = await tx.select({ uid: users.authProviderId, status: users.status }).from(users).where(eq(users.id, userId)).for('update')
     await tx.update(users).set({
       status: 'deleted',
       authProviderId: tombstoneKey(user!.uid),
