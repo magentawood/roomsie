@@ -12,6 +12,7 @@ import { SignInGate } from '../../components/shell/sign-in-gate'
 import { MissingNotice } from '../../components/listings/missing-notice'
 import { Badge, type Tone } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
+import { EmptyState } from '../../components/ui/empty-state'
 
 const statusBadge: Record<ListingResponse['status'], { tone: Tone; label: string }> = {
   live: { tone: 'success', label: 'Live' },
@@ -78,14 +79,9 @@ function MyListings() {
         {mine.isError && <p role="alert" className="text-sm text-error-primary">{errorText(mine.error)}</p>}
         {mine.isPending && <p className="text-sm text-tertiary">Loading…</p>}
         {mine.data && mine.data.listings.length === 0 && (
-          <div className="flex flex-1 flex-col items-center justify-center gap-4 py-16 text-center">
-            <span className="flex size-12 items-center justify-center rounded-xl border border-primary text-fg-quaternary shadow-xs"><Key01 size={24} aria-hidden /></span>
-            <div className="flex max-w-88 flex-col gap-1">
-              <h2 className="text-md font-semibold text-primary">No listings yet</h2>
-              <p className="text-sm text-tertiary">List a room in your flat, a whole flat, or a PG or hostel. People who look in your area can then find it.</p>
-            </div>
-            <Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button>
-          </div>
+          <EmptyState icon={Key01} title="No listings yet" action={<Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button>}>
+            List a room in your flat, a whole flat, or a PG or hostel. People who look in your area can then find it.
+          </EmptyState>
         )}
         {mine.data && mine.data.listings.length > 0 && (
           <>
