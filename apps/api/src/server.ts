@@ -9,7 +9,8 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import { asc } from 'drizzle-orm'
-import { areasResponse, healthResponse, meResponse } from '@roomsie/contract'
+import { areasResponse, deleteMeResponse, healthResponse, meResponse } from '@roomsie/contract'
+import { deleteAccount } from './account'
 import { requireUser, type AuthOptions } from './auth'
 import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
@@ -20,6 +21,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
+  app.decorateRequest('identity', null)
   // A 400 names the fields, so a client can show which value is wrong. Other errors keep the default reply.
   app.setErrorHandler((err, _req, reply) => {
     if (!hasZodFastifySchemaValidationErrors(err)) throw err
@@ -43,6 +45,14 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
         '/me',
         { preHandler: requireUser(options), schema: { response: { 200: meResponse } } },
         async (req) => req.user!,
+      )
+      v1.withTypeProvider<ZodTypeProvider>().delete(
+        '/me',
+        { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: deleteMeResponse } } },
+        async (req, reply) => {
+          await deleteAccount(options.db, options.storage, req.user!.id, req.identity!)
+          return reply.code(204).send(null)
+        },
       )
       v1.withTypeProvider<ZodTypeProvider>().get(
         '/areas',

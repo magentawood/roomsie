@@ -2,7 +2,7 @@
 id: T-20
 title: "Account deletion"
 owner: "P4 Content and moderation"
-sequence: "5 of 7"
+sequence: "5 of 8"
 hours: 3
 start: 2026-10-05
 end: 2026-10-08
@@ -17,7 +17,7 @@ tags:
 
 # T-20 · Account deletion
 
-**Owner:** [[P4 Content and moderation]], task 5 of 7  
+**Owner:** [[P4 Content and moderation]], task 5 of 8  
 **When:** Mon 5 Oct → Thu 8 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#46](https://github.com/magentawood/roomsie/issues/46)
@@ -28,14 +28,17 @@ Delete the account and data correctly: profile, photos and messages are really r
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-16b Profile screens ⚑]]
+- [[T-53 Delete the Firebase user]]
+- [[T-44 Messages API]]
 
 ## Done when
-- [ ] A person can delete their account from settings
-- [ ] The profile, the photos in R2 and the form state are removed. Events are pseudonymised
-- [ ] `tokens_valid_after` is set to now, thus every session ends
-- [ ] The chat turns of the person are deleted too
-- [ ] The other person sees Deleted user in their messages
+- [x] `DELETE /v1/me` deletes the account. The settings button is in T-16b · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44 · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] `tokens_valid_after` is set to now, thus every session ends · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The chat turns of the person are deleted too · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] The `users` row stays as a tombstone with a hash of the Google account id. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report · [#142](https://github.com/magentawood/roomsie/pull/142)
+- [x] A suspended user can delete the account. Blocks against the old account move to the new account · [#142](https://github.com/magentawood/roomsie/pull/142)
 
 ^done
 

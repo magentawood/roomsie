@@ -697,7 +697,8 @@
     "A parent can create a profile for a son or daughter of 18 or more. The card shows \"Managed by a parent\"",
     "A card becomes visible when its required fields are complete, unless the user hides it",
     "A profile has a required gender: Male, Female or Non-binary",
-    "The API masks phone numbers in the bio"
+    "The API masks phone numbers in the bio",
+    "A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo"
    ],
    "read": [
     "docs/decisions/0005-managed-platform-split.md",
@@ -718,12 +719,13 @@
    "end": "2026-10-10",
    "deps": [
     "T-16a",
-    "D-03"
+    "D-03",
+    "T-20"
    ],
    "done": [
     "A user can create and edit a profile on the web, with the fields of T-16a",
     "A user can upload a maximum of four photos from the profile screen",
-    "The delete button of T-20 uses the design of D-03",
+    "A person can delete their account from settings: the button of D-03 calls `DELETE /v1/me` of T-20",
     "Settings has a \"Hide my card\" switch"
    ],
    "read": [
@@ -981,7 +983,8 @@
     "One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed",
     "No message text is stored",
     "Code writes events only through one `track()` function in apps/api",
-    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database"
+    "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database",
+    "Account deletion (`deleteAccount` of T-20) pseudonymises the events of the user"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",
@@ -1078,11 +1081,12 @@
     "T-06"
    ],
    "done": [
-    "A person can delete their account from settings",
-    "The profile, the photos in R2 and the form state are removed. Events are pseudonymised",
+    "`DELETE /v1/me` deletes the account. The settings button is in T-16b",
+    "The profile, the photos in R2, the listings, the goals and the form state are removed. Events are in T-24, Form B in T-35, messages in T-44",
     "`tokens_valid_after` is set to now, thus every session ends",
     "The chat turns of the person are deleted too",
-    "The other person sees Deleted user in their messages"
+    "The `users` row stays as a tombstone with a hash of the Google account id. A new sign-in makes a new, empty account, unless the old account had the `suspended` status or has an open report",
+    "A suspended user can delete the account. Blocks against the old account move to the new account"
    ],
    "read": [
     "docs/decisions/0012-analytics-event-store.md",
@@ -1091,6 +1095,32 @@
    "cp": "CP3",
    "critical": false,
    "issue": 46
+  },
+  {
+   "id": "T-53",
+   "title": "Delete the Firebase user at account deletion",
+   "plain": "Removes the sign-in record at Google too, not only our data.",
+   "role": "P4",
+   "hours": 2,
+   "start": "2026-10-27",
+   "end": "2026-10-28",
+   "deps": [
+    "T-20"
+   ],
+   "done": [
+    "Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module",
+    "The service account key is only in the environment of apps/api, and a record names it (ADR-0016)",
+    "If the Firebase delete fails, a retry is safe",
+    "After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20"
+   ],
+   "read": [
+    "docs/decisions/0016-credentials-and-secrets.md",
+    "docs/decisions/0005-managed-platform-split.md",
+    "docs/decisions/0007-web-rendering-and-auth-transport.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 143
   },
   {
    "id": "T-23b",
@@ -1716,7 +1746,8 @@
     "T-05",
     "T-06",
     "T-18a",
-    "F-13"
+    "F-13",
+    "T-20"
    ],
    "done": [
     "Who can message whom follows PD17",
@@ -1724,7 +1755,8 @@
     "The API never gives a message to a user who is not in the conversation",
     "A blocked user cannot send a message to the user who blocked them",
     "The API masks phone numbers and WhatsApp links as •••• in each message",
-    "A new request or message sends an email and a browser push, with no message text, unless the user turned them off"
+    "A new request or message sends an email and a browser push, with no message text, unless the user turned them off",
+    "After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests"
    ],
    "read": [
     "docs/decisions/pd-14-v0-is-the-figma-designs.md",

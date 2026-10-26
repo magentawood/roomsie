@@ -15,6 +15,13 @@
       "when": 1792953503470,
       "tag": "0001_listing_who_can_move_in",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792961312828,
+      "tag": "0002_colorful_xavin",
+      "breakpoints": true
     }
   ]
 }

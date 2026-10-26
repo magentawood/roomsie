@@ -29,6 +29,7 @@ The server part of in-app messages between two users.
 - [[T-06 Database schema ⚑]]
 - [[T-18a Message request API ⚑]]
 - [[F-13 Connect and trust calls ⚑]]
+- [[T-20 Account deletion]]
 
 ## Unblocks
 - [[T-45 Messages screens]]
@@ -40,6 +41,7 @@ The server part of in-app messages between two users.
 - [ ] A blocked user cannot send a message to the user who blocked them
 - [ ] The API masks phone numbers and WhatsApp links as •••• in each message
 - [ ] A new request or message sends an email and a browser push, with no message text, unless the user turned them off
+- [ ] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests
 
 ^done
 

@@ -70,6 +70,13 @@
             }
           }
         }
+      },
+      "delete": {
+        "responses": {
+          "204": {
+            "description": "Deleted. No body."
+          }
+        }
       }
     },
     "/v1/areas": {

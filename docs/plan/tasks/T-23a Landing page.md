@@ -2,7 +2,7 @@
 id: T-23a
 title: "Landing page from the Figma design"
 owner: "P4 Content and moderation"
-sequence: "1 of 7"
+sequence: "1 of 8"
 hours: 4
 start: 2026-09-24
 end: 2026-09-27
@@ -17,7 +17,7 @@ tags:
 
 # T-23a · Landing page from the Figma design
 
-**Owner:** [[P4 Content and moderation]], task 1 of 7  
+**Owner:** [[P4 Content and moderation]], task 1 of 8  
 **When:** Thu 24 Sep → Sun 27 Sep · 4 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#39](https://github.com/magentawood/roomsie/issues/39)

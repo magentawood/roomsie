@@ -31,6 +31,7 @@ The screens where a person says who they are and adds photos.
 ## Needs first
 - [[T-16a Profile API ⚑]]
 - [[D-03 Results and profile designs]]
+- [[T-20 Account deletion]]
 
 ## Unblocks
 - [[M-06 Beta invites ⚑]]
@@ -38,7 +39,7 @@ The screens where a person says who they are and adds photos.
 ## Done when
 - [ ] A user can create and edit a profile on the web, with the fields of T-16a
 - [ ] A user can upload a maximum of four photos from the profile screen
-- [ ] The delete button of T-20 uses the design of D-03
+- [ ] A person can delete their account from settings: the button of D-03 calls `DELETE /v1/me` of T-20
 - [ ] Settings has a "Hide my card" switch
 
 ^done

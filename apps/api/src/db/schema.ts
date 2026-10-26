@@ -76,6 +76,9 @@ export const users = pgTable('users', {
   /** Tokens issued before this instant are rejected. Moves on sign-out-everywhere,
    *  suspension and deletion, so revocation needs no token blacklist. */
   tokensValidAfter: timestamp('tokens_valid_after', { withTimezone: true }).notNull().defaultNow(),
+  /** Set on a tombstone whose account was suspended at deletion. A new sign-in with the
+   *  same Google account then gets a 403, so a deletion does not undo a suspension (T-20). */
+  rejoinBlocked: boolean('rejoin_blocked').notNull().default(false),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => ({

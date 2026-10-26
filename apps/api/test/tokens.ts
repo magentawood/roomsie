@@ -2,7 +2,7 @@ import { createLocalJWKSet, exportJWK, generateKeyPair, SignJWT, type CryptoKey 
 
 export const projectId = 'roomsie-test'
 
-type TokenOptions = { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number; authTime?: number | null }
+type TokenOptions = { key?: CryptoKey; audience?: string; issuer?: string; iat?: number; exp?: number; authTime?: number | null; googleId?: string }
 
 /** A local key pair in place of Google's keys, and Firebase-shaped ID tokens signed with it. */
 export async function testTokens() {
@@ -11,7 +11,8 @@ export async function testTokens() {
   function idToken(uid: string, opts: TokenOptions = {}) {
     const now = Math.floor(Date.now() / 1000)
     const audience = opts.audience ?? projectId
-    return new SignJWT(opts.authTime === null ? {} : { auth_time: opts.authTime ?? opts.iat ?? now })
+    const google = opts.googleId ? { firebase: { identities: { 'google.com': [opts.googleId] }, sign_in_provider: 'google.com' } } : {}
+    return new SignJWT({ ...(opts.authTime === null ? {} : { auth_time: opts.authTime ?? opts.iat ?? now }), ...google })
       .setProtectedHeader({ alg: 'RS256', kid: 'test' })
       .setIssuer(opts.issuer ?? `https://securetoken.google.com/${audience}`)
       .setAudience(audience)

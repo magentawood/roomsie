@@ -44,6 +44,7 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 - [ ] A card becomes visible when its required fields are complete, unless the user hides it
 - [ ] A profile has a required gender: Male, Female or Non-binary
 - [ ] The API masks phone numbers in the bio
+- [ ] A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo
 
 ^done
 

@@ -2,7 +2,7 @@
 id: T-22a
 title: "Launch areas and waitlist API"
 owner: "P4 Content and moderation"
-sequence: "6 of 7"
+sequence: "6 of 8"
 hours: 2
 start: 2026-10-08
 end: 2026-10-10
@@ -17,7 +17,7 @@ tags:
 
 # T-22a · Launch areas and waitlist API
 
-**Owner:** [[P4 Content and moderation]], task 6 of 7  
+**Owner:** [[P4 Content and moderation]], task 6 of 8  
 **When:** Thu 8 Oct → Sat 10 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#47](https://github.com/magentawood/roomsie/issues/47)

@@ -12,3 +12,7 @@ export const areasResponse = z.object({
 export type AreasResponse = z.infer<typeof areasResponse>
 
 export * from './listings'
+
+/** `DELETE /v1/me` answers 204 with no body. `type: 'null'` tells the OpenAPI
+ *  document to give the 204 no content, not a JSON `null`. */
+export const deleteMeResponse = z.null().meta({ type: 'null', description: 'Deleted. No body.' })

@@ -36,6 +36,7 @@ Records what people actually do, to show what works.
 - [ ] No message text is stored
 - [ ] Code writes events only through one `track()` function in apps/api
 - [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database
+- [ ] Account deletion (`deleteAccount` of T-20) pseudonymises the events of the user
 
 ^done
 

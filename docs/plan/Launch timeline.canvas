@@ -714,6 +714,15 @@
    "height": 84
   },
   {
+   "id": "task-T-53",
+   "type": "text",
+   "text": "**[[T-53 Delete the Firebase user|T-53 Delete the Firebase user]]**\n2h · Tue 27 Oct → Wed 28 Oct",
+   "x": 7260,
+   "y": 1100,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "lane-P5",
    "type": "group",
    "label": "P5 Accounts and people",
@@ -1398,6 +1407,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-20-T-16b",
+   "fromNode": "task-T-20",
+   "fromSide": "right",
+   "toNode": "task-T-16b",
+   "toSide": "left"
+  },
+  {
    "id": "e-M-04-M-05",
    "fromNode": "task-M-04",
    "fromSide": "right",
@@ -1545,6 +1561,13 @@
    "fromNode": "task-T-06",
    "fromSide": "right",
    "toNode": "task-T-20",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-20-T-53",
+   "fromNode": "task-T-20",
+   "fromSide": "right",
+   "toNode": "task-T-53",
    "toSide": "left"
   },
   {
@@ -1798,6 +1821,13 @@
   {
    "id": "e-F-13-T-44",
    "fromNode": "task-F-13",
+   "fromSide": "right",
+   "toNode": "task-T-44",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-20-T-44",
+   "fromNode": "task-T-20",
    "fromSide": "right",
    "toNode": "task-T-44",
    "toSide": "left"
