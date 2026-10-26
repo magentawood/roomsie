@@ -8,7 +8,7 @@ import { visibleListing } from '../listings/read'
 import { maskContacts } from '../text/mask-contacts'
 
 /** Reports from this number of people hide a listing at once (PD18). */
-const hidingReporters = 2
+const hideAtReporters = 2
 
 export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
   const { db } = options
@@ -32,7 +32,7 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
       }).onConflictDoNothing()
       const [open] = await tx.select({ reporters: count() }).from(reports)
         .where(and(eq(reports.listingId, listingId), eq(reports.status, 'open')))
-      if (safetyReasons.includes(reason) || open!.reporters >= hidingReporters) {
+      if (safetyReasons.includes(reason) || open!.reporters >= hideAtReporters) {
         await tx.update(listings).set({ hiddenAt: new Date() }).where(and(eq(listings.id, listingId), isNull(listings.hiddenAt)))
       }
       return true

@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest'
 import { listingSteps, listingTitle, rentLine, resumeStep, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
 import { listing } from './test-listing'
 
-
 describe('the steps of each kind', () => {
   it('gives a room in a flat eight steps, with "Who lives here", and the other kinds seven', () => {
     expect(listingSteps('room_in_flat')).toEqual(['kind', 'where', 'nearby', 'place', 'rent', 'rules', 'people', 'photos'])

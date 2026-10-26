@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine } from './place-detail'
+import { flatmateLines, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine } from './place-detail'
 import { listing } from './test-listing'
 
 describe('the money to move in', () => {
@@ -48,6 +48,8 @@ describe('the lines of each part', () => {
       { label: 'Balcony', value: 'Yes' },
       { label: 'Furnishing', value: 'Fully furnished' },
     ])
+    const flat = listing({ kind: 'owner_flat', placeType: '1bhk', floor: 2, furnishing: 'semi', carpetAreaSqft: 450, bathroom: 'attached', balcony: false })
+    expect(placeLines(flat).map((l) => l.label)).toEqual(['Place type', 'Floor', 'Furnishing', 'Carpet area', 'Bathroom', 'Balcony'])
     expect(placeLines(listing({ floor: 0 }))).toEqual([{ label: 'Floor', value: 'Ground' }])
     expect(placeLines(listing({ floor: -1, balcony: false }))).toEqual([{ label: 'Floor', value: 'Basement 1' }, { label: 'Balcony', value: 'No' }])
   })
@@ -99,19 +101,12 @@ describe('the lines of each part', () => {
   })
 })
 
-describe('where it is and who lists it', () => {
+describe('where it is', () => {
   it('gives the building and the area, then the landmark, and the full address in place of the building when the API sends it', () => {
     expect(whereLine(listing({ building: 'Orchid Residency', landmark: 'Next to the municipal school' }), 'Andheri–Goregaon'))
       .toBe('Orchid Residency, Andheri–Goregaon • Next to the municipal school')
     expect(whereLine(listing({ address: 'Flat 12, Orchid Residency', building: 'Orchid Residency' }), 'Andheri–Goregaon'))
       .toBe('Flat 12, Orchid Residency, Andheri–Goregaon')
     expect(whereLine(listing({}), undefined)).toBeNull()
-  })
-
-  it('names the kind of lister', () => {
-    expect(listerLabel('owner_flat')).toBe('Owner')
-    expect(listerLabel('broker_flat')).toBe('Broker')
-    expect(listerLabel('pg')).toBe('PG operator')
-    expect(listerLabel('room_in_flat')).toBe('Flatmate')
   })
 })
