@@ -17,7 +17,7 @@
 | Raw analytics events | 12 months |
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
 | The DigiLocker selfie | Deleted right after the check |
-| The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more. A cache rule for the photo domain in Cloudflare sets it (T-54). |
+| The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
 | Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".
@@ -33,7 +33,7 @@
 
 - **Visitors for 7 days, and events for 6 months.** A visitor who thinks about a move for two weeks loses the chat. Six months cannot show a full season.
 - **A purge of the Cloudflare copies at each photo delete.** It needs a Cloudflare token in the API and more code, only to remove the last 10 minutes.
-- **The Cloudflare default of 2 hours for the copies.** A deleted photo, or a photo of a deleted account, shows too long.
+- **No cache rule.** Cloudflare keeps its copy for 2 hours by default, and a browser can keep one longer. A deleted photo, or a photo of a deleted account, shows too long.
 
 ## Consequences
 
