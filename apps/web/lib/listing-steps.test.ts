@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ListingResponse } from '@roomsie/contract'
-import { listingSteps, listingTitle, rentLine, resumeStep, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
+import { availableLabel, listingSteps, listingTitle, rentAmount, rentLine, resumeStep, rulesLine, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
 
 const listing = (patch: Partial<ListingResponse>): ListingResponse => ({
   id: '0199e4b0-0000-7000-8000-000000000001', kind: 'owner_flat', status: 'draft',
@@ -100,3 +100,17 @@ describe('My listings', () => {
     expect(rentLine(listing({}))).toBe('Rent: not set yet')
   })
 })
+
+describe('the card of a saved place', () => {
+  it('gives the rent amount, the house rules and the move-in date as the result card of the designs', () => {
+    expect(rentAmount(listing({ rates: [{ sharing: null, rent: 52000, deposit: null }] }))).toBe('₹52,000')
+    expect(rentAmount(listing({ kind: 'pg', rates: [{ sharing: 'single', rent: 15000, deposit: null }, { sharing: 'double', rent: 9000, deposit: null }] })))
+      .toBe('₹9,000–₹15,000')
+    expect(rentAmount(listing({}))).toBeNull()
+    expect(rulesLine(listing({ smokingAllowed: false, vegOnlyKitchen: true, guests: 'welcome' }))).toBe('No Smoking • Veg Kitchen • Guests Allowed')
+    expect(rulesLine(listing({ smokingAllowed: false, vegOnlyKitchen: true, alcoholAllowed: false, guests: 'none' }))).toBe('No Smoking • Veg Kitchen • No Alcohol +1')
+    expect(rulesLine(listing({}))).toBeNull()
+    expect(availableLabel('2026-03-31')).toBe('31 March 26')
+  })
+})
+

@@ -74,6 +74,8 @@
   --border-color-badge-success: var(--color-green-200);
   --border-color-badge-error: var(--color-red-200);
   --border-color-badge-gray: var(--color-gray-200);
+  /* The ring around a face that sits on a photo. */
+  --border-color-on-photo: #ffffff;
 
   --color-focus-ring: var(--color-gray-900);
 

@@ -165,10 +165,34 @@ export function listingTitle(listing: ListingResponse) {
   return `${listing.roomType ? labels.roomType[listing.roomType] : 'Room'} in ${place}`
 }
 
-export function rentLine(listing: ListingResponse) {
+/** The rent of a card: one amount, or the range of the rents of a PG. */
+export function rentAmount(listing: ListingResponse) {
   const rents = listing.rates.map((r) => r.rent)
-  if (!rents.length) return 'Rent: not set yet'
+  if (!rents.length) return null
   const low = Math.min(...rents)
   const high = Math.max(...rents)
-  return low === high ? `Rent: ${rupees(low)}/mo` : `Rent: ${rupees(low)}–${rupees(high)}/mo`
+  return low === high ? rupees(low) : `${rupees(low)}–${rupees(high)}`
 }
+
+export function rentLine(listing: ListingResponse) {
+  const amount = rentAmount(listing)
+  return amount ? `Rent: ${amount}/mo` : 'Rent: not set yet'
+}
+
+const guestRules = { none: 'No Guests', welcome: 'Guests Allowed', day_visits: 'Day Visits Only' } as const
+
+/** The house rules of a card, as the result card of the designs: the first three, then "+N". */
+export function rulesLine(listing: ListingResponse) {
+  const rules = [
+    listing.smokingAllowed === false && 'No Smoking', listing.smokingAllowed && 'Smoking OK',
+    listing.vegOnlyKitchen && 'Veg Kitchen', listing.vegOnlyKitchen === false && 'Non-veg OK',
+    listing.alcoholAllowed === false && 'No Alcohol', listing.alcoholAllowed && 'Alcohol OK',
+    listing.guests && guestRules[listing.guests],
+  ].filter((rule): rule is string => typeof rule === 'string')
+  if (!rules.length) return null
+  return rules.slice(0, 3).join(' • ') + (rules.length > 3 ? ` +${rules.length - 3}` : '')
+}
+
+/** "31 March 26", as the result card of the designs. */
+export const availableLabel = (date: string) =>
+  new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: '2-digit' })

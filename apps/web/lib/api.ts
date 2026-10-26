@@ -14,7 +14,7 @@ export class ApiError extends Error {
   }
 }
 
-type Options = { method?: 'GET' | 'POST' | 'PATCH' | 'DELETE'; body?: unknown }
+type Options = { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown }
 
 /** Calls the API as the signed-in user. getIdToken() gives the cached token, and we never store it (ADR-0007). */
 export async function api<T>(user: User, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {

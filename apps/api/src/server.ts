@@ -29,8 +29,8 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
     const fields = new Set(err.validation.map((v) => v.instancePath.split('/')[1] || err.validationContext))
     return reply.code(400).send({ error: `not valid: ${[...fields].join(', ')}` })
   })
-  // The listing flow saves with PATCH and deletes with DELETE. The default allows only GET, HEAD and POST.
-  app.register(cors, { origin: options.webOrigin, methods: ['GET', 'HEAD', 'POST', 'PATCH', 'DELETE'] })
+  // Saved uses PUT, and the listing flow uses PATCH and DELETE. The default allows only GET, HEAD and POST.
+  app.register(cors, { origin: options.webOrigin, methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] })
   app.register(swagger, {
     openapi: { info: { title: 'roomsie API', version: '1' } },
     transform: jsonSchemaTransform,

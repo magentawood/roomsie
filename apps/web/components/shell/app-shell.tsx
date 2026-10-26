@@ -1,18 +1,35 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { Bookmark, ChevronLeft, Key01, MessageChatCircle, MessageCircle01, Plus, User01 } from '@untitledui/icons'
+import { Bookmark, ChevronLeft, Key01, MessageCircle01, Plus, User01 } from '@untitledui/icons'
 import { useAuth } from '../../lib/auth'
 import { Button, type Icon } from '../ui/button'
 import { Logo } from './logo'
 
 const navLooks = {
   sidebar: { item: 'gap-3 rounded-md px-3 py-2 text-sm', active: 'bg-secondary text-primary', link: 'text-secondary hover:bg-primary_hover', icon: 'text-fg-quaternary' },
-  phone: { item: 'flex-1 flex-col gap-0.5 rounded-full px-2 py-1.5 text-xs', active: 'bg-tertiary text-primary', link: 'text-secondary', icon: '' },
+  phone: { item: 'flex-1 flex-col gap-0.5 rounded-full px-1 py-1.5 text-xs whitespace-nowrap', active: 'bg-tertiary text-primary', link: 'text-secondary', icon: '' },
 }
 
-function NavItem({ icon: ItemIcon, label, href, active, look }: { icon: Icon; label: string; href?: string; active?: boolean; look: keyof typeof navLooks }) {
+type NavEntry = { icon: Icon; label: string; href?: string }
+const sidebarItems: NavEntry[] = [
+  { icon: MessageCircle01, label: 'Messages' },
+  { icon: Bookmark, label: 'Saved', href: '/saved' },
+  { icon: Key01, label: 'My listings', href: '/listings' },
+]
+/** The bar of the designer: Messages, Saved, My Listings and Profile. The chat is the home screen behind it (T-47). */
+const phoneItems: NavEntry[] = [
+  { icon: MessageCircle01, label: 'Messages' },
+  { icon: Bookmark, label: 'Saved', href: '/saved' },
+  { icon: Key01, label: 'My Listings', href: '/listings' },
+  { icon: User01, label: 'Profile' },
+]
+
+function NavItem({ icon: ItemIcon, label, href, look }: NavEntry & { look: keyof typeof navLooks }) {
+  const pathname = usePathname()
+  const active = !!href && pathname.startsWith(href)
   const style = navLooks[look]
   const classes = `flex items-center font-medium ${style.item} ${active ? style.active : href ? style.link : 'text-quaternary'}`
   const content = (<><ItemIcon size={20} aria-hidden className={style.icon} />{label}</>)
@@ -34,9 +51,7 @@ function Sidebar() {
       </div>
       <div className="flex flex-col gap-4">
         <nav className="flex flex-col gap-1">
-          <NavItem look="sidebar" icon={MessageCircle01} label="Messages" />
-          <NavItem look="sidebar" icon={Bookmark} label="Saved" />
-          <NavItem look="sidebar" icon={Key01} label="My listings" href="/listings" active />
+          {sidebarItems.map((item) => <NavItem key={item.label} look="sidebar" {...item} />)}
         </nav>
         {user && (
           <div className="flex items-center gap-3 rounded-xl border border-secondary p-3">
@@ -59,10 +74,7 @@ function MobileNav() {
   return (
     <nav className="fixed inset-x-4 bottom-4 z-40 flex items-center gap-2 lg:hidden">
       <div className="flex flex-1 items-center rounded-full border border-secondary bg-primary p-1 shadow-sm">
-        <NavItem look="phone" icon={MessageChatCircle} label="Chats" />
-        <NavItem look="phone" icon={MessageCircle01} label="Messages" />
-        <NavItem look="phone" icon={Key01} label="Listings" href="/listings" active />
-        <NavItem look="phone" icon={User01} label="Profile" />
+        {phoneItems.map((item) => <NavItem key={item.label} look="phone" {...item} />)}
       </div>
       <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-primary text-quaternary shadow-sm" aria-disabled title="Coming soon">
         <Plus size={24} aria-hidden />
