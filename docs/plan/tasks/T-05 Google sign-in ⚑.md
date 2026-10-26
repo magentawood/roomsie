@@ -42,7 +42,7 @@ Log in with Google. The server checks the user on each request.
 - [[T-38 Advisor]]
 - [[T-41 Listings API]]
 - [[T-44 Messages API]]
-- [[T-46 DigiLocker verification]]
+- [[T-46 ID verification]]
 - [[T-47 Saved]]
 - [[T-48 Onboarding questions]]
 - [[T-52 Web CSP]]

@@ -6,9 +6,11 @@
 ## The v0 scope decision
 
 - **v0 is the product in the Figma designs.** It has listings from owners, flatmates, PG operators and brokers.
-- The listing flow has a DigiLocker step. Thus, listing and broker verification are in v0.
+- The listing flow has a verification step. Thus, listing and broker verification are in v0.
+- In v0, a person compares a selfie with a non-Aadhaar government ID. DigiLocker comes in v1.
+- A listing goes live at once. The Verified pill shows after the review.
 
-Why: [PD14](decisions/pd-14-v0-is-the-figma-designs.md)
+Why: [PD14](decisions/pd-14-v0-is-the-figma-designs.md), [PD8](decisions/pd-08-verification.md)
 
 ## The design as proposed
 
@@ -55,19 +57,18 @@ Why: [PD8](decisions/pd-08-verification.md)
 
 ### What to do instead
 
-**Primary route: DigiLocker, through an established KYC provider.**
+**v0 route: a government ID that is not Aadhaar**, for example a passport,
+driving licence or voter ID. A named reviewer compares the selfie to the ID photo.
+
+- If a user sends an Aadhaar, reject it and delete it at once.
+
+**v1 route: DigiLocker.**
 
 - After OTP authentication by the user, DigiLocker returns a signed Aadhaar XML.
 - You at no time hold the document.
-
-**Do not connect to DigiLocker directly.**
-
-- A direct connection needs registration with MeitY as a document requester.
-- Buy the API from a registered provider, such as Surepass, AuthBridge, Sandbox or IDfy.
-- The team must not use a month on this ([PD5](decisions/pd-05-team-and-budget.md)).
-
-**Fallback route: a government ID that is not Aadhaar**, for example a
-passport, driving licence or voter ID. A person compares the selfie to the ID photo.
+- Two ways in: a registered KYC provider (such as Surepass, AuthBridge, Sandbox
+  or IDfy), for a few rupees for each check; or a direct requester connection,
+  with no platform charge, an approval and a yearly CERT-In audit.
 
 **What you store, in all cases:**
 
@@ -80,8 +81,7 @@ passport, driving licence or voter ID. A person compares the selfie to the ID ph
 | Last 4 digits at most, and only if we store a value | |
 
 - Delete the document after the check.
-- For verification selfies, ADR 0005 requires a different non-public bucket and signed-URL access only. The selfie goes right after the check ([PD19](decisions/pd-19-retention.md)).
-- Identity documents need the same rule or a stronger rule.
+- The ID photo and the selfie go to a different non-public bucket, with signed-URL access only (ADR 0005). Both go right after the review ([PD19](decisions/pd-19-retention.md)).
 
 Why: [PD8](decisions/pd-08-verification.md)
 
@@ -96,7 +96,8 @@ Why: [PD8](decisions/pd-08-verification.md)
 | What about rejections? | A fast, polite appeal path |
 
 - **Budget for incorrect rejections.** The appeal must be fast, and a person must answer it.
-- DigiLocker is instant and needs no person.
+- In v0, these answers are a launch condition: the v0 route is the only route.
+- DigiLocker (v1) is instant and needs no person.
 
 Why: [PD8](decisions/pd-08-verification.md)
 

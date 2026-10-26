@@ -1,6 +1,6 @@
 # PD14 — v0 is the product in the Figma designs
 
-**Status:** Settled · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-26. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -17,7 +17,7 @@
 
 - **The Figma designs set the scope of v0.** If a doc or a task disagrees with the designs, the designs win. Change the doc or the task.
 - **v0 has listing objects.** A lister selects one of four kinds: a room in my flat, a whole flat or house that I own, a PG or hostel that I run, or "I'm a broker".
-- **v0 has in-app messages and DigiLocker verification,** as the designs show them.
+- **v0 has in-app messages,** as the designs show them, **and verification by the v0 route of PD8.** The DigiLocker step of the designs waits for v1.
 - **These do not change:** v0 is free for users, open to all genders, and in Mumbai. The login gate stays as in PD6b.
 - **Brokers list free in v0.** v0 has no payments. The broker price stays open in PD4.
 - **A screen that the plan needs and the designs do not have is drafted from the patterns of the designs.** The drafts are on the page "Drafts · Missing screens (Claude)" of the Product file. The designer reviews them before a build task uses them.
@@ -35,9 +35,9 @@
 
 - PD0 is superseded.
 - PD3 is no longer only a hypothesis. Listers supply the places at launch. Its risks 3 to 5 are now launch risks: junk listings, duplicates, and the trust in brokers.
-- Listing, broker and DigiLocker verification come into v0. PD8 gives the method.
+- Listing and broker verification come into v0. PD8 gives the method.
 - The product calls that rested on PD0 are open again. The designs answer many of them. F-11 asks them again with the designs.
-- T-41 to T-50 add the tasks for listings, messages, DigiLocker and the screens that had no task. T-08, T-14 and T-15 now include listings.
+- T-41 to T-50 add the tasks for listings, messages, verification and the screens that had no task. T-08, T-14 and T-15 now include listings.
 - The launch date is now open for selection in PD11 (PD12).
 
 ## Revisit when

@@ -1,6 +1,6 @@
-# PD8 — Verification: DigiLocker, not Aadhaar copies
+# PD8 — Verification: an ID check in v0, DigiLocker in v1, never Aadhaar copies
 
-**Status:** Settled with one change. Changed on 2026-10-25. · **Date:** 2026-09-22 · **Deciders:** Yash
+**Status:** Settled with one change. Changed on 2026-10-26. · **Date:** 2026-09-22 · **Deciders:** Yash; the v0 route and the listing gate: n3rxv, for the founders
 
 ## Context
 
@@ -10,18 +10,21 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 
 ## Decision
 
-**In one line:** Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback, and we store the result, never the document.
+**In one line:** In v0, a person compares a selfie with a non-Aadhaar government ID; DigiLocker comes in v1; we store the result, never the document.
 
 - **Verified-only and mutual.** Users who opt into verified-only show as
   blurred cards. Only verified users see them.
 - **The blur is server-side.** At upload, make a different blurred asset and
   serve its URL. Never give the address of the initial image to a viewer
   without permission.
-- **We drop the manual Aadhaar upload route.**
-- **Primary route: DigiLocker through a registered KYC provider**, such as
-  Surepass, AuthBridge, Sandbox or IDfy.
-- **Manual fallback: a non-Aadhaar government ID** (passport, driving licence
-  or voter ID). A person compares the selfie to the ID photo.
+- **We drop the manual Aadhaar upload route.** We never accept an Aadhaar copy.
+- **v0 route: a non-Aadhaar government ID** (passport, driving licence or
+  voter ID) and a selfie. A named reviewer compares the selfie to the ID photo.
+- **A listing goes live at once.** The Verified pill shows after the reviewer
+  approves. The review does not hold the listing.
+- **v1 route: DigiLocker**, through a registered KYC provider (such as
+  Surepass, AuthBridge, Sandbox or IDfy) or as a direct requester. The v0
+  route stays as the fallback.
 - **Store the result, never the document:**
 
 | Store | Do not store |
@@ -66,13 +69,18 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **DigiLocker gives a verified assertion.** After OTP authentication, it
   returns a signed Aadhaar XML, and we never hold the document. Approximately
   4,313 agencies have the document-requester status.
-- **Buy, do not build.** A direct connection needs MeitY registration. Four
-  part-time engineers should not spend a month on it.
-- **The fallback avoids the legal problem.** The Aadhaar Act restrictions do
-  not apply to the fallback IDs.
-- **DigiLocker first, not optional.** It is instant and needs no person.
-  Manual review is a job, not a feature. At a hundred signups a day, it takes
-  most of the morning of one person.
+- **No vendor in v0.** A KYC provider costs a few rupees for each check, and
+  a provider must be picked. A direct requester pays no platform charge (the
+  June 2025 terms), but needs an approval with no published time and a
+  yearly audit by a CERT-In empanelled auditor. The invite-only launch (T-33)
+  keeps the review queue small.
+- **The listing does not wait.** A new lister who waits a day for a review can
+  leave. The pill, not the listing, waits for the review.
+- **The v0 route avoids the legal problem.** The Aadhaar Act restrictions do
+  not apply to these IDs.
+- **DigiLocker in v1.** It is instant and needs no person. Manual review is a
+  job, not a feature. At a hundred signups a day, it takes most of the morning
+  of one person.
 - **One badge.** Two levels cause confusion and make the lower level look
   not truly verified. But monitor the manual route for fraud: a person who
   compares a selfie to a licence gives an opinion that a forger can deceive.
@@ -81,6 +89,12 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 
 ## Alternatives rejected
 
+- **DigiLocker through a KYC provider in v0.** A cost for each check, and a
+  provider to pick before launch.
+- **A direct DigiLocker connection in v0.** The approval has no published time,
+  and the yearly audit is a cost.
+- **The listing waits for the review.** A new lister can wait up to 24 hours.
+- **Only brokers and PGs wait.** Anyone can pick "owner" to skip the wait.
 - **An optional gender, with "Prefer not to say".** A "Women only" search fills
   with unknowns.
 - **A women-only mode.** PD1 removed women-only.
@@ -103,11 +117,14 @@ Also:
   signed-URL access only (ADR 0005, or stronger). The selfie goes right after
   the check (PD19).
 - In v0, browse, chat and results need nothing. A message needs sign-in.
-- Listing, broker and DigiLocker verification are in v0 (PD14). Blurred cards
-  wait (PD11).
+- Listing and broker verification are in v0, by the manual route. DigiLocker
+  and blurred cards wait (PD11).
+- A live listing can have no Verified pill. The cards and the detail show the
+  pill only after the review.
 
 ## Revisit when
 
+- v1 starts: DigiLocker through a provider, or as a direct requester.
 - The verified pool is sufficiently large for the verified-only setting.
 - Reports show that the trust story does not keep women safe enough.
 
@@ -118,3 +135,4 @@ Also:
 - [verification.md](../verification.md)
 - [launch-plan.md](../archive/2026-09-launch-plan.md), "What moves to after launch"
 - [assistant-risks.md](../assistant-risks.md), section 4.1
+- [DigiLocker terms of use for requesters, June 2025](https://cf-media.api-setu.in/resources/DigiLocker-Terms-of-User-Requester-june-2025.pdf)

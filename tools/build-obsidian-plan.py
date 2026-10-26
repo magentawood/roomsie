@@ -50,7 +50,7 @@ SHORT = {
  "T-34":"Router","T-35":"Form B contract","T-36":"Observer","T-37":"Articles and search",
  "T-38":"Advisor","T-39":"Analytics database","T-40":"Nightly backups",
  "T-41":"Listings API","T-42":"Listing flow screens","T-43":"Listing detail screens",
- "T-44":"Messages API","T-45":"Messages screens","T-46":"DigiLocker verification","T-47":"Saved",
+ "T-44":"Messages API","T-45":"Messages screens","T-46":"ID verification","T-47":"Saved",
  "T-48":"Onboarding questions","T-49":"Compare cards","T-50":"Found a place, share, feedback",
  "T-51":"Migrations in the deploy","T-52":"Web CSP","T-53":"Delete the Firebase user","T-54":"Photos domain",
 }

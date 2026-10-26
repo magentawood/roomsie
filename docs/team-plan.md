@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-183 of the 220 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+187 of the 224 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
@@ -32,7 +32,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Listing flow screens, Listing detail screens, Messages API, Messages screens, DigiLocker verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 85 | -51 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Listing flow screens, Listing detail screens, Messages API, Messages screens, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 89 | -55 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
@@ -102,13 +102,13 @@ Finish line: Sat 10 Oct. 64 hours.
 | 8 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | 9 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | 10 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| 11 | T-46 · DigiLocker verification | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 11 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
 | 12 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
 | 13 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
 | 14 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
 | 15 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
 
-Finish line: Tue 24 Nov. 85 hours.
+Finish line: Tue 24 Nov. 89 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -244,7 +244,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 8 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
 | P3 Data and trust | 9 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
 | P3 Data and trust | 10 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 11 | T-46 | DigiLocker verification | 8 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 11 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | P3 Data and trust | 12 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
 | P3 Data and trust | 13 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | P3 Data and trust | 14 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
@@ -359,7 +359,7 @@ gantt
     T-43 Listing detail screens :t43, 2026-11-02, 3d
     T-44 Messages API :t44, 2026-11-05, 4d
     T-45 Messages screens :t45, 2026-11-09, 3d
-    T-46 DigiLocker verification :t46, 2026-11-12, 4d
+    T-46 ID verification :t46, 2026-11-12, 4d
     T-47 Saved :t47, 2026-11-16, 2d
     T-48 Onboarding questions :t48, 2026-11-18, 3d
     T-49 Compare selected cards :t49, 2026-11-21, 2d
@@ -713,7 +713,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| T-46 | DigiLocker verification | P3 | 8 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| T-46 | ID verification | P3 | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
 | T-47 | Saved | P3 | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
 | T-48 | Onboarding questions | P3 | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
 | T-49 | Compare selected cards | P3 | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
@@ -739,6 +739,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The team names a moderator and a backup
 - The moderator confirms the rules of PD18, or changes them
 - The team checks reports every day from launch
+- The moderator or a second named person reviews the ID checks of PD8 within 24 hours, with a backup
 - Read first: `docs/scope-policy.md`, `docs/decisions/pd-18-moderation.md`
 
 **T-36 · Observer: Form B from free text, with the quote check** — done when:
@@ -979,7 +980,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-42 · Listing flow and My listings screens** — done when:
 - The eight steps of flow 04 work for the four kinds of lister, as in the Product file
 - My listings shows each listing of the user, with edit, pause and delete, and the empty state
-- The DigiLocker step of the flow opens the verification of T-46
+- The verification step of the flow opens the ID check of T-46
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
 **T-43 · Listing detail screens** — done when:
@@ -1006,10 +1007,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The empty inbox uses the empty state of the designs
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
-**T-46 · DigiLocker verification** — done when:
-- Verification uses DigiLocker through a registered KYC provider, with a non-Aadhaar government ID as the manual fallback
-- The system stores the result and its date, never the document. It deletes the selfie right after the check
-- The DigiLocker modal of flow 04 and the Verified badge on the cards use the result
+**T-46 · ID verification** — done when:
+- A person sends a non-Aadhaar government ID and a selfie from the verification step of flow 04 or from Settings. A listing goes live before the review
+- A named reviewer approves or rejects each check in a screen that only named accounts open. Each view of a document goes in an audit log
+- The person sees the state of the check: in review, verified, or rejected with the reason and a way to send a new ID
+- The system stores the result, the method and the date. It deletes the ID photo and the selfie right after the review
+- The Verified badge on the cards and the detail screens uses the result
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-08-verification.md`, `docs/verification.md`
 
 **T-47 · Saved** — done when:

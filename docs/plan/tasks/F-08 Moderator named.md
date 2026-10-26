@@ -21,7 +21,7 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#34](https://github.com/magentawood/roomsie/issues/34)
 
-Who handles reports and abuse.
+Who handles reports, abuse and ID checks.
 
 ## Needs first
 - Nothing. You can start this task at any time.
@@ -33,6 +33,7 @@ Who handles reports and abuse.
 - [ ] The team names a moderator and a backup
 - [ ] The moderator confirms the rules of PD18, or changes them
 - [ ] The team checks reports every day from launch
+- [ ] The moderator or a second named person reviews the ID checks of PD8 within 24 hours, with a backup
 
 ^done
 

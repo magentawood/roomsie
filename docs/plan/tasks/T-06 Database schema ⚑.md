@@ -46,7 +46,7 @@ The exact shape of all stored data: people, flats, messages, matches.
 - [[T-37 Articles and search]]
 - [[T-41 Listings API]]
 - [[T-44 Messages API]]
-- [[T-46 DigiLocker verification]]
+- [[T-46 ID verification]]
 - [[T-47 Saved]]
 - [[T-51 Migrations in the deploy ⚑]]
 

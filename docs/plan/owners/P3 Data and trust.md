@@ -9,7 +9,7 @@ tags:
 
 _The data and the matching, then the screens that show them and the advisor._
 
-**85 hours** of build work, at 5h a day. The last task ends on Tue 24 Nov.
+**89 hours** of build work, at 5.24h a day. The last task ends on Tue 24 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 8. [[T-43 Listing detail screens]] — Mon 2 Nov → Wed 4 Nov, 5h
 9. [[T-44 Messages API]] — Thu 5 Nov → Sun 8 Nov, 8h
 10. [[T-45 Messages screens]] — Mon 9 Nov → Wed 11 Nov, 6h
-11. [[T-46 DigiLocker verification]] — Thu 12 Nov → Sun 15 Nov, 8h
+11. [[T-46 ID verification]] — Thu 12 Nov → Sun 15 Nov, 12h
 12. [[T-47 Saved]] — Mon 16 Nov → Tue 17 Nov, 4h
 13. [[T-48 Onboarding questions]] — Wed 18 Nov → Fri 20 Nov, 5h
 14. [[T-49 Compare cards]] — Sat 21 Nov → Sun 22 Nov, 4h
