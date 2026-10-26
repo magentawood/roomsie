@@ -42,3 +42,41 @@ Read the full detail of a room, flat, PG or broker listing.
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [pd-06b-login-gate-and-search.md](../../decisions/pd-06b-login-gate-and-search.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `apps/api`:
+    - Reports get a listing. A new route files a report about a listing. A listing that the rule of PD18 hides gets a hide time, with its migration. The interface changes.
+    - The listing reply gets a `mine` flag.
+    - A hidden listing leaves the detail, the saved places and each other read of other users. The owner still sees it.
+  - `packages/contract`: the report body, the report reasons, and the `mine` and hidden fields of a listing.
+  - `apps/web`:
+    - A new page for the detail of a place, with its parts: the photos, the money to move in, the people who live there, the place, the house rules, what is inside, the building, what is nearby, the description and the lister.
+    - The report sheet and the share action.
+    - The cards of the saved places open the page. My listings marks a hidden listing.
+    - The interface is new.
+  - The plan: T-45, T-15 and T-16a get one item each.
+  - The Figma drafts page: section 20, the detail of a place on a phone, the listing report sheet, the "Your listing" bar, and the page for a listing that is no longer listed.
+  - Docs: PD18, and a learn page.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database. This seam exists.
+  - Vitest for the pure module of the web that turns the fields of a listing into the lines of the page.
+  - No component tests (testing standard). Puppeteer screenshots of the four kinds, of the own listing, of the report sheet and of a listing that is no longer listed, at 390 px and 1440 px, against local dev.
+- **Decisions:**
+  - The detail of a place is a page of its own, at `/places/<id>`, in the app shell. It needs sign-in ([PD6b](../../decisions/pd-06b-login-gate-and-search.md)). The saved places open it. T-15 can show the same parts in the results panel.
+  - The four kinds follow the frames of the designer: room in a flat `218:19145`, owner flat `218:17964`, PG or hostel `162:24009`, broker flat `218:18530`. The page uses the fields that the listing reply has. A part with no data does not show.
+  - No match sentence ([PD3a](../../decisions/pd-03a-flatmate-matching.md)). One "Verified" pill, which shows only after T-46 ([PD8](../../decisions/pd-08-verification.md)). Thus T-43 shows no pill.
+  - Other users see the building, the landmark and the area. They see the address only when the lister shares it (ADR-0017).
+  - T-43 builds the reports of a listing. A report has the listing and the person who owns it, one of the seven reasons of [PD18](../../decisions/pd-18-moderation.md), and a note. "Other" needs the note. The client makes the id, so a second tap files no second report (ADR-0015). A user reports a listing one time. T-19 adds the reports of a person to the same route.
+  - A harassment or under-18 report, or reports from two people, hide the listing from all other users at once, until the moderator acts. PD18 gets this rule for listings. The owner sees "Hidden for review" in My listings.
+  - Share opens the share sheet of the phone. Where there is no share sheet, it copies the link and says "Link copied".
+  - Save is the Save button of T-47.
+  - "Message the lister" and "Ask in chat" do not show. T-45 gets "The listing detail has the button "Message the lister" of the designs". T-15 gets "The listing detail in the results panel has the "Ask in chat" button of the designs".
+  - "Listed by" shows the kind of lister (Owner, Broker, PG operator or Flatmate) with a plain avatar. T-16a gets "The listing reply gives the name and the photo of the lister from the profile, and the listing detail shows them".
+  - The owner of the listing sees the bar "Your listing" with Edit, and no Report and no Save.
+  - A listing that is not live, or that is hidden, gives the page "This place is no longer listed.", with links to Saved and to "Start looking".
+  - On a phone: one column, a top bar with Back and a menu (Report, Share, Save), and a bottom bar with Save, as the person detail of section 16.
+- **Out of scope:** the "Verified" pill (T-46), messages (T-44, T-45), "Ask in chat" and the detail in the results panel (T-15), the name and photo of the lister (T-16a), the reports of a person and the block (T-19), the moderator's tools, a full-screen photo viewer, and a "Best match" label on the detail.
