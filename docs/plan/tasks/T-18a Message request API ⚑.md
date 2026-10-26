@@ -38,10 +38,10 @@ The server side of a message request. It never shows a phone number.
 - [[T-44 Messages API]]
 
 ## Done when
-- [ ] A user can send, accept or decline a message request, with one first note of up to 300 characters
+- [x] A user can send, accept or decline a message request, with one first note of up to 300 characters · [#157](https://github.com/magentawood/roomsie/pull/157)
 - [ ] After an accept, the two people chat in roomsie. No phone number is ever revealed
-- [ ] A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them
-- [ ] A request expires after 14 days, and only one request is open between two people at a time
+- [x] A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them · [#157](https://github.com/magentawood/roomsie/pull/157)
+- [x] A request expires after 14 days, and only one request is open between two people at a time · [#157](https://github.com/magentawood/roomsie/pull/157)
 
 ^done
 
@@ -72,3 +72,13 @@ The server side of a message request. It never shows a phone number.
   - One request is open between two people, in each direction and for each target. The database checks it. A new request while one is open, or after an accept between them, gets 409.
   - The recipient accepts or declines. Only an open request can be answered.
 - **Out of scope:** the messages and the chat (T-44), the alerts by email and push (T-44), the threads after a deletion (T-44), the screens (T-18b, T-45), the reports of a person and the block (T-19).
+
+## Log
+
+- **2026-10-26 · [#157](https://github.com/magentawood/roomsie/pull/157)**
+  - **Change:** the API of message requests: send a request to a card or, through a listing, to its owner, the incoming and the outgoing lists, and accept and decline. The table of the requests gets the two user ids, the listing and the note. A unique index keeps one open or accepted request between two people.
+  - **Why:** the T-18a spec, [PD17](../../decisions/pd-17-connect-and-contact.md)
+  - **Ticked:** three items: "A user can send, accept or decline a message request, with one first note of up to 300 characters", "A user sends a maximum of 10 new requests a day. A user cannot send a request to a person who blocked them" and "A request expires after 14 days, and only one request is open between two people at a time"
+  - **Not done:** "After an accept, the two people chat in roomsie". Blocked by T-44, which makes the note the first message of the chat.
+  - **Learn:** [Message requests](../../learn/message-requests.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**91 of 305 done · 30%**
+**94 of 305 done · 31%**
 
 `███████░░░░░░░░░░░░░░░░░`
 
@@ -26,7 +26,7 @@ This note is part of [[roomsie launch]].
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 5 / 15 | 25 / 72 | 35% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 31 | 19% |
-| [[P5 Accounts and people]] | 3 / 6 | 18 / 31 | 58% |
+| [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
@@ -53,7 +53,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
-| 0 | [[T-18a Message request API ⚑]] | P5 | 4 | ⬜ can start | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 3 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | 0 | [[T-18b Person and connect screens ⚑]] | P3 | 4 | ⬜ can start | 0 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
@@ -147,7 +147,7 @@ flowchart LR
   T23a["T-23a<br/>Landing page"]:::ready
   T24["T-24<br/>Event logging"]:::ready
   T21["T-21<br/>Turn cap and spend ceiling"]:::todo
-  T18a["T-18a ⚑<br/>Message request API"]:::ready
+  T18a["T-18a ⚑<br/>Message request API"]:::doing
   T20["T-20<br/>Account deletion"]:::done
   T53["T-53<br/>Delete the Firebase user"]:::ready
   T54["T-54<br/>Photos domain"]:::done
@@ -443,7 +443,7 @@ flowchart LR
 > ![[T-53 Delete the Firebase user#^done]]
 
 
-## P5 Accounts and people — 18/31
+## P5 Accounts and people — 21/31
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
@@ -454,7 +454,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-24 Event logging]] · 0/5
 > ![[T-24 Event logging#^done]]
 
-> [!todo]- ⬜ [[T-18a Message request API ⚑]] · 0/4
+> [!todo]- 🟡 [[T-18a Message request API ⚑]] · 3/4
 > ![[T-18a Message request API ⚑#^done]]
 
 > [!todo]- ✅ [[T-16a Profile API ⚑]] · 10/10
