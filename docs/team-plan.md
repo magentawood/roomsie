@@ -798,6 +798,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - It updates only when a form value or weight changes. It never changes the order during a scroll
 - A card shows the Best match label and the Didn't say label of PD3a
 - The empty panel shows No relevant results and the suggested posts (PD6c)
+- The listing detail in the results panel has the "Ask in chat" button of the designs
 - Read first: `docs/interface-shape.md`, `docs/decisions/pd-03a-flatmate-matching.md`
 
 **T-25 · Uptime monitor** — done when:
@@ -841,6 +842,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A profile has a required gender: Male, Female or Non-binary
 - The API masks phone numbers in the bio
 - A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo
+- The listing reply gives the name and the photo of the lister from the profile, and the listing detail shows them
 - Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-16b · Profile create and edit screens** — done when:
@@ -1005,6 +1007,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The Messages item in the sidebar shows the unread count
 - Report and block are in the menu of the conversation
 - The empty inbox uses the empty state of the designs
+- The listing detail has the button "Message the lister" of the designs
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
 **T-46 · ID verification** — done when:

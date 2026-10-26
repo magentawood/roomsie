@@ -44,6 +44,7 @@ Shows matches as cards: people and places.
 - [ ] It updates only when a form value or weight changes. It never changes the order during a scroll
 - [ ] A card shows the Best match label and the Didn't say label of PD3a
 - [ ] The empty panel shows No relevant results and the suggested posts (PD6c)
+- [ ] The listing detail in the results panel has the "Ask in chat" button of the designs
 - [ ] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 
 ^done
