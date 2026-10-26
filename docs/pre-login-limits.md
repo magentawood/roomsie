@@ -35,7 +35,7 @@ Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 - **The listings stay on the screen.** Gate the chat, not the results.
 - The wall is the sign-in modal of the designs, over the blurred screen. On a phone, it is a sheet.
-- The user can close the modal, then scroll and filter the panel. Each new message opens the modal again.
+- The user can close the modal, then scroll and filter the panel. The chat input becomes a sign-in button. The button and a tap on a chat chip open the modal again.
 
 Why: [PD9](decisions/pd-09-pre-login-limits.md)
 

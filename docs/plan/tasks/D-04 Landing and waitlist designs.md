@@ -39,7 +39,7 @@ The public home page and the waitlist page.
 ## Log
 
 - **2026-10-26 · [#152](https://github.com/magentawood/roomsie/pull/152)**
-  - **Change:** new drafts on the Figma drafts page. Section 17: the sign-in wall as the modal of the designs, the screen after the user closes it, the legal line on the sign-in screens, and the Terms of use and Grievance officer pages. Section 18: a search with a closed area, a search outside Mumbai, and the waitlist states. Section 19: copies of the landing page with the fixes, and Saved on a phone. PD9 now gives the modal, and PD14 gives the Website page of the Product file as the landing page.
+  - **Change:** new drafts on the Figma drafts page. Section 17: the sign-in wall as the modal of the designs, the screen after the user closes it, the legal line on the sign-in screens, and the Terms of use and Grievance officer pages. Section 18: a search with a closed area, a search outside Mumbai, and the waitlist states. Section 19: copies of the landing page with the fixes, and Saved on a phone. PD9 and PD14 change to match the designs.
   - **Why:** [PD9](../../decisions/pd-09-pre-login-limits.md), [PD2](../../decisions/pd-02-launch-market.md) and [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md). T-22b, T-23a and T-23b need these screens.
   - **Ticked:** "The design has a legal page template, the sign-in wall, the waitlist and empty states"
   - **Not done:** none
