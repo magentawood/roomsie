@@ -1,0 +1,4 @@
+#!/bin/sh
+# After a pull with rebase, tell the person which CI secrets GitHub still needs.
+[ "$1" = rebase ] || exit 0
+exec sh "$(git rev-parse --show-toplevel)/tools/missing-ci-secrets.sh"
