@@ -1,6 +1,6 @@
 # PD15 — Form A contract: intent, room type, lifestyle and who's moving
 
-**Status:** Settled · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-26. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -39,7 +39,7 @@
   | Couple | not asked | couple |
   | Family | not asked | family |
   | Group of friends | not asked | bachelors |
-  | Looking for my son or daughter | from the child (PD16) | bachelor |
+  | Looking for my son or daughter | the answer of the parent to one more choice: Student, Starting their first job or Working (PD16) | bachelor |
 
 - **The listing filter.** A seeker sees a listing only if the listing welcomes the type and the household. A part that is not known does not filter. A group of "Who is welcome" that the lister left empty does not filter. The filter runs on the server, as PD3c requires.
 

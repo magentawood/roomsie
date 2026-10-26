@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**77 of 304 done · 25%**
+**77 of 305 done · 25%**
 
 `██████░░░░░░░░░░░░░░░░░░`
 
@@ -26,7 +26,7 @@ This note is part of [[roomsie launch]].
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 5 / 15 | 25 / 72 | 35% |
 | [[P4 Content and moderation]] | 1 / 8 | 6 / 31 | 19% |
-| [[P5 Accounts and people]] | 1 / 6 | 4 / 30 | 13% |
+| [[P5 Accounts and people]] | 1 / 6 | 4 / 31 | 13% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
@@ -445,7 +445,7 @@ flowchart LR
 > ![[T-53 Delete the Firebase user#^done]]
 
 
-## P5 Accounts and people — 4/30
+## P5 Accounts and people — 4/31
 
 > [!todo]- ⬜ [[M-03 Eval sentences]] · 0/4
 > ![[M-03 Eval sentences#^done]]
@@ -459,7 +459,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-18a Message request API ⚑]] · 0/4
 > ![[T-18a Message request API ⚑#^done]]
 
-> [!todo]- ⬜ [[T-16a Profile API ⚑]] · 0/9
+> [!todo]- ⬜ [[T-16a Profile API ⚑]] · 0/10
 > ![[T-16a Profile API ⚑#^done]]
 
 > [!todo]- ⬜ [[T-16b Profile screens ⚑]] · 0/4

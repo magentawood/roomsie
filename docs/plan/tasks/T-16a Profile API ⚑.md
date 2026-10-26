@@ -46,6 +46,7 @@ The server part of profiles: save who a person is, and give a safe link to uploa
 - [ ] The API masks phone numbers in the bio
 - [ ] A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo
 - [ ] The listing reply gives the name and the photo of the lister from the profile, and the listing detail shows them
+- [ ] The API reads one live card for a signed-in user
 
 ^done
 

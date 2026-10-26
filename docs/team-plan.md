@@ -843,6 +843,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The API masks phone numbers in the bio
 - A photo upload checks in its transaction that the account is still active. Thus, a deletion (T-20) does not miss a photo
 - The listing reply gives the name and the photo of the lister from the profile, and the listing detail shows them
+- The API reads one live card for a signed-in user
 - Read first: `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/decisions/pd-16-profiles.md`
 
 **T-16b · Profile create and edit screens** — done when:
