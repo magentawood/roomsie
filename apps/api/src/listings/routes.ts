@@ -1,29 +1,29 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, asc, desc, eq, inArray } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { z } from 'zod'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
-  listingStatusBody, myListingsResponse, photoTypes, sharingTypes, uploadUrlBody, uploadUrlResponse,
-  type GoLiveField, type ListingEdit, type ListingResponse,
+  listingStatusBody, myListingsResponse, photoTypes, uploadUrlBody, uploadUrlResponse,
+  type GoLiveField, type ListingEdit,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { areas, listingFlatmates, listingRates, listings } from '../db/schema'
 import type { Storage } from '../storage'
 import { maskContacts } from '../text/mask-contacts'
+import { listingView, partsOf, type Parts } from './view'
 
 type Listing = typeof listings.$inferSelect
 type ListingStatus = Listing['status']
 type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
 type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
-type Parts = { rates: Rate[]; flatmates: Flatmate[] }
 
 const liveDays = 30
 /** Each free-text field that the lister writes (PD17). */
 const maskedFields = ['pgName', 'address', 'building', 'street', 'landmark', 'nearestStation', 'description'] as const
-const idParams = z.object({ id: z.uuid() })
+export const idParams = z.object({ id: z.uuid() })
 const allowedFrom: Record<'inactive' | 'filled', ListingStatus[]> = { inactive: ['live'], filled: ['live', 'inactive'] }
 
 export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
@@ -36,13 +36,13 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     schema: { body: createListingBody, response: { 201: listingResponse } },
   }, async (req, reply) => {
     const [listing] = await db.insert(listings).values({ ownerUserId: req.user!.id, kind: req.body.kind }).returning()
-    return reply.code(201).send(view(listing!, { rates: [], flatmates: [] }, storage, true))
+    return reply.code(201).send(listingView(listing!, { rates: [], flatmates: [] }, storage, true))
   })
 
   app.get('/listings/mine', { preHandler, schema: { response: { 200: myListingsResponse } } }, async (req) => {
     const mine = await db.select().from(listings).where(eq(listings.ownerUserId, req.user!.id)).orderBy(desc(listings.createdAt))
     const parts = await partsOf(db, mine.map((l) => l.id))
-    return { listings: mine.map((l) => view(l, parts(l.id), storage, true)) }
+    return { listings: mine.map((l) => listingView(l, parts(l.id), storage, true)) }
   })
 
   app.get('/listings/:id', {
@@ -53,7 +53,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const isOwner = listing?.ownerUserId === req.user!.id
     const visible = listing?.status === 'live' && listing.expiresAt! > new Date()
     if (!listing || (!isOwner && !visible)) return reply.code(404).send({ error: 'not found' })
-    return view(listing, (await partsOf(db, [listing.id]))(listing.id), storage, isOwner)
+    return listingView(listing, (await partsOf(db, [listing.id]))(listing.id), storage, isOwner)
   })
 
   app.patch('/listings/:id', {
@@ -118,7 +118,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       return row
     })
     if (!saved) return reply.code(404).send({ error: 'not found' })
-    return view(saved, next, storage, true)
+    return listingView(saved, next, storage, true)
   })
 
   app.post('/listings/:id/status', {
@@ -144,7 +144,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const [saved] = await db.update(listings).set({ status, expiresAt, updatedAt: new Date() })
       .where(listingOfOwner(listing.id, req.user!.id)).returning()
     if (!saved) return reply.code(404).send({ error: 'not found' })
-    return view(saved, parts, storage, true)
+    return listingView(saved, parts, storage, true)
   })
 
   app.delete('/listings/:id', {
@@ -183,14 +183,6 @@ async function ownedListing(db: Db, id: string, ownerUserId: string) {
 }
 
 /** The rents and the flatmates of each listing, from two queries. */
-export async function partsOf(db: Db, ids: string[]) {
-  const rates = await db.select().from(listingRates).where(inArray(listingRates.listingId, ids))
-  const flatmates = await db.select().from(listingFlatmates).where(inArray(listingFlatmates.listingId, ids)).orderBy(asc(listingFlatmates.position))
-  return (id: string): Parts => ({
-    rates: rates.filter((r) => r.listingId === id),
-    flatmates: flatmates.filter((f) => f.listingId === id),
-  })
-}
 
 function mask(edit: ListingEdit): ListingEdit {
   const masked = { ...edit }
@@ -231,21 +223,3 @@ function missingToGoLive(listing: Listing, { rates, flatmates }: Parts, check: '
   return missing
 }
 
-export function view(listing: Listing, { rates, flatmates }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
-  // The serializer parses each reply with the contract schema, which drops ownerUserId and the row ids.
-  const { photoKeys, roomType, expiresAt, createdAt, updatedAt, ...fields } = listing
-  const hideAddress = !isOwner && !listing.shareAddress
-  const sharingOrder = (r: Rate) => (r.sharing ? sharingTypes.indexOf(r.sharing) : -1)
-  return {
-    ...fields,
-    // ADR-0017: until the lister shares the address, other users see the area, the landmark and the building.
-    ...(hideAddress && { address: null, street: null, pincode: null }),
-    roomType: roomType === 'unclear' ? null : roomType,
-    photos: photoKeys.map((key) => ({ key, url: storage.publicUrl(key) })),
-    rates: [...rates].sort((a, b) => sharingOrder(a) - sharingOrder(b)),
-    flatmates: flatmates.map((f) => ({ ...f, photoUrl: f.photoKey && storage.publicUrl(f.photoKey) })),
-    expiresAt: expiresAt?.toISOString() ?? null,
-    createdAt: createdAt.toISOString(),
-    updatedAt: updatedAt.toISOString(),
-  }
-}

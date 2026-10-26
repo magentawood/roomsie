@@ -13,11 +13,11 @@
 | Part | Where |
 |---|---|
 | The table | `saves` in `apps/api/src/db/schema.ts`: `user_id`, and exactly one of `listing_id` and `profile_id` |
-| The routes | `apps/api/src/saved/routes.ts`: `PUT` and `DELETE /v1/saved/places/:id` and `/v1/saved/people/:id`, and `GET /v1/saved/places` and `/v1/saved/people` |
+| The routes | `apps/api/src/saved/routes.ts`: `PUT /v1/saved/places/:id` and `/v1/saved/people/:id`, `DELETE /v1/saved/:kind/:id`, and `GET /v1/saved/places` and `/v1/saved/people` |
 | The button | `apps/web/components/saved/save-button.tsx`: `<SaveButton kind="places" id={…} />` |
 | The page | `apps/web/app/saved/page.tsx`, with the place card of `apps/web/components/listings/place-card.tsx` |
 
-- Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404.
+- Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404. The match query uses the same rule for people (`visiblePeople`).
 - The web keeps the two lists in the cache keys `['saved', 'places']` and `['saved', 'people']`. The button reads them to know if an item is saved.
 - T-43 and T-18b put the button on the detail screens. T-18b also adds the person cards to the People tab.
 

@@ -178,21 +178,3 @@ export function rentLine(listing: ListingResponse) {
   const amount = rentAmount(listing)
   return amount ? `Rent: ${amount}/mo` : 'Rent: not set yet'
 }
-
-const guestRules = { none: 'No Guests', welcome: 'Guests Allowed', day_visits: 'Day Visits Only' } as const
-
-/** The house rules of a card, as the result card of the designs: the first three, then "+N". */
-export function rulesLine(listing: ListingResponse) {
-  const rules = [
-    listing.smokingAllowed === false && 'No Smoking', listing.smokingAllowed && 'Smoking OK',
-    listing.vegOnlyKitchen && 'Veg Kitchen', listing.vegOnlyKitchen === false && 'Non-veg OK',
-    listing.alcoholAllowed === false && 'No Alcohol', listing.alcoholAllowed && 'Alcohol OK',
-    listing.guests && guestRules[listing.guests],
-  ].filter((rule): rule is string => typeof rule === 'string')
-  if (!rules.length) return null
-  return rules.slice(0, 3).join(' • ') + (rules.length > 3 ? ` +${rules.length - 3}` : '')
-}
-
-/** "31 March 26", as the result card of the designs. */
-export const availableLabel = (date: string) =>
-  new Date(`${date}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: '2-digit' })

@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Bookmark, SearchLg } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
-import { useAreas, useSavedPlaces } from '../../lib/queries'
+import { useAreaNames, useSavedPlaces, type SavedKind } from '../../lib/queries'
 import { PlaceCard } from '../../components/listings/place-card'
 import { SaveButton } from '../../components/saved/save-button'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
@@ -12,11 +12,9 @@ import { Button } from '../../components/ui/button'
 import { EmptyState } from '../../components/ui/empty-state'
 import { Tabs } from '../../components/ui/tabs'
 
-/** The saved places, newest first. Only live listings show (T-47). */
 function Places() {
   const places = useSavedPlaces()
-  const areas = useAreas()
-  const areaNames = Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))
+  const areaNames = useAreaNames()
   if (places.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(places.error)}</p>
   if (places.isPending) return <p className="text-sm text-tertiary">Loading…</p>
   if (!places.data.places.length) {
@@ -28,7 +26,7 @@ function Places() {
   }
   return (
     <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {places.data.places.map(({ listing }) => (
+      {places.data.places.map((listing) => (
         <li key={listing.id}>
           <PlaceCard listing={listing} areaName={listing.areaSlug ? areaNames[listing.areaSlug] : undefined} action={<SaveButton kind="places" id={listing.id} />} />
         </li>
@@ -38,7 +36,7 @@ function Places() {
 }
 
 function Saved() {
-  const [tab, setTab] = useState<'places' | 'people'>('places')
+  const [tab, setTab] = useState<SavedKind>('places')
   return (
     <>
       <PageHeader title="Saved" backHref="/" />
@@ -57,7 +55,7 @@ function Saved() {
 
 export default function SavedPage() {
   return (
-    <SignInGate>
+    <SignInGate title="Sign in to see what you saved" text="Saved keeps the places and people that you want to see again.">
       <AppShell>
         <Saved />
       </AppShell>

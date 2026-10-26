@@ -4,7 +4,7 @@ import { listingResponse, meResponse, savedPeopleResponse, savedPlacesResponse }
 import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
 import { offlineStorage } from '../scripts/openapi'
-import { areas, blocks, profiles, saves } from '../src/db/schema'
+import { areas, blocks, listings, profiles, saves } from '../src/db/schema'
 import { buildServer } from '../src/server'
 
 let testDb: TestDb
@@ -43,12 +43,13 @@ describe('saved places', () => {
     expect((await call('seeker', 'PUT', `/v1/saved/places/${id}`)).statusCode).toBe(204)
     expect((await call('seeker', 'PUT', `/v1/saved/places/${id}`)).statusCode).toBe(204)
     const places = await savedPlaces()
-    expect(places.filter((p) => p.listing.id === id)).toHaveLength(1)
-    expect(places[0]!.listing).toMatchObject({ id, status: 'live', address: null })
+    expect(places.filter((p) => p.id === id)).toHaveLength(1)
+    expect(places[0]).toMatchObject({ id, status: 'live', address: null })
 
     expect((await call('seeker', 'DELETE', `/v1/saved/places/${id}`)).statusCode).toBe(204)
-    expect((await savedPlaces()).some((p) => p.listing.id === id)).toBe(false)
+    expect((await savedPlaces()).some((p) => p.id === id)).toBe(false)
     expect((await call('seeker', 'DELETE', `/v1/saved/places/${id}`)).statusCode).toBe(204)
+    expect((await call('seeker', 'DELETE', `/v1/saved/shops/${id}`)).statusCode).toBe(400)
   })
 
   it('refuses a listing that other users cannot see', async () => {
@@ -59,13 +60,19 @@ describe('saved places', () => {
     expect((await call(null, 'GET', '/v1/saved/places')).statusCode).toBe(401)
   })
 
-  it('hides a paused listing until it is live again, and the delete of the listing deletes the save', async () => {
+  it('hides a paused, filled or expired listing until it is live again, and the delete of the listing deletes the save', async () => {
     const id = await liveListing()
     await call('seeker', 'PUT', `/v1/saved/places/${id}`)
-    expect((await call('lister', 'POST', `/v1/listings/${id}/status`, { status: 'inactive' })).statusCode).toBe(200)
-    expect((await savedPlaces()).some((p) => p.listing.id === id)).toBe(false)
-    expect((await call('lister', 'POST', `/v1/listings/${id}/status`, { status: 'live' })).statusCode).toBe(200)
-    expect((await savedPlaces()).some((p) => p.listing.id === id)).toBe(true)
+    const shown = async () => (await savedPlaces()).some((p) => p.id === id)
+    for (const status of ['inactive', 'filled'] as const) {
+      expect((await call('lister', 'POST', `/v1/listings/${id}/status`, { status })).statusCode).toBe(200)
+      expect(await shown()).toBe(false)
+      expect((await call('lister', 'POST', `/v1/listings/${id}/status`, { status: 'live' })).statusCode).toBe(200)
+      expect(await shown()).toBe(true)
+    }
+    await testDb.db.update(listings).set({ expiresAt: new Date(Date.now() - 1000) }).where(eq(listings.id, id))
+    expect(await shown()).toBe(false)
+    expect((await call('seeker', 'PUT', `/v1/saved/places/${id}`)).statusCode).toBe(404)
 
     expect((await call('lister', 'DELETE', `/v1/listings/${id}`)).statusCode).toBe(204)
     expect(await testDb.db.select().from(saves).where(eq(saves.listingId, id))).toHaveLength(0)
@@ -76,7 +83,7 @@ describe('saved places', () => {
     await call('seeker', 'PUT', `/v1/saved/places/${older}`)
     await call('seeker', 'PUT', `/v1/saved/places/${newer}`)
     await testDb.db.update(saves).set({ createdAt: new Date(Date.now() - 60_000) }).where(eq(saves.listingId, older))
-    const order = (await savedPlaces()).map((p) => p.listing.id).filter((id) => id === older || id === newer)
+    const order = (await savedPlaces()).map((p) => p.id).filter((id) => id === older || id === newer)
     expect(order).toEqual([newer, older])
   })
 })
@@ -89,7 +96,11 @@ describe('saved people', () => {
     const asha = await card(ids.lister)
     expect((await call('seeker', 'PUT', `/v1/saved/people/${asha}`)).statusCode).toBe(204)
     expect((await call('seeker', 'PUT', `/v1/saved/people/${asha}`)).statusCode).toBe(204)
-    expect((await savedPeople()).map((p) => p.profileId)).toEqual([asha])
+    expect(await savedPeople()).toEqual([asha])
+    await testDb.db.update(profiles).set({ visibility: 'hidden' }).where(eq(profiles.id, asha))
+    expect(await savedPeople()).toEqual([])
+    await testDb.db.update(profiles).set({ visibility: 'live' }).where(eq(profiles.id, asha))
+    expect(await savedPeople()).toEqual([asha])
 
     expect((await call('seeker', 'DELETE', `/v1/saved/people/${asha}`)).statusCode).toBe(204)
     expect(await savedPeople()).toEqual([])

@@ -57,7 +57,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The routes</td>
-<td><code>apps/api/src/saved/routes.ts</code>: <code>PUT</code> and <code>DELETE /v1/saved/places/:id</code> and <code>/v1/saved/people/:id</code>, and <code>GET /v1/saved/places</code> and <code>/v1/saved/people</code></td>
+<td><code>apps/api/src/saved/routes.ts</code>: <code>PUT /v1/saved/places/:id</code> and <code>/v1/saved/people/:id</code>, <code>DELETE /v1/saved/:kind/:id</code>, and <code>GET /v1/saved/places</code> and <code>/v1/saved/people</code></td>
 </tr>
 <tr>
 <td>The button</td>
@@ -70,7 +70,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li>Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404.</li>
+<li>Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404. The match query uses the same rule for people (<code>visiblePeople</code>).</li>
 <li>The web keeps the two lists in the cache keys <code>['saved', 'places']</code> and <code>['saved', 'people']</code>. The button reads them to know if an item is saved.</li>
 <li>T-43 and T-18b put the button on the detail screens. T-18b also adds the person cards to the People tab.</li>
 </ul>

@@ -432,7 +432,7 @@ export const blocks = pgTable('blocks', {
   blockedIdx: index('blocks_blocked_idx').on(t.blockedUserId),
 })).enableRLS()
 
-/* ── waitlist ───────────────────────────────────────────────────────────── */
+/* ── saved ──────────────────────────────────────────────────────────────── */
 
 /** A place or a person that a user keeps under Saved (T-47). Each row has exactly one of the two. */
 export const saves = pgTable('saves', {
@@ -449,6 +449,9 @@ export const saves = pgTable('saves', {
   profileIdx: index('saves_profile_idx').on(t.profileId),
   oneTargetCheck: check('saves_one_target_check', sql`num_nonnulls(${t.listingId}, ${t.profileId}) = 1`),
 })).enableRLS()
+
+/* ── waitlist ───────────────────────────────────────────────────────────── */
+
 
 export const waitlist = pgTable('waitlist', {
   id: id(),
