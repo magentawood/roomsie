@@ -47,3 +47,34 @@ The screens where a person says who they are and adds photos.
 ## Read first
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
 - [pd-16-profiles.md](../../decisions/pd-16-profiles.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `apps/web`:
+    - A new page "Profile and Settings" at `/profile`: the basics, the photos, the search, the lifestyle answers, the must-haves, the bio and the settings, with one Save button.
+    - The create dialog "You've logged in!" in the app shell.
+    - The delete dialog of the account.
+    - The Profile tab of the phone bar and the account card of the sidebar open the page.
+    - A pure module for the budget bands and for the body of an edit.
+    - The interface is new.
+  - `apps/api`: a budget is complete when its lowest or its highest amount is set. The interface does not change.
+  - Docs: a learn page.
+- **Seams for the tests:**
+  - Vitest for the pure module of the web.
+  - The routes of the API, through `app.inject`, for the budget rule. This seam exists.
+  - No component tests (testing standard). Puppeteer screenshots of the create dialog, the page in each state of the card, the photos, and the delete dialog, at 390 px and 1440 px, against local dev.
+- **Decisions:**
+  - After a sign-in, a page in the app shell opens the create dialog when the account has no profile. The dialog asks the name, the age and the gender, and shows the email of the Google account. "Go to my profile" makes the profile and opens the page. "Explore for now" closes the dialog for this visit. The page always offers the dialog until a profile exists.
+  - The page follows the drafts of sections 10 and 15. Save sends only the fields that changed.
+  - A photo saves at once: the upload, then the key. Delete removes it at once. A profile has four photos at most.
+  - The banner tells the state of the card: "You're discoverable", "Your card is hidden", or "Your card is not visible yet" with the fields that are missing ([PD16](../../decisions/pd-16-profiles.md)).
+  - The budget bands of the designs: "Under ₹10k", "Under ₹15k", "Under ₹25k" and "Under ₹35k" set the highest amount, and "Above ₹35k" sets the lowest. The API counts a budget when either amount is set.
+  - "Looking for my son or daughter" opens the choice "What does your son or daughter do?": Student, Starting their first job or Working ([PD15](../../decisions/pd-15-form-a-contract.md)).
+  - The must-haves take Prefer or Dealbreaker, and a second tap clears one.
+  - "Verify your ID" (T-46), the email and push alerts (T-44, T-45), "Fill using our chat" and "Help" do not show. The header has no "Verified" pill.
+  - "Hide my card" is a switch in the settings.
+  - "Delete my account" opens the confirmation of section 15 and calls `DELETE /v1/me`. After the delete, the dialog says "Your account is deleted.", then it signs out and opens the home page. A failure keeps the dialog open with "We could not delete your account. Try again."
+- **Out of scope:** the verification of T-46, the alerts of T-44 and T-45, the chat that fills the profile, the place type (intent) of a profile, the landing page (T-23a), and the deletion of the Firebase user (T-53).
