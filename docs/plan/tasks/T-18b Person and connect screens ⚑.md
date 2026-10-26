@@ -48,3 +48,36 @@ Read the full profile of a person and send a message request.
 
 ## Read first
 - [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)
+
+## Spec
+
+**Approved:** 2026-10-26, by n3rxv
+
+- **Modules:**
+  - `packages/contract`: the card reply gets the connection with the viewer and the requests that are left today. The reply of the saved people gives cards. The interface changes.
+  - `apps/api`: the person detail route gives the connection and the requests left today. The saved people route gives cards. The interface changes. No migration.
+  - `apps/web`:
+    - New: the person detail at `/people/[id]`, with the Say hi sheet, the report sheet and the block sheet.
+    - New: a person card. The People tab of Saved lists the saved people with it.
+    - The reason labels of the reports serve a person and a listing.
+  - The Figma drafts page: the connect area for a request that the person sent to the viewer. The build uses it at once ([PD14](../../decisions/pd-14-v0-is-the-figma-designs.md)).
+  - Docs: the learn pages of message requests, Saved and profiles.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database, with the test app. This seam exists.
+  - The pure modules of the web, with Vitest. This seam exists.
+- **Decisions:**
+  - T-19 came first, in its own PR (#158). The report and block buttons use its API. T-18a is in main, so the screen uses the real API, not a mock.
+  - The person detail is at `/people/[id]`, behind sign-in. A guest sees "Sign in to open this card". A card that is hidden, blocked or not there shows "This card is not available".
+  - The detail follows the flatmate detail of the Product file and section 16 of the drafts page. On a phone, it is a page of its own: a bar at the bottom holds Save and the connect button, and the ⋮ menu has Report, Block, Share and Save. On a desktop, Report and Block are in the header of the panel, one tap each. There is no "A great match" box ([PD3a](../../decisions/pd-03a-flatmate-matching.md)).
+  - The card reply tells the connection with the viewer: none, sent, received (with the id and the note of the request), accepted, or not available. It also tells if the viewer has new requests left today.
+  - The connect states ([PD17](../../decisions/pd-17-connect-and-contact.md)):
+    - Say hi opens the sheet of the note: 1 to 300 characters, with a counter.
+    - Request sent: no withdraw.
+    - The daily cap: Say hi is disabled, with the line of the cap, before a tap.
+    - Received: the note of the person, with Accept and Decline. A new section of the drafts page shows it first.
+    - Accepted: the "Message" button of the design, disabled, with the line "You're connected. The chat opens here when Messages is ready." T-45 connects the button.
+    - Not available: "Divya isn't available right now. You can send Divya a new request later." Say hi works again.
+  - Report opens the report sheet for a person, with the seven reasons of [PD18](../../decisions/pd-18-moderation.md). "Other" needs a detail. Block opens the sheet of the design. After a block, the screen goes back to the page before it.
+  - No phone number shows. The API masks the note and the text fields, and the screen adds no contact detail.
+  - The person detail has the Save button of T-47. The saved people reply gives cards, not ids. The People tab lists the person cards of sections 14 and 19, with no match details, and each card opens its person detail.
+- **Out of scope:** the results panel and the match badges (T-15), the inbox of the requests and the chat (T-44, T-45), the "Verified" pill (T-46), unblock.
