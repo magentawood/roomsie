@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { incomingRequestsResponse, meResponse, profileResponse, reportQueueResponse } from '@roomsie/contract'
+import { incomingRequestsResponse, meResponse, outgoingRequestsResponse, profileResponse, reportQueueResponse } from '@roomsie/contract'
 import { connectionRequests, listings, profiles, reports, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -78,10 +78,11 @@ describe('the admin routes', () => {
     expect(await statusesOf(t.ids.other)).toEqual(['actioned'])
   })
 
-  it('suspend signs the person out, hides the card and the listings, withdraws the open requests, and closes all the reports', async () => {
+  it('suspend signs the person out, hides the card and the listings, ends the open requests, and closes all the reports', async () => {
     const listingId = await t.liveListing()
     const other = await t.liveListing()
     expect((await t.call('lister', 'POST', '/v1/requests', { toProfileId: cards.seeker, note: 'Hi, I have a room.' })).statusCode).toBe(201)
+    expect((await t.call('other', 'POST', '/v1/requests', { toProfileId: cards.lister, note: 'Hi, is the room free?' })).statusCode).toBe(201)
     await report('seeker', { listingId }, 'fake')
     await report('other', { profileId: cards.lister }, 'other', 0, 'Rude')
     expect((await review('listings', listingId, 'suspend')).statusCode).toBe(204)
@@ -94,6 +95,9 @@ describe('the admin routes', () => {
     expect(incomingRequestsResponse.parse((await t.call('seeker', 'GET', '/v1/requests/incoming')).json()).requests).toEqual([])
     const [request] = await t.db.select({ status: connectionRequests.status }).from(connectionRequests).where(eq(connectionRequests.fromUserId, t.ids.lister))
     expect(request!.status).toBe('withdrawn')
+    // The sender of a request to the suspended person sees "not available".
+    expect(outgoingRequestsResponse.parse((await t.call('other', 'GET', '/v1/requests/outgoing')).json()).requests)
+      .toMatchObject([{ toProfileId: cards.lister, state: 'not_available' }])
     expect(await statusesOf(t.ids.lister)).toEqual(['actioned', 'actioned'])
     expect(await queue()).toEqual([])
     await t.db.update(users).set({ status: 'active', tokensValidAfter: new Date(0) }).where(eq(users.id, t.ids.lister))

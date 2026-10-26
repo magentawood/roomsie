@@ -21,10 +21,9 @@ export function useMe() {
   return useQuery({ queryKey: queryKeys.me, queryFn: () => api(user, '/v1/me', meResponse) })
 }
 
-/** Only a moderator gets the queue. */
-export function useReportQueue(enabled: boolean) {
+export function useReportQueue() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueResponse), enabled })
+  return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueResponse) })
 }
 
 export function useListing(id: string) {

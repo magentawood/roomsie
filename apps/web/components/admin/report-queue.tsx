@@ -53,33 +53,34 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
     <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5">
       <div className="flex items-start gap-3">
         {subject.photo
-          ? <img src={subject.photo} alt="" className={`size-12 shrink-0 object-cover ${item.kind === 'person' ? 'rounded-full' : 'rounded-md'}`} />
+          ? <img src={subject.photo} alt="" className={`size-16 shrink-0 object-cover ${item.kind === 'person' ? 'rounded-full' : 'rounded-md'}`} />
           : (
-            <span className="flex size-12 shrink-0 items-center justify-center rounded-full bg-tertiary text-fg-quaternary">
+            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-tertiary text-fg-quaternary">
               {item.kind === 'person' ? <User01 size={20} aria-hidden /> : <Home02 size={20} aria-hidden />}
             </span>
           )}
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <p className="flex flex-wrap items-center gap-2">
             <span className="font-semibold text-primary">{subject.name}</span>
-            {safety && <Badge tone="error">{labels[safety.reason]}</Badge>}
-            <Badge tone="gray">{subject.hidden ? 'Hidden' : 'Visible'}</Badge>
+            {safety && <Badge tone="error" dot={false}>{labels[safety.reason]}</Badge>}
+            <Badge tone="gray" dot={false}>{subject.hidden ? 'Hidden' : 'Visible'}</Badge>
           </p>
           {subject.line && <p className="text-sm text-tertiary">{subject.line}</p>}
           <p className="text-sm text-tertiary">{summary(item)}</p>
         </div>
       </div>
-      <ul className="flex flex-col gap-2 border-t border-secondary pt-3">
+      <ul className="divide-y divide-secondary rounded-lg border border-secondary">
         {item.reports.map((r) => (
-          <li key={r.id} className="text-sm">
+          <li key={r.id} className="px-4 py-3 text-sm">
             <p className="font-medium text-secondary">{labels[r.reason]} · {ago(r.createdAt)}</p>
             {r.detail && <p className="text-tertiary">{r.detail}</p>}
           </li>
         ))}
       </ul>
-      {subject.text && <blockquote className="border-l-2 border-secondary pl-3 text-sm text-tertiary">“{subject.text}”</blockquote>}
+      {subject.text && <blockquote className="border-l-2 border-secondary pl-3 text-sm text-tertiary">{subject.text}</blockquote>}
       {review.isError && <p role="alert" className="text-sm text-error-primary">{errorText(review.error)}</p>}
-      <div className="flex flex-wrap gap-3">
+      {/* On a phone, the three buttons fill the row. */}
+      <div className="flex gap-3 *:flex-1 md:*:flex-none">
         <Button variant="secondary" size="sm" disabled={review.isPending} onClick={() => decide('dismiss')}>Dismiss</Button>
         <Button variant="secondary" size="sm" disabled={review.isPending} onClick={() => decide('hide')}>{subject.hidden ? 'Keep hidden' : 'Hide'}</Button>
         <Button variant="destructive" size="sm" disabled={review.isPending} onClick={() => setConfirming(true)}>Suspend</Button>
@@ -102,7 +103,7 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
 
 /** The open reports, one item for each person or listing (T-19). The API sorts them: safety reports first, then the oldest. */
 export function ReportQueue() {
-  const queue = useReportQueue(true)
+  const queue = useReportQueue()
   if (queue.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(queue.error)}</p>
   if (queue.isPending) return <p className="text-sm text-tertiary">Loading…</p>
   if (!queue.data.items.length) {

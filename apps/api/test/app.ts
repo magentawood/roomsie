@@ -34,7 +34,6 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     expect((await call(users[0], 'POST', `/v1/listings/${created.id}/status`, { status: 'live' })).statusCode).toBe(200)
     return created.id
   }
-  /** A live card of the user. Gives the profile id. */
   async function liveCard(who: U, fullName = 'Divya Sharma') {
     const made = profileResponse.parse((await call(who, 'POST', '/v1/me/profile', { fullName, age: 25, gender: 'female' })).json())
     expect((await call(who, 'PATCH', '/v1/me/profile', { whosMoving: 'working', areas: ['bandra'], budgetMax: 20000 })).statusCode).toBe(200)

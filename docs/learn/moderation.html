@@ -82,7 +82,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A hidden card</strong> leaves the results, the person detail and Saved, and it cannot get a request. The owner sees "Hidden for review" on the profile page. "Hide my card" does not bring it back. A hidden listing works in the same way (<a href="place-detail.html">Place detail</a>).</li>
 <li><strong>A block</strong> hides the two people in the results, the person detail, Saved and the listings. An open message request between them becomes declined, so its sender sees "Not available" (<a href="message-requests.html">Message requests</a>). There is no unblock in v0.</li>
 <li><strong>The queue</strong> has one item for each reported person or listing, with all its open reports. Safety reports come first, then the oldest.</li>
-<li><strong>Suspend</strong> sets <code>tokens_valid_after</code> to now, so each token of the person stops. It also hides the card and the listings, withdraws the open requests of the person, and closes each open report about the person.</li>
+<li><strong>Suspend</strong> sets <code>tokens_valid_after</code> to now, so each token of the person stops. It also hides the card and the listings, and closes each open report about the person. The open requests that the person sent are withdrawn. The open requests to the person are declined, so their senders see "Not available".</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -93,7 +93,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>The rules are settings.</strong> <code>REPORT_HIDE_AT_REPORTERS</code> (default 2) and <code>REPORT_SAFETY_REASONS</code> (default <code>harassment,under_18</code>) change the hide rule for people and listings. A change needs a redeploy.</li>
 <li><strong>Make a moderator.</strong> Add the Firebase uid of the person to the GitHub secret <code>MODERATOR_UIDS</code> (comma-separated), then redeploy the API. With no uid, nobody is a moderator.</li>
-<li><strong>A non-moderator gets 404</strong>, from the admin routes and from <code>/admin</code>. Thus, the screen does not show that it exists.</li>
+<li><strong>A guest and a non-moderator get 404</strong>, from the admin routes and from <code>/admin</code>. Thus, the screen does not show that it exists.</li>
 <li><strong>The end of a suspension is not in v0.</strong> A developer changes the status in the database.</li>
 <li><strong>A report of a deleted listing</strong> goes to the item of its owner, because the listing is gone.</li>
 </ul>

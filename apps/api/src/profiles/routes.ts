@@ -6,7 +6,7 @@ import {
   uploadUrlBody, type ProfileEditBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
-import type { Db } from '../db/client'
+import type { Tx } from '../db/client'
 import { areas, profileLifestyle, profileMustHaves, profiles, users } from '../db/schema'
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
@@ -97,7 +97,6 @@ function crossFieldError(p: Profile, photoKeys: string[] | undefined): keyof Pro
   return null
 }
 
-type Tx = Parameters<Parameters<Db['transaction']>[0]>[0]
 
 /** A null answer clears it. Each saved answer is "stated", because it comes from the form. */
 async function saveAnswers(tx: Tx, profileId: string, { lifestyle, mustHaves }: Pick<ProfileEditBody, 'lifestyle' | 'mustHaves'>) {

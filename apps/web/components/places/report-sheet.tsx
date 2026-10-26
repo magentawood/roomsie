@@ -14,7 +14,6 @@ import { ChoiceChips } from '../ui/choice'
 import { TextArea } from '../ui/field'
 import { Modal } from '../ui/modal'
 
-
 /** The report of a listing (PD18). */
 export function ReportSheet({ listingId, onClose }: { listingId: string; onClose: () => void }) {
   const user = useUser()

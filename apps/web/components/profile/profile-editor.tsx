@@ -37,7 +37,7 @@ function Section({ title, helper, children }: { title: string; helper: string; c
 
 function CardBanner({ profile }: { profile: ProfileResponse }) {
   const [title, text, BannerIcon] = profile.hiddenForReview
-    ? ['Hidden for review', 'Reports hid your card from others. We review it within 24 hours.', EyeOff]
+    ? ['Hidden for review', 'Reports hid your card from others until a moderator reviews it.', EyeOff]
     : profile.visibility === 'live'
     ? profile.managedByParent
       ? [`${firstName(profile.fullName)}’s card is discoverable`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]

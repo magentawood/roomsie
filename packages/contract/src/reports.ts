@@ -22,4 +22,3 @@ export const reportBody = z.union([z.strictObject({ ...report, listingId: z.uuid
 export type ReportBody = z.input<typeof reportBody>
 
 export const blockBody = z.strictObject({ id: clientId, profileId: z.uuid() })
-export type BlockBody = z.infer<typeof blockBody>
