@@ -24,7 +24,7 @@ These rules apply to `apps/web`: Next.js 16, React 19 and TanStack Query. The ru
 - Keep the ID token only in memory. Get it from `getIdToken()` for each call, and never write it to `localStorage`. Why: an XSS attack can read stored tokens. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Serve a strict Content-Security-Policy. Why: it is a primary control against XSS, which can steal the token. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Ask for login only when a user opens one listing or person, sends a message, or reaches the turn cap. Browse and filters need no login. Why: the product is open until that step. ([PD6b](../decisions/pd-06b-login-gate-and-search.md), [PD9](../decisions/pd-09-pre-login-limits.md))
-- The sign-in wall never shows before the results. It replaces the chat input, and the results stay on the screen. Why: a user signs in after they see something that they want. ([PD9](../decisions/pd-09-pre-login-limits.md))
+- The sign-in wall never shows before the results. It is a modal that the user can close, and the results stay on the screen. Why: a user signs in after they see something that they want. ([PD9](../decisions/pd-09-pre-login-limits.md))
 
 ## Pages and content
 

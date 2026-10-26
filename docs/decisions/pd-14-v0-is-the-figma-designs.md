@@ -4,9 +4,9 @@
 
 ## Context
 
-- The designs arrived on 24 October. They are in two Figma files in "Roomsie's team", with a page of the Product file for the website:
+- The designs arrived on 24 October. They are in Figma, in "Roomsie's team":
   - **[Product](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=5-2):** the page "Product screens", with four flows: 01 Entry and onboarding, 02 Search in chat, 03 Profile and settings, 04 Listing flow and my listings.
-  - **[Website](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=256-18546):** the page "Website" of the Product file. Its section "Final screens" is the landing page, at desktop, tablet and mobile widths, and it has the product film. The separate file "Website" is a copy. Do not build from the copy.
+  - **[Product file, page "Website"](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=256-18546):** the section "Final screens" is the landing page, at desktop, tablet and mobile widths, and it has the product film. The separate file "Website" is a copy. Do not build from the copy.
   - **[Roomsie design system (extended)](https://www.figma.com/design/uIuJWfzf3zGiOg3IqdDaxF/Roomsie-design-system--extended-?node-id=1480-0):** an Untitled UI kit (ADR-0011). Figtree type, a black and grey brand, and the Tailwind status colours.
 - The designs show more than PD0 allowed. Flow 04 lets owners, flatmates, PG operators and brokers list a place. The results show five card kinds: flatmate, room in a flat, owner flat, PG or hostel, and broker flat.
 - The designs also show in-app messages and a DigiLocker step. The plan had both after v0.
@@ -20,16 +20,18 @@
 - **v0 has in-app messages,** as the designs show them, **and verification by the v0 route of PD8.** The DigiLocker step of the designs waits for v1.
 - **These do not change:** v0 is free for users, open to all genders, and in Mumbai. The login gate stays as in PD6b.
 - **Brokers list free in v0.** v0 has no payments. The broker price stays open in PD4.
-- **A screen that the plan needs and the designs do not have is drafted from the patterns of the designs.** The drafts are on the page "Drafts · Missing screens (Claude)" of the Product file. The designer reviews them before a build task uses them.
+- **A screen that the plan needs and the designs do not have is drafted from the patterns of the designs.** The drafts are on the page "Drafts · Missing screens (Claude)" of the Product file. A build task uses the drafts at once. The designer can review them, and a change after the build goes into a follow-up.
 
 ## Rationale
 
 - The designs are complete for four flows. The team builds what they show.
 - One source for the scope stops the conflicts between the plan and the designs.
+- The drafts use the patterns of the designs. A later change costs less than screen tasks that wait for a review.
 
 ## Alternatives rejected
 
 - **Keep PD0, and move flow 04 and the property cards to v1.** The product team wants the launch to be the product in the designs.
+- **The designer reviews each draft before a build task uses it.** The screen tasks would wait. The designer already has enough work (2026-10-26).
 
 ## Consequences
 

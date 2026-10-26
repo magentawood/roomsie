@@ -34,7 +34,7 @@ Stops abuse of the AI and a very large bill.
 
 ## Done when
 - [ ] A visitor gets five typed turns before sign-in. Chip taps do not count
-- [ ] The sign-in wall never appears before results show. The results stay visible behind the wall
+- [ ] The sign-in wall never appears before results show. The results stay on the screen, and the user can close the wall to use them
 - [ ] Limits apply per device and per network
 - [ ] At the daily spend ceiling, the chat changes to chips only
 - [ ] An alert starts when the daily model spend is more than 70% of the ceiling
