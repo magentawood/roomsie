@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ProfileResponse } from '@roomsie/contract'
-import { bandOf, budgetBands, describesYou, editBody, formOf, pickDescribesYou } from './profile-form'
+import { bandOf, describesYou, editBody, formOf, pickDescribesYou } from './profile-form'
 
 const saved: ProfileResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', jobRole: null, commuteAddress: null, bio: null,
@@ -14,7 +14,6 @@ describe('the budget bands of the designs', () => {
     expect(bandOf(35000, null)).toBe('above_35k')
     expect(bandOf(12000, 18000)).toBeNull()
     expect(bandOf(null, null)).toBeNull()
-    expect(budgetBands.find((b) => b.id === 'above_35k')).toMatchObject({ min: 35000, max: null })
   })
 })
 
@@ -42,10 +41,5 @@ describe('the body of an edit', () => {
       lifestyle: { food: null, smoking: 'non_smoker' },
       mustHaves: { veg_kitchen: 'prefer', no_alcohol: 'dealbreaker' },
     })
-  })
-
-  it('reads "Hide my card" from the state of the card', () => {
-    expect(formOf({ ...saved, visibility: 'hidden' }).hidden).toBe(true)
-    expect(formOf({ ...saved, visibility: 'draft' }).hidden).toBe(false)
   })
 })

@@ -3,21 +3,19 @@
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { genders, profileResponse, profileTextLimits, type CreateProfileBody } from '@roomsie/contract'
+import { genders, maxAge, minAge, profileResponse, profileTextLimits, type CreateProfileBody } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useProfile } from '../../lib/queries'
 import { Logo } from '../shell/logo'
 import { Button } from '../ui/button'
-import { Field, TextInput, inputClass } from '../ui/field'
+import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
 import { Dialog } from '../ui/modal'
 
 /** "Explore for now" closes the dialog for this visit of the browser tab. */
 const skipKey = 'roomsie:skip-profile'
-const ages = Array.from({ length: 82 }, (_, i) => i + 18)
 
-/** The "You've logged in!" dialog: a signed-in account with no profile makes one (T-16b). */
 export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
   const user = useUser()
   const router = useRouter()
@@ -32,12 +30,18 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
       router.push('/profile')
     },
   })
-  const ready = fullName !== null && age !== null && gender !== null
+  const [tried, setTried] = useState(false)
+  const ageError = !tried ? undefined
+    : age === null ? 'Enter your age.'
+    : age < minAge ? `You must be ${minAge} or older to use roomsie.`
+    : age > maxAge ? `Enter an age of ${maxAge} or less.` : undefined
+  const ready = fullName !== null && gender !== null
   return (
     <Dialog labelledBy="create-profile-title" onClose={onClose}>
       <form className="flex flex-col gap-5 p-5 sm:p-6" onSubmit={(e) => {
         e.preventDefault()
-        if (ready) create.mutate({ fullName, age, gender })
+        setTried(true)
+        if (ready && age !== null && age >= minAge && age <= maxAge) create.mutate({ fullName, age, gender })
       }}>
         <div className="flex flex-col items-center gap-3 text-center">
           <Logo className="h-7 w-auto text-primary" />
@@ -47,14 +51,7 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
           </div>
         </div>
         <TextInput label="Full Name" required value={fullName} onChange={setFullName} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />
-        <Field label="Age" required>
-          {(id) => (
-            <select id={id} className={inputClass} value={age ?? ''} onChange={(e) => setAge(e.target.value ? Number(e.target.value) : null)}>
-              <option value="">eg. 24</option>
-              {ages.map((a) => <option key={a} value={a}>{a}</option>)}
-            </select>
-          )}
-        </Field>
+        <NumberInput label="Age" required value={age} onChange={setAge} placeholder="eg. 24" error={ageError} />
         <Field label="Email">{(id) => <input id={id} className={inputClass} value={user.email ?? ''} disabled />}</Field>
         <Field label="Gender" required>
           {(id) => (
@@ -74,7 +71,6 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
   )
 }
 
-/** In the app shell: the dialog opens after a sign-in when the account has no profile, until the user skips it for this visit. */
 export function CreateProfileGate() {
   const profile = useProfile()
   const pathname = usePathname()

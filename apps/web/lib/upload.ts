@@ -4,7 +4,6 @@ import type { UploadUrlBody } from '@roomsie/contract'
 import { api } from './api'
 import { shrinkPhoto } from './photo'
 
-/** Where a photo goes: the route that signs the upload link, and the schema of its reply. */
 export type UploadTarget = { path: string; reply: z.ZodType<{ key: string; url: string }> }
 
 /** Shrinks the photo, gets a signed link from the API, and uploads it straight to R2 (ADR-0005). Returns the key to save. */

@@ -1,12 +1,11 @@
 import {
-  childTypes, type LifestyleAxis, type ProfileEditBody, type ProfileResponse, type mustHaveKeys, type whosMovingAnswers,
+  childTypes, maxAge, minAge, type LifestyleAxis, type MustHaveKey, type ProfileEditBody, type ProfileResponse, type WhosMoving,
 } from '@roomsie/contract'
 import { labels } from './listing-steps'
 
-type WhosMoving = (typeof whosMovingAnswers)[number]
-type MustHave = (typeof mustHaveKeys)[number]
+export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
 
-/** The budget bands of the designs. "Above ₹35k" sets the lowest amount, each other band the highest. */
+/** The budget bands of the designs. */
 export const budgetBands = [
   { id: 'under_10k', label: 'Under ₹10k', min: null, max: 10000 },
   { id: 'under_15k', label: 'Under ₹15k', min: null, max: 15000 },
@@ -34,7 +33,6 @@ export function pickDescribesYou(choice: DescribesYou, current: Moving): Moving 
   return { managedByParent: true, whosMoving: isChildType ? current.whosMoving : 'unclear' }
 }
 
-/** The fields of the page. "hidden" is the "Hide my card" switch. */
 export type ProfileForm = Required<Omit<ProfileEditBody, 'photoKeys' | 'intent'>>
 
 export const formOf = (p: ProfileResponse): ProfileForm => ({
@@ -49,7 +47,6 @@ function changedAnswers<K extends string, V>(saved: Partial<Record<K, V>>, draft
   return Object.fromEntries([...keys].filter((k) => saved[k] !== draft[k]).map((k) => [k, draft[k] ?? null])) as Partial<Record<K, V | null>>
 }
 
-/** The PATCH body: only the fields that changed. */
 export function editBody(saved: ProfileForm, draft: ProfileForm): ProfileEditBody {
   const body: Record<string, unknown> = {}
   for (const key of Object.keys(draft) as (keyof ProfileForm)[]) {
@@ -57,13 +54,12 @@ export function editBody(saved: ProfileForm, draft: ProfileForm): ProfileEditBod
     if (JSON.stringify(saved[key]) !== JSON.stringify(draft[key])) body[key] = draft[key]
   }
   const lifestyle = changedAnswers<LifestyleAxis, string | null>(saved.lifestyle, draft.lifestyle)
-  const mustHaves = changedAnswers<MustHave, string | null>(saved.mustHaves, draft.mustHaves)
+  const mustHaves = changedAnswers<MustHaveKey, string | null>(saved.mustHaves, draft.mustHaves)
   if (Object.keys(lifestyle).length) body.lifestyle = lifestyle
   if (Object.keys(mustHaves).length) body.mustHaves = mustHaves
   return body as ProfileEditBody
 }
 
-/** The labels of the profile page, as the designs write them. */
 export const profileLabels = {
   gender: { male: 'Male', female: 'Female', non_binary: 'Non-Binary' },
   describesYou: {
@@ -87,7 +83,7 @@ export const profileLabels = {
   mustHaves: {
     veg_kitchen: 'Veg kitchen', non_smokers: 'Non-smokers', no_alcohol: 'No alcohol at home', women_only: 'Women only',
     men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly',
-  } satisfies Record<MustHave, string>,
+  } satisfies Record<MustHaveKey, string>,
   weights: { prefer: 'Prefer', dealbreaker: 'Dealbreaker' },
   missing: { whosMoving: 'What best describes you', areas: 'The areas you look in', budget: 'Your budget' },
   budget: Object.fromEntries(budgetBands.map((b) => [b.id, b.label])) as Record<BudgetBand, string>,

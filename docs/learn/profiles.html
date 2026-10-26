@@ -85,13 +85,14 @@ details.callout[open] summary{color:var(--fg)}
 <li><code>GET /v1/people/:id</code> uses the rule that Saved and the match query use (<code>visiblePeople</code>).</li>
 <li>A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.</li>
 <li>After a sign-in, the app shell opens the create dialog when the account has no profile. "Explore for now" closes it until the browser tab closes.</li>
-<li>The page saves its fields with one Save button, and sends only the fields that changed. A photo saves at once, so no uploaded photo waits for a Save.</li>
+<li>The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.</li>
 <li>"Delete my account" calls <code>DELETE /v1/me</code>, then signs out.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>The fields, adults only, the parent and the visibility rule: <a href="../decisions/pd-16-profiles.md">PD16</a>. The Form A fields: <a href="../decisions/pd-15-form-a-contract.md">PD15</a>. The gender: <a href="../decisions/pd-08-verification.md">PD8</a>.</li>
 <li>The routes, the follow-up choice of a parent and the lister: the spec of T-16a (<a href="https://github.com/magentawood/roomsie/issues/36">#36</a>).</li>
+<li>The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b (<a href="https://github.com/magentawood/roomsie/issues/98">#98</a>).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
