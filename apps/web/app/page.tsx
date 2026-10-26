@@ -1,18 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { FirebaseError } from 'firebase/app'
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, type User } from 'firebase/auth'
+import { signOut } from 'firebase/auth'
 import { healthResponse, meResponse } from '@roomsie/contract'
-import { firebaseAuth } from './firebase'
-
-const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
+import { api, apiUrl } from '../lib/api'
+import { useAuth } from '../lib/auth'
+import { firebaseAuth } from '../lib/firebase'
 
 export default function Home() {
-  const [user, setUser] = useState<User | null>(null)
+  const { user, signIn } = useAuth()
   const [signInError, setSignInError] = useState<string | null>(null)
-  useEffect(() => onAuthStateChanged(firebaseAuth(), setUser), [])
 
   const health = useQuery({
     queryKey: ['health'],
@@ -26,13 +24,7 @@ export default function Home() {
   const me = useQuery({
     queryKey: ['me', user?.uid],
     enabled: user !== null,
-    queryFn: async () => {
-      if (!user) throw new Error('Signed out')
-      // getIdToken() gives the cached token, or a new one near its expiry. We never store it.
-      const res = await fetch(`${apiUrl}/v1/me`, { headers: { authorization: `Bearer ${await user.getIdToken()}` } })
-      if (!res.ok) throw new Error(`/v1/me failed: ${res.status}`)
-      return meResponse.parse(await res.json())
-    },
+    queryFn: () => api(user!, '/v1/me', meResponse),
   })
 
   return (
@@ -46,18 +38,7 @@ export default function Home() {
         </>
       ) : (
         <>
-          <button
-            type="button"
-            onClick={() =>
-              signInWithPopup(firebaseAuth(), new GoogleAuthProvider()).then(
-                () => setSignInError(null),
-                (err: unknown) =>
-                  setSignInError(
-                    err instanceof FirebaseError && err.code === 'auth/popup-closed-by-user' ? null : String(err),
-                  ),
-              )
-            }
-          >
+          <button type="button" onClick={() => signIn().then(() => setSignInError(null), (err: unknown) => setSignInError(String(err)))}>
             Sign in with Google
           </button>
           {signInError && <p>{signInError}</p>}

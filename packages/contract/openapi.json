@@ -79,6 +79,51 @@
         }
       }
     },
+    "/v1/areas": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "areas": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "name": {
+                            "type": "string"
+                          },
+                          "isLaunchArea": {
+                            "type": "boolean"
+                          }
+                        },
+                        "required": [
+                          "slug",
+                          "name",
+                          "isLaunchArea"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "areas"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/listings": {
       "post": {
         "requestBody": {

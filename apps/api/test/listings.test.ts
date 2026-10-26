@@ -69,10 +69,22 @@ describe('a draft', () => {
   it('accepts the fields of its kind, and rejects the fields of a different kind', async () => {
     const pg = await draft('pg', { pgName: 'Shivraj PG', sharing: ['double'], meals: 'veg_included', whoCanMoveIn: 'men' })
     expect(pg).toMatchObject({ pgName: 'Shivraj PG', sharing: ['double'], meals: 'veg_included', whoCanMoveIn: 'men' })
-    expect((await call('lister', 'PATCH', `/${pg.id}`, { placeType: '2bhk' })).statusCode).toBe(400)
+    const wrongKind = await call('lister', 'PATCH', `/${pg.id}`, { placeType: '2bhk' })
+    expect(wrongKind.statusCode).toBe(400)
+    expect(wrongKind.json()).toEqual({ error: 'not valid: placeType' })
     const room = await draft('room_in_flat')
     expect((await call('lister', 'PATCH', `/${room.id}`, { meals: 'none' })).statusCode).toBe(400)
-    expect((await call('lister', 'PATCH', `/${room.id}`, { whoIsWelcome: ['families'] })).statusCode).toBe(400)
+    const notForRoom = await call('lister', 'PATCH', `/${room.id}`, { whoIsWelcome: ['families'] })
+    expect(notForRoom.statusCode).toBe(400)
+    expect(notForRoom.json()).toEqual({ error: 'not valid: whoIsWelcome' })
+  })
+
+  it('names the field of a value that is not valid', async () => {
+    const room = await draft('room_in_flat')
+    const res = await call('lister', 'PATCH', `/${room.id}`, { pincode: '4000', flatmates: [{ name: '' }] })
+    expect(res.statusCode).toBe(400)
+    expect(res.json()).toEqual({ error: 'not valid: pincode, flatmates' })
+    expect((await call('lister', 'PATCH', '/not-a-uuid', {})).json()).toEqual({ error: 'not valid: id' })
   })
 
   it('rejects an area that does not exist', async () => {
@@ -89,6 +101,17 @@ describe('a draft', () => {
     const edited = listingResponse.parse((await call('lister', 'PATCH', `/${room.id}`, { rates: [{ rent: 17000 }], flatmates: [{ name: 'Yash' }] })).json())
     expect(edited.rates).toEqual([{ sharing: null, rent: 17000, deposit: null }])
     expect(edited.flatmates.map((f) => f.name)).toEqual(['Yash'])
+  })
+
+  it('drops the rent of a sharing type that a PG no longer has', async () => {
+    const pg = await draft('pg', {
+      sharing: ['single', 'double'],
+      rates: [{ sharing: 'single', rent: 15000 }, { sharing: 'double', rent: 9000 }],
+    })
+    const edited = listingResponse.parse((await call('lister', 'PATCH', `/${pg.id}`, { sharing: ['double'] })).json())
+    expect(edited.rates).toEqual([{ sharing: 'double', rent: 9000, deposit: null }])
+    const otherType = await call('lister', 'PATCH', `/${pg.id}`, { rates: [{ sharing: 'triple', rent: 7000 }] })
+    expect(otherType.json()).toEqual({ error: 'not valid: rates' })
   })
 })
 
@@ -124,6 +147,15 @@ describe('going live', () => {
 
     const room = await draft('room_in_flat', { areaSlug: 'bandra', rates: [{ rent: 18000 }], flatmates: [{ name: 'Radhika' }] })
     expect((await live(room.id)).json()).toEqual({ error: 'incomplete', missing: ['flatmatesConsent'] })
+  })
+
+  it('lets a live PG add a sharing type before its rent, and needs a rent for each type to go live again', async () => {
+    const pg = await draft('pg', { areaSlug: 'bandra', pgName: 'Shivraj PG', sharing: ['single'], rates: [{ sharing: 'single', rent: 15000 }] })
+    expect((await live(pg.id)).statusCode).toBe(200)
+    expect((await call('lister', 'PATCH', `/${pg.id}`, { sharing: ['single', 'double'] })).statusCode).toBe(200)
+    expect((await call('lister', 'PATCH', `/${pg.id}`, { rates: [] })).json()).toEqual({ error: 'incomplete', missing: ['rates'] })
+    expect((await call('lister', 'POST', `/${pg.id}/status`, { status: 'inactive' })).statusCode).toBe(200)
+    expect((await live(pg.id)).json()).toEqual({ error: 'incomplete', missing: ['rates'] })
   })
 
   it('sets an expiry 30 days later, and shows the listing to other users without the address', async () => {

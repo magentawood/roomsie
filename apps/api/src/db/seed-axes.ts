@@ -2,7 +2,7 @@
 import { sql } from 'drizzle-orm'
 import { foodAnswers } from '@roomsie/contract'
 import type { Db } from './client'
-import { lifestyleAxes, mustHaves } from './schema'
+import { areas, lifestyleAxes, mustHaves } from './schema'
 
 const LIFESTYLE_AXES = [
   { key: 'food', question: 'What do you eat?', allowedValues: [...foodAnswers], sortOrder: 1 },
@@ -25,6 +25,19 @@ const MUST_HAVES = [
   { key: 'couple_friendly', label: 'Couple friendly', sortOrder: 7, active: true },
 ]
 
+/** The nine area groups of PD2, in the order of the designs. */
+const AREA_GROUPS = [
+  { slug: 'andheri-goregaon', name: 'Andheri–Goregaon', sortOrder: 1 },
+  { slug: 'bandra-santacruz', name: 'Bandra–Santacruz', sortOrder: 2 },
+  { slug: 'powai-vikhroli', name: 'Powai–Vikhroli', sortOrder: 3 },
+  { slug: 'lower-parel-worli', name: 'Lower Parel–Worli', sortOrder: 4 },
+  { slug: 'south-mumbai', name: 'South Mumbai', sortOrder: 5 },
+  { slug: 'malad-borivali', name: 'Malad–Borivali', sortOrder: 6 },
+  { slug: 'chembur-ghatkopar', name: 'Chembur–Ghatkopar', sortOrder: 7 },
+  { slug: 'thane', name: 'Thane', sortOrder: 8 },
+  { slug: 'navi-mumbai', name: 'Navi Mumbai', sortOrder: 9 },
+]
+
 export async function seedCatalogues(db: Db) {
   await db.insert(lifestyleAxes).values(LIFESTYLE_AXES)
     .onConflictDoUpdate({
@@ -36,4 +49,7 @@ export async function seedCatalogues(db: Db) {
       target: mustHaves.key,
       set: { label: sql`excluded.label`, sortOrder: sql`excluded.sort_order`, active: sql`excluded.active` },
     })
+  // The launch flag is not in the update: F-06 sets it, and a deploy must keep it.
+  await db.insert(areas).values(AREA_GROUPS)
+    .onConflictDoUpdate({ target: areas.slug, set: { name: sql`excluded.name`, sortOrder: sql`excluded.sort_order` } })
 }

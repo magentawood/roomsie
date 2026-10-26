@@ -55,6 +55,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><a href="secret-scanning.html">Secret scanning</a>: gitleaks finds a password or a key in the code before the secret goes into the shared git history. Run <code>pnpm secrets</code> before each pull request.</li>
 <li><a href="sign-in-and-tokens.html">Sign-in and tokens</a>: the web signs in with Google through Firebase. The API checks the ID token locally and loads the <code>users</code> row.</li>
 <li><a href="uptime-monitoring.html">Uptime monitoring</a>: HetrixTools calls the health check of the API each minute. When the API stops, it sends an alert to the Telegram group of the team.</li>
+<li><a href="web-ui-base.html">The web UI base</a>: the web app takes its colours, type and spacing from theme tokens of the design system, builds each screen from a small set of shared components, and calls the API through one helper that sends the sign-in token.</li>
 </ul>
 <!-- learn:end -->
 </main>

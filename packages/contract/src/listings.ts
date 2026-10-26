@@ -29,9 +29,10 @@ export const amenities = [
   'piped_gas', 'intercom', 'wifi', 'housekeeping', 'maid', 'cook', 'laundry', 'car_parking', 'rooftop_terrace',
 ] as const
 export const welcomeGroups = ['students', 'working_professionals', 'couples', 'families', 'bachelors'] as const
-const roomWelcomeGroups = ['students', 'working_professionals'] as const
+export const roomWelcomeGroups = ['students', 'working_professionals'] as const
 
 export const listingKind = z.enum(listingKinds)
+export type ListingKind = z.infer<typeof listingKind>
 
 /** The photo types that an upload accepts, and the extension of each in the key. */
 export const photoTypes = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as const
@@ -43,28 +44,34 @@ export const photoKey = z.string().regex(
 
 const pickMany = <T extends readonly [string, ...string[]]>(keys: T) =>
   z.array(z.enum(keys)).refine((list) => new Set(list).size === list.length, 'Each key once')
+export const maxPhotos = 5
+export const maxFlatmates = 8
+export const textLimits = {
+  pgName: 80, address: 200, building: 120, street: 120, landmark: 120, nearestStation: 120, description: 2000, flatmateName: 60, whatTheyDo: 80,
+} as const
+
 const optionalText = (max: number) => z.string().trim().min(1).max(max).nullable()
 const rupees = z.int().min(0).max(100_000_000)
 
 export const listingRate = z.strictObject({ rent: rupees, deposit: rupees.nullable().default(null) })
 export const pgRate = listingRate.extend({ sharing: z.enum(sharingTypes) })
 export const listingFlatmate = z.strictObject({
-  name: z.string().trim().min(1).max(60),
+  name: z.string().trim().min(1).max(textLimits.flatmateName),
   age: z.int().min(18).max(99).nullable().default(null),
-  whatTheyDo: optionalText(80).default(null),
+  whatTheyDo: optionalText(textLimits.whatTheyDo).default(null),
   food: z.enum(foodAnswers).nullable().default(null),
   photoKey: photoKey.nullable().default(null),
 })
 
 const commonFields = {
   areaSlug: z.string().min(1).max(60).nullable(),
-  address: optionalText(200),
+  address: optionalText(textLimits.address),
   shareAddress: z.boolean(),
-  building: optionalText(120),
-  street: optionalText(120),
-  landmark: optionalText(120),
+  building: optionalText(textLimits.building),
+  street: optionalText(textLimits.street),
+  landmark: optionalText(textLimits.landmark),
   pincode: z.string().regex(/^\d{6}$/).nullable(),
-  nearestStation: optionalText(120),
+  nearestStation: optionalText(textLimits.nearestStation),
   walkStation: z.enum(walkTimes).nullable(),
   walkBus: z.enum(walkTimes).nullable(),
   walkMarket: z.enum(walkTimes).nullable(),
@@ -83,8 +90,8 @@ const commonFields = {
   alcoholAllowed: z.boolean().nullable(),
   guests: z.enum(guestsRules).nullable(),
   whoCanMoveIn: z.enum(whoCanMoveIn).nullable(),
-  photoKeys: z.array(photoKey).max(5),
-  description: optionalText(2000),
+  photoKeys: z.array(photoKey).max(maxPhotos),
+  description: optionalText(textLimits.description),
 }
 const flatFields = {
   placeType: z.enum(placeTypes).nullable(),
@@ -96,7 +103,7 @@ const flatFields = {
   availableFrom: z.iso.date().nullable(),
 }
 const pgFields = {
-  pgName: optionalText(80),
+  pgName: optionalText(textLimits.pgName),
   sharing: pickMany(sharingTypes),
   bedsFree: z.enum(bedsFree).nullable(),
   meals: z.enum(meals).nullable(),
@@ -104,7 +111,7 @@ const pgFields = {
 }
 const brokerage = rupees.nullable()
 const roomFields = {
-  flatmates: z.array(listingFlatmate).max(8),
+  flatmates: z.array(listingFlatmate).max(maxFlatmates),
   flatmatesConsent: z.boolean(),
 }
 const nonPgRates = z.array(listingRate).max(1)
@@ -135,9 +142,12 @@ export const listingEditBody = z.strictObject({
 export type ListingEdit = z.infer<typeof listingEditBody>
 
 export const createListingBody = z.strictObject({ kind: listingKind })
+export type CreateListingBody = z.infer<typeof createListingBody>
 export const listingStatusBody = z.strictObject({ status: z.enum(['live', 'inactive', 'filled']) })
+export type ListingStatusBody = z.infer<typeof listingStatusBody>
 /** Upload with these two values as the content-type and content-length headers. The link signs them. */
 export const uploadUrlBody = z.strictObject({ contentType: photoType, size: z.int().min(1).max(10 * 1024 * 1024) })
+export type UploadUrlBody = z.infer<typeof uploadUrlBody>
 export const uploadUrlResponse = z.object({ key: photoKey, url: z.url(), expiresAt: z.iso.datetime() })
 
 export const listingResponse = z.object({
@@ -159,6 +169,7 @@ export const myListingsResponse = z.object({ listings: z.array(listingResponse) 
 
 /** What a listing needs to go live (T-41). */
 export const goLiveFields = ['areaSlug', 'pgName', 'brokerage', 'rates', 'flatmatesConsent'] as const
+export type GoLiveField = (typeof goLiveFields)[number]
 /** 422 when a listing cannot go live. */
 export const incompleteListingResponse = z.object({ error: z.literal('incomplete'), missing: z.array(z.enum(goLiveFields)) })
 export const errorResponse = z.object({ error: z.string() })

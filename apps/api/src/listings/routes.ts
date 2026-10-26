@@ -6,7 +6,7 @@ import { z } from 'zod'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
   listingStatusBody, myListingsResponse, photoTypes, sharingTypes, uploadUrlBody, uploadUrlResponse,
-  type goLiveFields, type ListingEdit, type ListingResponse,
+  type GoLiveField, type ListingEdit, type ListingResponse,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
@@ -67,7 +67,10 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const parsed = listingEdits[listing.kind].safeParse(req.body)
-    if (!parsed.success) return reply.code(400).send({ error: `not a field of a ${listing.kind} listing` })
+    if (!parsed.success) {
+      const fields = new Set(parsed.error.issues.flatMap((i) => (i.code === 'unrecognized_keys' ? i.keys : [String(i.path[0])])))
+      return reply.code(400).send({ error: `not valid: ${[...fields].join(', ')}` })
+    }
     const edit: ListingEdit = mask(parsed.data)
     const { rates: newRates, flatmates: newFlatmates, ...columns } = edit
 
@@ -78,14 +81,19 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     }
 
     const current = (await partsOf(db, [listing.id]))(listing.id)
+    const nextListing = { ...listing, ...columns }
+    const hasType = (r: { sharing?: Rate['sharing'] }) => listing.kind !== 'pg' || nextListing.sharing.includes(r.sharing!)
+    if (newRates && !newRates.every(hasType)) return reply.code(400).send({ error: 'not valid: rates' })
     const next = {
-      listing: { ...listing, ...columns },
-      rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates,
+      listing: nextListing,
+      // A PG that drops a sharing type drops its rent too.
+      rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates.filter(hasType),
       flatmates: newFlatmates ?? current.flatmates,
     }
+    const ratesChanged = newRates !== undefined || next.rates.length !== current.rates.length
     // The database checks each status after draft, so the API gives 422 for it, not 500.
     if (listing.status !== 'draft') {
-      const missing = missingToGoLive(next.listing, next)
+      const missing = missingToGoLive(next.listing, next, 'edit')
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
     }
 
@@ -97,7 +105,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       const [row] = await tx.update(listings).set({ ...columns, updatedAt: new Date() })
         .where(listingOfOwner(listing.id, req.user!.id)).returning()
       if (!row) return undefined
-      if (newRates) {
+      if (ratesChanged) {
         await tx.delete(listingRates).where(eq(listingRates.listingId, row.id))
         if (next.rates.length) await tx.insert(listingRates).values(next.rates.map((r) => ({ ...r, listingId: row.id, listingKind: row.kind })))
       }
@@ -127,7 +135,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const parts = (await partsOf(db, [listing.id]))(listing.id)
     let expiresAt = listing.expiresAt
     if (status === 'live') {
-      const missing = missingToGoLive(listing, parts)
+      const missing = missingToGoLive(listing, parts, 'publish')
       if (missing.length) return reply.code(422).send({ error: 'incomplete', missing })
       expiresAt = new Date(Date.now() + liveDays * 86_400_000)
     } else if (!allowedFrom[status].includes(listing.status)) {
@@ -206,13 +214,18 @@ async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj
   })
 }
 
-function missingToGoLive(listing: Listing, { rates, flatmates }: Parts) {
-  const missing: (typeof goLiveFields)[number][] = []
+/**
+ * A PG publishes with a rent for each sharing type. An edit of a PG that has been live needs one rent only,
+ * so step 4 can add a sharing type before step 5 gives its rent.
+ */
+function missingToGoLive(listing: Listing, { rates, flatmates }: Parts, check: 'publish' | 'edit') {
+  const missing: GoLiveField[] = []
   if (!listing.areaSlug) missing.push('areaSlug')
   if (listing.kind === 'pg' && !listing.pgName) missing.push('pgName')
   if (listing.kind === 'broker_flat' && listing.brokerage === null) missing.push('brokerage')
   const priced = new Set(rates.map((r) => r.sharing))
-  const unpriced = listing.kind === 'pg' ? !listing.sharing.length || listing.sharing.some((s) => !priced.has(s)) : !rates.length
+  const pgPriced = check === 'publish' ? listing.sharing.every((s) => priced.has(s)) : rates.length > 0
+  const unpriced = listing.kind === 'pg' ? !listing.sharing.length || !pgPriced : !rates.length
   if (unpriced) missing.push('rates')
   if (flatmates.length && !listing.flatmatesConsent) missing.push('flatmatesConsent')
   return missing
