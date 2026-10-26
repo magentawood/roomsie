@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Bookmark, SearchLg } from '@untitledui/icons'
+import { Bookmark } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
-import { useAreaNames, useSavedPlaces, type SavedKind } from '../../lib/queries'
+import type { SavedKind } from '@roomsie/contract'
+import { useAreaNames, useSavedPlaces } from '../../lib/queries'
 import { PlaceCard } from '../../components/listings/place-card'
 import { SaveButton } from '../../components/saved/save-button'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
@@ -19,7 +20,7 @@ function Places() {
   if (places.isPending) return <p className="text-sm text-tertiary">Loading…</p>
   if (!places.data.places.length) {
     return (
-      <EmptyState icon={Bookmark} title="Nothing saved yet" action={<Button variant="primary" size="md" iconLeading={SearchLg} href="/">Start looking</Button>}>
+      <EmptyState icon={Bookmark} title="Nothing saved yet" action={<Button variant="primary" size="md" href="/">Start looking</Button>}>
         Select Save on a listing or a person to keep them here. You can compare them later in the chat.
       </EmptyState>
     )
@@ -39,13 +40,13 @@ function Saved() {
   const [tab, setTab] = useState<SavedKind>('places')
   return (
     <>
-      <PageHeader title="Saved" backHref="/" />
+      <PageHeader title="Saved" backHref="/" inPhoneBar />
       <main className="flex flex-1 flex-col gap-5 px-5 py-5 md:px-6 md:py-8">
         <Tabs label="Saved" tabs={{ places: 'Places', people: 'People' }} value={tab} onChange={setTab} />
         <div role="tabpanel" className="flex flex-1 flex-col">
           {tab === 'places'
             ? <Places />
-            // T-18b adds the person cards.
+            // TODO(T-18b): the person cards.
             : <EmptyState icon={Bookmark} title="No people saved yet">Select Save on a person to keep them here.</EmptyState>}
         </div>
       </main>

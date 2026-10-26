@@ -2,10 +2,9 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { z } from 'zod'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
-  listingStatusBody, myListingsResponse, photoTypes, uploadUrlBody, uploadUrlResponse,
+  listingStatusBody, myListingsResponse, noContent, photoTypes, uploadUrlBody, uploadUrlResponse,
   type GoLiveField, type ListingEdit,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
@@ -13,17 +12,14 @@ import type { Db } from '../db/client'
 import { areas, listingFlatmates, listingRates, listings } from '../db/schema'
 import type { Storage } from '../storage'
 import { maskContacts } from '../text/mask-contacts'
-import { listingView, partsOf, type Parts } from './view'
+import { isVisible, listingView, partsOf, type Flatmate, type Listing, type Parts, type Rate } from './read'
+import { idParams } from '../params'
 
-type Listing = typeof listings.$inferSelect
 type ListingStatus = Listing['status']
-type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
-type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
 
 const liveDays = 30
 /** Each free-text field that the lister writes (PD17). */
 const maskedFields = ['pgName', 'address', 'building', 'street', 'landmark', 'nearestStation', 'description'] as const
-export const idParams = z.object({ id: z.uuid() })
 const allowedFrom: Record<'inactive' | 'filled', ListingStatus[]> = { inactive: ['live'], filled: ['live', 'inactive'] }
 
 export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
@@ -51,8 +47,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   }, async (req, reply) => {
     const [listing] = await db.select().from(listings).where(eq(listings.id, req.params.id))
     const isOwner = listing?.ownerUserId === req.user!.id
-    const visible = listing?.status === 'live' && listing.expiresAt! > new Date()
-    if (!listing || (!isOwner && !visible)) return reply.code(404).send({ error: 'not found' })
+    if (!listing || (!isOwner && !isVisible(listing))) return reply.code(404).send({ error: 'not found' })
     return listingView(listing, (await partsOf(db, [listing.id]))(listing.id), storage, isOwner)
   })
 
@@ -149,7 +144,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
   app.delete('/listings/:id', {
     preHandler,
-    schema: { params: idParams, response: { 204: z.null(), 404: errorResponse, 502: errorResponse } },
+    schema: { params: idParams, response: { 204: noContent, 404: errorResponse, 502: errorResponse } },
   }, async (req, reply) => {
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
@@ -181,8 +176,6 @@ async function ownedListing(db: Db, id: string, ownerUserId: string) {
   const [listing] = await db.select().from(listings).where(listingOfOwner(id, ownerUserId))
   return listing
 }
-
-/** The rents and the flatmates of each listing, from two queries. */
 
 function mask(edit: ListingEdit): ListingEdit {
   const masked = { ...edit }

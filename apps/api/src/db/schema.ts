@@ -434,7 +434,7 @@ export const blocks = pgTable('blocks', {
 
 /* ── saved ──────────────────────────────────────────────────────────────── */
 
-/** A place or a person that a user keeps under Saved (T-47). Each row has exactly one of the two. */
+/** A place or a person that a user keeps under Saved (T-47). */
 export const saves = pgTable('saves', {
   id: id(),
   userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
@@ -451,7 +451,6 @@ export const saves = pgTable('saves', {
 })).enableRLS()
 
 /* ── waitlist ───────────────────────────────────────────────────────────── */
-
 
 export const waitlist = pgTable('waitlist', {
   id: id(),

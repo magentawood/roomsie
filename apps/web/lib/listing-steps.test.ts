@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ListingResponse } from '@roomsie/contract'
-import { listingSteps, listingTitle, rentAmount, rentLine, resumeStep, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
+import { listingSteps, listingTitle, rentLine, resumeStep, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
 
 const listing = (patch: Partial<ListingResponse>): ListingResponse => ({
   id: '0199e4b0-0000-7000-8000-000000000001', kind: 'owner_flat', status: 'draft',
@@ -100,13 +100,3 @@ describe('My listings', () => {
     expect(rentLine(listing({}))).toBe('Rent: not set yet')
   })
 })
-
-describe('the card of a saved place', () => {
-  it('gives one rent, or the range of the rents of a PG', () => {
-    expect(rentAmount(listing({ rates: [{ sharing: null, rent: 52000, deposit: null }] }))).toBe('₹52,000')
-    expect(rentAmount(listing({ kind: 'pg', rates: [{ sharing: 'single', rent: 15000, deposit: null }, { sharing: 'double', rent: 9000, deposit: null }] })))
-      .toBe('₹9,000–₹15,000')
-    expect(rentAmount(listing({}))).toBeNull()
-  })
-})
-

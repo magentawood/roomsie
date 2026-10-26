@@ -1,19 +1,17 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq } from 'drizzle-orm'
-import { z } from 'zod'
-import { errorResponse, savedPeopleResponse, savedPlacesResponse } from '@roomsie/contract'
+import { errorResponse, noContent, savedKind, savedPeopleResponse, savedPlacesResponse } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import { listings, profiles, saves, users } from '../db/schema'
-import { idParams } from '../listings/routes'
-import { listingView, partsOf, visibleListing } from '../listings/view'
+import { listingView, partsOf, visibleListing } from '../listings/read'
 import { visiblePeople } from '../match/query'
+import { idParams } from '../params'
 import type { Storage } from '../storage'
 
-const saveSchema = { params: idParams, response: { 204: z.null(), 404: errorResponse } }
-const unsaveParams = idParams.extend({ kind: z.enum(['places', 'people']) })
+const saveSchema = { params: idParams, response: { 204: noContent, 404: errorResponse } }
+const unsaveParams = idParams.extend({ kind: savedKind })
 
-/** A save of the same item again changes nothing, and so does an unsave (T-47). */
 export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
@@ -35,7 +33,7 @@ export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storag
     return reply.code(204).send(null)
   })
 
-  app.delete('/saved/:kind/:id', { preHandler, schema: { params: unsaveParams, response: { 204: z.null() } } }, async (req, reply) => {
+  app.delete('/saved/:kind/:id', { preHandler, schema: { params: unsaveParams, response: { 204: noContent } } }, async (req, reply) => {
     const target = { places: saves.listingId, people: saves.profileId }[req.params.kind]
     await db.delete(saves).where(and(eq(saves.userId, req.user!.id), eq(target, req.params.id)))
     return reply.code(204).send(null)

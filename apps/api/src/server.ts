@@ -9,7 +9,7 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import { asc } from 'drizzle-orm'
-import { areasResponse, deleteMeResponse, healthResponse, meResponse } from '@roomsie/contract'
+import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { deleteAccount } from './account'
 import { requireUser, type AuthOptions } from './auth'
 import { areas } from './db/schema'
@@ -49,7 +49,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
       )
       v1.withTypeProvider<ZodTypeProvider>().delete(
         '/me',
-        { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: deleteMeResponse } } },
+        { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: noContent } } },
         async (req, reply) => {
           await deleteAccount(options.db, options.storage, req.user!.id, req.identity!)
           return reply.code(204).send(null)

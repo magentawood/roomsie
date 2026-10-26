@@ -19,12 +19,9 @@ import type { Db } from '../db/client'
 import { profiles, users, profileLifestyle, blocks } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
 
-/* ── input ──────────────────────────────────────────────────────────────── */
-// TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.
 /**
  * The people that a viewer can see: a live card of an active account, so suspended and deleted people never appear.
  * With a viewer: not the viewer, and no block in either direction, because a block hides each person from the other.
- * Saved (T-47) uses it too.
  */
 export function visiblePeople(viewerUserId?: string) {
   return [
@@ -40,6 +37,8 @@ export function visiblePeople(viewerUserId?: string) {
   ]
 }
 
+/* ── input ──────────────────────────────────────────────────────────────── */
+// TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.
 export type LifestyleAnswer = {
   axisKey: string
   value: string

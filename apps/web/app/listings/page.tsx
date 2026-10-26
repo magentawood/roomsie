@@ -73,7 +73,7 @@ function MyListings() {
   const areaNames = useAreaNames()
   return (
     <>
-      <PageHeader title="My Listings" backHref="/" />
+      <PageHeader title="My Listings" backHref="/" inPhoneBar />
       <main className="flex flex-1 flex-col gap-3 px-5 py-5 md:px-6 md:py-8">
         {mine.isError && <p role="alert" className="text-sm text-error-primary">{errorText(mine.error)}</p>}
         {mine.isPending && <p className="text-sm text-tertiary">Loading…</p>}
