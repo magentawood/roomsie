@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**94 of 305 done · 31%**
+**100 of 305 done · 33%**
 
-`███████░░░░░░░░░░░░░░░░░`
+`████████░░░░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
 | [[P3 Data and trust]] | 5 / 15 | 25 / 72 | 35% |
-| [[P4 Content and moderation]] | 1 / 8 | 6 / 31 | 19% |
+| [[P4 Content and moderation]] | 2 / 8 | 12 / 31 | 39% |
 | [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**42 free tasks are open · 164 build hours.**
+**41 free tasks are open · 159 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -83,7 +83,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ waits | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| 2 | [[T-19 Report and block]] | P4 | 5 | ⬜ waits | 0 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | 2 | [[T-45 Messages screens]] | P3 | 6 | ⬜ waits | 0 | [#121](https://github.com/magentawood/roomsie/issues/121) |
 | 2 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ waits | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
@@ -142,7 +141,7 @@ flowchart LR
   T13["T-13<br/>Reply writer"]:::todo
   T07["T-07<br/>Error reporting"]:::ready
   T17["T-17<br/>Carry chat into account"]:::todo
-  T19["T-19<br/>Report and block"]:::todo
+  T19["T-19<br/>Report and block"]:::done
   T33["T-33<br/>Invite-only gate"]:::ready
   T23a["T-23a<br/>Landing page"]:::ready
   T24["T-24<br/>Event logging"]:::ready
@@ -416,7 +415,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 6/31
+## P4 Content and moderation — 12/31
 
 > [!todo]- ⬜ [[T-23a Landing page]] · 0/5
 > ![[T-23a Landing page#^done]]
@@ -427,7 +426,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-37 Articles and search]] · 0/3
 > ![[T-37 Articles and search#^done]]
 
-> [!todo]- ⬜ [[T-19 Report and block]] · 0/6
+> [!todo]- ✅ [[T-19 Report and block]] · 6/6
 > ![[T-19 Report and block#^done]]
 
 > [!todo]- ✅ [[T-20 Account deletion]] · 6/6
