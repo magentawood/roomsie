@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, eq, inArray } from 'drizzle-orm'
 import {
-  cardResponse, childTypes, createProfileBody, errorResponse, profileEditBody, profileResponse, profileUploadUrlResponse,
+  childTypes, createProfileBody, errorResponse, personResponse, profileEditBody, profileResponse, profileUploadUrlResponse,
   uploadUrlBody, type ProfileEditBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
@@ -11,6 +11,7 @@ import { areas, profileLifestyle, profileMustHaves, profiles, users } from '../d
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import { deletePhotos, photoUploadLink, type Storage } from '../storage'
+import { connectionWith, dailyLimit, sentToday } from '../requests/read'
 import { maskFields } from '../text/mask-contacts'
 import { answersOf, cardView, missingFields, profileView, type Profile } from './read'
 
@@ -80,12 +81,17 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
   app.get('/people/:id', {
     preHandler,
-    schema: { params: idParams, response: { 200: cardResponse, 404: errorResponse } },
+    schema: { params: idParams, response: { 200: personResponse, 404: errorResponse } },
   }, async (req, reply) => {
     const [row] = await db.select({ profile: profiles }).from(profiles).innerJoin(users, eq(profiles.userId, users.id))
       .where(and(eq(profiles.id, req.params.id), ...visiblePeople(req.user!.id)))
     if (!row) return reply.code(404).send({ error: 'not found' })
-    return cardView(row.profile, await answersOf(db, row.profile.id), storage)
+    const viewerUserId = req.user!.id
+    return {
+      ...cardView(row.profile, await answersOf(db, row.profile.id), storage),
+      connection: await connectionWith(db, viewerUserId, row.profile.userId),
+      requestsLeftToday: Math.max(0, dailyLimit - await sentToday(db, viewerUserId)),
+    }
   })
 }
 

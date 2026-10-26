@@ -7,6 +7,7 @@ import { listings, profiles, saves, users } from '../db/schema'
 import { listingView, partsOf, visibleListing } from '../listings/read'
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
+import { answersFor, cardView } from '../profiles/read'
 import type { Storage } from '../storage'
 
 const saveSchema = { params: idParams, response: { 204: noContent, 404: errorResponse } }
@@ -49,11 +50,12 @@ export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storag
   })
 
   app.get('/saved/people', { preHandler, schema: { response: { 200: savedPeopleResponse } } }, async (req) => {
-    const rows = await db.select({ profileId: profiles.id }).from(saves)
+    const rows = await db.select({ profile: profiles }).from(saves)
       .innerJoin(profiles, eq(saves.profileId, profiles.id))
       .innerJoin(users, eq(profiles.userId, users.id))
       .where(and(eq(saves.userId, req.user!.id), ...visiblePeople(req.user!.id)))
       .orderBy(desc(saves.createdAt))
-    return { people: rows.map((r) => r.profileId) }
+    const answers = await answersFor(db, rows.map((r) => r.profile.id))
+    return { people: rows.map((r) => cardView(r.profile, answers(r.profile.id), storage)) }
   })
 }

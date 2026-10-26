@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { cardResponse } from './profiles'
 import { requiredText } from './shared'
 
 export const requestNoteLimit = 300
@@ -26,3 +27,14 @@ export const incomingRequest = z.object({
   expiresAt: z.iso.datetime(),
 })
 export const incomingRequestsResponse = z.object({ requests: z.array(incomingRequest) })
+
+/** The connection between the viewer and a person (T-18b). "received": the person sent the viewer an open request. */
+export const connection = z.discriminatedUnion('state', [
+  z.object({ state: z.enum(['none', 'sent', 'accepted', 'not_available']) }),
+  z.object({ state: z.literal('received'), requestId: z.uuid(), note: z.string() }),
+])
+export type Connection = z.infer<typeof connection>
+/** The person detail: the card, the connection with the viewer, and the new requests that the viewer can send today. */
+export const personResponse = cardResponse.extend({ connection, requestsLeftToday: z.int().min(0) })
+export type PersonResponse = z.infer<typeof personResponse>
+

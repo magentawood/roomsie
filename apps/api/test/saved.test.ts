@@ -8,7 +8,7 @@ let t: TestApp<'lister' | 'seeker'>
 beforeAll(async () => { t = await testApp(['lister', 'seeker']) })
 afterAll(() => t.close())
 const savedPlaces = async () => savedPlacesResponse.parse((await t.call('seeker', 'GET', '/v1/saved/places')).json()).places
-const savedPeople = async () => savedPeopleResponse.parse((await t.call('seeker', 'GET', '/v1/saved/people')).json()).people
+const savedPeople = async () => savedPeopleResponse.parse((await t.call('seeker', 'GET', '/v1/saved/people')).json()).people.map((p) => p.id)
 
 describe('saved places', () => {
   it('saves a live listing one time, lists it, and unsaves it', async () => {
@@ -70,6 +70,7 @@ describe('saved people', () => {
     expect((await t.call('seeker', 'PUT', `/v1/saved/people/${asha}`)).statusCode).toBe(204)
     expect((await t.call('seeker', 'PUT', `/v1/saved/people/${asha}`)).statusCode).toBe(204)
     expect(await savedPeople()).toEqual([asha])
+    expect(savedPeopleResponse.parse((await t.call('seeker', 'GET', '/v1/saved/people')).json()).people).toMatchObject([{ id: asha, fullName: 'Asha', age: 24 }])
     await t.db.update(profiles).set({ visibility: 'hidden' }).where(eq(profiles.id, asha))
     expect(await savedPeople()).toEqual([])
     await t.db.update(profiles).set({ visibility: 'live' }).where(eq(profiles.id, asha))

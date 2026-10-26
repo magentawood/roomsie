@@ -73,5 +73,5 @@ export function useSavedPeople(enabled = true) {
 export function useSavedIds(kind: SavedKind) {
   const places = useSavedPlaces(kind === 'places')
   const people = useSavedPeople(kind === 'people')
-  return new Set(kind === 'places' ? (places.data?.places ?? []).map((l) => l.id) : (people.data?.people ?? []))
+  return new Set((kind === 'places' ? places.data?.places : people.data?.people)?.map((x) => x.id))
 }

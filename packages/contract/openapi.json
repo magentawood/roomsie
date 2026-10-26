@@ -4829,9 +4829,214 @@
                     "people": {
                       "type": "array",
                       "items": {
-                        "type": "string",
-                        "format": "uuid",
-                        "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "fullName": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 80
+                          },
+                          "age": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 18,
+                            "maximum": 99
+                          },
+                          "jobRole": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 80
+                          },
+                          "commuteAddress": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "bio": {
+                            "nullable": true,
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 1000
+                          },
+                          "managedByParent": {
+                            "type": "boolean"
+                          },
+                          "intent": {
+                            "type": "string",
+                            "enum": [
+                              "room",
+                              "pg",
+                              "whole_flat",
+                              "flatmates",
+                              "unclear"
+                            ]
+                          },
+                          "whosMoving": {
+                            "type": "string",
+                            "enum": [
+                              "student",
+                              "first_job",
+                              "working",
+                              "couple",
+                              "family",
+                              "friends",
+                              "unclear"
+                            ]
+                          },
+                          "areas": {
+                            "maxItems": 9,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "minLength": 1,
+                              "maxLength": 60
+                            }
+                          },
+                          "budgetMin": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100000000
+                          },
+                          "budgetMax": {
+                            "nullable": true,
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 100000000
+                          },
+                          "moveDate": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "date",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                          },
+                          "photos": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "key": {
+                                  "type": "string",
+                                  "pattern": "^profiles\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                                },
+                                "url": {
+                                  "type": "string",
+                                  "format": "uri"
+                                }
+                              },
+                              "required": [
+                                "key",
+                                "url"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "lifestyle": {
+                            "type": "object",
+                            "properties": {
+                              "food": {
+                                "type": "string",
+                                "enum": [
+                                  "veg",
+                                  "non_veg",
+                                  "eggetarian",
+                                  "jain"
+                                ]
+                              },
+                              "smoking": {
+                                "type": "string",
+                                "enum": [
+                                  "non_smoker",
+                                  "smoker",
+                                  "smoke_outside"
+                                ]
+                              },
+                              "drinks": {
+                                "type": "string",
+                                "enum": [
+                                  "none_at_home",
+                                  "fine_at_home"
+                                ]
+                              },
+                              "guests": {
+                                "type": "string",
+                                "enum": [
+                                  "weekends_only",
+                                  "guests_welcome",
+                                  "guests_rarely"
+                                ]
+                              },
+                              "your_days": {
+                                "type": "string",
+                                "enum": [
+                                  "out_most_days",
+                                  "home_most_days",
+                                  "night_shifts",
+                                  "student"
+                                ]
+                              },
+                              "sleep": {
+                                "type": "string",
+                                "enum": [
+                                  "night_owl",
+                                  "early_bird"
+                                ]
+                              },
+                              "tidiness": {
+                                "type": "string",
+                                "enum": [
+                                  "very_tidy",
+                                  "tidy_enough",
+                                  "relaxed_about_mess"
+                                ]
+                              },
+                              "pets": {
+                                "type": "string",
+                                "enum": [
+                                  "no_pets",
+                                  "fine_with_pets"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "mustHaves": {
+                            "type": "object",
+                            "additionalProperties": {
+                              "type": "string",
+                              "enum": [
+                                "prefer",
+                                "dealbreaker"
+                              ]
+                            }
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "fullName",
+                          "age",
+                          "jobRole",
+                          "commuteAddress",
+                          "bio",
+                          "managedByParent",
+                          "intent",
+                          "whosMoving",
+                          "areas",
+                          "budgetMin",
+                          "budgetMax",
+                          "moveDate",
+                          "photos",
+                          "lifestyle",
+                          "mustHaves"
+                        ],
+                        "additionalProperties": false
                       }
                     }
                   },
@@ -6356,6 +6561,58 @@
                           "dealbreaker"
                         ]
                       }
+                    },
+                    "connection": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "none",
+                                "sent",
+                                "accepted",
+                                "not_available"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "state"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "state": {
+                              "type": "string",
+                              "enum": [
+                                "received"
+                              ]
+                            },
+                            "requestId": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            },
+                            "note": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "state",
+                            "requestId",
+                            "note"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    },
+                    "requestsLeftToday": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
                     }
                   },
                   "required": [
@@ -6374,7 +6631,9 @@
                     "moveDate",
                     "photos",
                     "lifestyle",
-                    "mustHaves"
+                    "mustHaves",
+                    "connection",
+                    "requestsLeftToday"
                   ],
                   "additionalProperties": false
                 }

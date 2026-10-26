@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { incomingRequestsResponse, outgoingRequest, outgoingRequestsResponse } from '@roomsie/contract'
+import { incomingRequestsResponse, outgoingRequest, outgoingRequestsResponse, personResponse } from '@roomsie/contract'
 import { blocks, connectionRequests, listings, profiles, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -135,6 +135,50 @@ describe('a request to a lister', () => {
       expect((await sayHiTo()).statusCode).toBe(404)
       await t.db.delete(blocks)
     }
+  })
+})
+
+describe('the person detail', () => {
+  const detail = async (who: Who, of: 'seeker' | 'friend') => personResponse.parse((await t.call(who, 'GET', `/v1/people/${profileIds[of]}`)).json())
+
+  it('tells the connection with the viewer, from each side', async () => {
+    expect((await detail('seeker', 'friend')).connection).toEqual({ state: 'none' })
+    await sayHi('seeker', 'friend', 'Hi! Call me on 98200 12345.')
+    expect((await detail('seeker', 'friend')).connection).toEqual({ state: 'sent' })
+    const [got] = await incoming('friend')
+    const received = (await detail('friend', 'seeker')).connection
+    expect(received).toEqual({ state: 'received', requestId: got!.id, note: got!.note })
+    expect(got!.note).not.toContain('98200')
+    expect((await t.call('friend', 'POST', `/v1/requests/${got!.id}/accept`)).statusCode).toBe(204)
+    expect((await detail('seeker', 'friend')).connection).toEqual({ state: 'accepted' })
+    expect((await detail('friend', 'seeker')).connection).toEqual({ state: 'accepted' })
+    await t.db.delete(connectionRequests)
+  })
+
+  it('shows a decline as "not available" to the sender only, and an expired request from the other person as none', async () => {
+    await sayHi('seeker', 'friend')
+    const [got] = await incoming('friend')
+    expect((await t.call('friend', 'POST', `/v1/requests/${got!.id}/decline`)).statusCode).toBe(204)
+    expect((await detail('seeker', 'friend')).connection).toEqual({ state: 'not_available' })
+    expect((await detail('friend', 'seeker')).connection).toEqual({ state: 'none' })
+    await t.db.delete(connectionRequests)
+    await sayHi('friend', 'seeker')
+    await t.db.update(connectionRequests).set({ createdAt: new Date(Date.now() - 15 * 86_400_000) })
+    expect((await detail('seeker', 'friend')).connection).toEqual({ state: 'none' })
+    expect((await detail('friend', 'seeker')).connection).toEqual({ state: 'not_available' })
+    await t.db.delete(connectionRequests)
+  })
+
+  it('counts the new requests that the viewer can still send today', async () => {
+    expect((await detail('seeker', 'friend')).requestsLeftToday).toBe(10)
+    await sayHi('seeker', 'friend')
+    expect((await detail('seeker', 'friend')).requestsLeftToday).toBe(9)
+    await t.db.delete(connectionRequests)
+    await t.db.insert(connectionRequests).values(Array.from({ length: 10 }, () => ({
+      fromUserId: t.ids.seeker, fromProfileId: profileIds.seeker!, toUserId: t.ids.friend, toProfileId: profileIds.friend!, note: 'Hi', status: 'declined' as const,
+    })))
+    expect((await detail('seeker', 'friend')).requestsLeftToday).toBe(0)
+    await t.db.delete(connectionRequests)
   })
 })
 
