@@ -1,7 +1,7 @@
 'use client'
 
-import { useParams } from 'next/navigation'
-import { Home02 } from '@untitledui/icons'
+import { useParams, useRouter } from 'next/navigation'
+import { ArrowLeft, Home02 } from '@untitledui/icons'
 import { ApiError, errorText } from '../../../lib/api'
 import { useListing } from '../../../lib/queries'
 import { PlaceDetail } from '../../../components/places/place-detail'
@@ -12,11 +12,13 @@ import { EmptyState } from '../../../components/ui/empty-state'
 
 function Place() {
   const { id } = useParams<{ id: string }>()
+  const router = useRouter()
   const listing = useListing(id)
   if (listing.isError) {
     if (!(listing.error instanceof ApiError && listing.error.status === 404)) return <p role="alert" className="p-6 text-sm text-error-primary">{errorText(listing.error)}</p>
     return (
-      <main className="flex flex-1 flex-col px-5">
+      <main className="flex flex-1 flex-col px-5 py-5 md:px-6">
+        <span><Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={() => (window.history.length > 1 ? router.back() : router.push('/saved'))} /></span>
         <EmptyState icon={Home02} title="This place is no longer listed."
           action={<div className="flex gap-3"><Button variant="secondary" size="md" href="/saved">See saved places</Button><Button variant="primary" size="md" href="/">Start looking</Button></div>}>
           The lister filled, paused or removed it.

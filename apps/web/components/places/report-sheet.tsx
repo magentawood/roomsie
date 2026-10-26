@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Flag01 } from '@untitledui/icons'
 import { uuidv7 } from 'uuidv7'
-import { noContent, reportDetailLimit, type ReportBody, type ReportReason } from '@roomsie/contract'
+import { needsDetail, noContent, reportDetailLimit, type ReportBody, type ReportReason } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { queryKeys } from '../../lib/queries'
@@ -42,7 +42,7 @@ export function ReportSheet({ listingId, onClose }: { listingId: string; onClose
       </Modal>
     )
   }
-  const ready = reason !== null && (reason !== 'other' || detail !== null)
+  const ready = reason !== null && (!needsDetail(reason) || detail !== null)
   return (
     <Modal icon={Flag01} title="Report this listing" onClose={onClose}
       actions={(
@@ -58,7 +58,7 @@ export function ReportSheet({ listingId, onClose }: { listingId: string; onClose
         <p>Pick one reason. The lister is not told who reported.</p>
         <ChoiceChips label="Reason" labels={reasonLabels} value={reason} onChange={setReason} required />
         <TextArea label="Tell us more" value={detail} onChange={setDetail} maxLength={reportDetailLimit}
-          hint={reason === 'other' ? 'Required for Other.' : 'Optional.'} />
+          hint={reason && needsDetail(reason) ? 'Required for Other.' : 'Optional.'} />
         <p>{reviewTimes}</p>
         {send.isError && <p role="alert" className="text-error-primary">{errorText(send.error)}</p>}
       </div>
