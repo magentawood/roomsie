@@ -2,7 +2,7 @@
 id: T-06
 title: "Database schema v1"
 owner: "P3 Data and trust"
-sequence: "1 of 15"
+sequence: "1 of 16"
 hours: 8
 start: 2026-09-24
 end: 2026-09-29
@@ -18,7 +18,7 @@ tags:
 
 # T-06 · Database schema v1
 
-**Owner:** [[P3 Data and trust]], task 1 of 15  
+**Owner:** [[P3 Data and trust]], task 1 of 16  
 **When:** Thu 24 Sep → Tue 29 Sep · 8 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#11](https://github.com/magentawood/roomsie/issues/11)

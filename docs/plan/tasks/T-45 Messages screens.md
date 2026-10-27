@@ -2,7 +2,7 @@
 id: T-45
 title: "Messages screens"
 owner: "P3 Data and trust"
-sequence: "10 of 15"
+sequence: "10 of 16"
 hours: 6
 start: 2026-11-09
 end: 2026-11-11
@@ -17,7 +17,7 @@ tags:
 
 # T-45 · Messages screens
 
-**Owner:** [[P3 Data and trust]], task 10 of 15  
+**Owner:** [[P3 Data and trust]], task 10 of 16  
 **When:** Mon 9 Nov → Wed 11 Nov · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#121](https://github.com/magentawood/roomsie/issues/121)
@@ -28,7 +28,7 @@ The inbox and the conversation.
 - [[T-44 Messages API]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-55 Message alerts]]
 
 ## Done when
 - [ ] The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone

@@ -605,11 +605,20 @@
    "height": 84
   },
   {
+   "id": "task-T-55",
+   "type": "text",
+   "text": "**[[T-55 Message alerts|T-55 Message alerts]]**\n6h · Thu 12 Nov → Sat 14 Nov",
+   "x": 10780,
+   "y": 810,
+   "width": 652,
+   "height": 84
+  },
+  {
    "id": "task-T-46",
    "type": "text",
    "text": "**[[T-46 ID verification|T-46 ID verification]]**\n12h · Thu 12 Nov → Sun 15 Nov",
    "x": 10780,
-   "y": 810,
+   "y": 906,
    "width": 872,
    "height": 84
   },
@@ -1853,6 +1862,20 @@
    "fromNode": "task-T-44",
    "fromSide": "right",
    "toNode": "task-T-45",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-44-T-55",
+   "fromNode": "task-T-44",
+   "fromSide": "right",
+   "toNode": "task-T-55",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-45-T-55",
+   "fromNode": "task-T-45",
+   "fromSide": "right",
+   "toNode": "task-T-55",
    "toSide": "left"
   },
   {

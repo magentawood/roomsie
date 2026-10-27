@@ -2,7 +2,7 @@
 id: T-54
 title: "Photos on photos.roomsie.in"
 owner: "P3 Data and trust"
-sequence: "6 of 15"
+sequence: "6 of 16"
 hours: 1
 start: 2026-10-27
 end: 2026-10-27
@@ -17,7 +17,7 @@ tags:
 
 # T-54 · Photos on photos.roomsie.in
 
-**Owner:** [[P3 Data and trust]], task 6 of 15  
+**Owner:** [[P3 Data and trust]], task 6 of 16  
 **When:** Tue 27 Oct · 1 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#146](https://github.com/magentawood/roomsie/issues/146)

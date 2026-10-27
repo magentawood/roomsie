@@ -2,7 +2,7 @@
 id: T-50
 title: "Found a place, share and feedback"
 owner: "P3 Data and trust"
-sequence: "15 of 15"
+sequence: "16 of 16"
 hours: 4
 start: 2026-11-23
 end: 2026-11-24
@@ -17,7 +17,7 @@ tags:
 
 # T-50 · Found a place, share and feedback
 
-**Owner:** [[P3 Data and trust]], task 15 of 15  
+**Owner:** [[P3 Data and trust]], task 16 of 16  
 **When:** Mon 23 Nov → Tue 24 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#126](https://github.com/magentawood/roomsie/issues/126)

@@ -60,6 +60,7 @@ This note is part of [[roomsie launch]].
 - [[T-43 Listing detail screens]] — P3 Data and trust
 - [[T-44 Messages API]] — P3 Data and trust
 - [[T-45 Messages screens]] — P3 Data and trust
+- [[T-55 Message alerts]] — P3 Data and trust
 - [[T-46 ID verification]] — P3 Data and trust
 - [[T-47 Saved]] — P3 Data and trust
 - [[T-48 Onboarding questions]] — P3 Data and trust
