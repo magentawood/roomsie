@@ -6,8 +6,9 @@ import { Clock, MessageCircle01 } from '@untitledui/icons'
 import { noContent, type PersonResponse } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
+import { chatWith } from '../../lib/messages'
 import { connectLine } from '../../lib/person'
-import { queryKeys } from '../../lib/queries'
+import { queryKeys, useConversations } from '../../lib/queries'
 import { Button } from '../ui/button'
 
 function Received({ profileId, requestId, note, line, save }: { profileId: string; requestId: string; note: string; line: string | null; save: ReactNode }) {
@@ -31,11 +32,15 @@ function Received({ profileId, requestId, note, line, save }: { profileId: strin
   )
 }
 
+function OpenChat({ profileId, name }: { profileId: string; name: string }) {
+  const chat = chatWith(useConversations().data?.conversations ?? [], profileId)
+  return <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} href={chat && `/messages/${chat}`} disabled={!chat}>{`Open chat with ${name}`}</Button>
+}
+
 function ConnectButton({ person, name, onSayHi }: { person: PersonResponse; name: string; onSayHi: () => void }) {
   switch (person.connection.state) {
     case 'sent': return <Button variant="secondary" size="lg" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
-    // TODO(T-45): open the chat.
-    case 'accepted': return <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} disabled>{`Open chat with ${name}`}</Button>
+    case 'accepted': return <OpenChat profileId={person.id} name={name} />
     default: return (
       <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} disabled={person.requestsLeftToday === 0} onClick={onSayHi}>
         {`Say hi to ${name}`}

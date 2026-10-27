@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { Bookmark, ChevronLeft, Key01, MessageCircle01, Plus, User01 } from '@untitledui/icons'
 import { useAuth } from '../../lib/auth'
+import { LiveMessages } from '../../lib/live'
+import { useMessagesBadge } from '../../lib/queries'
 import { Button, type Icon } from '../ui/button'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { Logo } from './logo'
@@ -14,15 +16,25 @@ const navLooks = {
   phone: { item: 'flex-1 flex-col gap-0.5 rounded-full px-1 py-1.5 text-xs whitespace-nowrap', active: 'bg-tertiary text-primary', link: 'text-secondary', icon: '' },
 }
 
-function NavItem({ icon: ItemIcon, label, href, look }: { icon: Icon; label: string; href?: string; look: keyof typeof navLooks }) {
+function NavItem({ icon: ItemIcon, label, href, look, count = 0 }: { icon: Icon; label: string; href?: string; look: keyof typeof navLooks; count?: number }) {
   const pathname = usePathname()
   const active = !!href && pathname.startsWith(href)
   const style = navLooks[look]
-  const classes = `flex items-center font-medium ${style.item} ${active ? style.active : href ? style.link : 'text-quaternary'}`
-  const content = (<><ItemIcon size={20} aria-hidden className={style.icon} />{label}</>)
+  const classes = `relative flex items-center font-medium ${style.item} ${active ? style.active : href ? style.link : 'text-quaternary'}`
+  const badge = count > 0 && (
+    <span className={`rounded-full border border-badge-gray bg-badge-gray px-1.5 text-xs font-medium text-badge-gray ${look === 'phone' ? 'absolute top-0 right-1/4' : 'ml-auto'}`}>
+      {count > 99 ? '99+' : count}
+    </span>
+  )
+  const content = (<><ItemIcon size={20} aria-hidden className={style.icon} />{label}{badge}</>)
   if (href) return <Link href={href} className={classes} aria-current={active ? 'page' : undefined}>{content}</Link>
   // A screen that a later task builds: it shows, but it does nothing yet.
   return <span className={classes} aria-disabled title="Coming soon">{content}</span>
+}
+
+/** The badge counts the unread messages and the open requests to the user (T-45). */
+function MessagesItem({ look }: { look: keyof typeof navLooks }) {
+  return <NavItem look={look} icon={MessageCircle01} label="Messages" href="/messages" count={useMessagesBadge()} />
 }
 
 function Sidebar() {
@@ -38,7 +50,7 @@ function Sidebar() {
       </div>
       <div className="flex flex-col gap-4">
         <nav className="flex flex-col gap-1">
-          <NavItem look="sidebar" icon={MessageCircle01} label="Messages" />
+          {user ? <MessagesItem look="sidebar" /> : <NavItem look="sidebar" icon={MessageCircle01} label="Messages" href="/messages" />}
           <NavItem look="sidebar" icon={Bookmark} label="Saved" href="/saved" />
           <NavItem look="sidebar" icon={Key01} label="My listings" href="/listings" />
         </nav>
@@ -60,11 +72,12 @@ function Sidebar() {
 
 /** The floating navigation of the phone designs. */
 function MobileNav() {
+  const { user } = useAuth()
   return (
     <nav className="fixed inset-x-4 bottom-4 z-40 flex items-center gap-2 lg:hidden">
       <div className="flex flex-1 items-center rounded-full border border-secondary bg-primary p-1 shadow-sm">
         {/* The chat is the home screen, so it has no tab. */}
-        <NavItem look="phone" icon={MessageCircle01} label="Messages" />
+        {user ? <MessagesItem look="phone" /> : <NavItem look="phone" icon={MessageCircle01} label="Messages" href="/messages" />}
         <NavItem look="phone" icon={Bookmark} label="Saved" href="/saved" />
         <NavItem look="phone" icon={Key01} label="My Listings" href="/listings" />
         <NavItem look="phone" icon={User01} label="Profile" href="/profile" />
@@ -78,7 +91,8 @@ function MobileNav() {
 
 /** The signed-in frame: the sidebar on a desktop, the floating navigation on a phone unless the page has its own bar. */
 export function AppShell({ children, mobileNav = true }: { children: ReactNode; mobileNav?: boolean }) {
-  return (
+  const { user } = useAuth()
+  const shell = (
     <div className="flex min-h-dvh">
       <Sidebar />
       <div className={`flex min-w-0 flex-1 flex-col ${mobileNav ? 'pb-24 lg:pb-0' : ''}`}>{children}</div>
@@ -86,6 +100,7 @@ export function AppShell({ children, mobileNav = true }: { children: ReactNode; 
       <CreateProfileGate />
     </div>
   )
+  return user ? <LiveMessages>{shell}</LiveMessages> : shell
 }
 
 /** `inPhoneBar`: the page is a tab of the phone bar, so phones show no back button. */

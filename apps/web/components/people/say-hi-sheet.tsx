@@ -12,17 +12,28 @@ import { Button } from '../ui/button'
 import { TextArea } from '../ui/field'
 import { Modal } from '../ui/modal'
 
-/** "Say hi" sends one note as a message request (PD17). */
-export function SayHiSheet({ target: { profileId, firstName: name }, onClose }: { target: PersonTarget; onClose: () => void }) {
+/** A message to a listing goes to its lister, who can have no profile (T-45). */
+export type ListingTarget = { listingId: string; title: string }
+
+/** "Say hi" sends one note as a message request (PD17), to a person or to the lister of a listing. */
+export function SayHiSheet({ target, onClose }: { target: PersonTarget | ListingTarget; onClose: () => void }) {
   const user = useUser()
   const queryClient = useQueryClient()
   const [note, setNote] = useState<string | null>(null)
+  const person = 'profileId' in target
   const send = useMutation({
-    mutationFn: () => api(user, '/v1/requests', outgoingRequest, { method: 'POST', body: { toProfileId: profileId, note } }),
-    onSuccess: () => { void queryClient.invalidateQueries({ queryKey: queryKeys.person(profileId) }); onClose() },
+    mutationFn: () => api(user, '/v1/requests', outgoingRequest, {
+      method: 'POST', body: person ? { toProfileId: target.profileId, note } : { listingId: target.listingId, note },
+    }),
+    onSuccess: () => {
+      if (person) void queryClient.invalidateQueries({ queryKey: queryKeys.person(target.profileId) })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.requests('outgoing') })
+      onClose()
+    },
   })
+  const name = person ? target.firstName : 'The lister'
   return (
-    <Modal icon={MessageCircle01} title={`Say hi to ${name}`} onClose={onClose}
+    <Modal icon={MessageCircle01} title={person ? `Say hi to ${target.firstName}` : target.title} onClose={onClose}
       actions={(
         <>
           <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
