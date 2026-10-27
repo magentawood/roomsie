@@ -9,7 +9,7 @@ import type { LifestyleAxis, PersonResponse } from '@roomsie/contract'
 import { aboutLine, budgetLine, initials, lifestyleLines, lookingFor, mustHaveGroups } from '../../lib/person'
 import { shortDate } from '../../lib/place-detail'
 import { firstName } from '../../lib/profile-form'
-import { useAreaNames } from '../../lib/queries'
+import { useAreaLabels } from '../../lib/queries'
 import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
@@ -25,7 +25,7 @@ const lifestyleIcons: Record<LifestyleAxis, Icon> = {
 
 /** The detail of a person: the flatmate detail of the Product file and section 16 of the drafts (T-18b). TODO(T-46): the "Verified" pill. */
 export function PersonDetail({ person }: { person: PersonResponse }) {
-  const areaNames = useAreaNames()
+  const areaLabels = useAreaLabels()
   const saved = useSaved('people', person.id)
   const { share, copied } = useShare(person.fullName)
   const [sheet, setSheet] = useState<'say_hi' | 'report' | 'block' | null>(null)
@@ -36,7 +36,7 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
 
   const lookingForFacts = [
     { label: 'Looking for', value: lookingFor(person), icon: SearchMd },
-    { label: 'Areas', value: person.areas.map((a) => areaNames[a] ?? a).join(', '), icon: Home02 },
+    { label: 'Areas', value: person.areas.map((a) => areaLabels[a] ?? a).join(' · '), icon: Home02 },
     { label: 'Budget', value: budgetLine(person), icon: Wallet02 },
     { label: 'Moving', value: person.moveDate && shortDate(person.moveDate), icon: Calendar },
     { label: 'Commute to', value: person.commuteAddress, icon: Car01 },

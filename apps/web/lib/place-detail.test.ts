@@ -107,6 +107,7 @@ describe('where it is', () => {
   it('gives the building and the area, then the landmark', () => {
     expect(whereLine(listing({ building: 'Orchid Residency', landmark: 'Next to the municipal school' }), 'Andheri–Goregaon'))
       .toBe('Orchid Residency, Andheri–Goregaon • Next to the municipal school')
+    expect(whereLine(listing({ building: 'Silver Oak' }), 'Versova, Andheri West')).toBe('Silver Oak, Versova, Andheri West')
     expect(whereLine(listing({}), undefined)).toBeNull()
   })
 

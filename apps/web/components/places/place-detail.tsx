@@ -10,7 +10,7 @@ import { labels, listingTitle } from '../../lib/listing-steps'
 import {
   addressLine, flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
-import { useAreaNames } from '../../lib/queries'
+import { useAreaLabels } from '../../lib/queries'
 import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
@@ -80,12 +80,12 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
 
 /** The detail of a place: the four kinds of the Product file (T-43). TODO(T-46): the "Verified" pill. */
 export function PlaceDetail({ listing }: { listing: ListingResponse }) {
-  const areaNames = useAreaNames()
+  const areaLabels = useAreaLabels()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
   const { share, copied } = useShare(title)
   const back = useBack()
-  const where = whereLine(listing, listing.areaSlug ? areaNames[listing.areaSlug] : undefined)
+  const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
   const address = addressLine(listing)
   const money = moveIn(listing)
   const terms = termLines(listing)
