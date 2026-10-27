@@ -423,7 +423,7 @@ export const connectionRequests = pgTable('connection_requests', {
 
 /** The messages of a conversation: an accepted request (T-44). The first message is the note of the request. */
 export const messages = pgTable('messages', {
-  /** ADR-0015: the client makes the id. The API makes it for the note. */
+  /** ADR-0015: the client makes the id. The API makes it for the note; migration 0010 made it in SQL for the notes before T-44. */
   id: id(),
   requestId: uuid('request_id').notNull().references(() => connectionRequests.id, { onDelete: 'cascade' }),
   senderUserId: uuid('sender_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
