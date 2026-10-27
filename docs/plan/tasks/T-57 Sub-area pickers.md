@@ -40,3 +40,32 @@ Lets a lister and a seeker pick a sub-area, and shows it on each card.
 ## Read first
 - [sub-areas.md](../../specs/sub-areas.md)
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
+
+## Spec
+
+**Approved:** not yet
+
+- **Modules:**
+  - **The area tree of the web (new):** the label of an area, its sub-areas, the search, and the rules of the profile picks. The search uses the names and the other names. The pickers and the labels use it. It reads the areas API, and the API does not change.
+  - **The Where step of the listing flow:** three chip rows, the area group, the sub-area and the pocket. The listing edit does not change.
+  - **The area picker of the profile editor:** the picks, the search and the groups. The profile edit does not change.
+  - **The place card, the place detail, My listings and the person detail:** they show the area label. Their interfaces do not change.
+- **Seams for the tests:**
+  - A new unit test of the area tree: the labels, the search by another name, and the pick rules.
+  - The place-detail unit test: the where line of a place in a pocket.
+  - A browser check at 390 px and 1440 px, with the API answers stubbed: the Where step, the profile editor, a card and a detail.
+- **Decisions:**
+  - The drafts are section 23 "Sub-area pickers" of the [drafts page](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=454-22998).
+  - **Where step:** three chip rows that open in turn: the area group, then the sub-area, then the pocket. The pocket row shows only for a sub-area that has pockets, and it is optional. The listing saves the sub-area or the pocket. The group comes from the parent of the saved area.
+  - A listing from before in a whole group opens with its group picked and no sub-area. A change of the group clears the sub-area and the pocket.
+  - **Profile editor:** one field on the page. It has the picks as tags that the seeker can remove, a search, and the ten groups as rows that open. An open group shows "All of" the group and its sub-areas.
+  - **The wider pick wins.** "All of" a group removes the picks under it, and its sub-area chips show checked and off. The seeker unpicks "All of" to pick some sub-areas. A sub-area and its pockets follow the same rule.
+  - **Pockets in the profile editor** show only in the search results, with their sub-area, for example "Versova · Andheri West".
+  - **The limit:** at 20 picks, the other chips are off, and the line says "20 of 20. Remove one to add another."
+  - **The search** ignores case, spaces and punctuation. It matches the names and the other names.
+  - **The label:** a sub-area shows its name. A pocket shows with its parent: "Versova, Andheri West". A group from before shows its name. Cards, the place detail, My listings and the person detail use the same label.
+- **Out of scope:**
+  - the API (T-56)
+  - the chip flow and the area slot of the assistant (T-09)
+  - the place lookup and the waitlist (T-22a, T-22b)
+  - the area pages for SEO, a map, and the seeding plan (F-06)
