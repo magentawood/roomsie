@@ -209,7 +209,7 @@ export const areas = pgTable('areas', {
   /** Evergreen copy for the area page. Written once, not generated. */
   description: text('description'),
   commuteNotes: text('commute_notes'),
-  /** F-06 picks three to open with. The rest exist for the waitlist (T-22). */
+  /** Unused since 2026-10-27: each area is live (PD2). A later migration drops it, after the API stops reading it. */
   isLaunchArea: boolean('is_launch_area').notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: createdAt(),

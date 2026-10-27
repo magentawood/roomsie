@@ -41,7 +41,6 @@ export async function seedCatalogues(db: Db) {
       target: mustHaves.key,
       set: { label: sql`excluded.label`, sortOrder: sql`excluded.sort_order`, active: sql`excluded.active` },
     })
-  // The launch flag is not in the update: F-06 sets it, and a deploy must keep it.
   await db.insert(areas).values(AREA_GROUPS)
     .onConflictDoUpdate({ target: areas.slug, set: { name: sql`excluded.name`, sortOrder: sql`excluded.sort_order` } })
 }

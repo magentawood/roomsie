@@ -17,7 +17,7 @@ This note is part of [[roomsie launch]].
 2. [[F-03 Billing and caps]] — Thu 24 Sep
 3. [[F-04 Accounts in Mumbai]] — Thu 24 Sep
 4. [[F-05 Seeding consent text ⚑]] — Thu 24 Sep → Fri 25 Sep
-5. [[F-06 Launch areas picked]] — Thu 24 Sep → Fri 25 Sep
+5. [[F-06 Seed areas picked]] — Thu 24 Sep → Fri 25 Sep
 6. [[F-07 Privacy and terms draft]] — Fri 25 Sep → Wed 30 Sep
 7. [[F-09 ADR exceptions]] — Sat 26 Sep → Sun 27 Sep
 8. [[F-08 Moderator named]] — Wed 30 Sep → Fri 2 Oct

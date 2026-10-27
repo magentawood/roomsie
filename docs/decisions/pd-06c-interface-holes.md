@@ -1,6 +1,6 @@
 # PD6c — The panel follows the form
 
-**Status:** Settled. Four holes closed, one provisional. Changed on 2026-10-25. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Four holes closed, one provisional. Changed on 2026-10-27. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -59,13 +59,13 @@ The banners, the undo and the scroll rules come in v1.
 suggested posts: the next budget band, or a neighbouring area group. A seeded
 list gives the neighbours of each area group. The chips of the assistant relax
 the budget, the area, or the dealbreaker that removes the most cards. A search
-with launch and other areas shows the launch results and one waitlist line. A
-search with no launch area shows the waitlist screen. The alerts go by email.
+with Mumbai and other places shows the Mumbai results and one waitlist line. A
+search with no Mumbai area shows the waitlist screen. The alerts go by email.
 
 ## Rationale
 
 - **The empty state follows the designs** (PD14). Suggested posts and chips
-  stop a dead end, and PD2 sends visitors from other areas to the waitlist.
+  stop a dead end, and PD2 sends visitors from outside Mumbai to the waitlist.
 - **Form, not turn.** A turn that changes no slot changes nothing on the
   screen. Ten turns can give only three panel updates.
 - **A pure function is deterministic and testable.** No other part of this

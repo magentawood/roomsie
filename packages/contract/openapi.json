@@ -103,15 +103,11 @@
                           },
                           "name": {
                             "type": "string"
-                          },
-                          "isLaunchArea": {
-                            "type": "boolean"
                           }
                         },
                         "required": [
                           "slug",
-                          "name",
-                          "isLaunchArea"
+                          "name"
                         ],
                         "additionalProperties": false
                       }

@@ -29,7 +29,7 @@ A simple sign-up form, and tell people about it.
 
 ## Needs first
 - [[F-05 Seeding consent text ⚑]]
-- [[F-06 Launch areas picked]]
+- [[F-06 Seed areas picked]]
 
 ## Unblocks
 - [[M-02 100 sign-ups]]

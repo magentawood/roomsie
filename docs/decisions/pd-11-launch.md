@@ -1,6 +1,6 @@
 # PD11 — Public launch on 12 October
 
-**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-26. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-27. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -16,7 +16,7 @@
 - **Go or no-go: Saturday 10 October, 8 pm.** Sunday 11 October is a bug-fix day.
 - **It is a public launch, not a closed beta.** This adds about 15 hours: report and block, account deletion, a waitlist, alerts and legal pages.
 - **v0 is free.** PD4 moves to v1.
-- Launch in the three named area groups of PD2.
+- Launch in all nine area groups of PD2.
 
 | Ships 12 Oct | After launch |
 |---|---|
@@ -39,7 +39,7 @@ Engineering go/no-go checks (from `team-plan.md`):
 7. The router flags off-topic messages with no model call. The observer rejects each observation with no user quote. The advisor never answers law, tax or safety from the web.
 8. Last night's backup exists. A restore worked one or more times.
 
-Seeding (checked Sunday 11 October): a minimum of 150 profiles, with a minimum of 40 in each launch area. If one area fails, launch in the other two. Do not move the date.
+Seeding (checked Sunday 11 October): a minimum of 150 profiles across Mumbai, most of them in the areas to seed first (F-06). Do not move the date.
 
 - The seeding form collects the full profile of PD16.
 - Marketing also seeds listings from owners, PG operators and brokers. The founders set the number of listings.
