@@ -44,14 +44,14 @@ describe('a conversation', () => {
     expect(t.sent.map((s) => [s.userId, s.event])).toEqual(expect.arrayContaining([[t.ids.seeker, 'message'], [t.ids.friend, 'message']]))
   })
 
-  it('sends a masked message, live to both people, and a retried send stores one message', async () => {
+  it('sends a message as it is written, also with a phone number, live to both people, and a retried send stores one message', async () => {
     const id = await connect()
     t.sent.length = 0
     const messageId = uuidv7()
     const first = await send('friend', id, 'Sure! Call me on 98200 12345.', messageId)
     expect(first.statusCode).toBe(201)
     expect(message.parse(first.json())).toMatchObject({ id: messageId, mine: true })
-    expect(first.json().text).not.toContain('98200')
+    expect(first.json().text).toBe('Sure! Call me on 98200 12345.')
     expect((await send('friend', id, 'Sure! Call me on 98200 12345.', messageId)).statusCode).toBe(201)
     expect(await t.db.select().from(messages).where(eq(messages.id, messageId))).toHaveLength(1)
     expect(t.sent).toEqual([

@@ -1,6 +1,6 @@
 # Messages and realtime
 
-**In one line:** an accepted message request is a conversation; the API saves each message, masks phone numbers, and sends it live to the two people on their private Supabase Realtime channels.
+**In one line:** an accepted message request is a conversation; the API saves each message and sends it live to the two people on their private Supabase Realtime channels.
 
 ## What it is
 
@@ -13,7 +13,7 @@
 
 ```
 Rahul sends a message ──▶ POST /v1/conversations/:id/messages
-                            ├── mask phone numbers, save (one row for each client id)
+                            ├── save (one row for each client id)
                             └── broadcast to user:<Rahul> and user:<Divya> ──▶ both apps show it
 ```
 
@@ -27,12 +27,13 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 
 - **The claims.** Supabase trusts a Firebase token only with `role: 'authenticated'`. The API also adds `roomsie_user_id`, our id of the person, so the policy can check the channel. `POST /v1/me/realtime` adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins `user:<our user id>`.
 - **The policy.** A migration adds a policy on Supabase's `realtime.messages`: a person can join only `user:` and their own `roomsie_user_id`. The local and test databases do not have Supabase's functions, so they skip it.
+- **Phone numbers.** In v0, two people who connected can share a number in their chat. Cards, listings and request notes stay masked, and v1 masks the chat again with the subscription ([PD17](../decisions/pd-17-connect-and-contact.md)).
 - **Who sees what.** Only the two people of a conversation get it. A block hides it from both. Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".
 
 ## The choice we made
 
 - Broadcast only, never table changes: [ADR-0005](../decisions/0005-managed-platform-split.md).
-- Message requests, no phone numbers: [PD17](../decisions/pd-17-connect-and-contact.md).
+- Message requests, and no phone numbers in public: [PD17](../decisions/pd-17-connect-and-contact.md).
 - Private channels with the Firebase sign-in, the claims from the API, and the alerts in T-55: the spec of T-44 ([#120](https://github.com/magentawood/roomsie/issues/120)).
 
 ## Gotchas

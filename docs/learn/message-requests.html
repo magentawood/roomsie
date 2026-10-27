@@ -35,7 +35,7 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="message-requests">Message requests</h1>
-<p><strong>In one line:</strong> "Say hi" sends a request with a short note, the other person accepts or declines, and only then can the two people chat; a phone number never shows.</p>
+<p><strong>In one line:</strong> "Say hi" sends a request with a short note, the other person accepts or declines, and only then can the two people chat; a phone number never shows in public or in a note.</p>
 <h2 id="what-it-is">What it is</h2>
 <p>A <strong>message request</strong> is a first message that waits for permission. It does not go straight to an inbox. It waits in the "Requests" list of the other person until they choose. Instagram and LinkedIn work in the same way for people that you do not follow.</p>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -86,12 +86,12 @@ details.callout[open] summary{color:var(--fg)}
 <p>The person detail at <code>/people/[id]</code> shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or the line of "Not available" under a new "Say hi".</p>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
-<li>Message requests, no phone numbers, and the limits: <a href="../decisions/pd-17-connect-and-contact.md">PD17</a>.</li>
+<li>Message requests, no phone numbers in public, and the limits: <a href="../decisions/pd-17-connect-and-contact.md">PD17</a>.</li>
 <li>The report reasons and the response times: <a href="../decisions/pd-18-moderation.md">PD18</a>.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>Masking:</strong> the API masks phone numbers and WhatsApp links as ••••. The pattern must not mask a rent ("15000") or a flat number ("1203").</li>
+<li><strong>Masking:</strong> the API masks phone numbers and WhatsApp links as •••• in a note. The pattern must not mask a rent ("15000") or a flat number ("1203"). After the accept, the chat can carry a number in v0 (<a href="messages.html">Messages and realtime</a>).</li>
 <li><strong>A spelled-out number</strong> ("nine eight two…") can pass the pattern. The terms and the reports are the backstop.</li>
 <li><strong>"Not available" is the same for a decline and an expiry.</strong> Thus, a sender never learns which one it was.</li>
 <li><strong>An expiry needs no job.</strong> After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.</li>
