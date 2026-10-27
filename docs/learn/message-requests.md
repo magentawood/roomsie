@@ -16,6 +16,7 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 ```
 
 - Divya gets an email and a browser push: "Rahul sent you a message". Neither shows the note.
+- If Divya's app is open, the API also sends a "request" event to her private channel. The event has only the id of the request, and her app then gets the list again ([Messages and realtime](messages.md)).
 - Until Divya accepts, Rahul cannot write more.
 - Rahul can also say hi through a listing. The request goes to the owner of the listing, who needs no profile. The rules are the same.
 - A sender has 10 new requests in a day of India time.
@@ -28,9 +29,11 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 |---|---|
 | `POST /v1/requests` | Sends a request to a card (`toProfileId`) or to a listing (`listingId`), with the note. The sender needs a profile. |
 | `GET /v1/requests/incoming` | Gives the open requests to you: the name and the photo of the sender, the note, and the time of the expiry. |
-| `GET /v1/requests/outgoing` | Gives your requests, each with its state: open, accepted or not available. |
+| `GET /v1/requests/outgoing` | Gives your requests, the newest first, each with its state (open, accepted or not available), the note, and the person who gets it as a conversation shows them. |
 | `POST /v1/requests/:id/accept` and `/decline` | The recipient answers an open request. |
 | `GET /v1/people/:id` | Gives the card, the connection with you (none, sent, received with the note, accepted, or not available), and the new requests that you can still send today. |
+
+In the web, Divya answers at `/messages/requests`, and Accept opens the chat. Rahul sees his request in his inbox as a thread: "Request sent" with no composer, or "Not available". The inbox shows each person or listing one time: the chat, or else the newest request. A listing detail has a button for its lister, for example "Message the owner", with the same states.
 
 The person detail at `/people/[id]` shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or the line of "Not available" under a new "Say hi".
 
@@ -55,3 +58,4 @@ The person detail at `/people/[id]` shows one connect state from this connection
 - T-18a: [#157](https://github.com/magentawood/roomsie/pull/157), 2026-10-26. The API of message requests.
 - T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and its connect states.
 - T-44: [#160](https://github.com/magentawood/roomsie/pull/160), 2026-10-27. The note opens the conversation, and a deletion keeps the requests.
+- T-45: [#167](https://github.com/magentawood/roomsie/pull/167), 2026-10-27. The requests screen, the sent requests in the inbox, the message button of a listing, and the live "request" event.
