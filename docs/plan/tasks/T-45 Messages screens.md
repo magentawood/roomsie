@@ -44,7 +44,7 @@ The inbox and the conversation.
 
 ## Spec
 
-**Approved:** not yet
+**Approved:** 2026-10-27, by n3rxv
 
 - **Modules:**
   - **The requests API:** each request that the user sent also gives the other person: the name and the photo, or "Deleted user". The interface changes.

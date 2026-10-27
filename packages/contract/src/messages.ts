@@ -11,7 +11,7 @@ export const message = z.object({ id: z.uuid(), conversationId: z.uuid(), mine: 
 export type Message = z.infer<typeof message>
 
 /** The other person of a conversation. `deleted`: the account is deleted, and the web shows "Deleted user". */
-const otherPerson = z.object({ profileId: z.uuid().nullable(), name: z.string().nullable(), photoUrl: z.url().nullable(), deleted: z.boolean() })
+export const otherPerson = z.object({ profileId: z.uuid().nullable(), name: z.string().nullable(), photoUrl: z.url().nullable(), deleted: z.boolean() })
 
 /** A conversation is an accepted message request (T-44). `canSend` is false when the other account is deleted or suspended. */
 export const conversation = z.object({
