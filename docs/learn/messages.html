@@ -35,7 +35,7 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="messages-and-realtime">Messages and realtime</h1>
-<p><strong>In one line:</strong> an accepted message request is a conversation; the API saves each message, masks phone numbers, and sends it live to the two people on their private Supabase Realtime channels.</p>
+<p><strong>In one line:</strong> an accepted message request is a conversation; the API saves each message and sends it live to the two people on their private Supabase Realtime channels.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>A <strong>conversation</strong> is an accepted message request. The note of the request is its first message, at the time of the accept.</li>
@@ -45,7 +45,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>Rahul sends a message ──▶ POST /v1/conversations/:id/messages
-                            ├── mask phone numbers, save (one row for each client id)
+                            ├── save (one row for each client id)
                             └── broadcast to user:&lt;Rahul&gt; and user:&lt;Divya&gt; ──▶ both apps show it
 </code></pre>
 <table>
@@ -81,12 +81,13 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>The claims.</strong> Supabase trusts a Firebase token only with <code>role: 'authenticated'</code>. The API also adds <code>roomsie_user_id</code>, our id of the person, so the policy can check the channel. <code>POST /v1/me/realtime</code> adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins <code>user:&lt;our user id&gt;</code>.</li>
 <li><strong>The policy.</strong> A migration adds a policy on Supabase's <code>realtime.messages</code>: a person can join only <code>user:</code> and their own <code>roomsie_user_id</code>. The local and test databases do not have Supabase's functions, so they skip it.</li>
+<li><strong>Phone numbers.</strong> In v0, two people who connected can share a number in their chat. Cards, listings and request notes stay masked, and v1 masks the chat again with the subscription (<a href="../decisions/pd-17-connect-and-contact.md">PD17</a>).</li>
 <li><strong>Who sees what.</strong> Only the two people of a conversation get it. A block hides it from both. Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>Broadcast only, never table changes: <a href="../decisions/0005-managed-platform-split.md">ADR-0005</a>.</li>
-<li>Message requests, no phone numbers: <a href="../decisions/pd-17-connect-and-contact.md">PD17</a>.</li>
+<li>Message requests, and no phone numbers in public: <a href="../decisions/pd-17-connect-and-contact.md">PD17</a>.</li>
 <li>Private channels with the Firebase sign-in, the claims from the API, and the alerts in T-55: the spec of T-44 (<a href="https://github.com/magentawood/roomsie/issues/120">#120</a>).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>

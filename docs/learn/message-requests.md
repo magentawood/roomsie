@@ -1,6 +1,6 @@
 # Message requests
 
-**In one line:** "Say hi" sends a request with a short note, the other person accepts or declines, and only then can the two people chat; a phone number never shows.
+**In one line:** "Say hi" sends a request with a short note, the other person accepts or declines, and only then can the two people chat; a phone number never shows in public or in a note.
 
 ## What it is
 
@@ -36,12 +36,12 @@ The person detail at `/people/[id]` shows one connect state from this connection
 
 ## The choice we made
 
-- Message requests, no phone numbers, and the limits: [PD17](../decisions/pd-17-connect-and-contact.md).
+- Message requests, no phone numbers in public, and the limits: [PD17](../decisions/pd-17-connect-and-contact.md).
 - The report reasons and the response times: [PD18](../decisions/pd-18-moderation.md).
 
 ## Gotchas
 
-- **Masking:** the API masks phone numbers and WhatsApp links as ••••. The pattern must not mask a rent ("15000") or a flat number ("1203").
+- **Masking:** the API masks phone numbers and WhatsApp links as •••• in a note. The pattern must not mask a rent ("15000") or a flat number ("1203"). After the accept, the chat can carry a number in v0 ([Messages and realtime](messages.md)).
 - **A spelled-out number** ("nine eight two…") can pass the pattern. The terms and the reports are the backstop.
 - **"Not available" is the same for a decline and an expiry.** Thus, a sender never learns which one it was.
 - **An expiry needs no job.** After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.

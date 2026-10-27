@@ -10,7 +10,6 @@ import { idParams } from '../params'
 import { userChannel } from '../realtime'
 import { markRead } from '../requests/read'
 import type { Storage } from '../storage'
-import { maskContacts } from '../text/mask-contacts'
 import { conversationFor, listConversations, messageView } from './read'
 import { sendLive } from './send'
 import type { Messaging } from './settings'
@@ -57,8 +56,8 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const conversation = await conversationOr404(me, req.params.id, reply)
     if (!conversation) return reply
     if (!conversation.canSend) return reply.code(409).send({ error: 'the other person cannot get messages' })
-    // ADR-0015: a retried send stores nothing, and gives the stored message again.
-    const [made] = await db.insert(messages).values({ id: req.body.id, requestId: req.params.id, senderUserId: me, text: maskContacts(req.body.text) })
+    // ADR-0015: a retried send stores nothing, and gives the stored message again. PD17: a chat can carry a phone number in v0.
+    const [made] = await db.insert(messages).values({ id: req.body.id, requestId: req.params.id, senderUserId: me, text: req.body.text })
       .onConflictDoNothing().returning()
     if (made) {
       await sendLive(messaging.realtime, req.log, made, [me, conversation.otherUserId])

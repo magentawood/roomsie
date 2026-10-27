@@ -40,7 +40,7 @@ The server part of in-app messages between two users.
 - [x] Messages arrive live through Supabase Realtime broadcast · [#160](https://github.com/magentawood/roomsie/pull/160)
 - [x] The API never gives a message to a user who is not in the conversation · [#160](https://github.com/magentawood/roomsie/pull/160)
 - [x] A blocked user cannot send a message to the user who blocked them · [#160](https://github.com/magentawood/roomsie/pull/160)
-- [x] The API masks phone numbers and WhatsApp links as •••• in each message · [#160](https://github.com/magentawood/roomsie/pull/160)
+- [x] People in an accepted conversation can share a phone number; cards, listings and requests stay masked (PD17) · [#160](https://github.com/magentawood/roomsie/pull/160)
 - [x] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests · [#160](https://github.com/magentawood/roomsie/pull/160)
 
 ^done
@@ -73,7 +73,7 @@ The server part of in-app messages between two users.
   - The API:
     - The list gives each conversation with the other person (the name and the photo, or "Deleted user"), the last message and the unread count, the newest first.
     - A thread gives its messages, the newest first, in pages.
-    - A message has 1 to 2,000 characters. The API masks phone numbers and WhatsApp links as •••• before the save. The client makes the id, so a retried send stores one message ([ADR-0015](../../decisions/0015-primary-key-strategy.md)).
+    - A message has 1 to 2,000 characters, and the API does not mask it: two people who connected can share a phone number. The client makes the id, so a retried send stores one message ([ADR-0015](../../decisions/0015-primary-key-strategy.md)).
     - The user marks a conversation as read.
     - A user who is not in the conversation gets 404.
   - After the save, the API broadcasts the message on a private Supabase Realtime channel of each of the two people, `user:<our user id>`. Only that user can join the channel: a policy checks the claims of the token ([ADR-0005](../../decisions/0005-managed-platform-split.md)).
@@ -84,6 +84,7 @@ The server part of in-app messages between two users.
   - Setup that the user does: the Firebase service account key and the public key of Supabase in GitHub secrets, through `!` commands; in Supabase, Firebase as a third-party auth provider, and Realtime that allows private channels only.
   - Review round 1, the user decided: the API calls the REST API of Firebase Admin, with no SDK. Item 7 changed: "A deleted profile now cascades its connection requests" → "A deleted profile or listing no longer deletes its connection requests".
   - Review round 2, the user decided: a page of messages breaks a tie of `created_at` with the id, and `docs/standards/database.md` says so.
+  - After the review, the user decided (2026-10-27): no phone number in public or in a request note, and a number is allowed in an accepted chat in v0. v1 masks the chat again with the subscription. PD17 changed. Item 5 changed: "The API masks phone numbers and WhatsApp links as •••• in each message" → "People in an accepted conversation can share a phone number; cards, listings and requests stay masked (PD17)".
 - **Out of scope:** the screens and the realtime client of the web (T-45), the email and push alerts (T-55), the reports in a conversation (T-45), unblock.
 
 ## Log
