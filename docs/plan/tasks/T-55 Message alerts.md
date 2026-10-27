@@ -32,8 +32,8 @@ Tell a person about a new request or message by email and browser push.
 - No task waits on this task.
 
 ## Done when
-- [ ] A new request or message sends an email and a browser push, with no message text, unless the user turned them off
-- [ ] Settings has the "Email alerts" and "Push alerts" switches of the designs
+- [x] A new request or message sends an email and a browser push, with no message text, unless the user turned them off · [#168](https://github.com/magentawood/roomsie/pull/168)
+- [x] Settings has the "Email alerts" and "Push alerts" switches of the designs · [#168](https://github.com/magentawood/roomsie/pull/168)
 
 ^done
 
@@ -76,3 +76,14 @@ Tell a person about a new request or message by email and browser push.
   - an unsubscribe link with a token in the email
   - an install prompt for iPhones (a push on an iPhone needs roomsie on the home screen)
   - the live check of SES and FCM, which comes after the setup of the secrets, the DNS records and the SES production access
+
+## Log
+
+- **2026-10-27 · [#168](https://github.com/magentawood/roomsie/pull/168)**
+  - **Change:** a new request, an accept and the first unread message of a chat send the other person an email by Amazon SES and a browser push by Firebase Cloud Messaging, with no message text. Settings has the "Email alerts" and "Push alerts" switches, also with no profile. The sign-in keeps the verified email.
+  - **Why:** a person must learn about a request or a message also when no roomsie tab is open ([PD17](../../decisions/pd-17-connect-and-contact.md), [ADR-0019](../../decisions/0019-alerts-by-ses-and-fcm.md)).
+  - **Ticked:** "A new request or message sends an email and a browser push, with no message text, unless the user turned them off" and "Settings has the "Email alerts" and "Push alerts" switches of the designs"
+  - **Not done:** none. The live check of SES and FCM waits for the secrets, the DNS records and the SES production access.
+  - **Learn:** [Alerts: email and browser push](../../learn/alerts.md), [Messages and realtime](../../learn/messages.md) and [Message requests](../../learn/message-requests.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
+- **Next:** the setup of SES and of the Web Push key, then the live check of the alerts.
