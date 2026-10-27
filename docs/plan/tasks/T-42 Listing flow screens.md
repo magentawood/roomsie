@@ -33,7 +33,7 @@ The screens where a lister adds a place, and sees and edits their places.
 ## Done when
 - [x] The eight steps of flow 04 work for the four kinds of lister, as in the Product file · [#144](https://github.com/magentawood/roomsie/pull/144)
 - [x] My listings shows each listing of the user, with edit, pause and delete, and the empty state · [#144](https://github.com/magentawood/roomsie/pull/144)
-- [ ] The verification step of the flow opens the ID check of T-46
+- [x] The verification step of the flow opens the ID check of T-46 · [#169](https://github.com/magentawood/roomsie/pull/169)
 
 ^done
 
@@ -82,4 +82,12 @@ The screens where a lister adds a place, and sees and edits their places.
   - **Ticked:** "The eight steps of flow 04 work for the four kinds of lister, as in the Product file" and "My listings shows each listing of the user, with edit, pause and delete, and the empty state"
   - **Not done:** "The verification step of the flow opens the ID check of T-46": blocked by T-46.
   - **Learn:** [The web UI base](../../learn/web-ui-base.md), [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
+
+- **2026-10-27 · [#169](https://github.com/magentawood/roomsie/pull/169)**
+  - **Change:** after a publish, the listing flow offers the ID check of T-46 in the "Verify your ID" modal. The listing is live before the check.
+  - **Why:** [PD8](../../decisions/pd-08-verification.md)
+  - **Ticked:** "The verification step of the flow opens the ID check of T-46"
+  - **Not done:** none
+  - **Learn:** [ID checks and the Verified badge](../../learn/id-checks.md)
   - **Journal:** [2026-10](../../journal/2026-10.md)
