@@ -76,7 +76,7 @@ function Messages({ conversationId, name }: { conversationId: string; name: stri
   )
 }
 
-function Composer({ conversationId }: { conversationId: string }) {
+function Composer({ conversationId, onSent }: { conversationId: string; onSent: () => void }) {
   const user = useUser()
   const queryClient = useQueryClient()
   const [text, setText] = useState('')
@@ -89,6 +89,7 @@ function Composer({ conversationId }: { conversationId: string }) {
       void queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
       id.current = null
       setText('')
+      onSent()
     },
   })
   const submit = () => { if (text.trim() && !send.isPending) send.mutate() }
@@ -119,6 +120,8 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
   const { name, about } = useChatName(other, listingId)
   const first = firstName(name)
   const [sheet, setSheet] = useState<'report' | 'block' | null>(null)
+  // The list grows upward, so a scroll of 0 shows the newest message.
+  const scroller = useRef<HTMLDivElement>(null)
   const read = useMutation({
     mutationFn: () => api(user, `/v1/conversations/${conversation.id}/read`, noContent, { method: 'POST' }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.conversations }),
@@ -139,14 +142,14 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
   return (
     <>
       <Header other={other} listingId={listingId} name={name} about={about} menu={menu} />
-      <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
+      <div ref={scroller} className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
         <div className="flex flex-col gap-6 p-4 md:px-6">
           <SafetyNotice />
           <Messages conversationId={conversation.id} name={name} />
         </div>
       </div>
       {conversation.canSend
-        ? <Composer conversationId={conversation.id} />
+        ? <Composer conversationId={conversation.id} onSent={() => scroller.current?.scrollTo({ top: 0 })} />
         : <Closed>{other.deleted ? 'This account is deleted, so you can’t reply.' : 'You can’t send messages in this chat.'}</Closed>}
       {sheet === 'report' && <ReportSheet target={person ?? { listingId: listingId! }} onClose={() => setSheet(null)} />}
       {sheet === 'block' && person && (
