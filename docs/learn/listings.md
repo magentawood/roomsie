@@ -42,7 +42,7 @@ The screens (T-42):
 - Each step saves only its own fields, with one `PATCH`, on "Next", "Previous step" and "Save as Draft" (`apps/web/lib/listing-steps.ts`).
 - Before the save, `stepErrors` checks the values with the contract schema of the kind. A refused value gets a red line under its field, and nothing saves.
 - The browser shrinks each photo to 1600 px or less, as WebP, before the upload (`apps/web/lib/photo.ts`). Safari cannot make WebP, so there it is a JPEG. The new file has no EXIF data, so no GPS location.
-- The area pick lists the nine area groups of PD2 from `GET /v1/areas`. The launch flag stays off until F-06.
+- The area pick lists the nine area groups of PD2 from `GET /v1/areas`.
 
 ## The choice we made
 

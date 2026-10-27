@@ -57,7 +57,7 @@ The screens where a lister adds a place, and sees and edits their places.
 - **Decisions:**
   - T-42 builds the shared web base that its screens need: the tokens (styling launch rules), the components, the app shell and the API helper. The sidebar shows New Goal, Messages and Saved as inactive. It shows no goals list: a user has no goals until the goals screens exist.
   - The API helper sends the Firebase ID token from `getIdToken()` on each call, through TanStack Query. (ADR-0007, ADR-0008)
-  - The seed adds the nine area groups of PD2, with the launch flag off. `GET /v1/areas` lists them, and the area pick of step 2 shows all nine. (PD2)
+  - The seed adds the nine area groups of PD2. `GET /v1/areas` lists them, and the area pick of step 2 shows all nine. (PD2)
   - "Publish my listing" makes the listing live, with no verification step. T-46 adds the ID check, and the listing does not wait for it (PD8). The done item about the verification step stays open, blocked by T-46.
   - "Delete listing" is a link at the bottom of step 1 of a listing that exists. It opens a confirmation: "Its photos are deleted too. You can't undo this." It never looks like a primary action. (styling standard)
   - We design the phone screens on the Figma drafts page before the build: a step, the My listings card and the delete confirmation. Phones use the floating navigation of the designs, not the sidebar. Each screen is checked at 390 px and at 1440 px.
@@ -72,7 +72,7 @@ The screens where a lister adds a place, and sees and edits their places.
   - A photo uploads with the signed link of T-41, and then the step saves its key. A listing has 5 photos or fewer.
   - Under each free-text field, a short line says that phone numbers are hidden. After a save, the lister sees •••• in their text. (PD17)
   - The listing screens need sign-in. A signed-out user sees the Google sign-in of T-05.
-- **Out of scope:** the ID check (T-46), the goals, Messages and Saved screens, the landing page (T-23a), the results and the listing detail screens (T-15, T-43), the pick of the launch areas (F-06), a resize on the server, dark mode, and the Content-Security-Policy (T-52).
+- **Out of scope:** the ID check (T-46), the goals, Messages and Saved screens, the landing page (T-23a), the results and the listing detail screens (T-15, T-43), a resize on the server, dark mode, and the Content-Security-Policy (T-52).
 
 ## Log
 

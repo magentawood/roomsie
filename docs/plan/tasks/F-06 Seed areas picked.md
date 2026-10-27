@@ -21,14 +21,13 @@ tags:
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#9](https://github.com/magentawood/roomsie/issues/9)
 
-The area groups that marketing seeds first. Each Mumbai area is live (PD2).
+The area groups that marketing seeds first. Not a gate (PD2).
 
 ## Needs first
 - Nothing. You can start this task at any time.
 
 ## Unblocks
 - [[M-01 Seeding form ⚑]]
-- [[T-22a Waitlist API]]
 
 ## Done when
 - [ ] The team chooses the areas to seed first with marketing

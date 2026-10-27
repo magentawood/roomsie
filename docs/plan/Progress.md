@@ -48,14 +48,14 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**40 free tasks are open · 153 build hours.**
+**42 free tasks are open · 156 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
-| 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
@@ -83,11 +83,13 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[T-55 Message alerts]] | P3 | 6 | ⬜ waits | 0 | [#161](https://github.com/magentawood/roomsie/issues/161) |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
+| 2 | [[T-22a Waitlist API]] | P4 | 2 | ⬜ waits | 1 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | 2 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ waits | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | 3 | [[T-34 Router ⚑]] | P2 | 6 | ⬜ waits | 0 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | 3 | [[T-21 Turn cap and spend ceiling]] | P2 | 5 | ⬜ waits | 1 | [#41](https://github.com/magentawood/roomsie/issues/41) |
 | 3 | [[T-17 Carry chat into account]] | P2 | 2 | ⬜ waits | 0 | [#32](https://github.com/magentawood/roomsie/issues/32) |
+| 3 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 3 | [[T-27 Eval run]] | P2 | 3 | ⬜ waits | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | 3 | [[T-36 Observer]] | P2 | 8 | ⬜ waits | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | 3 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
@@ -97,8 +99,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Task | Owner | Hours | Waits on | Issue |
 |---|---|---|---|---|
-| [[T-22a Waitlist API]] | P4 | 2 | F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
-| [[T-22b Waitlist screen]] | P4 | 1 | F-06 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 
 ### Waits on the designs
 
@@ -150,6 +150,8 @@ flowchart LR
   T53["T-53<br/>Delete the Firebase user"]:::ready
   T54["T-54<br/>Photos domain"]:::done
   T23b["T-23b<br/>Legal pages"]:::todo
+  T22a["T-22a<br/>Waitlist API"]:::todo
+  T22b["T-22b<br/>Waitlist screen"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::todo
   T29["T-29<br/>Abuse test"]:::todo
@@ -173,8 +175,6 @@ flowchart LR
   T50["T-50<br/>Found a place, share, feedback"]:::todo
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::ready
-  T22a["T-22a<br/>Waitlist API"]:::product
-  T22b["T-22b<br/>Waitlist screen"]:::product
   F03 --> F04
   F13 --> F07
   M04 --> M05
@@ -228,6 +228,9 @@ flowchart LR
   T41 --> T54
   T02 --> T23b
   F07 --> T23b
+  T14 --> T22a
+  T22a --> T22b
+  D04 -.-> T22b
   T04 --> T25
   T12 --> T27
   T21 --> T29
@@ -276,10 +279,6 @@ flowchart LR
   T04 --> T51
   T06 --> T51
   T05 --> T52
-  T14 --> T22a
-  F06 --> T22a
-  T22a --> T22b
-  D04 -.-> T22b
   classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f
   classDef doing fill:#e3b341,color:#000,stroke:#e3b341
   classDef ready fill:#3b82f6,color:#fff,stroke:#3b82f6

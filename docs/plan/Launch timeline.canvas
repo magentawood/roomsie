@@ -1632,13 +1632,6 @@
    "toSide": "left"
   },
   {
-   "id": "e-F-06-T-22a",
-   "fromNode": "task-F-06",
-   "fromSide": "right",
-   "toNode": "task-T-22a",
-   "toSide": "left"
-  },
-  {
    "id": "e-T-22a-T-22b",
    "fromNode": "task-T-22a",
    "fromSide": "right",

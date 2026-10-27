@@ -16,7 +16,6 @@
 - **Go or no-go: Saturday 10 October, 8 pm.** Sunday 11 October is a bug-fix day.
 - **It is a public launch, not a closed beta.** This adds about 15 hours: report and block, account deletion, a waitlist, alerts and legal pages.
 - **v0 is free.** PD4 moves to v1.
-- Launch in all nine area groups of PD2.
 
 | Ships 12 Oct | After launch |
 |---|---|
@@ -39,7 +38,9 @@ Engineering go/no-go checks (from `team-plan.md`):
 7. The router flags off-topic messages with no model call. The observer rejects each observation with no user quote. The advisor never answers law, tax or safety from the web.
 8. Last night's backup exists. A restore worked one or more times.
 
-Seeding (checked Sunday 11 October): a minimum of 150 profiles across Mumbai, most of them in the areas to seed first (F-06). Do not move the date.
+Seeding (checked Sunday 11 October): a minimum of 150 profiles across Mumbai. Marketing seeds the F-06 areas first. Do not move the date.
+
+Superseded (2026-10-27): a minimum of 40 profiles in each of three launch areas, and a launch in the other two if one fails. Each Mumbai area is live (PD2).
 
 - The seeding form collects the full profile of PD16.
 - Marketing also seeds listings from owners, PG operators and brokers. The founders set the number of listings.
@@ -49,8 +50,8 @@ Seeding (checked Sunday 11 October): a minimum of 150 profiles across Mumbai, mo
 - **The move gets back the router, the observer and the advisor for launch.** It also gets back analytics in its own database, and nightly backups.
 - On the go/no-go evening, the remaining work is clear. A date that you announce and then miss costs more than a second date announced at the start.
 - A public launch needs items that a closed beta can omit. Strangers see contact details, so there must be a way out. The DPDP Act requires account deletion, a clear data notice and a named grievance contact. There is one API machine and an open chat, so you must know first.
-- A visitor who sees an empty panel leaves. The waitlist makes an empty result into a demand signal, and tells marketing where to seed next.
-- **Cold start is the real risk, not code.** A matching product with no people shows an empty panel on day one. Many people in Powai is better than a small number in all areas.
+- A visitor who sees an empty panel leaves. For a place outside Mumbai, the waitlist makes an empty result into a demand signal, and tells marketing where to open next.
+- **Cold start is the real risk, not code.** A matching product with no people shows an empty panel on day one. Thus, marketing seeds a few area groups first (F-06).
 - v0 is free because there is nothing to charge for.
 - SEO area pages need data that does not exist. We do not abandon a cut item. Each has a slot in v1.
 - A card with an unanswered dealbreaker ranks below the full matches ([PD3a](pd-03a-flatmate-matching.md)). Thus, a thin seeded profile sinks in the results.

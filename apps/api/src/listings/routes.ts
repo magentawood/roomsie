@@ -71,7 +71,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
     const newKeys = [...(edit.photoKeys ?? []), ...photoKeysOf(newFlatmates ?? [])]
     if (newKeys.some((key) => !key.startsWith(`listings/${listing.id}/`))) return reply.code(400).send({ error: 'a photo of a different listing' })
-    if (edit.areaSlug && !(await db.select().from(areas).where(eq(areas.slug, edit.areaSlug))).length) {
+    if (edit.areaSlug && !(await db.select({ slug: areas.slug }).from(areas).where(eq(areas.slug, edit.areaSlug))).length) {
       return reply.code(400).send({ error: 'unknown area' })
     }
 

@@ -22,7 +22,7 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#99](https://github.com/magentawood/roomsie/issues/99)
 
-Results in each Mumbai area, and a waitlist form to visitors from outside Mumbai.
+Show the results in each Mumbai area, and a waitlist form outside Mumbai.
 
 ## Needs first
 - [[T-22a Waitlist API]]
@@ -33,10 +33,11 @@ Results in each Mumbai area, and a waitlist form to visitors from outside Mumbai
 
 ## Done when
 - [ ] A search in any Mumbai area shows its results
-- [ ] A visitor from outside Mumbai gets a waitlist form with "roomsie is only in Mumbai for now", not an empty panel
+- [ ] A visitor from outside Mumbai gets a waitlist form with "Roomsie is only in Mumbai for now", not an empty panel
 - [ ] A search with Mumbai and other places shows the Mumbai results and one waitlist line (PD6c)
 
 ^done
 
 ## Read first
-- [pd-11-launch.md](../../decisions/pd-11-launch.md)
+- [pd-02-launch-market.md](../../decisions/pd-02-launch-market.md)
+- [pd-06c-interface-holes.md](../../decisions/pd-06c-interface-holes.md)

@@ -37,7 +37,7 @@ Let the 100 seeded people in before the public.
 ## Done when
 - [ ] Invites go out on Sat 3 Oct, the day after profile creation works
 - [ ] The team helps people complete profiles
-- [ ] There are 150 profiles across Mumbai by Sunday 11 October, most of them in the areas to seed first
+- [ ] There are 150 profiles across Mumbai by Sunday 11 October
 
 ^done
 

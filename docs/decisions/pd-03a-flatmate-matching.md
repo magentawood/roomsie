@@ -6,7 +6,7 @@
 
 - PD15 gives a seeker one of five place types, and puts the dealbreakers on seven must-haves. PD14 puts listings into v0.
 - The designs show no score number. Results sort by "Best Matches".
-- Seeded profiles will have gaps, and PD11 needs full panels in the areas to seed first.
+- Seeded profiles will have gaps, and the areas to seed first need full panels (PD2).
 
 ## Decision
 

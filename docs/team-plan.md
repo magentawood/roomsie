@@ -120,7 +120,7 @@ Finish line: Tue 24 Nov. 95 hours.
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
 | 4 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
-| 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
+| 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14 |
 | 7 | T-22b · Waitlist screen outside Mumbai | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | 8 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
 
@@ -256,7 +256,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
-| P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | P4 Content and moderation | 7 | T-22b | Waitlist screen outside Mumbai | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | P4 Content and moderation | 8 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
@@ -700,7 +700,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-39 | Analytics in its own database, with scheduled jobs | P1 | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
 | T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
-| T-22a | Mumbai areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
+| T-22a | Mumbai areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14 |
 | T-22b | Waitlist screen outside Mumbai | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | T-40 | Nightly database backups to R2 | P1 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
 | D-06 | Launch visuals | D |  | Fri 9 Oct → Sat 10 Oct | — |
@@ -916,13 +916,13 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-22a · Mumbai areas and waitlist API** — done when:
 - The API tells if a place is in the nine Mumbai area groups
 - The system saves each waitlist entry with its place
-- Read first: `docs/decisions/pd-11-launch.md`
+- Read first: `docs/decisions/pd-02-launch-market.md`
 
 **T-22b · Waitlist screen outside Mumbai** — done when:
 - A search in any Mumbai area shows its results
-- A visitor from outside Mumbai gets a waitlist form with "roomsie is only in Mumbai for now", not an empty panel
+- A visitor from outside Mumbai gets a waitlist form with "Roomsie is only in Mumbai for now", not an empty panel
 - A search with Mumbai and other places shows the Mumbai results and one waitlist line (PD6c)
-- Read first: `docs/decisions/pd-11-launch.md`
+- Read first: `docs/decisions/pd-02-launch-market.md`, `docs/decisions/pd-06c-interface-holes.md`
 
 **T-40 · Nightly database backups to R2** — done when:
 - A scheduled GitHub Action dumps both databases to Cloudflare R2 every night
@@ -1063,7 +1063,7 @@ Public launch. The fallback date is Wednesday 14 October.
 **M-06 · Beta invites to seeded sign-ups** — done when:
 - Invites go out on Sat 3 Oct, the day after profile creation works
 - The team helps people complete profiles
-- There are 150 profiles across Mumbai by Sunday 11 October, most of them in the areas to seed first
+- There are 150 profiles across Mumbai by Sunday 11 October
 - Read first: `docs/decisions/pd-11-launch.md`
 
 **A-01 · Bug fix day** — done when:
@@ -1109,7 +1109,7 @@ Examine the numbers and the bug list. Then set the order of v1.
 
 **Seeding. We check it on the evening of Sunday 11 October. Do not move the date.**
 
-9. There are a minimum of 150 profiles that people made in the app, across Mumbai, most of them in the areas to seed first (F-06). Each Mumbai area is live (PD2).
+9. There are a minimum of 150 profiles that people made in the app, across Mumbai. Marketing seeds the F-06 areas first.
 
 ---
 
@@ -1132,7 +1132,7 @@ Examine the numbers and the bug list. Then set the order of v1.
 | The DeepSeek or Gemini sign-up is late | Use the provider that works. The wrapper, T-11, makes the provider a setting. |
 | Jev access arrives before launch | Test Jev on the eval set, behind the adapter of the router. Change to Jev only if it is better than DeepSeek on Hinglish and Marathi. |
 | The app reaches a free Supabase limit | Change the Supabase organisation to a paid plan before the planned time. This needs no code changes. |
-| Seeding is short | Launch in fewer areas. Never launch into an empty panel. |
+| Seeding is short | Launch in all nine area groups. A thin panel shows the suggested posts (PD6c). |
 | A checkpoint is more than a day late | On that checkpoint call, decide if 14 October becomes the plan. Do not wait for 10 October. |
 
 ---
