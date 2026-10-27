@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   areasResponse, listingResponse, meResponse, personResponse, profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
@@ -69,11 +68,9 @@ export function useAreas() {
 }
 
 export function useAreaLabels(): Record<string, string> {
-  const areas = useAreas().data?.areas
-  return useMemo(() => {
-    const tree = areaTree(areas ?? [])
-    return Object.fromEntries((areas ?? []).map((a) => [a.slug, tree.label(a.slug) ?? a.name]))
-  }, [areas])
+  const areas = useAreas().data?.areas ?? []
+  const tree = areaTree(areas)
+  return Object.fromEntries(areas.map((a) => [a.slug, tree.label(a.slug) ?? a.name]))
 }
 
 export function useSavedPlaces(enabled = true) {
