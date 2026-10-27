@@ -11,7 +11,7 @@ import { inputClass } from '../ui/field'
 export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['areas']; value: string[]; onChange: (areas: string[]) => void }) {
   const tree = useMemo(() => areaTree(areas), [areas])
   const [query, setQuery] = useState('')
-  const [open, setOpen] = useState<string | null>(null)
+  const [openGroup, setOpenGroup] = useState<string | null>(null)
   const toggle = (slug: string) => onChange(pickArea(tree, value, slug))
   const chip = (slug: string, label: string) => {
     const state = chipState(tree, value, slug)
@@ -19,8 +19,8 @@ export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['a
   }
   const groupStatus = (group: string) => {
     if (value.includes(group)) return 'All'
-    const under = value.filter((slug) => tree.lineage(slug).includes(group)).length
-    return under ? `${under} picked` : null
+    const pickedUnder = value.filter((slug) => tree.lineage(slug).includes(group)).length
+    return pickedUnder ? `${pickedUnder} picked` : null
   }
   const results = tree.search(query)
 
@@ -41,16 +41,16 @@ export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['a
           <p className="text-sm text-tertiary">
             {results.length ? `${results.length} ${results.length === 1 ? 'area matches' : 'areas match'} “${query.trim()}”, by name or another name` : `No area matches “${query.trim()}”.`}
           </p>
-          {results.map((a) => chip(a.slug, a.parent ? `${a.name} · ${tree.parentName(a)}` : pickLabel(tree, a.slug)))}
+          {results.map((a) => chip(a.slug, a.parent ? `${a.name} · ${tree.label(a.parent)}` : pickLabel(tree, a.slug)))}
         </div>
       ) : (
         <ul className="flex flex-col">
           {tree.groups.map((group) => {
-            const isOpen = open === group.slug
+            const isOpen = openGroup === group.slug
             const status = groupStatus(group.slug)
             return (
               <li key={group.slug} className="border-b border-secondary">
-                <button type="button" aria-expanded={isOpen} onClick={() => setOpen(isOpen ? null : group.slug)}
+                <button type="button" aria-expanded={isOpen} onClick={() => setOpenGroup(isOpen ? null : group.slug)}
                   className="flex w-full items-center gap-2 py-3.5 text-left text-sm font-medium text-secondary outline-focus-ring focus-visible:outline-2">
                   <span className="flex-1">{group.name}{status && <span className="ml-2 font-normal text-tertiary">{status}</span>}</span>
                   {isOpen ? <ChevronDown size={20} aria-hidden className="text-fg-quaternary" /> : <ChevronRight size={20} aria-hidden className="text-fg-quaternary" />}

@@ -15,13 +15,11 @@ export function areaTree(areas: readonly Area[]) {
     groups: areas.filter((a) => !a.parent),
     under: (slug: string) => areas.filter((a) => a.parent === slug),
     lineage,
-    /** A pocket shows with its parent: "Versova, Andheri West". */
     label(slug: string) {
       const area = bySlug.get(slug)
       const parent = area?.parent ? bySlug.get(area.parent) : undefined
       return area && (parent?.parent ? `${area.name}, ${parent.name}` : area.name)
     },
-    parentName: (area: Area) => (area.parent ? bySlug.get(area.parent)?.name : undefined),
     search(query: string) {
       const q = searchable(query)
       return q ? areas.filter((a) => [a.name, ...a.aliases].some((name) => searchable(name).includes(q))) : []
@@ -29,7 +27,7 @@ export function areaTree(areas: readonly Area[]) {
   }
 }
 
-/** The Where step: the group, the sub-area and the pocket of the saved area. A listing from before can have only a group. */
+/** A listing from before can have only a group. */
 export function subAreaChoice(tree: AreaTree, areaSlug: string | null | undefined) {
   const [group = null, subArea = null, pocket = null] = areaSlug ? tree.lineage(areaSlug).reverse() : []
   return { group, subArea, pocket }

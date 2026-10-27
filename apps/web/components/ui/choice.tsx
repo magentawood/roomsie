@@ -56,7 +56,7 @@ export function MultiChips<T extends string>({ label, labels, only, value, onCha
   )
 }
 
-/** One checkbox chip. An off chip can still show checked, as an area under a picked area. */
+/** An off chip can still show checked, as an area under a picked area. */
 export function CheckChip({ label, checked, disabled, onToggle }: { label: string; checked: boolean; disabled?: boolean; onToggle: () => void }) {
   return (
     <button type="button" role="checkbox" aria-checked={checked} disabled={disabled} onClick={onToggle}
