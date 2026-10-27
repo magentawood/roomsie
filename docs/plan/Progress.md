@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**106 of 306 done · 35%**
+**112 of 306 done · 37%**
 
-`████████░░░░░░░░░░░░░░░░`
+`█████████░░░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
-| [[P3 Data and trust]] | 6 / 16 | 31 / 73 | 42% |
+| [[P3 Data and trust]] | 7 / 16 | 37 / 73 | 51% |
 | [[P4 Content and moderation]] | 2 / 8 | 12 / 31 | 39% |
 | [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**41 free tasks are open · 161 build hours.**
+**40 free tasks are open · 153 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -60,6 +60,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[T-37 Articles and search]] | P4 | 3 | ⬜ can start | 1 | [#66](https://github.com/magentawood/roomsie/issues/66) |
+| 0 | [[T-45 Messages screens]] | P3 | 6 | ⬜ can start | 1 | [#121](https://github.com/magentawood/roomsie/issues/121) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
@@ -74,15 +75,14 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[T-14 Match query ⚑]] | P3 | 6 | 🟡 in progress | 6 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | 1 | [[T-15 Results panel ⚑]] | P3 | 6 | ⬜ waits | 2 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
-| 1 | [[T-44 Messages API]] | P3 | 8 | ⬜ waits | 2 | [#120](https://github.com/magentawood/roomsie/issues/120) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-35 Form B contract]] | P2 | 3 | ⬜ waits | 1 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-39 Analytics database]] | P1 | 3 | ⬜ waits | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 1 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ waits | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| 1 | [[T-55 Message alerts]] | P3 | 6 | ⬜ waits | 0 | no issue at this time |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| 2 | [[T-45 Messages screens]] | P3 | 6 | ⬜ waits | 1 | [#121](https://github.com/magentawood/roomsie/issues/121) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | 2 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ waits | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | 3 | [[T-34 Router ⚑]] | P2 | 6 | ⬜ waits | 0 | [#63](https://github.com/magentawood/roomsie/issues/63) |
@@ -91,7 +91,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 3 | [[T-27 Eval run]] | P2 | 3 | ⬜ waits | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | 3 | [[T-36 Observer]] | P2 | 8 | ⬜ waits | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | 3 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| 3 | [[T-55 Message alerts]] | P3 | 6 | ⬜ waits | 0 | no issue at this time |
 | 4 | [[T-29 Abuse test]] | P1 | 1 | ⬜ waits | 0 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 
 ### Waits on product calls
@@ -164,8 +163,8 @@ flowchart LR
   T41["T-41<br/>Listings API"]:::done
   T42["T-42<br/>Listing flow screens"]:::doing
   T43["T-43<br/>Listing detail screens"]:::done
-  T44["T-44<br/>Messages API"]:::todo
-  T45["T-45<br/>Messages screens"]:::todo
+  T44["T-44<br/>Messages API"]:::done
+  T45["T-45<br/>Messages screens"]:::ready
   T55["T-55<br/>Message alerts"]:::todo
   T46["T-46<br/>ID verification"]:::ready
   T47["T-47<br/>Saved"]:::done
@@ -370,7 +369,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 31/73
+## P3 Data and trust — 37/73
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -396,7 +395,7 @@ flowchart LR
 > [!todo]- ✅ [[T-43 Listing detail screens]] · 4/4
 > ![[T-43 Listing detail screens#^done]]
 
-> [!todo]- ⬜ [[T-44 Messages API]] · 0/6
+> [!todo]- ✅ [[T-44 Messages API]] · 6/6
 > ![[T-44 Messages API#^done]]
 
 > [!todo]- ⬜ [[T-45 Messages screens]] · 0/5

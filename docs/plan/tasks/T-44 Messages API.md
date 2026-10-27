@@ -36,12 +36,12 @@ The server part of in-app messages between two users.
 - [[T-55 Message alerts]]
 
 ## Done when
-- [ ] Who can message whom follows PD17
-- [ ] Messages arrive live through Supabase Realtime broadcast
-- [ ] The API never gives a message to a user who is not in the conversation
-- [ ] A blocked user cannot send a message to the user who blocked them
-- [ ] The API masks phone numbers and WhatsApp links as •••• in each message
-- [ ] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests
+- [x] Who can message whom follows PD17 · [#160](https://github.com/magentawood/roomsie/pull/160)
+- [x] Messages arrive live through Supabase Realtime broadcast · [#160](https://github.com/magentawood/roomsie/pull/160)
+- [x] The API never gives a message to a user who is not in the conversation · [#160](https://github.com/magentawood/roomsie/pull/160)
+- [x] A blocked user cannot send a message to the user who blocked them · [#160](https://github.com/magentawood/roomsie/pull/160)
+- [x] The API masks phone numbers and WhatsApp links as •••• in each message · [#160](https://github.com/magentawood/roomsie/pull/160)
+- [x] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests · [#160](https://github.com/magentawood/roomsie/pull/160)
 
 ^done
 
@@ -85,3 +85,13 @@ The server part of in-app messages between two users.
   - Review round 1, the user decided: the API calls the REST API of Firebase Admin, with no SDK. Item 7 changed: "A deleted profile now cascades its connection requests" → "A deleted profile or listing no longer deletes its connection requests".
   - Review round 2, the user decided: a page of messages breaks a tie of `created_at` with the id, and `docs/standards/database.md` says so.
 - **Out of scope:** the screens and the realtime client of the web (T-45), the email and push alerts (T-55), the reports in a conversation (T-45), unblock.
+
+## Log
+
+- **2026-10-27 · [#160](https://github.com/magentawood/roomsie/pull/160)**
+  - **Change:** the messages API. An accepted request is a conversation, and its note is the first message. The routes list the conversations with the unread counts, page the messages, send a masked message, and mark a conversation as read. Each message goes live on the private Supabase Realtime channels of the two people; the API adds the claims that Supabase needs to the Firebase user. A deletion keeps the thread for the other person.
+  - **Why:** the T-44 spec, [PD17](../../decisions/pd-17-connect-and-contact.md), [ADR-0005](../../decisions/0005-managed-platform-split.md)
+  - **Ticked:** all six items, from "Who can message whom follows PD17" to "After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests"
+  - **Not done:** none. The alerts item moved to T-55.
+  - **Learn:** [Messages and realtime](../../learn/messages.md), [Message requests](../../learn/message-requests.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
