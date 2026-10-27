@@ -66,7 +66,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
         '/areas',
         { schema: { response: { 200: areasResponse } } },
         async () => ({
-          areas: await options.db.select({ slug: areas.slug, name: areas.name, isLaunchArea: areas.isLaunchArea })
+          areas: await options.db.select({ slug: areas.slug, name: areas.name })
             .from(areas).orderBy(asc(areas.sortOrder)),
         }),
       )

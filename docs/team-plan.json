@@ -181,15 +181,15 @@
   },
   {
    "id": "F-06",
-   "title": "Pick the three launch areas",
-   "plain": "Three of the nine area groups (PD2).",
+   "title": "Pick the areas to seed first",
+   "plain": "The area groups that marketing seeds first. Each Mumbai area is live (PD2).",
    "role": "F",
    "hours": null,
    "start": "2026-09-24",
    "end": "2026-09-25",
    "deps": [],
    "done": [
-    "The team chooses three areas with marketing",
+    "The team chooses the areas to seed first with marketing",
     "The team chooses them by where it can really reach people"
    ],
    "read": [
@@ -1189,7 +1189,7 @@
    "done": [
     "Invites go out on Sat 3 Oct, the day after profile creation works",
     "The team helps people complete profiles",
-    "There are 150 profiles by Sunday 11 October, with at least 40 in each launch area"
+    "There are 150 profiles across Mumbai by Sunday 11 October, most of them in the areas to seed first"
    ],
    "read": [
     "docs/decisions/pd-11-launch.md"
@@ -1200,8 +1200,8 @@
   },
   {
    "id": "T-22a",
-   "title": "Launch areas and waitlist API",
-   "plain": "The server part: know the three open areas, and save waitlist emails from all other areas.",
+   "title": "Mumbai areas and waitlist API",
+   "plain": "The server part: know the nine Mumbai area groups, and save waitlist emails from places outside Mumbai.",
    "role": "P4",
    "hours": 2,
    "start": "2026-10-08",
@@ -1211,8 +1211,8 @@
     "F-06"
    ],
    "done": [
-    "The API gives the names of the three launch areas",
-    "The system saves each waitlist entry with its area"
+    "The API tells if a place is in the nine Mumbai area groups",
+    "The system saves each waitlist entry with its place"
    ],
    "read": [
     "docs/decisions/pd-11-launch.md"
@@ -1223,8 +1223,8 @@
   },
   {
    "id": "T-22b",
-   "title": "Launch areas and waitlist screen",
-   "plain": "Show the three open areas, and a waitlist form to visitors from other areas.",
+   "title": "Waitlist screen outside Mumbai",
+   "plain": "Results in each Mumbai area, and a waitlist form to visitors from outside Mumbai.",
    "role": "P4",
    "hours": 1,
    "start": "2026-10-08",
@@ -1234,9 +1234,9 @@
     "D-04"
    ],
    "done": [
-    "The site gives the names of the three launch areas",
-    "A visitor from a different area gets a waitlist form, not an empty panel",
-    "A search with launch and other areas shows the launch results and one waitlist line (PD6c)"
+    "A search in any Mumbai area shows its results",
+    "A visitor from outside Mumbai gets a waitlist form with \"roomsie is only in Mumbai for now\", not an empty panel",
+    "A search with Mumbai and other places shows the Mumbai results and one waitlist line (PD6c)"
    ],
    "read": [
     "docs/decisions/pd-11-launch.md"
@@ -2034,7 +2034,7 @@
    "CP0",
    "Kickoff",
    "2026-09-25",
-   "Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete."
+   "Every role has a name. The accounts and billing are live. The styling is decided. The areas to seed first are selected. The seeding consent text is complete. The designs for the core screens are complete."
   ],
   [
    "CP1",

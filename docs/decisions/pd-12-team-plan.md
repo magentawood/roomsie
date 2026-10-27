@@ -28,7 +28,7 @@
 
 - A wave comes from the dependencies, thus it stays correct when a date moves. A list with dates was incorrect on the first day that the designs were late.
 - Most of the work is in one or two hands with agents. One shared queue is better than five lanes that wait on each other.
-- A hidden dependency makes "can start" incorrect. Some tasks need the accounts and the keys, the legal text, the launch areas or the articles. Thus, the plan shows these dependencies.
+- A hidden dependency makes "can start" incorrect. Some tasks need the accounts and the keys, the legal text, the areas to seed first or the articles. Thus, the plan shows these dependencies.
 - An API half that waits on a design wastes build hours on the critical path (⚑). T-16 and T-22 had such halves.
 - A small screen part must not block the backend tasks after it. A plain button first, with the design subsequently, costs a small amount.
 - A stale `Progress.md` shows the incorrect next task. A check stops this.

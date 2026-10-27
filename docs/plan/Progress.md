@@ -55,7 +55,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
-| 0 | [[F-06 Launch areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 5 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
@@ -113,7 +113,7 @@ Blue can start. Yellow is in progress. Green is done. White waits on a different
 flowchart LR
   F03["F-03<br/>Billing and caps"]:::done
   F04["F-04<br/>Accounts in Mumbai"]:::done
-  F06["F-06<br/>Launch areas picked"]:::ready
+  F06["F-06<br/>Seed areas picked"]:::ready
   F07["F-07<br/>Privacy and terms draft"]:::ready
   F11["F-11 ⚑<br/>Intake and profile calls"]:::done
   F12["F-12 ⚑<br/>Matching calls"]:::done
@@ -530,8 +530,8 @@ flowchart LR
 > [!todo]- ⬜ [[F-05 Seeding consent text ⚑]] · 0/2
 > ![[F-05 Seeding consent text ⚑#^done]]
 
-> [!todo]- ⬜ [[F-06 Launch areas picked]] · 0/2
-> ![[F-06 Launch areas picked#^done]]
+> [!todo]- ⬜ [[F-06 Seed areas picked]] · 0/2
+> ![[F-06 Seed areas picked#^done]]
 
 > [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/6
 > ![[F-07 Privacy and terms draft#^done]]

@@ -120,8 +120,8 @@ Finish line: Tue 24 Nov. 95 hours.
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
 | 4 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
-| 6 | T-22a · Launch areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
-| 7 | T-22b · Launch areas and waitlist screen | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
+| 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
+| 7 | T-22b · Waitlist screen outside Mumbai | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | 8 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
 
 Finish line: Wed 28 Oct. 22 hours.
@@ -181,7 +181,7 @@ Finish line: Mon 19 Oct.
 | 2 | F-03 · Billing and hard spend caps | Thu 24 Sep | — |
 | 3 | F-04 · Create accounts in Mumbai regions | Thu 24 Sep | F-03 |
 | 4 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | F-11 |
-| 5 | F-06 · Pick the three launch areas | Thu 24 Sep → Fri 25 Sep | — |
+| 5 | F-06 · Pick the areas to seed first | Thu 24 Sep → Fri 25 Sep | — |
 | 6 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
 | 7 | F-09 · Write down the two ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
 | 8 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
@@ -256,8 +256,8 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
-| P4 Content and moderation | 6 | T-22a | Launch areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
-| P4 Content and moderation | 7 | T-22b | Launch areas and waitlist screen | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
+| P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, F-06 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| P4 Content and moderation | 7 | T-22b | Waitlist screen outside Mumbai | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | P4 Content and moderation | 8 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
@@ -282,7 +282,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Founder | 2 | F-03 | Billing and hard spend caps |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#4](https://github.com/magentawood/roomsie/issues/4) |
 | Founder | 3 | F-04 | Create accounts in Mumbai regions |  | Thu 24 Sep | Thu 24 Sep | CP0 | F-03 | [#5](https://github.com/magentawood/roomsie/issues/5) |
 | Founder | 4 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | F-11 | [#8](https://github.com/magentawood/roomsie/issues/8) |
-| Founder | 5 | F-06 | Pick the three launch areas |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| Founder | 5 | F-06 | Pick the areas to seed first |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | Founder | 6 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | Founder | 7 | F-09 | Write down the two ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
 | Founder | 8 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
@@ -301,7 +301,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 
 | | Date | What is true by then |
 |---|---|---|
-| **CP0 · Kickoff** | Fri 25 Sep | Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete. |
+| **CP0 · Kickoff** | Fri 25 Sep | Every role has a name. The accounts and billing are live. The styling is decided. The areas to seed first are selected. The seeding consent text is complete. The designs for the core screens are complete. |
 | **CP1 · Foundation** | Mon 28 Sep | The monorepo, the schema, sign-in, CI and the model wrapper are merged. The landing page and the legal pages are live. There are no product screens at this time, because the designs are still in progress. The article interviews are complete. The seeding form is live. |
 | **CP2 · Core loop live** | Thu 1 Oct | The app is deployed in Mumbai. The full loop works from end to end without a UI. A sentence goes in, the assistant extracts it, and the match query answers. A message request and an accepted chat also work. The designs are complete, and the screen work is in progress. There are 100 seeding sign-ups. The eval sentences are written. |
 | **CP3 · Feature freeze and go/no-go** | Sat 10 Oct | Every screen and every assistant handler is merged, and is live behind the invite gate. The seeded people make their profiles. At 8 pm, the go/no-go meeting selects 12 October or 14 October. |
@@ -373,8 +373,8 @@ gantt
     T-37 Articles table and full-text search :t37, 2026-09-29, 3d
     T-19 Report block suspend and the admin screen :t19, 2026-10-01, 5d
     T-20 Account deletion :t20, 2026-10-05, 4d
-    T-22a Launch areas and waitlist API :t22a, 2026-10-08, 3d
-    T-22b Launch areas and waitlist screen :t22b, 2026-10-08, 3d
+    T-22a Mumbai areas and waitlist API :t22a, 2026-10-08, 3d
+    T-22b Waitlist screen outside Mumbai :t22b, 2026-10-08, 3d
     T-53 Delete the Firebase user at account deletion :t53, 2026-10-27, 2d
     section P5 Accounts and people
     M-03 Write the eval sentences :m03, 2026-09-24, 4d
@@ -404,7 +404,7 @@ gantt
     F-03 Billing and hard spend caps :f03, 2026-09-24, 1d
     F-04 Create accounts in Mumbai regions :f04, 2026-09-24, 1d
     F-05 Consent text for the seeding form :crit, f05, 2026-09-24, 2d
-    F-06 Pick the three launch areas :f06, 2026-09-24, 2d
+    F-06 Pick the areas to seed first :f06, 2026-09-24, 2d
     F-07 Draft privacy policy terms grievance contact :f07, 2026-09-25, 6d
     F-09 Write down the two ADR exceptions :f09, 2026-09-26, 2d
     F-08 Name the moderator :f08, 2026-09-30, 3d
@@ -425,7 +425,7 @@ gantt
 
 ### CP0 · Kickoff — Fri 25 Sep
 
-Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete.
+Every role has a name. The accounts and billing are live. The styling is decided. The areas to seed first are selected. The seeding consent text is complete. The designs for the core screens are complete.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
@@ -436,7 +436,7 @@ Every role has a name. The accounts and billing are live. The styling is decided
 | T-08 ⚑ | Form A contract: slots and enums | P2 | 2 | Thu 24 Sep | F-11 |
 | D-02 ⚑ | Design the chat screens | D |  | Thu 24 Sep → Fri 25 Sep | D-01 |
 | F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | F-11 |
-| F-06 | Pick the three launch areas | F |  | Thu 24 Sep → Fri 25 Sep | — |
+| F-06 | Pick the areas to seed first | F |  | Thu 24 Sep → Fri 25 Sep | — |
 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
 | F-02 | Secure the domain and put the app on it | F | 2 | Wed 7 Oct → Thu 8 Oct | T-04 |
 
@@ -477,8 +477,8 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - It says what the system collects, that other roomsie users will see the profile, and how to delete it
 - It is short enough to read on a phone
 
-**F-06 · Pick the three launch areas** — done when:
-- The team chooses three areas with marketing
+**F-06 · Pick the areas to seed first** — done when:
+- The team chooses the areas to seed first with marketing
 - The team chooses them by where it can really reach people
 - Read first: `docs/decisions/pd-11-launch.md`
 
@@ -700,8 +700,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-39 | Analytics in its own database, with scheduled jobs | P1 | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
 | T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
-| T-22a | Launch areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
-| T-22b | Launch areas and waitlist screen | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
+| T-22a | Mumbai areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, F-06 |
+| T-22b | Waitlist screen outside Mumbai | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | T-40 | Nightly database backups to R2 | P1 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
 | D-06 | Launch visuals | D |  | Fri 9 Oct → Sat 10 Oct | — |
 | T-09 ⚑ | Chip flow for intent, area, budget | P2 | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
@@ -913,15 +913,15 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The person detail has the Save button of T-47, and the People tab of Saved lists the saved people
 - Read first: `docs/decisions/pd-17-connect-and-contact.md`
 
-**T-22a · Launch areas and waitlist API** — done when:
-- The API gives the names of the three launch areas
-- The system saves each waitlist entry with its area
+**T-22a · Mumbai areas and waitlist API** — done when:
+- The API tells if a place is in the nine Mumbai area groups
+- The system saves each waitlist entry with its place
 - Read first: `docs/decisions/pd-11-launch.md`
 
-**T-22b · Launch areas and waitlist screen** — done when:
-- The site gives the names of the three launch areas
-- A visitor from a different area gets a waitlist form, not an empty panel
-- A search with launch and other areas shows the launch results and one waitlist line (PD6c)
+**T-22b · Waitlist screen outside Mumbai** — done when:
+- A search in any Mumbai area shows its results
+- A visitor from outside Mumbai gets a waitlist form with "roomsie is only in Mumbai for now", not an empty panel
+- A search with Mumbai and other places shows the Mumbai results and one waitlist line (PD6c)
 - Read first: `docs/decisions/pd-11-launch.md`
 
 **T-40 · Nightly database backups to R2** — done when:
@@ -1063,7 +1063,7 @@ Public launch. The fallback date is Wednesday 14 October.
 **M-06 · Beta invites to seeded sign-ups** — done when:
 - Invites go out on Sat 3 Oct, the day after profile creation works
 - The team helps people complete profiles
-- There are 150 profiles by Sunday 11 October, with at least 40 in each launch area
+- There are 150 profiles across Mumbai by Sunday 11 October, most of them in the areas to seed first
 - Read first: `docs/decisions/pd-11-launch.md`
 
 **A-01 · Bug fix day** — done when:
@@ -1107,9 +1107,9 @@ Examine the numbers and the bug list. Then set the order of v1.
 7. The router flags off-topic messages without a model call. The observer rejects every observation that does not quote the user. The advisor never answers law, tax or safety from the web.
 8. The backup from last night exists. A restore worked one or more times.
 
-**Seeding. We check it on the evening of Sunday 11 October. If it fails, launch in fewer areas. Do not move the date.**
+**Seeding. We check it on the evening of Sunday 11 October. Do not move the date.**
 
-9. There are a minimum of 150 profiles that people made in the app, with a minimum of 40 in each launch area. If one area has fewer than 40, launch in the other two.
+9. There are a minimum of 150 profiles that people made in the app, across Mumbai, most of them in the areas to seed first (F-06). Each Mumbai area is live (PD2).
 
 ---
 

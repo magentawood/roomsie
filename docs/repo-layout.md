@@ -13,7 +13,7 @@ roomsie/
 │   │   │   ├── chat/           full-screen chat, then split view, chips
 │   │   │   ├── people/[id]/    person detail and connect
 │   │   │   ├── profile/        create and edit, photos
-│   │   │   └── waitlist/       launch areas and waitlist
+│   │   │   └── waitlist/       Mumbai areas and the waitlist
 │   │   ├── components/         Figma look, theme tokens only
 │   │   └── lib/                API client typed from packages/contract, Firebase sign-in
 │   └── api/                    Fastify · Zod · Drizzle → AWS Lightsail, Mumbai
@@ -37,7 +37,7 @@ roomsie/
 │       │   │   ├── connections/ message requests (PD17)
 │       │   │   ├── moderation/ report, block, suspend
 │       │   │   ├── account/    first sign-in, deletion
-│       │   │   └── waitlist/   launch areas and waitlist
+│       │   │   └── waitlist/   Mumbai areas and the waitlist
 │       │   └── db/             Drizzle client; each module keeps its
 │       │                       own schema file
 │       ├── drizzle/            generated SQL migrations                  ADR 0006

@@ -8,7 +8,7 @@ tags:
 
 **Date:** Fri 25 Sep
 
-Every role has a name. The accounts and billing are live. The styling is decided. The launch areas are selected. The seeding consent text is complete. The designs for the core screens are complete.
+Every role has a name. The accounts and billing are live. The styling is decided. The areas to seed first are selected. The seeding consent text is complete. The designs for the core screens are complete.
 
 **Next:** [[CP1 Foundation]]
 
@@ -23,6 +23,6 @@ This note is part of [[roomsie launch]].
 - [[T-08 Form A contract ⚑]] — P2 Chat
 - [[D-02 Chat screen designs ⚑]] — Design
 - [[F-05 Seeding consent text ⚑]] — Founder
-- [[F-06 Launch areas picked]] — Founder
+- [[F-06 Seed areas picked]] — Founder
 - [[T-11 Model wrapper ⚑]] — P2 Chat
 - [[F-02 Domain]] — Founder
