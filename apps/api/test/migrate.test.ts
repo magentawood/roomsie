@@ -68,7 +68,7 @@ describe('the backfill of the notes of accepted requests (0010)', () => {
       const [pa, pb] = await db.insert(profiles).values([{ userId: a, fullName: 'A' }, { userId: c, fullName: 'C' }]).returning()
       const acceptedAt = new Date('2026-10-26T10:00:00Z')
       const [old, withNote, open] = await db.insert(connectionRequests).values([
-        { fromUserId: a, fromProfileId: pa!.id, toUserId: b, listingId: null, toProfileId: null, note: 'Hi B', status: 'accepted', respondedAt: acceptedAt },
+        { fromUserId: a, fromProfileId: pa!.id, toUserId: b, note: 'Hi B', status: 'accepted', respondedAt: acceptedAt },
         { fromUserId: c, fromProfileId: pb!.id, toUserId: d, note: 'Hi D', status: 'accepted', respondedAt: acceptedAt },
         { fromUserId: a, fromProfileId: pa!.id, toUserId: c, note: 'Hi C', status: 'pending' },
       ]).returning()

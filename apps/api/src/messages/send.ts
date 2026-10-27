@@ -4,8 +4,8 @@ import { messages } from '../db/schema'
 import type { Realtime } from '../realtime'
 import { messageView, type MessageRow } from './read'
 
-/** The note of an accepted request opens the conversation, as the first message of its sender, at the time of the accept (T-44). */
-export async function openConversation(tx: Tx, note: { requestId: string; senderUserId: string; text: string; createdAt: Date }) {
+/** The note of an accepted request opens the conversation, as the first message of its sender. In the transaction of the accept, now() is the time of the accept (T-44). */
+export async function openConversation(tx: Tx, note: { requestId: string; senderUserId: string; text: string }) {
   const [row] = await tx.insert(messages).values(note).returning()
   return row!
 }

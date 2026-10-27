@@ -3,7 +3,7 @@ CREATE TABLE "messages" (
 	"request_id" uuid NOT NULL,
 	"sender_user_id" uuid NOT NULL,
 	"text" text NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp (3) with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "messages" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -15,8 +15,8 @@ ALTER TABLE "connection_requests" DROP CONSTRAINT "connection_requests_to_profil
 ALTER TABLE "connection_requests" DROP CONSTRAINT "connection_requests_listing_id_listings_id_fk";
 --> statement-breakpoint
 ALTER TABLE "connection_requests" ALTER COLUMN "from_profile_id" DROP NOT NULL;--> statement-breakpoint
-ALTER TABLE "connection_requests" ADD COLUMN "from_read_at" timestamp with time zone;--> statement-breakpoint
-ALTER TABLE "connection_requests" ADD COLUMN "to_read_at" timestamp with time zone;--> statement-breakpoint
+ALTER TABLE "connection_requests" ADD COLUMN "from_read_at" timestamp (3) with time zone;--> statement-breakpoint
+ALTER TABLE "connection_requests" ADD COLUMN "to_read_at" timestamp (3) with time zone;--> statement-breakpoint
 ALTER TABLE "messages" ADD CONSTRAINT "messages_request_id_connection_requests_id_fk" FOREIGN KEY ("request_id") REFERENCES "public"."connection_requests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "messages" ADD CONSTRAINT "messages_sender_user_id_users_id_fk" FOREIGN KEY ("sender_user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "messages_thread_idx" ON "messages" USING btree ("request_id","created_at");--> statement-breakpoint

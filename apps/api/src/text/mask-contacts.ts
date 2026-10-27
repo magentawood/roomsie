@@ -1,4 +1,4 @@
-/** PD17: roomsie never reveals a phone number. Up to three spaces, dots, dashes or brackets join the digits. */
+/** PD17: no phone number in public or in a request note. Up to three spaces, dots, dashes or brackets join the digits. */
 const separator = String.raw`[\s.()–—-]{0,3}`
 const whatsappLink = /(?:https?:\/\/)?(?:(?:www|web|api|chat)\.)?(?:wa\.(?:me|link)|whatsapp\.com)\/(?:\S*[^\s.,;:!?)])?/gi
 // A mobile: an optional +91, 91 or 0, then ten digits that start with 6 to 9.

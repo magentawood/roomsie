@@ -62,7 +62,7 @@ We will validate the hypothesis with calls to Mumbai brokers.
 
 | # | Risk | Response |
 |---|---|---|
-| 1 | Off-platform leakage | Charge at the introduction, not at the close of the deal. roomsie never reveals a phone number ([PD17](pd-17-connect-and-contact.md)). |
+| 1 | Off-platform leakage | Charge at the introduction, not at the close of the deal. roomsie never reveals a phone number, and a number shows only in a chat after an accept ([PD17](pd-17-connect-and-contact.md)). |
 | 2 | Brokers may not pay for each lead. Indian brokers expect subscriptions and free listing. | Test the price during the Mumbai pilot, before you build billing. |
 | 3 | A free listing tier attracts junk. | Broker verification becomes load-bearing. The prototype has no broker verification. |
 | 4 | Deduplication is hard without addresses. | Deduplication needs a property identity. This conflicts with the privacy design. The prototype never collects the address. roomsie must resolve this conflict. |

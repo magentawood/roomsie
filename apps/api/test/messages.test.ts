@@ -50,8 +50,7 @@ describe('a conversation', () => {
     const messageId = uuidv7()
     const first = await send('friend', id, 'Sure! Call me on 98200 12345.', messageId)
     expect(first.statusCode).toBe(201)
-    expect(message.parse(first.json())).toMatchObject({ id: messageId, mine: true })
-    expect(first.json().text).toBe('Sure! Call me on 98200 12345.')
+    expect(message.parse(first.json())).toMatchObject({ id: messageId, mine: true, text: 'Sure! Call me on 98200 12345.' })
     expect((await send('friend', id, 'Sure! Call me on 98200 12345.', messageId)).statusCode).toBe(201)
     expect(await t.db.select().from(messages).where(eq(messages.id, messageId))).toHaveLength(1)
     expect(t.sent).toEqual([

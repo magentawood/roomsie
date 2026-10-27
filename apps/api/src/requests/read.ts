@@ -46,7 +46,8 @@ export async function endOpenRequests(tx: Tx, userId: string) {
 }
 
 export async function markRead(db: Db, requestId: string, userId: string) {
-  const now = new Date()
+  // The clock of Postgres, as for each message.
+  const now = sql`now()`
   await db.update(connectionRequests).set({ fromReadAt: now }).where(and(eq(connectionRequests.id, requestId), eq(connectionRequests.fromUserId, userId)))
   await db.update(connectionRequests).set({ toReadAt: now }).where(and(eq(connectionRequests.id, requestId), eq(connectionRequests.toUserId, userId)))
 }

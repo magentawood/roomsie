@@ -56,7 +56,7 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const conversation = await conversationOr404(me, req.params.id, reply)
     if (!conversation) return reply
     if (!conversation.canSend) return reply.code(409).send({ error: 'the other person cannot get messages' })
-    // ADR-0015: a retried send stores nothing, and gives the stored message again. PD17: a chat can carry a phone number in v0.
+    // ADR-0015: a retry stores nothing. PD17: a chat can carry a phone number.
     const [made] = await db.insert(messages).values({ id: req.body.id, requestId: req.params.id, senderUserId: me, text: req.body.text })
       .onConflictDoNothing().returning()
     if (made) {

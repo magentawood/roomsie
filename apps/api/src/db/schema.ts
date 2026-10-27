@@ -407,9 +407,9 @@ export const connectionRequests = pgTable('connection_requests', {
   status: connectionStatusEnum('status').notNull().default('pending'),
   createdAt: createdAt(),
   respondedAt: timestamp('responded_at', { withTimezone: true }),
-  /** The last read of the conversation by each side: the unread count starts after it (T-44). */
-  fromReadAt: timestamp('from_read_at', { withTimezone: true }),
-  toReadAt: timestamp('to_read_at', { withTimezone: true }),
+  /** The last read of the conversation by each side: the unread count starts after it (T-44). In milliseconds, as the message times. */
+  fromReadAt: timestamp('from_read_at', { withTimezone: true, precision: 3 }),
+  toReadAt: timestamp('to_read_at', { withTimezone: true, precision: 3 }),
 }, (t) => ({
   /** One open or accepted request between two people, in either direction and for any target (PD17). */
   pairIdx: uniqueIndex('connection_requests_pair_idx')
@@ -423,12 +423,13 @@ export const connectionRequests = pgTable('connection_requests', {
 
 /** The messages of a conversation: an accepted request (T-44). The first message is the note of the request. */
 export const messages = pgTable('messages', {
-  /** ADR-0015: the client makes the id. The API makes it for the note; migration 0010 made it in SQL for the notes before T-44. */
+  /** ADR-0015: the client makes the id. The API makes it for the note. */
   id: id(),
   requestId: uuid('request_id').notNull().references(() => connectionRequests.id, { onDelete: 'cascade' }),
   senderUserId: uuid('sender_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   text: text('text').notNull(),
-  createdAt: createdAt(),
+  /** Milliseconds, as a JS Date: the API compares the times that it reads back, and a page cursor is one. */
+  createdAt: timestamp('created_at', { withTimezone: true, precision: 3 }).notNull().defaultNow(),
 }, (t) => ({
   threadIdx: index('messages_thread_idx').on(t.requestId, t.createdAt),
 })).enableRLS()
