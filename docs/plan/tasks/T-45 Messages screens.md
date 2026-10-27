@@ -31,7 +31,7 @@ The inbox and the conversation.
 - [[T-55 Message alerts]]
 
 ## Done when
-- [ ] The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone
+- [ ] The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone
 - [ ] The Messages item in the sidebar shows the unread count
 - [ ] Report and block are in the menu of the conversation
 - [ ] The empty inbox uses the empty state of the designs
@@ -41,3 +41,37 @@ The inbox and the conversation.
 
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
+
+## Spec
+
+**Approved:** not yet
+
+- **Modules:**
+  - **The requests API:** each request that the user sent also gives the other person: the name and the photo, or "Deleted user". The interface changes.
+  - **The messages data of the web (new):** the queries of the conversations, the messages and the requests, the send, the read, and the live channel. The live channel uses one new dependency, `@supabase/realtime-js`.
+  - **The inbox logic of the web (new):** the badge count, the order of the inbox, and the state of each message button.
+  - **The screens (new):** the inbox, the requests and the thread.
+  - **The app shell:** the Messages item opens the inbox and shows the badge.
+  - **The person detail and the listing detail:** "Open chat", and the message button of a listing with its states.
+- **Seams for the tests:**
+  - A new unit test of the inbox logic.
+  - The requests API test: the other person of a sent request.
+  - A browser check at 390 px and 1440 px, with the API answers stubbed and the live channel at 503.
+- **Decisions:**
+  - Done item 1 changed, with the approval of the user: "…follow the Messages screens in the Product file…" → "…follow sections 04 and 09 of the drafts page…". The Product file has no Messages screens.
+  - The drafts are sections 04, 09 and 24 of the [drafts page](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=471-25507), and the empty state "Empty · Messages" of section 03.
+  - **Live updates:** the web joins its private channel with `@supabase/realtime-js`. While the channel is down, the web gets the data again at each focus of the tab. It also gets it every 30 seconds on an open messages screen. While the channel is live, the web does not ask again. Thus the API gets no extra calls after the setup.
+  - **The inbox** lists the conversations and the requests that the user sent. A sent request shows as a thread: "Request sent" with the composer off, or "Not available". A "Requests" row on top opens the requests to the user.
+  - **The badge** of the Messages item counts the unread messages and the open requests to the user.
+  - **The requests screen** shows each request to the user with the card summary, the note, Decline and Accept. Accept opens the chat.
+  - **The thread** has the safety notice, the messages by day, the older pages on scroll, and the composer. A message has 1 to 2,000 characters. The client makes its id, so a retry sends it one time. The menu has View profile, Report and Block. A listing chat whose lister has no profile reports the listing.
+  - **The listing detail** has a message button with a label for each kind: "Message the PG/Hostel", "Message the broker", "Message the owner" and "Message the flatmate". It opens the Say-hi sheet. Then it shows "Request sent", "Not available" with a new request, or "Open chat". Your own listing has no button.
+  - "Open chat" on the person detail finds the conversation in the inbox list. The API does not change for it.
+  - A chat with a deleted user, or with an account that cannot get messages, stays readable, and its composer is off.
+  - A phone number can show in an accepted chat ([PD17](../../decisions/pd-17-connect-and-contact.md)). The section 09 drafts follow it now.
+  - The search box of the inbox filters the conversations by name.
+  - Routes: the inbox, the requests and one thread. A desktop shows the inbox list beside the thread. A phone shows one screen at a time.
+- **Out of scope:**
+  - the email and push alerts (T-55)
+  - the live check, which comes after the setup of the secrets and Supabase
+  - unblock, and the "Verified" badge (T-46)
