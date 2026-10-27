@@ -7,6 +7,7 @@ import { healthResponse, meResponse } from '@roomsie/contract'
 import { api, apiUrl } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { firebaseAuth } from '../lib/firebase'
+import { Button } from '../components/ui/button'
 
 export default function Home() {
   const { user, signIn } = useAuth()
@@ -30,6 +31,8 @@ export default function Home() {
   return (
     <main className="p-8">
       <h1 className="text-2xl font-semibold">roomsie</h1>
+      {/* Until the landing page of T-23a. */}
+      <Button variant="primary" size="lg" href="/chat">Start looking</Button>
       <p>API: {health.isPending ? 'checking' : health.isError ? 'unreachable' : health.data.status}</p>
       {user ? (
         <>

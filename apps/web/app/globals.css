@@ -34,6 +34,10 @@
   --color-yellow-200: #feee95;
   --color-yellow-500: #eaaa08;
   --color-yellow-700: #a15c07;
+  --color-yellow-25: #fefce8;
+  --color-orange-100: #ffedd5;
+  --color-rose-50: #f9ebea;
+  --color-purple-25: #faf5ff;
 
   /* Text and icons: text-primary, text-fg-quaternary, … */
   --text-color-primary: var(--color-gray-900);
@@ -97,6 +101,10 @@
   --text-md--line-height: 1.5rem;
   --text-lg: 1.125rem;
   --text-lg--line-height: 1.75rem;
+  --text-display-xs: 1.5rem;
+  --text-display-xs--line-height: 2rem;
+  --text-display-sm: 1.875rem;
+  --text-display-sm--line-height: 2.375rem;
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -105,8 +113,14 @@
 
   --shadow-xs: 0 1px 2px 0 #0000000d;
   --shadow-sm: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
+  --shadow-md: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000000f;
   --shadow-xl: 0 20px 24px -4px #00000014, 0 8px 8px -4px #00000008, 0 3px 3px -1.5px #0000000a;
   --shadow-xs-skeuomorphic: 0 1px 2px 0 #0000000d, inset 0 -2px 0 0 #0000000d, inset 0 0 0 1px #0000002e;
+}
+
+/* The soft glow behind the chat, as flow 02 of the designs. */
+@utility bg-chat-glow {
+  background-image: radial-gradient(100% 145.5% at 100% 100%, var(--background-color-primary) 0%, var(--color-orange-100) 25.5%, var(--color-rose-50) 51%, var(--color-purple-25) 76.4%, var(--color-yellow-25) 100%);
 }
 
 @layer base {
