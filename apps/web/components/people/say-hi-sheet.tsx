@@ -6,7 +6,7 @@ import { MessageCircle01 } from '@untitledui/icons'
 import { outgoingRequest, requestNoteLimit, type ListingKind } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { listerOf } from '../../lib/place-detail'
+import { listerPhrase } from '../../lib/place-detail'
 import { queryKeys } from '../../lib/queries'
 import type { PersonTarget } from '../reports/report-sheet'
 import { Button } from '../ui/button'
@@ -34,7 +34,7 @@ export function SayHiSheet({ target, onClose }: { target: PersonTarget | Listing
   })
   const name = person ? target.firstName : 'The lister'
   return (
-    <Modal icon={MessageCircle01} title={person ? `Say hi to ${target.firstName}` : `Message ${listerOf(target.kind)}`} onClose={onClose}
+    <Modal icon={MessageCircle01} title={person ? `Say hi to ${target.firstName}` : `Message ${listerPhrase(target.kind)}`} onClose={onClose}
       actions={(
         <>
           <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>

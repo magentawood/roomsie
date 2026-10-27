@@ -92,7 +92,7 @@ export function threadDays(newestFirst: readonly Message[], now = new Date()) {
   return days
 }
 
-/** A live or a sent message is the last message of its chat, and one more unread when it is not mine. Undefined: the chat is not in the list, so the list loads again. */
+/** Undefined: the chat is not in the list, so the list loads again. */
 export function withMessage(data: ConversationsResponse | undefined, m: Message): ConversationsResponse | undefined {
   const chat = data?.conversations.find((c) => c.id === m.conversationId)
   if (!data || !chat) return undefined
