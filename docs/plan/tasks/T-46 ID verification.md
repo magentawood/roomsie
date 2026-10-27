@@ -45,3 +45,65 @@ A person checks an ID and a selfie, and roomsie keeps only the result.
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [pd-08-verification.md](../../decisions/pd-08-verification.md)
 - [verification.md](../../verification.md)
+
+## Spec
+
+**Approved:** pending
+
+- **Modules:**
+  - **The verification module of the API (new):** the checks of each person, their states and the review. Its routes are new. A person reads the state of the check, gets two upload links and sends the check. A reviewer reads the queue, gets the photo links and reviews. Other modules ask it only one thing: is this person verified.
+  - **The ID store module (new):** the private S3 bucket in `ap-south-1` and the face match of Amazon Rekognition. It gives upload links and view links that last 5 minutes, deletes the files, and compares the selfie with the ID photo. It signs with `aws4fetch`, with the keys of the AWS IAM user of ADR-0019. No new package.
+  - **The sign-in path:** it marks a reviewer from the new `REVIEWER_UIDS` setting, as it marks a moderator. `GET /v1/me` tells the web if the person is a reviewer.
+  - **The alerts module:** two new kinds, the approve and the reject. The interface changes.
+  - **Account deletion:** it deletes the checks, their audit rows and their files.
+  - **The schema:** a table of the checks and a table of the audit log. One migration.
+  - **The contract:** the routes above, and a `verified` field on the person card, the person detail, the place card and the place detail.
+  - **The web:**
+    - "Verify your ID" in Settings in its five states, also on the profile page with no profile
+    - the verify dialog: the ID, then the live selfie
+    - the "Verify your ID" modal of flow 04 after a publish
+    - the "ID checks" screen and its reject dialog for reviewers
+    - the badges on the cards and the detail screens
+  - **The deploy:** the API gets the bucket name. It needs no new secret.
+- **Seams for the tests:**
+  - The API tests, with a fake ID store that records each link, each delete and each face match, as the fake mailer of T-55. They test these items:
+    - send a check, and one check at a time
+    - the routes that only reviewers open, and a view row for each photo link
+    - approve and reject, and the expiry after 7 days
+    - the alerts, the account deletion, and the badge in the views
+  - A unit test of the ID store against a fake `fetch`: the bucket, the region, the expiry of each link, and the face-match request.
+  - A unit test of the texts of the two new alerts.
+  - A browser check at 390 px and 1440 px, with the API, the camera and the uploads stubbed. It checks the five states in Settings, the two steps and a browser with no camera. It also checks the publish modal, the ID checks screen and the reject dialog.
+- **Decisions:**
+  - **The face match:** Amazon Rekognition `CompareFaces` gives the reviewer a score when the person sends the check. The score only helps: a named reviewer approves or rejects each check. The account opts out of the AWS AI services content use, so AWS keeps no selfie. This replaces "No vendor in v0" in PD8 (why: ADR-0020).
+  - **The files:** a private S3 bucket in `ap-south-1`. Rekognition reads the two files there, so no photo goes through our API. The IAM user of ADR-0019 also gets this bucket and `CompareFaces` (why: ADR-0020).
+  - **The reviewers:** the Firebase UIDs in a new `REVIEWER_UIDS` setting, separate from the moderators. Each other person gets 404 from the reviewer routes and the "ID checks" screen.
+  - **The ID:** a passport, a driving licence, a voter ID or a PAN card. The person picks the type and sends one photo of the side with the face. The photo can be a camera shot or a file.
+  - **The selfie:** a live photo from the camera in the page, with no file picker. With no camera, the dialog tells the person to allow the camera or to verify on a phone.
+  - **One check at a time:** a person cannot send a check while one is in review, or after an approval. After a rejection or an expiry, the person can send a new check.
+  - **The states:** not verified, in review, verified, rejected and expired. In review says "We check within 24 hours", with no place in the queue. This replaces the queue position in PD8.
+  - **The review:** "ID checks" lists the checks in review, oldest first. Approve gives the Verified badge. Reject needs one reason from a fixed list, and takes an optional note of at most 200 characters. The person sees the reason and the note in Settings. The reasons:
+    - "The ID photo is not clear"
+    - "The selfie is not clear"
+    - "The selfie and the ID don’t match"
+    - "We don’t accept this document" (also for an Aadhaar)
+    - "The ID has expired"
+  - **What we keep:** the person, the state, the method (`id_selfie`), the document type, the reason and the note, the dates and the reviewer. The face-match score goes at the review. We keep no name and no number from the ID (PD8).
+  - **The files go:** the API deletes the two files at the approve or the reject. A failed delete goes to the log. A lifecycle rule of the bucket deletes each file after 7 days, also an upload that the person never sent. A check with no review after 7 days becomes expired, and leaves the queue.
+  - **The audit log:** each photo link that the API gives a reviewer is one view row. Each approve and each reject is one more row. A row has the check, the reviewer, the action and the time. The rows go with the account of the person who sent the check (PD19). The user decided this in the grill.
+  - **The alerts:** "You're verified on roomsie" and "Your ID check needs a new photo", by email and push, through the T-55 alerts and their switches. A tap opens Profile and Settings. No alert says the reason.
+  - **The listing flow:** the "Verify your ID" modal of drafts section 07 shows after a publish, when the person has no check in review and no approval. "Not now" closes it. The listing is live before the check (PD8).
+  - **The badge:** each card and detail screen takes the result of the person, or of the owner of the listing. The cards say "Verified". The detail screens use the labels of the designs:
+    - "Verified Owner" for an owner flat or a PG
+    - "Verified Lister" for a room in a flat
+    - "Verified Broker" for a broker flat
+    - "Verified" for a person
+  - **Docs:** ADR-0020, the PD8 update (the vendor and the queue line), a PD19 row for the audit log, the row of extensibility.md, and a learn page on the ID check.
+  - **The drafts:** section 26 of the [drafts page](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=483-26166).
+- **Out of scope:**
+  - the blurred cards and the verified-only setting (PD8 Guard 1 keeps them off at launch)
+  - DigiLocker and the Aadhaar app QR (v1)
+  - a liveness check other than the live camera, and a check of the ID by a machine
+  - a check that starts on one device and ends on a different device
+  - an appeal other than a new check
+  - the live check of S3 and Rekognition, which comes after the setup of the bucket, the IAM policy and the opt-out
