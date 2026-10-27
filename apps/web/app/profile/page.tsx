@@ -6,6 +6,7 @@ import { errorText } from '../../lib/api'
 import { useProfile } from '../../lib/queries'
 import { CreateProfileDialog } from '../../components/profile/create-profile-dialog'
 import { AlertSwitches } from '../../components/profile/alert-switches'
+import { VerifyRow } from '../../components/verification/verify-row'
 import { ProfileEditor, Section } from '../../components/profile/profile-editor'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
@@ -24,7 +25,8 @@ function Profile() {
         Your card lets people who look for a flatmate find you.
       </EmptyState>
       {/* A lister with no profile also gets requests (T-55). */}
-      <Section title="Settings" helper="Alerts for your requests and messages. They work without a profile.">
+      <Section title="Settings" helper="Verification and alerts. They work without a profile.">
+        <VerifyRow />
         <AlertSwitches />
       </Section>
       {creating && <CreateProfileDialog onClose={() => setCreating(false)} />}

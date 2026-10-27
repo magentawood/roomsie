@@ -2,7 +2,8 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  alertSettings, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
+  alertSettings, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, verificationResponse,
+  type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { areaTree } from './areas'
@@ -25,11 +26,24 @@ export const queryKeys = {
   realtime: ['realtime'],
   alerts: ['alerts'],
   push: (userId: string) => ['push', userId],
+  verification: ['verification'],
+  idChecks: ['admin', 'id-checks'],
 } as const
 
 export function useMe() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.me, queryFn: () => api(user, '/v1/me', meResponse) })
+}
+
+/** `enabled`: false loads nothing, for a step of the listing flow that cannot publish. */
+export function useVerification(enabled = true) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.verification, queryFn: () => api(user, '/v1/me/verification', verificationResponse), enabled })
+}
+
+export function useIdChecks() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.idChecks, queryFn: () => api(user, '/v1/admin/verifications', idCheckQueueResponse) })
 }
 
 export function useReportQueue() {

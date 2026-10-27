@@ -17,6 +17,8 @@ import { SayHiSheet } from '../people/say-hi-sheet'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
+import { Badge } from '../ui/badge'
+import { verifiedLabel } from '../../lib/verification'
 
 /** The icon of each line, as the designs draw them. */
 const lineIcons: Record<FactLabel, Icon> = {
@@ -95,7 +97,7 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
   )
 }
 
-/** The detail of a place: the four kinds of the Product file (T-43). TODO(T-46): the "Verified" pill. */
+/** The detail of a place: the four kinds of the Product file (T-43). */
 export function PlaceDetail({ listing }: { listing: ListingResponse }) {
   const areaLabels = useAreaLabels()
   const title = listingTitle(listing)
@@ -146,7 +148,10 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
         {listing.mine && <OwnerBar listing={listing} />}
         <Photos photos={listing.photos} />
         <header className="flex flex-col gap-1 border-b border-secondary pb-5">
-          <h1 className="text-lg font-semibold text-primary">{title}</h1>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h1 className="text-lg font-semibold text-primary">{title}</h1>
+            {listing.verified && <Badge tone="success">{verifiedLabel(listing.kind)}</Badge>}
+          </div>
           {where && <p className="text-md text-tertiary">{where}</p>}
           {address && <p className="text-sm text-tertiary">{address}</p>}
         </header>

@@ -28,7 +28,12 @@
   --color-green-50: #f0fdf4;
   --color-green-200: #bbf7d0;
   --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
   --color-green-700: #15803d;
+  --color-yellow-50: #fefbe8;
+  --color-yellow-200: #feee95;
+  --color-yellow-500: #eaaa08;
+  --color-yellow-700: #a15c07;
 
   /* Text and icons: text-primary, text-fg-quaternary, … */
   --text-color-primary: var(--color-gray-900);
@@ -42,9 +47,11 @@
   --text-color-fg-quaternary: var(--color-gray-400);
   --text-color-fg-quaternary_hover: var(--color-gray-500);
   --text-color-fg-error: var(--color-red-600);
+  --text-color-fg-success: var(--color-green-600);
   --text-color-badge-success: var(--color-green-700);
   --text-color-badge-error: var(--color-red-700);
   --text-color-badge-gray: var(--color-gray-700);
+  --text-color-badge-warning: var(--color-yellow-700);
   --text-color-primary_on-brand: #ffffff;
 
   /* Backgrounds: bg-primary, bg-brand-solid, … */
@@ -62,9 +69,11 @@
   --background-color-badge-success: var(--color-green-50);
   --background-color-badge-error: var(--color-red-50);
   --background-color-badge-gray: var(--color-gray-50);
+  --background-color-badge-warning: var(--color-yellow-50);
   --background-color-dot-success: var(--color-green-500);
   --background-color-dot-error: var(--color-red-500);
   --background-color-dot-gray: var(--color-gray-500);
+  --background-color-dot-warning: var(--color-yellow-500);
 
   /* Borders: border-primary, border-brand, … */
   --border-color-primary: var(--color-gray-300);
@@ -74,6 +83,7 @@
   --border-color-badge-success: var(--color-green-200);
   --border-color-badge-error: var(--color-red-200);
   --border-color-badge-gray: var(--color-gray-200);
+  --border-color-badge-warning: var(--color-yellow-200);
 
   --color-focus-ring: var(--color-gray-900);
 

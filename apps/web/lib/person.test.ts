@@ -6,7 +6,7 @@ const card: CardResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 26, jobRole: 'Business analyst', commuteAddress: 'Goregaon', bio: null,
   managedByParent: false, intent: 'flatmates', whosMoving: 'working', areas: ['andheri-goregaon'], budgetMin: null, budgetMax: 15000,
   moveDate: '2026-11-01', photos: [], lifestyle: { food: 'veg', smoking: 'non_smoker', your_days: 'home_most_days', sleep: 'night_owl', pets: 'no_pets' },
-  mustHaves: { no_alcohol: 'dealbreaker', non_smokers: 'prefer', veg_kitchen: 'dealbreaker' },
+  mustHaves: { no_alcohol: 'dealbreaker', non_smokers: 'prefer', veg_kitchen: 'dealbreaker' }, verified: false,
 }
 
 describe('the lines of a card', () => {
