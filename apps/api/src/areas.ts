@@ -1,10 +1,13 @@
-import { and, asc, eq, isNotNull } from 'drizzle-orm'
+import { and, asc, eq, inArray, isNotNull } from 'drizzle-orm'
 import type { Db } from './db/client'
 import { areas } from './db/schema'
 
 export const listAreas = (db: Db) =>
   db.select({ slug: areas.slug, name: areas.name, parent: areas.parentSlug, aliases: areas.aliases })
     .from(areas).orderBy(asc(areas.sortOrder))
+
+/** The slugs of these that are areas. */
+export const knownAreas = (db: Db, slugs: string[]) => db.select({ slug: areas.slug }).from(areas).where(inArray(areas.slug, slugs))
 
 /** A listing is in a sub-area or a pocket, not in a whole group (PD2). */
 export const isSubArea = async (db: Db, slug: string | null) =>

@@ -3,7 +3,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, eq } from 'drizzle-orm'
 import { alertSettings, noContent, pushTokenBody, pushTokenStatus } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
-import { pushTokens, users } from '../db/schema'
+import { pushTokens } from '../db/schema'
+import { alertContactOf, setEmailAlerts } from '../users'
 
 /** The switches of Settings (T-55). Each tap saves at once. */
 export function alertRoutes(v1: FastifyInstance, options: AuthOptions) {
@@ -12,12 +13,12 @@ export function alertRoutes(v1: FastifyInstance, options: AuthOptions) {
   const preHandler = requireUser(options)
 
   app.get('/me/alerts', { preHandler, schema: { response: { 200: alertSettings } } }, async (req) => {
-    const [user] = await db.select({ emailAlerts: users.emailAlerts }).from(users).where(eq(users.id, req.user!.id))
-    return user!
+    const { emailAlerts } = (await alertContactOf(db, req.user!.id))!
+    return { emailAlerts }
   })
 
   app.put('/me/alerts', { preHandler, schema: { body: alertSettings, response: { 200: alertSettings } } }, async (req) => {
-    await db.update(users).set({ emailAlerts: req.body.emailAlerts, updatedAt: new Date() }).where(eq(users.id, req.user!.id))
+    await setEmailAlerts(db, req.user!.id, req.body.emailAlerts)
     return req.body
   })
 
