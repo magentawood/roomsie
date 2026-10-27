@@ -13,15 +13,17 @@ const note = requiredText(requestNoteLimit)
 export const sendRequestBody = z.union([z.strictObject({ toProfileId: z.uuid(), note }), z.strictObject({ listingId: z.uuid(), note })])
 export type SendRequestBody = z.infer<typeof sendRequestBody>
 
-/** What the sender sees. A decline and an expiry are both "not_available" (PD17). `to`: the person who gets it, as a conversation shows them. */
+/** What the sender sees. A decline and an expiry are both "not_available" (PD17). `to`: the person who gets it, as a conversation shows them. `note`: as the API saved it, masked. */
 export const outgoingRequest = z.object({
   id: z.uuid(),
   toProfileId: z.uuid().nullable(),
   listingId: z.uuid().nullable(),
   to: otherPerson,
+  note: z.string(),
   state: z.enum(['open', 'accepted', 'not_available']),
   createdAt: z.iso.datetime(),
 })
+export type OutgoingRequest = z.infer<typeof outgoingRequest>
 export const outgoingRequestsResponse = z.object({ requests: z.array(outgoingRequest) })
 
 export const incomingRequest = z.object({
@@ -32,6 +34,7 @@ export const incomingRequest = z.object({
   createdAt: z.iso.datetime(),
   expiresAt: z.iso.datetime(),
 })
+export type IncomingRequest = z.infer<typeof incomingRequest>
 export const incomingRequestsResponse = z.object({ requests: z.array(incomingRequest) })
 
 /** The connection between the viewer and a person (T-18b). "received": the person sent the viewer an open request. */

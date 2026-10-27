@@ -24,7 +24,7 @@ async function outgoingViews(db: Db, storage: Storage, rows: RequestRow[]) {
   return rows.map((r) => {
     const { profileId, name, photoUrl, deleted } = people.get(r.toUserId)!
     return {
-      id: r.id, toProfileId: r.toProfileId, listingId: r.listingId, createdAt: r.createdAt.toISOString(), to: { profileId, name, photoUrl, deleted },
+      id: r.id, toProfileId: r.toProfileId, listingId: r.listingId, note: r.note, createdAt: r.createdAt.toISOString(), to: { profileId, name, photoUrl, deleted },
       state: r.status === 'accepted' ? 'accepted' as const : isOpen(r) ? 'open' as const : 'not_available' as const,
     }
   })
