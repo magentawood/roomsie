@@ -31,11 +31,11 @@ The inbox and the conversation.
 - [[T-55 Message alerts]]
 
 ## Done when
-- [ ] The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone
-- [ ] The Messages item in the sidebar shows the unread count
-- [ ] Report and block are in the menu of the conversation
-- [ ] The empty inbox uses the empty state of the designs
-- [ ] The listing detail has the button "Message the lister" of the designs
+- [x] The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone · [#167](https://github.com/magentawood/roomsie/pull/167)
+- [x] The Messages item in the sidebar shows the unread count · [#167](https://github.com/magentawood/roomsie/pull/167)
+- [x] Report and block are in the menu of the conversation · [#167](https://github.com/magentawood/roomsie/pull/167)
+- [x] The empty inbox uses the empty state of the designs · [#167](https://github.com/magentawood/roomsie/pull/167)
+- [x] The listing detail has the button "Message the lister" of the designs · [#167](https://github.com/magentawood/roomsie/pull/167)
 
 ^done
 
@@ -76,3 +76,14 @@ The inbox and the conversation.
   - the email and push alerts (T-55)
   - the live check, which comes after the setup of the secrets and Supabase
   - unblock, and the "Verified" badge (T-46)
+
+## Log
+
+- **2026-10-27 · [#167](https://github.com/magentawood/roomsie/pull/167)**
+  - **Change:** the web has the inbox, the requests to the user and the thread, on a desktop and on a phone. The Messages item shows a badge, a listing detail has a message button for its lister, and "Open chat" opens the chat. The web joins its private channel with `@supabase/realtime-js`, and asks the API every 30 seconds while the channel is down. A sent request gives its note and the person who gets it. A new request sends a "request" event to the recipient.
+  - **Why:** people who connect through a request need a place to chat ([PD17](../../decisions/pd-17-connect-and-contact.md)). The screens follow the drafts ([PD14](../../decisions/pd-14-v0-is-the-figma-designs.md)).
+  - **Ticked:** "The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone", "The Messages item in the sidebar shows the unread count", "Report and block are in the menu of the conversation", "The empty inbox uses the empty state of the designs" and "The listing detail has the button "Message the lister" of the designs"
+  - **Not done:** none. The live check waits for the setup of the secrets and Supabase.
+  - **Learn:** [Messages and realtime](../../learn/messages.md) and [Message requests](../../learn/message-requests.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
+- **Next:** the live check of the channel after the Firebase and Supabase setup, then T-55, the message alerts.

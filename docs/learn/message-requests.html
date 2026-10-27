@@ -46,6 +46,7 @@ details.callout[open] summary{color:var(--fg)}
 </code></pre>
 <ul>
 <li>Divya gets an email and a browser push: "Rahul sent you a message". Neither shows the note.</li>
+<li>If Divya's app is open, the API also sends a "request" event to her private channel. The event has only the id of the request, and her app then gets the list again (<a href="messages.html">Messages and realtime</a>).</li>
 <li>Until Divya accepts, Rahul cannot write more.</li>
 <li>Rahul can also say hi through a listing. The request goes to the owner of the listing, who needs no profile. The rules are the same.</li>
 <li>A sender has 10 new requests in a day of India time.</li>
@@ -71,7 +72,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td><code>GET /v1/requests/outgoing</code></td>
-<td>Gives your requests, each with its state: open, accepted or not available.</td>
+<td>Gives your requests, the newest first, each with its state (open, accepted or not available), the note, and the person who gets it as a conversation shows them.</td>
 </tr>
 <tr>
 <td><code>POST /v1/requests/:id/accept</code> and <code>/decline</code></td>
@@ -83,6 +84,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
+<p>In the web, Divya answers at <code>/messages/requests</code>, and Accept opens the chat. Rahul sees his request in his inbox as a thread: "Request sent" with no composer, or "Not available". The inbox shows each person or listing one time: the chat, or else the newest request. A listing detail has a button for its lister, for example "Message the owner", with the same states.</p>
 <p>The person detail at <code>/people/[id]</code> shows one connect state from this connection: "Say hi", "Request sent", the daily cap, the note of a request to you with Accept and Decline, the chat button after an accept, or the line of "Not available" under a new "Say hi".</p>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -105,5 +107,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>T-18a: <a href="https://github.com/magentawood/roomsie/pull/157">#157</a>, 2026-10-26. The API of message requests.</li>
 <li>T-18b: <a href="https://github.com/magentawood/roomsie/pull/159">#159</a>, 2026-10-26. The person detail and its connect states.</li>
 <li>T-44: <a href="https://github.com/magentawood/roomsie/pull/160">#160</a>, 2026-10-27. The note opens the conversation, and a deletion keeps the requests.</li>
+<li>T-45: <a href="https://github.com/magentawood/roomsie/pull/167">#167</a>, 2026-10-27. The requests screen, the sent requests in the inbox, the message button of a listing, and the live "request" event.</li>
 </ul>
 </main>

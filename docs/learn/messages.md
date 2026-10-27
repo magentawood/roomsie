@@ -28,6 +28,8 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 - **The claims.** Supabase trusts a Firebase token only with `role: 'authenticated'`. The API also adds `roomsie_user_id`, our id of the person, so the policy can check the channel. `POST /v1/me/realtime` adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins `user:<our user id>`.
 - **The policy.** A migration adds a policy on Supabase's `realtime.messages`: a person can join only `user:` and their own `roomsie_user_id`. The local and test databases do not have Supabase's functions, so they skip it.
 - **Phone numbers.** In v0, two people who connected can share a number in their chat. Cards, listings and request notes stay masked, and v1 masks the chat again with the subscription ([PD17](../decisions/pd-17-connect-and-contact.md)).
+- **The screens.** `/messages` is the inbox, `/messages/requests` gives the requests to you, and `/messages/<id>` opens one thread. A conversation has the id of its accepted request, so one route opens a chat or a request that you sent. A desktop shows the inbox beside the thread. A phone shows one screen at a time. The Messages item counts the unread messages and the open requests to you.
+- **The web and the channel.** The web joins the channel one time for each visit, with `@supabase/realtime-js`. A live message goes into the cached data, and the web does not ask the API again. While the channel is down, a messages screen asks the API every 30 seconds and at each focus of the tab. The drafts are sections 04, 09 and 24 of the drafts page in Figma.
 - **Who sees what.** Only the two people of a conversation get it. A block hides it from both. Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".
 
 ## The choice we made
@@ -42,8 +44,10 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 - **`user_id` is taken.** A Firebase token already has `user_id`, the Firebase uid, so our claim has its own name.
 - **A new claim needs a new token.** Firebase puts a claim in the next token, so the web refreshes the token one time when `mustRefreshIdToken` is true.
 - **The setup is in two consoles.** The API needs the secrets `SUPABASE_ANON_KEY` and `FIREBASE_SERVICE_ACCOUNT`. Supabase needs Firebase as a third-party auth provider, and Realtime set to private channels only. Without the secrets, `POST /v1/me/realtime` gives 503.
+- **The channel keeps no old events.** Each time the web joins the channel, it gets the messages data from the API one more time.
 - **No SDK.** The Firebase Admin module calls the REST API that the Admin SDK calls, with a token that `jose` signs, as `aws4fetch` does for R2.
 
 ## Tickets
 
 - T-44: [#160](https://github.com/magentawood/roomsie/pull/160), 2026-10-27. Conversations, messages, the private channels and Deleted user.
+- T-45: [#167](https://github.com/magentawood/roomsie/pull/167), 2026-10-27. The inbox, the requests and the thread on the web, and the live channel.
