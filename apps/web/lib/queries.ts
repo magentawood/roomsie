@@ -3,6 +3,7 @@ import {
   areasResponse, listingResponse, meResponse, personResponse, profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
+import { areaTree } from './areas'
 import { useUser } from './auth'
 
 /** The cache keys of the API data. A change sets or refreshes its key. */
@@ -66,9 +67,11 @@ export function useAreas() {
   return useQuery({ queryKey: queryKeys.areas, queryFn: () => api(user, '/v1/areas', areasResponse), staleTime: Infinity })
 }
 
-export function useAreaNames() {
-  const areas = useAreas()
-  return Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))
+/** Each area slug with the label that cards and details show. */
+export function useAreaLabels(): Record<string, string> {
+  const areas = useAreas().data?.areas ?? []
+  const tree = areaTree(areas)
+  return Object.fromEntries(areas.map((a) => [a.slug, tree.label(a.slug)!]))
 }
 
 export function useSavedPlaces(enabled = true) {

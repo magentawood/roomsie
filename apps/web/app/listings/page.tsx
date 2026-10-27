@@ -5,7 +5,7 @@ import { ArrowRight, CheckSquare, Edit05, Home02, Key01, Plus, RefreshCw01, Slas
 import { listingResponse, myListingsResponse, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { queryKeys, useAreaNames } from '../../lib/queries'
+import { queryKeys, useAreaLabels } from '../../lib/queries'
 import { cardActions, listingSteps, listingTitle, rentLine, resumeStep, stepCopy, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { listingSignIn, SignInGate } from '../../components/shell/sign-in-gate'
@@ -72,7 +72,7 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
 function MyListings() {
   const user = useUser()
   const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user, '/v1/listings/mine', myListingsResponse) })
-  const areaNames = useAreaNames()
+  const areaLabels = useAreaLabels()
   return (
     <>
       <PageHeader title="My Listings" backHref="/" inPhoneBar />
@@ -87,7 +87,7 @@ function MyListings() {
         {mine.data && mine.data.listings.length > 0 && (
           <>
             <ul className="flex flex-col gap-3">
-              {mine.data.listings.map((l) => <ListingCard key={l.id} listing={l} areaName={l.areaSlug ? areaNames[l.areaSlug] : undefined} />)}
+              {mine.data.listings.map((l) => <ListingCard key={l.id} listing={l} areaName={l.areaSlug ? areaLabels[l.areaSlug] : undefined} />)}
             </ul>
             <div><Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button></div>
           </>

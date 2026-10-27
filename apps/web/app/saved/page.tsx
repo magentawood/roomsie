@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Bookmark } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import type { SavedKind } from '@roomsie/contract'
-import { useAreaNames, useSavedPeople, useSavedPlaces } from '../../lib/queries'
+import { useAreaLabels, useSavedPeople, useSavedPlaces } from '../../lib/queries'
 import { PlaceCard } from '../../components/listings/place-card'
 import { PersonCard } from '../../components/people/person-card'
 import { SaveButton } from '../../components/saved/save-button'
@@ -16,7 +16,7 @@ import { Tabs } from '../../components/ui/tabs'
 
 function Places() {
   const places = useSavedPlaces()
-  const areaNames = useAreaNames()
+  const areaLabels = useAreaLabels()
   if (places.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(places.error)}</p>
   if (places.isPending) return <p className="text-sm text-tertiary">Loading…</p>
   if (!places.data.places.length) {
@@ -30,7 +30,7 @@ function Places() {
     <ul className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
       {places.data.places.map((listing) => (
         <li key={listing.id}>
-          <PlaceCard listing={listing} areaName={listing.areaSlug ? areaNames[listing.areaSlug] : undefined} action={<SaveButton kind="places" id={listing.id} />} />
+          <PlaceCard listing={listing} areaName={listing.areaSlug ? areaLabels[listing.areaSlug] : undefined} action={<SaveButton kind="places" id={listing.id} />} />
         </li>
       ))}
     </ul>

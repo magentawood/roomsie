@@ -28,6 +28,7 @@ export const mustHaveWeights = ['prefer', 'dealbreaker'] as const
 export type MustHaveKey = (typeof mustHaveKeys)[number]
 export type MustHaveWeight = (typeof mustHaveWeights)[number]
 export const maxProfilePhotos = 4
+export const maxProfileAreas = 20
 export const profileTextLimits = { fullName: 80, jobRole: 80, commuteAddress: 200, bio: 1000 } as const
 /** The fields that a card needs to go live, other than the name and the age, which a profile always has (PD16). */
 export const liveCardFields = ['whosMoving', 'areas', 'budget'] as const
@@ -61,7 +62,7 @@ export const profileEditBody = z.strictObject({
   managedByParent: z.boolean(),
   intent: z.enum(intents),
   whosMoving: z.enum(whosMovingAnswers),
-  areas: z.array(areaSlug).max(20).refine((a) => new Set(a).size === a.length, 'Each area once'),
+  areas: z.array(areaSlug).max(maxProfileAreas).refine((a) => new Set(a).size === a.length, 'Each area once'),
   budgetMin: rupees.nullable(),
   budgetMax: rupees.nullable(),
   moveDate: z.iso.date().nullable(),
