@@ -22,6 +22,7 @@ import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
 import { requestRoutes } from './requests/routes'
 import { savedRoutes } from './saved/routes'
+import { noMailer, type Mailer } from './email'
 import type { Messaging } from './messages/settings'
 import type { Storage } from './storage'
 
@@ -31,10 +32,10 @@ declare module 'fastify' {
   }
 }
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging } & AuthOptions) {
+/** `mailer`: none in development and in the tests that need no email. */
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
-  const { mailer, firebaseAdmin } = options.messaging
-  const alerts = alertsOf({ db: options.db, mailer, firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
+  const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
   app.setValidatorCompiler(validatorCompiler)
@@ -82,10 +83,10 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       savedRoutes(v1, options)
       reportRoutes(v1, options)
       profileRoutes(v1, options)
-      requestRoutes(v1, { ...options, alerts })
+      requestRoutes(v1, options)
       blockRoutes(v1, options)
       moderationRoutes(v1, options)
-      messageRoutes(v1, { ...options, alerts })
+      messageRoutes(v1, options)
       alertRoutes(v1, options)
     },
     { prefix: '/v1' },

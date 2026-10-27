@@ -11,6 +11,7 @@ const app = buildServer({
   firebaseKeys: googleKeys,
   moderation: env.moderation,
   messaging: env.messaging,
+  mailer: env.mailer,
   storage: r2Storage({
     accountId: env.R2_ACCOUNT_ID,
     accessKeyId: env.R2_ACCESS_KEY_ID,
