@@ -1,7 +1,7 @@
 'use client'
 
 import { CloseButton, ModalFrame } from '../ui/modal'
-import { GoogleSignIn, LegalLine } from './sign-in-gate'
+import { GoogleSignIn, LegalLine } from './google-sign-in'
 
 /** "Sign in to continue" of drafts section 17, with the text of D-02. T-21 shows it at the turn cap. */
 export function SignInWall({ onClose }: { onClose: () => void }) {

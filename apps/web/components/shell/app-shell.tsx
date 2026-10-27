@@ -10,13 +10,14 @@ import { Badge } from '../ui/badge'
 import { Button, type Icon } from '../ui/button'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { Logo } from './logo'
-import { GoogleSignIn } from './sign-in-gate'
+import { GoogleSignIn } from './google-sign-in'
 import { SignInWall } from './sign-in-wall'
 
 const navLooks = {
   sidebar: { item: 'gap-3 rounded-md px-3 py-2 text-sm', active: 'bg-secondary text-primary', link: 'text-secondary hover:bg-primary_hover', icon: 'text-fg-quaternary' },
   phone: { item: 'flex-1 flex-col gap-0.5 rounded-full px-1 py-1.5 text-xs whitespace-nowrap', active: 'bg-tertiary text-primary', link: 'text-secondary', icon: '' },
 }
+type NavLook = keyof typeof navLooks
 
 /** A link of the shell. For a guest, a button that opens the sign-in wall in its place. */
 type ShellLink = { href: string } | { onClick: () => void }
@@ -27,7 +28,7 @@ function LinkOrButton({ link, className, label, current, children }: { link: She
   return <button type="button" aria-label={label} onClick={link.onClick} className={className}>{children}</button>
 }
 
-function NavItem({ icon: ItemIcon, label, look, count = 0, link }: { icon: Icon; label: string; look: keyof typeof navLooks; count?: number; link: ShellLink }) {
+function NavItem({ icon: ItemIcon, label, look, count = 0, link }: { icon: Icon; label: string; look: NavLook; count?: number; link: ShellLink }) {
   const pathname = usePathname()
   const active = 'href' in link && pathname.startsWith(link.href)
   const style = navLooks[look]
@@ -41,8 +42,13 @@ function NavItem({ icon: ItemIcon, label, look, count = 0, link }: { icon: Icon;
   )
 }
 
-function MessagesItem({ look }: { look: keyof typeof navLooks }) {
+function MessagesCount({ look }: { look: NavLook }) {
   return <NavItem look={look} icon={MessageCircle01} label="Messages" link={{ href: '/messages' }} count={useMessagesBadge()} />
+}
+
+/** The badge needs a signed-in user. */
+function MessagesItem({ look, linkTo }: { look: NavLook; linkTo: LinkTo }) {
+  return useAuth().user ? <MessagesCount look={look} /> : <NavItem look={look} icon={MessageCircle01} label="Messages" link={linkTo('/messages')} />
 }
 
 function Sidebar({ linkTo }: { linkTo: LinkTo }) {
@@ -58,7 +64,7 @@ function Sidebar({ linkTo }: { linkTo: LinkTo }) {
       </div>
       <div className="flex flex-col gap-4">
         <nav className="flex flex-col gap-1">
-          {user ? <MessagesItem look="sidebar" /> : <NavItem look="sidebar" icon={MessageCircle01} label="Messages" link={linkTo('/messages')} />}
+          <MessagesItem look="sidebar" linkTo={linkTo} />
           <NavItem look="sidebar" icon={Bookmark} label="Saved" link={linkTo('/saved')} />
           <NavItem look="sidebar" icon={Key01} label="My listings" link={linkTo('/listings')} />
         </nav>
@@ -80,11 +86,10 @@ function Sidebar({ linkTo }: { linkTo: LinkTo }) {
 
 /** The floating navigation of the phone designs. The chat is the home screen, so it has no tab: "+" starts a new goal. */
 function MobileNav({ linkTo }: { linkTo: LinkTo }) {
-  const { user } = useAuth()
   return (
     <nav className="fixed inset-x-4 bottom-4 z-40 flex items-center gap-2 lg:hidden">
       <div className="flex flex-1 items-center rounded-full border border-secondary bg-primary p-1 shadow-sm">
-        {user ? <MessagesItem look="phone" /> : <NavItem look="phone" icon={MessageCircle01} label="Messages" link={linkTo('/messages')} />}
+        <MessagesItem look="phone" linkTo={linkTo} />
         <NavItem look="phone" icon={Bookmark} label="Saved" link={linkTo('/saved')} />
         <NavItem look="phone" icon={Key01} label="My Listings" link={linkTo('/listings')} />
         <NavItem look="phone" icon={User01} label="Profile" link={linkTo('/profile')} />
@@ -101,22 +106,20 @@ function MobileNav({ linkTo }: { linkTo: LinkTo }) {
 export function AppShell({ children, mobileNav = true, fixed }: { children: ReactNode; mobileNav?: boolean; fixed?: boolean }) {
   const { user, loading } = useAuth()
   const router = useRouter()
-  // The address of a link that a person taps before the sign-in, or while it loads.
-  const [wallHref, setWallHref] = useState<string | null>(null)
-  const linkTo: LinkTo = (href) => (user ? { href } : { onClick: () => setWallHref(href) })
-  // After the sign-in, open the tapped page.
+  const [pendingHref, setPendingHref] = useState<string | null>(null)
+  const linkTo: LinkTo = (href) => (user ? { href } : { onClick: () => setPendingHref(href) })
   useEffect(() => {
-    if (!user || !wallHref) return
-    setWallHref(null)
-    router.push(wallHref)
-  }, [user, wallHref, router])
+    if (!user || !pendingHref) return
+    setPendingHref(null)
+    router.push(pendingHref)
+  }, [user, pendingHref, router])
   return (
     <div className={`flex ${fixed ? 'h-dvh' : 'min-h-dvh'}`}>
       <Sidebar linkTo={linkTo} />
       <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${mobileNav && !fixed ? 'pb-24 lg:pb-0' : ''}`}>{children}</div>
       {mobileNav && <MobileNav linkTo={linkTo} />}
       {user && <CreateProfileGate />}
-      {wallHref && !user && !loading && <SignInWall onClose={() => setWallHref(null)} />}
+      {pendingHref && !user && !loading && <SignInWall onClose={() => setPendingHref(null)} />}
     </div>
   )
 }

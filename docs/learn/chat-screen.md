@@ -17,7 +17,7 @@
 | The screen and the input | `apps/web/components/chat/chat-screen.tsx` |
 | The send rule | `apps/web/lib/chat.ts`: `keyAction` and `canSend`, with a unit test |
 | The wall | `apps/web/components/shell/sign-in-wall.tsx`: `<SignInWall onClose />` |
-| The sign-in button and the legal line of D-02 | `apps/web/components/shell/sign-in-gate.tsx`: `<GoogleSignIn />` and `<LegalLine />`, also on the full-page sign-in |
+| The sign-in button and the legal line of D-02 | `apps/web/components/shell/google-sign-in.tsx`: `<GoogleSignIn />` and `<LegalLine />`, also on the full-page sign-in |
 | The shell | `apps/web/components/shell/app-shell.tsx` |
 
 - **The assistant is not live yet.** A sent message shows in the thread with one line of the screen. Nothing goes to the API, and a reload clears the thread. T-12 replaces the line with its turn route.

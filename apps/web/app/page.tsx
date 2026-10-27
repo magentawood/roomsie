@@ -7,7 +7,7 @@ import { api, apiUrl } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { firebaseAuth } from '../lib/firebase'
 import { Button } from '../components/ui/button'
-import { GoogleSignIn } from '../components/shell/sign-in-gate'
+import { GoogleSignIn } from '../components/shell/google-sign-in'
 
 export default function Home() {
   const { user } = useAuth()
