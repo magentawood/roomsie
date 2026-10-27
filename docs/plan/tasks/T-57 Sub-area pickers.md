@@ -43,7 +43,7 @@ Lets a lister and a seeker pick a sub-area, and shows it on each card.
 
 ## Spec
 
-**Approved:** not yet
+**Approved:** 2026-10-27, by n3rxv
 
 - **Modules:**
   - **The area tree of the web (new):** the label of an area, its sub-areas, the search, and the rules of the profile picks. The search uses the names and the other names. The pickers and the labels use it. It reads the areas API, and the API does not change.
