@@ -80,7 +80,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-39 Analytics database]] | P1 | 3 | ⬜ waits | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 1 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ waits | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
-| 1 | [[T-55 Message alerts]] | P3 | 6 | ⬜ waits | 0 | no issue at this time |
+| 1 | [[T-55 Message alerts]] | P3 | 6 | ⬜ waits | 0 | [#161](https://github.com/magentawood/roomsie/issues/161) |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
