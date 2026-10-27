@@ -10,6 +10,8 @@ import {
 } from 'fastify-type-provider-zod'
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { deleteAccount } from './account'
+import { alertsOf, type Alerts } from './alerts/alerts'
+import { alertRoutes } from './alerts/routes'
 import { listAreas } from './areas'
 import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
@@ -23,8 +25,18 @@ import { savedRoutes } from './saved/routes'
 import type { Messaging } from './messages/settings'
 import type { Storage } from './storage'
 
+declare module 'fastify' {
+  interface FastifyInstance {
+    alerts: Alerts
+  }
+}
+
 export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
+  const { mailer, firebaseAdmin } = options.messaging
+  const alerts = alertsOf({ db: options.db, mailer, firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
+  app.decorate('alerts', alerts)
+  app.addHook('onClose', () => alerts.settled())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
@@ -70,10 +82,11 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       savedRoutes(v1, options)
       reportRoutes(v1, options)
       profileRoutes(v1, options)
-      requestRoutes(v1, options)
+      requestRoutes(v1, { ...options, alerts })
       blockRoutes(v1, options)
       moderationRoutes(v1, options)
-      messageRoutes(v1, options)
+      messageRoutes(v1, { ...options, alerts })
+      alertRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

@@ -13,6 +13,7 @@ import { visiblePeople } from '../match/query'
 import { peopleOf } from '../profiles/read'
 import { idParams } from '../params'
 import { firstPhotoUrl, type Storage } from '../storage'
+import type { Alerts } from '../alerts/alerts'
 import { openConversation, sendLive } from '../messages/send'
 import type { Messaging } from '../messages/settings'
 import { maskContacts } from '../text/mask-contacts'
@@ -42,8 +43,8 @@ async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) 
   return to?.userId
 }
 
-export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; messaging: Messaging }) {
-  const { db, storage, messaging } = options
+export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; messaging: Messaging; alerts: Alerts }) {
+  const { db, storage, messaging, alerts } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
   const answerable = (userId: string) => and(eq(connectionRequests.toUserId, userId), openRequest())
@@ -74,6 +75,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     })
     if (made === 'limit') return reply.code(429).send({ error: requestCapMessage })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
+    alerts.request(made)
     // Realtime is best effort: the request is already saved.
     await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => req.log.error({ err }, 'realtime'))
     return reply.code(201).send((await outgoingViews(db, storage, [made]))[0]!)
@@ -112,7 +114,10 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
         return { request, note: await openConversation(tx, { requestId: request.id, senderUserId: request.fromUserId, text: request.note }) }
       })
       if (!answered) return reply.code(404).send({ error: 'not found' })
-      if (answered.note) await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])
+      if (answered.note) {
+        alerts.accept(answered.request)
+        await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])
+      }
       return reply.code(204).send(null)
     })
   }

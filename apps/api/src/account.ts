@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto'
 import { and, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import type { Db } from './db/client'
-import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, reports, saves, users } from './db/schema'
+import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, pushTokens, reports, saves, users } from './db/schema'
 import type { Storage } from './storage'
 import { endOpenRequests } from './requests/read'
 
@@ -53,12 +53,14 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
     await tx.delete(profiles).where(eq(profiles.userId, userId))
     // The tombstone keeps the users row, so its cascade does not remove the saves of the user (T-47).
     await tx.delete(saves).where(eq(saves.userId, userId))
+    await tx.delete(pushTokens).where(eq(pushTokens.userId, userId))
     await tx.update(users).set({
       status: 'deleted',
       authProviderId: tombstoneKey(identity),
       // Whole seconds, like auth_time: a sign-in in the same second as the deletion counts as after it.
       tokensValidAfter: new Date(Math.floor(Date.now() / 1000) * 1000),
       rejoinBlocked: user!.status === 'suspended',
+      email: null,
       updatedAt: new Date(),
     }).where(eq(users.id, userId))
   })

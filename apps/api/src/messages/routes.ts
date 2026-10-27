@@ -4,6 +4,7 @@ import { and, desc, eq, sql } from 'drizzle-orm'
 import {
   conversationsResponse, errorResponse, message, messagesQuery, messagesResponse, noContent, realtimeResponse, sendMessageBody,
 } from '@roomsie/contract'
+import type { Alerts } from '../alerts/alerts'
 import { ensureRealtimeClaims, requireUser, type AuthOptions } from '../auth'
 import { messages } from '../db/schema'
 import { idParams } from '../params'
@@ -16,8 +17,8 @@ import type { Messaging } from './settings'
 
 const pageSize = 50
 
-export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; messaging: Messaging }) {
-  const { db, storage, messaging } = options
+export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; messaging: Messaging; alerts: Alerts }) {
+  const { db, storage, messaging, alerts } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
   /** The conversation, or a 404 when the user is not in it. */
@@ -60,6 +61,7 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const [made] = await db.insert(messages).values({ id: req.body.id, requestId: req.params.id, senderUserId: me, text: req.body.text })
       .onConflictDoNothing().returning()
     if (made) {
+      alerts.message(made)
       await sendLive(messaging.realtime, req.log, made, [me, conversation.otherUserId])
       return reply.code(201).send(messageView(made, me))
     }

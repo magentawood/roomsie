@@ -15,16 +15,26 @@ export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
 /** The settings of PD18 with their defaults, a change from `settings`, and the user "moderator" as the moderator. */
 export const testModeration = (settings: Record<string, string> = {}) => moderationSettings.parse({ MODERATOR_UIDS: 'uid-moderator', ...settings })
 
-/** A Realtime and a Firebase Admin that record their calls, and the public settings of Realtime. */
+/** A Realtime, a Firebase Admin and a mailer that record their calls, and the public settings of Realtime. FCM refuses a token that starts with "gone". */
 export function testMessaging() {
   const sent: { userId: string; event: string; payload: object }[] = []
   const claims: { uid: string; claims: object }[] = []
+  const mails: { to: string; subject: string; text: string; html: string }[] = []
+  const pushes: { token: string; title: string; link: string }[] = []
   const messaging: Messaging = {
     realtime: { send: async (userId, { event, payload }) => { sent.push({ userId, event, payload }) } },
-    firebaseAdmin: { setClaims: async (uid, c) => { claims.push({ uid, claims: c }) } },
+    firebaseAdmin: {
+      setClaims: async (uid, c) => { claims.push({ uid, claims: c }) },
+      sendPush: async (token, push) => {
+        if (token.startsWith('gone')) return 'gone'
+        pushes.push({ token, ...push })
+        return 'sent'
+      },
+    },
     webRealtime: { url: 'https://realtime.example.com', key: 'test-anon-key' },
+    mailer: { send: async (to, mail) => { mails.push({ to, ...mail }) } },
   }
-  return { messaging, sent, claims }
+  return { messaging, sent, claims, mails, pushes }
 }
 
 export const testAreas = [
@@ -40,10 +50,15 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   const { firebaseKeys, idToken } = await testTokens()
   const fakes = testMessaging()
   const tokens = {} as Record<U, string>
-  for (const user of users) tokens[user] = await idToken(`uid-${user}`)
+  // Each user signs in with a verified email, as Google gives it (T-55).
+  for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
   const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging })
-  const call = (who: U | null, method: Method, url: string, payload?: object, token?: string) =>
-    app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
+  // The alerts go out after the reply, so a call also waits for them.
+  const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
+    const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
+    await app.alerts.settled()
+    return res
+  }
   const ids = {} as Record<U, string>
   for (const user of users) ids[user] = meResponse.parse((await call(user, 'GET', '/v1/me')).json()).id
 
@@ -63,5 +78,5 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await app.close()
     await testDb.drop()
   }
-  return { db: testDb.db, call, ids, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, idToken }
+  return { db: testDb.db, call, ids, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken }
 }
