@@ -52,11 +52,11 @@ details.callout[open] summary{color:var(--fg)}
 </code></pre>
 <ul>
 <li>One table holds the three levels. Each area has a <code>parent_slug</code>, and a group has none. A slug never changes, because listings, profiles and later the area pages link it.</li>
-<li><code>GET /v1/areas</code> gives each area with its slug, name, parent and other names, in the order of the designs: each group, then its sub-areas, and each sub-area then its pockets.</li>
+<li><code>GET /v1/areas</code> gives each area with its slug, name, parent and other names. The order is the order of the designs: each group, then its sub-areas, and each sub-area then its pockets.</li>
 <li>The seed in the API code is the only home of the list. To add a place, add it to the seed. The deploy runs the seed.</li>
 <li>A listing has one sub-area or pocket, never a whole group.</li>
 <li>A profile picks groups, sub-areas or pockets.</li>
-<li>Two picks match when they are the same area, or when one includes the other. The match query expands the picks of the seeker: it adds each area above and below a pick, and then looks for profiles that picked one of them. Thus "Andheri West" finds Versova and the whole group, but Versova does not find Lokhandwala.</li>
+<li>Two picks match when they are the same area, or when one includes the other. The match query expands the picks of the seeker. It adds each area above and below a pick. Then it looks for profiles that picked one of them. Thus "Andheri West" finds Versova and the whole group, but Versova does not find Lokhandwala.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -65,7 +65,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li>A listing from before the sub-areas can have a whole group. It stays live, but its next edit must pick a sub-area: the API gives 422 with <code>areaSlug</code> missing.</li>
+<li>A listing from before the sub-areas can have a whole group. It stays live, but its next edit must pick a sub-area: the API gives 422, and <code>missing</code> holds <code>areaSlug</code>.</li>
 <li>The match query must use the expansion. A plain array overlap misses Versova for a seeker who picked Andheri West.</li>
 <li>The seed numbers the areas in the order of its list. Put a new place where it belongs, not at the end.</li>
 </ul>

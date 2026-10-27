@@ -11,7 +11,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
 **In one line:** Roomsie launches in all of Mumbai, in ten area groups and their sub-areas, and each visitor from outside Mumbai joins a waitlist.
 
 - **The launch market is Mumbai.**
-- **Each area is live.** The ten area groups are the nine of the designs and Dadar–Sion: Andheri–Goregaon, Bandra–Santacruz, Powai–Vikhroli, Lower Parel–Worli, Dadar–Sion, South Mumbai, Malad–Borivali, Chembur–Ghatkopar, Thane and Navi Mumbai. A search in each of them shows its results.
+- **Each area is live.** There are ten area groups: the nine of the designs, and Dadar–Sion. They are Andheri–Goregaon, Bandra–Santacruz, Powai–Vikhroli, Lower Parel–Worli, Dadar–Sion, South Mumbai, Malad–Borivali, Chembur–Ghatkopar, Thane and Navi Mumbai. A search in each of them shows its results.
 - **Sub-areas.** Each group has the sub-areas that renters and brokers use. The list is the broker list of the founders, with the places that the rental portals list, and the seed holds it ([T-56](../plan/tasks/T-56%20Sub-areas%20API.md)).
   - East and West are two sub-areas where the portals list them separately, for example Malad West and Malad East.
   - A pocket is a sub-area inside a sub-area, for example Versova in Andheri West.
@@ -62,4 +62,4 @@ Superseded (2026-10-27): the nine area groups with no sub-areas. There are ten g
 - [CONTEXT.md](../../CONTEXT.md): "Decisions taken in this session" table, row PD2, and its "Why" callout
 - [product-base.md](../product-base.md): section 02 and its "Why" callout
 - The decision of the user on 2026-10-27, in the session of T-44: "for Mumbai we are mapping each and every area"
-- The decisions of the user on 2026-10-27 in the grill of the sub-areas ([spec](../specs/sub-areas.md)), from the broker list of the founders and a research of the rental portals
+- The decisions of the user on 2026-10-27 in the grill of the sub-areas ([spec](../specs/sub-areas.md)). They come from the broker list of the founders and a research of the rental portals
