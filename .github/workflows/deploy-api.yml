@@ -66,6 +66,10 @@ jobs:
           API_FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
           # The Firebase uids of the moderators, comma-separated (T-19). Unset: nobody is a moderator.
           API_MODERATOR_UIDS: ${{ secrets.MODERATOR_UIDS }}
+          # The Firebase uids of the ID reviewers, comma-separated (T-46). Unset: nobody reviews.
+          API_REVIEWER_UIDS: ${{ secrets.REVIEWER_UIDS }}
+          # The private bucket of the ID checks in ap-south-1 (ADR-0020). Not a secret.
+          API_ID_BUCKET: roomsie-id-checks
         run: |
           jq -n --arg image "$IMAGE" '{
             containers: { api: {

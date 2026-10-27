@@ -3,11 +3,13 @@ import { photoKeyIn, uploadUrlBody, uploadUrlReply } from './shared'
 
 /** The IDs of the v0 route of PD8. Never an Aadhaar. */
 export const documentTypes = ['passport', 'driving_licence', 'voter_id', 'pan_card'] as const
-export const documentTypeLabels: Record<(typeof documentTypes)[number], string> = {
+export type DocumentType = (typeof documentTypes)[number]
+export const documentTypeLabels: Record<DocumentType, string> = {
   passport: 'Passport', driving_licence: 'Driving licence', voter_id: 'Voter ID', pan_card: 'PAN card',
 }
 export const rejectReasons = ['id_not_clear', 'selfie_not_clear', 'no_match', 'not_accepted', 'id_expired'] as const
-export const rejectReasonLabels: Record<(typeof rejectReasons)[number], string> = {
+export type RejectReason = (typeof rejectReasons)[number]
+export const rejectReasonLabels: Record<RejectReason, string> = {
   id_not_clear: 'The ID photo is not clear',
   selfie_not_clear: 'The selfie is not clear',
   no_match: 'The selfie and the ID don’t match',
@@ -23,10 +25,9 @@ export const checkUploadBody = z.strictObject({ idPhoto: uploadUrlBody, selfie: 
 export const checkUploadResponse = z.object({ idPhoto: uploadUrlReply(checkPhotoKey), selfie: uploadUrlReply(checkPhotoKey) })
 export const sendCheckBody = z.strictObject({ documentType: z.enum(documentTypes), idPhotoKey: checkPhotoKey, selfieKey: checkPhotoKey })
 
-export const verificationStates = ['none', 'in_review', 'verified', 'rejected', 'expired'] as const
 /** The latest check of the person. `none`: the person never sent one. */
 export const verificationResponse = z.object({
-  state: z.enum(verificationStates),
+  state: z.enum(['none', 'in_review', 'verified', 'rejected', 'expired']),
   reason: z.enum(rejectReasons).nullable(),
   note: z.string().nullable(),
   sentAt: z.iso.datetime().nullable(),

@@ -64,7 +64,7 @@ A person checks an ID and a selfie, and roomsie keeps only the result.
     - the "Verify your ID" modal of flow 04 after a publish
     - the "ID checks" screen and its reject dialog for reviewers
     - the badges on the cards and the detail screens
-  - **The deploy:** the API gets the bucket name. It needs no new secret.
+  - **The deploy:** the API gets the bucket name and the reviewer UIDs. It needs no new key.
 - **Seams for the tests:**
   - The API tests, with a fake ID store that records each link, each delete and each face match, as the fake mailer of T-55. They test these items:
     - send a check, and one check at a time

@@ -16,7 +16,6 @@ export type Alerts = {
   request(request: RequestRow): void
   accept(request: RequestRow): void
   message(message: MessageRow): void
-  /** The result of an ID check (T-46). */
   verification(userId: string, result: 'verified' | 'rejected'): void
   /** Waits for the alerts that are on their way: at a shutdown, and in the tests. */
   settled(): Promise<void>

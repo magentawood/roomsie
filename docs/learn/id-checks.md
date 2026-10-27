@@ -43,7 +43,7 @@ the browser ──signed PUT──▶ private S3 bucket (Mumbai) ◀── Rekog
 
 ## Gotchas
 
-- **The setup.** The API needs `ID_BUCKET` and the IAM user of the alerts, with access to that bucket and to `rekognition:CompareFaces`. The bucket needs a CORS rule for the PUT of the web, and a lifecycle rule that deletes each file after 7 days. The AWS account needs the AI services opt-out for Rekognition. Without the bucket name, the API takes no ID check.
+- **The setup.** The API needs the bucket `roomsie-id-checks`, the CI secret `REVIEWER_UIDS`, and the IAM user of the alerts, with access to that bucket and to `rekognition:CompareFaces`. The bucket needs a CORS rule for the PUT of the web, and a lifecycle rule that deletes each file after 7 days. The AWS account needs the AI services opt-out for Rekognition. Without the bucket name, the API takes no ID check.
 - **A parent.** A parent can manage the card of a son or daughter. The parent sends the check, so that card never shows the badge of the parent.
 - **No camera.** A laptop with no camera, or a blocked camera, shows "We can't open a camera". The person can verify on a phone.
 - **A failed delete.** The review stays, and the error goes to the log. The lifecycle rule deletes the files after 7 days.

@@ -27,7 +27,7 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  *
  * Not here yet: events (T-24), Form B (T-35), the Firebase user (T-53). The messages stay for the other person (T-44).
  */
-export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | null, userId: string, identity: string) {
+export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | undefined, userId: string, identity: string) {
   await db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
   await db.update(listings).set({ status: 'inactive', updatedAt: new Date() })
     .where(and(eq(listings.ownerUserId, userId), eq(listings.status, 'live')))
