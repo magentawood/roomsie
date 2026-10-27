@@ -1,37 +1,53 @@
 import type { InfiniteData } from '@tanstack/react-query'
-import type { Conversation, IncomingRequest, ListingKind, Message, OutgoingRequest } from '@roomsie/contract'
+import type { Conversation, IncomingRequest, ListingKind, Message, OtherPerson, OutgoingRequest } from '@roomsie/contract'
 
-export type InboxItem =
-  | { kind: 'conversation'; conversation: Conversation; at: string }
-  | { kind: 'sent'; request: OutgoingRequest; at: string }
+/** A row of the inbox. `id` opens its thread. */
+export type InboxItem = { id: string; other: OtherPerson; listingId: string | null; at: string } & (
+  | { kind: 'conversation'; conversation: Conversation }
+  | { kind: 'sent'; request: OutgoingRequest }
+)
 
 /** Everything that waits for the user: the unread messages and the open requests to them. */
 export const badgeCount = (conversations: readonly Conversation[], incoming: readonly IncomingRequest[]) =>
   conversations.reduce((sum, c) => sum + c.unread, 0) + incoming.length
 
-/** An accepted request is a conversation, so only the waiting and the "Not available" requests show as their own threads. */
+/** The person and the listing of a chat, so that two requests to one recipient show as one row. */
+const recipientKeys = (other: OtherPerson, listingId: string | null) => [other.profileId, listingId].filter((key) => key !== null)
+
+/**
+ * An accepted request is a conversation, so only the waiting and the "Not available" requests show as their own threads.
+ * `outgoing` comes newest first, as the API gives it, and each recipient shows once: the chat, or else the newest request.
+ */
 export function inboxItems(conversations: readonly Conversation[], outgoing: readonly OutgoingRequest[]): InboxItem[] {
+  const shown = new Set(conversations.flatMap((c) => recipientKeys(c.other, c.listingId)))
+  const sent = outgoing.filter((r) => {
+    const keys = recipientKeys(r.to, r.listingId)
+    if (r.state === 'accepted' || keys.some((key) => shown.has(key))) return false
+    keys.forEach((key) => shown.add(key))
+    return true
+  })
   const items: InboxItem[] = [
-    ...conversations.map((conversation) => ({ kind: 'conversation' as const, conversation, at: conversation.lastMessage?.createdAt ?? '' })),
-    ...outgoing.filter((r) => r.state !== 'accepted').map((request) => ({ kind: 'sent' as const, request, at: request.createdAt })),
+    ...conversations.map((conversation) => ({
+      kind: 'conversation' as const, conversation, id: conversation.id, other: conversation.other, listingId: conversation.listingId, at: conversation.lastMessage?.createdAt ?? '',
+    })),
+    ...sent.map((request) => ({ kind: 'sent' as const, request, id: request.id, other: request.to, listingId: request.listingId, at: request.createdAt })),
   ]
   return items.sort((a, b) => b.at.localeCompare(a.at))
 }
 
-export const otherName = (other: Conversation['other']) => (other.deleted ? 'Deleted user' : other.name)
+export const otherName = (other: OtherPerson) => (other.deleted ? 'Deleted user' : other.name)
 
-/** The message button of a listing follows the newest request of the user to it. */
+/** The message button of a listing follows the newest request of the user to it. `outgoing` comes newest first. */
 export function listingChat(outgoing: readonly OutgoingRequest[], conversations: readonly Conversation[], listingId: string) {
-  const newest = outgoing.filter((r) => r.listingId === listingId).sort((a, b) => b.createdAt.localeCompare(a.createdAt))[0]
+  const newest = outgoing.find((r) => r.listingId === listingId)
   if (!newest) return { state: 'none' as const }
   if (newest.state === 'open') return { state: 'sent' as const }
   if (newest.state === 'not_available') return { state: 'not_available' as const }
   return { state: 'accepted' as const, conversationId: conversations.find((c) => c.listingId === listingId)?.id }
 }
 
-/** The message button of a listing names its lister, as the listing details of the Product file. */
-export const messageListerLabel = (kind: ListingKind) =>
-  `Message ${({ pg: 'the PG/Hostel', broker_flat: 'the broker', owner_flat: 'the owner', room_in_flat: 'the flatmate' })[kind]}`
+/** The lister of a listing, as the message button of the listing details names it: "Message the owner". */
+export const listerOf = (kind: ListingKind) => ({ pg: 'the PG/Hostel', broker_flat: 'the broker', owner_flat: 'the owner', room_in_flat: 'the flatmate' })[kind]
 
 export const chatWith = (conversations: readonly Conversation[], profileId: string) =>
   conversations.find((c) => c.other.profileId === profileId)?.id

@@ -1,7 +1,8 @@
+import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
+  profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { areaTree } from './areas'
@@ -21,6 +22,7 @@ export const queryKeys = {
   conversations: ['conversations'],
   messages: (conversationId: string) => ['messages', conversationId],
   requests: (direction: 'incoming' | 'outgoing') => ['requests', direction],
+  realtime: ['realtime'],
 } as const
 
 export function useMe() {
@@ -36,13 +38,14 @@ export function useReportQueue() {
 /** A 4xx is final, for example a listing or a card that is gone. Only 5xx and network errors retry. */
 const retryOnServerErrors = (count: number, err: Error) => count < 3 && !(err instanceof ApiError && err.status < 500)
 
-export function useListing(id: string, enabled = true) {
+/** `id`: null loads nothing, for a chat or a request that has no listing. */
+export function useListing(id: string | null) {
   const user = useUser()
   return useQuery({
-    queryKey: queryKeys.listing(id),
+    queryKey: queryKeys.listing(id ?? ''),
     queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
     retry: retryOnServerErrors,
-    enabled,
+    enabled: id !== null,
   })
 }
 
@@ -96,33 +99,46 @@ export function useSavedIds(kind: SavedKind) {
   return new Set((kind === 'places' ? places.data?.places : people.data?.people)?.map((x) => x.id))
 }
 
-/** `poll`: the beat of a messages screen while the live channel is down (T-45). Without it, a focus of the tab gets the data again. */
-type Poll = number | false
+/** True while the private channel of the user is up (lib/live.tsx). The messages data then changes only by its events. */
+export const LiveChannel = createContext(false)
 
-export function useConversations(poll: Poll = false) {
-  const user = useUser()
-  return useQuery({ queryKey: queryKeys.conversations, queryFn: () => api(user, '/v1/conversations', conversationsResponse), refetchInterval: poll })
+const pollWhileDown = 30_000
+
+/** `poll`: a messages screen asks the API again every 30 s while the live channel is down (T-45). */
+function useFreshness(poll: boolean) {
+  return useContext(LiveChannel) ? { staleTime: Infinity, refetchOnWindowFocus: false } : { refetchInterval: poll ? pollWhileDown : false as const }
 }
 
-export function useIncomingRequests(poll: Poll = false) {
+/** What the web needs to join the channel. A 503 means that Realtime is not set up yet, so there is no retry: the screens poll. */
+export function useRealtime() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.requests('incoming'), queryFn: () => api(user, '/v1/requests/incoming', incomingRequestsResponse), refetchInterval: poll })
+  return useQuery({ queryKey: queryKeys.realtime, queryFn: () => api(user, '/v1/me/realtime', realtimeResponse, { method: 'POST' }), staleTime: Infinity, retry: false })
 }
 
-export function useOutgoingRequests(poll: Poll = false) {
+export function useConversations(poll = false) {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.requests('outgoing'), queryFn: () => api(user, '/v1/requests/outgoing', outgoingRequestsResponse), refetchInterval: poll })
+  return useQuery({ queryKey: queryKeys.conversations, queryFn: () => api(user, '/v1/conversations', conversationsResponse), ...useFreshness(poll) })
+}
+
+export function useIncomingRequests(poll = false) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.requests('incoming'), queryFn: () => api(user, '/v1/requests/incoming', incomingRequestsResponse), ...useFreshness(poll) })
+}
+
+export function useOutgoingRequests(poll = false) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.requests('outgoing'), queryFn: () => api(user, '/v1/requests/outgoing', outgoingRequestsResponse), ...useFreshness(poll) })
 }
 
 /** The pages of a thread, newest first. The next page is the one before the oldest message. */
-export function useMessages(conversationId: string, poll: Poll = false) {
+export function useMessages(conversationId: string) {
   const user = useUser()
   return useInfiniteQuery({
     queryKey: queryKeys.messages(conversationId),
     queryFn: ({ pageParam }) => api(user, `/v1/conversations/${conversationId}/messages${pageParam ? `?before=${pageParam}` : ''}`, messagesResponse),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (last) => (last.hasMore ? last.messages.at(-1)?.id : undefined),
-    refetchInterval: poll,
+    ...useFreshness(true),
   })
 }
 

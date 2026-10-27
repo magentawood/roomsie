@@ -4,12 +4,12 @@ import { useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { MessageCircle01, SearchLg, UserPlus01 } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
-import { useMessagesPoll } from '../../lib/live'
 import { inboxItems, inboxTime, type InboxItem } from '../../lib/messages'
 import { firstName } from '../../lib/profile-form'
 import { useConversations, useIncomingRequests, useOutgoingRequests } from '../../lib/queries'
 import { AppShell, PageHeader } from '../shell/app-shell'
 import { SignInGate } from '../shell/sign-in-gate'
+import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { inputClass } from '../ui/field'
@@ -27,9 +27,8 @@ function Row({ href, selected, children }: { href: string; selected: boolean; ch
 }
 
 function ItemRow({ item, selected, query }: { item: InboxItem; selected: boolean; query: string }) {
-  const other = item.kind === 'conversation' ? item.conversation.other : item.request.to
-  const listingId = item.kind === 'conversation' ? item.conversation.listingId : item.request.listingId
-  const { name } = useChatName(other, listingId)
+  const { other } = item
+  const { name } = useChatName(other, item.listingId)
   if (query && !name.toLowerCase().includes(query.toLowerCase())) return null
   const last = item.kind === 'conversation' ? item.conversation.lastMessage : null
   const preview = item.kind === 'sent'
@@ -37,7 +36,7 @@ function ItemRow({ item, selected, query }: { item: InboxItem; selected: boolean
     : last ? `${last.mine ? 'You: ' : ''}${last.text}` : ''
   const unread = item.kind === 'conversation' && item.conversation.unread > 0
   return (
-    <Row href={`/messages/${item.kind === 'conversation' ? item.conversation.id : item.request.id}`} selected={selected}>
+    <Row href={`/messages/${item.id}`} selected={selected}>
       <Avatar photoUrl={other.photoUrl} name={other.deleted ? null : other.name} />
       <span className="flex min-w-0 flex-1 flex-col text-sm">
         <span className="flex items-center gap-2">
@@ -55,10 +54,9 @@ function ItemRow({ item, selected, query }: { item: InboxItem; selected: boolean
 
 /** The list of chats, as section 04 of the drafts. `selected`: the open thread, or "requests". */
 function Inbox({ selected }: { selected?: string }) {
-  const poll = useMessagesPoll()
-  const conversations = useConversations(poll)
-  const outgoing = useOutgoingRequests(poll)
-  const incoming = useIncomingRequests(poll)
+  const conversations = useConversations(true)
+  const outgoing = useOutgoingRequests(true)
+  const incoming = useIncomingRequests(true)
   const [query, setQuery] = useState('')
   const failed = conversations.error ?? outgoing.error ?? incoming.error
   if (failed) return <p role="alert" className="p-4 text-sm text-error-primary">{errorText(failed)}</p>
@@ -86,13 +84,10 @@ function Inbox({ selected }: { selected?: string }) {
               <span className="font-medium text-primary">Requests</span>
               <span className="text-tertiary">{requests === 1 ? '1 person wants to say hi' : `${requests} people want to say hi`}</span>
             </span>
-            <span className="rounded-full border border-badge-gray bg-badge-gray px-2 text-xs font-medium text-badge-gray">{requests}</span>
+            <Badge tone="gray" dot={false}>{String(requests)}</Badge>
           </Row>
         )}
-        {items.map((item) => {
-          const id = item.kind === 'conversation' ? item.conversation.id : item.request.id
-          return <ItemRow key={id} item={item} selected={selected === id} query={query.trim()} />
-        })}
+        {items.map((item) => <ItemRow key={item.id} item={item} selected={selected === item.id} query={query.trim()} />)}
       </ul>
     </div>
   )

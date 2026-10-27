@@ -12,6 +12,7 @@ export type Message = z.infer<typeof message>
 
 /** The other person of a conversation. `deleted`: the account is deleted, and the web shows "Deleted user". */
 export const otherPerson = z.object({ profileId: z.uuid().nullable(), name: z.string().nullable(), photoUrl: z.url().nullable(), deleted: z.boolean() })
+export type OtherPerson = z.infer<typeof otherPerson>
 
 /** A conversation is an accepted message request (T-44). `canSend` is false when the other account is deleted or suspended. */
 export const conversation = z.object({
@@ -29,9 +30,12 @@ export const conversationsResponse = z.object({ conversations: z.array(conversat
 export const messagesQuery = z.object({ before: z.uuid().optional() })
 export const messagesResponse = z.object({ messages: z.array(message), hasMore: z.boolean() })
 
-/** The event on the private channel of a person: one new message, as that person sees it (T-44). */
-export const realtimeMessageEvent = z.object({ event: z.literal('message'), payload: message })
-export type RealtimeMessageEvent = z.infer<typeof realtimeMessageEvent>
+/** An event on the private channel of a person: one new message, as that person sees it (T-44), or a new request to that person (T-45). The request event carries only its id, so the web gets the list again. */
+export const realtimeEvent = z.discriminatedUnion('event', [
+  z.object({ event: z.literal('message'), payload: message }),
+  z.object({ event: z.literal('request'), payload: z.object({ id: z.uuid() }) }),
+])
+export type RealtimeEvent = z.infer<typeof realtimeEvent>
 
 /** What the web needs to join its private channel. `mustRefreshIdToken`: get a fresh Firebase ID token first, so that it has the claims. */
 export const realtimeResponse = z.object({ url: z.url(), key: z.string().min(1), channel: z.string(), mustRefreshIdToken: z.boolean() })

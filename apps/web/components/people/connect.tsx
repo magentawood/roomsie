@@ -1,23 +1,17 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Clock, MessageCircle01 } from '@untitledui/icons'
-import { noContent, type PersonResponse } from '@roomsie/contract'
-import { api, errorText } from '../../lib/api'
-import { useUser } from '../../lib/auth'
+import type { PersonResponse } from '@roomsie/contract'
+import { errorText } from '../../lib/api'
 import { chatWith } from '../../lib/messages'
 import { connectLine } from '../../lib/person'
-import { queryKeys, useConversations } from '../../lib/queries'
+import { useConversations } from '../../lib/queries'
+import { useAnswerRequest } from '../messages/requests'
 import { Button } from '../ui/button'
 
 function Received({ profileId, requestId, note, line, save }: { profileId: string; requestId: string; note: string; line: string | null; save: ReactNode }) {
-  const user = useUser()
-  const queryClient = useQueryClient()
-  const answer = useMutation({
-    mutationFn: (action: 'accept' | 'decline') => api(user, `/v1/requests/${requestId}/${action}`, noContent, { method: 'POST' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.person(profileId) }),
-  })
+  const answer = useAnswerRequest(requestId, profileId)
   return (
     <div className="flex flex-col gap-3">
       <p className="text-md font-semibold text-primary">{line}</p>

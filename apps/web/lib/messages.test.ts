@@ -1,15 +1,15 @@
 import { describe, expect, it } from 'vitest'
 import type { Conversation, IncomingRequest, Message, OutgoingRequest } from '@roomsie/contract'
-import { addMessage, badgeCount, chatWith, inboxItems, inboxTime, listingChat, messageListerLabel, otherName, requestTimes, threadDays } from './messages'
+import { addMessage, badgeCount, chatWith, inboxItems, inboxTime, listingChat, requestTimes, threadDays } from './messages'
 
 const id = (n: number) => `0199e4b0-0000-7000-8000-${String(n).padStart(12, '0')}`
-const person = (name: string | null, deleted = false) => ({ profileId: name ? id(90) : null, name, photoUrl: null, deleted })
+const person = (name: string | null, deleted = false, profileId = name ? id(90) : null) => ({ profileId, name, photoUrl: null, deleted })
 const message = (n: number, createdAt: string, mine = false): Message => ({ id: id(n), conversationId: id(1), mine, text: `m${n}`, createdAt })
 const conversation = (n: number, patch: Partial<Conversation> = {}): Conversation => ({
-  id: id(n), other: person(`Person ${n}`), listingId: null, lastMessage: null, unread: 0, canSend: true, ...patch,
+  id: id(n), other: person(`Person ${n}`, false, id(100 + n)), listingId: null, lastMessage: null, unread: 0, canSend: true, ...patch,
 })
 const sent = (n: number, patch: Partial<OutgoingRequest> = {}): OutgoingRequest => ({
-  id: id(n), toProfileId: id(90), listingId: null, to: person(`Sent ${n}`), note: 'Hi', state: 'open', createdAt: '2026-10-27T05:00:00.000Z', ...patch,
+  id: id(n), toProfileId: id(100 + n), listingId: null, to: person(`Sent ${n}`, false, id(100 + n)), note: 'Hi', state: 'open', createdAt: '2026-10-27T05:00:00.000Z', ...patch,
 })
 const incoming = { id: id(70) } as IncomingRequest
 
@@ -26,7 +26,17 @@ describe('the inbox', () => {
       [conversation(1, { lastMessage: message(11, '2026-10-27T09:00:00.000Z') }), conversation(2, { lastMessage: null })],
       [sent(3, { createdAt: '2026-10-27T10:00:00.000Z' }), sent(4, { state: 'accepted' }), sent(5, { state: 'not_available', createdAt: '2026-10-26T10:00:00.000Z' })],
     )
-    expect(items.map((i) => (i.kind === 'conversation' ? `c${i.conversation.id.slice(-1)}` : `r${i.request.id.slice(-1)}`))).toEqual(['r3', 'c1', 'r5', 'c2'])
+    expect(items.map((i) => (i.kind === 'conversation' ? `c${i.id.slice(-1)}` : `r${i.id.slice(-1)}`))).toEqual(['r3', 'c1', 'r5', 'c2'])
+  })
+
+  it('shows each recipient once: the chat, or else the newest request', () => {
+    const divya = person('Divya', false, id(201))
+    const listing = { listingId: id(50), toProfileId: null, to: person(null) }
+    const items = inboxItems(
+      [conversation(1, { other: divya })],
+      [sent(2, { to: divya, toProfileId: divya.profileId, state: 'not_available' }), sent(3, { ...listing, createdAt: '2026-10-27T06:00:00.000Z' }), sent(4, { ...listing, state: 'not_available' })],
+    )
+    expect(items.map((i) => i.id)).toEqual([id(3), id(1)])
   })
 
   it('gives the time of today, "Yesterday", the day of this week, or the date, in India time', () => {
@@ -35,12 +45,6 @@ describe('the inbox', () => {
     expect(inboxTime('2026-10-26T09:00:00.000Z', now)).toBe('Yesterday')
     expect(inboxTime('2026-10-23T09:00:00.000Z', now)).toBe('Fri')
     expect(inboxTime('2026-10-01T09:00:00.000Z', now)).toBe('1 Oct 26')
-  })
-
-  it('names a deleted account "Deleted user"', () => {
-    expect(otherName(person('Divya Trivedi'))).toBe('Divya Trivedi')
-    expect(otherName(person(null, true))).toBe('Deleted user')
-    expect(otherName(person(null))).toBeNull()
   })
 })
 
@@ -62,13 +66,6 @@ describe('the message buttons', () => {
     expect(listingChat([sent(1, { listingId })], [], listingId)).toEqual({ state: 'sent' })
     expect(listingChat([sent(1, { listingId, state: 'not_available' })], [], listingId)).toEqual({ state: 'not_available' })
     expect(listingChat([sent(1, { listingId, state: 'accepted' })], [chat], listingId)).toEqual({ state: 'accepted', conversationId: chat.id })
-  })
-
-  it('names the lister of each kind of listing', () => {
-    expect(messageListerLabel('pg')).toBe('Message the PG/Hostel')
-    expect(messageListerLabel('broker_flat')).toBe('Message the broker')
-    expect(messageListerLabel('owner_flat')).toBe('Message the owner')
-    expect(messageListerLabel('room_in_flat')).toBe('Message the flatmate')
   })
 
   it('finds the chat with a person', () => {

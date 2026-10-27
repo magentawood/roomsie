@@ -12,8 +12,8 @@ import { Button } from '../ui/button'
 import { TextArea } from '../ui/field'
 import { Modal } from '../ui/modal'
 
-/** A message to a listing goes to its lister, who can have no profile (T-45). */
-export type ListingTarget = { listingId: string; title: string }
+/** A message to a listing goes to its lister, who can have no profile (T-45). `lister`: "the owner". */
+type ListingTarget = { listingId: string; lister: string }
 
 /** "Say hi" sends one note as a message request (PD17), to a person or to the lister of a listing. */
 export function SayHiSheet({ target, onClose }: { target: PersonTarget | ListingTarget; onClose: () => void }) {
@@ -31,9 +31,9 @@ export function SayHiSheet({ target, onClose }: { target: PersonTarget | Listing
       onClose()
     },
   })
-  const name = person ? target.firstName : 'The lister'
+  const name = person ? target.firstName : target.lister.replace(/^t/, 'T')
   return (
-    <Modal icon={MessageCircle01} title={person ? `Say hi to ${target.firstName}` : target.title} onClose={onClose}
+    <Modal icon={MessageCircle01} title={person ? `Say hi to ${target.firstName}` : `Message ${target.lister}`} onClose={onClose}
       actions={(
         <>
           <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
