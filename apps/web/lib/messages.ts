@@ -53,6 +53,15 @@ export function inboxTime(iso: string, now = new Date()) {
   return shortDate(at)
 }
 
+const daysBetween = (from: Date, to: Date) => (Date.parse(dayOf(to)) - Date.parse(dayOf(from))) / 86_400_000
+
+/** A request to the user, as the requests drafts: "Sent 3 days ago · Closes in 11 days". */
+export function requestTimes(createdAt: string, expiresAt: string, now = new Date()) {
+  const ago = daysBetween(new Date(createdAt), now)
+  const left = daysBetween(now, new Date(expiresAt))
+  return `${ago === 0 ? 'Sent today' : `Sent ${ago} ${ago === 1 ? 'day' : 'days'} ago`} · ${left <= 0 ? 'Closes today' : left === 1 ? 'Closes tomorrow' : `Closes in ${left} days`}`
+}
+
 /** The API gives each page newest first. The thread shows the messages oldest first, under a line for each day. */
 export function threadDays(newestFirst: readonly Message[], now = new Date()) {
   const days: { label: string; messages: Message[] }[] = []

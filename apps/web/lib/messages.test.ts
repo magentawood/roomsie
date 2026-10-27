@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Conversation, IncomingRequest, Message, OutgoingRequest } from '@roomsie/contract'
-import { addMessage, badgeCount, chatWith, inboxItems, inboxTime, listingChat, messageListerLabel, otherName, threadDays } from './messages'
+import { addMessage, badgeCount, chatWith, inboxItems, inboxTime, listingChat, messageListerLabel, otherName, requestTimes, threadDays } from './messages'
 
 const id = (n: number) => `0199e4b0-0000-7000-8000-${String(n).padStart(12, '0')}`
 const person = (name: string | null, deleted = false) => ({ profileId: name ? id(90) : null, name, photoUrl: null, deleted })
@@ -41,6 +41,16 @@ describe('the inbox', () => {
     expect(otherName(person('Divya Trivedi'))).toBe('Divya Trivedi')
     expect(otherName(person(null, true))).toBe('Deleted user')
     expect(otherName(person(null))).toBeNull()
+  })
+})
+
+describe('the requests to the user', () => {
+  it('tells when a request came and when it closes, in India days', () => {
+    const now = new Date('2026-10-27T12:00:00.000Z')
+    expect(requestTimes('2026-10-27T05:00:00.000Z', '2026-11-10T05:00:00.000Z', now)).toBe('Sent today · Closes in 14 days')
+    expect(requestTimes('2026-10-24T05:00:00.000Z', '2026-11-07T05:00:00.000Z', now)).toBe('Sent 3 days ago · Closes in 11 days')
+    expect(requestTimes('2026-10-14T05:00:00.000Z', '2026-10-28T05:00:00.000Z', now)).toBe('Sent 13 days ago · Closes tomorrow')
+    expect(requestTimes('2026-10-13T13:00:00.000Z', '2026-10-27T13:00:00.000Z', now)).toBe('Sent 14 days ago · Closes today')
   })
 })
 

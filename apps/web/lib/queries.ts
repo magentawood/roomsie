@@ -1,10 +1,12 @@
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
-  areasResponse, listingResponse, meResponse, personResponse, profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
+  areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
+  profileResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { areaTree } from './areas'
 import { useUser } from './auth'
+import { badgeCount } from './messages'
 
 /** The cache keys of the API data. A change sets or refreshes its key. */
 export const queryKeys = {
@@ -16,6 +18,9 @@ export const queryKeys = {
   profile: ['profile'],
   me: ['me'],
   reportQueue: ['admin', 'reports'],
+  conversations: ['conversations'],
+  messages: (conversationId: string) => ['messages', conversationId],
+  requests: (direction: 'incoming' | 'outgoing') => ['requests', direction],
 } as const
 
 export function useMe() {
@@ -31,12 +36,13 @@ export function useReportQueue() {
 /** A 4xx is final, for example a listing or a card that is gone. Only 5xx and network errors retry. */
 const retryOnServerErrors = (count: number, err: Error) => count < 3 && !(err instanceof ApiError && err.status < 500)
 
-export function useListing(id: string) {
+export function useListing(id: string, enabled = true) {
   const user = useUser()
   return useQuery({
     queryKey: queryKeys.listing(id),
     queryFn: () => api(user, `/v1/listings/${id}`, listingResponse),
     retry: retryOnServerErrors,
+    enabled,
   })
 }
 
@@ -88,4 +94,40 @@ export function useSavedIds(kind: SavedKind) {
   const places = useSavedPlaces(kind === 'places')
   const people = useSavedPeople(kind === 'people')
   return new Set((kind === 'places' ? places.data?.places : people.data?.people)?.map((x) => x.id))
+}
+
+/** `poll`: the beat of a messages screen while the live channel is down (T-45). Without it, a focus of the tab gets the data again. */
+type Poll = number | false
+
+export function useConversations(poll: Poll = false) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.conversations, queryFn: () => api(user, '/v1/conversations', conversationsResponse), refetchInterval: poll })
+}
+
+export function useIncomingRequests(poll: Poll = false) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.requests('incoming'), queryFn: () => api(user, '/v1/requests/incoming', incomingRequestsResponse), refetchInterval: poll })
+}
+
+export function useOutgoingRequests(poll: Poll = false) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.requests('outgoing'), queryFn: () => api(user, '/v1/requests/outgoing', outgoingRequestsResponse), refetchInterval: poll })
+}
+
+/** The pages of a thread, newest first. The next page is the one before the oldest message. */
+export function useMessages(conversationId: string, poll: Poll = false) {
+  const user = useUser()
+  return useInfiniteQuery({
+    queryKey: queryKeys.messages(conversationId),
+    queryFn: ({ pageParam }) => api(user, `/v1/conversations/${conversationId}/messages${pageParam ? `?before=${pageParam}` : ''}`, messagesResponse),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (last) => (last.hasMore ? last.messages.at(-1)?.id : undefined),
+    refetchInterval: poll,
+  })
+}
+
+export function useMessagesBadge() {
+  const conversations = useConversations()
+  const incoming = useIncomingRequests()
+  return badgeCount(conversations.data?.conversations ?? [], incoming.data?.requests ?? [])
 }

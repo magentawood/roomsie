@@ -2,16 +2,18 @@
 
 import { useState, type ReactNode } from 'react'
 import {
-  Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
-  LayersThree01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
+  Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Clock, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
+  LayersThree01, MessageCircle01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
 } from '@untitledui/icons'
 import type { ListingResponse } from '@roomsie/contract'
 import { labels, listingTitle } from '../../lib/listing-steps'
 import {
   addressLine, flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
-import { useAreaLabels } from '../../lib/queries'
+import { listingChat, messageListerLabel } from '../../lib/messages'
+import { useAreaLabels, useConversations, useOutgoingRequests } from '../../lib/queries'
 import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
+import { SayHiSheet } from '../people/say-hi-sheet'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
@@ -55,6 +57,21 @@ function Person({ photoUrl, name, about }: { photoUrl: string | null; name: stri
   )
 }
 
+/** The message button of the listing details: a request to the lister, then the chat after an accept (T-45). */
+function MessageLister({ listing, onMessage }: { listing: ListingResponse; onMessage: () => void }) {
+  const outgoing = useOutgoingRequests()
+  const conversations = useConversations()
+  if (!outgoing.data || !conversations.data) return null
+  const chat = listingChat(outgoing.data.requests, conversations.data.conversations, listing.id)
+  const message = <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} onClick={onMessage}>{messageListerLabel(listing.kind)}</Button>
+  switch (chat.state) {
+    case 'sent': return <Button variant="secondary" size="lg" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
+    case 'accepted': return <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} href={chat.conversationId && `/messages/${chat.conversationId}`} disabled={!chat.conversationId}>Open chat</Button>
+    case 'not_available': return <div className="flex flex-col gap-2">{message}<p className="text-center text-sm text-tertiary">Not available. You can send a new request.</p></div>
+    default: return message
+  }
+}
+
 function OwnerBar({ listing }: { listing: ListingResponse }) {
   return (
     <div className="flex items-start justify-between gap-3 rounded-xl border border-secondary bg-secondary p-4 text-sm">
@@ -83,6 +100,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
   const areaLabels = useAreaLabels()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
+  const [messaging, setMessaging] = useState(false)
   const { share, copied } = useShare(title)
   const back = useBack()
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
@@ -115,7 +133,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
         <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
         <PhoneMenu listing={listing} onReport={() => setReporting(true)} share={share} />
       </div>
-      <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 md:px-6 md:py-8 ${listing.mine ? '' : 'pb-24 lg:pb-8'}`}>
+      <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 md:px-6 md:py-8 ${listing.mine ? '' : 'pb-40 lg:pb-8'}`}>
         <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-4 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
           <div className="flex gap-2">
@@ -132,14 +150,17 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
           {where && <p className="text-md text-tertiary">{where}</p>}
           {address && <p className="text-sm text-tertiary">{address}</p>}
         </header>
+        {!listing.mine && <div className="hidden lg:block"><MessageLister listing={listing} onMessage={() => setMessaging(true)} /></div>}
         {parts.map(([partTitle, body]) => body && <Section key={partTitle} title={partTitle}>{body}</Section>)}
       </article>
       {!listing.mine && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary p-4 lg:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-30 flex flex-col gap-3 border-t border-secondary bg-primary p-4 lg:hidden">
+          <MessageLister listing={listing} onMessage={() => setMessaging(true)} />
           <SaveButton kind="places" id={listing.id} className="w-full py-2.5" />
         </div>
       )}
       {reporting && <ReportSheet target={{ listingId: listing.id }} onClose={() => setReporting(false)} />}
+      {messaging && <SayHiSheet target={{ listingId: listing.id, title: messageListerLabel(listing.kind) }} onClose={() => setMessaging(false)} />}
     </>
   )
 }
