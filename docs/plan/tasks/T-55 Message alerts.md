@@ -43,7 +43,7 @@ Tell a person about a new request or message by email and browser push.
 
 ## Spec
 
-**Approved:** not yet
+**Approved:** 2026-10-27, by n3rxv
 
 - **Modules:**
   - **The alerts module of the API (new):** the rules of who gets an alert and when, the email through Amazon SES, and the push through Firebase Cloud Messaging. The requests and messages routes call it after each save. Its interface is new: one call for a request, one for a message, and one for an accept.
