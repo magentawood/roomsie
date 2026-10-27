@@ -15,7 +15,7 @@ import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { EmptyState } from '../ui/empty-state'
 import { TextArea } from '../ui/field'
-import { ModalFrame, ModalTop } from '../ui/modal'
+import { ModalFrame, ModalHead } from '../ui/modal'
 
 type Check = IdCheckQueueResponse['checks'][number]
 
@@ -27,11 +27,9 @@ function RejectDialog({ name, busy, onReject, onClose }: { name: string; busy: b
   return (
     <ModalFrame labelledBy="reject-title" onClose={onClose}>
       <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <ModalTop icon={SlashCircle01} onClose={onClose} />
-        <div className="flex flex-col gap-1">
-          <h2 id="reject-title" className="text-md font-semibold text-primary">Reject {name}’s check?</h2>
-          <p className="text-sm text-tertiary">{name} sees the reason and the note, and can send a new ID. We delete both photos now.</p>
-        </div>
+        <ModalHead icon={SlashCircle01} titleId="reject-title" title={`Reject ${name}’s check?`} onClose={onClose}>
+          {name} sees the reason and the note, and can send a new ID. We delete both photos now.
+        </ModalHead>
         <ChoiceChips label="Reason" labels={rejectReasonLabels} value={reason} onChange={setReason} required />
         <TextArea label={`Note to ${name} (optional)`} value={note} onChange={setNote} maxLength={reviewNoteLimit}
           hint={`At most ${reviewNoteLimit} characters. Be kind: say what to fix.`} placeholder="The photo on the ID is cut off at the top." />

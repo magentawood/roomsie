@@ -1,6 +1,6 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, asc, eq, sql } from 'drizzle-orm'
+import { and, asc, count, eq, inArray, sql } from 'drizzle-orm'
 import {
   checkUploadBody, checkUploadResponse, errorResponse, idCheckPhotosResponse, idCheckQueueResponse, noContent, reviewCheckBody, sendCheckBody,
   verificationResponse,
@@ -68,15 +68,16 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
   app.get('/admin/verifications', { preHandler: reviewerOnly, schema: { response: { 200: idCheckQueueResponse, 404: errorResponse } } }, async () => {
     // Each load of the queue is the sweep of the expired checks: no job runs for it.
     await clearExpired(db)
-    const rows = await db.select({
-      check: verifications,
-      // Drizzle writes the outer columns with no table name, which the subquery would read as its own.
-      earlierChecks: sql<number>`(select count(*)::int from verifications as earlier
-        where earlier.user_id = verifications.user_id and earlier.created_at < verifications.created_at)`,
-    }).from(verifications).where(openCheck()).orderBy(asc(verifications.createdAt))
-    const people = await peopleOf(db, storage, rows.map((r) => r.check.userId))
+    const rows = await db.select().from(verifications).where(openCheck()).orderBy(asc(verifications.createdAt))
+    const userIds = rows.map((r) => r.userId)
+    const [people, counts] = await Promise.all([
+      peopleOf(db, storage, userIds),
+      db.select({ userId: verifications.userId, checks: count() }).from(verifications).where(inArray(verifications.userId, userIds)).groupBy(verifications.userId),
+    ])
     return {
-      checks: rows.map(({ check, earlierChecks }) => {
+      // An open check is the latest check of its person, so the others came before it.
+      checks: rows.map((check) => {
+        const earlierChecks = counts.find((c) => c.userId === check.userId)!.checks - 1
         // The card of a son or daughter is not the person who sent the check (T-16a).
         const person = people.get(check.userId)
         const own = person && !person.managedByParent

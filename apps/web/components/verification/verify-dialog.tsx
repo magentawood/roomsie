@@ -10,7 +10,7 @@ import { queryKeys } from '../../lib/queries'
 import { openCamera, sendCheck, takeSelfie } from '../../lib/verification'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
-import { ModalFrame, ModalTop } from '../ui/modal'
+import { ModalFrame, ModalHead } from '../ui/modal'
 
 /** The live camera of step 2. No file picker: the selfie must come from the camera now (T-46). */
 function Camera({ shot, onShot }: { shot: string | null; onShot: (selfie: Blob) => void }) {
@@ -80,15 +80,11 @@ export function VerifyDialog({ onClose }: { onClose: () => void }) {
   return (
     <ModalFrame labelledBy="verify-title" onClose={onClose}>
       <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <ModalTop icon={ShieldTick} iconTone="success" onClose={onClose} />
-        <div className="flex flex-col gap-1">
-          <h2 id="verify-title" className="text-md font-semibold text-primary">Verify your ID</h2>
-          <p className="text-sm text-tertiary">
-            {step === 'id'
-              ? 'Step 1 of 2 · Pick your ID and add a photo of the side with your face. We don’t accept an Aadhaar card.'
-              : 'Step 2 of 2 · Take a selfie now. Look at the camera, in good light, with nothing over your face.'}
-          </p>
-        </div>
+        <ModalHead icon={ShieldTick} iconTone="success" titleId="verify-title" title="Verify your ID" onClose={onClose}>
+          {step === 'id'
+            ? 'Step 1 of 2 · Pick your ID and add a photo of the side with your face. We don’t accept an Aadhaar card.'
+            : 'Step 2 of 2 · Take a selfie now. Look at the camera, in good light, with nothing over your face.'}
+        </ModalHead>
 
         {step === 'id' && (
           <>

@@ -4,7 +4,7 @@ import {
   checkUploadResponse, idCheckPhotosResponse, idCheckQueueResponse, listingResponse, personResponse, savedPeopleResponse, savedPlacesResponse,
   verificationResponse, type ReviewCheckBody,
 } from '@roomsie/contract'
-import { pushTokens, verificationAudit, verifications } from '../src/db/schema'
+import { profiles, pushTokens, verificationAudit, verifications } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'lister' | 'seeker' | 'reviewer' | 'moderator' | 'leaver'
@@ -81,6 +81,14 @@ describe('a check that a person sends', () => {
     expect((await t.call('seeker', 'POST', '/v1/me/verification/upload-urls', { idPhoto: photo, selfie: photo })).statusCode).toBe(409)
   })
 
+  it('makes one check from two sends at the same time', async () => {
+    const { idPhoto, selfie } = await links('seeker')
+    const body = { documentType: 'passport', idPhotoKey: idPhoto.key, selfieKey: selfie.key }
+    const sends = await Promise.all([1, 2].map(() => t.call('seeker', 'POST', '/v1/me/verification', body)))
+    expect(sends.map((s) => s.statusCode).sort()).toEqual([201, 409])
+    expect(await t.db.select().from(verifications).where(eq(verifications.userId, t.ids.seeker))).toHaveLength(1)
+  })
+
   it('keeps a check with no face-match score', async () => {
     t.idStore.face.score = null
     await sendCheck('seeker')
@@ -142,6 +150,19 @@ describe('the review', () => {
     expect((await t.call('lister', 'PUT', `/v1/saved/people/${seekerCard}`)).statusCode).toBe(204)
     const saved = savedPeopleResponse.parse((await t.call('lister', 'GET', '/v1/saved/people')).json()).people
     expect(saved.map((p) => p.verified)).toEqual([true])
+  })
+
+  it('shows no badge and no name of a parent on the card of a son or daughter', async () => {
+    await t.db.update(profiles).set({ managedByParent: true }).where(eq(profiles.id, seekerCard))
+    try {
+      const id = await sendCheck('seeker')
+      expect((await queue())[0]).toMatchObject({ name: null, photoUrl: null })
+      expect((await review(id, { action: 'approve' })).statusCode).toBe(204)
+      const person = personResponse.parse((await t.call('lister', 'GET', `/v1/people/${seekerCard}`)).json())
+      expect(person.verified).toBe(false)
+    } finally {
+      await t.db.update(profiles).set({ managedByParent: false }).where(eq(profiles.id, seekerCard))
+    }
   })
 
   it('shows the badge of the owner on a listing', async () => {
