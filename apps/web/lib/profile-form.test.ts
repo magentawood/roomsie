@@ -5,7 +5,7 @@ import { bandOf, describesYou, editBody, formOf, pickDescribesYou } from './prof
 const saved: ProfileResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', jobRole: null, commuteAddress: null, bio: null,
   managedByParent: false, intent: 'unclear', whosMoving: 'working', areas: ['bandra-santacruz'], budgetMin: null, budgetMax: 25000, moveDate: null,
-  photos: [], lifestyle: { food: 'veg' }, mustHaves: { veg_kitchen: 'dealbreaker' }, visibility: 'live', missing: [], hiddenForReview: false,
+  photos: [], lifestyle: { food: 'veg' }, mustHaves: { veg_kitchen: 'dealbreaker' }, visibility: 'live', missing: [], hiddenForReview: false, verified: false,
 }
 
 describe('the budget bands of the designs', () => {

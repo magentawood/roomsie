@@ -20,6 +20,7 @@ import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { Field, TextArea, TextInput, inputClass } from '../ui/field'
 import { Toggle } from '../ui/toggle'
+import { VerifyRow } from '../verification/verify-row'
 import { AlertSwitches } from './alert-switches'
 import { AreaPicker } from './area-picker'
 import { DeleteAccountDialog } from './delete-account-dialog'
@@ -190,7 +191,8 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <TextArea label="What I want the others to know" value={draft.bio} onChange={(bio) => set({ bio })} placeholder="Say how you’d say it to a friend" maxLength={profileTextLimits.bio} />
       </Section>
 
-      <Section title="Settings" helper="Card visibility, alerts and your account.">
+      <Section title="Settings" helper="Verification, card visibility, alerts and your account.">
+        <VerifyRow />
         <Toggle title="Hide my card" help="Your card stops showing in other people’s results." checked={draft.hidden} onChange={(hidden) => set({ hidden })} />
         <AlertSwitches />
         <div className="flex items-start justify-between gap-4">

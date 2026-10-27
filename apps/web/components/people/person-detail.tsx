@@ -23,7 +23,7 @@ const lifestyleIcons: Record<LifestyleAxis, Icon> = {
   food: ShoppingCart01, smoking: SlashCircle01, drinks: Droplets01, guests: Users01, your_days: Sun, sleep: Moon01, tidiness: Brush01, pets: Heart,
 }
 
-/** The detail of a person: the flatmate detail of the Product file and section 16 of the drafts (T-18b). TODO(T-46): the "Verified" pill. */
+/** The detail of a person: the flatmate detail of the Product file and section 16 of the drafts (T-18b). */
 export function PersonDetail({ person }: { person: PersonResponse }) {
   const areaLabels = useAreaLabels()
   const saved = useSaved('people', person.id)
@@ -72,6 +72,7 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
         <header className="flex flex-col gap-1 border-b border-secondary pb-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h1 className="text-lg font-semibold text-primary">{person.fullName}</h1>
+            {person.verified && <Badge tone="success">Verified</Badge>}
             {person.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
           </div>
           <p className="text-md text-tertiary">{aboutLine(person)}</p>

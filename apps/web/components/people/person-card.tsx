@@ -6,7 +6,7 @@ import { aboutLine, budgetLine, initials, lifestyleSummary, lookingFor } from '.
 import { shortDate } from '../../lib/place-detail'
 import { Badge } from '../ui/badge'
 
-/** The person card of sections 14 and 19 of the drafts, with no match details (T-18b). TODO(T-15): the match badges. TODO(T-46): "Verified". */
+/** The person card of sections 14 and 19 of the drafts, with no match details (T-18b). TODO(T-15): the match badges. */
 export function PersonCard({ card, action }: { card: CardResponse; action?: ReactNode }) {
   const href = `/people/${card.id}`
   const photo = card.photos[0]
@@ -27,6 +27,7 @@ export function PersonCard({ card, action }: { card: CardResponse; action?: Reac
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-md font-medium text-primary"><Link href={href} className="outline-focus-ring hover:underline focus-visible:outline-2">{card.fullName}</Link></h3>
+          {card.verified && <Badge tone="success">Verified</Badge>}
           {card.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
         </div>
         <p className="text-sm text-tertiary">{aboutLine(card)}</p>

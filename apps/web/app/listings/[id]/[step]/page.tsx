@@ -8,7 +8,8 @@ import { listingResponse, noContent, type AreasResponse, type GoLiveField, type 
 import { api, errorText, missingFields } from '../../../../lib/api'
 import { useUser } from '../../../../lib/auth'
 import { listingSteps, stepBody, stepCopy, stepErrors, toEditValues, type StepId } from '../../../../lib/listing-steps'
-import { queryKeys, useAreas, useListing } from '../../../../lib/queries'
+import { queryKeys, useAreas, useListing, useVerification } from '../../../../lib/queries'
+import { canSendCheck } from '../../../../lib/verification'
 import { FlowFrame } from '../../../../components/listings/flow-frame'
 import { MissingNotice } from '../../../../components/listings/missing-notice'
 import { KindStep, NearbyStep, PeopleStep, PhotosStep, PlaceStep, RentStep, RulesStep, WhereStep } from '../../../../components/listings/steps'
@@ -16,6 +17,7 @@ import { AppShell } from '../../../../components/shell/app-shell'
 import { listingSignIn, SignInGate } from '../../../../components/shell/sign-in-gate'
 import { Button } from '../../../../components/ui/button'
 import { Modal } from '../../../../components/ui/modal'
+import { VerifyAfterPublish } from '../../../../components/verification/verify-row'
 
 function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas: AreasResponse['areas']; stepNumber: number }) {
   const user = useUser()
@@ -33,6 +35,8 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
   const [missing, setMissing] = useState<GoLiveField[]>([])
   const [checked, setChecked] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [offerCheck, setOfferCheck] = useState(false)
+  const verification = useVerification(last && listing.status === 'draft')
   const set = (patch: ListingEdit) => setValues((v) => ({ ...v, ...patch }))
 
   const save = useMutation({
@@ -68,6 +72,8 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
       if (stepId !== 'kind') await save.mutateAsync()
       if (target === 'publish') await publish.mutateAsync()
       await queryClient.invalidateQueries({ queryKey: queryKeys.myListings })
+      // PD8: the listing is live before the check. The offer shows only to a person who can send one.
+      if (target === 'publish' && verification.data && canSendCheck(verification.data.state)) return setOfferCheck(true)
       if (target === 'next') router.push(`/listings/${listing.id}/${stepNumber + 1}`)
       else if (target === 'previous') router.push(stepNumber > 1 ? `/listings/${listing.id}/${stepNumber - 1}` : '/listings')
       else router.push('/listings')
@@ -118,6 +124,7 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
         )}>
         {stepContent}
       </FlowFrame>
+      {offerCheck && <VerifyAfterPublish onDone={() => router.push('/listings')} />}
       {confirmDelete && (
         <Modal icon={Trash01} title="Delete this listing?" onClose={() => setConfirmDelete(false)}
           actions={(
