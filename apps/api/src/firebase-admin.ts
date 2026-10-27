@@ -1,20 +1,15 @@
 import { importPKCS8, SignJWT } from 'jose'
 import { z } from 'zod'
 
-/**
- * The only code that calls the Firebase Admin API. It calls the REST API that the Admin SDK calls,
- * with a token of the service account, so the API needs no SDK.
- */
-export type FirebaseAdmin = { setClaims(uid: string, claims: Record<string, string>): Promise<void> }
-
+// The REST call of the Admin SDK, with a token of the service account: no SDK dependency.
 export const serviceAccount = z.object({ project_id: z.string(), client_email: z.string(), private_key: z.string() })
-type ServiceAccount = z.infer<typeof serviceAccount>
 
-export function firebaseAdmin(account: ServiceAccount): FirebaseAdmin {
-  let token: { value: string; expires: number } | null = null
-  // A Google access token lives one hour. One token serves each call until 5 minutes before it ends.
+/** The claims that Supabase Realtime needs (T-44). Firebase already uses `user_id` for its uid, so ours has another name. */
+export type RealtimeClaims = { role: 'authenticated'; roomsie_user_id: string }
+export type FirebaseAdmin = { setClaims(uid: string, claims: RealtimeClaims): Promise<void> }
+
+export function firebaseAdmin(account: z.infer<typeof serviceAccount>): FirebaseAdmin {
   async function accessToken() {
-    if (token && token.expires > Date.now() + 5 * 60_000) return token.value
     const now = Math.floor(Date.now() / 1000)
     const assertion = await new SignJWT({ scope: 'https://www.googleapis.com/auth/identitytoolkit' })
       .setProtectedHeader({ alg: 'RS256' }).setIssuer(account.client_email).setAudience('https://oauth2.googleapis.com/token')
@@ -24,9 +19,7 @@ export function firebaseAdmin(account: ServiceAccount): FirebaseAdmin {
       body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
     })
     if (!res.ok) throw new Error(`Google token failed: ${res.status}`)
-    const body = z.object({ access_token: z.string(), expires_in: z.number() }).parse(await res.json())
-    token = { value: body.access_token, expires: Date.now() + body.expires_in * 1000 }
-    return token.value
+    return z.object({ access_token: z.string() }).parse(await res.json()).access_token
   }
   return {
     async setClaims(uid, claims) {

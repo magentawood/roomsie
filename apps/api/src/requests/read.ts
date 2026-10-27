@@ -37,10 +37,16 @@ export async function connectionWith(db: Db, viewerUserId: string, otherUserId: 
   return { state: mine ? 'not_available' : 'none' }
 }
 
-/** A suspended or deleted person leaves: the requests that the person sent are withdrawn, and the requests to the person are declined, so their senders see "not available". */
+/** For a suspended or deleted person. The senders of the requests to the person see "not available", as after a decline. */
 export async function endOpenRequests(tx: Tx, userId: string) {
-  const now = new Date()
   const open = eq(connectionRequests.status, 'pending')
   await tx.update(connectionRequests).set({ status: 'withdrawn' }).where(and(eq(connectionRequests.fromUserId, userId), open))
-  await tx.update(connectionRequests).set({ status: 'declined', respondedAt: now }).where(and(eq(connectionRequests.toUserId, userId), open))
+  await tx.update(connectionRequests).set({ status: 'declined', respondedAt: new Date() }).where(and(eq(connectionRequests.toUserId, userId), open))
+}
+
+/** The last read of a conversation by the user: the unread count starts after it (T-44). */
+export async function markRead(db: Db, requestId: string, userId: string) {
+  const now = new Date()
+  await db.update(connectionRequests).set({ fromReadAt: now }).where(and(eq(connectionRequests.id, requestId), eq(connectionRequests.fromUserId, userId)))
+  await db.update(connectionRequests).set({ toReadAt: now }).where(and(eq(connectionRequests.id, requestId), eq(connectionRequests.toUserId, userId)))
 }

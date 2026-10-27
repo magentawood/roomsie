@@ -14,3 +14,10 @@ export const uploadUrlReply = (key: ReturnType<typeof photoKeyIn>) => z.object({
 export const rupees = z.int().min(0).max(100_000_000)
 export const requiredText = (max: number) => z.string().trim().min(1).max(max)
 export const optionalText = (max: number) => requiredText(max).nullable()
+
+const idClockSkew = 5 * 60_000
+/** The time in a UUIDv7: its first 48 bits, in milliseconds. */
+const uuidv7Time = (id: string) => parseInt(id.replaceAll('-', '').slice(0, 12), 16)
+/** An id that the client makes: a UUIDv7 with a time at most 5 minutes from the server clock (ADR-0015). */
+export const clientId = z.uuid({ version: 'v7' })
+  .refine((id) => Math.abs(Date.now() - uuidv7Time(id)) <= idClockSkew, 'The time in the id is more than 5 minutes off')

@@ -22,7 +22,7 @@ beforeEach(async () => {
 
 const list = async (who: Who) => conversationsResponse.parse((await t.call(who, 'GET', '/v1/conversations')).json()).conversations
 const thread = async (who: Who, id: string, before?: string) =>
-  messagesResponse.parse((await t.call(who, 'GET', `/v1/conversations/${id}/messages${before ? `?before=${encodeURIComponent(before)}` : ''}`)).json())
+  messagesResponse.parse((await t.call(who, 'GET', `/v1/conversations/${id}/messages${before ? `?before=${before}` : ''}`)).json())
 const send = (who: Who, id: string, text: string, messageId = uuidv7()) => t.call(who, 'POST', `/v1/conversations/${id}/messages`, { id: messageId, text })
 /** Rahul says hi to Divya, and Divya accepts. Gives the id of the conversation. */
 async function connect(note = 'Hi Divya, I work in BKC.') {
@@ -83,16 +83,17 @@ describe('a conversation', () => {
     expect((await list('seeker'))[0]!.unread).toBe(0)
   })
 
-  it('gives the messages in pages, the newest first', async () => {
+  it('gives the messages in pages, the newest first, and loses no message at a tie of times on the edge of a page', async () => {
     const id = await connect()
     // After the note, which has the time of the request.
     const start = Date.now() + 60_000
-    await t.db.insert(messages).values(Array.from({ length: 60 }, (_, i) => ({ requestId: id, senderUserId: t.ids.seeker, text: `m${i}`, createdAt: new Date(start + i * 1000) })))
+    // m9 has the time of m10, the last message of the first page.
+    await t.db.insert(messages).values(Array.from({ length: 60 }, (_, i) => ({ requestId: id, senderUserId: t.ids.seeker, text: `m${i}`, createdAt: new Date(start + (i === 9 ? 10 : i) * 1000) })))
     const first = await thread('friend', id)
     expect(first.messages).toHaveLength(50)
     expect(first.messages[0]!.text).toBe('m59')
     expect(first.hasMore).toBe(true)
-    const second = await thread('friend', id, first.messages.at(-1)!.createdAt)
+    const second = await thread('friend', id, first.messages.at(-1)!.id)
     expect(second.messages.map((m) => m.text)).toEqual(['m9', 'm8', 'm7', 'm6', 'm5', 'm4', 'm3', 'm2', 'm1', 'm0', 'Hi Divya, I work in BKC.'])
     expect(second.hasMore).toBe(false)
   })
@@ -143,8 +144,8 @@ describe('the realtime channel', () => {
   it('gives the channel and the public settings, and adds the claims to the token one time', async () => {
     const first = realtimeResponse.parse((await t.call('seeker', 'POST', '/v1/me/realtime')).json())
     expect(first).toEqual({ url: 'https://realtime.example.com', key: 'test-anon-key', channel: `user:${t.ids.seeker}`, refreshToken: true })
-    expect(t.claims).toEqual([{ uid: 'uid-seeker', claims: { role: 'authenticated', user_id: t.ids.seeker } }])
-    const token = await t.idToken('uid-seeker', { claims: { role: 'authenticated', user_id: t.ids.seeker } })
+    expect(t.claims).toEqual([{ uid: 'uid-seeker', claims: { role: 'authenticated', roomsie_user_id: t.ids.seeker } }])
+    const token = await t.idToken('uid-seeker', { claims: { role: 'authenticated', roomsie_user_id: t.ids.seeker } })
     const again = realtimeResponse.parse((await t.call('seeker', 'POST', '/v1/me/realtime', undefined, token)).json())
     expect(again.refreshToken).toBe(false)
     expect(t.claims).toHaveLength(1)

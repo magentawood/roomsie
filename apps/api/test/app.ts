@@ -18,11 +18,11 @@ export const testModeration = (settings: Record<string, string> = {}) => moderat
 /** A Realtime and a Firebase Admin that record their calls, and the public settings of Realtime. */
 export function testMessaging() {
   const sent: { userId: string; event: string; payload: object }[] = []
-  const claims: { uid: string; claims: Record<string, string> }[] = []
+  const claims: { uid: string; claims: object }[] = []
   const messaging: Messaging = {
-    realtime: { send: async (userId, event, payload) => { sent.push({ userId, event, payload }) } },
+    realtime: { send: async (userId, { event, payload }) => { sent.push({ userId, event, payload }) } },
     firebaseAdmin: { setClaims: async (uid, c) => { claims.push({ uid, claims: c }) } },
-    realtimeClient: { url: 'https://realtime.example.com', key: 'test-anon-key' },
+    webRealtime: { url: 'https://realtime.example.com', key: 'test-anon-key' },
   }
   return { messaging, sent, claims }
 }

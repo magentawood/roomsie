@@ -41,7 +41,7 @@ The server part of in-app messages between two users.
 - [ ] The API never gives a message to a user who is not in the conversation
 - [ ] A blocked user cannot send a message to the user who blocked them
 - [ ] The API masks phone numbers and WhatsApp links as •••• in each message
-- [ ] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests
+- [ ] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests
 
 ^done
 
@@ -58,10 +58,10 @@ The server part of in-app messages between two users.
   - `packages/contract`: the conversations, the messages, the send body, and the reply of the realtime route. The interface changes.
   - `apps/api`:
     - New: the messaging module, with the routes of the conversations and the messages.
-    - New: a realtime module, the only code that calls Supabase Realtime. New: a Firebase Admin module, the only code that calls the Firebase Admin SDK.
+    - New: a realtime module, the only code that calls Supabase Realtime. New: a Firebase Admin module, the only code that calls the Firebase Admin API.
     - The settings: the Supabase URL and key, and the Firebase service account. Each is optional in development and in the tests.
     - The accept of a request makes its note the first message. The requests keep their rows when a profile is deleted.
-    - One migration: the messages, the read times, the profile links of the requests that can be empty, and the Realtime policy, which runs only on Supabase.
+    - Two migrations: the messages, the read times and the profile links of the requests that can be empty; and the Realtime policy, which runs only on Supabase, as a custom migration of drizzle-kit.
     - The interface changes.
   - The deploy of the API: the Firebase service account comes from a GitHub secret.
   - Docs: a learn page for messages and realtime.
@@ -77,9 +77,10 @@ The server part of in-app messages between two users.
     - The user marks a conversation as read.
     - A user who is not in the conversation gets 404.
   - After the save, the API broadcasts the message on a private Supabase Realtime channel of each of the two people, `user:<our user id>`. Only that user can join the channel: a policy checks the claims of the token ([ADR-0005](../../decisions/0005-managed-platform-split.md)).
-  - Supabase trusts the Firebase sign-in (third-party auth). The API adds the claims `role: 'authenticated'` and our user id to the Firebase user with the Firebase Admin SDK, at no extra compute cost. A route gives the web its channel, and tells it when it must refresh the token one time.
+  - Supabase trusts the Firebase sign-in (third-party auth). The API adds the claims `role: 'authenticated'` and our user id to the Firebase user with the Firebase Admin API, at no extra compute cost. A route gives the web its channel, and tells it when it must refresh the token one time.
   - A block hides the thread from the two people, and neither can send.
   - A suspended account cannot sign in, and nobody can send to it. The thread stays for the other person to read.
   - After an account deletion (T-20), the requests keep their rows: the profile links become empty, and the user row stays as a tombstone. The other person keeps the thread, which they can read but not answer, and sees "Deleted user".
-  - Setup that the user does: a Firebase service account key in a GitHub secret, through a `!` command; in Supabase, Firebase as a third-party auth provider, and Realtime that allows private channels only.
+  - Setup that the user does: the Firebase service account key and the public key of Supabase in GitHub secrets, through `!` commands; in Supabase, Firebase as a third-party auth provider, and Realtime that allows private channels only.
+  - Review round 1, the user decided: the API calls the REST API of Firebase Admin, with no SDK. Item 7 changed: "A deleted profile now cascades its connection requests" → "A deleted profile or listing no longer deletes its connection requests".
 - **Out of scope:** the screens and the realtime client of the web (T-45), the email and push alerts (T-55), the reports in a conversation (T-45), unblock.
