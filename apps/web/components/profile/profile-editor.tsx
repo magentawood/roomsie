@@ -154,7 +154,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
             <p className="text-sm text-tertiary">You make the card for your son or daughter. They must be 18 or older. Their card shows “Managed by a parent”, and you send and get the messages.</p>
           </>
         )}
-        <MultiChips label="Areas you are looking for" labels={Object.fromEntries((areas.data?.areas ?? []).map((a) => [a.slug, a.name]))}
+        <MultiChips label="Areas you are looking for" labels={Object.fromEntries((areas.data?.areas ?? []).filter((a) => !a.parent).map((a) => [a.slug, a.name]))}
           value={draft.areas} onChange={(picked) => set({ areas: picked })} />
         <ChoiceChips label="Budget" labels={profileLabels.budget} value={bandOf(draft.budgetMin, draft.budgetMax)}
           onChange={(id) => {

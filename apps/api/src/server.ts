@@ -8,12 +8,11 @@ import {
   validatorCompiler,
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
-import { asc } from 'drizzle-orm'
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { deleteAccount } from './account'
+import { listAreas } from './areas'
 import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
-import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
 import { moderationRoutes } from './moderation/routes'
@@ -65,10 +64,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       v1.withTypeProvider<ZodTypeProvider>().get(
         '/areas',
         { schema: { response: { 200: areasResponse } } },
-        async () => ({
-          areas: await options.db.select({ slug: areas.slug, name: areas.name })
-            .from(areas).orderBy(asc(areas.sortOrder)),
-        }),
+        async () => ({ areas: await listAreas(options.db) }),
       )
       listingRoutes(v1, options)
       savedRoutes(v1, options)

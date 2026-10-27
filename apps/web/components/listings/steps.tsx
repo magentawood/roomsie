@@ -34,7 +34,8 @@ export function KindStep({ kind, onPick }: { kind: ListingKind | null; onPick?: 
 }
 
 export function WhereStep({ kind, values, set, errors, areas }: StepProps & { areas: AreasResponse['areas'] }) {
-  const areaLabels = Object.fromEntries(areas.map((a) => [a.slug, a.name]))
+  // TODO(T-57): pick the group, then its sub-areas. A listing takes a sub-area or a pocket, not a group.
+  const areaLabels = Object.fromEntries(areas.filter((a) => a.parent).map((a) => [a.slug, a.name]))
   return (
     <>
       {kind === 'pg' && <TextInput label="PG/Hostel Name" required value={values.pgName} onChange={(pgName) => set({ pgName })} placeholder="Name of your PG/Hostel" hint={maskedHint} maxLength={textLimits.pgName} />}

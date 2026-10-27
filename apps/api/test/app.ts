@@ -27,10 +27,17 @@ export function testMessaging() {
   return { messaging, sent, claims }
 }
 
-/** A server on a disposable database with the area "bandra" and one signed-in user for each name. The first user lists. Call close() when done. */
+/** An area group, its sub-area "bandra", and the pocket "pali-hill" inside it. */
+export const testAreas = [
+  { slug: 'bandra-santacruz', name: 'Bandra–Santacruz' },
+  { slug: 'bandra', name: 'Bandra', parentSlug: 'bandra-santacruz' },
+  { slug: 'pali-hill', name: 'Pali Hill', parentSlug: 'bandra' },
+]
+
+/** A server on a disposable database with the test areas and one signed-in user for each name. The first user lists. Call close() when done. */
 export async function testApp<U extends string>(users: readonly [U, ...U[]], storage: Storage = offlineStorage, settings: Record<string, string> = {}) {
   const testDb = await createTestDb()
-  await testDb.db.insert(areas).values({ slug: 'bandra', name: 'Bandra' })
+  await testDb.db.insert(areas).values(testAreas)
   const { firebaseKeys, idToken } = await testTokens()
   const fakes = testMessaging()
   const tokens = {} as Record<U, string>

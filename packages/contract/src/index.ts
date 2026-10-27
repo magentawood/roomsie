@@ -5,9 +5,9 @@ export type HealthResponse = z.infer<typeof healthResponse>
 
 export const meResponse = z.object({ id: z.uuid(), status: z.enum(['active', 'suspended', 'deleted']), moderator: z.boolean() })
 export type MeResponse = z.infer<typeof meResponse>
-/** The nine area groups of PD2. */
+/** The area groups of PD2, their sub-areas and pockets, in order. `parent` is null for a group. */
 export const areasResponse = z.object({
-  areas: z.array(z.object({ slug: z.string(), name: z.string() })),
+  areas: z.array(z.object({ slug: z.string(), name: z.string(), parent: z.string().nullable(), aliases: z.array(z.string()) })),
 })
 export type AreasResponse = z.infer<typeof areasResponse>
 

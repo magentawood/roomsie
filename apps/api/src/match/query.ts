@@ -15,6 +15,7 @@
  * means something.
  */
 import { and, eq, ne, inArray, isNull, sql, desc, type SQLWrapper } from 'drizzle-orm'
+import { areaParents, relatedAreas } from '../areas'
 import type { Db } from '../db/client'
 import { profiles, users, profileLifestyle, blocks } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
@@ -127,8 +128,8 @@ export async function findMatches(
   const conditions = [
     ...visiblePeople(opts.viewerUserId),
     inArray(profiles.intent, compatibleIntents(form.intent)),
-    /** Areas overlap. `&&` is Postgres array intersection. */
-    sql`${profiles.areas} && ${form.areas}`,
+    /** Areas overlap, where an area includes the areas under it. `&&` is Postgres array intersection. */
+    sql`${profiles.areas} && ${relatedAreas(await areaParents(db), form.areas)}`,
   ]
 
   /** Budget ranges must overlap, not match. Someone asking up to 25k and

@@ -59,6 +59,13 @@ describe('the own profile', () => {
     expect((await edit('lister', { budgetMax: 20000 })).statusCode).toBe(200)
   })
 
+  it('saves an area group, a sub-area and a pocket together, up to 20 areas', async () => {
+    expect(profileResponse.parse((await edit('lister', { areas: ['bandra-santacruz', 'bandra', 'pali-hill'] })).json()).areas)
+      .toEqual(['bandra-santacruz', 'bandra', 'pali-hill'])
+    expect((await edit('lister', { areas: Array.from({ length: 21 }, (_, i) => `area-${i}`) })).statusCode).toBe(400)
+    expect((await edit('lister', { areas: ['bandra'] })).statusCode).toBe(200)
+  })
+
   it('refuses an unknown area, a budget the wrong way round, and an edit with no profile', async () => {
     expect((await edit('lister', { areas: ['pune'] })).statusCode).toBe(400)
     expect((await edit('lister', { budgetMin: 25000, budgetMax: 15000 })).statusCode).toBe(400)

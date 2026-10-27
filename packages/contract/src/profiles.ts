@@ -61,7 +61,7 @@ export const profileEditBody = z.strictObject({
   managedByParent: z.boolean(),
   intent: z.enum(intents),
   whosMoving: z.enum(whosMovingAnswers),
-  areas: z.array(z.string().min(1).max(60)).max(9).refine((a) => new Set(a).size === a.length, 'Each area once'),
+  areas: z.array(z.string().min(1).max(60)).max(20).refine((a) => new Set(a).size === a.length, 'Each area once'),
   budgetMin: rupees.nullable(),
   budgetMax: rupees.nullable(),
   moveDate: z.iso.date().nullable(),
