@@ -1201,16 +1201,17 @@
   {
    "id": "T-22a",
    "title": "Mumbai areas and waitlist API",
-   "plain": "The server part: know the nine Mumbai area groups, and save waitlist emails from places outside Mumbai.",
+   "plain": "The server part: know the Mumbai area groups, and save waitlist emails from places outside Mumbai.",
    "role": "P4",
    "hours": 2,
    "start": "2026-10-08",
    "end": "2026-10-10",
    "deps": [
-    "T-14"
+    "T-14",
+    "T-56"
    ],
    "done": [
-    "The API tells if a place is in the nine Mumbai area groups",
+    "The API tells if a place is in a Mumbai area group, by its name or another name",
     "The system saves each waitlist entry with its place"
    ],
    "read": [
@@ -1846,6 +1847,53 @@
    "cp": "CP3",
    "critical": false,
    "issue": 161
+  },
+  {
+   "id": "T-56",
+   "title": "Sub-areas API",
+   "plain": "Gives the sub-areas of each Mumbai area group, and checks the areas that listings and profiles pick.",
+   "role": "P3",
+   "hours": 6,
+   "start": "2026-10-28",
+   "end": "2026-10-29",
+   "deps": [],
+   "done": [
+    "The areas API gives the ten groups with their sub-areas, pockets and other names",
+    "A listing goes live only with a sub-area or a pocket",
+    "A profile picks groups, sub-areas and pockets, and a group matches all its sub-areas",
+    "The unused launch-area column and its index are gone"
+   ],
+   "read": [
+    "docs/specs/sub-areas.md",
+    "docs/decisions/pd-02-launch-market.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 163
+  },
+  {
+   "id": "T-57",
+   "title": "Sub-area pickers",
+   "plain": "Lets a lister and a seeker pick a sub-area, and shows it on each card.",
+   "role": "P3",
+   "hours": 8,
+   "start": "2026-10-30",
+   "end": "2026-11-03",
+   "deps": [
+    "T-56"
+   ],
+   "done": [
+    "The Where step of a listing picks a sub-area or a pocket of the group, as on our drafts page",
+    "The profile editor picks a whole group or its sub-areas, and finds an area by another name",
+    "Cards and details show the sub-area, and a pocket with its parent"
+   ],
+   "read": [
+    "docs/specs/sub-areas.md",
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": 164
   },
   {
    "id": "T-46",

@@ -52,7 +52,7 @@ SHORT = {
  "T-41":"Listings API","T-42":"Listing flow screens","T-43":"Listing detail screens",
  "T-44":"Messages API","T-45":"Messages screens","T-46":"ID verification","T-47":"Saved",
  "T-48":"Onboarding questions","T-49":"Compare cards","T-50":"Found a place, share, feedback",
- "T-51":"Migrations in the deploy","T-52":"Web CSP","T-53":"Delete the Firebase user","T-54":"Photos domain","T-55":"Message alerts",
+ "T-51":"Migrations in the deploy","T-52":"Web CSP","T-53":"Delete the Firebase user","T-54":"Photos domain","T-55":"Message alerts","T-56":"Sub-areas API","T-57":"Sub-area pickers",
 }
 CAP = 34  # hours each engineer has, Thu 24 Sep to Sat 10 Oct at two hours a day
 def issue_md(t):

@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-193 of the 230 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+207 of the 244 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
@@ -32,7 +32,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Listing flow screens, Listing detail screens, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 95 | -61 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 109 | -75 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
@@ -98,18 +98,20 @@ Finish line: Sat 10 Oct. 64 hours.
 | 4 | T-18b ⚑ · Person detail and connect screens | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
 | 5 | T-41 · Listings API: four kinds of lister | 8 | Sun 25 Oct → Wed 28 Oct | T-05, T-06, F-11 |
 | 6 | T-54 · Photos on photos.roomsie.in | 1 | Tue 27 Oct | T-41 |
-| 7 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
-| 8 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
-| 9 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
-| 10 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| 11 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
-| 12 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
-| 13 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
-| 14 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
-| 15 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
-| 16 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| 7 | T-56 · Sub-areas API | 6 | Wed 28 Oct → Thu 29 Oct | — |
+| 8 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
+| 9 | T-57 · Sub-area pickers | 8 | Fri 30 Oct → Tue 3 Nov | T-56 |
+| 10 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
+| 11 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
+| 12 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| 13 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
+| 14 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 15 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| 16 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| 17 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| 18 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
 
-Finish line: Tue 24 Nov. 95 hours.
+Finish line: Tue 24 Nov. 109 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -120,7 +122,7 @@ Finish line: Tue 24 Nov. 95 hours.
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
 | 4 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
-| 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14 |
+| 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, T-56 |
 | 7 | T-22b · Waitlist screen outside Mumbai | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | 8 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
 
@@ -241,22 +243,24 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 4 | T-18b ⚑ | Person detail and connect screens | 4 | Thu 8 Oct | Sat 10 Oct | CP3 | D-03, F-13 | [#44](https://github.com/magentawood/roomsie/issues/44) |
 | P3 Data and trust | 5 | T-41 | Listings API: four kinds of lister | 8 | Sun 25 Oct | Wed 28 Oct | CP3 | T-05, T-06, F-11 | [#117](https://github.com/magentawood/roomsie/issues/117) |
 | P3 Data and trust | 6 | T-54 | Photos on photos.roomsie.in | 1 | Tue 27 Oct | Tue 27 Oct | CP3 | T-41 | [#146](https://github.com/magentawood/roomsie/issues/146) |
-| P3 Data and trust | 7 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
-| P3 Data and trust | 8 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
-| P3 Data and trust | 9 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
-| P3 Data and trust | 10 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 11 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
-| P3 Data and trust | 12 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
-| P3 Data and trust | 13 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
-| P3 Data and trust | 14 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
-| P3 Data and trust | 15 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| P3 Data and trust | 16 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| P3 Data and trust | 7 | T-56 | Sub-areas API | 6 | Wed 28 Oct | Thu 29 Oct | CP3 | — | [#163](https://github.com/magentawood/roomsie/issues/163) |
+| P3 Data and trust | 8 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
+| P3 Data and trust | 9 | T-57 | Sub-area pickers | 8 | Fri 30 Oct | Tue 3 Nov | CP3 | T-56 | [#164](https://github.com/magentawood/roomsie/issues/164) |
+| P3 Data and trust | 10 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
+| P3 Data and trust | 11 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| P3 Data and trust | 12 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| P3 Data and trust | 13 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
+| P3 Data and trust | 14 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 15 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| P3 Data and trust | 16 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| P3 Data and trust | 17 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| P3 Data and trust | 18 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
-| P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, T-56 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | P4 Content and moderation | 7 | T-22b | Waitlist screen outside Mumbai | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | P4 Content and moderation | 8 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
@@ -357,7 +361,9 @@ gantt
     T-18b Person detail and connect screens :crit, t18b, 2026-10-08, 3d
     T-41 Listings API - four kinds of lister :t41, 2026-10-25, 4d
     T-54 Photos on photos.roomsie.in :t54, 2026-10-27, 1d
+    T-56 Sub-areas API :t56, 2026-10-28, 2d
     T-42 Listing flow and My listings screens :t42, 2026-10-29, 4d
+    T-57 Sub-area pickers :t57, 2026-10-30, 5d
     T-43 Listing detail screens :t43, 2026-11-02, 3d
     T-44 Messages API :t44, 2026-11-05, 4d
     T-45 Messages screens :t45, 2026-11-09, 3d
@@ -700,7 +706,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-39 | Analytics in its own database, with scheduled jobs | P1 | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
 | T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
 | T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
-| T-22a | Mumbai areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14 |
+| T-22a | Mumbai areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, T-56 |
 | T-22b | Waitlist screen outside Mumbai | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | T-40 | Nightly database backups to R2 | P1 | 2 | Thu 8 Oct → Sat 10 Oct | T-04, F-04 |
 | D-06 | Launch visuals | D |  | Fri 9 Oct → Sat 10 Oct | — |
@@ -712,7 +718,9 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-54 | Photos on photos.roomsie.in | P3 | 1 | Tue 27 Oct | T-41 |
 | T-52 | Content-Security-Policy for the web | P1 | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
 | T-53 | Delete the Firebase user at account deletion | P4 | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
+| T-56 | Sub-areas API | P3 | 6 | Wed 28 Oct → Thu 29 Oct | — |
 | T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
+| T-57 | Sub-area pickers | P3 | 8 | Fri 30 Oct → Tue 3 Nov | T-56 |
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
@@ -914,7 +922,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-22a · Mumbai areas and waitlist API** — done when:
-- The API tells if a place is in the nine Mumbai area groups
+- The API tells if a place is in a Mumbai area group, by its name or another name
 - The system saves each waitlist entry with its place
 - Read first: `docs/decisions/pd-02-launch-market.md`
 
@@ -984,11 +992,24 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20
 - Read first: `docs/decisions/0016-credentials-and-secrets.md`, `docs/decisions/0005-managed-platform-split.md`, `docs/decisions/0007-web-rendering-and-auth-transport.md`
 
+**T-56 · Sub-areas API** — done when:
+- The areas API gives the ten groups with their sub-areas, pockets and other names
+- A listing goes live only with a sub-area or a pocket
+- A profile picks groups, sub-areas and pockets, and a group matches all its sub-areas
+- The unused launch-area column and its index are gone
+- Read first: `docs/specs/sub-areas.md`, `docs/decisions/pd-02-launch-market.md`
+
 **T-42 · Listing flow and My listings screens** — done when:
 - The eight steps of flow 04 work for the four kinds of lister, as in the Product file
 - My listings shows each listing of the user, with edit, pause and delete, and the empty state
 - The verification step of the flow opens the ID check of T-46
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`
+
+**T-57 · Sub-area pickers** — done when:
+- The Where step of a listing picks a sub-area or a pocket of the group, as on our drafts page
+- The profile editor picks a whole group or its sub-areas, and finds an area by another name
+- Cards and details show the sub-area, and a pocket with its parent
+- Read first: `docs/specs/sub-areas.md`, `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
 **T-43 · Listing detail screens** — done when:
 - The detail screens of the four place kinds follow the Product file: room in a flat, owner flat, PG or hostel, and broker flat

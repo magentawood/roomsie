@@ -2,7 +2,7 @@
 id: T-46
 title: "ID verification"
 owner: "P3 Data and trust"
-sequence: "12 of 16"
+sequence: "14 of 18"
 hours: 12
 start: 2026-11-12
 end: 2026-11-15
@@ -17,7 +17,7 @@ tags:
 
 # T-46 · ID verification
 
-**Owner:** [[P3 Data and trust]], task 12 of 16  
+**Owner:** [[P3 Data and trust]], task 14 of 18  
 **When:** Thu 12 Nov → Sun 15 Nov · 12 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#122](https://github.com/magentawood/roomsie/issues/122)

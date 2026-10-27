@@ -2,7 +2,7 @@
 id: T-47
 title: "Saved"
 owner: "P3 Data and trust"
-sequence: "13 of 16"
+sequence: "15 of 18"
 hours: 4
 start: 2026-11-16
 end: 2026-11-17
@@ -17,7 +17,7 @@ tags:
 
 # T-47 · Saved
 
-**Owner:** [[P3 Data and trust]], task 13 of 16  
+**Owner:** [[P3 Data and trust]], task 15 of 18  
 **When:** Mon 16 Nov → Tue 17 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#123](https://github.com/magentawood/roomsie/issues/123)

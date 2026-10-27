@@ -2,7 +2,7 @@
 id: T-43
 title: "Listing detail screens"
 owner: "P3 Data and trust"
-sequence: "8 of 16"
+sequence: "10 of 18"
 hours: 5
 start: 2026-11-02
 end: 2026-11-04
@@ -17,7 +17,7 @@ tags:
 
 # T-43 · Listing detail screens
 
-**Owner:** [[P3 Data and trust]], task 8 of 16  
+**Owner:** [[P3 Data and trust]], task 10 of 18  
 **When:** Mon 2 Nov → Wed 4 Nov · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#119](https://github.com/magentawood/roomsie/issues/119)
