@@ -1,17 +1,23 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, desc, eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { errorResponse, noContent, savedKind, savedPeopleResponse, savedPlacesResponse } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
-import { listings, profiles, saves, users } from '../db/schema'
-import { listingView, partsOf, visibleListing } from '../listings/read'
-import { visiblePeople } from '../match/query'
+import { saves } from '../db/schema'
+import { listingView, partsOf, visibleListings } from '../listings/read'
 import { idParams } from '../params'
-import { answersFor, cardView } from '../profiles/read'
+import { answersFor, cardView, visibleCards } from '../profiles/read'
 import type { Storage } from '../storage'
+import { savesOf } from './read'
 
 const saveSchema = { params: idParams, response: { 204: noContent, 404: errorResponse } }
 const unsaveParams = idParams.extend({ kind: savedKind })
+
+/** The rows in the order of the ids: Saved shows the newest save first. */
+const inOrder = <T extends { id: string }>(ids: string[], rows: T[]) => {
+  const byId = new Map(rows.map((r) => [r.id, r]))
+  return ids.flatMap((id) => byId.get(id) ?? [])
+}
 
 export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options
@@ -19,16 +25,14 @@ export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storag
   const preHandler = requireUser(options)
 
   app.put('/saved/places/:id', { preHandler, schema: saveSchema }, async (req, reply) => {
-    const [listing] = await db.select({ id: listings.id }).from(listings).where(and(eq(listings.id, req.params.id), visibleListing(req.user!.id)))
+    const [listing] = await visibleListings(db, req.user!.id, [req.params.id])
     if (!listing) return reply.code(404).send({ error: 'not found' })
     await db.insert(saves).values({ userId: req.user!.id, listingId: listing.id }).onConflictDoNothing()
     return reply.code(204).send(null)
   })
 
   app.put('/saved/people/:id', { preHandler, schema: saveSchema }, async (req, reply) => {
-    const [person] = await db.select({ id: profiles.id }).from(profiles)
-      .innerJoin(users, eq(profiles.userId, users.id))
-      .where(and(eq(profiles.id, req.params.id), ...visiblePeople(req.user!.id)))
+    const [person] = await visibleCards(db, req.user!.id, [req.params.id])
     if (!person) return reply.code(404).send({ error: 'not found' })
     await db.insert(saves).values({ userId: req.user!.id, profileId: person.id }).onConflictDoNothing()
     return reply.code(204).send(null)
@@ -41,21 +45,16 @@ export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storag
   })
 
   app.get('/saved/places', { preHandler, schema: { response: { 200: savedPlacesResponse } } }, async (req) => {
-    const rows = await db.select({ listing: listings }).from(saves)
-      .innerJoin(listings, eq(saves.listingId, listings.id))
-      .where(and(eq(saves.userId, req.user!.id), visibleListing(req.user!.id)))
-      .orderBy(desc(saves.createdAt))
-    const parts = await partsOf(db, rows.map((r) => r.listing.id))
-    return { places: rows.map((r) => listingView(r.listing, parts(r.listing.id), storage, false)) }
+    const ids = (await savesOf(db, req.user!.id)).flatMap((s) => (s.listingId ? [s.listingId] : []))
+    const listings = inOrder(ids, await visibleListings(db, req.user!.id, ids))
+    const parts = await partsOf(db, listings.map((l) => l.id))
+    return { places: listings.map((l) => listingView(l, parts(l.id), storage, false)) }
   })
 
   app.get('/saved/people', { preHandler, schema: { response: { 200: savedPeopleResponse } } }, async (req) => {
-    const rows = await db.select({ profile: profiles }).from(saves)
-      .innerJoin(profiles, eq(saves.profileId, profiles.id))
-      .innerJoin(users, eq(profiles.userId, users.id))
-      .where(and(eq(saves.userId, req.user!.id), ...visiblePeople(req.user!.id)))
-      .orderBy(desc(saves.createdAt))
-    const answers = await answersFor(db, rows.map((r) => r.profile.id))
-    return { people: rows.map((r) => cardView(r.profile, answers(r.profile.id), storage)) }
+    const ids = (await savesOf(db, req.user!.id)).flatMap((s) => (s.profileId ? [s.profileId] : []))
+    const people = inOrder(ids, await visibleCards(db, req.user!.id, ids))
+    const answers = await answersFor(db, people.map((p) => p.id))
+    return { people: people.map((p) => cardView(p, answers(p.id), storage)) }
   })
 }

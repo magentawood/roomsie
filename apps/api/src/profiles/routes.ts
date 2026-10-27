@@ -1,19 +1,20 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, eq, inArray } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import {
   childTypes, createProfileBody, errorResponse, personResponse, requestDailyLimit, profileEditBody, profileResponse, profileUploadUrlResponse,
   uploadUrlBody, type ProfileEditBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Tx } from '../db/client'
-import { areas, profileLifestyle, profileMustHaves, profiles, users } from '../db/schema'
-import { visiblePeople } from '../match/query'
+import { knownAreas } from '../areas'
+import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { idParams } from '../params'
 import { deletePhotos, photoUploadLink, type Storage } from '../storage'
 import { connectionWith, sentToday } from '../requests/read'
 import { maskFields } from '../text/mask-contacts'
-import { answersOf, cardView, missingFields, profileView, type Profile } from './read'
+import { lockAccount } from '../users'
+import { answersOf, cardView, missingFields, profileOf, profileView, visibleCards, type Profile } from './read'
 
 /** Each free-text field that the person writes (PD17). */
 const maskedFields = ['fullName', 'bio', 'jobRole', 'commuteAddress'] as const
@@ -23,7 +24,6 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   const { db, storage } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
-  const ownProfile = async (userId: string) => (await db.select().from(profiles).where(eq(profiles.userId, userId)))[0]
   const ownProfileView = async (p: Profile) => profileView(p, await answersOf(db, p.id), storage)
 
   app.post('/me/profile', {
@@ -36,7 +36,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   })
 
   app.get('/me/profile', { preHandler, schema: { response: { 200: profileResponse, 404: errorResponse } } }, async (req, reply) => {
-    const p = await ownProfile(req.user!.id)
+    const p = await profileOf(db, req.user!.id)
     return p ? ownProfileView(p) : reply.code(404).send({ error: 'no profile' })
   })
 
@@ -46,12 +46,12 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   }, async (req, reply) => {
     const { lifestyle, mustHaves, hidden, photoKeys, ...fields } = maskFields(req.body, maskedFields)
     if (fields.areas?.length) {
-      const known = await db.select({ slug: areas.slug }).from(areas).where(inArray(areas.slug, fields.areas))
+      const known = await knownAreas(db, fields.areas)
       if (known.length !== fields.areas.length) return reply.code(400).send({ error: 'not valid: areas' })
     }
     const result = await db.transaction(async (tx) => {
       // The deletion of an account (T-20) locks this row too, so a photo change cannot race it.
-      const [user] = await tx.select({ status: users.status }).from(users).where(eq(users.id, req.user!.id)).for('update')
+      const user = await lockAccount(tx, req.user!.id)
       if (user?.status !== 'active') return noProfile
       const [p] = await tx.select().from(profiles).where(eq(profiles.userId, req.user!.id)).for('update')
       if (!p) return noProfile
@@ -74,7 +74,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     preHandler,
     schema: { body: uploadUrlBody, response: { 200: profileUploadUrlResponse, 404: errorResponse } },
   }, async (req, reply) => {
-    const p = await ownProfile(req.user!.id)
+    const p = await profileOf(db, req.user!.id)
     if (!p) return reply.code(404).send({ error: 'no profile' })
     return photoUploadLink(storage, 'profiles', p.id, req.body)
   })
@@ -83,13 +83,12 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     preHandler,
     schema: { params: idParams, response: { 200: personResponse, 404: errorResponse } },
   }, async (req, reply) => {
-    const [row] = await db.select({ profile: profiles }).from(profiles).innerJoin(users, eq(profiles.userId, users.id))
-      .where(and(eq(profiles.id, req.params.id), ...visiblePeople(req.user!.id)))
-    if (!row) return reply.code(404).send({ error: 'not found' })
     const viewerUserId = req.user!.id
+    const [profile] = await visibleCards(db, viewerUserId, [req.params.id])
+    if (!profile) return reply.code(404).send({ error: 'not found' })
     return {
-      ...cardView(row.profile, await answersOf(db, row.profile.id), storage),
-      connection: await connectionWith(db, viewerUserId, row.profile.userId),
+      ...cardView(profile, await answersOf(db, profile.id), storage),
+      connection: await connectionWith(db, viewerUserId, profile.userId),
       requestsLeftToday: Math.max(0, requestDailyLimit - await sentToday(db, viewerUserId)),
     }
   })
