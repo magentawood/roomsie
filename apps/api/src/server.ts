@@ -15,19 +15,22 @@ import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
 import { areas } from './db/schema'
 import { listingRoutes } from './listings/routes'
+import { messageRoutes } from './messages/routes'
 import { moderationRoutes } from './moderation/routes'
 import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
 import { requestRoutes } from './requests/routes'
 import { savedRoutes } from './saved/routes'
+import type { Messaging } from './messages/settings'
 import type { Storage } from './storage'
 
-export function buildServer(options: { webOrigin: string; storage: Storage } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
   app.decorateRequest('identity', null)
+  app.decorateRequest('firebase', null)
   // A 400 names the fields, so a client can show which value is wrong. Other errors keep the default reply.
   app.setErrorHandler((err, _req, reply) => {
     if (!hasZodFastifySchemaValidationErrors(err)) throw err
@@ -75,6 +78,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage } & A
       requestRoutes(v1, options)
       blockRoutes(v1, options)
       moderationRoutes(v1, options)
+      messageRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

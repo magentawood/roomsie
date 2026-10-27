@@ -7,7 +7,7 @@ import { offlineStorage } from '../scripts/openapi'
 import { areas, listingFlatmates, listings } from '../src/db/schema'
 import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
-import { testModeration } from './app'
+import { testMessaging, testModeration } from './app'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -28,7 +28,7 @@ beforeAll(async () => {
   await testDb.db.insert(areas).values({ slug: 'bandra', name: 'Bandra' })
   const { firebaseKeys, idToken } = await testTokens()
   tokens = { lister: await idToken('uid-lister'), seeker: await idToken('uid-seeker') }
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration() })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(), messaging: testMessaging().messaging })
 })
 afterAll(async () => {
   await app.close()

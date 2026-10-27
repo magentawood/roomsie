@@ -4,6 +4,7 @@ import { googleKeys } from '../src/auth'
 import { createDb } from '../src/db/client'
 import { buildServer } from '../src/server'
 import { r2Storage } from '../src/storage'
+import { messagingSettings } from '../src/messages/settings'
 import { moderationSettings } from '../src/moderation/settings'
 
 export const openapiPath = fileURLToPath(new URL('../../../packages/contract/openapi.json', import.meta.url))
@@ -21,6 +22,7 @@ export const routesOnlyOptions = {
   firebaseKeys: googleKeys,
   storage: offlineStorage,
   moderation: moderationSettings.parse({}),
+  messaging: messagingSettings.parse({}),
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

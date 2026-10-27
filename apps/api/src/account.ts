@@ -4,6 +4,7 @@ import { uuidv7 } from 'uuidv7'
 import type { Db } from './db/client'
 import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, reports, saves, users } from './db/schema'
 import type { Storage } from './storage'
+import { endOpenRequests } from './requests/read'
 
 /** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
  *  stays the same when T-53 deletes the Firebase user, so a returning person meets the checks. */
@@ -22,7 +23,7 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * deletes are idempotent, so if the database step fails, a retry is safe. If the
  * photos went last, a failure would leave photos that no row points to.
  *
- * Not here yet: events (T-24), Form B (T-35), messages (T-44), the Firebase user (T-53).
+ * Not here yet: events (T-24), Form B (T-35), the Firebase user (T-53). The messages stay for the other person (T-44).
  */
 export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, userId: string, identity: string) {
   await db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
@@ -44,8 +45,9 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
       ...profilePhotos.flatMap((r) => r.keys),
       ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
     ])])
-    // The cascades remove the rates, the flatmates, the chat turns, the goals of a
-    // claimed visitor session and the connection requests.
+    // The other people keep their conversations (T-44): the requests keep their rows, with empty profile and listing links.
+    await endOpenRequests(tx, userId)
+    // The cascades remove the rates, the flatmates, the chat turns and the goals of a claimed visitor session.
     await tx.delete(listings).where(eq(listings.ownerUserId, userId))
     await tx.delete(goals).where(eq(goals.userId, userId))
     await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))

@@ -20,6 +20,8 @@ declare module 'fastify' {
     user: MeResponse | null
     /** The person at the sign-in provider: the Google account id, or the Firebase uid if the token has none. */
     identity: string | null
+    /** The Firebase uid, and the claims that the API adds for Supabase Realtime (T-44). */
+    firebase: { uid: string; role?: string; userId?: string } | null
   }
 }
 
@@ -28,6 +30,8 @@ const firebaseClaims = z.object({
   sub: z.string().min(1),
   auth_time: z.number().int(),
   firebase: z.object({ identities: z.record(z.string(), z.array(z.string())) }).partial().optional(),
+  role: z.string().optional(),
+  user_id: z.string().optional(),
 })
 
 /** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
@@ -59,7 +63,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
     // auth_time is the sign-in. A refreshed token keeps it, so a revocation holds (ADR-0007).
-    const { sub: uid, auth_time: authTime, firebase } = claims.data
+    const { sub: uid, auth_time: authTime, firebase, role, user_id: userId } = claims.data
     const signedInAt = new Date(authTime * 1000)
     // A tombstone keys on the Google account id: it stays when T-53 deletes the Firebase user, and the uid does not.
     const identity = firebase?.identities?.['google.com']?.[0] ?? uid
@@ -77,6 +81,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid) }
     req.identity = identity
+    req.firebase = { uid, role, userId }
   }
 }
 

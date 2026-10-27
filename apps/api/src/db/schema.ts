@@ -398,15 +398,19 @@ export const chatTurns = pgTable('chat_turns', {
 export const connectionRequests = pgTable('connection_requests', {
   id: id(),
   fromUserId: uuid('from_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  fromProfileId: uuid('from_profile_id').notNull().references(() => profiles.id, { onDelete: 'cascade' }),
+  /** The profile and listing links become empty at a deletion, so the other person keeps the thread (T-44). */
+  fromProfileId: uuid('from_profile_id').references(() => profiles.id, { onDelete: 'set null' }),
   toUserId: uuid('to_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  toProfileId: uuid('to_profile_id').references(() => profiles.id, { onDelete: 'cascade' }),
-  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
+  toProfileId: uuid('to_profile_id').references(() => profiles.id, { onDelete: 'set null' }),
+  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'set null' }),
   /** T-44 makes it the first message of the chat after an accept. */
   note: text('note').notNull(),
   status: connectionStatusEnum('status').notNull().default('pending'),
   createdAt: createdAt(),
   respondedAt: timestamp('responded_at', { withTimezone: true }),
+  /** The last read of the conversation by each side: the unread count starts after it (T-44). */
+  fromReadAt: timestamp('from_read_at', { withTimezone: true }),
+  toReadAt: timestamp('to_read_at', { withTimezone: true }),
 }, (t) => ({
   /** One open or accepted request between two people, in either direction and for any target (PD17). */
   pairIdx: uniqueIndex('connection_requests_pair_idx')
@@ -414,7 +418,20 @@ export const connectionRequests = pgTable('connection_requests', {
     .where(sql`${t.status} in ('pending', 'accepted')`),
   inboxIdx: index('connection_requests_inbox_idx').on(t.toUserId, t.status),
   senderDayIdx: index('connection_requests_sender_day_idx').on(t.fromUserId, t.createdAt),
-  targetCheck: check('connection_requests_target_check', sql`num_nonnulls(${t.toProfileId}, ${t.listingId}) = 1`),
+  /** One target at the send; a deletion can empty it later. */
+  targetCheck: check('connection_requests_target_check', sql`num_nonnulls(${t.toProfileId}, ${t.listingId}) <= 1`),
+})).enableRLS()
+
+/** The messages of a conversation: an accepted request (T-44). The first message is the note of the request. */
+export const messages = pgTable('messages', {
+  /** ADR-0015: the client makes the id. The API makes it for the note. */
+  id: id(),
+  requestId: uuid('request_id').notNull().references(() => connectionRequests.id, { onDelete: 'cascade' }),
+  senderUserId: uuid('sender_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  text: text('text').notNull(),
+  createdAt: createdAt(),
+}, (t) => ({
+  threadIdx: index('messages_thread_idx').on(t.requestId, t.createdAt),
 })).enableRLS()
 
 /* ── safety ─────────────────────────────────────────────────────────────────

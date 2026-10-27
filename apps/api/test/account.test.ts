@@ -10,7 +10,7 @@ import {
 import { buildServer } from '../src/server'
 import { offlineStorage } from '../scripts/openapi'
 import type { Storage } from '../src/storage'
-import { testModeration } from './app'
+import { testMessaging, testModeration } from './app'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -32,7 +32,7 @@ beforeAll(async () => {
   await testDb.db.insert(areas).values({ slug: 'powai', name: 'Powai' })
   const tokens = await testTokens()
   idToken = tokens.idToken
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore, moderation: testModeration() })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore, moderation: testModeration(), messaging: testMessaging().messaging })
 })
 afterAll(async () => {
   await app.close()
@@ -105,7 +105,11 @@ describe('DELETE /v1/me', () => {
     expect(await db.select().from(listingRates).where(eq(listingRates.listingId, goneSeed.listingId))).toHaveLength(0)
     expect(await db.select().from(listingFlatmates).where(eq(listingFlatmates.listingId, goneSeed.listingId))).toHaveLength(0)
     expect(await db.select().from(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, gone.id))).toHaveLength(0)
-    expect(await db.select().from(connectionRequests).where(eq(connectionRequests.fromUserId, stays.id))).toHaveLength(0)
+    // The requests stay for the other person (T-44): the links are empty, and the open request is declined.
+    expect(await db.select({ status: connectionRequests.status, toProfileId: connectionRequests.toProfileId, listingId: connectionRequests.listingId })
+      .from(connectionRequests).where(eq(connectionRequests.fromUserId, stays.id))).toEqual([
+      { status: 'declined', toProfileId: null, listingId: null }, { status: 'declined', toProfileId: null, listingId: null },
+    ])
     expect(await db.select().from(saves).where(eq(saves.userId, gone.id))).toHaveLength(0)
     expect(await db.select().from(saves).where(eq(saves.userId, stays.id))).toHaveLength(0)
     // The other person keeps all of theirs.

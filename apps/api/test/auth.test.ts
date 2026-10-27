@@ -7,7 +7,7 @@ import { projectId, testTokens } from './tokens'
 import { offlineStorage } from '../scripts/openapi'
 import { users } from '../src/db/schema'
 import { buildServer } from '../src/server'
-import { testModeration } from './app'
+import { testMessaging, testModeration } from './app'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -19,7 +19,7 @@ beforeAll(async () => {
   const tokens = await testTokens()
   idToken = tokens.idToken
   otherKey = (await generateKeyPair('RS256')).privateKey
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: offlineStorage, moderation: testModeration() })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: offlineStorage, moderation: testModeration(), messaging: testMessaging().messaging })
 })
 afterAll(async () => {
   await app.close()
@@ -101,6 +101,7 @@ describe('GET /v1/me', () => {
       firebaseKeys: () => Promise.reject(new errors.JOSEError('Expected 200 OK from the JSON Web Key Set HTTP response')),
       storage: offlineStorage,
       moderation: testModeration(),
+      messaging: testMessaging().messaging,
     })
     const res = await down.inject({ method: 'GET', url: '/v1/me', headers: { authorization: `Bearer ${await idToken('uid-keys-down')}` } })
     expect(res.statusCode).toBe(500)
