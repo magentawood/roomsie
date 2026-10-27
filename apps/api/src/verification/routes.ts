@@ -6,11 +6,12 @@ import {
   verificationResponse,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
-import { profiles, users, verificationAudit, verifications } from '../db/schema'
+import { verificationAudit, verifications } from '../db/schema'
 import type { IdStore } from '../id-store'
 import { idParams } from '../params'
-import { firstPhotoUrl, photoUploadLink, type Storage } from '../storage'
-import { blockingCheck, openCheck, verificationOf } from './read'
+import { peopleOf } from '../profiles/read'
+import { photoUploadLink, type Storage } from '../storage'
+import { blockingCheck, clearExpired, fileKeys, openCheck, verificationOf } from './read'
 
 /** The ID check of PD8 (T-46): a person sends an ID photo and a live selfie, and a named reviewer approves or rejects. */
 export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; idStore?: IdStore }) {
@@ -54,8 +55,8 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
       return null
     })
     const sent = await db.transaction(async (tx) => {
-      // The lock makes two sends at the same time one check.
-      await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for('update')
+      // A lock on the person makes two sends at the same time one check.
+      await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${userId}, 0))`)
       if ((await blockingCheck(tx, userId)).length) return false
       await tx.insert(verifications).values({ userId, documentType, idPhotoKey, selfieKey, faceMatch })
       return true
@@ -65,20 +66,25 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
   })
 
   app.get('/admin/verifications', { preHandler: reviewerOnly, schema: { response: { 200: idCheckQueueResponse, 404: errorResponse } } }, async () => {
+    // Each load of the queue is the sweep of the expired checks: no job runs for it.
+    await clearExpired(db)
     const rows = await db.select({
       check: verifications,
-      // The card of a son or daughter is not the person who sent the check (T-16a).
-      profile: { fullName: profiles.fullName, photoKeys: profiles.photoKeys },
-      earlierChecks: sql<number>`(select count(*)::int from ${verifications} as earlier
-        where earlier.user_id = ${verifications.userId} and earlier.created_at < ${verifications.createdAt})`,
-    }).from(verifications)
-      .leftJoin(profiles, and(eq(profiles.userId, verifications.userId), eq(profiles.managedByParent, false)))
-      .where(openCheck()).orderBy(asc(verifications.createdAt))
+      // Drizzle writes the outer columns with no table name, which the subquery would read as its own.
+      earlierChecks: sql<number>`(select count(*)::int from verifications as earlier
+        where earlier.user_id = verifications.user_id and earlier.created_at < verifications.created_at)`,
+    }).from(verifications).where(openCheck()).orderBy(asc(verifications.createdAt))
+    const people = await peopleOf(db, storage, rows.map((r) => r.check.userId))
     return {
-      checks: rows.map(({ check, profile, earlierChecks }) => ({
-        id: check.id, name: profile?.fullName ?? null, photoUrl: profile ? firstPhotoUrl(storage, profile.photoKeys) : null,
-        documentType: check.documentType, faceMatch: check.faceMatch, earlierChecks, sentAt: check.createdAt.toISOString(),
-      })),
+      checks: rows.map(({ check, earlierChecks }) => {
+        // The card of a son or daughter is not the person who sent the check (T-16a).
+        const person = people.get(check.userId)
+        const own = person && !person.managedByParent
+        return {
+          id: check.id, name: own ? person.name : null, photoUrl: own ? person.photoUrl : null,
+          documentType: check.documentType, faceMatch: check.faceMatch, earlierChecks, sentAt: check.createdAt.toISOString(),
+        }
+      }),
     }
   })
 
@@ -115,9 +121,9 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
       return check
     })
     if (!reviewed) return reply.code(404).send({ error: 'not found' })
-    const keys = [reviewed.idPhotoKey, reviewed.selfieKey].filter((k) => k !== null)
+    const keys = fileKeys(reviewed)
     // A failed delete keeps the review: the lifecycle rule of the bucket deletes the files after 7 days.
-    if (idStore && keys.length) await idStore.deleteObjects(keys).catch((err: unknown) => req.log.error({ err }, 'ID files delete'))
+    if (idStore) await idStore.deleteObjects(keys).catch((err: unknown) => req.log.error({ err }, 'ID files delete'))
     alerts.verification(reviewed.userId, result)
     return reply.code(204).send(null)
   })

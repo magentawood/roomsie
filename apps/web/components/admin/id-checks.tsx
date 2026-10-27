@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { CheckCircle, User01, XClose } from '@untitledui/icons'
+import { CheckCircle, SlashCircle01, User01 } from '@untitledui/icons'
 import {
   documentTypeLabels, idCheckPhotosResponse, noContent, rejectReasonLabels, reviewNoteLimit, type IdCheckQueueResponse, type RejectReason, type ReviewCheckBody,
 } from '@roomsie/contract'
@@ -15,7 +15,7 @@ import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { EmptyState } from '../ui/empty-state'
 import { TextArea } from '../ui/field'
-import { ModalFrame } from '../ui/modal'
+import { ModalFrame, ModalTop } from '../ui/modal'
 
 type Check = IdCheckQueueResponse['checks'][number]
 
@@ -27,13 +27,11 @@ function RejectDialog({ name, busy, onReject, onClose }: { name: string; busy: b
   return (
     <ModalFrame labelledBy="reject-title" onClose={onClose}>
       <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <div className="flex items-start justify-between">
+        <ModalTop icon={SlashCircle01} onClose={onClose} />
+        <div className="flex flex-col gap-1">
           <h2 id="reject-title" className="text-md font-semibold text-primary">Reject {name}’s check?</h2>
-          <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover focus-visible:outline-2">
-            <XClose size={20} aria-hidden />
-          </button>
+          <p className="text-sm text-tertiary">{name} sees the reason and the note, and can send a new ID. We delete both photos now.</p>
         </div>
-        <p className="text-sm text-tertiary">{name} sees the reason and the note, and can send a new ID. We delete both photos now.</p>
         <ChoiceChips label="Reason" labels={rejectReasonLabels} value={reason} onChange={setReason} required />
         <TextArea label={`Note to ${name} (optional)`} value={note} onChange={setNote} maxLength={reviewNoteLimit}
           hint={`At most ${reviewNoteLimit} characters. Be kind: say what to fix.`} placeholder="The photo on the ID is cut off at the top." />

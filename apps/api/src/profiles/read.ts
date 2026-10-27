@@ -1,9 +1,9 @@
-import { eq, inArray } from 'drizzle-orm'
+import { and, eq, inArray } from 'drizzle-orm'
 import { liveCardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles, users } from '../db/schema'
 import { firstPhotoUrl, type Storage } from '../storage'
-import { verifiedCards } from '../verification/read'
+import { verifiedAmong } from '../verification/read'
 
 export type Profile = typeof profiles.$inferSelect
 type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves' | 'verified'>
@@ -14,11 +14,14 @@ export const missingFields = (p: Profile): ProfileResponse['missing'] =>
 /** Keys and values are text in the database, so the contract parses them. */
 /** The answers and the Verified badge of each profile, in three queries. Gives a lookup by profile id. */
 export async function answersFor(db: Db, profileIds: string[]) {
-  const [lifestyle, mustHaves, verified] = await Promise.all([
+  const [lifestyle, mustHaves, people] = await Promise.all([
     db.select().from(profileLifestyle).where(inArray(profileLifestyle.profileId, profileIds)),
     db.select().from(profileMustHaves).where(inArray(profileMustHaves.profileId, profileIds)),
-    verifiedCards(db, profileIds),
+    // The card of a son or daughter shows no badge of the parent who sent the check.
+    db.select({ id: profiles.id, userId: profiles.userId }).from(profiles).where(and(inArray(profiles.id, profileIds), eq(profiles.managedByParent, false))),
   ])
+  const verifiedUsers = await verifiedAmong(db, people.map((p) => p.userId))
+  const verified = new Set(people.filter((p) => verifiedUsers.has(p.userId)).map((p) => p.id))
   return (profileId: string): Answers => ({
     lifestyle: cardResponse.shape.lifestyle.parse(Object.fromEntries(lifestyle.filter((a) => a.profileId === profileId).map((a) => [a.axisKey, a.value]))),
     mustHaves: cardResponse.shape.mustHaves.parse(Object.fromEntries(mustHaves.filter((m) => m.profileId === profileId).map((m) => [m.mustHaveKey, m.weight]))),
@@ -44,5 +47,6 @@ export async function peopleOf(db: Db, storage: Storage, userIds: string[]) {
   return new Map(rows.map(({ userId, status, profile }) => [userId, {
     active: status === 'active', deleted: status === 'deleted',
     profileId: profile?.id ?? null, name: profile?.fullName ?? null, photoUrl: profile ? firstPhotoUrl(storage, profile.photoKeys) : null,
+    managedByParent: profile?.managedByParent ?? false,
   }]))
 }

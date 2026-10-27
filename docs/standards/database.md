@@ -25,6 +25,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 ## Queries
 
+- A module owns its tables. Other modules call its functions, and never read or write its tables. Why: a change to a table then stays in one module. ([ADR-0002](../decisions/0002-api-boundary.md), [extensibility.md](../extensibility.md))
 - Run complex queries in Postgres, as raw SQL with a typed result through Drizzle. Examples are the rank score, the seen-exclusion and the 90-day suppression. Why: they must not block the event loop, and they stay typed. ([ADR-0006](../decisions/0006-drizzle.md), [ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 
 ## Analytics database

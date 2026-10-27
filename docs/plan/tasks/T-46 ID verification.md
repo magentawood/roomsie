@@ -99,6 +99,7 @@ A person checks an ID and a selfie, and roomsie keeps only the result.
     - "Verified Broker" for a broker flat
     - "Verified" for a person
   - **Docs:** ADR-0020, the PD8 update (the vendor and the queue line), a PD19 row for the audit log, the row of extensibility.md, and a learn page on the ID check.
+  - **The module rule:** "A module owns its tables" becomes a rule in the database standard. The verification module reads only its own tables, and gives the other modules one function for the badge. The user decided this in review round 2.
   - **The drafts:** section 26 of the [drafts page](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=483-26166).
 - **Out of scope:**
   - the blurred cards and the verified-only setting (PD8 Guard 1 keeps them off at launch)

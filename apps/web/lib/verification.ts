@@ -1,6 +1,6 @@
 import type { User } from 'firebase/auth'
 import {
-  checkUploadResponse, rejectReasonLabels, verificationResponse, type DocumentType, type ListingKind, type VerificationResponse,
+  checkExpiryDays, checkUploadResponse, rejectReasonLabels, verificationResponse, type DocumentType, type ListingKind, type VerificationResponse,
 } from '@roomsie/contract'
 import type { Tone } from '../components/ui/badge'
 import { api } from './api'
@@ -20,11 +20,10 @@ export function verifyRow({ state, reason, note }: Pick<VerificationResponse, 's
       badge: { tone: 'error', label: 'Not verified' }, text: `${reason ? `${rejectReasonLabels[reason]}. ` : ''}Send a new ID photo and take a new selfie.`,
       note: note ?? undefined, action: 'Send a new ID',
     }
-    case 'expired': return { badge: { tone: 'gray', label: 'Not verified' }, text: 'Your check took more than 7 days, so we deleted your photos. Please send them again. Sorry for the wait.', action: 'Send again' }
+    case 'expired': return { badge: { tone: 'gray', label: 'Not verified' }, text: `Your check took more than ${checkExpiryDays} days, so we deleted your photos. Please send them again. Sorry for the wait.`, action: 'Send again' }
   }
 }
 
-/** The person can send a check: none yet, or the last one was rejected or expired. */
 export const canSendCheck = (state: VerificationResponse['state']) => state === 'none' || state === 'rejected' || state === 'expired'
 
 /** The pill of a detail screen, as the designs label it. */
@@ -37,7 +36,6 @@ export async function openCamera() {
   return navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false }).catch(() => null)
 }
 
-/** One frame of the live video, as a JPEG of 1600 px or less. */
 export function takeSelfie(video: HTMLVideoElement) {
   const { width, height } = fitWithin(video.videoWidth, video.videoHeight, 1600)
   const canvas = document.createElement('canvas')

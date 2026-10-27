@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ImagePlus, ShieldTick, XClose } from '@untitledui/icons'
+import { ImagePlus, ShieldTick } from '@untitledui/icons'
 import { documentTypeLabels, photoTypes, type DocumentType } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -10,7 +10,7 @@ import { queryKeys } from '../../lib/queries'
 import { openCamera, sendCheck, takeSelfie } from '../../lib/verification'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
-import { ModalFrame } from '../ui/modal'
+import { ModalFrame, ModalTop } from '../ui/modal'
 
 /** The live camera of step 2. No file picker: the selfie must come from the camera now (T-46). */
 function Camera({ shot, onShot }: { shot: string | null; onShot: (selfie: Blob) => void }) {
@@ -80,12 +80,7 @@ export function VerifyDialog({ onClose }: { onClose: () => void }) {
   return (
     <ModalFrame labelledBy="verify-title" onClose={onClose}>
       <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <div className="flex items-start justify-between">
-          <span className="flex size-10 items-center justify-center rounded-md border border-primary text-fg-success shadow-xs"><ShieldTick size={20} aria-hidden /></span>
-          <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover focus-visible:outline-2">
-            <XClose size={20} aria-hidden />
-          </button>
-        </div>
+        <ModalTop icon={ShieldTick} iconTone="success" onClose={onClose} />
         <div className="flex flex-col gap-1">
           <h2 id="verify-title" className="text-md font-semibold text-primary">Verify your ID</h2>
           <p className="text-sm text-tertiary">
