@@ -31,9 +31,9 @@ Lets a lister and a seeker pick a sub-area, and shows it on each card.
 - No task waits on this task.
 
 ## Done when
-- [ ] The Where step of a listing picks a sub-area or a pocket of the group, as on our drafts page
-- [ ] The profile editor picks a whole group or its sub-areas, and finds an area by another name
-- [ ] Cards and details show the sub-area, and a pocket with its parent
+- [x] The Where step of a listing picks a sub-area or a pocket of the group, as on our drafts page · [#166](https://github.com/magentawood/roomsie/pull/166)
+- [x] The profile editor picks a whole group or its sub-areas, and finds an area by another name · [#166](https://github.com/magentawood/roomsie/pull/166)
+- [x] Cards and details show the sub-area, and a pocket with its parent · [#166](https://github.com/magentawood/roomsie/pull/166)
 
 ^done
 
@@ -69,3 +69,13 @@ Lets a lister and a seeker pick a sub-area, and shows it on each card.
   - the chip flow and the area slot of the assistant (T-09)
   - the place lookup and the waitlist (T-22a, T-22b)
   - the area pages for SEO, a map, and the seeding plan (F-06)
+
+## Log
+
+- **2026-10-27 · [#166](https://github.com/magentawood/roomsie/pull/166)**
+  - **Change:** the Where step picks the area group, then the sub-area, then an optional pocket. The profile editor picks whole groups, sub-areas, or pockets from a search by the other names. Cards and details show a pocket with its parent.
+  - **Why:** renters and brokers use the sub-area names. [PD2](../../decisions/pd-02-launch-market.md) and the [spec](../../specs/sub-areas.md).
+  - **Ticked:** "The Where step of a listing picks a sub-area or a pocket of the group, as on our drafts page", "The profile editor picks a whole group or its sub-areas, and finds an area by another name" and "Cards and details show the sub-area, and a pocket with its parent"
+  - **Not done:** none
+  - **Learn:** [Areas, sub-areas and pockets](../../learn/areas.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

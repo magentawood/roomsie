@@ -26,6 +26,14 @@ Andheri–Goregaon            (group: parent is null)
 - A profile picks groups, sub-areas or pockets.
 - Two picks match when they are the same area, or when one includes the other. The match query expands the picks of the seeker. It adds each area above and below a pick. Then it looks for profiles that picked one of them. Thus "Andheri West" finds Versova and the whole group, but Versova does not find Lokhandwala.
 
+## In the web
+
+- **The label:** a card or a detail shows the sub-area. A pocket shows with its parent, for example "Versova, Andheri West".
+- **The Where step** of a listing has three chip rows: the area group, the sub-area, and the pocket. The pocket row shows only for a sub-area that has pockets, and the lister can skip it.
+- **The profile editor** shows the picks as tags, a search, and the ten groups as rows that open. The wider pick wins: "All of" a group removes the picks under it, and the chips under it show checked and off.
+- **The search** ignores case, spaces and punctuation, and it matches the other names. Thus "kandivli" finds Kandivali East.
+- Section 23 of the drafts page in Figma shows each screen.
+
 ## The choice we made
 
 - The ten groups, the sub-areas and where Mumbai ends: [PD2](../decisions/pd-02-launch-market.md).
