@@ -1153,7 +1153,7 @@ Examine the numbers and the bug list. Then set the order of v1.
 | The DeepSeek or Gemini sign-up is late | Use the provider that works. The wrapper, T-11, makes the provider a setting. |
 | Jev access arrives before launch | Test Jev on the eval set, behind the adapter of the router. Change to Jev only if it is better than DeepSeek on Hinglish and Marathi. |
 | The app reaches a free Supabase limit | Change the Supabase organisation to a paid plan before the planned time. This needs no code changes. |
-| Seeding is short | Launch in all nine area groups. A thin panel shows the suggested posts (PD6c). |
+| Seeding is short | Launch in each area group. A thin panel shows the suggested posts (PD6c). |
 | A checkpoint is more than a day late | On that checkpoint call, decide if 14 October becomes the plan. Do not wait for 10 October. |
 
 ---

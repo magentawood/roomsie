@@ -118,7 +118,7 @@ browser ─▶ PATCH {photoKeys: [..., key]} ─▶ API checks that the key is o
 <li>Each step saves only its own fields, with one <code>PATCH</code>, on "Next", "Previous step" and "Save as Draft" (<code>apps/web/lib/listing-steps.ts</code>).</li>
 <li>Before the save, <code>stepErrors</code> checks the values with the contract schema of the kind. A refused value gets a red line under its field, and nothing saves.</li>
 <li>The browser shrinks each photo to 1600 px or less, as WebP, before the upload (<code>apps/web/lib/photo.ts</code>). Safari cannot make WebP, so there it is a JPEG. The new file has no EXIF data, so no GPS location.</li>
-<li>The area pick lists the nine area groups of PD2 from <code>GET /v1/areas</code>.</li>
+<li>The area pick lists the sub-areas and pockets from <code>GET /v1/areas</code>. A listing cannot have a whole group (<a href="areas.html">Areas</a>).</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>

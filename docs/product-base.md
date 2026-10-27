@@ -3,7 +3,7 @@
 What roomsie does, and why, at a glance. Each decision's full record is its PD file.
 
 roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the flats, rooms and people that fit.
-v0 is the product in the Figma designs (PD14): flats, rooms, PGs and flatmates, open to all genders, in the nine Mumbai area groups (PD2).
+v0 is the product in the Figma designs (PD14): flats, rooms, PGs and flatmates, open to all genders, in the Mumbai area groups and their sub-areas (PD2).
 The public launch is on 12 October. The fallback is 14 October.
 The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roomsie is self-funded.
 
@@ -14,7 +14,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 |---|---|---|---|
 | [PD0](decisions/pd-00-v0-scope.md) | v0 is flatmate matching only | Superseded by PD14 on 2026-10-24 | v0 is flatmate matching only, with no property listing objects: a person with a spare room is a person card. |
 | [PD1](decisions/pd-01-audience.md) | Open to all genders | Settled | roomsie is open to all genders and drops the women-only promise of femmeflats. |
-| [PD2](decisions/pd-02-launch-market.md) | Mumbai first | Settled. Changed on 2026-10-27. | roomsie launches in all of Mumbai, in the nine area groups of the designs, and each visitor from outside Mumbai joins a waitlist. |
+| [PD2](decisions/pd-02-launch-market.md) | Mumbai first | Settled. Changed on 2026-10-27. | Roomsie launches in all of Mumbai, in ten area groups and their sub-areas, and each visitor from outside Mumbai joins a waitlist. |
 | [PD3](decisions/pd-03-listing-supply.md) | Where listing supply comes from at launch | Deferred | Deferred until the broker interviews: the working hypothesis is that brokers list free and pay only for a qualified introduction. |
 | [PD3a](decisions/pd-03a-flatmate-matching.md) | Matching: who sees what, the filters and the order | Settled | Each place type sees its own kind; must-haves filter both ways between people; gaps rank lower; a plain "Best match" label marks full fits. |
 | [PD3b](decisions/pd-03b-interview-vs-chips.md) | What the AI interview adds over the chip filters | Settled | Both: the assistant interview runs with the chip filters, and the structured form, not the model, is the source of truth. |
