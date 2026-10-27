@@ -139,7 +139,7 @@ const AREAS: AreaSeed[] = [
     { slug: 'kamothe', name: 'Kamothe', aliases: ['Kamothe Sector'] },
     { slug: 'kalamboli', name: 'Kalamboli', aliases: ['Kalamboli Sector'] },
     { slug: 'panvel', name: 'Panvel', aliases: ['New Panvel', 'New Panvel East', 'New Panvel West', 'Old Panvel', 'Karanjade', 'Khanda Colony'] },
-    { slug: 'ulwe', name: 'Ulwe', aliases: ['Ulwe Sector', 'Ulwe Node', 'Pushpak Nagar', 'Dronagiri'] },
+    { slug: 'ulwe', name: 'Ulwe', aliases: ['Ulwe Sector', 'Ulwe Node', 'Pushpak Nagar'] },
     { slug: 'taloja', name: 'Taloja', aliases: ['Taloja Phase 1', 'Taloja Phase 2', 'Pendhar', 'Taloja MIDC'] },
   ] },
 ]
