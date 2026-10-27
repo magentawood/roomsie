@@ -105,7 +105,7 @@ const AREAS: AreaSeed[] = [
     { slug: 'mankhurd', name: 'Mankhurd', aliases: ['Mankhurd East', 'Mankhurd West'] },
   ] },
   { slug: 'thane', name: 'Thane', areas: [
-    { slug: 'thane-west', name: 'Thane West', aliases: ['Thane W', 'Thane (W)'], areas: [
+    { slug: 'thane-west', name: 'Thane West', aliases: ['Thane W', 'Thane (W)', 'Thane'], areas: [
       { slug: 'naupada', name: 'Naupada', aliases: ['Thane Station', 'Thane Station West', 'Gokhale Road', 'Ram Maruti Road', 'Charai', 'Panch Pakhadi'] },
       { slug: 'ghodbunder-road', name: 'Ghodbunder Road', aliases: ['GB Road', 'Ghodbunder', 'Owale', 'Kavesar', 'Anand Nagar Thane', 'Bhayanderpada', 'Waghbil', 'Brahmand'] },
       { slug: 'hiranandani-estate', name: 'Hiranandani Estate', aliases: ['Hiranandani Estate Thane', 'Patlipada', 'Rodas Enclave', 'Hiranandani'] },
@@ -118,7 +118,7 @@ const AREAS: AreaSeed[] = [
       { slug: 'vasant-vihar', name: 'Vasant Vihar', aliases: ['Vasant Vihar Thane'] },
       { slug: 'vartak-nagar', name: 'Vartak Nagar', aliases: ['Wagle Estate', 'Wagle'] },
     ] },
-    { slug: 'thane-east', name: 'Thane East', aliases: ['Thane (E)', 'Kopri'] },
+    { slug: 'thane-east', name: 'Thane East', aliases: ['Thane E', 'Thane (E)', 'Kopri', 'Thane'] },
     { slug: 'kalwa', name: 'Kalwa', aliases: ['Kalwa West', 'Kalwa East'] },
     { slug: 'mumbra-diva', name: 'Mumbra–Diva', aliases: ['Mumbra', 'Diva', 'Kausa', 'Mumbra Kausa', 'Diva Junction'] },
   ] },

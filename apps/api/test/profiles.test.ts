@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { cardResponse, listingResponse, profileResponse, profileUploadUrlResponse } from '@roomsie/contract'
-import { blocks, profiles, users } from '../src/db/schema'
+import { areas, blocks, profiles, users } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import type { Storage } from '../src/storage'
 import { offlineStorage } from '../scripts/openapi'
@@ -62,7 +62,9 @@ describe('the own profile', () => {
   it('saves an area group, a sub-area and a pocket together, up to 20 areas', async () => {
     expect(profileResponse.parse((await edit('lister', { areas: ['bandra-santacruz', 'bandra', 'pali-hill'] })).json()).areas)
       .toEqual(['bandra-santacruz', 'bandra', 'pali-hill'])
-    expect((await edit('lister', { areas: Array.from({ length: 21 }, (_, i) => `area-${i}`) })).statusCode).toBe(400)
+    const known = (await t.db.select({ slug: areas.slug }).from(areas).limit(21)).map((a) => a.slug)
+    expect((await edit('lister', { areas: known.slice(0, 20) })).statusCode).toBe(200)
+    expect((await edit('lister', { areas: known })).statusCode).toBe(400)
     expect((await edit('lister', { areas: ['bandra'] })).statusCode).toBe(200)
   })
 

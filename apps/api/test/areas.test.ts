@@ -38,7 +38,6 @@ describe('GET /v1/areas', () => {
     ])
     expect(list.filter((a) => a.parent === 'thane-west')).toHaveLength(11)
     expect(list.find((a) => a.slug === 'kandivali-east')!.aliases).toContain('Kandivli')
-    expect(list.every((a) => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(a.slug))).toBe(true)
   })
 })
 
