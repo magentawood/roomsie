@@ -106,12 +106,18 @@ export async function findMatches(
   const dealbreakers = form.lifestyle.filter((a) => a.weight === 'dealbreaker')
   const preferences = form.lifestyle.filter((a) => a.weight === 'prefer')
 
+  /** No person fits an intent that sees only listings (PD3a), or picks that are not areas. */
+  const intents = compatibleIntents(form.intent)
+  const areas = intents.length ? matchingAreas(await areaParents(db), form.areas) : []
+  if (!areas.length) return { rows: [], total: 0, resultsUnlocked: true, scoreShown: showScore, header: panelHeader(form, 0) }
+
   /* Hard filters -------------------------------------------------------- */
   const conditions = [
     ...visiblePeople(opts.viewerUserId),
-    inArray(profiles.intent, compatibleIntents(form.intent)),
-    /** Areas overlap, where an area includes the areas under it. `&&` is Postgres array intersection. */
-    sql`${profiles.areas} && ${matchingAreas(await areaParents(db), form.areas)}`,
+    inArray(profiles.intent, intents),
+    /** Areas overlap, where an area includes the areas under it. `&&` is Postgres array intersection.
+     *  Drizzle renders a JS array as a list `($1, $2)`, so the areas go in as one `text[]`. */
+    sql`${profiles.areas} && array[${sql.join(areas.map((a) => sql`${a}`), sql`, `)}]::text[]`,
   ]
 
   /** Budget ranges must overlap, not match. Someone asking up to 25k and
