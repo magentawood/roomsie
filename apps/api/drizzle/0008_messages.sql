@@ -25,10 +25,10 @@ ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_to_profile
 ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_listing_id_listings_id_fk" FOREIGN KEY ("listing_id") REFERENCES "public"."listings"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_target_check" CHECK (num_nonnulls("connection_requests"."to_profile_id", "connection_requests"."listing_id") <= 1);--> statement-breakpoint
 -- Supabase only: a user joins only the own private channel, user:<our user id> (T-44). The claim user_id comes from the API.
--- The local and test databases have no realtime schema, so they skip it.
+-- The local and test databases have neither function, so they skip it.
 DO $$
 BEGIN
-  IF to_regnamespace('realtime') IS NOT NULL THEN
+  IF to_regprocedure('realtime.topic()') IS NOT NULL AND to_regprocedure('auth.jwt()') IS NOT NULL THEN
     EXECUTE $policy$
       CREATE POLICY "roomsie user channel" ON realtime.messages FOR SELECT TO authenticated
       USING (realtime.topic() = 'user:' || (auth.jwt() ->> 'user_id'))
