@@ -164,6 +164,8 @@ describe('going live', () => {
     expect((await call('lister', 'GET', `/${flat.id}`)).json()).toMatchObject({ status: 'live' })
     expect((await call('lister', 'PATCH', `/${flat.id}`, { rates: [{ rent: 32000 }] })).json()).toEqual({ error: 'incomplete', missing: ['areaSlug'] })
     expect((await call('lister', 'PATCH', `/${flat.id}`, { areaSlug: 'pali-hill', rates: [{ rent: 32000 }] })).statusCode).toBe(200)
+    const inPocket = await draft('owner_flat', { areaSlug: 'pali-hill', rates: [{ rent: 30000 }] })
+    expect((await live(inPocket.id)).statusCode).toBe(200)
   })
 
   it('lets a live PG add a sharing type before its rent, and needs a rent for each type to go live again', async () => {
