@@ -1787,7 +1787,6 @@
     "The API never gives a message to a user who is not in the conversation",
     "A blocked user cannot send a message to the user who blocked them",
     "The API masks phone numbers and WhatsApp links as •••• in each message",
-    "A new request or message sends an email and a browser push, with no message text, unless the user turned them off",
     "After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests"
    ],
    "read": [
@@ -1823,6 +1822,30 @@
    "cp": "CP3",
    "critical": false,
    "issue": 121
+  },
+  {
+   "id": "T-55",
+   "title": "Message alerts: email and push",
+   "plain": "Tell a person about a new request or message by email and browser push.",
+   "role": "P3",
+   "hours": 6,
+   "start": "2026-11-12",
+   "end": "2026-11-14",
+   "deps": [
+    "T-44",
+    "T-45"
+   ],
+   "done": [
+    "A new request or message sends an email and a browser push, with no message text, unless the user turned them off",
+    "Settings has the \"Email alerts\" and \"Push alerts\" switches of the designs"
+   ],
+   "read": [
+    "docs/decisions/pd-17-connect-and-contact.md",
+    "docs/extensibility.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   },
   {
    "id": "T-46",

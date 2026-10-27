@@ -2,7 +2,7 @@
 id: T-44
 title: "Messages API"
 owner: "P3 Data and trust"
-sequence: "9 of 15"
+sequence: "9 of 16"
 hours: 8
 start: 2026-11-05
 end: 2026-11-08
@@ -17,7 +17,7 @@ tags:
 
 # T-44 · Messages API
 
-**Owner:** [[P3 Data and trust]], task 9 of 15  
+**Owner:** [[P3 Data and trust]], task 9 of 16  
 **When:** Thu 5 Nov → Sun 8 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#120](https://github.com/magentawood/roomsie/issues/120)
@@ -33,6 +33,7 @@ The server part of in-app messages between two users.
 
 ## Unblocks
 - [[T-45 Messages screens]]
+- [[T-55 Message alerts]]
 
 ## Done when
 - [ ] Who can message whom follows PD17
@@ -40,7 +41,6 @@ The server part of in-app messages between two users.
 - [ ] The API never gives a message to a user who is not in the conversation
 - [ ] A blocked user cannot send a message to the user who blocked them
 - [ ] The API masks phone numbers and WhatsApp links as •••• in each message
-- [ ] A new request or message sends an email and a browser push, with no message text, unless the user turned them off
 - [ ] After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests
 
 ^done
@@ -49,3 +49,37 @@ The server part of in-app messages between two users.
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [extensibility.md](../../extensibility.md)
 - [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)
+
+## Spec
+
+**Approved:** 2026-10-27, by n3rxv
+
+- **Modules:**
+  - `packages/contract`: the conversations, the messages, the send body, and the reply of the realtime route. The interface changes.
+  - `apps/api`:
+    - New: the messaging module, with the routes of the conversations and the messages.
+    - New: a realtime module, the only code that calls Supabase Realtime. New: a Firebase Admin module, the only code that calls the Firebase Admin SDK.
+    - The settings: the Supabase URL and key, and the Firebase service account. Each is optional in development and in the tests.
+    - The accept of a request makes its note the first message. The requests keep their rows when a profile is deleted.
+    - One migration: the messages, the read times, the profile links of the requests that can be empty, and the Realtime policy, which runs only on Supabase.
+    - The interface changes.
+  - The deploy of the API: the Firebase service account comes from a GitHub secret.
+  - Docs: a learn page for messages and realtime.
+- **Seams for the tests:**
+  - The routes, through `app.inject`, against a disposable test database, with the test app. A fake realtime module and a fake Firebase Admin module record their calls. This seam exists.
+- **Decisions:**
+  - Item 6 (the email and the push alerts) moved to the new task T-55, after T-45. The user approved it.
+  - A conversation is an accepted message request. At the accept, the note of the request becomes the first message, from its sender. Only the two people of an accepted request can read and send. A request that is open or declined has no thread ([PD17](../../decisions/pd-17-connect-and-contact.md)).
+  - The API:
+    - The list gives each conversation with the other person (the name and the photo, or "Deleted user"), the last message and the unread count, the newest first.
+    - A thread gives its messages, the newest first, in pages.
+    - A message has 1 to 2,000 characters. The API masks phone numbers and WhatsApp links as •••• before the save. The client makes the id, so a retried send stores one message ([ADR-0015](../../decisions/0015-primary-key-strategy.md)).
+    - The user marks a conversation as read.
+    - A user who is not in the conversation gets 404.
+  - After the save, the API broadcasts the message on a private Supabase Realtime channel of each of the two people, `user:<our user id>`. Only that user can join the channel: a policy checks the claims of the token ([ADR-0005](../../decisions/0005-managed-platform-split.md)).
+  - Supabase trusts the Firebase sign-in (third-party auth). The API adds the claims `role: 'authenticated'` and our user id to the Firebase user with the Firebase Admin SDK, at no extra compute cost. A route gives the web its channel, and tells it when it must refresh the token one time.
+  - A block hides the thread from the two people, and neither can send.
+  - A suspended account cannot sign in, and nobody can send to it. The thread stays for the other person to read.
+  - After an account deletion (T-20), the requests keep their rows: the profile links become empty, and the user row stays as a tombstone. The other person keeps the thread, which they can read but not answer, and sees "Deleted user".
+  - Setup that the user does: a Firebase service account key in a GitHub secret, through a `!` command; in Supabase, Firebase as a third-party auth provider, and Realtime that allows private channels only.
+- **Out of scope:** the screens and the realtime client of the web (T-45), the email and push alerts (T-55), the reports in a conversation (T-45), unblock.
