@@ -1,6 +1,8 @@
 # Handoff: sub-areas (T-56, T-57) and the open threads
 
-Written 2026-10-27 by the local session before the weekly limit ran out. Read it, then continue from "What's next". **Delete this file and HANDOFF-notes.md before the T-56 PR is opened. They must not merge to `main`.**
+Written 2026-10-27 by the local session before the weekly limit ran out. Read it, then continue from "What's next".
+
+**This handoff is for one transfer only.** The cloud session continues the work until the user's weekly limit resets, at 3:30 AM IST on Wednesday 28 October 2026. After the reset, the user takes the work back to the local sessions. Before then, commit and push all work to this branch. At the top of this file, write what the cloud session did and where it stopped. **Delete this file and HANDOFF-notes.md before the T-56 PR is opened. They must not merge to `main`.**
 
 ## The goal
 
@@ -18,14 +20,7 @@ Written 2026-10-27 by the local session before the weekly limit ran out. Read it
 | Issue #163 T-56 | `status:in-progress`, claimed by n3rxv |
 | Issue #164 T-57 | `status:spec`, claimed by n3rxv |
 
-The commits on `feat/t-56-sub-areas` after `fceaa7d`:
-
-1. `a44484a`: the spec, and T-56 and T-57 in the plan (with the issue numbers).
-2. `7355d31`: the schema, the seed and migrations 0011/0012.
-3. `1520c8d`: the areas module, the API, the listing rules, the match expansion, the tests and the stopgap on the web.
-4. `b7f6db3`: PD2 is rewritten, and the new learn page `docs/learn/areas.md`.
-5. `e750cc0`: the fixes from review round 1, and the T-09 item without a count.
-6. This file.
+`git log --oneline fceaa7d..HEAD` lists the commits of T-56.
 
 ## What's done in T-56
 
