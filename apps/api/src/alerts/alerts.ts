@@ -7,7 +7,7 @@ import type { Mailer } from '../email'
 import type { FirebaseAdmin } from '../firebase-admin'
 import type { MessageRow } from '../messages/read'
 import type { RequestRow } from '../requests/read'
-import { alertMail, alertTitle, type AlertKind } from './texts'
+import { alertMail, alertTitle, type Alert } from './texts'
 
 /** A person who read the chat this recently is in it, so a message sends no alert (PD17). */
 const quietMs = 5 * 60_000
@@ -45,22 +45,22 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
     return listing ? listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType }) : 'A lister'
   }
 
-  async function tell(userId: string, kind: AlertKind, name: string, link: string) {
+  async function tell(userId: string, alert: Alert) {
     const [user] = await db.select({ status: users.status, email: users.email, emailAlerts: users.emailAlerts }).from(users).where(eq(users.id, userId))
     if (user?.status !== 'active') return
     const tokens = firebaseAdmin ? await db.select({ token: pushTokens.token }).from(pushTokens).where(eq(pushTokens.userId, userId)) : []
     const sends = await Promise.allSettled([
-      user.emailAlerts && user.email ? mailer.send(user.email, alertMail(kind, name, link, `${webOrigin}/profile`)) : null,
+      user.emailAlerts && user.email ? mailer.send(user.email, alertMail(alert, `${webOrigin}/profile`)) : null,
       ...tokens.map(async ({ token }) => {
-        if (await firebaseAdmin!.sendPush(token, { title: alertTitle(kind, name), link }) === 'gone') await db.delete(pushTokens).where(eq(pushTokens.token, token))
+        if (await firebaseAdmin!.sendPush(token, { title: alertTitle(alert), link: alert.link }) === 'gone') await db.delete(pushTokens).where(eq(pushTokens.token, token))
       }),
     ])
     for (const send of sends) if (send.status === 'rejected') log.error({ err: send.reason }, 'alerts')
   }
 
   return {
-    request: (request) => later(async () => tell(request.toUserId, 'request', await nameOf(request.fromUserId, null), `${webOrigin}/messages/requests`)),
-    accept: (request) => later(async () => tell(request.fromUserId, 'accept', await nameOf(request.toUserId, request.listingId), chatLink(request.id))),
+    request: (request) => later(async () => tell(request.toUserId, { kind: 'request', name: await nameOf(request.fromUserId, null), link: `${webOrigin}/messages/requests` })),
+    accept: (request) => later(async () => tell(request.fromUserId, { kind: 'accept', name: await nameOf(request.toUserId, request.listingId), link: chatLink(request.id) })),
     message: (message) => later(async () => {
       const [request] = await db.select().from(connectionRequests).where(eq(connectionRequests.id, message.requestId))
       if (!request) return
@@ -69,14 +69,14 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
       const readAt = toSender ? request.fromReadAt : request.toReadAt
       const quietSince = message.createdAt.getTime() - quietMs
       if (readAt && readAt.getTime() > quietSince) return
-      // The accept sent its own alert to the sender of the request.
+      // The accept alert counts as the alert of the chat (PD17).
       if (toSender && request.respondedAt && request.respondedAt.getTime() > quietSince) return
       const [unread] = await db.select({ id: messages.id }).from(messages).where(and(
         eq(messages.requestId, request.id), eq(messages.senderUserId, message.senderUserId), ne(messages.id, message.id),
         readAt ? gt(messages.createdAt, readAt) : undefined,
       )).limit(1)
       if (unread) return
-      await tell(toSender ? request.fromUserId : request.toUserId, 'message', await nameOf(message.senderUserId, request.listingId), chatLink(request.id))
+      await tell(toSender ? request.fromUserId : request.toUserId, { kind: 'message', name: await nameOf(message.senderUserId, request.listingId), link: chatLink(request.id) })
     }),
     async settled() {
       while (pending.size) await Promise.all(pending)

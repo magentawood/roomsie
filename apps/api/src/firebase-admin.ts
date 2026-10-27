@@ -6,12 +6,10 @@ export const serviceAccount = z.object({ project_id: z.string(), client_email: z
 
 /** The claims that Supabase Realtime needs (T-44). */
 export const realtimeClaims = z.object({ role: z.literal('authenticated'), roomsie_user_id: z.uuid() })
-/** A push has no message text (PD17). `link` opens at a tap. */
-export type Push = { title: string; link: string }
 export type FirebaseAdmin = {
   setClaims(uid: string, claims: z.infer<typeof realtimeClaims>): Promise<void>
-  /** "gone": FCM refuses the token, so the browser no longer gets pushes (T-55). */
-  sendPush(token: string, push: Push): Promise<'sent' | 'gone'>
+  /** A push has no message text (PD17), and `link` opens at a tap. "gone": FCM refuses the token, so the browser no longer gets pushes (T-55). */
+  sendPush(token: string, push: { title: string; link: string }): Promise<'sent' | 'gone'>
 }
 
 const googleToken = z.object({ access_token: z.string(), expires_in: z.number() })

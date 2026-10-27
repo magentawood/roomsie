@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { alertSettings, outgoingRequest } from '@roomsie/contract'
+import { alertSettings, outgoingRequest, pushTokenStatus } from '@roomsie/contract'
 import { connectionRequests, listings, messages, pushTokens, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -78,6 +78,9 @@ describe('the switches', () => {
     expect((await addToken('seeker', 'browser-1')).statusCode).toBe(204)
     const owners = async () => (await t.db.select({ userId: pushTokens.userId }).from(pushTokens)).map((r) => r.userId)
     expect(await owners()).toEqual([t.ids.seeker])
+    const status = async (who: Who) => pushTokenStatus.parse((await t.call(who, 'POST', '/v1/me/push-tokens/status', { token: 'browser-1' })).json())
+    expect(await status('seeker')).toEqual({ registered: true })
+    expect(await status('friend')).toEqual({ registered: false })
     expect((await t.call('friend', 'DELETE', '/v1/me/push-tokens', { token: 'browser-1' })).statusCode).toBe(204)
     expect(await owners()).toEqual([t.ids.seeker])
     expect((await t.call('seeker', 'DELETE', '/v1/me/push-tokens', { token: 'browser-1' })).statusCode).toBe(204)
@@ -147,7 +150,7 @@ describe('the alerts', () => {
     expect(t.mails.map((m) => m.subject)).toEqual(['Divya sent you a message'])
   })
 
-  it('tells nothing about a message in the first 5 minutes after the accept, to the sender of the request', async () => {
+  it('counts the accept alert as the alert of the chat, for 5 minutes', async () => {
     const id = await sayHi()
     await t.call('friend', 'POST', `/v1/requests/${id}/accept`)
     t.mails.length = 0

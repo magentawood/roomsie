@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { alertSettings } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { pushState, turnOffPush, turnOnPush, type PushState } from '../../lib/push'
-import { queryKeys, useAlertSettings, useMe } from '../../lib/queries'
+import { queryKeys, useAlertSettings } from '../../lib/queries'
 import { Toggle } from '../ui/toggle'
 
 const pushProblems: Partial<Record<PushState, string>> = {
@@ -17,22 +16,18 @@ const pushProblems: Partial<Record<PushState, string>> = {
 /** "Email alerts" and "Push alerts" (T-55). Each tap saves at once, also with no profile. */
 export function AlertSwitches() {
   const user = useUser()
-  const me = useMe().data?.id
   const queryClient = useQueryClient()
   const settings = useAlertSettings()
   const email = useMutation({
     mutationFn: (on: boolean) => api(user, '/v1/me/alerts', alertSettings, { method: 'PUT', body: { emailAlerts: on } }),
     onSuccess: (saved) => queryClient.setQueryData(queryKeys.alerts, saved),
   })
-  // The state of this browser: its permission and its token. It needs no call to the API.
-  const [push, setPush] = useState<PushState | null>(null)
-  useEffect(() => {
-    if (!me) return
-    let current = true
-    void pushState(me).then((state) => { if (current) setPush(state) })
-    return () => { current = false }
-  }, [me])
-  const tapPush = useMutation({ mutationFn: (on: boolean) => (on ? turnOnPush(user, me!) : turnOffPush(user)), onSuccess: setPush })
+  const pushQuery = useQuery({ queryKey: queryKeys.push, queryFn: () => pushState(user) })
+  const push = pushQuery.data
+  const tapPush = useMutation({
+    mutationFn: (on: boolean) => (on ? turnOnPush(user) : turnOffPush(user)),
+    onSuccess: (state) => queryClient.setQueryData(queryKeys.push, state),
+  })
 
   const emailError = email.error ?? settings.error
   return (
@@ -41,7 +36,7 @@ export function AlertSwitches() {
         disabled={!settings.data || email.isPending} onChange={(on) => email.mutate(on)} problem={emailError && errorText(emailError)} />
       <Toggle title="Push alerts" help="A browser notification when someone messages you or replies." checked={push === 'on'}
         disabled={!push || push === 'unsupported' || tapPush.isPending} onChange={(on) => tapPush.mutate(on)}
-        problem={tapPush.isError ? errorText(tapPush.error) : push && pushProblems[push]} />
+        problem={tapPush.error || pushQuery.error ? errorText(tapPush.error ?? pushQuery.error) : push && pushProblems[push]} />
     </>
   )
 }

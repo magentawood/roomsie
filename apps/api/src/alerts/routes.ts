@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, eq } from 'drizzle-orm'
-import { alertSettings, noContent, pushTokenBody } from '@roomsie/contract'
+import { alertSettings, noContent, pushTokenBody, pushTokenStatus } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import { pushTokens, users } from '../db/schema'
 
@@ -26,6 +26,12 @@ export function alertRoutes(v1: FastifyInstance, options: AuthOptions) {
     await db.insert(pushTokens).values({ userId: req.user!.id, token: req.body.token })
       .onConflictDoUpdate({ target: pushTokens.token, set: { userId: req.user!.id } })
     return reply.code(204).send(null)
+  })
+
+  // A POST, not a GET: the token stays out of the URL and the logs.
+  app.post('/me/push-tokens/status', { preHandler, schema: { body: pushTokenBody, response: { 200: pushTokenStatus } } }, async (req) => {
+    const [mine] = await db.select({ id: pushTokens.id }).from(pushTokens).where(and(eq(pushTokens.token, req.body.token), eq(pushTokens.userId, req.user!.id)))
+    return { registered: !!mine }
   })
 
   app.delete('/me/push-tokens', { preHandler, schema: { body: pushTokenBody, response: { 204: noContent } } }, async (req, reply) => {
