@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
+  alertSettings, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { areaTree } from './areas'
@@ -23,6 +23,7 @@ export const queryKeys = {
   messages: (conversationId: string) => ['messages', conversationId],
   requests: (direction: 'incoming' | 'outgoing') => ['requests', direction],
   realtime: ['realtime'],
+  alerts: ['alerts'],
 } as const
 
 export function useMe() {
@@ -144,4 +145,10 @@ export function useMessagesBadge() {
   const conversations = useConversations()
   const incoming = useIncomingRequests()
   return badgeCount(conversations.data?.conversations ?? [], incoming.data?.requests ?? [])
+}
+
+/** The "Email alerts" switch of the account (T-55). */
+export function useAlertSettings() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.alerts, queryFn: () => api(user, '/v1/me/alerts', alertSettings) })
 }

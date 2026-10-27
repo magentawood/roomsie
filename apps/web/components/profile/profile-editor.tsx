@@ -20,12 +20,13 @@ import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { Field, TextArea, TextInput, inputClass } from '../ui/field'
 import { Toggle } from '../ui/toggle'
+import { AlertSwitches } from './alert-switches'
 import { AreaPicker } from './area-picker'
 import { DeleteAccountDialog } from './delete-account-dialog'
 
 const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
 
-function Section({ title, helper, children }: { title: string; helper: string; children: ReactNode }) {
+export function Section({ title, helper, children }: { title: string; helper: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-5">
       <div className="border-b border-secondary pb-4">
@@ -189,8 +190,9 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <TextArea label="What I want the others to know" value={draft.bio} onChange={(bio) => set({ bio })} placeholder="Say how you’d say it to a friend" maxLength={profileTextLimits.bio} />
       </Section>
 
-      <Section title="Settings" helper="Card visibility and your account.">
+      <Section title="Settings" helper="Card visibility, alerts and your account.">
         <Toggle title="Hide my card" help="Your card stops showing in other people’s results." checked={draft.hidden} onChange={(hidden) => set({ hidden })} />
+        <AlertSwitches />
         <div className="flex items-start justify-between gap-4">
           <span className="flex flex-col"><span className="text-md font-medium text-primary">Delete Account</span><span className="text-sm text-tertiary">Delete your account.</span></span>
           <Button variant="secondary" size="sm" onClick={() => setDeleting(true)}>Delete my account</Button>

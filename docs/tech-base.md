@@ -84,6 +84,7 @@ Clients hold a Firebase ID token and send requests to `apps/api`. They never ope
 | [ADR-0016](decisions/0016-credentials-and-secrets.md) | Credentials and secrets | Accepted | Public credentials can ship in the clients, but critical credentials stay only in `apps/api` or the CI secret store. |
 | [ADR-0017](decisions/0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted | A goal is one move with its own chat; a listing is one wide table; Form A catalogues are data. |
 | [ADR-0018](decisions/0018-migrations-in-the-deploy.md) | Migrations run in the deploy, before the new API | Accepted | The deploy applies the migrations and the seed before the new API starts. Each migration works with the API before it. |
+| [ADR-0019](decisions/0019-alerts-by-ses-and-fcm.md) | Alerts by Amazon SES and Firebase Cloud Messaging | Accepted | Amazon SES in Mumbai sends the alert emails, and Firebase Cloud Messaging sends the browser pushes. |
 <!-- ledger:end -->
 
 ## Learn

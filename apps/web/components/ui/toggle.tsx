@@ -1,12 +1,16 @@
-export function Toggle({ title, help, checked, onChange }: { title: string; help: string; checked: boolean; onChange: (checked: boolean) => void }) {
+/** `problem`: a line in the error colour under the help, for example a browser that blocks notifications. */
+export function Toggle({ title, help, checked, onChange, disabled, problem }: {
+  title: string; help: string; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean; problem?: string | null
+}) {
   return (
-    <label className="flex cursor-pointer items-start justify-between gap-4">
+    <label className={`flex items-start justify-between gap-4 ${disabled ? 'cursor-not-allowed' : 'cursor-pointer'}`}>
       <span className="flex flex-col">
         <span className="text-md font-medium text-primary">{title}</span>
         <span className="text-sm text-tertiary">{help}</span>
+        {problem && <span role="alert" className="text-sm text-error-primary">{problem}</span>}
       </span>
-      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)}
-        className={`relative mt-1 h-5 w-9 shrink-0 rounded-full transition-colors outline-focus-ring focus-visible:outline-2 ${checked ? 'bg-brand-solid' : 'bg-tertiary'}`}>
+      <button type="button" role="switch" aria-checked={checked} disabled={disabled} onClick={() => onChange(!checked)}
+        className={`relative mt-1 h-5 w-9 shrink-0 rounded-full transition-colors outline-focus-ring focus-visible:outline-2 disabled:opacity-50 ${checked ? 'bg-brand-solid' : 'bg-tertiary'}`}>
         <span className={`absolute top-0.5 left-0.5 size-4 rounded-full bg-primary shadow-sm transition-transform ${checked ? 'translate-x-4' : ''}`} />
       </button>
     </label>

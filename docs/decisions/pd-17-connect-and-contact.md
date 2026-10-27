@@ -1,6 +1,6 @@
 # PD17 — Connect and contact: message requests, no phone numbers in public
 
-**Status:** Settled. Changed on 2026-10-27. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-27 (T-55: the alerts). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -16,7 +16,7 @@
 - **Message requests.** "Say hi" sends one first note of up to 300 characters as a request. The receiver accepts or declines. Until an accept, the sender cannot write more.
 - **Limits.** A sender has 10 new requests a day. A request expires after 14 days. Only one request is open between two people at a time.
 - **After a decline.** The sender sees "Not available", never "Declined". The sender can send a new request later. Abuse goes to a report (PD18).
-- **Alerts.** A new request or message sends an email and a browser push, with no message text: "Divya sent you a message". The "Email alerts" and "Push alerts" switches turn them off.
+- **Alerts.** A new request, an accept and a message send an email and a browser push, with no message text: "Divya sent you a message". A chat sends one alert until the person reads it, and none while the person read it in the last 5 minutes. The "Email alerts" and "Push alerts" switches turn them off. The services: [ADR 0019](0019-alerts-by-ses-and-fcm.md).
 - **Bulk senders.** The cap and the reports only.
 
 ## Rationale
