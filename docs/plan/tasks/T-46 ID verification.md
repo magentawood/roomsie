@@ -33,11 +33,11 @@ A person checks an ID and a selfie, and roomsie keeps only the result.
 - No task waits on this task.
 
 ## Done when
-- [ ] A person sends a non-Aadhaar government ID and a selfie from the verification step of flow 04 or from Settings. A listing goes live before the review
-- [ ] A named reviewer approves or rejects each check in a screen that only named accounts open. Each view of a document goes in an audit log
-- [ ] The person sees the state of the check: in review, verified, or rejected with the reason and a way to send a new ID
-- [ ] The system stores the result, the method and the date. It deletes the ID photo and the selfie right after the review
-- [ ] The Verified badge on the cards and the detail screens uses the result
+- [x] A person sends a non-Aadhaar government ID and a selfie from the verification step of flow 04 or from Settings. A listing goes live before the review · [#169](https://github.com/magentawood/roomsie/pull/169)
+- [x] A named reviewer approves or rejects each check in a screen that only named accounts open. Each view of a document goes in an audit log · [#169](https://github.com/magentawood/roomsie/pull/169)
+- [x] The person sees the state of the check: in review, verified, or rejected with the reason and a way to send a new ID · [#169](https://github.com/magentawood/roomsie/pull/169)
+- [x] The system stores the result, the method and the date. It deletes the ID photo and the selfie right after the review · [#169](https://github.com/magentawood/roomsie/pull/169)
+- [x] The Verified badge on the cards and the detail screens uses the result · [#169](https://github.com/magentawood/roomsie/pull/169)
 
 ^done
 
@@ -108,3 +108,13 @@ A person checks an ID and a selfie, and roomsie keeps only the result.
   - a check that starts on one device and ends on a different device
   - an appeal other than a new check
   - the live check of S3 and Rekognition, which comes after the setup of the bucket, the IAM policy and the opt-out
+
+## Log
+
+- **2026-10-27 · [#169](https://github.com/magentawood/roomsie/pull/169)**
+  - **Change:** a person sends a photo of a non-Aadhaar ID and a live selfie from Settings or after a publish. A reviewer in `REVIEWER_UIDS` approves or rejects each check on "ID checks", with a face-match score of Amazon Rekognition as a help. The files wait in a private S3 bucket in Mumbai and go at the review. Cards and detail screens show the Verified badge.
+  - **Why:** [PD8](../../decisions/pd-08-verification.md), [ADR-0020](../../decisions/0020-id-checks-in-s3-with-rekognition.md)
+  - **Ticked:** all five items, and the T-42 item "The verification step of the flow opens the ID check of T-46"
+  - **Not done:** none. The live check of S3 and Rekognition waits for the setup of the bucket, the IAM policy and the opt-out.
+  - **Learn:** [ID checks and the Verified badge](../../learn/id-checks.md), and [Alerts](../../learn/alerts.md) (the IAM user)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
