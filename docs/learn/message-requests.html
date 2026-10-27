@@ -97,12 +97,13 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>An expiry needs no job.</strong> After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.</li>
 <li><strong>A 404 hides a block.</strong> A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.</li>
 <li><strong>A block declines an open request.</strong> Its sender sees "Not available", as after a decline (<a href="moderation.html">Moderation</a>).</li>
-<li><strong>The note waits for the chat.</strong> T-44 makes the note of an accepted request the first message of the chat.</li>
+<li><strong>The note opens the chat.</strong> At the accept, the note becomes the first message of the conversation (<a href="messages.html">Messages and realtime</a>).</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>F-13: <a href="https://github.com/magentawood/roomsie/pull/132">#132</a>, 2026-10-25. The rules of message requests.</li>
 <li>T-18a: <a href="https://github.com/magentawood/roomsie/pull/157">#157</a>, 2026-10-26. The API of message requests.</li>
 <li>T-18b: <a href="https://github.com/magentawood/roomsie/pull/159">#159</a>, 2026-10-26. The person detail and its connect states.</li>
+<li>T-44: <a href="https://github.com/magentawood/roomsie/pull/160">#160</a>, 2026-10-27. The note opens the conversation, and a deletion keeps the requests.</li>
 </ul>
 </main>
