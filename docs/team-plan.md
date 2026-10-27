@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-55.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
 
 ---
 
@@ -245,7 +245,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 8 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
 | P3 Data and trust | 9 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
 | P3 Data and trust | 10 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 11 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | no issue at this time |
+| P3 Data and trust | 11 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
 | P3 Data and trust | 12 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
 | P3 Data and trust | 13 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
 | P3 Data and trust | 14 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |

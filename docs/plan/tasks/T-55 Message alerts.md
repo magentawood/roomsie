@@ -8,6 +8,7 @@ start: 2026-11-12
 end: 2026-11-14
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/161
 tags:
   - task
   - p3
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P3 Data and trust]], task 11 of 16  
 **When:** Thu 12 Nov → Sat 14 Nov · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#161](https://github.com/magentawood/roomsie/issues/161)
 
 Tell a person about a new request or message by email and browser push.
 
