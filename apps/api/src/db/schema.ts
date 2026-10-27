@@ -209,7 +209,7 @@ export const areas = pgTable('areas', {
   /** Evergreen copy for the area page. Written once, not generated. */
   description: text('description'),
   commuteNotes: text('commute_notes'),
-  /** Unused since 2026-10-27: each area is live (PD2). A later migration drops it, after the API stops reading it. */
+  /** Unused (PD2). A second PR drops it and areas_launch_idx. */
   isLaunchArea: boolean('is_launch_area').notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: createdAt(),
@@ -496,7 +496,7 @@ export const saves = pgTable('saves', {
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
-  /** Where they asked for. Decides which area opens next (T-22). */
+  /** The place outside Mumbai (PD2). */
   area: text('area'),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),

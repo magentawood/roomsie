@@ -3,7 +3,7 @@
 What roomsie does, and why, at a glance. Each decision's full record is its PD file.
 
 roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the flats, rooms and people that fit.
-v0 is the product in the Figma designs (PD14): flats, rooms, PGs and flatmates, open to all genders, in three Mumbai area groups.
+v0 is the product in the Figma designs (PD14): flats, rooms, PGs and flatmates, open to all genders, in the nine Mumbai area groups (PD2).
 The public launch is on 12 October. The fallback is 14 October.
 The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roomsie is self-funded.
 

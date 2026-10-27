@@ -26,7 +26,6 @@ The server part: know the nine Mumbai area groups, and save waitlist emails from
 
 ## Needs first
 - [[T-14 Match query ⚑]]
-- [[F-06 Seed areas picked]]
 
 ## Unblocks
 - [[T-22b Waitlist screen]]
@@ -38,4 +37,4 @@ The server part: know the nine Mumbai area groups, and save waitlist emails from
 ^done
 
 ## Read first
-- [pd-11-launch.md](../../decisions/pd-11-launch.md)
+- [pd-02-launch-market.md](../../decisions/pd-02-launch-market.md)
