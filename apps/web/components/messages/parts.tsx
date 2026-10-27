@@ -18,7 +18,7 @@ export function Avatar({ photoUrl, name, size = 'md' }: { photoUrl: string | nul
   )
 }
 
-/** The name of a chat: the person, "Deleted user", or the listing when its lister has no profile. `first`: the first name of a person only. */
+/** The person, "Deleted user", or the listing when its lister has no profile. */
 export function useChatName(other: OtherPerson, listingId: string | null) {
   const listing = useListing(listingId).data
   const areas = useAreaLabels()
@@ -27,7 +27,6 @@ export function useChatName(other: OtherPerson, listingId: string | null) {
   return { name: person ?? (listing ? listingTitle(listing) : 'Lister'), first: other.deleted || !other.name ? null : firstName(other.name), about: about || null }
 }
 
-/** The icon of the requests to the user. */
 export function RequestsIcon() {
   return <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-secondary text-fg-quaternary"><UserPlus01 size={20} aria-hidden /></span>
 }

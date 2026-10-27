@@ -8,7 +8,7 @@ import {
 import type { ListingResponse } from '@roomsie/contract'
 import { labels, listingTitle } from '../../lib/listing-steps'
 import {
-  addressLine, flatmateLines, listerLabel, listerOf, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
+  addressLine, flatmateLines, listerLabel, listerPhrase, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
 import { listingChat } from '../../lib/messages'
 import { useAreaLabels, useConversations, useOutgoingRequests } from '../../lib/queries'
@@ -63,7 +63,7 @@ function MessageLister({ listing, onMessage }: { listing: ListingResponse; onMes
   const conversations = useConversations()
   if (!outgoing.data || !conversations.data) return null
   const chat = listingChat(outgoing.data.requests, conversations.data.conversations, listing.id)
-  const message = <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} onClick={onMessage}>{`Message ${listerOf(listing.kind)}`}</Button>
+  const message = <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} onClick={onMessage}>{`Message ${listerPhrase(listing.kind)}`}</Button>
   switch (chat.state) {
     case 'sent': return <Button variant="secondary" size="lg" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
     case 'accepted': return <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} href={chat.conversationId && `/messages/${chat.conversationId}`} disabled={!chat.conversationId}>Open chat</Button>

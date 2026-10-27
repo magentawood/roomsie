@@ -8,14 +8,11 @@ import { useAuth, useUser } from './auth'
 import { addMessage, withMessage, type MessagePages } from './messages'
 import { LiveChannel, queryKeys, useRealtime } from './queries'
 
-/** A live or a sent message goes into the cache. Only a chat that is not in the list yet, after an accept, loads the lists again. */
+/** A chat that is not in the list yet (after an accept) loads the lists again. */
 export function cacheMessage(queryClient: QueryClient, m: Message) {
   queryClient.setQueryData<MessagePages>(queryKeys.messages(m.conversationId), (data) => addMessage(data, m))
   const conversations = withMessage(queryClient.getQueryData<ConversationsResponse>(queryKeys.conversations), m)
-  if (conversations) {
-    queryClient.setQueryData(queryKeys.conversations, conversations)
-    return
-  }
+  if (conversations) return void queryClient.setQueryData(queryKeys.conversations, conversations)
   void queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
   void queryClient.invalidateQueries({ queryKey: queryKeys.requests('outgoing') })
 }
