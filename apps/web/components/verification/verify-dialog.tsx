@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ImagePlus, ShieldTick, XClose } from '@untitledui/icons'
-import { documentTypeLabels, photoTypes } from '@roomsie/contract'
+import { documentTypeLabels, photoTypes, type DocumentType } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { queryKeys } from '../../lib/queries'
@@ -11,8 +11,6 @@ import { openCamera, sendCheck, takeSelfie } from '../../lib/verification'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { ModalFrame } from '../ui/modal'
-
-type DocumentType = keyof typeof documentTypeLabels
 
 /** The live camera of step 2. No file picker: the selfie must come from the camera now (T-46). */
 function Camera({ shot, onShot }: { shot: string | null; onShot: (selfie: Blob) => void }) {

@@ -13,7 +13,7 @@ import { firstPhotoUrl, photoUploadLink, type Storage } from '../storage'
 import { blockingCheck, openCheck, verificationOf } from './read'
 
 /** The ID check of PD8 (T-46): a person sends an ID photo and a live selfie, and a named reviewer approves or rejects. */
-export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; idStore: IdStore | null }) {
+export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; idStore?: IdStore }) {
   const { db, storage, idStore } = options
   const { alerts } = v1
   const app = v1.withTypeProvider<ZodTypeProvider>()
@@ -100,6 +100,7 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
   }, async (req, reply) => {
     const { id } = req.params
     const review = req.body
+    const result = review.action === 'approve' ? 'verified' : 'rejected'
     const reviewed = await db.transaction(async (tx) => {
       const [check] = await tx.select({ userId: verifications.userId, idPhotoKey: verifications.idPhotoKey, selfieKey: verifications.selfieKey })
         .from(verifications).where(and(eq(verifications.id, id), openCheck())).for('update')
@@ -107,7 +108,7 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
       const rejected = review.action === 'reject' ? { reason: review.reason, note: review.note || null } : { reason: null, note: null }
       // PD8: we keep the result. The keys and the score go with the files.
       await tx.update(verifications).set({
-        state: review.action === 'approve' ? 'verified' : 'rejected', ...rejected,
+        state: result, ...rejected,
         idPhotoKey: null, selfieKey: null, faceMatch: null, reviewerUserId: req.user!.id, reviewedAt: new Date(),
       }).where(eq(verifications.id, id))
       await tx.insert(verificationAudit).values({ verificationId: id, reviewerUserId: req.user!.id, action: review.action })
@@ -117,7 +118,7 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
     const keys = [reviewed.idPhotoKey, reviewed.selfieKey].filter((k) => k !== null)
     // A failed delete keeps the review: the lifecycle rule of the bucket deletes the files after 7 days.
     if (idStore && keys.length) await idStore.deleteObjects(keys).catch((err: unknown) => req.log.error({ err }, 'ID files delete'))
-    alerts.verification(reviewed.userId, review.action === 'approve' ? 'verified' : 'rejected')
+    alerts.verification(reviewed.userId, result)
     return reply.code(204).send(null)
   })
 }

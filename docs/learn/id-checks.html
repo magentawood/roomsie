@@ -107,7 +107,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>The setup.</strong> The API needs <code>ID_BUCKET</code> and the IAM user of the alerts, with access to that bucket and to <code>rekognition:CompareFaces</code>. The bucket needs a CORS rule for the PUT of the web, and a lifecycle rule that deletes each file after 7 days. The AWS account needs the AI services opt-out for Rekognition. Without the bucket name, the API takes no ID check.</li>
+<li><strong>The setup.</strong> The API needs the bucket <code>roomsie-id-checks</code>, the CI secret <code>REVIEWER_UIDS</code>, and the IAM user of the alerts, with access to that bucket and to <code>rekognition:CompareFaces</code>. The bucket needs a CORS rule for the PUT of the web, and a lifecycle rule that deletes each file after 7 days. The AWS account needs the AI services opt-out for Rekognition. Without the bucket name, the API takes no ID check.</li>
 <li><strong>A parent.</strong> A parent can manage the card of a son or daughter. The parent sends the check, so that card never shows the badge of the parent.</li>
 <li><strong>No camera.</strong> A laptop with no camera, or a blocked camera, shows "We can't open a camera". The person can verify on a phone.</li>
 <li><strong>A failed delete.</strong> The review stays, and the error goes to the log. The lifecycle rule deletes the files after 7 days.</li>

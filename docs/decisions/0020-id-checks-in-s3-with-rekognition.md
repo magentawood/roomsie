@@ -17,8 +17,9 @@
 - **The face match:** when the person sends the check, the API asks Rekognition `CompareFaces` to compare the selfie with the ID photo in the bucket. The score goes to the reviewer. The reviewer approves or rejects, and the score goes at the review.
 - **The opt-out:** the AWS account has an AI services opt-out policy for Rekognition, so AWS keeps no image for its own use.
 - **One module:** only the ID store module of the API touches the bucket and Rekognition.
-- **The keys:** the IAM user of ADR 0019 also gets `s3:PutObject`, `s3:GetObject` and `s3:DeleteObject` on this bucket, and `rekognition:CompareFaces`. The API reads the bucket name from `ID_BUCKET`. No new secret.
-- **No setup, no checks:** without the bucket name or the keys, the API takes no ID check.
+- **The keys:** the IAM user of ADR 0019 also gets `s3:PutObject`, `s3:GetObject` and `s3:DeleteObject` on this bucket, and `rekognition:CompareFaces`. The deploy workflow gives the API the bucket name, `roomsie-id-checks`, in `ID_BUCKET`. No new key.
+- **The reviewers:** the Firebase UIDs in the CI secret `REVIEWER_UIDS`, as `MODERATOR_UIDS` (T-19).
+- **No setup, no checks:** without the bucket name or the keys, the API takes no ID check. Without `REVIEWER_UIDS`, nobody reviews.
 
 ## Rationale
 

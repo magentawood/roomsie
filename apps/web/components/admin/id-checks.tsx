@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { CheckCircle, User01, XClose } from '@untitledui/icons'
 import {
-  documentTypeLabels, idCheckPhotosResponse, noContent, rejectReasonLabels, reviewNoteLimit, type IdCheckQueueResponse, type ReviewCheckBody,
+  documentTypeLabels, idCheckPhotosResponse, noContent, rejectReasonLabels, reviewNoteLimit, type IdCheckQueueResponse, type RejectReason, type ReviewCheckBody,
 } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -18,12 +18,11 @@ import { TextArea } from '../ui/field'
 import { ModalFrame } from '../ui/modal'
 
 type Check = IdCheckQueueResponse['checks'][number]
-type Reason = keyof typeof rejectReasonLabels
 
 const faceLine = (score: number | null) => (score === null ? 'Face match: no score' : `Face match ${Math.round(score)}% · from Amazon Rekognition, a help only`)
 
-function RejectDialog({ name, busy, onReject, onClose }: { name: string; busy: boolean; onReject: (reason: Reason, note: string | null) => void; onClose: () => void }) {
-  const [reason, setReason] = useState<Reason | null>(null)
+function RejectDialog({ name, busy, onReject, onClose }: { name: string; busy: boolean; onReject: (reason: RejectReason, note: string | null) => void; onClose: () => void }) {
+  const [reason, setReason] = useState<RejectReason | null>(null)
   const [note, setNote] = useState<string | null>(null)
   return (
     <ModalFrame labelledBy="reject-title" onClose={onClose}>

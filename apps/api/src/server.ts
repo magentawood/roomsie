@@ -34,7 +34,7 @@ declare module 'fastify' {
   }
 }
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore | null } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
@@ -71,7 +71,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
         '/me',
         { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: noContent } } },
         async (req, reply) => {
-          await deleteAccount(options.db, options.storage, options.idStore ?? null, req.user!.id, req.identity!)
+          await deleteAccount(options.db, options.storage, options.idStore, req.user!.id, req.identity!)
           return reply.code(204).send(null)
         },
       )
@@ -89,7 +89,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       moderationRoutes(v1, options)
       messageRoutes(v1, options)
       alertRoutes(v1, options)
-      verificationRoutes(v1, { ...options, idStore: options.idStore ?? null })
+      verificationRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

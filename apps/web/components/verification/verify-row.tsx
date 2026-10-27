@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ShieldTick } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import { useVerification } from '../../lib/queries'
-import { verifyRow } from '../../lib/verification'
+import { verifyOffer, verifyRow } from '../../lib/verification'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
@@ -21,7 +21,7 @@ export function VerifyRow() {
     <div className="flex items-start justify-between gap-4">
       <span className="flex flex-col gap-0.5">
         <span className="flex flex-wrap items-center gap-2 text-md font-medium text-primary">
-          Verify your ID{row.badge && <Badge tone={row.badge[0]} dot={false}>{row.badge[1]}</Badge>}
+          Verify your ID{row.badge && <Badge tone={row.badge.tone} dot={false}>{row.badge.label}</Badge>}
         </span>
         <span className="text-sm text-tertiary">{row.text}</span>
         {row.note && <span className="text-sm font-medium text-secondary">Note from our team: “{row.note}”</span>}
@@ -44,7 +44,7 @@ export function VerifyAfterPublish({ onDone }: { onDone: () => void }) {
           <Button variant="primary" size="lg" className="flex-1" onClick={() => setVerifying(true)}>Verify</Button>
         </>
       )}>
-      Optional. Send a passport, driving licence, voter ID or PAN card and a selfie. A Verified badge shows on your card after our check.
+      {verifyOffer}
     </Modal>
   )
 }

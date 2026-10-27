@@ -9,13 +9,16 @@ export type UploadTarget = { path: string; reply: z.ZodType<{ key: string; url: 
 /** Shrinks the photo, gets a signed link from the API, and uploads it straight to R2 (ADR-0005). Returns the key to save. */
 export async function uploadPhoto(user: User, target: UploadTarget, file: File) {
   const photo = await shrinkPhoto(file)
-  const contentType = photo.type as UploadUrlBody['contentType']
-  const { key, url } = await api(user, target.path, target.reply, {
-    method: 'POST',
-    body: { contentType, size: photo.size } satisfies UploadUrlBody,
-  })
-  // The link signs the type and the size; the browser sets content-length from the body.
-  const res = await fetch(url, { method: 'PUT', headers: { 'content-type': contentType }, body: photo })
-  if (!res.ok) throw new Error(`The upload failed with ${res.status}`)
+  const { key, url } = await api(user, target.path, target.reply, { method: 'POST', body: uploadBody(photo) })
+  await putPhoto(url, photo)
   return { key, preview: URL.createObjectURL(photo) }
+}
+
+/** The body of an upload-link request for a photo. */
+export const uploadBody = (photo: Blob): UploadUrlBody => ({ contentType: photo.type as UploadUrlBody['contentType'], size: photo.size })
+
+/** Puts a photo at a signed link. The link signs the type and the size; the browser sets content-length from the body. */
+export async function putPhoto(url: string, photo: Blob) {
+  const res = await fetch(url, { method: 'PUT', headers: { 'content-type': photo.type }, body: photo })
+  if (!res.ok) throw new Error(`The upload failed with ${res.status}`)
 }
