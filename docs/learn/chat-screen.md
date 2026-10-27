@@ -16,11 +16,12 @@
 | The page | `apps/web/app/chat/page.tsx`: `<AppShell fixed><ChatScreen /></AppShell>` |
 | The screen and the input | `apps/web/components/chat/chat-screen.tsx` |
 | The send rule | `apps/web/lib/chat.ts`: `keyAction` and `canSend`, with a unit test |
-| The wall | `apps/web/components/shell/sign-in-wall.tsx`: `<SignInWall onClose onSignedIn />` and `<GoogleSignIn />` |
+| The wall | `apps/web/components/shell/sign-in-wall.tsx`: `<SignInWall onClose />` |
+| The sign-in button and the legal line of D-02 | `apps/web/components/shell/sign-in-gate.tsx`: `<GoogleSignIn />` and `<LegalLine />`, also on the full-page sign-in |
 | The shell | `apps/web/components/shell/app-shell.tsx` |
 
-- **The assistant is not live yet.** A sent message shows in the thread with the line "The assistant isn’t live yet. Your message stays here until it is." Nothing goes to the API, and a reload clears the thread. T-12 replaces the line with its turn route.
-- **The shell gates the taps of a guest.** New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the wall opens the page that the guest tapped. For a signed-in user, each one is a plain link.
+- **The assistant is not live yet.** A sent message shows in the thread with one line of the screen. Nothing goes to the API, and a reload clears the thread. T-12 replaces the line with its turn route.
+- **The shell gates the taps of a guest.** New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.
 - **A link from outside** to a page that needs an account still opens the full-page sign-in of `SignInGate`.
 - **`AppShell fixed`** makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.
 

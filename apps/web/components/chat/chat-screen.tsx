@@ -9,7 +9,6 @@ import { Button } from '../ui/button'
 function ChatInput({ grow, autoFocus, onSend }: { grow: 'up' | 'down'; autoFocus?: boolean; onSend: (text: string) => void }) {
   const [text, setText] = useState('')
   const box = useRef<HTMLTextAreaElement>(null)
-  // The text box takes the height of its text, to its max height.
   useLayoutEffect(() => {
     const el = box.current!
     el.style.height = 'auto'
@@ -20,7 +19,6 @@ function ChatInput({ grow, autoFocus, onSend }: { grow: 'up' | 'down'; autoFocus
     setText('')
   }
   return (
-    // The box keeps the height of one line. The input grows out of it.
     <div className="relative h-16">
       <form onSubmit={(e) => { e.preventDefault(); send() }}
         className={`absolute inset-x-0 z-10 flex items-end gap-2 rounded-xl border border-secondary bg-primary px-3.5 py-3 shadow-md focus-within:outline-2 focus-within:outline-focus-ring ${grow === 'up' ? 'bottom-0' : 'top-0'}`}>
@@ -60,10 +58,7 @@ function EmptyChat({ onSend }: { onSend: (text: string) => void }) {
   )
 }
 
-/**
- * The chat of a goal (T-10). The assistant is not live until T-12, so a sent message stays on the screen with one line,
- * and nothing goes to the API. A reload clears the thread.
- */
+/** The chat of a goal. Nothing goes to the API until T-12, and a reload clears it. */
 export function ChatScreen() {
   const [sent, setSent] = useState<string[]>([])
   const send = (text: string) => setSent((list) => [...list, text])
