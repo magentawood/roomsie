@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { otherPerson } from './messages'
 import { cardResponse } from './profiles'
 import { requiredText } from './shared'
 
@@ -12,11 +13,12 @@ const note = requiredText(requestNoteLimit)
 export const sendRequestBody = z.union([z.strictObject({ toProfileId: z.uuid(), note }), z.strictObject({ listingId: z.uuid(), note })])
 export type SendRequestBody = z.infer<typeof sendRequestBody>
 
-/** What the sender sees. A decline and an expiry are both "not_available" (PD17). */
+/** What the sender sees. A decline and an expiry are both "not_available" (PD17). `to`: the person who gets it, as a conversation shows them. */
 export const outgoingRequest = z.object({
   id: z.uuid(),
   toProfileId: z.uuid().nullable(),
   listingId: z.uuid().nullable(),
+  to: otherPerson,
   state: z.enum(['open', 'accepted', 'not_available']),
   createdAt: z.iso.datetime(),
 })

@@ -10,6 +10,7 @@ import type { Db } from '../db/client'
 import { connectionRequests, listings, profiles, users } from '../db/schema'
 import { visibleListing } from '../listings/read'
 import { visiblePeople } from '../match/query'
+import { peopleOf } from '../profiles/read'
 import { idParams } from '../params'
 import { firstPhotoUrl, type Storage } from '../storage'
 import { openConversation, sendLive } from '../messages/send'
@@ -17,10 +18,17 @@ import type { Messaging } from '../messages/settings'
 import { maskContacts } from '../text/mask-contacts'
 import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
 
-const outgoingView = (r: RequestRow) => ({
-  id: r.id, toProfileId: r.toProfileId, listingId: r.listingId, createdAt: r.createdAt.toISOString(),
-  state: r.status === 'accepted' ? 'accepted' as const : isOpen(r) ? 'open' as const : 'not_available' as const,
-})
+/** Each sent request with the person who gets it, as a conversation shows the other person. */
+async function outgoingViews(db: Db, storage: Storage, rows: RequestRow[]) {
+  const people = rows.length ? await peopleOf(db, storage, rows.map((r) => r.toUserId)) : new Map()
+  return rows.map((r) => {
+    const { profileId, name, photoUrl, deleted } = people.get(r.toUserId)!
+    return {
+      id: r.id, toProfileId: r.toProfileId, listingId: r.listingId, createdAt: r.createdAt.toISOString(), to: { profileId, name, photoUrl, deleted },
+      state: r.status === 'accepted' ? 'accepted' as const : isOpen(r) ? 'open' as const : 'not_available' as const,
+    }
+  })
+}
 
 /** The user who gets the request, or nothing when the target is not visible to the sender. */
 async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) {
@@ -66,13 +74,13 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     })
     if (made === 'limit') return reply.code(429).send({ error: requestCapMessage })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
-    return reply.code(201).send(outgoingView(made))
+    return reply.code(201).send((await outgoingViews(db, storage, [made]))[0]!)
   })
 
   app.get('/requests/outgoing', { preHandler, schema: { response: { 200: outgoingRequestsResponse } } }, async (req) => {
     const rows = await db.select().from(connectionRequests)
       .where(eq(connectionRequests.fromUserId, req.user!.id)).orderBy(desc(connectionRequests.createdAt))
-    return { requests: rows.map(outgoingView) }
+    return { requests: await outgoingViews(db, storage, rows) }
   })
 
   app.get('/requests/incoming', { preHandler, schema: { response: { 200: incomingRequestsResponse } } }, async (req) => {
