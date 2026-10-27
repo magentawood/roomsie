@@ -1,5 +1,7 @@
 # Handoff: sub-areas (T-56, T-57) and the open threads
 
+**Cloud session, 2026-10-27:** review round 2 is done and its fixes are committed. The push is blocked (GitHub 403). See [HANDOFF-notes.md](HANDOFF-notes.md#cloud-session-2026-10-27-what-it-did-and-where-it-stopped).
+
 Written 2026-10-27 by the local session before the weekly limit ran out. Read it, then continue from "What's next".
 
 **This handoff is for one transfer only.** The cloud session continues the work until the user's weekly limit resets, at 3:30 AM IST on Wednesday 28 October 2026. After the reset, the user takes the work back to the local sessions. Before then, commit and push all work to this branch. At the top of this file, write what the cloud session did and where it stopped. **Delete this file and HANDOFF-notes.md before the T-56 PR is opened. They must not merge to `main`.**
