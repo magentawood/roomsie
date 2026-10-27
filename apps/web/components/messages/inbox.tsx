@@ -2,10 +2,9 @@
 
 import { useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { MessageCircle01, SearchLg, UserPlus01 } from '@untitledui/icons'
+import { MessageCircle01, SearchLg } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import { inboxItems, inboxTime, type InboxItem } from '../../lib/messages'
-import { firstName } from '../../lib/profile-form'
 import { useConversations, useIncomingRequests, useOutgoingRequests } from '../../lib/queries'
 import { AppShell, PageHeader } from '../shell/app-shell'
 import { SignInGate } from '../shell/sign-in-gate'
@@ -13,7 +12,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { inputClass } from '../ui/field'
-import { Avatar, useChatName } from './parts'
+import { Avatar, RequestsIcon, useChatName } from './parts'
 
 function Row({ href, selected, children }: { href: string; selected: boolean; children: ReactNode }) {
   return (
@@ -28,11 +27,11 @@ function Row({ href, selected, children }: { href: string; selected: boolean; ch
 
 function ItemRow({ item, selected, query }: { item: InboxItem; selected: boolean; query: string }) {
   const { other } = item
-  const { name } = useChatName(other, item.listingId)
+  const { name, first } = useChatName(other, item.listingId)
   if (query && !name.toLowerCase().includes(query.toLowerCase())) return null
   const last = item.kind === 'conversation' ? item.conversation.lastMessage : null
   const preview = item.kind === 'sent'
-    ? (item.request.state === 'open' ? `Request sent · Waiting for ${firstName(name)}` : 'Not available')
+    ? (item.request.state === 'open' ? `Request sent · Waiting for ${first ?? 'the lister'}` : 'Not available')
     : last ? `${last.mine ? 'You: ' : ''}${last.text}` : ''
   const unread = item.kind === 'conversation' && item.conversation.unread > 0
   return (
@@ -79,7 +78,7 @@ function Inbox({ selected }: { selected?: string }) {
       <ul className="flex flex-col">
         {requests > 0 && (
           <Row href="/messages/requests" selected={selected === 'requests'}>
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-secondary text-fg-quaternary"><UserPlus01 size={20} aria-hidden /></span>
+            <RequestsIcon />
             <span className="flex min-w-0 flex-1 flex-col text-sm">
               <span className="font-medium text-primary">Requests</span>
               <span className="text-tertiary">{requests === 1 ? '1 person wants to say hi' : `${requests} people want to say hi`}</span>

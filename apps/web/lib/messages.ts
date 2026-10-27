@@ -1,5 +1,5 @@
 import type { InfiniteData } from '@tanstack/react-query'
-import type { Conversation, IncomingRequest, ListingKind, Message, OtherPerson, OutgoingRequest } from '@roomsie/contract'
+import type { Conversation, ConversationsResponse, IncomingRequest, Message, OtherPerson, OutgoingRequest } from '@roomsie/contract'
 
 /** A row of the inbox. `id` opens its thread. */
 export type InboxItem = { id: string; other: OtherPerson; listingId: string | null; at: string } & (
@@ -35,8 +35,6 @@ export function inboxItems(conversations: readonly Conversation[], outgoing: rea
   return items.sort((a, b) => b.at.localeCompare(a.at))
 }
 
-export const otherName = (other: OtherPerson) => (other.deleted ? 'Deleted user' : other.name)
-
 /** The message button of a listing follows the newest request of the user to it. `outgoing` comes newest first. */
 export function listingChat(outgoing: readonly OutgoingRequest[], conversations: readonly Conversation[], listingId: string) {
   const newest = outgoing.find((r) => r.listingId === listingId)
@@ -46,11 +44,11 @@ export function listingChat(outgoing: readonly OutgoingRequest[], conversations:
   return { state: 'accepted' as const, conversationId: conversations.find((c) => c.listingId === listingId)?.id }
 }
 
-/** The lister of a listing, as the message button of the listing details names it: "Message the owner". */
-export const listerOf = (kind: ListingKind) => ({ pg: 'the PG/Hostel', broker_flat: 'the broker', owner_flat: 'the owner', room_in_flat: 'the flatmate' })[kind]
-
 export const chatWith = (conversations: readonly Conversation[], profileId: string) =>
   conversations.find((c) => c.other.profileId === profileId)?.id
+
+/** The profile that a chat can open: none for a deleted account or a lister with no profile. */
+export const profileOf = (other: OtherPerson) => (other.deleted ? null : other.profileId)
 
 const india = { timeZone: 'Asia/Kolkata' } as const
 const dayOf = (at: Date) => at.toLocaleDateString('en-CA', india)
@@ -92,6 +90,14 @@ export function threadDays(newestFirst: readonly Message[], now = new Date()) {
     days.at(-1)!.messages.push(m)
   }
   return days
+}
+
+/** A live or a sent message is the last message of its chat, and one more unread when it is not mine. Undefined: the chat is not in the list, so the list loads again. */
+export function withMessage(data: ConversationsResponse | undefined, m: Message): ConversationsResponse | undefined {
+  const chat = data?.conversations.find((c) => c.id === m.conversationId)
+  if (!data || !chat) return undefined
+  if (chat.lastMessage?.id === m.id) return data
+  return { conversations: data.conversations.map((c) => (c === chat ? { ...c, lastMessage: m, unread: c.unread + (m.mine ? 0 : 1) } : c)) }
 }
 
 export type MessagePages = InfiniteData<{ messages: Message[]; hasMore: boolean }, string | undefined>

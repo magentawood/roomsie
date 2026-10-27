@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Conversation, IncomingRequest, Message, OutgoingRequest } from '@roomsie/contract'
-import { addMessage, badgeCount, chatWith, inboxItems, inboxTime, listingChat, requestTimes, threadDays } from './messages'
+import { addMessage, badgeCount, chatWith, inboxItems, inboxTime, listingChat, requestTimes, threadDays, withMessage } from './messages'
 
 const id = (n: number) => `0199e4b0-0000-7000-8000-${String(n).padStart(12, '0')}`
 const person = (name: string | null, deleted = false, profileId = name ? id(90) : null) => ({ profileId, name, photoUrl: null, deleted })
@@ -82,6 +82,18 @@ describe('the thread', () => {
     expect(added!.pages[0]!.messages.map((m) => m.text)).toEqual(['m2', 'm1'])
     expect(addMessage(added, message(2, '2026-10-27T04:00:00.000Z'))).toBe(added)
     expect(addMessage(undefined, message(2, '2026-10-27T04:00:00.000Z'))).toBeUndefined()
+  })
+
+  it('makes a live or a sent message the last message of its chat, counts it unread when it is not mine, and one time only', () => {
+    const list = { conversations: [conversation(1, { unread: 1 }), conversation(2)] }
+    const theirs = { ...message(5, '2026-10-27T04:00:00.000Z'), conversationId: id(1) }
+    const got = withMessage(list, theirs)!
+    expect(got.conversations[0]).toMatchObject({ lastMessage: theirs, unread: 2 })
+    expect(got.conversations[1]).toBe(list.conversations[1])
+    expect(withMessage(got, theirs)).toBe(got)
+    expect(withMessage(list, { ...message(6, '2026-10-27T04:00:00.000Z', true), conversationId: id(1) })!.conversations[0]!.unread).toBe(1)
+    expect(withMessage(list, { ...theirs, conversationId: id(3) })).toBeUndefined()
+    expect(withMessage(undefined, theirs)).toBeUndefined()
   })
 
   it('shows the pages oldest first, by day in India time', () => {

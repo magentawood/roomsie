@@ -1,11 +1,11 @@
 'use client'
 
-import { InfoCircle, User01 } from '@untitledui/icons'
+import { InfoCircle, User01, UserPlus01 } from '@untitledui/icons'
 import type { OtherPerson } from '@roomsie/contract'
 import { listerLabel } from '../../lib/place-detail'
 import { listingTitle } from '../../lib/listing-steps'
-import { otherName } from '../../lib/messages'
 import { initials } from '../../lib/person'
+import { firstName } from '../../lib/profile-form'
 import { useAreaLabels, useListing } from '../../lib/queries'
 
 export function Avatar({ photoUrl, name, size = 'md' }: { photoUrl: string | null; name: string | null; size?: 'md' | 'sm' }) {
@@ -18,18 +18,18 @@ export function Avatar({ photoUrl, name, size = 'md' }: { photoUrl: string | nul
   )
 }
 
-function useListingLine(listingId: string | null) {
-  const listing = useListing(listingId)
+/** The name of a chat: the person, "Deleted user", or the listing when its lister has no profile. `first`: the first name of a person only. */
+export function useChatName(other: OtherPerson, listingId: string | null) {
+  const listing = useListing(listingId).data
   const areas = useAreaLabels()
-  if (!listing.data) return null
-  const area = listing.data.areaSlug ? areas[listing.data.areaSlug] : null
-  return { title: listingTitle(listing.data), line: [listerLabel(listing.data.kind), area].filter(Boolean).join(' · ') }
+  const person = other.deleted ? 'Deleted user' : other.name
+  const about = listing && [listerLabel(listing.kind), listing.areaSlug && areas[listing.areaSlug]].filter(Boolean).join(' · ')
+  return { name: person ?? (listing ? listingTitle(listing) : 'Lister'), first: other.deleted || !other.name ? null : firstName(other.name), about: about || null }
 }
 
-/** The name of a chat: the person, "Deleted user", or the listing when its lister has no profile. */
-export function useChatName(other: OtherPerson, listingId: string | null) {
-  const listing = useListingLine(listingId)
-  return { name: otherName(other) ?? listing?.title ?? 'Lister', about: listing?.line ?? null }
+/** The icon of the requests to the user. */
+export function RequestsIcon() {
+  return <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-secondary text-fg-quaternary"><UserPlus01 size={20} aria-hidden /></span>
 }
 
 export function SafetyNotice() {

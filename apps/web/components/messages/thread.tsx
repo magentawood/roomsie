@@ -6,11 +6,11 @@ import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, Flag01, Home02, Send01, SlashCircle01, User01 } from '@untitledui/icons'
 import { uuidv7 } from 'uuidv7'
-import { message, messageTextLimit, noContent, requestExpiryDays, type Conversation, type OtherPerson, type OutgoingRequest } from '@roomsie/contract'
+import { message, messageTextLimit, noContent, requestExpiryDays, type Conversation, type ConversationsResponse, type OtherPerson, type OutgoingRequest } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { addMessage, clockTime, threadDays, type MessagePages } from '../../lib/messages'
-import { firstName } from '../../lib/profile-form'
+import { cacheMessage } from '../../lib/live'
+import { clockTime, profileOf, threadDays } from '../../lib/messages'
 import { queryKeys, useMessages } from '../../lib/queries'
 import { DetailMenu } from '../detail/parts'
 import { BlockSheet } from '../people/block-sheet'
@@ -19,7 +19,8 @@ import { Button } from '../ui/button'
 import { Avatar, SafetyNotice, useChatName } from './parts'
 
 function Header({ other, listingId, name, about, menu }: { other: OtherPerson; listingId: string | null; name: string; about: string | null; menu?: ReactNode }) {
-  const view = other.profileId && !other.deleted ? { href: `/people/${other.profileId}`, label: 'View profile' } : listingId ? { href: `/places/${listingId}`, label: 'View listing' } : null
+  const profileId = profileOf(other)
+  const view = profileId ? { href: `/people/${profileId}`, label: 'View profile' } : listingId ? { href: `/places/${listingId}`, label: 'View listing' } : null
   return (
     <header className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
       <Link href="/messages" aria-label="Back to messages" className="rounded-md p-1 text-fg-quaternary outline-focus-ring focus-visible:outline-2 lg:hidden"><ChevronLeft size={20} aria-hidden /></Link>
@@ -84,9 +85,7 @@ function Composer({ conversationId, onSent }: { conversationId: string; onSent: 
   const send = useMutation({
     mutationFn: () => api(user, `/v1/conversations/${conversationId}/messages`, message, { method: 'POST', body: { id: (id.current ??= uuidv7()), text: text.trim() } }),
     onSuccess: (sent) => {
-      queryClient.setQueryData<MessagePages>(queryKeys.messages(conversationId), (data) => addMessage(data, sent))
-      void queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
-      id.current = null
+      cacheMessage(queryClient, sent)
       setText('')
       onSent()
     },
@@ -116,19 +115,21 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
   const router = useRouter()
   const queryClient = useQueryClient()
   const { other, listingId, unread } = conversation
-  const { name, about } = useChatName(other, listingId)
-  const first = firstName(name)
+  const { name, first, about } = useChatName(other, listingId)
   const [sheet, setSheet] = useState<'report' | 'block' | null>(null)
   // The list grows upward, so a scroll of 0 shows the newest message.
   const scroller = useRef<HTMLDivElement>(null)
   const { mutate: markRead } = useMutation({
     mutationFn: () => api(user, `/v1/conversations/${conversation.id}/read`, noContent, { method: 'POST' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.conversations }),
+    onSuccess: () => queryClient.setQueryData<ConversationsResponse>(queryKeys.conversations, (data) => data && {
+      conversations: data.conversations.map((c) => (c.id === conversation.id ? { ...c, unread: 0 } : c)),
+    }),
   })
   // An open thread reads each message that comes in.
   useEffect(() => { if (unread > 0) markRead() }, [unread, markRead])
 
-  const person = other.profileId && !other.deleted ? { profileId: other.profileId, firstName: first } : null
+  const profileId = profileOf(other)
+  const person = profileId && first ? { profileId, firstName: first } : null
   const menu = !other.deleted && (
     <DetailMenu id="thread-menu" items={[
       ...(person ? [{ label: 'View profile', icon: User01, onClick: () => router.push(`/people/${person.profileId}`) }] : []),
@@ -160,8 +161,7 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
 
 /** A request that the user sent: the note waits for an answer, and the composer stays off (section 09 of the drafts). */
 export function SentThread({ request }: { request: OutgoingRequest }) {
-  const { name, about } = useChatName(request.to, request.listingId)
-  const first = firstName(name)
+  const { name, first, about } = useChatName(request.to, request.listingId)
   const open = request.state === 'open'
   return (
     <>
@@ -171,11 +171,11 @@ export function SentThread({ request }: { request: OutgoingRequest }) {
           <SafetyNotice />
           <Bubble mine name={name} at={request.createdAt}>{request.note}</Bubble>
           <p className="text-center text-xs text-tertiary">
-            {open ? `Request sent. ${first} has ${requestExpiryDays} days to accept or decline.` : 'Not available. You can send a new request later.'}
+            {open ? `Request sent. ${first ?? 'The lister'} has ${requestExpiryDays} days to accept or decline.` : 'Not available. You can send a new request later.'}
           </p>
         </div>
       </div>
-      <Closed>{open ? `You can write more after ${first} accepts.` : 'This request is not available.'}</Closed>
+      <Closed>{open ? `You can write more after ${first ?? 'the lister'} accepts.` : 'This request is not available.'}</Closed>
     </>
   )
 }
