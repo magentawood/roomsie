@@ -8,7 +8,6 @@ const expiryMs = checkExpiryDays * 86_400_000
 /** A check in review that has not expired. */
 export const openCheck = () => and(eq(verifications.state, 'in_review'), gt(verifications.createdAt, new Date(Date.now() - expiryMs)))
 
-/** The keys of the files of a check that still has them. */
 export const fileKeys = (check: { idPhotoKey: string | null; selfieKey: string | null }) =>
   [check.idPhotoKey, check.selfieKey].filter((key) => key !== null)
 
@@ -41,9 +40,10 @@ export async function deleteChecksOf(tx: Tx, idStore: IdStore | undefined, userI
   await tx.delete(verifications).where(eq(verifications.userId, userId))
 }
 
-/** The users with an approved check: the badge on the cards and the listings (T-46). */
-export async function verifiedAmong(db: Db, userIds: string[]) {
-  const rows = await db.selectDistinct({ userId: verifications.userId }).from(verifications)
-    .where(and(inArray(verifications.userId, userIds), eq(verifications.state, 'verified')))
-  return new Set(rows.map((r) => r.userId))
+/** The ids of the rows (cards or listings) whose person has an approved check: the badge (T-46). */
+export async function verifiedIds(db: Db, rows: { id: string; userId: string }[]) {
+  const verified = await db.selectDistinct({ userId: verifications.userId }).from(verifications)
+    .where(and(inArray(verifications.userId, rows.map((r) => r.userId)), eq(verifications.state, 'verified')))
+  const users = new Set(verified.map((v) => v.userId))
+  return new Set(rows.filter((r) => users.has(r.userId)).map((r) => r.id))
 }
