@@ -8,7 +8,7 @@ export const serviceAccount = z.object({ project_id: z.string(), client_email: z
 export const realtimeClaims = z.object({ role: z.literal('authenticated'), roomsie_user_id: z.uuid() })
 export type FirebaseAdmin = {
   setClaims(uid: string, claims: z.infer<typeof realtimeClaims>): Promise<void>
-  /** A push has no message text (PD17), and `link` opens at a tap. "gone": FCM refuses the token, so the browser no longer gets pushes (T-55). */
+  /** "gone": FCM refuses the token, so remove it (T-55). */
   sendPush(token: string, push: { title: string; link: string }): Promise<'sent' | 'gone'>
 }
 

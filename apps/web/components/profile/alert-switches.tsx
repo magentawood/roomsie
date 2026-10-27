@@ -5,7 +5,7 @@ import { alertSettings } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { pushState, turnOffPush, turnOnPush, type PushState } from '../../lib/push'
-import { queryKeys, useAlertSettings } from '../../lib/queries'
+import { queryKeys, useAlertSettings, useMe } from '../../lib/queries'
 import { Toggle } from '../ui/toggle'
 
 const pushProblems: Partial<Record<PushState, string>> = {
@@ -22,12 +22,14 @@ export function AlertSwitches() {
     mutationFn: (on: boolean) => api(user, '/v1/me/alerts', alertSettings, { method: 'PUT', body: { emailAlerts: on } }),
     onSuccess: (saved) => queryClient.setQueryData(queryKeys.alerts, saved),
   })
-  const pushQuery = useQuery({ queryKey: queryKeys.push, queryFn: () => pushState(user) })
-  const push = pushQuery.data
+  // The state of a person in this browser: a second person who signs in here gets their own.
+  const me = useMe().data?.id ?? ''
+  const { data: push, error: pushError } = useQuery({ queryKey: queryKeys.push(me), queryFn: () => pushState(user), enabled: !!me })
   const tapPush = useMutation({
     mutationFn: (on: boolean) => (on ? turnOnPush(user) : turnOffPush(user)),
-    onSuccess: (state) => queryClient.setQueryData(queryKeys.push, state),
+    onSuccess: (state) => queryClient.setQueryData(queryKeys.push(me), state),
   })
+  const pushProblem = tapPush.error ?? pushError
 
   const emailError = email.error ?? settings.error
   return (
@@ -36,7 +38,7 @@ export function AlertSwitches() {
         disabled={!settings.data || email.isPending} onChange={(on) => email.mutate(on)} problem={emailError && errorText(emailError)} />
       <Toggle title="Push alerts" help="A browser notification when someone messages you or replies." checked={push === 'on'}
         disabled={!push || push === 'unsupported' || tapPush.isPending} onChange={(on) => tapPush.mutate(on)}
-        problem={tapPush.error || pushQuery.error ? errorText(tapPush.error ?? pushQuery.error) : push && pushProblems[push]} />
+        problem={pushProblem ? errorText(pushProblem) : push && pushProblems[push]} />
     </>
   )
 }

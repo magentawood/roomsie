@@ -50,7 +50,7 @@ Tell a person about a new request or message by email and browser push.
   - **The Firebase Admin module:** a Google token for each scope, kept for one hour. The interface changes.
   - **The sign-in path:** it saves the email of the verified token in the user row.
   - **The schema:** the email and the setting "email alerts" of each user, and a new table of the push tokens of each browser. One migration.
-  - **The contract and the API routes (new):** read and set the email switch, and add and remove the push token of this browser.
+  - **The contract and the API routes (new):** read and set the email switch, add and remove the push token of this browser, and tell if the API has that token for the caller (the push switch shows it).
   - **The web:** the two switches in Settings, also on the profile page with no profile. The push token of this browser. A service worker that shows a push and opens roomsie at a tap. No new package.
   - **The deploy:** the API gets the two SES secrets.
 - **Seams for the tests:**
