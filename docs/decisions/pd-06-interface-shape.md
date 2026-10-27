@@ -32,7 +32,7 @@ The flow opened five holes. `interface-shape.md` records each one:
 
 | Hole | State | Where |
 |---|---|---|
-| 1. Mobile has no side-by-side | Provisional | PD6a |
+| 1. Mobile has no side-by-side | Closed. The designs settle it. | PD6a |
 | 2. Search traffic breaks the no-skip rule | Closed. We moved the login gate. | PD6b |
 | 3. Two or three turns is not sufficient to rank | Closed | PD6c |
 | 4. Live updates | Closed | PD6c |

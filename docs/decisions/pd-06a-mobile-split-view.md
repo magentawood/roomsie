@@ -1,6 +1,6 @@
 # PD6a — Mobile pattern for the split view
 
-**Status:** Provisional · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-10-27. · **Date:** 2026-09-20 · **Deciders:** Yash, then n3rxv for the founders (2026-10-27)
 
 ## Context
 
@@ -8,53 +8,52 @@ PD6 gives a split view: the chat on one side and the results on the other. Two p
 
 - Mumbai is a mobile-first market. At 400px, a second panel cannot fit.
 - Thus, the central idea must work in a different way on mobile.
-- On 20 September, we wrote down three options. We did not fully choose one.
+- On 20 September, we wrote down three options and a provisional pattern. The designer was to decide with the designs ([PD12](pd-12-team-plan.md)).
+- The designs of flow 02 show the phone pattern, and v0 is the product in the designs ([PD14](pd-14-v0-is-the-figma-designs.md)).
 
 ## Decision
 
-**In one line:** Provisional: on mobile, the chat is a bar below the listings, and its size never changes while the user types or reads.
+**In one line:** On a phone, the chat fills the screen, and "Show all" on a results card in the chat opens the results above the input.
 
-Engineering chose a provisional pattern so that it can start:
+On a phone, we use the pattern of flow 02 of the designs:
 
-| When | Chat | Listings |
+| When | Chat | Results |
 |---|---|---|
 | Start | Fills the screen | — |
-| Results are available | A bar at the bottom, approximately 25% of the height | Fill the space above |
-| The user taps the input | Approximately 60% of the height | The space above |
-| The user sends, or the listings update | Small again | The space above |
+| Results are available | Still fills the screen | A card in the chat, with "Show all" |
+| The user selects "Show all" | The input stays at the bottom of the screen | Fill the space above the input |
 
-**One rule for all options:** never change the size while the user types or reads. The size changes on send, or when the user drags it.
+**One rule for all sizes:** never change the size while the user types or reads. Only the input grows, to four lines at most, over the screen. The size changes on send, or when the user opens or closes the results.
 
-The mechanics are the same as on desktop. We settled the mechanics. We did not settle the appearance. The UI is not the last version.
+The mechanics are the same as on desktop: one form, two views.
 
 ## Rationale
 
-- The mechanics are the same as on desktop: one form, two views.
-- The chat becomes approximately 60% of the height to let the user read the history.
+- The designs settle the appearance, and v0 is the product in the designs (PD14).
+- The card keeps the chat as the primary function. The results screen gives the room to compare the options.
+- The input at the bottom of the results lets the user change the search without a return to the chat.
 - An automatic shrink in the middle of a sentence is the same defect as silent reorder (hole 4 of `interface-shape.md`).
 
 ## Alternatives considered
 
-We did not fully choose one option. The trade-offs of the three options:
-
-- **Bottom sheet.** The chat fills the screen. The results are in a sheet that the user drags up. A pill shows the live count. One more component, but one product.
+- **The provisional pattern of 20 September.** The chat is a bar below the listings, approximately 25% of the height, and 60% when the user taps the input. The designs do not use it. The size changes are hard to get correct on small screens.
+- **Bottom sheet.** The results are in a sheet that the user drags up. A pill shows the live count. One more component.
 - **Tabs.** Two tabs, Chat and Results, with a badge. Lowest cost. But it loses the live feedback, which is the primary function.
-- **Inline cards.** The results show in the chat as card carousels. Most natural on mobile. But it is hard to compare options, which property search needs.
+- **Inline cards only.** The results show in the chat as card carousels. But it is hard to compare options, which property search needs. The designs keep the card and add "Show all".
 
 ## Consequences
 
-- The launch plan moved the mobile bottom sheet to v1. At launch, mobile uses only a responsive layout.
-- The design review lists mobile as unresolved and the largest open question in the product. The designer decides it with the designs ([PD12](pd-12-team-plan.md)).
-- We expect that the designer will overrule the provisional pattern.
+- T-10 builds the phone chat. The results card and the results screen wait for the Form A contract (T-08), the match route (T-14) and the results panel (T-15).
+- This decision closes hole 1 of `interface-shape.md`.
 
 ## Revisit when
 
-The designer decides the mobile pattern in the design review.
+User tests on phones show that people cannot compare the options on the results screen.
 
 ## Sources
 
 - [CONTEXT.md, PD6a row](../../CONTEXT.md)
-- [product-base.md, section 06 "Mobile is provisional", section 16 and the "Still open" table](../product-base.md)
 - [interface-shape.md, hole 1 and its Why callout](../interface-shape.md)
 - [design-review.md, deadlines and §5 Mobile, with its Why callout](../archive/2026-09-design-review.md)
 - [launch-plan.md, the cut table](../archive/2026-09-launch-plan.md)
+- [T-10 Chat screen and split view, the grill of 2026-10-27](../plan/tasks/T-10%20Chat%20screen%20and%20split%20view%20%E2%9A%91.md)

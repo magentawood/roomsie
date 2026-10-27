@@ -1,6 +1,6 @@
 # Interface shape
 
-**Date:** 2026-09-20 · **Status:** holes 2 to 5 closed. Mobile provisional.
+**Date:** 2026-09-20 · **Status:** all five holes closed.
 **Decision:** PD6
 
 ---
@@ -22,29 +22,17 @@ Why: [PD6](decisions/pd-06-interface-shape.md)
 
 ## The five holes
 
-### 1. Mobile has no side-by-side — PROVISIONAL
+### 1. Mobile has no side-by-side — CLOSED
 
-- This is the largest hole.
+- This was the largest hole.
 - Two panels need approximately 900px.
-- Select one of three options:
-
-| Option | How it works |
-|---|---|
-| Bottom sheet | Chat fills the screen. Results are in a sheet that the user drags up. A pill shows the live count. |
-| Tabs | Two tabs, Chat and Results. Results has a badge. |
-| Inline cards | Results show in the chat as card carousels. |
-
-**Provisional design (2026-09-20).** We will finalise it subsequently.
-
-| When | Chat | Listings |
-|---|---|---|
-| Start | Fills the screen | — |
-| Results are available | A bar at the bottom, approximately 25% of the height | Fill the space above |
-| The user taps the input | Approximately 60% of the height | The space above |
-| The listings update | Small again | The space above |
+- **The designs settle it.** We use the pattern of flow 02:
+  - The chat fills the screen.
+  - The results show as a card in the chat.
+  - "Show all" opens the results, with the chat input at the bottom.
 
 **One rule to hold.** Do not change the size while the user types or reads.
-The size should change on send, or when the user drags it.
+Only the input grows, to four lines at most, over the screen.
 
 Why: [PD6a](decisions/pd-06a-mobile-split-view.md)
 
