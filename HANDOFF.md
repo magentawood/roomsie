@@ -15,12 +15,12 @@ Written 2026-10-27 by the local session before the weekly limit ran out. Read it
 
 | Item | State |
 |---|---|
-| PR #162 `docs/all-of-mumbai` (each Mumbai area live) | Open, CI green. The user approved the text. **It waits for the user's merge.** |
-| Branch `feat/t-56-sub-areas` | **Stacked on `docs/all-of-mumbai`** (base commit `fceaa7d`). Pushed with this file. No PR yet. |
+| PR #162 `docs/all-of-mumbai` (each Mumbai area live) | **Merged** on 2026-10-27 (`f771fd5` on `main`). |
+| Branch `feat/t-56-sub-areas` | On `main` after the merge of #162. Pushed with this file. No PR yet. |
 | Issue #163 T-56 | `status:in-progress`, claimed by n3rxv |
 | Issue #164 T-57 | `status:spec`, claimed by n3rxv |
 
-`git log --oneline fceaa7d..HEAD` lists the commits of T-56.
+`git log --oneline origin/main..HEAD` lists the commits of T-56.
 
 ## What's done in T-56
 
@@ -82,12 +82,8 @@ Round 1 findings, for the PR "Review" section:
 
 ## What's next, in order
 
-1. **Review round 2** of T-56: three new blind reviewers, the same inputs, `git diff fceaa7d...HEAD`. Exclude this file and the generated files: `docs/plan/**`, `*.html`, `drizzle/meta`, `openapi.json`. Fix the findings, or record the reason to reject each one.
-2. **After the user merges #162:**
-   - `git fetch && git rebase --onto origin/main fceaa7d feat/t-56-sub-areas`;
-   - fix any conflicts in the generated plan files, by running `python3 tools/build-obsidian-plan.py` again;
-   - `git push --force-with-lease`.
-   - #162's issue renames are already synced: `sync-issues --apply` ran on this branch.
+1. **Review round 2** of T-56: three new blind reviewers, the same inputs, `git diff origin/main...HEAD`. Exclude this file and the generated files: `docs/plan/**`, `*.html`, `drizzle/meta`, `openapi.json`. Fix the findings, or record the reason to reject each one.
+2. **Done:** #162 is merged, and the branch is on `main`. #162's issue renames are synced.
 3. **The PR stage of T-56**, from the agentic-devkit `build-feature` skill, references/pr.md:
    - delete `HANDOFF.md` and `HANDOFF-notes.md`;
    - tick the four T-56 items with the skill's `tick` script;
