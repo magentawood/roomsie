@@ -23,13 +23,14 @@ export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['a
     return under ? `${under} picked` : null
   }
   const results = tree.search(query)
+  const pickLabel = (slug: string) => (tree.lineage(slug).length === 1 ? `All of ${tree.label(slug)}` : tree.label(slug) ?? slug)
 
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className="mb-1.5 text-sm font-medium text-secondary">Areas you are looking for</legend>
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map((slug) => <RemoveChip key={slug} label={tree.label(slug) ?? slug} onRemove={() => toggle(slug)} />)}
+          {value.map((slug) => <RemoveChip key={slug} label={pickLabel(slug)} onRemove={() => toggle(slug)} />)}
         </div>
       )}
       <div className="relative">
