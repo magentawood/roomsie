@@ -15,7 +15,7 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
                                                         └── no answer for 14 days ──▶ expired
 ```
 
-- Divya gets an email and a browser push: "Rahul sent you a message". Neither shows the note.
+- Divya gets an email and a browser push: "Rahul wants to say hi". Neither shows the note ([Alerts](alerts.md)). When she accepts, Rahul gets "Divya accepted your request".
 - If Divya's app is open, the API also sends a "request" event to her private channel. The event has only the id of the request, and her app then gets the list again ([Messages and realtime](messages.md)).
 - Until Divya accepts, Rahul cannot write more.
 - Rahul can also say hi through a listing. The request goes to the owner of the listing, who needs no profile. The rules are the same.

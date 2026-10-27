@@ -36,7 +36,8 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 
 - Broadcast only, never table changes: [ADR-0005](../decisions/0005-managed-platform-split.md).
 - Message requests, and no phone numbers in public: [PD17](../decisions/pd-17-connect-and-contact.md).
-- Private channels with the Firebase sign-in, the claims from the API, and the alerts in T-55: the spec of T-44 ([#120](https://github.com/magentawood/roomsie/issues/120)).
+- Private channels with the Firebase sign-in and the claims from the API: the spec of T-44 ([#120](https://github.com/magentawood/roomsie/issues/120)).
+- The email and push alerts of a new message: [Alerts](alerts.md).
 
 ## Gotchas
 
