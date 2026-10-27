@@ -56,6 +56,4 @@ export async function photoUploadLink(storage: Storage, folder: string, ownerId:
   return { key, url, expiresAt: expiresAt.toISOString() }
 }
 
-
-/** The URL of the first photo of a person, or null. */
 export const firstPhotoUrl = (storage: Storage, photoKeys: string[]) => (photoKeys[0] ? storage.publicUrl(photoKeys[0]) : null)

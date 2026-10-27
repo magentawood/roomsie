@@ -1,15 +1,13 @@
 import type { FastifyBaseLogger } from 'fastify'
 import type { Tx } from '../db/client'
-import { connectionRequests, messages } from '../db/schema'
+import { messages } from '../db/schema'
 import type { Realtime } from '../realtime'
-import { messageView } from './read'
+import { messageView, type MessageRow } from './read'
 
-type MessageRow = typeof messages.$inferSelect
-
-/** The note of an accepted request opens the conversation, as the first message of its sender (T-44). */
-export async function openConversation(tx: Tx, request: typeof connectionRequests.$inferSelect) {
-  const [note] = await tx.insert(messages).values({ requestId: request.id, senderUserId: request.fromUserId, text: request.note, createdAt: request.createdAt }).returning()
-  return note!
+/** The note of an accepted request opens the conversation, as the first message of its sender, at the time of the accept (T-44). */
+export async function openConversation(tx: Tx, note: { requestId: string; senderUserId: string; text: string; createdAt: Date }) {
+  const [row] = await tx.insert(messages).values(note).returning()
+  return row!
 }
 
 /** Sends a message live to the two people. Realtime is best effort: the message is already saved. */

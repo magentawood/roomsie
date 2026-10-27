@@ -1,8 +1,8 @@
-import { inArray } from 'drizzle-orm'
+import { eq, inArray } from 'drizzle-orm'
 import { liveCardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
-import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
-import type { Storage } from '../storage'
+import { profileLifestyle, profileMustHaves, profiles, users } from '../db/schema'
+import { firstPhotoUrl, type Storage } from '../storage'
 
 export type Profile = typeof profiles.$inferSelect
 type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves'>
@@ -32,4 +32,14 @@ export function cardView(p: Profile, answers: Answers, storage: Storage): CardRe
 
 export function profileView(p: Profile, answers: Answers, storage: Storage): ProfileResponse {
   return { ...cardView(p, answers, storage), gender: p.gender!, visibility: p.visibility, missing: missingFields(p), hiddenForReview: p.hiddenAt !== null }
+}
+
+/** The name, the first photo and the account status of people, by user id (T-44). A deleted account has no profile. */
+export async function peopleOf(db: Db, storage: Storage, userIds: string[]) {
+  const rows = await db.select({ userId: users.id, status: users.status, profile: profiles }).from(users)
+    .leftJoin(profiles, eq(profiles.userId, users.id)).where(inArray(users.id, userIds))
+  return new Map(rows.map(({ userId, status, profile }) => [userId, {
+    active: status === 'active', deleted: status === 'deleted',
+    profileId: profile?.id ?? null, name: profile?.fullName ?? null, photoUrl: profile ? firstPhotoUrl(storage, profile.photoKeys) : null,
+  }]))
 }

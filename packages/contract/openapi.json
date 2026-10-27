@@ -8664,7 +8664,7 @@
                     "channel": {
                       "type": "string"
                     },
-                    "refreshToken": {
+                    "mustRefreshIdToken": {
                       "type": "boolean"
                     }
                   },
@@ -8672,7 +8672,7 @@
                     "url",
                     "key",
                     "channel",
-                    "refreshToken"
+                    "mustRefreshIdToken"
                   ],
                   "additionalProperties": false
                 }

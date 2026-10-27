@@ -61,7 +61,7 @@ The server part of in-app messages between two users.
     - New: a realtime module, the only code that calls Supabase Realtime. New: a Firebase Admin module, the only code that calls the Firebase Admin API.
     - The settings: the Supabase URL and key, and the Firebase service account. Each is optional in development and in the tests.
     - The accept of a request makes its note the first message. The requests keep their rows when a profile is deleted.
-    - Two migrations: the messages, the read times and the profile links of the requests that can be empty; and the Realtime policy, which runs only on Supabase, as a custom migration of drizzle-kit.
+    - Three migrations: the messages, the read times and the profile links of the requests that can be empty; the Realtime policy, which runs only on Supabase; and the note of each request that was accepted before. The last two are custom migrations of drizzle-kit.
     - The interface changes.
   - The deploy of the API: the Firebase service account comes from a GitHub secret.
   - Docs: a learn page for messages and realtime.
@@ -69,7 +69,7 @@ The server part of in-app messages between two users.
   - The routes, through `app.inject`, against a disposable test database, with the test app. A fake realtime module and a fake Firebase Admin module record their calls. This seam exists.
 - **Decisions:**
   - Item 6 (the email and the push alerts) moved to the new task T-55, after T-45. The user approved it.
-  - A conversation is an accepted message request. At the accept, the note of the request becomes the first message, from its sender. Only the two people of an accepted request can read and send. A request that is open or declined has no thread ([PD17](../../decisions/pd-17-connect-and-contact.md)).
+  - A conversation is an accepted message request. At the accept, the note of the request becomes the first message, from its sender, and the person who accepts has read it. Only the two people of an accepted request can read and send. A request that is open or declined has no thread ([PD17](../../decisions/pd-17-connect-and-contact.md)).
   - The API:
     - The list gives each conversation with the other person (the name and the photo, or "Deleted user"), the last message and the unread count, the newest first.
     - A thread gives its messages, the newest first, in pages.
@@ -83,4 +83,5 @@ The server part of in-app messages between two users.
   - After an account deletion (T-20), the requests keep their rows: the profile links become empty, and the user row stays as a tombstone. The other person keeps the thread, which they can read but not answer, and sees "Deleted user".
   - Setup that the user does: the Firebase service account key and the public key of Supabase in GitHub secrets, through `!` commands; in Supabase, Firebase as a third-party auth provider, and Realtime that allows private channels only.
   - Review round 1, the user decided: the API calls the REST API of Firebase Admin, with no SDK. Item 7 changed: "A deleted profile now cascades its connection requests" → "A deleted profile or listing no longer deletes its connection requests".
+  - Review round 2, the user decided: a page of messages breaks a tie of `created_at` with the id, and `docs/standards/database.md` says so.
 - **Out of scope:** the screens and the realtime client of the web (T-45), the email and push alerts (T-55), the reports in a conversation (T-45), unblock.
