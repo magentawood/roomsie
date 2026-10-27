@@ -48,7 +48,7 @@ The main screen: chat on one side, results on the other.
 
 ## Spec
 
-**Approved:** pending
+**Approved:** 2026-10-27, by n3rxv
 
 - **Modules** (all in `apps/web`; this ticket changes no file in `apps/api` or `packages/contract`):
   - **The chat page (new):** the page `/chat`. An empty chat shows "What are we looking for?" of flow 02. A sent message shows in the thread with the line of the assistant that is not live. Its interface is new.
