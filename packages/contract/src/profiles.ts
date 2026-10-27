@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { optionalText, photoKeyIn, requiredText, rupees, uploadUrlReply } from './shared'
+import { areaSlug, optionalText, photoKeyIn, requiredText, rupees, uploadUrlReply } from './shared'
 
 /* The Form A fields of PD15. The database enums use the same lists. */
 export const intents = ['room', 'pg', 'whole_flat', 'flatmates', 'unclear'] as const
@@ -61,7 +61,7 @@ export const profileEditBody = z.strictObject({
   managedByParent: z.boolean(),
   intent: z.enum(intents),
   whosMoving: z.enum(whosMovingAnswers),
-  areas: z.array(z.string().min(1).max(60)).max(20).refine((a) => new Set(a).size === a.length, 'Each area once'),
+  areas: z.array(areaSlug).max(20).refine((a) => new Set(a).size === a.length, 'Each area once'),
   budgetMin: rupees.nullable(),
   budgetMax: rupees.nullable(),
   moveDate: z.iso.date().nullable(),

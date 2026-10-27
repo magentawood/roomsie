@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { areaSlug } from './shared'
 
 export const healthResponse = z.object({ status: z.literal('ok') })
 export type HealthResponse = z.infer<typeof healthResponse>
@@ -7,7 +8,7 @@ export const meResponse = z.object({ id: z.uuid(), status: z.enum(['active', 'su
 export type MeResponse = z.infer<typeof meResponse>
 /** The area groups of PD2, their sub-areas and pockets, in order. `parent` is null for a group. */
 export const areasResponse = z.object({
-  areas: z.array(z.object({ slug: z.string(), name: z.string(), parent: z.string().nullable(), aliases: z.array(z.string()) })),
+  areas: z.array(z.object({ slug: areaSlug, name: z.string(), parent: areaSlug.nullable(), aliases: z.array(z.string()) })),
 })
 export type AreasResponse = z.infer<typeof areasResponse>
 

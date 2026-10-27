@@ -11,6 +11,8 @@ export const uploadUrlBody = z.strictObject({ contentType: photoType, size: z.in
 export type UploadUrlBody = z.infer<typeof uploadUrlBody>
 export const uploadUrlReply = (key: ReturnType<typeof photoKeyIn>) => z.object({ key, url: z.url(), expiresAt: z.iso.datetime() })
 
+/** The permanent slug of an area of PD2: `andheri-west`. */
+export const areaSlug = z.string().max(60).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
 export const rupees = z.int().min(0).max(100_000_000)
 export const requiredText = (max: number) => z.string().trim().min(1).max(max)
 export const optionalText = (max: number) => requiredText(max).nullable()

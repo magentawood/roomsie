@@ -99,14 +99,18 @@
                         "type": "object",
                         "properties": {
                           "slug": {
-                            "type": "string"
+                            "type": "string",
+                            "maxLength": 60,
+                            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                           },
                           "name": {
                             "type": "string"
                           },
                           "parent": {
                             "nullable": true,
-                            "type": "string"
+                            "type": "string",
+                            "maxLength": 60,
+                            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                           },
                           "aliases": {
                             "type": "array",
@@ -197,8 +201,8 @@
                     "areaSlug": {
                       "nullable": true,
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 60
+                      "maxLength": 60,
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                     },
                     "address": {
                       "nullable": true,
@@ -813,8 +817,8 @@
                           "areaSlug": {
                             "nullable": true,
                             "type": "string",
-                            "minLength": 1,
-                            "maxLength": 60
+                            "maxLength": 60,
+                            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                           },
                           "address": {
                             "nullable": true,
@@ -1443,8 +1447,8 @@
                     "areaSlug": {
                       "nullable": true,
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 60
+                      "maxLength": 60,
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                     },
                     "address": {
                       "nullable": true,
@@ -2047,8 +2051,8 @@
                   "areaSlug": {
                     "nullable": true,
                     "type": "string",
-                    "minLength": 1,
-                    "maxLength": 60
+                    "maxLength": 60,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                   },
                   "address": {
                     "nullable": true,
@@ -2544,8 +2548,8 @@
                     "areaSlug": {
                       "nullable": true,
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 60
+                      "maxLength": 60,
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                     },
                     "address": {
                       "nullable": true,
@@ -3341,8 +3345,8 @@
                     "areaSlug": {
                       "nullable": true,
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 60
+                      "maxLength": 60,
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                     },
                     "address": {
                       "nullable": true,
@@ -4242,8 +4246,8 @@
                           "areaSlug": {
                             "nullable": true,
                             "type": "string",
-                            "minLength": 1,
-                            "maxLength": 60
+                            "maxLength": 60,
+                            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                           },
                           "address": {
                             "nullable": true,
@@ -4903,8 +4907,8 @@
                             "type": "array",
                             "items": {
                               "type": "string",
-                              "minLength": 1,
-                              "maxLength": 60
+                              "maxLength": 60,
+                              "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                             }
                           },
                           "budgetMin": {
@@ -5288,8 +5292,8 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "minLength": 1,
-                        "maxLength": 60
+                        "maxLength": 60,
+                        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                       }
                     },
                     "budgetMin": {
@@ -5562,8 +5566,8 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "minLength": 1,
-                        "maxLength": 60
+                        "maxLength": 60,
+                        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                       }
                     },
                     "budgetMin": {
@@ -5837,8 +5841,8 @@
                     "type": "array",
                     "items": {
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 60
+                      "maxLength": 60,
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                     }
                   },
                   "budgetMin": {
@@ -6036,8 +6040,8 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "minLength": 1,
-                        "maxLength": 60
+                        "maxLength": 60,
+                        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                       }
                     },
                     "budgetMin": {
@@ -6448,8 +6452,8 @@
                       "type": "array",
                       "items": {
                         "type": "string",
-                        "minLength": 1,
-                        "maxLength": 60
+                        "maxLength": 60,
+                        "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                       }
                     },
                     "budgetMin": {
@@ -7239,8 +7243,8 @@
                                     "type": "array",
                                     "items": {
                                       "type": "string",
-                                      "minLength": 1,
-                                      "maxLength": 60
+                                      "maxLength": 60,
+                                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                                     }
                                   },
                                   "budgetMin": {
@@ -7478,8 +7482,8 @@
                                   "areaSlug": {
                                     "nullable": true,
                                     "type": "string",
-                                    "minLength": 1,
-                                    "maxLength": 60
+                                    "maxLength": 60,
+                                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                                   },
                                   "address": {
                                     "nullable": true,

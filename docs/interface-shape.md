@@ -82,7 +82,7 @@ budget. This takes approximately three turns.
 | Slot | Chips |
 |---|---|
 | Intent | The five place types of [PD15](decisions/pd-15-form-a-contract.md) |
-| Area | The area groups of [PD2](decisions/pd-02-launch-market.md), and their sub-areas. The user can select more than one area. |
+| Area | The area groups of [PD2](decisions/pd-02-launch-market.md). The user can select more than one area. |
 | Budget | Bands, not a slider: under 10k, under 15k, under 25k, under 35k, above 35k |
 
 **Chips are the floor, not the ceiling.**

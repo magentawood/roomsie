@@ -14,11 +14,10 @@ export const areaParents = async (db: Db): Promise<ReadonlyMap<string, string | 
   new Map((await db.select({ slug: areas.slug, parent: areas.parentSlug }).from(areas)).map((a) => [a.slug, a.parent]))
 
 /** The areas that match the picks: each pick, the areas under it, and the areas above it. */
-export function relatedAreas(parentOf: ReadonlyMap<string, string | null>, picks: readonly string[]): string[] {
+export function matchingAreas(parentOf: ReadonlyMap<string, string | null>, picks: readonly string[]): string[] {
   const lineage = (slug: string): string[] => {
     const parent = parentOf.get(slug)
     return parent ? [slug, ...lineage(parent)] : [slug]
   }
-  const above = new Set(picks.flatMap(lineage))
-  return [...parentOf.keys()].filter((slug) => above.has(slug) || lineage(slug).some((a) => picks.includes(a)))
+  return [...parentOf.keys()].filter((slug) => picks.some((pick) => lineage(pick).includes(slug) || lineage(slug).includes(pick)))
 }
