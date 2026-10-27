@@ -29,6 +29,7 @@ describe('a request to a person', () => {
     const [got] = await incoming('friend')
     expect(got).toMatchObject({ from: { profileId: profileIds.seeker, name: 'Rahul Verma' }, listingId: null })
     expect(got!.note).not.toContain('98200')
+    expect((await outgoing('seeker'))[0]!.note).toBe(got!.note)
     expect(await incoming('seeker')).toEqual([])
   })
 
