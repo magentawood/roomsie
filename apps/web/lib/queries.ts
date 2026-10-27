@@ -24,8 +24,7 @@ export const queryKeys = {
   requests: (direction: 'incoming' | 'outgoing') => ['requests', direction],
   realtime: ['realtime'],
   alerts: ['alerts'],
-  /** The push switch of this browser: it reads the browser, then asks the API. */
-  push: ['push'],
+  push: (userId: string) => ['push', userId],
 } as const
 
 export function useMe() {

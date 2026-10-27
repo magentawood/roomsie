@@ -77,8 +77,9 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
     // Realtime is best effort: the request is already saved.
     await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => req.log.error({ err }, 'realtime'))
+    const view = (await outgoingViews(db, storage, [made]))[0]!
     alerts.request(made)
-    return reply.code(201).send((await outgoingViews(db, storage, [made]))[0]!)
+    return reply.code(201).send(view)
   })
 
   app.get('/requests/outgoing', { preHandler, schema: { response: { 200: outgoingRequestsResponse } } }, async (req) => {

@@ -11,7 +11,7 @@ const worker = '/alerts-sw.js'
 const fcmToken = (serviceWorkerRegistration: ServiceWorkerRegistration) =>
   getToken(getMessaging(firebaseApp()), { vapidKey: process.env.NEXT_PUBLIC_FIREBASE_VAPID_KEY, serviceWorkerRegistration })
 
-/** The token of the push subscription of this browser, or null with none. FCM drops the subscription when it refuses the token. */
+/** FCM drops the subscription when it refuses the token. */
 async function browserToken() {
   const registration = await navigator.serviceWorker.getRegistration(worker)
   return registration && (await registration.pushManager.getSubscription()) ? fcmToken(registration) : null

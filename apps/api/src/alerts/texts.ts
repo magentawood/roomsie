@@ -1,11 +1,10 @@
 import type { Mail } from '../email'
 
-export type AlertKind = 'request' | 'message' | 'accept'
 /** `name`: who did it. `link`: the page that the alert opens. */
-export type Alert = { kind: AlertKind; name: string; link: string }
+export type Alert = { kind: 'request' | 'message' | 'accept'; name: string; link: string }
 
 /** No alert has the text of a message or a note (PD17). */
-const lines: Record<AlertKind, { title: (name: string) => string; body: string; button: string }> = {
+const lines: Record<Alert['kind'], { title: (name: string) => string; body: string; button: string }> = {
   request: { title: (name) => `${name} wants to say hi`, body: 'Open roomsie to see the request and answer it.', button: 'See the request' },
   message: { title: (name) => `${name} sent you a message`, body: 'Open roomsie to read it and reply.', button: 'Open the chat' },
   accept: { title: (name) => `${name} accepted your request`, body: 'You can write more now.', button: 'Open the chat' },
@@ -17,8 +16,8 @@ const escape = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)}
 
 /** The email of an alert. `settings` is the page with the switch. */
 export function alertMail(alert: Alert, settings: string): Mail {
-  const { body, button } = lines[alert.kind]
-  const { link } = alert
+  const { kind, link } = alert
+  const { body, button } = lines[kind]
   const subject = alertTitle(alert)
   const footer = 'You get this email because Email alerts is on. Turn off these emails in Profile and Settings.'
   return {

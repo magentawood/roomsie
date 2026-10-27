@@ -32,7 +32,6 @@ declare module 'fastify' {
   }
 }
 
-/** `mailer`: none in development and in the tests that need no email. */
 export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
