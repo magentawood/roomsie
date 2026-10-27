@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**132 of 313 done · 42%**
+**135 of 313 done · 43%**
 
 `██████████░░░░░░░░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
-| [[P2 Chat]] | 0 / 13 | 0 / 60 | 0% |
+| [[P2 Chat]] | 0 / 13 | 3 / 60 | 5% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 80 | 71% |
 | [[P4 Content and moderation]] | 2 / 8 | 12 / 31 | 39% |
 | [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
@@ -52,9 +52,8 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
-| 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 20 | [#6](https://github.com/magentawood/roomsie/issues/6) |
+| 0 | [[T-08 Form A contract ⚑]] | P2 | 2 | ⬜ can start | 21 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | ⬜ can start | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[T-24 Event logging]] | P5 | 2 | ⬜ can start | 2 | [#37](https://github.com/magentawood/roomsie/issues/37) |
@@ -71,13 +70,14 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | 1 | [[T-14 Match query ⚑]] | P3 | 6 | 🟡 in progress | 6 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | 1 | [[T-15 Results panel ⚑]] | P3 | 6 | ⬜ waits | 2 | [#16](https://github.com/magentawood/roomsie/issues/16) |
-| 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
+| 1 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | 🟡 in progress | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-35 Form B contract]] | P2 | 3 | ⬜ waits | 1 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-39 Analytics database]] | P1 | 3 | ⬜ waits | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 1 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ waits | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 2 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ waits | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
+| 2 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | 2 | [[T-13 Reply writer]] | P2 | 4 | ⬜ waits | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 2 | [[T-22a Waitlist API]] | P4 | 2 | ⬜ waits | 1 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
@@ -121,7 +121,7 @@ flowchart LR
   T02["T-02 ⚑<br/>Scaffold monorepo"]:::done
   T18b["T-18b ⚑<br/>Person and connect screens"]:::done
   T06["T-06 ⚑<br/>Database schema"]:::done
-  T10["T-10 ⚑<br/>Chat screen and split view"]:::ready
+  T10["T-10 ⚑<br/>Chat screen and split view"]:::doing
   T11["T-11 ⚑<br/>Model wrapper"]:::todo
   T05["T-05 ⚑<br/>Google sign-in"]:::done
   T15["T-15 ⚑<br/>Results panel"]:::todo
@@ -181,6 +181,7 @@ flowchart LR
   F13 --> T18b
   F11 --> T06
   D02 -.-> T10
+  T08 --> T10
   T08 --> T11
   F04 --> T11
   T02 --> T05
@@ -326,7 +327,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 0/60
+## P2 Chat — 3/60
 
 > [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/5
 > ![[T-08 Form A contract ⚑#^done]]
@@ -361,7 +362,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-17 Carry chat into account]] · 0/4
 > ![[T-17 Carry chat into account#^done]]
 
-> [!todo]- ⬜ [[T-10 Chat screen and split view ⚑]] · 0/5
+> [!todo]- 🟡 [[T-10 Chat screen and split view ⚑]] · 3/5
 > ![[T-10 Chat screen and split view ⚑#^done]]
 
 > [!todo]- ⬜ [[T-09 Chip flow ⚑]] · 0/3

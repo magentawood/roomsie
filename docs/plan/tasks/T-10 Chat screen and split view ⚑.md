@@ -30,16 +30,17 @@ The main screen: chat on one side, results on the other.
 
 ## Needs first
 - [[D-02 Chat screen designs ⚑]]
+- [[T-08 Form A contract ⚑]]
 
 ## Unblocks
 - [[T-09 Chip flow ⚑]]
 
 ## Done when
-- [ ] The landing button opens a full-screen chat
+- [x] The landing button opens a full-screen chat · [#172](https://github.com/magentawood/roomsie/pull/172)
 - [ ] When results exist, the screen splits into chat and results
 - [ ] On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom
-- [ ] Nothing changes size while the person types
-- [ ] The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02
+- [x] Nothing changes size while the person types · [#172](https://github.com/magentawood/roomsie/pull/172)
+- [x] The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02 · [#172](https://github.com/magentawood/roomsie/pull/172)
 
 ^done
 
@@ -76,3 +77,13 @@ The main screen: chat on one side, results on the other.
   - the turn cap, "Free messages remaining" and the wall at the cap (T-21)
   - the list of goals, the goal title and "I found a place" (T-17, T-50)
   - the landing page (T-23a)
+
+## Log
+
+- **2026-10-27 · [#172](https://github.com/magentawood/roomsie/pull/172)**
+  - **Change:** the chat screen at `/chat`: the empty chat of flow 02, an input that never changes the layout, and a sent message with the line of the assistant that is not live yet. The sign-in wall of drafts section 17 opens on each guest tap of the shell, and the full-page sign-in has the button and the legal line of D-02. The home stub has "Start looking".
+  - **Why:** [PD6a](../../decisions/pd-06a-mobile-split-view.md) (now settled by the designs), [PD6b](../../decisions/pd-06b-login-gate-and-search.md)
+  - **Ticked:** "The landing button opens a full-screen chat", "Nothing changes size while the person types", "The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02"
+  - **Not done:** "When results exist, the screen splits into chat and results" and "On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom": blocked by T-08 (the Form A contract), then T-14 and T-15. T-08 is now in the dependencies of T-10.
+  - **Learn:** [The chat screen and the sign-in wall](../../learn/chat-screen.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

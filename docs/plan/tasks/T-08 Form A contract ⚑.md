@@ -32,6 +32,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 - [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
+- [[T-10 Chat screen and split view ⚑]]
 - [[T-11 Model wrapper ⚑]]
 - [[T-15 Results panel ⚑]]
 - [[T-09 Chip flow ⚑]]

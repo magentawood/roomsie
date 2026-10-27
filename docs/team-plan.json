@@ -295,7 +295,8 @@
    "start": "2026-10-07",
    "end": "2026-10-09",
    "deps": [
-    "D-02"
+    "D-02",
+    "T-08"
    ],
    "done": [
     "The landing button opens a full-screen chat",
