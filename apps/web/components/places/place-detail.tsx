@@ -8,9 +8,9 @@ import {
 import type { ListingResponse } from '@roomsie/contract'
 import { labels, listingTitle } from '../../lib/listing-steps'
 import {
-  addressLine, flatmateLines, listerLabel, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
+  addressLine, flatmateLines, listerLabel, listerOf, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
-import { listerOf, listingChat } from '../../lib/messages'
+import { listingChat } from '../../lib/messages'
 import { useAreaLabels, useConversations, useOutgoingRequests } from '../../lib/queries'
 import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
 import { SayHiSheet } from '../people/say-hi-sheet'
@@ -160,7 +160,7 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
         </div>
       )}
       {reporting && <ReportSheet target={{ listingId: listing.id }} onClose={() => setReporting(false)} />}
-      {messaging && <SayHiSheet target={{ listingId: listing.id, lister: listerOf(listing.kind) }} onClose={() => setMessaging(false)} />}
+      {messaging && <SayHiSheet target={{ listingId: listing.id, kind: listing.kind }} onClose={() => setMessaging(false)} />}
     </>
   )
 }

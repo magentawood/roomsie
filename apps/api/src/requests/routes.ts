@@ -20,7 +20,7 @@ import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, t
 
 /** Each sent request with the person who gets it, as a conversation shows the other person. */
 async function outgoingViews(db: Db, storage: Storage, rows: RequestRow[]) {
-  const people = rows.length ? await peopleOf(db, storage, rows.map((r) => r.toUserId)) : new Map()
+  const people = await peopleOf(db, storage, rows.map((r) => r.toUserId))
   return rows.map((r) => {
     const { profileId, name, photoUrl, deleted } = people.get(r.toUserId)!
     return {
@@ -74,7 +74,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     })
     if (made === 'limit') return reply.code(429).send({ error: requestCapMessage })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
-    // The recipient gets the requests again (T-45). Realtime is best effort: the request is already saved.
+    // Realtime is best effort: the request is already saved.
     await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => req.log.error({ err }, 'realtime'))
     return reply.code(201).send((await outgoingViews(db, storage, [made]))[0]!)
   })

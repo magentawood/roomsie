@@ -99,14 +99,12 @@ export function useSavedIds(kind: SavedKind) {
   return new Set((kind === 'places' ? places.data?.places : people.data?.people)?.map((x) => x.id))
 }
 
-/** True while the private channel of the user is up (lib/live.tsx). The messages data then changes only by its events. */
+/** True while the private channel of the user is up. The messages data then changes only by its events. lib/live.tsx provides it, and imports the queries, so it lives here. */
 export const LiveChannel = createContext(false)
-
-const pollWhileDown = 30_000
 
 /** `poll`: a messages screen asks the API again every 30 s while the live channel is down (T-45). */
 function useFreshness(poll: boolean) {
-  return useContext(LiveChannel) ? { staleTime: Infinity, refetchOnWindowFocus: false } : { refetchInterval: poll ? pollWhileDown : false as const }
+  return useContext(LiveChannel) ? { staleTime: Infinity, refetchOnWindowFocus: false } : { refetchInterval: poll ? 30_000 : false as const }
 }
 
 /** What the web needs to join the channel. A 503 means that Realtime is not set up yet, so there is no retry: the screens poll. */

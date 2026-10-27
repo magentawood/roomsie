@@ -2,7 +2,6 @@
 
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { UserPlus01 } from '@untitledui/icons'
 import { noContent, requestExpiryDays, type IncomingRequest } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -12,7 +11,7 @@ import { aboutLine, budgetLine, lookingFor } from '../../lib/person'
 import { firstName } from '../../lib/profile-form'
 import { queryKeys, useIncomingRequests, useListing, usePerson } from '../../lib/queries'
 import { Button } from '../ui/button'
-import { Avatar } from './parts'
+import { Avatar, RequestsIcon } from './parts'
 
 /** Accepts or declines a request to the user, from the requests or from the card of its sender. */
 export function useAnswerRequest(requestId: string, fromProfileId: string, onAccepted?: () => void) {
@@ -71,7 +70,7 @@ export function Requests() {
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <header className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
-        <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-secondary text-fg-quaternary"><UserPlus01 size={20} aria-hidden /></span>
+        <RequestsIcon />
         <div className="flex flex-col text-sm">
           <h1 className="text-md font-semibold text-primary">Requests</h1>
           <p className="text-tertiary">People who want to say hi. {`Each request closes after ${requestExpiryDays} days.`}</p>

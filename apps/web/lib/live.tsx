@@ -1,12 +1,24 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { RealtimeClient } from '@supabase/realtime-js'
-import { realtimeEvent } from '@roomsie/contract'
+import { realtimeEvent, type ConversationsResponse, type Message } from '@roomsie/contract'
 import { useAuth, useUser } from './auth'
-import { addMessage, type MessagePages } from './messages'
+import { addMessage, withMessage, type MessagePages } from './messages'
 import { LiveChannel, queryKeys, useRealtime } from './queries'
+
+/** A live or a sent message goes into the cache. Only a chat that is not in the list yet, after an accept, loads the lists again. */
+export function cacheMessage(queryClient: QueryClient, m: Message) {
+  queryClient.setQueryData<MessagePages>(queryKeys.messages(m.conversationId), (data) => addMessage(data, m))
+  const conversations = withMessage(queryClient.getQueryData<ConversationsResponse>(queryKeys.conversations), m)
+  if (conversations) {
+    queryClient.setQueryData(queryKeys.conversations, conversations)
+    return
+  }
+  void queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
+  void queryClient.invalidateQueries({ queryKey: queryKeys.requests('outgoing') })
+}
 
 /** The only web code that talks to Supabase: the private channel of the user (T-44), for broadcasts only (ADR-0005). */
 function Channel({ onLive }: { onLive: (live: boolean) => void }) {
@@ -26,19 +38,11 @@ function Channel({ onLive }: { onLive: (live: boolean) => void }) {
     const onEvent = ({ event, payload }: { event: string; payload?: unknown }) => {
       const got = realtimeEvent.safeParse({ event, payload })
       if (!got.success) return
-      if (got.data.event === 'request') {
-        void queryClient.invalidateQueries({ queryKey: queryKeys.requests('incoming') })
-        return
-      }
-      const m = got.data.payload
-      queryClient.setQueryData<MessagePages>(queryKeys.messages(m.conversationId), (data) => addMessage(data, m))
-      // The last message, the unread count, and a new chat after an accept.
-      void queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
-      void queryClient.invalidateQueries({ queryKey: queryKeys.requests('outgoing') })
+      if (got.data.event === 'message') cacheMessage(queryClient, got.data.payload)
+      else void queryClient.invalidateQueries({ queryKey: queryKeys.requests('incoming') })
     }
     client.channel(channel, { config: { private: true } })
-      .on('broadcast', { event: 'message' }, onEvent)
-      .on('broadcast', { event: 'request' }, onEvent)
+      .on('broadcast', { event: '*' }, onEvent)
       .subscribe((status) => {
         const live = status === 'SUBSCRIBED'
         onLive(live)

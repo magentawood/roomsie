@@ -112,3 +112,6 @@ export const addressLine = (listing: ListingResponse) => [listing.address, listi
 /** The kind of lister, under the name, or alone when the lister has no profile. */
 export const listerLabel = (kind: ListingKind) =>
   ({ owner_flat: 'Owner', broker_flat: 'Broker', pg: 'PG operator', room_in_flat: 'Flatmate' })[kind]
+
+/** The lister in the message button of the listing details: "Message the owner". */
+export const listerOf = (kind: ListingKind) => ({ owner_flat: 'the owner', broker_flat: 'the broker', pg: 'the PG/Hostel', room_in_flat: 'the flatmate' })[kind]

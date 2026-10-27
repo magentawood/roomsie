@@ -25,12 +25,13 @@ export const conversation = z.object({
 })
 export type Conversation = z.infer<typeof conversation>
 export const conversationsResponse = z.object({ conversations: z.array(conversation) })
+export type ConversationsResponse = z.infer<typeof conversationsResponse>
 
 /** The messages of a conversation, the newest first. `before` is the id of the oldest message of the last page. */
 export const messagesQuery = z.object({ before: z.uuid().optional() })
 export const messagesResponse = z.object({ messages: z.array(message), hasMore: z.boolean() })
 
-/** An event on the private channel of a person: one new message, as that person sees it (T-44), or a new request to that person (T-45). The request event carries only its id, so the web gets the list again. */
+/** An event on the private channel of a person: a new message, as that person sees it (T-44), or a new request to that person. The request event has only its id, so the web gets the list again. */
 export const realtimeEvent = z.discriminatedUnion('event', [
   z.object({ event: z.literal('message'), payload: message }),
   z.object({ event: z.literal('request'), payload: z.object({ id: z.uuid() }) }),
