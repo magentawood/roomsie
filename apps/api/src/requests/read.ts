@@ -36,3 +36,11 @@ export async function connectionWith(db: Db, viewerUserId: string, otherUserId: 
   // A decline and an expiry look the same to the sender, and a closed request to the viewer leaves no trace.
   return { state: mine ? 'not_available' : 'none' }
 }
+
+/** A suspended or deleted person leaves: the requests that the person sent are withdrawn, and the requests to the person are declined, so their senders see "not available". */
+export async function endOpenRequests(tx: Tx, userId: string) {
+  const now = new Date()
+  const open = eq(connectionRequests.status, 'pending')
+  await tx.update(connectionRequests).set({ status: 'withdrawn' }).where(and(eq(connectionRequests.fromUserId, userId), open))
+  await tx.update(connectionRequests).set({ status: 'declined', respondedAt: now }).where(and(eq(connectionRequests.toUserId, userId), open))
+}

@@ -7,11 +7,13 @@ import {
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
-import { connectionRequests, listings, profiles, users } from '../db/schema'
+import { connectionRequests, listings, messages, profiles, users } from '../db/schema'
 import { visibleListing } from '../listings/read'
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
 import type { Storage } from '../storage'
+import { sendLive } from '../messages/routes'
+import type { Messaging } from '../messages/settings'
 import { maskContacts } from '../text/mask-contacts'
 import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
 
@@ -32,8 +34,8 @@ async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) 
   return to?.userId
 }
 
-export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
-  const { db, storage } = options
+export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; messaging: Messaging }) {
+  const { db, storage, messaging } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
   const answerable = (userId: string) => and(eq(connectionRequests.toUserId, userId), openRequest())
@@ -74,13 +76,13 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   })
 
   app.get('/requests/incoming', { preHandler, schema: { response: { 200: incomingRequestsResponse } } }, async (req) => {
-    const incoming = await db.select({ request: connectionRequests, name: profiles.fullName, photoKeys: profiles.photoKeys })
+    const incoming = await db.select({ request: connectionRequests, profileId: profiles.id, name: profiles.fullName, photoKeys: profiles.photoKeys })
       .from(connectionRequests).innerJoin(profiles, eq(profiles.id, connectionRequests.fromProfileId))
       .where(answerable(req.user!.id)).orderBy(desc(connectionRequests.createdAt))
     return {
-      requests: incoming.map(({ request: r, name, photoKeys: [photo] }) => ({
+      requests: incoming.map(({ request: r, profileId, name, photoKeys: [photo] }) => ({
         id: r.id, listingId: r.listingId, note: r.note,
-        from: { profileId: r.fromProfileId, name, photoUrl: photo ? storage.publicUrl(photo) : null },
+        from: { profileId, name, photoUrl: photo ? storage.publicUrl(photo) : null },
         createdAt: r.createdAt.toISOString(), expiresAt: new Date(r.createdAt.getTime() + expiryMs).toISOString(),
       })),
     }
@@ -91,9 +93,16 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       preHandler,
       schema: { params: idParams, response: { 204: noContent, 404: errorResponse } },
     }, async (req, reply) => {
-      const [answered] = await db.update(connectionRequests).set({ status, respondedAt: new Date() })
-        .where(and(eq(connectionRequests.id, req.params.id), answerable(req.user!.id))).returning({ id: connectionRequests.id })
+      const answered = await db.transaction(async (tx) => {
+        const [request] = await tx.update(connectionRequests).set({ status, respondedAt: new Date() })
+          .where(and(eq(connectionRequests.id, req.params.id), answerable(req.user!.id))).returning()
+        if (!request || status === 'declined') return request && { request, note: null }
+        // T-44: the note opens the conversation, as the first message of its sender.
+        const [note] = await tx.insert(messages).values({ requestId: request.id, senderUserId: request.fromUserId, text: request.note, createdAt: request.createdAt }).returning()
+        return { request, note: note! }
+      })
       if (!answered) return reply.code(404).send({ error: 'not found' })
+      if (answered.note) await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])
       return reply.code(204).send(null)
     })
   }

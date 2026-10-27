@@ -4,6 +4,7 @@ import { createTestDb } from './db'
 import { projectId, testTokens } from './tokens'
 import { offlineStorage } from '../scripts/openapi'
 import { areas } from '../src/db/schema'
+import type { Messaging } from '../src/messages/settings'
 import { moderationSettings } from '../src/moderation/settings'
 import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
@@ -14,16 +15,29 @@ export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
 /** The settings of PD18 with their defaults, a change from `settings`, and the user "moderator" as the moderator. */
 export const testModeration = (settings: Record<string, string> = {}) => moderationSettings.parse({ MODERATOR_UIDS: 'uid-moderator', ...settings })
 
+/** A Realtime and a Firebase Admin that record their calls, and the public settings of Realtime. */
+export function testMessaging() {
+  const sent: { userId: string; event: string; payload: object }[] = []
+  const claims: { uid: string; claims: Record<string, string> }[] = []
+  const messaging: Messaging = {
+    realtime: { send: async (userId, event, payload) => { sent.push({ userId, event, payload }) } },
+    firebaseAdmin: { setClaims: async (uid, c) => { claims.push({ uid, claims: c }) } },
+    realtimeClient: { url: 'https://realtime.example.com', key: 'test-anon-key' },
+  }
+  return { messaging, sent, claims }
+}
+
 /** A server on a disposable database with the area "bandra" and one signed-in user for each name. The first user lists. Call close() when done. */
 export async function testApp<U extends string>(users: readonly [U, ...U[]], storage: Storage = offlineStorage, settings: Record<string, string> = {}) {
   const testDb = await createTestDb()
   await testDb.db.insert(areas).values({ slug: 'bandra', name: 'Bandra' })
   const { firebaseKeys, idToken } = await testTokens()
+  const fakes = testMessaging()
   const tokens = {} as Record<U, string>
   for (const user of users) tokens[user] = await idToken(`uid-${user}`)
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings) })
-  const call = (who: U | null, method: Method, url: string, payload?: object) =>
-    app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${tokens[who]}` } : {} })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging })
+  const call = (who: U | null, method: Method, url: string, payload?: object, token?: string) =>
+    app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
   const ids = {} as Record<U, string>
   for (const user of users) ids[user] = meResponse.parse((await call(user, 'GET', '/v1/me')).json()).id
 
@@ -43,5 +57,5 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await app.close()
     await testDb.drop()
   }
-  return { db: testDb.db, call, ids, liveListing, liveCard, close }
+  return { db: testDb.db, call, ids, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, idToken }
 }

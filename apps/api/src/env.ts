@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { messagingSettings } from './messages/settings'
 import { moderationSettings } from './moderation/settings'
 
 const envSchema = z.object({
@@ -13,4 +14,4 @@ const envSchema = z.object({
   R2_PUBLIC_URL: z.url(),
 })
 
-export const env = { ...envSchema.parse(process.env), moderation: moderationSettings.parse(process.env) }
+export const env = { ...envSchema.parse(process.env), moderation: moderationSettings.parse(process.env), messaging: messagingSettings.parse(process.env) }

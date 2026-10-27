@@ -4,10 +4,11 @@ import { and, asc, eq, isNull } from 'drizzle-orm'
 import { errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Tx } from '../db/client'
-import { connectionRequests, listings, profiles, reports, users } from '../db/schema'
+import { listings, profiles, reports, users } from '../db/schema'
 import { listingView, partsOf } from '../listings/read'
 import { idParams } from '../params'
 import { answersFor, cardView } from '../profiles/read'
+import { endOpenRequests } from '../requests/read'
 import type { Storage } from '../storage'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
@@ -16,10 +17,7 @@ async function suspend(tx: Tx, userId: string) {
   await tx.update(users).set({ status: 'suspended', tokensValidAfter: now }).where(eq(users.id, userId))
   await tx.update(profiles).set({ hiddenAt: now }).where(eq(profiles.userId, userId))
   await tx.update(listings).set({ hiddenAt: now }).where(eq(listings.ownerUserId, userId))
-  const open = eq(connectionRequests.status, 'pending')
-  await tx.update(connectionRequests).set({ status: 'withdrawn' }).where(and(eq(connectionRequests.fromUserId, userId), open))
-  // The senders of the open requests to the person see "not available", as after a decline.
-  await tx.update(connectionRequests).set({ status: 'declined', respondedAt: now }).where(and(eq(connectionRequests.toUserId, userId), open))
+  await endOpenRequests(tx, userId)
   await tx.update(reports).set({ status: 'actioned' }).where(and(eq(reports.subjectUserId, userId), eq(reports.status, 'open')))
 }
 

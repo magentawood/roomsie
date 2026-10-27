@@ -48,6 +48,9 @@ jobs:
           API_ANALYTICS_DATABASE_URL: ${{ secrets.ANALYTICS_DATABASE_URL }}
           API_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           API_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # The public key that the web joins Realtime with, and the Firebase service account for the claims (T-44).
+          API_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          API_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           API_R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           API_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           API_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
