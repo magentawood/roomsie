@@ -2,6 +2,24 @@
 
 The second part of [HANDOFF.md](HANDOFF.md). Delete both files before the T-56 PR.
 
+## Cloud session, 2026-10-27: what it did and where it stopped
+
+- Started Postgres 17 in Docker on port 5433. All 168 API tests pass.
+- **Review round 2 is done** (3 blind reviewers). The fixes are in `d59caf6` and `8f2f7be`:
+  - "Thane" is another name of Thane West and Thane East, and "Thane E" of Thane East (Spec).
+  - The profile test proves the limit of 20 with real slugs. It fails with `.max(9)` (Spec, Standards).
+  - A draft in a pocket goes live through the status route (Spec).
+  - The slug regex check in `areas.test.ts` is gone, because the contract parse checks it (Lean).
+  - STE fixes in PD2, the spec and `learn/areas.md` (Standards).
+- **Rejected in round 2, with the reason:**
+  - Lean, Standards: lowercase "roomsie" in PD2. Rejected: the user's rule is "Roomsie" in new prose.
+  - Lean: one migration, not two. Rejected: drizzle-kit opens a rename prompt with no TTY.
+  - Lean, Standards: skip `isSubArea` on a draft PATCH with no area. Rejected: one primary-key read, and the extra condition costs more than it saves.
+  - Lean: cut the restatement of the picks in `learn/areas.md` and the schema comment. Rejected: the learn page explains the concept, with no reasons copied.
+  - Standards: `'not valid: areaSlug'` for an unknown slug. Rejected: round 1 chose one text for both refusals. The web sends only slugs from `/v1/areas`.
+  - The spec line "are gone" stays: it is the exact text of a plan item.
+- **Stopped at:** the push. GitHub gives 403 "Claude doesn't have GitHub access to magentawood/roomsie". The user must reconnect GitHub. Then push, ask about Dronagiri, and do the PR stage.
+
 ## Other open threads
 
 - **A "Roomsie" capital-R PR** for the web strings and the docs prose:
