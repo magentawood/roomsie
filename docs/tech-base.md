@@ -93,9 +93,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
-- [Listings and photo uploads](learn/listings.md)
 - [Message requests](learn/message-requests.md)
+- [Messages and realtime](learn/messages.md)
+- [Listings and photo uploads](learn/listings.md)
 - [Moderation: reports, blocks and the admin screen](learn/moderation.md)
 - [Place detail and listing reports](learn/place-detail.md)
-- [Profiles and cards](learn/profiles.md)
 <!-- learn-newest:end -->

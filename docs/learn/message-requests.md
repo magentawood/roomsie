@@ -47,10 +47,11 @@ The person detail at `/people/[id]` shows one connect state from this connection
 - **An expiry needs no job.** After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.
 - **A 404 hides a block.** A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.
 - **A block declines an open request.** Its sender sees "Not available", as after a decline ([Moderation](moderation.md)).
-- **The note waits for the chat.** T-44 makes the note of an accepted request the first message of the chat.
+- **The note opens the chat.** At the accept, the note becomes the first message of the conversation ([Messages and realtime](messages.md)).
 
 ## Tickets
 
 - F-13: [#132](https://github.com/magentawood/roomsie/pull/132), 2026-10-25. The rules of message requests.
 - T-18a: [#157](https://github.com/magentawood/roomsie/pull/157), 2026-10-26. The API of message requests.
 - T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and its connect states.
+- T-44: [#160](https://github.com/magentawood/roomsie/pull/160), 2026-10-27. The note opens the conversation, and a deletion keeps the requests.
