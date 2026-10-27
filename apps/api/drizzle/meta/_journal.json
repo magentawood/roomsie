@@ -78,6 +78,20 @@
       "when": 1793077760985,
       "tag": "0010_accepted_notes",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1793082348494,
+      "tag": "0011_sub_areas",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1793082349599,
+      "tag": "0012_drop_launch_area",
+      "breakpoints": true
     }
   ]
 }

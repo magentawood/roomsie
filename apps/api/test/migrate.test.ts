@@ -3,10 +3,11 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { eq, sql } from 'drizzle-orm'
 import { describe, expect, it } from 'vitest'
+import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import journal from '../drizzle/meta/_journal.json'
 import { createTestDb, migrationsFolder, type TestDb } from './db'
 import { migrateAndSeed } from '../src/db/migrate-and-seed'
-import { connectionRequests, lifestyleAxes, messages, mustHaves, profiles, users } from '../src/db/schema'
+import { areas, connectionRequests, lifestyleAxes, listings, messages, mustHaves, profiles, users } from '../src/db/schema'
 
 const dbState = async ({ db }: TestDb) => ({
   migrations: (await db.execute(sql`select count(*)::int as n from drizzle.__drizzle_migrations`))[0]!.n,
@@ -85,6 +86,34 @@ describe('the backfill of the notes of accepted requests (0010)', () => {
       expect(read!.toReadAt).toEqual(acceptedAt)
     } finally {
       await testDb.drop()
+    }
+  })
+})
+
+describe('the sub-areas (0011, 0012 and the seed)', () => {
+  it('keeps the area group of each listing and profile, and puts the sub-areas under the groups', async () => {
+    const testDb = await createTestDb({ migrated: false })
+    const folder = mkdtempSync(join(tmpdir(), 'migrations-'))
+    try {
+      const { db } = testDb
+      cpSync(migrationsFolder, folder, { recursive: true })
+      writeFileSync(join(folder, 'meta/_journal.json'), JSON.stringify({ ...journal, entries: journal.entries.filter((e) => e.idx <= 10) }))
+      await migrate(db, { migrationsFolder: folder })
+      await db.execute(sql`insert into areas (slug, name, is_launch_area, sort_order) values ('andheri-goregaon', 'Andheri–Goregaon', true, 1)`)
+      const [user] = await db.insert(users).values({ authProviderId: 'a' }).returning()
+      await db.insert(profiles).values({ userId: user!.id, fullName: 'A', areas: ['andheri-goregaon'] })
+      const [listing] = await db.insert(listings).values({ ownerUserId: user!.id, kind: 'owner_flat', areaSlug: 'andheri-goregaon' }).returning()
+
+      await migrateAndSeed(db, migrationsFolder)
+      expect((await db.select({ areaSlug: listings.areaSlug }).from(listings).where(eq(listings.id, listing!.id)))[0]!.areaSlug).toBe('andheri-goregaon')
+      expect((await db.select({ areas: profiles.areas }).from(profiles))[0]!.areas).toEqual(['andheri-goregaon'])
+      const parentOf = async (slug: string) => (await db.select({ parent: areas.parentSlug }).from(areas).where(eq(areas.slug, slug)))[0]!.parent
+      expect(await parentOf('andheri-goregaon')).toBeNull()
+      expect(await parentOf('andheri-west')).toBe('andheri-goregaon')
+      expect(await parentOf('versova')).toBe('andheri-west')
+    } finally {
+      await testDb.drop()
+      rmSync(folder, { recursive: true })
     }
   })
 })

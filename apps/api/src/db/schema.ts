@@ -195,6 +195,10 @@ export const profileMustHaves = pgTable('profile_must_haves', {
  * This table is also where the evergreen copy lives: the commute notes and
  * area description written once and reused on every page.
  *
+ * It holds three levels: the area groups of PD2, their sub-areas, and the
+ * pockets inside a sub-area (Versova in Andheri West). A pick of an area
+ * includes the areas under it.
+ *
  * ADR 0015 exception, deliberately: the primary key is the slug, not a UUIDv7.
  * The ADR's reasoning is enumerability — you should not be able to walk
  * `/users/1024` to `/users/1025`. Areas are the opposite: the slugs are
@@ -206,16 +210,18 @@ export const areas = pgTable('areas', {
   slug: text('slug').primaryKey(),
   /** Display name: `Bandra East`. */
   name: text('name').notNull(),
+  /** Null for an area group. */
+  parentSlug: text('parent_slug'),
+  /** The spellings and landmarks that renters search for: `Kandivli`, `GB Road`. */
+  aliases: text('aliases').array().notNull().default([]),
   /** Evergreen copy for the area page. Written once, not generated. */
   description: text('description'),
   commuteNotes: text('commute_notes'),
-  /** Unused (PD2). A second PR drops it and areas_launch_idx. */
-  isLaunchArea: boolean('is_launch_area').notNull().default(false),
   sortOrder: integer('sort_order').notNull().default(0),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => ({
-  launchIdx: index('areas_launch_idx').on(t.isLaunchArea, t.sortOrder),
+  parentFk: foreignKey({ columns: [t.parentSlug], foreignColumns: [t.slug] }),
 })).enableRLS()
 
 /* ── listings: the eight steps of the listing flow (ADR-0017) ─────────────── */
