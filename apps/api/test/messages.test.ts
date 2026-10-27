@@ -87,7 +87,7 @@ describe('a conversation', () => {
 
   it('gives the messages in pages, the newest first, and loses no message at a tie of times on the edge of a page', async () => {
     const id = await connect()
-    // After the note, which has the time of the request.
+    // After the note, which has the time of the accept.
     const start = Date.now() + 60_000
     // m9 has the time of m10, the last message of the first page.
     await t.db.insert(messages).values(Array.from({ length: 60 }, (_, i) => ({ requestId: id, senderUserId: t.ids.seeker, text: `m${i}`, createdAt: new Date(start + (i === 9 ? 10 : i) * 1000) })))

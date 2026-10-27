@@ -26,7 +26,7 @@ export async function listConversations(db: Db, storage: Storage, viewerUserId: 
   const [people, last, unread] = await Promise.all([
     peopleOf(db, storage, requests.map((r) => r.otherUserId)),
     db.selectDistinctOn([messages.requestId]).from(messages)
-      .where(inArray(messages.requestId, requests.map((r) => r.id))).orderBy(messages.requestId, desc(messages.createdAt)),
+      .where(inArray(messages.requestId, requests.map((r) => r.id))).orderBy(messages.requestId, desc(messages.createdAt), desc(messages.id)),
     // The messages of the other person after the last read of the viewer, in each conversation.
     db.select({ requestId: messages.requestId, unread: count() }).from(messages)
       .where(and(ne(messages.senderUserId, viewerUserId), or(...requests.map((r) => and(eq(messages.requestId, r.id), r.readAt ? gt(messages.createdAt, r.readAt) : undefined)))))
