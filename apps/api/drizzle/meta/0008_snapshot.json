@@ -1,5 +1,5 @@
 {
-  "id": "85c0eac3-f3ab-4f2f-9aa2-0ca41b42c200",
+  "id": "8ffdbdda-d965-493d-9037-afcb5ce70862",
   "prevId": "7ffeddce-b2bc-4287-b615-34886899e875",
   "version": "7",
   "dialect": "postgresql",
@@ -464,13 +464,13 @@
         },
         "from_read_at": {
           "name": "from_read_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": false
         },
         "to_read_at": {
           "name": "to_read_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": false
         }
@@ -1522,7 +1522,7 @@
         },
         "created_at": {
           "name": "created_at",
-          "type": "timestamp with time zone",
+          "type": "timestamp (3) with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"

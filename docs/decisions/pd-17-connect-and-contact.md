@@ -11,8 +11,8 @@
 **In one line:** People talk only in roomsie, through message requests; the system masks each phone number in public and in a request, and two people who connected can share numbers in their chat.
 
 - **No phone numbers in public.** The system masks phone numbers and WhatsApp links as •••• in names, bios, listing descriptions, flatmate fields and request notes. The terms forbid them there.
-- **Numbers in a chat.** After an accept, the two people can share a phone number in their messages. In v1, the subscription model ([PD4](pd-04-monetisation.md)) brings back the masking of the chat.
-- **Masked at save.** The API masks each public free-text field before the save, so the database never stores a phone number there (T-41).
+- **Numbers in a chat.** After an accept, the two people can share a phone number in their messages. In v1, a subscription, still open in [PD4](pd-04-monetisation.md), brings back the masking of the chat.
+- **Masked at save.** The API masks each public free-text field and each request note before the save, so the database never stores a phone number there (T-41).
 - **Message requests.** "Say hi" sends one first note of up to 300 characters as a request. The receiver accepts or declines. Until an accept, the sender cannot write more.
 - **Limits.** A sender has 10 new requests a day. A request expires after 14 days. Only one request is open between two people at a time.
 - **After a decline.** The sender sees "Not available", never "Declined". The sender can send a new request later. Abuse goes to a report (PD18).
@@ -22,15 +22,15 @@
 ## Rationale
 
 - A masked number cannot leak from a card, a listing or a request, and a chat stays a record that a report can point to.
-- Two people who chose to connect can move to a call. In v1, the subscription can charge for that step.
+- Two people who chose to connect can move to a call.
 - A note gives the receiver a reason to accept. A request that waits for an accept stops unwanted messages.
 - An alert with no text keeps messages out of inboxes and lock screens.
 
 ## Alternatives rejected
 
 - **roomsie shows the phone number after a mutual accept.** A harvester needs only accepts, and the number cannot return. In v0, each person decides to type it.
-- **Mask the chat in v0 too.** The product team keeps the masking of the chat for the subscription of v1 (2026-10-27).
-- **Block a message that has a number.** The product team prefers to send it with the number masked.
+- **Mask the chat in v0 too.** The product team keeps it for v1 (2026-10-27).
+- **Block a note or a field that has a number.** The product team prefers to save it with the number masked.
 - **No retry after a decline.** The product team prefers a second chance, and the report for abuse.
 - **A complete card before "Say hi", and a weekly review of heavy senders.** The product team keeps the cap and the reports only.
 - **Email only.** The product team also wants a browser push.

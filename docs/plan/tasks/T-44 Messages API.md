@@ -90,7 +90,7 @@ The server part of in-app messages between two users.
 ## Log
 
 - **2026-10-27 · [#160](https://github.com/magentawood/roomsie/pull/160)**
-  - **Change:** the messages API. An accepted request is a conversation, and its note is the first message. The routes list the conversations with the unread counts, page the messages, send a masked message, and mark a conversation as read. Each message goes live on the private Supabase Realtime channels of the two people; the API adds the claims that Supabase needs to the Firebase user. A deletion keeps the thread for the other person.
+  - **Change:** the messages API. An accepted request is a conversation, and its note is the first message. The routes list the conversations with the unread counts, page the messages, send a message, and mark a conversation as read. Each message goes live on the private Supabase Realtime channels of the two people; the API adds the claims that Supabase needs to the Firebase user. A deletion keeps the thread for the other person.
   - **Why:** the T-44 spec, [PD17](../../decisions/pd-17-connect-and-contact.md), [ADR-0005](../../decisions/0005-managed-platform-split.md)
   - **Ticked:** all six items, from "Who can message whom follows PD17" to "After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests"
   - **Not done:** none. The alerts item moved to T-55.

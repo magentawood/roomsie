@@ -99,7 +99,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
         const [request] = await tx.update(connectionRequests).set({ status, respondedAt: now, ...(status === 'accepted' && { toReadAt: now }) })
           .where(and(eq(connectionRequests.id, req.params.id), answerable(req.user!.id))).returning()
         if (!request || status === 'declined') return request && { request, note: null }
-        return { request, note: await openConversation(tx, { requestId: request.id, senderUserId: request.fromUserId, text: request.note, createdAt: request.respondedAt! }) }
+        return { request, note: await openConversation(tx, { requestId: request.id, senderUserId: request.fromUserId, text: request.note }) }
       })
       if (!answered) return reply.code(404).send({ error: 'not found' })
       if (answered.note) await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])
