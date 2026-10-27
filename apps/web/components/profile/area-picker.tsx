@@ -3,11 +3,11 @@
 import { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, SearchLg } from '@untitledui/icons'
 import { maxProfileAreas, type AreasResponse } from '@roomsie/contract'
-import { areaTree, chipState, pickArea } from '../../lib/areas'
+import { areaTree, chipState, pickArea, pickLabel } from '../../lib/areas'
 import { CheckChip, RemoveChip } from '../ui/choice'
 import { inputClass } from '../ui/field'
 
-/** The areas of a seeker: whole groups, sub-areas, or pockets from the search, as section 23 of the drafts. */
+/** Pockets show only in the search results (section 23 of the drafts). */
 export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['areas']; value: string[]; onChange: (areas: string[]) => void }) {
   const tree = useMemo(() => areaTree(areas), [areas])
   const [query, setQuery] = useState('')
@@ -23,14 +23,13 @@ export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['a
     return under ? `${under} picked` : null
   }
   const results = tree.search(query)
-  const pickLabel = (slug: string) => (tree.lineage(slug).length === 1 ? `All of ${tree.label(slug)}` : tree.label(slug) ?? slug)
 
   return (
     <fieldset className="flex flex-col gap-3">
       <legend className="mb-1.5 text-sm font-medium text-secondary">Areas you are looking for</legend>
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {value.map((slug) => <RemoveChip key={slug} label={pickLabel(slug)} onRemove={() => toggle(slug)} />)}
+          {value.map((slug) => <RemoveChip key={slug} label={pickLabel(tree, slug)} onRemove={() => toggle(slug)} />)}
         </div>
       )}
       <div className="relative">
@@ -42,7 +41,7 @@ export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['a
           <p className="text-sm text-tertiary">
             {results.length ? `${results.length} ${results.length === 1 ? 'area matches' : 'areas match'} “${query.trim()}”, by name or another name` : `No area matches “${query.trim()}”.`}
           </p>
-          {results.map((a) => chip(a.slug, [a.name, tree.parentName(a)].filter(Boolean).join(' · ')))}
+          {results.map((a) => chip(a.slug, a.parent ? `${a.name} · ${tree.parentName(a)}` : pickLabel(tree, a.slug)))}
         </div>
       ) : (
         <ul className="flex flex-col">
