@@ -20,11 +20,11 @@ Andheri–Goregaon            (group: parent is null)
 ```
 
 - One table holds the three levels. Each area has a `parent_slug`, and a group has none. A slug never changes, because listings, profiles and later the area pages link it.
-- `GET /v1/areas` gives each area with its slug, name, parent and other names, in the order of the designs: each group, then its sub-areas, and each sub-area then its pockets.
+- `GET /v1/areas` gives each area with its slug, name, parent and other names. The order is the order of the designs: each group, then its sub-areas, and each sub-area then its pockets.
 - The seed in the API code is the only home of the list. To add a place, add it to the seed. The deploy runs the seed.
 - A listing has one sub-area or pocket, never a whole group.
 - A profile picks groups, sub-areas or pockets.
-- Two picks match when they are the same area, or when one includes the other. The match query expands the picks of the seeker: it adds each area above and below a pick, and then looks for profiles that picked one of them. Thus "Andheri West" finds Versova and the whole group, but Versova does not find Lokhandwala.
+- Two picks match when they are the same area, or when one includes the other. The match query expands the picks of the seeker. It adds each area above and below a pick. Then it looks for profiles that picked one of them. Thus "Andheri West" finds Versova and the whole group, but Versova does not find Lokhandwala.
 
 ## The choice we made
 
@@ -33,7 +33,7 @@ Andheri–Goregaon            (group: parent is null)
 
 ## Gotchas
 
-- A listing from before the sub-areas can have a whole group. It stays live, but its next edit must pick a sub-area: the API gives 422 with `areaSlug` missing.
+- A listing from before the sub-areas can have a whole group. It stays live, but its next edit must pick a sub-area: the API gives 422, and `missing` holds `areaSlug`.
 - The match query must use the expansion. A plain array overlap misses Versova for a seeker who picked Andheri West.
 - The seed numbers the areas in the order of its list. Put a new place where it belongs, not at the end.
 

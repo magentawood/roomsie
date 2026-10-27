@@ -16,7 +16,7 @@ Today a listing and a profile pick one of nine area groups, for example Andheri�
 ## Decisions
 
 - **Ten area groups:** the nine groups of the designs, and Dadar–Sion (Dadar West, Dadar East, Mahim, Matunga, Sion, Wadala), after Lower Parel–Worli. Why: [PD2](../decisions/pd-02-launch-market.md).
-- **The list:** the broker list of the user, with the missing places from the rental portals (NoBroker, Square Yards, 99acres, 2026-10-27). It has 10 groups, 90 sub-areas and 19 pockets. The seed is the only home of the list.
+- **The list:** the broker list of the user, and the places from the rental portals that it did not have (NoBroker, Square Yards, 99acres, 2026-10-27). It has 10 groups, 90 sub-areas and 19 pockets. The seed is the only home of the list.
 - **East and West** are two sub-areas where the portals list them separately, for example Malad West and Malad East. The other name "Malad" leads to both.
 - **Pockets:**
   - A pocket is a sub-area inside a sub-area, for example Versova in Andheri West.
@@ -30,7 +30,11 @@ Today a listing and a profile pick one of nine area groups, for example Andheri�
   - Mulund goes in Powai–Vikhroli.
   - Mahalaxmi goes in Lower Parel–Worli.
   - Oshiwara goes in Andheri West.
-- **Live:** the BMC area; Mira–Bhayandar (in Malad–Borivali); the Thane Municipal Corporation, with Mumbra–Diva; and Navi Mumbai, with the Panvel nodes and Ulwe.
+- **Live:**
+  - the BMC area
+  - Mira–Bhayandar (in Malad–Borivali)
+  - the Thane Municipal Corporation, with Mumbra–Diva
+  - Navi Mumbai, with the Panvel nodes and Ulwe.
 - **Waitlist:** Vasai–Virar, Kalyan–Dombivli, Bhiwandi, Ulhasnagar, Ambernath, Badlapur, Karjat and Uran. Why: PD2.
 - **Other names:** the spellings and landmarks that renters use, such as "Kandivli" and "GB Road".
 - **One table:** the areas table holds the groups, the sub-areas and the pockets, each with its parent. The nine group slugs do not change, so the current listings and profiles stay valid.
@@ -69,8 +73,8 @@ Today a listing and a profile pick one of nine area groups, for example Andheri�
 - [ ] A listing cannot go live with a group as its area. It can go live with a sub-area or a pocket (listings API test).
 - [ ] A profile saves a group, a sub-area and a pocket together, up to 20 areas (profiles API test).
 - [ ] The area expansion makes these matches (unit test):
-  - a group matches its sub-areas and pockets;
-  - a sub-area matches its pockets;
+  - a group matches its sub-areas and pockets
+  - a sub-area matches its pockets
   - two pockets of the same sub-area do not match.
 - [ ] After the migration, each listing and profile keeps its area (migration test).
 - [ ] The Where step shows the sub-areas of the selected group, with the pockets under their parent (browser check).
