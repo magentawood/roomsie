@@ -55,6 +55,7 @@ These rules apply to all code.
 - Secrets exist only in the environment of `apps/api`. They are never in `apps/web`: not in a config file, an env var or an import. Why: web code goes to the browser. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - Never put a secret in a `NEXT_PUBLIC_*` env var. Why: the build compiles these values into the browser bundle. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - The Supabase `service_role` key never leaves `apps/api`. Why: the key bypasses Row Level Security, so a leak exposes all data. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
+- Each secret that a workflow reads has a record that names it: a decision record or a learn page. Why: a secret with no record has no owner and no plan to change it. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - Deploy tokens are only in the CI secret store. Why: a deploy token gives control of production. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - Git ignores `.env*`. A committed `.env.example` documents each key with dummy values. Why: each key has a record, and no secret goes into git. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - Database connection details are only in environment settings. Why: a move of a database is then a transfer, not a code change. ([PD13](../decisions/pd-13-databases-and-backups.md))

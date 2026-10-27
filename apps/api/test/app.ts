@@ -4,6 +4,7 @@ import { createTestDb } from './db'
 import { projectId, testTokens } from './tokens'
 import { offlineStorage } from '../scripts/openapi'
 import { areas } from '../src/db/schema'
+import type { Mail } from '../src/email'
 import type { Messaging } from '../src/messages/settings'
 import { moderationSettings } from '../src/moderation/settings'
 import { buildServer } from '../src/server'
@@ -19,7 +20,7 @@ export const testModeration = (settings: Record<string, string> = {}) => moderat
 export function testMessaging() {
   const sent: { userId: string; event: string; payload: object }[] = []
   const claims: { uid: string; claims: object }[] = []
-  const mails: { to: string; subject: string; text: string; html: string }[] = []
+  const mails: (Mail & { to: string })[] = []
   const pushes: { token: string; title: string; link: string }[] = []
   const messaging: Messaging = {
     realtime: { send: async (userId, { event, payload }) => { sent.push({ userId, event, payload }) } },

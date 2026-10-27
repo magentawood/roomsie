@@ -2,10 +2,9 @@
 
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { noContent, requestExpiryDays, type IncomingRequest } from '@roomsie/contract'
+import { listingTitle, noContent, requestExpiryDays, type IncomingRequest } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { listingTitle } from '../../lib/listing-steps'
 import { requestTimes } from '../../lib/messages'
 import { aboutLine, budgetLine, lookingFor } from '../../lib/person'
 import { firstName } from '../../lib/profile-form'

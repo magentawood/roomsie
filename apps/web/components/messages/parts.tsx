@@ -1,9 +1,8 @@
 'use client'
 
 import { InfoCircle, User01, UserPlus01 } from '@untitledui/icons'
-import type { OtherPerson } from '@roomsie/contract'
+import { listingTitle, type OtherPerson } from '@roomsie/contract'
 import { listerLabel } from '../../lib/place-detail'
-import { listingTitle } from '../../lib/listing-steps'
 import { initials } from '../../lib/person'
 import { firstName } from '../../lib/profile-form'
 import { useAreaLabels, useListing } from '../../lib/queries'

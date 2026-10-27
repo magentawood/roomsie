@@ -1,4 +1,3 @@
-/** `problem`: a line in the error colour under the help, for example a browser that blocks notifications. */
 export function Toggle({ title, help, checked, onChange, disabled, problem }: {
   title: string; help: string; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean; problem?: string | null
 }) {
