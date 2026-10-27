@@ -32,13 +32,23 @@ Gives the sub-areas of each Mumbai area group, and checks the areas that listing
 - [[T-57 Sub-area pickers]]
 
 ## Done when
-- [ ] The areas API gives the ten groups with their sub-areas, pockets and other names
-- [ ] A listing goes live only with a sub-area or a pocket
-- [ ] A profile picks groups, sub-areas and pockets, and a group matches all its sub-areas
-- [ ] The unused launch-area column and its index are gone
+- [x] The areas API gives the ten groups with their sub-areas, pockets and other names · [#165](https://github.com/magentawood/roomsie/pull/165)
+- [x] A listing goes live only with a sub-area or a pocket · [#165](https://github.com/magentawood/roomsie/pull/165)
+- [x] A profile picks groups, sub-areas and pockets, and a group matches all its sub-areas · [#165](https://github.com/magentawood/roomsie/pull/165)
+- [x] The unused launch-area column and its index are gone · [#165](https://github.com/magentawood/roomsie/pull/165)
 
 ^done
 
 ## Read first
 - [sub-areas.md](../../specs/sub-areas.md)
 - [pd-02-launch-market.md](../../decisions/pd-02-launch-market.md)
+
+## Log
+
+- **2026-10-27 · [#165](https://github.com/magentawood/roomsie/pull/165)**
+  - **Change:** the areas table holds ten area groups, 90 sub-areas and 19 pockets, each with its parent and other names. `GET /v1/areas` gives them. A listing goes live only in a sub-area or a pocket. A profile picks up to 20 areas at any level, and a pick includes the areas under it. T-56 drops the launch-area column and its index.
+  - **Why:** renters and brokers in Mumbai use the sub-area names. [PD2](../../decisions/pd-02-launch-market.md) and the [spec](../../specs/sub-areas.md).
+  - **Ticked:** "The areas API gives the ten groups with their sub-areas, pockets and other names", "A listing goes live only with a sub-area or a pocket", "A profile picks groups, sub-areas and pockets, and a group matches all its sub-areas" and "The unused launch-area column and its index are gone"
+  - **Not done:** none
+  - **Learn:** [Areas, sub-areas and pockets](../../learn/areas.md), [Listings and photo uploads](../../learn/listings.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
