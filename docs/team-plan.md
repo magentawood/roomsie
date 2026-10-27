@@ -1028,7 +1028,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-45 · Messages screens** — done when:
-- The inbox and the conversation follow the Messages screens in the Product file, on desktop and on a phone
+- The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone
 - The Messages item in the sidebar shows the unread count
 - Report and block are in the menu of the conversation
 - The empty inbox uses the empty state of the designs
