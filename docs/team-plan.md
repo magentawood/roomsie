@@ -907,7 +907,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-10 · Chat screen and split view** — done when:
 - The landing button opens a full-screen chat
 - When results exist, the screen splits into chat and results
-- On a phone, the chat becomes a bar at the bottom and expands when the user taps it
+- On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom
 - Nothing changes size while the person types
 - The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02
 - Read first: `docs/interface-shape.md`
