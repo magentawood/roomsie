@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { Home02, MarkerPin01 } from '@untitledui/icons'
-import type { ListingResponse } from '@roomsie/contract'
-import { listingTitle, rentAmount } from '../../lib/listing-steps'
+import { listingTitle, type ListingResponse } from '@roomsie/contract'
+import { rentAmount } from '../../lib/listing-steps'
 
 /** The result card of the designs for a place. TODO(T-46): the "Verified" badge. */
 export function PlaceCard({ listing, areaName, action }: { listing: ListingResponse; areaName?: string; action?: ReactNode }) {

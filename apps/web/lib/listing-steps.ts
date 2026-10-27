@@ -3,8 +3,6 @@ import {
   listingEditBody, listingEdits, placeTypeLabels, roomTypeLabels, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse,
 } from '@roomsie/contract'
 
-export { listingTitle } from '@roomsie/contract'
-
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
 export type StepId = 'kind' | 'where' | 'nearby' | 'place' | 'rent' | 'rules' | 'people' | 'photos'
 type EditField = keyof ListingEdit

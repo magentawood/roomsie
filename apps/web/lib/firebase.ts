@@ -10,7 +10,6 @@ export function firebaseApp() {
         authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
         projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
         appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-        // The push alerts need it (T-55).
         messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
       })
 }

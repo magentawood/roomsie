@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { listingSteps, listingTitle, rentLine, resumeStep, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
+import { listingTitle } from '@roomsie/contract'
+import { listingSteps, rentLine, resumeStep, stepBody, stepErrors, stepFields, toEditValues } from './listing-steps'
 import { listing } from './test-listing'
 
 describe('the steps of each kind', () => {

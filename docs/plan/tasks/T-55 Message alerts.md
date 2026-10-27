@@ -66,6 +66,7 @@ Tell a person about a new request or message by email and browser push.
   - **Who gets none:** the sender, and an account that is not active.
   - **Switches:** both save at each tap, with no Save. A person with no profile sees them under "Make your profile". "Email alerts" is one setting of the account, on by default. "Push alerts" belongs to each browser, off by default: on means that this browser has a push token at the API. A tap asks the browser. If the browser blocks notifications, the switch stays off, with a line on how to allow them.
   - **The email address:** the sign-in path saves the email of the verified token in the user row, and changes it when the token has a new one. Account deletion clears it. The user decided this at the implement stage, because only the sign-in path reads the Firebase UID (ADR-0005).
+  - **One browser, one person:** when a different person turns on Push alerts in the same browser, the push token moves to that person. It is a named exception to the rule on updates of client-supplied ids (ADR-0019). The user decided this in review round 1.
   - **Best effort:** the API saves first and sends the alerts after the reply. A failure goes to the log, with no retry. The API deletes a push token that FCM refuses.
   - **Without the secrets,** the API sends no email and no push, as Realtime without its secrets.
   - **Docs:** ADR-0019, the PD17 update, a row in extensibility.md, and a learn page on alerts.

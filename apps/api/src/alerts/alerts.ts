@@ -27,8 +27,10 @@ export type Alerts = {
 export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: FirebaseAdmin | null; webOrigin: string; log: FastifyBaseLogger }): Alerts {
   const { db, mailer, firebaseAdmin, webOrigin, log } = options
   const pending = new Set<Promise<void>>()
+  // setImmediate: the route sends its reply first.
   const later = (work: () => Promise<void>) => {
-    const done: Promise<void> = work().catch((err: unknown) => log.error({ err }, 'alerts')).finally(() => pending.delete(done))
+    const done: Promise<void> = new Promise((next) => setImmediate(next)).then(work)
+      .catch((err: unknown) => log.error({ err }, 'alerts')).finally(() => pending.delete(done))
     pending.add(done)
   }
   const chatLink = (requestId: string) => `${webOrigin}/messages/${requestId}`

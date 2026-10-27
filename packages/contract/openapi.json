@@ -8793,12 +8793,12 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "email": {
+                    "emailAlerts": {
                       "type": "boolean"
                     }
                   },
                   "required": [
-                    "email"
+                    "emailAlerts"
                   ],
                   "additionalProperties": false
                 }
@@ -8815,12 +8815,12 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "email": {
+                  "emailAlerts": {
                     "type": "boolean"
                   }
                 },
                 "required": [
-                  "email"
+                  "emailAlerts"
                 ]
               }
             }
@@ -8834,12 +8834,12 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "email": {
+                    "emailAlerts": {
                       "type": "boolean"
                     }
                   },
                   "required": [
-                    "email"
+                    "emailAlerts"
                   ],
                   "additionalProperties": false
                 }

@@ -8,7 +8,7 @@ const from = 'roomsie <alerts@roomsie.in>'
 const region = 'ap-south-1'
 
 export function sesMailer({ accessKeyId, secretAccessKey }: { accessKeyId: string; secretAccessKey: string }): Mailer {
-  const client = new AwsClient({ accessKeyId, secretAccessKey, service: 'ses', region, retries: 1 })
+  const client = new AwsClient({ accessKeyId, secretAccessKey, service: 'ses', region, retries: 0 })
   return {
     async send(to, { subject, text, html }) {
       const res = await client.fetch(`https://email.${region}.amazonaws.com/v2/email/outbound-emails`, {

@@ -65,10 +65,10 @@ describe('the email of an account', () => {
 
 describe('the switches', () => {
   it('turns the email alerts off and on, for the account', async () => {
-    expect(alertSettings.parse((await t.call('friend', 'GET', '/v1/me/alerts')).json())).toEqual({ email: true })
-    expect(alertSettings.parse((await t.call('friend', 'PUT', '/v1/me/alerts', { email: false })).json())).toEqual({ email: false })
-    expect(alertSettings.parse((await t.call('friend', 'GET', '/v1/me/alerts')).json())).toEqual({ email: false })
-    expect(alertSettings.parse((await t.call('seeker', 'GET', '/v1/me/alerts')).json())).toEqual({ email: true })
+    expect(alertSettings.parse((await t.call('friend', 'GET', '/v1/me/alerts')).json())).toEqual({ emailAlerts: true })
+    expect(alertSettings.parse((await t.call('friend', 'PUT', '/v1/me/alerts', { emailAlerts: false })).json())).toEqual({ emailAlerts: false })
+    expect(alertSettings.parse((await t.call('friend', 'GET', '/v1/me/alerts')).json())).toEqual({ emailAlerts: false })
+    expect(alertSettings.parse((await t.call('seeker', 'GET', '/v1/me/alerts')).json())).toEqual({ emailAlerts: true })
   })
 
   it('keeps the push token of a browser for one user, and removes it only for that user', async () => {
@@ -85,7 +85,7 @@ describe('the switches', () => {
   })
 
   it('checks the bodies', async () => {
-    expect((await t.call('friend', 'PUT', '/v1/me/alerts', { email: 'no' })).statusCode).toBe(400)
+    expect((await t.call('friend', 'PUT', '/v1/me/alerts', { emailAlerts: 'no' })).statusCode).toBe(400)
     expect((await t.call('friend', 'POST', '/v1/me/push-tokens', { token: '' })).statusCode).toBe(400)
   })
 })
@@ -167,7 +167,7 @@ describe('the alerts', () => {
 
   it('obeys the switches, and tells no account that is not active', async () => {
     await addToken('friend', 'divya-phone')
-    await t.call('friend', 'PUT', '/v1/me/alerts', { email: false })
+    await t.call('friend', 'PUT', '/v1/me/alerts', { emailAlerts: false })
     await sayHi()
     expect(t.mails).toEqual([])
     expect(t.pushes.map((p) => p.token)).toEqual(['divya-phone'])

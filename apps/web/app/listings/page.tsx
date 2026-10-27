@@ -2,11 +2,11 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckSquare, Edit05, Home02, Key01, Plus, RefreshCw01, SlashCircle01 } from '@untitledui/icons'
-import { listingResponse, myListingsResponse, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
+import { listingResponse, listingTitle, myListingsResponse, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
 import { api, errorText, missingFields } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { queryKeys, useAreaLabels } from '../../lib/queries'
-import { cardActions, listingSteps, listingTitle, rentLine, resumeStep, stepCopy, type CardAction } from '../../lib/listing-steps'
+import { cardActions, listingSteps, rentLine, resumeStep, stepCopy, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { listingSignIn, SignInGate } from '../../components/shell/sign-in-gate'
 import { MissingNotice } from '../../components/listings/missing-notice'

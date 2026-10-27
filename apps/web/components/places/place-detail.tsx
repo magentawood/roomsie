@@ -5,8 +5,8 @@ import {
   Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Clock, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
   LayersThree01, MessageCircle01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
 } from '@untitledui/icons'
-import type { ListingResponse } from '@roomsie/contract'
-import { labels, listingTitle } from '../../lib/listing-steps'
+import { listingTitle, type ListingResponse } from '@roomsie/contract'
+import { labels } from '../../lib/listing-steps'
 import {
   addressLine, flatmateLines, listerLabel, listerPhrase, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
