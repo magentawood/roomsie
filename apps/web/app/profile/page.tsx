@@ -5,7 +5,8 @@ import { User01 } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import { useProfile } from '../../lib/queries'
 import { CreateProfileDialog } from '../../components/profile/create-profile-dialog'
-import { ProfileEditor } from '../../components/profile/profile-editor'
+import { AlertSwitches } from '../../components/profile/alert-switches'
+import { ProfileEditor, Section } from '../../components/profile/profile-editor'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
 import { Button } from '../../components/ui/button'
@@ -18,10 +19,14 @@ function Profile() {
   if (profile.isPending) return <p className="p-6 text-sm text-tertiary">Loading…</p>
   if (profile.data) return <ProfileEditor key={profile.data.id} profile={profile.data} />
   return (
-    <main className="flex flex-1 flex-col px-5">
+    <main className="mx-auto flex w-full max-w-240 flex-col gap-8 px-5 py-5 md:px-6 md:py-8">
       <EmptyState icon={User01} title="Make your profile" action={<Button variant="primary" size="md" onClick={() => setCreating(true)}>Make my profile</Button>}>
         Your card lets people who look for a flatmate find you.
       </EmptyState>
+      {/* A lister with no profile also gets requests (T-55). */}
+      <Section title="Settings" helper="Alerts for your requests and messages. They work without a profile.">
+        <AlertSwitches />
+      </Section>
       {creating && <CreateProfileDialog onClose={() => setCreating(false)} />}
     </main>
   )

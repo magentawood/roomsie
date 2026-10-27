@@ -35,6 +35,7 @@ Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error
 | Move analytics to a larger store, for example ClickHouse | At scale | Change the sink in `track()`. Export and import the rows | Events go through one `track()`. Each event has an `event_version` from `packages/contract`. Product code does not read or join the events table |
 | Change the auth provider | If necessary | Link `users.auth_provider_id` again | The Firebase UID is only in that column |
 | Change error tracking to GlitchTip | v1 | In `reportError` | Only one function reports errors |
+| Change the email or the push provider | If necessary | The email module or the Firebase Admin module of the API | Only the alerts module sends alerts, through these two modules ([ADR 0019](decisions/0019-alerts-by-ses-and-fcm.md)) |
 | Move photo storage | If necessary | Change the storage module and the base URL | Store object keys, not full URLs. Uploads use presigned URLs |
 | Property listings | v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)) | A new `listings` module and table. Results get a second kind | Results in the contract are a tagged union, `kind: "person"`, from day one |
 | In-app messaging | v0 ([PD14](decisions/pd-14-v0-is-the-figma-designs.md)) | A new `messaging` module, with Supabase Realtime broadcast | Only rule 5 |
