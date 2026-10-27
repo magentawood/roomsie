@@ -60,7 +60,7 @@ export function useProfile() {
   })
 }
 
-/** The area groups change only with a deploy, so one fetch serves the visit. */
+/** The areas change only with a deploy, so one fetch serves the visit. */
 export function useAreas() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.areas, queryFn: () => api(user, '/v1/areas', areasResponse), staleTime: Infinity })

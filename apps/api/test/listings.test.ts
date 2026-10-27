@@ -7,7 +7,7 @@ import { offlineStorage } from '../scripts/openapi'
 import { areas, listingFlatmates, listings } from '../src/db/schema'
 import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
-import { testMessaging, testModeration } from './app'
+import { testAreas, testMessaging, testModeration } from './app'
 
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
@@ -25,7 +25,7 @@ const storage: Storage = {
 
 beforeAll(async () => {
   testDb = await createTestDb()
-  await testDb.db.insert(areas).values({ slug: 'bandra', name: 'Bandra' })
+  await testDb.db.insert(areas).values(testAreas)
   const { firebaseKeys, idToken } = await testTokens()
   tokens = { lister: await idToken('uid-lister'), seeker: await idToken('uid-seeker') }
   app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(), messaging: testMessaging().messaging })
@@ -88,9 +88,12 @@ describe('a draft', () => {
     expect((await call('lister', 'PATCH', '/not-a-uuid', {})).json()).toEqual({ error: 'not valid: id' })
   })
 
-  it('rejects an area that does not exist', async () => {
+  it('takes a sub-area or a pocket, and rejects a whole area group and an area that does not exist', async () => {
     const listing = await draft('owner_flat')
     expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'atlantis' })).statusCode).toBe(400)
+    expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'bandra-santacruz' })).json()).toEqual({ error: 'not a sub-area' })
+    expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'pali-hill' })).statusCode).toBe(200)
+    expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'bandra' })).statusCode).toBe(200)
   })
 
   it('replaces the full set of rents and of flatmates', async () => {
@@ -148,6 +151,19 @@ describe('going live', () => {
 
     const room = await draft('room_in_flat', { areaSlug: 'bandra', rates: [{ rent: 18000 }], flatmates: [{ name: 'Radhika' }] })
     expect((await live(room.id)).json()).toEqual({ error: 'incomplete', missing: ['flatmatesConsent'] })
+  })
+
+  it('needs a sub-area: a listing in a whole area group from before stays live, and its next edit picks a sub-area', async () => {
+    const flat = await draft('owner_flat', { areaSlug: 'bandra', rates: [{ rent: 30000 }] })
+    const inGroup = () => testDb.db.update(listings).set({ areaSlug: 'bandra-santacruz' }).where(eq(listings.id, flat.id))
+    await inGroup()
+    expect((await live(flat.id)).json()).toEqual({ error: 'incomplete', missing: ['areaSlug'] })
+    await call('lister', 'PATCH', `/${flat.id}`, { areaSlug: 'bandra' })
+    expect((await live(flat.id)).statusCode).toBe(200)
+    await inGroup()
+    expect((await call('lister', 'GET', `/${flat.id}`)).json()).toMatchObject({ status: 'live' })
+    expect((await call('lister', 'PATCH', `/${flat.id}`, { rates: [{ rent: 32000 }] })).json()).toEqual({ error: 'incomplete', missing: ['areaSlug'] })
+    expect((await call('lister', 'PATCH', `/${flat.id}`, { areaSlug: 'pali-hill', rates: [{ rent: 32000 }] })).statusCode).toBe(200)
   })
 
   it('lets a live PG add a sharing type before its rent, and needs a rent for each type to go live again', async () => {
