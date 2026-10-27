@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify'
+import type { FastifyInstance, FastifyReply } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq, sql } from 'drizzle-orm'
 import {
@@ -21,7 +21,12 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   const { db, storage, messaging } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
-  const notFound = { error: 'not found' }
+  /** The conversation, or a 404 when the user is not in it. */
+  const conversationOr404 = async (userId: string, conversationId: string, reply: FastifyReply) => {
+    const conversation = await conversationFor(db, storage, userId, conversationId)
+    if (!conversation) void reply.code(404).send({ error: 'not found' })
+    return conversation
+  }
 
   app.get('/conversations', { preHandler, schema: { response: { 200: conversationsResponse } } }, async (req) => ({
     conversations: await listConversations(db, storage, req.user!.id),
@@ -32,9 +37,9 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     schema: { params: idParams, querystring: messagesQuery, response: { 200: messagesResponse, 404: errorResponse } },
   }, async (req, reply) => {
     const me = req.user!.id
-    if (!await conversationFor(db, me, req.params.id)) return reply.code(404).send(notFound)
+    if (!await conversationOr404(me, req.params.id, reply)) return reply
     const { before } = req.query
-    // The page before a message: the id breaks a tie of two messages at the same time. One more row than a page tells if an older page exists.
+    // The id breaks a tie of times. One extra row tells if an older page exists.
     const rows = await db.select().from(messages)
       .where(and(
         eq(messages.requestId, req.params.id),
@@ -49,8 +54,8 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     schema: { params: idParams, body: sendMessageBody, response: { 201: message, 404: errorResponse, 409: errorResponse } },
   }, async (req, reply) => {
     const me = req.user!.id
-    const conversation = await conversationFor(db, me, req.params.id)
-    if (!conversation) return reply.code(404).send(notFound)
+    const conversation = await conversationOr404(me, req.params.id, reply)
+    if (!conversation) return reply
     if (!conversation.canSend) return reply.code(409).send({ error: 'the other person cannot get messages' })
     // ADR-0015: a retried send stores nothing, and gives the stored message again.
     const [made] = await db.insert(messages).values({ id: req.body.id, requestId: req.params.id, senderUserId: me, text: maskContacts(req.body.text) })
@@ -65,7 +70,7 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
   app.post('/conversations/:id/read', { preHandler, schema: { params: idParams, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
     const me = req.user!.id
-    if (!await conversationFor(db, me, req.params.id)) return reply.code(404).send(notFound)
+    if (!await conversationOr404(me, req.params.id, reply)) return reply
     await markRead(db, req.params.id, me)
     return reply.code(204).send(null)
   })
@@ -73,7 +78,7 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   app.post('/me/realtime', { preHandler, schema: { response: { 200: realtimeResponse, 503: errorResponse } } }, async (req, reply) => {
     const { webRealtime, firebaseAdmin } = messaging
     if (!webRealtime || !firebaseAdmin) return reply.code(503).send({ error: 'realtime is not set up' })
-    const refreshToken = await ensureRealtimeClaims(req, firebaseAdmin)
-    return { ...webRealtime, channel: userChannel(req.user!.id), refreshToken }
+    const mustRefreshIdToken = await ensureRealtimeClaims(req, firebaseAdmin)
+    return { ...webRealtime, channel: userChannel(req.user!.id), mustRefreshIdToken }
   })
 }

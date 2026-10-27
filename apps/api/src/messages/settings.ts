@@ -5,10 +5,7 @@ import { noRealtime, supabaseRealtime } from '../realtime'
 /** An unset secret of the deploy arrives as an empty string. */
 const optional = z.preprocess((v) => v || undefined, z.string().optional())
 
-/**
- * The settings of the messages (T-44). Each is optional, so development and the tests run with no Supabase and no Firebase.
- * `webRealtime` is the public URL and key that the web joins Realtime with.
- */
+/** Each is optional, so development runs with no Supabase and no Firebase (T-44). */
 export const messagingSettings = z.object({
   SUPABASE_URL: optional.pipe(z.url().optional()),
   SUPABASE_ANON_KEY: optional,

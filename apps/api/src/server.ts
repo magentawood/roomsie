@@ -30,7 +30,6 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
   app.decorateRequest('identity', null)
-  app.decorateRequest('firebase', null)
   // A 400 names the fields, so a client can show which value is wrong. Other errors keep the default reply.
   app.setErrorHandler((err, _req, reply) => {
     if (!hasZodFastifySchemaValidationErrors(err)) throw err

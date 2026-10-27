@@ -21,7 +21,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 - For a client-minted id, Zod checks that the id is a UUIDv7. It also checks that the timestamp in it is in the range ±5 minutes of the server clock. Why: a spoofed timestamp destroys index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - Insert a client-minted row with `ON CONFLICT (id) DO NOTHING`. Why: a retried request is then safe. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - Each table has `created_at timestamptz not null default now()`. Why: the server clock is the only chronology that the application trusts. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
-- Order rows by `created_at`, never by id. The application never reads, shows or orders by the timestamp in a UUIDv7. Why: a client with a skewed clock would change the order of a chat thread. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
+- Order rows by `created_at`, never by id. The application never reads, shows or orders by the timestamp in a UUIDv7. A keyset page may break a tie of `created_at` with the id. Why: a client with a skewed clock would change the order of a chat thread. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 
 ## Queries
 

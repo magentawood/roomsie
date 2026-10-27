@@ -38,7 +38,7 @@ details.callout[open] summary{color:var(--fg)}
 <p><strong>In one line:</strong> an accepted message request is a conversation; the API saves each message, masks phone numbers, and sends it live to the two people on their private Supabase Realtime channels.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
-<li>A <strong>conversation</strong> is an accepted message request. The note of the request is its first message.</li>
+<li>A <strong>conversation</strong> is an accepted message request. The note of the request is its first message, at the time of the accept.</li>
 <li>A <strong>realtime channel</strong> is a pipe from the server to an open app. The API sends to it, and the app gets each message at once, with no reload.</li>
 <li>A <strong>private channel</strong> is open only to one signed-in person. Supabase checks a policy before the app can join.</li>
 <li>A <strong>claim</strong> is a field in the sign-in token. Supabase needs two claims that Firebase does not give by default.</li>
@@ -74,7 +74,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td><code>POST /v1/me/realtime</code></td>
-<td>Gives the channel, the public URL and key of Supabase, and <code>refreshToken</code>.</td>
+<td>Gives the channel, the public URL and key of Supabase, and <code>mustRefreshIdToken</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -93,7 +93,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>Realtime is best effort.</strong> The API saves the message first. If the broadcast fails, the API logs it, and the app gets the message at its next fetch.</li>
 <li><strong><code>user_id</code> is taken.</strong> A Firebase token already has <code>user_id</code>, the Firebase uid, so our claim has its own name.</li>
-<li><strong>A new claim needs a new token.</strong> Firebase puts a claim in the next token, so the web refreshes the token one time when <code>refreshToken</code> is true.</li>
+<li><strong>A new claim needs a new token.</strong> Firebase puts a claim in the next token, so the web refreshes the token one time when <code>mustRefreshIdToken</code> is true.</li>
 <li><strong>The setup is in two consoles.</strong> The API needs the secrets <code>SUPABASE_ANON_KEY</code> and <code>FIREBASE_SERVICE_ACCOUNT</code>. Supabase needs Firebase as a third-party auth provider, and Realtime set to private channels only. Without the secrets, <code>POST /v1/me/realtime</code> gives 503.</li>
 <li><strong>No SDK.</strong> The Firebase Admin module calls the REST API that the Admin SDK calls, with a token that <code>jose</code> signs, as <code>aws4fetch</code> does for R2.</li>
 </ul>

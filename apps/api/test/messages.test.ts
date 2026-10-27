@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { conversationsResponse, message, messagesResponse, realtimeResponse } from '@roomsie/contract'
+import { conversationsResponse, message, messagesResponse, outgoingRequest, realtimeResponse } from '@roomsie/contract'
 import { blocks, connectionRequests, messages, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -28,7 +28,7 @@ const send = (who: Who, id: string, text: string, messageId = uuidv7()) => t.cal
 async function connect(note = 'Hi Divya, I work in BKC.') {
   const sent = await t.call('seeker', 'POST', '/v1/requests', { toProfileId: cards.friend, note })
   expect(sent.statusCode).toBe(201)
-  const id = sent.json().id as string
+  const { id } = outgoingRequest.parse(sent.json())
   expect((await t.call('friend', 'POST', `/v1/requests/${id}/accept`)).statusCode).toBe(204)
   return id
 }
@@ -38,7 +38,8 @@ describe('a conversation', () => {
     const id = await connect()
     const [mine] = await list('seeker')
     expect(mine).toMatchObject({ id, other: { profileId: cards.friend, name: 'Divya Sharma', deleted: false }, listingId: null, unread: 0, canSend: true, lastMessage: { text: 'Hi Divya, I work in BKC.', mine: true } })
-    expect((await list('friend'))[0]).toMatchObject({ id, other: { profileId: cards.seeker, name: 'Rahul Verma' }, unread: 1, lastMessage: { mine: false } })
+    // Divya read the note to accept it.
+    expect((await list('friend'))[0]).toMatchObject({ id, other: { profileId: cards.seeker, name: 'Rahul Verma' }, unread: 0, lastMessage: { mine: false } })
     expect((await thread('friend', id)).messages).toMatchObject([{ conversationId: id, text: 'Hi Divya, I work in BKC.', mine: false }])
     expect(t.sent.map((s) => [s.userId, s.event])).toEqual(expect.arrayContaining([[t.ids.seeker, 'message'], [t.ids.friend, 'message']]))
   })
@@ -66,7 +67,7 @@ describe('a conversation', () => {
     expect((await t.call('stranger', 'GET', `/v1/conversations/${id}/messages`)).statusCode).toBe(404)
     expect((await send('stranger', id, 'Hi')).statusCode).toBe(404)
     expect(await list('stranger')).toEqual([])
-    const open = (await t.call('friend', 'POST', '/v1/requests', { listingId: await t.liveListing(), note: 'Is it free?' })).json().id as string
+    const open = outgoingRequest.parse((await t.call('friend', 'POST', '/v1/requests', { listingId: await t.liveListing(), note: 'Is it free?' })).json()).id
     expect((await t.call('friend', 'GET', `/v1/conversations/${open}/messages`)).statusCode).toBe(404)
     expect((await send('lister', open, 'Hi')).statusCode).toBe(404)
     expect((await t.call(null, 'GET', '/v1/conversations')).statusCode).toBe(401)
@@ -75,6 +76,7 @@ describe('a conversation', () => {
   it('counts the unread messages until the person reads the conversation', async () => {
     const id = await connect()
     await send('seeker', id, 'Are you free on Sunday?')
+    await send('seeker', id, 'Or after work?')
     expect((await list('friend'))[0]!.unread).toBe(2)
     expect((await t.call('friend', 'POST', `/v1/conversations/${id}/read`)).statusCode).toBe(204)
     expect((await list('friend'))[0]!.unread).toBe(0)
@@ -120,7 +122,7 @@ describe('a conversation', () => {
   it('goes through a listing to an owner with no profile', async () => {
     const listingId = await t.liveListing()
     const sent = await t.call('seeker', 'POST', '/v1/requests', { listingId, note: 'Is the room free?' })
-    expect((await t.call('lister', 'POST', `/v1/requests/${sent.json().id}/accept`)).statusCode).toBe(204)
+    expect((await t.call('lister', 'POST', `/v1/requests/${outgoingRequest.parse(sent.json()).id}/accept`)).statusCode).toBe(204)
     expect((await list('seeker'))[0]).toMatchObject({ listingId, other: { profileId: null, name: null, deleted: false }, canSend: true })
     expect((await list('lister'))[0]).toMatchObject({ listingId, other: { profileId: cards.seeker, name: 'Rahul Verma' } })
   })
@@ -130,7 +132,7 @@ describe('a deleted account', () => {
   it('leaves the thread to the other person, who sees "Deleted user" and cannot answer', async () => {
     const card = await t.liveCard('stranger', 'Karan Shah')
     const sent = await t.call('seeker', 'POST', '/v1/requests', { toProfileId: card, note: 'Hi Karan' })
-    const id = sent.json().id as string
+    const { id } = outgoingRequest.parse(sent.json())
     expect((await t.call('stranger', 'POST', `/v1/requests/${id}/accept`)).statusCode).toBe(204)
     await send('stranger', id, 'Hello!')
     expect((await t.call('stranger', 'DELETE', '/v1/me')).statusCode).toBe(204)
@@ -143,11 +145,11 @@ describe('a deleted account', () => {
 describe('the realtime channel', () => {
   it('gives the channel and the public settings, and adds the claims to the token one time', async () => {
     const first = realtimeResponse.parse((await t.call('seeker', 'POST', '/v1/me/realtime')).json())
-    expect(first).toEqual({ url: 'https://realtime.example.com', key: 'test-anon-key', channel: `user:${t.ids.seeker}`, refreshToken: true })
+    expect(first).toEqual({ url: 'https://realtime.example.com', key: 'test-anon-key', channel: `user:${t.ids.seeker}`, mustRefreshIdToken: true })
     expect(t.claims).toEqual([{ uid: 'uid-seeker', claims: { role: 'authenticated', roomsie_user_id: t.ids.seeker } }])
     const token = await t.idToken('uid-seeker', { claims: { role: 'authenticated', roomsie_user_id: t.ids.seeker } })
     const again = realtimeResponse.parse((await t.call('seeker', 'POST', '/v1/me/realtime', undefined, token)).json())
-    expect(again.refreshToken).toBe(false)
+    expect(again.mustRefreshIdToken).toBe(false)
     expect(t.claims).toHaveLength(1)
   })
 })

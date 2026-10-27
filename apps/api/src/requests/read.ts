@@ -2,6 +2,7 @@ import { and, count, desc, eq, gt, gte, or, sql } from 'drizzle-orm'
 import { requestExpiryDays, type Connection } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { connectionRequests } from '../db/schema'
+import { noBlockBetween } from '../match/query'
 
 export type RequestRow = typeof connectionRequests.$inferSelect
 
@@ -44,9 +45,28 @@ export async function endOpenRequests(tx: Tx, userId: string) {
   await tx.update(connectionRequests).set({ status: 'declined', respondedAt: new Date() }).where(and(eq(connectionRequests.toUserId, userId), open))
 }
 
-/** The last read of a conversation by the user: the unread count starts after it (T-44). */
 export async function markRead(db: Db, requestId: string, userId: string) {
   const now = new Date()
   await db.update(connectionRequests).set({ fromReadAt: now }).where(and(eq(connectionRequests.id, requestId), eq(connectionRequests.fromUserId, userId)))
   await db.update(connectionRequests).set({ toReadAt: now }).where(and(eq(connectionRequests.id, requestId), eq(connectionRequests.toUserId, userId)))
+}
+
+/**
+ * The accepted requests of the viewer with no block between the two people: the conversations of T-44.
+ * Each gives the other person and the last read of the viewer.
+ */
+export function acceptedRequestsOf(db: Db, viewerUserId: string, requestId?: string) {
+  const viewerSent = sql`${connectionRequests.fromUserId} = ${viewerUserId}`
+  const otherUserId = sql<string>`case when ${viewerSent} then ${connectionRequests.toUserId} else ${connectionRequests.fromUserId} end`
+  return db.select({
+    id: connectionRequests.id,
+    listingId: connectionRequests.listingId,
+    otherUserId,
+    readAt: sql`case when ${viewerSent} then ${connectionRequests.fromReadAt} else ${connectionRequests.toReadAt} end`.mapWith(connectionRequests.fromReadAt),
+  }).from(connectionRequests).where(and(
+    eq(connectionRequests.status, 'accepted'),
+    or(eq(connectionRequests.fromUserId, viewerUserId), eq(connectionRequests.toUserId, viewerUserId)),
+    noBlockBetween(viewerUserId, otherUserId),
+    requestId ? eq(connectionRequests.id, requestId) : undefined,
+  ))
 }

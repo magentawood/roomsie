@@ -4,16 +4,15 @@ import { z } from 'zod'
 // The REST call of the Admin SDK, with a token of the service account: no SDK dependency.
 export const serviceAccount = z.object({ project_id: z.string(), client_email: z.string(), private_key: z.string() })
 
-/** The claims that Supabase Realtime needs (T-44). Firebase already uses `user_id` for its uid, so ours has another name. */
-export type RealtimeClaims = { role: 'authenticated'; roomsie_user_id: string }
-export type FirebaseAdmin = { setClaims(uid: string, claims: RealtimeClaims): Promise<void> }
+/** The claims that Supabase Realtime needs (T-44). */
+export const realtimeClaims = z.object({ role: z.literal('authenticated'), roomsie_user_id: z.uuid() })
+export type FirebaseAdmin = { setClaims(uid: string, claims: z.infer<typeof realtimeClaims>): Promise<void> }
 
 export function firebaseAdmin(account: z.infer<typeof serviceAccount>): FirebaseAdmin {
   async function accessToken() {
-    const now = Math.floor(Date.now() / 1000)
     const assertion = await new SignJWT({ scope: 'https://www.googleapis.com/auth/identitytoolkit' })
       .setProtectedHeader({ alg: 'RS256' }).setIssuer(account.client_email).setAudience('https://oauth2.googleapis.com/token')
-      .setIssuedAt(now).setExpirationTime(now + 3600).sign(await importPKCS8(account.private_key, 'RS256'))
+      .setIssuedAt().setExpirationTime('1h').sign(await importPKCS8(account.private_key, 'RS256'))
     const res = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),

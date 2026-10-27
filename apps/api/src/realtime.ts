@@ -18,5 +18,4 @@ export function supabaseRealtime({ url, serviceKey }: { url: string; serviceKey:
   }
 }
 
-/** For development with no Supabase: nothing is sent. */
 export const noRealtime: Realtime = { send: async () => {} }

@@ -33,6 +33,6 @@ export const messagesResponse = z.object({ messages: z.array(message), hasMore: 
 export const realtimeMessageEvent = z.object({ event: z.literal('message'), payload: message })
 export type RealtimeMessageEvent = z.infer<typeof realtimeMessageEvent>
 
-/** What the web needs to join its private channel. `refreshToken`: get a fresh ID token first, so that it has the claims. */
-export const realtimeResponse = z.object({ url: z.url(), key: z.string().min(1), channel: z.string(), refreshToken: z.boolean() })
+/** What the web needs to join its private channel. `mustRefreshIdToken`: get a fresh Firebase ID token first, so that it has the claims. */
+export const realtimeResponse = z.object({ url: z.url(), key: z.string().min(1), channel: z.string(), mustRefreshIdToken: z.boolean() })
 export type RealtimeResponse = z.infer<typeof realtimeResponse>
