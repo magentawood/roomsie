@@ -569,12 +569,30 @@
    "height": 84
   },
   {
+   "id": "task-T-56",
+   "type": "text",
+   "text": "**[[T-56 Sub-areas API|T-56 Sub-areas API]]**\n6h · Wed 28 Oct → Thu 29 Oct",
+   "x": 7480,
+   "y": 906,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "task-T-42",
    "type": "text",
    "text": "**[[T-42 Listing flow screens|T-42 Listing flow screens]]**\n8h · Thu 29 Oct → Sun 1 Nov",
    "x": 7700,
    "y": 810,
    "width": 872,
+   "height": 84
+  },
+  {
+   "id": "task-T-57",
+   "type": "text",
+   "text": "**[[T-57 Sub-area pickers|T-57 Sub-area pickers]]**\n8h · Fri 30 Oct → Tue 3 Nov",
+   "x": 7920,
+   "y": 906,
+   "width": 1092,
    "height": 84
   },
   {
@@ -1632,6 +1650,13 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-56-T-22a",
+   "fromNode": "task-T-56",
+   "fromSide": "right",
+   "toNode": "task-T-22a",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-22a-T-22b",
    "fromNode": "task-T-22a",
    "fromSide": "right",
@@ -1869,6 +1894,13 @@
    "fromNode": "task-T-45",
    "fromSide": "right",
    "toNode": "task-T-55",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-56-T-57",
+   "fromNode": "task-T-56",
+   "fromSide": "right",
+   "toNode": "task-T-57",
    "toSide": "left"
   },
   {

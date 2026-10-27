@@ -22,16 +22,17 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#47](https://github.com/magentawood/roomsie/issues/47)
 
-The server part: know the nine Mumbai area groups, and save waitlist emails from places outside Mumbai.
+The server part: know the Mumbai area groups, and save waitlist emails from places outside Mumbai.
 
 ## Needs first
 - [[T-14 Match query ⚑]]
+- [[T-56 Sub-areas API]]
 
 ## Unblocks
 - [[T-22b Waitlist screen]]
 
 ## Done when
-- [ ] The API tells if a place is in the nine Mumbai area groups
+- [ ] The API tells if a place is in a Mumbai area group, by its name or another name
 - [ ] The system saves each waitlist entry with its place
 
 ^done

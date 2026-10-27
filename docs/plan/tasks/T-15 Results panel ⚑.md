@@ -2,7 +2,7 @@
 id: T-15
 title: "Results panel, built against the contract"
 owner: "P3 Data and trust"
-sequence: "3 of 16"
+sequence: "3 of 18"
 hours: 6
 start: 2026-10-03
 end: 2026-10-08
@@ -18,7 +18,7 @@ tags:
 
 # T-15 · Results panel, built against the contract
 
-**Owner:** [[P3 Data and trust]], task 3 of 16  
+**Owner:** [[P3 Data and trust]], task 3 of 18  
 **When:** Sat 3 Oct → Thu 8 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#16](https://github.com/magentawood/roomsie/issues/16)

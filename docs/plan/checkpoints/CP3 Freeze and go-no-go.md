@@ -56,7 +56,9 @@ This note is part of [[roomsie launch]].
 - [[T-41 Listings API]] — P3 Data and trust
 - [[T-52 Web CSP]] — P1 Platform
 - [[T-53 Delete the Firebase user]] — P4 Content and moderation
+- [[T-56 Sub-areas API]] — P3 Data and trust
 - [[T-42 Listing flow screens]] — P3 Data and trust
+- [[T-57 Sub-area pickers]] — P3 Data and trust
 - [[T-43 Listing detail screens]] — P3 Data and trust
 - [[T-44 Messages API]] — P3 Data and trust
 - [[T-45 Messages screens]] — P3 Data and trust

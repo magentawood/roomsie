@@ -2,7 +2,7 @@
 id: T-41
 title: "Listings API: four kinds of lister"
 owner: "P3 Data and trust"
-sequence: "5 of 16"
+sequence: "5 of 18"
 hours: 8
 start: 2026-10-25
 end: 2026-10-28
@@ -17,7 +17,7 @@ tags:
 
 # T-41 · Listings API: four kinds of lister
 
-**Owner:** [[P3 Data and trust]], task 5 of 16  
+**Owner:** [[P3 Data and trust]], task 5 of 18  
 **When:** Sun 25 Oct → Wed 28 Oct · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#117](https://github.com/magentawood/roomsie/issues/117)
