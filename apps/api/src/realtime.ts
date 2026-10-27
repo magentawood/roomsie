@@ -1,7 +1,7 @@
-import type { RealtimeMessageEvent } from '@roomsie/contract'
+import type { RealtimeEvent } from '@roomsie/contract'
 
 /** The only code that calls Supabase Realtime (ADR-0005: broadcast only). Each user has one private channel. */
-export type Realtime = { send(userId: string, event: RealtimeMessageEvent): Promise<void> }
+export type Realtime = { send(userId: string, event: RealtimeEvent): Promise<void> }
 
 export const userChannel = (userId: string) => `user:${userId}`
 

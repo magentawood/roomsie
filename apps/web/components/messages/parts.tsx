@@ -1,7 +1,7 @@
 'use client'
 
 import { InfoCircle, User01 } from '@untitledui/icons'
-import type { Conversation } from '@roomsie/contract'
+import type { OtherPerson } from '@roomsie/contract'
 import { listerLabel } from '../../lib/place-detail'
 import { listingTitle } from '../../lib/listing-steps'
 import { otherName } from '../../lib/messages'
@@ -19,7 +19,7 @@ export function Avatar({ photoUrl, name, size = 'md' }: { photoUrl: string | nul
 }
 
 function useListingLine(listingId: string | null) {
-  const listing = useListing(listingId ?? '', !!listingId)
+  const listing = useListing(listingId)
   const areas = useAreaLabels()
   if (!listing.data) return null
   const area = listing.data.areaSlug ? areas[listing.data.areaSlug] : null
@@ -27,9 +27,9 @@ function useListingLine(listingId: string | null) {
 }
 
 /** The name of a chat: the person, "Deleted user", or the listing when its lister has no profile. */
-export function useChatName(other: Conversation['other'], listingId: string | null) {
+export function useChatName(other: OtherPerson, listingId: string | null) {
   const listing = useListingLine(listingId)
-  return { name: otherName(other) ?? listing?.title ?? 'Lister', about: listingId ? listing?.line ?? null : null }
+  return { name: otherName(other) ?? listing?.title ?? 'Lister', about: listing?.line ?? null }
 }
 
 export function SafetyNotice() {

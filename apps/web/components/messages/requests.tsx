@@ -3,11 +3,10 @@
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { UserPlus01 } from '@untitledui/icons'
-import { noContent, type IncomingRequest } from '@roomsie/contract'
+import { noContent, requestExpiryDays, type IncomingRequest } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { listingTitle } from '../../lib/listing-steps'
-import { useMessagesPoll } from '../../lib/live'
 import { requestTimes } from '../../lib/messages'
 import { aboutLine, budgetLine, lookingFor } from '../../lib/person'
 import { firstName } from '../../lib/profile-form'
@@ -15,26 +14,28 @@ import { queryKeys, useIncomingRequests, useListing, usePerson } from '../../lib
 import { Button } from '../ui/button'
 import { Avatar } from './parts'
 
-function RequestCard({ request }: { request: IncomingRequest }) {
+/** Accepts or declines a request to the user, from the requests or from the card of its sender. */
+export function useAnswerRequest(requestId: string, fromProfileId: string, onAccepted?: () => void) {
   const user = useUser()
-  const router = useRouter()
   const queryClient = useQueryClient()
-  const { from, listingId } = request
-  const person = usePerson(from.profileId)
-  const listing = useListing(listingId ?? '', !!listingId)
-  const first = firstName(from.name)
-  const answer = useMutation({
-    mutationFn: (action: 'accept' | 'decline') => api(user, `/v1/requests/${request.id}/${action}`, noContent, { method: 'POST' }),
+  return useMutation({
+    mutationFn: (action: 'accept' | 'decline') => api(user, `/v1/requests/${requestId}/${action}`, noContent, { method: 'POST' }),
     onSuccess: async (_, action) => {
-      await queryClient.invalidateQueries({ queryKey: queryKeys.requests('incoming') })
-      void queryClient.invalidateQueries({ queryKey: queryKeys.person(from.profileId) })
-      if (action === 'accept') {
-        await queryClient.invalidateQueries({ queryKey: queryKeys.conversations })
-        // The accepted request is the conversation, with the same id.
-        router.push(`/messages/${request.id}`)
-      }
+      const changed = [queryKeys.person(fromProfileId), queryKeys.requests('incoming'), ...(action === 'accept' ? [queryKeys.conversations] : [])]
+      await Promise.all(changed.map((queryKey) => queryClient.invalidateQueries({ queryKey })))
+      if (action === 'accept') onAccepted?.()
     },
   })
+}
+
+function RequestCard({ request }: { request: IncomingRequest }) {
+  const router = useRouter()
+  const { from, listingId } = request
+  const person = usePerson(from.profileId)
+  const listing = useListing(listingId)
+  const first = firstName(from.name)
+  // The accepted request is the conversation, with the same id.
+  const answer = useAnswerRequest(request.id, from.profileId, () => router.push(`/messages/${request.id}`))
   const card = person.data
   return (
     <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5">
@@ -66,14 +67,14 @@ function RequestCard({ request }: { request: IncomingRequest }) {
 
 /** The requests to the user, as section 09 of the drafts. */
 export function Requests() {
-  const incoming = useIncomingRequests(useMessagesPoll())
+  const incoming = useIncomingRequests(true)
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
       <header className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full border border-secondary text-fg-quaternary"><UserPlus01 size={20} aria-hidden /></span>
         <div className="flex flex-col text-sm">
           <h1 className="text-md font-semibold text-primary">Requests</h1>
-          <p className="text-tertiary">People who want to say hi. Each request closes after 14 days.</p>
+          <p className="text-tertiary">People who want to say hi. {`Each request closes after ${requestExpiryDays} days.`}</p>
         </div>
       </header>
       <div className="p-4 md:px-6">

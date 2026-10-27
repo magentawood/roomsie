@@ -21,9 +21,12 @@ const outgoing = async (who: Who) => outgoingRequestsResponse.parse((await t.cal
 const incoming = async (who: Who) => incomingRequestsResponse.parse((await t.call(who, 'GET', '/v1/requests/incoming')).json()).requests
 
 describe('a request to a person', () => {
-  it('sends a note to a live card; the recipient sees the sender and the note, and the sender sees it open', async () => {
+  it('sends a note to a live card; the recipient sees the sender and the note, and gets a live event; the sender sees it open', async () => {
+    t.sent.length = 0
     const sent = await sayHi('seeker', 'friend', 'Hi! Call me on 98200 12345, I work in BKC.')
     expect(sent.statusCode).toBe(201)
+    // Live to the recipient only, with no note and no name.
+    expect(t.sent).toEqual([{ userId: t.ids.friend, event: 'request', payload: { id: outgoingRequest.parse(sent.json()).id } }])
     expect(outgoingRequest.parse(sent.json())).toMatchObject({ toProfileId: profileIds.friend, listingId: null, state: 'open' })
     expect((await outgoing('seeker'))[0]!.to).toEqual({ profileId: profileIds.friend, name: 'Divya Sharma', photoUrl: null, deleted: false })
     const [got] = await incoming('friend')

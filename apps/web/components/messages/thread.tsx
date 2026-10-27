@@ -6,10 +6,9 @@ import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ChevronLeft, Flag01, Home02, Send01, SlashCircle01, User01 } from '@untitledui/icons'
 import { uuidv7 } from 'uuidv7'
-import { message, messageTextLimit, noContent, type Conversation, type OutgoingRequest } from '@roomsie/contract'
+import { message, messageTextLimit, noContent, requestExpiryDays, type Conversation, type OtherPerson, type OutgoingRequest } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { useMessagesPoll } from '../../lib/live'
 import { addMessage, clockTime, threadDays, type MessagePages } from '../../lib/messages'
 import { firstName } from '../../lib/profile-form'
 import { queryKeys, useMessages } from '../../lib/queries'
@@ -19,7 +18,7 @@ import { ReportSheet } from '../reports/report-sheet'
 import { Button } from '../ui/button'
 import { Avatar, SafetyNotice, useChatName } from './parts'
 
-function Header({ other, listingId, name, about, menu }: { other: Conversation['other']; listingId: string | null; name: string; about: string | null; menu?: ReactNode }) {
+function Header({ other, listingId, name, about, menu }: { other: OtherPerson; listingId: string | null; name: string; about: string | null; menu?: ReactNode }) {
   const view = other.profileId && !other.deleted ? { href: `/people/${other.profileId}`, label: 'View profile' } : listingId ? { href: `/places/${listingId}`, label: 'View listing' } : null
   return (
     <header className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
@@ -50,7 +49,7 @@ function DayLine({ label }: { label: string }) {
 
 /** The messages scroll from the bottom. The top line loads the page before when it comes into view. */
 function Messages({ conversationId, name }: { conversationId: string; name: string }) {
-  const messages = useMessages(conversationId, useMessagesPoll())
+  const messages = useMessages(conversationId)
   const top = useRef<HTMLDivElement>(null)
   const { hasNextPage, isFetchingNextPage, fetchNextPage } = messages
   useEffect(() => {
@@ -122,11 +121,10 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
   const [sheet, setSheet] = useState<'report' | 'block' | null>(null)
   // The list grows upward, so a scroll of 0 shows the newest message.
   const scroller = useRef<HTMLDivElement>(null)
-  const read = useMutation({
+  const { mutate: markRead } = useMutation({
     mutationFn: () => api(user, `/v1/conversations/${conversation.id}/read`, noContent, { method: 'POST' }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.conversations }),
   })
-  const { mutate: markRead } = read
   // An open thread reads each message that comes in.
   useEffect(() => { if (unread > 0) markRead() }, [unread, markRead])
 
@@ -173,7 +171,7 @@ export function SentThread({ request }: { request: OutgoingRequest }) {
           <SafetyNotice />
           <Bubble mine name={name} at={request.createdAt}>{request.note}</Bubble>
           <p className="text-center text-xs text-tertiary">
-            {open ? `Request sent. ${first} has 14 days to accept or decline.` : 'Not available. You can send a new request later.'}
+            {open ? `Request sent. ${first} has ${requestExpiryDays} days to accept or decline.` : 'Not available. You can send a new request later.'}
           </p>
         </div>
       </div>
