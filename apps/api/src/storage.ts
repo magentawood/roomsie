@@ -50,7 +50,7 @@ export async function deletePhotos(storage: Storage, keys: string[], log: { erro
 }
 
 /** A signed link that uploads one photo to <folder>/<owner id>/<photo id>.<extension>. */
-export async function photoUploadLink(storage: Storage, folder: string, ownerId: string, body: UploadUrlBody) {
+export async function photoUploadLink(storage: Pick<Storage, 'uploadUrl'>, folder: string, ownerId: string, body: UploadUrlBody) {
   const key = `${folder}/${ownerId}/${uuidv7()}.${photoTypes[body.contentType]}`
   const { url, expiresAt } = await storage.uploadUrl(key, body.contentType, body.size)
   return { key, url, expiresAt: expiresAt.toISOString() }

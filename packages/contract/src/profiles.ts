@@ -83,6 +83,8 @@ export const cardResponse = z.object({
   photos: z.array(photo),
   lifestyle,
   mustHaves,
+  /** A reviewer approved the ID check of the person (T-46). */
+  verified: z.boolean(),
 })
 export type CardResponse = z.infer<typeof cardResponse>
 

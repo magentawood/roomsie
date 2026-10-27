@@ -3,23 +3,26 @@ import { liveCardFields, cardResponse, type CardResponse, type ProfileResponse }
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles, users } from '../db/schema'
 import { firstPhotoUrl, type Storage } from '../storage'
+import { verifiedCards } from '../verification/read'
 
 export type Profile = typeof profiles.$inferSelect
-type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves'>
+type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves' | 'verified'>
 
 export const missingFields = (p: Profile): ProfileResponse['missing'] =>
   liveCardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMin === null && p.budgetMax === null })[f])
 
 /** Keys and values are text in the database, so the contract parses them. */
-/** The answers of each profile, in two queries. Gives a lookup by profile id. */
+/** The answers and the Verified badge of each profile, in three queries. Gives a lookup by profile id. */
 export async function answersFor(db: Db, profileIds: string[]) {
-  const [lifestyle, mustHaves] = await Promise.all([
+  const [lifestyle, mustHaves, verified] = await Promise.all([
     db.select().from(profileLifestyle).where(inArray(profileLifestyle.profileId, profileIds)),
     db.select().from(profileMustHaves).where(inArray(profileMustHaves.profileId, profileIds)),
+    verifiedCards(db, profileIds),
   ])
   return (profileId: string): Answers => ({
     lifestyle: cardResponse.shape.lifestyle.parse(Object.fromEntries(lifestyle.filter((a) => a.profileId === profileId).map((a) => [a.axisKey, a.value]))),
     mustHaves: cardResponse.shape.mustHaves.parse(Object.fromEntries(mustHaves.filter((m) => m.profileId === profileId).map((m) => [m.mustHaveKey, m.weight]))),
+    verified: verified.has(profileId),
   })
 }
 

@@ -16,6 +16,8 @@ export type Alerts = {
   request(request: RequestRow): void
   accept(request: RequestRow): void
   message(message: MessageRow): void
+  /** The result of an ID check (T-46). */
+  verification(userId: string, result: 'verified' | 'rejected'): void
   /** Waits for the alerts that are on their way: at a shutdown, and in the tests. */
   settled(): Promise<void>
 }
@@ -78,6 +80,7 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
       if (unread) return
       await tell(toSender ? request.fromUserId : request.toUserId, { kind: 'message', name: await nameOf(message.senderUserId, request.listingId), link: chatLink(request.id) })
     }),
+    verification: (userId, result) => later(() => tell(userId, { kind: result, link: `${webOrigin}/profile` })),
     async settled() {
       while (pending.size) await Promise.all(pending)
     },

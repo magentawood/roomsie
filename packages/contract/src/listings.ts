@@ -152,6 +152,8 @@ export const listingResponse = z.object({
   /** The listing belongs to the user who asks. */
   mine: z.boolean(),
   lister: listerResponse,
+  /** A reviewer approved the ID check of the owner (T-46). */
+  verified: z.boolean(),
   /** Reports hid the listing until the moderator acts (PD18). Only the owner sees a hidden listing. */
   hidden: z.boolean(),
   expiresAt: z.iso.datetime().nullable(),

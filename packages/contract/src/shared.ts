@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const photoTypes = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' } as const
 export const photoType = z.enum(Object.keys(photoTypes) as [keyof typeof photoTypes, ...(keyof typeof photoTypes)[]])
 /** <folder>/<owner id>/<photo id>.<extension>. The API also checks the owner id. */
-export const photoKeyIn = (folder: 'listings' | 'profiles') =>
+export const photoKeyIn = (folder: 'listings' | 'profiles' | 'checks') =>
   z.string().regex(new RegExp(String.raw`^${folder}/[0-9a-f-]{36}/[0-9a-f-]{36}\.(${Object.values(photoTypes).join('|')})$`))
 /** Upload with these two values as the content-type and content-length headers. The link signs them. */
 export const uploadUrlBody = z.strictObject({ contentType: photoType, size: z.int().min(1).max(10 * 1024 * 1024) })

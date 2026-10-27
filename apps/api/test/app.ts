@@ -9,12 +9,13 @@ import type { Messaging } from '../src/messages/settings'
 import { moderationSettings } from '../src/moderation/settings'
 import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
+import type { IdStore } from '../src/id-store'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
 
 /** The settings of PD18 with their defaults, a change from `settings`, and the user "moderator" as the moderator. */
-export const testModeration = (settings: Record<string, string> = {}) => moderationSettings.parse({ MODERATOR_UIDS: 'uid-moderator', ...settings })
+export const testModeration = (settings: Record<string, string> = {}) => moderationSettings.parse({ MODERATOR_UIDS: 'uid-moderator', REVIEWER_UIDS: 'uid-reviewer', ...settings })
 
 /** A Realtime, a Firebase Admin and a mailer that record their calls, and the public settings of Realtime. FCM refuses a token that starts with "gone". */
 export function testMessaging() {
@@ -38,6 +39,26 @@ export function testMessaging() {
   return { messaging, mailer, sent, claims, mails, pushes }
 }
 
+/** An ID store that records each link, delete and face match. A key that contains "stuck" fails to delete. Each face match gives `score`. */
+export function testIdStore() {
+  const uploads: { key: string; contentType: string; size: number }[] = []
+  const views: string[] = []
+  const deleted: string[] = []
+  const matches: { selfieKey: string; idPhotoKey: string }[] = []
+  const face = { score: 97 as number | null }
+  const expiresAt = () => new Date(Date.now() + 300_000)
+  const idStore: IdStore = {
+    uploadUrl: async (key, contentType, size) => { uploads.push({ key, contentType, size }); return { url: `https://ids.example.com/${key}?put`, expiresAt: expiresAt() } },
+    viewUrl: async (key) => { views.push(key); return { url: `https://ids.example.com/${key}?get`, expiresAt: expiresAt() } },
+    deleteObjects: async (keys) => {
+      if (keys.some((k) => k.includes('stuck'))) throw new Error('S3 delete failed')
+      deleted.push(...keys)
+    },
+    faceMatch: async (selfieKey, idPhotoKey) => { matches.push({ selfieKey, idPhotoKey }); return face.score },
+  }
+  return { idStore, uploads, views, deleted, matches, face }
+}
+
 export const testAreas = [
   { slug: 'bandra-santacruz', name: 'Bandra–Santacruz' },
   { slug: 'bandra', name: 'Bandra', parentSlug: 'bandra-santacruz' },
@@ -50,18 +71,19 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   await testDb.db.insert(areas).values(testAreas)
   const { firebaseKeys, idToken } = await testTokens()
   const fakes = testMessaging()
+  const ids = testIdStore()
   const tokens = {} as Record<U, string>
   // Each user signs in with a verified email, as Google gives it (T-55).
   for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: ids.idStore })
   // The alerts go out after the reply, so a call also waits for them.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
     await app.alerts.settled()
     return res
   }
-  const ids = {} as Record<U, string>
-  for (const user of users) ids[user] = meResponse.parse((await call(user, 'GET', '/v1/me')).json()).id
+  const userIds = {} as Record<U, string>
+  for (const user of users) userIds[user] = meResponse.parse((await call(user, 'GET', '/v1/me')).json()).id
 
   /** A live owner flat of the first user. */
   async function liveListing() {
@@ -79,5 +101,5 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await app.close()
     await testDb.drop()
   }
-  return { db: testDb.db, call, ids, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken }
+  return { db: testDb.db, call, ids: userIds, idStore: ids, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken }
 }

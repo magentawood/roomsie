@@ -48,7 +48,7 @@ A person checks an ID and a selfie, and roomsie keeps only the result.
 
 ## Spec
 
-**Approved:** pending
+**Approved:** 2026-10-27, by n3rxv
 
 - **Modules:**
   - **The verification module of the API (new):** the checks of each person, their states and the review. Its routes are new. A person reads the state of the check, gets two upload links and sends the check. A reviewer reads the queue, gets the photo links and reviews. Other modules ask it only one thing: is this person verified.
