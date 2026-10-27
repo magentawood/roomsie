@@ -71,19 +71,19 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   await testDb.db.insert(areas).values(testAreas)
   const { firebaseKeys, idToken } = await testTokens()
   const fakes = testMessaging()
-  const ids = testIdStore()
+  const idStore = testIdStore()
   const tokens = {} as Record<U, string>
   // Each user signs in with a verified email, as Google gives it (T-55).
   for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: ids.idStore })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idStore.idStore })
   // The alerts go out after the reply, so a call also waits for them.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
     await app.alerts.settled()
     return res
   }
-  const userIds = {} as Record<U, string>
-  for (const user of users) userIds[user] = meResponse.parse((await call(user, 'GET', '/v1/me')).json()).id
+  const ids = {} as Record<U, string>
+  for (const user of users) ids[user] = meResponse.parse((await call(user, 'GET', '/v1/me')).json()).id
 
   /** A live owner flat of the first user. */
   async function liveListing() {
@@ -101,5 +101,5 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await app.close()
     await testDb.drop()
   }
-  return { db: testDb.db, call, ids: userIds, idStore: ids, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken }
+  return { db: testDb.db, call, ids, idStore, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken }
 }

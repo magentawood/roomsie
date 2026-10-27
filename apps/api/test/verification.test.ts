@@ -1,10 +1,10 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import {
-  checkUploadResponse, idCheckPhotosResponse, idCheckQueueResponse, listingResponse, personResponse, verificationResponse,
-  type ReviewCheckBody,
+  checkUploadResponse, idCheckPhotosResponse, idCheckQueueResponse, listingResponse, personResponse, savedPeopleResponse, savedPlacesResponse,
+  verificationResponse, type ReviewCheckBody,
 } from '@roomsie/contract'
-import { verificationAudit, verifications } from '../src/db/schema'
+import { pushTokens, verificationAudit, verifications } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'lister' | 'seeker' | 'reviewer' | 'moderator' | 'leaver'
@@ -122,6 +122,7 @@ describe('the review', () => {
   })
 
   it('approves: the badge shows, the files go, and the person gets an alert', async () => {
+    expect((await t.call('seeker', 'POST', '/v1/me/push-tokens', { token: 'seeker-browser' })).statusCode).toBe(204)
     const id = await sendCheck('seeker')
     const [files] = await t.db.select({ idPhotoKey: verifications.idPhotoKey, selfieKey: verifications.selfieKey }).from(verifications).where(eq(verifications.id, id))
     expect((await review(id, { action: 'approve' })).statusCode).toBe(204)
@@ -132,10 +133,15 @@ describe('the review', () => {
     expect(row).toMatchObject({ idPhotoKey: null, selfieKey: null, faceMatch: null, reviewerUserId: t.ids.reviewer })
     expect(await audit(id)).toEqual([{ action: 'approve', reviewer: t.ids.reviewer }])
     expect(t.mails.map((m) => [m.to, m.subject])).toEqual([['seeker@example.com', 'You’re verified on roomsie']])
+    expect(t.pushes.map((p) => [p.token, p.title])).toEqual([['seeker-browser', 'You’re verified on roomsie']])
+    await t.db.delete(pushTokens)
     expect(await queue()).toEqual([])
 
     const person = personResponse.parse((await t.call('lister', 'GET', `/v1/people/${seekerCard}`)).json())
     expect(person.verified).toBe(true)
+    expect((await t.call('lister', 'PUT', `/v1/saved/people/${seekerCard}`)).statusCode).toBe(204)
+    const saved = savedPeopleResponse.parse((await t.call('lister', 'GET', '/v1/saved/people')).json()).people
+    expect(saved.map((p) => p.verified)).toEqual([true])
   })
 
   it('shows the badge of the owner on a listing', async () => {
@@ -144,6 +150,9 @@ describe('the review', () => {
     expect(await view()).toBe(false)
     expect((await review(await sendCheck('lister'), { action: 'approve' })).statusCode).toBe(204)
     expect(await view()).toBe(true)
+    expect((await t.call('seeker', 'PUT', `/v1/saved/places/${listingId}`)).statusCode).toBe(204)
+    const saved = savedPlacesResponse.parse((await t.call('seeker', 'GET', '/v1/saved/places')).json()).places
+    expect(saved.find((p) => p.id === listingId)?.verified).toBe(true)
   })
 
   it('rejects with a reason and a note, which only Settings shows, and the person can send again', async () => {
@@ -183,11 +192,13 @@ describe('the review', () => {
 })
 
 describe('a check with no review after 7 days', () => {
-  it('expires: it leaves the queue, cannot be reviewed, and the person can send again', async () => {
+  it('expires: it leaves the queue, loses its keys and score, cannot be reviewed, and the person can send again', async () => {
     const id = await sendCheck('seeker')
     await t.db.update(verifications).set({ createdAt: daysAgo(8) }).where(eq(verifications.id, id))
     expect(await state('seeker')).toMatchObject({ state: 'expired' })
     expect(await queue()).toEqual([])
+    const [row] = await t.db.select().from(verifications).where(eq(verifications.id, id))
+    expect(row).toMatchObject({ idPhotoKey: null, selfieKey: null, faceMatch: null })
     expect((await t.call('reviewer', 'POST', `/v1/admin/verifications/${id}/photos`)).statusCode).toBe(404)
     expect((await review(id, { action: 'approve' })).statusCode).toBe(404)
     await sendCheck('seeker')

@@ -14,10 +14,9 @@ export async function uploadPhoto(user: User, target: UploadTarget, file: File) 
   return { key, preview: URL.createObjectURL(photo) }
 }
 
-/** The body of an upload-link request for a photo. */
 export const uploadBody = (photo: Blob): UploadUrlBody => ({ contentType: photo.type as UploadUrlBody['contentType'], size: photo.size })
 
-/** Puts a photo at a signed link. The link signs the type and the size; the browser sets content-length from the body. */
+/** The link signs the type and the size; the browser sets content-length from the body. */
 export async function putPhoto(url: string, photo: Blob) {
   const res = await fetch(url, { method: 'PUT', headers: { 'content-type': photo.type }, body: photo })
   if (!res.ok) throw new Error(`The upload failed with ${res.status}`)

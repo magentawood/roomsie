@@ -17,21 +17,28 @@ export function ModalFrame({ labelledBy, onClose, children }: { labelledBy: stri
   )
 }
 
-/** A modal with an icon, a title, a text and the actions: a confirmation. A success icon is for an offer, as "Verify your ID". */
-export function Modal({ icon: ModalIcon, iconTone = 'error', title, children, actions, onClose }: {
+/** The top of a modal: its icon and the close button. A success icon is for an offer, as "Verify your ID". */
+export function ModalTop({ icon: ModalIcon, iconTone = 'error', onClose }: { icon: Icon; iconTone?: 'error' | 'success'; onClose: () => void }) {
+  return (
+    <div className="flex items-start justify-between">
+      <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${iconTone === 'error' ? 'text-fg-error' : 'text-fg-success'}`}>
+        <ModalIcon size={20} aria-hidden />
+      </span>
+      <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover focus-visible:outline-2">
+        <XClose size={20} aria-hidden />
+      </button>
+    </div>
+  )
+}
+
+/** A modal with an icon, a title, a text and the actions: a confirmation. */
+export function Modal({ icon, iconTone, title, children, actions, onClose }: {
   icon: Icon; iconTone?: 'error' | 'success'; title: string; children: ReactNode; actions: ReactNode; onClose: () => void
 }) {
   return (
     <ModalFrame labelledBy="modal-title" onClose={onClose}>
       <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <div className="flex items-start justify-between">
-          <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${iconTone === 'error' ? 'text-fg-error' : 'text-fg-success'}`}>
-            <ModalIcon size={20} aria-hidden />
-          </span>
-          <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover focus-visible:outline-2">
-            <XClose size={20} aria-hidden />
-          </button>
-        </div>
+        <ModalTop icon={icon} iconTone={iconTone} onClose={onClose} />
         <div className="flex flex-col gap-1">
           <h2 id="modal-title" className="text-md font-semibold text-primary">{title}</h2>
           <div className="text-sm text-tertiary">{children}</div>

@@ -1,6 +1,6 @@
 import type { Mail } from '../email'
 
-/** `name`: who did it. `link`: the page that the alert opens. The ID check alerts name nobody. */
+/** `name`: who did it. `link`: the page that the alert opens. */
 export type Alert = { kind: 'request' | 'message' | 'accept'; name: string; link: string } | { kind: 'verified' | 'rejected'; link: string }
 
 /** No alert has the text of a message or a note (PD17), or the reason of a rejection (T-46). */

@@ -1,9 +1,10 @@
 import { and, asc, eq, gt, inArray, isNull } from 'drizzle-orm'
 import { sharingTypes, type ListingResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
-import { listingFlatmates, listingRates, listings, profiles, verifications } from '../db/schema'
+import { listingFlatmates, listingRates, listings, profiles } from '../db/schema'
 import { noBlockBetween } from '../match/query'
 import { firstPhotoUrl, type Storage } from '../storage'
+import { verifiedAmong } from '../verification/read'
 
 export type Listing = typeof listings.$inferSelect
 export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
@@ -23,10 +24,9 @@ export async function partsOf(db: Db, ids: string[]) {
   const listers = await db.select({ listingId: listings.id, fullName: profiles.fullName, photoKeys: profiles.photoKeys }).from(listings)
     .innerJoin(profiles, and(eq(profiles.userId, listings.ownerUserId), eq(profiles.managedByParent, false)))
     .where(inArray(listings.id, ids))
-  // The owner has an approved ID check (T-46).
-  const verified = new Set((await db.selectDistinct({ id: listings.id }).from(listings)
-    .innerJoin(verifications, and(eq(verifications.userId, listings.ownerUserId), eq(verifications.state, 'verified')))
-    .where(inArray(listings.id, ids))).map((r) => r.id))
+  const owners = await db.select({ id: listings.id, ownerUserId: listings.ownerUserId }).from(listings).where(inArray(listings.id, ids))
+  const verifiedOwners = await verifiedAmong(db, owners.map((o) => o.ownerUserId))
+  const verified = new Set(owners.filter((o) => verifiedOwners.has(o.ownerUserId)).map((o) => o.id))
   return (id: string): Parts => ({
     rates: rates.filter((r) => r.listingId === id),
     flatmates: flatmates.filter((f) => f.listingId === id),
