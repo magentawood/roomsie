@@ -80,10 +80,25 @@ export const users = pgTable('users', {
   /** Set on a tombstone whose account was suspended at deletion. A new sign-in with the
    *  same Google account then gets a 403, so a deletion does not undo a suspension (T-20). */
   rejoinBlocked: boolean('rejoin_blocked').notNull().default(false),
+  /** The verified email of the sign-in, for the email alerts (T-55). The sign-in path keeps it current, and a deletion clears it. */
+  email: text('email'),
+  /** The "Email alerts" switch of Settings (PD17). */
+  emailAlerts: boolean('email_alerts').notNull().default(true),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => ({
   authProviderIdx: uniqueIndex('users_auth_provider_id_idx').on(t.authProviderId),
+})).enableRLS()
+
+/** The Firebase Cloud Messaging token of each browser that turned on "Push alerts" (T-55). A browser has one token, so a new user takes it over. */
+export const pushTokens = pgTable('push_tokens', {
+  id: id(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull(),
+  createdAt: createdAt(),
+}, (t) => ({
+  tokenIdx: uniqueIndex('push_tokens_token_idx').on(t.token),
+  userIdx: index('push_tokens_user_idx').on(t.userId),
 })).enableRLS()
 
 /* ── the person ─────────────────────────────────────────────────────────── */

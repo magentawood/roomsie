@@ -161,6 +161,21 @@ export const listingResponse = z.object({
 export type ListingResponse = z.infer<typeof listingResponse>
 export const myListingsResponse = z.object({ listings: z.array(listingResponse) })
 
+/** The labels of the place and the room, as the designs write them. */
+export const placeTypeLabels: Record<(typeof placeTypes)[number], string> = {
+  '1rk': '1 RK', '1bhk': '1 BHK', '2bhk': '2 BHK', '3bhk': '3 BHK', '4bhk': '4 BHK', studio: 'Studio Flat', independent_house: 'Independent House', bungalow_villa: 'Bungalow/Villa', penthouse: 'Penthouse',
+}
+export const roomTypeLabels: Record<(typeof listingRoomTypes)[number], string> = { private: 'Private room', shared: 'Shared room' }
+
+/** The title of a listing, in the web and in an alert: "2 BHK, full flat", "Private room in 3 BHK" or the PG name. */
+export function listingTitle(listing: Pick<ListingResponse, 'kind' | 'pgName' | 'placeType' | 'roomType'>) {
+  if (listing.kind === 'pg') return listing.pgName ?? 'New listing'
+  if (!listing.placeType) return 'New listing'
+  const place = placeTypeLabels[listing.placeType]
+  if (listing.kind !== 'room_in_flat') return `${place}, full flat`
+  return `${listing.roomType ? roomTypeLabels[listing.roomType] : 'Room'} in ${place}`
+}
+
 /** What a listing needs to go live (T-41). */
 export const goLiveFields = ['areaSlug', 'pgName', 'brokerage', 'rates', 'flatmatesConsent'] as const
 export type GoLiveField = (typeof goLiveFields)[number]

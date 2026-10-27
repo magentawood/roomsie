@@ -31,6 +31,8 @@ const firebaseClaims = z.object({
   sub: z.string().min(1),
   auth_time: z.number().int(),
   firebase: z.object({ identities: z.record(z.string(), z.array(z.string())) }).partial().optional(),
+  email: z.string().optional(),
+  email_verified: z.boolean().optional(),
 })
 
 /** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
@@ -62,7 +64,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
     // auth_time is the sign-in. A refreshed token keeps it, so a revocation holds (ADR-0007).
-    const { sub: uid, auth_time: authTime, firebase } = claims.data
+    const { sub: uid, auth_time: authTime, firebase, email, email_verified: emailVerified } = claims.data
     const signedInAt = new Date(authTime * 1000)
     // A tombstone keys on the Google account id: it stays when T-53 deletes the Firebase user, and the uid does not.
     const identity = firebase?.identities?.['google.com']?.[0] ?? uid
@@ -78,6 +80,8 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     const allowed = user.status === 'active' || (allowSuspended && user.status === 'suspended')
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
+    // The email alerts go to the verified email of the latest sign-in (T-55).
+    if (emailVerified && email && email !== user.email) await db.update(users).set({ email, updatedAt: new Date() }).where(eq(users.id, user.id))
     req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid) }
     req.identity = identity
     tokens.set(req, { uid, claims: realtimeClaims.safeParse(verified!.payload).data })
@@ -92,7 +96,7 @@ async function createUser(db: Db, uid: string, signedInAt: Date) {
 
 async function findUser(db: Db, uid: string) {
   const [user] = await db
-    .select({ id: users.id, status: users.status, tokensValidAfter: users.tokensValidAfter })
+    .select({ id: users.id, status: users.status, tokensValidAfter: users.tokensValidAfter, email: users.email })
     .from(users)
     .where(eq(users.authProviderId, uid))
   return user

@@ -1,5 +1,9 @@
 import type { z } from 'zod'
-import { listingEditBody, listingEdits, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse } from '@roomsie/contract'
+import {
+  listingEditBody, listingEdits, placeTypeLabels, roomTypeLabels, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse,
+} from '@roomsie/contract'
+
+export { listingTitle } from '@roomsie/contract'
 
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
 export type StepId = 'kind' | 'where' | 'nearby' | 'place' | 'rent' | 'rules' | 'people' | 'photos'
@@ -127,9 +131,9 @@ export const cardActions: Record<ListingResponse['status'], CardAction[]> = {
 
 /* Labels of the single and pick-many choices, as the designs write them. */
 export const labels = {
-  placeType: { '1rk': '1 RK', '1bhk': '1 BHK', '2bhk': '2 BHK', '3bhk': '3 BHK', '4bhk': '4 BHK', studio: 'Studio Flat', independent_house: 'Independent House', bungalow_villa: 'Bungalow/Villa', penthouse: 'Penthouse' },
+  placeType: placeTypeLabels,
   furnishing: { fully: 'Fully furnished', semi: 'Semi furnished', unfurnished: 'Unfurnished' },
-  roomType: { private: 'Private room', shared: 'Shared room' },
+  roomType: roomTypeLabels,
   sharing: { single: 'Single', double: 'Double', triple: 'Triple', four: 'Four sharing', four_plus: '4+ sharing' },
   bedsFree: { '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '5_plus': '5+' },
   meals: { veg_included: 'Veg, included', veg_non_veg: 'Veg + non-veg', breakfast_only: 'Breakfast only', none: 'No meals' },
@@ -157,15 +161,6 @@ export const labels = {
 } as const
 
 export const rupees = (n: number) => `₹${inIndianDigits(n)}`
-
-/** The card title: "2 BHK, full flat", "Private room in 3 BHK" or the PG name. */
-export function listingTitle(listing: ListingResponse) {
-  if (listing.kind === 'pg') return listing.pgName ?? 'New listing'
-  if (!listing.placeType) return 'New listing'
-  const place = labels.placeType[listing.placeType]
-  if (listing.kind !== 'room_in_flat') return `${place}, full flat`
-  return `${listing.roomType ? labels.roomType[listing.roomType] : 'Room'} in ${place}`
-}
 
 /** The rent of a card: one amount, or the range of the rents of a PG. */
 export function rentAmount(listing: ListingResponse) {

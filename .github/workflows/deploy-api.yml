@@ -51,6 +51,9 @@ jobs:
           # The public key that the web joins Realtime with, and the Firebase service account for the claims (T-44).
           API_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           API_FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          # An IAM user that can only send email with Amazon SES, for the email alerts (T-55).
+          API_SES_ACCESS_KEY_ID: ${{ secrets.SES_ACCESS_KEY_ID }}
+          API_SES_SECRET_ACCESS_KEY: ${{ secrets.SES_SECRET_ACCESS_KEY }}
           API_R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
           API_R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
           API_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
