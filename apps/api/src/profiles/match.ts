@@ -14,30 +14,12 @@
  * So we show results early and honestly, and withhold the score until it
  * means something.
  */
-import { and, eq, ne, inArray, isNull, sql, desc, type SQLWrapper } from 'drizzle-orm'
+import { and, inArray, sql, desc } from 'drizzle-orm'
 import { areaParents, matchingAreas } from '../areas'
 import type { Db } from '../db/client'
-import { profiles, users, profileLifestyle, blocks } from '../db/schema'
+import { profiles, profileLifestyle } from '../db/schema'
 import { compatibleIntents, type Intent } from './intent'
-
-/**
- * The people that a viewer can see: a live card of an active account that reports did not hide, so suspended and deleted people never appear.
- * With a viewer: not the viewer, and no block in either direction, because a block hides each person from the other.
- */
-export function visiblePeople(viewerUserId?: string) {
-  return [
-    eq(profiles.visibility, 'live'),
-    isNull(profiles.hiddenAt),
-    eq(users.status, 'active'),
-    ...(viewerUserId ? [ne(profiles.userId, viewerUserId), noBlockBetween(viewerUserId, profiles.userId)] : []),
-  ]
-}
-
-export const noBlockBetween = (viewerUserId: string, otherUserId: SQLWrapper) => sql`not exists (
-  select 1 from ${blocks} b
-  where (b.blocker_user_id = ${viewerUserId} and b.blocked_user_id = ${otherUserId})
-     or (b.blocked_user_id = ${viewerUserId} and b.blocker_user_id = ${otherUserId})
-)`
+import { visiblePeople } from './read'
 
 /* ── input ──────────────────────────────────────────────────────────────── */
 // TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.
@@ -163,13 +145,14 @@ export async function findMatches(
    * 70 + 30 × (share of the searcher's preferences the candidate meets).
    * Baseline 70 because everyone here already cleared every hard filter —
    * they are all genuinely viable, and a 12% match on a viable person reads
-   * as a worse result than it is.
+   * as a worse result than it is. A select list from one table names its
+   * columns without the table, so the subquery names the table itself.
    */
   const scoreExpr = showScore
     ? sql<number>`70 + 30.0 * (
         select count(*)::float / ${preferences.length}
         from ${profileLifestyle} pl
-        where pl.profile_id = ${profiles.id}
+        where pl.profile_id = ${profiles}.id
           and (${sql.join(
             preferences.map((p) => sql`(pl.axis_key = ${p.axisKey} and pl.value = ${p.value})`),
             sql` or `,
@@ -189,7 +172,6 @@ export async function findMatches(
       score: scoreExpr,
     })
     .from(profiles)
-    .innerJoin(users, eq(users.id, profiles.userId))
     .where(and(...conditions))
     /** Ranked by score when there is one; newest first when there is not, so
      *  an empty ranking never looks arbitrary. */

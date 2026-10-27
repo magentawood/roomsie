@@ -1,12 +1,14 @@
 import type { FastifyBaseLogger } from 'fastify'
-import { and, eq, gt, ne } from 'drizzle-orm'
-import { listingTitle } from '@roomsie/contract'
+import { eq } from 'drizzle-orm'
 import type { Db } from '../db/client'
-import { connectionRequests, listings, messages, profiles, pushTokens, users } from '../db/schema'
+import { pushTokens } from '../db/schema'
 import type { Mailer } from '../email'
 import type { FirebaseAdmin } from '../firebase-admin'
-import type { MessageRow } from '../messages/read'
-import type { RequestRow } from '../requests/read'
+import { titleOf } from '../listings/read'
+import { hasEarlierUnread, type MessageRow } from '../messages/read'
+import { profileOf } from '../profiles/read'
+import { requestById, type RequestRow } from '../requests/read'
+import { alertContactOf } from '../users'
 import { alertMail, alertTitle, type Alert } from './texts'
 
 /** A person who read the chat this recently is in it, so a message sends no alert (PD17). */
@@ -38,16 +40,13 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
 
   /** A first name, or the title of the listing for a lister with no profile. */
   async function nameOf(userId: string, listingId: string | null) {
-    const [profile] = await db.select({ name: profiles.fullName }).from(profiles).where(eq(profiles.userId, userId))
-    if (profile) return profile.name.split(' ')[0]!
-    const [listing] = listingId
-      ? await db.select({ kind: listings.kind, pgName: listings.pgName, placeType: listings.placeType, roomType: listings.roomType }).from(listings).where(eq(listings.id, listingId))
-      : []
-    return listing ? listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType }) : 'A lister'
+    const profile = await profileOf(db, userId)
+    if (profile) return profile.fullName.split(' ')[0]!
+    return (listingId ? await titleOf(db, listingId) : undefined) ?? 'A lister'
   }
 
   async function tell(userId: string, alert: Alert) {
-    const [user] = await db.select({ status: users.status, email: users.email, emailAlerts: users.emailAlerts }).from(users).where(eq(users.id, userId))
+    const user = await alertContactOf(db, userId)
     if (user?.status !== 'active') return
     const tokens = firebaseAdmin ? await db.select({ token: pushTokens.token }).from(pushTokens).where(eq(pushTokens.userId, userId)) : []
     const sends = await Promise.allSettled([
@@ -63,7 +62,7 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
     request: (request) => later(async () => tell(request.toUserId, { kind: 'request', name: await nameOf(request.fromUserId, null), link: `${webOrigin}/messages/requests` })),
     accept: (request) => later(async () => tell(request.fromUserId, { kind: 'accept', name: await nameOf(request.toUserId, request.listingId), link: chatLink(request.id) })),
     message: (message) => later(async () => {
-      const [request] = await db.select().from(connectionRequests).where(eq(connectionRequests.id, message.requestId))
+      const request = await requestById(db, message.requestId)
       if (!request) return
       // The sender of the request reads from the "from" side.
       const toSender = message.senderUserId === request.toUserId
@@ -72,11 +71,7 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
       if (readAt && readAt.getTime() > quietSince) return
       // The accept alert counts as the alert of the chat (PD17).
       if (toSender && request.respondedAt && request.respondedAt.getTime() > quietSince) return
-      const [unread] = await db.select({ id: messages.id }).from(messages).where(and(
-        eq(messages.requestId, request.id), eq(messages.senderUserId, message.senderUserId), ne(messages.id, message.id),
-        readAt ? gt(messages.createdAt, readAt) : undefined,
-      )).limit(1)
-      if (unread) return
+      if (await hasEarlierUnread(db, message, readAt)) return
       await tell(toSender ? request.fromUserId : request.toUserId, { kind: 'message', name: await nameOf(message.senderUserId, request.listingId), link: chatLink(request.id) })
     }),
     verification: (userId, result) => later(() => tell(userId, { kind: result, link: `${webOrigin}/profile` })),

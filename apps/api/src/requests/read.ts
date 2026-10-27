@@ -2,7 +2,7 @@ import { and, count, desc, eq, gt, gte, or, sql } from 'drizzle-orm'
 import { requestExpiryDays, type Connection } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { connectionRequests } from '../db/schema'
-import { noBlockBetween } from '../match/query'
+import { noBlockBetween } from '../blocks/read'
 
 export type RequestRow = typeof connectionRequests.$inferSelect
 
@@ -18,6 +18,9 @@ export const betweenUsers = (a: string, b: string) => or(
   and(eq(connectionRequests.fromUserId, a), eq(connectionRequests.toUserId, b)),
   and(eq(connectionRequests.fromUserId, b), eq(connectionRequests.toUserId, a)),
 )
+
+export const requestById = async (db: Db, requestId: string): Promise<RequestRow | undefined> =>
+  (await db.select().from(connectionRequests).where(eq(connectionRequests.id, requestId)))[0]
 
 /** The new requests of a sender in the calendar day of India time. */
 export async function sentToday(db: Db | Tx, userId: string) {
@@ -44,6 +47,10 @@ export async function endOpenRequests(tx: Tx, userId: string) {
   await tx.update(connectionRequests).set({ status: 'withdrawn' }).where(and(eq(connectionRequests.fromUserId, userId), open))
   await tx.update(connectionRequests).set({ status: 'declined', respondedAt: new Date() }).where(and(eq(connectionRequests.toUserId, userId), open))
 }
+
+/** At a block. The sender of an open request sees "not available", as after a decline, so the block does not show. */
+export const declineOpenBetween = (tx: Tx, a: string, b: string) => tx.update(connectionRequests).set({ status: 'declined', respondedAt: new Date() })
+  .where(and(betweenUsers(a, b), eq(connectionRequests.status, 'pending')))
 
 export async function markRead(db: Db, requestId: string, userId: string) {
   // The clock of Postgres, as for each message.

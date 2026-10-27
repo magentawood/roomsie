@@ -8,6 +8,15 @@ import type { Storage } from '../storage'
 
 export type MessageRow = typeof messages.$inferSelect
 
+/** An earlier message of the same sender that the other person has not read: its alert covers this message too. */
+export async function hasEarlierUnread(db: Db, message: MessageRow, readAt: Date | null) {
+  const [unread] = await db.select({ id: messages.id }).from(messages).where(and(
+    eq(messages.requestId, message.requestId), eq(messages.senderUserId, message.senderUserId), ne(messages.id, message.id),
+    readAt ? gt(messages.createdAt, readAt) : undefined,
+  )).limit(1)
+  return !!unread
+}
+
 export const messageView = (m: MessageRow, viewerUserId: string): Message => ({
   id: m.id, conversationId: m.requestId, mine: m.senderUserId === viewerUserId, text: m.text, createdAt: m.createdAt.toISOString(),
 })

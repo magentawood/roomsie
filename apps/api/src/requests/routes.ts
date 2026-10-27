@@ -1,21 +1,21 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, desc, eq, lte, ne, sql } from 'drizzle-orm'
+import { and, desc, eq, lte, sql } from 'drizzle-orm'
 import {
   errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, requestCapMessage, requestDailyLimit, sendRequestBody,
   type SendRequestBody,
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
-import { connectionRequests, listings, profiles, users } from '../db/schema'
-import { visibleListing } from '../listings/read'
-import { visiblePeople } from '../match/query'
-import { peopleOf } from '../profiles/read'
+import { connectionRequests } from '../db/schema'
+import { ownerOfVisibleListing } from '../listings/read'
+import { peopleOf, profileOf, profilesByIds, visibleCards } from '../profiles/read'
 import { idParams } from '../params'
 import { firstPhotoUrl, type Storage } from '../storage'
 import { openConversation, sendLive } from '../messages/send'
 import type { Messaging } from '../messages/settings'
 import { maskContacts } from '../text/mask-contacts'
+import { lockAccount } from '../users'
 import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
 
 /** Each sent request with the person who gets it, as a conversation shows the other person. */
@@ -33,12 +33,8 @@ async function outgoingViews(db: Db, storage: Storage, rows: RequestRow[]) {
 /** The user who gets the request, or nothing when the target is not visible to the sender. */
 async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) {
   const [to] = 'toProfileId' in body
-    ? await db.select({ userId: profiles.userId }).from(profiles).innerJoin(users, eq(users.id, profiles.userId))
-      .where(and(eq(profiles.id, body.toProfileId), ...visiblePeople(senderUserId)))
-    : await db.select({ userId: listings.ownerUserId }).from(listings).innerJoin(users, eq(users.id, listings.ownerUserId))
-      .where(and(
-        eq(listings.id, body.listingId), visibleListing(senderUserId), eq(users.status, 'active'), ne(listings.ownerUserId, senderUserId),
-      ))
+    ? await visibleCards(db, senderUserId, [body.toProfileId])
+    : await ownerOfVisibleListing(db, body.listingId, senderUserId, { activeOwner: true })
   return to?.userId
 }
 
@@ -54,7 +50,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     schema: { body: sendRequestBody, response: { 201: outgoingRequest, 403: errorResponse, 404: errorResponse, 409: errorResponse, 429: errorResponse } },
   }, async (req, reply) => {
     const userId = req.user!.id
-    const [senderProfile] = await db.select({ id: profiles.id, hiddenAt: profiles.hiddenAt }).from(profiles).where(eq(profiles.userId, userId))
+    const senderProfile = await profileOf(db, userId)
     if (!senderProfile) return reply.code(409).send({ error: 'no profile' })
     // T-19: reports hid the card, so the person reaches nobody new until a moderator reviews it.
     if (senderProfile.hiddenAt) return reply.code(403).send({ error: 'Your card is hidden for review.' })
@@ -63,7 +59,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const pair = betweenUsers(userId, toUserId)
     const made = await db.transaction(async (tx) => {
       // The lock makes two requests at the same time count each other.
-      await tx.select({ id: users.id }).from(users).where(eq(users.id, userId)).for('update')
+      await lockAccount(tx, userId)
       if (await sentToday(tx, userId) >= requestDailyLimit) return 'limit' as const
       // An expired request frees the pair for a new one.
       await tx.update(connectionRequests).set({ status: 'expired' })
@@ -89,15 +85,20 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   })
 
   app.get('/requests/incoming', { preHandler, schema: { response: { 200: incomingRequestsResponse } } }, async (req) => {
-    const incoming = await db.select({ request: connectionRequests, profileId: profiles.id, name: profiles.fullName, photoKeys: profiles.photoKeys })
-      .from(connectionRequests).innerJoin(profiles, eq(profiles.id, connectionRequests.fromProfileId))
-      .where(answerable(req.user!.id)).orderBy(desc(connectionRequests.createdAt))
+    const rows = await db.select().from(connectionRequests).where(answerable(req.user!.id)).orderBy(desc(connectionRequests.createdAt))
+    const senders = new Map((await profilesByIds(db, rows.flatMap((r) => (r.fromProfileId ? [r.fromProfileId] : [])))).map((p) => [p.id, p]))
     return {
-      requests: incoming.map(({ request: r, profileId, name, photoKeys }) => ({
-        id: r.id, listingId: r.listingId, note: r.note,
-        from: { profileId, name, photoUrl: firstPhotoUrl(storage, photoKeys) },
-        createdAt: r.createdAt.toISOString(), expiresAt: new Date(r.createdAt.getTime() + expiryMs).toISOString(),
-      })),
+      // An account deletion withdraws its open requests, so each sender here has a profile. The rare miss is skipped, as the inner join did.
+      requests: rows.flatMap((r) => {
+        const from = r.fromProfileId ? senders.get(r.fromProfileId) : undefined
+        return from
+          ? [{
+              id: r.id, listingId: r.listingId, note: r.note,
+              from: { profileId: from.id, name: from.fullName, photoUrl: firstPhotoUrl(storage, from.photoKeys) },
+              createdAt: r.createdAt.toISOString(), expiresAt: new Date(r.createdAt.getTime() + expiryMs).toISOString(),
+            }]
+          : []
+      }),
     }
   })
 

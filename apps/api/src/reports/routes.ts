@@ -1,10 +1,11 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, count, eq, isNull, ne } from 'drizzle-orm'
+import { and, count, eq } from 'drizzle-orm'
 import { errorResponse, noContent, reportBody } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
-import { listings, profiles, reports } from '../db/schema'
-import { visibleListing } from '../listings/read'
+import { reports } from '../db/schema'
+import { hideListingForReview, ownerOfVisibleListing } from '../listings/read'
+import { hideCardForReview, ownerOfProfile } from '../profiles/read'
 import { maskContacts } from '../text/mask-contacts'
 
 export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
@@ -23,16 +24,14 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
       // so that the recipient of a request can report its sender.
       const target = 'listingId' in body
         ? {
-            subject: () => tx.select({ userId: listings.ownerUserId }).from(listings)
-              .where(and(eq(listings.id, body.listingId), visibleListing(reporterUserId), ne(listings.ownerUserId, reporterUserId))).for('update'),
+            subject: () => ownerOfVisibleListing(tx, body.listingId, reporterUserId).for('update'),
             reports: eq(reports.listingId, body.listingId),
-            hide: () => tx.update(listings).set({ hiddenAt: new Date() }).where(and(eq(listings.id, body.listingId), isNull(listings.hiddenAt))),
+            hide: () => hideListingForReview(tx, body.listingId),
           }
         : {
-            subject: () => tx.select({ userId: profiles.userId }).from(profiles)
-              .where(and(eq(profiles.id, body.profileId), ne(profiles.userId, reporterUserId))).for('update'),
+            subject: () => ownerOfProfile(tx, body.profileId, reporterUserId).for('update'),
             reports: eq(reports.profileId, body.profileId),
-            hide: () => tx.update(profiles).set({ hiddenAt: new Date() }).where(and(eq(profiles.id, body.profileId), isNull(profiles.hiddenAt))),
+            hide: () => hideCardForReview(tx, body.profileId),
           }
       const [subject] = await target.subject()
       if (!subject) return false

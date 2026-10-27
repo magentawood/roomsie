@@ -1,24 +1,24 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, asc, eq, isNull } from 'drizzle-orm'
 import { errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Tx } from '../db/client'
-import { listings, profiles, reports, users } from '../db/schema'
-import { listingView, partsOf } from '../listings/read'
+import { hideListingsOf, listingsByIds, listingView, partsOf, setListingHiddenForReview } from '../listings/read'
 import { idParams } from '../params'
-import { answersFor, cardView } from '../profiles/read'
+import { answersFor, cardView, profilesOfUsers, setCardHiddenForReview } from '../profiles/read'
+import { actionReportsAbout, closeReports, openReports } from '../reports/read'
 import { endOpenRequests } from '../requests/read'
 import type { Storage } from '../storage'
+import { suspendAccount } from '../users'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
 async function suspend(tx: Tx, userId: string) {
   const now = new Date()
-  await tx.update(users).set({ status: 'suspended', tokensValidAfter: now }).where(eq(users.id, userId))
-  await tx.update(profiles).set({ hiddenAt: now }).where(eq(profiles.userId, userId))
-  await tx.update(listings).set({ hiddenAt: now }).where(eq(listings.ownerUserId, userId))
+  await suspendAccount(tx, userId, now)
+  await setCardHiddenForReview(tx, userId, now)
+  await hideListingsOf(tx, userId, now)
   await endOpenRequests(tx, userId)
-  await tx.update(reports).set({ status: 'actioned' }).where(and(eq(reports.subjectUserId, userId), eq(reports.status, 'open')))
+  await actionReportsAbout(tx, userId)
 }
 
 export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
@@ -30,15 +30,20 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
   }]
 
   app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse, 404: errorResponse } } }, async () => {
-    const open = await db.select({ report: reports, listing: listings, profile: profiles }).from(reports)
-      .leftJoin(listings, eq(listings.id, reports.listingId))
-      .leftJoin(profiles, eq(profiles.userId, reports.subjectUserId))
-      .where(eq(reports.status, 'open')).orderBy(asc(reports.createdAt))
-    const parts = await partsOf(db, open.flatMap((r) => (r.listing ? [r.listing.id] : [])))
-    const answers = await answersFor(db, open.flatMap((r) => (r.profile ? [r.profile.id] : [])))
+    const reports = await openReports(db)
+    const [listings, profiles] = await Promise.all([
+      listingsByIds(db, reports.flatMap((r) => (r.listingId ? [r.listingId] : []))),
+      profilesOfUsers(db, reports.map((r) => r.subjectUserId)),
+    ])
+    const listingOf = new Map(listings.map((l) => [l.id, l]))
+    const profileOf = new Map(profiles.map((p) => [p.userId, p]))
+    const parts = await partsOf(db, listings.map((l) => l.id))
+    const answers = await answersFor(db, profiles.map((p) => p.id))
     // One item for each listing. The reports of a person, and of a listing that its owner deleted, go to the person.
     const items = new Map<string, ReportQueueItem>()
-    for (const { report, listing, profile } of open) {
+    for (const report of reports) {
+      const listing = report.listingId ? listingOf.get(report.listingId) : undefined
+      const profile = profileOf.get(report.subjectUserId) ?? null
       const key = listing ? `listing:${listing.id}` : `person:${report.subjectUserId}`
       const item = items.get(key) ?? (listing
         ? { kind: 'listing' as const, listing: listingView(listing, parts(listing.id), storage, false), reports: [] }
@@ -67,13 +72,11 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
       const { id } = req.params
       const { action } = req.body
       const reviewed = await db.transaction(async (tx) => {
-        const ofItem = kind === 'listings' ? eq(reports.listingId, id) : and(eq(reports.subjectUserId, id), isNull(reports.listingId))
-        const closed = await tx.update(reports).set({ status: action === 'dismiss' ? 'dismissed' : 'actioned' })
-          .where(and(ofItem, eq(reports.status, 'open'))).returning({ subjectUserId: reports.subjectUserId })
+        const closed = await closeReports(tx, kind === 'listings' ? { listingId: id } : { userId: id }, action === 'dismiss' ? 'dismissed' : 'actioned')
         if (!closed.length) return false
         const hiddenAt = action === 'dismiss' ? null : new Date()
-        if (kind === 'listings') await tx.update(listings).set({ hiddenAt }).where(eq(listings.id, id))
-        else await tx.update(profiles).set({ hiddenAt }).where(eq(profiles.userId, id))
+        if (kind === 'listings') await setListingHiddenForReview(tx, id, hiddenAt)
+        else await setCardHiddenForReview(tx, id, hiddenAt)
         if (action === 'suspend') await suspend(tx, closed[0]!.subjectUserId)
         return true
       })

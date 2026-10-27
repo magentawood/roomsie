@@ -1,12 +1,18 @@
 import { createHash } from 'node:crypto'
-import { and, eq } from 'drizzle-orm'
-import { uuidv7 } from 'uuidv7'
+import { eq } from 'drizzle-orm'
+import { deletePushTokensOf } from './alerts/read'
+import { copyBlocksAgainst } from './blocks/read'
 import type { Db } from './db/client'
-import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, pushTokens, reports, saves, users } from './db/schema'
+import { anonymousSessions, goals, users } from './db/schema'
 import type { IdStore } from './id-store'
-import type { Storage } from './storage'
-import { deleteChecksOf } from './verification/read'
+import { deactivateListingsOf, deleteListingsOf, listingPhotoKeysOf } from './listings/read'
+import { deleteProfileOf, profilePhotoKeysOf, unpublishCardOf } from './profiles/read'
+import { hasOpenReportAbout } from './reports/read'
 import { endOpenRequests } from './requests/read'
+import { deleteSavesOf } from './saved/read'
+import type { Storage } from './storage'
+import { lockAccount } from './users'
+import { deleteChecksOf } from './verification/read'
 
 /** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
  *  stays the same when T-53 deletes the Firebase user, so a returning person meets the checks. */
@@ -25,38 +31,30 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * deletes are idempotent, so if the database step fails, a retry is safe. If the
  * photos went last, a failure would leave photos that no row points to.
  *
+ * Each module deletes its own rows. The account module owns `goals` and `anonymous_sessions` until the assistant has a module.
+ *
  * Not here yet: events (T-24), Form B (T-35), the Firebase user (T-53). The messages stay for the other person (T-44).
  */
 export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | undefined, userId: string, identity: string) {
-  await db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
-  await db.update(listings).set({ status: 'inactive', updatedAt: new Date() })
-    .where(and(eq(listings.ownerUserId, userId), eq(listings.status, 'live')))
+  await unpublishCardOf(db, userId)
+  await deactivateListingsOf(db, userId)
 
   await db.transaction(async (tx) => {
-    const [user] = await tx.select({ status: users.status }).from(users).where(eq(users.id, userId)).for('update')
+    const user = await lockAccount(tx, userId)
     // A second request at the same time (a double tap) waited on the lock. Without this stop, it would
     // hash the tombstone key again and clear rejoin_blocked, so a suspended person could sign in again.
     if (user!.status === 'deleted') return
-    const [profilePhotos, listingPhotos] = await Promise.all([
-      tx.select({ keys: profiles.photoKeys }).from(profiles).where(eq(profiles.userId, userId)),
-      tx.select({ keys: listings.photoKeys, flatmate: listingFlatmates.photoKey }).from(listings)
-        .leftJoin(listingFlatmates, eq(listingFlatmates.listingId, listings.id))
-        .where(eq(listings.ownerUserId, userId)),
-    ])
-    await storage.deleteObjects([...new Set([
-      ...profilePhotos.flatMap((r) => r.keys),
-      ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
-    ])])
+    const [profilePhotos, listingPhotos] = await Promise.all([profilePhotoKeysOf(tx, userId), listingPhotoKeysOf(tx, userId)])
+    await storage.deleteObjects([...new Set([...profilePhotos, ...listingPhotos])])
     await deleteChecksOf(tx, idStore, userId)
     await endOpenRequests(tx, userId)
-    // The cascades remove the rates, the flatmates, the chat turns and the goals of a claimed visitor session.
-    await tx.delete(listings).where(eq(listings.ownerUserId, userId))
+    await deleteListingsOf(tx, userId)
+    // The cascades remove the chat turns and the goals of a claimed visitor session.
     await tx.delete(goals).where(eq(goals.userId, userId))
     await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
-    await tx.delete(profiles).where(eq(profiles.userId, userId))
-    // The tombstone keeps the users row, so its cascade does not remove the saves of the user (T-47).
-    await tx.delete(saves).where(eq(saves.userId, userId))
-    await tx.delete(pushTokens).where(eq(pushTokens.userId, userId))
+    await deleteProfileOf(tx, userId)
+    await deleteSavesOf(tx, userId)
+    await deletePushTokensOf(tx, userId)
     await tx.update(users).set({
       status: 'deleted',
       authProviderId: tombstoneKey(identity),
@@ -81,17 +79,11 @@ export async function rejoin(db: Db, tombstoneId: string, uid: string, identity:
       .from(users).where(eq(users.id, tombstoneId)).for('update')
     // A second request at the same time waited on the lock: the first one already rejoined.
     if (tombstone?.key !== tombstoneKey(identity)) return 'rejoined' as const
-    const [openReport] = await tx.select({ id: reports.id }).from(reports)
-      .where(and(eq(reports.subjectUserId, tombstoneId), eq(reports.status, 'open'))).limit(1)
-    if (tombstone.rejoinBlocked || openReport) return 'blocked' as const
+    if (tombstone.rejoinBlocked || await hasOpenReportAbout(tx, tombstoneId)) return 'blocked' as const
 
     await tx.update(users).set({ authProviderId: `deleted:${tombstoneId}`, updatedAt: new Date() }).where(eq(users.id, tombstoneId))
     const [user] = await tx.insert(users).values({ authProviderId: uid, tokensValidAfter: signedInAt }).returning({ id: users.id })
-    const blockers = await tx.select({ blockerUserId: blocks.blockerUserId }).from(blocks).where(eq(blocks.blockedUserId, tombstoneId))
-    if (blockers.length > 0) {
-      await tx.insert(blocks).values(blockers.map((b) => ({ id: uuidv7(), blockerUserId: b.blockerUserId, blockedUserId: user!.id })))
-        .onConflictDoNothing()
-    }
+    await copyBlocksAgainst(tx, tombstoneId, user!.id)
     return 'rejoined' as const
   })
 }
