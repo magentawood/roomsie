@@ -58,6 +58,14 @@ details.callout[open] summary{color:var(--fg)}
 <li>A profile picks groups, sub-areas or pockets.</li>
 <li>Two picks match when they are the same area, or when one includes the other. The match query expands the picks of the seeker. It adds each area above and below a pick. Then it looks for profiles that picked one of them. Thus "Andheri West" finds Versova and the whole group, but Versova does not find Lokhandwala.</li>
 </ul>
+<h2 id="in-the-web">In the web</h2>
+<ul>
+<li><strong>The label:</strong> a card or a detail shows the sub-area. A pocket shows with its parent, for example "Versova, Andheri West".</li>
+<li><strong>The Where step</strong> of a listing has three chip rows: the area group, the sub-area, and the pocket. The pocket row shows only for a sub-area that has pockets, and the lister can skip it.</li>
+<li><strong>The profile editor</strong> shows the picks as tags, a search, and the ten groups as rows that open. The wider pick wins: "All of" a group removes the picks under it, and the chips under it show checked and off.</li>
+<li><strong>The search</strong> ignores case, spaces and punctuation, and it matches the other names. Thus "kandivli" finds Kandivali East.</li>
+<li>Section 23 of the drafts page in Figma shows each screen.</li>
+</ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>The ten groups, the sub-areas and where Mumbai ends: <a href="../decisions/pd-02-launch-market.md">PD2</a>.</li>
