@@ -7,12 +7,12 @@ import {
 } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
-import { connectionRequests, listings, messages, profiles, users } from '../db/schema'
+import { connectionRequests, listings, profiles, users } from '../db/schema'
 import { visibleListing } from '../listings/read'
 import { visiblePeople } from '../match/query'
 import { idParams } from '../params'
-import type { Storage } from '../storage'
-import { sendLive } from '../messages/routes'
+import { firstPhotoUrl, type Storage } from '../storage'
+import { openConversation, sendLive } from '../messages/send'
 import type { Messaging } from '../messages/settings'
 import { maskContacts } from '../text/mask-contacts'
 import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
@@ -80,9 +80,9 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       .from(connectionRequests).innerJoin(profiles, eq(profiles.id, connectionRequests.fromProfileId))
       .where(answerable(req.user!.id)).orderBy(desc(connectionRequests.createdAt))
     return {
-      requests: incoming.map(({ request: r, profileId, name, photoKeys: [photo] }) => ({
+      requests: incoming.map(({ request: r, profileId, name, photoKeys }) => ({
         id: r.id, listingId: r.listingId, note: r.note,
-        from: { profileId, name, photoUrl: photo ? storage.publicUrl(photo) : null },
+        from: { profileId, name, photoUrl: firstPhotoUrl(storage, photoKeys) },
         createdAt: r.createdAt.toISOString(), expiresAt: new Date(r.createdAt.getTime() + expiryMs).toISOString(),
       })),
     }
@@ -97,9 +97,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
         const [request] = await tx.update(connectionRequests).set({ status, respondedAt: new Date() })
           .where(and(eq(connectionRequests.id, req.params.id), answerable(req.user!.id))).returning()
         if (!request || status === 'declined') return request && { request, note: null }
-        // T-44: the note opens the conversation, as the first message of its sender.
-        const [note] = await tx.insert(messages).values({ requestId: request.id, senderUserId: request.fromUserId, text: request.note, createdAt: request.createdAt }).returning()
-        return { request, note: note! }
+        return { request, note: await openConversation(tx, request) }
       })
       if (!answered) return reply.code(404).send({ error: 'not found' })
       if (answered.note) await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])

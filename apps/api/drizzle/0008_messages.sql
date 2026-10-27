@@ -23,15 +23,4 @@ CREATE INDEX "messages_thread_idx" ON "messages" USING btree ("request_id","crea
 ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_from_profile_id_profiles_id_fk" FOREIGN KEY ("from_profile_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_to_profile_id_profiles_id_fk" FOREIGN KEY ("to_profile_id") REFERENCES "public"."profiles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_listing_id_listings_id_fk" FOREIGN KEY ("listing_id") REFERENCES "public"."listings"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_target_check" CHECK (num_nonnulls("connection_requests"."to_profile_id", "connection_requests"."listing_id") <= 1);--> statement-breakpoint
--- Supabase only: a user joins only the own private channel, user:<our user id> (T-44). The claim user_id comes from the API.
--- The local and test databases have neither function, so they skip it.
-DO $$
-BEGIN
-  IF to_regprocedure('realtime.topic()') IS NOT NULL AND to_regprocedure('auth.jwt()') IS NOT NULL THEN
-    EXECUTE $policy$
-      CREATE POLICY "roomsie user channel" ON realtime.messages FOR SELECT TO authenticated
-      USING (realtime.topic() = 'user:' || (auth.jwt() ->> 'user_id'))
-    $policy$;
-  END IF;
-END $$;
+ALTER TABLE "connection_requests" ADD CONSTRAINT "connection_requests_target_check" CHECK (num_nonnulls("connection_requests"."to_profile_id", "connection_requests"."listing_id") <= 1);

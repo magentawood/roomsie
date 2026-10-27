@@ -20,14 +20,13 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 | Route | What it does |
 |---|---|
 | `GET /v1/conversations` | Gives each conversation: the other person, the last message and the unread count, the newest first. |
-| `GET /v1/conversations/:id` | Gives one conversation. |
-| `GET /v1/conversations/:id/messages` | Gives 50 messages, the newest first. `?before=<time>` gives the page before. |
+| `GET /v1/conversations/:id/messages` | Gives 50 messages, the newest first. `?before=<message id>` gives the page before that message. |
 | `POST /v1/conversations/:id/messages` | Sends a message of 1 to 2,000 characters, with an id that the client makes. |
 | `POST /v1/conversations/:id/read` | Marks the conversation as read. |
 | `POST /v1/me/realtime` | Gives the channel, the public URL and key of Supabase, and `refreshToken`. |
 
-- **The claims.** Supabase trusts a Firebase token only with `role: 'authenticated'`. The API also adds `user_id`, our id of the person, so the policy can check the channel. `POST /v1/me/realtime` adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins `user:<our user id>`.
-- **The policy.** The migration adds a policy on Supabase's `realtime.messages`: a person can join only `user:` and their own `user_id`. The local and test databases do not have Supabase's functions, so they skip it.
+- **The claims.** Supabase trusts a Firebase token only with `role: 'authenticated'`. The API also adds `roomsie_user_id`, our id of the person, so the policy can check the channel. `POST /v1/me/realtime` adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins `user:<our user id>`.
+- **The policy.** A migration adds a policy on Supabase's `realtime.messages`: a person can join only `user:` and their own `roomsie_user_id`. The local and test databases do not have Supabase's functions, so they skip it.
 - **Who sees what.** Only the two people of a conversation get it. A block hides it from both. Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".
 
 ## The choice we made
@@ -39,6 +38,7 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 ## Gotchas
 
 - **Realtime is best effort.** The API saves the message first. If the broadcast fails, the API logs it, and the app gets the message at its next fetch.
+- **`user_id` is taken.** A Firebase token already has `user_id`, the Firebase uid, so our claim has its own name.
 - **A new claim needs a new token.** Firebase puts a claim in the next token, so the web refreshes the token one time when `refreshToken` is true.
 - **The setup is in two consoles.** The API needs the secrets `SUPABASE_ANON_KEY` and `FIREBASE_SERVICE_ACCOUNT`. Supabase needs Firebase as a third-party auth provider, and Realtime set to private channels only. Without the secrets, `POST /v1/me/realtime` gives 503.
 - **No SDK.** The Firebase Admin module calls the REST API that the Admin SDK calls, with a token that `jose` signs, as `aws4fetch` does for R2.

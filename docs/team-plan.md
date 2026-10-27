@@ -1003,7 +1003,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The API never gives a message to a user who is not in the conversation
 - A blocked user cannot send a message to the user who blocked them
 - The API masks phone numbers and WhatsApp links as •••• in each message
-- After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile now cascades its connection requests
+- After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/decisions/pd-17-connect-and-contact.md`
 
 **T-45 · Messages screens** — done when:

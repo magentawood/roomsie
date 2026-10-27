@@ -1,6 +1,5 @@
 import { z } from 'zod'
-import { clientId } from './reports'
-import { requiredText } from './shared'
+import { clientId, requiredText } from './shared'
 
 export const messageTextLimit = 2000
 
@@ -26,9 +25,13 @@ export const conversation = z.object({
 export type Conversation = z.infer<typeof conversation>
 export const conversationsResponse = z.object({ conversations: z.array(conversation) })
 
-/** The messages of a conversation, the newest first. `before` gives the page before a time. */
-export const messagesQuery = z.object({ before: z.iso.datetime().optional() })
+/** The messages of a conversation, the newest first. `before` is the id of the oldest message of the last page. */
+export const messagesQuery = z.object({ before: z.uuid().optional() })
 export const messagesResponse = z.object({ messages: z.array(message), hasMore: z.boolean() })
+
+/** The event on the private channel of a person: one new message, as that person sees it (T-44). */
+export const realtimeMessageEvent = z.object({ event: z.literal('message'), payload: message })
+export type RealtimeMessageEvent = z.infer<typeof realtimeMessageEvent>
 
 /** What the web needs to join its private channel. `refreshToken`: get a fresh ID token first, so that it has the claims. */
 export const realtimeResponse = z.object({ url: z.url(), key: z.string().min(1), channel: z.string(), refreshToken: z.boolean() })

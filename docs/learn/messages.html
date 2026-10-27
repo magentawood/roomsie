@@ -61,12 +61,8 @@ details.callout[open] summary{color:var(--fg)}
 <td>Gives each conversation: the other person, the last message and the unread count, the newest first.</td>
 </tr>
 <tr>
-<td><code>GET /v1/conversations/:id</code></td>
-<td>Gives one conversation.</td>
-</tr>
-<tr>
 <td><code>GET /v1/conversations/:id/messages</code></td>
-<td>Gives 50 messages, the newest first. <code>?before=&lt;time&gt;</code> gives the page before.</td>
+<td>Gives 50 messages, the newest first. <code>?before=&lt;message id&gt;</code> gives the page before that message.</td>
 </tr>
 <tr>
 <td><code>POST /v1/conversations/:id/messages</code></td>
@@ -83,8 +79,8 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The claims.</strong> Supabase trusts a Firebase token only with <code>role: 'authenticated'</code>. The API also adds <code>user_id</code>, our id of the person, so the policy can check the channel. <code>POST /v1/me/realtime</code> adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins <code>user:&lt;our user id&gt;</code>.</li>
-<li><strong>The policy.</strong> The migration adds a policy on Supabase's <code>realtime.messages</code>: a person can join only <code>user:</code> and their own <code>user_id</code>. The local and test databases do not have Supabase's functions, so they skip it.</li>
+<li><strong>The claims.</strong> Supabase trusts a Firebase token only with <code>role: 'authenticated'</code>. The API also adds <code>roomsie_user_id</code>, our id of the person, so the policy can check the channel. <code>POST /v1/me/realtime</code> adds the claims with the Firebase Admin API the first time. Then the web gets a fresh token, and joins <code>user:&lt;our user id&gt;</code>.</li>
+<li><strong>The policy.</strong> A migration adds a policy on Supabase's <code>realtime.messages</code>: a person can join only <code>user:</code> and their own <code>roomsie_user_id</code>. The local and test databases do not have Supabase's functions, so they skip it.</li>
 <li><strong>Who sees what.</strong> Only the two people of a conversation get it. A block hides it from both. Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
@@ -96,6 +92,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>Realtime is best effort.</strong> The API saves the message first. If the broadcast fails, the API logs it, and the app gets the message at its next fetch.</li>
+<li><strong><code>user_id</code> is taken.</strong> A Firebase token already has <code>user_id</code>, the Firebase uid, so our claim has its own name.</li>
 <li><strong>A new claim needs a new token.</strong> Firebase puts a claim in the next token, so the web refreshes the token one time when <code>refreshToken</code> is true.</li>
 <li><strong>The setup is in two consoles.</strong> The API needs the secrets <code>SUPABASE_ANON_KEY</code> and <code>FIREBASE_SERVICE_ACCOUNT</code>. Supabase needs Firebase as a third-party auth provider, and Realtime set to private channels only. Without the secrets, <code>POST /v1/me/realtime</code> gives 503.</li>
 <li><strong>No SDK.</strong> The Firebase Admin module calls the REST API that the Admin SDK calls, with a token that <code>jose</code> signs, as <code>aws4fetch</code> does for R2.</li>

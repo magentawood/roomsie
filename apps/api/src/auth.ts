@@ -6,6 +6,7 @@ import type { MeResponse } from '@roomsie/contract'
 import { rejoin, tombstoneKey } from './account'
 import type { Db } from './db/client'
 import { users } from './db/schema'
+import type { FirebaseAdmin } from './firebase-admin'
 import type { Moderation } from './moderation/settings'
 
 /** jose caches these keys and fetches them again only when Google rotates them. */
@@ -20,8 +21,8 @@ declare module 'fastify' {
     user: MeResponse | null
     /** The person at the sign-in provider: the Google account id, or the Firebase uid if the token has none. */
     identity: string | null
-    /** The Firebase uid, and the claims that the API adds for Supabase Realtime (T-44). */
-    firebase: { uid: string; role?: string; userId?: string } | null
+    /** The Firebase uid and the Realtime claims of the token. Only this module reads them (T-44). */
+    firebase: { uid: string; role?: string; roomsieUserId?: string } | null
   }
 }
 
@@ -31,7 +32,7 @@ const firebaseClaims = z.object({
   auth_time: z.number().int(),
   firebase: z.object({ identities: z.record(z.string(), z.array(z.string())) }).partial().optional(),
   role: z.string().optional(),
-  user_id: z.string().optional(),
+  roomsie_user_id: z.string().optional(),
 })
 
 /** A bad token is the caller's fault. A failure to get Google's keys is ours, so it is not a 401. */
@@ -63,7 +64,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (!claims.success) return reply.code(401).send({ error: 'unauthorized' })
 
     // auth_time is the sign-in. A refreshed token keeps it, so a revocation holds (ADR-0007).
-    const { sub: uid, auth_time: authTime, firebase, role, user_id: userId } = claims.data
+    const { sub: uid, auth_time: authTime, firebase, role, roomsie_user_id: roomsieUserId } = claims.data
     const signedInAt = new Date(authTime * 1000)
     // A tombstone keys on the Google account id: it stays when T-53 deletes the Firebase user, and the uid does not.
     const identity = firebase?.identities?.['google.com']?.[0] ?? uid
@@ -81,7 +82,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid) }
     req.identity = identity
-    req.firebase = { uid, role, userId }
+    req.firebase = { uid, role, roomsieUserId }
   }
 }
 
@@ -97,4 +98,16 @@ async function findUser(db: Db, uid: string) {
     .from(users)
     .where(eq(users.authProviderId, uid))
   return user
+}
+
+/**
+ * Supabase trusts a Firebase token only with these claims (T-44). Adds them to the Firebase user when the token has none.
+ * A new claim shows in the next token, so it returns true when the web must refresh the token.
+ */
+export async function ensureRealtimeClaims(req: FastifyRequest, admin: FirebaseAdmin) {
+  const { uid, role, roomsieUserId } = req.firebase!
+  const userId = req.user!.id
+  if (role === 'authenticated' && roomsieUserId === userId) return false
+  await admin.setClaims(uid, { role: 'authenticated', roomsie_user_id: userId })
+  return true
 }

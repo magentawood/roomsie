@@ -45,7 +45,6 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
       ...profilePhotos.flatMap((r) => r.keys),
       ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
     ])])
-    // The other people keep their conversations (T-44): the requests keep their rows, with empty profile and listing links.
     await endOpenRequests(tx, userId)
     // The cascades remove the rates, the flatmates, the chat turns and the goals of a claimed visitor session.
     await tx.delete(listings).where(eq(listings.ownerUserId, userId))

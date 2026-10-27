@@ -3,7 +3,7 @@ import { sharingTypes, type ListingResponse } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { listingFlatmates, listingRates, listings, profiles } from '../db/schema'
 import { noBlockBetween } from '../match/query'
-import type { Storage } from '../storage'
+import { firstPhotoUrl, type Storage } from '../storage'
 
 export type Listing = typeof listings.$inferSelect
 export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
@@ -43,7 +43,7 @@ export function listingView(listing: Listing, { rates, flatmates, lister }: Part
     rates: [...rates].sort((a, b) => sharingOrder(a) - sharingOrder(b)),
     flatmates: flatmates.map((f) => ({ ...f, photoUrl: f.photoKey && storage.publicUrl(f.photoKey) })),
     mine: isOwner,
-    lister: lister && { name: lister.fullName, photoUrl: lister.photoKeys[0] ? storage.publicUrl(lister.photoKeys[0]) : null },
+    lister: lister && { name: lister.fullName, photoUrl: firstPhotoUrl(storage, lister.photoKeys) },
     hidden: hiddenAt !== null,
     expiresAt: expiresAt?.toISOString() ?? null,
     createdAt: createdAt.toISOString(),
