@@ -16,7 +16,8 @@
 | The session, goals and chat turns of a visitor | 30 days after the last visit, unless the visitor signs in and the goals move to the account |
 | Raw analytics events | 12 months |
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
-| The ID photo and the selfie of a verification | Deleted right after the review |
+| The ID photo and the selfie of a verification | Deleted right after the review. A rule of the bucket deletes each file after 7 days, also with no review ([ADR 0020](0020-id-checks-in-s3-with-rekognition.md)). |
+| The result of a verification, and the audit log of its views and reviews | Until the user deletes the account (T-46) |
 | The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
 | The saved places and people of an account | Until the user unsaves them or deletes the account. The deletion of a listing or of an account deletes its saves (T-47). |
 | The email of the sign-in and the push tokens of the browsers | Until the user deletes the account. A deletion clears the email and deletes the tokens (T-55). |

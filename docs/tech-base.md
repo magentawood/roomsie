@@ -85,6 +85,7 @@ Clients hold a Firebase ID token and send requests to `apps/api`. They never ope
 | [ADR-0017](decisions/0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted | A goal is one move with its own chat; a listing is one wide table; Form A catalogues are data. |
 | [ADR-0018](decisions/0018-migrations-in-the-deploy.md) | Migrations run in the deploy, before the new API | Accepted | The deploy applies the migrations and the seed before the new API starts. Each migration works with the API before it. |
 | [ADR-0019](decisions/0019-alerts-by-ses-and-fcm.md) | Alerts by Amazon SES and Firebase Cloud Messaging | Accepted | Amazon SES in Mumbai sends the alert emails, and Firebase Cloud Messaging sends the browser pushes. |
+| [ADR-0020](decisions/0020-id-checks-in-s3-with-rekognition.md) | ID checks in a private S3 bucket, with a face match by Amazon Rekognition | Accepted | The ID files wait in a private S3 bucket in Mumbai, and Amazon Rekognition gives the reviewer a face-match score as a help. |
 <!-- ledger:end -->
 
 ## Learn
@@ -95,8 +96,8 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
 - [Alerts: email and browser push](learn/alerts.md)
+- [ID checks and the Verified badge](learn/id-checks.md)
 - [Message requests](learn/message-requests.md)
 - [Messages and realtime](learn/messages.md)
 - [Listings and photo uploads](learn/listings.md)
-- [Moderation: reports, blocks and the admin screen](learn/moderation.md)
 <!-- learn-newest:end -->

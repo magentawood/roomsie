@@ -34,7 +34,7 @@ send a message ────┘   (after the reply)  └─▶ FCM ──▶ each
 
 ## Gotchas
 
-- **The setup.** The API needs the secrets `SES_ACCESS_KEY_ID` and `SES_SECRET_ACCESS_KEY`, from an IAM user that can only send email. SES needs the DNS records of `roomsie.in` in Cloudflare and production access. In the sandbox, SES sends only to verified addresses. The web needs the public values `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` and `NEXT_PUBLIC_FIREBASE_VAPID_KEY` (the public key of the Web Push certificate of Cloud Messaging). Without them, the API sends no email or no push, and the switches still save.
+- **The setup.** The API needs the secrets `SES_ACCESS_KEY_ID` and `SES_SECRET_ACCESS_KEY`, from the IAM user of the alerts and the ID checks ([ADR-0020](../decisions/0020-id-checks-in-s3-with-rekognition.md)). SES needs the DNS records of `roomsie.in` in Cloudflare and production access. In the sandbox, SES sends only to verified addresses. The web needs the public values `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` and `NEXT_PUBLIC_FIREBASE_VAPID_KEY` (the public key of the Web Push certificate of Cloud Messaging). Without them, the API sends no email or no push, and the switches still save.
 - **iPhones.** Safari on an iPhone gives push only to roomsie on the home screen. In a normal tab, the switch is off with a line that tells this.
 - **A blocked browser.** After a "Block", the browser does not ask again. The person must allow notifications in the site settings of the browser.
 - **One browser, one person.** When a second person turns on push in the same browser, the token moves to that person. It is the named exception to the rule on updates of client-supplied ids.
