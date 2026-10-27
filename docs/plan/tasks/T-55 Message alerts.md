@@ -40,3 +40,37 @@ Tell a person about a new request or message by email and browser push.
 ## Read first
 - [pd-17-connect-and-contact.md](../../decisions/pd-17-connect-and-contact.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** not yet
+
+- **Modules:**
+  - **The alerts module of the API (new):** the rules of who gets an alert and when, the email through Amazon SES, and the push through Firebase Cloud Messaging. The requests and messages routes call it after each save. Its interface is new: one call for a request, one for a message, and one for an accept.
+  - **The Firebase Admin module:** a Google token for each scope, kept for one hour, and the email address of a Firebase user. The interface changes.
+  - **The schema:** the setting "email alerts" of each user, and a new table of the push tokens of each browser. One migration.
+  - **The contract and the API routes (new):** read and set the email switch, and add and remove the push token of this browser.
+  - **The web:** the two switches in Settings, also on the profile page with no profile. The push token of this browser. A service worker that shows a push and opens roomsie at a tap. No new package.
+  - **The deploy:** the API gets the two SES secrets.
+- **Seams for the tests:**
+  - The API tests, with a fake email sender and a fake push sender, as the Realtime fake of T-44: who gets an alert, the quiet rule, the switches, an account that cannot get alerts, and a push token that FCM refuses.
+  - A unit test of the texts of the alerts.
+  - The API test of the new routes.
+  - A browser check at 390 px and 1440 px, with the API stubbed: the switches, the card with no profile, and a browser that blocks notifications.
+- **Decisions:**
+  - **Email:** Amazon SES in `ap-south-1`, from `roomsie <alerts@roomsie.in>`, signed with `aws4fetch` (why: ADR-0019).
+  - **Push:** Firebase Cloud Messaging, with the service account that the API already has and the `firebase` package of the web. It is the option with the least compute on our API (why: ADR-0019).
+  - **When:** each new request sends one alert to its recipient. Each accept sends one alert to the sender of the request: "Divya accepted your request". A message sends an alert only when it is the first message in the chat that the person did not read. The person also must not have read the chat in the last 5 minutes ([PD17](../../decisions/pd-17-connect-and-contact.md)).
+  - **Text:** no alert has the text of a message or of a note: "Divya sent you a message", "Divya wants to say hi" and "Divya accepted your request". The name is the first name of a person, or the title of the listing for a lister with no profile. The email has a button to the chat, or to Requests for a request, and the line "Turn off these emails in Profile and Settings". A tap on a push opens the same page.
+  - **Who gets none:** the sender, and an account that is not active.
+  - **Switches:** both save at each tap, with no Save. A person with no profile sees them under "Make your profile". "Email alerts" is one setting of the account, on by default. "Push alerts" belongs to each browser, off by default: on means that this browser has a push token at the API. A tap asks the browser. If the browser blocks notifications, the switch stays off, with a line on how to allow them.
+  - **The email address** comes from Firebase at each send. Our database does not store it.
+  - **Best effort:** the API saves first and sends the alerts after the reply. A failure goes to the log, with no retry. The API deletes a push token that FCM refuses.
+  - **Without the secrets,** the API sends no email and no push, as Realtime without its secrets.
+  - **Docs:** ADR-0019, the PD17 update, a row in extensibility.md, and a learn page on alerts.
+  - **The drafts:** section 25 of the [drafts page](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=477-25810), and the sections 05 and 16 of the drafts page say "We'll email you when Divya answers".
+- **Out of scope:**
+  - a digest or a batch of alerts, and a mute for one chat
+  - an unsubscribe link with a token in the email
+  - an install prompt for iPhones (a push on an iPhone needs roomsie on the home screen)
+  - the live check of SES and FCM, which comes after the setup of the secrets, the DNS records and the SES production access
