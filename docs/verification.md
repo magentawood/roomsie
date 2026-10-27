@@ -96,7 +96,7 @@ Why: [PD8](decisions/pd-08-verification.md)
 |---|---|
 | Who reviews? | One named person, with a backup |
 | How fast? | An SLA. People will not wait more than 24 hours. |
-| What happens at backlog? | A queue that users can see. Users know their position in it. |
+| What happens at backlog? | Users see "We check within 24 hours" ([PD8](decisions/pd-08-verification.md)). |
 | Who can see submitted documents? | Named accounts only, with an audit log of all views |
 | What about rejections? | A fast, polite appeal path |
 

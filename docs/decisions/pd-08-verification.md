@@ -1,6 +1,6 @@
 # PD8 — Verification: an ID check in v0, DigiLocker in v1, never Aadhaar copies
 
-**Status:** Settled with one change. Changed on 2026-10-26. · **Date:** 2026-09-22 · **Deciders:** Yash; the v0 route and the listing gate: n3rxv, for the founders
+**Status:** Settled with two changes. Changed on 2026-10-26 and 2026-10-27. · **Date:** 2026-09-22 · **Deciders:** Yash; the v0 route and the listing gate: n3rxv, for the founders
 
 ## Context
 
@@ -72,11 +72,12 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **DigiLocker gives a verified assertion.** After OTP authentication, it
   returns a signed Aadhaar XML, and we never hold the document. Approximately
   4,313 agencies have the document-requester status.
-- **No vendor in v0.** A KYC provider costs a few rupees for each check, and
-  a provider must be picked. A direct requester pays no platform charge (the
+- **No KYC provider in v0.** A KYC provider costs a few rupees for each check,
+  and a provider must be picked. A direct requester pays no platform charge (the
   June 2025 terms), but needs an approval with no published time and a
   yearly audit by a CERT-In empanelled auditor. The invite-only launch (T-33)
-  keeps the review queue small.
+  keeps the review queue small. Amazon Rekognition gives the reviewer a
+  face-match score, which only helps (ADR 0020, 2026-10-27).
 - **The listing does not wait.** A new lister who waits a day for a review can
   leave. The pill, not the listing, waits for the review.
 - **The v0 route avoids the legal problem.** The Aadhaar Act restrictions do
@@ -113,7 +114,7 @@ Manual review needs answers before launch:
 
 - One named reviewer, with a backup.
 - An SLA. People will not wait more than 24 hours.
-- A queue that users can see, with their position.
+- A state that users can see: "We check within 24 hours", with no place in the queue (T-46).
 - Named accounts only see documents, with an audit log.
 - A fast, polite appeal that a person answers. Budget for incorrect
   rejections: "your face does not agree with your ID" feels like an

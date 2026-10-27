@@ -13,10 +13,10 @@
 
 **In one line:** Amazon SES in Mumbai sends the alert emails, and Firebase Cloud Messaging sends the browser pushes.
 
-- **Email:** Amazon SES v2 in `ap-south-1`, from `roomsie <alerts@roomsie.in>`. The email module signs each call with `aws4fetch`. An IAM user that can only send email gives its key to the API.
+- **Email:** Amazon SES v2 in `ap-south-1`, from `roomsie <alerts@roomsie.in>`. The email module signs each call with `aws4fetch`. An IAM user gives its key to the API. ADR 0020 also gives it the bucket of the ID checks and Rekognition.
 - **Push:** Firebase Cloud Messaging (FCM). The web gets a token for the browser with `firebase/messaging`, and a service worker shows each push. The Firebase Admin module sends a data message with the service account of the API. It keeps each Google token for one hour.
 - **The email address:** the sign-in path saves the verified email of the token. The alerts read it from our database, so only the sign-in path reads the Firebase UID.
-- **Secrets:** `SES_ACCESS_KEY_ID` and `SES_SECRET_ACCESS_KEY` (the IAM user that only sends), in the CI secret store and the API (ADR 0016). The web gets two public values: `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` and `NEXT_PUBLIC_FIREBASE_VAPID_KEY`, the public key of the Web Push certificate.
+- **Secrets:** `SES_ACCESS_KEY_ID` and `SES_SECRET_ACCESS_KEY` (the IAM user of the alerts and, from ADR 0020, the ID checks), in the CI secret store and the API (ADR 0016). The web gets two public values: `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID` and `NEXT_PUBLIC_FIREBASE_VAPID_KEY`, the public key of the Web Push certificate.
 - **No secrets, no alerts:** without the SES key, the API sends no email. Without the service account, it sends no push.
 - **One browser, one person:** a browser has one push token. When a different person turns on Push alerts in the same browser, the token moves to that person. This is a named exception to the rule that an update on a client-supplied id checks the user.
 
