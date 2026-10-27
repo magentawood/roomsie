@@ -942,7 +942,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Social post images and link preview images exist
 
 **T-09 · Chip flow for intent, area, budget** — done when:
-- Intent shows as the five place types of PD15, area as the nine area groups of PD2, and budget as bands
+- Intent shows as the five place types of PD15, area as the area groups of PD2, and budget as bands
 - Each tap writes to the form. A tap never calls a model
 - If a person types and does not tap, the typed answer still works
 - Read first: `docs/interface-shape.md`

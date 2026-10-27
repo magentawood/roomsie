@@ -27,7 +27,6 @@ export function testMessaging() {
   return { messaging, sent, claims }
 }
 
-/** An area group, its sub-area "bandra", and the pocket "pali-hill" inside it. */
 export const testAreas = [
   { slug: 'bandra-santacruz', name: 'Bandra–Santacruz' },
   { slug: 'bandra', name: 'Bandra', parentSlug: 'bandra-santacruz' },

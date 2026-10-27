@@ -91,7 +91,7 @@ describe('a draft', () => {
   it('takes a sub-area or a pocket, and rejects a whole area group and an area that does not exist', async () => {
     const listing = await draft('owner_flat')
     expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'atlantis' })).statusCode).toBe(400)
-    expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'bandra-santacruz' })).json()).toEqual({ error: 'not a sub-area' })
+    expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'bandra-santacruz' })).json()).toEqual({ error: 'pick a sub-area' })
     expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'pali-hill' })).statusCode).toBe(200)
     expect((await call('lister', 'PATCH', `/${listing.id}`, { areaSlug: 'bandra' })).statusCode).toBe(200)
   })

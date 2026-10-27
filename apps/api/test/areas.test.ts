@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { areasResponse } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { offlineStorage, routesOnlyOptions } from '../scripts/openapi'
-import { relatedAreas } from '../src/areas'
+import { matchingAreas } from '../src/areas'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { buildServer } from '../src/server'
 
@@ -49,12 +49,12 @@ describe('the areas that match a pick', () => {
   ])
 
   it('includes the areas under a group and under a sub-area', () => {
-    expect(relatedAreas(parentOf, ['andheri-goregaon'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'lokhandwala', 'andheri-east'])
-    expect(relatedAreas(parentOf, ['andheri-west'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'lokhandwala'])
+    expect(matchingAreas(parentOf, ['andheri-goregaon'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'lokhandwala', 'andheri-east'])
+    expect(matchingAreas(parentOf, ['andheri-west'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'lokhandwala'])
   })
 
   it('matches a pocket with the areas above it, and not with the pocket next to it', () => {
-    expect(relatedAreas(parentOf, ['versova'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova'])
-    expect(relatedAreas(parentOf, ['versova', 'thane'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'thane', 'thane-west'])
+    expect(matchingAreas(parentOf, ['versova'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova'])
+    expect(matchingAreas(parentOf, ['versova', 'thane'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'thane', 'thane-west'])
   })
 })

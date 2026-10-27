@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { foodAnswers, listerResponse } from './profiles'
-import { optionalText, photoKeyIn, rupees, uploadUrlReply } from './shared'
+import { areaSlug, optionalText, photoKeyIn, rupees, uploadUrlReply } from './shared'
 
 /* The values of the listing flow (flow 04 of the designs). The database enums use the same lists. */
 export const listingKinds = ['room_in_flat', 'owner_flat', 'pg', 'broker_flat'] as const
@@ -56,7 +56,7 @@ export const listingFlatmate = z.strictObject({
 })
 
 const commonFields = {
-  areaSlug: z.string().min(1).max(60).nullable(),
+  areaSlug: areaSlug.nullable(),
   address: optionalText(textLimits.address),
   shareAddress: z.boolean(),
   building: optionalText(textLimits.building),

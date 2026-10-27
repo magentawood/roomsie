@@ -76,7 +76,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const current = (await partsOf(db, [listing.id]))(listing.id)
     const nextListing = { ...listing, ...columns }
     const inSubArea = await isSubArea(db, nextListing.areaSlug)
-    if (edit.areaSlug && !inSubArea) return reply.code(400).send({ error: 'not a sub-area' })
+    if (edit.areaSlug && !inSubArea) return reply.code(400).send({ error: 'pick a sub-area' })
     const hasType = (r: { sharing?: Rate['sharing'] }) => listing.kind !== 'pg' || nextListing.sharing.includes(r.sharing!)
     if (newRates && !newRates.every(hasType)) return reply.code(400).send({ error: 'not valid: rates' })
     const next = {
