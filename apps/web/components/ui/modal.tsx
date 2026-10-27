@@ -4,16 +4,27 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
 import type { Icon } from './button'
 
-/** The frame of each modal: the native dialog, its backdrop and the close on a backdrop click. */
-export function ModalFrame({ labelledBy, onClose, children }: { labelledBy: string; onClose: () => void; children: ReactNode }) {
+/** The frame of each modal: the native dialog, its backdrop and the close on a backdrop click. `sheet`: a bottom sheet on a phone. */
+export function ModalFrame({ labelledBy, onClose, sheet, children }: { labelledBy: string; onClose: () => void; sheet?: boolean; children: ReactNode }) {
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => dialog.current?.showModal(), [])
+  const place = sheet
+    ? 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-120 lg:rounded-2xl'
+    : 'inset-x-4 mb-4 max-w-100 rounded-2xl sm:my-auto'
   return (
     // A click on the backdrop has the dialog as its target. A click in the panel has a child as its target.
     <dialog ref={dialog} aria-labelledby={labelledBy} onClose={onClose} onClick={(e) => e.target === e.currentTarget && onClose()}
-      className="inset-x-4 mx-auto mt-auto mb-4 w-auto max-w-100 rounded-2xl bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm sm:my-auto">
+      className={`mx-auto mt-auto w-auto bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm ${place}`}>
       {children}
     </dialog>
+  )
+}
+
+export function CloseButton({ onClose }: { onClose: () => void }) {
+  return (
+    <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover focus-visible:outline-2">
+      <XClose size={20} aria-hidden />
+    </button>
   )
 }
 
@@ -27,9 +38,7 @@ export function ModalHead({ icon: ModalIcon, iconTone = 'error', titleId, title,
         <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${iconTone === 'error' ? 'text-fg-error' : 'text-fg-success'}`}>
           <ModalIcon size={20} aria-hidden />
         </span>
-        <button type="button" aria-label="Close" onClick={onClose} className="rounded-md p-2 text-fg-quaternary outline-focus-ring hover:bg-primary_hover hover:text-fg-quaternary_hover focus-visible:outline-2">
-          <XClose size={20} aria-hidden />
-        </button>
+        <CloseButton onClose={onClose} />
       </div>
       <div className="flex flex-col gap-1">
         <h2 id={titleId} className="text-md font-semibold text-primary">{title}</h2>

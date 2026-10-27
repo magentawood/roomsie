@@ -99,5 +99,5 @@ These are the newest learn pages. The full list is in [the Learn index](learn/RE
 - [ID checks and the Verified badge](learn/id-checks.md)
 - [Message requests](learn/message-requests.md)
 - [Messages and realtime](learn/messages.md)
-- [Listings and photo uploads](learn/listings.md)
+- [The chat screen and the sign-in wall](learn/chat-screen.md)
 <!-- learn-newest:end -->

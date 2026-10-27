@@ -30,18 +30,60 @@ The main screen: chat on one side, results on the other.
 
 ## Needs first
 - [[D-02 Chat screen designs ⚑]]
+- [[T-08 Form A contract ⚑]]
 
 ## Unblocks
 - [[T-09 Chip flow ⚑]]
 
 ## Done when
-- [ ] The landing button opens a full-screen chat
+- [x] The landing button opens a full-screen chat · [#172](https://github.com/magentawood/roomsie/pull/172)
 - [ ] When results exist, the screen splits into chat and results
-- [ ] On a phone, the chat becomes a bar at the bottom and expands when the user taps it
-- [ ] Nothing changes size while the person types
-- [ ] The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02
+- [ ] On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom
+- [x] Nothing changes size while the person types · [#172](https://github.com/magentawood/roomsie/pull/172)
+- [x] The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02 · [#172](https://github.com/magentawood/roomsie/pull/172)
 
 ^done
 
 ## Read first
 - [interface-shape.md](../../interface-shape.md)
+
+## Spec
+
+**Approved:** 2026-10-27, by n3rxv
+
+- **Modules** (all in `apps/web`; this ticket changes no file in `apps/api` or `packages/contract`):
+  - **The chat page (new):** the page `/chat`. An empty chat shows "What are we looking for?" of flow 02. A sent message shows in the thread with the line of the assistant that is not live. Its interface is new.
+  - **The chat input (new):** a text box that grows to four lines at most in its own box. Enter sends, Shift+Enter makes a new line, and an empty message never sends.
+  - **The sign-in wall (new):** "Sign in to continue", a modal on a desktop and a sheet on a phone, with the legal line of drafts section 17. T-21 uses the same component at the turn cap.
+  - **The app shell:** it works for a guest. The sidebar of a guest has "Sign in with Google" at the bottom. The logo, New Goal and the phone "+" open `/chat`. A guest who taps New Goal, New Listing, Messages, Saved, My listings, Profile or the phone "+" gets the wall. The interface changes.
+  - **The home stub:** a "Start looking" button that opens `/chat`, until T-23a.
+- **Seams for the tests:**
+  - A web unit test of the send rule of the input: Enter, Shift+Enter, and an empty or blank message.
+  - A browser check at 390 px and 1440 px, with the API stubbed. It checks the empty chat, a send, and that no part of the screen changes size while the person types. It also checks the wall on each guest tap and its close. Last, it checks the full-page sign-in for a link from outside, the sidebar button of a guest, and the home button.
+- **Decisions:**
+  - **The phone:** the chat fills the screen. Results show as a card in the chat. "Show all" opens the results with the chat input at the bottom, as in flow 02 of the designs. This settles PD6a, which said "provisional" (why: PD14). The user decided this in the grill and approved the new text of item 3.
+  - **The scope:** T-10 builds now only the parts that need no results. The split view (item 2) and the phone results (item 3) wait for the Form A contract (T-08), the match route (T-14) and the results panel (T-15). The user decided this in the grill.
+  - **Send:** a sent message shows in the thread with one line: "The assistant isn’t live yet. Your message stays here until it is." Nothing goes to the API, and a reload clears the thread. T-12 replaces the line with its turn route. The user decided this in the grill.
+  - **The wall:** the component of drafts section 17, with the text of D-02. The text is "Sign in to continue. Unlimited chats and multiple goals, all synced up with your account." A guest tap on New Goal, New Listing, Messages, Saved, My listings, Profile or the phone "+" shows it. The close keeps the person on the chat. After the sign-in from the wall, the app opens the page that the guest tapped (the user decided this in review round 1). A link from outside to a page that needs sign-in still opens the full-page sign-in. The user decided this in the grill.
+  - **The address:** the chat is at `/chat`. The landing page of T-23a keeps `/` (PD6b). The user decided this in the grill.
+  - **No size change while typing:** the screen layout never changes while the person types (PD6a). Only the input grows, to four lines at most, and the thread above it keeps its height and scrolls.
+  - **A guest chats with no sign-in** (PD6b). The account card shows only after sign-in.
+  - **Docs:** PD6a becomes settled by the designs. Hole 1 of interface-shape.md changes to the pattern of the designs. A learn page tells how the chat screen works.
+  - **The drafts:** section 27 of the [drafts page](https://www.figma.com/design/heT0Ubh5r8PE4nwU0WPk8P/Product?node-id=492-27033).
+- **Out of scope:**
+  - the results, the split view and the phone results screen (T-08, then T-14 and T-15)
+  - the chips (T-09)
+  - the turn API, the assistant replies and the saved turns (T-12, T-13)
+  - the turn cap, "Free messages remaining" and the wall at the cap (T-21)
+  - the list of goals, the goal title and "I found a place" (T-17, T-50)
+  - the landing page (T-23a)
+
+## Log
+
+- **2026-10-27 · [#172](https://github.com/magentawood/roomsie/pull/172)**
+  - **Change:** the chat screen at `/chat`: the empty chat of flow 02, an input that never changes the layout, and a sent message with the line of the assistant that is not live yet. The sign-in wall of drafts section 17 opens on each guest tap of the shell, and the full-page sign-in has the button and the legal line of D-02. The home stub has "Start looking".
+  - **Why:** [PD6a](../../decisions/pd-06a-mobile-split-view.md) (now settled by the designs), [PD6b](../../decisions/pd-06b-login-gate-and-search.md)
+  - **Ticked:** "The landing button opens a full-screen chat", "Nothing changes size while the person types", "The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02"
+  - **Not done:** "When results exist, the screen splits into chat and results" and "On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom": blocked by T-08 (the Form A contract), then T-14 and T-15. T-08 is now in the dependencies of T-10.
+  - **Learn:** [The chat screen and the sign-in wall](../../learn/chat-screen.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

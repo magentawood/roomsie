@@ -1,6 +1,6 @@
 # PD6c — The panel follows the form
 
-**Status:** Settled. Four holes closed, one provisional. Changed on 2026-10-27. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. All five holes closed. Changed on 2026-10-27. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -8,7 +8,7 @@ PD6 settles the flow. First a landing page, then a full-screen chat with no
 skip. After 2 to 3 inputs, a split view shows live listings with minimal manual
 filters. The design had five holes:
 
-1. Mobile has no side-by-side view. **Provisional** (PD6a).
+1. Mobile has no side-by-side view. **Closed** (PD6a).
 2. Search traffic breaks the no-skip rule. **Closed** (PD6b).
 3. Two or three turns do not give sufficient data to rank. **Closed.**
 4. Live updates. **Closed.**

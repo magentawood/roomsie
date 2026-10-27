@@ -83,7 +83,7 @@ Finish line: Wed 28 Oct. 29 hours.
 | 9 | T-38 · Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct → Mon 5 Oct | T-37, T-11, T-05, M-05 |
 | 10 | T-27 · Run the eval set and tune the prompt | 3 | Mon 5 Oct → Tue 6 Oct | T-12 |
 | 11 | T-17 · Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06, T-12 |
-| 12 | T-10 ⚑ · Chat screen and split view | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
+| 12 | T-10 ⚑ · Chat screen and split view | 8 | Wed 7 Oct → Fri 9 Oct | D-02, T-08 |
 | 13 | T-09 ⚑ · Chip flow for intent, area, budget | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
 
 Finish line: Sat 10 Oct. 64 hours.
@@ -235,7 +235,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P2 Chat | 9 | T-38 | Advisor: articles first, then web search after sign-in | 7 | Sun 4 Oct | Mon 5 Oct | CP3 | T-37, T-11, T-05, M-05 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 | P2 Chat | 10 | T-27 | Run the eval set and tune the prompt | 3 | Mon 5 Oct | Tue 6 Oct | CP3 | T-12 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | P2 Chat | 11 | T-17 | Carry anonymous chat into the account on sign-in | 2 | Tue 6 Oct | Wed 7 Oct | CP3 | T-05, T-06, T-12 | [#32](https://github.com/magentawood/roomsie/issues/32) |
-| P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02 | [#12](https://github.com/magentawood/roomsie/issues/12) |
+| P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02, T-08 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | P2 Chat | 13 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Fri 9 Oct | Sat 10 Oct | CP3 | T-10, T-08, D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
@@ -704,7 +704,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | D-05 | Design QA on the live build | D |  | Mon 5 Oct → Sat 10 Oct | D-02, D-03 |
 | T-17 | Carry anonymous chat into the account on sign-in | P2 | 2 | Tue 6 Oct → Wed 7 Oct | T-05, T-06, T-12 |
 | T-39 | Analytics in its own database, with scheduled jobs | P1 | 3 | Tue 6 Oct → Thu 8 Oct | T-24 |
-| T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02 |
+| T-10 ⚑ | Chat screen and split view | P2 | 8 | Wed 7 Oct → Fri 9 Oct | D-02, T-08 |
 | T-18b ⚑ | Person detail and connect screens | P3 | 4 | Thu 8 Oct → Sat 10 Oct | D-03, F-13 |
 | T-22a | Mumbai areas and waitlist API | P4 | 2 | Thu 8 Oct → Sat 10 Oct | T-14, T-56 |
 | T-22b | Waitlist screen outside Mumbai | P4 | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
@@ -907,7 +907,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-10 · Chat screen and split view** — done when:
 - The landing button opens a full-screen chat
 - When results exist, the screen splits into chat and results
-- On a phone, the chat becomes a bar at the bottom and expands when the user taps it
+- On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom
 - Nothing changes size while the person types
 - The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02
 - Read first: `docs/interface-shape.md`

@@ -1,16 +1,15 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useAuth } from '../../lib/auth'
-import { Button } from '../ui/button'
+import { GoogleSignIn, LegalLine } from './google-sign-in'
 import { Logo } from './logo'
 
 export const listingSignIn = { title: 'Sign in to list your place', text: 'Your listings stay in your account, and only you can change them.' }
 
-/** A screen behind sign-in (PD6b). A signed-out user sees the Google sign-in of T-05, with the title and text of the screen. */
+/** A screen behind sign-in (PD6b). A signed-out user sees the Google sign-in of T-05 in the design of D-02, with the title and text of the screen. */
 export function SignInGate({ title, text, children }: { title: string; text: string; children: ReactNode }) {
-  const { user, loading, signIn } = useAuth()
-  const [error, setError] = useState<string | null>(null)
+  const { user, loading } = useAuth()
   if (loading) return <div className="flex min-h-dvh items-center justify-center text-sm text-tertiary">Loading…</div>
   if (user) return <>{children}</>
   return (
@@ -21,10 +20,10 @@ export function SignInGate({ title, text, children }: { title: string; text: str
           <h1 className="text-lg font-semibold text-primary">{title}</h1>
           <p className="text-sm text-tertiary">{text}</p>
         </div>
-        <Button variant="primary" size="lg" className="w-full" onClick={() => signIn().then(() => setError(null), (err: unknown) => setError(String(err)))}>
-          Continue with Google
-        </Button>
-        {error && <p className="text-sm text-error-primary">{error}</p>}
+        <div className="flex w-full flex-col gap-3">
+          <GoogleSignIn size="lg" />
+          <LegalLine />
+        </div>
       </div>
     </main>
   )
