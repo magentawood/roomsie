@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { signOut } from 'firebase/auth'
 import { healthResponse, meResponse } from '@roomsie/contract'
@@ -8,10 +7,10 @@ import { api, apiUrl } from '../lib/api'
 import { useAuth } from '../lib/auth'
 import { firebaseAuth } from '../lib/firebase'
 import { Button } from '../components/ui/button'
+import { GoogleSignIn } from '../components/shell/sign-in-wall'
 
 export default function Home() {
-  const { user, signIn } = useAuth()
-  const [signInError, setSignInError] = useState<string | null>(null)
+  const { user } = useAuth()
 
   const health = useQuery({
     queryKey: ['health'],
@@ -40,12 +39,7 @@ export default function Home() {
           <button type="button" onClick={() => signOut(firebaseAuth())}>Sign out</button>
         </>
       ) : (
-        <>
-          <button type="button" onClick={() => signIn().then(() => setSignInError(null), (err: unknown) => setSignInError(String(err)))}>
-            Sign in with Google
-          </button>
-          {signInError && <p>{signInError}</p>}
-        </>
+        <GoogleSignIn />
       )}
     </main>
   )

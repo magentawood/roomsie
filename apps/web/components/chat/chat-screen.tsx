@@ -2,14 +2,11 @@
 
 import { useLayoutEffect, useRef, useState } from 'react'
 import { ArrowRight } from '@untitledui/icons'
-import { canSend, keyAction, notLiveLine } from '../../lib/chat'
+import { canSend, keyAction } from '../../lib/chat'
 import { Button } from '../ui/button'
 
-/**
- * The input of the chat. It grows to four lines in its own box, over the screen, so the layout never changes while
- * the person types (PD6a). `grow`: the side that it grows to.
- */
-function ChatInput({ grow, onSend }: { grow: 'up' | 'down'; onSend: (text: string) => void }) {
+/** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
+function ChatInput({ grow, autoFocus, onSend }: { grow: 'up' | 'down'; autoFocus?: boolean; onSend: (text: string) => void }) {
   const [text, setText] = useState('')
   const box = useRef<HTMLTextAreaElement>(null)
   // The text box takes the height of its text, to its max height.
@@ -25,10 +22,9 @@ function ChatInput({ grow, onSend }: { grow: 'up' | 'down'; onSend: (text: strin
   return (
     // The box keeps the height of one line. The input grows out of it.
     <div className="relative h-16">
-      <form onSubmit={(e) => { e.preventDefault(); if (canSend(text)) send() }}
+      <form onSubmit={(e) => { e.preventDefault(); send() }}
         className={`absolute inset-x-0 z-10 flex items-end gap-2 rounded-xl border border-secondary bg-primary px-3.5 py-3 shadow-md focus-within:outline-2 focus-within:outline-focus-ring ${grow === 'up' ? 'bottom-0' : 'top-0'}`}>
-        {/* The input of a thread comes after the first send, so it keeps the focus of the person. */}
-        <textarea ref={box} aria-label="Message" rows={1} autoFocus={grow === 'up'} value={text} placeholder="3 bhk in bandra for 3 friends..."
+        <textarea ref={box} aria-label="Message" rows={1} autoFocus={autoFocus} value={text} placeholder="3 bhk in bandra for 3 friends..."
           className="max-h-28 flex-1 resize-none bg-transparent py-2 text-md text-primary outline-none placeholder:text-placeholder"
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -80,13 +76,15 @@ export function ChatScreen() {
           {sent.map((text, i) => (
             <li key={i} className="flex flex-col gap-6">
               <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
-              <p className="text-md text-primary">{notLiveLine}</p>
+              {/* T-12 replaces this line with the reply of the assistant. */}
+              <p className="text-md text-primary">The assistant isn’t live yet. Your message stays here until it is.</p>
             </li>
           ))}
         </ol>
       </div>
       <div className="px-5 pb-28 lg:px-6 lg:pb-6">
-        <ChatInput grow="up" onSend={send} />
+        {/* It comes after the first send, so it keeps the focus of the person. */}
+        <ChatInput grow="up" autoFocus onSend={send} />
       </div>
     </main>
   )

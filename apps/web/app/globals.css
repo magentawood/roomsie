@@ -118,7 +118,6 @@
   --shadow-xs-skeuomorphic: 0 1px 2px 0 #0000000d, inset 0 -2px 0 0 #0000000d, inset 0 0 0 1px #0000002e;
 }
 
-/* The soft glow behind the chat, as flow 02 of the designs. */
 @utility bg-chat-glow {
   background-image: radial-gradient(100% 145.5% at 100% 100%, var(--background-color-primary) 0%, var(--color-orange-100) 25.5%, var(--color-rose-50) 51%, var(--color-purple-25) 76.4%, var(--color-yellow-25) 100%);
 }
