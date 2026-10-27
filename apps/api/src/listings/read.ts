@@ -4,11 +4,13 @@ import type { Db } from '../db/client'
 import { listingFlatmates, listingRates, listings, profiles } from '../db/schema'
 import { noBlockBetween } from '../match/query'
 import { firstPhotoUrl, type Storage } from '../storage'
+import { verifiedAmong } from '../verification/read'
 
 export type Listing = typeof listings.$inferSelect
 export type Rate = Pick<typeof listingRates.$inferSelect, 'sharing' | 'rent' | 'deposit'>
 export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age' | 'whatTheyDo' | 'food' | 'photoKey'>
-export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'> | null }
+/** `verified`: the owner has an approved ID check (T-46). */
+export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<typeof profiles.$inferSelect, 'fullName' | 'photoKeys'> | null; verified: boolean }
 
 /** A listing that the viewer can see: live, not expired, not hidden by reports, and no block between the viewer and the owner. */
 export const visibleListing = (viewerUserId: string) => and(
@@ -22,14 +24,17 @@ export async function partsOf(db: Db, ids: string[]) {
   const listers = await db.select({ listingId: listings.id, fullName: profiles.fullName, photoKeys: profiles.photoKeys }).from(listings)
     .innerJoin(profiles, and(eq(profiles.userId, listings.ownerUserId), eq(profiles.managedByParent, false)))
     .where(inArray(listings.id, ids))
+  const owners = await db.select({ id: listings.id, ownerUserId: listings.ownerUserId }).from(listings).where(inArray(listings.id, ids))
+  const verified = await verifiedAmong(db, owners.map((o) => o.ownerUserId))
   return (id: string): Parts => ({
     rates: rates.filter((r) => r.listingId === id),
     flatmates: flatmates.filter((f) => f.listingId === id),
     lister: listers.find((l) => l.listingId === id) ?? null,
+    verified: verified.has(owners.find((o) => o.id === id)?.ownerUserId ?? ''),
   })
 }
 
-export function listingView(listing: Listing, { rates, flatmates, lister }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
+export function listingView(listing: Listing, { rates, flatmates, lister, verified }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
   // The serializer parses each reply with the contract schema, which drops ownerUserId and the row ids.
   const { photoKeys, roomType, expiresAt, hiddenAt, createdAt, updatedAt, ...fields } = listing
   const hideAddress = !isOwner && !listing.shareAddress
@@ -44,6 +49,7 @@ export function listingView(listing: Listing, { rates, flatmates, lister }: Part
     flatmates: flatmates.map((f) => ({ ...f, photoUrl: f.photoKey && storage.publicUrl(f.photoKey) })),
     mine: isOwner,
     lister: lister && { name: lister.fullName, photoUrl: firstPhotoUrl(storage, lister.photoKeys) },
+    verified,
     hidden: hiddenAt !== null,
     expiresAt: expiresAt?.toISOString() ?? null,
     createdAt: createdAt.toISOString(),

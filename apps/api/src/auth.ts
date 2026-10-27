@@ -82,7 +82,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     // The email alerts go to the verified email of the latest sign-in (T-55).
     if (emailVerified && email && email !== user.email) await db.update(users).set({ email, updatedAt: new Date() }).where(eq(users.id, user.id))
-    req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid) }
+    req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid), reviewer: moderation.reviewerUids.includes(uid) }
     req.identity = identity
     tokens.set(req, { uid, claims: realtimeClaims.safeParse(verified!.payload).data })
   }

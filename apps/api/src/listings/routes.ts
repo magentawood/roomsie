@@ -81,6 +81,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     if (newRates && !newRates.every(hasType)) return reply.code(400).send({ error: 'not valid: rates' })
     const next = {
       lister: current.lister,
+      verified: current.verified,
       listing: nextListing,
       // A PG that drops a sharing type drops its rent too.
       rates: newRates?.map((r) => ({ sharing: r.sharing ?? null, rent: r.rent, deposit: r.deposit })) ?? current.rates.filter(hasType),

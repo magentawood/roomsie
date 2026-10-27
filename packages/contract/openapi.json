@@ -61,12 +61,16 @@
                     },
                     "moderator": {
                       "type": "boolean"
+                    },
+                    "reviewer": {
+                      "type": "boolean"
                     }
                   },
                   "required": [
                     "id",
                     "status",
-                    "moderator"
+                    "moderator",
+                    "reviewer"
                   ],
                   "additionalProperties": false
                 }
@@ -692,6 +696,9 @@
                       ],
                       "additionalProperties": false
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -763,6 +770,7 @@
                     "flatmates",
                     "mine",
                     "lister",
+                    "verified",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -1308,6 +1316,9 @@
                             ],
                             "additionalProperties": false
                           },
+                          "verified": {
+                            "type": "boolean"
+                          },
                           "hidden": {
                             "type": "boolean"
                           },
@@ -1379,6 +1390,7 @@
                           "flatmates",
                           "mine",
                           "lister",
+                          "verified",
                           "hidden",
                           "expiresAt",
                           "createdAt",
@@ -1938,6 +1950,9 @@
                       ],
                       "additionalProperties": false
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -2009,6 +2024,7 @@
                     "flatmates",
                     "mine",
                     "lister",
+                    "verified",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -3039,6 +3055,9 @@
                       ],
                       "additionalProperties": false
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -3110,6 +3129,7 @@
                     "flatmates",
                     "mine",
                     "lister",
+                    "verified",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -3836,6 +3856,9 @@
                       ],
                       "additionalProperties": false
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "hidden": {
                       "type": "boolean"
                     },
@@ -3907,6 +3930,7 @@
                     "flatmates",
                     "mine",
                     "lister",
+                    "verified",
                     "hidden",
                     "expiresAt",
                     "createdAt",
@@ -4737,6 +4761,9 @@
                             ],
                             "additionalProperties": false
                           },
+                          "verified": {
+                            "type": "boolean"
+                          },
                           "hidden": {
                             "type": "boolean"
                           },
@@ -4808,6 +4835,7 @@
                           "flatmates",
                           "mine",
                           "lister",
+                          "verified",
                           "hidden",
                           "expiresAt",
                           "createdAt",
@@ -5028,6 +5056,9 @@
                                 "dealbreaker"
                               ]
                             }
+                          },
+                          "verified": {
+                            "type": "boolean"
                           }
                         },
                         "required": [
@@ -5046,7 +5077,8 @@
                           "moveDate",
                           "photos",
                           "lifestyle",
-                          "mustHaves"
+                          "mustHaves",
+                          "verified"
                         ],
                         "additionalProperties": false
                       }
@@ -5414,6 +5446,9 @@
                         ]
                       }
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "gender": {
                       "type": "string",
                       "enum": [
@@ -5462,6 +5497,7 @@
                     "photos",
                     "lifestyle",
                     "mustHaves",
+                    "verified",
                     "gender",
                     "visibility",
                     "missing",
@@ -5688,6 +5724,9 @@
                         ]
                       }
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "gender": {
                       "type": "string",
                       "enum": [
@@ -5736,6 +5775,7 @@
                     "photos",
                     "lifestyle",
                     "mustHaves",
+                    "verified",
                     "gender",
                     "visibility",
                     "missing",
@@ -6162,6 +6202,9 @@
                         ]
                       }
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "gender": {
                       "type": "string",
                       "enum": [
@@ -6210,6 +6253,7 @@
                     "photos",
                     "lifestyle",
                     "mustHaves",
+                    "verified",
                     "gender",
                     "visibility",
                     "missing",
@@ -6574,6 +6618,9 @@
                         ]
                       }
                     },
+                    "verified": {
+                      "type": "boolean"
+                    },
                     "connection": {
                       "oneOf": [
                         {
@@ -6644,6 +6691,7 @@
                     "photos",
                     "lifestyle",
                     "mustHaves",
+                    "verified",
                     "connection",
                     "requestsLeftToday"
                   ],
@@ -7434,6 +7482,9 @@
                                         "dealbreaker"
                                       ]
                                     }
+                                  },
+                                  "verified": {
+                                    "type": "boolean"
                                   }
                                 },
                                 "required": [
@@ -7452,7 +7503,8 @@
                                   "moveDate",
                                   "photos",
                                   "lifestyle",
-                                  "mustHaves"
+                                  "mustHaves",
+                                  "verified"
                                 ],
                                 "additionalProperties": false
                               },
@@ -8043,6 +8095,9 @@
                                     ],
                                     "additionalProperties": false
                                   },
+                                  "verified": {
+                                    "type": "boolean"
+                                  },
                                   "hidden": {
                                     "type": "boolean"
                                   },
@@ -8114,6 +8169,7 @@
                                   "flatmates",
                                   "mine",
                                   "lister",
+                                  "verified",
                                   "hidden",
                                   "expiresAt",
                                   "createdAt",
@@ -8944,6 +9000,677 @@
                   },
                   "required": [
                     "registered"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/verification": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "in_review",
+                        "verified",
+                        "rejected",
+                        "expired"
+                      ]
+                    },
+                    "reason": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "id_not_clear",
+                        "selfie_not_clear",
+                        "no_match",
+                        "not_accepted",
+                        "id_expired"
+                      ]
+                    },
+                    "note": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "sentAt": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "reviewedAt": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "state",
+                    "reason",
+                    "note",
+                    "sentAt",
+                    "reviewedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "documentType": {
+                    "type": "string",
+                    "enum": [
+                      "passport",
+                      "driving_licence",
+                      "voter_id",
+                      "pan_card"
+                    ]
+                  },
+                  "idPhotoKey": {
+                    "type": "string",
+                    "pattern": "^checks\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                  },
+                  "selfieKey": {
+                    "type": "string",
+                    "pattern": "^checks\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                  }
+                },
+                "required": [
+                  "documentType",
+                  "idPhotoKey",
+                  "selfieKey"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "none",
+                        "in_review",
+                        "verified",
+                        "rejected",
+                        "expired"
+                      ]
+                    },
+                    "reason": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "id_not_clear",
+                        "selfie_not_clear",
+                        "no_match",
+                        "not_accepted",
+                        "id_expired"
+                      ]
+                    },
+                    "note": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "sentAt": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "reviewedAt": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "state",
+                    "reason",
+                    "note",
+                    "sentAt",
+                    "reviewedAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/me/verification/upload-urls": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "idPhoto": {
+                    "type": "object",
+                    "properties": {
+                      "contentType": {
+                        "type": "string",
+                        "enum": [
+                          "image/jpeg",
+                          "image/png",
+                          "image/webp"
+                        ]
+                      },
+                      "size": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10485760
+                      }
+                    },
+                    "required": [
+                      "contentType",
+                      "size"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "selfie": {
+                    "type": "object",
+                    "properties": {
+                      "contentType": {
+                        "type": "string",
+                        "enum": [
+                          "image/jpeg",
+                          "image/png",
+                          "image/webp"
+                        ]
+                      },
+                      "size": {
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10485760
+                      }
+                    },
+                    "required": [
+                      "contentType",
+                      "size"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "idPhoto",
+                  "selfie"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "idPhoto": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "pattern": "^checks\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "selfie": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string",
+                          "pattern": "^checks\\/[0-9a-f-]{36}\\/[0-9a-f-]{36}\\.(jpg|png|webp)$"
+                        },
+                        "url": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "url",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "idPhoto",
+                    "selfie"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/verifications": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "checks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "name": {
+                            "nullable": true,
+                            "type": "string"
+                          },
+                          "photoUrl": {
+                            "nullable": true,
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "documentType": {
+                            "type": "string",
+                            "enum": [
+                              "passport",
+                              "driving_licence",
+                              "voter_id",
+                              "pan_card"
+                            ]
+                          },
+                          "faceMatch": {
+                            "nullable": true,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 100
+                          },
+                          "earlierChecks": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "sentAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "name",
+                          "photoUrl",
+                          "documentType",
+                          "faceMatch",
+                          "earlierChecks",
+                          "sentAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "checks"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/verifications/{id}/photos": {
+      "post": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "idPhotoUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "selfieUrl": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "expiresAt": {
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    }
+                  },
+                  "required": [
+                    "idPhotoUrl",
+                    "selfieUrl",
+                    "expiresAt"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/verifications/{id}/review": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "approve"
+                        ]
+                      }
+                    },
+                    "required": [
+                      "action"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "type": "string",
+                        "enum": [
+                          "reject"
+                        ]
+                      },
+                      "reason": {
+                        "type": "string",
+                        "enum": [
+                          "id_not_clear",
+                          "selfie_not_clear",
+                          "no_match",
+                          "not_accepted",
+                          "id_expired"
+                        ]
+                      },
+                      "note": {
+                        "default": null,
+                        "nullable": true,
+                        "type": "string",
+                        "maxLength": 200
+                      }
+                    },
+                    "required": [
+                      "action",
+                      "reason"
+                    ],
+                    "additionalProperties": false
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No body."
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
                   ],
                   "additionalProperties": false
                 }

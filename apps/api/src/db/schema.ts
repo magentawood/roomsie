@@ -11,13 +11,13 @@
  */
 import { sql } from 'drizzle-orm'
 import {
-  pgTable, pgEnum, uuid, text, integer, boolean, date, timestamp, jsonb,
+  pgTable, pgEnum, uuid, text, integer, real, boolean, date, timestamp, jsonb,
   primaryKey, uniqueIndex, index, check, unique, foreignKey,
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import {
-  amenities, bathrooms, bedsFree, curfews, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, placeTypes, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  amenities, bathrooms, bedsFree, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
+  listingKinds, listingStatuses, meals, minStays, placeTypes, rejectReasons, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -99,6 +99,51 @@ export const pushTokens = pgTable('push_tokens', {
 }, (t) => ({
   tokenIdx: uniqueIndex('push_tokens_token_idx').on(t.token),
   userIdx: index('push_tokens_user_idx').on(t.userId),
+})).enableRLS()
+
+/* ── ID verification (T-46) ───────────────────────────────────────────────
+ * PD8: we keep the result, never the document. The two files wait in the
+ * private bucket until the review, and the keys go with them.
+ */
+/** A check older than 7 days with no review reads as expired: the state stays `in_review`. */
+export const verificationStateEnum = pgEnum('verification_state', ['in_review', 'verified', 'rejected'])
+/** The v0 route of PD8. DigiLocker adds a method in v1. */
+export const verificationMethodEnum = pgEnum('verification_method', ['id_selfie'])
+export const documentTypeEnum = pgEnum('document_type', documentTypes)
+export const rejectReasonEnum = pgEnum('reject_reason', rejectReasons)
+export const verificationAuditActionEnum = pgEnum('verification_audit_action', ['view', 'approve', 'reject'])
+
+export const verifications = pgTable('verifications', {
+  id: id(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  state: verificationStateEnum('state').notNull().default('in_review'),
+  method: verificationMethodEnum('method').notNull().default('id_selfie'),
+  documentType: documentTypeEnum('document_type').notNull(),
+  /** The files in the private bucket. Null after the review. */
+  idPhotoKey: text('id_photo_key'),
+  selfieKey: text('selfie_key'),
+  /** The similarity of Amazon Rekognition, 0 to 100. Only the reviewer sees it, and it goes at the review (ADR-0020). */
+  faceMatch: real('face_match'),
+  reason: rejectReasonEnum('reason'),
+  note: text('note'),
+  reviewerUserId: uuid('reviewer_user_id').references(() => users.id, { onDelete: 'set null' }),
+  reviewedAt: timestamp('reviewed_at', { withTimezone: true }),
+  createdAt: createdAt(),
+}, (t) => ({
+  userIdx: index('verifications_user_idx').on(t.userId, t.createdAt),
+  queueIdx: index('verifications_queue_idx').on(t.state, t.createdAt),
+  reasonCheck: check('verifications_reason_check', sql`(${t.state} = 'rejected') = (${t.reason} is not null)`),
+})).enableRLS()
+
+/** Each view of the photos, and each review, of a check (PD8). The rows go with the check. */
+export const verificationAudit = pgTable('verification_audit', {
+  id: id(),
+  verificationId: uuid('verification_id').notNull().references(() => verifications.id, { onDelete: 'cascade' }),
+  reviewerUserId: uuid('reviewer_user_id').references(() => users.id, { onDelete: 'set null' }),
+  action: verificationAuditActionEnum('action').notNull(),
+  createdAt: createdAt(),
+}, (t) => ({
+  verificationIdx: index('verification_audit_verification_idx').on(t.verificationId, t.createdAt),
 })).enableRLS()
 
 /* ── the person ─────────────────────────────────────────────────────────── */

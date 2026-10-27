@@ -18,3 +18,17 @@ describe('the texts of the alerts', () => {
     expect(mail.html).toContain('&#60;img')
   })
 })
+
+describe('the texts of the ID check alerts', () => {
+  it('tells the result and opens Settings, with no reason', () => {
+    const verified = alertMail({ kind: 'verified', link: 'https://roomsie.in/profile' }, 'https://roomsie.in/profile')
+    expect(verified.subject).toBe('You’re verified on roomsie')
+    const rejected = alertMail({ kind: 'rejected', link: 'https://roomsie.in/profile' }, 'https://roomsie.in/profile')
+    expect(rejected.subject).toBe('Your ID check needs a new photo')
+    for (const part of [rejected.text, rejected.html]) {
+      expect(part).toContain('https://roomsie.in/profile')
+      expect(part).toContain('We never put the reason in an email')
+      expect(part).not.toContain('messages in an email')
+    }
+  })
+})

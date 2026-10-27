@@ -3,7 +3,9 @@ import { and, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import type { Db } from './db/client'
 import { anonymousSessions, blocks, goals, listingFlatmates, listings, profiles, pushTokens, reports, saves, users } from './db/schema'
+import type { IdStore } from './id-store'
 import type { Storage } from './storage'
+import { deleteChecksOf } from './verification/read'
 import { endOpenRequests } from './requests/read'
 
 /** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
@@ -25,7 +27,7 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  *
  * Not here yet: events (T-24), Form B (T-35), the Firebase user (T-53). The messages stay for the other person (T-44).
  */
-export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, userId: string, identity: string) {
+export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | null, userId: string, identity: string) {
   await db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
   await db.update(listings).set({ status: 'inactive', updatedAt: new Date() })
     .where(and(eq(listings.ownerUserId, userId), eq(listings.status, 'live')))
@@ -45,6 +47,7 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
       ...profilePhotos.flatMap((r) => r.keys),
       ...listingPhotos.flatMap((r) => (r.flatmate ? [...r.keys, r.flatmate] : r.keys)),
     ])])
+    await deleteChecksOf(tx, idStore, userId)
     await endOpenRequests(tx, userId)
     // The cascades remove the rates, the flatmates, the chat turns and the goals of a claimed visitor session.
     await tx.delete(listings).where(eq(listings.ownerUserId, userId))
