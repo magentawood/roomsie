@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { AreasResponse } from '@roomsie/contract'
-import { areaTree, chipState, pickArea, subAreaChoice } from './areas'
+import { areaTree, chipState, pickArea, pickLabel, subAreaChoice } from './areas'
 
 const area = (slug: string, name: string, parent: string | null, aliases: string[] = []) => ({ slug, name, parent, aliases })
 const tree = areaTree([
@@ -32,12 +32,6 @@ describe('the Where step', () => {
     expect(subAreaChoice(tree, 'andheri-goregaon')).toEqual({ group: 'andheri-goregaon', subArea: null, pocket: null })
     expect(subAreaChoice(tree, null)).toEqual({ group: null, subArea: null, pocket: null })
   })
-
-  it('gives the areas under an area, in the order of the API', () => {
-    expect(tree.under('andheri-goregaon').map((a) => a.slug)).toEqual(['andheri-west', 'andheri-east'])
-    expect(tree.under('andheri-east')).toEqual([])
-    expect(tree.groups.map((a) => a.slug)).toEqual(['andheri-goregaon', 'malad-borivali', 'thane'])
-  })
 })
 
 describe('the search', () => {
@@ -62,6 +56,12 @@ describe('the profile picks', () => {
     expect(pickArea(tree, ['andheri-goregaon'], 'versova')).toEqual(['andheri-goregaon'])
     expect(chipState(tree, ['andheri-goregaon'], 'andheri-goregaon')).toBe('picked')
     expect(chipState(tree, ['andheri-west'], 'andheri-east')).toBe('free')
+  })
+
+  it('shows a group pick as "All of" the group, and an area that is not loaded yet by its slug', () => {
+    expect(pickLabel(tree, 'andheri-goregaon')).toBe('All of Andheri–Goregaon')
+    expect(pickLabel(tree, 'versova')).toBe('Versova, Andheri West')
+    expect(pickLabel(areaTree([]), 'powai')).toBe('powai')
   })
 
   it('stops at 20 picks, and still removes one', () => {

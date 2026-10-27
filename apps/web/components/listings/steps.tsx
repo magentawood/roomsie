@@ -35,7 +35,7 @@ export function KindStep({ kind, onPick }: { kind: ListingKind | null; onPick?: 
   )
 }
 
-const names = (areas: Area[]) => Object.fromEntries(areas.map((a) => [a.slug, a.name]))
+const areaNames = (areas: Area[]) => Object.fromEntries(areas.map((a) => [a.slug, a.name]))
 
 /** A listing saves a sub-area or a pocket (PD2). The group only opens its sub-areas, as section 23 of the drafts. */
 export function WhereStep({ kind, values, set, errors, areas }: StepProps & { areas: AreasResponse['areas'] }) {
@@ -47,11 +47,11 @@ export function WhereStep({ kind, values, set, errors, areas }: StepProps & { ar
   return (
     <>
       {kind === 'pg' && <TextInput label="PG/Hostel Name" required value={values.pgName} onChange={(pgName) => set({ pgName })} placeholder="Name of your PG/Hostel" hint={maskedHint} maxLength={textLimits.pgName} />}
-      <ChoiceChips label="Area group" required labels={names(tree.groups)} value={group} onChange={(picked) => { setGroup(picked); set({ areaSlug: null }) }} />
-      {group && <ChoiceChips label="Sub-area" required labels={names(tree.under(group))} value={subArea} onChange={(areaSlug) => set({ areaSlug })} />}
+      <ChoiceChips label="Area group" required labels={areaNames(tree.groups)} value={group} onChange={(picked) => { setGroup(picked); set({ areaSlug: null }) }} />
+      {group && <ChoiceChips label="Sub-area" required labels={areaNames(tree.under(group))} value={subArea} onChange={(areaSlug) => set({ areaSlug })} />}
       {subArea && pockets.length > 0 && (
         <ChoiceChips label={`Which part of ${tree.label(subArea)}?`} hint={`Optional. Skip it to keep ${tree.label(subArea)}.`}
-          labels={names(pockets)} value={saved.pocket} onChange={(pocket) => set({ areaSlug: pocket ?? subArea })} />
+          labels={areaNames(pockets)} value={saved.pocket} onChange={(pocket) => set({ areaSlug: pocket ?? subArea })} />
       )}
       <TextInput label="Address" value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint={`Only you see it, unless you share it below. ${maskedHint}`} maxLength={textLimits.address} />
       <div className="grid gap-5 md:grid-cols-2 md:gap-8">

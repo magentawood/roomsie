@@ -1,11 +1,10 @@
 import { maxProfileAreas, type AreasResponse } from '@roomsie/contract'
 
 export type Area = AreasResponse['areas'][number]
-export type AreaTree = ReturnType<typeof areaTree>
+type AreaTree = ReturnType<typeof areaTree>
 
 const searchable = (text: string) => text.toLowerCase().replace(/[^a-z0-9]/g, '')
 
-/** The areas of the API as groups, sub-areas and pockets (PD2), in the order of the designs. */
 export function areaTree(areas: readonly Area[]) {
   const bySlug = new Map(areas.map((a) => [a.slug, a]))
   const lineage = (slug: string): string[] => {
@@ -41,6 +40,13 @@ export function chipState(tree: AreaTree, picks: readonly string[], slug: string
   if (picks.includes(slug)) return 'picked'
   if (tree.lineage(slug).some((above) => picks.includes(above))) return 'covered'
   return picks.length >= maxProfileAreas ? 'full' : 'free'
+}
+
+/** A group pick reads "All of" the group. An area that is not loaded yet shows its slug. */
+export function pickLabel(tree: AreaTree, slug: string) {
+  const label = tree.label(slug)
+  if (!label) return slug
+  return tree.lineage(slug).length === 1 ? `All of ${label}` : label
 }
 
 export function pickArea(tree: AreaTree, picks: readonly string[], slug: string): string[] {

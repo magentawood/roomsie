@@ -67,11 +67,10 @@ export function useAreas() {
   return useQuery({ queryKey: queryKeys.areas, queryFn: () => api(user, '/v1/areas', areasResponse), staleTime: Infinity })
 }
 
-/** Each area slug with the label that cards and details show. */
 export function useAreaLabels(): Record<string, string> {
   const areas = useAreas().data?.areas ?? []
   const tree = areaTree(areas)
-  return Object.fromEntries(areas.map((a) => [a.slug, tree.label(a.slug)!]))
+  return Object.fromEntries(areas.map((a) => [a.slug, tree.label(a.slug) ?? a.name]))
 }
 
 export function useSavedPlaces(enabled = true) {
