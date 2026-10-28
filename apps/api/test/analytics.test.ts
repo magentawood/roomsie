@@ -2,6 +2,7 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { asc, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { outgoingRequest } from '@roomsie/contract'
+import { createAnalyticsDb } from '../src/analytics/client'
 import { events } from '../src/analytics/schema'
 import { connectionRequests, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
@@ -62,21 +63,15 @@ describe('track', () => {
     ])
   })
 
-  it('fires "report filed" with the subject and the reason, and not the detail', async () => {
+  it('fires "report filed" with the subject and the reason, not the detail, and one time for a repeated tap', async () => {
     const detail = 'He asked for money first'
-    expect((await t.call('seeker', 'POST', '/v1/reports', { id: uuidv7(), profileId: cards.friend, reason: 'fake', detail })).statusCode).toBe(204)
+    const report = { id: uuidv7(), profileId: cards.friend, reason: 'fake', detail }
+    expect((await t.call('seeker', 'POST', '/v1/reports', report)).statusCode).toBe(204)
+    expect((await t.call('seeker', 'POST', '/v1/reports', report)).statusCode).toBe(204)
 
     const rows = await written()
     expect(rows).toMatchObject([{ name: 'report_filed', actor: await actorOf('seeker'), fields: { subject: 'person', reason: 'fake' } }])
     expect(JSON.stringify(rows)).not.toContain(detail)
-  })
-
-  it('fires no second "report filed" for a repeated tap', async () => {
-    const report = { id: uuidv7(), profileId: cards.seeker, reason: 'fake' }
-    expect((await t.call('friend', 'POST', '/v1/reports', report)).statusCode).toBe(204)
-    expect((await t.call('friend', 'POST', '/v1/reports', report)).statusCode).toBe(204)
-
-    expect(await written()).toHaveLength(1)
   })
 
   it('fires "signed in" one time for each sign-in, not for a refreshed token', async () => {
@@ -110,15 +105,14 @@ describe('track', () => {
     expect(event).toMatchObject({ name: 'signed_in', fields: { newAccount: true } })
     expect(event!.actor).not.toBe(actor)
   })
-})
 
-describe('track without the analytics database', () => {
-  it('loses the events, logs it, and the route still succeeds', async () => {
-    const gone = await createTestAnalyticsDb()
-    await gone.drop()
-    const app = await testApp(['visitor'], undefined, {}, gone.db)
-    expect((await app.call('visitor', 'GET', '/v1/me')).statusCode).toBe(200)
-    await expect(app.flushEvents()).resolves.toBeUndefined()
-    await app.close()
+  it('keeps the route working when a write of the events fails', async () => {
+    const app = await testApp(['visitor'], undefined, {}, createAnalyticsDb('postgres://postgres@localhost:1/nowhere'))
+    try {
+      expect((await app.call('visitor', 'GET', '/v1/me')).statusCode).toBe(200)
+      await expect(app.flushEvents()).resolves.toBeUndefined()
+    } finally {
+      await app.close()
+    }
   })
 })
