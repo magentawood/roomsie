@@ -20,7 +20,7 @@ export const testModeration = (settings: Record<string, string> = {}) => moderat
 
 /**
  * A Realtime, a Firebase Admin and a mailer that record their calls, and the public settings of Realtime.
- * FCM refuses a token that starts with "gone". Set `firebaseUsers.down` to make the Firebase user delete fail, and `realtimeState.down` to make each live send fail.
+ * FCM refuses a token that starts with "gone". Set `firebaseUsers.down` to make the Firebase user delete fail, and `realtime.down` to make each live send fail.
  */
 export function testMessaging() {
   const sent: { userId: string; event: string; payload: object }[] = []
@@ -28,11 +28,11 @@ export function testMessaging() {
   const mails: (Mail & { to: string })[] = []
   const pushes: { token: string; title: string; link: string }[] = []
   const firebaseUsers = { deleted: [] as string[], down: false }
-  const realtimeState = { down: false }
+  const realtime = { down: false }
   const messaging: Messaging = {
     realtime: {
       send: async (userId, { event, payload }) => {
-        if (realtimeState.down) throw new Error('Realtime is down')
+        if (realtime.down) throw new Error('Realtime is down')
         sent.push({ userId, event, payload })
       },
     },
@@ -51,7 +51,7 @@ export function testMessaging() {
     webRealtime: { url: 'https://realtime.example.com', key: 'test-anon-key' },
   }
   const mailer: Mailer = { send: async (to, mail) => { mails.push({ to, ...mail }) } }
-  return { messaging, mailer, sent, claims, mails, pushes, firebaseUsers, realtimeState }
+  return { messaging, mailer, sent, claims, mails, pushes, firebaseUsers, realtime }
 }
 
 /** An ID store that records each link, delete and face match. A key that contains "stuck" fails to delete. Each face match gives `score`. */
@@ -120,7 +120,7 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await testDb.drop()
   }
   return {
-    db: testDb.db, call, ids, idStore: idFakes, liveListing, liveCard, close, sent: fakes.sent, realtimeState: fakes.realtimeState, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken,
+    db: testDb.db, call, ids, idStore: idFakes, liveListing, liveCard, close, sent: fakes.sent, realtime: fakes.realtime, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken,
     flushEvents: () => app.analytics.flush(),
   }
 }

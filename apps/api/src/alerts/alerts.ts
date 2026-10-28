@@ -56,7 +56,7 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
         if (await firebaseAdmin!.sendPush(token, { title: alertTitle(alert), link: alert.link }) === 'gone') await db.delete(pushTokens).where(eq(pushTokens.token, token))
       }),
     ])
-    for (const send of sends) if (send.status === 'rejected') reportError(send.reason, { where: 'alerts', userId, log })
+    for (const send of sends) if (send.status === 'rejected') reportError(send.reason, { where: 'alerts', log })
   }
 
   return {
