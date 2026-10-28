@@ -22,6 +22,7 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
 - **The actor:** `track()` takes the analytics id of the signed-in person of `req`. A guest has no actor. Account deletion clears the analytics id in the users row. After that, no row links the events to the person, and the deletion makes no call to the analytics database.
 - **Signed in:** the users row keeps the `auth_time` of the latest sign-in. A token with a later `auth_time` fires "signed in" one time. A token refresh keeps its `auth_time`, so it fires nothing.
 - **Best effort:** a bad event or a failed insert goes to the log, and the route still succeeds. At a shutdown (SIGTERM at a deploy), the API first writes the events in memory.
+- **The job:** each day at 04:00 IST, `pg_cron` runs `jobs.maintain_events(12)` in the analytics database. It makes each missing monthly partition, in UTC, to 12 months ahead, with row level security. It drops each partition whose whole month is older than 12 months ([PD19](../decisions/pd-19-retention.md)). The migration `0002_maintain_events` makes the function and the schedule.
 - **Migrations:** the analytics database has its own folder, `apps/api/drizzle-analytics`. `node dist/migrate.js` migrates both databases. The deploy gives it `ANALYTICS_DATABASE_URL_SESSION`.
 - **Local work:** with no `ANALYTICS_DATABASE_URL`, `track()` does nothing. The tests make a disposable analytics database for each test file that checks events.
 
@@ -39,15 +40,20 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
 
 - Our own Postgres, not an analytics vendor, with batched writes and monthly partitions ([ADR-0012](../decisions/0012-analytics-event-store.md)).
 - An analytics id in place of `users.id`, so a deletion cuts the link in one transaction of the main database ([#176](https://github.com/magentawood/roomsie/pull/176)).
-- The partitions from the month of the first migration to 12 months ahead. T-39 adds the scheduled job for the next partitions and the deletion after 12 months ([PD19](../decisions/pd-19-retention.md)).
+- Deletion by whole month, so an event stays from 12 to 13 months ([PD19](../decisions/pd-19-retention.md)).
+- `pg_cron` in the database, not a job in the API, so the job runs with no API ([#182](https://github.com/magentawood/roomsie/pull/182)).
 
 ## Gotchas
 
-- Postgres refuses an insert when no partition holds its month. Each partition the migration made lasts until 12 months after the first deploy. T-39 must add the next ones before then.
-- A partition is also a table that the Supabase API can reach. Each new partition needs row level security, as the migration does.
+- Postgres refuses an insert when no partition holds its month. The job makes 12 months ahead, so a missed run is not urgent. To see the runs: `select * from cron.job_run_details order by start_time desc limit 5`.
+- A partition is also a table that the Supabase API can reach. Each new partition needs row level security, as the job does.
+- The Supabase API also serves each function of `public`. Thus, the function is in the `jobs` schema, and nobody but the owner can run it.
+- The period is in the schedule, not in the code. To change it, change PD19 first, then run `select cron.schedule('maintain-events', '30 22 * * *', 'SELECT jobs.maintain_events(<months>)')`. The same command schedules the job again after a restore into Supabase, because the dump has no schedule.
+- Local work and the tests have no `pg_cron`. The migration skips the schedule there, and the tests call the function.
 - Drizzle cannot declare a partitioned table. The SQL of the first analytics migration is edited by hand. `pnpm db:generate:analytics` makes the next one, and it sees a plain table, so check its SQL.
 - The tests must call `flushEvents()` before they read the table, because `track()` writes later.
 
 ## Tickets
 
 - T-24: [#176](https://github.com/magentawood/roomsie/pull/176), 2026-10-28. The events table, `track()`, the analytics id and the first four events.
+- T-39: [#182](https://github.com/magentawood/roomsie/pull/182), 2026-10-28. The daily job for the partitions and the deletion after 12 months.

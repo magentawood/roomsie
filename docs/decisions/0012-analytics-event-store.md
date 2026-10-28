@@ -77,7 +77,7 @@ own.** We use no third-party analytics vendor.
     DPDP Act.
   - Account deletion clears the analytics id. Then no event points to the person,
     and the deletion makes no call to the analytics database (T-24).
-  - Raw events go after 12 months ([PD19](pd-19-retention.md)).
+  - Raw events go after 12 months, by whole month ([PD19](pd-19-retention.md)).
   - We must design this policy with the schema, and not attach it subsequently.
     It is the one part where to own the data is genuinely harder than to rent it.
 
