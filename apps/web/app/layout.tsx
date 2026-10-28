@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Figtree } from 'next/font/google'
+import { connection } from 'next/server'
 import { Providers } from './providers'
 import './globals.css'
 
@@ -8,7 +9,9 @@ const figtree = Figtree({ subsets: ['latin'], variable: '--font-figtree', displa
 
 export const metadata = { title: 'roomsie' }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  // A static page cannot have the new nonce of each request, so each page renders on each request (T-52).
+  await connection()
   return (
     <html lang="en" className={figtree.variable}>
       <body>
