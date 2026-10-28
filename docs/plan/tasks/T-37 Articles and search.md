@@ -47,11 +47,11 @@ Stores the roomsie articles and finds the correct passage.
 **Approved:** 2026-10-28, by n3rxv
 
 - **Modules:**
-  - **`apps/api/content/articles/` (new):** one Markdown file for each published article, `NN-slug.md`. It has the front matter of the marketing article drafts, and an optional `author_photo`.
+  - **`apps/api/content/articles/` (new):** one Markdown file for each published article, `NN-slug.md`. It has the front matter of the marketing article drafts, an optional `author_photo`, and an optional `cover_image` with its `cover_alt`.
   - **The articles module of the API (new):** it owns the tables `articles` and `article_passages`. It parses the files, syncs the tables with them at each deploy, gives the search function to the Advisor, and serves two public routes: the list of the articles and one article. The step that migrates and seeds calls the sync. Its interface does not change.
   - **The contract:** the schemas of the two routes.
-  - **The web:** the blog pages (new), a link in the landing footer, `sitemap.xml` and `robots.txt` (new).
-  - **The Figma drafts page:** section 30, the blog list and the article page, at desktop and phone widths.
+  - **The web:** the blog pages (new), a link in the landing footer, `sitemap.xml` and `robots.txt` (new), and the share cards.
+  - **The Figma drafts page:** section 30, the blog list and the article page at desktop and phone widths, and the share cards.
   - **Docs:** `corpus-plan.md` and `seo-with-gated-products.md`.
 - **Seams for the tests:**
   - The API tests of the parser, with sample files: the front matter, the slug, the passages, the HTML and the plain text. The parser refuses a bad file. Each file in `apps/api/content/articles/` parses.
@@ -59,16 +59,18 @@ Stores the roomsie articles and finds the correct passage.
   - A browser check at 390 px and 1440 px, with a sample article that is not committed and with no article: the footer link, `/blog`, an article page and the 404.
 - **Decisions:**
   - **Scope:** the articles table, the loader, the search for the Advisor, and the public blog at `/blog` and `/blog/<slug>`. The user decided this in the grill.
-  - **The files:** `apps/api/content/articles/NN-slug.md`, with the front matter of the marketing article drafts and an optional `author_photo`. The slug comes from the file name, and it never changes (why: PD6b). The API is the only reader of the files, so they are in its package.
-  - **One parser, in the API:** it makes the fields of each article, and each passage as HTML and as plain text. A test fails when a file is bad: a missing field, an SEO title of more than 60 characters, an SEO description of more than 155 characters, a number or slug that two files use, or a photo file that does not exist in the public folder of the web.
+  - **The files:** `apps/api/content/articles/NN-slug.md`, with the front matter of the marketing article drafts, an optional `author_photo`, and an optional `cover_image` with its `cover_alt`. The photo and the cover are files in the public folder of the web. The slug comes from the file name, and it never changes (why: PD6b). The API is the only reader of the files, so they are in its package.
+  - **One parser, in the API:** it makes the fields of each article, and each passage as HTML and as plain text. A test fails when a file is bad: a missing field, an SEO title of more than 60 characters, an SEO description of more than 155 characters, a number or slug that two files use, a cover with no alt text, or a photo or cover file that does not exist in the public folder of the web.
   - **The passages:** one passage for each `##` section, because each heading is a question (corpus plan), and one passage for the text before the first heading.
   - **The tables:** UUIDv7 ids, row level security on, and an English full-text index in which the heading counts more than the body. There is no vector store (why: PD7a). Each deploy syncs the tables with the files: it adds the new articles, changes the changed articles and removes the removed articles.
   - **The search:** a function of the API, not a route. It takes a question and a limit, 3 by default. It matches any word of the question, ranks the passages in SQL, and gives each passage with the slug and title of its article and its heading. The user decided "any word, best first" in the grill.
   - **The blog data:** the web renders each blog page on the server, and gets its data from the two public routes of the API, server to server (why: ADR-0007, the web standards). The web keeps each answer in the cache of `fetch` for 60 seconds, so a view does not wait for the API, and each link to an article prefetches the full article. The user decided this after the spec, on 2026-10-28, in place of a web that reads the files.
-  - **The blog pages:** the list shows the articles by number. An article page shows the title, the byline (the photo or the initials, the name and the author line), "Checked on <date>", the sections and a link to the chat. The user decided the optional photo in the grill.
-  - **SEO:** the title and the description come from the SEO fields. Each article has its canonical address on `roomsie.in` and Article structured data. `sitemap.xml` lists `/` and the blog pages, and `robots.txt` names it.
+  - **The blog pages:** the list shows the articles by number. An article page shows the title, "Checked on <date>", the byline (the photo or the initials, the name and the author line), the cover, the sections and a link to the chat. In the list, a row with a cover shows it on the right on desktop and above the text on the phone. The user decided the optional photo in the grill.
+  - **SEO:** the title and the description come from the SEO fields. Each article has its canonical address on `roomsie.in` and Article structured data. Each article has its own share card, as Substack does: its cover with a dark overlay, the Roomsie logo and its title. With no cover, the card has the dark background. The blog list has a general share card. The user decided the cards at the design gate, on 2026-10-28. `sitemap.xml` lists `/` and the blog pages, and `robots.txt` names it.
   - **The way in:** a "Blog" link shows in the landing footer when the first article exists. Until then, `/blog` is a 404, and the sitemap has no blog page. The user decided this in the grill.
-  - **The design:** we draw the blog list and the article page as section 30 of the Figma drafts page, with our tokens. The user approves them before the pages are built.
+  - **The design:** we draw the blog list, the article page and the share cards as section 30 of the Figma drafts page, with our tokens. The user approves them before the pages are built.
+  - **The cover:** each article can have a cover image. The user decided this at the design gate, on 2026-10-28.
+  - **The authors:** only the Roomsie team writes articles, as files that a merged pull request publishes. No user can write one. The author line gives the role of the author in the team. The user said this at the design gate, on 2026-10-28.
   - **The domain:** the docs that say `roomsie.com/blog` change to `roomsie.in/blog` (F-02).
   - **The done items:** the user added "The articles show on the public blog at roomsie.in/blog, with their SEO fields" at the spec gate, on 2026-10-28.
 - **Out of scope:**
