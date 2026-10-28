@@ -41,7 +41,7 @@ export function analyticsOf(db: AnalyticsDb | undefined, log: FastifyBaseLogger)
       const parsed = analyticsEvent.safeParse(event)
       if (!parsed.success) return log.error({ err: parsed.error }, 'analytics')
       const { name, eventVersion, ...fields } = parsed.data
-      buffer.push({ name, eventVersion, actor: req.analyticsId, fields, occurredAt: new Date() })
+      buffer.push({ name, eventVersion, actor: req.analyticsId, fields, createdAt: new Date() })
       if (buffer.length >= batchSize) write()
     },
     flush,

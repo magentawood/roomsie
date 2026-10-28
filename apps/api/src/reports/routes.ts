@@ -39,7 +39,7 @@ export function reportRoutes(v1: FastifyInstance, options: AuthOptions) {
       const filed = await tx.insert(reports).values({
         ...body, reporterUserId, subjectUserId: subject.userId, detail: body.detail && maskContacts(body.detail),
       }).onConflictDoNothing().returning({ id: reports.id })
-      if (!filed.length) return 'again' as const
+      if (!filed.length) return 'repeat' as const
       const [open] = await tx.select({ reporters: count() }).from(reports).where(and(target.reports, eq(reports.status, 'open')))
       // PD18: a safety report, or reports from this number of people, hide the listing or the card at once.
       if (moderation.safetyReasons.includes(body.reason) || open!.reporters >= moderation.hideAtReporters) await target.hide()

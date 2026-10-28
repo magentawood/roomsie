@@ -113,7 +113,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>Postgres refuses an insert when no partition holds its month. Each partition the migration made lasts until 12 months after the first deploy. T-39 must add the next ones before then.</li>
 <li>A partition is also a table that the Supabase API can reach. Each new partition needs row level security, as the migration does.</li>
-<li>Drizzle cannot declare a partitioned table. The SQL of the first analytics migration is edited by hand. A later <code>drizzle-kit generate</code> for the analytics database sees a plain table, so check its SQL.</li>
+<li>Drizzle cannot declare a partitioned table. The SQL of the first analytics migration is edited by hand. <code>pnpm db:generate:analytics</code> makes the next one, and it sees a plain table, so check its SQL.</li>
 <li>The tests must call <code>flushEvents()</code> before they read the table, because <code>track()</code> writes later.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

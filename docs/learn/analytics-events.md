@@ -45,7 +45,7 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
 
 - Postgres refuses an insert when no partition holds its month. Each partition the migration made lasts until 12 months after the first deploy. T-39 must add the next ones before then.
 - A partition is also a table that the Supabase API can reach. Each new partition needs row level security, as the migration does.
-- Drizzle cannot declare a partitioned table. The SQL of the first analytics migration is edited by hand. A later `drizzle-kit generate` for the analytics database sees a plain table, so check its SQL.
+- Drizzle cannot declare a partitioned table. The SQL of the first analytics migration is edited by hand. `pnpm db:generate:analytics` makes the next one, and it sees a plain table, so check its SQL.
 - The tests must call `flushEvents()` before they read the table, because `track()` writes later.
 
 ## Tickets
