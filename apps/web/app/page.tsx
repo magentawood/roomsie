@@ -5,6 +5,7 @@ import { HowItWorks } from '../components/landing/how-it-works'
 import { Problems } from '../components/landing/problems'
 import { Quotes } from '../components/landing/quotes'
 import { SearchStrip } from '../components/landing/search-strip'
+import { getArticles } from '../lib/articles'
 import { getSite } from '../lib/site'
 
 export const metadata: Metadata = {
@@ -14,7 +15,8 @@ export const metadata: Metadata = {
 
 /** The landing page of the designs (T-23a). The server renders it, because it is a search page (ADR-0007). */
 export default async function Home() {
-  const { quotes, details } = await getSite()
+  // The landing page shows with no articles when the API fails.
+  const [{ quotes, details }, articles] = await Promise.all([getSite(), getArticles().catch(() => [])])
   return (
     <>
       <LandingHeader />
@@ -27,7 +29,7 @@ export default async function Home() {
         <Callout />
         <Contact details={details} />
       </main>
-      <Footer orgNumber={details.orgNumber} />
+      <Footer orgNumber={details.orgNumber} blog={articles.length > 0} />
     </>
   )
 }

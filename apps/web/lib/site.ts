@@ -3,6 +3,9 @@ import { apiUrl } from './api-url'
 
 const noSite: SiteResponse = { quotes: [], details: noSiteDetails }
 
+/** The live address. Canonical links, the sitemap and the share cards use it, also on a preview. */
+export const siteUrl = 'https://roomsie.in'
+
 /** The networks of "Follow us", in the order of the design. */
 export const socialNetworks = [
   { key: 'instagram', name: 'Instagram', example: 'https://www.instagram.com/…' },

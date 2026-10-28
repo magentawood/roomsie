@@ -22,7 +22,8 @@ const frontMatter = z.strictObject({
   seo_description: z.string().min(1).max(155),
   date_checked: z.iso.date(),
   sources: z.array(z.string()).optional(),
-  cover_image: z.string().regex(/^\/blog\/[\w.-]+$/).optional(),
+  // The share cards read only JPEG and PNG.
+  cover_image: z.string().regex(/^\/blog\/[\w.-]+\.(?:jpe?g|png)$/).optional(),
   cover_alt: z.string().min(1).optional(),
 }).refine((f) => !f.cover_image === !f.cover_alt, { message: 'cover_image and cover_alt go together', path: ['cover_alt'] })
 
