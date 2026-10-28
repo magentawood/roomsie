@@ -100,6 +100,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><code>next dev</code> adds <code>unsafe-eval</code> and inline styles, because the development server of Next needs them. A page can work in development and fail in production. Check a production build with <code>next build</code> and <code>next start</code>.</li>
 <li>The comments toolbar of the Vercel previews does not load, because the policy blocks its script.</li>
 <li>The photos host and the ID bucket are in the proxy and in <code>deploy-api.yml</code>. A change of one needs a change of the other.</li>
+<li>The proxy skips a request by the extension of the file. Thus, a request for a missing file, for example <code>/missing.png</code>, gets the "not found" page with no policy. The page shows nothing from the request, so the user accepted this gap.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>

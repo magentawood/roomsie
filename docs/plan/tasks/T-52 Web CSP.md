@@ -67,6 +67,7 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
   - **Development:** `unsafe-eval` and inline styles, because the development server of Next needs them, and no upgrade of `http` requests.
   - **Rollout:** the policy blocks from the first deploy. After the deploy, the user checks sign-in, a photo upload, the live chat, push and an ID check on the live site. The user decided this in the grill.
   - **The "not found" page:** our own page with a link to the home page. The user decided this in implement.
+  - **A missing file:** the proxy skips the files of `public` by their extension, so a request for a missing file with that extension gets the "not found" page with no policy. The page shows nothing from the request. The user decided this in review.
   - **The test:** a unit test of the proxy and a live check, not a browser test in CI, because the testing standard defers Playwright tests until the UI is stable (why: ADR-0013). The user decided this in implement.
 - **Out of scope:**
   - the violation reports (a candidate for T-07)

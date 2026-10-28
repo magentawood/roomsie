@@ -35,7 +35,7 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [{
-    // The files of public. Each other path gets the policy, also a wrong URL such as /a.php.
+    // Skips the files of public by extension, so /a.php still gets the policy.
     source: '/((?!_next/static|_next/image|.*\\.(?:jpg|js|mp4|png|svg|webp)$).*)',
     missing: [
       { type: 'header', key: 'next-router-prefetch' },

@@ -43,6 +43,7 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
 - `next dev` adds `unsafe-eval` and inline styles, because the development server of Next needs them. A page can work in development and fail in production. Check a production build with `next build` and `next start`.
 - The comments toolbar of the Vercel previews does not load, because the policy blocks its script.
 - The photos host and the ID bucket are in the proxy and in `deploy-api.yml`. A change of one needs a change of the other.
+- The proxy skips a request by the extension of the file. Thus, a request for a missing file, for example `/missing.png`, gets the "not found" page with no policy. The page shows nothing from the request, so the user accepted this gap.
 
 ## Tickets
 
