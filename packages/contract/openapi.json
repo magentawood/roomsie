@@ -10373,7 +10373,9 @@
                         "type": "object",
                         "properties": {
                           "slug": {
-                            "type": "string"
+                            "type": "string",
+                            "maxLength": 100,
+                            "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
                           },
                           "number": {
                             "type": "integer",
@@ -10447,7 +10449,8 @@
           {
             "schema": {
               "type": "string",
-              "maxLength": 100
+              "maxLength": 100,
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
             },
             "in": "path",
             "name": "slug",
@@ -10463,7 +10466,9 @@
                   "type": "object",
                   "properties": {
                     "slug": {
-                      "type": "string"
+                      "type": "string",
+                      "maxLength": 100,
+                      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
                     },
                     "number": {
                       "type": "integer",

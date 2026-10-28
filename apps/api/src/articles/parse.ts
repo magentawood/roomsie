@@ -6,7 +6,7 @@ import { z } from 'zod'
 // Raw HTML in an article shows as text, so a file cannot put a script on the blog.
 const markdown = MarkdownIt({ html: false })
 
-const articleFileName = /^\d{2}-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
+const articleFileName = /^(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const withFrontMatter = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
 
 /** The front matter of the marketing article drafts. */
@@ -54,11 +54,12 @@ export type Article = ReturnType<typeof parseArticle>
 
 export function parseArticle(fileName: string, source: string) {
   try {
-    const slug = articleFileName.exec(fileName)?.[1]
+    const [, nn, slug] = articleFileName.exec(fileName) ?? []
     if (!slug) throw new Error('the name is not NN-slug.md')
     const parts = withFrontMatter.exec(source.replaceAll('\r\n', '\n'))
     if (!parts) throw new Error('no front matter between two --- lines')
     const fields = frontMatter.parse(parseYaml(parts[1]!))
+    if (fields.number !== Number(nn)) throw new Error(`the name says ${nn}, but number is ${fields.number}`)
     return {
       slug,
       number: fields.number,

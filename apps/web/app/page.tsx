@@ -15,7 +15,6 @@ export const metadata: Metadata = {
 
 /** The landing page of the designs (T-23a). The server renders it, because it is a search page (ADR-0007). */
 export default async function Home() {
-  // The landing page shows with no articles when the API fails.
   const [{ quotes, details }, articles] = await Promise.all([getSite(), getArticles().catch(() => [])])
   return (
     <>

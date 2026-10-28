@@ -14,7 +14,6 @@ export async function shareCard(title: string, cover: string | null) {
     cover && readFile(join(process.cwd(), 'public', cover)),
   ])
   const src = image && `data:image/${cover!.endsWith('.png') ? 'png' : 'jpeg'};base64,${image.toString('base64')}`
-  // A PNG, not HTML: the style-prop rule of web.md guards the policy, so it does not apply.
   // The renderer reads no CSS variables: #171717 is --color-gray-900, the background of the footer.
   return new ImageResponse(
     (
@@ -28,6 +27,6 @@ export async function shareCard(title: string, cover: string | null) {
         </div>
       </div>
     ),
-    { ...shareCardSize, fonts: [{ name: 'Figtree', data: font, weight: 600, style: 'normal' }] },
+    { ...shareCardSize, fonts: [{ name: 'Figtree', data: font, weight: 600 }] },
   )
 }
