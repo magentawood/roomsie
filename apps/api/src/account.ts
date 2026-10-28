@@ -35,7 +35,9 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  *
  * Each module deletes its own rows. The account module owns `goals` and `anonymous_sessions` until the assistant has a module.
  *
- * Not here yet: events (T-24), Form B (T-35). The messages stay for the other person (T-44).
+ * The events stay, but the analytics id goes, so no event points to the person (T-24).
+ *
+ * Not here yet: Form B (T-35). The messages stay for the other person (T-44).
  */
 export async function deleteAccount(
   { db, storage, idStore, firebaseAdmin }: { db: Db; storage: Pick<Storage, 'deleteObjects'>; idStore?: IdStore; firebaseAdmin: Pick<FirebaseAdmin, 'deleteUser'> | null },
@@ -69,6 +71,8 @@ export async function deleteAccount(
       tokensValidAfter: new Date(Math.floor(Date.now() / 1000) * 1000),
       rejoinBlocked: user!.status === 'suspended',
       email: null,
+      analyticsId: null,
+      lastSignInAt: null,
       updatedAt: new Date(),
     }).where(eq(users.id, userId))
     // Last: a sign-in after it gets a new uid, so it cannot find this account to retry a failed step.

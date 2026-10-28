@@ -43,3 +43,31 @@ Records what people actually do, to show what works.
 ## Read first
 - [0012-analytics-event-store.md](../../decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **The analytics module of the API (new):** its interface is only `track()`. It keeps the events in memory and writes them to the analytics database in batches. No other function reads the events.
+  - **The contract:** a Zod schema with an `event_version` for each of the seven events. The interface is new.
+  - **The analytics database (new schema):** one `events` table, partitioned by month, with its own migrations. The deploy runs them before the API starts.
+  - **The account module:** each user row gets an analytics id and the time of the last sign-in. The sign-in path fires "signed in", and account deletion clears both values.
+  - **The requests and reports routes:** they fire "connect sent", "connect accepted" and "report filed".
+  - **ADR-0012:** the events refer to the analytics id, not to `users.id`.
+  - **The plan:** T-12, T-14 and T-21 get one new done item each.
+- **Seams for the tests:**
+  - The API tests, with a disposable analytics database: each route fires its event with the analytics id of the person, "signed in" fires one time for each sign-in, account deletion removes the link, and no event has text.
+- **Decisions:**
+  - **The actor:** each users row has a random analytics id. An event keeps only that id, never `users.id`. Account deletion clears the id in its transaction, so the events have no link to a person after it, and the deletion does not call the analytics database. The user decided this in the grill (update to ADR-0012).
+  - **The events:** seven schemas with `event_version` 1. "Signed in", "connect sent", "connect accepted" and "report filed" fire now. New done items: T-12 fires "interview started", T-14 fires "results shown", and T-21 fires "wall hit" on the server at the turn cap.
+  - **The fields, with no text:** "signed in" has `new_account`. "Connect sent" and "connect accepted" have `to`: a person or a listing. "Report filed" has `subject`, a person or a listing, and `reason`. "Results shown" has `count`. "Interview started" and "wall hit" have no fields. An event of a guest has no actor.
+  - **Signed in:** the users row keeps the time of the last sign-in. A token with a later `auth_time` fires the event one time, through a conditional update. A first sign-in and a rejoin fire it with `new_account` true. A token refresh keeps its `auth_time`, so it does not fire the event.
+  - **Writes:** `track()` writes each 5 seconds, at 100 events, and when the server closes. A failed write goes to the log, and the batch is lost (best effort, as the alerts). Without the address of the analytics database, `track()` does nothing.
+  - **The table:** partitioned by month on the time of the event, with the partitions from this month to 12 months ahead and a BRIN index on the time. The key is a UUIDv7 and the time. Row level security is on, with no policies (why: ADR-0012).
+  - **T-39:** its first done item is true after T-24. T-39 keeps the scheduled job, the next partitions and the 12-month retention.
+- **Out of scope:**
+  - dashboards and rollup tables
+  - the scheduled job, the next partitions and the deletion after 12 months (T-39)
+  - a route for the events of the browser
+  - rate limits (T-21)

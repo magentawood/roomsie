@@ -11,6 +11,8 @@ import {
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { deleteAccount } from './account'
 import { alertsOf, type Alerts } from './alerts/alerts'
+import type { AnalyticsDb } from './analytics/client'
+import { analyticsOf, type Analytics } from './analytics/track'
 import { alertRoutes } from './alerts/routes'
 import { listAreas } from './areas'
 import { requireUser, type AuthOptions } from './auth'
@@ -33,18 +35,23 @@ import { verificationRoutes } from './verification/routes'
 declare module 'fastify' {
   interface FastifyInstance {
     alerts: Alerts
+    analytics: Analytics
   }
 }
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
+  const analytics = analyticsOf(options.analyticsDb, app.log)
+  app.decorate('analytics', analytics)
+  app.addHook('onClose', () => analytics.close())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
   app.decorateRequest('identity', null)
+  app.decorateRequest('analyticsId', null)
   // A 400 names the fields, so a client can show which value is wrong. Other errors keep the default reply.
   app.setErrorHandler((err, _req, reply) => {
     if (!hasZodFastifySchemaValidationErrors(err)) throw err

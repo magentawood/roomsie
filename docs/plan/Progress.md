@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**147 of 316 done · 47%**
+**147 of 319 done · 46%**
 
 `███████████░░░░░░░░░░░░░`
 
@@ -23,8 +23,8 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
-| [[P2 Chat]] | 0 / 13 | 3 / 60 | 5% |
-| [[P3 Data and trust]] | 13 / 18 | 57 / 80 | 71% |
+| [[P2 Chat]] | 0 / 13 | 3 / 62 | 5% |
+| [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
 | [[P4 Content and moderation]] | 4 / 8 | 24 / 34 | 71% |
 | [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -325,7 +325,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 3/60
+## P2 Chat — 3/62
 
 > [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/5
 > ![[T-08 Form A contract ⚑#^done]]
@@ -336,7 +336,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-35 Form B contract]] · 0/3
 > ![[T-35 Form B contract#^done]]
 
-> [!todo]- ⬜ [[T-12 Extraction ⚑]] · 0/6
+> [!todo]- ⬜ [[T-12 Extraction ⚑]] · 0/7
 > ![[T-12 Extraction ⚑#^done]]
 
 > [!todo]- ⬜ [[T-34 Router ⚑]] · 0/4
@@ -348,7 +348,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-36 Observer]] · 0/6
 > ![[T-36 Observer#^done]]
 
-> [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/6
+> [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/7
 > ![[T-21 Turn cap and spend ceiling#^done]]
 
 > [!todo]- ⬜ [[T-38 Advisor]] · 0/5
@@ -367,12 +367,12 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 57/80
+## P3 Data and trust — 57/81
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
 
-> [!todo]- 🟡 [[T-14 Match query ⚑]] · 1/8
+> [!todo]- 🟡 [[T-14 Match query ⚑]] · 1/9
 > ![[T-14 Match query ⚑#^done]]
 
 > [!todo]- ⬜ [[T-15 Results panel ⚑]] · 0/7

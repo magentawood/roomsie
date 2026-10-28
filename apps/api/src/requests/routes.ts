@@ -40,7 +40,7 @@ async function recipientOf(db: Db, senderUserId: string, body: SendRequestBody) 
 
 export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage; messaging: Messaging }) {
   const { db, storage, messaging } = options
-  const { alerts } = v1
+  const { alerts, analytics } = v1
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
   const answerable = (userId: string) => and(eq(connectionRequests.toUserId, userId), openRequest())
@@ -75,6 +75,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => req.log.error({ err }, 'realtime'))
     const view = (await outgoingViews(db, storage, [made]))[0]!
     alerts.request(made)
+    analytics.track(req, { name: 'connect_sent', to: made.listingId ? 'listing' : 'person' })
     return reply.code(201).send(view)
   })
 
@@ -119,6 +120,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       if (answered.note) {
         await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])
         alerts.accept(answered.request)
+        analytics.track(req, { name: 'connect_accepted', to: answered.request.listingId ? 'listing' : 'person' })
       }
       return reply.code(204).send(null)
     })

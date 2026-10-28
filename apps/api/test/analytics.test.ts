@@ -1,0 +1,87 @@
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
+import { asc, eq } from 'drizzle-orm'
+import { uuidv7 } from 'uuidv7'
+import { outgoingRequest } from '@roomsie/contract'
+import { events } from '../src/analytics/schema'
+import { users } from '../src/db/schema'
+import { testApp, type TestApp } from './app'
+import { createTestAnalyticsDb } from './db'
+
+type Who = 'seeker' | 'friend' | 'leaver'
+let t: TestApp<Who>
+let analytics: Awaited<ReturnType<typeof createTestAnalyticsDb>>
+const cards = {} as Record<'seeker' | 'friend', string>
+beforeAll(async () => {
+  analytics = await createTestAnalyticsDb()
+  t = await testApp(['seeker', 'friend', 'leaver'], undefined, {}, analytics.db)
+  cards.seeker = await t.liveCard('seeker', 'Rahul Verma')
+  cards.friend = await t.liveCard('friend', 'Divya Sharma')
+})
+afterAll(async () => {
+  await t.close()
+  await analytics.drop()
+})
+beforeEach(async () => {
+  await t.flushEvents()
+  await analytics.db.delete(events)
+})
+
+/** The events after a flush, oldest first. */
+async function written() {
+  await t.flushEvents()
+  return analytics.db.select().from(events).orderBy(asc(events.occurredAt))
+}
+const actorOf = async (who: Who) => (await t.db.select({ id: users.analyticsId }).from(users).where(eq(users.id, t.ids[who])))[0]!.id
+
+describe('track', () => {
+  it('fires "connect sent" and "connect accepted" with the analytics id of each person, and no text', async () => {
+    const sent = await t.call('seeker', 'POST', '/v1/requests', { toProfileId: cards.friend, note: 'Hi Divya, call me on 98200 12345' })
+    const { id } = outgoingRequest.parse(sent.json())
+    expect((await t.call('friend', 'POST', `/v1/requests/${id}/accept`)).statusCode).toBe(204)
+
+    const rows = await written()
+    expect(rows).toMatchObject([
+      { name: 'connect_sent', eventVersion: 1, actor: await actorOf('seeker'), fields: { to: 'person' } },
+      { name: 'connect_accepted', eventVersion: 1, actor: await actorOf('friend'), fields: { to: 'person' } },
+    ])
+    expect(rows.map((r) => r.actor)).not.toContain(t.ids.seeker)
+    expect(JSON.stringify(rows)).not.toContain('98200')
+  })
+
+  it('fires "report filed" with the subject and the reason, and not the detail', async () => {
+    const detail = 'He asked for money first'
+    expect((await t.call('seeker', 'POST', '/v1/reports', { id: uuidv7(), profileId: cards.friend, reason: 'fake', detail })).statusCode).toBe(204)
+
+    const rows = await written()
+    expect(rows).toMatchObject([{ name: 'report_filed', actor: await actorOf('seeker'), fields: { subject: 'person', reason: 'fake' } }])
+    expect(JSON.stringify(rows)).not.toContain(detail)
+  })
+
+  it('fires "signed in" one time for each sign-in, not for a refreshed token', async () => {
+    const now = Math.floor(Date.now() / 1000)
+    const later = await t.idToken('uid-seeker', { authTime: now + 1 })
+    // Two requests at the same time with a new sign-in fire one event.
+    await Promise.all([t.call('seeker', 'GET', '/v1/me', undefined, later), t.call('seeker', 'GET', '/v1/me', undefined, later)])
+    // A refresh keeps auth_time.
+    await t.call('seeker', 'GET', '/v1/me', undefined, await t.idToken('uid-seeker', { authTime: now + 1, iat: now + 2 }))
+
+    expect(await written()).toMatchObject([{ name: 'signed_in', actor: await actorOf('seeker'), fields: { newAccount: false } }])
+  })
+
+  it('fires "signed in" as a new account at the first sign-in', async () => {
+    await t.call('seeker', 'GET', '/v1/me', undefined, await t.idToken('uid-newcomer'))
+    const [newcomer] = await t.db.select({ analyticsId: users.analyticsId }).from(users).where(eq(users.authProviderId, 'uid-newcomer'))
+
+    expect(await written()).toMatchObject([{ name: 'signed_in', actor: newcomer!.analyticsId, fields: { newAccount: true } }])
+  })
+
+  it('removes the link between a deleted account and its events', async () => {
+    const actor = await actorOf('leaver')
+    expect(actor).toBeTruthy()
+    expect((await t.call('leaver', 'DELETE', '/v1/me')).statusCode).toBe(204)
+
+    const [tombstone] = await t.db.select().from(users).where(eq(users.id, t.ids.leaver))
+    expect(tombstone).toMatchObject({ analyticsId: null, lastSignInAt: null })
+    expect(await t.db.select().from(users).where(eq(users.analyticsId, actor!))).toHaveLength(0)
+  })
+})

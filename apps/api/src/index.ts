@@ -1,4 +1,5 @@
 import { env } from './env'
+import { createAnalyticsDb } from './analytics/client'
 import { googleKeys } from './auth'
 import { createDb } from './db/client'
 import { buildServer } from './server'
@@ -7,6 +8,7 @@ import { r2Storage } from './storage'
 const app = buildServer({
   webOrigin: env.WEB_ORIGIN,
   db: createDb(env.DATABASE_URL),
+  analyticsDb: env.ANALYTICS_DATABASE_URL ? createAnalyticsDb(env.ANALYTICS_DATABASE_URL) : undefined,
   firebaseProjectId: env.FIREBASE_PROJECT_ID,
   firebaseKeys: googleKeys,
   moderation: env.moderation,
