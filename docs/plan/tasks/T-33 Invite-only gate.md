@@ -31,8 +31,8 @@ Keeps the public out until launch day.
 - No task waits on this task.
 
 ## Done when
-- [ ] Before launch, sign-in works only for emails on an allowlist
-- [ ] One setting disables the gate on launch day
+- [x] Before launch, sign-in works only for emails on an allowlist · [#181](https://github.com/magentawood/roomsie/pull/181)
+- [x] One setting disables the gate on launch day · [#181](https://github.com/magentawood/roomsie/pull/181)
 
 ^done
 
@@ -63,3 +63,13 @@ Keeps the public out until launch day.
   - a request for an invite, and the waitlist (T-22a and T-22b)
   - the chat of a guest before sign-in
   - an email to an invited person
+
+## Log
+
+- **2026-10-28 · [#181](https://github.com/magentawood/roomsie/pull/181)**
+  - **Change:** an invites module keeps the invited emails and the gate. Until the opening time, sign-in works only for an invited, verified email and the moderators, and the API makes no account for anyone else. Moderators change the list, the switch "Invite only" and the opening time on `/admin/invites`. A refused person sees "Roomsie opens on 8 November", and an account can still delete itself. PD11 moves the launch to 8 November 2026.
+  - **Why:** the public stays out until the launch ([PD11](../../decisions/pd-11-launch.md)).
+  - **Ticked:** "Before launch, sign-in works only for emails on an allowlist" and "One setting disables the gate on launch day"
+  - **Not done:** none. After the deploy, a moderator adds the emails of the team and sets the opening time.
+  - **Learn:** [The invite gate](../../learn/invite-gate.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
