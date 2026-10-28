@@ -1,5 +1,3 @@
-'use client'
-
 import { ModeratorPage } from '../../../components/admin/moderator-page'
 import { SiteDetailsForm } from '../../../components/admin/site-details-form'
 

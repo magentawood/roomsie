@@ -1,5 +1,3 @@
-'use client'
-
 import { FeedbackList } from '../../../components/admin/feedback-list'
 import { ModeratorPage } from '../../../components/admin/moderator-page'
 

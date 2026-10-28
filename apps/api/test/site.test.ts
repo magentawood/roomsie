@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { adminQuotesResponse, siteResponse } from '@roomsie/contract'
+import { adminQuotesResponse, noSiteDetails as noDetails, siteResponse } from '@roomsie/contract'
 import { quotes, siteDetails } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -22,7 +22,6 @@ const addQuotes = async (from: number, to: number) => {
     await t.db.update(quotes).set({ createdAt: new Date(Date.now() - (100 - i) * 60_000) }).where(eq(quotes.text, `Quote ${i}`))
   }
 }
-const noDetails = { instagram: null, whatsapp: null, facebook: null, linkedin: null, contactEmail: null, orgNumber: null }
 
 describe('the landing quotes', () => {
   it('show only when five exist, and then the five newest', async () => {
@@ -39,6 +38,13 @@ describe('the landing quotes', () => {
     expect((await addQuote('x'.repeat(201))).statusCode).toBe(400)
     expect((await addQuote('   ')).statusCode).toBe(400)
     expect(await t.db.select().from(quotes)).toHaveLength(0)
+  })
+
+  it('hide a phone number in the text and the name', async () => {
+    expect((await t.call('moderator', 'POST', '/v1/admin/quotes', { text: 'Call me on 98765 43210', name: 'Asha 9876543210', consent: true })).statusCode).toBe(204)
+    const [saved] = await t.db.select().from(quotes)
+    expect(saved!.text).not.toContain('43210')
+    expect(saved!.name).not.toContain('9876543210')
   })
 
   it('list newest first for a moderator, who can delete one', async () => {
@@ -60,6 +66,7 @@ describe('the site details', () => {
     expect((await site()).details).toEqual(details)
     expect((await t.call('moderator', 'PUT', '/v1/admin/site', { ...details, instagram: null })).statusCode).toBe(204)
     expect((await site()).details).toEqual({ ...details, instagram: null })
+    expect(await t.db.select().from(siteDetails)).toHaveLength(2)
   })
 
   it('refuse a link that is not https and an email that is not valid', async () => {

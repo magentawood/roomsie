@@ -1,5 +1,3 @@
-'use client'
-
 import { ModeratorPage } from '../../components/admin/moderator-page'
 import { ReportQueue } from '../../components/admin/report-queue'
 import { Button } from '../../components/ui/button'

@@ -2,20 +2,21 @@ import type { CSSProperties } from 'react'
 import type { Quote } from '@roomsie/contract'
 import { Container, Mascot, SectionHeading } from './parts'
 
+type Spot = { x: string; y: string; w: string }
 /**
  * The places of the five cards in the collage of the design, in z order: left and width
  * in % of the panel, top in px. A phone stacks the cards.
  */
-const slots = [
-  { md: ['3.69%', '41px', '46.31%'], xl: ['7.7%', '48px', '45.27%'] },
-  { md: ['29.64%', '198px', '44.91%'], xl: ['27.74%', '256px', '45.27%'] },
-  { md: ['3.69%', '322px', '40.97%'], xl: ['11.2%', '422px', '33.08%'] },
-  { md: ['54.2%', '322px', '42.11%'], xl: ['59.22%', '422px', '33.08%'] },
-  { md: ['53.94%', '46px', '42.37%'], xl: ['57.01%', '48px', '33.08%'] },
+const slots: { md: Spot; xl: Spot }[] = [
+  { md: { x: '3.69%', y: '41px', w: '46.31%' }, xl: { x: '7.7%', y: '48px', w: '45.27%' } },
+  { md: { x: '29.64%', y: '198px', w: '44.91%' }, xl: { x: '27.74%', y: '256px', w: '45.27%' } },
+  { md: { x: '3.69%', y: '322px', w: '40.97%' }, xl: { x: '11.2%', y: '422px', w: '33.08%' } },
+  { md: { x: '54.2%', y: '322px', w: '42.11%' }, xl: { x: '59.22%', y: '422px', w: '33.08%' } },
+  { md: { x: '53.94%', y: '46px', w: '42.37%' }, xl: { x: '57.01%', y: '48px', w: '33.08%' } },
 ]
 
 const place = ({ md, xl }: (typeof slots)[number]) => ({
-  '--md-x': md[0], '--md-y': md[1], '--md-w': md[2], '--xl-x': xl[0], '--xl-y': xl[1], '--xl-w': xl[2],
+  '--md-x': md.x, '--md-y': md.y, '--md-w': md.w, '--xl-x': xl.x, '--xl-y': xl.y, '--xl-w': xl.w,
 }) as CSSProperties
 
 function QuoteCard({ quote, slot }: { quote: Quote; slot: (typeof slots)[number] }) {
