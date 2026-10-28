@@ -1,6 +1,6 @@
-# PD11 — Public launch on 12 October
+# PD11 — Public launch on 8 November
 
-**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-27. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-27. The date moved to 8 November on 2026-10-28 (T-33). · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -9,11 +9,11 @@
 
 ## Decision
 
-**In one line:** The public launch is on Monday 12 October, with Wednesday 14 October as the fallback, and the go/no-go list is the quality bar.
+**In one line:** The public launch is on Sunday 8 November 2026 (IST), and the go/no-go list is the quality bar.
 
-- **Target: Monday 12 October. Fallback: Wednesday 14 October. Quality comes before the date.**
+- **Target: Sunday 8 November 2026, IST. Quality comes before the date.** Until then, the invite gate of T-33 lets in only the invited emails, and it opens by itself at the launch.
 - **The go/no-go list is the quality bar.** If a check fails, the date moves by a small quantity. We do not ship something below the bar.
-- **Go or no-go: Saturday 10 October, 8 pm.** Sunday 11 October is a bug-fix day.
+- **The fallback date, the go/no-go day and the bug-fix day move with the launch.** F-10 sets them.
 - **It is a public launch, not a closed beta.** This adds about 15 hours: report and block, account deletion, a waitlist, alerts and legal pages.
 - **v0 is free.** PD4 moves to v1.
 
@@ -38,7 +38,7 @@ Engineering go/no-go checks (from `team-plan.md`):
 7. The router flags off-topic messages with no model call. The observer rejects each observation with no user quote. The advisor never answers law, tax or safety from the web.
 8. Last night's backup exists. A restore worked one or more times.
 
-Seeding (checked Sunday 11 October): a minimum of 150 profiles across Mumbai. Marketing seeds the F-06 areas first. Do not move the date.
+Seeding (checked on the bug-fix day): a minimum of 150 profiles across Mumbai. Marketing seeds the F-06 areas first. Do not move the date.
 
 Superseded (2026-10-27): a minimum of 40 profiles in each of three launch areas, and a launch in the other two if one fails. Each Mumbai area is live (PD2).
 
@@ -59,8 +59,8 @@ Superseded (2026-10-27): a minimum of 40 profiles in each of three launch areas,
 ## Consequences
 
 - Capacity: 170 person-hours (5 × 2h × 17 days), 151 build hours, 19 spare, none before the designs arrive (PD12).
-- If the team is late, the launch moves to 14 October. The scope stays the same.
-- If a checkpoint is more than a day late, decide on that checkpoint call if 14 October becomes the plan.
+- If the team is late, the launch moves to the fallback date. The scope stays the same.
+- If a checkpoint is more than a day late, decide on that checkpoint call if the fallback date becomes the plan.
 - **Still open (deferred): the master launch document.** All its inputs are settled.
 - Marketing seeds profiles, publishes the first ten corpus articles, and makes the broker calls. They make the broker calls at this time, because the answers take time.
 
