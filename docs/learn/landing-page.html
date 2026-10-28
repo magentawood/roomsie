@@ -84,7 +84,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The server renders the page,</strong> because the landing page is a search page (ADR-0007). Next renders it again at most once each 60 seconds, with the quotes and the details from the API. Thus, a change on an admin page shows on the landing page in one minute or less.</li>
+<li><strong>The server renders the page,</strong> because the landing page is a search page (ADR-0007). It renders on each request, because of the nonce of the <a href="content-security-policy.html">Content-Security-Policy</a>. Next keeps the quotes and the details from the API for at most 60 seconds. Thus, a change on an admin page shows on the landing page in one minute or less.</li>
 <li><strong>If the API does not answer in 5 seconds,</strong> the page shows with no quotes and no details. The page never fails because of the API.</li>
 <li><strong>The header knows the person only in the browser,</strong> because sign-in is in the browser (ADR-0007). A guest sees "Sign in with Google", and the sign-in opens <code>/chat</code>. A signed-in person sees "Open Roomsie".</li>
 <li><strong>Moderators</strong> are the editors. Their Firebase uids are in <code>MODERATOR_UIDS</code>.</li>

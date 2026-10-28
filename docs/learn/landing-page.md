@@ -22,7 +22,7 @@
 | The admin pages | `/admin/quotes`, `/admin/site` and `/admin/feedback`, for moderators |
 | The videos and their first frames | `apps/web/public/landing/` |
 
-- **The server renders the page,** because the landing page is a search page (ADR-0007). Next renders it again at most once each 60 seconds, with the quotes and the details from the API. Thus, a change on an admin page shows on the landing page in one minute or less.
+- **The server renders the page,** because the landing page is a search page (ADR-0007). It renders on each request, because of the nonce of the [Content-Security-Policy](content-security-policy.md). Next keeps the quotes and the details from the API for at most 60 seconds. Thus, a change on an admin page shows on the landing page in one minute or less.
 - **If the API does not answer in 5 seconds,** the page shows with no quotes and no details. The page never fails because of the API.
 - **The header knows the person only in the browser,** because sign-in is in the browser (ADR-0007). A guest sees "Sign in with Google", and the sign-in opens `/chat`. A signed-in person sees "Open Roomsie".
 - **Moderators** are the editors. Their Firebase uids are in `MODERATOR_UIDS`.

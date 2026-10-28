@@ -96,8 +96,8 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
 - [Analytics events](learn/analytics-events.md)
+- [Content-Security-Policy](learn/content-security-policy.md)
 - [Sign-in and tokens](learn/sign-in-and-tokens.md)
 - [Alerts: email and browser push](learn/alerts.md)
 - [ID checks and the Verified badge](learn/id-checks.md)
-- [Message requests](learn/message-requests.md)
 <!-- learn-newest:end -->
