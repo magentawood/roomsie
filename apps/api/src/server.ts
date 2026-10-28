@@ -16,6 +16,7 @@ import type { AnalyticsDb } from './analytics/client'
 import { analyticsOf, type Analytics } from './analytics/track'
 import { alertRoutes } from './alerts/routes'
 import { listAreas } from './areas'
+import { articleRoutes } from './articles/routes'
 import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
 import { feedbackRoutes } from './feedback/routes'
@@ -108,6 +109,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       siteRoutes(v1, options)
       feedbackRoutes(v1, options)
       inviteRoutes(v1, options)
+      articleRoutes(v1, options)
     },
     { prefix: '/v1' },
   )
