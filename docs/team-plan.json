@@ -1605,7 +1605,8 @@
    "done": [
     "An articles table has a Postgres full-text index. There is no vector store",
     "The launch articles load from files in the repo. Thus, a pull request publishes an article",
-    "A search returns the passages that match best, with their article and heading"
+    "A search returns the passages that match best, with their article and heading",
+    "The articles show on the public blog at roomsie.in/blog, with their SEO fields"
    ],
    "read": [
     "docs/content/corpus-plan.md",

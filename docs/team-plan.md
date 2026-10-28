@@ -675,6 +675,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - An articles table has a Postgres full-text index. There is no vector store
 - The launch articles load from files in the repo. Thus, a pull request publishes an article
 - A search returns the passages that match best, with their article and heading
+- The articles show on the public blog at roomsie.in/blog, with their SEO fields
 - Read first: `docs/content/corpus-plan.md`, `docs/extensibility.md`
 
 ### CP3 · Feature freeze and go/no-go — Sat 10 Oct
