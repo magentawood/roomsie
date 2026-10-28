@@ -21,7 +21,6 @@ declare module 'fastify' {
     user: MeResponse | null
     /** The person at the sign-in provider: the Google account id, or the Firebase uid if the token has none. */
     identity: string | null
-    /** The id that the analytics events of the person carry (T-24). */
     analyticsId: string | null
   }
 }

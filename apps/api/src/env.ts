@@ -9,7 +9,6 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().default(8080),
   WEB_ORIGIN: z.url().default('http://localhost:3000'),
   DATABASE_URL: z.url(),
-  /** Unset: the API writes no events (T-24). */
   ANALYTICS_DATABASE_URL: unsetIfEmpty.pipe(z.url().optional()),
   FIREBASE_PROJECT_ID: z.string().min(1),
   R2_ACCOUNT_ID: z.string().min(1),

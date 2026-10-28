@@ -1,5 +1,4 @@
 import type { FastifyBaseLogger, FastifyRequest } from 'fastify'
-import { uuidv7 } from 'uuidv7'
 import { analyticsEvent, type AnalyticsEvent } from '@roomsie/contract'
 import type { AnalyticsDb } from './client'
 import { events } from './schema'
@@ -10,7 +9,7 @@ const flushMs = 5_000
 
 export type Analytics = {
   /** The one way to write an event. The actor is the analytics id of the person of `req`, or nobody for a guest. */
-  track(req: FastifyRequest | null, event: AnalyticsEvent): void
+  track(req: FastifyRequest, event: AnalyticsEvent): void
   /** Writes the events in memory now, and waits for each write: in the tests. */
   flush(): Promise<void>
   /** Stops the timer and writes the rest: at a shutdown. */
@@ -38,8 +37,11 @@ export function analyticsOf(db: AnalyticsDb | undefined, log: FastifyBaseLogger)
   }
   return {
     track(req, event) {
-      const { name, eventVersion, ...fields } = analyticsEvent.parse(event)
-      buffer.push({ id: uuidv7(), name, eventVersion, actor: req?.analyticsId ?? null, fields, occurredAt: new Date() })
+      // The action of the route is already saved, so a bad event goes to the log, never to the person.
+      const parsed = analyticsEvent.safeParse(event)
+      if (!parsed.success) return log.error({ err: parsed.error }, 'analytics')
+      const { name, eventVersion, ...fields } = parsed.data
+      buffer.push({ name, eventVersion, actor: req.analyticsId, fields, occurredAt: new Date() })
       if (buffer.length >= batchSize) write()
     },
     flush,

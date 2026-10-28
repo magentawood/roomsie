@@ -9,7 +9,6 @@
  * a person lives in `profiles`. The per-request auth check then reads a tiny
  * row, and editing a profile never touches the auth row.
  */
-import { randomUUID } from 'node:crypto'
 import { sql } from 'drizzle-orm'
 import {
   pgTable, pgEnum, uuid, text, integer, real, boolean, date, timestamp, jsonb,
@@ -86,7 +85,7 @@ export const users = pgTable('users', {
   /** The "Email alerts" switch of Settings (PD17). */
   emailAlerts: boolean('email_alerts').notNull().default(true),
   /** A random id that the analytics events carry in place of `users.id`. A deletion clears it, so the events lose their link (T-24). */
-  analyticsId: uuid('analytics_id').$defaultFn(() => randomUUID()),
+  analyticsId: uuid('analytics_id').defaultRandom(),
   /** The `auth_time` of the latest sign-in, so each sign-in fires one "signed in" event (T-24). */
   lastSignInAt: timestamp('last_sign_in_at', { withTimezone: true }),
   createdAt: createdAt(),
