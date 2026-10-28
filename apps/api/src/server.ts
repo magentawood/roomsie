@@ -84,7 +84,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       )
       v1.withTypeProvider<ZodTypeProvider>().delete(
         '/me',
-        { preHandler: requireUser(options, { deletion: true }), schema: { response: { 204: noContent } } },
+        { preHandler: requireUser(options, { forDeletion: true }), schema: { response: { 204: noContent } } },
         async (req, reply) => {
           await deleteAccount({ ...options, firebaseAdmin: options.messaging.firebaseAdmin }, req.user!.id, req.identity!)
           return reply.code(204).send(null)

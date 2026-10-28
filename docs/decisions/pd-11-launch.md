@@ -17,7 +17,7 @@
 - **It is a public launch, not a closed beta.** This adds about 15 hours: report and block, account deletion, a waitlist, alerts and legal pages.
 - **v0 is free.** PD4 moves to v1.
 
-| Ships 12 Oct | After launch |
+| Ships at the launch | After launch |
 |---|---|
 | Chat with chips, the router, extraction, the observer, the reply writer | Blurred cards |
 | The advisor: articles first, web search after sign-in | SEO area pages |
@@ -66,7 +66,7 @@ Superseded (2026-10-27): a minimum of 40 profiles in each of three launch areas,
 
 Superseded (2026-10-24): in-app chat and DigiLocker verification were cut. [PD14](pd-14-v0-is-the-figma-designs.md) brings them into v0, and [PD8](pd-08-verification.md) moves DigiLocker to v1. **Open:** blurred cards were cut because they need verification. The founders decide if they ship at launch.
 
-Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October. That plan had no margin.
+Superseded (2026-10-28): target 12 October, fallback 14 October, go/no-go 10 October, bug-fix day 11 October. Superseded: target 7 October, fallback 9 October, go/no-go Monday 5 October (decided 2026-09-23). Superseded: the cut v0 of about 130 hours, scheduled as 115 build hours against 120 available, with a bug-fix day on 6 October. That plan had no margin.
 
 The 23 September plan gave a reason for each cut:
 

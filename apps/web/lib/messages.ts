@@ -1,5 +1,6 @@
 import type { InfiniteData } from '@tanstack/react-query'
 import type { Conversation, ConversationsResponse, IncomingRequest, Message, OtherPerson, OutgoingRequest } from '@roomsie/contract'
+import { india } from './ist'
 
 /** A row of the inbox. `id` opens its thread. */
 export type InboxItem = { id: string; other: OtherPerson; listingId: string | null; at: string } & (
@@ -50,7 +51,6 @@ export const chatWith = (conversations: readonly Conversation[], profileId: stri
 /** The profile that a chat can open: none for a deleted account or a lister with no profile. */
 export const profileOf = (other: OtherPerson) => (other.deleted ? null : other.profileId)
 
-const india = { timeZone: 'Asia/Kolkata' } as const
 const dayOf = (at: Date) => at.toLocaleDateString('en-CA', india)
 const daysBefore = (now: Date, days: number) => dayOf(new Date(now.getTime() - days * 86_400_000))
 const shortDate = (at: Date) => at.toLocaleDateString('en-IN', { ...india, day: 'numeric', month: 'short', year: '2-digit' })

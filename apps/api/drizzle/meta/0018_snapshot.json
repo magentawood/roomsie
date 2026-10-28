@@ -1,5 +1,5 @@
 {
-  "id": "fb746567-ee29-413c-9796-382e461a9027",
+  "id": "a1942fff-b991-4cf6-8467-788c8d8a1d48",
   "prevId": "00c1bcb4-20f2-4276-9552-4f945eab2f73",
   "version": "7",
   "dialect": "postgresql",
@@ -841,47 +841,27 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "boolean",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true,
-          "default": true
+          "notNull": true
         },
         "invite_only": {
           "name": "invite_only",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true,
-          "default": true
+          "notNull": true
         },
         "opens_at": {
           "name": "opens_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {
-        "invite_gate_one_row_check": {
-          "name": "invite_gate_one_row_check",
-          "value": "\"invite_gate\".\"id\""
-        }
-      },
-      "isRLSEnabled": true
-    },
-    "public.invites": {
-      "name": "invites",
-      "schema": "",
-      "columns": {
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true
+        },
+        "saved_by": {
+          "name": "saved_by",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -892,6 +872,68 @@
         }
       },
       "indexes": {},
+      "foreignKeys": {
+        "invite_gate_saved_by_users_id_fk": {
+          "name": "invite_gate_saved_by_users_id_fk",
+          "tableFrom": "invite_gate",
+          "tableTo": "users",
+          "columnsFrom": [
+            "saved_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": true
+    },
+    "public.invites": {
+      "name": "invites",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "invites_email_idx": {
+          "name": "invites_email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
