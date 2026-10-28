@@ -40,3 +40,30 @@ Sends each crash that a user gets to a dashboard automatically.
 
 ## Read first
 - [0014-error-tracking.md](../../decisions/0014-error-tracking.md)
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **`packages/config` (new interface):** `reportError(err, context)` sends an error to Sentry with the place in the code and the `users.id`, and writes the log line when it gets the logger of the API. `setReportUser(id)` sets the person in the browser. `scrubEvent` removes the personal data of each event before it goes out. Only this package and the start files of each app import Sentry.
+  - **The API:** a start file starts Sentry with `SENTRY_DSN_API`. With no address, Sentry stays off. The error handler reports each 5xx and each error with no status, with the route and the `users.id`. The nine best-effort failures that only write a log line now use `reportError`.
+  - **The web:** `@sentry/nextjs` starts in the browser and on the server, with `NEXT_PUBLIC_SENTRY_DSN`. With no address, Sentry stays off. The events go through our own `/monitoring` path. The person is set when `/v1/me` loads and cleared at sign-out. Our own error pages report a crash of a page and show "Something went wrong" with "Try again".
+  - **The proxy:** the policy sends its violation reports to the security address of Sentry, from the web address. The proxy does not run for `/monitoring`.
+  - **ADR-0014:** the Sentry free tier for launch, the `users.id` on each event, and no source maps.
+- **Seams for the tests:**
+  - The API tests, with Sentry that keeps the events in memory: a failing route gives one event with the route, the `users.id` and a masked phone number, and with no Authorization header and no request body. A best-effort failure gives an event, and the route still succeeds. A 4xx gives no event.
+- **Decisions:**
+  - **The destination:** the Sentry free tier, not GlitchTip, as the launch plan said. This PR writes the exception in ADR-0014, and ticks the 0014 item of F-09. The user decided this in the grill, for Yash.
+  - **The web SDK:** `@sentry/nextjs` with no upload of source maps, because the upload needs a secret in the web (why: ADR-0016). The browser stack traces stay minified. The user decided this in the grill.
+  - **The API failures:** the crashes and the nine best-effort failures (alerts, analytics, realtime, the deletes of photos and ID files, the face match). The user decided this in the grill.
+  - **The violation reports of the policy:** they go to Sentry. The user decided this in the grill.
+  - **The person:** each event has the `users.id` of the signed-in person. Sentry keeps the events for 30 days, so the id goes away 30 days after an account deletion. The user decided this in the grill.
+  - **Scrubbing:** no request body, no cookies, no Authorization header and no IP address. Each Indian phone number in a text becomes `[phone]`.
+  - **Errors only:** no performance tracing and no session replay.
+  - **No address, no Sentry:** local work and the tests send nothing.
+- **Out of scope:**
+  - the upload of source maps
+  - GlitchTip, and the move to Crashlytics (ADR-0014)
+  - the alerts of Sentry to the team (the settings of the Sentry project)
+  - the 0011 item of F-09
