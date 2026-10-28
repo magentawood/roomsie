@@ -33,7 +33,7 @@ quiet failure ─┘
 
 ## Gotchas
 
-- Sentry 11 collects request bodies, headers, cookies and local variables by default. `privacyOptions` turns them off in each app. Keep it in each `Sentry.init`.
+- Sentry 11 collects request bodies, headers, cookies and local variables by default. `privacyOptions` turns them off. Keep it in the `startSentry` of each app: `apps/api/src/sentry.ts` and `apps/web/lib/sentry.ts`.
 - A failed query of Drizzle puts its values, for example the text of a message, in its message. `scrubEvent` cuts them.
 - The automatic capture of Fastify is off in the API. If it is on, Sentry drops our event as a copy of its own, and the event has no `where` and no person.
 - A React crash does not reach Sentry by itself, because React catches it. The error pages report it. An error with a `digest` came from the server, which reported it already.

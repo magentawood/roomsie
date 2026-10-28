@@ -43,10 +43,10 @@ Sends each crash that a user gets to a dashboard automatically.
 
 ## Spec
 
-**Approved:** 2026-10-28, by n3rxv. The changes in implement: approved on 2026-10-28, by n3rxv.
+**Approved:** 2026-10-28, by n3rxv. The changes in implement and review: approved on 2026-10-28, by n3rxv.
 
 - **Modules:**
-  - **`packages/config` (new interface):** `reportError(err, context)` sends an error to Sentry with the place in the code and the `users.id`, and writes the log line when it gets the logger of the API. `setReportUser(id)` sets the person in the browser. `scrubEvent` removes the personal data of each event before it goes out. Only this package and the start files of each app import Sentry.
+  - **`packages/config` (new interface):** `reportError(err, context)` sends an error to Sentry with the place in the code and the `users.id`, and writes the log line when it gets the logger of the API. `setReportUser(id)` sets the person in the browser. `privacyOptions` turns off the data that Sentry collects, and its `scrubEvent` removes the personal data of each event before it goes out. Only this package and the start files of each app import Sentry.
   - **The API:** a start file starts Sentry with `SENTRY_DSN_API`. With no address, Sentry stays off. The error handler reports each 5xx and each error with no status, with the route and the `users.id`. The nine best-effort failures that only write a log line now use `reportError`.
   - **The web:** `@sentry/nextjs` starts in the browser and on the server, with `NEXT_PUBLIC_SENTRY_DSN`. With no address, Sentry stays off. The events go through our own `/monitoring` path. The person is set when `/v1/me` loads and cleared at sign-out. Our own error pages report a crash of a page and show "Something went wrong" with "Try again".
   - **The proxy:** the policy sends its violation reports to the security address of Sentry, from the web address. The proxy does not run for `/monitoring`.
