@@ -542,6 +542,9 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The hero plays the product film "roomsie-product-film-v5" from the Website page of the Product file (Figma node 256:23029)
 - Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
 - The footer links of T-23b use the design of D-04
+- Moderators add and delete the quotes at /admin/quotes. The quotes section shows the five newest quotes when five or more exist
+- Moderators set the social links, the contact email and the organisation number at /admin/site. Each part shows only when it has a value
+- A signed-in person sends feedback from the landing page, and moderators read it at /admin/feedback
 - Read first: `docs/extensibility.md`
 
 **M-04 · Interviews for articles 1 to 10** — done when:

@@ -36,8 +36,45 @@ The public home page that explains roomsie.
 - [ ] The hero plays the product film "roomsie-product-film-v5" from the Website page of the Product file (Figma node 256:23029)
 - [ ] Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
 - [ ] The footer links of T-23b use the design of D-04
+- [ ] Moderators add and delete the quotes at /admin/quotes. The quotes section shows the five newest quotes when five or more exist
+- [ ] Moderators set the social links, the contact email and the organisation number at /admin/site. Each part shows only when it has a value
+- [ ] A signed-in person sends feedback from the landing page, and moderators read it at /admin/feedback
 
 ^done
 
 ## Read first
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **The contract** (`packages/contract`): new schemas for the site details, the quotes and the feedback. The interface gets new parts only.
+  - **The site module** (`apps/api`, new): it owns the quotes and the site details. A public route gives the quotes and the site details to the landing page. Routes for moderators add and delete quotes and set the site details. Its interface is new.
+  - **The feedback module** (`apps/api`, new): it owns the feedback. A signed-in person sends feedback. Moderators read it. Account deletion calls the module to delete the feedback of the person. Its interface is new.
+  - **The landing page** (`apps/web`, new): the page `/`, rendered on the server. The header, the hero with the film, the problem cards, the example searches, "Roomsie does it for you simply", the quotes, "Your next flat is just one search away", the contact section and the footer. It replaces the home stub.
+  - **The admin pages** (`apps/web`, new): `/admin/quotes`, `/admin/site` and `/admin/feedback`, for moderators only. The reports page at `/admin` links to them.
+  - **The theme tokens** (`apps/web`): new tokens for the colours of the dark section and the gradients of the design.
+- **Seams for the tests:**
+  - API tests on the test database, through the server: the public route gives no quotes with four quotes, and the five newest with six; a site detail shows only when it has a value; each moderator route gives 404 to a person who is not a moderator; a quote needs the consent tick; feedback needs sign-in; account deletion deletes the feedback of the person.
+  - A browser check at 390 px, 834 px and 1440 px, with the API stubbed: each section of the design; the header of a guest and of a signed-in person; the sign-in wall when a guest sends feedback; no quotes section with four quotes; no "Follow us" card with no links; the page with no motion when the person turns motion off.
+- **Decisions:**
+  - **The design:** the section "Final screens" of the Website page of the Product file, at desktop, tablet and phone widths, with the fixes of drafts section 19 (why: PD14). The tablet gets the same fixes. The brand name is "Roomsie", as in the designs.
+  - **The media:** the product film (25 seconds), "Tell it." (8 seconds) and "It searches." (6 seconds) are the videos of the design, exported from Figma, one loop each. The web app serves them. They play muted in a loop and show their first frame when the person turns motion off. "You decide." is the still image of drafts section 19. The user decided this in the grill.
+  - **The quotes:** the section is as designed. A moderator adds a quote with its text (200 characters at most), the name (40 characters at most) and a tick that the person agreed. A moderator can delete a quote, but not edit it. The quote keeps who added it and when. The section shows only when five quotes or more exist, and then it shows the five newest. The user decided this in the grill.
+  - **The editors:** moderators, from `MODERATOR_UIDS`, edit the quotes and the site details and read the feedback. The user decided this in the grill.
+  - **The site details:** a moderator sets the links of Instagram, WhatsApp, Facebook and LinkedIn, the contact email and the organisation number. Each part shows only when it has a value. "Follow us" hides with no link, and "Contact us" hides with no email. The user decided this in the grill.
+  - **The footer:** "Copyright © 2026 Roomsie. All rights reserved." It names no headquarters. "Organization number: <number>" shows when a moderator sets it. The footer links are "Privacy policy", "Terms of use" and "Grievance officer", to the pages of T-23b. The user decided this in the grill.
+  - **The feedback:** the text (2,000 characters at most) goes into our database. Sign-in is necessary to send it, and a guest who taps "Share Feedback" gets the sign-in wall. Moderators see the text and the date of the 100 newest. T-50 uses the same route for its popover. The user decided this in the grill.
+  - **The header:** each person sees the landing page. A guest sees "Sign in with Google" ("Sign in" on a phone), and the sign-in opens `/chat`. A signed-in person sees "Open Roomsie", to `/chat`. The user decided this in the grill.
+  - **The example searches:** the rows move, stop when the pointer is on them, and do not move when the person turns motion off. A tap does nothing. The user decided this in the grill.
+  - **"Tell it.":** the text is "Type it in English or Hinglish. No problem.", because the chat has no voice input. The user decided this in the grill.
+  - **The rendering:** the server renders the page (why: ADR-0007, PD6b). It gets the quotes and the site details from the API, and keeps them for 60 seconds. Thus, a change goes live in one minute or less. If the API does not answer, the page shows with no quotes and no site details.
+  - **The tokens:** each colour, size and font comes from a theme token.
+- **Out of scope:**
+  - the pages `/privacy`, `/terms` and `/grievance` (T-23b)
+  - an edit of a quote, and a reply to feedback
+  - the feedback popover of the app (T-50)
+  - the invite gate (T-33)
+  - a new film without "A great match" (the designer)
