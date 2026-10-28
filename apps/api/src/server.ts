@@ -19,6 +19,7 @@ import { listAreas } from './areas'
 import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
 import { feedbackRoutes } from './feedback/routes'
+import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
 import { moderationRoutes } from './moderation/routes'
@@ -83,7 +84,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       )
       v1.withTypeProvider<ZodTypeProvider>().delete(
         '/me',
-        { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: noContent } } },
+        { preHandler: requireUser(options, { deletion: true }), schema: { response: { 204: noContent } } },
         async (req, reply) => {
           await deleteAccount({ ...options, firebaseAdmin: options.messaging.firebaseAdmin }, req.user!.id, req.identity!)
           return reply.code(204).send(null)
@@ -106,6 +107,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       verificationRoutes(v1, options)
       siteRoutes(v1, options)
       feedbackRoutes(v1, options)
+      inviteRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

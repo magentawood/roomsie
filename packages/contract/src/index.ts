@@ -16,6 +16,7 @@ export type AreasResponse = z.infer<typeof areasResponse>
 export * from './alerts'
 export * from './events'
 export * from './feedback'
+export * from './invites'
 export * from './listings'
 export * from './messages'
 export * from './moderation'

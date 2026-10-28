@@ -6,6 +6,7 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import { migrate } from 'drizzle-orm/postgres-js/migrator'
 import { createAnalyticsDb } from '../src/analytics/client'
 import { createDb } from '../src/db/client'
+import { inviteGate } from '../src/db/schema'
 
 export const adminUrl = process.env.TEST_DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/postgres'
 export const migrationsFolder = fileURLToPath(new URL('../drizzle', import.meta.url))
@@ -30,5 +31,10 @@ async function disposableDatabase<D extends PostgresJsDatabase<Record<string, un
   return { db, drop }
 }
 
-export const createTestDb = ({ migrated = true } = {}) => disposableDatabase(createDb, migrationsFolder, migrated)
+/** The gate of T-33 starts closed. The tests of the other features need it open, and the invites tests close it. */
+export async function createTestDb({ migrated = true } = {}) {
+  const testDb = await disposableDatabase(createDb, migrationsFolder, migrated)
+  if (migrated) await testDb.db.update(inviteGate).set({ inviteOnly: false })
+  return testDb
+}
 export const createTestAnalyticsDb = () => disposableDatabase(createAnalyticsDb, fileURLToPath(new URL('../drizzle-analytics', import.meta.url)))
