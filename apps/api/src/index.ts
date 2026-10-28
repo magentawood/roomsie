@@ -2,8 +2,11 @@ import { env } from './env'
 import { createAnalyticsDb } from './analytics/client'
 import { googleKeys } from './auth'
 import { createDb } from './db/client'
+import { flushSentry, startSentry } from './sentry'
 import { buildServer } from './server'
 import { r2Storage } from './storage'
+
+if (env.SENTRY_DSN_API) startSentry({ dsn: env.SENTRY_DSN_API })
 
 const app = buildServer({
   webOrigin: env.WEB_ORIGIN,
@@ -23,6 +26,6 @@ const app = buildServer({
     publicUrl: env.R2_PUBLIC_URL,
   }),
 })
-// A deploy stops the container with SIGTERM. The close writes the events and the alerts in memory first.
-for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => void app.close().then(() => process.exit(0)))
+// A deploy stops the container with SIGTERM. The close writes the events, the alerts and the error reports in memory first.
+for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => void app.close().then(flushSentry).then(() => process.exit(0)))
 await app.listen({ port: env.PORT, host: '0.0.0.0' })

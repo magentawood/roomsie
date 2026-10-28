@@ -1,4 +1,5 @@
 import type { FastifyBaseLogger } from 'fastify'
+import { reportError } from '@roomsie/config/report'
 import type { Tx } from '../db/client'
 import { messages } from '../db/schema'
 import type { Realtime } from '../realtime'
@@ -13,5 +14,5 @@ export async function openConversation(tx: Tx, note: { requestId: string; sender
 /** Sends a message live to the two people. Realtime is best effort: the message is already saved. */
 export async function sendLive(realtime: Realtime, log: FastifyBaseLogger, row: MessageRow, userIds: string[]) {
   await Promise.all(userIds.map((userId) => realtime.send(userId, { event: 'message', payload: messageView(row, userId) })
-    .catch((err: unknown) => log.error({ err }, 'realtime'))))
+    .catch((err: unknown) => reportError(err, { where: 'realtime', log }))))
 }

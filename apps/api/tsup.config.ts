@@ -5,6 +5,6 @@ export default defineConfig({
   format: 'esm',
   target: 'node22',
   clean: true,
-  // The contract package ships TypeScript source, so the bundle must include it.
-  noExternal: ['@roomsie/contract'],
+  // The workspace packages ship TypeScript source, so the bundle must include them.
+  noExternal: ['@roomsie/contract', '@roomsie/config'],
 })

@@ -5,13 +5,23 @@
   "type": "module",
   "exports": {
     "./tsconfig.base.json": "./tsconfig.base.json",
-    "./eslint": "./eslint.config.js"
+    "./eslint": "./eslint.config.js",
+    "./report": "./src/report.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@eslint/js": "^10.0.0",
+    "@sentry/core": "11.9.0",
     "typescript-eslint": "^8.71.0"
   },
   "peerDependencies": {
     "eslint": "^10.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^10.11.0",
+    "typescript": "~6.0.3"
   }
 }

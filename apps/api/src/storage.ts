@@ -1,6 +1,7 @@
 import { uuidv7 } from 'uuidv7'
 import { photoTypes, type UploadUrlBody } from '@roomsie/contract'
 import { AwsClient } from 'aws4fetch'
+import { reportError } from '@roomsie/config/report'
 
 /** Photo bytes never pass through the API (ADR-0005). The client uploads to R2 with a signed link. */
 export type Storage = {
@@ -44,7 +45,7 @@ export function r2Storage(options: { accountId: string; accessKeyId: string; sec
 /** False when R2 fails, so the caller changes nothing (PD19). */
 export async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj: unknown) => void }) {
   return storage.deleteObjects(keys).then(() => true, (err: unknown) => {
-    log.error(err)
+    reportError(err, { where: 'photo delete', log })
     return false
   })
 }

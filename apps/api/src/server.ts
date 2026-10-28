@@ -1,4 +1,4 @@
-import Fastify from 'fastify'
+import Fastify, { type FastifyError } from 'fastify'
 import cors from '@fastify/cors'
 import swagger from '@fastify/swagger'
 import {
@@ -9,6 +9,7 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
+import { reportError } from '@roomsie/config/report'
 import { deleteAccount } from './account'
 import { alertsOf, type Alerts } from './alerts/alerts'
 import type { AnalyticsDb } from './analytics/client'
@@ -53,10 +54,14 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.decorateRequest('identity', null)
   app.decorateRequest('analyticsId', null)
   // A 400 names the fields, so a client can show which value is wrong. Other errors keep the default reply.
-  app.setErrorHandler((err, _req, reply) => {
-    if (!hasZodFastifySchemaValidationErrors(err)) throw err
-    const fields = new Set(err.validation.map((v) => v.instancePath.split('/')[1] || err.validationContext))
-    return reply.code(400).send({ error: `not valid: ${[...fields].join(', ')}` })
+  app.setErrorHandler<FastifyError>((err, req, reply) => {
+    if (hasZodFastifySchemaValidationErrors(err)) {
+      const fields = new Set(err.validation.map((v) => v.instancePath.split('/')[1] || err.validationContext))
+      return reply.code(400).send({ error: `not valid: ${[...fields].join(', ')}` })
+    }
+    // A 4xx is a fault of the request. Fastify writes the log line of each error (T-07).
+    if (!(err.statusCode && err.statusCode < 500)) reportError(err, { where: `${req.method} ${req.routeOptions.url}`, userId: req.user?.id })
+    throw err
   })
   // Saved uses PUT, and the listing flow uses PATCH and DELETE. The default allows only GET, HEAD and POST.
   app.register(cors, { origin: options.webOrigin, methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] })

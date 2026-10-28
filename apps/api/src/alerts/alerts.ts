@@ -1,5 +1,6 @@
 import type { FastifyBaseLogger } from 'fastify'
 import { eq } from 'drizzle-orm'
+import { reportError } from '@roomsie/config/report'
 import type { Db } from '../db/client'
 import { pushTokens } from '../db/schema'
 import type { Mailer } from '../email'
@@ -33,7 +34,7 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
   // setImmediate: the route sends its reply first.
   const later = (work: () => Promise<void>) => {
     const done: Promise<void> = new Promise((next) => setImmediate(next)).then(work)
-      .catch((err: unknown) => log.error({ err }, 'alerts')).finally(() => pending.delete(done))
+      .catch((err: unknown) => reportError(err, { where: 'alerts', log })).finally(() => pending.delete(done))
     pending.add(done)
   }
   const chatLink = (requestId: string) => `${webOrigin}/messages/${requestId}`
@@ -55,7 +56,7 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
         if (await firebaseAdmin!.sendPush(token, { title: alertTitle(alert), link: alert.link }) === 'gone') await db.delete(pushTokens).where(eq(pushTokens.token, token))
       }),
     ])
-    for (const send of sends) if (send.status === 'rejected') log.error({ err: send.reason }, 'alerts')
+    for (const send of sends) if (send.status === 'rejected') reportError(send.reason, { where: 'alerts', log })
   }
 
   return {

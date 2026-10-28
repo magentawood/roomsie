@@ -5,6 +5,7 @@ import {
   errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, requestCapMessage, requestDailyLimit, sendRequestBody,
   type SendRequestBody,
 } from '@roomsie/contract'
+import { reportError } from '@roomsie/config/report'
 import { requireUser, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { connectionRequests } from '../db/schema'
@@ -72,7 +73,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     if (made === 'limit') return reply.code(429).send({ error: requestCapMessage })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
     // Realtime is best effort: the request is already saved.
-    await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => req.log.error({ err }, 'realtime'))
+    await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => reportError(err, { where: 'realtime', userId: req.user!.id, log: req.log }))
     const view = (await outgoingViews(db, storage, [made]))[0]!
     alerts.request(made)
     analytics.track(req, { name: 'connect_sent', to: made.listingId ? 'listing' : 'person' })
