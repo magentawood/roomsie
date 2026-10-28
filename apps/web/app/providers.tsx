@@ -11,13 +11,13 @@ export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(() => new QueryClient())
   return (
     <QueryClientProvider client={client}>
-      <AuthProvider><LiveMessages><ReportUser />{children}</LiveMessages></AuthProvider>
+      <AuthProvider><LiveMessages><ReportUserWhenSignedIn />{children}</LiveMessages></AuthProvider>
     </QueryClientProvider>
   )
 }
 
 /** Each error event of this browser carries the users.id of the signed-in person (T-07). */
-function ReportUser() {
+function ReportUserWhenSignedIn() {
   const { user } = useAuth()
   return user && <ReportUserId key={user.uid} />
 }

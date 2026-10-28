@@ -8,5 +8,4 @@ export const startSentry = (options: Sentry.NodeOptions) => Sentry.init({
   integrations: (defaults) => defaults.filter((integration) => integration.name !== 'Fastify'),
 })
 
-/** Sends the events in memory, before a shutdown. */
 export const flushSentry = () => Sentry.flush(2000)
