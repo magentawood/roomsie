@@ -29,7 +29,7 @@ export default async function Home() {
         <Callout />
         <Contact details={details} />
       </main>
-      <Footer orgNumber={details.orgNumber} blog={articles.length > 0} />
+      <Footer orgNumber={details.orgNumber} showBlogLink={articles.length > 0} />
     </>
   )
 }

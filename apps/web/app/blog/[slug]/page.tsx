@@ -6,7 +6,7 @@ import { Portrait } from '../../../components/blog/portrait'
 import { Callout, Footer } from '../../../components/landing/contact'
 import { LandingHeader } from '../../../components/landing/hero'
 import { Container } from '../../../components/landing/parts'
-import { checkedOn, getArticle } from '../../../lib/articles'
+import { articlePath, checkedOn, getArticle } from '../../../lib/articles'
 import { getSite, siteUrl } from '../../../lib/site'
 
 type Props = { params: Promise<{ slug: string }> }
@@ -14,16 +14,14 @@ type Props = { params: Promise<{ slug: string }> }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const article = await getArticle((await params).slug)
   if (!article) return {}
-  const { seoTitle: title, seoDescription: description } = article
   return {
-    title, description,
-    alternates: { canonical: `/blog/${article.slug}` },
-    openGraph: { type: 'article', title, description, url: `/blog/${article.slug}` },
-    twitter: { card: 'summary_large_image', title, description },
+    title: article.seoTitle,
+    description: article.seoDescription,
+    alternates: { canonical: articlePath(article.slug) },
+    openGraph: { type: 'article', url: articlePath(article.slug) },
   }
 }
 
-// Each passage is HTML that the API made from a file of the repo, with raw HTML escaped (T-37).
 const body = 'flex flex-col gap-4 text-lg text-secondary [&_a]:font-semibold [&_a]:text-primary [&_a]:underline [&_h3]:font-semibold [&_h3]:text-primary [&_li]:ml-6 [&_ol]:flex [&_ol]:list-decimal [&_ol]:flex-col [&_ol]:gap-2 [&_strong]:font-semibold [&_strong]:text-primary [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2'
 
 export default async function ArticlePage({ params }: Props) {
@@ -37,7 +35,7 @@ export default async function ArticlePage({ params }: Props) {
     dateModified: article.dateChecked,
     author: { '@type': 'Person', name: article.author },
     publisher: { '@type': 'Organization', name: 'Roomsie', url: siteUrl },
-    mainEntityOfPage: `${siteUrl}/blog/${article.slug}`,
+    mainEntityOfPage: `${siteUrl}${articlePath(article.slug)}`,
     ...(article.coverImage && { image: `${siteUrl}${article.coverImage}` }),
   }
   return (
@@ -63,6 +61,7 @@ export default async function ArticlePage({ params }: Props) {
               {article.passages.map((p, i) => (
                 <section key={i} className="flex flex-col gap-3 md:gap-4">
                   {p.heading && <h2 className="text-xl font-semibold text-primary md:text-display-xs">{p.heading}</h2>}
+                  {/* The API made this HTML from a file of the repo, with raw HTML escaped. */}
                   <div className={body} dangerouslySetInnerHTML={{ __html: p.html }} />
                 </section>
               ))}
@@ -71,7 +70,7 @@ export default async function ArticlePage({ params }: Props) {
         </Container>
         <Callout />
       </main>
-      <Footer orgNumber={details.orgNumber} blog />
+      <Footer orgNumber={details.orgNumber} showBlogLink />
       {/* A data block, not a script: the browser does not run it, so the policy needs no nonce for it. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replaceAll('<', '\\u003c') }} />
     </>

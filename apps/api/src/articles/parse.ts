@@ -9,7 +9,7 @@ const markdown = MarkdownIt({ html: false })
 const articleFileName = /^\d{2}-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const withFrontMatter = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
 
-/** The front matter of the marketing article drafts, with the photo and the cover of T-37. */
+/** The front matter of the marketing article drafts. */
 const frontMatter = z.strictObject({
   number: z.int().positive(),
   title: z.string().min(1),
@@ -79,7 +79,6 @@ export function parseArticle(fileName: string, source: string) {
   }
 }
 
-/** The published articles: each `NN-slug.md` file of the folder. */
 export async function readArticles(folder: URL) {
   const files = (await readdir(folder)).filter((f) => f.endsWith('.md')).sort()
   const articles = await Promise.all(files.map(async (f) => parseArticle(f, await readFile(new URL(f, folder), 'utf8'))))

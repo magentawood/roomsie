@@ -48,6 +48,9 @@ describe('syncArticles', () => {
     await syncArticles(t.db, [{ ...deposit, title: 'Your deposit, back in full', passages: deposit.passages.slice(0, 1) }])
     expect(await stored()).toEqual([{ slug: 'deposit-back', title: 'Your deposit, back in full' }])
     expect(await t.db.select({ text: articlePassages.text }).from(articlePassages)).toEqual([{ text: 'Most deposits come back in full.' }])
+
+    await syncArticles(t.db, [])
+    expect(await stored()).toEqual([])
   })
 })
 
@@ -80,7 +83,9 @@ describe('the article routes', () => {
   beforeAll(() => syncArticles(t.db, [police, deposit]))
 
   it('list the articles by number', async () => {
-    const list = articlesResponse.parse((await t.call(null, 'GET', '/v1/articles')).json())
+    const res = await t.call(null, 'GET', '/v1/articles')
+    expect(res.json().articles[0]).not.toHaveProperty('id')
+    const list = articlesResponse.parse(res.json())
     expect(list.articles).toEqual([
       {
         slug: 'deposit-back', number: 4, title: 'Getting your deposit back', author: 'Asha Rao', authorLine: 'Rented in Andheri for six years',

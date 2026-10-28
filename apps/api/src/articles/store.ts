@@ -6,7 +6,7 @@ import type { Article } from './parse'
 /** Makes the tables match the files, so a merged pull request publishes, changes or removes an article. */
 export async function syncArticles(db: Db, published: Article[]) {
   await db.transaction(async (tx) => {
-    await tx.delete(articles).where(published.length ? notInArray(articles.slug, published.map((a) => a.slug)) : undefined)
+    await tx.delete(articles).where(notInArray(articles.slug, published.map((a) => a.slug)))
     for (const { passages, ...fields } of published) {
       const [row] = await tx.insert(articles).values(fields).onConflictDoUpdate({ target: articles.slug, set: fields }).returning({ id: articles.id })
       await tx.delete(articlePassages).where(eq(articlePassages.articleId, row!.id))

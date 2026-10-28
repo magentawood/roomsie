@@ -34,7 +34,7 @@ export default async function Blog() {
           </div>
         </Container>
       </main>
-      <Footer orgNumber={details.orgNumber} blog />
+      <Footer orgNumber={details.orgNumber} showBlogLink />
     </>
   )
 }
