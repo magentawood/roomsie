@@ -1,7 +1,7 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
-import { requireUser, type AuthOptions } from '../auth'
+import { requireModerator, type AuthOptions } from '../auth'
 import type { Tx } from '../db/client'
 import { hideListingsOf, listingsByIds, listingView, partsOf, setListingHiddenForReview } from '../listings/read'
 import { idParams } from '../params'
@@ -24,10 +24,7 @@ async function suspend(tx: Tx, userId: string) {
 export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage, moderation } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
-  // Each other user gets 404, so the routes do not show.
-  const preHandler = [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
-    if (!req.user!.moderator) return reply.code(404).send({ error: 'not found' })
-  }]
+  const preHandler = requireModerator(options)
 
   app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse, 404: errorResponse } } }, async () => {
     const reports = await openReports(db)

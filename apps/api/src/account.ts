@@ -3,6 +3,7 @@ import { eq } from 'drizzle-orm'
 import { deletePushTokensOf } from './alerts/read'
 import { copyBlocksAgainst } from './blocks/read'
 import type { Db } from './db/client'
+import { deleteFeedbackOf } from './feedback/read'
 import { anonymousSessions, goals, users } from './db/schema'
 import type { IdStore } from './id-store'
 import { deactivateListingsOf, deleteListingsOf, listingPhotoKeysOf } from './listings/read'
@@ -55,6 +56,7 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
     await deleteProfileOf(tx, userId)
     await deleteSavesOf(tx, userId)
     await deletePushTokensOf(tx, userId)
+    await deleteFeedbackOf(tx, userId)
     await tx.update(users).set({
       status: 'deleted',
       authProviderId: tombstoneKey(identity),
