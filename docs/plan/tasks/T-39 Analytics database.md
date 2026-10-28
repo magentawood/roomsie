@@ -43,3 +43,22 @@ Keeps analytics writes off the main database.
 - [0012-analytics-event-store.md](../../decisions/0012-analytics-event-store.md)
 - [extensibility.md](../../extensibility.md)
 - [pd-19-retention.md](../../decisions/pd-19-retention.md)
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **The analytics database:** a new migration adds the function `maintain_events(retention_months)`, turns on `pg_cron` where it exists, and schedules the function each day. The interface of the API does not change.
+  - **PD19:** the period of the raw events.
+- **Seams for the tests:**
+  - The API tests, with a disposable analytics database: the function makes a missing monthly table again, with row level security. It drops a table whose whole month is older than the period, and keeps a table that is partly inside. A second run changes nothing.
+- **Decisions:**
+  - **The function:** it makes each missing monthly table, in UTC, from this month to 12 months ahead, each with row level security, as the first analytics migration does. It drops each monthly table whose whole month is older than the period. The user decided 12 months ahead in the grill.
+  - **Whole months:** the job deletes events by whole month, not each day. Thus, an event stays from 12 to 13 months. The user decided this in the grill.
+  - **The schedule:** `pg_cron` runs the function each day at 22:30 UTC (04:00 IST), after the backups, with a period of 12 months. The period is in the settings of the job, not in the code. Where `pg_cron` does not exist (local work and the tests), the migration only skips the schedule. The migration also runs the function one time.
+  - **PD19:** the raw events stay 12 months, deleted by whole month, thus at most 13 months. The user decided this in the grill, for Yash.
+  - **The other items:** T-24 ([#176](https://github.com/magentawood/roomsie/pull/176)) did "track() writes to its own project" and "the main database keeps no events". PD19 decided the period, F-13 is closed, and the period is in the settings of the job.
+- **Out of scope:**
+  - an alert when the job fails
+  - the rollup tables and the dashboards (ADR-0012)
