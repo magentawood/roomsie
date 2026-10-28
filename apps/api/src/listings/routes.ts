@@ -96,7 +96,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
     const kept = new Set([...next.listing.photoKeys, ...photoKeysOf(next.flatmates)])
     const removed = [...listing.photoKeys, ...photoKeysOf(current.flatmates)].filter((key) => !kept.has(key))
-    if (!(await deletePhotos(storage, removed, req.log))) return reply.code(502).send({ error: 'photo storage failed' })
+    if (!(await deletePhotos(storage, removed, req))) return reply.code(502).send({ error: 'photo storage failed' })
 
     const saved = await db.transaction(async (tx) => {
       const [row] = await tx.update(listings).set({ ...columns, updatedAt: new Date() })
@@ -151,7 +151,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const { flatmates } = (await partsOf(db, [listing.id]))(listing.id)
-    if (!(await deletePhotos(storage, [...listing.photoKeys, ...photoKeysOf(flatmates)], req.log))) {
+    if (!(await deletePhotos(storage, [...listing.photoKeys, ...photoKeysOf(flatmates)], req))) {
       return reply.code(502).send({ error: 'photo storage failed' })
     }
     await db.delete(listings).where(listingOfOwner(listing.id, req.user!.id))

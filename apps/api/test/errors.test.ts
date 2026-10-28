@@ -13,8 +13,8 @@ async function sent() {
   return reported.splice(0)
 }
 
-// R2 refuses each upload link, with a phone number in its message.
-const failingStorage: Storage = { ...offlineStorage, uploadUrl: async () => { throw new Error('R2 refused the link of +91 98200 12345') } }
+// R2 refuses each upload link, with phone numbers in its message.
+const failingStorage: Storage = { ...offlineStorage, uploadUrl: async () => { throw new Error('R2 refused the link of +91 98200 12345, 09820012345 and 982 001 2345') } }
 
 let t: TestApp<'visitor'>
 beforeAll(async () => {
@@ -39,7 +39,7 @@ describe('reportError', () => {
     // The first sign-in of the setup put "signed in" in memory.
     await t.flushEvents()
     const events = await sent()
-    expect(events).toMatchObject([{ tags: { where: 'analytics' } }])
+    expect(events).toMatchObject([{ tags: { where: 'analytics' }, exception: { values: expect.arrayContaining([expect.objectContaining({ value: '1 analytics events lost' })]) } }])
     // The failed query names its values in its message, and they do not go out.
     const messages = events.flatMap((e) => e.exception?.values ?? []).map((v) => v.value).join('\n')
     expect(messages).toContain('params: [removed]')
@@ -54,8 +54,8 @@ describe('reportError', () => {
     const events = await sent()
     expect(events).toMatchObject([{ tags: { where: 'POST /v1/me/profile/upload-urls' }, user: { id: t.ids.visitor } }])
     const text = JSON.stringify(events)
-    expect(text).toContain('R2 refused the link of [phone]')
-    expect(text).not.toMatch(/98200|Bearer|image\/jpeg/)
+    expect(text).toContain('R2 refused the link of [phone], [phone] and [phone]')
+    expect(text).not.toMatch(/98200|982 001|Bearer|image\/jpeg/)
   })
 
   it('does not report a 4xx', async () => {

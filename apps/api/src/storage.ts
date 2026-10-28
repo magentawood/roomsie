@@ -1,3 +1,4 @@
+import type { FastifyRequest } from 'fastify'
 import { uuidv7 } from 'uuidv7'
 import { photoTypes, type UploadUrlBody } from '@roomsie/contract'
 import { AwsClient } from 'aws4fetch'
@@ -43,9 +44,9 @@ export function r2Storage(options: { accountId: string; accessKeyId: string; sec
 }
 
 /** False when R2 fails, so the caller changes nothing (PD19). */
-export async function deletePhotos(storage: Storage, keys: string[], log: { error: (obj: unknown) => void }) {
+export async function deletePhotos(storage: Storage, keys: string[], req: Pick<FastifyRequest, 'log' | 'user'>) {
   return storage.deleteObjects(keys).then(() => true, (err: unknown) => {
-    reportError(err, { where: 'photo delete', log })
+    reportError(err, { where: 'photo delete', userId: req.user?.id, log: req.log })
     return false
   })
 }

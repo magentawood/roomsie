@@ -1,6 +1,6 @@
 'use client'
 
-import { CrashState } from '../components/shell/crash-state'
+import PageError from './error'
 import './globals.css'
 
 /** A crash of the root layout. It replaces the layout, so it has its own html and body (T-07). */
@@ -8,7 +8,7 @@ export default function GlobalError(props: { error: Error & { digest?: string };
   return (
     <html lang="en">
       <body>
-        <CrashState {...props} />
+        <PageError {...props} />
       </body>
     </html>
   )

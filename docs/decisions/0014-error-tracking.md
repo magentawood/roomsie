@@ -27,12 +27,12 @@ and no release correlation. Its retention is short and depends on the plan.
 
 **In one line:** `apps/web` and `apps/api` send errors through the Sentry SDK, behind one `reportError` wrapper, to the Sentry free tier for launch, then to self-hosted GlitchTip until Firebase Crashlytics for web reaches GA.
 
-**Instrument with the Sentry SDK. Point the DSN at self-hosted GlitchTip.**
+**Instrument with the Sentry SDK. Point the DSN at self-hosted GlitchTip,** after the launch on the Sentry free tier (see the exception at the end).
 
 | | |
 |---|---|
 | Instrumentation | Sentry SDK in `apps/web` and `apps/api` |
-| Destination now | **Self-hosted GlitchTip** on Fly, ~$5/month |
+| Destination now | **The Sentry free tier** for launch (see the exception at the end), then **self-hosted GlitchTip** on Fly, ~$5/month |
 | Destination later | **Firebase Crashlytics for web, when it reaches GA.** This is the preferred destination. The fallback is Sentry paid. |
 | Mobile (month 4) | **Firebase Crashlytics**: free, best in class, and we already use Firebase |
 | Uptime | An external free-tier monitor of the single API machine. A monitor on the API host can stop together with the API. |
@@ -75,7 +75,7 @@ that this project consistently chose to avoid.
 - **We instrument with the Sentry SDK in all cases.** This is what makes the
   decision reversible. The SDK is the de-facto standard, and it has first-class
   Next.js and Node integrations.
-- **GlitchTip, not the Sentry free tier.** The limit that stops us on the free
+- **GlitchTip, not the Sentry free tier,** after launch. The limit that stops us on the free
   tier is **1 user**, not the 5,000-error cap. A shared login conflicts with the
   rules in `docs/security/credentials.md`. GlitchTip gives unlimited users and
   events. Also, error data stays in our own infrastructure. This agrees with the
@@ -113,7 +113,7 @@ that this project consistently chose to avoid.
   no part of the API, and it has no grouping or alerting. On a product where broken
   chat is a safety issue, it is not acceptable to learn about breakage from users.
 - **Sentry free tier.** The full feature set at $0, but 1 user against a team of
-  four.
+  four. Accepted for launch only: see the exception at the end.
 - **Sentry Team at $26/month.** This is the best product, and the destination
   that we expect to reach. We deferred it only because of the budget. We did not reject it. A change
   to one variable moves us to it.
@@ -126,8 +126,9 @@ that this project consistently chose to avoid.
   volume becomes too large for the self-hosted instance. In these cases, point
   the DSN at Sentry paid as an interim step.
 
-Exception (2026-10-28, T-07): the launch uses the Sentry free tier, not GlitchTip. The launch plan of 2026-09-23 proposed this exception, and F-09 tracks it. The one login of the free tier is accepted until GlitchTip runs. The move is a change of the DSN.
+Exception (2026-10-28, T-07): the launch uses the Sentry free tier, not GlitchTip, as the launch plan proposed (F-09). Its one login is accepted until GlitchTip runs. The move is a change of the DSN.
 
-- Each event carries the `users.id` of the signed-in person, so support can find the errors of one person. The free tier keeps an event for 30 days, so the id goes from Sentry at most 30 days after an account deletion.
+- Each event carries the `users.id` of the signed-in person, for support. The free tier keeps an event for 30 days, so the id leaves Sentry at most 30 days after an account deletion.
 - The browser stack traces stay minified. The upload of source maps needs a secret in the build of the web, and ADR-0016 keeps secrets out of `apps/web`.
 - The SDKs collect no request body, cookie, header but the user agent, IP address, local variable or value of a database query, and `beforeSend` removes the rest.
+- The browser sends the violation reports of the Content-Security-Policy straight to Sentry, so `beforeSend` does not see them. They hold the page address, and the setting "Prevent Storing of IP Addresses" of the project keeps out the IP address.
