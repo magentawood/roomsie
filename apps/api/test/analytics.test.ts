@@ -28,10 +28,9 @@ beforeEach(async () => {
   await analytics.db.delete(events)
 })
 
-/** The events after a flush, oldest first. */
 async function written() {
   await t.flushEvents()
-  return analytics.db.select().from(events).orderBy(asc(events.occurredAt))
+  return analytics.db.select().from(events).orderBy(asc(events.createdAt))
 }
 const actorOf = async (who: Who) => (await t.db.select({ id: users.analyticsId }).from(users).where(eq(users.id, t.ids[who])))[0]!.id
 
@@ -72,6 +71,14 @@ describe('track', () => {
     expect(JSON.stringify(rows)).not.toContain(detail)
   })
 
+  it('fires no second "report filed" for a repeated tap', async () => {
+    const report = { id: uuidv7(), profileId: cards.seeker, reason: 'fake' }
+    expect((await t.call('friend', 'POST', '/v1/reports', report)).statusCode).toBe(204)
+    expect((await t.call('friend', 'POST', '/v1/reports', report)).statusCode).toBe(204)
+
+    expect(await written()).toHaveLength(1)
+  })
+
   it('fires "signed in" one time for each sign-in, not for a refreshed token', async () => {
     const now = Math.floor(Date.now() / 1000)
     const later = await t.idToken('uid-seeker', { authTime: now + 1 })
@@ -102,5 +109,16 @@ describe('track', () => {
     const [event] = await written()
     expect(event).toMatchObject({ name: 'signed_in', fields: { newAccount: true } })
     expect(event!.actor).not.toBe(actor)
+  })
+})
+
+describe('track without the analytics database', () => {
+  it('loses the events, logs it, and the route still succeeds', async () => {
+    const gone = await createTestAnalyticsDb()
+    await gone.drop()
+    const app = await testApp(['visitor'], undefined, {}, gone.db)
+    expect((await app.call('visitor', 'GET', '/v1/me')).statusCode).toBe(200)
+    await expect(app.flushEvents()).resolves.toBeUndefined()
+    await app.close()
   })
 })

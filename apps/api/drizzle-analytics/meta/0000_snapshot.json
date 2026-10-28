@@ -1,5 +1,5 @@
 {
-  "id": "70d55245-8056-4c6e-abb4-93e66aa07eda",
+  "id": "c2c29016-86cf-4294-9566-914ba4bb50e6",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -38,8 +38,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "occurred_at": {
-          "name": "occurred_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
@@ -47,11 +47,11 @@
         }
       },
       "indexes": {
-        "events_occurred_at_idx": {
-          "name": "events_occurred_at_idx",
+        "events_created_at_idx": {
+          "name": "events_created_at_idx",
           "columns": [
             {
-              "expression": "occurred_at",
+              "expression": "created_at",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -65,11 +65,11 @@
       },
       "foreignKeys": {},
       "compositePrimaryKeys": {
-        "events_id_occurred_at_pk": {
-          "name": "events_id_occurred_at_pk",
+        "events_id_created_at_pk": {
+          "name": "events_id_created_at_pk",
           "columns": [
             "id",
-            "occurred_at"
+            "created_at"
           ]
         }
       },

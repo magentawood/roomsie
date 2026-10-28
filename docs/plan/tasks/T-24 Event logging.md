@@ -65,6 +65,9 @@ Records what people actually do, to show what works.
   - **Signed in:** the users row keeps the time of the last sign-in. A token with a later `auth_time` fires the event one time, through a conditional update. A first sign-in and a rejoin fire it with `newAccount` true. A token refresh keeps its `auth_time`, so it does not fire the event.
   - **Writes:** `track()` writes each 5 seconds, at 100 events, and when the server closes. A failed write goes to the log, and the batch is lost (best effort, as the alerts). Without the address of the analytics database, `track()` does nothing.
   - **The table:** partitioned by month on the time of the event, with the partitions from this month to 12 months ahead and a BRIN index on the time. The key is a UUIDv7 and the time. Row level security is on, with no policies (why: ADR-0012).
+  - **Shutdown:** a SIGTERM closes the server, so the events and the alerts in memory are written before the deploy stops the API. The user decided this in review round 2.
+  - **A bad event:** an event that fails its schema goes to the log, and the route still succeeds. The user decided this in review round 2.
+  - **The first values:** the migration gives each existing account an analytics id and sets its last sign-in to the time of the migration, so the sign-ins from before T-24 fire no event. A tombstone gets no analytics id. The user decided this in review round 2.
   - **T-39:** its first done item is true after T-24. T-39 keeps the scheduled job, the next partitions and the 12-month retention.
 - **Out of scope:**
   - dashboards and rollup tables

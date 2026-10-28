@@ -12,7 +12,7 @@ export const migrationsFolder = fileURLToPath(new URL('../drizzle', import.meta.
 
 export type TestDb = Awaited<ReturnType<typeof createTestDb>>
 
-/** A new database, connected with `connect` and migrated from `folder`. Call drop() when done. */
+/** Call drop() when done. */
 async function disposableDatabase<D extends PostgresJsDatabase<Record<string, unknown>> & { $client: Sql }>(connect: (url: string) => D, folder: string, migrated = true) {
   const name = `test_${randomUUID().replaceAll('-', '')}`
   const admin = postgres(adminUrl, { max: 1, onnotice: () => {} })
@@ -32,5 +32,4 @@ async function disposableDatabase<D extends PostgresJsDatabase<Record<string, un
 }
 
 export const createTestDb = ({ migrated = true } = {}) => disposableDatabase(createDb, migrationsFolder, migrated)
-/** The analytics database (T-24). */
 export const createTestAnalyticsDb = () => disposableDatabase(createAnalyticsDb, fileURLToPath(new URL('../drizzle-analytics', import.meta.url)))

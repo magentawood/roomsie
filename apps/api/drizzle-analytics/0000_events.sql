@@ -5,12 +5,12 @@ CREATE TABLE "events" (
 	"event_version" integer NOT NULL,
 	"actor" uuid,
 	"fields" jsonb NOT NULL,
-	"occurred_at" timestamp with time zone DEFAULT now() NOT NULL,
-	CONSTRAINT "events_id_occurred_at_pk" PRIMARY KEY("id","occurred_at")
-) PARTITION BY RANGE ("occurred_at");
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "events_id_created_at_pk" PRIMARY KEY("id","created_at")
+) PARTITION BY RANGE ("created_at");
 --> statement-breakpoint
 ALTER TABLE "events" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
-CREATE INDEX "events_occurred_at_idx" ON "events" USING brin ("occurred_at");--> statement-breakpoint
+CREATE INDEX "events_created_at_idx" ON "events" USING brin ("created_at");--> statement-breakpoint
 -- One partition for each month in UTC, from this month to 12 months ahead. T-39 makes the next ones.
 -- A partition is also a table that the Supabase API can reach, so each one has row level security too.
 DO $$

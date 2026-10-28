@@ -65,5 +65,5 @@ These rules apply to all code.
 
 - Never log a token. API logs redact the `Authorization` header. Why: a token in a log is a password in a log. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))
 - `beforeSend` removes personal data from each error report: message bodies, phone numbers, accurate locations and the `Authorization` header. Why: the error data can go to a vendor. ([ADR-0014](../decisions/0014-error-tracking.md))
-- Events that reference `users.id` are personal data in the scope of the DPDP Act. Account deletion purges or pseudonymises them. Why: we own the events, so the deletion duty is ours. ([ADR-0012](../decisions/0012-analytics-event-store.md))
+- An event carries the analytics id of the person, never `users.id`. Account deletion clears the analytics id in its transaction. Why: we own the events, so the deletion duty is ours. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - Account deletion also purges Form B and propagates to each model provider that got the text of the user. Why: DPDP obligations follow the data. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD7](../decisions/pd-07-models.md))
