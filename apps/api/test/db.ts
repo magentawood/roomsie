@@ -12,7 +12,6 @@ export const migrationsFolder = fileURLToPath(new URL('../drizzle', import.meta.
 
 export type TestDb = Awaited<ReturnType<typeof createTestDb>>
 
-/** Call drop() when done. */
 async function disposableDatabase<D extends PostgresJsDatabase<Record<string, unknown>> & { $client: Sql }>(connect: (url: string) => D, folder: string, migrated = true) {
   const name = `test_${randomUUID().replaceAll('-', '')}`
   const admin = postgres(adminUrl, { max: 1, onnotice: () => {} })
