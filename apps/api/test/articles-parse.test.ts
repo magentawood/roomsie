@@ -69,6 +69,7 @@ describe('parseArticle', () => {
     ['an SEO description of more than 155 characters', '04-deposit-back.md', source({ ...frontMatter, seo_description: `"${'x'.repeat(156)}"` })],
     ['a cover with no alt text', '04-deposit-back.md', source({ ...frontMatter, cover_alt: undefined })],
     ['a number that is not the number of the file name', '05-deposit-back.md', source()],
+    ['a slug with capital letters', '04-Deposit-Back.md', source()],
     ['a file name that is not NN-slug.md', 'Deposit Back.md', source()],
     ['no front matter', '04-deposit-back.md', body],
   ])('refuses %s', (_case, fileName, text) => {

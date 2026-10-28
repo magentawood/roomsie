@@ -117,7 +117,8 @@ row that the API already loaded.
 - The policy has a new nonce for each request (T-52), not the hashes of the
   files, because the experimental hashes of Next do not cover its inline
   scripts. Thus, each page renders on each request, because a static page
-  cannot have the nonce. The policy also blocks inline styles and `eval`.
+  cannot have the nonce. The policy also blocks inline styles and `eval`. A
+  share card of `next/og` is a PNG, not HTML, so it can use inline styles (T-37).
 - Public pages must not require identity, so the API needs unauthenticated read
   endpoints for listings and landing content.
 

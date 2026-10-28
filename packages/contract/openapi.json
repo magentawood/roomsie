@@ -10448,9 +10448,7 @@
         "parameters": [
           {
             "schema": {
-              "type": "string",
-              "maxLength": 100,
-              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+              "type": "string"
             },
             "in": "path",
             "name": "slug",
