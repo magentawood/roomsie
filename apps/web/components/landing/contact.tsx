@@ -1,16 +1,10 @@
 import Link from 'next/link'
 import { ArrowUpRight } from '@untitledui/icons'
 import type { SiteDetails } from '@roomsie/contract'
+import { socialNetworks } from '../../lib/site'
 import { Logo } from '../shell/logo'
 import { FeedbackCard } from './feedback-card'
 import { Container, Mascot, SectionHeading, StartLooking } from './parts'
-
-const socials = [
-  { key: 'instagram', name: 'Instagram' },
-  { key: 'whatsapp', name: 'WhatsApp' },
-  { key: 'facebook', name: 'Facebook' },
-  { key: 'linkedin', name: 'LinkedIn' },
-] as const
 
 const card = 'flex flex-col rounded-2xl border border-primary bg-primary p-5 md:p-6'
 const cardTitle = 'text-lg font-medium text-secondary md:text-xl md:text-primary'
@@ -29,7 +23,7 @@ export function Callout() {
 
 /** "Follow us" and "Contact us" show only with the details that a moderator set (T-23a). */
 export function Contact({ details }: { details: SiteDetails }) {
-  const links = socials.flatMap((s) => (details[s.key] ? [{ ...s, href: details[s.key]! }] : []))
+  const links = socialNetworks.flatMap((s) => (details[s.key] ? [{ ...s, href: details[s.key]! }] : []))
   return (
     <section className="bg-primary-solid">
       <Container className="flex flex-col gap-6 pt-14 pb-7 md:gap-16 md:pt-12 md:pb-6 xl:pt-24 xl:pb-0">

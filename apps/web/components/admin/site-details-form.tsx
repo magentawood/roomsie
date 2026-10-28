@@ -6,14 +6,12 @@ import { noContent, type SiteDetails } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { queryKeys, useSite } from '../../lib/queries'
+import { socialNetworks } from '../../lib/site'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/field'
 
 const fields: { key: keyof SiteDetails; label: string; placeholder: string }[] = [
-  { key: 'instagram', label: 'Instagram link', placeholder: 'https://www.instagram.com/…' },
-  { key: 'whatsapp', label: 'WhatsApp link', placeholder: 'https://wa.me/…' },
-  { key: 'facebook', label: 'Facebook link', placeholder: 'https://www.facebook.com/…' },
-  { key: 'linkedin', label: 'LinkedIn link', placeholder: 'https://www.linkedin.com/company/…' },
+  ...socialNetworks.map((n) => ({ key: n.key, label: `${n.name} link`, placeholder: 'https://…' })),
   { key: 'contactEmail', label: 'Contact email', placeholder: 'hello@roomsie.in' },
   { key: 'orgNumber', label: 'Organization number', placeholder: 'As it shows in the footer' },
 ]

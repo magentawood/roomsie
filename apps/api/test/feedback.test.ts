@@ -1,5 +1,4 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { eq } from 'drizzle-orm'
 import { feedbackResponse } from '@roomsie/contract'
 import { feedback } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
@@ -22,10 +21,9 @@ describe('feedback', () => {
   })
 
   it('shows the newest 100 to a moderator, with no sender, and nothing to other people', async () => {
-    for (let i = 1; i <= 101; i++) {
-      const [row] = await t.db.insert(feedback).values({ userId: t.ids.seeker, text: `Note ${i}` }).returning()
-      await t.db.update(feedback).set({ createdAt: new Date(Date.now() - (101 - i) * 1000) }).where(eq(feedback.id, row!.id))
-    }
+    await t.db.insert(feedback).values(Array.from({ length: 101 }, (_, i) => ({
+      userId: t.ids.seeker, text: `Note ${i + 1}`, createdAt: new Date(Date.now() - (100 - i) * 1000),
+    })))
     const items = await listed()
     expect(items).toHaveLength(100)
     expect(items[0]).toEqual({ id: expect.any(String), text: 'Note 101', createdAt: expect.any(String) })

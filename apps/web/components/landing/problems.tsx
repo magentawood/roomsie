@@ -1,35 +1,35 @@
 import { User01 } from '@untitledui/icons'
 import { Container, Mascot, SectionHeading } from './parts'
 
-/** `me`: the right side. A line with no name continues the line before it. */
-type Line = { me: boolean; name?: string; text: string }
+/** `mine`: the right side. A line with no name continues the line before it. */
+type Line = { mine: boolean; name?: string; text: string }
 
 const chats: { lines: Line[]; className: string }[] = [
   {
     lines: [
-      { me: true, name: 'Meena (Student)', text: 'Sir the 20k Flat near Mithibai college, still available?' },
-      { me: false, name: 'Broker 😈', text: 'Yes yes available. Come today at 5. I will show you' },
-      { me: true, name: 'Meena (Student)', text: 'Ok sir coming. Wohi waala chahiye mast laga wo mujhe' },
-      { me: false, name: 'Broker 😈', text: 'That one gone. I have another, 27k. Come see.' },
+      { mine: true, name: 'Meena (Student)', text: 'Sir the 20k Flat near Mithibai college, still available?' },
+      { mine: false, name: 'Broker 😈', text: 'Yes yes available. Come today at 5. I will show you' },
+      { mine: true, name: 'Meena (Student)', text: 'Ok sir coming. Wohi waala chahiye mast laga wo mujhe' },
+      { mine: false, name: 'Broker 😈', text: 'That one gone. I have another, 27k. Come see.' },
     ],
     className: 'ml-3.5 rotate-5 md:mt-4.5 md:ml-0 md:-rotate-7',
   },
   {
     lines: [
-      { me: true, name: 'Meena (Student)', text: 'I posted the flat on facebook' },
-      { me: true, text: '15 days no replies. ab kya kru?' },
-      { me: false, name: 'Chandu', text: 'Post again. Purani posts logo ko dikhti nahi hai.' },
-      { me: true, name: 'Meena (Student)', text: 'Bohot baar post kiya yaar, post doesnt get much traction...' },
-      { me: false, name: 'Chandu', text: 'Baar baar karoge to hi hoga...' },
+      { mine: true, name: 'Meena (Student)', text: 'I posted the flat on facebook' },
+      { mine: true, text: '15 days no replies. ab kya kru?' },
+      { mine: false, name: 'Chandu', text: 'Post again. Purani posts logo ko dikhti nahi hai.' },
+      { mine: true, name: 'Meena (Student)', text: 'Bohot baar post kiya yaar, post doesnt get much traction...' },
+      { mine: false, name: 'Chandu', text: 'Baar baar karoge to hi hoga...' },
     ],
     className: '-mt-1 ml-3.5 -rotate-8 md:mt-7 md:-ml-7.75 md:rotate-11 xl:-ml-1',
   },
   {
     lines: [
-      { me: true, name: 'Rahul', text: 'Anyone know a place in goregaon? Under 15k' },
-      { me: false, name: 'Mahesh', text: 'What kind?' },
-      { me: true, name: 'Meena (Student)', text: 'Honestly I just want a flatmate who isn’t messy and doesn’t mind me cooking non-veg' },
-      { me: false, name: 'Mahesh', text: 'Yeah no app tells you that lol. I’ll ask around' },
+      { mine: true, name: 'Rahul', text: 'Anyone know a place in goregaon? Under 15k' },
+      { mine: false, name: 'Mahesh', text: 'What kind?' },
+      { mine: true, name: 'Meena (Student)', text: 'Honestly I just want a flatmate who isn’t messy and doesn’t mind me cooking non-veg' },
+      { mine: false, name: 'Mahesh', text: 'Yeah no app tells you that lol. I’ll ask around' },
     ],
     className: 'ml-3.5 rotate-7 md:mt-5 md:-ml-7.75 md:-rotate-8 xl:-ml-1',
   },
@@ -37,17 +37,17 @@ const chats: { lines: Line[]; className: string }[] = [
 
 function Bubble({ line }: { line: Line }) {
   return (
-    <div className={`flex flex-col gap-1.5 ${line.me ? 'w-90' : 'w-79'}`}>
+    <div className={`flex flex-col gap-1.5 ${line.mine ? 'w-90' : 'w-79'}`}>
       {line.name && (
         <p className="flex items-center gap-2">
           <span className="flex-1 truncate text-sm font-medium text-secondary">{line.name}</span>
           <span className="flex items-center gap-0.5 text-xs text-tertiary">
             Friday 2:20pm
-            {line.me && <img src="/landing/icons/check-read.svg" alt="" width={16} height={16} />}
+            {line.mine && <img src="/landing/icons/check-read.svg" alt="" width={16} height={16} />}
           </span>
         </p>
       )}
-      <p className={`rounded-lg border border-secondary px-3 py-2 text-md text-primary ${line.me ? 'rounded-tr-none bg-primary' : 'rounded-tl-none bg-secondary'}`}>{line.text}</p>
+      <p className={`rounded-lg border border-secondary px-3 py-2 text-md text-primary ${line.mine ? 'rounded-tr-none bg-primary' : 'rounded-tl-none bg-secondary'}`}>{line.text}</p>
     </div>
   )
 }
@@ -56,7 +56,7 @@ function Bubble({ line }: { line: Line }) {
 function ChatCard({ lines }: { lines: Line[] }) {
   return (
     <div className="flex w-118.75 flex-col gap-0.75 rounded-xl border border-primary bg-primary p-5 shadow-tilt zoom-64 xl:zoom-100">
-      {lines.map((line, i) => line.me
+      {lines.map((line, i) => line.mine
         ? <div key={i} className={`flex flex-col items-end p-2.5 ${line.name ? '' : 'pt-0'} ${lines[i + 1] && !lines[i + 1]!.name ? 'pb-0' : ''}`}><Bubble line={line} /></div>
         : (
           <div key={i} className="flex items-start gap-3 p-2.5">

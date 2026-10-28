@@ -25,7 +25,7 @@ function AddQuote() {
       setText(null)
       setName(null)
       setConsent(false)
-      return queryClient.invalidateQueries({ queryKey: queryKeys.quotes })
+      return queryClient.invalidateQueries({ queryKey: queryKeys.adminQuotes })
     },
   })
   return (
@@ -48,7 +48,7 @@ export function QuotesEditor() {
   const quotes = useAdminQuotes()
   const remove = useMutation({
     mutationFn: (id: string) => api(user, `/v1/admin/quotes/${id}`, noContent, { method: 'DELETE' }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.quotes }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.adminQuotes }),
   })
   if (quotes.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(quotes.error)}</p>
   if (quotes.isPending) return <p className="text-sm text-tertiary">Loading…</p>
