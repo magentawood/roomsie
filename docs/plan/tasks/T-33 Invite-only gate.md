@@ -35,3 +35,30 @@ Keeps the public out until launch day.
 - [ ] One setting disables the gate on launch day
 
 ^done
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **The invites module of the API (new):** it owns two tables. `invites` has one row for each invited email, in lower case. `invite_gate` has one row with the switch "invite only" and the opening time. Its interface: the check "is this person in", the reads and the changes for the admin page.
+  - **The account module:** the sign-in path asks the invites module before it makes an account row.
+  - **The contract:** the schemas of the admin routes and of the answer "invite only".
+  - **The web:** the admin page `/admin/invites`, and the screen for a person that the gate refuses.
+  - **PD11:** the date of the launch.
+- **Seams for the tests:**
+  - The API tests: an invited email gets in, in any case of letters, and a different email gets 403 with no account row. A moderator gets in with no invite. An account that is not invited gets 403, but can delete itself. The gate opens after the opening time and when the switch is off. Only a moderator can use the admin routes.
+- **Decisions:**
+  - **The list:** a table that moderators change on an admin page, not a setting. The user decided this in the grill.
+  - **Who gets in:** a verified Google email on the list, in any case of letters, and the moderators of `MODERATOR_UIDS`. The user decided this in the grill.
+  - **A person that the gate refuses:** the API answers 403 with "invite only" and the opening time, and makes no account row. An account that exists and is not invited gets the same 403 on each route, but it can delete itself (DPDP).
+  - **The gate:** closed while the switch is on and the opening time is empty or in the future. It opens by itself at the opening time, and the switch opens it at once. The user decided this in the grill.
+  - **The start:** the migration makes the gate closed, with no opening time. Thus, `MODERATOR_UIDS` must have a value before the merge. A moderator then adds the emails of the team and sets the opening time.
+  - **The admin page:** the invited emails with "Add" and "Remove", the switch "Invite only" with a confirm step before it opens the site, and the opening date and time in IST.
+  - **The screen of a refused person:** "Roomsie opens on 8 November" from the opening time, or "Roomsie opens soon" with no time, and a Home button. The web signs the person out. The user decided this in the grill.
+  - **The design:** both screens go on the drafts page of Figma first, from the components of the design system (why: the gaps are ours to design).
+  - **PD11:** the launch is on Sunday 8 November 2026, IST. The go/no-go day and the bug-fix day move with it, and F-10 sets them. The user decided this in the grill, for Yash.
+- **Out of scope:**
+  - a request for an invite, and the waitlist (T-22a and T-22b)
+  - the chat of a guest before sign-in
+  - an email to an invited person
