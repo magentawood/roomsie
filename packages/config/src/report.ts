@@ -26,7 +26,6 @@ function scrubText<T>(value: T): T {
   return value
 }
 
-/** `beforeSend` of each app (ADR-0014). */
 function scrubEvent(event: ErrorEvent): ErrorEvent {
   if (event.request) {
     delete event.request.data
@@ -35,6 +34,7 @@ function scrubEvent(event: ErrorEvent): ErrorEvent {
     event.request.headers = Object.fromEntries(Object.entries(event.request.headers ?? {}).filter(([name]) => name.toLowerCase() === 'user-agent'))
   }
   if (event.user) event.user = { id: event.user.id }
+  for (const value of event.exception?.values ?? []) for (const frame of value.stacktrace?.frames ?? []) delete frame.vars
   for (const part of ['message', 'exception', 'breadcrumbs', 'extra', 'request', 'tags'] as const) event[part] = scrubText(event[part]) as never
   return event
 }

@@ -60,7 +60,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       return reply.code(400).send({ error: `not valid: ${[...fields].join(', ')}` })
     }
     // A 4xx is a fault of the request. Fastify writes the log line of each error (T-07).
-    if (!(err.statusCode && err.statusCode < 500)) reportError(err, { where: `${req.method} ${req.routeOptions.url}`, userId: req.user?.id })
+    if ((err.statusCode ?? 500) >= 500) reportError(err, { where: `${req.method} ${req.routeOptions.url}`, userId: req.user?.id })
     throw err
   })
   // Saved uses PUT, and the listing flow uses PATCH and DELETE. The default allows only GET, HEAD and POST.
