@@ -32,11 +32,11 @@ Records what people actually do, to show what works.
 - [[T-50 Found a place, share, feedback]]
 
 ## Done when
-- [ ] One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed
-- [ ] No message text is stored
-- [ ] Code writes events only through one `track()` function in apps/api
-- [ ] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database
-- [ ] Account deletion (`deleteAccount` of T-20) pseudonymises the events of the user
+- [x] One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed · [#176](https://github.com/magentawood/roomsie/pull/176)
+- [x] No message text is stored · [#176](https://github.com/magentawood/roomsie/pull/176)
+- [x] Code writes events only through one `track()` function in apps/api · [#176](https://github.com/magentawood/roomsie/pull/176)
+- [x] Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database · [#176](https://github.com/magentawood/roomsie/pull/176)
+- [x] Account deletion (`deleteAccount` of T-20) pseudonymises the events of the user · [#176](https://github.com/magentawood/roomsie/pull/176)
 
 ^done
 
@@ -74,3 +74,13 @@ Records what people actually do, to show what works.
   - the scheduled job, the next partitions and the deletion after 12 months (T-39)
   - a route for the events of the browser
   - rate limits (T-21)
+
+## Log
+
+- **2026-10-28 · [#176](https://github.com/magentawood/roomsie/pull/176)**
+  - **Change:** the API writes analytics events through one `track()` to an `events` table in the analytics database, partitioned by month. Each event carries a random analytics id of the person, never `users.id`, and account deletion clears that id. "Signed in", "connect sent", "connect accepted" and "report filed" fire now. T-12, T-14 and T-21 each got a done item for the other three events.
+  - **Why:** the funnel needs per-person events, and the deletion duty for them is ours ([ADR-0012](../../decisions/0012-analytics-event-store.md), [PD19](../../decisions/pd-19-retention.md)).
+  - **Ticked:** "One events table in the analytics database holds these events: interview started, results shown, wall hit, signed in, connect sent, connect accepted, report filed", "No message text is stored", "Code writes events only through one `track()` function in apps/api", "Each event is a Zod schema in packages/contract with an `event_version`. No product code reads or joins the events table, thus no product code depends on the analytics database" and "Account deletion (`deleteAccount` of T-20) pseudonymises the events of the user"
+  - **Not done:** none. "Interview started", "results shown" and "wall hit" fire in T-12, T-14 and T-21.
+  - **Learn:** [Analytics events](../../learn/analytics-events.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
