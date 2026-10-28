@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**155 of 319 done · 49%**
+**159 of 319 done · 50%**
 
 `████████████░░░░░░░░░░░░`
 
@@ -22,7 +22,7 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 6 / 11 | 19 / 35 | 54% |
+| [[P1 Platform]] | 7 / 11 | 22 / 35 | 63% |
 | [[P2 Chat]] | 0 / 13 | 3 / 62 | 5% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
 | [[P4 Content and moderation]] | 4 / 8 | 24 / 34 | 71% |
@@ -30,7 +30,7 @@ This note is part of [[roomsie launch]].
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 6 / 14 | 18 / 41 | 44% |
+| [[Founder]] | 6 / 14 | 19 / 41 | 46% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**34 free tasks are open · 113 build hours.**
+**33 free tasks are open · 112 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -60,7 +60,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-37 Articles and search]] | P4 | 3 | ⬜ can start | 1 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
-| 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
 | 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-39 Analytics database]] | P1 | 3 | ⬜ can start | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
@@ -130,7 +129,7 @@ flowchart LR
   T16b["T-16b ⚑<br/>Profile screens"]:::done
   T03["T-03<br/>CI checks"]:::done
   T13["T-13<br/>Reply writer"]:::todo
-  T07["T-07<br/>Error reporting"]:::ready
+  T07["T-07<br/>Error reporting"]:::done
   T17["T-17<br/>Carry chat into account"]:::todo
   T19["T-19<br/>Report and block"]:::done
   T33["T-33<br/>Invite-only gate"]:::ready
@@ -287,7 +286,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 19/35
+## P1 Platform — 22/35
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -298,7 +297,7 @@ flowchart LR
 > [!todo]- ✅ [[T-04 Deploy to Mumbai]] · 3/3
 > ![[T-04 Deploy to Mumbai#^done]]
 
-> [!todo]- ⬜ [[T-07 Error reporting]] · 0/3
+> [!todo]- ✅ [[T-07 Error reporting]] · 3/3
 > ![[T-07 Error reporting#^done]]
 
 > [!todo]- ✅ [[T-25 Uptime monitor]] · 1/1
@@ -518,7 +517,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 18/41
+## Founder — 19/41
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -538,7 +537,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/6
 > ![[F-07 Privacy and terms draft#^done]]
 
-> [!todo]- ⬜ [[F-09 ADR exceptions]] · 0/2
+> [!todo]- 🟡 [[F-09 ADR exceptions]] · 1/2
 > ![[F-09 ADR exceptions#^done]]
 
 > [!todo]- ⬜ [[F-08 Moderator named]] · 0/4
