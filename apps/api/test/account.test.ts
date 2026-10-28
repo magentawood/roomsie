@@ -231,12 +231,14 @@ describe('DELETE /v1/me', () => {
     expect(await testDb.db.select().from(profiles).where(eq(profiles.userId, user.id))).toHaveLength(0)
   })
 
-  it('removes no data when Firebase cannot delete the user, thus a retry is safe', async () => {
+  it('keeps the rows when Firebase cannot delete the user, thus a retry is safe', async () => {
     const user = await signIn('uid-firebase-down')
     await seedAccount(user.id, 'firebase-down')
     fakes.firebaseUsers.down = true
     expect((await call('DELETE', user.token)).statusCode).toBe(500)
 
+    // The photos go before the rows, as when the database step fails (T-20).
+    expect(photos.deleted.sort()).toEqual(['f/firebase-down', 'l/firebase-down', 'p/firebase-down-1', 'p/firebase-down-2'])
     expect(await testDb.db.select().from(profiles).where(eq(profiles.userId, user.id))).toHaveLength(1)
     expect(await userRow(user.id)).toMatchObject({ status: 'active', authProviderId: user.uid })
     expect((await call('GET', user.token)).statusCode).toBe(200)

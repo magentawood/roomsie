@@ -52,7 +52,7 @@ Removes the sign-in record at Google too, not only our data.
   - **The account module:** account deletion reads the Firebase uid from the locked users row, and deletes the Firebase user as the last step of its transaction. The account deletion function gets the Firebase Admin module.
   - **ADR-0016:** its table names the variable of the service account.
 - **Seams for the tests:**
-  - The API test of account deletion, with the fake Firebase Admin of T-44: the Firebase user of the account is deleted, a Firebase failure removes no data and a retry is safe, a double tap calls Firebase one time, and a sign-in after the delete still meets the rejoin checks.
+  - The API test of account deletion, with the fake Firebase Admin of T-44: the Firebase user of the account is deleted, a Firebase failure keeps the rows and a retry is safe, a double tap calls Firebase one time, and a sign-in after the delete still meets the rejoin checks.
   - A unit test of the Firebase Admin module with a fake `fetch`: "user not found" counts as deleted.
 - **Decisions:**
   - **Order:** the Firebase delete is the last step in the transaction of account deletion. If it fails, the transaction rolls back, the API gives 500, and the dialog says "Try again". A retry is safe, because "user not found" counts as deleted. If the commit fails after the Firebase delete, the retry must come before the token expires (one hour). The R2 deletes of T-20 use the same pattern.

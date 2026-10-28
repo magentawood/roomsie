@@ -34,6 +34,7 @@ browser ── Google popup ──▶ Firebase ──▶ ID token (in memory)
 - The `jose` library verifies the token locally. It fetches the keys of Google one time and caches them. The tests sign their own tokens with a test key ([#131](https://github.com/magentawood/roomsie/pull/131)).
 - Firebase keeps its session in the browser, so a user stays signed in after a reload ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md)).
 - One write to `tokens_valid_after` stops all sessions of a user. The status check stops a suspended user, also with a new token ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md)).
+- Account deletion also deletes the **Firebase user**: the record of the person at Google, with the uid, the email and the name. The Firebase Admin module deletes it as the last step of the deletion transaction ([#175](https://github.com/magentawood/roomsie/pull/175)).
 
 ## Gotchas
 
@@ -43,7 +44,10 @@ browser ── Google popup ──▶ Firebase ──▶ ID token (in memory)
 - If the API cannot get the keys of Google, it gives 500, not 401. A 401 tells the user to sign in again, and that does not help.
 - `next build` runs without the Firebase settings, because Firebase starts only in the browser.
 - A new domain must be in the authorized domains of Firebase. If not, the popup gives `auth/unauthorized-domain`.
+- After its Firebase user is deleted, a Google sign-in makes a new Firebase user with a new uid. Thus the deletion tombstone keys on the Google account id in the token, not on the uid, and the rejoin checks still apply.
+- The new uid cannot find the old account. Thus the Firebase delete is the last step: if an earlier step fails, the person can still retry with the same sign-in. Google's `USER_NOT_FOUND` counts as deleted, so a retry is safe.
 
 ## Tickets
 
 - T-05: [#131](https://github.com/magentawood/roomsie/pull/131), 2026-10-25. Google sign-in on the web, the token check in the API, and `GET /v1/me`.
+- T-53: [#175](https://github.com/magentawood/roomsie/pull/175), 2026-10-28. Account deletion deletes the Firebase user.

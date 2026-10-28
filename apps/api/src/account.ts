@@ -13,7 +13,6 @@ import { hasOpenReportAbout } from './reports/read'
 import { endOpenRequests } from './requests/read'
 import { deleteSavesOf } from './saved/read'
 import type { Storage } from './storage'
-import { lockAccount } from './users'
 import { deleteChecksOf } from './verification/read'
 
 /** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
@@ -38,13 +37,16 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * Not here yet: events (T-24), Form B (T-35). The messages stay for the other person (T-44).
  */
 export async function deleteAccount(
-  db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | undefined, firebaseAdmin: FirebaseAdmin | null, userId: string, identity: string,
+  { db, storage, idStore, firebaseAdmin }: { db: Db; storage: Pick<Storage, 'deleteObjects'>; idStore?: IdStore; firebaseAdmin: Pick<FirebaseAdmin, 'deleteUser'> | null },
+  userId: string,
+  identity: string,
 ) {
   await unpublishCardOf(db, userId)
   await deactivateListingsOf(db, userId)
 
   await db.transaction(async (tx) => {
-    const user = await lockAccount(tx, userId)
+    // The lock of lockAccount. It reads the Firebase uid here, so its other callers do not get it.
+    const [user] = await tx.select({ status: users.status, uid: users.authProviderId }).from(users).where(eq(users.id, userId)).for('update')
     // A second request at the same time (a double tap) waited on the lock. Without this stop, it would
     // hash the tombstone key again and clear rejoin_blocked, so a suspended person could sign in again.
     if (user!.status === 'deleted') return
@@ -70,7 +72,7 @@ export async function deleteAccount(
       updatedAt: new Date(),
     }).where(eq(users.id, userId))
     // Last: a sign-in after it gets a new uid, so it cannot find this account to retry a failed step.
-    await firebaseAdmin?.deleteUser(user!.authProviderId)
+    await firebaseAdmin?.deleteUser(user!.uid)
   })
 }
 

@@ -95,9 +95,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
+- [Sign-in and tokens](learn/sign-in-and-tokens.md)
 - [Alerts: email and browser push](learn/alerts.md)
 - [ID checks and the Verified badge](learn/id-checks.md)
 - [Message requests](learn/message-requests.md)
 - [Messages and realtime](learn/messages.md)
-- [The chat screen and the sign-in wall](learn/chat-screen.md)
 <!-- learn-newest:end -->
