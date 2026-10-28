@@ -14,6 +14,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [CI checks](ci-checks.md): GitHub checks each pull request automatically, and `main` accepts a merge only when the checks pass and a teammate approves.
 - [Content-Security-Policy](content-security-policy.md): each page of the web tells the browser which scripts, styles and hosts it can use, so a script that an attacker puts into a page does not run and cannot take the sign-in.
 - [Deploys](deploys.md): Vercel publishes the web from `main` and builds a preview for each pull request. A GitHub workflow deploys the API as a Docker image to AWS Lightsail in Mumbai.
+- [Error reporting](error-reporting.md): each error that a user gets, in the browser or in the API, goes to Sentry through one `reportError`, with the place in the code and the `users.id`, and with no message text, token, IP address or phone number.
 - [Form A and intent](form-a-and-intent.md): Form A is the set of typed answers that drives matching, and intent is its first answer: the kind of place that a seeker wants.
 - [ID checks and the Verified badge](id-checks.md): a person sends an ID photo and a live selfie, a named reviewer decides, and roomsie keeps only the result.
 - [The landing page](landing-page.md): `/` is the public page that explains Roomsie. The server renders it, and moderators edit its quotes, links and details on admin pages with no code change.

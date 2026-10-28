@@ -97,7 +97,7 @@ These are the newest learn pages. The full list is in [the Learn index](learn/RE
 
 - [Analytics events](learn/analytics-events.md)
 - [Content-Security-Policy](learn/content-security-policy.md)
+- [Error reporting](learn/error-reporting.md)
 - [Sign-in and tokens](learn/sign-in-and-tokens.md)
 - [Alerts: email and browser push](learn/alerts.md)
-- [ID checks and the Verified badge](learn/id-checks.md)
 <!-- learn-newest:end -->

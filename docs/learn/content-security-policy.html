@@ -51,7 +51,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>The proxy</strong> (<code>apps/web/proxy.ts</code>) makes the nonce and the policy for each page request. It does not run for the files in <code>_next/static</code> and <code>public</code>, or for the link prefetches. A new type of file in <code>public</code> needs its extension in the matcher of the proxy.</li>
 <li><strong>Each page renders on each request.</strong> A static page has no nonce, so the policy blocks its scripts. The root layout waits for the request. The landing page keeps its data from the API for 60 seconds with the option of <code>fetch</code>.</li>
-<li><strong>No inline styles and no <code>eval</code>.</strong> The policy blocks a <code>style</code> attribute, an inline <code>&lt;style&gt;</code> with no nonce, and <code>eval</code>. The code uses classes. Zod tries <code>eval</code> to parse faster, so <code>instrumentation-client.ts</code> turns that off. The "not found" page of Next has inline styles, so we have our own.</li>
+<li><strong>No inline styles and no <code>eval</code>.</strong> The policy blocks a <code>style</code> attribute, an inline <code>&lt;style&gt;</code> with no nonce, and <code>eval</code>. The code uses classes. Zod tries <code>eval</code> to parse faster, so <code>instrumentation-client.ts</code> turns that off. The "not found" and error pages of Next have inline styles, so we have our own.</li>
 </ul>
 <table>
 <thead>
@@ -91,7 +91,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>A nonce for each request, not the hashes of the files (<a href="../decisions/0007-web-rendering-and-auth-transport.md">ADR-0007</a>).</li>
 <li>Wildcards for the R2 upload host and the Supabase realtime host, because Vercel does not have their values. The nonce stops a script before it can send data out.</li>
-<li>The policy blocks from the first deploy. There is no report-only period, because nobody collects the reports yet. T-07 can send the violation reports to Sentry.</li>
+<li>The policy blocks from the first deploy, with no report-only period. Since T-07, the browser sends each violation to the security address of the Sentry project of the web (<a href="error-reporting.html">error reporting</a>).</li>
 <li>A unit test of the proxy and a live check, not a browser test in CI, because ADR-0013 defers the Playwright tests (<a href="../decisions/0013-ci-gate-and-testing.md">ADR-0013</a>).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
@@ -105,5 +105,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-52: <a href="https://github.com/magentawood/roomsie/pull/177">#177</a>, 2026-10-28. The policy, the nonce for each request, and the pages that render on each request.</li>
+<li>T-07: <a href="https://github.com/magentawood/roomsie/pull/178">#178</a>, 2026-10-28. The violation reports go to Sentry, and <code>/monitoring</code> skips the proxy.</li>
 </ul>
 </main>
