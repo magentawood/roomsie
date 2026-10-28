@@ -24,6 +24,7 @@ import { VerifyRow } from '../verification/verify-row'
 import { AlertSwitches } from './alert-switches'
 import { AreaPicker } from './area-picker'
 import { DeleteAccountDialog } from './delete-account-dialog'
+import { LogOutRow } from './log-out-row'
 
 const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
 
@@ -195,6 +196,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <VerifyRow />
         <Toggle title="Hide my card" help="Your card stops showing in other people’s results." checked={draft.hidden} onChange={(hidden) => set({ hidden })} />
         <AlertSwitches />
+        <LogOutRow />
         <div className="flex items-start justify-between gap-4">
           <span className="flex flex-col"><span className="text-md font-medium text-primary">Delete Account</span><span className="text-sm text-tertiary">Delete your account.</span></span>
           <Button variant="secondary" size="sm" onClick={() => setDeleting(true)}>Delete my account</Button>
