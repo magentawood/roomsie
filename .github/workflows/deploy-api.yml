@@ -60,7 +60,7 @@ jobs:
           API_R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           API_R2_BUCKET_PHOTOS: ${{ secrets.R2_BUCKET_PHOTOS }}
           API_R2_BUCKET_PRIVATE: ${{ secrets.R2_BUCKET_PRIVATE }}
-          # The CSP of the web allows this host and the ID bucket below: change apps/web/proxy.ts too (T-52).
+          # The CSP of the web allows this host: change apps/web/proxy.ts too (T-52).
           API_R2_PUBLIC_URL: https://photos.roomsie.in
           API_DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           API_GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -70,7 +70,7 @@ jobs:
           API_MODERATOR_UIDS: ${{ secrets.MODERATOR_UIDS }}
           # The Firebase uids of the ID reviewers, comma-separated (T-46). Unset: nobody reviews.
           API_REVIEWER_UIDS: ${{ secrets.REVIEWER_UIDS }}
-          # The private bucket of the ID checks in ap-south-1 (ADR-0020). Not a secret.
+          # The private bucket of the ID checks in ap-south-1 (ADR-0020). Not a secret. Also in apps/web/proxy.ts (T-52).
           API_ID_BUCKET: roomsie-id-checks
         run: |
           jq -n --arg image "$IMAGE" '{
