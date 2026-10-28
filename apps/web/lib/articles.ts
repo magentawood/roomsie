@@ -1,6 +1,6 @@
 import { articleResponse, articlesResponse, type ArticleResponse, type ArticleSummary } from '@roomsie/contract'
 import { apiUrl } from './api-url'
-import { india } from './ist'
+import { istDay } from './ist'
 
 // An article changes only with a deploy of the API, so a view takes the cached answer and does not wait (T-37).
 const cached = () => ({ signal: AbortSignal.timeout(5000), next: { revalidate: 60 } })
@@ -12,7 +12,6 @@ export async function getArticles(): Promise<ArticleSummary[]> {
   return articlesResponse.parse(await res.json()).articles
 }
 
-/** Null for an unknown slug. */
 export async function getArticle(slug: string): Promise<ArticleResponse | null> {
   const res = await fetch(`${apiUrl}/v1/articles/${encodeURIComponent(slug)}`, cached())
   if (res.status === 404) return null
@@ -20,6 +19,7 @@ export async function getArticle(slug: string): Promise<ArticleResponse | null> 
   return articleResponse.parse(await res.json())
 }
 
-/** "Checked on 8 October 2026". */
-export const checkedOn = (date: string) =>
-  `Checked on ${new Date(date).toLocaleDateString('en-IN', { ...india, day: 'numeric', month: 'long', year: 'numeric' })}`
+export const checkedOn = (date: string) => `Checked on ${istDay(date, 'long', 'numeric')}`
+
+/** The slug never changes, because links point to it (PD6b). */
+export const articlePath = (slug: string) => `/blog/${slug}`

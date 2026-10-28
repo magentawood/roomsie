@@ -75,8 +75,8 @@ const legal = [
 ]
 
 /** No headquarters. The organisation number shows when a moderator sets it (T-23a). "Blog" shows with the first article (T-37). */
-export function Footer({ orgNumber, blog }: { orgNumber: string | null; blog: boolean }) {
-  const links = blog ? [{ href: '/blog', label: 'Blog' }, ...legal] : legal
+export function Footer({ orgNumber, showBlogLink }: { orgNumber: string | null; showBlogLink: boolean }) {
+  const links = showBlogLink ? [{ href: '/blog', label: 'Blog' }, ...legal] : legal
   return (
     <footer className="bg-primary-solid text-primary_on-dark">
       <Container className="flex flex-col items-center gap-9.5 pt-13 pb-7 text-center md:flex-row-reverse md:justify-between md:gap-6 md:py-6 md:text-left xl:px-24">
