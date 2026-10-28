@@ -1,5 +1,5 @@
 {
-  "id": "d520ef85-9727-4033-a85f-6272725769ae",
+  "id": "8eea5c60-b514-40ba-91a2-199c2a265c67",
   "prevId": "1e15cdf6-6a65-4590-9d0e-e6329f2f0a27",
   "version": "7",
   "dialect": "postgresql",
@@ -2634,10 +2634,9 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "boolean",
+          "type": "uuid",
           "primaryKey": true,
-          "notNull": true,
-          "default": true
+          "notNull": true
         },
         "instagram": {
           "name": "instagram",
@@ -2675,28 +2674,44 @@
           "primaryKey": false,
           "notNull": false
         },
-        "updated_by": {
-          "name": "updated_by",
+        "saved_by": {
+          "name": "saved_by",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
         },
-        "updated_at": {
-          "name": "updated_at",
+        "created_at": {
+          "name": "created_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "site_details_created_at_idx": {
+          "name": "site_details_created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {
-        "site_details_updated_by_users_id_fk": {
-          "name": "site_details_updated_by_users_id_fk",
+        "site_details_saved_by_users_id_fk": {
+          "name": "site_details_saved_by_users_id_fk",
           "tableFrom": "site_details",
           "tableTo": "users",
           "columnsFrom": [
-            "updated_by"
+            "saved_by"
           ],
           "columnsTo": [
             "id"
@@ -2708,12 +2723,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {
-        "site_details_one_row_check": {
-          "name": "site_details_one_row_check",
-          "value": "\"site_details\".\"id\""
-        }
-      },
+      "checkConstraints": {},
       "isRLSEnabled": true
     },
     "public.users": {

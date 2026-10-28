@@ -62,8 +62,8 @@
   --text-color-badge-warning: var(--color-yellow-700);
   --text-color-primary_on-brand: #ffffff;
   /* Text on the dark sections of the landing page. */
-  --text-color-white: #ffffff;
-  --text-color-white_subtle: var(--color-alpha-white-70);
+  --text-color-primary_on-dark: #ffffff;
+  --text-color-tertiary_on-dark: var(--color-alpha-white-70);
 
   /* Backgrounds: bg-primary, bg-brand-solid, … */
   --background-color-primary: #ffffff;
@@ -175,10 +175,6 @@
 /* zoom-64 shows a card at 64% with its layout, as the design shrinks the chat cards on a phone and a tablet. */
 @utility zoom-* {
   zoom: calc(--value(integer) * 1%);
-}
-
-@utility pause-on-hover {
-  &:hover { animation-play-state: paused; }
 }
 
 @layer base {

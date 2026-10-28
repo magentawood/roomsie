@@ -5,7 +5,7 @@ import {
   adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type SavedKind,
 } from '@roomsie/contract'
-import { api, ApiError, apiUrl } from './api'
+import { api, ApiError } from './api'
 import { areaTree } from './areas'
 import { useUser } from './auth'
 import { badgeCount } from './messages'
@@ -64,15 +64,10 @@ export function useFeedback() {
   return useQuery({ queryKey: queryKeys.feedback, queryFn: () => api(user, '/v1/admin/feedback', feedbackResponse) })
 }
 
-/** The public route of the landing page, which needs no sign-in. */
-export const useSite = () => useQuery({
-  queryKey: queryKeys.site,
-  queryFn: async () => {
-    const res = await fetch(`${apiUrl}/v1/site`)
-    if (!res.ok) throw new ApiError(res.status, null)
-    return siteResponse.parse(await res.json())
-  },
-})
+export function useSite() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.site, queryFn: () => api(user, '/v1/site', siteResponse) })
+}
 
 /** A 4xx is final, for example a listing or a card that is gone. Only 5xx and network errors retry. */
 const retryOnServerErrors = (count: number, err: Error) => count < 3 && !(err instanceof ApiError && err.status < 500)

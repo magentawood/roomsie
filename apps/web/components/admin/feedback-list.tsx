@@ -3,8 +3,9 @@
 import { MessageChatSquare } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import { useFeedback } from '../../lib/queries'
-import { ago } from '../../lib/reports'
 import { EmptyState } from '../ui/empty-state'
+
+const sentAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
 
 /** The newest feedback from the landing page (T-23a). It names no sender. */
 export function FeedbackList() {
@@ -17,7 +18,7 @@ export function FeedbackList() {
       {feedback.data.feedback.map((item) => (
         <li key={item.id} className="flex flex-col gap-2 rounded-xl border border-secondary p-4">
           <p className="text-md whitespace-pre-wrap text-primary">{item.text}</p>
-          <p className="text-sm text-tertiary">{ago(item.createdAt)}</p>
+          <p className="text-sm text-tertiary">{sentAt.format(new Date(item.createdAt))}</p>
         </li>
       ))}
     </ul>

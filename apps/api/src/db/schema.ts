@@ -582,19 +582,20 @@ export const quotes = pgTable('quotes', {
   createdAtIdx: index('quotes_created_at_idx').on(t.createdAt),
 })).enableRLS()
 
-/** The one row of links and details on the landing page (T-23a). The site module owns it. */
+/** The links and details of the landing page (T-23a). Each save adds a row, and the newest row counts. The site module owns it. */
 export const siteDetails = pgTable('site_details', {
-  id: boolean('id').primaryKey().default(true),
+  id: id(),
   instagram: text('instagram'),
   whatsapp: text('whatsapp'),
   facebook: text('facebook'),
   linkedin: text('linkedin'),
   contactEmail: text('contact_email'),
   orgNumber: text('org_number'),
-  updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
-  updatedAt: updatedAt(),
+  /** The moderator who saved this version. */
+  savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: createdAt(),
 }, (t) => ({
-  oneRowCheck: check('site_details_one_row_check', sql`${t.id}`),
+  createdAtIdx: index('site_details_created_at_idx').on(t.createdAt),
 })).enableRLS()
 
 /** Feedback from a signed-in person (T-23a, T-50). The feedback module owns it. */

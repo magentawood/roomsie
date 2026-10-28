@@ -19,7 +19,7 @@ export function Callout() {
   return (
     <section className="bg-primary-solid">
       <Container className="flex flex-col gap-6.5 py-14 md:gap-12 md:py-12 xl:py-20">
-        <SectionHeading className="max-w-87.5 text-white md:max-w-183 xl:max-w-224">Your next flat is just one search away</SectionHeading>
+        <SectionHeading className="max-w-87.5 text-primary_on-dark md:max-w-183 xl:max-w-224">Your next flat is just one search away</SectionHeading>
         <span><StartLooking light /></span>
         <Mascot name="laptop" className="top-26.5 right-6.75 size-26 md:top-1/2 md:right-13.25 md:size-35 md:-translate-y-1/2 xl:top-20.25 xl:right-16 xl:size-62 xl:translate-y-0" />
       </Container>
@@ -33,7 +33,7 @@ export function Contact({ details }: { details: SiteDetails }) {
   return (
     <section className="bg-primary-solid">
       <Container className="flex flex-col gap-6 pt-14 pb-7 md:gap-16 md:pt-12 md:pb-6 xl:pt-24 xl:pb-0">
-        <div className="flex flex-col gap-2 text-white">
+        <div className="flex flex-col gap-2 text-primary_on-dark">
           <SectionHeading>Contact us or Give us your feedback</SectionHeading>
           <p className="text-md md:font-medium xl:text-xl xl:font-normal">We’re still new, help us with your valuable words</p>
         </div>
@@ -68,7 +68,7 @@ export function Contact({ details }: { details: SiteDetails }) {
             </div>
           )}
         </div>
-        <Logo className="hidden h-auto w-full text-white md:block xl:mt-6.5" />
+        <Logo className="hidden h-auto w-full text-primary_on-dark md:block xl:mt-6.5" />
       </Container>
     </section>
   )
@@ -83,14 +83,14 @@ const legal = [
 /** No headquarters. The organisation number shows when a moderator sets it (T-23a). */
 export function Footer({ orgNumber }: { orgNumber: string | null }) {
   return (
-    <footer className="bg-primary-solid text-white">
+    <footer className="bg-primary-solid text-primary_on-dark">
       <Container className="flex flex-col items-center gap-9.5 pt-13 pb-7 text-center md:flex-row-reverse md:justify-between md:gap-6 md:py-6 md:text-left xl:px-24">
         <Logo className="h-auto w-full max-w-85.5 md:hidden" />
         <nav aria-label="Legal">
           <ul className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm font-medium">
             {legal.map((link, i) => (
               <li key={link.href} className="flex gap-2">
-                {i > 0 && <span aria-hidden className="text-white_subtle">·</span>}
+                {i > 0 && <span aria-hidden className="text-tertiary_on-dark">·</span>}
                 <Link href={link.href} className="rounded-sm outline-focus-ring_on-dark hover:underline focus-visible:outline-2">{link.label}</Link>
               </li>
             ))}

@@ -1,13 +1,12 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { desc, eq } from 'drizzle-orm'
-import { adminQuotesResponse, errorResponse, landingQuoteCount, noContent, quoteBody, siteDetails as siteDetailsBody, siteResponse, type SiteDetails } from '@roomsie/contract'
+import { adminQuotesResponse, errorResponse, landingQuoteCount, noContent, noSiteDetails, quoteBody, siteDetailsBody, siteResponse, type SiteDetails } from '@roomsie/contract'
 import { requireModerator, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { quotes, siteDetails } from '../db/schema'
 import { idParams } from '../params'
-
-const noDetails: SiteDetails = { instagram: null, whatsapp: null, facebook: null, linkedin: null, contactEmail: null, orgNumber: null }
+import { maskContacts } from '../text/mask-contacts'
 
 /** The landing page shows a full collage or no quotes (T-23a). */
 async function landingQuotes(db: Db) {
@@ -16,12 +15,12 @@ async function landingQuotes(db: Db) {
   return newest.length === landingQuoteCount ? newest : []
 }
 
-async function details(db: Db): Promise<SiteDetails> {
+async function latestDetails(db: Db): Promise<SiteDetails> {
   const [row] = await db.select({
     instagram: siteDetails.instagram, whatsapp: siteDetails.whatsapp, facebook: siteDetails.facebook, linkedin: siteDetails.linkedin,
     contactEmail: siteDetails.contactEmail, orgNumber: siteDetails.orgNumber,
-  }).from(siteDetails)
-  return row ?? noDetails
+  }).from(siteDetails).orderBy(desc(siteDetails.createdAt), desc(siteDetails.id)).limit(1)
+  return row ?? noSiteDetails
 }
 
 /** The quotes and the details of the landing page, which moderators edit (T-23a). */
@@ -31,8 +30,8 @@ export function siteRoutes(v1: FastifyInstance, options: AuthOptions) {
   const preHandler = requireModerator(options)
 
   app.get('/site', { schema: { response: { 200: siteResponse } } }, async () => {
-    const [shown, set] = await Promise.all([landingQuotes(db), details(db)])
-    return { quotes: shown, details: set }
+    const [shownQuotes, details] = await Promise.all([landingQuotes(db), latestDetails(db)])
+    return { quotes: shownQuotes, details }
   })
 
   app.get('/admin/quotes', { preHandler, schema: { response: { 200: adminQuotesResponse, 404: errorResponse } } }, async () => {
@@ -41,7 +40,7 @@ export function siteRoutes(v1: FastifyInstance, options: AuthOptions) {
   })
 
   app.post('/admin/quotes', { preHandler, schema: { body: quoteBody, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
-    await db.insert(quotes).values({ text: req.body.text, name: req.body.name, addedBy: req.user!.id })
+    await db.insert(quotes).values({ text: maskContacts(req.body.text), name: maskContacts(req.body.name), addedBy: req.user!.id })
     return reply.code(204).send(null)
   })
 
@@ -51,8 +50,7 @@ export function siteRoutes(v1: FastifyInstance, options: AuthOptions) {
   })
 
   app.put('/admin/site', { preHandler, schema: { body: siteDetailsBody, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
-    const row = { ...req.body, updatedBy: req.user!.id, updatedAt: new Date() }
-    await db.insert(siteDetails).values(row).onConflictDoUpdate({ target: siteDetails.id, set: row })
+    await db.insert(siteDetails).values({ ...req.body, savedBy: req.user!.id })
     return reply.code(204).send(null)
   })
 }

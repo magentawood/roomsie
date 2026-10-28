@@ -1,5 +1,3 @@
-'use client'
-
 import { ModeratorPage } from '../../../components/admin/moderator-page'
 import { QuotesEditor } from '../../../components/admin/quotes-editor'
 

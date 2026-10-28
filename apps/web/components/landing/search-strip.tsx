@@ -22,7 +22,7 @@ function Phrases({ copy }: { copy?: boolean }) {
 export function SearchStrip() {
   return (
     <section aria-label="Example searches" className="overflow-hidden bg-strip-glow">
-      <div className="flex w-max animate-marquee py-3 pl-4 pause-on-hover motion-reduce:animate-none md:py-1 md:pl-0 xl:py-2">
+      <div className="flex w-max animate-marquee py-3 pl-4 hover:[animation-play-state:paused] motion-reduce:animate-none md:py-1 md:pl-0 xl:py-2">
         <Phrases />
         <Phrases copy />
       </div>
