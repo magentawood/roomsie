@@ -3,6 +3,8 @@ import { withSentryConfig } from '@sentry/nextjs/config'
 
 const config: NextConfig = {
   transpilePackages: ['@roomsie/contract', '@roomsie/config'],
+  // The share cards read the font and the covers from disk, so the function of each card needs these files (T-37).
+  outputFileTracingIncludes: { '/blog/**': ['./assets/**', './public/blog/**'] },
   // The project has one agent file, CONTEXT.md. Next must not write its own.
   agentRules: false,
 }
