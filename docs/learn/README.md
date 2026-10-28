@@ -8,6 +8,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Alerts: email and browser push](alerts.md): a new request, an accept or a new message sends the other person an email and a browser push with no message text.
 - [Analytics events](analytics-events.md): the API records what people do, for example "connect sent", in an `events` table of a second database, with no text and no `users.id`.
 - [Areas, sub-areas and pockets](areas.md): the areas table holds three levels (area groups, sub-areas and pockets), and a pick of an area includes each area under it.
+- [Articles and the blog](articles.md): the Roomsie team writes each article as a Markdown file in the repo, each deploy of the API loads the files into the database, the blog shows them, and the Advisor searches their passages.
 - [Backups](backups.md): each night, a GitHub workflow dumps the two databases, checks each restore, and keeps fourteen encrypted dumps in R2.
 - [Building the API](building-the-api.md): `tsx` runs the TypeScript API in development, and `tsup` builds our code into one JavaScript file. The Docker image installs the libraries next to it.
 - [The chat screen and the sign-in wall](chat-screen.md): `/chat` starts each goal. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
