@@ -10,9 +10,12 @@ export type FirebaseAdmin = {
   setClaims(uid: string, claims: z.infer<typeof realtimeClaims>): Promise<void>
   /** "gone": FCM refuses the token, so remove it (T-55). */
   sendPush(token: string, push: { title: string; link: string }): Promise<'sent' | 'gone'>
+  /** A user that is not found counts as deleted, so a retry of an account deletion is safe (T-53). */
+  deleteUser(uid: string): Promise<void>
 }
 
 const googleToken = z.object({ access_token: z.string(), expires_in: z.number() })
+const googleError = z.object({ error: z.object({ message: z.string() }) })
 /** FCM refuses a token that a browser dropped with 404 UNREGISTERED, and a token that is not one with 400 INVALID_ARGUMENT. */
 const goneStatuses = [400, 404]
 
@@ -53,6 +56,17 @@ export function firebaseAdmin(account: z.infer<typeof serviceAccount>): Firebase
       if (goneStatuses.includes(res.status)) return 'gone'
       if (!res.ok) throw new Error(`FCM failed: ${res.status}`)
       return 'sent'
+    },
+    async deleteUser(uid) {
+      const res = await fetch(`https://identitytoolkit.googleapis.com/v1/projects/${account.project_id}/accounts:delete`, {
+        method: 'POST',
+        headers: { authorization: `Bearer ${await accessToken('https://www.googleapis.com/auth/identitytoolkit')}`, 'content-type': 'application/json' },
+        body: JSON.stringify({ localId: uid }),
+      })
+      if (res.ok) return
+      // Google can add details after the code: "USER_NOT_FOUND : ...".
+      const error = googleError.safeParse(await res.json().catch(() => null))
+      if (!error.data?.error.message.startsWith('USER_NOT_FOUND')) throw new Error(`Firebase delete failed: ${res.status}`)
     },
   }
 }

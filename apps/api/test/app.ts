@@ -17,12 +17,16 @@ export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
 /** The settings of PD18 with their defaults, a change from `settings`, and the user "moderator" as the moderator. */
 export const testModeration = (settings: Record<string, string> = {}) => moderationSettings.parse({ MODERATOR_UIDS: 'uid-moderator', REVIEWER_UIDS: 'uid-reviewer', ...settings })
 
-/** A Realtime, a Firebase Admin and a mailer that record their calls, and the public settings of Realtime. FCM refuses a token that starts with "gone". */
+/**
+ * A Realtime, a Firebase Admin and a mailer that record their calls, and the public settings of Realtime.
+ * FCM refuses a token that starts with "gone". Set `firebaseUsers.down` to make the Firebase user delete fail.
+ */
 export function testMessaging() {
   const sent: { userId: string; event: string; payload: object }[] = []
   const claims: { uid: string; claims: object }[] = []
   const mails: (Mail & { to: string })[] = []
   const pushes: { token: string; title: string; link: string }[] = []
+  const firebaseUsers = { deleted: [] as string[], down: false }
   const messaging: Messaging = {
     realtime: { send: async (userId, { event, payload }) => { sent.push({ userId, event, payload }) } },
     firebaseAdmin: {
@@ -32,11 +36,15 @@ export function testMessaging() {
         pushes.push({ token, ...push })
         return 'sent'
       },
+      deleteUser: async (uid) => {
+        if (firebaseUsers.down) throw new Error('Firebase is down')
+        firebaseUsers.deleted.push(uid)
+      },
     },
     webRealtime: { url: 'https://realtime.example.com', key: 'test-anon-key' },
   }
   const mailer: Mailer = { send: async (to, mail) => { mails.push({ to, ...mail }) } }
-  return { messaging, mailer, sent, claims, mails, pushes }
+  return { messaging, mailer, sent, claims, mails, pushes, firebaseUsers }
 }
 
 /** An ID store that records each link, delete and face match. A key that contains "stuck" fails to delete. Each face match gives `score`. */

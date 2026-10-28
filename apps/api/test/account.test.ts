@@ -15,6 +15,7 @@ import { testMessaging, testModeration } from './app'
 let testDb: TestDb
 let app: ReturnType<typeof buildServer>
 let idToken: Awaited<ReturnType<typeof testTokens>>['idToken']
+const fakes = testMessaging()
 
 /** Records each delete. Set `down` to make R2 fail, and `slowMs` to make it slow. */
 const photos = { deleted: [] as string[], down: false, slowMs: 0 }
@@ -32,7 +33,7 @@ beforeAll(async () => {
   await testDb.db.insert(areas).values({ slug: 'powai', name: 'Powai' })
   const tokens = await testTokens()
   idToken = tokens.idToken
-  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore, moderation: testModeration(), messaging: testMessaging().messaging })
+  app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore, moderation: testModeration(), messaging: fakes.messaging })
 })
 afterAll(async () => {
   await app.close()
@@ -41,6 +42,8 @@ afterAll(async () => {
 beforeEach(() => {
   photos.deleted = []
   photos.down = false
+  fakes.firebaseUsers.deleted = []
+  fakes.firebaseUsers.down = false
 })
 
 const call = (method: 'GET' | 'DELETE', token: string) =>
@@ -98,6 +101,7 @@ describe('DELETE /v1/me', () => {
     expect((await call('DELETE', gone.token)).statusCode).toBe(204)
 
     expect(photos.deleted.sort()).toEqual(['f/gone', 'l/gone', 'p/gone-1', 'p/gone-2'])
+    expect(fakes.firebaseUsers.deleted).toEqual([gone.uid])
     expect(await db.select().from(profiles).where(eq(profiles.userId, gone.id))).toHaveLength(0)
     expect(await db.select().from(listings).where(eq(listings.ownerUserId, gone.id))).toHaveLength(0)
     expect(await db.select().from(goals).where(inArray(goals.id, goneSeed.goalIds))).toHaveLength(0)
@@ -177,6 +181,7 @@ describe('DELETE /v1/me', () => {
     await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, id))
     expect((await call('DELETE', before)).statusCode).toBe(204)
     expect(await userRow(id)).toMatchObject({ authProviderId: tombstoneKey('google-1'), rejoinBlocked: true })
+    expect(fakes.firebaseUsers.deleted).toEqual(['uid-before-t53'])
 
     // T-53 deletes the Firebase user, so the next Google sign-in has a new uid.
     const after = await idToken('uid-after-t53', { authTime: Math.floor(Date.now() / 1000), googleId: 'google-1' })
@@ -192,6 +197,7 @@ describe('DELETE /v1/me', () => {
     const replies = await Promise.all([call('DELETE', user.token), call('DELETE', user.token)])
     photos.slowMs = 0
     expect(replies.map((r) => r.statusCode)).toEqual([204, 204])
+    expect(fakes.firebaseUsers.deleted).toEqual([user.uid])
     expect(await userRow(user.id)).toMatchObject({ status: 'deleted', authProviderId: tombstoneKey(user.uid), rejoinBlocked: true })
     expect((await call('GET', await freshToken(user.uid))).statusCode).toBe(403)
   })
@@ -223,6 +229,22 @@ describe('DELETE /v1/me', () => {
     photos.down = false
     expect((await call('DELETE', user.token)).statusCode).toBe(204)
     expect(await testDb.db.select().from(profiles).where(eq(profiles.userId, user.id))).toHaveLength(0)
+  })
+
+  it('removes no data when Firebase cannot delete the user, thus a retry is safe', async () => {
+    const user = await signIn('uid-firebase-down')
+    await seedAccount(user.id, 'firebase-down')
+    fakes.firebaseUsers.down = true
+    expect((await call('DELETE', user.token)).statusCode).toBe(500)
+
+    expect(await testDb.db.select().from(profiles).where(eq(profiles.userId, user.id))).toHaveLength(1)
+    expect(await userRow(user.id)).toMatchObject({ status: 'active', authProviderId: user.uid })
+    expect((await call('GET', user.token)).statusCode).toBe(200)
+
+    fakes.firebaseUsers.down = false
+    expect((await call('DELETE', user.token)).statusCode).toBe(204)
+    expect(await testDb.db.select().from(profiles).where(eq(profiles.userId, user.id))).toHaveLength(0)
+    expect(fakes.firebaseUsers.deleted).toEqual([user.uid])
   })
 
   it('deletes an account with no data', async () => {

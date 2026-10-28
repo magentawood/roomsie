@@ -15,7 +15,7 @@ export async function statusesOf(db: Db, userIds: string[]) {
 
 /** Locks the users row of the person. Account deletion locks it too, so a write under this lock cannot race a deletion. */
 export async function lockAccount(tx: Tx, userId: string) {
-  const [user] = await tx.select({ status: users.status }).from(users).where(eq(users.id, userId)).for('update')
+  const [user] = await tx.select({ status: users.status, authProviderId: users.authProviderId }).from(users).where(eq(users.id, userId)).for('update')
   return user
 }
 

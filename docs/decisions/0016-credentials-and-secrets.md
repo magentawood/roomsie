@@ -37,7 +37,7 @@ The table gives the class of each credential and where it lives:
 | Postgres connection string | **[Critical]** | apps/api only |
 | R2 access key + secret | **[Critical]** | apps/api only |
 | R2 backups key + secret (backups bucket only) | **[Critical]** | CI secret store only |
-| Firebase Admin service account | **[Critical]** | apps/api only |
+| Firebase Admin service account (`FIREBASE_SERVICE_ACCOUNT`) | **[Critical]** | apps/api only |
 | Deploy tokens | **[Critical]** | CI secret store |
 
 > [!danger] The one that ends the company
