@@ -21,7 +21,7 @@ a file in the repo ──pull request──▶ merge ──▶ deploy of the API
 
 | Field | Rule |
 |---|---|
-| `number`, `title`, `author`, `author_line`, `date_checked` | Required. `author_line` gives the role of the author in the team. `date_checked` is the date of each rate or fee in the text. |
+| `number`, `title`, `author`, `author_line`, `date_checked` | Required. `number` is the `NN` of the file name. `author_line` gives the role of the author in the team. `date_checked` is the date of each rate or fee in the text. |
 | `seo_title`, `seo_description` | Required. At most 60 and 155 characters. |
 | `author_photo` | Optional: a file in `apps/web/public/authors/`, for example `/authors/asha.jpg`. With none, the byline shows the initials. |
 | `cover_image`, `cover_alt` | Optional, but together: a JPEG or PNG in `apps/web/public/blog/`, and its alt text. |

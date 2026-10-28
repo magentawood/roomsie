@@ -100,5 +100,6 @@ describe('the article routes', () => {
     const one = articleResponse.parse((await t.call(null, 'GET', '/v1/articles/police-verification')).json())
     expect(one.passages).toEqual([{ heading: 'Who files the police verification?', html: '<p>The landlord files it online, before you move in.</p>\n' }])
     expect((await t.call(null, 'GET', '/v1/articles/no-such-article')).statusCode).toBe(404)
+    expect((await t.call(null, 'GET', '/v1/articles/Deposit-Back')).statusCode).toBe(404)
   })
 })

@@ -2,11 +2,12 @@ import { readdir, readFile } from 'node:fs/promises'
 import MarkdownIt, { type Token } from 'markdown-it'
 import { parse as parseYaml } from 'yaml'
 import { z } from 'zod'
+import { articleSlug } from '@roomsie/contract'
 
 // Raw HTML in an article shows as text, so a file cannot put a script on the blog.
 const markdown = MarkdownIt({ html: false })
 
-const articleFileName = /^(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
+const articleFileName = /^(\d{2})-(.+)\.md$/
 const withFrontMatter = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
 
 /** The front matter of the marketing article drafts. */
@@ -56,6 +57,7 @@ export function parseArticle(fileName: string, source: string) {
   try {
     const [, nn, slug] = articleFileName.exec(fileName) ?? []
     if (!slug) throw new Error('the name is not NN-slug.md')
+    articleSlug.parse(slug)
     const parts = withFrontMatter.exec(source.replaceAll('\r\n', '\n'))
     if (!parts) throw new Error('no front matter between two --- lines')
     const fields = frontMatter.parse(parseYaml(parts[1]!))
