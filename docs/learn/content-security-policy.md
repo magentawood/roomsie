@@ -19,7 +19,7 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
 
 - **The proxy** (`apps/web/proxy.ts`) makes the nonce and the policy for each page request. It does not run for the files in `_next/static` and `public`, or for the link prefetches. A new type of file in `public` needs its extension in the matcher of the proxy.
 - **Each page renders on each request.** A static page has no nonce, so the policy blocks its scripts. The root layout waits for the request. The landing page keeps its data from the API for 60 seconds with the option of `fetch`.
-- **No inline styles and no `eval`.** The policy blocks a `style` attribute, an inline `<style>` with no nonce, and `eval`. The code uses classes. Zod tries `eval` to parse faster, so `instrumentation-client.ts` turns that off. The "not found" page of Next has inline styles, so we have our own.
+- **No inline styles and no `eval`.** The policy blocks a `style` attribute, an inline `<style>` with no nonce, and `eval`. The code uses classes. Zod tries `eval` to parse faster, so `instrumentation-client.ts` turns that off. The "not found" and error pages of Next have inline styles, so we have our own.
 
 | Content | Allowed sources |
 |---|---|
@@ -34,7 +34,7 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
 
 - A nonce for each request, not the hashes of the files ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md)).
 - Wildcards for the R2 upload host and the Supabase realtime host, because Vercel does not have their values. The nonce stops a script before it can send data out.
-- The policy blocks from the first deploy. There is no report-only period, because nobody collects the reports yet. T-07 can send the violation reports to Sentry.
+- The policy blocks from the first deploy, with no report-only period. Since T-07, the browser sends each violation to the security address of the Sentry project of the web ([error reporting](error-reporting.md)).
 - A unit test of the proxy and a live check, not a browser test in CI, because ADR-0013 defers the Playwright tests ([ADR-0013](../decisions/0013-ci-gate-and-testing.md)).
 
 ## Gotchas
@@ -48,3 +48,4 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
 ## Tickets
 
 - T-52: [#177](https://github.com/magentawood/roomsie/pull/177), 2026-10-28. The policy, the nonce for each request, and the pages that render on each request.
+- T-07: [#178](https://github.com/magentawood/roomsie/pull/178), 2026-10-28. The violation reports go to Sentry, and `/monitoring` skips the proxy.
