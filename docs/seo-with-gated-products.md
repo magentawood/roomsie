@@ -89,7 +89,7 @@ Targets:
 
 These pages send users to Layer 1 through internal links.
 
-**Use `roomsie.com/blog`, not `blogs.roomsie.com`.**
+**Use `roomsie.in/blog`, not `blog.roomsie.in`.**
 
 Why: [PD6b](decisions/pd-06b-login-gate-and-search.md)
 

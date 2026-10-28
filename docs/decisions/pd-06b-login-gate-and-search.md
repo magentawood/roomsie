@@ -38,7 +38,7 @@ Three public layers, none of them the product:
    - **1b Filter pages.** The same mechanism as layer 1, but narrower. Make
      them from actual search demand, not from all filter combinations.
 2. **Editorial pages.** They link to the area pages. The blog is at
-   `roomsie.com/blog`, not `blogs.roomsie.com`.
+   `roomsie.in/blog`, not `blog.roomsie.in`.
 3. **The landing page and brand.** This layer is already in the plan: the
    hero, the narrative, and the call to action into the chat.
 

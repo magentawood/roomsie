@@ -8,7 +8,7 @@ The articles have three jobs:
 2. **Rank in search.** See `docs/seo-with-gated-products.md`.
 3. **Fill the gap before there are users.**
 
-We publish the articles at `roomsie.com/blog`, not on a subdomain.
+We publish the articles at `roomsie.in/blog`, not on a subdomain. The file of an article, and how it goes live: [Articles and the blog](../learn/articles.md).
 
 Why: [PD5](../decisions/pd-05-team-and-budget.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md), [PD10](../decisions/pd-10-scope-bands.md)
 

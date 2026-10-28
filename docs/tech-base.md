@@ -96,8 +96,8 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
 - [Analytics events](learn/analytics-events.md)
+- [Articles and the blog](learn/articles.md)
 - [Backups](learn/backups.md)
 - [Content-Security-Policy](learn/content-security-policy.md)
 - [Database migrations](learn/migrations.md)
-- [Error reporting](learn/error-reporting.md)
 <!-- learn-newest:end -->
