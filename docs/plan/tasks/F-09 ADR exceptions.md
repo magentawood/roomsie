@@ -31,7 +31,7 @@ Where we knowingly broke our own architecture rules, and why.
 
 ## Done when
 - [ ] 0011: the launch uses the prototype styles
-- [ ] 0014: the product uses the Sentry free tier, not GlitchTip
+- [x] 0014: the product uses the Sentry free tier, not GlitchTip · [#178](https://github.com/magentawood/roomsie/pull/178)
 
 ^done
 

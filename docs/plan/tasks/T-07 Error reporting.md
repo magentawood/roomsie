@@ -32,9 +32,9 @@ Sends each crash that a user gets to a dashboard automatically.
 - No task waits on this task.
 
 ## Done when
-- [ ] `reportError(err, context)` is in packages/config. It is the only way that code reports errors
-- [ ] The Sentry free tier is connected in web and API
-- [ ] `beforeSend` strips message text, phone numbers and the Authorization header
+- [x] `reportError(err, context)` is in packages/config. It is the only way that code reports errors · [#178](https://github.com/magentawood/roomsie/pull/178)
+- [x] The Sentry free tier is connected in web and API · [#178](https://github.com/magentawood/roomsie/pull/178)
+- [x] `beforeSend` strips message text, phone numbers and the Authorization header · [#178](https://github.com/magentawood/roomsie/pull/178)
 
 ^done
 
@@ -67,3 +67,13 @@ Sends each crash that a user gets to a dashboard automatically.
   - GlitchTip, and the move to Crashlytics (ADR-0014)
   - the alerts of Sentry to the team (the settings of the Sentry project)
   - the 0011 item of F-09
+
+## Log
+
+- **2026-10-28 · [#178](https://github.com/magentawood/roomsie/pull/178)**
+  - **Change:** `reportError` in `packages/config` is the one way to report an error. The API sends each 5xx and each best-effort failure to Sentry, and the web sends the browser errors, the crashes of a page and the errors of a server render, through `/monitoring` on our domain. Each event has its place and the `users.id`, and no message text, header but the user agent, IP address or phone number. The violations of the CSP go to Sentry too, and the web has its own error pages.
+  - **Why:** without reports, the team learns about breakage from the users ([ADR-0014](../../decisions/0014-error-tracking.md)).
+  - **Ticked:** "`reportError(err, context)` is in packages/config. It is the only way that code reports errors", "The Sentry free tier is connected in web and API" and "`beforeSend` strips message text, phone numbers and the Authorization header"
+  - **Not done:** none. The live check after the deploy sends a test event from the web and the API.
+  - **Learn:** [Error reporting](../../learn/error-reporting.md), [Content-Security-Policy](../../learn/content-security-policy.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
