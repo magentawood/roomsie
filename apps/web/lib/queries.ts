@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
+  adminInvitesResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
@@ -29,6 +29,7 @@ export const queryKeys = {
   verification: ['verification'],
   idChecks: ['admin', 'id-checks'],
   adminQuotes: ['admin', 'quotes'],
+  adminInvites: ['admin', 'invites'],
   adminFeedback: ['admin', 'feedback'],
   site: ['site'],
 } as const
@@ -57,6 +58,11 @@ export function useReportQueue() {
 export function useAdminQuotes() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.adminQuotes, queryFn: () => api(user, '/v1/admin/quotes', adminQuotesResponse) })
+}
+
+export function useAdminInvites() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.adminInvites, queryFn: () => api(user, '/v1/admin/invites', adminInvitesResponse) })
 }
 
 export function useAdminFeedback() {
