@@ -25,7 +25,7 @@ and no release correlation. Its retention is short and depends on the plan.
 
 ## Decision
 
-**In one line:** `apps/web` and `apps/api` send errors through the Sentry SDK to self-hosted GlitchTip, behind one `reportError` wrapper, until Firebase Crashlytics for web reaches GA.
+**In one line:** `apps/web` and `apps/api` send errors through the Sentry SDK, behind one `reportError` wrapper, to the Sentry free tier for launch, then to self-hosted GlitchTip until Firebase Crashlytics for web reaches GA.
 
 **Instrument with the Sentry SDK. Point the DSN at self-hosted GlitchTip.**
 
@@ -125,3 +125,9 @@ that this project consistently chose to avoid.
 - The burden to operate GlitchTip becomes more than $26/month, or error
   volume becomes too large for the self-hosted instance. In these cases, point
   the DSN at Sentry paid as an interim step.
+
+Exception (2026-10-28, T-07): the launch uses the Sentry free tier, not GlitchTip. The launch plan of 2026-09-23 proposed this exception, and F-09 tracks it. The one login of the free tier is accepted until GlitchTip runs. The move is a change of the DSN.
+
+- Each event carries the `users.id` of the signed-in person, so support can find the errors of one person. The free tier keeps an event for 30 days, so the id goes from Sentry at most 30 days after an account deletion.
+- The browser stack traces stay minified. The upload of source maps needs a secret in the build of the web, and ADR-0016 keeps secrets out of `apps/web`.
+- The SDKs collect no request body, cookie, header but the user agent, IP address, local variable or value of a database query, and `beforeSend` removes the rest.

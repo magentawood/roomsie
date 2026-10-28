@@ -23,7 +23,7 @@ One file for each decision. Each file records:
 | [0011](0011-design-system-token-pipeline.md) | Design system: Untitled UI + generated theme.css from Figma | Accepted |
 | [0012](0012-analytics-event-store.md) | Analytics events in our own Postgres, no vendor | Accepted |
 | [0013](0013-ci-gate-and-testing.md) | CI gate: typecheck, lint, build, unit + API integration tests | Accepted |
-| [0014](0014-error-tracking.md) | Sentry SDK, GlitchTip destination now, Crashlytics for mobile | Accepted |
+| [0014](0014-error-tracking.md) | Sentry SDK, the Sentry free tier for launch, then GlitchTip, Crashlytics for mobile | Accepted |
 | [0015](0015-primary-key-strategy.md) | UUIDv7 primary keys, no DB default, client mints for offline writes | Accepted |
 | [0016](0016-credentials-and-secrets.md) | Credentials and secrets: public vs critical, secrets only in apps/api | Accepted |
 | [0017](0017-schema-v1-shape.md) | Schema v1: goals, listings and the storage of Form A | Accepted |
