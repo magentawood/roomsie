@@ -9,10 +9,10 @@
  * a person lives in `profiles`. The per-request auth check then reads a tiny
  * row, and editing a profile never touches the auth row.
  */
-import { sql } from 'drizzle-orm'
+import { sql, type SQL } from 'drizzle-orm'
 import {
   pgTable, pgEnum, uuid, text, integer, real, boolean, date, timestamp, jsonb,
-  primaryKey, uniqueIndex, index, check, unique, foreignKey,
+  primaryKey, uniqueIndex, index, check, unique, foreignKey, customType,
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import {
@@ -626,3 +626,36 @@ export const inviteGate = pgTable('invite_gate', {
   savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
 }).enableRLS()
+
+const tsvector = customType<{ data: string }>({ dataType: () => 'tsvector' })
+
+/** The published articles (T-37). Each deploy syncs them with the files of `content/articles`. The articles module owns it. */
+export const articles = pgTable('articles', {
+  id: id(),
+  slug: text('slug').notNull().unique(),
+  number: integer('number').notNull(),
+  title: text('title').notNull(),
+  author: text('author').notNull(),
+  authorLine: text('author_line').notNull(),
+  authorPhoto: text('author_photo'),
+  seoTitle: text('seo_title').notNull(),
+  seoDescription: text('seo_description').notNull(),
+  dateChecked: date('date_checked').notNull(),
+  createdAt: createdAt(),
+}).enableRLS()
+
+/** One section of an article. In the search, its heading counts more than its text. The articles module owns it. */
+export const articlePassages = pgTable('article_passages', {
+  id: id(),
+  articleId: uuid('article_id').notNull().references(() => articles.id, { onDelete: 'cascade' }),
+  position: integer('position').notNull(),
+  heading: text('heading'),
+  html: text('html').notNull(),
+  text: text('text').notNull(),
+  search: tsvector('search').notNull().generatedAlwaysAs((): SQL =>
+    sql`setweight(to_tsvector('english', coalesce(${articlePassages.heading}, '')), 'A') || setweight(to_tsvector('english', ${articlePassages.text}), 'B')`),
+  createdAt: createdAt(),
+}, (t) => ({
+  positionUnique: unique('article_passages_position_unique').on(t.articleId, t.position),
+  searchIdx: index('article_passages_search_idx').using('gin', t.search),
+})).enableRLS()
