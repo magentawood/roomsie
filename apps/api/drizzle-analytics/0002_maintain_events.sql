@@ -1,6 +1,5 @@
 -- The job of T-39 (ADR-0012, PD19). It is in its own schema, because the Supabase API serves each function of "public".
 CREATE SCHEMA IF NOT EXISTS jobs;--> statement-breakpoint
--- Each monthly table in UTC from this month to 12 months ahead, as 0000 makes them. Each table whose whole month is older than the period goes.
 CREATE FUNCTION jobs.maintain_events(retention_months integer) RETURNS void LANGUAGE plpgsql SET search_path = '' AS $$
 DECLARE
 	first date := date_trunc('month', now() AT TIME ZONE 'UTC')::date;
@@ -27,7 +26,7 @@ BEGIN
 END $$;--> statement-breakpoint
 REVOKE EXECUTE ON FUNCTION jobs.maintain_events(integer) FROM PUBLIC;--> statement-breakpoint
 SELECT jobs.maintain_events(12);--> statement-breakpoint
--- Each day at 22:30 UTC (04:00 IST), after the backups. The period is the argument, so a change of it is a change of the job, not of the code.
+-- 04:00 IST, after the backups. The period is the argument, so a change of it is a change of the job, not of the code.
 -- Local work and the tests have no pg_cron, so they skip the schedule.
 DO $$
 BEGIN

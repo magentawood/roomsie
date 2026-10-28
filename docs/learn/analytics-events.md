@@ -48,7 +48,7 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
 - Postgres refuses an insert when no partition holds its month. The job makes 12 months ahead, so a missed run is not urgent. To see the runs: `select * from cron.job_run_details order by start_time desc limit 5`.
 - A partition is also a table that the Supabase API can reach. Each new partition needs row level security, as the job does.
 - The Supabase API also serves each function of `public`. Thus, the function is in the `jobs` schema, and nobody but the owner can run it.
-- The period is in the schedule, not in the code. To change it, change PD19 first, then run `select cron.schedule('maintain-events', '30 22 * * *', 'SELECT jobs.maintain_events(<months>)')`. The same command schedules the job again after a restore into Supabase, because the dump has no schedule.
+- The period is in the schedule, not in the code. To change it, change PD19 first, then run `select cron.schedule('maintain-events', '30 22 * * *', 'SELECT jobs.maintain_events(<months>)')`. After a restore into Supabase, the dump has no schedule, and a new project has `pg_cron` off. Run `create extension if not exists pg_cron with schema pg_catalog`, then the same command.
 - Local work and the tests have no `pg_cron`. The migration skips the schedule there, and the tests call the function.
 - Drizzle cannot declare a partitioned table. The SQL of the first analytics migration is edited by hand. `pnpm db:generate:analytics` makes the next one, and it sees a plain table, so check its SQL.
 - The tests must call `flushEvents()` before they read the table, because `track()` writes later.
