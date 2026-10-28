@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const body = 'flex flex-col gap-4 text-lg text-secondary [&_a]:font-semibold [&_a]:text-primary [&_a]:underline [&_h3]:font-semibold [&_h3]:text-primary [&_li]:ml-6 [&_ol]:flex [&_ol]:list-decimal [&_ol]:flex-col [&_ol]:gap-2 [&_strong]:font-semibold [&_strong]:text-primary [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2'
+const passageClasses = 'flex flex-col gap-4 text-lg text-secondary [&_a]:font-semibold [&_a]:text-primary [&_a]:underline [&_h3]:font-semibold [&_h3]:text-primary [&_li]:ml-6 [&_ol]:flex [&_ol]:list-decimal [&_ol]:flex-col [&_ol]:gap-2 [&_strong]:font-semibold [&_strong]:text-primary [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2'
 
 export default async function ArticlePage({ params }: Props) {
   const [article, { details }] = await Promise.all([getArticle((await params).slug), getSite()])
@@ -62,7 +62,7 @@ export default async function ArticlePage({ params }: Props) {
                 <section key={i} className="flex flex-col gap-3 md:gap-4">
                   {p.heading && <h2 className="text-xl font-semibold text-primary md:text-display-xs">{p.heading}</h2>}
                   {/* The API made this HTML from a file of the repo, with raw HTML escaped. */}
-                  <div className={body} dangerouslySetInnerHTML={{ __html: p.html }} />
+                  <div className={passageClasses} dangerouslySetInnerHTML={{ __html: p.html }} />
                 </section>
               ))}
             </div>

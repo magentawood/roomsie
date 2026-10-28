@@ -1,5 +1,5 @@
 import { noSiteDetails, siteResponse, type SiteResponse } from '@roomsie/contract'
-import { apiUrl } from './api-url'
+import { apiUrl, cachedRead } from './api-url'
 
 const noSite: SiteResponse = { quotes: [], details: noSiteDetails }
 
@@ -18,7 +18,7 @@ export const socialNetworks = [
 export async function getSite(): Promise<SiteResponse> {
   try {
     // A moderator's change to the quotes or the details shows within 60 seconds (T-23a).
-    const res = await fetch(`${apiUrl}/v1/site`, { signal: AbortSignal.timeout(5000), next: { revalidate: 60 } })
+    const res = await fetch(`${apiUrl}/v1/site`, cachedRead())
     return res.ok ? siteResponse.parse(await res.json()) : noSite
   } catch {
     return noSite

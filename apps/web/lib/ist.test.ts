@@ -11,7 +11,7 @@ describe('the times in IST', () => {
     expect(toIstInput('2026-10-28T18:29:00.000Z')).toBe('2026-10-28T23:59')
     expect(istDay('2026-10-28T18:30:00.000Z', 'short')).toBe('29 Oct')
     expect(istDay('2026-11-07T18:30:00.000Z')).toBe('8 November')
-    expect(istDay('2026-10-08', 'long', 'numeric')).toBe('8 October 2026')
+    expect(istDay('2026-10-08', 'long', true)).toBe('8 October 2026')
   })
 
   it('keeps an empty value empty', () => {

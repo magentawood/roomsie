@@ -1,13 +1,16 @@
 import { z } from 'zod'
 
-/** An article of the blog (T-37). Its slug never changes, because links point to it. */
+/** The address of an article. It never changes, because links point to it (PD6b). */
+export const articleSlug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/).max(100)
+
+/** An article of the blog (T-37). */
 export const articleSummary = z.object({
-  slug: z.string(),
+  slug: articleSlug,
   number: z.int(),
   title: z.string(),
   author: z.string(),
   authorLine: z.string(),
-  /** A file in the public folder of the web. With none, the byline shows the initials. */
+  /** A file in the public folder of the web. */
   authorPhoto: z.string().nullable(),
   seoTitle: z.string(),
   seoDescription: z.string(),

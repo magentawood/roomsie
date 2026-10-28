@@ -74,7 +74,7 @@ const legal = [
   { href: '/grievance', label: 'Grievance officer' },
 ]
 
-/** No headquarters. The organisation number shows when a moderator sets it (T-23a). "Blog" shows with the first article (T-37). */
+/** No headquarters. The organisation number shows when a moderator sets it (T-23a). */
 export function Footer({ orgNumber, showBlogLink }: { orgNumber: string | null; showBlogLink: boolean }) {
   const links = showBlogLink ? [{ href: '/blog', label: 'Blog' }, ...legal] : legal
   return (
