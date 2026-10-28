@@ -11,7 +11,7 @@ import { Button } from '../ui/button'
 import { TextInput } from '../ui/field'
 
 const fields: { key: keyof SiteDetails; label: string; placeholder: string }[] = [
-  ...socialNetworks.map((n) => ({ key: n.key, label: `${n.name} link`, placeholder: 'https://…' })),
+  ...socialNetworks.map((n) => ({ key: n.key, label: `${n.name} link`, placeholder: n.example })),
   { key: 'contactEmail', label: 'Contact email', placeholder: 'hello@roomsie.in' },
   { key: 'orgNumber', label: 'Organization number', placeholder: 'As it shows in the footer' },
 ]

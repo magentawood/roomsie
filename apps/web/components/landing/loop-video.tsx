@@ -4,7 +4,6 @@ import { useEffect, useRef } from 'react'
 
 type Props = { src: string; phoneSrc?: string; poster: string; label?: string; className?: string }
 
-/** A person who turns off motion sees the first frame only. */
 export function LoopVideo({ src, phoneSrc, poster, label, className }: Props) {
   const video = useRef<HTMLVideoElement>(null)
   useEffect(() => {
