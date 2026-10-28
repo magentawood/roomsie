@@ -15,7 +15,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<{ user: User | null; loading: boolean }>({ user: null, loading: true })
   const uid = useRef<string | null>(null)
   useEffect(() => onAuthStateChanged(firebaseAuth(), (user) => {
-    // The cache holds the data of one account. A sign-out in any tab, or a new account, starts it empty.
+    // The cache holds one account. A change of account, in any tab, empties it.
     if (uid.current !== (user?.uid ?? null)) queryClient.clear()
     uid.current = user?.uid ?? null
     setState({ user, loading: false })
@@ -32,8 +32,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ),
     signOut: async () => {
       const user = firebaseAuth().currentUser
-      // The push token belongs to this account, so the alerts of the account stop here (T-55).
-      if (user) await import('./push').then(({ turnOffPush }) => turnOffPush(user)).catch(() => undefined)
+      // The alerts of the account stop on this browser (T-55). A slow network does not hold the sign-out.
+      if (user) {
+        const stopPush = import('./push').then(({ turnOffPush }) => turnOffPush(user))
+        await Promise.race([stopPush, new Promise((done) => setTimeout(done, 5000))]).catch(() => undefined)
+      }
       sessionStorage.clear()
       await firebaseSignOut(firebaseAuth())
     },
