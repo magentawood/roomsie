@@ -7,9 +7,6 @@ import { Quotes } from '../components/landing/quotes'
 import { SearchStrip } from '../components/landing/search-strip'
 import { getSite } from '../lib/site'
 
-/** A moderator's change to the quotes or the details shows within this many seconds (T-23a). */
-export const revalidate = 60
-
 export const metadata: Metadata = {
   title: 'Roomsie: find where you’ll live, and who with',
   description: 'Roomsie finds flats, flatmates and rented rooms in Mumbai that fit your preferences and your needs. Tell it what you want in English or Hinglish.',

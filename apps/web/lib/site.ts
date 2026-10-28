@@ -14,7 +14,8 @@ export const socialNetworks = [
 /** For the server render of the landing page. With no answer from the API in 5 seconds, the page shows no quotes and no details (T-23a). */
 export async function getSite(): Promise<SiteResponse> {
   try {
-    const res = await fetch(`${apiUrl}/v1/site`, { signal: AbortSignal.timeout(5000) })
+    // A moderator's change to the quotes or the details shows within 60 seconds (T-23a).
+    const res = await fetch(`${apiUrl}/v1/site`, { signal: AbortSignal.timeout(5000), next: { revalidate: 60 } })
     return res.ok ? siteResponse.parse(await res.json()) : noSite
   } catch {
     return noSite
