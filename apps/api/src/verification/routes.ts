@@ -5,6 +5,7 @@ import {
   checkUploadBody, checkUploadResponse, errorResponse, idCheckPhotosResponse, idCheckQueueResponse, noContent, reviewCheckBody, sendCheckBody,
   verificationResponse,
 } from '@roomsie/contract'
+import { reportError } from '@roomsie/config/report'
 import { requireUser, type AuthOptions } from '../auth'
 import { verificationAudit, verifications } from '../db/schema'
 import type { IdStore } from '../id-store'
@@ -51,7 +52,7 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
     if ((await blockingCheck(db, userId)).length) return checkExists(reply)
     // The score only helps the reviewer, so a failure sends the check with no score (ADR-0020).
     const faceMatch = await idStore.faceMatch(selfieKey, idPhotoKey).catch((err: unknown) => {
-      req.log.error({ err }, 'face match')
+      reportError(err, { where: 'face match', userId, log: req.log })
       return null
     })
     const sent = await db.transaction(async (tx) => {
@@ -124,7 +125,7 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
     if (!reviewed) return reply.code(404).send({ error: 'not found' })
     const keys = fileKeys(reviewed)
     // A failed delete keeps the review: the lifecycle rule of the bucket deletes the files after 7 days.
-    if (idStore) await idStore.deleteObjects(keys).catch((err: unknown) => req.log.error({ err }, 'ID files delete'))
+    if (idStore) await idStore.deleteObjects(keys).catch((err: unknown) => reportError(err, { where: 'ID files delete', userId: req.user!.id, log: req.log }))
     alerts.verification(reviewed.userId, result)
     return reply.code(204).send(null)
   })

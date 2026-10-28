@@ -10,6 +10,8 @@ const envSchema = z.object({
   WEB_ORIGIN: z.url().default('http://localhost:3000'),
   DATABASE_URL: z.url(),
   ANALYTICS_DATABASE_URL: unsetIfEmpty.pipe(z.url().optional()),
+  // Unset: Sentry stays off, for local work and the tests (T-07).
+  SENTRY_DSN_API: unsetIfEmpty.pipe(z.url().optional()),
   FIREBASE_PROJECT_ID: z.string().min(1),
   R2_ACCOUNT_ID: z.string().min(1),
   R2_ACCESS_KEY_ID: z.string().min(1),
