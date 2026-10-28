@@ -641,6 +641,8 @@ export const articles = pgTable('articles', {
   seoTitle: text('seo_title').notNull(),
   seoDescription: text('seo_description').notNull(),
   dateChecked: date('date_checked').notNull(),
+  coverImage: text('cover_image'),
+  coverAlt: text('cover_alt'),
   createdAt: createdAt(),
 }).enableRLS()
 

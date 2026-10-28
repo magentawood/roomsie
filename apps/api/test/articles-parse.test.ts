@@ -16,6 +16,8 @@ const frontMatter = {
   seo_title: '"Getting your rent deposit back in Mumbai"',
   seo_description: '"What your leave and licence agreement must say so the deposit comes back."',
   date_checked: '2026-10-08',
+  cover_image: '"/blog/deposit-back.jpg"',
+  cover_alt: '"An empty living room on the day of the handover"',
   sources: '[]',
 }
 const body = `Most deposits come back in full when the agreement names **the deductions**.
@@ -47,6 +49,8 @@ describe('parseArticle', () => {
       seoTitle: 'Getting your rent deposit back in Mumbai',
       seoDescription: 'What your leave and licence agreement must say so the deposit comes back.',
       dateChecked: '2026-10-08',
+      coverImage: '/blog/deposit-back.jpg',
+      coverAlt: 'An empty living room on the day of the handover',
     })
     expect(article.passages.map((p) => p.heading)).toEqual([null, 'How long can a landlord keep the deposit?', 'What can a landlord deduct?'])
     expect(article.passages.map((p) => p.text)).toEqual([
@@ -63,6 +67,7 @@ describe('parseArticle', () => {
     ['a missing field', '04-deposit-back.md', source({ ...frontMatter, author: undefined })],
     ['an SEO title of more than 60 characters', '04-deposit-back.md', source({ ...frontMatter, seo_title: `"${'x'.repeat(61)}"` })],
     ['an SEO description of more than 155 characters', '04-deposit-back.md', source({ ...frontMatter, seo_description: `"${'x'.repeat(156)}"` })],
+    ['a cover with no alt text', '04-deposit-back.md', source({ ...frontMatter, cover_alt: undefined })],
     ['a file name that is not NN-slug.md', 'Deposit Back.md', source()],
     ['no front matter', '04-deposit-back.md', body],
   ])('refuses %s', (_case, fileName, text) => {
@@ -86,10 +91,10 @@ describe('readArticles', () => {
     await folder.remove()
   })
 
-  it('parses each file of the repo, and each author photo is in the public folder of the web', async () => {
+  it('parses each file of the repo, and each author photo and cover is in the public folder of the web', async () => {
     const articles = await readArticles(new URL('../content/articles/', import.meta.url))
-    for (const { authorPhoto } of articles) {
-      if (authorPhoto) expect(existsSync(new URL(`../../web/public${authorPhoto}`, import.meta.url)), authorPhoto).toBe(true)
+    for (const file of articles.flatMap((a) => [a.authorPhoto, a.coverImage])) {
+      if (file) expect(existsSync(new URL(`../../web/public${file}`, import.meta.url)), file).toBe(true)
     }
   })
 })
