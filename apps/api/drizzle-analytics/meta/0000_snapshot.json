@@ -1,5 +1,5 @@
 {
-  "id": "37bb21c8-53fa-401e-b607-2999990caeaf",
+  "id": "70d55245-8056-4c6e-abb4-93e66aa07eda",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -42,7 +42,8 @@
           "name": "occurred_at",
           "type": "timestamp with time zone",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {

@@ -5,7 +5,7 @@ CREATE TABLE "events" (
 	"event_version" integer NOT NULL,
 	"actor" uuid,
 	"fields" jsonb NOT NULL,
-	"occurred_at" timestamp with time zone NOT NULL,
+	"occurred_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "events_id_occurred_at_pk" PRIMARY KEY("id","occurred_at")
 ) PARTITION BY RANGE ("occurred_at");
 --> statement-breakpoint

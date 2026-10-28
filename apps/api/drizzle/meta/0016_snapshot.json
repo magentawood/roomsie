@@ -1,5 +1,5 @@
 {
-  "id": "2357c4b4-2467-401b-9cc8-6bd6f3922d93",
+  "id": "dea5a910-8c60-46cd-9a31-4910467c1e07",
   "prevId": "1b39d542-5dd7-40a2-aa17-8db580acc057",
   "version": "7",
   "dialect": "postgresql",
@@ -2749,7 +2749,8 @@
           "name": "analytics_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": "gen_random_uuid()"
         },
         "last_sign_in_at": {
           "name": "last_sign_in_at",

@@ -23,4 +23,6 @@ const app = buildServer({
     publicUrl: env.R2_PUBLIC_URL,
   }),
 })
+// A deploy stops the container with SIGTERM. The close writes the events and the alerts in memory first.
+for (const signal of ['SIGTERM', 'SIGINT']) process.once(signal, () => void app.close().then(() => process.exit(0)))
 await app.listen({ port: env.PORT, host: '0.0.0.0' })

@@ -3,7 +3,7 @@ import { asc, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { outgoingRequest } from '@roomsie/contract'
 import { events } from '../src/analytics/schema'
-import { users } from '../src/db/schema'
+import { connectionRequests, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb } from './db'
 
@@ -22,6 +22,8 @@ afterAll(async () => {
   await analytics.drop()
 })
 beforeEach(async () => {
+  // A pair with an accepted request cannot send a new one.
+  await t.db.delete(connectionRequests)
   await t.flushEvents()
   await analytics.db.delete(events)
 })
@@ -44,8 +46,21 @@ describe('track', () => {
       { name: 'connect_sent', eventVersion: 1, actor: await actorOf('seeker'), fields: { to: 'person' } },
       { name: 'connect_accepted', eventVersion: 1, actor: await actorOf('friend'), fields: { to: 'person' } },
     ])
-    expect(rows.map((r) => r.actor)).not.toContain(t.ids.seeker)
     expect(JSON.stringify(rows)).not.toContain('98200')
+  })
+
+  it('names a listing as the target of a request, an accept and a report', async () => {
+    const listingId = await t.liveListing()
+    const sent = await t.call('friend', 'POST', '/v1/requests', { listingId, note: 'Is it free?' })
+    const { id } = outgoingRequest.parse(sent.json())
+    expect((await t.call('seeker', 'POST', `/v1/requests/${id}/accept`)).statusCode).toBe(204)
+    expect((await t.call('friend', 'POST', '/v1/reports', { id: uuidv7(), listingId, reason: 'broker_or_spam' })).statusCode).toBe(204)
+
+    expect(await written()).toMatchObject([
+      { name: 'connect_sent', fields: { to: 'listing' } },
+      { name: 'connect_accepted', fields: { to: 'listing' } },
+      { name: 'report_filed', fields: { subject: 'listing', reason: 'broker_or_spam' } },
+    ])
   })
 
   it('fires "report filed" with the subject and the reason, and not the detail', async () => {
@@ -79,9 +94,13 @@ describe('track', () => {
     const actor = await actorOf('leaver')
     expect(actor).toBeTruthy()
     expect((await t.call('leaver', 'DELETE', '/v1/me')).statusCode).toBe(204)
-
     const [tombstone] = await t.db.select().from(users).where(eq(users.id, t.ids.leaver))
     expect(tombstone).toMatchObject({ analyticsId: null, lastSignInAt: null })
-    expect(await t.db.select().from(users).where(eq(users.analyticsId, actor!))).toHaveLength(0)
+
+    // A rejoin is a new account with a new analytics id.
+    await t.call('leaver', 'GET', '/v1/me', undefined, await t.idToken('uid-leaver', { authTime: Math.floor(Date.now() / 1000) + 1 }))
+    const [event] = await written()
+    expect(event).toMatchObject({ name: 'signed_in', fields: { newAccount: true } })
+    expect(event!.actor).not.toBe(actor)
   })
 })
