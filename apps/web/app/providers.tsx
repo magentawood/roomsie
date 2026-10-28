@@ -23,7 +23,7 @@ function SignedIn({ children }: { children: ReactNode }) {
   return user ? <GateOrApp key={user.uid}>{children}</GateOrApp> : children
 }
 
-/** Each error event of this browser carries the users.id (T-07). A person that the gate refuses sees only its screen (T-33). */
+/** The users.id on each error event (T-07), and the screen of the gate (T-33). */
 function GateOrApp({ children }: { children: ReactNode }) {
   const me = useMe()
   const id = me.data?.id
