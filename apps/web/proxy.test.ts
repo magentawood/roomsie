@@ -34,6 +34,7 @@ describe('the Content-Security-Policy', () => {
     const runs = (url: string, headers?: Record<string, string>) => unstable_doesMiddlewareMatch({ config, url, headers })
     expect(runs('/')).toBe(true)
     expect(runs('/messages/0192f1a2-0000-7000-8000-000000000000')).toBe(true)
+    expect(runs('/wp-login.php')).toBe(true)
     expect(runs('/_next/static/chunks/main.js')).toBe(false)
     expect(runs('/landing/hero.mp4')).toBe(false)
     expect(runs('/alerts-sw.js')).toBe(false)

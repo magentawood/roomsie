@@ -114,6 +114,10 @@ row that the API already loaded.
   above. Our code keeps the ID token only in memory, never in `localStorage`.
   The Firebase SDK keeps its refresh token in IndexedDB, so a user stays signed
   in after a reload. All mobile apps accept this same exposure.
+- The policy has a new nonce for each request (T-52), not the hashes of the
+  files, because the experimental hashes of Next do not cover its inline
+  scripts. Thus, each page renders on each request, because a static page
+  cannot have the nonce. The policy also blocks inline styles and `eval`.
 - Public pages must not require identity, so the API needs unauthenticated read
   endpoints for listings and landing content.
 
