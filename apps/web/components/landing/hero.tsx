@@ -32,7 +32,7 @@ export function Hero() {
         </div>
         <span className="shrink-0"><StartLooking /></span>
       </div>
-      <div className="aspect-8/5 overflow-hidden rounded-2xl border border-primary shadow-md">
+      <div className="aspect-4/3 overflow-hidden rounded-2xl border border-primary shadow-md">
         <LoopVideo src="/landing/film.mp4" phoneSrc="/landing/film-720.mp4" poster="/landing/film-poster.jpg" className="size-full object-cover"
           label="A short film of Roomsie: a person types what they want, and Roomsie shows matching places and people" />
       </div>

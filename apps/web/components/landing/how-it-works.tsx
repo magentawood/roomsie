@@ -26,10 +26,7 @@ export function HowItWorks() {
           <LoopVideo src="/landing/search.mp4" poster="/landing/search-poster.jpg" className="size-full object-cover" />
         </Step>
         <Step title="You decide." text="Shortlist people or flats. Share and visit them easily.">
-          <picture>
-            <source srcSet="/landing/you-decide.webp" media="(min-width: 80rem)" />
-            <img src="/landing/you-decide-phone.webp" alt="" className="size-full object-cover object-top" />
-          </picture>
+          <LoopVideo src="/landing/you-decide.mp4" phoneSrc="/landing/you-decide-phone.mp4" poster="/landing/you-decide-poster.jpg" className="size-full object-cover" />
         </Step>
       </ol>
     </Container>
