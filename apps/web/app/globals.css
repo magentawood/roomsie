@@ -38,6 +38,10 @@
   --color-orange-100: #ffedd5;
   --color-rose-50: #f9ebea;
   --color-purple-25: #faf5ff;
+  --color-purple-400: #c084fc;
+  --color-violet-100: #ede9fe;
+  --color-pink-100: #fce7f3;
+  --color-alpha-white-70: #ffffffb3;
 
   /* Text and icons: text-primary, text-fg-quaternary, … */
   --text-color-primary: var(--color-gray-900);
@@ -57,6 +61,9 @@
   --text-color-badge-gray: var(--color-gray-700);
   --text-color-badge-warning: var(--color-yellow-700);
   --text-color-primary_on-brand: #ffffff;
+  /* Text on the dark sections of the landing page. */
+  --text-color-white: #ffffff;
+  --text-color-white_subtle: var(--color-alpha-white-70);
 
   /* Backgrounds: bg-primary, bg-brand-solid, … */
   --background-color-primary: #ffffff;
@@ -78,6 +85,8 @@
   --background-color-dot-error: var(--color-red-500);
   --background-color-dot-gray: var(--color-gray-500);
   --background-color-dot-warning: var(--color-yellow-500);
+  --background-color-dot-accent: var(--color-purple-400);
+  --background-color-primary-solid: var(--color-gray-900);
 
   /* Borders: border-primary, border-brand, … */
   --border-color-primary: var(--color-gray-300);
@@ -90,6 +99,7 @@
   --border-color-badge-warning: var(--color-yellow-200);
 
   --color-focus-ring: var(--color-gray-900);
+  --color-focus-ring_on-dark: #ffffff;
 
   /* Type: Figtree. Sizes and line heights of the Figma text styles. */
   --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
@@ -101,10 +111,27 @@
   --text-md--line-height: 1.5rem;
   --text-lg: 1.125rem;
   --text-lg--line-height: 1.75rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.875rem;
   --text-display-xs: 1.5rem;
   --text-display-xs--line-height: 2rem;
   --text-display-sm: 1.875rem;
   --text-display-sm--line-height: 2.375rem;
+  --text-display-md: 2.25rem;
+  --text-display-md--line-height: 2.75rem;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-display-lg: 3rem;
+  --text-display-lg--line-height: 3.75rem;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-xl: 3.75rem;
+  --text-display-xl--line-height: 4.5rem;
+  --text-display-xl--letter-spacing: -0.02em;
+  /* The quote marks of the landing quotes. */
+  --font-quote: 'Times New Roman', Times, serif;
+  --text-quote: 4rem;
+  --text-quote--line-height: 1;
+  --text-quote-lg: 8rem;
+  --text-quote-lg--line-height: 1;
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -115,11 +142,43 @@
   --shadow-sm: 0 1px 3px 0 #0000001a, 0 1px 2px -1px #0000001a;
   --shadow-md: 0 4px 6px -1px #0000001a, 0 2px 4px -2px #0000000f;
   --shadow-xl: 0 20px 24px -4px #00000014, 0 8px 8px -4px #00000008, 0 3px 3px -1.5px #0000000a;
+  /* The tilted cards and the contact cards of the landing page. */
+  --shadow-tilt: 4px 4px 6px 0 #00000040;
+  --shadow-tilt-sm: 3px 4px 5px 0 #00000033;
+  --shadow-step: 0 1px 4px 1px #00000040;
+  --shadow-step-sm: 0 2px 5px 0 #0000001a;
+  --shadow-glow: 0 0 15px 0 #00000040;
   --shadow-xs-skeuomorphic: 0 1px 2px 0 #0000000d, inset 0 -2px 0 0 #0000000d, inset 0 0 0 1px #0000002e;
 }
 
 @utility bg-chat-glow {
   background-image: radial-gradient(100% 145.5% at 100% 100%, var(--background-color-primary) 0%, var(--color-orange-100) 25.5%, var(--color-rose-50) 51%, var(--color-purple-25) 76.4%, var(--color-yellow-25) 100%);
+}
+
+/* The example searches of the landing page and the arrow of its white button. */
+@utility bg-strip-glow {
+  background-image: linear-gradient(87.4deg, color-mix(in srgb, var(--color-violet-100) 81%, transparent) 0%, color-mix(in srgb, var(--color-pink-100) 85.5%, transparent) 50%, color-mix(in srgb, var(--color-orange-100) 90%, transparent) 100%);
+}
+
+@utility bg-arrow-glow {
+  background-image: linear-gradient(to bottom, var(--color-violet-100), var(--color-pink-100), var(--color-orange-100));
+}
+
+/* The moving row of example searches holds its phrases two times, so -50% is one full loop. */
+@theme {
+  --animate-marquee: marquee 40s linear infinite;
+  @keyframes marquee {
+    to { transform: translateX(-50%); }
+  }
+}
+
+/* zoom-64 shows a card at 64% with its layout, as the design shrinks the chat cards on a phone and a tablet. */
+@utility zoom-* {
+  zoom: calc(--value(integer) * 1%);
+}
+
+@utility pause-on-hover {
+  &:hover { animation-play-state: paused; }
 }
 
 @layer base {

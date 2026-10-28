@@ -1,46 +1,36 @@
-'use client'
+import type { Metadata } from 'next'
+import { Callout, Contact, Footer } from '../components/landing/contact'
+import { Hero, LandingHeader } from '../components/landing/hero'
+import { HowItWorks } from '../components/landing/how-it-works'
+import { Problems } from '../components/landing/problems'
+import { Quotes } from '../components/landing/quotes'
+import { SearchStrip } from '../components/landing/search-strip'
+import { getSite } from '../lib/site'
 
-import { useQuery } from '@tanstack/react-query'
-import { signOut } from 'firebase/auth'
-import { healthResponse, meResponse } from '@roomsie/contract'
-import { api, apiUrl } from '../lib/api'
-import { useAuth } from '../lib/auth'
-import { firebaseAuth } from '../lib/firebase'
-import { Button } from '../components/ui/button'
-import { GoogleSignIn } from '../components/shell/google-sign-in'
+/** A moderator's change to the quotes or the details shows within this many seconds (T-23a). */
+export const revalidate = 60
 
-export default function Home() {
-  const { user } = useAuth()
+export const metadata: Metadata = {
+  title: 'Roomsie: find where you’ll live, and who with',
+  description: 'Roomsie finds flats, flatmates and rented rooms in Mumbai that fit your preferences and your needs. Tell it what you want in English or Hinglish.',
+}
 
-  const health = useQuery({
-    queryKey: ['health'],
-    queryFn: async () => {
-      const res = await fetch(`${apiUrl}/v1/health`)
-      if (!res.ok) throw new Error(`Health check failed: ${res.status}`)
-      return healthResponse.parse(await res.json())
-    },
-  })
-
-  const me = useQuery({
-    queryKey: ['me', user?.uid],
-    enabled: user !== null,
-    queryFn: () => api(user!, '/v1/me', meResponse),
-  })
-
+/** The landing page of the designs (T-23a). The server renders it, because it is a search page (ADR-0007). */
+export default async function Home() {
+  const { quotes, details } = await getSite()
   return (
-    <main className="p-8">
-      <h1 className="text-2xl font-semibold">roomsie</h1>
-      {/* Until the landing page of T-23a. */}
-      <Button variant="primary" size="lg" href="/chat">Start looking</Button>
-      <p>API: {health.isPending ? 'checking' : health.isError ? 'unreachable' : health.data.status}</p>
-      {user ? (
-        <>
-          <p>User: {me.isPending ? 'loading' : me.isError ? me.error.message : `${me.data.id} (${me.data.status})`}</p>
-          <button type="button" onClick={() => signOut(firebaseAuth())}>Sign out</button>
-        </>
-      ) : (
-        <GoogleSignIn />
-      )}
-    </main>
+    <>
+      <LandingHeader />
+      <main>
+        <Hero />
+        <Problems />
+        <SearchStrip />
+        <HowItWorks />
+        {quotes.length > 0 && <Quotes quotes={quotes} />}
+        <Callout />
+        <Contact details={details} />
+      </main>
+      <Footer orgNumber={details.orgNumber} />
+    </>
   )
 }

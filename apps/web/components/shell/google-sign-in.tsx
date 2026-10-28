@@ -7,7 +7,7 @@ import { useAuth } from '../../lib/auth'
 import { Button } from '../ui/button'
 
 /** The mark of Google, in the colours that its sign-in buttons must keep. */
-const GoogleMark = () => <img src="/icons/google.svg" alt="" width={20} height={20} className="shrink-0" />
+export const GoogleMark = () => <img src="/icons/google.svg" alt="" width={20} height={20} className="shrink-0" />
 
 /** "Sign in with Google" of D-02. */
 export function GoogleSignIn({ size = 'md' }: { size?: 'md' | 'lg' }) {
