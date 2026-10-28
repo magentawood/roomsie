@@ -41,3 +41,35 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
 - [0007-web-rendering-and-auth-transport.md](../../decisions/0007-web-rendering-and-auth-transport.md)
 - [web.md](../../standards/web.md)
 - [0008-web-stack.md](../../decisions/0008-web-stack.md)
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **The proxy of the web (new):** it makes a new nonce for each page request and sets the Content-Security-Policy header. Next puts the nonce on its own scripts. It does not run for the static files or for the link prefetches.
+  - **The root layout:** it waits for the request, so each page renders on each request.
+  - **The landing page:** it renders on each request. The fetch of the site data keeps its cache of 60 seconds, so the load on the API does not change.
+  - **The quote cards of the landing page:** the places of the collage move from a style attribute to classes.
+  - **The "not found" page (new):** our own page, from the empty state of the design system, because the policy blocks the inline styles of the page of Next.
+  - **The start file of the browser (new):** Zod parses without eval, because the policy blocks eval.
+  - **The web standard:** the CSP rule tells that each page renders on each request.
+- **Seams for the tests:**
+  - The proxy, in a unit test: each page request gets the policy with a new nonce, the policy of production has no `unsafe-inline` and no `unsafe-eval` for scripts, Next gets the same policy on the request, and the proxy does not run for the static files and the link prefetches.
+  - A live check after the deploy: the scripts of Next run, and a script without the nonce does not run.
+- **Decisions:**
+  - **The nonce:** a new random nonce for each page request (why: ADR-0007). A static page cannot have a new nonce, so no page is static, and no page uses a page-level revalidate. Data caches use the fetch option.
+  - **Scripts:** our own scripts with the nonce, and `strict-dynamic`. Thus, the script of Google that Firebase sign-in loads runs. No `unsafe-inline` and no `unsafe-eval` in production.
+  - **Styles:** our own style sheets and the nonce, with no `unsafe-inline` in production.
+  - **Connections:** the API, Firebase sign-in and push, the upload hosts of R2 and of the ID bucket, and the realtime host of Supabase.
+  - **The R2 upload host and the Supabase realtime host:** the wildcards of the provider, `*.r2.cloudflarestorage.com` and `*.supabase.co`, because Vercel does not have their values. The user decided this in the grill.
+  - **Images:** our own files, `blob:` and `data:`, the photos host, the ID bucket and the Google profile photos. **Frames:** the Firebase auth domain only. **Plugins:** none. **Embedding of our pages in a different site:** none.
+  - **Development:** `unsafe-eval` and inline styles, because the development server of Next needs them, and no upgrade of `http` requests.
+  - **Rollout:** the policy blocks from the first deploy. After the deploy, the user checks sign-in, a photo upload, the live chat, push and an ID check on the live site. The user decided this in the grill.
+  - **The "not found" page:** our own page with a link to the home page. The user decided this in implement.
+  - **The test:** a unit test of the proxy and a live check, not a browser test in CI, because the testing standard defers Playwright tests until the UI is stable (why: ADR-0013). The user decided this in implement.
+- **Out of scope:**
+  - the violation reports (a candidate for T-07)
+  - the other security headers, for example `Strict-Transport-Security`
+  - the comments toolbar of the Vercel previews, which the policy blocks
+  - Trusted Types
