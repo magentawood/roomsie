@@ -85,6 +85,7 @@ describe('the article routes', () => {
       {
         slug: 'deposit-back', number: 4, title: 'Getting your deposit back', author: 'Asha Rao', authorLine: 'Rented in Andheri for six years',
         authorPhoto: null, seoTitle: 'Getting your deposit back', seoDescription: 'About getting your deposit back', dateChecked: '2026-10-08',
+        coverImage: null, coverAlt: null,
       },
       expect.objectContaining({ slug: 'police-verification', number: 7 }),
     ])

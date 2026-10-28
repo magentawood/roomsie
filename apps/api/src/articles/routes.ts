@@ -9,6 +9,7 @@ import { articlePassages, articles } from '../db/schema'
 const summary = {
   slug: articles.slug, number: articles.number, title: articles.title, author: articles.author, authorLine: articles.authorLine,
   authorPhoto: articles.authorPhoto, seoTitle: articles.seoTitle, seoDescription: articles.seoDescription, dateChecked: articles.dateChecked,
+  coverImage: articles.coverImage, coverAlt: articles.coverAlt,
 }
 
 /** The blog gets the articles here, server to server (ADR-0007). */

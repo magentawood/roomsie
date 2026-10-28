@@ -12,6 +12,9 @@ export const articleSummary = z.object({
   seoTitle: z.string(),
   seoDescription: z.string(),
   dateChecked: z.iso.date(),
+  /** A file in the public folder of the web, with its alt text, or both null. */
+  coverImage: z.string().nullable(),
+  coverAlt: z.string().nullable(),
 })
 export type ArticleSummary = z.infer<typeof articleSummary>
 /** By number. */

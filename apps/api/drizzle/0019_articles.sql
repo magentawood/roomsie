@@ -22,6 +22,8 @@ CREATE TABLE "articles" (
 	"seo_title" text NOT NULL,
 	"seo_description" text NOT NULL,
 	"date_checked" date NOT NULL,
+	"cover_image" text,
+	"cover_alt" text,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
 	CONSTRAINT "articles_slug_unique" UNIQUE("slug")
 );

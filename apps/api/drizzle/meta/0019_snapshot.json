@@ -1,5 +1,5 @@
 {
-  "id": "f0df948b-ccd1-49b0-87e2-de30e2fa4372",
+  "id": "b331b1a1-4a5f-4f7a-9383-654d48286ac5",
   "prevId": "a1942fff-b991-4cf6-8467-788c8d8a1d48",
   "version": "7",
   "dialect": "postgresql",
@@ -360,6 +360,18 @@
           "type": "date",
           "primaryKey": false,
           "notNull": true
+        },
+        "cover_image": {
+          "name": "cover_image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "cover_alt": {
+          "name": "cover_alt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",

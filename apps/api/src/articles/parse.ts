@@ -9,7 +9,7 @@ const markdown = MarkdownIt({ html: false })
 const articleFileName = /^\d{2}-([a-z0-9]+(?:-[a-z0-9]+)*)\.md$/
 const withFrontMatter = /^---\n([\s\S]*?)\n---\n([\s\S]*)$/
 
-/** The front matter of the marketing article drafts, with the photo of T-37. */
+/** The front matter of the marketing article drafts, with the photo and the cover of T-37. */
 const frontMatter = z.strictObject({
   number: z.int().positive(),
   title: z.string().min(1),
@@ -22,7 +22,9 @@ const frontMatter = z.strictObject({
   seo_description: z.string().min(1).max(155),
   date_checked: z.iso.date(),
   sources: z.array(z.string()).optional(),
-})
+  cover_image: z.string().regex(/^\/blog\/[\w.-]+$/).optional(),
+  cover_alt: z.string().min(1).optional(),
+}).refine((f) => !f.cover_image === !f.cover_alt, { message: 'cover_image and cover_alt go together', path: ['cover_alt'] })
 
 function textOf(tokens: Token[]) {
   return tokens
@@ -66,6 +68,8 @@ export function parseArticle(fileName: string, source: string) {
       seoTitle: fields.seo_title,
       seoDescription: fields.seo_description,
       dateChecked: fields.date_checked,
+      coverImage: fields.cover_image ?? null,
+      coverAlt: fields.cover_alt ?? null,
       passages: passagesOf(parts[2]!),
     }
   } catch (err) {
