@@ -47,25 +47,25 @@ Stores the roomsie articles and finds the correct passage.
 **Approved:** 2026-10-28, by n3rxv
 
 - **Modules:**
-  - **`content/articles/` (new):** one Markdown file for each published article, `NN-slug.md`. It has the front matter of the marketing article drafts, and an optional `author_photo`.
-  - **`packages/articles` (new):** the one parser. It makes a committed data module from the files: the fields of each article, and each passage as HTML and as plain text. Its interface is new.
-  - **The articles module of the API (new):** it owns the tables `articles` and `article_passages`. It syncs the tables with the data module at each deploy, and it gives the search function to the Advisor. The step that migrates and seeds calls the sync. Its interface does not change.
+  - **`apps/api/content/articles/` (new):** one Markdown file for each published article, `NN-slug.md`. It has the front matter of the marketing article drafts, and an optional `author_photo`.
+  - **The articles module of the API (new):** it owns the tables `articles` and `article_passages`. It parses the files, syncs the tables with them at each deploy, gives the search function to the Advisor, and serves two public routes: the list of the articles and one article. The step that migrates and seeds calls the sync. Its interface does not change.
+  - **The contract:** the schemas of the two routes.
   - **The web:** the blog pages (new), a link in the landing footer, `sitemap.xml` and `robots.txt` (new).
   - **The Figma drafts page:** section 30, the blog list and the article page, at desktop and phone widths.
   - **Docs:** `corpus-plan.md` and `seo-with-gated-products.md`.
 - **Seams for the tests:**
-  - The tests of `packages/articles`, with sample files: the front matter, the slug, the passages, the HTML and the plain text. The parser refuses a bad file. The committed data module agrees with `content/articles/`.
-  - The API tests, with a disposable database: the sync adds a new article, changes a changed article and removes a removed article. The search gives the best passages first, each with its article and heading, and no passage for a question that has no word of an article.
-  - The web tests: with no article, the footer has no "Blog" link and `/blog` is a 404. With one article, both show.
-  - A browser check at 390 px and 1440 px, with a sample article that is not committed.
+  - The API tests of the parser, with sample files: the front matter, the slug, the passages, the HTML and the plain text. The parser refuses a bad file. Each file in `apps/api/content/articles/` parses.
+  - The API tests, with a disposable database: the sync adds a new article, changes a changed article and removes a removed article. The search gives the best passages first, each with its article and heading, and no passage for a question that has no word of an article. The two routes give the list, one article, and 404 for an unknown slug.
+  - A browser check at 390 px and 1440 px, with a sample article that is not committed and with no article: the footer link, `/blog`, an article page and the 404.
 - **Decisions:**
   - **Scope:** the articles table, the loader, the search for the Advisor, and the public blog at `/blog` and `/blog/<slug>`. The user decided this in the grill.
-  - **The files:** `content/articles/NN-slug.md`, with the front matter of the marketing article drafts and an optional `author_photo`. The slug comes from the file name, and it never changes (why: PD6b).
-  - **One parser:** `packages/articles` makes the committed data module. A test fails when the module is stale, or when a file is bad: a missing field, an SEO title of more than 60 characters, an SEO description of more than 155 characters, a number or slug that two files use, or a photo file that does not exist.
+  - **The files:** `apps/api/content/articles/NN-slug.md`, with the front matter of the marketing article drafts and an optional `author_photo`. The slug comes from the file name, and it never changes (why: PD6b). The API is the only reader of the files, so they are in its package.
+  - **One parser, in the API:** it makes the fields of each article, and each passage as HTML and as plain text. A test fails when a file is bad: a missing field, an SEO title of more than 60 characters, an SEO description of more than 155 characters, a number or slug that two files use, or a photo file that does not exist in the public folder of the web.
   - **The passages:** one passage for each `##` section, because each heading is a question (corpus plan), and one passage for the text before the first heading.
-  - **The tables:** UUIDv7 ids, row level security on, and an English full-text index in which the heading counts more than the body. There is no vector store (why: PD7a). Each deploy syncs the tables with the data module: it adds the new articles, changes the changed articles and removes the removed articles.
+  - **The tables:** UUIDv7 ids, row level security on, and an English full-text index in which the heading counts more than the body. There is no vector store (why: PD7a). Each deploy syncs the tables with the files: it adds the new articles, changes the changed articles and removes the removed articles.
   - **The search:** a function of the API, not a route. It takes a question and a limit, 3 by default. It matches any word of the question, ranks the passages in SQL, and gives each passage with the slug and title of its article and its heading. The user decided "any word, best first" in the grill.
-  - **The blog:** the web renders each page from the data module, with no call to the API or the database, and each link to an article prefetches the full article. The user decided this in the grill, for pages with no wait. The list shows the articles by number. An article page shows the title, the byline (the photo or the initials, the name and the author line), "Checked on <date>", the sections and a link to the chat. The user decided the optional photo in the grill.
+  - **The blog data:** the web renders each blog page on the server, and gets its data from the two public routes of the API, server to server (why: ADR-0007, the web standards). The web keeps each answer in the cache of `fetch` for 60 seconds, so a view does not wait for the API, and each link to an article prefetches the full article. The user decided this after the spec, on 2026-10-28, in place of a web that reads the files.
+  - **The blog pages:** the list shows the articles by number. An article page shows the title, the byline (the photo or the initials, the name and the author line), "Checked on <date>", the sections and a link to the chat. The user decided the optional photo in the grill.
   - **SEO:** the title and the description come from the SEO fields. Each article has its canonical address on `roomsie.in` and Article structured data. `sitemap.xml` lists `/` and the blog pages, and `robots.txt` names it.
   - **The way in:** a "Blog" link shows in the landing footer when the first article exists. Until then, `/blog` is a 404, and the sitemap has no blog page. The user decided this in the grill.
   - **The design:** we draw the blog list and the article page as section 30 of the Figma drafts page, with our tokens. The user approves them before the pages are built.
