@@ -44,7 +44,7 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
 
 ## Spec
 
-**Approved:** 2026-10-28, by n3rxv. The changes in implement: approved on 2026-10-28, by n3rxv.
+**Approved:** 2026-10-28, by n3rxv. The changes in implement and review: approved on 2026-10-28, by n3rxv.
 
 - **Modules:**
   - **The proxy of the web (new):** it makes a new nonce for each page request and sets the Content-Security-Policy header. Next puts the nonce on its own scripts. It does not run for the static files or for the link prefetches.
