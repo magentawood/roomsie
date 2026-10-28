@@ -73,7 +73,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
         '/me',
         { preHandler: requireUser(options, { allowSuspended: true }), schema: { response: { 204: noContent } } },
         async (req, reply) => {
-          await deleteAccount(options.db, options.storage, options.idStore, req.user!.id, req.identity!)
+          await deleteAccount(options.db, options.storage, options.idStore, options.messaging.firebaseAdmin, req.user!.id, req.identity!)
           return reply.code(204).send(null)
         },
       )

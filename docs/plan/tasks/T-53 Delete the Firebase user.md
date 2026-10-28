@@ -42,3 +42,26 @@ Removes the sign-in record at Google too, not only our data.
 - [0016-credentials-and-secrets.md](../../decisions/0016-credentials-and-secrets.md)
 - [0005-managed-platform-split.md](../../decisions/0005-managed-platform-split.md)
 - [0007-web-rendering-and-auth-transport.md](../../decisions/0007-web-rendering-and-auth-transport.md)
+
+## Spec
+
+**Approved:** 2026-10-28, by n3rxv
+
+- **Modules:**
+  - **The Firebase Admin module:** a new call deletes the Firebase user of a uid. The interface changes.
+  - **The account module:** account deletion reads the Firebase uid from the locked users row, and deletes the Firebase user as the last step of its transaction. The account deletion function gets the Firebase Admin module.
+  - **ADR-0016:** its table names the variable of the service account.
+- **Seams for the tests:**
+  - The API test of account deletion, with the fake Firebase Admin of T-44: the Firebase user of the account is deleted, a Firebase failure removes no data and a retry is safe, a double tap calls Firebase one time, and a sign-in after the delete still meets the rejoin checks.
+  - A unit test of the Firebase Admin module with a fake `fetch`: "user not found" counts as deleted.
+- **Decisions:**
+  - **Order:** the Firebase delete is the last step in the transaction of account deletion. If it fails, the transaction rolls back, the API gives 500, and the dialog says "Try again". A retry is safe, because "user not found" counts as deleted. If the commit fails after the Firebase delete, the retry must come before the token expires (one hour). The R2 deletes of T-20 use the same pattern.
+  - **No SDK:** the call goes through the Firebase Admin module, with the REST API that the Admin SDK calls, as T-44 did ([messages](../../learn/messages.md)). The done item keeps its text.
+  - **The uid:** the Firebase uid comes from the users row under its lock. The second request of a double tap finds the account deleted, so it does not call Firebase.
+  - **Without the service account,** the API does not delete the Firebase user, as it sends no push (why: ADR-0019). Production has the secret.
+  - **The record:** the row "Firebase Admin service account" in ADR-0016 names `FIREBASE_SERVICE_ACCOUNT`. The deploy puts it only in the environment of apps/api.
+  - **Rejoin:** a sign-in after the Firebase delete has a new uid. The tombstone keys on the Google account id, so the checks of T-20 still apply.
+- **Out of scope:**
+  - the Firebase users of accounts that were deleted before T-53: they stay
+  - a change to the web or to the text of the dialog
+  - the old token at Supabase Realtime, which works until it expires (one hour), as before

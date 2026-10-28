@@ -5,6 +5,7 @@ import { copyBlocksAgainst } from './blocks/read'
 import type { Db } from './db/client'
 import { deleteFeedbackOf } from './feedback/read'
 import { anonymousSessions, goals, users } from './db/schema'
+import type { FirebaseAdmin } from './firebase-admin'
 import type { IdStore } from './id-store'
 import { deactivateListingsOf, deleteListingsOf, listingPhotoKeysOf } from './listings/read'
 import { deleteProfileOf, profilePhotoKeysOf, unpublishCardOf } from './profiles/read'
@@ -27,16 +28,18 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * and the other person in a thread can still show "Deleted user". Reports and
  * blocks keep their ids for moderation.
  *
- * Order: hide, then lock the users row, then the photos, then the rows. A profile
- * photo change locks the same row (T-16a), so no photo is added after the read. R2
- * deletes are idempotent, so if the database step fails, a retry is safe. If the
+ * Order: hide, then lock the users row, then the photos, then the rows, then the Firebase user. A profile
+ * photo change locks the same row (T-16a), so no photo is added after the read. The R2
+ * and Firebase deletes are idempotent, so if a step fails, a retry is safe. If the
  * photos went last, a failure would leave photos that no row points to.
  *
  * Each module deletes its own rows. The account module owns `goals` and `anonymous_sessions` until the assistant has a module.
  *
- * Not here yet: events (T-24), Form B (T-35), the Firebase user (T-53). The messages stay for the other person (T-44).
+ * Not here yet: events (T-24), Form B (T-35). The messages stay for the other person (T-44).
  */
-export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | undefined, userId: string, identity: string) {
+export async function deleteAccount(
+  db: Db, storage: Pick<Storage, 'deleteObjects'>, idStore: IdStore | undefined, firebaseAdmin: FirebaseAdmin | null, userId: string, identity: string,
+) {
   await unpublishCardOf(db, userId)
   await deactivateListingsOf(db, userId)
 
@@ -66,6 +69,8 @@ export async function deleteAccount(db: Db, storage: Pick<Storage, 'deleteObject
       email: null,
       updatedAt: new Date(),
     }).where(eq(users.id, userId))
+    // Last: a sign-in after it gets a new uid, so it cannot find this account to retry a failed step.
+    await firebaseAdmin?.deleteUser(user!.authProviderId)
   })
 }
 
