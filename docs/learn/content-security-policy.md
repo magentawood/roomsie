@@ -17,7 +17,7 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
                                       └─▶ Next renders the page and puts the nonce on its own scripts
 ```
 
-- **The proxy** (`apps/web/proxy.ts`) makes the nonce and the policy for each page request. It does not run for the files in `_next/static` and `public`, or for the link prefetches.
+- **The proxy** (`apps/web/proxy.ts`) makes the nonce and the policy for each page request. It does not run for the files in `_next/static` and `public`, or for the link prefetches. A new type of file in `public` needs its extension in the matcher of the proxy.
 - **Each page renders on each request.** A static page has no nonce, so the policy blocks its scripts. The root layout waits for the request. The landing page keeps its data from the API for 60 seconds with the option of `fetch`.
 - **No inline styles and no `eval`.** The policy blocks a `style` attribute, an inline `<style>` with no nonce, and `eval`. The code uses classes. Zod tries `eval` to parse faster, so `instrumentation-client.ts` turns that off. The "not found" page of Next has inline styles, so we have our own.
 
@@ -32,7 +32,7 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
 
 ## The choice we made
 
-- A nonce, not hashes of the files. The experimental hashes of Next do not cover its inline scripts, and a nonce needs no build step ([#135](https://github.com/magentawood/roomsie/issues/135)).
+- A nonce for each request, not the hashes of the files ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md)).
 - Wildcards for the R2 upload host and the Supabase realtime host, because Vercel does not have their values. The nonce stops a script before it can send data out.
 - The policy blocks from the first deploy. There is no report-only period, because nobody collects the reports yet. T-07 can send the violation reports to Sentry.
 - A unit test of the proxy and a live check, not a browser test in CI, because ADR-0013 defers the Playwright tests ([ADR-0013](../decisions/0013-ci-gate-and-testing.md)).

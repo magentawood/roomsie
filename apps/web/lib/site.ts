@@ -1,5 +1,5 @@
 import { noSiteDetails, siteResponse, type SiteResponse } from '@roomsie/contract'
-import { apiUrl } from './api'
+import { apiUrl } from './api-url'
 
 const noSite: SiteResponse = { quotes: [], details: noSiteDetails }
 

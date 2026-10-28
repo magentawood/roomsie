@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest, type ProxyConfig } from 'next/server'
-import { apiUrl } from './lib/api'
+import { apiUrl } from './lib/api-url'
 
 const dev = process.env.NODE_ENV === 'development'
 // The hosts of API_R2_PUBLIC_URL and API_ID_BUCKET in deploy-api.yml.
@@ -35,8 +35,8 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [{
-    // A file has a dot in its path, and a page does not.
-    source: '/((?!_next/static|_next/image|.*\\.).*)',
+    // The files of public. Each other path gets the policy, also a wrong URL such as /a.php.
+    source: '/((?!_next/static|_next/image|.*\\.(?:jpg|js|mp4|png|svg|webp)$).*)',
     missing: [
       { type: 'header', key: 'next-router-prefetch' },
       { type: 'header', key: 'purpose', value: 'prefetch' },

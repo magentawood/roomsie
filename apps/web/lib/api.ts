@@ -1,8 +1,7 @@
 import type { User } from 'firebase/auth'
 import type { z } from 'zod'
 import { errorResponse, incompleteListingResponse, type GoLiveField } from '@roomsie/contract'
-
-export const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080'
+import { apiUrl } from './api-url'
 
 /** A response of the API that is not 2xx. `body` is the parsed JSON, if any. */
 export class ApiError extends Error {
