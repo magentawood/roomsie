@@ -38,7 +38,12 @@ export async function turnOnPush(user: User): Promise<PushState> {
 
 export async function turnOffPush(user: User): Promise<PushState> {
   const token = await browserToken()
-  if (token) await api(user, '/v1/me/push-tokens', noContent, { method: 'DELETE', body: { token } })
-  await deleteToken(getMessaging(firebaseApp())).catch(() => false)
+  if (!token) return 'off'
+  try {
+    await api(user, '/v1/me/push-tokens', noContent, { method: 'DELETE', body: { token } })
+  } finally {
+    // When the API call fails, this browser still stops getting the alerts.
+    await deleteToken(getMessaging(firebaseApp())).catch(() => false)
+  }
   return 'off'
 }
