@@ -31,10 +31,10 @@ Removes the sign-in record at Google too, not only our data.
 - No task waits on this task.
 
 ## Done when
-- [ ] Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module
-- [ ] The service account key is only in the environment of apps/api, and a record names it (ADR-0016)
-- [ ] If the Firebase delete fails, a retry is safe
-- [ ] After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20
+- [x] Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module · [#175](https://github.com/magentawood/roomsie/pull/175)
+- [x] The service account key is only in the environment of apps/api, and a record names it (ADR-0016) · [#175](https://github.com/magentawood/roomsie/pull/175)
+- [x] If the Firebase delete fails, a retry is safe · [#175](https://github.com/magentawood/roomsie/pull/175)
+- [x] After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20 · [#175](https://github.com/magentawood/roomsie/pull/175)
 
 ^done
 
@@ -62,7 +62,18 @@ Removes the sign-in record at Google too, not only our data.
   - **The record:** the row "Firebase Admin service account" in ADR-0016 names `FIREBASE_SERVICE_ACCOUNT`. The deploy puts it only in the environment of apps/api.
   - **Rejoin:** a sign-in after the Firebase delete has a new uid. The tombstone keys on the Google account id, so the checks of T-20 still apply.
   - **Timeout:** the Firebase delete and the Google token fetch stop after 10 seconds, so a hung Google cannot hold the lock of the users row. The token fetch is shared, so the claims of T-44 and the push of T-55 also stop after 10 seconds. The user decided this in review round 2.
+  - **ADR-0005:** its rule 1 names account deletion as the second reader of the Firebase uid, and the standards rule agrees with it. The user decided this in the extra review round.
 - **Out of scope:**
   - the Firebase users of accounts that were deleted before T-53: they stay
   - a change to the web or to the text of the dialog
   - the old token at Supabase Realtime, which works until it expires (one hour), as before
+
+## Log
+
+- **2026-10-28 · [#175](https://github.com/magentawood/roomsie/pull/175)**
+  - **Change:** account deletion also deletes the Firebase user of the person, as the last step of its transaction. The Firebase Admin module calls the REST API of the Admin SDK. "User not found" counts as deleted, and the Google calls stop after 10 seconds.
+  - **Why:** the record at Google keeps the uid, the email and the name of the person, so a deletion must remove it too ([PD19](../../decisions/pd-19-retention.md), [ADR-0016](../../decisions/0016-credentials-and-secrets.md)).
+  - **Ticked:** "Account deletion also deletes the Firebase Auth user, through the Firebase Admin SDK in the one auth module", "The service account key is only in the environment of apps/api, and a record names it (ADR-0016)", "If the Firebase delete fails, a retry is safe" and "After the Firebase delete, a sign-in with the same Google account still meets the rejoin checks of T-20"
+  - **Not done:** none. The Firebase users of accounts deleted before T-53 stay at Google, as the user decided.
+  - **Learn:** [Sign-in and tokens](../../learn/sign-in-and-tokens.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
