@@ -63,7 +63,7 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
   - **Styles:** our own style sheets and the nonce, with no `unsafe-inline` in production.
   - **Connections:** the API, Firebase sign-in and push, the upload hosts of R2 and of the ID bucket, and the realtime host of Supabase.
   - **The R2 upload host and the Supabase realtime host:** the wildcards of the provider, `*.r2.cloudflarestorage.com` and `*.supabase.co`, because Vercel does not have their values. The user decided this in the grill.
-  - **Images:** our own files, `blob:` and `data:`, the photos host, the ID bucket and the Google profile photos. **Frames:** the Firebase auth domain only. **Plugins:** none. **Embedding of our pages in a different site:** none.
+  - **Images:** our own files, `blob:` and `data:`, the photos host, the ID bucket and the Google profile photos. **Frames:** the Firebase auth domain only. **Plugins:** none. **Embedding of our pages in a different site:** none. **The base URL and the form targets:** our own site only.
   - **Development:** `unsafe-eval` and inline styles, because the development server of Next needs them, and no upgrade of `http` requests.
   - **Rollout:** the policy blocks from the first deploy. After the deploy, the user checks sign-in, a photo upload, the live chat, push and an ID check on the live site. The user decided this in the grill.
   - **The "not found" page:** our own page with a link to the home page. The user decided this in implement.

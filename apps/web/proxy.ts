@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest, type ProxyConfig } from 'next/server'
 import { apiUrl } from './lib/api'
 
 const dev = process.env.NODE_ENV === 'development'
-// The photo hosts of deploy-api.yml. Vercel does not have the R2 account or the Supabase project, so those are wildcards (T-52).
+// The hosts of API_R2_PUBLIC_URL and API_ID_BUCKET in deploy-api.yml.
 const photos = 'https://photos.roomsie.in'
 const idBucket = 'https://roomsie-id-checks.s3.ap-south-1.amazonaws.com'
 
@@ -15,8 +15,7 @@ export function proxy(request: NextRequest) {
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ''}`,
     `style-src 'self' ${dev ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
     `img-src 'self' blob: data: ${photos} ${idBucket} https://lh3.googleusercontent.com`,
-    "font-src 'self'",
-    "media-src 'self'",
+    // Vercel lacks the R2 account and the Supabase project, so these two are wildcards (T-52).
     `connect-src 'self' ${new URL(apiUrl).origin} https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.r2.cloudflarestorage.com ${idBucket} wss://*.supabase.co`,
     `frame-src https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}`,
     "worker-src 'self'",
