@@ -38,6 +38,7 @@ Stops abuse of the AI and a very large bill.
 - [ ] Limits apply per device and per network
 - [ ] At the daily spend ceiling, the chat changes to chips only
 - [ ] An alert starts when the daily model spend is more than 70% of the ceiling
+- [ ] The turn cap fires the 'wall hit' event on the server, through track() of T-24
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 
 ^done

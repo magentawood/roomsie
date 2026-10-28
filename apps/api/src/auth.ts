@@ -1,5 +1,5 @@
 import type { FastifyReply, FastifyRequest } from 'fastify'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull, lt, or } from 'drizzle-orm'
 import { createRemoteJWKSet, errors, jwtVerify, type JWTVerifyGetKey } from 'jose'
 import { z } from 'zod'
 import type { MeResponse } from '@roomsie/contract'
@@ -21,6 +21,8 @@ declare module 'fastify' {
     user: MeResponse | null
     /** The person at the sign-in provider: the Google account id, or the Firebase uid if the token has none. */
     identity: string | null
+    /** The id that the analytics events of the person carry (T-24). */
+    analyticsId: string | null
   }
 }
 
@@ -84,7 +86,14 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     if (emailVerified && email && email !== user.email) await db.update(users).set({ email, updatedAt: new Date() }).where(eq(users.id, user.id))
     req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid), reviewer: moderation.reviewerUids.includes(uid) }
     req.identity = identity
+    req.analyticsId = user.analyticsId
     tokens.set(req, { uid, claims: realtimeClaims.safeParse(verified!.payload).data })
+    // A refresh keeps auth_time, so only a new sign-in moves it. Of two requests at the same time, one wins (T-24).
+    if (!user.lastSignInAt || user.lastSignInAt < signedInAt) {
+      const [moved] = await db.update(users).set({ lastSignInAt: signedInAt })
+        .where(and(eq(users.id, user.id), or(isNull(users.lastSignInAt), lt(users.lastSignInAt, signedInAt)))).returning({ id: users.id })
+      if (moved) req.server.analytics.track(req, { name: 'signed_in', newAccount: !user.lastSignInAt })
+    }
   }
 }
 
@@ -101,7 +110,7 @@ async function createUser(db: Db, uid: string, signedInAt: Date) {
 
 async function findUser(db: Db, uid: string) {
   const [user] = await db
-    .select({ id: users.id, status: users.status, tokensValidAfter: users.tokensValidAfter, email: users.email })
+    .select({ id: users.id, status: users.status, tokensValidAfter: users.tokensValidAfter, email: users.email, analyticsId: users.analyticsId, lastSignInAt: users.lastSignInAt })
     .from(users)
     .where(eq(users.authProviderId, uid))
   return user

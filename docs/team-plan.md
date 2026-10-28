@@ -583,6 +583,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - Code parses numbers and dates, not the model
 - All vague input becomes `unclear`, never a guess. An inferred value never fills a slot silently
 - The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure
+- The first turn of a goal fires the 'interview started' event through track() of T-24
 - Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/research/hinglish-model-report.md`, `docs/agent-architecture.md`, `docs/extensibility.md`
 
@@ -743,6 +744,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The must-haves of the candidate apply back to the searcher, with the mapping of PD3a
 - A card with an unanswered dealbreaker shows below the full matches, with what is missing
 - The suggested posts use the next budget band or a neighbouring area group, from a seeded list
+- Each page of results fires the 'results shown' event through track() of T-24
 - Read first: `docs/interface-shape.md`, `docs/decisions/pd-03a-flatmate-matching.md`
 
 **M-05 · Drafts of articles 1 to 10** — done when:
@@ -798,6 +800,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Limits apply per device and per network
 - At the daily spend ceiling, the chat changes to chips only
 - An alert starts when the daily model spend is more than 70% of the ceiling
+- The turn cap fires the 'wall hit' event on the server, through track() of T-24
 - Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 - Read first: `docs/pre-login-limits.md`
 

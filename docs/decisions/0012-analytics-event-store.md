@@ -72,9 +72,11 @@ own.** We use no third-party analytics vendor.
   for the next month. If not, inserts fail at a month boundary.
 - Rollup tables need a background job. `apps/api` already has one.
 - **Retention and deletion policy is now our problem.**
-  - Events reference `users.id`. Thus, they are personal data in the scope of
-    India's DPDP Act.
-  - Account deletion must purge or pseudonymise the event history of the user.
+  - Events carry a random analytics id of the person, never `users.id`. The users
+    row links the two, so the events are personal data in the scope of India's
+    DPDP Act.
+  - Account deletion clears the analytics id. Then no event points to the person,
+    and the deletion makes no call to the analytics database (T-24).
   - Raw events go after 12 months ([PD19](pd-19-retention.md)).
   - We must design this policy with the schema, and not attach it subsequently.
     It is the one part where to own the data is genuinely harder than to rent it.

@@ -47,6 +47,7 @@ Takes what a person wants and returns the people who fit.
 - [ ] The must-haves of the candidate apply back to the searcher, with the mapping of PD3a
 - [ ] A card with an unanswered dealbreaker shows below the full matches, with what is missing
 - [ ] The suggested posts use the next budget band or a neighbouring area group, from a seeded list
+- [ ] Each page of results fires the 'results shown' event through track() of T-24
 
 ^done
 

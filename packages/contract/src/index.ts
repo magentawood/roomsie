@@ -14,6 +14,7 @@ export const areasResponse = z.object({
 export type AreasResponse = z.infer<typeof areasResponse>
 
 export * from './alerts'
+export * from './events'
 export * from './feedback'
 export * from './listings'
 export * from './messages'

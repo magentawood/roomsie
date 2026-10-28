@@ -10,6 +10,7 @@ import { moderationSettings } from '../src/moderation/settings'
 import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
 import type { IdStore } from '../src/id-store'
+import type { AnalyticsDb } from '../src/analytics/client'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
@@ -73,8 +74,11 @@ export const testAreas = [
   { slug: 'pali-hill', name: 'Pali Hill', parentSlug: 'bandra' },
 ]
 
-/** A server on a disposable database with the test areas and one signed-in user for each name. The first user lists. Call close() when done. */
-export async function testApp<U extends string>(users: readonly [U, ...U[]], storage: Storage = offlineStorage, settings: Record<string, string> = {}) {
+/**
+ * A server on a disposable database with the test areas and one signed-in user for each name. The first user lists.
+ * With `analyticsDb`, the events go to it, and `flushEvents()` writes them. Call close() when done.
+ */
+export async function testApp<U extends string>(users: readonly [U, ...U[]], storage: Storage = offlineStorage, settings: Record<string, string> = {}, analyticsDb?: AnalyticsDb) {
   const testDb = await createTestDb()
   await testDb.db.insert(areas).values(testAreas)
   const { firebaseKeys, idToken } = await testTokens()
@@ -83,7 +87,7 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   const tokens = {} as Record<U, string>
   // Each user signs in with a verified email, as Google gives it (T-55).
   for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore, analyticsDb })
   // The alerts go out after the reply, so a call also waits for them.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
@@ -109,5 +113,8 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await app.close()
     await testDb.drop()
   }
-  return { db: testDb.db, call, ids, idStore: idFakes, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken }
+  return {
+    db: testDb.db, call, ids, idStore: idFakes, liveListing, liveCard, close, sent: fakes.sent, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken,
+    flushEvents: () => app.analytics.flush(),
+  }
 }
