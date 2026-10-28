@@ -5,10 +5,10 @@ const noSite: SiteResponse = { quotes: [], details: noSiteDetails }
 
 /** The networks of "Follow us", in the order of the design. */
 export const socialNetworks = [
-  { key: 'instagram', name: 'Instagram' },
-  { key: 'whatsapp', name: 'WhatsApp' },
-  { key: 'facebook', name: 'Facebook' },
-  { key: 'linkedin', name: 'LinkedIn' },
+  { key: 'instagram', name: 'Instagram', example: 'https://www.instagram.com/…' },
+  { key: 'whatsapp', name: 'WhatsApp', example: 'https://wa.me/…' },
+  { key: 'facebook', name: 'Facebook', example: 'https://www.facebook.com/…' },
+  { key: 'linkedin', name: 'LinkedIn', example: 'https://www.linkedin.com/company/…' },
 ] as const
 
 /** For the server render of the landing page. With no answer from the API in 5 seconds, the page shows no quotes and no details (T-23a). */
