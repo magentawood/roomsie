@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**166 of 320 done · 52%**
+**170 of 320 done · 53%**
 
-`████████████░░░░░░░░░░░░`
+`█████████████░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
 | [[P2 Chat]] | 0 / 13 | 3 / 62 | 5% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
-| [[P4 Content and moderation]] | 4 / 8 | 24 / 35 | 69% |
+| [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**31 free tasks are open · 108 build hours.**
+**30 free tasks are open · 105 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -57,7 +57,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
-| 0 | [[T-37 Articles and search]] | P4 | 3 | ⬜ can start | 1 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
@@ -147,7 +146,7 @@ flowchart LR
   T34["T-34 ⚑<br/>Router"]:::todo
   T35["T-35<br/>Form B contract"]:::todo
   T36["T-36<br/>Observer"]:::todo
-  T37["T-37<br/>Articles and search"]:::ready
+  T37["T-37<br/>Articles and search"]:::done
   T38["T-38<br/>Advisor"]:::todo
   T39["T-39<br/>Analytics database"]:::done
   T40["T-40<br/>Nightly backups"]:::ready
@@ -419,7 +418,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 24/35
+## P4 Content and moderation — 28/35
 
 > [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
@@ -427,7 +426,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-23b Legal pages]] · 0/2
 > ![[T-23b Legal pages#^done]]
 
-> [!todo]- ⬜ [[T-37 Articles and search]] · 0/4
+> [!todo]- ✅ [[T-37 Articles and search]] · 4/4
 > ![[T-37 Articles and search#^done]]
 
 > [!todo]- ✅ [[T-19 Report and block]] · 6/6

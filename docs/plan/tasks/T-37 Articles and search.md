@@ -31,10 +31,10 @@ Stores the roomsie articles and finds the correct passage.
 - [[T-38 Advisor]]
 
 ## Done when
-- [ ] An articles table has a Postgres full-text index. There is no vector store
-- [ ] The launch articles load from files in the repo. Thus, a pull request publishes an article
-- [ ] A search returns the passages that match best, with their article and heading
-- [ ] The articles show on the public blog at roomsie.in/blog, with their SEO fields
+- [x] An articles table has a Postgres full-text index. There is no vector store · [#183](https://github.com/magentawood/roomsie/pull/183)
+- [x] The launch articles load from files in the repo. Thus, a pull request publishes an article · [#183](https://github.com/magentawood/roomsie/pull/183)
+- [x] A search returns the passages that match best, with their article and heading · [#183](https://github.com/magentawood/roomsie/pull/183)
+- [x] The articles show on the public blog at roomsie.in/blog, with their SEO fields · [#183](https://github.com/magentawood/roomsie/pull/183)
 
 ^done
 
@@ -72,9 +72,20 @@ Stores the roomsie articles and finds the correct passage.
   - **The cover:** each article can have a cover image. The user decided this at the design gate, on 2026-10-28.
   - **The authors:** only the Roomsie team writes articles, as files that a merged pull request publishes. No user can write one. The author line gives the role of the author in the team. The user said this at the design gate, on 2026-10-28.
   - **The domain:** the docs that say `roomsie.com/blog` change to `roomsie.in/blog` (F-02).
+  - **The style of the share cards:** a share card of `next/og` is a PNG, so it can use the `style` prop. `web.md` and ADR-0007 say this. The user decided this after the review, on 2026-10-28.
   - **The done items:** the user added "The articles show on the public blog at roomsie.in/blog, with their SEO fields" at the spec gate, on 2026-10-28.
 - **Out of scope:**
   - the Advisor (T-38)
   - the texts of the articles (M-05)
   - Search Console (MK-19)
   - a search box on the blog
+
+## Log
+
+- **2026-10-28 · [#183](https://github.com/magentawood/roomsie/pull/183)**
+  - **Change:** the team writes each article as a Markdown file in `apps/api/content/articles/`. Each deploy of the API parses the files and syncs the tables `articles` and `article_passages`, with an English full-text index. `searchPassages()` gives the Advisor the best passages for any word of a question. Two public routes serve the blog: `/blog` lists the articles, and `/blog/<slug>` shows one, with an optional cover, structured data and its own share card. The landing footer links the blog when the first article exists, and `sitemap.xml` and `robots.txt` list the pages.
+  - **Why:** the Advisor answers from our articles first ([PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md)), and the articles bring search traffic ([PD6b](../../decisions/pd-06b-login-gate-and-search.md)).
+  - **Ticked:** all four items.
+  - **Not done:** none. The blog stays a 404 until MK-18 adds the first articles.
+  - **Learn:** [Articles and the blog](../../learn/articles.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
