@@ -29,13 +29,14 @@ function scrubText<T>(value: T): T {
   return value
 }
 
-/** `beforeSend` of each app: no request body or query values (message text), cookies, Authorization header, IP address or phone number (ADR-0014). */
+/** `beforeSend` of each app: no request body or query values (message text), no header but the user agent, no IP address and no phone number (ADR-0014). */
 export function scrubEvent(event: ErrorEvent): ErrorEvent {
   if (event.request) {
     delete event.request.data
     delete event.request.cookies
-    const headers = event.request.headers ?? {}
-    for (const name of Object.keys(headers)) if (/^(authorization|cookie)$/i.test(name)) delete headers[name]
+    // Each other header can hold a token, a cookie or the IP address, for example X-Forwarded-For.
+    const agent = event.request.headers?.['user-agent']
+    event.request.headers = agent ? { 'user-agent': agent } : {}
   }
   if (event.user) event.user = { id: event.user.id }
   for (const part of ['message', 'exception', 'breadcrumbs', 'extra', 'request', 'tags'] as const) event[part] = scrubText(event[part]) as never
@@ -45,5 +46,5 @@ export function scrubEvent(event: ErrorEvent): ErrorEvent {
 /** The privacy part of the options of `Sentry.init` in each app. Sentry collects none of this data, and `scrubEvent` removes what is left. */
 export const privacyOptions: Pick<Options, 'beforeSend' | 'dataCollection'> = {
   beforeSend: scrubEvent,
-  dataCollection: { userInfo: false, cookies: false, httpBodies: [], stackFrameVariables: false, databaseQueryData: false },
+  dataCollection: { userInfo: false, cookies: false, httpHeaders: { request: { allow: ['user-agent'] }, response: false }, httpBodies: [], stackFrameVariables: false, databaseQueryData: false },
 }

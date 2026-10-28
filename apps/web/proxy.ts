@@ -5,6 +5,9 @@ const dev = process.env.NODE_ENV === 'development'
 // The hosts of API_R2_PUBLIC_URL and API_ID_BUCKET in deploy-api.yml.
 const photos = 'https://photos.roomsie.in'
 const idBucket = 'https://roomsie-id-checks.s3.ap-south-1.amazonaws.com'
+// The browser sends each violation of the policy to the security address of the Sentry project (T-07).
+const sentry = process.env.NEXT_PUBLIC_SENTRY_DSN ? new URL(process.env.NEXT_PUBLIC_SENTRY_DSN) : null
+const reportUrl = sentry && `${sentry.origin}/api${sentry.pathname}/security/?sentry_key=${sentry.username}`
 
 /** The browser runs only the scripts with the nonce of this response, so an injected script cannot take the sign-in (ADR-0007). */
 export function proxy(request: NextRequest) {
@@ -24,19 +27,21 @@ export function proxy(request: NextRequest) {
     "form-action 'self'",
     "frame-ancestors 'none'",
     ...(dev ? [] : ['upgrade-insecure-requests']),
+    ...(reportUrl ? [`report-uri ${reportUrl}`, 'report-to csp'] : []),
   ].join('; ')
   // Next reads the nonce from the policy of the request, and puts it on its own scripts.
   const headers = new Headers(request.headers)
   headers.set('content-security-policy', policy)
   const response = NextResponse.next({ request: { headers } })
   response.headers.set('content-security-policy', policy)
+  if (reportUrl) response.headers.set('reporting-endpoints', `csp="${reportUrl}"`)
   return response
 }
 
 export const config = {
   matcher: [{
-    // Skips the files of public by extension, so /a.php still gets the policy.
-    source: '/((?!_next/static|_next/image|.*\\.(?:jpg|js|mp4|png|svg|webp)$).*)',
+    // Skips the files of public by extension, so /a.php still gets the policy. /monitoring takes the events of Sentry.
+    source: '/((?!_next/static|_next/image|monitoring|.*\\.(?:jpg|js|mp4|png|svg|webp)$).*)',
     missing: [
       { type: 'header', key: 'next-router-prefetch' },
       { type: 'header', key: 'purpose', value: 'prefetch' },

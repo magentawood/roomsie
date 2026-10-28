@@ -1,7 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { NextRequest } from 'next/server'
 import { unstable_doesMiddlewareMatch } from 'next/experimental/testing/server'
 import { config, proxy } from './proxy'
+
+vi.hoisted(() => { process.env.NEXT_PUBLIC_SENTRY_DSN = 'https://public@o1.ingest.us.sentry.io/2' })
 
 function policyOf(url = 'https://roomsie.in/') {
   const res = proxy(new NextRequest(url))
@@ -30,6 +32,13 @@ describe('the Content-Security-Policy', () => {
     expect(directive(sent, 'frame-ancestors')).toBe("frame-ancestors 'none'")
   })
 
+  it('sends each violation to the security address of the Sentry project', () => {
+    const security = 'https://o1.ingest.us.sentry.io/api/2/security/?sentry_key=public'
+    const res = proxy(new NextRequest('https://roomsie.in/'))
+    expect(directive(res.headers.get('content-security-policy') ?? '', 'report-uri')).toBe(`report-uri ${security}`)
+    expect(res.headers.get('reporting-endpoints')).toBe(`csp="${security}"`)
+  })
+
   it('runs for the pages, not for the static files and the link prefetches', () => {
     const runs = (url: string, headers?: Record<string, string>) => unstable_doesMiddlewareMatch({ config, url, headers })
     expect(runs('/')).toBe(true)
@@ -38,6 +47,7 @@ describe('the Content-Security-Policy', () => {
     expect(runs('/_next/static/chunks/main.js')).toBe(false)
     expect(runs('/landing/hero.mp4')).toBe(false)
     expect(runs('/alerts-sw.js')).toBe(false)
+    expect(runs('/monitoring?o=1&p=2')).toBe(false)
     expect(runs('/places/0192f1a2-0000-7000-8000-000000000000', { 'next-router-prefetch': '1' })).toBe(false)
   })
 })
