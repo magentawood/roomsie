@@ -1,6 +1,6 @@
 import type { User } from 'firebase/auth'
 import type { z } from 'zod'
-import { errorResponse, incompleteListingResponse, type GoLiveField } from '@roomsie/contract'
+import { errorResponse, incompleteListingResponse, inviteRefusalResponse, type GoLiveField, type InviteRefusal } from '@roomsie/contract'
 import { apiUrl } from './api-url'
 
 /** A response of the API that is not 2xx. `body` is the parsed JSON, if any. */
@@ -40,4 +40,10 @@ export function errorText(err: unknown) {
 export function missingFields(err: unknown): GoLiveField[] | null {
   const incomplete = err instanceof ApiError && err.status === 422 ? incompleteListingResponse.safeParse(err.body) : null
   return incomplete?.success ? incomplete.data.missing : null
+}
+
+/** The answer of the gate of T-33, or null for a different error. */
+export function refusalOf(err: unknown): InviteRefusal | null {
+  const parsed = err instanceof ApiError && err.status === 403 ? inviteRefusalResponse.safeParse(err.body) : null
+  return parsed?.success ? parsed.data : null
 }
