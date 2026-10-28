@@ -28,14 +28,17 @@ export function CloseButton({ onClose }: { onClose: () => void }) {
   )
 }
 
+type Tone = 'error' | 'success' | 'neutral'
+const tones: Record<Tone, string> = { error: 'text-fg-error', success: 'text-fg-success', neutral: 'text-fg-quaternary' }
+
 /** A success icon is for an offer, as "Verify your ID". `titleId` names the dialog. */
 export function ModalHead({ icon: ModalIcon, iconTone = 'error', titleId, title, children, onClose }: {
-  icon: Icon; iconTone?: 'error' | 'success'; titleId: string; title: string; children: ReactNode; onClose: () => void
+  icon: Icon; iconTone?: Tone; titleId: string; title: string; children: ReactNode; onClose: () => void
 }) {
   return (
     <>
       <div className="flex items-start justify-between">
-        <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${iconTone === 'error' ? 'text-fg-error' : 'text-fg-success'}`}>
+        <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${tones[iconTone]}`}>
           <ModalIcon size={20} aria-hidden />
         </span>
         <CloseButton onClose={onClose} />
@@ -50,7 +53,7 @@ export function ModalHead({ icon: ModalIcon, iconTone = 'error', titleId, title,
 
 /** A modal with an icon, a title, a text and the actions: a confirmation. */
 export function Modal({ icon, iconTone, title, children, actions, onClose }: {
-  icon: Icon; iconTone?: 'error' | 'success'; title: string; children: ReactNode; actions: ReactNode; onClose: () => void
+  icon: Icon; iconTone?: Tone; title: string; children: ReactNode; actions: ReactNode; onClose: () => void
 }) {
   return (
     <ModalFrame labelledBy="modal-title" onClose={onClose}>
