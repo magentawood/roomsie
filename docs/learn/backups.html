@@ -45,7 +45,7 @@ details.callout[open] summary{color:var(--fg)}
 <p>The free plan of Supabase makes no backups (<a href="../decisions/pd-13-databases-and-backups.md">PD13</a>). The workflow <code>backup-databases.yml</code> gives the backups. It starts each night at 03:00 IST, and a person can start it by hand from the Actions tab of GitHub.</p>
 <p>For each database, the workflow does these steps:</p>
 <ol>
-<li>It dumps the <code>public</code> and <code>drizzle</code> schemas through the session pooler of Supabase.</li>
+<li>It dumps the <code>public</code>, <code>drizzle</code> and <code>jobs</code> schemas through the session pooler of Supabase.</li>
 <li>It restores the dump into a temporary Postgres 17.</li>
 <li>It encrypts the dump with the public key, then uploads it to the backups bucket in R2.</li>
 <li>It deletes the dumps that are older than the newest fourteen.</li>
@@ -77,7 +77,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The dump connects through the session pooler, not the direct address.</strong> GitHub runners have no IPv6, and the direct address of a free Supabase project has only IPv6.</li>
 <li><strong>The workflow runs <code>pg_dump</code> from the Postgres 17 image.</strong> The <code>pg_dump</code> of the runner is older than the Postgres of Supabase, and an older <code>pg_dump</code> cannot dump a newer server.</li>
 <li><strong>A restore needs <code>--clean --if-exists</code>.</strong> The dump makes the <code>public</code> schema, and a new database has it already. Without the two options, the restore stops with "schema public already exists".</li>
-<li><strong>The dump has no Supabase schemas, owners or grants.</strong> Thus, it restores into each Postgres 17. The <code>pg_cron</code> jobs of the analytics database are not in the dump.</li>
+<li><strong>The dump has no Supabase schemas, owners or grants.</strong> Thus, it restores into each Postgres 17. The schedule of the analytics job is not in the dump. After a restore into Supabase, schedule it again (<a href="analytics-events.html">analytics events</a>).</li>
 <li><strong>Row Level Security does not hide rows from the dump.</strong> The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds <code>FORCE ROW LEVEL SECURITY</code>, the dump stops with an error.</li>
 <li><strong>If you lose the private key, nobody can read the dumps.</strong> Keep the key only in the Bitwarden note. Never put it in GitHub, Vercel, <code>.env</code>, a chat or the repo.</li>
 <li><strong>A deleted account stays in the dumps for fourteen days,</strong> until the workflow deletes its newest dump.</li>
@@ -87,5 +87,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-40: <a href="https://github.com/magentawood/roomsie/pull/138">#138</a>, 2026-10-25. The nightly backup workflow, the restore check and the retention.</li>
+<li>T-39: <a href="https://github.com/magentawood/roomsie/pull/182">#182</a>, 2026-10-28. The <code>jobs</code> schema in the dump.</li>
 </ul>
 </main>

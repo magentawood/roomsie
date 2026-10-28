@@ -18,7 +18,7 @@ The free plan of Supabase makes no backups ([PD13](../decisions/pd-13-databases-
 
 For each database, the workflow does these steps:
 
-1. It dumps the `public` and `drizzle` schemas through the session pooler of Supabase.
+1. It dumps the `public`, `drizzle` and `jobs` schemas through the session pooler of Supabase.
 2. It restores the dump into a temporary Postgres 17.
 3. It encrypts the dump with the public key, then uploads it to the backups bucket in R2.
 4. It deletes the dumps that are older than the newest fourteen.
@@ -54,7 +54,7 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 - **The dump connects through the session pooler, not the direct address.** GitHub runners have no IPv6, and the direct address of a free Supabase project has only IPv6.
 - **The workflow runs `pg_dump` from the Postgres 17 image.** The `pg_dump` of the runner is older than the Postgres of Supabase, and an older `pg_dump` cannot dump a newer server.
 - **A restore needs `--clean --if-exists`.** The dump makes the `public` schema, and a new database has it already. Without the two options, the restore stops with "schema public already exists".
-- **The dump has no Supabase schemas, owners or grants.** Thus, it restores into each Postgres 17. The `pg_cron` jobs of the analytics database are not in the dump.
+- **The dump has no Supabase schemas, owners or grants.** Thus, it restores into each Postgres 17. The schedule of the analytics job is not in the dump. After a restore into Supabase, schedule it again ([analytics events](analytics-events.md)).
 - **Row Level Security does not hide rows from the dump.** The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds `FORCE ROW LEVEL SECURITY`, the dump stops with an error.
 - **If you lose the private key, nobody can read the dumps.** Keep the key only in the Bitwarden note. Never put it in GitHub, Vercel, `.env`, a chat or the repo.
 - **A deleted account stays in the dumps for fourteen days,** until the workflow deletes its newest dump.
@@ -64,3 +64,4 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 ## Tickets
 
 - T-40: [#138](https://github.com/magentawood/roomsie/pull/138), 2026-10-25. The nightly backup workflow, the restore check and the retention.
+- T-39: [#182](https://github.com/magentawood/roomsie/pull/182), 2026-10-28. The `jobs` schema in the dump.
