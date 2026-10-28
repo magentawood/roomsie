@@ -182,8 +182,8 @@ chat could plausibly be 500–1,500. Budget $10–20/month more.
 
 These rules are non-negotiable and reviewable:
 
-1. **Our own `users.id` is the primary key everywhere.** We store the Firebase
-   UID in a plain `auth_provider_id` column, and only the login path reads it.
+1. **Our own `users.id` is the primary key everywhere.** The Firebase UID is only
+   in `auth_provider_id`. Only the login path and account deletion read it.
    All other tables foreign-key to *our* ID.
    *Why:* Auth is the one piece with real lock-in: you cannot `pg_dump` an OAuth
    relationship. With this rule, a change of provider is a one-column backfill

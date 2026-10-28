@@ -19,7 +19,7 @@ export async function lockAccount(tx: Tx, userId: string) {
   return user
 }
 
-/** The lock of lockAccount, with the Firebase uid. Only account deletion reads the uid (T-53). */
+/** The lock of lockAccount, with the Firebase uid, for account deletion (T-53). */
 export async function lockAccountForDeletion(tx: Tx, userId: string) {
   const [user] = await tx.select({ status: users.status, uid: users.authProviderId }).from(users).where(eq(users.id, userId)).for('update')
   return user

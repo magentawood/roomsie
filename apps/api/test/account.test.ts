@@ -50,13 +50,13 @@ const call = (method: 'GET' | 'DELETE', token: string) =>
   app.inject({ method, url: '/v1/me', headers: { authorization: `Bearer ${token}` } })
 
 /** Signs in a minute ago, so the session is from before the deletion. */
-async function signIn(uid: string) {
-  const token = await idToken(uid, { authTime: Math.floor(Date.now() / 1000) - 60 })
+async function signIn(uid: string, googleId?: string) {
+  const token = await idToken(uid, { authTime: Math.floor(Date.now() / 1000) - 60, googleId })
   return { uid, token, id: meResponse.parse((await call('GET', token)).json()).id }
 }
 
 /** A sign-in right now, after the deletion. auth_time is in whole seconds, like Firebase's. */
-const freshToken = (uid: string) => idToken(uid, { authTime: Math.floor(Date.now() / 1000) })
+const freshToken = (uid: string, googleId?: string) => idToken(uid, { authTime: Math.floor(Date.now() / 1000), googleId })
 
 /** A person with something in each table that deletion must empty. */
 async function seedAccount(userId: string, tag: string) {
@@ -176,28 +176,24 @@ describe('DELETE /v1/me', () => {
   })
 
   it('knows a returning person by the Google account id, so a new Firebase uid after T-53 still meets the checks', async () => {
-    const before = await idToken('uid-before-t53', { authTime: Math.floor(Date.now() / 1000) - 60, googleId: 'google-1' })
-    const { id } = meResponse.parse((await call('GET', before)).json())
-    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, id))
-    expect((await call('DELETE', before)).statusCode).toBe(204)
-    expect(await userRow(id)).toMatchObject({ authProviderId: tombstoneKey('google-1'), rejoinBlocked: true })
+    const user = await signIn('uid-before-t53', 'google-1')
+    await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, user.id))
+    expect((await call('DELETE', user.token)).statusCode).toBe(204)
+    expect(await userRow(user.id)).toMatchObject({ authProviderId: tombstoneKey('google-1'), rejoinBlocked: true })
     expect(fakes.firebaseUsers.deleted).toEqual(['uid-before-t53'])
 
     // T-53 deletes the Firebase user, so the next Google sign-in has a new uid.
-    const after = await idToken('uid-after-t53', { authTime: Math.floor(Date.now() / 1000), googleId: 'google-1' })
-    expect((await call('GET', after)).statusCode).toBe(403)
+    expect((await call('GET', await freshToken('uid-after-t53', 'google-1'))).statusCode).toBe(403)
   })
 
   it('makes a new, empty account at a sign-in with a new Firebase uid after T-53', async () => {
-    const before = await idToken('uid-rejoins-before', { authTime: Math.floor(Date.now() / 1000) - 60, googleId: 'google-2' })
-    const { id } = meResponse.parse((await call('GET', before)).json())
-    expect((await call('DELETE', before)).statusCode).toBe(204)
+    const old = await signIn('uid-rejoins-before', 'google-2')
+    expect((await call('DELETE', old.token)).statusCode).toBe(204)
 
-    const after = await idToken('uid-rejoins-after', { authTime: Math.floor(Date.now() / 1000), googleId: 'google-2' })
-    const fresh = meResponse.parse((await call('GET', after)).json())
+    const fresh = meResponse.parse((await call('GET', await freshToken('uid-rejoins-after', 'google-2'))).json())
     expect(fresh).toMatchObject({ status: 'active' })
-    expect(fresh.id).not.toBe(id)
-    expect(await userRow(id)).toMatchObject({ status: 'deleted', authProviderId: `deleted:${id}` })
+    expect(fresh.id).not.toBe(old.id)
+    expect(await userRow(old.id)).toMatchObject({ status: 'deleted', authProviderId: `deleted:${old.id}` })
   })
 
   it('makes one tombstone from two deletes at the same time, so a suspended person stays out', async () => {
@@ -215,15 +211,16 @@ describe('DELETE /v1/me', () => {
   })
 
   it('stops a new sign-in while a report against the old account is open', async () => {
-    const user = await signIn('uid-reported')
+    const user = await signIn('uid-reported', 'google-4')
     const reporter = await signIn('uid-reporter')
     const [report] = await testDb.db.insert(reports).values({ reporterUserId: reporter.id, subjectUserId: user.id, reason: 'harassment' }).returning()
     expect((await call('DELETE', user.token)).statusCode).toBe(204)
 
-    expect((await call('GET', await freshToken(user.uid))).statusCode).toBe(403)
+    // A new uid, as after T-53 deletes the Firebase user.
+    expect((await call('GET', await freshToken('uid-reported-new', 'google-4'))).statusCode).toBe(403)
     // The moderator dismisses the report: then the person can come back.
     await testDb.db.update(reports).set({ status: 'dismissed' }).where(eq(reports.id, report!.id))
-    expect((await call('GET', await freshToken(user.uid))).statusCode).toBe(200)
+    expect((await call('GET', await freshToken('uid-reported-new', 'google-4'))).statusCode).toBe(200)
   })
 
   it('hides the card and removes no data when the photos cannot be deleted, thus a retry is safe', async () => {
