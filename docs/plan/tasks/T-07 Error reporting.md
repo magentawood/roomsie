@@ -43,7 +43,7 @@ Sends each crash that a user gets to a dashboard automatically.
 
 ## Spec
 
-**Approved:** 2026-10-28, by n3rxv
+**Approved:** 2026-10-28, by n3rxv. The changes in implement: approved on 2026-10-28, by n3rxv.
 
 - **Modules:**
   - **`packages/config` (new interface):** `reportError(err, context)` sends an error to Sentry with the place in the code and the `users.id`, and writes the log line when it gets the logger of the API. `setReportUser(id)` sets the person in the browser. `scrubEvent` removes the personal data of each event before it goes out. Only this package and the start files of each app import Sentry.
@@ -59,7 +59,7 @@ Sends each crash that a user gets to a dashboard automatically.
   - **The API failures:** the crashes and the nine best-effort failures (alerts, analytics, realtime, the deletes of photos and ID files, the face match). The user decided this in the grill.
   - **The violation reports of the policy:** they go to Sentry. The user decided this in the grill.
   - **The person:** each event has the `users.id` of the signed-in person. Sentry keeps the events for 30 days, so the id goes away 30 days after an account deletion. The user decided this in the grill.
-  - **Scrubbing:** no request body, no cookies, no Authorization header and no IP address. Each Indian phone number in a text becomes `[phone]`.
+  - **Scrubbing:** the SDKs collect no request body, no cookies, no header but the user agent, no IP address, no local variables and no values of a database query. `scrubEvent` removes the rest of these, and the values of a failed query of Drizzle. Each Indian phone number in a text becomes `[phone]`. The automatic capture of Fastify is off, because its events have no place and no person.
   - **Errors only:** no performance tracing and no session replay.
   - **No address, no Sentry:** local work and the tests send nothing.
 - **Out of scope:**
