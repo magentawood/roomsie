@@ -569,3 +569,41 @@ export const waitlist = pgTable('waitlist', {
 }, (t) => ({
   emailIdx: uniqueIndex('waitlist_email_idx').on(t.email),
 })).enableRLS()
+
+/** The quotes of real users on the landing page (T-23a). The site module owns them. */
+export const quotes = pgTable('quotes', {
+  id: id(),
+  text: text('text').notNull(),
+  name: text('name').notNull(),
+  /** The moderator who added the quote and confirmed that its person agreed. */
+  addedBy: uuid('added_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: createdAt(),
+}, (t) => ({
+  createdAtIdx: index('quotes_created_at_idx').on(t.createdAt),
+})).enableRLS()
+
+/** The one row of links and details on the landing page (T-23a). The site module owns it. */
+export const siteDetails = pgTable('site_details', {
+  id: boolean('id').primaryKey().default(true),
+  instagram: text('instagram'),
+  whatsapp: text('whatsapp'),
+  facebook: text('facebook'),
+  linkedin: text('linkedin'),
+  contactEmail: text('contact_email'),
+  orgNumber: text('org_number'),
+  updatedBy: uuid('updated_by').references(() => users.id, { onDelete: 'set null' }),
+  updatedAt: updatedAt(),
+}, (t) => ({
+  oneRowCheck: check('site_details_one_row_check', sql`${t.id}`),
+})).enableRLS()
+
+/** Feedback from a signed-in person (T-23a, T-50). The feedback module owns it. */
+export const feedback = pgTable('feedback', {
+  id: id(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  text: text('text').notNull(),
+  createdAt: createdAt(),
+}, (t) => ({
+  createdAtIdx: index('feedback_created_at_idx').on(t.createdAt),
+  userIdx: index('feedback_user_idx').on(t.userId),
+})).enableRLS()

@@ -15,6 +15,7 @@ import { alertRoutes } from './alerts/routes'
 import { listAreas } from './areas'
 import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
+import { feedbackRoutes } from './feedback/routes'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
 import { moderationRoutes } from './moderation/routes'
@@ -22,6 +23,7 @@ import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
 import { requestRoutes } from './requests/routes'
 import { savedRoutes } from './saved/routes'
+import { siteRoutes } from './site/routes'
 import { noMailer, type Mailer } from './email'
 import type { Messaging } from './messages/settings'
 import type { IdStore } from './id-store'
@@ -90,6 +92,8 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       messageRoutes(v1, options)
       alertRoutes(v1, options)
       verificationRoutes(v1, options)
+      siteRoutes(v1, options)
+      feedbackRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

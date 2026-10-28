@@ -88,6 +88,11 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
   }
 }
 
+/** Each user who is not a moderator gets 404, so the admin routes do not show (T-19). */
+export const requireModerator = (options: AuthOptions) => [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
+  if (!req.user!.moderator) return reply.code(404).send({ error: 'not found' })
+}]
+
 /** ON CONFLICT: two first requests at the same time make one user. */
 async function createUser(db: Db, uid: string, signedInAt: Date) {
   await db.insert(users).values({ authProviderId: uid, tokensValidAfter: signedInAt }).onConflictDoNothing()
