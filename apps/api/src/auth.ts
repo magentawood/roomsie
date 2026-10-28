@@ -47,8 +47,8 @@ function badToken(err: unknown) {
   throw err
 }
 
-/** `deletion` is for account deletion only: a suspended person, or an account that the gate refuses, can still remove their data (DPDP). */
-export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }: AuthOptions, { deletion = false } = {}) {
+/** `forDeletion` is for account deletion only: a suspended person, or an account that the gate refuses, can still remove their data (DPDP). */
+export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }: AuthOptions, { forDeletion = false } = {}) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const header = bearerHeader.safeParse(req.headers.authorization)
     if (!header.success) return reply.code(401).send({ error: 'unauthorized' })
@@ -71,9 +71,10 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     // A tombstone keys on the Google account id: it stays when T-53 deletes the Firebase user, and the uid does not.
     const identity = firebase?.identities?.['google.com']?.[0] ?? uid
     let user = await findUser(db, uid)
+    if (user && signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
     const moderator = moderation.moderatorUids.includes(uid)
     // The gate of T-33 comes before a new account. Moderators pass it, so they can add the invites.
-    if (!moderator && !(deletion && user)) {
+    if (!moderator && !(forDeletion && user)) {
       const refused = await refusal(db, emailVerified && email ? email : null)
       if (refused) return reply.code(403).send({ error: 'invite only', opensAt: refused.opensAt?.toISOString() ?? null, account: !!user })
     }
@@ -85,8 +86,7 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
       else if ((await rejoin(db, tombstone.id, uid, identity, signedInAt)) === 'blocked') return reply.code(403).send({ error: 'forbidden' })
       else user = (await findUser(db, uid))!
     }
-    if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
-    const allowed = user.status === 'active' || (deletion && user.status === 'suspended')
+    const allowed = user.status === 'active' || (forDeletion && user.status === 'suspended')
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     // The email alerts go to the verified email of the latest sign-in (T-55).
     if (emailVerified && email && email !== user.email) await db.update(users).set({ email, updatedAt: new Date() }).where(eq(users.id, user.id))

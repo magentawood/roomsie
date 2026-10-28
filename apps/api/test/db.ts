@@ -34,7 +34,7 @@ async function disposableDatabase<D extends PostgresJsDatabase<Record<string, un
 /** The gate of T-33 starts closed. The tests of the other features need it open, and the invites tests close it. */
 export async function createTestDb({ migrated = true } = {}) {
   const testDb = await disposableDatabase(createDb, migrationsFolder, migrated)
-  if (migrated) await testDb.db.update(inviteGate).set({ inviteOnly: false })
+  if (migrated) await testDb.db.insert(inviteGate).values({ inviteOnly: false })
   return testDb
 }
 export const createTestAnalyticsDb = () => disposableDatabase(createAnalyticsDb, fileURLToPath(new URL('../drizzle-analytics', import.meta.url)))

@@ -3,16 +3,16 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Calendar } from '@untitledui/icons'
-import type { InviteOnly } from '@roomsie/contract'
+import type { InviteRefusal } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
-import { istDay } from '../../lib/invites'
+import { istDay } from '../../lib/ist'
 import { DeleteAccountDialog } from '../profile/delete-account-dialog'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { Logo } from './logo'
 
 /** The screen of a person that the gate refuses (T-33). An account can still delete itself. */
-export function InviteOnlyScreen({ refusal }: { refusal: InviteOnly }) {
+export function InviteOnlyScreen({ refusal }: { refusal: InviteRefusal }) {
   const { signOut } = useAuth()
   const router = useRouter()
   const [deleting, setDeleting] = useState(false)

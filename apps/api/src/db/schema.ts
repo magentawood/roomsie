@@ -610,17 +610,22 @@ export const feedback = pgTable('feedback', {
 
 /** The emails that can sign in while the gate is closed (T-33). In lower case. The invites module owns it. */
 export const invites = pgTable('invites', {
-  email: text('email').primaryKey(),
+  id: id(),
+  email: text('email').notNull(),
   createdAt: createdAt(),
 }, (t) => ({
+  emailIdx: uniqueIndex('invites_email_idx').on(t.email),
   lowerCaseCheck: check('invites_email_lower_case_check', sql`${t.email} = lower(${t.email})`),
 })).enableRLS()
 
-/** The one row of the gate (T-33): closed while `invite_only` is on and `opens_at` is empty or in the future. The invites module owns it. */
+/**
+ * The gate of T-33: closed while `invite_only` is on and `opens_at` is empty or in the future.
+ * Each save adds a row, and the newest row counts. With no row, the gate is closed. The invites module owns it.
+ */
 export const inviteGate = pgTable('invite_gate', {
-  id: boolean('id').primaryKey().default(true),
-  inviteOnly: boolean('invite_only').notNull().default(true),
+  id: id(),
+  inviteOnly: boolean('invite_only').notNull(),
   opensAt: timestamp('opens_at', { withTimezone: true }),
-}, (t) => ({
-  oneRowCheck: check('invite_gate_one_row_check', sql`${t.id}`),
-})).enableRLS()
+  savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: createdAt(),
+}).enableRLS()
