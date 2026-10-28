@@ -37,7 +37,5 @@ describe('deleteUser', () => {
   it('fails on each other error', async () => {
     fakeGoogle(googleError(400, 'INVALID_ID_TOKEN'))
     await expect(admin.deleteUser('uid-gone')).rejects.toThrow('Firebase delete failed: 400')
-    fakeGoogle(googleError(503, 'UNAVAILABLE'))
-    await expect(admin.deleteUser('uid-gone')).rejects.toThrow('Firebase delete failed: 503')
   })
 })

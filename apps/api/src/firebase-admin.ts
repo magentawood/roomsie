@@ -16,6 +16,8 @@ export type FirebaseAdmin = {
 
 const googleToken = z.object({ access_token: z.string(), expires_in: z.number() })
 const googleError = z.object({ error: z.object({ message: z.string() }) })
+/** Account deletion calls Google inside its transaction, so a hung Google must not hold the row lock. */
+const googleTimeout = 10_000
 /** FCM refuses a token that a browser dropped with 404 UNREGISTERED, and a token that is not one with 400 INVALID_ARGUMENT. */
 const goneStatuses = [400, 404]
 
@@ -30,6 +32,7 @@ export function firebaseAdmin(account: z.infer<typeof serviceAccount>): Firebase
       .setIssuedAt().setExpirationTime('1h').sign(await importPKCS8(account.private_key, 'RS256'))
     const res = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
+      signal: AbortSignal.timeout(googleTimeout),
       body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion }),
     })
     if (!res.ok) throw new Error(`Google token failed: ${res.status}`)
@@ -60,6 +63,7 @@ export function firebaseAdmin(account: z.infer<typeof serviceAccount>): Firebase
     async deleteUser(uid) {
       const res = await fetch(`https://identitytoolkit.googleapis.com/v1/projects/${account.project_id}/accounts:delete`, {
         method: 'POST',
+        signal: AbortSignal.timeout(googleTimeout),
         headers: { authorization: `Bearer ${await accessToken('https://www.googleapis.com/auth/identitytoolkit')}`, 'content-type': 'application/json' },
         body: JSON.stringify({ localId: uid }),
       })
