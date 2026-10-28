@@ -34,7 +34,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 - Partition the events table monthly, with a BRIN index on the timestamp. Why: the table grows by millions of rows each month. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - A scheduled job makes the partition for the next month. Why: without it, inserts fail at a month boundary. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - Dashboards query rollup tables that a background job builds. Why: dashboards then do not scan the raw events. ([ADR-0012](../decisions/0012-analytics-event-store.md))
-- Delete raw events by whole month, so an event stays 12 to 13 months, and design the deletion policy with the events schema. Why: the DPDP Act applies, and we cannot attach the policy subsequently. ([ADR-0012](../decisions/0012-analytics-event-store.md), [PD19](../decisions/pd-19-retention.md))
+- Delete raw events by whole month after the period of PD19, and design the deletion policy with the events schema. Why: the DPDP Act applies, and we cannot attach the policy subsequently. ([ADR-0012](../decisions/0012-analytics-event-store.md), [PD19](../decisions/pd-19-retention.md))
 
 ## Stored data
 

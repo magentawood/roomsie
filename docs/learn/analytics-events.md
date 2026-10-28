@@ -40,7 +40,7 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
 
 - Our own Postgres, not an analytics vendor, with batched writes and monthly partitions ([ADR-0012](../decisions/0012-analytics-event-store.md)).
 - An analytics id in place of `users.id`, so a deletion cuts the link in one transaction of the main database ([#176](https://github.com/magentawood/roomsie/pull/176)).
-- Deletion by whole month, so an event stays from 12 to 13 months ([PD19](../decisions/pd-19-retention.md)).
+- Deletion by whole month ([PD19](../decisions/pd-19-retention.md)).
 - `pg_cron` in the database, not a job in the API, so the job runs with no API ([#182](https://github.com/magentawood/roomsie/pull/182)).
 
 ## Gotchas

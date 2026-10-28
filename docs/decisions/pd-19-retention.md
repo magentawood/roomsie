@@ -9,12 +9,12 @@
 
 ## Decision
 
-**In one line:** Visitor data goes after 30 days, raw events after 12 to 13 months, the ID photo and the selfie right after the review, and account data at deletion.
+**In one line:** Visitor data goes after 30 days, raw events after 12 months by whole month, the ID photo and the selfie right after the review, and account data at deletion.
 
 | Data | Kept for |
 |---|---|
 | The session, goals and chat turns of a visitor | 30 days after the last visit, unless the visitor signs in and the goals move to the account |
-| Raw analytics events | 12 months, deleted by whole month. A daily job drops a month when its last day is 12 months old. Thus, an event stays at most 13 months (T-39). |
+| Raw analytics events | 12 months, deleted by whole month. Each day at 04:00 IST, a job drops each month that ended 12 months ago or earlier. Thus, an event stays at most 13 months and one day (T-39). |
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
 | The ID photo and the selfie of a verification | Deleted right after the review. A rule of the bucket deletes each file after 7 days, also with no review ([ADR 0020](0020-id-checks-in-s3-with-rekognition.md)). |
 | The result of a verification, and the audit log of its views and reviews | Until the user deletes the account (T-46) |

@@ -108,7 +108,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>Our own Postgres, not an analytics vendor, with batched writes and monthly partitions (<a href="../decisions/0012-analytics-event-store.md">ADR-0012</a>).</li>
 <li>An analytics id in place of <code>users.id</code>, so a deletion cuts the link in one transaction of the main database (<a href="https://github.com/magentawood/roomsie/pull/176">#176</a>).</li>
-<li>Deletion by whole month, so an event stays from 12 to 13 months (<a href="../decisions/pd-19-retention.md">PD19</a>).</li>
+<li>Deletion by whole month (<a href="../decisions/pd-19-retention.md">PD19</a>).</li>
 <li><code>pg_cron</code> in the database, not a job in the API, so the job runs with no API (<a href="https://github.com/magentawood/roomsie/pull/182">#182</a>).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
