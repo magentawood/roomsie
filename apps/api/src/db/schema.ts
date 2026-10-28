@@ -607,3 +607,20 @@ export const feedback = pgTable('feedback', {
   createdAtIdx: index('feedback_created_at_idx').on(t.createdAt),
   userIdx: index('feedback_user_idx').on(t.userId),
 })).enableRLS()
+
+/** The emails that can sign in while the gate is closed (T-33). In lower case. The invites module owns it. */
+export const invites = pgTable('invites', {
+  email: text('email').primaryKey(),
+  createdAt: createdAt(),
+}, (t) => ({
+  lowerCaseCheck: check('invites_email_lower_case_check', sql`${t.email} = lower(${t.email})`),
+})).enableRLS()
+
+/** The one row of the gate (T-33): closed while `invite_only` is on and `opens_at` is empty or in the future. The invites module owns it. */
+export const inviteGate = pgTable('invite_gate', {
+  id: boolean('id').primaryKey().default(true),
+  inviteOnly: boolean('invite_only').notNull().default(true),
+  opensAt: timestamp('opens_at', { withTimezone: true }),
+}, (t) => ({
+  oneRowCheck: check('invite_gate_one_row_check', sql`${t.id}`),
+})).enableRLS()

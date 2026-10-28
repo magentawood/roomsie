@@ -7,6 +7,7 @@ import { rejoin, tombstoneKey } from './account'
 import type { Db } from './db/client'
 import { users } from './db/schema'
 import { realtimeClaims, type FirebaseAdmin } from './firebase-admin'
+import { refusal } from './invites/gate'
 import type { Moderation } from './moderation/settings'
 
 /** jose caches these keys and fetches them again only when Google rotates them. */
@@ -46,8 +47,8 @@ function badToken(err: unknown) {
   throw err
 }
 
-/** `allowSuspended` is for account deletion only: a suspended person can still remove their data (DPDP). */
-export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }: AuthOptions, { allowSuspended = false } = {}) {
+/** `deletion` is for account deletion only: a suspended person, or an account that the gate refuses, can still remove their data (DPDP). */
+export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }: AuthOptions, { deletion = false } = {}) {
   return async (req: FastifyRequest, reply: FastifyReply) => {
     const header = bearerHeader.safeParse(req.headers.authorization)
     if (!header.success) return reply.code(401).send({ error: 'unauthorized' })
@@ -70,6 +71,12 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
     // A tombstone keys on the Google account id: it stays when T-53 deletes the Firebase user, and the uid does not.
     const identity = firebase?.identities?.['google.com']?.[0] ?? uid
     let user = await findUser(db, uid)
+    const moderator = moderation.moderatorUids.includes(uid)
+    // The gate of T-33 comes before a new account. Moderators pass it, so they can add the invites.
+    if (!moderator && !(deletion && user)) {
+      const refused = await refusal(db, emailVerified && email ? email : null)
+      if (refused) return reply.code(403).send({ error: 'invite only', opensAt: refused.opensAt?.toISOString() ?? null, account: !!user })
+    }
     if (!user) {
       // No account: a first sign-in, or a sign-in after a deletion (T-20).
       const tombstone = await findUser(db, tombstoneKey(identity))
@@ -79,11 +86,11 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
       else user = (await findUser(db, uid))!
     }
     if (signedInAt < user.tokensValidAfter) return reply.code(401).send({ error: 'unauthorized' })
-    const allowed = user.status === 'active' || (allowSuspended && user.status === 'suspended')
+    const allowed = user.status === 'active' || (deletion && user.status === 'suspended')
     if (!allowed) return reply.code(403).send({ error: 'forbidden' })
     // The email alerts go to the verified email of the latest sign-in (T-55).
     if (emailVerified && email && email !== user.email) await db.update(users).set({ email, updatedAt: new Date() }).where(eq(users.id, user.id))
-    req.user = { id: user.id, status: user.status, moderator: moderation.moderatorUids.includes(uid), reviewer: moderation.reviewerUids.includes(uid) }
+    req.user = { id: user.id, status: user.status, moderator, reviewer: moderation.reviewerUids.includes(uid) }
     req.identity = identity
     req.analyticsId = user.analyticsId
     tokens.set(req, { uid, claims: realtimeClaims.safeParse(verified!.payload).data })
