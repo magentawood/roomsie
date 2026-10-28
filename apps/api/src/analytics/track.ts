@@ -27,7 +27,7 @@ export function analyticsOf(db: AnalyticsDb | undefined, log: FastifyBaseLogger)
     const batch = buffer
     buffer = []
     const done: Promise<void> = db!.insert(events).values(batch)
-      .then(() => {}, (err: unknown) => reportError(err, { where: 'analytics', log }))
+      .then(() => {}, (err: unknown) => reportError(new Error(`${batch.length} analytics events lost`, { cause: err }), { where: 'analytics', log }))
       .finally(() => writing.delete(done))
     writing.add(done)
   }
@@ -40,7 +40,7 @@ export function analyticsOf(db: AnalyticsDb | undefined, log: FastifyBaseLogger)
     track(req, event) {
       // The action of the route is already saved, so a bad event goes to the log, never to the person.
       const parsed = analyticsEvent.safeParse(event)
-      if (!parsed.success) return reportError(parsed.error, { where: 'analytics', log })
+      if (!parsed.success) return reportError(parsed.error, { where: 'analytics', userId: req.user?.id, log })
       const { name, eventVersion, ...fields } = parsed.data
       buffer.push({ name, eventVersion, actor: req.analyticsId, fields, createdAt: new Date() })
       if (buffer.length >= batchSize) write()

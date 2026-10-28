@@ -119,7 +119,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       })
       if (!answered) return reply.code(404).send({ error: 'not found' })
       if (answered.note) {
-        await sendLive(messaging.realtime, req.log, answered.note, [answered.request.fromUserId, answered.request.toUserId])
+        await sendLive(messaging.realtime, req, answered.note, [answered.request.fromUserId, answered.request.toUserId])
         alerts.accept(answered.request)
         analytics.track(req, { name: 'connect_accepted', to: answered.request.listingId ? 'listing' : 'person' })
       }

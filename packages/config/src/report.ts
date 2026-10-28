@@ -1,10 +1,7 @@
 import { captureException, setUser, withScope, type ErrorEvent, type Options } from '@sentry/core'
 
-/** The logger of the API. The web passes none. */
-type Log = { error(obj: object, msg: string): void }
-
 /** The one way to report an error (ADR-0014). `where` names the place in the code. Without a DSN, only the log line goes out. */
-export function reportError(err: unknown, context: { where: string; userId?: string | null; log?: Log }) {
+export function reportError(err: unknown, context: { where: string; userId?: string | null; log?: { error(obj: object, msg: string): void } }) {
   const { where, userId, log } = context
   log?.error({ err, userId }, where)
   withScope((scope) => {
@@ -17,8 +14,8 @@ export function reportError(err: unknown, context: { where: string; userId?: str
 /** The person of the events of this browser, or null at sign-out. */
 export const setReportUser = (id: string | null) => setUser(id ? { id } : null)
 
-// An Indian mobile number: +91 or 91 is optional, then 10 digits from 6 to 9, with one space or dash after the 5th.
-const phone = /(?:\+91[\s-]?|\b(?:91[\s-]?)?)[6-9]\d{4}[\s-]?\d{5}\b/g
+// An Indian mobile number: +91, 91 or 0 is optional, then 10 digits that start with 6 to 9, with a space or a dash in any place.
+const phone = /(?:\+91[\s-]?|\b(?:91[\s-]?|0)?)[6-9](?:[\s-]?\d){9}\b/g
 // A failed query of Drizzle ends with its values, for example the text of a message.
 const queryValues = /\nparams: [\s\S]*$/
 
@@ -29,14 +26,13 @@ function scrubText<T>(value: T): T {
   return value
 }
 
-/** `beforeSend` of each app: no request body or query values (message text), no header but the user agent, no IP address and no phone number (ADR-0014). */
-export function scrubEvent(event: ErrorEvent): ErrorEvent {
+/** `beforeSend` of each app (ADR-0014). */
+function scrubEvent(event: ErrorEvent): ErrorEvent {
   if (event.request) {
     delete event.request.data
     delete event.request.cookies
     // Each other header can hold a token, a cookie or the IP address, for example X-Forwarded-For.
-    const agent = event.request.headers?.['user-agent']
-    event.request.headers = agent ? { 'user-agent': agent } : {}
+    event.request.headers = Object.fromEntries(Object.entries(event.request.headers ?? {}).filter(([name]) => name.toLowerCase() === 'user-agent'))
   }
   if (event.user) event.user = { id: event.user.id }
   for (const part of ['message', 'exception', 'breadcrumbs', 'extra', 'request', 'tags'] as const) event[part] = scrubText(event[part]) as never

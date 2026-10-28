@@ -60,7 +60,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       if (invalid) return { ok: false as const, code: 400 as const, error: `not valid: ${invalid}` }
       const removed = p.photoKeys.filter((key) => !next.photoKeys.includes(key))
       // PD19: a photo leaves R2 before its row. If R2 fails, the transaction changes nothing.
-      if (!(await deletePhotos(storage, removed, req.log))) return { ok: false as const, code: 502 as const, error: 'photo storage failed' }
+      if (!(await deletePhotos(storage, removed, req))) return { ok: false as const, code: 502 as const, error: 'photo storage failed' }
       const visibility = (hidden ?? p.visibility === 'hidden') ? 'hidden' : missingFields(next).length ? 'draft' : 'live'
       const [saved] = await tx.update(profiles).set({ ...fields, photoKeys: next.photoKeys, visibility, updatedAt: new Date() })
         .where(eq(profiles.id, p.id)).returning()

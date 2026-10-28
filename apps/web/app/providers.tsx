@@ -19,10 +19,10 @@ export function Providers({ children }: { children: ReactNode }) {
 /** Each error event of this browser carries the users.id of the signed-in person (T-07). */
 function ReportUser() {
   const { user } = useAuth()
-  return user && <ReportMe key={user.uid} />
+  return user && <ReportUserId key={user.uid} />
 }
 
-function ReportMe() {
+function ReportUserId() {
   const id = useMe().data?.id
   useEffect(() => {
     if (!id) return

@@ -41,7 +41,7 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [{
     // Skips the files of public by extension, so /a.php still gets the policy. /monitoring takes the events of Sentry.
-    source: '/((?!_next/static|_next/image|monitoring|.*\\.(?:jpg|js|mp4|png|svg|webp)$).*)',
+    source: '/((?!_next/static|_next/image|monitoring$|.*\\.(?:jpg|js|mp4|png|svg|webp)$).*)',
     missing: [
       { type: 'header', key: 'next-router-prefetch' },
       { type: 'header', key: 'purpose', value: 'prefetch' },

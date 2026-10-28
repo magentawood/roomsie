@@ -61,7 +61,7 @@ export function messageRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const [made] = await db.insert(messages).values({ id: req.body.id, requestId: req.params.id, senderUserId: me, text: req.body.text })
       .onConflictDoNothing().returning()
     if (made) {
-      await sendLive(messaging.realtime, req.log, made, [me, conversation.otherUserId])
+      await sendLive(messaging.realtime, req, made, [me, conversation.otherUserId])
       alerts.message(made)
       return reply.code(201).send(messageView(made, me))
     }

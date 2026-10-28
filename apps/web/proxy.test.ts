@@ -48,6 +48,7 @@ describe('the Content-Security-Policy', () => {
     expect(runs('/landing/hero.mp4')).toBe(false)
     expect(runs('/alerts-sw.js')).toBe(false)
     expect(runs('/monitoring?o=1&p=2')).toBe(false)
+    expect(runs('/monitoring-help')).toBe(true)
     expect(runs('/places/0192f1a2-0000-7000-8000-000000000000', { 'next-router-prefetch': '1' })).toBe(false)
   })
 })
