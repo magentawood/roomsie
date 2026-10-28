@@ -15,6 +15,13 @@
       "when": 1793180948539,
       "tag": "0001_ist_timezone",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793191687185,
+      "tag": "0002_maintain_events",
+      "breakpoints": true
     }
   ]
 }
