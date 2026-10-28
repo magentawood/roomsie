@@ -53,7 +53,7 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
   - **The quote cards of the landing page:** the places of the collage move from a style attribute to classes.
   - **The "not found" page (new):** our own page, from the empty state of the design system, because the policy blocks the inline styles of the page of Next.
   - **The start file of the browser (new):** Zod parses without eval, because the policy blocks eval.
-  - **The web standard:** the CSP rule tells that each page renders on each request.
+  - **The web standard:** the CSP rules tell that each page renders on each request, and that the code uses no `style` prop and no `eval`.
 - **Seams for the tests:**
   - The proxy, in a unit test: each page request gets the policy with a new nonce, the policy of production has no `unsafe-inline` and no `unsafe-eval` for scripts, Next gets the same policy on the request, and the proxy does not run for the static files and the link prefetches.
   - A live check after the deploy: the scripts of Next run, and a script without the nonce does not run.
