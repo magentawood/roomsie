@@ -2,10 +2,10 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  alertSettings, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, verificationResponse,
+  adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type SavedKind,
 } from '@roomsie/contract'
-import { api, ApiError } from './api'
+import { api, ApiError, apiUrl } from './api'
 import { areaTree } from './areas'
 import { useUser } from './auth'
 import { badgeCount } from './messages'
@@ -28,6 +28,9 @@ export const queryKeys = {
   push: (userId: string) => ['push', userId],
   verification: ['verification'],
   idChecks: ['admin', 'id-checks'],
+  quotes: ['admin', 'quotes'],
+  feedback: ['admin', 'feedback'],
+  site: ['site'],
 } as const
 
 export function useMe() {
@@ -50,6 +53,26 @@ export function useReportQueue() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueResponse) })
 }
+
+export function useAdminQuotes() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.quotes, queryFn: () => api(user, '/v1/admin/quotes', adminQuotesResponse) })
+}
+
+export function useFeedback() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.feedback, queryFn: () => api(user, '/v1/admin/feedback', feedbackResponse) })
+}
+
+/** The public route of the landing page, which needs no sign-in. */
+export const useSite = () => useQuery({
+  queryKey: queryKeys.site,
+  queryFn: async () => {
+    const res = await fetch(`${apiUrl}/v1/site`)
+    if (!res.ok) throw new ApiError(res.status, null)
+    return siteResponse.parse(await res.json())
+  },
+})
 
 /** A 4xx is final, for example a listing or a card that is gone. Only 5xx and network errors retry. */
 const retryOnServerErrors = (count: number, err: Error) => count < 3 && !(err instanceof ApiError && err.status < 500)
