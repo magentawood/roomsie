@@ -5,7 +5,7 @@ import { errorText } from '../../lib/api'
 import { useAdminFeedback } from '../../lib/queries'
 import { EmptyState } from '../ui/empty-state'
 
-const sentAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+const sentAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
 
 /** The newest feedback from the landing page (T-23a). It names no sender. */
 export function FeedbackList() {
