@@ -45,7 +45,7 @@ These rules apply to all code.
 
 - Clients never connect to the database. Why: the business rules must stay in one place for three clients. ([ADR-0002](../decisions/0002-api-boundary.md))
 - All business logic is in `apps/api`. Why: a network boundary stops a shortcut from web code to the database. ([ADR-0002](../decisions/0002-api-boundary.md), [ADR-0003](../decisions/0003-api-as-separate-service.md))
-- `users.id` is the only identity key. The Firebase UID is only in `users.auth_provider_id`, and only the login path reads it. Why: a change of auth provider stays a one-column backfill. ([ADR-0005](../decisions/0005-managed-platform-split.md))
+- `users.id` is the only identity key. The Firebase UID is only in `users.auth_provider_id`, and only the login path and account deletion read it. Why: a change of auth provider stays a one-column backfill. ([ADR-0005](../decisions/0005-managed-platform-split.md))
 - A package imports only the packages that it declares [tool]. Why: a hoisted import works on a laptop and fails in CI. ([ADR-0010](../decisions/0010-monorepo-tooling.md))
 - Apps share code only through `packages/`. An app never imports from a different app. Why: each app builds and deploys independently. ([ADR-0003](../decisions/0003-api-as-separate-service.md), [ADR-0010](../decisions/0010-monorepo-tooling.md))
 - Error reports, model calls, emails and pushes each go through one internal module. Application code never imports those SDKs. Why: a vendor change then touches one module. ([ADR-0014](../decisions/0014-error-tracking.md), [PD7](../decisions/pd-07-models.md), [ADR-0019](../decisions/0019-alerts-by-ses-and-fcm.md))

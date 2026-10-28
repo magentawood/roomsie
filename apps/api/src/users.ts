@@ -19,6 +19,12 @@ export async function lockAccount(tx: Tx, userId: string) {
   return user
 }
 
+/** The lock of lockAccount, with the Firebase uid. Only account deletion reads the uid (T-53). */
+export async function lockAccountForDeletion(tx: Tx, userId: string) {
+  const [user] = await tx.select({ status: users.status, uid: users.authProviderId }).from(users).where(eq(users.id, userId)).for('update')
+  return user
+}
+
 /** A suspended person is signed out everywhere (T-19). */
 export const suspendAccount = (tx: Tx, userId: string, at: Date) =>
   tx.update(users).set({ status: 'suspended', tokensValidAfter: at }).where(eq(users.id, userId))

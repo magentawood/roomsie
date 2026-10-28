@@ -13,6 +13,7 @@ import { hasOpenReportAbout } from './reports/read'
 import { endOpenRequests } from './requests/read'
 import { deleteSavesOf } from './saved/read'
 import type { Storage } from './storage'
+import { lockAccountForDeletion } from './users'
 import { deleteChecksOf } from './verification/read'
 
 /** A tombstone keeps a hash of the identity (the Google account id), never the id itself. It
@@ -45,8 +46,7 @@ export async function deleteAccount(
   await deactivateListingsOf(db, userId)
 
   await db.transaction(async (tx) => {
-    // The lock of lockAccount. It reads the Firebase uid here, so its other callers do not get it.
-    const [user] = await tx.select({ status: users.status, uid: users.authProviderId }).from(users).where(eq(users.id, userId)).for('update')
+    const user = await lockAccountForDeletion(tx, userId)
     // A second request at the same time (a double tap) waited on the lock. Without this stop, it would
     // hash the tombstone key again and clear rejoin_blocked, so a suspended person could sign in again.
     if (user!.status === 'deleted') return

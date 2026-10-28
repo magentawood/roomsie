@@ -61,6 +61,7 @@ Removes the sign-in record at Google too, not only our data.
   - **Without the service account,** the API does not delete the Firebase user, as it sends no push (why: ADR-0019). Production has the secret.
   - **The record:** the row "Firebase Admin service account" in ADR-0016 names `FIREBASE_SERVICE_ACCOUNT`. The deploy puts it only in the environment of apps/api.
   - **Rejoin:** a sign-in after the Firebase delete has a new uid. The tombstone keys on the Google account id, so the checks of T-20 still apply.
+  - **Timeout:** the Firebase delete and the Google token fetch stop after 10 seconds, so a hung Google cannot hold the lock of the users row. The token fetch is shared, so the claims of T-44 and the push of T-55 also stop after 10 seconds. The user decided this in review round 2.
 - **Out of scope:**
   - the Firebase users of accounts that were deleted before T-53: they stay
   - a change to the web or to the text of the dialog

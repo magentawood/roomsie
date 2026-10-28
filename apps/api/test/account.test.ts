@@ -188,6 +188,18 @@ describe('DELETE /v1/me', () => {
     expect((await call('GET', after)).statusCode).toBe(403)
   })
 
+  it('makes a new, empty account at a sign-in with a new Firebase uid after T-53', async () => {
+    const before = await idToken('uid-rejoins-before', { authTime: Math.floor(Date.now() / 1000) - 60, googleId: 'google-2' })
+    const { id } = meResponse.parse((await call('GET', before)).json())
+    expect((await call('DELETE', before)).statusCode).toBe(204)
+
+    const after = await idToken('uid-rejoins-after', { authTime: Math.floor(Date.now() / 1000), googleId: 'google-2' })
+    const fresh = meResponse.parse((await call('GET', after)).json())
+    expect(fresh).toMatchObject({ status: 'active' })
+    expect(fresh.id).not.toBe(id)
+    expect(await userRow(id)).toMatchObject({ status: 'deleted', authProviderId: `deleted:${id}` })
+  })
+
   it('makes one tombstone from two deletes at the same time, so a suspended person stays out', async () => {
     const user = await signIn('uid-double-tap')
     await testDb.db.update(users).set({ status: 'suspended' }).where(eq(users.id, user.id))
@@ -240,7 +252,6 @@ describe('DELETE /v1/me', () => {
     // The photos go before the rows, as when the database step fails (T-20).
     expect(photos.deleted.sort()).toEqual(['f/firebase-down', 'l/firebase-down', 'p/firebase-down-1', 'p/firebase-down-2'])
     expect(await testDb.db.select().from(profiles).where(eq(profiles.userId, user.id))).toHaveLength(1)
-    expect(await userRow(user.id)).toMatchObject({ status: 'active', authProviderId: user.uid })
     expect((await call('GET', user.token)).statusCode).toBe(200)
 
     fakes.firebaseUsers.down = false
