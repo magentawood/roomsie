@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import type { ErrorEvent } from '@sentry/node'
+import { privacyOptions } from '@roomsie/config/report'
 import { offlineStorage } from '../scripts/openapi'
 import { createAnalyticsDb } from '../src/analytics/client'
 import { flushSentry, startSentry } from '../src/sentry'
@@ -13,14 +14,14 @@ async function sent() {
   return reported.splice(0)
 }
 
-/** The events with no stack frames: their lines of code show the text of this test too. */
-const outsideCode = (events: ErrorEvent[]) => JSON.stringify(events, (key, value: unknown) => (key === 'stacktrace' ? undefined : value))
+/** The events as text, with no lines of source code: those show the text of this test too. */
+const sourceLines = new Set(['pre_context', 'context_line', 'post_context'])
+const textWithoutSource = (events: ErrorEvent[]) => JSON.stringify(events, (key, value: unknown) => (sourceLines.has(key) ? undefined : value))
 
 // R2 refuses each upload link, with phone numbers in its message.
 const failingStorage: Storage = { ...offlineStorage, uploadUrl: async () => { throw new Error('R2 refused the link of +91 98200 12345, 09820012345 and 982 001 2345') } }
 
 let t: TestApp<'visitor' | 'friend'>
-let friendCard: string
 beforeAll(async () => {
   startSentry({
     dsn: 'https://public@o1.ingest.sentry.io/1',
@@ -35,8 +36,7 @@ beforeAll(async () => {
   })
   // The analytics database is down, so each write of the events fails.
   t = await testApp(['visitor', 'friend'], failingStorage, {}, createAnalyticsDb('postgres://postgres@localhost:1/nowhere'))
-  await t.liveCard('visitor', 'Rahul Verma')
-  friendCard = await t.liveCard('friend')
+  await t.liveCard('visitor')
 })
 afterAll(() => t.close())
 
@@ -53,18 +53,19 @@ describe('reportError', () => {
   })
 
   it('reports a best-effort failure with the person, and the route still succeeds', async () => {
-    t.realtimeState.down = true
+    const friendCard = await t.liveCard('friend')
+    t.realtime.down = true
     try {
       const res = await t.call('visitor', 'POST', '/v1/requests', { toProfileId: friendCard, note: 'Hi, call me on 98200 12345' })
       expect(res.statusCode).toBe(201)
     } finally {
-      t.realtimeState.down = false
+      t.realtime.down = false
     }
     // The request also put "connect sent" in memory, and its write fails too.
     await t.flushEvents()
     const events = await sent()
     expect(events).toMatchObject([{ tags: { where: 'realtime' }, user: { id: t.ids.visitor } }, { tags: { where: 'analytics' } }])
-    expect(outsideCode(events)).not.toMatch(/call me|98200/)
+    expect(textWithoutSource(events)).not.toMatch(/call me|98200/)
   })
 
   it('reports a failing route with the route and the person, and with no token, body or phone number', async () => {
@@ -73,9 +74,15 @@ describe('reportError', () => {
 
     const events = await sent()
     expect(events).toMatchObject([{ tags: { where: 'POST /v1/me/profile/upload-urls' }, user: { id: t.ids.visitor } }])
-    const text = outsideCode(events)
+    const text = textWithoutSource(events)
     expect(text).toContain('R2 refused the link of [phone], [phone] and [phone]')
     expect(text).not.toMatch(/98200|982 001|Bearer|image\/jpeg/)
+  })
+
+  it('removes the variables of the stack frames', async () => {
+    const event: ErrorEvent = { type: undefined, exception: { values: [{ stacktrace: { frames: [{ function: 'send', vars: { note: 'call me' } }] } }] } }
+    const scrubbed = await privacyOptions.beforeSend!(event, {})
+    expect(scrubbed?.exception?.values?.[0]?.stacktrace?.frames).toEqual([{ function: 'send' }])
   })
 
   it('does not report a 4xx', async () => {
