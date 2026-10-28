@@ -182,7 +182,7 @@ details.callout[open] summary{color:var(--fg)}
 <td><a href="decisions/0014-error-tracking.md">ADR-0014</a></td>
 <td>Error tracking and observability</td>
 <td>Accepted</td>
-<td><code>apps/web</code> and <code>apps/api</code> send errors through the Sentry SDK to self-hosted GlitchTip, behind one <code>reportError</code> wrapper, until Firebase Crashlytics for web reaches GA.</td>
+<td><code>apps/web</code> and <code>apps/api</code> send errors through the Sentry SDK, behind one <code>reportError</code> wrapper, to the Sentry free tier for launch, then to self-hosted GlitchTip until Firebase Crashlytics for web reaches GA.</td>
 </tr>
 <tr>
 <td><a href="decisions/0015-primary-key-strategy.md">ADR-0015</a></td>
