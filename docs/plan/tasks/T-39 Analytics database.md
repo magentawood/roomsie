@@ -31,11 +31,11 @@ Keeps analytics writes off the main database.
 - No task waits on this task.
 
 ## Done when
-- [ ] The same track() function writes events to their own Supabase project, in the same account
-- [ ] pg_cron in that project deletes events past the retention period and creates next month's partition
-- [ ] The main database keeps no events. The connection details of each project are only in environment settings, thus a paid plan later needs no code change
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it
-- [ ] Raw events are deleted after 12 months (PD19)
+- [x] The same track() function writes events to their own Supabase project, in the same account · [#176](https://github.com/magentawood/roomsie/pull/176)
+- [x] pg_cron in that project deletes events past the retention period and creates next month's partition · [#182](https://github.com/magentawood/roomsie/pull/182)
+- [x] The main database keeps no events. The connection details of each project are only in environment settings, thus a paid plan later needs no code change · [#176](https://github.com/magentawood/roomsie/pull/176)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-13 confirms it · [#182](https://github.com/magentawood/roomsie/pull/182)
+- [x] Raw events are deleted after 12 months (PD19) · [#182](https://github.com/magentawood/roomsie/pull/182)
 
 ^done
 
@@ -64,3 +64,13 @@ Keeps analytics writes off the main database.
 - **Out of scope:**
   - an alert when the job fails
   - the rollup tables and the dashboards (ADR-0012)
+
+## Log
+
+- **2026-10-28 · [#182](https://github.com/magentawood/roomsie/pull/182)**
+  - **Change:** a migration of the analytics database adds `jobs.maintain_events(12)`. Each day at 04:00 IST, `pg_cron` runs it. It makes each missing monthly table to 12 months ahead, with row level security, and drops each month that ended 12 months ago or earlier. The nightly dump also takes the `jobs` schema. PD19 now says that raw events go by whole month, at most 13 months and one day after the event.
+  - **Why:** without the next tables, inserts fail at a month boundary, and PD19 needs the deletion ([ADR-0012](../../decisions/0012-analytics-event-store.md), [PD19](../../decisions/pd-19-retention.md)).
+  - **Ticked:** all five items. T-24 ([#176](https://github.com/magentawood/roomsie/pull/176)) did "The same track() function writes events to their own Supabase project" and "The main database keeps no events".
+  - **Not done:** none. After the deploy, a read of `cron.job` on the live project confirms the schedule.
+  - **Learn:** [Analytics events](../../learn/analytics-events.md), [Backups](../../learn/backups.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)
