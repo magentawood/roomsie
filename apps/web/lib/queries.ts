@@ -6,7 +6,6 @@ import {
   type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
-import { refusalOf } from './invites'
 import { areaTree } from './areas'
 import { useUser } from './auth'
 import { badgeCount } from './messages'
@@ -37,8 +36,8 @@ export const queryKeys = {
 
 export function useMe() {
   const user = useUser()
-  // The refusal of the gate does not change on a retry, so its screen shows at once (T-33).
-  return useQuery({ queryKey: queryKeys.me, queryFn: () => api(user, '/v1/me', meResponse), retry: (count, err) => count < 3 && !refusalOf(err) })
+  // The refusal of the gate is a 4xx, so its screen shows at once (T-33).
+  return useQuery({ queryKey: queryKeys.me, queryFn: () => api(user, '/v1/me', meResponse), retry: retryOnServerErrors })
 }
 
 /** `enabled`: false loads nothing, for a step of the listing flow that cannot publish. */

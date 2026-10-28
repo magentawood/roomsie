@@ -2,10 +2,11 @@
 
 import { MessageChatSquare } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
+import { india } from '../../lib/ist'
 import { useAdminFeedback } from '../../lib/queries'
 import { EmptyState } from '../ui/empty-state'
 
-const sentAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kolkata' })
+const sentAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', ...india })
 
 /** The newest feedback from the landing page (T-23a). It names no sender. */
 export function FeedbackList() {

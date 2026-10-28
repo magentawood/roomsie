@@ -618,10 +618,7 @@ export const invites = pgTable('invites', {
   lowerCaseCheck: check('invites_email_lower_case_check', sql`${t.email} = lower(${t.email})`),
 })).enableRLS()
 
-/**
- * The gate of T-33: closed while `invite_only` is on and `opens_at` is empty or in the future.
- * Each save adds a row, and the newest row counts. With no row, the gate is closed. The invites module owns it.
- */
+/** The gate of T-33. Each save adds a row, and the newest row counts. With no row, the gate is closed. The invites module owns it. */
 export const inviteGate = pgTable('invite_gate', {
   id: id(),
   inviteOnly: boolean('invite_only').notNull(),

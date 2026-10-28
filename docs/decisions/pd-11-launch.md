@@ -11,7 +11,7 @@
 
 **In one line:** The public launch is on Sunday 8 November 2026 (IST), and the go/no-go list is the quality bar.
 
-- **Target: Sunday 8 November 2026, IST. Quality comes before the date.** Until then, the invite gate of T-33 lets in only the invited emails, and it opens by itself at the launch.
+- **Target: Sunday 8 November 2026, IST. Quality comes before the date.** Until then, the invite gate of T-33 lets in only the invited emails and the moderators. It opens by itself at the opening time that a moderator sets.
 - **The go/no-go list is the quality bar.** If a check fails, the date moves by a small quantity. We do not ship something below the bar.
 - **The fallback date, the go/no-go day and the bug-fix day move with the launch.** F-10 sets them.
 - **It is a public launch, not a closed beta.** This adds about 15 hours: report and block, account deletion, a waitlist, alerts and legal pages.
