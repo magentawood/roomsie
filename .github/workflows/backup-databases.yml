@@ -47,7 +47,7 @@ jobs:
     steps:
       # GitHub runners have no IPv6, so the dump goes through the session pooler.
       # The runner has an older pg_dump than Supabase, so the Postgres 17 image runs it.
-      # The jobs schema holds the job of the analytics database (T-39). The main database has none, and pg_dump skips it.
+      # Only the analytics database has the jobs schema, and pg_dump skips a schema that is missing.
       - name: Dump
         env:
           SOURCE_URL: ${{ secrets[matrix.url_secret] }}

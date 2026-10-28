@@ -6,11 +6,11 @@ import { createAnalyticsDb } from '../src/analytics/client'
 import { events } from '../src/analytics/schema'
 import { connectionRequests, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
-import { createTestAnalyticsDb } from './db'
+import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
 
 type Who = 'seeker' | 'friend' | 'leaver'
 let t: TestApp<Who>
-let analytics: Awaited<ReturnType<typeof createTestAnalyticsDb>>
+let analytics: TestAnalyticsDb
 const cards = {} as Record<'seeker' | 'friend', string>
 beforeAll(async () => {
   analytics = await createTestAnalyticsDb()

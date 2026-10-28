@@ -38,3 +38,4 @@ export async function createTestDb({ migrated = true } = {}) {
   return testDb
 }
 export const createTestAnalyticsDb = () => disposableDatabase(createAnalyticsDb, fileURLToPath(new URL('../drizzle-analytics', import.meta.url)))
+export type TestAnalyticsDb = Awaited<ReturnType<typeof createTestAnalyticsDb>>

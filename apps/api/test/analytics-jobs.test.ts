@@ -1,14 +1,14 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { sql } from 'drizzle-orm'
-import { createTestAnalyticsDb } from './db'
+import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
 
-let analytics: Awaited<ReturnType<typeof createTestAnalyticsDb>>
+let analytics: TestAnalyticsDb
 beforeAll(async () => { analytics = await createTestAnalyticsDb() })
 afterAll(() => analytics.drop())
 
 const now = new Date()
-const monthStart = (offset: number) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + offset, 1))
-const partitionName = (offset: number) => `events_${monthStart(offset).toISOString().slice(0, 7).replace('-', '_')}`
+const monthStart = (monthsFromNow: number) => new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + monthsFromNow, 1))
+const partitionName = (monthsFromNow: number) => `events_${monthStart(monthsFromNow).toISOString().slice(0, 7).replace('-', '_')}`
 
 async function partitions() {
   const rows = await analytics.db.execute<{ name: string; rls: boolean }>(sql`
@@ -17,8 +17,8 @@ async function partitions() {
   return [...rows]
 }
 const maintain = () => analytics.db.execute(sql`select jobs.maintain_events(12)`)
-const addPartition = (offset: number) => analytics.db.execute(sql.raw(
-  `create table ${partitionName(offset)} partition of events for values from ('${monthStart(offset).toISOString()}') to ('${monthStart(offset + 1).toISOString()}')`))
+const addPartition = (monthsFromNow: number) => analytics.db.execute(sql.raw(
+  `create table ${partitionName(monthsFromNow)} partition of events for values from ('${monthStart(monthsFromNow).toISOString()}') to ('${monthStart(monthsFromNow + 1).toISOString()}')`))
 
 describe('jobs.maintain_events', () => {
   it('makes each missing monthly table to 12 months ahead, with row level security', async () => {

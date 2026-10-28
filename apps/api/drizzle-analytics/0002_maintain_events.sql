@@ -1,9 +1,10 @@
--- The job of T-39 (ADR-0012, PD19). It is in its own schema, because the Supabase API serves each function of "public".
+-- Its own schema, because the Supabase API serves each function of "public".
 CREATE SCHEMA IF NOT EXISTS jobs;--> statement-breakpoint
 CREATE FUNCTION jobs.maintain_events(retention_months integer) RETURNS void LANGUAGE plpgsql SET search_path = '' AS $$
 DECLARE
 	first date := date_trunc('month', now() AT TIME ZONE 'UTC')::date;
-	cutoff timestamptz := now() - make_interval(months => retention_months);
+	-- The table of the oldest month that stays. The names sort by month.
+	oldest name := 'events_' || to_char(first - make_interval(months => retention_months), 'YYYY_MM');
 	month date;
 	part text;
 BEGIN
@@ -17,16 +18,14 @@ BEGIN
 	END LOOP;
 	FOR part IN
 		SELECT c.relname FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid
-		WHERE i.inhparent = 'public.events'::regclass AND c.relname ~ '^events_\d{4}_\d{2}$'
+		WHERE i.inhparent = 'public.events'::regclass AND c.relname ~ '^events_\d{4}_\d{2}$' AND c.relname < oldest
 	LOOP
-		IF (to_date(substr(part, 8), 'YYYY_MM') + interval '1 month')::timestamp AT TIME ZONE 'UTC' <= cutoff THEN
-			EXECUTE format('DROP TABLE public.%I', part);
-		END IF;
+		EXECUTE format('DROP TABLE public.%I', part);
 	END LOOP;
 END $$;--> statement-breakpoint
 REVOKE EXECUTE ON FUNCTION jobs.maintain_events(integer) FROM PUBLIC;--> statement-breakpoint
 SELECT jobs.maintain_events(12);--> statement-breakpoint
--- 04:00 IST, after the backups. The period is the argument, so a change of it is a change of the job, not of the code.
+-- 04:00 IST, after the backups.
 -- Local work and the tests have no pg_cron, so they skip the schedule.
 DO $$
 BEGIN
