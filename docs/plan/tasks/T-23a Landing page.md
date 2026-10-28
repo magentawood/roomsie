@@ -31,14 +31,14 @@ The public home page that explains roomsie.
 - No task waits on this task.
 
 ## Done when
-- [ ] The landing page uses the Figma design of D-04
-- [ ] The page has a hero, a how-it-works section, and a button into the chat
-- [ ] The hero plays the product film "roomsie-product-film-v5" from the Website page of the Product file (Figma node 256:23029)
-- [ ] Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values
-- [ ] The footer links of T-23b use the design of D-04
-- [ ] Moderators add and delete the quotes at /admin/quotes. The quotes section shows the five newest quotes when five or more exist
-- [ ] Moderators set the social links, the contact email and the organisation number at /admin/site. Each part shows only when it has a value
-- [ ] A signed-in person sends feedback from the landing page, and moderators read it at /admin/feedback
+- [x] The landing page uses the Figma design of D-04 · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] The page has a hero, a how-it-works section, and a button into the chat · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] The hero plays the product film "roomsie-product-film-v5" from the Website page of the Product file (Figma node 256:23029) · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] Colours, type and spacing come from theme tokens, never from raw values in components. Thus, the v1 token pipeline only changes values · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] The footer links of T-23b use the design of D-04 · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] Moderators add and delete the quotes at /admin/quotes. The quotes section shows the five newest quotes when five or more exist · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] Moderators set the social links, the contact email and the organisation number at /admin/site. Each part shows only when it has a value · [#173](https://github.com/magentawood/roomsie/pull/173)
+- [x] A signed-in person sends feedback from the landing page, and moderators read it at /admin/feedback · [#173](https://github.com/magentawood/roomsie/pull/173)
 
 ^done
 
@@ -78,3 +78,13 @@ The public home page that explains roomsie.
   - the feedback popover of the app (T-50)
   - the invite gate (T-33)
   - a new film without "A great match" (the designer)
+
+## Log
+
+- **2026-10-28 · [#173](https://github.com/magentawood/roomsie/pull/173)**
+  - **Change:** the landing page at `/`, from the Figma design with the fixes of drafts section 19, at phone, tablet and desktop widths. The film and the two step videos come from Figma. Moderators add the quotes, set the links and the details, and read the feedback on three admin pages.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD6b](../../decisions/pd-06b-login-gate-and-search.md), and the decisions of the spec.
+  - **Ticked:** all eight items.
+  - **Not done:** none.
+  - **Learn:** [The landing page](../../learn/landing-page.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

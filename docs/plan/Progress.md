@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**135 of 316 done · 43%**
+**143 of 316 done · 45%**
 
-`██████████░░░░░░░░░░░░░░`
+`███████████░░░░░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 5 / 11 | 16 / 35 | 46% |
 | [[P2 Chat]] | 0 / 13 | 3 / 60 | 5% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 80 | 71% |
-| [[P4 Content and moderation]] | 2 / 8 | 12 / 34 | 35% |
+| [[P4 Content and moderation]] | 3 / 8 | 20 / 34 | 59% |
 | [[P5 Accounts and people]] | 3 / 6 | 21 / 31 | 68% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**38 free tasks are open · 124 build hours.**
+**37 free tasks are open · 120 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -62,7 +62,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-07 Error reporting]] | P1 | 1 | ⬜ can start | 0 | [#28](https://github.com/magentawood/roomsie/issues/28) |
-| 0 | [[T-23a Landing page]] | P4 | 4 | ⬜ can start | 0 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | 0 | [[T-33 Invite-only gate]] | P1 | 1 | ⬜ can start | 0 | [#29](https://github.com/magentawood/roomsie/issues/29) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-52 Web CSP]] | P1 | 3 | ⬜ can start | 0 | [#135](https://github.com/magentawood/roomsie/issues/135) |
@@ -138,7 +137,7 @@ flowchart LR
   T17["T-17<br/>Carry chat into account"]:::todo
   T19["T-19<br/>Report and block"]:::done
   T33["T-33<br/>Invite-only gate"]:::ready
-  T23a["T-23a<br/>Landing page"]:::ready
+  T23a["T-23a<br/>Landing page"]:::done
   T24["T-24<br/>Event logging"]:::ready
   T21["T-21<br/>Turn cap and spend ceiling"]:::todo
   T18a["T-18a ⚑<br/>Message request API"]:::doing
@@ -426,9 +425,9 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 12/34
+## P4 Content and moderation — 20/34
 
-> [!todo]- ⬜ [[T-23a Landing page]] · 0/8
+> [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
 
 > [!todo]- ⬜ [[T-23b Legal pages]] · 0/2
