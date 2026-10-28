@@ -31,9 +31,9 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
 - No task waits on this task.
 
 ## Done when
-- [ ] Each page serves a strict Content-Security-Policy, with a new nonce for each request
-- [ ] Google sign-in, the API and the photo storage still work under the policy
-- [ ] A test checks the header. A script without the nonce does not run
+- [x] Each page serves a strict Content-Security-Policy, with a new nonce for each request · [#177](https://github.com/magentawood/roomsie/pull/177)
+- [x] Google sign-in, the API and the photo storage still work under the policy · [#177](https://github.com/magentawood/roomsie/pull/177)
+- [x] A test checks the header. A script without the nonce does not run · [#177](https://github.com/magentawood/roomsie/pull/177)
 
 ^done
 
@@ -74,3 +74,13 @@ The browser runs only our own scripts, so an injected script cannot steal a sign
   - the other security headers, for example `Strict-Transport-Security`
   - the comments toolbar of the Vercel previews, which the policy blocks
   - Trusted Types
+
+## Log
+
+- **2026-10-28 · [#177](https://github.com/magentawood/roomsie/pull/177)**
+  - **Change:** a proxy gives each page request a strict Content-Security-Policy with a new nonce, and Next puts the nonce on its own scripts. Each page renders on each request. The quote cards use classes, our own "not found" page replaces the page of Next, and Zod parses without eval, so the policy needs no inline styles and no eval.
+  - **Why:** the ID token is in JavaScript, and the policy is the main control against XSS ([ADR-0007](../../decisions/0007-web-rendering-and-auth-transport.md)).
+  - **Ticked:** "Each page serves a strict Content-Security-Policy, with a new nonce for each request", "Google sign-in, the API and the photo storage still work under the policy" and "A test checks the header. A script without the nonce does not run"
+  - **Not done:** none. The live check after the deploy confirms the API, the uploads, the live chat and push on the live site.
+  - **Learn:** [Content-Security-Policy](../../learn/content-security-policy.md), [The landing page](../../learn/landing-page.md)
+  - **Journal:** [2026-10](../../journal/2026-10.md)

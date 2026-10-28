@@ -47,4 +47,4 @@ request ──▶ proxy: new nonce ──▶ policy on the request and the respo
 
 ## Tickets
 
-- T-52: [#135](https://github.com/magentawood/roomsie/issues/135), 2026-10-28. The policy, the nonce for each request, and the pages that render on each request.
+- T-52: [#177](https://github.com/magentawood/roomsie/pull/177), 2026-10-28. The policy, the nonce for each request, and the pages that render on each request.
