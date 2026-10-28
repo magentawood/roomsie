@@ -4,7 +4,7 @@ What roomsie does, and why, at a glance. Each decision's full record is its PD f
 
 roomsie is the AI-native pivot of femmeflats. An assistant interviews you. Then it shows the flats, rooms and people that fit.
 v0 is the product in the Figma designs (PD14): flats, rooms, PGs and flatmates, open to all genders, in the Mumbai area groups and their sub-areas (PD2).
-The public launch is on 12 October. The fallback is 14 October.
+The public launch is on 8 November 2026 (IST). F-10 sets the fallback date.
 The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roomsie is self-funded.
 
 ### The ledger
@@ -31,7 +31,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 | [PD8](decisions/pd-08-verification.md) | Verification: an ID check in v0, DigiLocker in v1, never Aadhaar copies | Settled with two changes. Changed on 2026-10-26 and 2026-10-27. | In v0, a person compares a selfie with a non-Aadhaar government ID; DigiLocker comes in v1; we store the result, never the document. |
 | [PD9](decisions/pd-09-pre-login-limits.md) | Abuse and cost limits on the pre-login chat | Settled. Changed on 2026-10-26. | The pre-login chat uses a turn cap of 5 free-text turns and rate limits, with a global daily spend ceiling as the backstop. |
 | [PD10](decisions/pd-10-scope-bands.md) | Five scope bands for the assistant | Settled | The router puts each question in one of five scope bands by the cost of an incorrect answer, and band 2b is corpus only. |
-| [PD11](decisions/pd-11-launch.md) | Public launch on 12 October | Settled. The date moved on 2026-09-26. Changed on 2026-10-27. | The public launch is on Monday 12 October, with Wednesday 14 October as the fallback, and the go/no-go list is the quality bar. |
+| [PD11](decisions/pd-11-launch.md) | Public launch on 8 November | Settled. The date moved on 2026-09-26. Changed on 2026-10-27. The date moved to 8 November on 2026-10-28 (T-33). | The public launch is on Sunday 8 November 2026 (IST), and the go/no-go list is the quality bar. |
 | [PD12](decisions/pd-12-team-plan.md) | Team plan: design-free waves, then screens | Settled. Cut again on 2026-09-25. Changed on 2026-10-03. The designs arrived on 2026-10-24. | All design-free work comes first, in waves, and the screens come when designs D-02, D-03 and D-04 arrive. |
 | [PD13](decisions/pd-13-databases-and-backups.md) | Databases and backups | Settled, as an exception. Changed on 2026-10-04. | The main and analytics databases are two free projects in one Supabase account, with a nightly dump of both to R2. |
 | [PD14](decisions/pd-14-v0-is-the-figma-designs.md) | v0 is the product in the Figma designs | Settled. Changed on 2026-10-26. | v0 is the product that the Figma designs show, with listings from owners, flatmates, PG operators and brokers; this replaces PD0. |
