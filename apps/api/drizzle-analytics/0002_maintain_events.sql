@@ -3,8 +3,8 @@ CREATE SCHEMA IF NOT EXISTS jobs;--> statement-breakpoint
 CREATE FUNCTION jobs.maintain_events(retention_months integer) RETURNS void LANGUAGE plpgsql SET search_path = '' AS $$
 DECLARE
 	first date := date_trunc('month', now() AT TIME ZONE 'UTC')::date;
-	-- The table of the oldest month that stays. The names sort by month.
-	oldest name := 'events_' || to_char(first - make_interval(months => retention_months), 'YYYY_MM');
+	-- The names sort by month.
+	oldest_kept name := 'events_' || to_char(first - make_interval(months => retention_months), 'YYYY_MM');
 	month date;
 	part text;
 BEGIN
@@ -18,7 +18,7 @@ BEGIN
 	END LOOP;
 	FOR part IN
 		SELECT c.relname FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid
-		WHERE i.inhparent = 'public.events'::regclass AND c.relname ~ '^events_\d{4}_\d{2}$' AND c.relname < oldest
+		WHERE i.inhparent = 'public.events'::regclass AND c.relname ~ '^events_\d{4}_\d{2}$' AND c.relname < oldest_kept
 	LOOP
 		EXECUTE format('DROP TABLE public.%I', part);
 	END LOOP;
