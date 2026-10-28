@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**161 of 319 done · 50%**
+**166 of 319 done · 52%**
 
 `████████████░░░░░░░░░░░░`
 
@@ -22,7 +22,7 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 8 / 11 | 24 / 35 | 69% |
+| [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
 | [[P2 Chat]] | 0 / 13 | 3 / 62 | 5% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
 | [[P4 Content and moderation]] | 4 / 8 | 24 / 34 | 71% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**32 free tasks are open · 111 build hours.**
+**31 free tasks are open · 108 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -60,7 +60,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-37 Articles and search]] | P4 | 3 | ⬜ can start | 1 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
-| 0 | [[T-39 Analytics database]] | P1 | 3 | ⬜ can start | 0 | [#68](https://github.com/magentawood/roomsie/issues/68) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 1 | [[T-11 Model wrapper ⚑]] | P2 | 4 | ⬜ waits | 10 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | 1 | [[T-14 Match query ⚑]] | P3 | 6 | 🟡 in progress | 6 | [#27](https://github.com/magentawood/roomsie/issues/27) |
@@ -150,7 +149,7 @@ flowchart LR
   T36["T-36<br/>Observer"]:::todo
   T37["T-37<br/>Articles and search"]:::ready
   T38["T-38<br/>Advisor"]:::todo
-  T39["T-39<br/>Analytics database"]:::ready
+  T39["T-39<br/>Analytics database"]:::done
   T40["T-40<br/>Nightly backups"]:::ready
   T41["T-41<br/>Listings API"]:::done
   T42["T-42<br/>Listing flow screens"]:::done
@@ -285,7 +284,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 24/35
+## P1 Platform — 29/35
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -305,7 +304,7 @@ flowchart LR
 > [!todo]- ✅ [[T-33 Invite-only gate]] · 2/2
 > ![[T-33 Invite-only gate#^done]]
 
-> [!todo]- ⬜ [[T-39 Analytics database]] · 0/5
+> [!todo]- ✅ [[T-39 Analytics database]] · 5/5
 > ![[T-39 Analytics database#^done]]
 
 > [!todo]- ⬜ [[T-40 Nightly backups]] · 0/3
