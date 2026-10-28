@@ -24,7 +24,6 @@ export function StartLooking({ light }: { light?: boolean }) {
   )
 }
 
-/** A mascot of the design. Each one is decoration. */
 export function Mascot({ name, className }: { name: 'sunglasses' | 'confused' | 'angry' | 'celebrating' | 'laptop'; className: string }) {
-  return <img src={`/landing/mascot-${name}.webp`} alt="" aria-hidden className={`pointer-events-none absolute object-contain ${className}`} />
+  return <img src={`/landing/mascot-${name}.webp`} alt="" className={`pointer-events-none absolute object-contain ${className}`} />
 }

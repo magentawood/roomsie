@@ -19,7 +19,7 @@ async function latestDetails(db: Db): Promise<SiteDetails> {
   const [row] = await db.select({
     instagram: siteDetails.instagram, whatsapp: siteDetails.whatsapp, facebook: siteDetails.facebook, linkedin: siteDetails.linkedin,
     contactEmail: siteDetails.contactEmail, orgNumber: siteDetails.orgNumber,
-  }).from(siteDetails).orderBy(desc(siteDetails.createdAt), desc(siteDetails.id)).limit(1)
+  }).from(siteDetails).orderBy(desc(siteDetails.createdAt)).limit(1)
   return row ?? noSiteDetails
 }
 

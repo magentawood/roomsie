@@ -578,9 +578,7 @@ export const quotes = pgTable('quotes', {
   /** The moderator who added the quote and confirmed that its person agreed. */
   addedBy: uuid('added_by').references(() => users.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
-}, (t) => ({
-  createdAtIdx: index('quotes_created_at_idx').on(t.createdAt),
-})).enableRLS()
+}).enableRLS()
 
 /** The links and details of the landing page (T-23a). Each save adds a row, and the newest row counts. The site module owns it. */
 export const siteDetails = pgTable('site_details', {
@@ -591,12 +589,9 @@ export const siteDetails = pgTable('site_details', {
   linkedin: text('linkedin'),
   contactEmail: text('contact_email'),
   orgNumber: text('org_number'),
-  /** The moderator who saved this version. */
   savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
-}, (t) => ({
-  createdAtIdx: index('site_details_created_at_idx').on(t.createdAt),
-})).enableRLS()
+}).enableRLS()
 
 /** Feedback from a signed-in person (T-23a, T-50). The feedback module owns it. */
 export const feedback = pgTable('feedback', {

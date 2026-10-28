@@ -28,8 +28,8 @@ export const queryKeys = {
   push: (userId: string) => ['push', userId],
   verification: ['verification'],
   idChecks: ['admin', 'id-checks'],
-  quotes: ['admin', 'quotes'],
-  feedback: ['admin', 'feedback'],
+  adminQuotes: ['admin', 'quotes'],
+  adminFeedback: ['admin', 'feedback'],
   site: ['site'],
 } as const
 
@@ -56,12 +56,12 @@ export function useReportQueue() {
 
 export function useAdminQuotes() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.quotes, queryFn: () => api(user, '/v1/admin/quotes', adminQuotesResponse) })
+  return useQuery({ queryKey: queryKeys.adminQuotes, queryFn: () => api(user, '/v1/admin/quotes', adminQuotesResponse) })
 }
 
-export function useFeedback() {
+export function useAdminFeedback() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.feedback, queryFn: () => api(user, '/v1/admin/feedback', feedbackResponse) })
+  return useQuery({ queryKey: queryKeys.adminFeedback, queryFn: () => api(user, '/v1/admin/feedback', feedbackResponse) })
 }
 
 export function useSite() {
