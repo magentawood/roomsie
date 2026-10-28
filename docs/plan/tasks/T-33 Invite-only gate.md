@@ -38,7 +38,7 @@ Keeps the public out until launch day.
 
 ## Spec
 
-**Approved:** 2026-10-28, by n3rxv. The changes in implement: approved on 2026-10-28, by n3rxv.
+**Approved:** 2026-10-28, by n3rxv. The changes in implement and review: approved on 2026-10-28, by n3rxv.
 
 - **Modules:**
   - **The invites module of the API (new):** it owns two tables. `invites` has one row for each invited email, in lower case. `invite_gate` has one row with the switch "invite only" and the opening time. Its interface: the check "is this person in", the reads and the changes for the admin page.
