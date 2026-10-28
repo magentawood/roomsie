@@ -36,8 +36,10 @@ merge to main ─▶ build image ─▶ push image ─▶ migrate and seed ─�
 - **One transaction.** If one statement fails, all new migrations roll back, and the deploy stops. The old API keeps running. Read the error in the "Migrate and seed" step.
 - **Do not change a committed migration.** Drizzle does not apply a file again, so the live database and the file disagree. Write a new migration.
 - Lines such as `schema "drizzle" already exists, skipping` in the step log are Postgres notices. They are not errors.
+- **Time in IST.** The two databases show each `timestamptz` in IST, for example `12:55:33+05:30`, because of their setting `timezone = Asia/Kolkata`. The stored moment does not change, and the API sends UTC (`…Z`). A date function in SQL names its zone, for example `date_trunc('day', now(), 'Asia/Kolkata')`, so it does not depend on the setting.
 
 ## Tickets
 
 - T-06: [#129](https://github.com/magentawood/roomsie/pull/129), 2026-10-24. The first migration.
 - T-51: [#137](https://github.com/magentawood/roomsie/pull/137), 2026-10-25. Migrations and the seed in the deploy.
+- IST: [#179](https://github.com/magentawood/roomsie/pull/179), 2026-10-28. The two databases show time in IST.

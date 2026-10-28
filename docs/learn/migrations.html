@@ -83,10 +83,12 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>One transaction.</strong> If one statement fails, all new migrations roll back, and the deploy stops. The old API keeps running. Read the error in the "Migrate and seed" step.</li>
 <li><strong>Do not change a committed migration.</strong> Drizzle does not apply a file again, so the live database and the file disagree. Write a new migration.</li>
 <li>Lines such as <code>schema "drizzle" already exists, skipping</code> in the step log are Postgres notices. They are not errors.</li>
+<li><strong>Time in IST.</strong> The two databases show each <code>timestamptz</code> in IST, for example <code>12:55:33+05:30</code>, because of their setting <code>timezone = Asia/Kolkata</code>. The stored moment does not change, and the API sends UTC (<code>…Z</code>). A date function in SQL names its zone, for example <code>date_trunc('day', now(), 'Asia/Kolkata')</code>, so it does not depend on the setting.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-06: <a href="https://github.com/magentawood/roomsie/pull/129">#129</a>, 2026-10-24. The first migration.</li>
 <li>T-51: <a href="https://github.com/magentawood/roomsie/pull/137">#137</a>, 2026-10-25. Migrations and the seed in the deploy.</li>
+<li>IST: <a href="https://github.com/magentawood/roomsie/pull/179">#179</a>, 2026-10-28. The two databases show time in IST.</li>
 </ul>
 </main>
