@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**170 of 320 done · 53%**
+**170 of 321 done · 53%**
 
 `█████████████░░░░░░░░░░░`
 
@@ -27,7 +27,7 @@ This note is part of [[roomsie launch]].
 | [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
-| [[Design]] | 4 / 6 | 8 / 11 | 73% |
+| [[Design]] | 4 / 6 | 8 / 12 | 67% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
 | [[Founder]] | 6 / 14 | 19 / 41 | 46% |
@@ -466,7 +466,7 @@ flowchart LR
 > ![[T-16b Profile screens ⚑#^done]]
 
 
-## Design — 8/11
+## Design — 8/12
 
 > [!todo]- ✅ [[D-01 Styling decision]] · 1/1
 > ![[D-01 Styling decision#^done]]
@@ -483,7 +483,7 @@ flowchart LR
 > [!todo]- ⬜ [[D-05 Design QA]] · 0/2
 > ![[D-05 Design QA#^done]]
 
-> [!todo]- ⬜ [[D-06 Launch visuals]] · 0/1
+> [!todo]- ⬜ [[D-06 Launch visuals]] · 0/2
 > ![[D-06 Launch visuals#^done]]
 
 

@@ -30,6 +30,33 @@ The images for the launch-day posts.
 - No task waits on this task.
 
 ## Done when
-- [ ] Social post images and link preview images exist
+- [ ] Link preview images exist
+- [ ] Social post images exist, with the words of the launch posts (M-07)
 
 ^done
+
+## Spec
+
+**Approved:** 2026-10-29, by n3rxv
+
+- **Modules:**
+  - **The listings module of the API:** a new public route gives the preview of a live listing. The other routes do not change.
+  - **The contract:** the schema of the preview.
+  - **The web:** the default share card, the share card and the page title of a listing, the site icon, and one renderer for all share cards.
+  - **The Figma drafts page:** section 31, the two new share cards and the layouts of the social images.
+  - **The plan:** the done item "Social post images and link preview images exist" becomes two items.
+- **Seams for the tests:**
+  - The API tests: the preview of a live listing gives its title, area, lowest rent and first photo, with no sign-in. A listing that is not live, and an unknown id, give 404.
+  - A check of a production build: the default card, the card of a listing with a photo, the card of a paused listing, the page title of a listing, and the site icon.
+- **Decisions:**
+  - **The default link preview:** one card for `roomsie.in` and for each page that has no card of its own, in the style of the blog cards: the dark background, the logo, the landing line "Find where you'll live. And who with." and `roomsie.in`. The user decided this in the grill.
+  - **The link preview of a listing:** the API gives only the fields of a public result card: the title from `listingTitle`, the area, the lowest rent and the first photo. It gives them only for a live listing (why: PD6b, browse needs no sign-in). The card puts the photo under the dark overlay of the blog cards, with the logo, the title and the rent. A listing that is not live gets the default card. Opening the listing still needs sign-in. The user decided this in the grill.
+  - **The site icon:** a favicon and an icon for the home screen of a phone, from the logo mark.
+  - **One renderer:** the renderer of the blog cards makes all the share cards.
+  - **The social images:** the launch message in three sizes (a feed post of 1080 × 1350, a Story or WhatsApp status of 1080 × 1920, and LinkedIn or X at 1200 × 627), and a carousel of four slides of 1080 × 1350 on how Roomsie works. The user decided this in the grill.
+  - **The words of the social images:** they come from the launch posts of marketing (M-07). Until then, the layouts have placeholder words. The user decided this in the grill.
+  - **The design:** section 31 of the Figma drafts page, with our tokens. The user approves it before the code.
+  - **The done items:** "Social post images and link preview images exist" becomes "Link preview images exist" and "Social post images exist, with the words of the launch posts (M-07)". The user approved this in the grill, on 2026-10-29.
+- **Out of scope:**
+  - the final words and the exported images of the social posts (they wait for M-07)
+  - a share card for the profile of a person

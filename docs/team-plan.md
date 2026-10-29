@@ -946,7 +946,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/extensibility.md`
 
 **D-06 · Launch visuals** — done when:
-- Social post images and link preview images exist
+- Link preview images exist
+- Social post images exist, with the words of the launch posts (M-07)
 
 **T-09 · Chip flow for intent, area, budget** — done when:
 - Intent shows as the five place types of PD15, area as the area groups of PD2, and budget as bands
