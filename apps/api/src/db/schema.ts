@@ -64,7 +64,8 @@ export const whoCanMoveInEnum = pgEnum('who_can_move_in', whoCanMoveIn)
 export const mustHaveWeightEnum = pgEnum('must_have_weight', ['prefer', 'dealbreaker'])
 
 /** Where a value came from. T-08's fourth state, `empty`, is the absence of a
- *  row — we never store "we don't know". */
+ *  row — we never store "we don't know". No code writes `inferred` (PD15); the
+ *  value stays because Postgres cannot simply drop an enum value. */
 export const sourceEnum = pgEnum('answer_source', ['stated', 'inferred', 'default'])
 
 /* ── identity ───────────────────────────────────────────────────────────── */
