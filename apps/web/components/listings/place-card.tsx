@@ -14,7 +14,7 @@ export function PlaceCard({ listing, areaName, action, label, onOpen }: {
   const rent = rentAmount(listing)
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
-      <CardLink href={href} onOpen={onOpen} hidden className="block aspect-3/2 bg-tertiary">
+      <CardLink href={href} onOpen={onOpen} decorative className="block aspect-3/2 bg-tertiary">
         {photo
           ? <img src={photo.url} alt="" className="size-full object-cover" />
           : <span className="flex size-full items-center justify-center text-fg-quaternary"><Home02 size={32} aria-hidden /></span>}

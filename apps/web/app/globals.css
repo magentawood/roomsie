@@ -37,6 +37,7 @@
   --color-yellow-25: #fefce8;
   --color-blue-50: #eff6ff;
   --color-blue-200: #bfdbfe;
+  --color-blue-500: #3b82f6;
   --color-blue-700: #1d4ed8;
   --color-orange-100: #ffedd5;
   --color-rose-50: #f9ebea;
@@ -92,6 +93,7 @@
   --background-color-dot-gray: var(--color-gray-500);
   --background-color-dot-warning: var(--color-yellow-500);
   --background-color-dot-accent: var(--color-purple-400);
+  --background-color-dot-blue: var(--color-blue-500);
   --background-color-primary-solid: var(--color-gray-900);
 
   /* Borders: border-primary, border-brand, … */
