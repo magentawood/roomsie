@@ -4,7 +4,7 @@ import type { CardResponse } from '@roomsie/contract'
 import { aboutLine, budgetLine, initials, lifestyleSummary, lookingFor } from '../../lib/person'
 import { shortDate } from '../../lib/place-detail'
 import { Badge } from '../ui/badge'
-import { CardLink } from '../ui/card-link'
+import { CardLabel, CardLink } from '../ui/card-link'
 
 /** The person card of sections 14 and 19 of the drafts. `label`: the match label over the photo (T-15). */
 export function PersonCard({ card, action, label, onOpen }: { card: CardResponse; action?: ReactNode; label?: ReactNode; onOpen?: () => void }) {
@@ -23,7 +23,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
           ? <img src={photo.url} alt="" className="size-full object-cover" />
           : <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials(card.fullName)}</span>}
       </CardLink>
-      {label && <div className="absolute top-3 left-3">{label}</div>}
+      <CardLabel>{label}</CardLabel>
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{card.fullName}</CardLink></h3>
