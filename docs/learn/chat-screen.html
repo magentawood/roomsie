@@ -61,8 +61,8 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>apps/web/components/chat/chat-screen.tsx</code></td>
 </tr>
 <tr>
-<td>The send rule</td>
-<td><code>apps/web/lib/chat.ts</code>: <code>keyAction</code> and <code>canSend</code>, with a unit test</td>
+<td>The send rule and the stored chat</td>
+<td><code>apps/web/lib/chat.ts</code>: <code>keyAction</code>, <code>canSend</code>, <code>readStored</code> and <code>forgetChat</code>, with unit tests</td>
 </tr>
 <tr>
 <td>The wall</td>
@@ -79,7 +79,8 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The assistant is not live yet.</strong> A sent message shows in the thread with one line of the screen. Nothing goes to the API, and a reload clears the thread. T-12 replaces the line with its turn route.</li>
+<li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The first message starts a goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
+<li><strong>A reload opens the same chat.</strong> Local storage keeps the id of the open goal and the visitor key, never a sign-in token. A sign-out removes both, so the next person on the browser cannot open the chat.</li>
 <li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
 <li><strong>A link from outside</strong> to a page that needs an account still opens the full-page sign-in of <code>SignInGate</code>.</li>
 <li><strong><code>AppShell fixed</code></strong> makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.</li>
@@ -97,9 +98,11 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The thread grows upward.</strong> Its list is in a <code>flex-col-reverse</code> box, so a scroll of 0 shows the newest message.</li>
 <li><strong>The Google mark keeps its own colours.</strong> It is the file <code>public/icons/google.svg</code>, not a component, because components use theme tokens only.</li>
 <li><strong>The legal line links to <code>/terms</code> and <code>/privacy</code>.</strong> T-23b makes those pages.</li>
+<li><strong>Local storage can throw</strong> in a private window. Then the chat works until a reload.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-10: <a href="https://github.com/magentawood/roomsie/pull/172">#172</a>, 2026-10-27. The chat screen, the input, the sign-in wall, the shell of a guest, and "Start looking" on the home stub. The results and the split view wait for T-08, T-14 and T-15.</li>
+<li>T-12: <a href="https://github.com/magentawood/roomsie/pull/189">#189</a>, 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.</li>
 </ul>
 </main>

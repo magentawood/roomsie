@@ -20,7 +20,7 @@ a role (T-12, T-13, …) ──▶ models.json() or models.text() ──▶ Deep
 ```
 
 - **One module:** `apps/api/src/models/`. No other code calls a model ([PD7](../decisions/pd-07-models.md), [ADR-0014](../decisions/0014-error-tracking.md)). It sends the chat request of the OpenAI format with `fetch`, because both vendors accept it.
-- **Two kinds of call:** `models.json({ req, role, system, messages, schema, session })` asks in the JSON mode of the vendor and parses the answer with the Zod `schema`. `models.text({ … })` gives text, for the composer and the Advisor.
+- **Three kinds of call:** `models.json({ req, role, system, messages, schema, session })` asks in the JSON mode of the vendor and parses the answer with the Zod `schema`. `models.scored({ … })` does the same, and also gives the probability of each token, for the gate of the extractor ([the assistant turn](assistant-turn.md)). `models.text({ … })` gives text, for the composer and the Advisor.
 - **The fallback:** each failure of DeepSeek goes to Gemini: a timeout, a lost connection, a 5xx or a 4xx. The module also reports a 4xx from DeepSeek, because a person must fix a bad key or an empty balance. An answer that fails the schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the module reports the error and throws `ModelUnavailable`. The role then selects what the user sees.
 - **The record:** each attempt writes the analytics event `model_called` with the role, the model, the tokens in, the cached tokens, the tokens out, the time, the fallback, the outcome and the session. The sum of the tokens of one session gives the cost of one interview ([PD5](../decisions/pd-05-team-and-budget.md)). The event has no text.
 - **The settings:** `DEEPSEEK_API_KEY` and `GEMINI_API_KEY`. Without both, the API calls no model. `MODEL_PRIMARY`, `MODEL_FALLBACK` and `MODEL_TIMEOUT_MS` have defaults. A model name that starts with `deepseek-` goes to DeepSeek, and a name that starts with `gemini-` goes to Gemini. With a name of a different vendor, the API does not start.
@@ -37,8 +37,10 @@ a role (T-12, T-13, …) ──▶ models.json() or models.text() ──▶ Deep
 - In the JSON mode, the prompt must contain the word "json" and show the shape of the answer. If not, a vendor can refuse the call.
 - A bad key or an empty balance of DeepSeek does not stop the chat, because Gemini answers. Read the reports, and use the check route after each deploy.
 - DeepSeek costs more from 06:30 to 09:30 and from 11:30 to 15:30 IST, from Monday to Friday ([model selection](../model-selection.md)).
-- In the tests, stub the global `fetch`. The tests of `apps/api/test/models.test.ts` show how.
+- Only DeepSeek gets the field `logprobs`. Gemini refuses it, so a scored call to Gemini gives `tokens: null`.
+- In the tests, stub the global `fetch` with `fakeVendors()` of `apps/api/test/vendors.ts`.
 
 ## Tickets
 
 - T-11: [#186](https://github.com/magentawood/roomsie/pull/186), 2026-11-02. The module, the fallback, the event and the check route.
+- T-12: [#189](https://github.com/magentawood/roomsie/pull/189), 2026-11-02. The scored call, with the token probabilities of DeepSeek.
