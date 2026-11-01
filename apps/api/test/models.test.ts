@@ -28,8 +28,8 @@ function fakeVendors(replies: { deepseek?: (Response | Error)[]; gemini?: (Respo
 const answer = (content: string, usage: Record<string, unknown> = { prompt_tokens: 120, completion_tokens: 8, prompt_cache_hit_tokens: 100 }) =>
   Response.json({ choices: [{ message: { role: 'assistant', content } }], usage })
 const timeout = () => new DOMException('The operation timed out.', 'TimeoutError')
-/** A response whose headers came, and whose body timed out. */
-const slowBody = () => ({ ok: true, status: 200, json: () => Promise.reject(timeout()) }) as unknown as Response
+/** A response whose headers came, and whose body then failed. */
+const brokenBody = (err: Error) => ({ ok: true, status: 200, json: () => Promise.reject(err) }) as unknown as Response
 
 /** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
 function fakeRequest() {
@@ -64,10 +64,13 @@ describe('the models module', () => {
   })
 
   it.each([
-    ['a timeout', timeout()],
-    ['a 5xx', new Response('busy', { status: 503 })],
-    ['a 429', new Response('slow down', { status: 429 })],
-  ])('asks Gemini one time after %s', async (_case, failure) => {
+    ['a timeout', timeout(), false],
+    ['a 5xx', new Response('busy', { status: 503 }), false],
+    ['a 429', new Response('slow down', { status: 429 }), false],
+    ['a body that times out', brokenBody(timeout()), false],
+    ['a connection lost while the body arrives', brokenBody(new TypeError('terminated')), false],
+    ['a 4xx other than 429, such as a bad key, and reports it', new Response('bad key', { status: 401 }), true],
+  ])('asks Gemini one time after %s', async (_case, failure, reported) => {
     const requests = fakeVendors({ deepseek: [failure], gemini: [answer('{"intent":"flatmate"}', { prompt_tokens: 90, completion_tokens: 6, prompt_tokens_details: { cached_tokens: 64 } })] })
     const { req, events } = fakeRequest()
     expect(await ask(req)).toEqual({ intent: 'flatmate' })
@@ -75,6 +78,7 @@ describe('the models module', () => {
     expect(requests[1]).toMatchObject({ authorization: 'Bearer gemini-key', body: { model: 'gemini-3.5-flash-lite' } })
     expect(events.map((e) => 'outcome' in e && [e.model, e.outcome, e.fallback])).toEqual([['deepseek-flash', 'failed', false], ['gemini-3.5-flash-lite', 'ok', true]])
     expect(events[1]).toMatchObject({ tokensIn: 90, cachedTokensIn: 64, tokensOut: 6 })
+    expect(req.log.error).toHaveBeenCalledTimes(reported ? 1 : 0)
   })
 
   it('asks DeepSeek once more after an answer that fails its schema, then Gemini', async () => {
@@ -92,27 +96,15 @@ describe('the models module', () => {
     expect(requests.map((r) => r.url)).toEqual([deepseek, deepseek])
   })
 
-  it('asks Gemini at once when the body of DeepSeek times out', async () => {
-    const requests = fakeVendors({ deepseek: [slowBody()], gemini: [answer('{"intent":"room"}')] })
-    const { req, events } = fakeRequest()
-    expect(await ask(req)).toEqual({ intent: 'room' })
-    expect(requests.map((r) => r.url)).toEqual([deepseek, gemini])
-    expect(events.map((e) => 'outcome' in e && e.outcome)).toEqual(['failed', 'ok'])
-  })
-
-  it('asks Gemini after a 4xx other than 429, such as a bad key, and reports the 4xx', async () => {
-    const requests = fakeVendors({ deepseek: [new Response('bad key', { status: 401 })], gemini: [answer('{"intent":"room"}')] })
-    const { req } = fakeRequest()
-    expect(await ask(req)).toEqual({ intent: 'room' })
-    expect(requests.map((r) => r.url)).toEqual([deepseek, gemini])
-    expect(req.log.error).toHaveBeenCalled()
-  })
-
-  it('throws, and reports it, when Gemini also fails', async () => {
-    fakeVendors({ deepseek: [new Response('down', { status: 500 })], gemini: [timeout()] })
+  it('throws, and reports it one time, when Gemini also fails', async () => {
+    fakeVendors({ deepseek: [new Response('down', { status: 500 })], gemini: [new Response('bad key', { status: 401 })] })
     const { req } = fakeRequest()
     await expect(ask(req)).rejects.toBeInstanceOf(ModelUnavailable)
-    expect(req.log.error).toHaveBeenCalled()
+    expect(req.log.error).toHaveBeenCalledTimes(1)
+  })
+
+  it('refuses a model name of a third vendor', () => {
+    expect(() => modelSettings.parse({ ...keys, MODEL_PRIMARY: 'gpt-5' })).toThrow('deepseek-')
   })
 
   it('gives the text of a text call, with no JSON mode', async () => {

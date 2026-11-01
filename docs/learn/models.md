@@ -13,7 +13,7 @@
 
 ```
 a role (T-12, T-13, …) ──▶ models.json() or models.text() ──▶ DeepSeek (deepseek-flash)
-                                     │                         │ timeout, 5xx or 429
+                                     │                         │ each failure
                                      │                         ▼
                                      │                  Gemini (gemini-3.5-flash-lite)
                                      └──▶ the event model_called, and one log line for each attempt
@@ -21,9 +21,9 @@ a role (T-12, T-13, …) ──▶ models.json() or models.text() ──▶ Deep
 
 - **One module:** `apps/api/src/models/`. No other code calls a model ([PD7](../decisions/pd-07-models.md), [ADR-0014](../decisions/0014-error-tracking.md)). It sends the chat request of the OpenAI format with `fetch`, because both vendors accept it.
 - **Two kinds of call:** `models.json({ req, role, system, messages, schema, session })` asks in the JSON mode of the vendor and parses the answer with the Zod `schema`. `models.text({ … })` gives text, for the composer and the Advisor.
-- **The fallback:** each failure of DeepSeek goes to Gemini: a timeout, a lost connection, a 5xx or a 4xx. The module also reports a 4xx, because a person must fix a bad key or an empty balance. An answer that fails the schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the module reports the error and throws `ModelUnavailable`. The role then selects what the user sees.
+- **The fallback:** each failure of DeepSeek goes to Gemini: a timeout, a lost connection, a 5xx or a 4xx. The module also reports a 4xx from DeepSeek, because a person must fix a bad key or an empty balance. An answer that fails the schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the module reports the error and throws `ModelUnavailable`. The role then selects what the user sees.
 - **The record:** each attempt writes the analytics event `model_called` with the role, the model, the tokens in, the cached tokens, the tokens out, the time, the fallback, the outcome and the session. The sum of the tokens of one session gives the cost of one interview ([PD5](../decisions/pd-05-team-and-budget.md)). The event has no text.
-- **The settings:** `DEEPSEEK_API_KEY` and `GEMINI_API_KEY`. Without both, the API calls no model. `MODEL_PRIMARY`, `MODEL_FALLBACK` and `MODEL_TIMEOUT_MS` have defaults. A model name that starts with `gemini` goes to Gemini, and the others go to DeepSeek.
+- **The settings:** `DEEPSEEK_API_KEY` and `GEMINI_API_KEY`. Without both, the API calls no model. `MODEL_PRIMARY`, `MODEL_FALLBACK` and `MODEL_TIMEOUT_MS` have defaults. A model name that starts with `deepseek-` goes to DeepSeek, and a name that starts with `gemini-` goes to Gemini. With a name of a different vendor, the API does not start.
 - **The live check:** a moderator sends `POST /v1/admin/model-check`. The API asks each model one short question, with no fallback, and shows which model answered, the tokens and the time.
 
 ## The choice we made
