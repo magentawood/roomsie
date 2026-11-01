@@ -1,8 +1,8 @@
 import type { User } from 'firebase/auth'
 import type { z } from 'zod'
-import { errorResponse, incompleteListingResponse, inviteRefusalResponse, type GoLiveField, type InviteRefusal } from '@roomsie/contract'
+import { errorResponse, incompleteListingResponse, inviteRefusalResponse, visitorKeyHeader, type GoLiveField, type InviteRefusal } from '@roomsie/contract'
 import { apiUrl } from './api-url'
-import { chatHeaders, chatStorage, readStored } from './chat'
+import { chatStorage, readStored } from './chat'
 
 /** A response of the API that is not 2xx. `body` is the parsed JSON, if any. */
 export class ApiError extends Error {
@@ -11,6 +11,15 @@ export class ApiError extends Error {
     readonly body: unknown,
   ) {
     super(`The API answered ${status}`)
+  }
+}
+
+/** A signed-in person sends the token, and a visitor of the chat the key. Before T-17 moves a visitor goal, a person sends both. */
+export function requestHeaders(token: string | null, visitorKey: string | null, json: boolean): Record<string, string> {
+  return {
+    ...(token && { authorization: `Bearer ${token}` }),
+    ...(visitorKey && { [visitorKeyHeader]: visitorKey }),
+    ...(json && { 'content-type': 'application/json' }),
   }
 }
 
@@ -30,13 +39,13 @@ async function request<T>(path: string, headers: Record<string, string>, schema:
 
 /** Calls the API as the signed-in user. getIdToken() gives the cached token, and we never store it (ADR-0007). */
 export async function api<T>(user: User, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
-  return request(path, chatHeaders(await user.getIdToken(), null, options.body !== undefined), schema, options)
+  return request(path, requestHeaders(await user.getIdToken(), null, options.body !== undefined), schema, options)
 }
 
 /** Calls the API of the chat, which is open to a visitor (PD6b): with the token, the visitor key, or both. */
 export async function chatApi<T>(user: User | null, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
   const token = user ? await user.getIdToken() : null
-  return request(path, chatHeaders(token, readStored(chatStorage.visitorKey), options.body !== undefined), schema, options)
+  return request(path, requestHeaders(token, readStored(chatStorage.visitorKey), options.body !== undefined), schema, options)
 }
 
 export function errorText(err: unknown) {

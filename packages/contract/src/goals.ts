@@ -29,6 +29,7 @@ export type TurnResponse = z.infer<typeof turnResponse>
 
 /** What the extractor reads: the typed turn and the last question of the assistant, never the full chat. */
 export const extractorInput = z.object({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
+export type ExtractorInput = z.output<typeof extractorInput>
 
 const choice = <V extends readonly [string, ...string[]]>(values: V) => z.enum(values).nullish()
 const answer = <A extends LifestyleAxis>(axis: A) => z.enum([...lifestyleAnswers[axis], 'unclear']).nullish()
@@ -51,7 +52,6 @@ export const extractorAnswer = z.object({
   } satisfies Record<LifestyleAxis, z.ZodType>).nullish(),
   mustHaves: z.partialRecord(z.enum(mustHaveKeys), choice([...mustHaveWeights, 'unclear'])).nullish(),
 })
-export type ExtractorAnswer = z.infer<typeof extractorAnswer>
 
 /** What an assistant turn keeps: the slot that it asked about, and if the question is a conflict of two values (PD3b). */
 export const assistantParts = z.object({
@@ -59,3 +59,7 @@ export const assistantParts = z.object({
   asked: z.object({ slot: z.enum(formASlots), conflict: z.boolean() }).nullable(),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
+
+/** What the reply writer gives: the text of the reply, and what the turn keeps. */
+export const assistantReply = z.object({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
+export type AssistantReply = z.output<typeof assistantReply>

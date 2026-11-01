@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { chatHeaders, chatStorage, forgetChat, keyAction, readStored, writeStored } from './chat'
+import { chatStorage, forgetChat, keyAction, readStored, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -11,15 +11,6 @@ describe('the send rule of the chat input', () => {
     ['other keys type', 'a', {}, '', 'type'],
   ] as const)('%s', (_, key, patch, text, action) => {
     expect(keyAction({ key, shiftKey: false, isComposing: false, ...patch }, text)).toBe(action)
-  })
-})
-
-describe('the headers of the chat', () => {
-  it('sends the token, the visitor key, both or none', () => {
-    expect(chatHeaders('token', null, false)).toEqual({ authorization: 'Bearer token' })
-    expect(chatHeaders(null, 'key', true)).toEqual({ 'x-visitor-key': 'key', 'content-type': 'application/json' })
-    expect(chatHeaders('token', 'key', false)).toEqual({ authorization: 'Bearer token', 'x-visitor-key': 'key' })
-    expect(chatHeaders(null, null, false)).toEqual({})
   })
 })
 

@@ -63,7 +63,7 @@ function EmptyChat({ onSend }: { onSend: (text: string) => void }) {
   )
 }
 
-type Turn = { id: string; role: 'user' | 'assistant'; text: string }
+type Turn = GoalResponse['turns'][number]
 
 /** The goal of this browser, kept in local storage, so a reload opens the same chat. */
 function useChat() {

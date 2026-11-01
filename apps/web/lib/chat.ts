@@ -1,5 +1,3 @@
-import { visitorKeyHeader } from '@roomsie/contract'
-
 export const canSend = (text: string) => text.trim().length > 0
 
 /** What a key does in the chat input. `block`: Enter on a blank message adds no line. */
@@ -31,12 +29,3 @@ export function writeStored(key: StoredKey, value: string | null) {
 }
 /** At sign-out, so the next person on this browser cannot open the chat. */
 export const forgetChat = () => Object.values(chatStorage).forEach((key) => writeStored(key, null))
-
-/** A signed-in person sends the token, and a visitor the key. Before T-17 moves a visitor goal, a person sends both. */
-export function chatHeaders(token: string | null, visitorKey: string | null, json: boolean): Record<string, string> {
-  return {
-    ...(token && { authorization: `Bearer ${token}` }),
-    ...(visitorKey && { [visitorKeyHeader]: visitorKey }),
-    ...(json && { 'content-type': 'application/json' }),
-  }
-}

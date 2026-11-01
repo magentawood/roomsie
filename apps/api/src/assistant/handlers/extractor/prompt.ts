@@ -1,4 +1,4 @@
-import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers } from '@roomsie/contract'
+import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers, type ExtractorInput } from '@roomsie/contract'
 import type { Catalogue } from '../../catalogue'
 
 const list = (values: readonly string[]) => values.join(' | ')
@@ -50,5 +50,5 @@ ${areas}`
 }
 
 /** The message of one turn. The model gets the last question, never the full chat (PD7a). */
-export const extractorMessage = (text: string, lastQuestion: string | null) =>
+export const extractorMessage = ({ text, lastQuestion }: ExtractorInput) =>
   `${lastQuestion ? `Last question of the assistant: ${lastQuestion}\n` : ''}Message of the person: ${text}`

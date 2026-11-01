@@ -4,7 +4,8 @@ import { listAreas } from '../areas'
 import type { Db } from '../db/client'
 import { lifestyleAxes, mustHaves } from '../db/schema'
 
-const normal = (words: string) => words.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+/** Letters and digits of each script, so a word in Devanagari stays. */
+const normal = (words: string) => words.toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
 
 /** The seed data that the assistant reads: the areas with their names, and the labels of the questions. */
 async function load(db: Db) {
@@ -21,6 +22,11 @@ async function load(db: Db) {
   return {
     areas,
     names: new Map(areas.map((a) => [a.slug, a.name])),
+    /** The name and the aliases of an area. */
+    namesOf: (slug: string) => {
+      const area = areas.find((a) => a.slug === slug)
+      return area ? [area.name, ...area.aliases] : []
+    },
     /** The areas of a name that the person typed, or none for a name that is not in the seed. */
     areasNamed: (words: string) => byName.get(normal(words)) ?? [],
     questions: new Map(axes.map((a) => [a.key as LifestyleAxis, a.question])),

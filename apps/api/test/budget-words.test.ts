@@ -33,11 +33,15 @@ describe('the budget parser', () => {
     ['15 se 20 hazaar', { min: 15_000, max: 20_000 }],
     ['between 12 and 18k', { min: 12_000, max: 18_000 }],
     ['20-15k', { min: 15_000, max: 20_000 }],
+    ['२०,००० तक', { min: null, max: 20_000 }],
+    ['बीस हज़ार', { min: null, max: 20_000 }],
+    ['पंधरा हजार', { min: null, max: 15_000 }],
+    ['1.5 लाख', { min: null, max: 150_000 }],
   ])('reads %s', (words, budget) => {
     expect(parseBudget(words)).toEqual(budget)
   })
 
-  it.each(['affordable', 'not too much', 'kuch bhi', '', 'k', 'lakh'])('reads nothing in %j', (words) => {
+  it.each(['affordable', 'not too much', 'kuch bhi', '', 'k', 'lakh', '500', 'under 800'])('reads nothing in %j', (words) => {
     expect(parseBudget(words)).toBeNull()
   })
 })

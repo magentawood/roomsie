@@ -21,7 +21,7 @@ import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
 import { feedbackRoutes } from './feedback/routes'
 import { goalRoutes } from './goals/routes'
-import { todayInIst } from './assistant/handlers/extractor/extractor'
+import { todayInIst } from './ist'
 import { assistantSettings, type AssistantSettings } from './assistant/settings'
 import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
@@ -50,7 +50,7 @@ declare module 'fastify' {
 }
 
 export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; today?: () => string } & AuthOptions) {
-  const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
+  const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
