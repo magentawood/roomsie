@@ -419,6 +419,8 @@ export const listingFlatmates = pgTable('listing_flatmates', {
 
 export const anonymousSessions = pgTable('anonymous_sessions', {
   id: id(),
+  /** The SHA-256 of the visitor key. Only the browser has the key, so a log line with the id opens no chat (T-12). */
+  keyHash: text('key_hash').notNull(),
   /** Per-device, per-network hash. Feeds the rate limits in T-21. */
   deviceHash: text('device_hash').notNull(),
   /** Typed turns only — chip taps are free and do not count (T-21). */
@@ -429,6 +431,7 @@ export const anonymousSessions = pgTable('anonymous_sessions', {
   lastSeenAt: timestamp('last_seen_at', { withTimezone: true }).notNull().defaultNow(),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 }, (t) => ({
+  keyIdx: uniqueIndex('anonymous_sessions_key_idx').on(t.keyHash),
   deviceIdx: index('anonymous_sessions_device_idx').on(t.deviceHash),
   claimedIdx: index('anonymous_sessions_claimed_idx').on(t.claimedByUserId),
 })).enableRLS()

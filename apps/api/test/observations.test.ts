@@ -23,7 +23,7 @@ const newUser = async () => {
 }
 const newSession = async () => {
   const [session] = await testDb.db.insert(anonymousSessions)
-    .values({ deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) }).returning()
+    .values({ keyHash: crypto.randomUUID(), deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) }).returning()
   return { anonymousSessionId: session!.id } satisfies Owner
 }
 

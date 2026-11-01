@@ -4,8 +4,9 @@ import { deletePushTokensOf } from './alerts/read'
 import { copyBlocksAgainst } from './blocks/read'
 import type { Db } from './db/client'
 import { deleteFeedbackOf } from './feedback/read'
-import { anonymousSessions, goals, users } from './db/schema'
+import { users } from './db/schema'
 import type { FirebaseAdmin } from './firebase-admin'
+import { deleteGoalsOf } from './goals/store'
 import type { IdStore } from './id-store'
 import { deactivateListingsOf, deleteListingsOf, listingPhotoKeysOf } from './listings/read'
 import { deleteObservationsOf } from './observations/read'
@@ -34,7 +35,7 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * and Firebase deletes are idempotent, so if a step fails, a retry is safe. If the
  * photos went last, a failure would leave photos that no row points to.
  *
- * Each module deletes its own rows. The account module owns `goals` and `anonymous_sessions` until the assistant has a module.
+ * Each module deletes its own rows.
  *
  * The events stay, but the analytics id goes, so no event points to the person (T-24).
  *
@@ -59,9 +60,7 @@ export async function deleteAccount(
     await endOpenRequests(tx, userId)
     await deleteListingsOf(tx, userId)
     await deleteObservationsOf(tx, userId)
-    // The cascades remove the chat turns and the goals of a claimed visitor session.
-    await tx.delete(goals).where(eq(goals.userId, userId))
-    await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
+    await deleteGoalsOf(tx, userId)
     await deleteProfileOf(tx, userId)
     await deleteSavesOf(tx, userId)
     await deletePushTokensOf(tx, userId)

@@ -20,6 +20,7 @@ const app = buildServer({
   idStore: env.idStore,
   models: env.models,
   matching: env.matching,
+  assistant: env.assistant,
   storage: r2Storage({
     accountId: env.R2_ACCOUNT_ID,
     accessKeyId: env.R2_ACCESS_KEY_ID,

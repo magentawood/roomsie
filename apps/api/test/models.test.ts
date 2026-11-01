@@ -8,25 +8,8 @@ import { modelSettings } from '../src/models/settings'
 import { events as eventRows } from '../src/analytics/schema'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
+import { answer, deepseek, fakeVendors, gemini, keys } from './vendors'
 
-const deepseek = 'https://api.deepseek.com/chat/completions'
-const gemini = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
-const keys = { DEEPSEEK_API_KEY: 'deepseek-key', GEMINI_API_KEY: 'gemini-key' }
-
-/** Each vendor answers with the next reply of its list. A reply that is an Error makes fetch throw it, as a timeout does. */
-function fakeVendors(replies: { deepseek?: (Response | Error)[]; gemini?: (Response | Error)[] }) {
-  const requests: { url: string; body: Record<string, unknown>; authorization: string | null }[] = []
-  vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
-    requests.push({ url, body: JSON.parse(String(init.body)), authorization: new Headers(init.headers).get('authorization') })
-    const reply = (url === deepseek ? replies.deepseek : replies.gemini)?.shift()
-    if (!reply) throw new Error(`no reply left for ${url}`)
-    if (reply instanceof Error) throw reply
-    return reply
-  })
-  return requests
-}
-const answer = (content: string, usage: Record<string, unknown> = { prompt_tokens: 120, completion_tokens: 8, prompt_cache_hit_tokens: 100 }) =>
-  Response.json({ choices: [{ message: { role: 'assistant', content } }], usage })
 const timeout = () => new DOMException('The operation timed out.', 'TimeoutError')
 /** A response whose headers came, and whose body then failed. */
 const brokenBody = (err: Error) => ({ ok: true, status: 200, json: () => Promise.reject(err) }) as unknown as Response
@@ -112,6 +95,21 @@ describe('the models module', () => {
     const { req } = fakeRequest()
     expect(await models.text({ req, role: 'composer', system: 'Reply in the language of the user.', messages: [{ role: 'user', content: 'Powai?' }], session: null })).toBe('Powai has many rooms near the lake.')
     expect(requests[0]!.body).not.toHaveProperty('response_format')
+  })
+
+  it('gives the token probabilities of DeepSeek in a scored call', async () => {
+    const tokens = [{ token: '{"intent":"', logprob: -0.01 }, { token: 'room', logprob: -0.4 }, { token: '"}', logprob: 0 }]
+    const requests = fakeVendors({ deepseek: [answer('{"intent":"room"}', undefined, tokens)] })
+    const { req } = fakeRequest()
+    expect(await models.scored({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: intent, session })).toEqual({ value: { intent: 'room' }, tokens })
+    expect(requests[0]!.body).toMatchObject({ logprobs: true, response_format: { type: 'json_object' } })
+  })
+
+  it('asks Gemini with no logprobs field, because Gemini refuses it, and gives no probabilities', async () => {
+    const requests = fakeVendors({ deepseek: [new Response('busy', { status: 503 })], gemini: [answer('{"intent":"room"}')] })
+    const { req } = fakeRequest()
+    expect(await models.scored({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: intent, session })).toEqual({ value: { intent: 'room' }, tokens: null })
+    expect(requests[1]!.body).not.toHaveProperty('logprobs')
   })
 })
 
