@@ -38,10 +38,10 @@ One piece of code that talks to the AI. If DeepSeek is down, it silently changes
 - [[T-38 Advisor]]
 
 ## Done when
-- [ ] One module is the only way the app calls a model
-- [ ] The model wrapper calls DeepSeek V4.1 Flash first. It calls Gemini if there is a timeout, a 5xx or a rate limit
-- [ ] If output fails Zod, the call retries one time, then goes to Gemini
-- [ ] It logs tokens in, tokens out and the model for every call. The system prompt is cached
+- [x] One module is the only way the app calls a model · [#186](https://github.com/magentawood/roomsie/pull/186)
+- [x] The model wrapper calls DeepSeek V4.1 Flash first. It calls Gemini if there is a timeout, a 5xx or a rate limit · [#186](https://github.com/magentawood/roomsie/pull/186)
+- [x] If output fails Zod, the call retries one time, then goes to Gemini · [#186](https://github.com/magentawood/roomsie/pull/186)
+- [x] It logs tokens in, tokens out and the model for every call. The system prompt is cached · [#186](https://github.com/magentawood/roomsie/pull/186)
 
 ^done
 
@@ -71,3 +71,13 @@ One piece of code that talks to the AI. If DeepSeek is down, it silently changes
   - the gate on token probability for `unclear` (T-12)
   - the daily spend ceiling (T-21). The module gives the token counts only.
   - the prompts of each role (T-12, T-13, T-34, T-36, T-38)
+
+## Log
+
+- **2026-11-02 · [#186](https://github.com/magentawood/roomsie/pull/186)**
+  - **Change:** `apps/api/src/models/` is the only code that calls a model. `models.json()` asks DeepSeek in its JSON mode and parses the answer with a Zod schema, and `models.text()` gives text. Each failure of DeepSeek goes one time to Gemini. An answer that fails its schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the module reports the error and throws `ModelUnavailable`. Each attempt writes the analytics event `model_called` and one log line. A moderator checks the two keys with `POST /v1/admin/model-check`.
+  - **Why:** one module calls the models of [PD7](../../decisions/pd-07-models.md), and the tokens of each session give the cost of an interview ([PD5](../../decisions/pd-05-team-and-budget.md)).
+  - **Ticked:** all four items.
+  - **Not done:** none. The live check of the two keys comes after the deploy.
+  - **Learn:** [The model wrapper](../../learn/models.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

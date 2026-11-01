@@ -29,7 +29,7 @@ a role (T-12, T-13, …) ──▶ models.json() or models.text() ──▶ Deep
 ## The choice we made
 
 - DeepSeek V4.1 Flash for all roles, and the Gemini Flash-Lite tier as the fallback: [PD7](../decisions/pd-07-models.md).
-- A record in the analytics database, and a check route for moderators: [#185](https://github.com/magentawood/roomsie/pull/185).
+- A record in the analytics database, and a check route for moderators: [#186](https://github.com/magentawood/roomsie/pull/186).
 
 ## Gotchas
 
@@ -41,4 +41,4 @@ a role (T-12, T-13, …) ──▶ models.json() or models.text() ──▶ Deep
 
 ## Tickets
 
-- T-11: [#185](https://github.com/magentawood/roomsie/pull/185), 2026-11-02. The module, the fallback, the event and the check route.
+- T-11: [#186](https://github.com/magentawood/roomsie/pull/186), 2026-11-02. The module, the fallback, the event and the check route.
