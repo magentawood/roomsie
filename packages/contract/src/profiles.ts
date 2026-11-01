@@ -9,6 +9,7 @@ export const whosMovingAnswers = ['student', 'first_job', 'working', 'couple', '
 /** The answers of a parent about a son or daughter (PD15, PD16). */
 export const childTypes = ['student', 'first_job', 'working'] as const
 export const genders = ['male', 'female', 'non_binary'] as const
+export type Gender = (typeof genders)[number]
 /** The answers of the lifestyle question "What do you eat?" (PD15). */
 export const foodAnswers = ['veg', 'non_veg', 'eggetarian', 'jain'] as const
 export const lifestyleAnswers = {

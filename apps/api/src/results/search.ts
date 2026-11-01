@@ -2,12 +2,12 @@ import { sql } from 'drizzle-orm'
 import { mustHaveKeys, resultsPageSize, type Budget, type FormA, type ListingKind, type MatchResult, type MustHaveKey } from '@roomsie/contract'
 import { areaParents, lineage, matchingAreas, neighboursOf } from '../areas'
 import type { Db } from '../db/client'
+import { inOrder } from '../in-order'
 import { matchingListings } from '../listings/match'
 import { listingsByIds, listingView, partsOf } from '../listings/read'
 import { formBPoints } from '../observations/read'
 import { matchingPeople, searcherMustHaves, type SearcherAnswers } from '../profiles/match'
 import { answersFor, cardView, profileOf, profilesByIds } from '../profiles/read'
-import { inOrder } from '../in-order'
 import type { Storage } from '../storage'
 import type { Matching } from './settings'
 
@@ -54,34 +54,35 @@ export async function searchResults({ db, storage, matching }: Deps, form: FormA
   if (total > 0) return { results, total, suggestions: [] }
 
   // The next budget band, and the neighbouring area groups: one change at a time.
-  const max = filters.budget?.max
-  // Under 35k: the next band is "above 35k", with no maximum.
-  const nextBand = max != null && max <= budgetBands.at(-1)! ? budgetBands.find((band) => band > max) ?? null : undefined
+  const nextBand = nextBandOf(filters.budget?.max)
   const groups = [...new Set(picks.map((pick) => lineage(parentOf, pick).at(-1)!))]
   const neighbours = groups.length ? (await neighboursOf(db, groups)).slice(0, 2) : []
   const relaxed = [
-    ...(nextBand !== undefined ? [{ relaxed: { kind: 'budget' as const, max: nextBand }, filters: { ...filters, budget: { min: filters.budget!.min, max: nextBand } } }] : []),
+    ...(nextBand ? [{ relaxed: { kind: 'budget' as const, ...nextBand }, filters: { ...filters, budget: { min: filters.budget!.min, ...nextBand } } }] : []),
     ...neighbours.map((area) => ({ relaxed: { kind: 'area' as const, area }, filters: { ...filters, areas: matchingAreas(parentOf, [area]) } })),
   ]
   const suggestions = await Promise.all(relaxed.map(async (r) => ({ relaxed: r.relaxed, results: (await runSearch(r.filters, suggestedCards, 0)).results })))
   return { results, total, suggestions: suggestions.filter((s) => s.results.length) }
 }
 
-const labelsOf = (ranked: Ranked[]) => {
-  const byId = new Map(ranked.map((r) => [r.id, r]))
-  return (id: string) => ({ bestMatch: byId.get(id)!.bestMatch, didntSay: byId.get(id)!.didntSay })
+/** The next budget band. No maximum: the band "above 35k". Undefined: no next band, above 35k or with no budget. */
+function nextBandOf(max: number | null | undefined): { max: number | null } | undefined {
+  if (max == null || max > budgetBands.at(-1)!) return undefined
+  return { max: budgetBands.find((band) => band > max) ?? null }
 }
+
+const labelsOf = (ranked: Ranked[]) => new Map(ranked.map(({ id, ...labels }) => [id, labels]))
 
 async function personResults(db: Db, storage: Storage, ranked: Ranked[]): Promise<MatchResult[]> {
   const ids = ranked.map((r) => r.id)
   const [rows, answers] = await Promise.all([profilesByIds(db, ids), answersFor(db, ids)])
   const labels = labelsOf(ranked)
-  return inOrder(ids, rows).map((row) => ({ kind: 'person', card: cardView(row, answers(row.id), storage), ...labels(row.id) }))
+  return inOrder(ids, rows).map((row) => ({ kind: 'person', card: cardView(row, answers(row.id), storage), ...labels.get(row.id)! }))
 }
 
 async function listingResults(db: Db, storage: Storage, ranked: Ranked[], viewerUserId?: string): Promise<MatchResult[]> {
   const ids = ranked.map((r) => r.id)
   const [rows, parts] = await Promise.all([listingsByIds(db, ids), partsOf(db, ids)])
   const labels = labelsOf(ranked)
-  return inOrder(ids, rows).map((row) => ({ kind: 'listing', listing: listingView(row, parts(row.id), storage, row.ownerUserId === viewerUserId), ...labels(row.id) }))
+  return inOrder(ids, rows).map((row) => ({ kind: 'listing', listing: listingView(row, parts(row.id), storage, row.ownerUserId === viewerUserId), ...labels.get(row.id)! }))
 }

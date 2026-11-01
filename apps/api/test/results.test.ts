@@ -114,8 +114,11 @@ describe('people', () => {
     expect(await search(t, 'seeker', form, 2)).toMatchObject({ results: [], total: 8, page: 2 })
   })
 
-  it('gives nothing to an unclear intent, with no suggested posts', async () => {
-    expect(await search(t, 'seeker', { ...form, intent: stated('unclear') })).toMatchObject({ results: [], total: 0, suggestions: [] })
+  it.each([
+    ['an unclear intent', stated('unclear')],
+    ['an empty intent', { source: 'empty', value: null }],
+  ])('gives nothing to %s, with no suggested posts', async (_, intent) => {
+    expect(await search(t, 'seeker', { ...form, intent })).toMatchObject({ results: [], total: 0, suggestions: [] })
   })
 })
 
@@ -173,6 +176,15 @@ describe('the mapping of PD3a between people', () => {
     const ids = (await search(t, 'seeker', { ...base, moveDate: stated('2026-12-01') })).results.map(idOf)
     expect(ids).toContain(cards.early)
     expect(ids).not.toContain(cards.tooEarly)
+  })
+
+  it('counts only the preferences that apply to a person for Best match', async () => {
+    const labelOf = async (third: string) => (await search(t, 'seeker', {
+      ...base, mustHaves: { veg_kitchen: stated('prefer'), tidy_flatmates: stated('prefer'), [third]: stated('prefer') },
+    })).results.find((r) => idOf(r) === cards.veg)!.bestMatch
+    expect(await labelOf('no_alcohol')).toBe(true)
+    // "Couple friendly" does not apply to a person, so only two preferences count.
+    expect(await labelOf('couple_friendly')).toBe(false)
   })
 
   it('gives no Best match label for fewer than three preferences', async () => {
@@ -281,6 +293,10 @@ describe('listings', () => {
     for (const name of shown) expect(found).toContain(name)
     for (const name of hidden) expect(found).not.toContain(name)
     expect(found).toContain('ownerFlat')
+  })
+
+  it('never shows a searcher their own listings', async () => {
+    expect((await search(t, 'lister', form)).results).toEqual([])
   })
 
   it('shows a non-binary searcher only the listings open to all', async () => {
