@@ -39,15 +39,15 @@ Takes what a person wants and returns the people who fit.
 - [[T-22a Waitlist API]]
 
 ## Done when
-- [ ] It returns the matching people for a form state
-- [ ] It returns the matching listings too, as the `listing` kind of the results
-- [ ] The hard filters are area, budget with 10% leeway, move date, intent and the dealbreaker must-haves of PD3a
-- [ ] The results come in the Best Matches order of PD3a, with its Best match label
+- [x] It returns the matching people for a form state · [#187](https://github.com/magentawood/roomsie/pull/187)
+- [x] It returns the matching listings too, as the `listing` kind of the results · [#187](https://github.com/magentawood/roomsie/pull/187)
+- [x] The hard filters are area, budget with 10% leeway, move date, intent and the dealbreaker must-haves of PD3a · [#187](https://github.com/magentawood/roomsie/pull/187)
+- [x] The results come in the Best Matches order of PD3a, with its Best match label · [#187](https://github.com/magentawood/roomsie/pull/187)
 - [x] Blocked and suspended people never appear · [#59](https://github.com/magentawood/roomsie/pull/59)
-- [ ] The must-haves of the candidate apply back to the searcher, with the mapping of PD3a
-- [ ] A card with an unanswered dealbreaker shows below the full matches, with what is missing
-- [ ] The suggested posts use the next budget band or a neighbouring area group, from a seeded list
-- [ ] Each page of results fires the 'results shown' event through track() of T-24
+- [x] The must-haves of the candidate apply back to the searcher, with the mapping of PD3a · [#187](https://github.com/magentawood/roomsie/pull/187)
+- [x] A card with an unanswered dealbreaker shows below the full matches, with what is missing · [#187](https://github.com/magentawood/roomsie/pull/187)
+- [x] The suggested posts use the next budget band or a neighbouring area group, from a seeded list · [#187](https://github.com/magentawood/roomsie/pull/187)
+- [x] Each page of results fires the 'results shown' event through track() of T-24 · [#187](https://github.com/magentawood/roomsie/pull/187)
 
 ^done
 
@@ -117,3 +117,13 @@ Takes what a person wants and returns the people who fit.
   - The results panel and its header (T-15).
   - A search from the stored form of a goal. No goal route exists.
   - The writing of Form B notes (T-36).
+
+## Log
+
+- **2026-11-02 · [#187](https://github.com/magentawood/roomsie/pull/187)**
+  - **Change:** the PR adds `POST /v1/results`. It gives the people or the listings that fit a Form A, in the Best Matches order. It also gives the labels, the suggested posts and the event. It replaces the draft match query of T-06.
+  - **Why:** T-15, T-19 and T-22a need the search ([PD3a](../../decisions/pd-03a-flatmate-matching.md), [PD15](../../decisions/pd-15-form-a-contract.md)).
+  - **Ticked:** all eight open items. #59 ticked "Blocked and suspended people never appear", and a test still checks it.
+  - **Not done:** none.
+  - **Learn:** [The match query](../../learn/match-query.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
