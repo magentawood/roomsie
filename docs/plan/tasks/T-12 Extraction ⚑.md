@@ -53,3 +53,53 @@ Changes a typed sentence into tidy form slots.
 - [hinglish-model-report.md](../../research/hinglish-model-report.md)
 - [agent-architecture.md](../../agent-architecture.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by pulkitshringi
+
+- **Modules:**
+  - **The goals module of the API (new):** three routes. One route starts a goal, one route sends a turn, and one route reads a goal with its turns. It owns the goals, the chat turns and the visitor sessions.
+  - **The assistant module of the API (new):** the one entry point for a turn. It runs the steps of the turn in order: the extractor, then the reply writer. Each step is a handler, so the router, the observer and the advisor attach with no new structure.
+  - **The extractor (new):** it changes the typed text into Form A slots, with the probability gate. The number parser and the date parser change the words of the person into a number or a date.
+  - **The reply writer (new, scripted):** it confirms the slots that changed, then asks the next empty or unclear question. It calls no model.
+  - **The models module of the API (interface changes):** a JSON call can ask for the token probabilities.
+  - **The database (interface changes):** the visitor session gets a column for the hash of its key.
+  - **The contract (interface changes):** the goal and turn schemas, the handler input and output schemas with a version, and the event `slot_conflict`.
+  - **The settings of the API (interface changes):** the probability threshold and the order of the questions.
+  - **The chat screen of the web (interface does not change):** it sends each message, shows the reply, and loads the open goal again after a reload.
+- **Seams for the tests:**
+  - The API tests on the test database, with a fake vendor in place of the network:
+    - the visitor key, and the owner of a goal
+    - the extraction into Form A, and the probability gate
+    - a value that contradicts an earlier value
+    - the area names of two areas
+    - a model that does not answer
+    - the events `interview_started` and `slot_conflict`
+  - The unit tests of the number parser and the date parser.
+  - The unit tests of the chat helpers of the web.
+- **Decisions:**
+  - **Storage:** T-12 saves each goal, each turn of the two sides, and Form A on the goal. A signed-in person owns a goal. For a visitor, the first goal makes a visitor session (why: PD7a, ADR-0017). The user decided this in the grill.
+  - **The visitor key:** the API makes a random key and gives it one time. The database keeps only the hash of the key. The browser keeps the key in local storage and sends it in the header `X-Visitor-Key`, never in a cookie (why: ADR-0007). A log line or an event with the session id cannot open a chat. The user decided this in the grill.
+  - **The visitor session:** it ends 30 days after the last visit (why: PD19). For now, the device hash is a hash of the IP address and the user agent. T-21 can change it.
+  - **The chat screen:** it sends each message and shows the reply. The browser keeps the id of the open goal, so a reload shows the chat again. The user decided this in the grill.
+  - **The reply:** code writes a short confirmation of the slots that changed, then the next empty or unclear question. The order of the questions is a setting. Its default is the recommendation of PC-39: intent, areas, budget, move date, then the eight lifestyle questions (why: PD7a, PC-39). The reply is in English only. T-13 replaces this step. The user decided this in the grill.
+  - **The probability gate:** when DeepSeek answers, a value with a token probability below the threshold becomes `unclear`. The threshold is a setting, 0.8 by default. T-27 tunes it (why: PD7). Gemini gives no token probabilities, so its values go into the form with no gate. The user decided this in the grill.
+  - **The area names of two areas:** a name such as "Andheri" or "Bandra" leaves the areas slot empty. Then the reply asks "East or West, or both?". The user decided this in the grill.
+  - **Numbers and dates:** the model copies the words of the person. Code makes sure that the words are in the turn. Then the number parser or the date parser changes them. The parsers accept digits, "20k", "lakh", the Hindi and Marathi number words, ranges, month names, relative dates and "ASAP". They use the date of today in IST. If a parser cannot read the words, the slot stays empty (why: PD7, ai-agent-design.md 3.2).
+  - **A new area:** it adds to the areas in the form, with no question. It does not contradict an earlier area. The person removes an area in the filters. The user decided this during the implementation, on 2026-11-02.
+  - **A vague area, budget or move date:** these slots have no `unclear` value, so the slot stays empty, and the reply asks again. Form A does not change (why: PD15, PD3b).
+  - **A value that contradicts an earlier value:** the new value does not replace the earlier value. The reply asks which value to keep. The assistant turn keeps the question, so the next answer resolves it. The event `slot_conflict` records the slot, with no text (why: PD3b, PD6c).
+  - **The input of the extractor:** the typed text and the last question of the assistant, never the full chat (why: PD7a, PD5).
+  - **The cached prompt:** the fixed system prompt holds the enum values, the area list from the database, and the accepted number and date forms. The model does not get the date of today, because only the date parser uses it. Thus, the cached part does not change (why: PD7).
+  - **A model that does not answer:** the API saves the turn, Form A does not change, and a fixed reply asks the person to try again. No error page shows.
+  - **The event `interview_started`:** the first turn of a goal fires it, through `track()` (why: T-24).
+  - **The open product calls:** PC-09 (languages) and PC-39 (the order of the questions) are in F-14, not F-11. This task uses their recommended defaults, as settings.
+- **Out of scope:**
+  - the turn cap, the rate limits and the turn count (T-21)
+  - the chips (T-09)
+  - the reply writer with a model, and its scope rules (T-13)
+  - the router (T-34)
+  - Form B and the observer (T-35, T-36)
+  - the move of the goals of a visitor into the account at sign-in (T-17)
+  - the title of a goal
