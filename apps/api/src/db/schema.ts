@@ -284,6 +284,8 @@ export const areas = pgTable('areas', {
   description: text('description'),
   commuteNotes: text('commute_notes'),
   sortOrder: integer('sort_order').notNull().default(0),
+  /** The area groups next to an area group, for the suggested posts of an empty search (PD6c). */
+  neighbours: text('neighbours').array().notNull().default([]),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 }, (t) => ({

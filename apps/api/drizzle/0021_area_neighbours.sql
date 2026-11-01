@@ -1,0 +1,1 @@
+ALTER TABLE "areas" ADD COLUMN "neighbours" text[] DEFAULT '{}' NOT NULL;

@@ -144,13 +144,27 @@ const AREAS: AreaSeed[] = [
   ] },
 ]
 
+/** The area groups next to each area group (T-14). */
+const NEIGHBOURS: Record<string, string[]> = {
+  'south-mumbai': ['lower-parel-worli'],
+  'lower-parel-worli': ['south-mumbai', 'dadar-sion', 'bandra-santacruz'],
+  'dadar-sion': ['lower-parel-worli', 'bandra-santacruz', 'chembur-ghatkopar'],
+  'bandra-santacruz': ['dadar-sion', 'lower-parel-worli', 'andheri-goregaon'],
+  'andheri-goregaon': ['bandra-santacruz', 'malad-borivali', 'powai-vikhroli'],
+  'malad-borivali': ['andheri-goregaon'],
+  'powai-vikhroli': ['andheri-goregaon', 'chembur-ghatkopar', 'thane'],
+  'chembur-ghatkopar': ['dadar-sion', 'powai-vikhroli', 'navi-mumbai'],
+  'thane': ['powai-vikhroli', 'navi-mumbai'],
+  'navi-mumbai': ['chembur-ghatkopar', 'thane'],
+}
+
 const rows = (list: AreaSeed[], parentSlug: string | null = null): (typeof areas.$inferInsert)[] =>
-  list.flatMap(({ areas: children = [], ...area }) => [{ ...area, parentSlug }, ...rows(children, area.slug)])
+  list.flatMap(({ areas: children = [], ...area }) => [{ ...area, parentSlug, neighbours: NEIGHBOURS[area.slug] ?? [] }, ...rows(children, area.slug)])
 
 export async function seedAreas(db: Db) {
   await db.insert(areas).values(rows(AREAS).map((row, i) => ({ ...row, sortOrder: i + 1 })))
     .onConflictDoUpdate({
       target: areas.slug,
-      set: { name: sql`excluded.name`, parentSlug: sql`excluded.parent_slug`, aliases: sql`excluded.aliases`, sortOrder: sql`excluded.sort_order` },
+      set: { name: sql`excluded.name`, parentSlug: sql`excluded.parent_slug`, aliases: sql`excluded.aliases`, sortOrder: sql`excluded.sort_order`, neighbours: sql`excluded.neighbours` },
     })
 }
