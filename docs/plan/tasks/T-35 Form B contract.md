@@ -44,7 +44,7 @@ What the observer records about a person, and where we store it.
 
 ## Spec
 
-**Approved:** 2026-11-02, by Pulkit.
+**Approved:** 2026-11-02, by Pulkit. The changes in review: approved on 2026-11-02, by Pulkit.
 
 - **Modules:**
   - **`packages/contract`, Form B:** new. The schema of one observation and its type, with a version. Other schemas do not change.
@@ -82,6 +82,8 @@ What the observer records about a person, and where we store it.
   - **The kind:** a database enum of the four kinds of PD7a. The kinds are the fixed list of PD7a.
   - **The other fields:** `value` and `evidence` are text, and the quote is not empty. `confidence` is a number from 0 to 1. `visible` is true by default. Only its owner sees a note (why: PD7a).
   - **Account deletion:** the observations module deletes the notes of the user. The notes of a claimed session also go, with the session.
+  - **Review round 2, the limits:** a key has a maximum of 60 characters, a value 200 and a quote 2000. The contract trims the value, but not the quote. The user decided this.
+  - **Review round 2, the docs:** `agent-architecture.md` is the home of the three Form B rules. The user decided this.
   - **The open product calls:** no open call blocks this task. PC-17 is open, and its default stores no note for a disclosure. Thus, the table needs no column for it. The seed data holds the topics.
 - **Out of scope:**
   - The observer, and the check that the quote is word for word in the turn (T-36).

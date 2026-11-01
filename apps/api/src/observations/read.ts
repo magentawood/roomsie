@@ -10,10 +10,7 @@ const ownerColumn = (owner: Owner) => 'userId' in owner
   ? { column: observations.userId, id: owner.userId }
   : { column: observations.anonymousSessionId, id: owner.anonymousSessionId }
 
-const ownedBy = (owner: Owner) => {
-  const { column, id } = ownerColumn(owner)
-  return eq(column, id)
-}
+const ownedBy = (owner: Owner) => { const { column, id } = ownerColumn(owner); return eq(column, id) }
 
 /** Saves a Form B note. A newer note on a topic replaces the older note. False: the topic is not in the catalogue, or is retired. */
 export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, kind, evidence, turn, confidence, visible }: Observation) {
