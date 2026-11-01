@@ -53,7 +53,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>One module:</strong> <code>apps/api/src/models/</code>. No other code calls a model (<a href="../decisions/pd-07-models.md">PD7</a>, <a href="../decisions/0014-error-tracking.md">ADR-0014</a>). It sends the chat request of the OpenAI format with <code>fetch</code>, because both vendors accept it.</li>
 <li><strong>Two kinds of call:</strong> <code>models.json({ req, role, system, messages, schema, session })</code> asks in the JSON mode of the vendor and parses the answer with the Zod <code>schema</code>. <code>models.text({ … })</code> gives text, for the composer and the Advisor.</li>
-<li><strong>The fallback:</strong> a timeout, a 5xx or a 429 goes to Gemini. An answer that fails the schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the module reports the error and throws <code>ModelUnavailable</code>. The role then selects what the user sees.</li>
+<li><strong>The fallback:</strong> each failure of DeepSeek goes to Gemini: a timeout, a lost connection, a 5xx or a 4xx. The module also reports a 4xx, because a person must fix a bad key or an empty balance. An answer that fails the schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the module reports the error and throws <code>ModelUnavailable</code>. The role then selects what the user sees.</li>
 <li><strong>The record:</strong> each attempt writes the analytics event <code>model_called</code> with the role, the model, the tokens in, the cached tokens, the tokens out, the time, the fallback, the outcome and the session. The sum of the tokens of one session gives the cost of one interview (<a href="../decisions/pd-05-team-and-budget.md">PD5</a>). The event has no text.</li>
 <li><strong>The settings:</strong> <code>DEEPSEEK_API_KEY</code> and <code>GEMINI_API_KEY</code>. Without both, the API calls no model. <code>MODEL_PRIMARY</code>, <code>MODEL_FALLBACK</code> and <code>MODEL_TIMEOUT_MS</code> have defaults. A model name that starts with <code>gemini</code> goes to Gemini, and the others go to DeepSeek.</li>
 <li><strong>The live check:</strong> a moderator sends <code>POST /v1/admin/model-check</code>. The API asks each model one short question, with no fallback, and shows which model answered, the tokens and the time.</li>
@@ -67,7 +67,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>Put the fixed system prompt in <code>system</code>, and the changing text in <code>messages</code>. The cache of each vendor works only on a start of the prompt that does not change.</li>
 <li>In the JSON mode, the prompt must contain the word "json" and show the shape of the answer. If not, a vendor can refuse the call.</li>
-<li>A 4xx other than 429, for example a bad key, throws at once, with no fallback. The check route shows a bad key after each deploy.</li>
+<li>A bad key or an empty balance of DeepSeek does not stop the chat, because Gemini answers. Read the reports, and use the check route after each deploy.</li>
 <li>DeepSeek costs more from 06:30 to 09:30 and from 11:30 to 15:30 IST, from Monday to Friday (<a href="../model-selection.md">model selection</a>).</li>
 <li>In the tests, stub the global <code>fetch</code>. The tests of <code>apps/api/test/models.test.ts</code> show how.</li>
 </ul>
