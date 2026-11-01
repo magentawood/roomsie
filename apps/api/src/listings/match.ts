@@ -1,9 +1,9 @@
 import { and, count, desc, inArray, ne, sql, type SQL } from 'drizzle-orm'
-import { welcomeOf, type Budget, type ListingKind, type MustHaveKey, type roomTypes, type WhosMoving } from '@roomsie/contract'
+import { welcomeOf, type genders, type ListingKind, type MustHaveKey, type roomTypes, type WhosMoving } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { listingRates, listings } from '../db/schema'
 import { textArray } from '../db/sql'
-import { moveGap, near, rankParts } from '../ranking'
+import { moveGap, mustHaveSql, near, type BaseSearch } from '../ranking'
 import { visibleListing } from './read'
 
 /** What a must-have checks on a listing, as true or false, or null when the lister did not say (PD3a). */
@@ -18,26 +18,17 @@ const onListing: Record<MustHaveKey, SQL | null> = {
 }
 const appliesToListings = (key: MustHaveKey) => onListing[key] !== null
 
-/** "Who can move in" for each gender of a searcher (PD3a, F-13). */
-const moveInFor = { male: ['men', 'any'], female: ['women', 'any'], non_binary: ['any'] } as const
+/** "Who can move in" for each gender of a searcher, besides Any (PD3a, F-13). */
+const moveInFor: Record<(typeof genders)[number], string[]> = { male: ['men'], female: ['women'], non_binary: [] }
 const typeGroups = ['students', 'working_professionals']
 const householdGroups = ['bachelors', 'couples', 'families']
 
-export type ListingSearch = {
-  viewerUserId?: string
+export type ListingSearch = BaseSearch & {
   kinds: ListingKind[]
-  /** Null: all of Mumbai. */
-  areas: string[] | null
-  budget: Budget | null
-  moveDate: string | null
   roomType: Exclude<(typeof roomTypes)[number], 'unclear'> | null
   whosMoving: WhosMoving | null
-  dealbreakers: MustHaveKey[]
-  preferences: MustHaveKey[]
   /** Null: the searcher did not give a gender. */
-  gender: keyof typeof moveInFor | null
-  limit: number
-  offset: number
+  gender: (typeof genders)[number] | null
 }
 
 /** The listing welcomes this group, or the lister picked no group of its part (PD15). */
@@ -46,7 +37,7 @@ const welcomes = (group: string | undefined, part: string[]) => group
 
 /** The listings that fit, in the Best Matches order of PD3a, and their number. */
 export async function matchingListings(db: Db, search: ListingSearch) {
-  const rank = rankParts((key) => onListing[key]!, search.dealbreakers.filter(appliesToListings), search.preferences.filter(appliesToListings))
+  const rank = mustHaveSql((key) => onListing[key]!, search.dealbreakers.filter(appliesToListings), search.preferences.filter(appliesToListings))
   const { budget, moveDate, roomType, gender } = search
   const welcome = search.whosMoving ? welcomeOf[search.whosMoving] : {}
 

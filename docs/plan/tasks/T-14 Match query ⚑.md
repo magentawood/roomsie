@@ -105,6 +105,12 @@ Takes what a person wants and returns the people who fit.
   - **The pages:** 20 results for each page, by page number. Each page fires `results_shown` through `track()`.
   - **The modules:** the results module calls the functions of the profiles, listings and observations modules. It does not use their tables (why: `database.md`).
   - **The draft:** the old Form A type, the score and the panel header of the draft go. T-15 owns the header.
+  - **Review round 1, Who is welcome:** a listing filters on the type and the household of "Who's moving", with the mapping of PD15. A group that the lister left empty does not filter.
+  - **Review round 1, the label:** "Best match" shows only on a full match. A Form B note counts only above the floor, not at it.
+  - **Review round 1, the room type:** a private seeker does not see a shared room. A shared seeker of a PG does not count the Single rent (why: PD15, PC-29).
+  - **Review round 2, the label:** "Best match" counts only the preferences that apply to the kind of card. The user decided this.
+  - **Review round 2, own listings:** a signed-in searcher does not see their own listings, as with their own card. The user decided this.
+  - **Review round 2, the bands:** the next band of "under 35k" is "above 35k", with no maximum. An empty intent gives no results, as `unclear` does.
 - **Out of scope:**
   - The chip that widens a search by one kind, for example "Show some PGs too" (T-09, T-12).
   - The waitlist line for an area outside Mumbai (T-22a).
