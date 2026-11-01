@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, formA, type AssistantParts, type FormA } from '@roomsie/contract'
+import { assistantParts, formA, type AssistantReply, type FormA } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 
@@ -54,7 +54,7 @@ export async function turnsOf(db: Db, goalId: string) {
   return rows.map(shown)
 }
 
-/** The last reply of the assistant, and the number of turns of the person before it. */
+/** The last reply of the assistant, and the slot that it asked about. */
 export async function lastReplyOf(db: Db, goalId: string) {
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt), desc(chatTurns.id)).limit(1)
@@ -66,17 +66,16 @@ export async function lastReplyOf(db: Db, goalId: string) {
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
  * would otherwise replace the form of the first. Returns false when the goal changed.
  */
-export async function saveTurn(db: Db, goal: { id: string; seen: Date }, form: FormA, userText: string, reply: { text: string; parts: AssistantParts }) {
+export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userText: string, reply: AssistantReply) {
   return db.transaction(async (tx) => {
     const [changed] = await tx.update(goals).set({ form, updatedAt: new Date() })
       // A JS date has milliseconds, and the default of the column has microseconds.
-      .where(and(eq(goals.id, goal.id), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
+      .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null
-    // The reply comes after the turn of the person, also when the two get the same clock time.
-    const now = Date.now()
+    // The two turns get the same time from the database. Their UUIDv7 ids keep the reply after the turn of the person.
     const rows = await tx.insert(chatTurns).values([
-      { goalId: goal.id, role: 'user', inputMethod: 'typed', text: userText, createdAt: new Date(now) },
-      { goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: new Date(now + 1) },
+      { goalId: goal.id, role: 'user', inputMethod: 'typed', text: userText },
+      { goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts },
     ]).returning(turnFields)
     return rows.map(shown)
   })

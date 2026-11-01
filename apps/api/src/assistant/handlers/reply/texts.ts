@@ -1,4 +1,4 @@
-import type { Budget, FormASlot } from '@roomsie/contract'
+import type { Budget, FormASlot, LifestyleAxis } from '@roomsie/contract'
 import type { Catalogue } from '../../catalogue'
 
 /** The scripted lines of the reply writer, in English only, until T-13 writes replies with the model. */
@@ -22,7 +22,7 @@ const questions: Partial<Record<FormASlot, string>> = {
 
 export function questionFor(slot: FormASlot, catalogue: Catalogue) {
   const [group, key] = slot.split('.') as [string, string | undefined]
-  if (group === 'lifestyle') return catalogue.questions.get(key as never) ?? `${key}?`
+  if (group === 'lifestyle') return catalogue.questions.get(key as LifestyleAxis) ?? `${key}?`
   if (group === 'mustHaves') return `Is ${catalogue.mustHaveLabels.get(key!) ?? key} a must for you?`
   return questions[slot]!
 }
@@ -33,7 +33,6 @@ const budgetText = ({ min, max }: Budget) => (min != null && max != null ? `${ru
 const dateText = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const words = (value: string) => value.replaceAll('_', ' ')
 
-/** A value of a slot as the reply says it. */
 export function valueText(slot: FormASlot, value: unknown, catalogue: Catalogue): string {
   const [group, key] = slot.split('.') as [string, string | undefined]
   switch (group) {

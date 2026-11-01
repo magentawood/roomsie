@@ -122,6 +122,18 @@ describe('a typed turn', () => {
     expect(turns[1].text).toBe('Got it: a PG. Which areas of Mumbai work for you?')
   })
 
+  it('makes a value unclear, and reports it, when the tokens of DeepSeek do not hold it', async () => {
+    fakeVendors({ deepseek: [answer(JSON.stringify({ intent: 'room' }), undefined, [{ token: '{"intent":"flat"}', logprob: 0 }])] })
+    const goal = await visitorGoal()
+    expect((await sent(goal, 'room chahiye')).form.intent).toEqual({ source: 'stated', value: 'unclear' })
+  })
+
+  it('reads a budget in Devanagari', async () => {
+    fakeVendors({ deepseek: [scored({ budget: 'बीस हज़ार तक' })] })
+    const goal = await visitorGoal()
+    expect((await sent(goal, 'बजट बीस हज़ार तक')).form.budget.value).toEqual({ min: null, max: 20_000 })
+  })
+
   it('keeps the values of Gemini, which gives no probabilities', async () => {
     const requests = fakeVendors({ deepseek: [new Response('busy', { status: 503 })], gemini: [answer(JSON.stringify({ lifestyle: { food: 'eggetarian' } }))] })
     const goal = await visitorGoal()
