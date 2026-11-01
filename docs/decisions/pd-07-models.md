@@ -1,6 +1,6 @@
 # PD7 — Models: DeepSeek for all roles, Gemini as fallback
 
-**Status:** Settled. Changed on 2026-10-25. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-11-02. · **Date:** 2026-09-20 · **Deciders:** Yash. PC-09: pulkitshringi
 
 ## Context
 
@@ -49,6 +49,9 @@ quality. The eval set and the primary model settle quality.
 The decision: user text goes to DeepSeek. The team opts out by email, and the
 privacy policy names the storage in China. F-07 confirms the text.
 
+**Languages (PC-09).** The screens are in English. The assistant reads and
+replies in English, Hindi, Marathi and Hinglish, in Latin or Devanagari script.
+
 ## Rationale
 
 - **We chose the model for how correctly it reads Hinglish, not for price.**
@@ -74,22 +77,21 @@ privacy policy names the storage in China. F-07 confirms the text.
   language risk.
 - **Sarvam and the extractor.** The reported time to first token is 13.85
   seconds (30B). If those numbers are correct, they disqualify Sarvam from the
-  extractor, which is in the loop. Verify this before you act on it: do your
-  own test on a warm endpoint.
+  extractor, which is in the loop.
 - **A side benefit, not the reason.** The DPDP Act permits cross-border
   transfer, but not to countries that the government notifies as restricted.
   No list exists. If one comes, a Chinese provider is a plausible entry. With Gemini in
   place from the start, this becomes a config change, not a migration.
 - **Cache discount matters more than headline price.** Each call sends the
-  large fixed system prompt. DeepSeek V4.1 Flash is the value option: its
-  cache discount is genuinely large.
-- **Peak-hour pricing is manageable.** Peak includes the Indian work day but
-  **not** the Indian evening. People are most likely to look for a flat in the
-  evening, so our traffic should be mostly in the Indian evening. But the clock
-  prices are a complication for operations.
+  large fixed system prompt, and DeepSeek V4.1 Flash has a large cache discount.
+- **Peak-hour pricing is manageable.** Peak is the Indian work day, **not** the
+  evening, when most people look for a flat. The clock prices still complicate
+  operations.
 - **One module for the two vendors.** With one module, a vendor swap costs a
   config change. This is important because this list will be different in six
   months.
+- **Languages.** The models and the PD10 tests cover Hindi, Marathi and
+  Hinglish. Hindi screens need a translation before launch.
 
 ## Consequences
 
