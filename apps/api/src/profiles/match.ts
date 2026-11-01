@@ -1,4 +1,4 @@
-import { and, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
+import { and, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
 import { mustHaveKeys, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
@@ -48,13 +48,12 @@ const theirDealbreakerIn = (keys: MustHaveKey[]) => sql`exists (select 1 from ${
 
 export type PeopleSearch = BaseSearch & {
   searcher: ReturnType<typeof searcherMustHaves>
-  /** A Form B note counts only above this confidence. */
   formBFloor: number
 }
 
 /** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
 export async function matchingPeople(db: Db, search: PeopleSearch) {
-  const rank = mustHaveSql(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
+  const mustHaves = mustHaveSql(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
   const { budget, moveDate, searcher } = search
 
   const conditions = [
@@ -65,22 +64,22 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
     budget?.max != null && sql`coalesce(${profiles.budgetMin}, 0) <= ${budget.max}`,
     budget?.min != null && sql`coalesce(${profiles.budgetMax}, 2147483647) >= ${budget.min}`,
     moveDate && near(sql`${profiles.moveDate}`, moveDate),
-    ...rank.filters,
+    ...mustHaves.filters,
     searcher.fails.length && sql`not ${theirDealbreakerIn(searcher.fails)}`,
   ].filter((c): c is SQL => !!c)
 
-  const [rows, [total]] = await Promise.all([
+  const [rows, total] = await Promise.all([
     db.select({
       id: profiles.id,
-      didntSay: sql<MustHaveKey[]>`${rank.didntSay}`.as('didnt_say'),
-      isFull: sql<boolean>`(cardinality(${rank.didntSay}) = 0 and not ${theirDealbreakerIn(searcher.gaps)})`.as('is_full'),
-      prefsMet: sql<number>`${rank.prefsMet}`.as('prefs_met'),
-      points: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('points'),
+      didntSay: sql<MustHaveKey[]>`${mustHaves.didntSay}`.as('didnt_say'),
+      isFull: sql<boolean>`(cardinality(${mustHaves.didntSay}) = 0 and not ${theirDealbreakerIn(searcher.gaps)})`.as('is_full'),
+      prefsMet: sql<number>`${mustHaves.prefsMet}`.as('prefs_met'),
+      formB: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('form_b'),
       moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
-      .orderBy(sql`is_full desc, prefs_met desc, points desc, move_gap asc nulls last`, desc(profiles.createdAt))
+      .orderBy(sql`is_full desc, prefs_met desc, form_b desc, move_gap asc nulls last`, desc(profiles.createdAt))
       .limit(search.limit).offset(search.offset),
-    db.select({ n: count() }).from(profiles).where(and(...conditions)),
+    db.$count(profiles, and(...conditions)),
   ])
-  return { rows: rows.map((r) => ({ id: r.id, ...rank.labels(r) })), total: total!.n }
+  return { rows: rows.map((r) => ({ id: r.id, ...mustHaves.labels(r) })), total }
 }

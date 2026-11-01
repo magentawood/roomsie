@@ -19,7 +19,8 @@ type Ranked = { id: string; didntSay: MustHaveKey[]; bestMatch: boolean }
 type Filters = Pick<BaseSearch, 'areas' | 'budget'>
 
 /** The search of a Form A: the page, and the suggested posts when it finds nothing (PD6c). */
-export async function searchResults({ db, storage, matching }: Deps, form: FormA, viewerUserId: string | undefined, page: number) {
+export async function searchResults(deps: Deps, form: FormA, viewerUserId: string | undefined, page: number) {
+  const { db, matching } = deps
   const intent = form.intent.value
   if (!intent || intent === 'unclear') return { results: [], total: 0, suggestions: [] }
 
@@ -37,12 +38,12 @@ export async function searchResults({ db, storage, matching }: Deps, form: FormA
       const { rows, total } = await matchingPeople(db, {
         ...common, areas, budget, limit, offset, searcher: searcherMustHaves(answers), formBFloor: matching.formBFloor,
       })
-      return { results: await personResults(db, storage, rows), total }
+      return { results: await personResults(deps, rows), total }
     }
     const { rows, total } = await matchingListings(db, {
       ...common, areas, budget, limit, offset, roomType, gender, whosMoving: form.whosMoving.value, kinds: listingKindsOf[intent],
     })
-    return { results: await listingResults(db, storage, rows), total }
+    return { results: await listingResults(deps, rows), total }
   }
 
   const filters: Filters = { areas: picks.length ? matchingAreas(parentOf, picks) : null, budget: form.budget.value }
@@ -70,14 +71,14 @@ function nextBandOf(max: number | null | undefined): { max: number | null } | un
 
 const labelsOf = (ranked: Ranked[]) => new Map(ranked.map(({ id, ...labels }) => [id, labels]))
 
-async function personResults(db: Db, storage: Storage, ranked: Ranked[]): Promise<MatchResult[]> {
+async function personResults({ db, storage }: Deps, ranked: Ranked[]): Promise<MatchResult[]> {
   const ids = ranked.map((r) => r.id)
   const [rows, answers] = await Promise.all([profilesByIds(db, ids), answersFor(db, ids)])
   const labels = labelsOf(ranked)
   return inOrder(ids, rows).map((row) => ({ kind: 'person', card: cardView(row, answers(row.id), storage), ...labels.get(row.id)! }))
 }
 
-async function listingResults(db: Db, storage: Storage, ranked: Ranked[]): Promise<MatchResult[]> {
+async function listingResults({ db, storage }: Deps, ranked: Ranked[]): Promise<MatchResult[]> {
   const ids = ranked.map((r) => r.id)
   const [rows, parts] = await Promise.all([listingsByIds(db, ids), partsOf(db, ids)])
   const labels = labelsOf(ranked)
