@@ -14,9 +14,9 @@ export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age'
 /** `verified`: the owner has an approved ID check (T-46). */
 export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<Profile, 'fullName' | 'photoKeys'> | null; verified: boolean }
 
-/** A listing that the viewer can see: live, not expired, not hidden by reports, and no block between the viewer and the owner. */
-export const visibleListing = (viewerUserId: string) => and(
-  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt), noBlockBetween(viewerUserId, listings.ownerUserId),
+/** A listing that the viewer can see: live, not expired, not hidden by reports, and no block between the viewer and the owner. A guest has no blocks. */
+export const visibleListing = (viewerUserId?: string) => and(
+  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt), viewerUserId ? noBlockBetween(viewerUserId, listings.ownerUserId) : undefined,
 )
 
 export async function partsOf(db: Db, ids: string[]) {
