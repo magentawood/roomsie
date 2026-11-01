@@ -97,18 +97,18 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
   )
 }
 
-/** The detail of a place: the four kinds of the Product file (T-43). In the results panel, `onBack` closes it and `onAskInChat` shows "Ask in chat" (T-15). */
-export function PlaceDetail({ listing, onBack, onAskInChat }: { listing: ListingResponse; onBack?: () => void; onAskInChat?: () => void }) {
+/** The detail of a place: the four kinds of the Product file (T-43). `panel`: it is in the results panel, with "Ask in chat" (T-15). */
+export function PlaceDetail({ listing, panel }: { listing: ListingResponse; panel?: { onBack: () => void; onAskInChat: () => void } }) {
   const areaLabels = useAreaLabels()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
   const [messaging, setMessaging] = useState(false)
   const { share, copied } = useShare(title)
   const routerBack = useBack()
-  const back = onBack ?? routerBack
+  const back = panel?.onBack ?? routerBack
   // In the panel, the bar sits at the bottom of the panel, so the chat input stays free (PD6a).
-  const inPanel = onBack !== undefined
-  const askInChat = onAskInChat && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={onAskInChat}>Ask in chat</Button>
+  const inPanel = panel !== undefined
+  const askInChat = panel && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={panel.onAskInChat}>Ask in chat</Button>
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
   const address = addressLine(listing)
   const money = moveIn(listing)

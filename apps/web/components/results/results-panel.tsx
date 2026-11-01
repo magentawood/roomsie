@@ -17,12 +17,12 @@ import { CloseButton } from '../ui/modal'
 /** How long the panel waits after the last scroll or read before it applies a new form (PD6c). */
 const idleMs = 1500
 
-type Held = { form: FormA; page: ResultsPage }
+type Shown = { form: FormA; page: ResultsPage }
 
 /** The results on the screen and the form that they answer, so the header and the grid change together (PD6c). */
 export function useHeldResults(form: FormA, page: ResultsPage) {
   const key = formKey(form)
-  const [state, dispatch] = useReducer(panelUpdate<Held>, { shown: { key, page: { form, page } }, pending: null, busy: false } satisfies PanelState<Held>)
+  const [state, dispatch] = useReducer(panelUpdate<Shown>, { shown: { key, page: { form, page } }, pending: null, busy: false } satisfies PanelState<Shown>)
   const idleTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => dispatch({ type: 'arrive', key, page: { form, page } }), [key, form, page])
   useEffect(() => () => clearTimeout(idleTimer.current), [])
@@ -30,8 +30,6 @@ export function useHeldResults(form: FormA, page: ResultsPage) {
   const release = () => { clearTimeout(idleTimer.current); idleTimer.current = setTimeout(() => dispatch({ type: 'idle' }), idleMs) }
   return { ...state.shown.page, hold, release }
 }
-
-type HeldResults = ReturnType<typeof useHeldResults>
 
 function MatchLabel({ result }: { result: MatchResult }) {
   if (result.bestMatch) return <Badge tone="blue" dot={false}>Best match</Badge>
@@ -81,7 +79,7 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
  * `sample`: the preview of T-15 shows that the data is not real.
  */
 export function ResultsPanel({ title, held: { page, hold, release }, sample, onClose, onAskInChat }: {
-  title: string; held: HeldResults; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+  title: string; held: ReturnType<typeof useHeldResults>; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
@@ -106,7 +104,7 @@ export function ResultsPanel({ title, held: { page, hold, release }, sample, onC
       {open
         ? (
           <div className="min-h-0 flex-1 overflow-y-auto">
-            <PlaceDetail listing={open} onBack={closeDetail} onAskInChat={() => { onAskInChat(open); closeDetail() }} />
+            <PlaceDetail listing={open} panel={{ onBack: closeDetail, onAskInChat: () => { onAskInChat(open); closeDetail() } }} />
           </div>
         )
         : (
