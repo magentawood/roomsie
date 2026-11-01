@@ -41,3 +41,52 @@ What the observer records about a person, and where we store it.
 ## Read first
 - [agent-architecture.md](../../agent-architecture.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by Pulkit.
+
+- **Modules:**
+  - **`packages/contract`, Form B:** new. The schema of one observation and its type, with a version. Other schemas do not change.
+  - **The database schema:** new. A table of observations, a catalogue of the allowed topics, and an enum of the four kinds. One migration adds them.
+  - **The seed:** the catalogue of topics gets a starter list. The seed of the Form A catalogues does not change.
+  - **The observations module of the API:** new. It owns the two tables. Its interface has five functions:
+    - Save a note.
+    - List the notes of an owner.
+    - Delete one note.
+    - Delete the notes of a user.
+    - Move the notes of a session to a user.
+  - **Account deletion:** it calls the delete function of the observations module. Its interface does not change.
+  - **The docs:** the Form B example in `agent-architecture.md` gets a message id in `turn`. A learn page explains Form B notes.
+- **Seams for the tests:**
+  - The unit tests of `packages/contract` parse observations. They check these rules:
+    - An observation has the seven fields of the done item, and it rejects other keys.
+    - `kind` accepts only constraint, preference, context and concern.
+    - An observation with an empty quote fails.
+    - A confidence below 0 or above 1 fails.
+    - `visible` is true when the input does not give it.
+  - The database tests of the API call the functions of the observations module on the test database. They check these rules:
+    - A note with a topic that is not in the catalogue fails. A note with an inactive topic also fails.
+    - A second note on the same topic for the same owner replaces the first note.
+    - A note has a user or a session, never both and never neither.
+    - The deletion of its message also deletes the note.
+    - The move gives the notes of a session to a user. If the user has a note on the same topic, the newer note stays.
+  - The test of account deletion that exists checks that no note of the user stays.
+- **Decisions:**
+  - **The message link:** `turn` holds the id of the chat turn that the note quotes. The deletion of that chat turn also deletes the note. The user decided this in the grill.
+  - **The topics:** `key` must be a topic in a catalogue in the database, as the Form A catalogues are (why: ADR-0017). A new topic is a seed change, with no code change and no migration. The contract checks only the format of the key. The observations module checks the catalogue. The user decided this in the grill.
+  - **The starter topics:** `guest_frequency`, `work_pattern`, `noise`, `cooking`, `past_flatmates` and `move_reason`. T-36 adds or removes topics when it tunes the observer.
+  - **One note for each topic:** an owner has a maximum of one note on a topic. A newer note replaces the older note. The user decided this in the grill.
+  - **The move at sign-in:** this task writes and tests the move. T-17 calls it at sign-in, together with the move of the goals. For a topic that both owners have, the newer note stays. The user decided this in the grill.
+  - **The owner:** a note belongs to a user or to an anonymous session, never both. This is the rule of the goals (why: ADR-0017).
+  - **The kind:** a database enum of the four kinds of PD7a. The kinds are the fixed list of PD7a.
+  - **The other fields:** `value` and `evidence` are text, and the quote is not empty. `confidence` is a number from 0 to 1. `visible` is true by default. Only its owner sees a note (why: PD7a).
+  - **Account deletion:** the observations module deletes the notes of the user. The notes of a claimed session also go, with the session.
+  - **The open product calls:** no open call blocks this task. PC-17 is open, and its default stores no note for a disclosure. Thus, the table needs no column for it. The seed data holds the topics.
+- **Out of scope:**
+  - The observer, and the check that the quote is word for word in the turn (T-36).
+  - The backfill of Form B from the stored chat turns (T-36).
+  - "What do you know about me?" in the chat, and the correction of a note by the user (T-36).
+  - The sign-in flow that calls the move (T-17).
+  - The use of notes in the order of the results (PD3a, the match query).
+  - An API route for notes. No client reads the notes in this task.
