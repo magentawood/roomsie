@@ -42,9 +42,7 @@ smoking: {
 }
 ```
 
-- Each slot has a value and a source only. The words of the user stay only in Form B ([PD15](decisions/pd-15-form-a-contract.md)).
-- The value of a must-have is its weight: `prefer`, `dealbreaker` or `unclear`.
-- The model never infers a value. A vague answer is `unclear`, and the assistant asks again ([PD15](decisions/pd-15-form-a-contract.md)).
+[PD15](decisions/pd-15-form-a-contract.md) gives the rules of the slots.
 
 | `source` | Meaning | Rule |
 |---|---|---|

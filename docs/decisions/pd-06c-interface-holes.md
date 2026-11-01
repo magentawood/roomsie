@@ -1,6 +1,6 @@
 # PD6c — The panel follows the form
 
-**Status:** Settled. All five holes closed. Changed on 2026-10-27. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. All five holes closed. Changed on 2026-11-01. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 

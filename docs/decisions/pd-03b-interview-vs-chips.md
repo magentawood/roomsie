@@ -1,6 +1,6 @@
 # PD3b — What the AI interview adds over the chip filters
 
-**Status:** Settled · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-11-01. · **Deciders:** Yash
 
 ## Context
 

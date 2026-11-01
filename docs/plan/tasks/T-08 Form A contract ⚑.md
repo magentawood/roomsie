@@ -56,7 +56,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 
 ## Spec
 
-**Approved:** 2026-11-01, by Pulkit. The changes in implement: the guardrails doc, and the Form A learn page exists already.
+**Approved:** 2026-11-01, by Pulkit. The changes in implement and review (the docs, the standards and the version): not approved yet.
 
 - **Modules:**
   - **`packages/contract`, Form A:** new. The Form A schema and its type. Each slot of PD15 has a value and a source. The answer lists of the profile API do not change.
@@ -64,7 +64,9 @@ The exact things that the assistant tries to learn, and the exact allowed answer
   - **`packages/contract`, tests:** new. The package gets unit tests with Vitest.
   - **The database schema:** a comment only. The `inferred` source stays in the database, and no code uses it. There is no migration.
   - **The match query:** its TODO names T-14. Its interface does not change.
-  - **The docs:** PD15, `ai-agent-design.md`, `interface-shape.md`, `assistant-guardrails-and-eval.md`, the done items, and two learn pages.
+  - **The docs:** PD15, PD3b, PD6c, `ai-agent-design.md`, `interface-shape.md` and `assistant-guardrails-and-eval.md`.
+  - **The standards:** a rule in `api.md`, and a rule candidate.
+  - **The plan:** the done items, and two learn pages.
 - **Seams for the tests:**
   - The unit tests of `packages/contract` parse Form A and the results with their schemas. They check these rules:
     - Each enum of Form A accepts `unclear`.
@@ -85,6 +87,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
   - **Old forms:** a slot that a stored form does not have reads as empty. Thus, a stored empty form is valid, and no data moves.
   - **The results:** a result has `kind: "person"` with a card, or `kind: "listing"` with a listing. Each result also has a Best match flag and a "Didn't say" list of must-haves (PD3a). T-14 fills them, and T-15 shows them. The user decided this in the grill.
   - **The database:** the `inferred` value of the answer source stays, and no code uses it. Postgres cannot easily remove a value from an enum, and no row has the value.
+  - **Review round 1:** Form A has `version: 1`, because a handler input has a version (`api.md`). Form A and its slots reject keys that they do not have.
   - **The done items:** item 2 gets the new sources and the new weight. The note loses the old fifth item, because it contradicts PD14. The T-12 item about inferred values changes to agree.
 - **Out of scope:**
   - The match query and its tests (T-14).
