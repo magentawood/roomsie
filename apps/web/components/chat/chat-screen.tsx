@@ -114,7 +114,7 @@ const emptyForm = formA.parse({})
 
 /**
  * The chat of a goal, and the results beside it (flow 02). The person sees their message at once, and the reply when it comes.
- * The form fills only through T-12, so `preview` shows the panel with sample data (T-15). TODO(T-12, T-14): the form and the match query.
+ * TODO(T-12): the form of the assistant replaces the preview.
  */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, send, loadingGoal } = useChat()
@@ -126,27 +126,24 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const pending = send.isPending || failed ? send.variables : undefined
   const areaLabels = useAreaLabels()
   const form = preview ? sampleForm : emptyForm
-  const { form: shownForm, page, hold, release } = useHeldResults(form, preview === 'empty' ? sampleEmpty : sampleMatches)
+  const held = useHeldResults(form, preview === 'empty' ? sampleEmpty : sampleMatches)
   const ready = panelReady(form)
-  const title = panelTitle(shownForm, (slug) => areaLabels[slug] ?? slug)
+  const title = panelTitle(held.form, (slug) => areaLabels[slug] ?? slug)
   // The panel is open beside the chat on a desktop. On a phone, the chat fills the screen until "Show all" (PD6a).
-  const [closed, setClosed] = useState(false)
-  const [showAll, setShowAll] = useState(false)
+  const [view, setView] = useState<'split' | 'all' | 'closed'>('split')
   const [draft, setDraft] = useState({ text: '', version: 0 })
-  const openResults = () => { setClosed(false); setShowAll(true) }
-  const closeResults = () => { setClosed(true); setShowAll(false) }
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
-    setShowAll(false)
+    setView('split')
   }
 
   if (loadingGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={submit} />
-  const split = ready && !closed
+  const split = ready && view !== 'closed'
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
-      <div className={`col-start-1 row-start-1 flex min-h-0 flex-col-reverse overflow-y-auto ${showAll ? 'max-lg:hidden' : ''}`}>
+      <div className={`col-start-1 row-start-1 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
           {turns.map((turn) => (
             <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
@@ -159,7 +156,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
                 : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
           )}
-          {ready && <li><ResultsCard title={title} count={page.results.length} onOpen={openResults} /></li>}
+          {ready && <li><ResultsCard title={title} count={held.page.results.length} onOpen={() => setView('all')} /></li>}
         </ol>
       </div>
       <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
@@ -167,8 +164,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={submit} />
       </div>
       {ready && (
-        <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${showAll ? 'grid' : 'hidden'} ${closed ? 'lg:hidden' : 'lg:grid'}`}>
-          <ResultsPanel title={title} page={page} sample={Boolean(preview)} hold={hold} release={release} onClose={closeResults} onAskInChat={askInChat} />
+        <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${view === 'closed' ? 'lg:hidden' : 'lg:grid'}`}>
+          <ResultsPanel title={title} held={held} sample={Boolean(preview)} onClose={() => setView('closed')} onAskInChat={askInChat} />
         </div>
       )}
     </main>
