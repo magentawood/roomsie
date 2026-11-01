@@ -42,10 +42,9 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 
 ## Done when
 - [ ] A Zod schema for Form A is in packages/contract
-- [ ] The fields are intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15. Each has a value and a source: stated, inferred, default or empty. Each must-have also has a weight: prefer or dealbreaker
+- [ ] The fields are intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15. Each has a value and a source: stated, default or empty. The value of a must-have is its weight: prefer, dealbreaker or unclear
 - [ ] Every enum has an `unclear` value
 - [ ] Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14)
-- [ ] Results are a tagged union with `kind: "person"` for v0. Thus, a later change can add property listings and not break clients
 
 ^done
 
@@ -54,3 +53,43 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 - [ai-agent-design.md](../../ai-agent-design.md)
 - [extensibility.md](../../extensibility.md)
 - [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
+
+## Spec
+
+**Approved:** 2026-11-01, by Pulkit
+
+- **Modules:**
+  - **`packages/contract`, Form A:** new. The Form A schema and its type. Each slot of PD15 has a value and a source. The answer lists of the profile API do not change.
+  - **`packages/contract`, results:** new. The schema of one result: a tagged union of a person and a listing, with the labels of PD3a.
+  - **`packages/contract`, tests:** new. The package gets unit tests with Vitest.
+  - **The database schema:** a comment only. The `inferred` source stays in the database, and no code uses it. There is no migration.
+  - **The match query:** its TODO names T-14. Its interface does not change.
+  - **The docs:** PD15, section 3.1 of `ai-agent-design.md`, `interface-shape.md`, the done items of T-08 and T-12, the profiles learn page, and a new Form A learn page.
+- **Seams for the tests:**
+  - The unit tests of `packages/contract` parse Form A and the results with their schemas. They check these rules:
+    - Each enum of Form A accepts `unclear`.
+    - The profile edit body still rejects `unclear`.
+    - Form A rejects the source `inferred`.
+    - An empty slot has no value, and a slot with a value is not empty.
+    - Form A rejects a budget with a minimum above its maximum.
+    - An empty object reads as a Form A with all slots empty.
+    - A person result needs a card, and a listing result needs a listing.
+- **Decisions:**
+  - **Scope:** the contract only. T-14 changes the match query to the Form A of the contract, together with the must-have filters of PD3a. The user decided this in the grill.
+  - **The slots:** intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15.
+  - **One slot shape:** each slot has a value and a source. An empty slot has the value null and the source `empty`. The value of a must-have is its weight.
+  - **The sources:** `stated`, `default` or `empty`. There is no `inferred`: the system does not guess a value. The user decided this in the grill (why: PD15).
+  - **Unclear:** Form A adds `unclear` to each of the eight lifestyle questions. Intent, room type and who is moving have it already. The profile API and the cards keep the answers of the designs, so a card never shows `unclear`. The user decided this in the grill.
+  - **The weight:** `prefer`, `dealbreaker` or `unclear`. An unclear weight does not filter and does not rank. The assistant asks at once, with two chips. The user decided this in the grill (why: PD15).
+  - **The detail of a slot:** the value and the source only. The words of the person stay only in Form B. The user decided this in the grill.
+  - **Old forms:** a slot that a stored form does not have reads as empty. Thus, a stored empty form is valid, and no data moves.
+  - **The results:** a result has `kind: "person"` with a card, or `kind: "listing"` with a listing. Each result also has a Best match flag and a "Didn't say" list of must-haves (PD3a). T-14 fills them, and T-15 shows them. The user decided this in the grill.
+  - **The database:** the `inferred` value of the answer source stays, and no code uses it. Postgres cannot easily remove a value from an enum, and no row has the value.
+  - **The done items:** item 2 gets the new sources and the new weight. The note loses the old fifth item, because it contradicts PD14. The T-12 item about inferred values changes to agree.
+- **Out of scope:**
+  - The match query and its tests (T-14).
+  - The results route, and the parts of its response around the results, for example the count and the header (T-14).
+  - The code that fills Form A from the chat (T-12) or from the chips (T-09).
+  - The question with two chips for an unclear weight (T-12, T-09).
+  - Form B (T-35).
+  - A migration of the answer source enum.

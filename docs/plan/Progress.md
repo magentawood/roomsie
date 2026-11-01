@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**170 of 320 done · 53%**
+**170 of 319 done · 53%**
 
 `█████████████░░░░░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
-| [[P2 Chat]] | 0 / 13 | 3 / 62 | 5% |
+| [[P2 Chat]] | 0 / 13 | 3 / 61 | 5% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -319,9 +319,9 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 3/62
+## P2 Chat — 3/61
 
-> [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/5
+> [!todo]- ⬜ [[T-08 Form A contract ⚑]] · 0/4
 > ![[T-08 Form A contract ⚑#^done]]
 
 > [!todo]- ⬜ [[T-11 Model wrapper ⚑]] · 0/4
