@@ -32,9 +32,9 @@ What the observer records about a person, and where we store it.
 - [[T-36 Observer]]
 
 ## Done when
-- [ ] Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible
-- [ ] An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] Form B is a Zod schema in packages/contract. It has key, value, kind (constraint, preference, context or concern), evidence, turn, confidence and visible · [#185](https://github.com/magentawood/roomsie/pull/185)
+- [x] An observations table has a key to the user or the anonymous session. It moves with the session on sign-in, and account deletion deletes it · [#185](https://github.com/magentawood/roomsie/pull/185)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#185](https://github.com/magentawood/roomsie/pull/185)
 
 ^done
 
@@ -92,3 +92,13 @@ What the observer records about a person, and where we store it.
   - The sign-in flow that calls the move (T-17).
   - The use of notes in the order of the results (PD3a, the match query).
   - An API route for notes. No client reads the notes in this task.
+
+## Log
+
+- **2026-11-02 · [#185](https://github.com/magentawood/roomsie/pull/185)**
+  - **Change:** the PR adds the Form B contract, the observations table, the topic catalogue with six starter topics, and the observations module. Account deletion now deletes the notes.
+  - **Why:** T-36 needs a home and a shape for the notes of the observer ([PD7a](../../decisions/pd-07a-agent-architecture.md)).
+  - **Ticked:** all three items.
+  - **Not done:** none. T-17 calls the move at sign-in.
+  - **Learn:** [Form B notes](../../learn/form-b-notes.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

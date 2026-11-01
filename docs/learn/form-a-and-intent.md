@@ -10,7 +10,7 @@
 - **`unclear` is not empty.** `unclear` means that the person answered, but the answer was vague. Empty means that nobody asked yet.
 - **A must-have has a weight as its value.** A dealbreaker filters, and a preference ranks ([PD3a](../decisions/pd-03a-flatmate-matching.md)). An unclear weight does nothing until the person decides.
 - **A result** is a person card or a listing card, with its `kind`. Each result also has the "Best match" label and the "Didn't say" list of PD3a.
-- **Form B** is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat ([PD7a](../decisions/pd-07a-agent-architecture.md)).
+- **Form B** is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat ([PD7a](../decisions/pd-07a-agent-architecture.md)). Refer to [Form B notes](form-b-notes.md).
 
 ## How it fits our project
 
