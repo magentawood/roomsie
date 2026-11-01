@@ -56,7 +56,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 
 ## Spec
 
-**Approved:** 2026-11-01, by Pulkit
+**Approved:** 2026-11-01, by Pulkit. The changes in implement: the guardrails doc, and the Form A learn page exists already.
 
 - **Modules:**
   - **`packages/contract`, Form A:** new. The Form A schema and its type. Each slot of PD15 has a value and a source. The answer lists of the profile API do not change.
@@ -64,7 +64,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
   - **`packages/contract`, tests:** new. The package gets unit tests with Vitest.
   - **The database schema:** a comment only. The `inferred` source stays in the database, and no code uses it. There is no migration.
   - **The match query:** its TODO names T-14. Its interface does not change.
-  - **The docs:** PD15, section 3.1 of `ai-agent-design.md`, `interface-shape.md`, the done items of T-08 and T-12, the profiles learn page, and a new Form A learn page.
+  - **The docs:** PD15, `ai-agent-design.md`, `interface-shape.md`, `assistant-guardrails-and-eval.md`, the done items, and two learn pages.
 - **Seams for the tests:**
   - The unit tests of `packages/contract` parse Form A and the results with their schemas. They check these rules:
     - Each enum of Form A accepts `unclear`.

@@ -40,7 +40,10 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>Form A</strong> is a set of slots, for example intent, areas, budget and the lifestyle answers. The chat, the chips and the onboarding screens fill the slots. The match query filters on Form A (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>, <a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>).</li>
 <li><strong>An enum</strong> is a fixed list of the values that a slot can hold. The database keeps the list. A new value needs a migration, so we fix the list before the first migration (T-06).</li>
-<li><strong>Each slot has a source:</strong> stated, inferred, default or empty. An inferred value never fills a slot silently (<a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>).</li>
+<li><strong>Each slot has a value and a source:</strong> <code>stated</code>, <code>default</code> or <code>empty</code>. The system never guesses a value (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
+<li><strong><code>unclear</code> is not empty.</strong> <code>unclear</code> means that the person answered, but the answer was vague. Empty means that nobody asked yet.</li>
+<li><strong>A must-have has a weight as its value.</strong> A dealbreaker filters, and a preference ranks (<a href="../decisions/pd-03a-flatmate-matching.md">PD3a</a>). An unclear weight does nothing until the person decides.</li>
+<li><strong>A result</strong> is a person card or a listing card, with its <code>kind</code>. Each result also has the "Best match" label and the "Didn't say" list of PD3a.</li>
 <li><strong>Form B</strong> is different. It holds short notes from the observer, each with the words of the user. The user sees and corrects them in the chat (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -57,14 +60,23 @@ details.callout[open] summary{color:var(--fg)}
 <li>Rahul sees one card: the room of Priya. He sees who lives there in the listing.</li>
 <li>If Rahul selects "Not sure, help me pick", his intent is <code>unclear</code>, and the assistant asks him in the chat.</li>
 </ul>
+<p><strong>An example of the slots.</strong> Rahul types "a veg kitchen would be nice, not sure it's a deal-breaker".</p>
+<pre><code>mustHaves.veg_kitchen: { value: &quot;unclear&quot;, source: &quot;stated&quot; }   // the results do not change
+lifestyle.food:        { value: null, source: &quot;empty&quot; }         // nobody asked yet
+</code></pre>
+<p>The assistant asks at once: "Should I hide places with a non-veg kitchen, or just show veg kitchens first?" A tap on "Hide them" saves <code>dealbreaker</code>, and the panel filters.</p>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>Five intent values, one for each place type, and the other slots of Form A (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
+<li>Three sources and no <code>inferred</code>, <code>unclear</code> in each enum of Form A, and an unclear weight (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>Do not add a seeker value for a lister</strong> (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
 <li><strong>A slot that the screens do not show can still exist.</strong> Only the chat fills room type, for example "private room only".</li>
+<li><strong><code>unclear</code> is only in the chat.</strong> The profile form and the cards keep the answers of the designs. Thus, the profile API rejects <code>unclear</code> for a lifestyle answer.</li>
+<li><strong>A stored form can have no slots.</strong> A slot that is not there reads as empty. Thus, an old <code>{}</code> form is valid, and a new slot needs no data change.</li>
+<li><strong>Zod <code>.default()</code> does not parse its value.</strong> A nested object with <code>.default({})</code> gives <code>{}</code>, with no empty slots in it. Use <code>.prefault({})</code>, which parses the value.</li>
 <li><strong>"Who's moving" has two parts:</strong> a type and a household. The listing filter uses only the parts that we know (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

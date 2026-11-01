@@ -1,6 +1,6 @@
 # PD15 — Form A contract: intent, room type, lifestyle and who's moving
 
-**Status:** Settled. Changed on 2026-10-26. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-11-01. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -11,7 +11,7 @@
 
 ## Decision
 
-**In one line:** A seeker's intent is one of five place types, and Form A adds room type, who is moving, eight lifestyle answers and seven must-haves.
+**In one line:** Intent is one of five place types, Form A adds room type, who is moving, lifestyle and must-haves, and no slot guesses.
 
 - **Intent.** "What brings you to Roomsie?" sends a lister to the listing flow. A lister is a listing, not a seeker. A seeker selects a place type. The values are `room` (a room in a shared flat), `pg`, `whole_flat`, `flatmates` (people to rent with) and `unclear` ("Not sure, help me pick").
 - **Room type.** A slot that only the chat fills. The values are `private`, `shared` and `unclear`. `private` matches "Private room" and a PG with "Single". `shared` matches "Shared room" and a PG with "Double" or more.
@@ -30,6 +30,9 @@
 
 - **No community question** ([PD3c](pd-03c-exclusionary-preferences.md)).
 - **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly. A dealbreaker filters, and a preference ranks ([PD3a](pd-03a-flatmate-matching.md)).
+- **Sources.** Each slot of Form A has a value and a source: `stated`, `default` or `empty`. The system does not guess a value, so there is no `inferred` source. The words of the person stay only in Form B ([PD7a](pd-07a-agent-architecture.md)).
+- **Unclear.** A vague answer becomes `unclear`, never a guess. Each enum of Form A has `unclear`, also the eight lifestyle questions. The profile form and the cards keep the answers of the designs.
+- **An unclear weight.** The weight of a must-have can also be `unclear`. An unclear weight does not filter and does not rank. The assistant asks at once, with two chips, for example "Hide them" and "Show veg first".
 - **Who's moving.** Each answer has a type and a household:
 
   | Who's moving | Type | Household |
@@ -48,6 +51,9 @@
 - One intent value for each screen choice keeps the data and the screens the same.
 - "Private room only" is a frequent stated must-have. A chat-only slot keeps it with no change to the designs.
 - The designs set the lifestyle questions and the must-haves (PD14).
+- A guessed value can hide a good place or a good person. The person can correct only a value that they know about.
+- An unclear weight keeps what the person said, and it has no effect until the person decides.
+- A card that shows "unclear" tells the other person nothing.
 
 ## Alternatives rejected
 
@@ -55,6 +61,10 @@
 - **No room type slot.** A stated "private room only" cannot filter.
 - **Show "Who is welcome", and never filter.** Couples and bachelors contact listers who refuse them.
 - **Match the two lists one to one.** It breaks the "no bachelors" rule of a lister.
+- **An `inferred` source, as a proposal to confirm.** The system guesses, and each module must handle a value that does not count.
+- **Save an unclear weight as `prefer`.** It is a guess, and it changes the order of the results.
+- **Save no must-have until the weight is clear.** The form loses the fact that the person said it.
+- **`unclear` in the answers of the profile form.** A card can then show "unclear".
 
 ## Consequences
 

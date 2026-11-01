@@ -81,7 +81,7 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li>An edit sends only the fields that change. <code>null</code> clears a field, and in <code>lifestyle</code> and <code>mustHaves</code> it clears one answer.</li>
-<li>A value from the profile form is "stated". T-08 adds the values that the chat infers.</li>
+<li>A value from the profile form is "stated". The chat can also give a "default" value (<a href="form-a-and-intent.html">Form A and intent</a>).</li>
 <li>The reply of the own profile has <code>visibility</code> and <code>missing</code>, so the profile screens can tell why a card is not live.</li>
 <li><code>GET /v1/people/:id</code> uses the rule that Saved and the match query use (<code>visiblePeople</code>). It also gives the connection with the viewer for the person detail at <code>/people/[id]</code> (<a href="message-requests.html">Message requests</a>).</li>
 <li>A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.</li>
