@@ -104,7 +104,7 @@ function useChat() {
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns] }))
     },
   })
-  const turns: Turn[] = goal.data?.turns ?? []
+  const turns = goal.data?.turns ?? []
   return { turns, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 

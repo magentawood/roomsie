@@ -1,8 +1,8 @@
-import type { Budget, FormASlot, LifestyleAxis } from '@roomsie/contract'
+import { slotPath, type Budget, type FormASlot, type LifestyleAxis } from '@roomsie/contract'
 import type { Catalogue } from '../../catalogue'
 
 /** The scripted lines of the reply writer, in English only, until T-13 writes replies with the model. */
-export const lines = {
+export const replyLines = {
   failed: 'Sorry, I could not read that just now. Please send it again.',
   done: 'That is all I need for now. Have a look at the results.',
   conflict: (earlier: string, later: string) => `You said ${earlier} before, and now ${later}. Which one should I keep?`,
@@ -21,7 +21,7 @@ const questions: Partial<Record<FormASlot, string>> = {
 }
 
 export function questionFor(slot: FormASlot, catalogue: Catalogue) {
-  const [group, key] = slot.split('.') as [string, string | undefined]
+  const [group, key] = slotPath(slot)
   if (group === 'lifestyle') return catalogue.questions.get(key as LifestyleAxis) ?? `${key}?`
   if (group === 'mustHaves') return `Is ${catalogue.mustHaveLabels.get(key!) ?? key} a must for you?`
   return questions[slot]!
@@ -31,18 +31,18 @@ const intentText: Record<string, string> = { room: 'a room in a shared flat', pg
 const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
 const budgetText = ({ min, max }: Budget) => (min != null && max != null ? `${rupees(min)} to ${rupees(max)}` : max != null ? `up to ${rupees(max)}` : `${rupees(min!)} or more`)
 const dateText = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
-const words = (value: string) => value.replaceAll('_', ' ')
+const humanize = (value: string) => value.replaceAll('_', ' ')
 
 export function valueText(slot: FormASlot, value: unknown, catalogue: Catalogue): string {
-  const [group, key] = slot.split('.') as [string, string | undefined]
+  const [group, key] = slotPath(slot)
   switch (group) {
-    case 'intent': return intentText[value as string] ?? words(value as string)
-    case 'roomType': return `a ${words(value as string)} room`
-    case 'areas': return (value as string[]).map((slug) => catalogue.names.get(slug) ?? slug).join(', ')
+    case 'intent': return intentText[value as string]!
+    case 'roomType': return `a ${humanize(value as string)} room`
+    case 'areas': return (value as string[]).map((slug) => catalogue.bySlug.get(slug)?.name ?? slug).join(', ')
     case 'budget': return budgetText(value as Budget)
     case 'moveDate': return `from ${dateText(value as string)}`
-    case 'lifestyle': return `${words(key!)}: ${words(value as string)}`
+    case 'lifestyle': return `${humanize(key!)}: ${humanize(value as string)}`
     case 'mustHaves': return `${catalogue.mustHaveLabels.get(key!) ?? key} (${value === 'dealbreaker' ? 'a must' : 'preferred'})`
-    default: return words(value as string)
+    default: return humanize(value as string)
   }
 }

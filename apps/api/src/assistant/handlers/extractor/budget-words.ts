@@ -46,10 +46,8 @@ export function parseBudget(words: string): Budget | null {
   if (amounts.length >= 2) {
     const [low, high] = amounts as [Amount, Amount]
     // "15 to 20k": the unit of the second amount is also the unit of the first.
-    const bounds = [rupeesOf({ ...low, multiplier: low.multiplier ?? high.multiplier }), rupeesOf(high)]
-    if (bounds[0] == null || bounds[1] == null) return null
-    const [min, max] = (bounds as number[]).sort((a, b) => a - b)
-    return { min: min!, max: max! }
+    const [a, b] = [rupeesOf({ ...low, multiplier: low.multiplier ?? high.multiplier }), rupeesOf(high)]
+    return a == null || b == null ? null : { min: Math.min(a, b), max: Math.max(a, b) }
   }
   const rupees = amounts.length ? rupeesOf(amounts[0]!) : null
   if (rupees === null) return null

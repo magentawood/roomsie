@@ -1,19 +1,20 @@
 import { z } from 'zod'
 import { formA } from './form-a'
-import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
+import { intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { areaSlug, requiredText } from './shared'
 
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
 export const visitorKeyHeader = 'x-visitor-key'
 export const maxTurnLength = 2000
 
-const lifestyleAxes = Object.keys(lifestyleAnswers) as LifestyleAxis[]
 /** Each slot of Form A that the assistant can fill or ask about. */
 export const formASlots = [
   'intent', 'roomType', 'whosMoving', 'areas', 'budget', 'moveDate',
   ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
 ] as const
 export type FormASlot = (typeof formASlots)[number]
+/** The group of a slot, and its key inside the group: `lifestyle.food` is `['lifestyle', 'food']`. */
+export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
 export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), createdAt: z.iso.datetime() })
 export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn) })
@@ -52,6 +53,22 @@ export const extractorAnswer = z.object({
   } satisfies Record<LifestyleAxis, z.ZodType>).nullish(),
   mustHaves: z.partialRecord(z.enum(mustHaveKeys), choice([...mustHaveWeights, 'unclear'])).nullish(),
 })
+
+/** A name of two or more areas, such as "Andheri". */
+export const ambiguousArea = z.object({ words: z.string(), slugs: z.array(areaSlug).min(2) })
+export type AmbiguousArea = z.infer<typeof ambiguousArea>
+
+/** What the extractor gives: the new form, the slots that changed, the values that contradict the form, and a name of two areas. */
+export const extractorOutput = z.object({
+  version: z.literal(1).default(1),
+  form: formA,
+  changed: z.array(z.enum(formASlots)),
+  conflicts: z.array(z.object({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })),
+  ambiguous: ambiguousArea.nullable(),
+  /** No model gave an answer, so the form did not change. */
+  failed: z.boolean(),
+})
+export type ExtractorOutput = z.output<typeof extractorOutput>
 
 /** What an assistant turn keeps: the slot that it asked about, and if the question is a conflict of two values (PD3b). */
 export const assistantParts = z.object({
