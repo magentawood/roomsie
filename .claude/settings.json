@@ -9,7 +9,7 @@
           },
           {
             "type": "command",
-            "command": "sh \"$CLAUDE_PROJECT_DIR/tools/sync-main.sh\" --now",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/tools/sync-main.sh\" SessionStart",
             "timeout": 20
           }
         ]
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh \"$CLAUDE_PROJECT_DIR/tools/sync-main.sh\"",
+            "command": "sh \"$CLAUDE_PROJECT_DIR/tools/sync-main.sh\" UserPromptSubmit",
             "timeout": 20
           }
         ]
