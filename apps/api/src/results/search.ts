@@ -5,8 +5,9 @@ import type { Db } from '../db/client'
 import { matchingListings } from '../listings/match'
 import { listingsByIds, listingView, partsOf } from '../listings/read'
 import { formBPoints } from '../observations/read'
-import { matchingPeople, searcherAgainst, type SearcherAnswers } from '../profiles/match'
+import { matchingPeople, searcherMustHaves, type SearcherAnswers } from '../profiles/match'
 import { answersFor, cardView, profileOf, profilesByIds } from '../profiles/read'
+import { inOrder } from '../in-order'
 import type { Storage } from '../storage'
 import type { Matching } from './settings'
 
@@ -37,7 +38,7 @@ export async function searchResults({ db, storage, matching }: Deps, form: FormA
   const runSearch = async ({ areas, budget }: Filters, limit: number, offset: number): Promise<{ results: MatchResult[]; total: number }> => {
     if (intent === 'flatmates') {
       const { rows, total } = await matchingPeople(db, {
-        ...common, areas, budget, limit, offset, searcher: searcherAgainst(answers),
+        ...common, areas, budget, limit, offset, searcher: searcherMustHaves(answers),
         formBPoints: (person) => (viewerUserId ? formBPoints(viewerUserId, person, matching.formBFloor) : sql`0`),
       })
       return { results: await personResults(db, storage, rows), total }
@@ -54,38 +55,33 @@ export async function searchResults({ db, storage, matching }: Deps, form: FormA
 
   // The next budget band, and the neighbouring area groups: one change at a time.
   const max = filters.budget?.max
-  const nextBand = max != null ? budgetBands.find((band) => band > max) : undefined
+  // Under 35k: the next band is "above 35k", with no maximum.
+  const nextBand = max != null && max <= budgetBands.at(-1)! ? budgetBands.find((band) => band > max) ?? null : undefined
   const groups = [...new Set(picks.map((pick) => lineage(parentOf, pick).at(-1)!))]
   const neighbours = groups.length ? (await neighboursOf(db, groups)).slice(0, 2) : []
   const relaxed = [
-    ...(nextBand ? [{ relaxed: { kind: 'budget' as const, max: nextBand }, filters: { ...filters, budget: { min: filters.budget!.min, max: nextBand } } }] : []),
+    ...(nextBand !== undefined ? [{ relaxed: { kind: 'budget' as const, max: nextBand }, filters: { ...filters, budget: { min: filters.budget!.min, max: nextBand } } }] : []),
     ...neighbours.map((area) => ({ relaxed: { kind: 'area' as const, area }, filters: { ...filters, areas: matchingAreas(parentOf, [area]) } })),
   ]
   const suggestions = await Promise.all(relaxed.map(async (r) => ({ relaxed: r.relaxed, results: (await runSearch(r.filters, suggestedCards, 0)).results })))
   return { results, total, suggestions: suggestions.filter((s) => s.results.length) }
 }
 
-/** Each ranked id with its row. */
-const inOrder = <T extends { id: string }>(ranked: Ranked[], rows: T[]) => {
-  const byId = new Map(rows.map((r) => [r.id, r]))
-  return ranked.flatMap((rank) => {
-    const row = byId.get(rank.id)
-    return row ? [{ rank, row }] : []
-  })
+const labelsOf = (ranked: Ranked[]) => {
+  const byId = new Map(ranked.map((r) => [r.id, r]))
+  return (id: string) => ({ bestMatch: byId.get(id)!.bestMatch, didntSay: byId.get(id)!.didntSay })
 }
 
 async function personResults(db: Db, storage: Storage, ranked: Ranked[]): Promise<MatchResult[]> {
-  if (!ranked.length) return []
   const ids = ranked.map((r) => r.id)
   const [rows, answers] = await Promise.all([profilesByIds(db, ids), answersFor(db, ids)])
-  return inOrder(ranked, rows).map(({ rank, row }) => ({ kind: 'person', card: cardView(row, answers(row.id), storage), bestMatch: rank.bestMatch, didntSay: rank.didntSay }))
+  const labels = labelsOf(ranked)
+  return inOrder(ids, rows).map((row) => ({ kind: 'person', card: cardView(row, answers(row.id), storage), ...labels(row.id) }))
 }
 
 async function listingResults(db: Db, storage: Storage, ranked: Ranked[], viewerUserId?: string): Promise<MatchResult[]> {
-  if (!ranked.length) return []
   const ids = ranked.map((r) => r.id)
   const [rows, parts] = await Promise.all([listingsByIds(db, ids), partsOf(db, ids)])
-  return inOrder(ranked, rows).map(({ rank, row }) => ({
-    kind: 'listing', listing: listingView(row, parts(row.id), storage, row.ownerUserId === viewerUserId), bestMatch: rank.bestMatch, didntSay: rank.didntSay,
-  }))
+  const labels = labelsOf(ranked)
+  return inOrder(ids, rows).map((row) => ({ kind: 'listing', listing: listingView(row, parts(row.id), storage, row.ownerUserId === viewerUserId), ...labels(row.id) }))
 }

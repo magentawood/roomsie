@@ -25,7 +25,8 @@ export const resultsBody = z.strictObject({ form: formA, page: z.int().min(1).de
 
 /** One filter that a suggested post relaxes: the next budget band, or a neighbouring area group (PD6c). */
 const relaxed = z.discriminatedUnion('kind', [
-  z.strictObject({ kind: z.literal('budget'), max: rupees }),
+  /** No maximum: the band "above 35k". */
+  z.strictObject({ kind: z.literal('budget'), max: rupees.nullable() }),
   z.strictObject({ kind: z.literal('area'), area: areaSlug }),
 ])
 

@@ -120,18 +120,24 @@ describe('people', () => {
 })
 
 describe('the mapping of PD3a between people', () => {
-  type Who = 'seeker' | 'veg' | 'jain' | 'nb'
+  type Who = 'seeker' | 'veg' | 'jain' | 'nb' | 'wantsVeg' | 'wantsNonSmoker' | 'wantsDry' | 'wantsMen' | 'early' | 'tooEarly'
   let t: TestApp<Who>
   const cards = {} as Record<Who, string>
   const base = { intent: stated('flatmates'), areas: stated(['bandra']) }
 
   beforeAll(async () => {
-    t = await testApp(['seeker', 'veg', 'jain', 'nb'])
+    t = await testApp(['seeker', 'veg', 'jain', 'nb', 'wantsVeg', 'wantsNonSmoker', 'wantsDry', 'wantsMen', 'early', 'tooEarly'])
     await seedCatalogues(t.db)
     await person(t, 'seeker', {}, 'male')
     cards.veg = await person(t, 'veg', { lifestyle: { food: 'veg', tidiness: 'tidy_enough', drinks: 'none_at_home' } }, 'male')
     cards.jain = await person(t, 'jain', { lifestyle: { food: 'jain', tidiness: 'relaxed_about_mess', drinks: 'fine_at_home' } }, 'female')
     cards.nb = await person(t, 'nb', { lifestyle: { food: 'veg', tidiness: 'very_tidy', drinks: 'none_at_home' }, gender: 'non_binary' } as ProfileEditBody)
+    cards.wantsVeg = await person(t, 'wantsVeg', { mustHaves: { veg_kitchen: 'dealbreaker' } })
+    cards.wantsNonSmoker = await person(t, 'wantsNonSmoker', { mustHaves: { non_smokers: 'dealbreaker' } })
+    cards.wantsDry = await person(t, 'wantsDry', { mustHaves: { no_alcohol: 'dealbreaker' } })
+    cards.wantsMen = await person(t, 'wantsMen', { mustHaves: { men_only: 'dealbreaker' } })
+    cards.early = await person(t, 'early', { moveDate: '2026-11-05' })
+    cards.tooEarly = await person(t, 'tooEarly', { moveDate: '2026-10-25' })
   })
   afterAll(() => t.close())
 
@@ -146,6 +152,27 @@ describe('the mapping of PD3a between people', () => {
     const ids = results.map(idOf)
     for (const who of shown) expect(ids).toContain(cards[who])
     for (const who of hidden) expect(ids).not.toContain(cards[who])
+  })
+
+  it.each([
+    ['wantsVeg', 'food', 'veg', 'non_veg'],
+    ['wantsNonSmoker', 'smoking', 'non_smoker', 'smoker'],
+    ['wantsDry', 'drinks', 'none_at_home', 'fine_at_home'],
+  ] as const)('the dealbreaker of %s applies back to the %s answer of the searcher', async (who, axis, passes, fails) => {
+    const ids = async (answer: string) => (await search(t, 'seeker', { ...base, lifestyle: { [axis]: stated(answer) } })).results.map(idOf)
+    expect(await ids(passes)).toContain(cards[who])
+    expect(await ids(fails)).not.toContain(cards[who])
+  })
+
+  it('applies a Men only dealbreaker back to the gender of the searcher', async () => {
+    expect((await search(t, 'seeker', base)).results.map(idOf)).toContain(cards.wantsMen)
+    expect((await search(t, 'jain', base)).results.map(idOf)).not.toContain(cards.wantsMen)
+  })
+
+  it('takes a move date up to 30 days before the date of the searcher, and not more', async () => {
+    const ids = (await search(t, 'seeker', { ...base, moveDate: stated('2026-12-01') })).results.map(idOf)
+    expect(ids).toContain(cards.early)
+    expect(ids).not.toContain(cards.tooEarly)
   })
 
   it('gives no Best match label for fewer than three preferences', async () => {
@@ -262,7 +289,7 @@ describe('listings', () => {
 })
 
 describe('the suggested posts and the event', () => {
-  type Who = 'seeker' | 'dearer' | 'neighbour' | 'n2' | 'n3' | 'n4' | 'n5' | 'dadar' | 'worli'
+  type Who = 'seeker' | 'dearer' | 'neighbour' | 'n2' | 'n3' | 'n4' | 'n5' | 'dadar' | 'worli' | 'rich'
   let t: TestApp<Who>
   let analytics: TestAnalyticsDb
   const cards = {} as Record<Who, string>
@@ -270,7 +297,7 @@ describe('the suggested posts and the event', () => {
 
   beforeAll(async () => {
     analytics = await createTestAnalyticsDb()
-    t = await testApp(['seeker', 'dearer', 'neighbour', 'n2', 'n3', 'n4', 'n5', 'dadar', 'worli'], offlineStorage, {}, analytics.db)
+    t = await testApp(['seeker', 'dearer', 'neighbour', 'n2', 'n3', 'n4', 'n5', 'dadar', 'worli', 'rich'], offlineStorage, {}, analytics.db)
     await seedCatalogues(t.db)
     await t.db.update(areas).set({ neighbours: ['andheri-goregaon', 'dadar-sion', 'lower-parel-worli'] }).where(eq(areas.slug, 'bandra-santacruz'))
     cards.dearer = await person(t, 'dearer', { budgetMin: 18000, budgetMax: 22000, moveDate: null })
@@ -280,6 +307,7 @@ describe('the suggested posts and the event', () => {
     for (const who of ['n2', 'n3', 'n4', 'n5'] as const) cards[who] = await person(t, who, { ...near, areas: ['andheri-west'] })
     cards.dadar = await person(t, 'dadar', { ...near, areas: ['dadar-west'] })
     cards.worli = await person(t, 'worli', { ...near, areas: ['worli'] })
+    cards.rich = await person(t, 'rich', { areas: ['lower-parel'], budgetMin: 40000, budgetMax: 50000, moveDate: null })
   })
   afterAll(async () => {
     await t.close()
@@ -295,6 +323,12 @@ describe('the suggested posts and the event', () => {
       [{ kind: 'area', area: 'andheri-goregaon' }, [cards.n5, cards.n4, cards.n3, cards.n2]],
       [{ kind: 'area', area: 'dadar-sion' }, [cards.dadar]],
     ])
+  })
+
+  it('gives "above 35k", with no maximum, as the next band of "under 35k"', async () => {
+    const { suggestions } = await search(t, 'seeker', { ...form, areas: stated(['lower-parel']), budget: stated({ min: null, max: 35000 }) })
+    expect(suggestions.find((s) => s.relaxed.kind === 'budget')).toEqual({ relaxed: { kind: 'budget', max: null }, results: [expect.objectContaining({ kind: 'person' })] })
+    expect(idOf(suggestions[0]!.results[0]!)).toBe(cards.rich)
   })
 
   it('has no next band above 35k', async () => {

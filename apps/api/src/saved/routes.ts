@@ -5,6 +5,7 @@ import { errorResponse, noContent, savedKind, savedPeopleResponse, savedPlacesRe
 import { requireUser, type AuthOptions } from '../auth'
 import { saves } from '../db/schema'
 import { listingView, partsOf, visibleListings } from '../listings/read'
+import { inOrder } from '../in-order'
 import { idParams } from '../params'
 import { answersFor, cardView, visibleCards } from '../profiles/read'
 import type { Storage } from '../storage'
@@ -13,11 +14,6 @@ import { savesOf } from './read'
 const saveSchema = { params: idParams, response: { 204: noContent, 404: errorResponse } }
 const unsaveParams = idParams.extend({ kind: savedKind })
 
-/** The rows in the order of the ids: Saved shows the newest save first. */
-const inOrder = <T extends { id: string }>(ids: string[], rows: T[]) => {
-  const byId = new Map(rows.map((r) => [r.id, r]))
-  return ids.flatMap((id) => byId.get(id) ?? [])
-}
 
 export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options

@@ -1,8 +1,8 @@
 import { sql, type SQL } from 'drizzle-orm'
-import type { MustHaveKey } from '@roomsie/contract'
+import type { Budget, MustHaveKey } from '@roomsie/contract'
 
 /** The parts of PD3a that people and listings share. `meets` gives true or false, or null when the card did not answer. */
-export function rankParts(meets: (key: MustHaveKey) => SQL, dealbreakers: MustHaveKey[], preferences: MustHaveKey[]) {
+export function mustHaveSql(meets: (key: MustHaveKey) => SQL, dealbreakers: MustHaveKey[], preferences: MustHaveKey[]) {
   return {
     filters: dealbreakers.map((key) => sql`${meets(key)} is not false`),
     didntSay: dealbreakers.length
@@ -13,6 +13,19 @@ export function rankParts(meets: (key: MustHaveKey) => SQL, dealbreakers: MustHa
     labels: (row: { didntSay: MustHaveKey[]; isFull: boolean; prefsMet: number }) =>
       ({ didntSay: row.didntSay, bestMatch: row.isFull && preferences.length >= 3 && row.prefsMet === preferences.length }),
   }
+}
+
+/** The fields that a search of people and a search of listings share. */
+export type BaseSearch = {
+  viewerUserId?: string
+  /** Null: all of Mumbai. */
+  areas: string[] | null
+  budget: Budget | null
+  moveDate: string | null
+  dealbreakers: MustHaveKey[]
+  preferences: MustHaveKey[]
+  limit: number
+  offset: number
 }
 
 /** 30 days before or after the move date. An empty date passes (PD3a). */

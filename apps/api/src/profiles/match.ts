@@ -1,9 +1,9 @@
 import { and, count, desc, eq, sql, type SQL } from 'drizzle-orm'
-import { mustHaveKeys, type Budget, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
+import { mustHaveKeys, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { textArray } from '../db/sql'
-import { moveGap, near, rankParts } from '../ranking'
+import { moveGap, mustHaveSql, near, type BaseSearch } from '../ranking'
 import { visiblePeople } from './read'
 
 /** What a must-have checks on a person (PD3a). "Couple friendly" does not apply to a person. */
@@ -22,7 +22,7 @@ const appliesToPeople = (key: MustHaveKey) => onPerson[key] !== null
 export type SearcherAnswers = Partial<Record<LifestyleAxis | 'gender', string>>
 
 /** The must-haves that the searcher fails, and the must-haves that the searcher did not answer. */
-export function searcherAgainst(answers: SearcherAnswers) {
+export function searcherMustHaves(answers: SearcherAnswers) {
   const fails: MustHaveKey[] = []
   const gaps: MustHaveKey[] = []
   for (const key of mustHaveKeys.filter(appliesToPeople)) {
@@ -45,24 +45,15 @@ function meets(key: MustHaveKey): SQL {
 const theirDealbreakerIn = (keys: MustHaveKey[]) => sql`exists (select 1 from ${profileMustHaves}
   where ${profileMustHaves.profileId} = ${profiles.id} and ${profileMustHaves.weight} = 'dealbreaker' and ${profileMustHaves.mustHaveKey} = any(${textArray(keys)}))`
 
-export type PeopleSearch = {
-  viewerUserId?: string
-  /** Null: all of Mumbai. */
-  areas: string[] | null
-  budget: Budget | null
-  moveDate: string | null
-  dealbreakers: MustHaveKey[]
-  preferences: MustHaveKey[]
-  searcher: ReturnType<typeof searcherAgainst>
+export type PeopleSearch = BaseSearch & {
+  searcher: ReturnType<typeof searcherMustHaves>
   /** The Form B points of the person with this user id. */
   formBPoints: (personUserId: SQL) => SQL
-  limit: number
-  offset: number
 }
 
 /** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
 export async function matchingPeople(db: Db, search: PeopleSearch) {
-  const rank = rankParts(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
+  const rank = mustHaveSql(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
   const { budget, moveDate, searcher } = search
 
   const conditions = [
