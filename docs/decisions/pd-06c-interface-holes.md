@@ -105,7 +105,7 @@ search with no Mumbai area shows the waitlist screen. The alerts go by email.
 - **A manual tap wins** because it is explicit and recent. An "are you sure"
   question after a deliberate tap annoys the user, and teaches people to close
   dialogs without a check.
-- **Inference never wins.** An inferred value never fills a slot silently.
+- **Inference never wins.** The model never infers a slot value ([PD15](pd-15-form-a-contract.md)).
 
 ## Alternatives rejected
 

@@ -2,8 +2,8 @@ import { z } from 'zod'
 import { listingResponse } from './listings'
 import { cardResponse, mustHaveKeys } from './profiles'
 
-/** The labels of PD3a. T-14 sets them, and the results panel shows them. */
-const labels = {
+/** The labels of PD3a. */
+const resultLabels = {
   /** The card meets all the preferences, and the searcher stated three or more. */
   bestMatch: z.boolean(),
   /** The dealbreakers of the searcher that the card did not answer. */
@@ -12,7 +12,7 @@ const labels = {
 
 /** One card of the results: a person or a listing (PD14). */
 export const matchResult = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('person'), card: cardResponse, ...labels }),
-  z.object({ kind: z.literal('listing'), listing: listingResponse, ...labels }),
+  z.object({ kind: z.literal('person'), card: cardResponse, ...resultLabels }),
+  z.object({ kind: z.literal('listing'), listing: listingResponse, ...resultLabels }),
 ])
 export type MatchResult = z.infer<typeof matchResult>
