@@ -1,4 +1,4 @@
-import { and, count, desc, inArray, ne, sql, type SQL } from 'drizzle-orm'
+import { and, desc, inArray, ne, sql, type SQL } from 'drizzle-orm'
 import { roomWelcomeGroups, type Gender, type ListingKind, type MustHaveKey, type roomTypes, type welcomeGroups, type WhosMoving, type whoCanMoveIn } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { listingRates, listings } from '../db/schema'
@@ -19,7 +19,7 @@ const welcomeOf: Record<WhosMoving, { type?: (typeof roomWelcomeGroups)[number];
   unclear: {},
 }
 
-/** What a must-have checks on a listing, as true or false, or null when the lister did not say (PD3a). */
+/** What a must-have checks on a listing: true, false, or null when the lister did not say (PD3a). A null entry does not apply to a listing. */
 const onListing: Record<MustHaveKey, SQL | null> = {
   veg_kitchen: sql`${listings.vegOnlyKitchen}`,
   non_smokers: sql`(not ${listings.smokingAllowed})`,
@@ -39,7 +39,6 @@ export type ListingSearch = BaseSearch & {
   kinds: ListingKind[]
   roomType: Exclude<(typeof roomTypes)[number], 'unclear'> | null
   whosMoving: WhosMoving | null
-  /** Null: the searcher did not give a gender. */
   gender: Gender | null
 }
 
@@ -49,7 +48,7 @@ const welcomes = (group: string | undefined, part: readonly string[]) => group
 
 /** The listings that fit, in the Best Matches order of PD3a, and their number. */
 export async function matchingListings(db: Db, search: ListingSearch) {
-  const rank = mustHaveSql((key) => onListing[key]!, search.dealbreakers.filter(appliesToListings), search.preferences.filter(appliesToListings))
+  const mustHaves = mustHaveSql((key) => onListing[key]!, search.dealbreakers.filter(appliesToListings), search.preferences.filter(appliesToListings))
   const { budget, moveDate, roomType, gender } = search
   const welcome = search.whosMoving ? welcomeOf[search.whosMoving] : {}
 
@@ -74,22 +73,22 @@ export async function matchingListings(db: Db, search: ListingSearch) {
     gender && sql`(${openToAll} or ${inArray(listings.whoCanMoveIn, moveInFor[gender])})`,
     welcomes(welcome.type, roomWelcomeGroups),
     welcomes(welcome.household, householdGroups),
-    ...rank.filters,
+    ...mustHaves.filters,
   ].filter((c): c is SQL => !!c)
 
-  const [rows, [total]] = await Promise.all([
+  const [rows, total] = await Promise.all([
     db.select({
       id: listings.id,
-      didntSay: sql<MustHaveKey[]>`${rank.didntSay}`.as('didnt_say'),
+      didntSay: sql<MustHaveKey[]>`${mustHaves.didntSay}`.as('didnt_say'),
       // A guest gives no gender, so a listing for men or women only is not a full match.
-      isFull: sql<boolean>`(cardinality(${rank.didntSay}) = 0 ${gender ? sql`` : sql`and ${openToAll}`} ${movingGap})`.as('is_full'),
+      isFull: sql<boolean>`(cardinality(${mustHaves.didntSay}) = 0 ${gender ? sql`` : sql`and ${openToAll}`} ${movingGap})`.as('is_full'),
       inBudget: sql<boolean>`${rentFits(false)}`.as('in_budget'),
-      prefsMet: sql<number>`${rank.prefsMet}`.as('prefs_met'),
+      prefsMet: sql<number>`${mustHaves.prefsMet}`.as('prefs_met'),
       moveGap: sql<number | null>`${moveGap(sql`${listings.availableFrom}`, moveDate)}`.as('move_gap'),
     }).from(listings).where(and(...conditions))
       .orderBy(sql`is_full desc, in_budget desc, prefs_met desc, move_gap asc nulls last`, desc(listings.createdAt))
       .limit(search.limit).offset(search.offset),
-    db.select({ n: count() }).from(listings).where(and(...conditions)),
+    db.$count(listings, and(...conditions)),
   ])
-  return { rows: rows.map((r) => ({ id: r.id, ...rank.labels(r) })), total: total!.n }
+  return { rows: rows.map((r) => ({ id: r.id, ...mustHaves.labels(r) })), total }
 }

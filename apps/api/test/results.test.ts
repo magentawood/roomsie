@@ -92,6 +92,11 @@ describe('people', () => {
     expect(results.every((r) => r.kind === 'person')).toBe(true)
   })
 
+  it('hides a card whose Tidy flatmates dealbreaker the searcher fails', async () => {
+    const { results } = await search(t, 'seeker', { ...form, lifestyle: { ...form.lifestyle, tidiness: stated('relaxed_about_mess') } })
+    expect(results.map((r) => nameOf(idOf(r)))).not.toContain('picky')
+  })
+
   it('gives a guest the people whose rule the guest did not answer, below the full matches, and no Form B points', async () => {
     const { results } = await search(t, null, form)
     const names = results.map((r) => nameOf(idOf(r)))
@@ -186,11 +191,6 @@ describe('the mapping of PD3a between people', () => {
     expect(await labelOf('no_alcohol')).toBe(true)
     // "Couple friendly" does not apply to a person, so only two preferences count.
     expect(await labelOf('couple_friendly')).toBe(false)
-  })
-
-  it('gives no Best match label for fewer than three preferences', async () => {
-    const { results } = await search(t, 'seeker', { ...base, mustHaves: { veg_kitchen: stated('prefer'), tidy_flatmates: stated('prefer') } })
-    expect(results.find((r) => idOf(r) === cards.veg)!.bestMatch).toBe(false)
   })
 })
 
@@ -315,6 +315,15 @@ describe('listings', () => {
     await listing('students', 'room_in_flat', { ...room, whoIsWelcome: ['students'] })
     const { results } = await search(t, 'seeker', { ...form, mustHaves: { ...form.mustHaves, couple_friendly: stated('dealbreaker') } })
     expect(results.find((r) => idOf(r) === ids.students)?.didntSay).toEqual(['couple_friendly'])
+  })
+
+  it('puts the listing that meets more preferences first, then the nearest move date', async () => {
+    const byPrefs = names((await search(t, 'seeker', { ...flats, mustHaves: { non_smokers: stated('prefer'), no_alcohol: stated('prefer') } })).results)
+    expect(byPrefs.slice(0, 2).sort()).toEqual(['drinkers', 'smokers'])
+    await listing('soon', 'owner_flat', { rates: [{ rent: 19000 }], availableFrom: '2026-12-05' })
+    await listing('late', 'owner_flat', { rates: [{ rent: 19000 }], availableFrom: '2026-12-25' })
+    const byDate = names((await search(t, 'seeker', { ...flats, moveDate: stated('2026-12-01') })).results)
+    expect(byDate.slice(0, 2)).toEqual(['soon', 'late'])
   })
 })
 

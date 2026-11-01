@@ -9,11 +9,11 @@ export type BudgetBand = (typeof bands)[number]['id']
 const bandLabels: Record<BudgetBand, string> = {
   under_10k: 'Under ₹10k', under_15k: 'Under ₹15k', under_25k: 'Under ₹25k', under_35k: 'Under ₹35k', above_35k: 'Above ₹35k',
 }
-export const budgetBands = bands.map((band) => ({ ...band, label: bandLabels[band.id] }))
+export const budgetChips = bands.map((band) => ({ ...band, label: bandLabels[band.id] }))
 
 /** A budget that the chat set can fit no band. */
 export const bandOf = (min: number | null, max: number | null): BudgetBand | null =>
-  budgetBands.find((b) => b.min === min && b.max === max)?.id ?? null
+  bands.find((b) => b.min === min && b.max === max)?.id ?? null
 
 /** "What best describes you?": the answers of who is moving, and "parent" for "Looking for my son or daughter". */
 export type DescribesYou = Exclude<WhosMoving, 'unclear'> | 'parent'
@@ -84,7 +84,7 @@ export const profileLabels = {
   weights: { prefer: 'Prefer', dealbreaker: 'Dealbreaker' },
   missing: { whosMoving: 'What best describes you', areas: 'The areas you look in', budget: 'Your budget' },
   missingChildType: 'What your son or daughter does',
-  budget: Object.fromEntries(budgetBands.map((b) => [b.id, b.label])) as Record<BudgetBand, string>,
+  budget: bandLabels,
 }
 
 export const firstName = (fullName: string) => fullName.split(/\s+/)[0] ?? fullName
