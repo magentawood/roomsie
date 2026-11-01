@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useReducer, useRef, useState } from 'react'
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FaceSad } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
 import { useAreaLabels } from '../../lib/queries'
-import { areaName, countLine, didntSayLine, formKey, panelTitle, panelUpdate, resultId, type PanelState, type ResultsPage } from '../../lib/results'
+import { countLine, didntSayLine, formKey, panelUpdate, resultId, type PanelState, type ResultsPage } from '../../lib/results'
 import { PlaceCard } from '../listings/place-card'
 import { PersonCard } from '../people/person-card'
 import { PlaceDetail } from '../places/place-detail'
@@ -14,8 +14,25 @@ import { SignInWall } from '../shell/sign-in-wall'
 import { Badge } from '../ui/badge'
 import { CloseButton } from '../ui/modal'
 
-/** How long the panel waits after the last scroll before it applies a new form (PD6c). */
+/** How long the panel waits after the last scroll or read before it applies a new form (PD6c). */
 const idleMs = 1500
+
+type Held = { form: FormA; page: ResultsPage }
+
+/**
+ * The results on the screen, and the form that they answer, so the header and the grid change together.
+ * `hold` while the person scrolls or reads a card. `release` when they stop: the newest results apply `idleMs` later.
+ */
+export function useHeldResults(form: FormA, page: ResultsPage) {
+  const key = formKey(form)
+  const [state, dispatch] = useReducer(panelUpdate<Held>, { shown: { key, page: { form, page } }, pending: null, busy: false } satisfies PanelState<Held>)
+  const idleTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useEffect(() => dispatch({ type: 'arrive', key, page: { form, page } }), [key, form, page])
+  useEffect(() => () => clearTimeout(idleTimer.current), [])
+  const hold = useCallback(() => { clearTimeout(idleTimer.current); dispatch({ type: 'busy' }) }, [])
+  const release = () => { clearTimeout(idleTimer.current); idleTimer.current = setTimeout(() => dispatch({ type: 'idle' }), idleMs) }
+  return { ...state.shown!.page, hold, release }
+}
 
 function MatchLabel({ result }: { result: MatchResult }) {
   if (result.bestMatch) return <Badge tone="blue" dot={false}>Best match</Badge>
@@ -31,7 +48,7 @@ function ResultGrid({ results, onOpen }: { results: MatchResult[]; onOpen: (resu
         <li key={resultId(result)}>
           {result.kind === 'person'
             ? <PersonCard card={result.card} label={<MatchLabel result={result} />} onOpen={() => onOpen(result)} />
-            : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaName(areaLabels)(result.listing.areaSlug) : undefined}
+            : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaLabels[result.listing.areaSlug] : undefined}
                 label={<MatchLabel result={result} />} onOpen={() => onOpen(result)} />}
         </li>
       ))}
@@ -61,46 +78,37 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
 }
 
 /**
- * The results panel of flow 02: a pure function of Form A (PD6c). A new form waits while the person scrolls,
- * so the order never moves under them. A card opens here: a place in the panel, a person on its page.
+ * The results panel of flow 02: a pure function of Form A (PD6c). A card opens here: a place in the panel, a person on its page.
  * `sample`: the preview of T-15 shows that the data is not real.
  */
-export function ResultsPanel({ form, page, sample, onClose, onAskInChat }: {
-  form: FormA; page: ResultsPage; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+export function ResultsPanel({ title, page, sample, hold, release, onClose, onAskInChat }: {
+  title: string; page: ResultsPage; sample?: boolean; hold: () => void; release: () => void
+  onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
-  const { user } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
-  const areaLabels = useAreaLabels()
-  const key = formKey(form)
-  const [state, dispatch] = useReducer(panelUpdate<ResultsPage>, { shown: { key, page }, pending: null, busy: false } satisfies PanelState<ResultsPage>)
   const [open, setOpen] = useState<ListingResponse | null>(null)
-  const [wall, setWall] = useState(false)
-  const idleTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const [tapped, setTapped] = useState<MatchResult | null>(null)
 
-  useEffect(() => dispatch({ type: 'arrive', key, page }), [key, page])
-  useEffect(() => () => clearTimeout(idleTimer.current), [])
+  // A guest signs in to open one card (PD6b), and the card opens after the sign-in. The results stay behind the wall.
+  // The tap waits for the auth check, so a signed-in person never sees the wall, as in the app shell.
+  useEffect(() => {
+    if (!user || !tapped) return
+    setTapped(null)
+    if (tapped.kind === 'person') return router.push(`/people/${tapped.card.id}`)
+    hold()
+    setOpen(tapped.listing)
+  }, [user, tapped, router, hold])
 
-  const onScroll = () => {
-    dispatch({ type: 'busy' })
-    clearTimeout(idleTimer.current)
-    idleTimer.current = setTimeout(() => dispatch({ type: 'idle' }), idleMs)
-  }
-  // A guest signs in to open one card (PD6b). The results stay on the screen behind the wall.
-  const openResult = (result: MatchResult) => {
-    if (!user) return setWall(true)
-    if (result.kind === 'person') return router.push(`/people/${result.card.id}`)
-    setOpen(result.listing)
-  }
-
-  const shown = state.shown!.page
-  const title = panelTitle(form, areaName(areaLabels))
+  const onScroll = () => { hold(); release() }
+  const closeDetail = () => { setOpen(null); release() }
 
   return (
     <section aria-label="Results" className="flex min-h-0 flex-col bg-primary">
       {open
         ? (
           <div className="min-h-0 flex-1 overflow-y-auto">
-            <PlaceDetail listing={open} onBack={() => setOpen(null)} onAskInChat={() => { onAskInChat(open); setOpen(null) }} />
+            <PlaceDetail listing={open} onBack={closeDetail} onAskInChat={() => { onAskInChat(open); closeDetail() }} />
           </div>
         )
         : (
@@ -108,7 +116,7 @@ export function ResultsPanel({ form, page, sample, onClose, onAskInChat }: {
             <header className="flex items-start justify-between gap-3 border-b border-secondary px-5 py-4 lg:px-6">
               <div className="flex flex-col gap-1">
                 <h2 className="text-lg font-semibold text-primary">
-                  {title} <span className="font-normal text-tertiary">· {countLine(shown.results.length)}</span>
+                  {title} <span className="font-normal text-tertiary">· {countLine(page.results.length)}</span>
                 </h2>
                 {sample && <span><Badge tone="warning">Sample data</Badge></span>}
               </div>
@@ -120,13 +128,13 @@ export function ResultsPanel({ form, page, sample, onClose, onAskInChat }: {
               </div>
             </header>
             <div onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 lg:px-6">
-              {shown.results.length
-                ? <ResultGrid results={shown.results} onOpen={openResult} />
-                : <NoResults suggested={shown.suggested} onOpen={openResult} />}
+              {page.results.length
+                ? <ResultGrid results={page.results} onOpen={setTapped} />
+                : <NoResults suggested={page.suggested} onOpen={setTapped} />}
             </div>
           </>
         )}
-      {wall && <SignInWall onClose={() => setWall(false)} />}
+      {tapped && !user && !loading && <SignInWall onClose={() => setTapped(null)} />}
     </section>
   )
 }

@@ -8,10 +8,10 @@ import { ApiError, chatApi, errorText } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels } from '../../lib/queries'
-import { areaName, panelReady, panelTitle, type ResultsPage } from '../../lib/results'
-import { sampleEmpty, sampleForm, sampleMatches } from '../../lib/sample-results'
+import { panelReady, panelTitle } from '../../lib/results'
+import { sampleEmpty, sampleForm, sampleMatches, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
-import { ResultsPanel } from '../results/results-panel'
+import { ResultsPanel, useHeldResults } from '../results/results-panel'
 import { Button } from '../ui/button'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
@@ -110,14 +110,11 @@ function useChat() {
   return { turns, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 
-export type Preview = 'results' | 'empty'
-
 const emptyForm = formA.parse({})
-const noResults: ResultsPage = { results: [], suggested: [] }
 
 /**
  * The chat of a goal, and the results beside it (flow 02). The person sees their message at once, and the reply when it comes.
- * The grid is not connected to the match query yet, so `preview` shows the panel with sample data (T-15).
+ * The form fills only through T-12, so `preview` shows the panel with sample data (T-15). TODO(T-12, T-14): the form and the match query.
  */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, send, loadingGoal } = useChat()
@@ -129,16 +126,17 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const pending = send.isPending || failed ? send.variables : undefined
   const areaLabels = useAreaLabels()
   const form = preview ? sampleForm : emptyForm
-  const page = preview === 'empty' ? sampleEmpty : preview ? sampleMatches : noResults
+  const { form: shownForm, page, hold, release } = useHeldResults(form, preview === 'empty' ? sampleEmpty : sampleMatches)
   const ready = panelReady(form)
+  const title = panelTitle(shownForm, (slug) => areaLabels[slug] ?? slug)
   // The panel is open beside the chat on a desktop. On a phone, the chat fills the screen until "Show all" (PD6a).
   const [closed, setClosed] = useState(false)
   const [showAll, setShowAll] = useState(false)
-  const [draft, setDraft] = useState({ text: '', n: 0 })
+  const [draft, setDraft] = useState({ text: '', version: 0 })
   const openResults = () => { setClosed(false); setShowAll(true) }
   const closeResults = () => { setClosed(true); setShowAll(false) }
   const askInChat = (listing: ListingResponse) => {
-    setDraft(({ n }) => ({ text: `About ${listingTitle(listing)}: `, n: n + 1 }))
+    setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
     setShowAll(false)
   }
 
@@ -161,16 +159,16 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
                 : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
           )}
-          {ready && <li><ResultsCard title={panelTitle(form, areaName(areaLabels))} count={page.results.length} onOpen={openResults} /></li>}
+          {ready && <li><ResultsCard title={title} count={page.results.length} onOpen={openResults} /></li>}
         </ol>
       </div>
       <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
         {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
-        <ChatInput key={draft.n} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.n > 0} initialText={draft.text} onSend={submit} />
+        <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={submit} />
       </div>
       {ready && (
         <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${showAll ? 'grid' : 'hidden'} ${closed ? 'lg:hidden' : 'lg:grid'}`}>
-          <ResultsPanel form={form} page={page} sample={Boolean(preview)} onClose={closeResults} onAskInChat={askInChat} />
+          <ResultsPanel title={title} page={page} sample={Boolean(preview)} hold={hold} release={release} onClose={closeResults} onAskInChat={askInChat} />
         </div>
       )}
     </main>
@@ -180,4 +178,3 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
 function UserText({ text }: { text: string }) {
   return <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
 }
-

@@ -1,8 +1,6 @@
-import { ChatScreen, type Preview } from '../../components/chat/chat-screen'
+import { ChatScreen } from '../../components/chat/chat-screen'
 import { AppShell } from '../../components/shell/app-shell'
-
-const previews: readonly string[] = ['results', 'empty'] satisfies Preview[]
-const isPreview = (value: unknown): value is Preview => typeof value === 'string' && previews.includes(value)
+import { previews } from '../../lib/sample-results'
 
 /**
  * The chat is open to a guest (PD6b). The landing page of T-23a keeps `/`.
@@ -12,7 +10,7 @@ export default async function ChatPage({ searchParams }: { searchParams: Promise
   const { preview } = await searchParams
   return (
     <AppShell fixed>
-      <ChatScreen preview={isPreview(preview) ? preview : undefined} />
+      <ChatScreen preview={previews.find((name) => name === preview)} />
     </AppShell>
   )
 }
