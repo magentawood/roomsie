@@ -74,10 +74,10 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
       didntSay: sql<MustHaveKey[]>`${mustHaves.didntSay}`.as('didnt_say'),
       isFull: sql<boolean>`(cardinality(${mustHaves.didntSay}) = 0 and not ${theirDealbreakerIn(searcher.gaps)})`.as('is_full'),
       prefsMet: sql<number>`${mustHaves.prefsMet}`.as('prefs_met'),
-      formB: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('form_b'),
+      formBPoints: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('form_b_points'),
       moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
-      .orderBy(sql`is_full desc, prefs_met desc, form_b desc, move_gap asc nulls last`, desc(profiles.createdAt))
+      .orderBy(sql`is_full desc, prefs_met desc, form_b_points desc, move_gap asc nulls last`, desc(profiles.createdAt))
       .limit(search.limit).offset(search.offset),
     db.$count(profiles, and(...conditions)),
   ])

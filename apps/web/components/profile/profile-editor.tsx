@@ -4,13 +4,14 @@ import { useState, type ReactNode } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Eye, EyeOff, InfoCircle, Trash01 } from '@untitledui/icons'
 import {
+  budgetBands,
   childTypes, lifestyleAnswers, maxProfilePhotos, mustHaveKeys, profileResponse, profileTextLimits, profileUploadUrlResponse,
   type LifestyleAxis, type ProfileEditBody, type ProfileResponse,
 } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import {
-  ages, bandOf, budgetChips, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, type ProfileForm,
+  ages, bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, type ProfileForm,
 } from '../../lib/profile-form'
 import { initials } from '../../lib/person'
 import { queryKeys, useAreas } from '../../lib/queries'
@@ -161,7 +162,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <AreaPicker areas={areas.data?.areas ?? []} value={draft.areas} onChange={(picked) => set({ areas: picked })} />
         <ChoiceChips label="Budget" labels={profileLabels.budget} value={bandOf(draft.budgetMin, draft.budgetMax)}
           onChange={(id) => {
-            const picked = budgetChips.find((b) => b.id === id)
+            const picked = budgetBands.find((b) => b.id === id)
             set({ budgetMin: picked?.min ?? null, budgetMax: picked?.max ?? null })
           }} />
         <div className="grid gap-5">

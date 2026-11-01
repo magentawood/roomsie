@@ -19,7 +19,7 @@ const welcomeOf: Record<WhosMoving, { type?: (typeof roomWelcomeGroups)[number];
   unclear: {},
 }
 
-/** What a must-have checks on a listing: true, false, or null when the lister did not say (PD3a). A null entry does not apply to a listing. */
+/** What a must-have checks on a listing, or null when the lister did not say (PD3a). */
 const onListing: Record<MustHaveKey, SQL | null> = {
   veg_kitchen: sql`${listings.vegOnlyKitchen}`,
   non_smokers: sql`(not ${listings.smokingAllowed})`,
