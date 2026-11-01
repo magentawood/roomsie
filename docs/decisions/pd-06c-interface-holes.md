@@ -1,6 +1,6 @@
 # PD6c — The panel follows the form
 
-**Status:** Settled. All five holes closed. Changed on 2026-11-01. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. All five holes closed. Changed on 2026-11-02. · **Date:** 2026-09-20 · **Deciders:** Yash. PC-39: pulkitshringi
 
 ## Context
 
@@ -29,6 +29,12 @@ budget, approximately three turns. These turns are chip-driven: the place types 
 PD15, the area groups of PD2, and the budget bands of the designs. The "Best match" label follows
 [PD3a](pd-03a-flatmate-matching.md). The interview does not end: open questions
 continue while the user browses.
+
+**The order of the interview (PC-39).** After intent, area and budget, the
+assistant asks the move date, then the eight lifestyle questions of PD15. The
+open questions come while the user browses the results. A step count shows the
+progress. The assistant fills no market default, so no slot has the `default`
+source.
 
 **Direction of change (hole 4):**
 
@@ -107,6 +113,10 @@ search with no Mumbai area shows the waitlist screen. The alerts go by email.
   dialogs without a check.
 - **Inference never wins.** The model never infers a slot value ([PD15](pd-15-form-a-contract.md)).
 
+- **The order of the interview.** The results show after the first three answers,
+  so a market default adds nothing. The open questions need the observer (T-36)
+  first.
+
 ## Alternatives rejected
 
 - **An empty state with chips only.** The panel stays empty until the person
@@ -116,7 +126,9 @@ search with no Mumbai area shows the waitlist screen. The alerts go by email.
 
 - The panel must not wait for the model. Run the query from the current form
   state.
-- F-14 (PC-39) decides what the completeness gate gates. PD3a uses no score.
+- No result waits for the step count. PD3a uses no score.
+- A later task shows the step count. T-12 has the order as the setting
+  `ASSISTANT_QUESTION_ORDER`.
 - Mobile rule (hole 1): do not change the chat size while the user types or
   reads. An automatic shrink in the middle of a sentence is the same defect as
   a silent reorder.

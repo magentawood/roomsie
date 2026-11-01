@@ -1,6 +1,6 @@
 # Product calls: assistant and limits
 
-**Task:** F-14 · **Status:** open · **Updated:** 2026-10-25
+**Task:** F-14 · **Status:** open · **Updated:** 2026-11-02
 
 The product team (founder and product) settles these calls. Engineers do not.
 
@@ -13,17 +13,6 @@ The product team (founder and product) settles these calls. Engineers do not.
 - Do not ask again what a record decides. For example, [PD9](../decisions/pd-09-pre-login-limits.md) decides five typed turns and chips-only at the ceiling.
 
 ## Round 1
-
-### PC-09 · Supported languages
-
-❓ Which languages and scripts do we promise? Do we promise them in the screens, in the assistant, or in the two?
-
-- **Today:** the composer mirrors the language and script of the user (`docs/decisions/pd-07-models.md:94`, `docs/team-plan.json`). The eval set has English, Hinglish and Marathi (`docs/team-plan.json`). No doc gives the language of the screens.
-- **Options:** a) English only, everywhere. b) Screens in English. The assistant reads and replies in English, Hindi, Marathi and Hinglish. It uses Latin or Devanagari script. c) Option b, and screens in Hindi too.
-- **Blocks:** T-13, T-34, M-03, T-27 (soft: the default is option b).
-- **Record:** [PD7](../decisions/pd-07-models.md)
-
-➡️ **Recommended:** b. PD7 chose the models for Hinglish, and PD10 tests each band in Hindi, Marathi and Hinglish.
 
 ### PC-10 · The daily spend ceiling amount
 
@@ -81,16 +70,3 @@ The product team (founder and product) settles these calls. Engineers do not.
 - **Record:** [PD10](../decisions/pd-10-scope-bands.md)
 
 ➡️ **Recommended:** a, and a short list of national helplines, for example 112 (emergency) and Tele-MANAS 14416 (mental health). Make sure that each number is correct before launch. assistant-risks.md section 4.4 forbids a matching attribute. The typed turn stays in `chat_turns` and goes with account deletion.
-
-## Round 3
-
-### PC-39 · The interview script after the chips
-
-❓ After intent, area and budget, in which order does the assistant ask the other questions? Which open questions does it ask? Is there a progress indicator? Does it ever use market defaults?
-
-- **Today:** no order. The open questions are in `docs/ai-agent-design.md:101-106`. The `default` source exists but nothing uses it (`docs/ai-agent-design.md:54`). "Show progress" is in `docs/assistant-risks.md:76`.
-- **Options:** a) Move date, the eight lifestyle questions, then the open questions during the results. b) The open questions first, then the lifestyle questions. Progress: a step count, or nothing. Defaults: none, or with a label.
-- **Blocks:** T-09 scripted next question, T-13 (soft: the default is option a).
-- **Record:** [PD6c](../decisions/pd-06c-interface-holes.md)
-
-➡️ **Recommended:** a, with a step count and no market defaults. Move date and two dealbreakers make the minimum slot set (`docs/ai-agent-design.md`, section 3.3). The chips show results before these questions. Thus, defaults add nothing.
