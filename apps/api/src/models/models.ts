@@ -24,7 +24,16 @@ const parseJson = (text: string): unknown => {
   }
 }
 const readText = (content: string) => content.trim() || undefined
-const isTimeout = (err: unknown) => err instanceof Error && err.name === 'TimeoutError'
+
+// Both vendors serve the chat format of OpenAI, so one request fits both (PD7).
+const vendors = ['deepseek', 'gemini'] as const
+type Vendor = (typeof vendors)[number]
+const urls: Record<Vendor, string> = {
+  deepseek: 'https://api.deepseek.com/chat/completions',
+  gemini: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+}
+/** The first word of a model name is its vendor, such as `deepseek` in `deepseek-flash`. */
+export const vendorOf = (model: string) => vendors.find((vendor) => model.startsWith(`${vendor}-`))
 
 export type ModelCall = {
   req: FastifyRequest
@@ -39,47 +48,50 @@ export type ModelCall = {
 export class ModelUnavailable extends Error {}
 
 type Outcome<T> = { outcome: 'ok'; value: T } | { outcome: 'invalid' | 'failed' }
+/** `refused` is the status of a 4xx other than 429: a bad key or an empty balance. */
+type Answer<T> = Outcome<T> & { usage: ModelUsage; refused?: number }
+const noUsage: ModelUsage = { tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 }
+
+async function readAnswer<T>(res: Response | null, read: (content: string) => T | undefined): Promise<Answer<T>> {
+  if (!res?.ok) return { outcome: 'failed', usage: noUsage, ...(res && res.status !== 429 && res.status < 500 && { refused: res.status }) }
+  let json: unknown
+  try {
+    json = await res.json()
+  } catch (err) {
+    // A timeout or a lost connection can also come while the body arrives. Then the vendor is slow, not wrong.
+    if (!(err instanceof SyntaxError)) return { outcome: 'failed', usage: noUsage }
+  }
+  const body = completion.safeParse(json)
+  const usage = body.success ? body.data.usage : noUsage
+  const value = body.success ? read(body.data.choices[0]!.message.content ?? '') : undefined
+  return value === undefined ? { outcome: 'invalid', usage } : { outcome: 'ok', value, usage }
+}
 
 /** The only code that calls a model (PD7, ADR-0014). */
-export function modelsOf({ deepseekKey, geminiKey, primary, fallback, timeoutMs }: { deepseekKey: string; geminiKey: string; primary: string; fallback: string; timeoutMs: number }) {
-  // Both vendors serve the chat format of OpenAI, so one request fits both (PD7).
-  const vendorOf = (model: string) => (model.startsWith('gemini')
-    ? { url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions', key: geminiKey }
-    : { url: 'https://api.deepseek.com/chat/completions', key: deepseekKey })
-
+export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<Vendor, string>; primary: string; fallback: string; timeoutMs: number }) {
   async function attempt<T>(call: ModelCall, model: string, json: boolean, read: (content: string) => T | undefined) {
-    const { url, key } = vendorOf(model)
+    // The settings let only a model name of a known vendor through.
+    const vendor = vendorOf(model)!
     const started = performance.now()
-    let usage: ModelUsage = { tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 }
-    let result: Outcome<T> = { outcome: 'failed' }
-    const res = await fetch(url, {
+    const res = await fetch(urls[vendor], {
       method: 'POST',
-      headers: { authorization: `Bearer ${key}`, 'content-type': 'application/json' },
+      headers: { authorization: `Bearer ${keys[vendor]}`, 'content-type': 'application/json' },
       // The fixed system prompt comes first, so the automatic cache of each vendor applies.
       body: JSON.stringify({ model, messages: [{ role: 'system', content: call.system }, ...call.messages], ...(json && { response_format: { type: 'json_object' } }) }),
       signal: AbortSignal.timeout(timeoutMs),
     }).catch(() => null)
-    if (res && !res.ok && res.status !== 429 && res.status < 500) {
-      // A bad key or an empty balance: the fallback answers, but a person must act.
-      reportError(new Error(`${model} answered ${res.status}`), { where: `models.${call.role}`, log: call.req.log })
-    } else if (res?.ok) {
-      // The timeout can also come while the body arrives. Then the vendor is slow, not wrong.
-      const body = await res.json().then((json: unknown) => completion.safeParse(json), (err: unknown) => (isTimeout(err) ? 'timeout' : undefined))
-      if (body !== 'timeout') {
-        if (body?.success) usage = body.data.usage
-        const value = body?.success ? read(body.data.choices[0]!.message.content ?? '') : undefined
-        result = value === undefined ? { outcome: 'invalid' } : { outcome: 'ok', value }
-      }
-    }
+    const answer = await readAnswer(res, read)
     const ms = Math.round(performance.now() - started)
-    const record = { role: call.role, model, ...usage, ms, fallback: model === fallback, outcome: result.outcome, session: call.session }
+    const record = { role: call.role, model, ...answer.usage, ms, fallback: model === fallback, outcome: answer.outcome, session: call.session }
     call.req.server.analytics.track(call.req, { name: 'model_called', ...record })
     call.req.log.info(record, 'model call')
-    return { ...result, usage, ms }
+    return { ...answer, ms }
   }
 
   async function run<T>(call: ModelCall, json: boolean, read: (content: string) => T | undefined) {
     const first = await attempt(call, primary, json, read)
+    // Gemini answers, but a person must fix the key or the balance of DeepSeek.
+    if (first.refused) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
     const second = first.outcome === 'invalid' ? await attempt(call, primary, json, read) : first
     const last = second.outcome === 'ok' ? second : await attempt(call, fallback, json, read)
     if (last.outcome === 'ok') return last.value
