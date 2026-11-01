@@ -5,7 +5,8 @@ import { createTestDb, type TestDb } from './db'
 import { projectId, testTokens } from './tokens'
 import { tombstoneKey } from '../src/account'
 import {
-  anonymousSessions, areas, blocks, chatTurns, connectionRequests, goals, listingFlatmates, listingRates, listings, profiles, reports, saves, users,
+  anonymousSessions, areas, blocks, chatTurns, connectionRequests, goals, listingFlatmates, listingRates, listings, observations, observationTopics, profiles, reports, saves,
+  users,
 } from '../src/db/schema'
 import { buildServer } from '../src/server'
 import { offlineStorage } from '../scripts/openapi'
@@ -31,6 +32,7 @@ const fakeStore: Storage = {
 beforeAll(async () => {
   testDb = await createTestDb()
   await testDb.db.insert(areas).values({ slug: 'powai', name: 'Powai' })
+  await testDb.db.insert(observationTopics).values({ key: 'work_pattern', label: 'Work' })
   const tokens = await testTokens()
   idToken = tokens.idToken
   app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys: tokens.firebaseKeys, storage: fakeStore, moderation: testModeration(), messaging: fakes.messaging })
@@ -70,7 +72,8 @@ async function seedAccount(userId: string, tag: string) {
   await db.insert(listingRates).values({ listingId: listing!.id, listingKind: 'room_in_flat', rent: 20000 })
   await db.insert(listingFlatmates).values({ listingId: listing!.id, listingKind: 'room_in_flat', name: 'Asha', photoKey: `f/${tag}` })
   const [goal] = await db.insert(goals).values({ userId, form: { intent: 'room' } }).returning()
-  await db.insert(chatTurns).values({ goalId: goal!.id, role: 'user', inputMethod: 'typed', text: 'I work in Powai' })
+  const [turn] = await db.insert(chatTurns).values({ goalId: goal!.id, role: 'user', inputMethod: 'typed', text: 'I work in Powai' }).returning()
+  await db.insert(observations).values({ userId, key: 'work_pattern', value: 'works in Powai', kind: 'context', evidence: 'I work in Powai', turnId: turn!.id, confidence: 0.9 })
   const [session] = await db.insert(anonymousSessions)
     .values({ deviceHash: `device-${tag}`, claimedByUserId: userId, expiresAt: new Date(Date.now() + 86_400_000) }).returning()
   const [sessionGoal] = await db.insert(goals).values({ anonymousSessionId: session!.id }).returning()
@@ -115,10 +118,12 @@ describe('DELETE /v1/me', () => {
       { status: 'declined', toProfileId: null, listingId: null }, { status: 'declined', toProfileId: null, listingId: null },
     ])
     expect(await db.select().from(saves).where(eq(saves.userId, gone.id))).toHaveLength(0)
+    expect(await db.select().from(observations).where(eq(observations.userId, gone.id))).toHaveLength(0)
     expect(await db.select().from(saves).where(eq(saves.userId, stays.id))).toHaveLength(0)
     // The other person keeps all of theirs.
     expect(await db.select().from(goals).where(inArray(goals.id, staysSeed.goalIds))).toHaveLength(2)
     expect(await db.select().from(chatTurns).where(inArray(chatTurns.goalId, staysSeed.goalIds))).toHaveLength(1)
+    expect(await db.select().from(observations).where(eq(observations.userId, stays.id))).toHaveLength(1)
     expect(await db.select().from(listingRates).where(eq(listingRates.listingId, staysSeed.listingId))).toHaveLength(1)
     expect(await db.select().from(profiles).where(eq(profiles.userId, stays.id))).toHaveLength(1)
     // Reports and blocks stay for moderation.

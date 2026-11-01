@@ -8,6 +8,7 @@ import { anonymousSessions, goals, users } from './db/schema'
 import type { FirebaseAdmin } from './firebase-admin'
 import type { IdStore } from './id-store'
 import { deactivateListingsOf, deleteListingsOf, listingPhotoKeysOf } from './listings/read'
+import { deleteObservationsOf } from './observations/read'
 import { deleteProfileOf, profilePhotoKeysOf, unpublishCardOf } from './profiles/read'
 import { hasOpenReportAbout } from './reports/read'
 import { endOpenRequests } from './requests/read'
@@ -37,7 +38,7 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  *
  * The events stay, but the analytics id goes, so no event points to the person (T-24).
  *
- * Not here yet: Form B (T-35). The messages stay for the other person (T-44).
+ * The messages stay for the other person (T-44).
  */
 export async function deleteAccount(
   { db, storage, idStore, firebaseAdmin }: { db: Db; storage: Pick<Storage, 'deleteObjects'>; idStore?: IdStore; firebaseAdmin: Pick<FirebaseAdmin, 'deleteUser'> | null },
@@ -57,6 +58,7 @@ export async function deleteAccount(
     await deleteChecksOf(tx, idStore, userId)
     await endOpenRequests(tx, userId)
     await deleteListingsOf(tx, userId)
+    await deleteObservationsOf(tx, userId)
     // The cascades remove the chat turns and the goals of a claimed visitor session.
     await tx.delete(goals).where(eq(goals.userId, userId))
     await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
