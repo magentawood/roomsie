@@ -56,7 +56,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 
 ## Spec
 
-**Approved:** 2026-11-01, by Pulkit. The changes in implement and review are not approved yet: the extra docs and standards, the version, the strict keys, and one home for the slot rules.
+**Approved:** 2026-11-01, by Pulkit. The changes in implement and review: approved on 2026-11-01, by Pulkit.
 
 - **Modules:**
   - **`packages/contract`, Form A:** new. The Form A schema and its type. Each slot of PD15 has a value and a source. The answer lists of the profile API do not change.
@@ -87,7 +87,7 @@ The exact things that the assistant tries to learn, and the exact allowed answer
   - **Old forms:** a slot that a stored form does not have reads as empty. Thus, a stored empty form is valid, and no data moves.
   - **The results:** a result has `kind: "person"` with a card, or `kind: "listing"` with a listing. Each result also has a Best match flag and a "Didn't say" list of must-haves (PD3a). T-14 fills them, and T-15 shows them. The user decided this in the grill.
   - **The database:** the `inferred` value of the answer source stays, and no code uses it. Postgres cannot easily remove a value from an enum, and no row has the value.
-  - **Review round 1 (not approved yet):** Form A has `version: 1`, because a handler input has a version (`api.md`). Form A and its slots reject keys that they do not have.
+  - **Review round 1:** Form A has `version: 1`, because a handler input has a version (`api.md`). Form A and its slots reject keys that they do not have.
   - **The done items:** item 2 gets the new sources and the new weight. The note loses the old fifth item, because it contradicts PD14. The T-12 item about inferred values changes to agree.
 - **Out of scope:**
   - The match query and its tests (T-14).
