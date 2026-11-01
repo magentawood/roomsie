@@ -47,13 +47,17 @@ observation: {
   value:      "partner stays over most nights",
   kind:       "constraint" | "preference" | "context" | "concern",
   evidence:   "my ex basically lived there, that's what killed it",
-  turn:       11,
+  turn:       "<the id of the chat turn>",
   confidence: 0.82,
   visible:    true
 }
 ```
 
 Only its owner sees a `visible` note.
+
+- `key` must be a topic of a seeded catalogue. A new topic is a seed row.
+- An owner has one note for each topic. A newer note replaces the older note.
+- When its chat turn goes, the note goes too.
 
 - **Each observation must contain the user's actual words.** If the model cannot give a verbatim span from the turn, the system rejects the observation.
 - **Build Form B one turn at a time, not in one pass at the end.**
@@ -207,7 +211,7 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 ## What this changes elsewhere
 
-- **Schema.** Form A lives on goals and profiles ([ADR-0017](decisions/0017-schema-v1-shape.md)). Form B needs a home (T-35). Form B is personal data that comes from free text. Thus, account deletion must purge it.
+- **Schema.** Form A lives on goals and profiles ([ADR-0017](decisions/0017-schema-v1-shape.md)). Form B lives in its own table, with one owner: a user or a visitor session (T-35). Form B is personal data that comes from free text. Thus, account deletion purges it.
 - **Evals.** Each handler gets its own score: router accuracy, extractor accuracy, observer evidence validity, advisor grounding and refusal rate.
 - **`packages/contract`.** Handler inputs and outputs are Zod schemas with versions. They are next to the analytics event schemas in the package.
 - **Model choice (PD7).** This design needs a small fast model and a good model.
