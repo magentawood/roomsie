@@ -47,3 +47,27 @@ One piece of code that talks to the AI. If DeepSeek is down, it silently changes
 
 ## Read first
 - [model-selection.md](../../model-selection.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by n3rxv
+
+- **Modules:**
+  - **The models module of the API (new):** the only code that calls a model. It gives a JSON call and a text call, and a check route for moderators.
+  - **The contract:** the event `model_called`, and the answer of the check route.
+  - **The settings of the API:** the two keys, the two model names and the timeout.
+- **Seams for the tests:**
+  - The API tests, with a fake vendor in place of the network: DeepSeek answers. A timeout, a 5xx and a 429 go to Gemini. An answer that fails its schema goes to DeepSeek one more time, then to Gemini. When Gemini also fails, the call throws. Each call records its event, with the cached tokens. Only a moderator can use the check route.
+  - A check of the live API after the deploy, through the check route.
+- **Decisions:**
+  - **One module:** it talks to the chat endpoints of the OpenAI format of both vendors with `fetch`, and uses no SDK of a vendor (why: PD7, ADR-0014).
+  - **The models:** `deepseek-flash` (DeepSeek V4.1 Flash) first, and `gemini-3.5-flash-lite` as the fallback for all roles. Both names are settings with these defaults, so a change of vendor is a change of settings (why: PD7).
+  - **The fallback:** a timeout, a 5xx or a 429 from DeepSeek goes one time to Gemini. An answer that fails its Zod schema goes one more time to DeepSeek, then one time to Gemini. When Gemini also fails, the module reports the error and throws a typed error, so that the caller selects what the user sees. The timeout of each attempt is a setting, 10 seconds by default (why: PD7).
+  - **Two kinds of call:** a JSON call, in the JSON mode of the vendor, then the Zod schema, for the router, the extractor and the observer. A text call for the composer and the Advisor. The fixed system prompt is always the first message, so that the automatic cache of each vendor applies.
+  - **The record of each call:** the analytics event `model_called`, with the role, the model, the tokens in, the cached tokens, the tokens out, the time, the fallback and the session, and one log line. No text of the user or the model. The user decided this in the grill.
+  - **The live check:** `POST /v1/admin/model-check`, for moderators only. It sends one short prompt to DeepSeek and one to Gemini, and shows which model answered, the tokens and the time. The user decided this in the grill.
+- **Out of scope:**
+  - web search and the grounding of Gemini (T-38)
+  - the gate on token probability for `unclear` (T-12)
+  - the daily spend ceiling (T-21). The module gives the token counts only.
+  - the prompts of each role (T-12, T-13, T-34, T-36, T-38)
