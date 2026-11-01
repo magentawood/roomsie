@@ -57,7 +57,7 @@ Takes what a person wants and returns the people who fit.
 
 ## Spec
 
-**Approved:** 2026-11-02, by Pulkit.
+**Approved:** 2026-11-02, by Pulkit. The changes in review: approved on 2026-11-02, by Pulkit.
 
 - **Modules:**
   - **`packages/contract`, results:** new. The body of a search (a Form A and a page number) and the response: the results, the page and the suggested posts. The result schema of T-08 does not change.
