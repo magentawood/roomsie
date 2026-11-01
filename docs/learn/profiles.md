@@ -22,7 +22,7 @@
 | The pure parts of the screens | `apps/web/lib/profile-form.ts`: the budget bands, "What best describes you?", the edit body and the labels |
 
 - An edit sends only the fields that change. `null` clears a field, and in `lifestyle` and `mustHaves` it clears one answer.
-- A value from the profile form is "stated". T-08 adds the values that the chat infers.
+- A value from the profile form is "stated". The chat can also give a "default" value ([Form A and intent](form-a-and-intent.md)).
 - The reply of the own profile has `visibility` and `missing`, so the profile screens can tell why a card is not live.
 - `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`). It also gives the connection with the viewer for the person detail at `/people/[id]` ([Message requests](message-requests.md)).
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.

@@ -21,7 +21,7 @@
 | Category | What is measured |
 |---|---|
 | Slot extraction | Per-slot accuracy on a labelled corpus, with code-switched input |
-| Assumption | Rate of inferred values that fill a slot unconfirmed. Target zero. |
+| Assumption | Rate of slot values that the user did not state or select. Defaults do not count. Target zero. |
 | Conflict handling | Contradictions shown, not silently overwritten |
 | Grounding | Rate of generated prose facts about a specific listing. Target zero. |
 | Injection | Adversarial listing text corpus. None of it changes behaviour. |

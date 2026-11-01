@@ -36,21 +36,19 @@ Three jobs, different trust levels: **Extract** (enum or number only), **Convers
 Slot filling with a structured state object for the full session:
 
 ```
-slot: {
-  key:        "smoke",
-  value:      "no",
-  source:     "stated" | "inferred" | "default" | "empty",
-  evidence:   "I really can't be around cigarette smoke",
-  turn:       7,
-  confirmed:  true,
-  weight:     null   // only a must-have has a weight: "prefer" | "dealbreaker" (PD15)
+smoking: {
+  value:   "non_smoker",                  // "unclear" for a vague answer, null when empty
+  source:  "stated" | "default" | "empty"
 }
 ```
 
+- Each slot has a value and a source only. The words of the user stay only in Form B ([PD15](decisions/pd-15-form-a-contract.md)).
+- The value of a must-have is its weight: `prefer`, `dealbreaker` or `unclear`.
+- The model never infers a value. A vague answer is `unclear`, and the assistant asks again ([PD15](decisions/pd-15-form-a-contract.md)).
+
 | `source` | Meaning | Rule |
 |---|---|---|
-| stated | The user said it | Fill silently. |
-| inferred | The model got it from a related statement | Never fill silently. Propose it: "Should I make that a dealbreaker?" |
+| stated | The user said it or selected it | Fill silently. |
 | default | A market default, only to show the first results | Always label it visibly. The user can always override it. |
 | empty | Unknown | The interview is not complete. |
 

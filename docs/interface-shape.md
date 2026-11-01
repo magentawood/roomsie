@@ -89,7 +89,7 @@ Why: [PD6c](decisions/pd-06c-interface-holes.md)
 - The panel is a pure function of the form.
 - A form change is a change to the value or weight of a slot.
 - A change to provenance is not a form change.
-- If the user confirms an inferred value that the panel uses, there is no new query.
+- If the user confirms a default value that the panel uses, there is no new query.
 
 **The direction of the change sets what the panel does:**
 
