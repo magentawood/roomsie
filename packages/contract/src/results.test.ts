@@ -43,8 +43,9 @@ describe('a search', () => {
       suggestions: [
         { relaxed: { kind: 'budget', max: 25_000 }, results: [{ kind: 'person', card, ...labels }] },
         { relaxed: { kind: 'area', area: 'andheri-goregaon' }, results: [] },
+        { relaxed: { kind: 'budget', max: null }, results: [] },
       ],
     })
-    expect(response.suggestions.map((s) => s.relaxed.kind)).toEqual(['budget', 'area'])
+    expect(response.suggestions.map((s) => s.relaxed.kind)).toEqual(['budget', 'area', 'budget'])
   })
 })

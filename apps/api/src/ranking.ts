@@ -15,7 +15,6 @@ export function mustHaveSql(meets: (key: MustHaveKey) => SQL, dealbreakers: Must
   }
 }
 
-/** The fields that a search of people and a search of listings share. */
 export type BaseSearch = {
   viewerUserId?: string
   /** Null: all of Mumbai. */

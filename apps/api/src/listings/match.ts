@@ -1,5 +1,5 @@
 import { and, count, desc, inArray, ne, sql, type SQL } from 'drizzle-orm'
-import { welcomeOf, type genders, type ListingKind, type MustHaveKey, type roomTypes, type WhosMoving } from '@roomsie/contract'
+import { welcomeOf, type Gender, type ListingKind, type MustHaveKey, type roomTypes, type WhosMoving } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { listingRates, listings } from '../db/schema'
 import { textArray } from '../db/sql'
@@ -19,7 +19,7 @@ const onListing: Record<MustHaveKey, SQL | null> = {
 const appliesToListings = (key: MustHaveKey) => onListing[key] !== null
 
 /** "Who can move in" for each gender of a searcher, besides Any (PD3a, F-13). */
-const moveInFor: Record<(typeof genders)[number], string[]> = { male: ['men'], female: ['women'], non_binary: [] }
+const moveInFor: Record<Gender, string[]> = { male: ['men'], female: ['women'], non_binary: [] }
 const typeGroups = ['students', 'working_professionals']
 const householdGroups = ['bachelors', 'couples', 'families']
 
@@ -28,7 +28,7 @@ export type ListingSearch = BaseSearch & {
   roomType: Exclude<(typeof roomTypes)[number], 'unclear'> | null
   whosMoving: WhosMoving | null
   /** Null: the searcher did not give a gender. */
-  gender: (typeof genders)[number] | null
+  gender: Gender | null
 }
 
 /** The listing welcomes this group, or the lister picked no group of its part (PD15). */
@@ -73,7 +73,7 @@ export async function matchingListings(db: Db, search: ListingSearch) {
       prefsMet: sql<number>`${rank.prefsMet}`.as('prefs_met'),
       moveGap: sql<number | null>`${moveGap(sql`${listings.availableFrom}`, moveDate)}`.as('move_gap'),
     }).from(listings).where(and(...conditions))
-      .orderBy(sql`is_full desc, in_budget desc, prefs_met desc, move_gap asc nulls last`, desc(listings.createdAt), desc(listings.id))
+      .orderBy(sql`is_full desc, in_budget desc, prefs_met desc, move_gap asc nulls last`, desc(listings.createdAt))
       .limit(search.limit).offset(search.offset),
     db.select({ n: count() }).from(listings).where(and(...conditions)),
   ])

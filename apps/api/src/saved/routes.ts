@@ -14,7 +14,6 @@ import { savesOf } from './read'
 const saveSchema = { params: idParams, response: { 204: noContent, 404: errorResponse } }
 const unsaveParams = idParams.extend({ kind: savedKind })
 
-
 export function savedRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
   const { db, storage } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()

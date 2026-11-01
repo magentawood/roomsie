@@ -77,7 +77,7 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
       points: sql<number>`${search.formBPoints(sql`${profiles.userId}`)}`.as('points'),
       moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
-      .orderBy(sql`is_full desc, prefs_met desc, points desc, move_gap asc nulls last`, desc(profiles.createdAt), desc(profiles.id))
+      .orderBy(sql`is_full desc, prefs_met desc, points desc, move_gap asc nulls last`, desc(profiles.createdAt))
       .limit(search.limit).offset(search.offset),
     db.select({ n: count() }).from(profiles).where(and(...conditions)),
   ])
