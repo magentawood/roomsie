@@ -1,10 +1,13 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { eq } from 'drizzle-orm'
 import type { FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { analyticsEvent, modelCheckResponse, type AnalyticsEvent } from '@roomsie/contract'
 import { ModelUnavailable } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
+import { events as eventRows } from '../src/analytics/schema'
 import { testApp, type TestApp } from './app'
+import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
 
 const deepseek = 'https://api.deepseek.com/chat/completions'
 const gemini = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
@@ -25,6 +28,8 @@ function fakeVendors(replies: { deepseek?: (Response | Error)[]; gemini?: (Respo
 const answer = (content: string, usage: Record<string, unknown> = { prompt_tokens: 120, completion_tokens: 8, prompt_cache_hit_tokens: 100 }) =>
   Response.json({ choices: [{ message: { role: 'assistant', content } }], usage })
 const timeout = () => new DOMException('The operation timed out.', 'TimeoutError')
+/** A response whose headers came, and whose body timed out. */
+const slowBody = () => ({ ok: true, status: 200, json: () => Promise.reject(timeout()) }) as unknown as Response
 
 /** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
 function fakeRequest() {
@@ -73,18 +78,33 @@ describe('the models module', () => {
   })
 
   it('asks DeepSeek once more after an answer that fails its schema, then Gemini', async () => {
-    const requests = fakeVendors({ deepseek: [answer('{"intent":"villa"}'), new Response('<html>Bad gateway</html>')], gemini: [answer('{"intent":"unclear"}')] })
+    const requests = fakeVendors({ deepseek: [answer('{"intent":"villa"}'), answer('not json')], gemini: [answer('{"intent":"unclear"}')] })
     const { req, events } = fakeRequest()
     expect(await ask(req)).toEqual({ intent: 'unclear' })
     expect(requests.map((r) => r.url)).toEqual([deepseek, deepseek, gemini])
     expect(events.map((e) => 'outcome' in e && e.outcome)).toEqual(['invalid', 'invalid', 'ok'])
   })
 
-  it('throws at once, and reports it, after a 4xx other than 429, such as a bad key', async () => {
-    const requests = fakeVendors({ deepseek: [new Response('bad key', { status: 401 })] })
+  it('reads a body that is not JSON as an invalid answer', async () => {
+    const requests = fakeVendors({ deepseek: [new Response('<html>Bad gateway</html>'), answer('{"intent":"room"}')] })
     const { req } = fakeRequest()
-    await expect(ask(req)).rejects.toBeInstanceOf(ModelUnavailable)
-    expect(requests).toHaveLength(1)
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([deepseek, deepseek])
+  })
+
+  it('asks Gemini at once when the body of DeepSeek times out', async () => {
+    const requests = fakeVendors({ deepseek: [slowBody()], gemini: [answer('{"intent":"room"}')] })
+    const { req, events } = fakeRequest()
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([deepseek, gemini])
+    expect(events.map((e) => 'outcome' in e && e.outcome)).toEqual(['failed', 'ok'])
+  })
+
+  it('asks Gemini after a 4xx other than 429, such as a bad key, and reports the 4xx', async () => {
+    const requests = fakeVendors({ deepseek: [new Response('bad key', { status: 401 })], gemini: [answer('{"intent":"room"}')] })
+    const { req } = fakeRequest()
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([deepseek, gemini])
     expect(req.log.error).toHaveBeenCalled()
   })
 
@@ -105,18 +125,31 @@ describe('the models module', () => {
 
 describe('the model check route', () => {
   let t: TestApp<'moderator' | 'member'>
-  beforeAll(async () => { t = await testApp(['moderator', 'member'], undefined, { MODERATOR_UIDS: 'uid-moderator', ...keys }) })
-  afterAll(() => t.close())
+  let analytics: TestAnalyticsDb
+  beforeAll(async () => {
+    analytics = await createTestAnalyticsDb()
+    t = await testApp(['moderator', 'member'], undefined, { MODERATOR_UIDS: 'uid-moderator', ...keys }, analytics.db)
+  })
+  afterAll(async () => {
+    await t.close()
+    await analytics.drop()
+  })
 
   it('asks each model one time, for moderators only, and shows a bad key as no answer', async () => {
     fakeVendors({ deepseek: [new Response('bad key', { status: 401 })], gemini: [answer('ok', { prompt_tokens: 90, completion_tokens: 6 })] })
     const res = await t.call('moderator', 'POST', '/v1/admin/model-check')
     expect(res.statusCode).toBe(200)
     expect(modelCheckResponse.parse(res.json()).models).toEqual([
-      { model: 'deepseek-flash', answered: false, ms: expect.any(Number), tokensIn: 0, tokensOut: 0 },
-      { model: 'gemini-3.5-flash-lite', answered: true, ms: expect.any(Number), tokensIn: 90, tokensOut: 6 },
+      { model: 'deepseek-flash', answered: false, ms: expect.any(Number), tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 },
+      { model: 'gemini-3.5-flash-lite', answered: true, ms: expect.any(Number), tokensIn: 90, cachedTokensIn: 0, tokensOut: 6 },
     ])
     expect((await t.call('member', 'POST', '/v1/admin/model-check')).statusCode).toBe(404)
+    await t.flushEvents()
+    const stored = await analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, 'model_called'))
+    expect(stored.map((r) => r.fields)).toEqual(expect.arrayContaining([
+      expect.objectContaining({ role: 'check', model: 'deepseek-flash', outcome: 'failed' }),
+      expect.objectContaining({ role: 'check', model: 'gemini-3.5-flash-lite', outcome: 'ok', tokensIn: 90 }),
+    ]))
   })
 
   it('gives 503 when the keys are not set', async () => {
