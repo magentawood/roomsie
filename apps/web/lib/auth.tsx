@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { useQueryClient } from '@tanstack/react-query'
 import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
+import { forgetChat } from './chat'
 import { firebaseAuth } from './firebase'
 
 type Auth = { user: User | null; loading: boolean; signIn: () => Promise<void>; signOut: () => Promise<void> }
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await Promise.race([stopPush, new Promise((done) => setTimeout(done, 5000))]).catch(() => undefined)
       }
       sessionStorage.clear()
+      forgetChat()
       await firebaseSignOut(firebaseAuth())
     },
   }

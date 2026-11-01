@@ -1,8 +1,13 @@
 'use client'
 
-import { useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { canSend, keyAction } from '../../lib/chat'
+import { goalResponse, newGoalResponse, turnResponse, type GoalResponse } from '@roomsie/contract'
+import { ApiError, chatApi, errorText } from '../../lib/api'
+import { useAuth } from '../../lib/auth'
+import { canSend, chatStorage, keyAction, readStored, writeStored } from '../../lib/chat'
+import { queryKeys } from '../../lib/queries'
 import { Button } from '../ui/button'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
@@ -58,29 +63,90 @@ function EmptyChat({ onSend }: { onSend: (text: string) => void }) {
   )
 }
 
-/** The chat of a goal. Nothing goes to the API until T-12, and a reload clears it. */
+type Turn = { id: string; role: 'user' | 'assistant'; text: string }
+
+/** The goal of this browser, kept in local storage, so a reload opens the same chat. */
+function useChat() {
+  const { user, loading } = useAuth()
+  const queryClient = useQueryClient()
+  const [goalId, setGoalId] = useState<string | null>(null)
+  // Local storage exists only in the browser, so the server render and the first render have no goal.
+  useEffect(() => setGoalId(readStored(chatStorage.goal)), [])
+  const goal = useQuery({
+    queryKey: queryKeys.goal(goalId ?? ''),
+    queryFn: () => chatApi(user, `/v1/goals/${goalId}`, goalResponse),
+    enabled: goalId !== null && !loading,
+    // The turns of this tab update the cache, so only a reload reads the goal again.
+    staleTime: Infinity,
+    retry: (count, err) => count < 2 && !(err instanceof ApiError && err.status === 404),
+  })
+  const gone = goal.error instanceof ApiError && goal.error.status === 404
+  useEffect(() => {
+    if (!gone) return
+    writeStored(chatStorage.goal, null)
+    setGoalId(null)
+  }, [gone])
+
+  const send = useMutation({
+    mutationFn: async (text: string) => {
+      let id = goalId
+      if (!id) {
+        const made = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
+        if (made.visitorKey) writeStored(chatStorage.visitorKey, made.visitorKey)
+        writeStored(chatStorage.goal, made.id)
+        queryClient.setQueryData(queryKeys.goal(made.id), { id: made.id, form: made.form, turns: [] })
+        setGoalId(made.id)
+        id = made.id
+      }
+      return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body: { text } })) }
+    },
+    onSuccess: ({ id, form, turns }) => {
+      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns] }))
+    },
+  })
+  const turns: Turn[] = goal.data?.turns ?? []
+  return { turns, send, loadingGoal: goalId !== null && goal.isPending && !gone }
+}
+
+/** The chat of a goal (flow 02). The person sees their message at once, and the reply when it comes. */
 export function ChatScreen() {
-  const [sent, setSent] = useState<string[]>([])
-  const send = (text: string) => setSent((list) => [...list, text])
-  if (!sent.length) return <EmptyChat onSend={send} />
+  const { turns, send, loadingGoal } = useChat()
+  const [failed, setFailed] = useState<string | null>(null)
+  const submit = (text: string) => {
+    setFailed(null)
+    send.mutate(text, { onError: (err) => setFailed(errorText(err)) })
+  }
+  const pending = send.isPending || failed ? send.variables : undefined
+  if (loadingGoal) return <main className="flex-1" aria-busy="true" />
+  if (!turns.length && pending === undefined) return <EmptyChat onSend={submit} />
   return (
     <main className="flex min-h-0 flex-1 flex-col">
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
       <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
-        <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6">
-          {sent.map((text, i) => (
-            <li key={i} className="flex flex-col gap-6">
-              <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
-              {/* T-12 replaces this line with the reply of the assistant. */}
-              <p className="text-md text-primary">The assistant isn’t live yet. Your message stays here until it is.</p>
+        <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
+          {turns.map((turn) => <TurnLine key={turn.id} turn={turn} />)}
+          {pending !== undefined && (
+            <li className="flex flex-col gap-6">
+              <UserText text={pending} />
+              {failed
+                ? <p role="alert" className="text-md text-error-primary">{failed}</p>
+                : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
-          ))}
+          )}
         </ol>
       </div>
       <div className="px-5 pb-28 lg:px-6 lg:pb-6">
         {/* It comes after the first send, so it keeps the focus of the person. */}
-        <ChatInput grow="up" autoFocus onSend={send} />
+        <ChatInput grow="up" autoFocus onSend={submit} />
       </div>
     </main>
   )
+}
+
+function UserText({ text }: { text: string }) {
+  return <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
+}
+
+function TurnLine({ turn }: { turn: Turn }) {
+  return <li>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
 }
