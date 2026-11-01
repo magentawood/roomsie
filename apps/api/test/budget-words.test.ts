@@ -1,0 +1,43 @@
+import { describe, expect, it } from 'vitest'
+import { parseBudget } from '../src/assistant/handlers/extractor/budget-words'
+
+describe('the budget parser', () => {
+  it.each([
+    ['20000', { min: null, max: 20_000 }],
+    ['20,000', { min: null, max: 20_000 }],
+    ['₹20,000', { min: null, max: 20_000 }],
+    ['Rs. 18000', { min: null, max: 18_000 }],
+    ['20k', { min: null, max: 20_000 }],
+    ['20 K', { min: null, max: 20_000 }],
+    ['1.5 lakh', { min: null, max: 150_000 }],
+    ['1.5L', { min: null, max: 150_000 }],
+    ['2 lac', { min: null, max: 200_000 }],
+    ['20 thousand', { min: null, max: 20_000 }],
+    ['bees hazaar', { min: null, max: 20_000 }],
+    ['bees hazaar tak', { min: null, max: 20_000 }],
+    ['pandrah hajar', { min: null, max: 15_000 }],
+    ['vees hajar paryant', { min: null, max: 20_000 }],
+    ['pachees', { min: null, max: 25_000 }],
+    ['dedh lakh', { min: null, max: 150_000 }],
+    ['saade baara hazaar', { min: null, max: 12_500 }],
+    ['under 25k', { min: null, max: 25_000 }],
+    ['max 20', { min: null, max: 20_000 }],
+    ['upto 18k', { min: null, max: 18_000 }],
+    ['less than 30000', { min: null, max: 30_000 }],
+    ['above 35k', { min: 35_000, max: null }],
+    ['35k+', { min: 35_000, max: null }],
+    ['minimum 15k', { min: 15_000, max: null }],
+    ['30 hazaar se upar', { min: 30_000, max: null }],
+    ['15-20k', { min: 15_000, max: 20_000 }],
+    ['15k to 20k', { min: 15_000, max: 20_000 }],
+    ['15 se 20 hazaar', { min: 15_000, max: 20_000 }],
+    ['between 12 and 18k', { min: 12_000, max: 18_000 }],
+    ['20-15k', { min: 15_000, max: 20_000 }],
+  ])('reads %s', (words, budget) => {
+    expect(parseBudget(words)).toEqual(budget)
+  })
+
+  it.each(['affordable', 'not too much', 'kuch bhi', '', 'k', 'lakh'])('reads nothing in %j', (words) => {
+    expect(parseBudget(words)).toBeNull()
+  })
+})
