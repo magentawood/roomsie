@@ -2,7 +2,6 @@ import { formA, slotPath, type Budget, type ExtractorOutput, type FormA, type Fo
 
 /** The values of one turn, as the slots of Form A. */
 export type SlotValues = Partial<Record<FormASlot, unknown>>
-export type Conflict = ExtractorOutput['conflicts'][number]
 type Slot = { source: 'empty' | 'stated' | 'default'; value: unknown }
 
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
@@ -36,7 +35,7 @@ function budgetOf(earlier: Budget, later: Budget): Budget | 'conflict' {
 export function applyValues(form: FormA, values: SlotValues, answering: FormASlot | null) {
   let next = form
   const changed: FormASlot[] = []
-  const conflicts: Conflict[] = []
+  const conflicts: ExtractorOutput['conflicts'] = []
   for (const [slot, later] of Object.entries(values) as [FormASlot, unknown][]) {
     const { source, value: earlier } = slotOf(next, slot)
     const open = source !== 'stated' || slot === answering

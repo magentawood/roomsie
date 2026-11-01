@@ -9,7 +9,7 @@ These rules apply to `apps/api`. The rules in [_index.md](_index.md) also apply.
 - Never use an `as` cast on external data. Why: `as` is a promise to the compiler, not a check. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 - Generate the OpenAPI document from the Zod schemas and commit it. Why: it is the single source of truth for all clients. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 - Put the shared contract in `packages/contract`. Why: the two apps and the future mobile app share one contract. ([ADR-0003](../decisions/0003-api-as-separate-service.md), [ADR-0010](../decisions/0010-monorepo-tooling.md))
-- CPU-heavy work must not block the event loop. Put the rank computation in SQL. Why: work that blocks the event loop stops all requests. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
+- CPU-heavy work must not block the event loop. Put the rank computation in SQL. Why: a blocked event loop stops all requests. ([ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 
 ## Auth
 
@@ -40,7 +40,7 @@ These rules apply to `apps/api`. The rules in [_index.md](_index.md) also apply.
 - Call a model only through the one model module. The module holds the timeout, the retry, the fallback and the token counts. Why: a vendor change is then a config change. ([PD7](../decisions/pd-07-models.md))
 - Parse each model output with Zod. If it fails, retry one time on the same model, then on the fallback. Why: the model is never the source of truth. ([PD7](../decisions/pd-07-models.md), [PD7a](../decisions/pd-07a-agent-architecture.md))
 - Each extractor enum has an `unclear` value. Why: without it, the extractor fills slots with guesses. ([PD7](../decisions/pd-07-models.md))
-- Handler inputs and outputs are Zod schemas with a version, in `packages/contract`. Why: each handler has one job and its own eval. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- Handler inputs and outputs are `z.strictObject` schemas with a version, in `packages/contract`. Why: one job and one eval for each handler, and misspelled keys fail. ([PD7a](../decisions/pd-07a-agent-architecture.md))
 - The reply writer reads Form A, Form B and the last two turns. It never reads the full transcript. Why: the cost of a full transcript increases with each turn. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD5](../decisions/pd-05-team-and-budget.md))
 - Reject each Form B observation that has no verbatim quote from the user. Why: a profile fact must point to the words of the user. ([PD7a](../decisions/pd-07a-agent-architecture.md))
 - Delete a Form B note with a database action, never through the model. Why: the form is the source of truth. ([PD7a](../decisions/pd-07a-agent-architecture.md))

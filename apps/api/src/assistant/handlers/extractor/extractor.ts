@@ -10,7 +10,8 @@ import { parseMoveDate } from './move-date-words'
 import { extractorPrompt, extractorMessage } from './prompt'
 
 /** Free text to Form A slots. The model only picks values and copies words. Code reads numbers and dates, and checks the probability (PD7). */
-export const extractor: Handler = async (turn, deps) => extractorOutput.parse(await extract(turn, deps))
+/** The version of the output names its schema in the contract. The turn keeps only the fields. */
+export const extractor: Handler = async (turn, deps) => extractorOutput.omit({ version: true }).parse(await extract(turn, deps))
 
 const noAnswer = (turn: Turn) => ({ form: turn.form, changed: [], conflicts: [], ambiguous: null, failed: true })
 
