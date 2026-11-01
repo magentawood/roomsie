@@ -75,7 +75,7 @@ async function seedAccount(userId: string, tag: string) {
   const [turn] = await db.insert(chatTurns).values({ goalId: goal!.id, role: 'user', inputMethod: 'typed', text: 'I work in Powai' }).returning()
   await db.insert(observations).values({ userId, key: 'work_pattern', value: 'works in Powai', kind: 'context', evidence: 'I work in Powai', turnId: turn!.id, confidence: 0.9 })
   const [session] = await db.insert(anonymousSessions)
-    .values({ deviceHash: `device-${tag}`, claimedByUserId: userId, expiresAt: new Date(Date.now() + 86_400_000) }).returning()
+    .values({ keyHash: `key-${tag}`, deviceHash: `device-${tag}`, claimedByUserId: userId, expiresAt: new Date(Date.now() + 86_400_000) }).returning()
   const [sessionGoal] = await db.insert(goals).values({ anonymousSessionId: session!.id }).returning()
   const [sessionTurn] = await db.insert(chatTurns).values({ goalId: sessionGoal!.id, role: 'user', inputMethod: 'typed', text: 'I work nights' }).returning()
   await db.insert(observations).values({ anonymousSessionId: session!.id, key: 'work_pattern', value: 'works nights', kind: 'context', evidence: 'I work nights', turnId: sessionTurn!.id, confidence: 0.9 })

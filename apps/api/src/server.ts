@@ -20,6 +20,9 @@ import { articleRoutes } from './articles/routes'
 import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
 import { feedbackRoutes } from './feedback/routes'
+import { goalRoutes } from './goals/routes'
+import { todayInIst } from './assistant/handlers/extractor/extractor'
+import { assistantSettings, type AssistantSettings } from './assistant/settings'
 import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
@@ -46,7 +49,7 @@ declare module 'fastify' {
   }
 }
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; today?: () => string } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
@@ -116,6 +119,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       articleRoutes(v1, options)
       modelRoutes(v1, options)
       resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
+      goalRoutes(v1, { ...options, settings: options.assistant ?? assistantSettings.parse({}), today: options.today ?? todayInIst })
     },
     { prefix: '/v1' },
   )

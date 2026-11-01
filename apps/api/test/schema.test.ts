@@ -35,7 +35,7 @@ describe('goals', () => {
   it('belongs to exactly one owner: a visitor session or a user', async () => {
     const user = await newUser()
     const [session] = await testDb.db.insert(anonymousSessions)
-      .values({ deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) })
+      .values({ keyHash: crypto.randomUUID(), deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) })
       .returning()
     await expect(testDb.db.insert(goals).values({ userId: user.id })).resolves.toBeDefined()
     await expect(testDb.db.insert(goals).values({ anonymousSessionId: session!.id })).resolves.toBeDefined()
@@ -59,7 +59,7 @@ describe('Form B notes', () => {
   it('belong to exactly one owner: a visitor session or a user', async () => {
     const user = await newUser()
     const [session] = await testDb.db.insert(anonymousSessions)
-      .values({ deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) }).returning()
+      .values({ keyHash: crypto.randomUUID(), deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) }).returning()
     const [goal] = await testDb.db.insert(goals).values({ userId: user.id }).returning()
     const [turn] = await testDb.db.insert(chatTurns).values({ goalId: goal!.id, role: 'user', inputMethod: 'typed', text: 'loud music is fine' }).returning()
     await testDb.db.insert(observationTopics).values({ key: 'noise', label: 'Noise' }).onConflictDoNothing()

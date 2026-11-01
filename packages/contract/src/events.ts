@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { formASlots } from './goals'
 import { modelRoles, modelUsage } from './models'
 import { reportReasons } from './reports'
 
@@ -19,6 +20,8 @@ export const analyticsEvent = z.discriminatedUnion('name', [
     name: z.literal('model_called'), eventVersion: version1, role: z.enum(modelRoles), model: z.string().max(100),
     ...modelUsage.shape, ms: z.int().min(0), fallback: z.boolean(), outcome: z.enum(['ok', 'invalid', 'failed']), session: z.uuid().nullable(),
   }),
+  /** A typed value that contradicts an earlier value. The assistant asks which to keep (PD3b). Many on one slot show a bad question. */
+  z.strictObject({ name: z.literal('slot_conflict'), eventVersion: version1, slot: z.enum(formASlots) }),
   z.strictObject({ name: z.literal('report_filed'), eventVersion: version1, subject: target, reason: z.enum(reportReasons) }),
 ])
 export type AnalyticsEvent = z.input<typeof analyticsEvent>

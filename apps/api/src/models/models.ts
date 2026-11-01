@@ -3,8 +3,15 @@ import { z } from 'zod'
 import type { ModelRole, ModelUsage } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 
+/** The probability of each token of an answer, as a natural log (PD7). */
+const tokenSchema = z.object({ token: z.string(), logprob: z.number() })
+export type Token = z.infer<typeof tokenSchema>
+
 const completion = z.object({
-  choices: z.array(z.object({ message: z.object({ content: z.string().nullable() }) })).min(1),
+  choices: z.array(z.object({
+    message: z.object({ content: z.string().nullable() }),
+    logprobs: z.object({ content: z.array(tokenSchema).nullable() }).nullish(),
+  })).min(1),
   usage: z.object({
     prompt_tokens: z.int(),
     completion_tokens: z.int(),
@@ -52,7 +59,9 @@ type Outcome<T> = { outcome: 'ok'; value: T } | { outcome: 'invalid' | 'failed' 
 type Answer<T> = Outcome<T> & { usage: ModelUsage; refused?: number }
 const noUsage: ModelUsage = { tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 }
 
-async function readAnswer<T>(res: Response | null, read: (content: string) => T | undefined): Promise<Answer<T>> {
+type Read<T> = (content: string, tokens: Token[] | null) => T | undefined
+
+async function readAnswer<T>(res: Response | null, read: Read<T>): Promise<Answer<T>> {
   if (!res?.ok) return { outcome: 'failed', usage: noUsage, ...(res && res.status !== 429 && res.status < 500 && { refused: res.status }) }
   let json: unknown
   try {
@@ -63,13 +72,15 @@ async function readAnswer<T>(res: Response | null, read: (content: string) => T 
   }
   const body = completion.safeParse(json)
   const usage = body.success ? body.data.usage : noUsage
-  const value = body.success ? read(body.data.choices[0]!.message.content ?? '') : undefined
+  const choice = body.success ? body.data.choices[0]! : undefined
+  const value = choice ? read(choice.message.content ?? '', choice.logprobs?.content ?? null) : undefined
   return value === undefined ? { outcome: 'invalid', usage } : { outcome: 'ok', value, usage }
 }
 
 /** The only code that calls a model (PD7, ADR-0014). */
 export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<Vendor, string>; primary: string; fallback: string; timeoutMs: number }) {
-  async function attempt<T>(call: ModelCall, model: string, json: boolean, read: (content: string) => T | undefined) {
+  type Mode = { json: boolean; logprobs?: boolean }
+  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>) {
     // The settings let only a model name of a known vendor through.
     const vendor = vendorOf(model)!
     const started = performance.now()
@@ -77,7 +88,11 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
       method: 'POST',
       headers: { authorization: `Bearer ${keys[vendor]}`, 'content-type': 'application/json' },
       // The fixed system prompt comes first, so the automatic cache of each vendor applies.
-      body: JSON.stringify({ model, messages: [{ role: 'system', content: call.system }, ...call.messages], ...(json && { response_format: { type: 'json_object' } }) }),
+      // Gemini refuses the logprobs field, so only DeepSeek gets it.
+      body: JSON.stringify({
+        model, messages: [{ role: 'system', content: call.system }, ...call.messages],
+        ...(json && { response_format: { type: 'json_object' } }), ...(logprobs && vendor === 'deepseek' && { logprobs: true }),
+      }),
       signal: AbortSignal.timeout(timeoutMs),
     }).catch(() => null)
     const answer = await readAnswer(res, read)
@@ -88,27 +103,34 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     return { ...answer, ms }
   }
 
-  async function run<T>(call: ModelCall, json: boolean, read: (content: string) => T | undefined) {
-    const first = await attempt(call, primary, json, read)
+  async function run<T>(call: ModelCall, mode: Mode, read: Read<T>) {
+    const first = await attempt(call, primary, mode, read)
     // Gemini answers, but a person must fix the key or the balance of DeepSeek.
     if (first.refused) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
-    const second = first.outcome === 'invalid' ? await attempt(call, primary, json, read) : first
-    const last = second.outcome === 'ok' ? second : await attempt(call, fallback, json, read)
+    const second = first.outcome === 'invalid' ? await attempt(call, primary, mode, read) : first
+    const last = second.outcome === 'ok' ? second : await attempt(call, fallback, mode, read)
     if (last.outcome === 'ok') return last.value
     const err = new ModelUnavailable(`No model answered the ${call.role}: the last attempt was ${last.outcome}`)
     reportError(err, { where: `models.${call.role}`, userId: call.req.user?.id, log: call.req.log })
     throw err
   }
 
+  const parseWith = <S extends z.ZodType>(schema: S) => (content: string): z.infer<S> | undefined => {
+    const parsed = schema.safeParse(parseJson(content))
+    return parsed.success ? parsed.data : undefined
+  }
+
   return {
-    json: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, true, (content): z.infer<S> | undefined => {
-      const parsed = call.schema.safeParse(parseJson(content))
-      return parsed.success ? parsed.data : undefined
+    json: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true }, parseWith(call.schema)),
+    /** A JSON call that also gives the probability of each token. Gemini gives none, so `tokens` is then null. */
+    scored: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true, logprobs: true }, (content, tokens) => {
+      const value = parseWith(call.schema)(content)
+      return value === undefined ? undefined : { value, tokens }
     }),
-    text: (call: ModelCall) => run(call, false, readText),
+    text: (call: ModelCall) => run(call, { json: false }, readText),
     /** One short prompt to each model, with no fallback: the live check of the keys. */
     check: (req: FastifyRequest) => Promise.all([primary, fallback].map(async (model) => {
-      const answer = await attempt({ req, role: 'check', system: 'Answer with one word.', messages: [{ role: 'user', content: 'Say ok.' }], session: null }, model, false, readText)
+      const answer = await attempt({ req, role: 'check', system: 'Answer with one word.', messages: [{ role: 'user', content: 'Say ok.' }], session: null }, model, { json: false }, readText)
       return { model, answered: answer.outcome === 'ok', ms: answer.ms, ...answer.usage }
     })),
   }
