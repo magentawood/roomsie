@@ -3,7 +3,7 @@ import { listingResponse } from './listings'
 import { cardResponse, mustHaveKeys } from './profiles'
 
 const resultLabels = {
-  /** The card meets all the preferences, and the searcher stated three or more. */
+  /** The card meets all the preferences, and the searcher stated three or more (PD3a). */
   bestMatch: z.boolean(),
   /** The dealbreakers of the searcher that the card did not answer. */
   didntSay: z.array(z.enum(mustHaveKeys)),

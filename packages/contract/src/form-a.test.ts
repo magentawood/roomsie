@@ -3,6 +3,8 @@ import { formA } from './form-a'
 import { lifestyleAnswers, mustHaveKeys, profileEditBody } from './profiles'
 
 const empty = { value: null, source: 'empty' }
+const unclear = { value: 'unclear', source: 'stated' }
+type Case = [string, unknown]
 
 describe('Form A', () => {
   it('reads an empty object as a form with all slots empty', () => {
@@ -14,12 +16,12 @@ describe('Form A', () => {
     expect(form.version).toBe(1)
   })
 
-  it.each<[string, unknown]>([
-    ['intent', { intent: { value: 'unclear', source: 'stated' } }],
-    ['room type', { roomType: { value: 'unclear', source: 'stated' } }],
-    ["who's moving", { whosMoving: { value: 'unclear', source: 'stated' } }],
-    ...Object.keys(lifestyleAnswers).map((axis): [string, unknown] => [axis, { lifestyle: { [axis]: { value: 'unclear', source: 'stated' } } }]),
-    ...mustHaveKeys.map((key): [string, unknown] => [`the weight of ${key}`, { mustHaves: { [key]: { value: 'unclear', source: 'stated' } } }]),
+  it.each<Case>([
+    ['intent', { intent: unclear }],
+    ['room type', { roomType: unclear }],
+    ["who's moving", { whosMoving: unclear }],
+    ...Object.keys(lifestyleAnswers).map((axis): Case => [`the answer of ${axis}`, { lifestyle: { [axis]: unclear } }]),
+    ...mustHaveKeys.map((key): Case => [`the weight of ${key}`, { mustHaves: { [key]: unclear } }]),
   ])('accepts unclear for %s', (_, input) => {
     expect(formA.safeParse(input).success).toBe(true)
   })
