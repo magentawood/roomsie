@@ -3,7 +3,7 @@ import { Home02, MarkerPin01 } from '@untitledui/icons'
 import { listingTitle, type ListingResponse } from '@roomsie/contract'
 import { rentAmount } from '../../lib/listing-steps'
 import { Badge } from '../ui/badge'
-import { CardLink } from '../ui/card-link'
+import { CardLabel, CardLink } from '../ui/card-link'
 
 /** The result card of the designs for a place. `label`: the match label over the photo (T-15). */
 export function PlaceCard({ listing, areaName, action, label, onOpen }: {
@@ -19,7 +19,7 @@ export function PlaceCard({ listing, areaName, action, label, onOpen }: {
           ? <img src={photo.url} alt="" className="size-full object-cover" />
           : <span className="flex size-full items-center justify-center text-fg-quaternary"><Home02 size={32} aria-hidden /></span>}
       </CardLink>
-      {label && <div className="absolute top-3 left-3">{label}</div>}
+      <CardLabel>{label}</CardLabel>
       <div className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{listingTitle(listing)}</CardLink></h3>
