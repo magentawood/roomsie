@@ -32,6 +32,7 @@ export const queryKeys = {
   adminInvites: ['admin', 'invites'],
   adminFeedback: ['admin', 'feedback'],
   site: ['site'],
+  goal: (id: string) => ['goal', id],
 } as const
 
 export function useMe() {

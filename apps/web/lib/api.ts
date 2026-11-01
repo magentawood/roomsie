@@ -2,6 +2,7 @@ import type { User } from 'firebase/auth'
 import type { z } from 'zod'
 import { errorResponse, incompleteListingResponse, inviteRefusalResponse, type GoLiveField, type InviteRefusal } from '@roomsie/contract'
 import { apiUrl } from './api-url'
+import { chatHeaders, chatStorage, readStored } from './chat'
 
 /** A response of the API that is not 2xx. `body` is the parsed JSON, if any. */
 export class ApiError extends Error {
@@ -15,20 +16,27 @@ export class ApiError extends Error {
 
 type Options = { method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'; body?: unknown }
 
-/** Calls the API as the signed-in user. getIdToken() gives the cached token, and we never store it (ADR-0007). */
-export async function api<T>(user: User, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
+async function request<T>(path: string, headers: Record<string, string>, schema: z.ZodType<T>, options: Options): Promise<T> {
   const res = await fetch(`${apiUrl}${path}`, {
     method: options.method ?? 'GET',
-    headers: {
-      authorization: `Bearer ${await user.getIdToken()}`,
-      ...(options.body === undefined ? {} : { 'content-type': 'application/json' }),
-    },
+    headers,
     body: options.body === undefined ? undefined : JSON.stringify(options.body),
   })
   // A 204 has no body, so json() fails and gives null.
   const json: unknown = await res.json().catch(() => null)
   if (!res.ok) throw new ApiError(res.status, json)
   return schema.parse(json)
+}
+
+/** Calls the API as the signed-in user. getIdToken() gives the cached token, and we never store it (ADR-0007). */
+export async function api<T>(user: User, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
+  return request(path, chatHeaders(await user.getIdToken(), null, options.body !== undefined), schema, options)
+}
+
+/** Calls the API of the chat, which is open to a visitor (PD6b): with the token, the visitor key, or both. */
+export async function chatApi<T>(user: User | null, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
+  const token = user ? await user.getIdToken() : null
+  return request(path, chatHeaders(token, readStored(chatStorage.visitorKey), options.body !== undefined), schema, options)
 }
 
 export function errorText(err: unknown) {
