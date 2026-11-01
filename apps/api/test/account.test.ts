@@ -77,7 +77,9 @@ async function seedAccount(userId: string, tag: string) {
   const [session] = await db.insert(anonymousSessions)
     .values({ deviceHash: `device-${tag}`, claimedByUserId: userId, expiresAt: new Date(Date.now() + 86_400_000) }).returning()
   const [sessionGoal] = await db.insert(goals).values({ anonymousSessionId: session!.id }).returning()
-  return { profile: profile!, listingId: listing!.id, goalIds: [goal!.id, sessionGoal!.id] }
+  const [sessionTurn] = await db.insert(chatTurns).values({ goalId: sessionGoal!.id, role: 'user', inputMethod: 'typed', text: 'I work nights' }).returning()
+  await db.insert(observations).values({ anonymousSessionId: session!.id, key: 'work_pattern', value: 'works nights', kind: 'context', evidence: 'I work nights', turnId: sessionTurn!.id, confidence: 0.9 })
+  return { profile: profile!, listingId: listing!.id, goalIds: [goal!.id, sessionGoal!.id], sessionId: session!.id }
 }
 
 const userRow = async (id: string) => (await testDb.db.select().from(users).where(eq(users.id, id)))[0]!
@@ -119,10 +121,11 @@ describe('DELETE /v1/me', () => {
     ])
     expect(await db.select().from(saves).where(eq(saves.userId, gone.id))).toHaveLength(0)
     expect(await db.select().from(observations).where(eq(observations.userId, gone.id))).toHaveLength(0)
+    expect(await db.select().from(observations).where(eq(observations.anonymousSessionId, goneSeed.sessionId))).toHaveLength(0)
     expect(await db.select().from(saves).where(eq(saves.userId, stays.id))).toHaveLength(0)
     // The other person keeps all of theirs.
     expect(await db.select().from(goals).where(inArray(goals.id, staysSeed.goalIds))).toHaveLength(2)
-    expect(await db.select().from(chatTurns).where(inArray(chatTurns.goalId, staysSeed.goalIds))).toHaveLength(1)
+    expect(await db.select().from(chatTurns).where(inArray(chatTurns.goalId, staysSeed.goalIds))).toHaveLength(2)
     expect(await db.select().from(observations).where(eq(observations.userId, stays.id))).toHaveLength(1)
     expect(await db.select().from(listingRates).where(eq(listingRates.listingId, staysSeed.listingId))).toHaveLength(1)
     expect(await db.select().from(profiles).where(eq(profiles.userId, stays.id))).toHaveLength(1)

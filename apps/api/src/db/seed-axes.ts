@@ -26,7 +26,7 @@ const OBSERVATION_TOPICS = [
   { key: 'cooking', label: 'Cooking and the kitchen' },
   { key: 'past_flatmates', label: 'What went wrong with past flatmates' },
   { key: 'move_reason', label: 'Why they are moving' },
-].map((topic) => ({ ...topic, active: true }))
+]
 
 export async function seedCatalogues(db: Db) {
   await db.insert(lifestyleAxes).values(LIFESTYLE_AXES)
