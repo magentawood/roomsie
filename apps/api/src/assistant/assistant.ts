@@ -8,7 +8,7 @@ import type { AssistantSettings } from './settings'
 
 export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; settings: AssistantSettings; today: () => string }
 
-/** One typed turn, as the handlers fill it in order. Each handler gives a schema of the contract. */
+/** One typed turn, as the handlers fill it in order. */
 export type Turn = {
   goalId: string
   text: string

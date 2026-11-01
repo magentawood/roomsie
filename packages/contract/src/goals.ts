@@ -13,7 +13,6 @@ export const formASlots = [
   ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
 ] as const
 export type FormASlot = (typeof formASlots)[number]
-/** The group of a slot, and its key inside the group: `lifestyle.food` is `['lifestyle', 'food']`. */
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
 export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), createdAt: z.iso.datetime() })
@@ -29,7 +28,7 @@ export type TurnResponse = z.infer<typeof turnResponse>
 /* The handlers of the assistant (PD7a). A change of a field gives the schema a new version. */
 
 /** What the extractor reads: the typed turn and the last question of the assistant, never the full chat. */
-export const extractorInput = z.object({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
+export const extractorInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
 export type ExtractorInput = z.output<typeof extractorInput>
 
 const choice = <V extends readonly [string, ...string[]]>(values: V) => z.enum(values).nullish()
@@ -55,15 +54,15 @@ export const extractorAnswer = z.object({
 })
 
 /** A name of two or more areas, such as "Andheri". */
-export const ambiguousArea = z.object({ words: z.string(), slugs: z.array(areaSlug).min(2) })
+export const ambiguousArea = z.strictObject({ words: z.string(), slugs: z.array(areaSlug).min(2) })
 export type AmbiguousArea = z.infer<typeof ambiguousArea>
 
-/** What the extractor gives: the new form, the slots that changed, the values that contradict the form, and a name of two areas. */
-export const extractorOutput = z.object({
+/** What the extractor gives. */
+export const extractorOutput = z.strictObject({
   version: z.literal(1).default(1),
   form: formA,
   changed: z.array(z.enum(formASlots)),
-  conflicts: z.array(z.object({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })),
+  conflicts: z.array(z.strictObject({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })),
   ambiguous: ambiguousArea.nullable(),
   /** No model gave an answer, so the form did not change. */
   failed: z.boolean(),
@@ -71,12 +70,15 @@ export const extractorOutput = z.object({
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
 /** What an assistant turn keeps: the slot that it asked about, and if the question is a conflict of two values (PD3b). */
-export const assistantParts = z.object({
+export const assistantParts = z.strictObject({
   version: z.literal(1).default(1),
-  asked: z.object({ slot: z.enum(formASlots), conflict: z.boolean() }).nullable(),
+  asked: z.strictObject({ slot: z.enum(formASlots), conflict: z.boolean() }).nullable(),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 
+/** What the reply writer reads: the output of the extractor, and the question of the last reply. */
+export const replyInput = extractorOutput.extend({ asked: assistantParts.shape.asked })
+
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
-export const assistantReply = z.object({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
+export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
 export type AssistantReply = z.output<typeof assistantReply>

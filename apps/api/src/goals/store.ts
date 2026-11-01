@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, formA, type AssistantReply, type FormA } from '@roomsie/contract'
+import { assistantParts, formA, type AssistantReply, type FormA, type TurnResponse } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 
@@ -73,9 +73,9 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
       .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
-    const [mine] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: 'typed', text: userText, createdAt: sql`clock_timestamp()` }).returning(turnFields)
-    const [answer] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
-    return [shown(mine!), shown(answer!)] as const
+    const [userTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: 'typed', text: userText, createdAt: sql`clock_timestamp()` }).returning(turnFields)
+    const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
+    return [shown(userTurn!), shown(assistantTurn!)] satisfies TurnResponse['turns']
   })
 }
 

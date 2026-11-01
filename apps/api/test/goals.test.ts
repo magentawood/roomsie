@@ -2,6 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { eq } from 'drizzle-orm'
 import { goalResponse, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
+import { chatTurns } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
@@ -156,6 +157,19 @@ describe('a typed turn', () => {
     expect(first.turns[1].text).toBe('Which Andheri do you mean: Andheri West, Andheri East, or both?')
     fakeVendors({ deepseek: [scored({ areas: [{ words: 'both', slug: 'andheri-west' }, { words: 'both', slug: 'andheri-east' }] })] })
     expect((await sent(goal, 'both')).form.areas.value).toEqual(['andheri-west', 'andheri-east'])
+  })
+
+  it('takes a slug of the model only from an area named in the turn, or in a question about the areas', async () => {
+    const goal = await visitorGoal()
+    // A reply that names Bandra West, but asks about the budget.
+    await t.db.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: 'Got it: Bandra West. What is your monthly budget?', parts: { version: 1, asked: { slot: 'budget', conflict: false } } })
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'there', slug: 'bandra-west' }] })] })
+    expect((await sent(goal, 'somewhere there')).form.areas.source).toBe('empty')
+  })
+
+  it('cuts a long user agent, and does not refuse the request', async () => {
+    const res = await t.app.inject({ method: 'POST', url: '/v1/goals', headers: { 'user-agent': 'a'.repeat(2_000) } })
+    expect(res.statusCode).toBe(201)
   })
 
   it('adds a new area to the areas of the form', async () => {
