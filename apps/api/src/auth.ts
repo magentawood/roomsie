@@ -104,6 +104,14 @@ export function requireUser({ db, firebaseProjectId, firebaseKeys, moderation }:
 }
 
 /** Each user who is not a moderator gets 404, so the admin routes do not show (T-19). */
+/** A guest sends no Authorization header. A header that it sends must be a valid token. */
+export function optionalUser(options: AuthOptions) {
+  const signedIn = requireUser(options)
+  return async (req: FastifyRequest, reply: FastifyReply) => {
+    if (req.headers.authorization !== undefined) return signedIn(req, reply)
+  }
+}
+
 export const requireModerator = (options: AuthOptions) => [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
   if (!req.user!.moderator) return reply.code(404).send({ error: 'not found' })
 }]

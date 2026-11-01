@@ -29,6 +29,8 @@ import { moderationRoutes } from './moderation/routes'
 import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
 import { requestRoutes } from './requests/routes'
+import { resultRoutes } from './results/routes'
+import { matchingSettings, type Matching } from './results/settings'
 import { savedRoutes } from './saved/routes'
 import { siteRoutes } from './site/routes'
 import { noMailer, type Mailer } from './email'
@@ -44,7 +46,7 @@ declare module 'fastify' {
   }
 }
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
@@ -113,6 +115,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       inviteRoutes(v1, options)
       articleRoutes(v1, options)
       modelRoutes(v1, options)
+      resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
     },
     { prefix: '/v1' },
   )
