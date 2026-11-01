@@ -18,7 +18,7 @@ function areaPhrase(slugs: readonly string[], label: (slug: string) => string) {
   return rest.length ? `${first}, ${second} and ${rest.length} more` : `${first} and ${second}`
 }
 
-function budgetPhrase({ min, max }: { min: number | null; max: number | null }) {
+function budgetPhrase({ min, max }: NonNullable<FormA['budget']['value']>) {
   if (min !== null && max !== null) return `${rupees(min)} to ${rupees(max)}`
   return max !== null ? `under ${rupees(max)}` : `from ${rupees(min!)}`
 }
@@ -31,10 +31,6 @@ export function panelTitle(form: FormA, label: (slug: string) => string) {
   const scope = `${intent ? nouns[intent] : 'Everything'} in ${areas ? areaPhrase(areas, label) : 'Mumbai'}`
   return budget ? `${scope} ${budgetPhrase(budget)}` : scope
 }
-
-/** The name of an area: from the API, or from its slug while the names load ("powai-vikhroli" reads "Powai Vikhroli"). */
-export const areaName = (labels: Record<string, string>) => (slug: string) =>
-  labels[slug] ?? slug.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
 
 export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
 

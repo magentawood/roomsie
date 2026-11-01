@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA, type FormA } from '@roomsie/contract'
-import { areaName, countLine, didntSayLine, formKey, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
+import { countLine, didntSayLine, formKey, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
 import { sampleMatches } from './sample-results'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
@@ -24,7 +24,7 @@ describe('the panel header', () => {
   })
 
   it('writes each kind of budget', () => {
-    const scope = (budget: { min: number | null; max: number | null }) => panelTitle(form({ intent: stated('room'), budget: stated(budget) }), label)
+    const scope = (budget: NonNullable<FormA['budget']['value']>) => panelTitle(form({ intent: stated('room'), budget: stated(budget) }), label)
     expect(scope({ min: 10000, max: 20000 })).toBe('Rooms in Mumbai ₹10,000 to ₹20,000')
     expect(scope({ min: 35000, max: null })).toBe('Rooms in Mumbai from ₹35,000')
   })
@@ -36,13 +36,6 @@ describe('the panel header', () => {
   it('counts the results', () => {
     expect(countLine(1)).toBe('1 result')
     expect(countLine(24)).toBe('24 results')
-  })
-})
-
-describe('the area names', () => {
-  it('uses the name from the API, and reads a slug while the names load', () => {
-    expect(areaName({ 'powai-vikhroli': 'Powai–Vikhroli' })('powai-vikhroli')).toBe('Powai–Vikhroli')
-    expect(areaName({})('powai-vikhroli')).toBe('Powai Vikhroli')
   })
 })
 
@@ -99,6 +92,16 @@ describe('the update rule', () => {
     expect(state.shown?.key).toBe('a')
     state = panelUpdate(state, { type: 'idle' })
     expect(state).toEqual({ shown: { key: 'c', page: 'page c' }, pending: null, busy: false })
+  })
+
+  it('keeps the header with the results on the screen while the person is busy', () => {
+    const under = (max: number) => form({ intent: stated('room'), budget: stated({ min: null, max }) })
+    const arriveForm = (f: FormA) => ({ type: 'arrive' as const, key: formKey(f), page: f })
+    let state = panelUpdate({ shown: null, pending: null, busy: false } as PanelState<FormA>, arriveForm(under(25000)))
+    state = panelUpdate(panelUpdate(state, { type: 'busy' }), arriveForm(under(20000)))
+    expect(panelTitle(state.shown!.page, label)).toBe('Rooms in Mumbai under ₹25,000')
+    state = panelUpdate(state, { type: 'idle' })
+    expect(panelTitle(state.shown!.page, label)).toBe('Rooms in Mumbai under ₹20,000')
   })
 
   it('ignores results for the form that is already on the screen', () => {
