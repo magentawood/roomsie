@@ -1,6 +1,6 @@
 import { sql } from 'drizzle-orm'
-import { mustHaveKeys, type FormA, type ListingKind, type MatchResult, type MustHaveKey } from '@roomsie/contract'
-import { areaParents, groupOf, matchingAreas, neighboursOf } from '../areas'
+import { mustHaveKeys, resultsPageSize, type Budget, type FormA, type ListingKind, type MatchResult, type MustHaveKey } from '@roomsie/contract'
+import { areaParents, lineage, matchingAreas, neighboursOf } from '../areas'
 import type { Db } from '../db/client'
 import { matchingListings } from '../listings/match'
 import { listingsByIds, listingView, partsOf } from '../listings/read'
@@ -18,26 +18,23 @@ const suggestedCards = 4
 
 type Deps = { db: Db; storage: Storage; matching: Matching }
 type Ranked = { id: string; didntSay: MustHaveKey[]; bestMatch: boolean }
-type Filters = { areas: string[] | null; budget: { min: number | null; max: number | null } | null }
+type Filters = { areas: string[] | null; budget: Budget | null }
 
 /** The search of a Form A: the page, and the suggested posts when it finds nothing (PD6c). */
-export async function searchResults({ db, storage, matching }: Deps, form: FormA, viewerUserId: string | undefined, page: number, pageSize: number) {
-  const seeks = form.intent.value
-  if (!seeks || seeks === 'unclear') return { results: [], total: 0, suggestions: [] }
-  const intent = seeks
+export async function searchResults({ db, storage, matching }: Deps, form: FormA, viewerUserId: string | undefined, page: number) {
+  const intent = form.intent.value
+  if (!intent || intent === 'unclear') return { results: [], total: 0, suggestions: [] }
 
   const weightOf = (weight: 'prefer' | 'dealbreaker') => mustHaveKeys.filter((key) => form.mustHaves[key].value === weight)
   const answers: SearcherAnswers = Object.fromEntries(Object.entries(form.lifestyle).flatMap(([axis, slot]) => (slot.value && slot.value !== 'unclear' ? [[axis, slot.value]] : [])))
   const gender = viewerUserId ? (await profileOf(db, viewerUserId))?.gender ?? null : null
   if (gender) answers.gender = gender
   const roomType = form.roomType.value === 'private' || form.roomType.value === 'shared' ? form.roomType.value : null
-  const common = {
-    viewerUserId, moveDate: form.moveDate.value, dealbreakers: weightOf('dealbreaker'), preferences: weightOf('prefer'),
-  }
+  const common = { viewerUserId, moveDate: form.moveDate.value, dealbreakers: weightOf('dealbreaker'), preferences: weightOf('prefer') }
   const parentOf = await areaParents(db)
   const picks = form.areas.value ?? []
 
-  async function run({ areas, budget }: Filters, limit: number, offset: number): Promise<{ results: MatchResult[]; total: number }> {
+  const runSearch = async ({ areas, budget }: Filters, limit: number, offset: number): Promise<{ results: MatchResult[]; total: number }> => {
     if (intent === 'flatmates') {
       const { rows, total } = await matchingPeople(db, {
         ...common, areas, budget, limit, offset, searcher: searcherAgainst(answers),
@@ -45,30 +42,36 @@ export async function searchResults({ db, storage, matching }: Deps, form: FormA
       })
       return { results: await personResults(db, storage, rows), total }
     }
-    const { rows, total } = await matchingListings(db, { ...common, areas, budget, limit, offset, roomType, gender, kinds: listingKindsOf[intent] })
+    const { rows, total } = await matchingListings(db, {
+      ...common, areas, budget, limit, offset, roomType, gender, whosMoving: form.whosMoving.value, kinds: listingKindsOf[intent],
+    })
     return { results: await listingResults(db, storage, rows, viewerUserId), total }
   }
 
   const filters: Filters = { areas: picks.length ? matchingAreas(parentOf, picks) : null, budget: form.budget.value }
-  const { results, total } = await run(filters, pageSize, (page - 1) * pageSize)
+  const { results, total } = await runSearch(filters, resultsPageSize, (page - 1) * resultsPageSize)
   if (total > 0) return { results, total, suggestions: [] }
 
   // The next budget band, and the neighbouring area groups: one change at a time.
-  const nextBand = filters.budget?.max != null ? budgetBands.find((band) => band > filters.budget!.max!) : undefined
-  const groups = [...new Set(picks.map((pick) => groupOf(parentOf, pick)))]
+  const max = filters.budget?.max
+  const nextBand = max != null ? budgetBands.find((band) => band > max) : undefined
+  const groups = [...new Set(picks.map((pick) => lineage(parentOf, pick).at(-1)!))]
   const neighbours = groups.length ? (await neighboursOf(db, groups)).slice(0, 2) : []
   const relaxed = [
-    ...(nextBand ? [{ relaxed: { kind: 'budget' as const, max: nextBand }, filters: { ...filters, budget: { ...filters.budget!, max: nextBand } } }] : []),
+    ...(nextBand ? [{ relaxed: { kind: 'budget' as const, max: nextBand }, filters: { ...filters, budget: { min: filters.budget!.min, max: nextBand } } }] : []),
     ...neighbours.map((area) => ({ relaxed: { kind: 'area' as const, area }, filters: { ...filters, areas: matchingAreas(parentOf, [area]) } })),
   ]
-  const suggestions = await Promise.all(relaxed.map(async (r) => ({ relaxed: r.relaxed, results: (await run(r.filters, suggestedCards, 0)).results })))
+  const suggestions = await Promise.all(relaxed.map(async (r) => ({ relaxed: r.relaxed, results: (await runSearch(r.filters, suggestedCards, 0)).results })))
   return { results, total, suggestions: suggestions.filter((s) => s.results.length) }
 }
 
-/** The rows in the order of the ranked ids. */
+/** Each ranked id with its row. */
 const inOrder = <T extends { id: string }>(ranked: Ranked[], rows: T[]) => {
   const byId = new Map(rows.map((r) => [r.id, r]))
-  return ranked.flatMap((r) => (byId.has(r.id) ? [{ rank: r, row: byId.get(r.id)! }] : []))
+  return ranked.flatMap((rank) => {
+    const row = byId.get(rank.id)
+    return row ? [{ rank, row }] : []
+  })
 }
 
 async function personResults(db: Db, storage: Storage, ranked: Ranked[]): Promise<MatchResult[]> {

@@ -1,8 +1,9 @@
 import { and, count, desc, eq, sql, type SQL } from 'drizzle-orm'
-import { mustHaveKeys, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
+import { mustHaveKeys, type Budget, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
-import { textArray } from '../db/sql'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
+import { textArray } from '../db/sql'
+import { moveGap, near, rankParts } from '../ranking'
 import { visiblePeople } from './read'
 
 /** What a must-have checks on a person (PD3a). "Couple friendly" does not apply to a person. */
@@ -33,7 +34,6 @@ export function searcherAgainst(answers: SearcherAnswers) {
   return { fails, gaps }
 }
 
-/** True or false, or null when the person did not answer. */
 function meets(key: MustHaveKey): SQL {
   const { axis, values } = onPerson[key]!
   const answer = axis === 'gender'
@@ -49,7 +49,7 @@ export type PeopleSearch = {
   viewerUserId?: string
   /** Null: all of Mumbai. */
   areas: string[] | null
-  budget: { min: number | null; max: number | null } | null
+  budget: Budget | null
   moveDate: string | null
   dealbreakers: MustHaveKey[]
   preferences: MustHaveKey[]
@@ -61,44 +61,34 @@ export type PeopleSearch = {
 }
 
 /** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
-export async function matchingPeople(db: Db, s: PeopleSearch) {
-  const dealbreakers = s.dealbreakers.filter(appliesToPeople)
-  const preferences = s.preferences.filter(appliesToPeople)
+export async function matchingPeople(db: Db, search: PeopleSearch) {
+  const rank = rankParts(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
+  const { budget, moveDate, searcher } = search
 
   const conditions = [
-    ...visiblePeople(s.viewerUserId),
+    ...visiblePeople(search.viewerUserId),
     eq(profiles.intent, 'flatmates'),
-    s.areas && sql`${profiles.areas} && ${textArray(s.areas)}`,
+    search.areas && sql`${profiles.areas} && ${textArray(search.areas)}`,
     // Two budgets overlap (PD3a).
-    s.budget?.max != null && sql`coalesce(${profiles.budgetMin}, 0) <= ${s.budget.max}`,
-    s.budget?.min != null && sql`coalesce(${profiles.budgetMax}, 2147483647) >= ${s.budget.min}`,
-    s.moveDate && sql`(${profiles.moveDate} is null or ${profiles.moveDate} between ${s.moveDate}::date - 30 and ${s.moveDate}::date + 30)`,
-    ...dealbreakers.map((key) => sql`${meets(key)} is not false`),
-    s.searcher.fails.length && sql`not ${theirDealbreakerIn(s.searcher.fails)}`,
+    budget?.max != null && sql`coalesce(${profiles.budgetMin}, 0) <= ${budget.max}`,
+    budget?.min != null && sql`coalesce(${profiles.budgetMax}, 2147483647) >= ${budget.min}`,
+    moveDate && near(sql`${profiles.moveDate}`, moveDate),
+    ...rank.filters,
+    searcher.fails.length && sql`not ${theirDealbreakerIn(searcher.fails)}`,
   ].filter((c): c is SQL => !!c)
-
-  const didntSay = dealbreakers.length
-    ? sql`array_remove(array[${sql.join(dealbreakers.map((key) => sql`case when ${meets(key)} is null then ${key} end`), sql`, `)}]::text[], null)`
-    : sql`'{}'::text[]`
-  const full = sql`(cardinality(${didntSay}) = 0 and not ${theirDealbreakerIn(s.searcher.gaps)})`
-  const prefsMet = preferences.length ? sql.join(preferences.map((key) => sql`(case when ${meets(key)} then 1 else 0 end)`), sql` + `) : sql`0`
-  const moveGap = s.moveDate ? sql`abs(${profiles.moveDate} - ${s.moveDate}::date)` : sql`null::int`
 
   const [rows, [total]] = await Promise.all([
     db.select({
       id: profiles.id,
-      didntSay: sql<MustHaveKey[]>`${didntSay}`.as('didnt_say'),
-      isFull: sql<boolean>`${full}`.as('is_full'),
-      prefsMet: sql<number>`${prefsMet}`.as('prefs_met'),
-      points: sql<number>`${s.formBPoints(sql`${profiles.userId}`)}`.as('points'),
-      moveGap: sql<number | null>`${moveGap}`.as('move_gap'),
+      didntSay: sql<MustHaveKey[]>`${rank.didntSay}`.as('didnt_say'),
+      isFull: sql<boolean>`(cardinality(${rank.didntSay}) = 0 and not ${theirDealbreakerIn(searcher.gaps)})`.as('is_full'),
+      prefsMet: sql<number>`${rank.prefsMet}`.as('prefs_met'),
+      points: sql<number>`${search.formBPoints(sql`${profiles.userId}`)}`.as('points'),
+      moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
       .orderBy(sql`is_full desc, prefs_met desc, points desc, move_gap asc nulls last`, desc(profiles.createdAt), desc(profiles.id))
-      .limit(s.limit).offset(s.offset),
+      .limit(search.limit).offset(search.offset),
     db.select({ n: count() }).from(profiles).where(and(...conditions)),
   ])
-  return {
-    rows: rows.map((r) => ({ id: r.id, didntSay: r.didntSay, bestMatch: preferences.length >= 3 && r.prefsMet === preferences.length })),
-    total: total!.n,
-  }
+  return { rows: rows.map((r) => ({ id: r.id, ...rank.labels(r) })), total: total!.n }
 }

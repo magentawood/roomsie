@@ -86,7 +86,8 @@ describe('people', () => {
     expect(results.map((r) => nameOf(idOf(r)))).toEqual(['twin', 'lowNote', 'best', 'pocket', 'noDate', 'twoPrefs', 'picky', 'quiet'])
     expect(total).toBe(8)
     const labels = Object.fromEntries(results.map((r) => [nameOf(idOf(r)), [r.bestMatch, r.didntSay]]))
-    expect(labels).toMatchObject({ twin: [true, []], twoPrefs: [false, []], picky: [true, []], quiet: [false, ['non_smokers']] })
+    // Picky has a rule that the searcher did not answer: not a full match, so no label.
+    expect(labels).toMatchObject({ twin: [true, []], twoPrefs: [false, []], picky: [false, []], quiet: [false, ['non_smokers']] })
     expect(results.every((r) => r.kind === 'person')).toBe(true)
   })
 
@@ -118,8 +119,43 @@ describe('people', () => {
   })
 })
 
+describe('the mapping of PD3a between people', () => {
+  type Who = 'seeker' | 'veg' | 'jain' | 'nb'
+  let t: TestApp<Who>
+  const cards = {} as Record<Who, string>
+  const base = { intent: stated('flatmates'), areas: stated(['bandra']) }
+
+  beforeAll(async () => {
+    t = await testApp(['seeker', 'veg', 'jain', 'nb'])
+    await seedCatalogues(t.db)
+    await person(t, 'seeker', {}, 'male')
+    cards.veg = await person(t, 'veg', { lifestyle: { food: 'veg', tidiness: 'tidy_enough', drinks: 'none_at_home' } }, 'male')
+    cards.jain = await person(t, 'jain', { lifestyle: { food: 'jain', tidiness: 'relaxed_about_mess', drinks: 'fine_at_home' } }, 'female')
+    cards.nb = await person(t, 'nb', { lifestyle: { food: 'veg', tidiness: 'very_tidy', drinks: 'none_at_home' }, gender: 'non_binary' } as ProfileEditBody)
+  })
+  afterAll(() => t.close())
+
+  it.each([
+    ['veg_kitchen', ['veg', 'nb'], ['jain']],
+    ['tidy_flatmates', ['veg', 'nb'], ['jain']],
+    ['no_alcohol', ['veg', 'nb'], ['jain']],
+    ['men_only', ['veg'], ['jain', 'nb']],
+    ['women_only', ['jain'], ['veg', 'nb']],
+  ] as const)('a %s dealbreaker shows %j and hides %j', async (key, shown, hidden) => {
+    const { results } = await search(t, 'seeker', { ...base, mustHaves: { [key]: stated('dealbreaker') } })
+    const ids = results.map(idOf)
+    for (const who of shown) expect(ids).toContain(cards[who])
+    for (const who of hidden) expect(ids).not.toContain(cards[who])
+  })
+
+  it('gives no Best match label for fewer than three preferences', async () => {
+    const { results } = await search(t, 'seeker', { ...base, mustHaves: { veg_kitchen: stated('prefer'), tidy_flatmates: stated('prefer') } })
+    expect(results.find((r) => idOf(r) === cards.veg)!.bestMatch).toBe(false)
+  })
+})
+
 describe('listings', () => {
-  type Who = 'lister' | 'seeker' | 'she'
+  type Who = 'lister' | 'seeker' | 'she' | 'nb'
   let t: TestApp<Who>
   const ids = {} as Record<string, string>
 
@@ -138,10 +174,11 @@ describe('listings', () => {
   const room = { roomType: 'private', vegOnlyKitchen: true, availableFrom: '2026-12-01', rates: [{ rent: 19000 }] }
 
   beforeAll(async () => {
-    t = await testApp(['lister', 'seeker', 'she'])
+    t = await testApp(['lister', 'seeker', 'she', 'nb'])
     await seedCatalogues(t.db)
     await person(t, 'seeker', {}, 'male')
     await person(t, 'she', {}, 'female')
+    await person(t, 'nb', { gender: 'non_binary' } as ProfileEditBody)
     await listing('inBudget', 'room_in_flat', room)
     await listing('leeway', 'room_in_flat', { ...room, rates: [{ rent: 21500 }] })
     await listing('tooDear', 'room_in_flat', { ...room, rates: [{ rent: 23000 }] })
@@ -153,6 +190,12 @@ describe('listings', () => {
     await listing('pg', 'pg', { pgName: 'Shanti PG', vegOnlyKitchen: true, sharing: ['single', 'double'], rates: [{ sharing: 'single', rent: 30000 }, { sharing: 'double', rent: 15000 }] })
     await listing('ownerFlat', 'owner_flat', { vegOnlyKitchen: true, rates: [{ rent: 19000 }] })
     await listing('brokerFlat', 'broker_flat', { vegOnlyKitchen: true, brokerage: 19000, rates: [{ rent: 19000 }] })
+    const flat = { rates: [{ rent: 19000 }], smokingAllowed: false, alcoholAllowed: false }
+    await listing('smokers', 'owner_flat', { ...flat, smokingAllowed: true })
+    await listing('drinkers', 'owner_flat', { ...flat, alcoholAllowed: true })
+    await listing('families', 'owner_flat', { ...flat, whoIsWelcome: ['families'] })
+    await listing('workers', 'owner_flat', { ...flat, whoIsWelcome: ['working_professionals'] })
+    await listing('couples', 'owner_flat', { ...flat, whoIsWelcome: ['couples'] })
   })
   afterAll(() => t.close())
 
@@ -179,14 +222,47 @@ describe('listings', () => {
     expect(names((await search(t, 'seeker', { ...pgForm, roomType: stated('shared') })).results)).toEqual(['pg'])
   })
 
+  const flats = { intent: stated('whole_flat'), areas: stated(['bandra']) }
+
   it('gives owner flats and broker flats to a whole-flat seeker', async () => {
-    const { results } = await search(t, 'seeker', { ...form, intent: stated('whole_flat'), roomType: { source: 'empty', value: null } })
-    expect(names(results).sort()).toEqual(['brokerFlat', 'ownerFlat'])
+    const { results } = await search(t, 'seeker', flats)
+    expect(names(results).sort()).toEqual(['brokerFlat', 'couples', 'drinkers', 'families', 'ownerFlat', 'smokers', 'workers'])
+  })
+
+  it.each([
+    ['non_smokers', 'smokers'],
+    ['no_alcohol', 'drinkers'],
+  ] as const)('a %s dealbreaker needs the house rule, so it hides %s', async (key, hidden) => {
+    const shown = names((await search(t, 'seeker', { ...flats, mustHaves: { [key]: stated('dealbreaker') } })).results)
+    expect(shown).not.toContain(hidden)
+    expect(shown).toContain('workers')
+  })
+
+  it('a couple-friendly dealbreaker needs Couples in "Who is welcome", and an empty list is a gap', async () => {
+    const { results } = await search(t, 'seeker', { ...flats, mustHaves: { couple_friendly: stated('dealbreaker') } })
+    expect(names(results)[0]).toBe('couples')
+    expect(names(results)).not.toContain('families')
+    expect(results.find((r) => idOf(r) === ids.ownerFlat)!.didntSay).toEqual(['couple_friendly'])
+  })
+
+  it.each([
+    ['working', ['workers'], ['families', 'couples']],
+    ['family', ['families', 'workers'], ['couples']],
+    ['student', [], ['families', 'workers', 'couples']],
+  ] as const)('"Who is welcome" lets a %s seeker see %j and not %j (PD15)', async (whosMoving, shown, hidden) => {
+    const found = names((await search(t, 'seeker', { ...flats, whosMoving: stated(whosMoving) })).results)
+    for (const name of shown) expect(found).toContain(name)
+    for (const name of hidden) expect(found).not.toContain(name)
+    expect(found).toContain('ownerFlat')
+  })
+
+  it('shows a non-binary searcher only the listings open to all', async () => {
+    expect(names((await search(t, 'nb', form)).results)).not.toContain('women')
   })
 })
 
 describe('the suggested posts and the event', () => {
-  type Who = 'seeker' | 'dearer' | 'neighbour'
+  type Who = 'seeker' | 'dearer' | 'neighbour' | 'n2' | 'n3' | 'n4' | 'n5' | 'dadar' | 'worli'
   let t: TestApp<Who>
   let analytics: TestAnalyticsDb
   const cards = {} as Record<Who, string>
@@ -194,11 +270,16 @@ describe('the suggested posts and the event', () => {
 
   beforeAll(async () => {
     analytics = await createTestAnalyticsDb()
-    t = await testApp(['seeker', 'dearer', 'neighbour'], offlineStorage, {}, analytics.db)
+    t = await testApp(['seeker', 'dearer', 'neighbour', 'n2', 'n3', 'n4', 'n5', 'dadar', 'worli'], offlineStorage, {}, analytics.db)
     await seedCatalogues(t.db)
-    await t.db.update(areas).set({ neighbours: ['andheri-goregaon'] }).where(eq(areas.slug, 'bandra-santacruz'))
+    await t.db.update(areas).set({ neighbours: ['andheri-goregaon', 'dadar-sion', 'lower-parel-worli'] }).where(eq(areas.slug, 'bandra-santacruz'))
     cards.dearer = await person(t, 'dearer', { budgetMin: 18000, budgetMax: 22000, moveDate: null })
-    cards.neighbour = await person(t, 'neighbour', { areas: ['andheri-west'], budgetMin: 10000, budgetMax: 14000, moveDate: null })
+    const near = { budgetMin: 10000, budgetMax: 14000, moveDate: null }
+    // Four cards at most: the newest four of these five.
+    cards.neighbour = await person(t, 'neighbour', { ...near, areas: ['andheri-west'] })
+    for (const who of ['n2', 'n3', 'n4', 'n5'] as const) cards[who] = await person(t, who, { ...near, areas: ['andheri-west'] })
+    cards.dadar = await person(t, 'dadar', { ...near, areas: ['dadar-west'] })
+    cards.worli = await person(t, 'worli', { ...near, areas: ['worli'] })
   })
   afterAll(async () => {
     await t.close()
@@ -208,9 +289,11 @@ describe('the suggested posts and the event', () => {
   it('gives the next budget band and the neighbouring area group of an empty search, each with its cards', async () => {
     const { results, suggestions } = await search(t, 'seeker', form)
     expect(results).toEqual([])
+    // Two neighbours at most: Lower Parel–Worli is the third.
     expect(suggestions.map((s) => [s.relaxed, s.results.map(idOf)])).toEqual([
       [{ kind: 'budget', max: 25000 }, [cards.dearer]],
-      [{ kind: 'area', area: 'andheri-goregaon' }, [cards.neighbour]],
+      [{ kind: 'area', area: 'andheri-goregaon' }, [cards.n5, cards.n4, cards.n3, cards.n2]],
+      [{ kind: 'area', area: 'dadar-sion' }, [cards.dadar]],
     ])
   })
 

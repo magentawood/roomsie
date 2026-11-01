@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { foodAnswers, listerResponse } from './profiles'
+import { foodAnswers, listerResponse, type WhosMoving } from './profiles'
 import { areaSlug, optionalText, photoKeyIn, rupees, uploadUrlReply } from './shared'
 
 /* The values of the listing flow (flow 04 of the designs). The database enums use the same lists. */
@@ -30,6 +30,17 @@ export const amenities = [
 ] as const
 export const welcomeGroups = ['students', 'working_professionals', 'couples', 'families', 'bachelors'] as const
 export const roomWelcomeGroups = ['students', 'working_professionals'] as const
+
+/** The type and the household of each answer to "Who's moving", as groups of "Who is welcome" (PD15). A part that is not known is absent. */
+export const welcomeOf: Record<WhosMoving, { type?: (typeof roomWelcomeGroups)[number]; household?: 'bachelors' | 'couples' | 'families' }> = {
+  student: { type: 'students', household: 'bachelors' },
+  first_job: { type: 'working_professionals', household: 'bachelors' },
+  working: { type: 'working_professionals', household: 'bachelors' },
+  couple: { household: 'couples' },
+  family: { household: 'families' },
+  friends: { household: 'bachelors' },
+  unclear: {},
+}
 
 export const listingKind = z.enum(listingKinds)
 export type ListingKind = z.infer<typeof listingKind>
