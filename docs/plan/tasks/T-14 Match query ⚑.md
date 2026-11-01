@@ -54,3 +54,60 @@ Takes what a person wants and returns the people who fit.
 ## Read first
 - [interface-shape.md](../../interface-shape.md)
 - [pd-03a-flatmate-matching.md](../../decisions/pd-03a-flatmate-matching.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by Pulkit.
+
+- **Modules:**
+  - **`packages/contract`, results:** new. The body of a search (a Form A and a page number) and the response: the results, the page and the suggested posts. The result schema of T-08 does not change.
+  - **The database schema:** a list of neighbours on each area group. One migration adds it, and the seed fills it.
+  - **The results module of the API:** new. It has the search route, the filters, the order, the labels, the suggested posts and the event. It replaces the draft match query of T-06.
+  - **The profiles module:** a function that gives the people who pass the filters, with their answers and their must-haves. It replaces the draft. The visibility rules of #59 do not change.
+  - **The listings module:** a function that gives the listings that pass the filters, with their rents. The listing view does not change.
+  - **The observations module:** a function that gives the Form B points of a person for a searcher. The query of the profiles module uses this SQL.
+  - **The config of the API:** the confidence floor of a Form B note, 0.5 by default.
+  - **The docs:** PD3a gets the two grill decisions. A learn page explains the match query.
+- **Seams for the tests:**
+  - The route, on the test database, with no mocks. The tests check these rules:
+    - Each kind of seeker gets its kind of result, and `unclear` gets no result.
+    - The area includes the areas under it. An empty area is all of Mumbai.
+    - A rent up to 10% over the budget passes, and ranks below the rents in the budget. A private seeker of a PG counts only the Single rent. The budgets of two people overlap.
+    - The move date passes in 30 days before or after. An empty date passes.
+    - A listing passes a dealbreaker only with the house rule of PD3a. "Who can move in" filters on the gender of the searcher.
+    - Between people, each dealbreaker applies both ways, with the mapping of PD3a. A known answer that fails hides the card.
+    - A card with an unanswered dealbreaker shows below the full matches, with the dealbreaker in "Didn't say". A gap of the searcher also puts the card below the full matches.
+    - The order is the six steps of PD3a. A same-kind note on one topic breaks a tie. A note below the confidence floor does not count.
+    - "Best match" needs three or more preferences, all met.
+    - Blocked, hidden and suspended people never appear.
+    - An empty search gives the suggested posts: the next budget band, and the neighbours of the area group.
+    - Each page fires one `results_shown` event with its count.
+  - The unit tests of `packages/contract` parse the body and the response.
+- **Decisions:**
+  - **The route:** `POST /v1/results`. The body is a Form A and a page number. A guest can search (why: PD6b). The response is a function of the form only (why: PD6c).
+  - **The kinds:** `room` sees room listings, `pg` sees PGs, `whole_flat` sees owner flats and broker flats, and `flatmates` sees people (why: PD3a). An empty area means all of Mumbai, and an empty budget means no budget filter.
+  - **The answers of the searcher:** the lifestyle answers of the Form A. The gender comes from the profile of a signed-in searcher. A guest has no gender.
+  - **A gap of the searcher:** the card shows below the full matches, with no label. The user decided this in the grill (why: PD3a).
+  - **The Form B step:** a person gets one point for each topic where the two people have a visible note of the same kind. The note must be above the confidence floor. It applies to people only. A guest gets no Form B points until a route knows the session of the guest (T-21, T-17). The user decided this in the grill (why: PD3a).
+  - **The suggested posts:** when a search finds nothing, the response also gives some cards for each relaxed search, with its reason. The user decided this in the grill.
+  - **The relaxed searches:** the next budget band, and a maximum of two neighbours of the area group, with four cards each. The bands are under 10k, 15k, 25k and 35k, and above 35k has no next band (why: `interface-shape.md`).
+  - **The neighbours:** a seeded list for the 10 area groups:
+    - South Mumbai: Lower Parel–Worli.
+    - Lower Parel–Worli: South Mumbai, Dadar–Sion and Bandra–Santacruz.
+    - Dadar–Sion: Lower Parel–Worli, Bandra–Santacruz and Chembur–Ghatkopar.
+    - Bandra–Santacruz: Dadar–Sion, Lower Parel–Worli and Andheri–Goregaon.
+    - Andheri–Goregaon: Bandra–Santacruz, Malad–Borivali and Powai–Vikhroli.
+    - Malad–Borivali: Andheri–Goregaon.
+    - Powai–Vikhroli: Andheri–Goregaon, Chembur–Ghatkopar and Thane.
+    - Chembur–Ghatkopar: Dadar–Sion, Powai–Vikhroli and Navi Mumbai.
+    - Thane: Powai–Vikhroli and Navi Mumbai.
+    - Navi Mumbai: Chembur–Ghatkopar and Thane.
+  - **The pages:** 20 results for each page, by page number. Each page fires `results_shown` through `track()`.
+  - **The modules:** the results module calls the functions of the profiles, listings and observations modules. It does not use their tables (why: `database.md`).
+  - **The draft:** the old Form A type, the score and the panel header of the draft go. T-15 owns the header.
+- **Out of scope:**
+  - The chip that widens a search by one kind, for example "Show some PGs too" (T-09, T-12).
+  - The waitlist line for an area outside Mumbai (T-22a).
+  - The results panel and its header (T-15).
+  - A search from the stored form of a goal. No goal route exists.
+  - The writing of Form B notes (T-36).
