@@ -76,11 +76,13 @@ lifestyle.food:        { value: null, source: &quot;empty&quot; }         // nob
 <li><strong>A slot that the screens do not show can still exist.</strong> Only the chat fills room type, for example "private room only".</li>
 <li><strong><code>unclear</code> is only in the chat.</strong> The profile form and the cards keep the answers of the designs. Thus, the profile API rejects <code>unclear</code> for a lifestyle answer.</li>
 <li><strong>A stored form can have no slots.</strong> A slot that is not there reads as empty. Thus, an old <code>{}</code> form is valid, and a new slot needs no data change.</li>
+<li><strong>Form A rejects a key that it does not have.</strong> A misspelled slot name fails the parse, so it does not become empty without a sign. The form also has <code>version: 1</code>.</li>
 <li><strong>Zod <code>.default()</code> does not parse its value.</strong> A nested object with <code>.default({})</code> gives <code>{}</code>, with no empty slots in it. Use <code>.prefault({})</code>, which parses the value.</li>
 <li><strong>"Who's moving" has two parts:</strong> a type and a household. The listing filter uses only the parts that we know (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>).</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>F-11: <a href="https://github.com/magentawood/roomsie/pull/128">#128</a>, 2026-10-24. The intake calls, and the Form A contract of PD15.</li>
+<li>T-08: <a href="https://github.com/magentawood/roomsie/pull/184">#184</a>, 2026-11-01. The Form A schema and the results in <code>packages/contract</code>. No inferred values, and <code>unclear</code> in each enum of Form A.</li>
 </ul>
 </main>

@@ -50,9 +50,11 @@ The assistant asks at once: "Should I hide places with a non-veg kitchen, or jus
 - **A slot that the screens do not show can still exist.** Only the chat fills room type, for example "private room only".
 - **`unclear` is only in the chat.** The profile form and the cards keep the answers of the designs. Thus, the profile API rejects `unclear` for a lifestyle answer.
 - **A stored form can have no slots.** A slot that is not there reads as empty. Thus, an old `{}` form is valid, and a new slot needs no data change.
+- **Form A rejects a key that it does not have.** A misspelled slot name fails the parse, so it does not become empty without a sign. The form also has `version: 1`.
 - **Zod `.default()` does not parse its value.** A nested object with `.default({})` gives `{}`, with no empty slots in it. Use `.prefault({})`, which parses the value.
 - **"Who's moving" has two parts:** a type and a household. The listing filter uses only the parts that we know ([PD15](../decisions/pd-15-form-a-contract.md)).
 
 ## Tickets
 
 - F-11: [#128](https://github.com/magentawood/roomsie/pull/128), 2026-10-24. The intake calls, and the Form A contract of PD15.
+- T-08: [#184](https://github.com/magentawood/roomsie/pull/184), 2026-11-01. The Form A schema and the results in `packages/contract`. No inferred values, and `unclear` in each enum of Form A.
