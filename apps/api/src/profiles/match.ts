@@ -22,7 +22,7 @@ import { compatibleIntents, type Intent } from './intent'
 import { visiblePeople } from './read'
 
 /* ── input ──────────────────────────────────────────────────────────────── */
-// TODO(T-08): import Form A from the contract. PD15 moves the weight to the must-haves.
+// TODO(T-14): use formA of the contract. PD15 moves the weight to the must-haves.
 export type LifestyleAnswer = {
   axisKey: string
   value: string

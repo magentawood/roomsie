@@ -49,6 +49,7 @@ const lifestyleEdit = z.strictObject(Object.fromEntries(Object.entries(answers).
 const weight = z.enum(mustHaveWeights)
 const mustHaves = z.partialRecord(z.enum(mustHaveKeys), weight)
 export const profilePhotoKey = photoKeyIn('profiles')
+export const areaPicks = z.array(areaSlug).max(maxProfileAreas).refine((a) => new Set(a).size === a.length, 'Each area once')
 
 export const createProfileBody = z.strictObject({ fullName: requiredText(profileTextLimits.fullName), age, gender: z.enum(genders) })
 export type CreateProfileBody = z.infer<typeof createProfileBody>
@@ -62,7 +63,7 @@ export const profileEditBody = z.strictObject({
   managedByParent: z.boolean(),
   intent: z.enum(intents),
   whosMoving: z.enum(whosMovingAnswers),
-  areas: z.array(areaSlug).max(maxProfileAreas).refine((a) => new Set(a).size === a.length, 'Each area once'),
+  areas: areaPicks,
   budgetMin: rupees.nullable(),
   budgetMax: rupees.nullable(),
   moveDate: z.iso.date().nullable(),
