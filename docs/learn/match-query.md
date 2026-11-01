@@ -41,6 +41,8 @@ POST /v1/results ──► results module ──┬─► profiles module: match
 ## Gotchas
 
 - **A guest has no gender.** A card with "Women only", or a listing for men only, shows below the full matches for a guest. It does not go.
+- **A searcher with no "Who's moving" is a gap.** A listing that names a group of "Who is welcome" shows below the full matches. It does not go.
+- **"Couple friendly" on a room is a gap.** A room can welcome only students and working professionals. Thus, a room, or a listing with no household group, shows "Couple friendly" in "Didn't say".
 - **A guest has no Form B points** until a route knows the session of the guest (T-21, T-17).
 - **A preference that does not apply does not count.** "Couple friendly" does not apply to a person, and "Tidy flatmates" does not apply to a listing. "Best match" needs three preferences that apply, all met, on a full match.
 - **Postgres sorts the results.** Change the SQL in `profiles/match.ts`, `listings/match.ts` and `ranking.ts`, not a sort in TypeScript ([database.md](../standards/database.md)).
