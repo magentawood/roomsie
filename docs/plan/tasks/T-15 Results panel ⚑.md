@@ -39,13 +39,13 @@ Shows matches as cards: people and places.
 - [[T-50 Found a place, share, feedback]]
 
 ## Done when
-- [x] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data
-- [x] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
-- [x] It updates only when a form value or weight changes. It never changes the order during a scroll
-- [x] A card shows the Best match label and the Didn't say label of PD3a
-- [x] The empty panel shows No relevant results and the suggested posts (PD6c)
-- [x] The listing detail in the results panel has the "Ask in chat" button of the designs
-- [x] A grid of person cards uses the prototype cards, the Form A contract and sample data
+- [x] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] It updates only when a form value or weight changes. It never changes the order during a scroll · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] A card shows the Best match label and the Didn't say label of PD3a · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] The empty panel shows No relevant results and the suggested posts (PD6c) · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] The listing detail in the results panel has the "Ask in chat" button of the designs · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] A grid of person cards uses the prototype cards, the Form A contract and sample data · [#188](https://github.com/magentawood/roomsie/pull/188)
 
 ^done
 
@@ -81,3 +81,13 @@ Shows matches as cards: people and places.
   - the "12 more matches" banner and the "Hid 8" note of PD6c
   - the compare selection (T-49)
   - the kind pills of the place cards (Owner, Broker, PG)
+
+## Log
+
+- **2026-11-02 · [#188](https://github.com/magentawood/roomsie/pull/188)**
+  - **Change:** the results panel shows the person and place cards beside the chat, with the header states, the "Best match" and "Didn't say" labels, and "No relevant results" with the suggested posts. On a phone, "Show all" opens the panel above the input. A place opens in the panel, with "Ask in chat". `/chat?preview=results` and `/chat?preview=empty` show sample data.
+  - **Why:** the panel is the second half of the chat ([PD6c](../../decisions/pd-06c-interface-holes.md), [PD6a](../../decisions/pd-06a-mobile-split-view.md)).
+  - **Ticked:** all seven items.
+  - **Not done:** the connection to the match query moved to T-14.
+  - **Learn:** [The results panel](../../learn/results-panel.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
