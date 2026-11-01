@@ -27,6 +27,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Messages and realtime](messages.md): an accepted message request is a conversation; the API saves each message and sends it live to the two people on their private Supabase Realtime channels.
 - [Database migrations](migrations.md): a migration is a committed SQL file that changes the shape of the database. The deploy applies the new migrations and the catalogue seed before the new API starts.
 - [Model hosting and where user text goes](model-hosting-and-data.md): each chat message goes to a model provider, and the provider decides where the text is stored and if it trains on it; roomsie sends user text to the DeepSeek API.
+- [The model wrapper](models.md): each call of the API to a language model goes through one module, which asks DeepSeek first, asks Gemini when DeepSeek fails, and records the tokens of each attempt.
 - [Moderation: reports, blocks and the admin screen](moderation.md): a user reports or blocks a person; reports can hide a card or a listing at once, and a moderator reviews each report on the admin screen and dismisses it, keeps the hide, or suspends the account.
 - [OpenAPI from Zod](openapi-from-zod.md): the API makes its OpenAPI document from the Zod schemas in `packages/contract`. The document is committed, and a test fails when it is out of date.
 - [Place detail and listing reports](place-detail.md): a signed-in user opens the full detail of a place, and can report it; a safety report, or reports from two people, hide the listing at once.
