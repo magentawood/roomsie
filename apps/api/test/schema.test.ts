@@ -1,6 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createTestDb, type TestDb } from './db'
-import { anonymousSessions, areas, chatTurns, goals, lifestyleAxes, listingFlatmates, listingRates, listings, mustHaves, profiles, users } from '../src/db/schema'
+import {
+  anonymousSessions, areas, chatTurns, goals, lifestyleAxes, listingFlatmates, listingRates, listings, mustHaves, observations, observationTopics, profiles, users,
+} from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 
 let testDb: TestDb
@@ -53,8 +55,24 @@ describe('chat turns', () => {
   })
 })
 
+describe('Form B notes', () => {
+  it('belong to exactly one owner: a visitor session or a user', async () => {
+    const user = await newUser()
+    const [session] = await testDb.db.insert(anonymousSessions)
+      .values({ deviceHash: 'device', expiresAt: new Date(Date.now() + 86_400_000) }).returning()
+    const [goal] = await testDb.db.insert(goals).values({ userId: user.id }).returning()
+    const [turn] = await testDb.db.insert(chatTurns).values({ goalId: goal!.id, role: 'user', inputMethod: 'typed', text: 'loud music is fine' }).returning()
+    await testDb.db.insert(observationTopics).values({ key: 'noise', label: 'Noise' }).onConflictDoNothing()
+    const note = { key: 'noise', value: 'fine with music', kind: 'preference', evidence: 'loud music is fine', turnId: turn!.id, confidence: 0.9 } as const
+    await expect(testDb.db.insert(observations).values(note)).rejects.toThrow()
+    await expect(testDb.db.insert(observations).values({ ...note, userId: user.id, anonymousSessionId: session!.id })).rejects.toThrow()
+    await expect(testDb.db.insert(observations).values({ ...note, userId: user.id })).resolves.toBeDefined()
+    await expect(testDb.db.insert(observations).values({ ...note, anonymousSessionId: session!.id })).resolves.toBeDefined()
+  })
+})
+
 describe('catalogues', () => {
-  it('seeds the eight lifestyle questions and the seven must-haves, all active', async () => {
+  it('seeds the eight lifestyle questions, the seven must-haves and the six Form B topics, all active', async () => {
     await seedCatalogues(testDb.db)
     await seedCatalogues(testDb.db)
     const axes = await testDb.db.select().from(lifestyleAxes)
@@ -62,6 +80,9 @@ describe('catalogues', () => {
     const all = await testDb.db.select().from(mustHaves)
     expect(all).toHaveLength(7)
     expect(all.filter((m) => !m.active)).toEqual([])
+    const topics = await testDb.db.select().from(observationTopics)
+    expect(topics.map((t) => t.key).sort()).toEqual(['cooking', 'guest_frequency', 'move_reason', 'noise', 'past_flatmates', 'work_pattern'])
+    expect(topics.filter((t) => !t.active)).toEqual([])
   })
 })
 

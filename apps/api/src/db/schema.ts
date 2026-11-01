@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, placeTypes, rejectReasons, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -44,6 +44,7 @@ export const visibilityEnum = pgEnum('visibility', visibilities)
 export const goalStatusEnum = pgEnum('goal_status', ['open', 'found'])
 export const turnRoleEnum = pgEnum('turn_role', ['user', 'assistant'])
 export const turnInputEnum = pgEnum('turn_input', ['typed', 'chip'])
+export const observationKindEnum = pgEnum('observation_kind', observationKinds)
 
 /* The single choices of the listing flow (flow 04 of the designs). */
 export const listingKindEnum = pgEnum('listing_kind', listingKinds)
@@ -461,6 +462,40 @@ export const chatTurns = pgTable('chat_turns', {
 }, (t) => ({
   goalIdx: index('chat_turns_goal_idx').on(t.goalId, t.createdAt),
   inputCheck: check('chat_turns_input_check', sql`(${t.role} = 'user') = (${t.inputMethod} is not null)`),
+})).enableRLS()
+
+/* ── Form B: what the user revealed in the chat (PD7a, T-35) ────────────── */
+
+/** The topics a note can have. A new topic is a seed row, with no migration. */
+export const observationTopics = pgTable('observation_topics', {
+  key: text('key').primaryKey(),
+  label: text('label').notNull(),
+  /** Retire a topic: no new note can use it. */
+  active: boolean('active').notNull().default(true),
+  createdAt: createdAt(),
+}).enableRLS()
+
+/** One note for each topic of an owner. A newer note replaces the older note. */
+export const observations = pgTable('observations', {
+  id: id(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  anonymousSessionId: uuid('anonymous_session_id').references(() => anonymousSessions.id, { onDelete: 'cascade' }),
+  key: text('key').notNull().references(() => observationTopics.key),
+  value: text('value').notNull(),
+  kind: observationKindEnum('kind').notNull(),
+  evidence: text('evidence').notNull(),
+  /** The quoted turn. No note outlives the words that it quotes. */
+  turnId: uuid('turn_id').notNull().references(() => chatTurns.id, { onDelete: 'cascade' }),
+  confidence: real('confidence').notNull(),
+  visible: boolean('visible').notNull().default(true),
+  createdAt: createdAt(),
+  updatedAt: updatedAt(),
+}, (t) => ({
+  userKey: uniqueIndex('observations_user_key_idx').on(t.userId, t.key),
+  sessionKey: uniqueIndex('observations_session_key_idx').on(t.anonymousSessionId, t.key),
+  turnIdx: index('observations_turn_idx').on(t.turnId),
+  oneOwnerCheck: check('observations_one_owner_check', sql`num_nonnulls(${t.userId}, ${t.anonymousSessionId}) = 1`),
+  confidenceCheck: check('observations_confidence_check', sql`${t.confidence} between 0 and 1`),
 })).enableRLS()
 
 /* ── connecting ─────────────────────────────────────────────────────────── */
