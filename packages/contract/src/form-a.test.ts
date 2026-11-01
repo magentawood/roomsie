@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA } from './form-a'
-import { profileEditBody } from './profiles'
+import { lifestyleAnswers, mustHaveKeys, profileEditBody } from './profiles'
 
 const empty = { value: null, source: 'empty' }
 
@@ -14,12 +14,12 @@ describe('Form A', () => {
     expect(form.version).toBe(1)
   })
 
-  it.each([
+  it.each<[string, unknown]>([
     ['intent', { intent: { value: 'unclear', source: 'stated' } }],
     ['room type', { roomType: { value: 'unclear', source: 'stated' } }],
     ["who's moving", { whosMoving: { value: 'unclear', source: 'stated' } }],
-    ['each lifestyle answer', { lifestyle: { food: { value: 'unclear', source: 'stated' }, pets: { value: 'unclear', source: 'stated' } } }],
-    ['a must-have weight', { mustHaves: { veg_kitchen: { value: 'unclear', source: 'stated' } } }],
+    ...Object.keys(lifestyleAnswers).map((axis): [string, unknown] => [axis, { lifestyle: { [axis]: { value: 'unclear', source: 'stated' } } }]),
+    ...mustHaveKeys.map((key): [string, unknown] => [`the weight of ${key}`, { mustHaves: { [key]: { value: 'unclear', source: 'stated' } } }]),
   ])('accepts unclear for %s', (_, input) => {
     expect(formA.safeParse(input).success).toBe(true)
   })

@@ -2,7 +2,6 @@ import { z } from 'zod'
 import { listingResponse } from './listings'
 import { cardResponse, mustHaveKeys } from './profiles'
 
-/** The labels of PD3a. */
 const resultLabels = {
   /** The card meets all the preferences, and the searcher stated three or more. */
   bestMatch: z.boolean(),
