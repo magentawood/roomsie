@@ -34,3 +34,4 @@ export const formA = z.strictObject({
   mustHaves: z.strictObject(mustHaves).prefault({}),
 })
 export type FormA = z.infer<typeof formA>
+export type Budget = z.infer<typeof budget>

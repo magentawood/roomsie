@@ -35,11 +35,11 @@ export async function observationsOf(db: Db | Tx, owner: Owner) {
   return rows.map((row) => ({ version: 1 as const, ...row }))
 }
 
-/** The Form B points of a person for a searcher: one for each topic where both have a visible note of the same kind, at the floor or above (PD3a). */
+/** The Form B points of a person for a searcher: one for each topic where both have a visible note of the same kind, above the floor (PD3a). */
 export function formBPoints(searcherUserId: string, personUserId: SQL, floor: number) {
   return sql<number>`(select count(*)::int from ${observations} join ${observations} as ${other} on ${other.key} = ${observations.key} and ${other.kind} = ${observations.kind}
     where ${observations.userId} = ${searcherUserId} and ${other.userId} = ${personUserId}
-      and ${observations.visible} and ${other.visible} and ${observations.confidence} >= ${floor} and ${other.confidence} >= ${floor})`
+      and ${observations.visible} and ${other.visible} and ${observations.confidence} > ${floor} and ${other.confidence} > ${floor})`
 }
 
 /** A delete by the user is a direct database action, never an edit by the model (PD7a). */
@@ -48,7 +48,6 @@ export const deleteObservation = (db: Db | Tx, owner: Owner, id: string) =>
 
 /** The tombstone keeps the users row, so its cascade does not remove the notes of the user. */
 export const deleteObservationsOf = (tx: Tx, userId: string) => tx.delete(observations).where(eq(observations.userId, userId))
-
 
 /** At sign-in (T-17): the notes of the session go to the user. On a topic that both have, the newer note stays. */
 export async function moveObservations(tx: Tx, { anonymousSessionId, userId }: { anonymousSessionId: string; userId: string }) {
