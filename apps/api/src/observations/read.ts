@@ -1,14 +1,19 @@
 import { and, asc, eq, sql } from 'drizzle-orm'
+import { alias } from 'drizzle-orm/pg-core'
 import type { Observation } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { observations, observationTopics } from '../db/schema'
 
-/** A note belongs to a user or to a visitor session, never both. */
 export type Owner = { userId: string } | { anonymousSessionId: string }
 
-const ownedBy = (owner: Owner) => 'userId' in owner
-  ? eq(observations.userId, owner.userId)
-  : eq(observations.anonymousSessionId, owner.anonymousSessionId)
+const ownerColumn = (owner: Owner) => 'userId' in owner
+  ? { column: observations.userId, id: owner.userId }
+  : { column: observations.anonymousSessionId, id: owner.anonymousSessionId }
+
+const ownedBy = (owner: Owner) => {
+  const { column, id } = ownerColumn(owner)
+  return eq(column, id)
+}
 
 /** Saves a Form B note. A newer note on a topic replaces the older note. False: the topic is not in the catalogue, or is retired. */
 export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, kind, evidence, turn, confidence, visible }: Observation) {
@@ -17,13 +22,12 @@ export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, k
   if (!topic) return false
   const fields = { value, kind, evidence, turnId: turn, confidence, visible }
   await db.insert(observations).values({ ...owner, key, ...fields }).onConflictDoUpdate({
-    target: 'userId' in owner ? [observations.userId, observations.key] : [observations.anonymousSessionId, observations.key],
+    target: [ownerColumn(owner).column, observations.key],
     set: { ...fields, updatedAt: sql`now()` },
   })
   return true
 }
 
-/** The notes of an owner, oldest first. */
 export async function observationsOf(db: Db | Tx, owner: Owner) {
   const rows = await db.select({
     id: observations.id, key: observations.key, value: observations.value, kind: observations.kind, evidence: observations.evidence,
@@ -39,12 +43,14 @@ export const deleteObservation = (db: Db | Tx, owner: Owner, id: string) =>
 /** The tombstone keeps the users row, so its cascade does not remove the notes of the user. */
 export const deleteObservationsOf = (tx: Tx, userId: string) => tx.delete(observations).where(eq(observations.userId, userId))
 
+const other = alias(observations, 'other')
+
 /** At sign-in (T-17): the notes of the session go to the user. On a topic that both have, the newer note stays. */
-export async function moveObservations(tx: Tx, anonymousSessionId: string, userId: string) {
+export async function moveObservations(tx: Tx, { anonymousSessionId, userId }: { anonymousSessionId: string; userId: string }) {
   await tx.execute(sql`
-    delete from observations o using observations other
-    where o.key = other.key and (
-      (o.user_id = ${userId} and other.anonymous_session_id = ${anonymousSessionId} and o.updated_at <= other.updated_at)
-      or (o.anonymous_session_id = ${anonymousSessionId} and other.user_id = ${userId} and o.updated_at < other.updated_at))`)
+    delete from ${observations} using ${observations} as ${other}
+    where ${observations.key} = ${other.key} and (
+      (${observations.userId} = ${userId} and ${other.anonymousSessionId} = ${anonymousSessionId} and ${observations.updatedAt} <= ${other.updatedAt})
+      or (${observations.anonymousSessionId} = ${anonymousSessionId} and ${other.userId} = ${userId} and ${observations.updatedAt} < ${other.updatedAt}))`)
   await tx.update(observations).set({ userId, anonymousSessionId: null }).where(eq(observations.anonymousSessionId, anonymousSessionId))
 }

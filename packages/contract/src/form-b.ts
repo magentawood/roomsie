@@ -3,13 +3,11 @@ import { requiredText } from './shared'
 
 export const observationKinds = ['constraint', 'preference', 'context', 'concern'] as const
 
-/** The format only. The API checks the key against the catalogue of topics (T-35). */
-export const observationKey = z.string().max(60).regex(/^[a-z]+(_[a-z]+)*$/)
-
 /** One Form B note: a thing the user revealed, with their own words (PD7a). */
 export const observation = z.strictObject({
   version: z.literal(1).default(1),
-  key: observationKey,
+  /** The format only. The API checks the key against the topic catalogue. */
+  key: z.string().max(60).regex(/^[a-z]+(_[a-z]+)*$/),
   value: requiredText(200),
   kind: z.enum(observationKinds),
   /** Verbatim, so no trim. T-36 checks that the quote is in the turn. */

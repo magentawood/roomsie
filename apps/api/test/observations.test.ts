@@ -27,7 +27,6 @@ const newSession = async () => {
   return { anonymousSessionId: session!.id } satisfies Owner
 }
 
-/** A typed turn in a new goal of the owner. */
 async function typedTurn(owner: Owner, text: string) {
   const [goal] = await testDb.db.insert(goals).values(owner).returning()
   const [turn] = await testDb.db.insert(chatTurns).values({ goalId: goal!.id, role: 'user', inputMethod: 'typed', text }).returning()
@@ -100,7 +99,7 @@ describe('moveObservations', () => {
     const userGuests = await typedTurn(user, 'no guests ever')
     await saveObservation(testDb.db, user, note(userGuests, { value: 'no guests', evidence: 'no guests ever' }))
 
-    await testDb.db.transaction((tx) => moveObservations(tx, session.anonymousSessionId, user.userId))
+    await testDb.db.transaction((tx) => moveObservations(tx, { anonymousSessionId: session.anonymousSessionId, userId: user.userId }))
 
     const notes = await observationsOf(testDb.db, user)
     expect(notes.map((n) => [n.key, n.value]).sort()).toEqual([['guest_frequency', 'no guests'], ['noise', 'needs silence']])
