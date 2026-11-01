@@ -95,9 +95,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
+- [Form B notes](learn/form-b-notes.md)
 - [Form A and intent](learn/form-a-and-intent.md)
 - [Analytics events](learn/analytics-events.md)
 - [Articles and the blog](learn/articles.md)
 - [Backups](learn/backups.md)
-- [Content-Security-Policy](learn/content-security-policy.md)
 <!-- learn-newest:end -->

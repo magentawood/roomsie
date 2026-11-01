@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**174 of 319 done · 55%**
+**177 of 319 done · 55%**
 
 `█████████████░░░░░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
-| [[P2 Chat]] | 1 / 13 | 7 / 61 | 11% |
+| [[P2 Chat]] | 2 / 13 | 10 / 61 | 16% |
 | [[P3 Data and trust]] | 13 / 18 | 57 / 81 | 70% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**29 free tasks are open · 103 build hours.**
+**28 free tasks are open · 100 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -60,7 +60,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
-| 0 | [[T-35 Form B contract]] | P2 | 3 | ⬜ can start | 1 | [#64](https://github.com/magentawood/roomsie/issues/64) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
@@ -143,7 +142,7 @@ flowchart LR
   T27["T-27<br/>Eval run"]:::todo
   T29["T-29<br/>Abuse test"]:::todo
   T34["T-34 ⚑<br/>Router"]:::todo
-  T35["T-35<br/>Form B contract"]:::ready
+  T35["T-35<br/>Form B contract"]:::done
   T36["T-36<br/>Observer"]:::todo
   T37["T-37<br/>Articles and search"]:::done
   T38["T-38<br/>Advisor"]:::todo
@@ -318,7 +317,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 7/61
+## P2 Chat — 10/61
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -326,7 +325,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-11 Model wrapper ⚑]] · 0/4
 > ![[T-11 Model wrapper ⚑#^done]]
 
-> [!todo]- ⬜ [[T-35 Form B contract]] · 0/3
+> [!todo]- ✅ [[T-35 Form B contract]] · 3/3
 > ![[T-35 Form B contract#^done]]
 
 > [!todo]- ⬜ [[T-12 Extraction ⚑]] · 0/7
