@@ -92,11 +92,6 @@ describe('people', () => {
     expect(results.every((r) => r.kind === 'person')).toBe(true)
   })
 
-  it('hides a card whose Tidy flatmates dealbreaker the searcher fails', async () => {
-    const { results } = await search(t, 'seeker', { ...form, lifestyle: { ...form.lifestyle, tidiness: stated('relaxed_about_mess') } })
-    expect(results.map((r) => nameOf(idOf(r)))).not.toContain('picky')
-  })
-
   it('gives a guest the people whose rule the guest did not answer, below the full matches, and no Form B points', async () => {
     const { results } = await search(t, null, form)
     const names = results.map((r) => nameOf(idOf(r)))
@@ -129,13 +124,13 @@ describe('people', () => {
 })
 
 describe('the mapping of PD3a between people', () => {
-  type Who = 'seeker' | 'veg' | 'jain' | 'nb' | 'wantsVeg' | 'wantsNonSmoker' | 'wantsDry' | 'wantsMen' | 'early' | 'tooEarly'
+  type Who = 'seeker' | 'veg' | 'jain' | 'nb' | 'wantsVeg' | 'wantsNonSmoker' | 'wantsDry' | 'wantsTidy' | 'wantsMen' | 'early' | 'tooEarly'
   let t: TestApp<Who>
   const cards = {} as Record<Who, string>
   const base = { intent: stated('flatmates'), areas: stated(['bandra']) }
 
   beforeAll(async () => {
-    t = await testApp(['seeker', 'veg', 'jain', 'nb', 'wantsVeg', 'wantsNonSmoker', 'wantsDry', 'wantsMen', 'early', 'tooEarly'])
+    t = await testApp(['seeker', 'veg', 'jain', 'nb', 'wantsVeg', 'wantsNonSmoker', 'wantsDry', 'wantsTidy', 'wantsMen', 'early', 'tooEarly'])
     await seedCatalogues(t.db)
     await person(t, 'seeker', {}, 'male')
     cards.veg = await person(t, 'veg', { lifestyle: { food: 'veg', tidiness: 'tidy_enough', drinks: 'none_at_home' } }, 'male')
@@ -144,6 +139,7 @@ describe('the mapping of PD3a between people', () => {
     cards.wantsVeg = await person(t, 'wantsVeg', { mustHaves: { veg_kitchen: 'dealbreaker' } })
     cards.wantsNonSmoker = await person(t, 'wantsNonSmoker', { mustHaves: { non_smokers: 'dealbreaker' } })
     cards.wantsDry = await person(t, 'wantsDry', { mustHaves: { no_alcohol: 'dealbreaker' } })
+    cards.wantsTidy = await person(t, 'wantsTidy', { mustHaves: { tidy_flatmates: 'dealbreaker' } })
     cards.wantsMen = await person(t, 'wantsMen', { mustHaves: { men_only: 'dealbreaker' } })
     cards.early = await person(t, 'early', { moveDate: '2026-11-05' })
     cards.tooEarly = await person(t, 'tooEarly', { moveDate: '2026-10-25' })
@@ -167,6 +163,7 @@ describe('the mapping of PD3a between people', () => {
     ['wantsVeg', 'food', 'veg', 'non_veg'],
     ['wantsNonSmoker', 'smoking', 'non_smoker', 'smoker'],
     ['wantsDry', 'drinks', 'none_at_home', 'fine_at_home'],
+    ['wantsTidy', 'tidiness', 'very_tidy', 'relaxed_about_mess'],
   ] as const)('the dealbreaker of %s applies back to the %s answer of the searcher', async (who, axis, passes, fails) => {
     const ids = async (answer: string) => (await search(t, 'seeker', { ...base, lifestyle: { [axis]: stated(answer) } })).results.map(idOf)
     expect(await ids(passes)).toContain(cards[who])
@@ -237,6 +234,8 @@ describe('listings', () => {
     await listing('families', 'owner_flat', { ...flat, whoIsWelcome: ['families'] })
     await listing('workers', 'owner_flat', { ...flat, whoIsWelcome: ['working_professionals'] })
     await listing('couples', 'owner_flat', { ...flat, whoIsWelcome: ['couples'] })
+    await listing('soon', 'owner_flat', { rates: [{ rent: 19000 }], availableFrom: '2026-12-05' })
+    await listing('late', 'owner_flat', { rates: [{ rent: 19000 }], availableFrom: '2026-12-25' })
   })
   afterAll(() => t.close())
 
@@ -267,7 +266,7 @@ describe('listings', () => {
 
   it('gives owner flats and broker flats to a whole-flat seeker', async () => {
     const { results } = await search(t, 'seeker', flats)
-    expect(names(results).sort()).toEqual(['brokerFlat', 'couples', 'drinkers', 'families', 'ownerFlat', 'smokers', 'workers'])
+    expect(names(results).sort()).toEqual(['brokerFlat', 'couples', 'drinkers', 'families', 'late', 'ownerFlat', 'smokers', 'soon', 'workers'])
   })
 
   it.each([
@@ -280,7 +279,7 @@ describe('listings', () => {
   })
 
   it('a couple-friendly dealbreaker needs Couples in "Who is welcome", and an empty list is a gap', async () => {
-    const { results } = await search(t, 'seeker', { ...flats, mustHaves: { couple_friendly: stated('dealbreaker') } })
+    const { results } = await search(t, 'seeker', { ...flats, whosMoving: stated('couple'), mustHaves: { couple_friendly: stated('dealbreaker') } })
     expect(names(results)[0]).toBe('couples')
     expect(names(results)).not.toContain('families')
     expect(results.find((r) => idOf(r) === ids.ownerFlat)!.didntSay).toEqual(['couple_friendly'])
@@ -317,13 +316,15 @@ describe('listings', () => {
     expect(results.find((r) => idOf(r) === ids.students)?.didntSay).toEqual(['couple_friendly'])
   })
 
-  it('puts the listing that meets more preferences first, then the nearest move date', async () => {
-    const byPrefs = names((await search(t, 'seeker', { ...flats, mustHaves: { non_smokers: stated('prefer'), no_alcohol: stated('prefer') } })).results)
-    expect(byPrefs.slice(0, 2).sort()).toEqual(['drinkers', 'smokers'])
-    await listing('soon', 'owner_flat', { rates: [{ rent: 19000 }], availableFrom: '2026-12-05' })
-    await listing('late', 'owner_flat', { rates: [{ rent: 19000 }], availableFrom: '2026-12-25' })
-    const byDate = names((await search(t, 'seeker', { ...flats, moveDate: stated('2026-12-01') })).results)
-    expect(byDate.slice(0, 2)).toEqual(['soon', 'late'])
+  it('puts the listing that meets more preferences first, before a newer listing', async () => {
+    // Only Smokers allows no alcohol. Drinkers, Soon and Late are newer.
+    const { results } = await search(t, 'seeker', { ...flats, mustHaves: { no_alcohol: stated('prefer') } })
+    expect(names(results)[0]).toBe('smokers')
+  })
+
+  it('puts the nearest move date first, before a newer listing', async () => {
+    const { results } = await search(t, 'seeker', { ...flats, moveDate: stated('2026-12-01') })
+    expect(names(results).slice(0, 2)).toEqual(['soon', 'late'])
   })
 })
 

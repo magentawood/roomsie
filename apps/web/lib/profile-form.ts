@@ -9,7 +9,6 @@ export type BudgetBand = (typeof bands)[number]['id']
 const bandLabels: Record<BudgetBand, string> = {
   under_10k: 'Under ₹10k', under_15k: 'Under ₹15k', under_25k: 'Under ₹25k', under_35k: 'Under ₹35k', above_35k: 'Above ₹35k',
 }
-export const budgetChips = bands.map((band) => ({ ...band, label: bandLabels[band.id] }))
 
 /** A budget that the chat set can fit no band. */
 export const bandOf = (min: number | null, max: number | null): BudgetBand | null =>
