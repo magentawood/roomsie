@@ -11,6 +11,7 @@ describe('the panel header', () => {
   it('narrows from Everything in Mumbai to a place, an area and a budget', () => {
     expect(panelTitle(form(), label)).toBe('Everything in Mumbai')
     expect(panelTitle(form({ intent: stated('whole_flat') }), label)).toBe('Flats in Mumbai')
+    expect(panelTitle(form({ areas: stated(['powai-vikhroli']) }), label)).toBe('Everything in Powai–Vikhroli')
     expect(panelTitle(form({ intent: stated('room'), areas: stated(['powai-vikhroli']) }), label)).toBe('Rooms in Powai–Vikhroli')
     expect(panelTitle(form({ intent: stated('flatmates'), areas: stated(['powai-vikhroli']), budget: stated({ min: null, max: 20000 }) }), label))
       .toBe('People in Powai–Vikhroli under ₹20,000')
@@ -88,6 +89,16 @@ describe('the update rule', () => {
     expect(state.shown.key).toBe('a')
     state = panelUpdate(state, { type: 'idle' })
     expect(state).toEqual({ shown: { key: 'c', page: 'page c' }, pending: null, busy: false })
+  })
+
+  it('keeps the header with the results on the screen while the person is busy', () => {
+    const under = (max: number) => form({ intent: stated('room'), budget: stated({ min: null, max }) })
+    const arriveForm = (f: FormA) => ({ type: 'arrive' as const, key: formKey(f), page: f })
+    const start: PanelState<FormA> = { shown: { key: formKey(under(25000)), page: under(25000) }, pending: null, busy: false }
+    let state = panelUpdate(panelUpdate(start, { type: 'busy' }), arriveForm(under(20000)))
+    expect(panelTitle(state.shown.page, label)).toBe('Rooms in Mumbai under ₹25,000')
+    state = panelUpdate(state, { type: 'idle' })
+    expect(panelTitle(state.shown.page, label)).toBe('Rooms in Mumbai under ₹20,000')
   })
 
   it('ignores results for the form that is already on the screen', () => {
