@@ -96,8 +96,8 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
 - [Form B notes](learn/form-b-notes.md)
+- [The assistant turn](learn/assistant-turn.md)
+- [The chat screen and the sign-in wall](learn/chat-screen.md)
 - [The match query](learn/match-query.md)
 - [The model wrapper](learn/models.md)
-- [Form A and intent](learn/form-a-and-intent.md)
-- [Analytics events](learn/analytics-events.md)
 <!-- learn-newest:end -->

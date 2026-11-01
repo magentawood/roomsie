@@ -39,12 +39,12 @@ Changes a typed sentence into tidy form slots.
 - [[T-36 Observer]]
 
 ## Done when
-- [ ] Free text becomes Form A slots, as JSON that uses only the enum values
-- [ ] The Mumbai area list and number and date forms are in the cached prompt
-- [ ] Code parses numbers and dates, not the model
-- [ ] All vague input becomes `unclear`, never a guess. The model never infers a slot value
-- [ ] The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure
-- [ ] The first turn of a goal fires the 'interview started' event through track() of T-24
+- [x] Free text becomes Form A slots, as JSON that uses only the enum values · [#189](https://github.com/magentawood/roomsie/pull/189)
+- [x] The Mumbai area list and number and date forms are in the cached prompt · [#189](https://github.com/magentawood/roomsie/pull/189)
+- [x] Code parses numbers and dates, not the model · [#189](https://github.com/magentawood/roomsie/pull/189)
+- [x] All vague input becomes `unclear`, never a guess. The model never infers a slot value · [#189](https://github.com/magentawood/roomsie/pull/189)
+- [x] The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure · [#189](https://github.com/magentawood/roomsie/pull/189)
+- [x] The first turn of a goal fires the 'interview started' event through track() of T-24 · [#189](https://github.com/magentawood/roomsie/pull/189)
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 
 ^done
@@ -92,7 +92,7 @@ Changes a typed sentence into tidy form slots.
   - **A value that contradicts an earlier value:** the new value does not replace the earlier value. The reply asks which value to keep. The assistant turn keeps the question, so the next answer resolves it. The event `slot_conflict` records the slot, with no text (why: PD3b, PD6c).
   - **The input of the extractor:** the typed text and the last question of the assistant, never the full chat (why: PD7a, PD5).
   - **The cached prompt:** the fixed system prompt holds the enum values, the area list from the database, and the accepted number and date forms. The model does not get the date of today, because only the date parser uses it. Thus, the cached part does not change (why: PD7).
-  - **A model that does not answer:** the API saves the turn, Form A does not change, and a fixed reply asks the person to try again. No error page shows.
+  - **A model that does not answer:** the API saves the turn, and Form A does not change. A fixed reply asks the person to try again. No error page shows.
   - **The event `interview_started`:** the first turn of a goal fires it, through `track()` (why: T-24).
   - **The open product calls:** PC-09 (languages) and PC-39 (the order of the questions) are in F-14, not F-11. This task uses their recommended defaults, as settings.
 - **Out of scope:**
@@ -103,3 +103,13 @@ Changes a typed sentence into tidy form slots.
   - Form B and the observer (T-35, T-36)
   - the move of the goals of a visitor into the account at sign-in (T-17)
   - the title of a goal
+
+## Log
+
+- **2026-11-02 · [#189](https://github.com/magentawood/roomsie/pull/189)**
+  - **Change:** three goals routes save each goal, each turn and Form A. A visitor gets a key, and the database keeps only its hash. One entry point runs the extractor and a scripted reply writer. The extractor fills Form A from enum values and the copied words of the person. It uses the gate on token probability, the budget and date parsers and the area rules. The chat screen sends each turn and opens the goal again after a reload.
+  - **Why:** [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD7](../../decisions/pd-07-models.md) and [PD3b](../../decisions/pd-03b-interview-vs-chips.md). T-17, T-21 and T-36 need the stored goals and turns.
+  - **Ticked:** "Free text becomes Form A slots, as JSON that uses only the enum values", "The Mumbai area list and number and date forms are in the cached prompt", "Code parses numbers and dates, not the model", "All vague input becomes `unclear`, never a guess. The model never infers a slot value", "The assistant has one entry point that runs the steps of each turn in order. Its first two handlers are extraction and the reply writer, thus v1 can add the router, observer and advisor without a restructure", "The first turn of a goal fires the 'interview started' event through track() of T-24".
+  - **Not done:** "Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it": the calls are PC-09 and PC-39, which are open in F-14. Their defaults are settings. F-14 confirms them.
+  - **Learn:** [The assistant turn](../../learn/assistant-turn.md), [The model wrapper](../../learn/models.md), [The chat screen](../../learn/chat-screen.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

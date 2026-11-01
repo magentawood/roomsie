@@ -1,0 +1,58 @@
+# The assistant turn
+
+**In one line:** one entry point fills Form A from each typed message, and writes a scripted reply with the next question.
+
+## What it is
+
+- A **goal** is one move, with its own chat and its own Form A ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A **turn** is one message: the person types it, and the assistant replies.
+- A **visitor** chats with no sign-in ([PD6b](../decisions/pd-06b-login-gate-and-search.md)). The first goal of a visitor makes a **visitor session**, and the API gives the browser a **visitor key** one time.
+- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** writes the reply. The router, the observer and the advisor become more handlers ([PD7a](../decisions/pd-07a-agent-architecture.md)).
+- The **token probability** is the probability that the model gave to each piece of its answer. The extractor uses it as a **gate**: a value that the model was not sure of becomes `unclear` ([PD7](../decisions/pd-07-models.md)).
+
+## How it fits our project
+
+```
+the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
+                                                  ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini
+                                                  │     ├─ the gate on the token probabilities
+                                                  │     ├─ the words check, the area names, the budget and date parsers
+                                                  │     └─ applyValues(): the new form, the changes, the conflicts
+                                                  └─ reply writer: "Got it: …" and one question
+                                  saveTurn(): the two turns and the form, then the events
+```
+
+| Part | Where |
+|---|---|
+| The routes: start a goal, read a goal, send a turn | `apps/api/src/goals/routes.ts` |
+| The goals, the turns and the visitor sessions | `apps/api/src/goals/store.ts` |
+| The entry point and the list of handlers | `apps/api/src/assistant/assistant.ts` |
+| The extractor, its prompt, the gate and the parsers | `apps/api/src/assistant/handlers/extractor/` |
+| The reply writer and its lines | `apps/api/src/assistant/handlers/reply/` |
+| The schemas of the routes and the handlers | `packages/contract/src/goals.ts` |
+
+- **The visitor key.** The browser keeps it in local storage and sends it in the header `X-Visitor-Key`. The database keeps only its SHA-256, so a log line or an event with the session id opens no chat. A session ends 30 days after the last visit ([PD19](../decisions/pd-19-retention.md)). A signed-in person sends the token, and the key too until T-17 moves the goals of the session.
+- **The words of the person.** The model picks enum values, and it copies the words for the areas, the budget and the move date. Code makes sure that the words are in the turn. Then `parseBudget` and `parseMoveDate` read them. They know "20k", "lakh", the Hindi and Marathi number words in Latin and Devanagari, month names, "agle mahine", "ASAP" and the date of today in IST. Words that a parser cannot read leave the slot empty.
+- **The area names.** A name of the seed gives its areas. A name of two areas, such as "Andheri", leaves the slot empty, and the reply asks "Andheri West, Andheri East, or both?". A slug that the model picked counts only if its name is in the turn, or in that area question.
+- **The gate.** Only DeepSeek gives token probabilities. Below `ASSISTANT_MIN_PROBABILITY` (0.8), a value becomes `unclear`. A value that the tokens do not hold also becomes `unclear`, and the API reports it. Gemini gives none, so its values have no gate.
+- **Conflicts.** A new value never replaces an earlier stated value ([PD3b](../decisions/pd-03b-interview-vs-chips.md)). The reply asks which value to keep, and the assistant turn keeps that question. The next answer for that slot wins. The event `slot_conflict` records the slot. A new area adds to the areas, and a new budget bound can fill the other bound.
+- **The reply.** Code writes it, with no model, in English only. A conflict comes first, then a name of two areas, then an unclear must-have weight ([PD15](../decisions/pd-15-form-a-contract.md)), then the next empty or unclear slot in `ASSISTANT_QUESTION_ORDER`. T-13 replaces this handler.
+- **The events.** The first turn of a goal fires `interview_started`. Each conflict fires `slot_conflict`, after the save.
+
+## The choice we made
+
+- The router, the small handlers and the extractor that picks only enum values: [PD7a](../decisions/pd-07a-agent-architecture.md).
+- `unclear` in each enum, and the gate on token probability: [PD7](../decisions/pd-07-models.md).
+- The visitor key, the scripted reply, the area rules and the gate that fails closed: the spec of T-12 ([#189](https://github.com/magentawood/roomsie/pull/189)).
+
+## Gotchas
+
+- **Put fixed text in the system prompt.** The prompt holds the enums, the area list from the database and the number forms. It has no date, so the cache of the vendor applies to each turn.
+- **The two turns get the time of `clock_timestamp()`.** `now()` is the same for the whole transaction, so two inserts in two statements keep the reply after the turn of the person.
+- **A 409 means that a different tab changed the goal.** The second turn does not replace the form of the first. The person sends the message again.
+- **The catalogue loads one time for each database.** After a change of the area seed, start the API again.
+- **In the tests, use `scored()` of `apps/api/test/goals.test.ts`.** It gives one token for each character, so a test can make one value unsure.
+- **The handler schemas use `z.strictObject`** ([api.md](../standards/api.md)). A misspelled key then fails at once.
+
+## Tickets
+
+- T-12: [#189](https://github.com/magentawood/roomsie/pull/189), 2026-11-02. The goals routes, the visitor key, the extractor with the gate and the parsers, the scripted reply, and the chat screen that sends turns.

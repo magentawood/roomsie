@@ -14,16 +14,16 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**189 of 319 done · 59%**
+**195 of 319 done · 61%**
 
-`██████████████░░░░░░░░░░`
+`███████████████░░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
-| [[P2 Chat]] | 3 / 13 | 14 / 61 | 23% |
+| [[P2 Chat]] | 3 / 13 | 20 / 61 | 33% |
 | [[P3 Data and trust]] | 14 / 18 | 65 / 81 | 80% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -52,7 +52,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
-| 0 | [[T-12 Extraction ⚑]] | P2 | 6 | ⬜ can start | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
+| 0 | [[T-12 Extraction ⚑]] | P2 | 6 | 🟡 in progress | 6 | [#23](https://github.com/magentawood/roomsie/issues/23) |
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | 0 | [[T-15 Results panel ⚑]] | P3 | 6 | ⬜ can start | 2 | [#16](https://github.com/magentawood/roomsie/issues/16) |
 | 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | 🟡 in progress | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
@@ -114,7 +114,7 @@ flowchart LR
   T05["T-05 ⚑<br/>Google sign-in"]:::done
   T15["T-15 ⚑<br/>Results panel"]:::ready
   M03["M-03<br/>Eval sentences"]:::ready
-  T12["T-12 ⚑<br/>Extraction"]:::ready
+  T12["T-12 ⚑<br/>Extraction"]:::doing
   T09["T-09 ⚑<br/>Chip flow"]:::todo
   T14["T-14 ⚑<br/>Match query"]:::done
   T04["T-04<br/>Deploy to Mumbai"]:::done
@@ -315,7 +315,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 14/61
+## P2 Chat — 20/61
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -326,7 +326,7 @@ flowchart LR
 > [!todo]- ✅ [[T-35 Form B contract]] · 3/3
 > ![[T-35 Form B contract#^done]]
 
-> [!todo]- ⬜ [[T-12 Extraction ⚑]] · 0/7
+> [!todo]- 🟡 [[T-12 Extraction ⚑]] · 6/7
 > ![[T-12 Extraction ⚑#^done]]
 
 > [!todo]- ⬜ [[T-34 Router ⚑]] · 0/4
