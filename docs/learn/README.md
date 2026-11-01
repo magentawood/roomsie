@@ -23,6 +23,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [The landing page](landing-page.md): `/` is the public page that explains Roomsie. The server renders it, and moderators edit its quotes, links and details on admin pages with no code change.
 - [Listings and photo uploads](listings.md): a lister saves a listing of one of four kinds one step at a time, uploads photos straight to R2 with a signed link, and publishes it for 30 days.
 - [Local development with Docker](local-dev-with-docker.md): a local Postgres 17 runs in Docker. `pnpm db:up` starts it, and `pnpm test` starts it if necessary and gives each test run a fresh database.
+- [The match query](match-query.md): the match query takes a Form A and gives the people or the places that fit, in the Best Matches order.
 - [Message requests](message-requests.md): "Say hi" sends a request with a short note, the other person accepts or declines, and only then can the two people chat; a phone number never shows in public or in a note.
 - [Messages and realtime](messages.md): an accepted message request is a conversation; the API saves each message and sends it live to the two people on their private Supabase Realtime channels.
 - [Database migrations](migrations.md): a migration is a committed SQL file that changes the shape of the database. The deploy applies the new migrations and the catalogue seed before the new API starts.
