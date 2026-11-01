@@ -1,8 +1,8 @@
-/** Form A catalogues of PD15; the values are the answer keys of the designs. */
+/** Form A catalogues of PD15, with the answer keys of the designs, and the Form B topics. */
 import { sql } from 'drizzle-orm'
 import { lifestyleAnswers, mustHaveKeys, type LifestyleAxis } from '@roomsie/contract'
 import type { Db } from './client'
-import { lifestyleAxes, mustHaves } from './schema'
+import { lifestyleAxes, mustHaves, observationTopics } from './schema'
 import { seedAreas } from './seed-areas'
 
 const questions: Record<LifestyleAxis, string> = {
@@ -18,6 +18,16 @@ const mustHaveLabels: Record<(typeof mustHaveKeys)[number], string> = {
 }
 const MUST_HAVES = mustHaveKeys.map((key, i) => ({ key, label: mustHaveLabels[key], sortOrder: i + 1, active: true }))
 
+/** The starter topics of Form B (T-35). T-36 changes them when it tunes the observer. */
+const OBSERVATION_TOPICS = [
+  { key: 'guest_frequency', label: 'Guests and partners who stay over' },
+  { key: 'work_pattern', label: 'Work hours and work from home' },
+  { key: 'noise', label: 'Noise and quiet' },
+  { key: 'cooking', label: 'Cooking and the kitchen' },
+  { key: 'past_flatmates', label: 'What went wrong with past flatmates' },
+  { key: 'move_reason', label: 'Why they are moving' },
+].map((topic) => ({ ...topic, active: true }))
+
 export async function seedCatalogues(db: Db) {
   await db.insert(lifestyleAxes).values(LIFESTYLE_AXES)
     .onConflictDoUpdate({
@@ -29,5 +39,7 @@ export async function seedCatalogues(db: Db) {
       target: mustHaves.key,
       set: { label: sql`excluded.label`, sortOrder: sql`excluded.sort_order`, active: sql`excluded.active` },
     })
+  await db.insert(observationTopics).values(OBSERVATION_TOPICS)
+    .onConflictDoUpdate({ target: observationTopics.key, set: { label: sql`excluded.label`, active: sql`excluded.active` } })
   await seedAreas(db)
 }
