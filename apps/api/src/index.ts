@@ -18,6 +18,7 @@ const app = buildServer({
   messaging: env.messaging,
   mailer: env.mailer,
   idStore: env.idStore,
+  models: env.models,
   storage: r2Storage({
     accountId: env.R2_ACCOUNT_ID,
     accessKeyId: env.R2_ACCESS_KEY_ID,

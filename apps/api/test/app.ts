@@ -11,6 +11,7 @@ import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
 import type { IdStore } from '../src/id-store'
 import type { AnalyticsDb } from '../src/analytics/client'
+import { modelSettings } from '../src/models/settings'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 export type TestApp<U extends string> = Awaited<ReturnType<typeof testApp<U>>>
@@ -93,7 +94,7 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   const tokens = {} as Record<U, string>
   // Each user signs in with a verified email, as Google gives it (T-55).
   for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore, analyticsDb })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore, analyticsDb, models: modelSettings.parse(settings) })
   // The alerts go out after the reply, so a call also waits for them.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })

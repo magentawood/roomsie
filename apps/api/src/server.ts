@@ -23,6 +23,8 @@ import { feedbackRoutes } from './feedback/routes'
 import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
+import type { Models } from './models/models'
+import { modelRoutes } from './models/routes'
 import { moderationRoutes } from './moderation/routes'
 import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
@@ -42,7 +44,7 @@ declare module 'fastify' {
   }
 }
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb } & AuthOptions) {
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization'] } }).withTypeProvider<ZodTypeProvider>()
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
@@ -110,6 +112,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       feedbackRoutes(v1, options)
       inviteRoutes(v1, options)
       articleRoutes(v1, options)
+      modelRoutes(v1, options)
     },
     { prefix: '/v1' },
   )

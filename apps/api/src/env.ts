@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { mailerSettings } from './alerts/settings'
 import { unsetIfEmpty } from './env-values'
 import { messagingSettings } from './messages/settings'
+import { modelSettings } from './models/settings'
 import { moderationSettings } from './moderation/settings'
 import { idStoreSettings } from './verification/settings'
 
@@ -20,4 +21,4 @@ const envSchema = z.object({
   R2_PUBLIC_URL: z.url(),
 })
 
-export const env = { ...envSchema.parse(process.env), moderation: moderationSettings.parse(process.env), messaging: messagingSettings.parse(process.env), mailer: mailerSettings.parse(process.env), idStore: idStoreSettings.parse(process.env) }
+export const env = { ...envSchema.parse(process.env), moderation: moderationSettings.parse(process.env), messaging: messagingSettings.parse(process.env), mailer: mailerSettings.parse(process.env), idStore: idStoreSettings.parse(process.env), models: modelSettings.parse(process.env) }
