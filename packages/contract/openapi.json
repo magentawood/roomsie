@@ -13818,6 +13818,15 @@
             "in": "header",
             "name": "x-visitor-key",
             "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "in": "header",
+            "name": "user-agent",
+            "required": false
           }
         ],
         "responses": {
@@ -15165,6 +15174,15 @@
             },
             "in": "header",
             "name": "x-visitor-key",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "in": "header",
+            "name": "user-agent",
             "required": false
           }
         ],
@@ -16548,6 +16566,15 @@
             },
             "in": "header",
             "name": "x-visitor-key",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "in": "header",
+            "name": "user-agent",
             "required": false
           }
         ],

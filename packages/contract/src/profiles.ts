@@ -23,6 +23,7 @@ export const lifestyleAnswers = {
   pets: ['no_pets', 'fine_with_pets'],
 } as const
 export type LifestyleAxis = keyof typeof lifestyleAnswers
+export const lifestyleAxes = Object.keys(lifestyleAnswers) as LifestyleAxis[]
 export type WhosMoving = (typeof whosMovingAnswers)[number]
 export const mustHaveKeys = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates', 'couple_friendly'] as const
 export const mustHaveWeights = ['prefer', 'dealbreaker'] as const

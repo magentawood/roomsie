@@ -21,12 +21,7 @@ async function load(db: Db) {
   }
   return {
     areas,
-    names: new Map(areas.map((a) => [a.slug, a.name])),
-    /** The name and the aliases of an area. */
-    namesOf: (slug: string) => {
-      const area = areas.find((a) => a.slug === slug)
-      return area ? [area.name, ...area.aliases] : []
-    },
+    bySlug: new Map(areas.map((a) => [a.slug, a])),
     /** The areas of a name that the person typed, or none for a name that is not in the seed. */
     areasNamed: (words: string) => byName.get(normal(words)) ?? [],
     questions: new Map(axes.map((a) => [a.key as LifestyleAxis, a.question])),

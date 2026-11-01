@@ -1,7 +1,7 @@
 import { z } from 'zod'
-import { formASlots, lifestyleAnswers, type FormASlot } from '@roomsie/contract'
+import { formASlots, lifestyleAxes } from '@roomsie/contract'
 
-const lifestyleSlots = Object.keys(lifestyleAnswers).map((axis) => `lifestyle.${axis}` as FormASlot)
+const lifestyleSlots = lifestyleAxes.map((axis) => `lifestyle.${axis}` as const)
 const orderItem = z.enum([...formASlots, 'lifestyle'])
 
 /** The open product calls of the assistant are settings, not code (PC-39 of F-14). */

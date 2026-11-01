@@ -61,7 +61,7 @@ function read(text: string, today: Day): Day | null {
   if (thisMonth.test(text)) return today
   const span = text.match(after)
   const count = span && countOf(span[1]!)
-  if (!span || count === undefined || count === null) return null
+  if (!span || count == null) return null
   const unit = span[2]!
   if (/^(days?|din|divas)$/.test(unit)) return addDays(today, count)
   if (/^(weeks?|hafte|haftay)$/.test(unit)) return addDays(today, count * 7)

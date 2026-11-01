@@ -1,20 +1,20 @@
-import { formA, type Budget, type FormA, type FormASlot } from '@roomsie/contract'
+import { formA, slotPath, type Budget, type ExtractorOutput, type FormA, type FormASlot } from '@roomsie/contract'
 
 /** The values of one turn, as the slots of Form A. */
 export type SlotValues = Partial<Record<FormASlot, unknown>>
-export type Conflict = { slot: FormASlot; earlier: unknown; later: unknown }
+export type Conflict = ExtractorOutput['conflicts'][number]
 type Slot = { source: 'empty' | 'stated' | 'default'; value: unknown }
 
 const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 
 export function slotOf(form: FormA, slot: FormASlot): Slot {
-  const [group, key] = slot.split('.') as [string, string | undefined]
+  const [group, key] = slotPath(slot)
   const record = form as unknown as Record<string, Record<string, Slot>>
   return (key ? record[group]![key] : record[group]) as Slot
 }
 
 function withSlot(form: FormA, slot: FormASlot, value: unknown): FormA {
-  const [group, key] = slot.split('.') as [string, string | undefined]
+  const [group, key] = slotPath(slot)
   const stated = { source: 'stated', value }
   const record = form as unknown as Record<string, Record<string, unknown>>
   return { ...form, [group]: key ? { ...record[group], [key]: stated } : stated }
@@ -38,7 +38,6 @@ export function applyValues(form: FormA, values: SlotValues, answering: FormASlo
   const changed: FormASlot[] = []
   const conflicts: Conflict[] = []
   for (const [slot, later] of Object.entries(values) as [FormASlot, unknown][]) {
-    if (later === undefined) continue
     const { source, value: earlier } = slotOf(next, slot)
     const open = source !== 'stated' || slot === answering
     let value = later

@@ -21,7 +21,6 @@ import { requireUser, type AuthOptions } from './auth'
 import { blockRoutes } from './blocks/routes'
 import { feedbackRoutes } from './feedback/routes'
 import { goalRoutes } from './goals/routes'
-import { todayInIst } from './ist'
 import { assistantSettings, type AssistantSettings } from './assistant/settings'
 import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
@@ -48,6 +47,9 @@ declare module 'fastify' {
     analytics: Analytics
   }
 }
+
+/** The date of today in Mumbai, as an ISO date. */
+const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
 export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; today?: () => string } & AuthOptions) {
   const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]'] } }).withTypeProvider<ZodTypeProvider>()
