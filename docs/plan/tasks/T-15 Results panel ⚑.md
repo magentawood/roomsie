@@ -71,12 +71,13 @@ Shows matches as cards: people and places.
 - **Decisions:**
   - **The preview:** the assistant (T-12) does not fill Form A, and the match query (T-14) does not exist. Thus, `/chat?preview=results` and `/chat?preview=empty` show the panel with sample data. A "Sample data" badge shows on the panel. T-14 removes the preview. The user decided this on 2026-11-02.
   - **When the panel shows:** when intent, area and budget have a value (interface-shape.md, hole 3).
-  - **The header:** the noun of the intent ("Rooms", "PGs", "Flats", "People"), the areas and the budget, then the count. With no intent, it reads "Everything in Mumbai" (drafts section 14).
+  - **The header:** the noun of the intent ("Rooms", "PGs", "Flats", "People"), the areas and the budget, then the count. With no intent, it reads "Everything in", then the areas, or "Mumbai" with no area (drafts section 14).
   - **The update rule:** the key of the form has the values and the weights, not the sources. Thus, a confirmed default gives no new results. New results wait while the person scrolls or has a place open, and show 1.5 seconds after the last scroll or the return. The header waits with the grid, so the two always agree (PD6c, review round 1).
   - **The labels:** "Best match" is a blue pill, and "Didn't say: …" is a grey pill. Each sits on the top left of the photo. The blue is the Tailwind blue, because the token file has no blue yet.
   - **A card opens:** a guest sees the sign-in wall (PD6b), and the card opens after the sign-in. The tap waits for the auth check, as in the app shell, so a signed-in person never sees the wall. A place opens in the panel. A person opens on the person page.
   - **The sample (review round 1):** it states three preferences, so its "Best match" labels obey PD3a. It mixes the five kinds on purpose, to show each card. It borrows the test listing until T-14 removes it.
-  - **The area names (review round 1):** while the names load, the screen shows the slug, as the other screens do.
+  - **The area names (review round 1):** while the names load, the header shows the slug, and a place card shows no area, as on the other screens.
+  - **A place in the panel on a phone (review round 2):** its Message and Save bar sits at the bottom of the panel, not of the screen, so the chat input stays free (PD6a).
   - **The sort control:** "Best Matches" stays, with one option (PD3a and the designs).
   - **"Ask in chat":** it closes the detail, and starts the chat input with "About <the title>: ".
   - **The plan:** the connection to the match query moves to T-14. The user decided the same split for T-20.
