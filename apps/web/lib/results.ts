@@ -39,11 +39,10 @@ export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
  * Thus a stated value that confirms a default gives the same key, and no new query.
  */
 export function formKey(form: FormA) {
-  const value = (slot: { value: unknown }) => slot.value
   return JSON.stringify([
-    value(form.intent), value(form.roomType), value(form.whosMoving), value(form.areas), value(form.budget), value(form.moveDate),
-    Object.entries(form.lifestyle).map(([axis, slot]) => [axis, value(slot)]),
-    Object.entries(form.mustHaves).map(([key, slot]) => [key, value(slot)]),
+    form.intent.value, form.roomType.value, form.whosMoving.value, form.areas.value, form.budget.value, form.moveDate.value,
+    Object.entries(form.lifestyle).map(([axis, slot]) => [axis, slot.value]),
+    Object.entries(form.mustHaves).map(([key, slot]) => [key, slot.value]),
   ])
 }
 
@@ -60,24 +59,22 @@ const unanswered: Record<MatchResult['kind'], Record<MustHaveKey, string>> = {
 }
 
 /** "Didn't say: smoking" of drafts section 14. Two keys can name one answer, so each answer shows once. */
-export function didntSayLine(result: MatchResult) {
+export function didntSayLine(result: Pick<MatchResult, 'kind' | 'didntSay'>) {
   if (!result.didntSay.length) return null
   return `Didn’t say: ${[...new Set(result.didntSay.map((key) => unanswered[result.kind][key]))].join(', ')}`
 }
-
-export const resultId = (result: MatchResult) => (result.kind === 'person' ? result.card.id : result.listing.id)
 
 /**
  * The update rule of PD6c: a new form key waits while the person scrolls or reads, and applies when they are idle.
  * Results for the key on the screen change nothing, so the order never moves under the person.
  */
-export type PanelState<T> = { shown: { key: string; page: T } | null; pending: { key: string; page: T } | null; busy: boolean }
+export type PanelState<T> = { shown: { key: string; page: T }; pending: { key: string; page: T } | null; busy: boolean }
 export type PanelEvent<T> = { type: 'arrive'; key: string; page: T } | { type: 'busy' } | { type: 'idle' }
 
 export function panelUpdate<T>(state: PanelState<T>, event: PanelEvent<T>): PanelState<T> {
   switch (event.type) {
     case 'arrive': {
-      if ((state.pending ?? state.shown)?.key === event.key) return state
+      if ((state.pending ?? state.shown).key === event.key) return state
       const next = { key: event.key, page: event.page }
       return state.busy ? { ...state, pending: next } : { ...state, shown: next, pending: null }
     }

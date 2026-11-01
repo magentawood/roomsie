@@ -6,7 +6,7 @@ import { FaceSad } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
 import { useAreaLabels } from '../../lib/queries'
-import { countLine, didntSayLine, formKey, panelUpdate, resultId, type PanelState, type ResultsPage } from '../../lib/results'
+import { countLine, didntSayLine, formKey, panelUpdate, type PanelState, type ResultsPage } from '../../lib/results'
 import { PlaceCard } from '../listings/place-card'
 import { PersonCard } from '../people/person-card'
 import { PlaceDetail } from '../places/place-detail'
@@ -19,10 +19,7 @@ const idleMs = 1500
 
 type Held = { form: FormA; page: ResultsPage }
 
-/**
- * The results on the screen, and the form that they answer, so the header and the grid change together.
- * `hold` while the person scrolls or reads a card. `release` when they stop: the newest results apply `idleMs` later.
- */
+/** The results on the screen and the form that they answer, so the header and the grid change together (PD6c). */
 export function useHeldResults(form: FormA, page: ResultsPage) {
   const key = formKey(form)
   const [state, dispatch] = useReducer(panelUpdate<Held>, { shown: { key, page: { form, page } }, pending: null, busy: false } satisfies PanelState<Held>)
@@ -31,8 +28,10 @@ export function useHeldResults(form: FormA, page: ResultsPage) {
   useEffect(() => () => clearTimeout(idleTimer.current), [])
   const hold = useCallback(() => { clearTimeout(idleTimer.current); dispatch({ type: 'busy' }) }, [])
   const release = () => { clearTimeout(idleTimer.current); idleTimer.current = setTimeout(() => dispatch({ type: 'idle' }), idleMs) }
-  return { ...state.shown!.page, hold, release }
+  return { ...state.shown.page, hold, release }
 }
+
+type HeldResults = ReturnType<typeof useHeldResults>
 
 function MatchLabel({ result }: { result: MatchResult }) {
   if (result.bestMatch) return <Badge tone="blue" dot={false}>Best match</Badge>
@@ -45,7 +44,7 @@ function ResultGrid({ results, onOpen }: { results: MatchResult[]; onOpen: (resu
   return (
     <ul className="grid gap-4 sm:grid-cols-2">
       {results.map((result) => (
-        <li key={resultId(result)}>
+        <li key={result.kind === 'person' ? result.card.id : result.listing.id}>
           {result.kind === 'person'
             ? <PersonCard card={result.card} label={<MatchLabel result={result} />} onOpen={() => onOpen(result)} />
             : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaLabels[result.listing.areaSlug] : undefined}
@@ -81,9 +80,8 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
  * The results panel of flow 02: a pure function of Form A (PD6c). A card opens here: a place in the panel, a person on its page.
  * `sample`: the preview of T-15 shows that the data is not real.
  */
-export function ResultsPanel({ title, page, sample, hold, release, onClose, onAskInChat }: {
-  title: string; page: ResultsPage; sample?: boolean; hold: () => void; release: () => void
-  onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+export function ResultsPanel({ title, held: { page, hold, release }, sample, onClose, onAskInChat }: {
+  title: string; held: HeldResults; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()

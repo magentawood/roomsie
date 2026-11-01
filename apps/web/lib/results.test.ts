@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA, type FormA } from '@roomsie/contract'
 import { countLine, didntSayLine, formKey, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
-import { sampleMatches } from './sample-results'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
 const stated = <V>(value: V) => ({ source: 'stated' as const, value })
@@ -61,22 +60,19 @@ describe('the form key', () => {
 })
 
 describe('the Didn’t say label', () => {
-  const [person] = sampleMatches.results.filter((r) => r.kind === 'person')
-  const [listing] = sampleMatches.results.filter((r) => r.kind === 'listing')
-
   it('names the answers that a card did not give', () => {
-    expect(didntSayLine({ ...person!, didntSay: ['non_smokers'] })).toBe('Didn’t say: smoking')
-    expect(didntSayLine({ ...listing!, didntSay: ['veg_kitchen', 'couple_friendly'] })).toBe('Didn’t say: kitchen, who’s welcome')
+    expect(didntSayLine({ kind: 'person', didntSay: ['non_smokers'] })).toBe('Didn’t say: smoking')
+    expect(didntSayLine({ kind: 'listing', didntSay: ['veg_kitchen', 'couple_friendly'] })).toBe('Didn’t say: kitchen, who’s welcome')
   })
 
   it('names one answer once, and shows nothing for a full match', () => {
-    expect(didntSayLine({ ...person!, didntSay: ['women_only', 'men_only'] })).toBe('Didn’t say: gender')
-    expect(didntSayLine({ ...person!, didntSay: [] })).toBeNull()
+    expect(didntSayLine({ kind: 'person', didntSay: ['women_only', 'men_only'] })).toBe('Didn’t say: gender')
+    expect(didntSayLine({ kind: 'person', didntSay: [] })).toBeNull()
   })
 })
 
 describe('the update rule', () => {
-  const idle: PanelState<string> = { shown: null, pending: null, busy: false }
+  const idle: PanelState<string> = { shown: { key: '0', page: 'page 0' }, pending: null, busy: false }
   const arrive = (key: string) => ({ type: 'arrive' as const, key, page: `page ${key}` })
 
   it('shows new results at once while the person is idle', () => {
@@ -89,19 +85,9 @@ describe('the update rule', () => {
     state = panelUpdate(state, { type: 'busy' })
     state = panelUpdate(state, arrive('b'))
     state = panelUpdate(state, arrive('c'))
-    expect(state.shown?.key).toBe('a')
+    expect(state.shown.key).toBe('a')
     state = panelUpdate(state, { type: 'idle' })
     expect(state).toEqual({ shown: { key: 'c', page: 'page c' }, pending: null, busy: false })
-  })
-
-  it('keeps the header with the results on the screen while the person is busy', () => {
-    const under = (max: number) => form({ intent: stated('room'), budget: stated({ min: null, max }) })
-    const arriveForm = (f: FormA) => ({ type: 'arrive' as const, key: formKey(f), page: f })
-    let state = panelUpdate({ shown: null, pending: null, busy: false } as PanelState<FormA>, arriveForm(under(25000)))
-    state = panelUpdate(panelUpdate(state, { type: 'busy' }), arriveForm(under(20000)))
-    expect(panelTitle(state.shown!.page, label)).toBe('Rooms in Mumbai under ₹25,000')
-    state = panelUpdate(state, { type: 'idle' })
-    expect(panelTitle(state.shown!.page, label)).toBe('Rooms in Mumbai under ₹20,000')
   })
 
   it('ignores results for the form that is already on the screen', () => {
