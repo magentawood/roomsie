@@ -41,10 +41,10 @@ The exact things that the assistant tries to learn, and the exact allowed answer
 - [[T-48 Onboarding questions]]
 
 ## Done when
-- [ ] A Zod schema for Form A is in packages/contract
-- [ ] The fields are intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15. Each has a value and a source: stated, default or empty. The value of a must-have is its weight: prefer, dealbreaker or unclear
-- [ ] Every enum has an `unclear` value
-- [ ] Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14)
+- [x] A Zod schema for Form A is in packages/contract · [#184](https://github.com/magentawood/roomsie/pull/184)
+- [x] The fields are intent, room type, who is moving, areas, budget, move date, the eight lifestyle answers and the seven must-haves of PD15. Each has a value and a source: stated, default or empty. The value of a must-have is its weight: prefer, dealbreaker or unclear · [#184](https://github.com/magentawood/roomsie/pull/184)
+- [x] Every enum has an `unclear` value · [#184](https://github.com/magentawood/roomsie/pull/184)
+- [x] Results are a tagged union with `kind: "person"` and `kind: "listing"`. Listings are in v0 (PD14) · [#184](https://github.com/magentawood/roomsie/pull/184)
 
 ^done
 
@@ -96,3 +96,13 @@ The exact things that the assistant tries to learn, and the exact allowed answer
   - The question with two chips for an unclear weight (T-12, T-09).
   - Form B (T-35).
   - A migration of the answer source enum.
+
+## Log
+
+- **2026-11-01 · [#184](https://github.com/magentawood/roomsie/pull/184)**
+  - **Change:** `packages/contract` gets the Form A schema and the schema of one result. Each slot of Form A has a value and a source: stated, default or empty. Each enum of Form A has `unclear`, and a must-have has its weight as its value. A result is a person card or a listing, with the Best match label and the "Didn't say" list of PD3a. PD15 and the docs lose the `inferred` source.
+  - **Why:** the chat, the chips, the onboarding, the match query and the results panel build against one form ([PD15](../../decisions/pd-15-form-a-contract.md), [PD7a](../../decisions/pd-07a-agent-architecture.md)).
+  - **Ticked:** all four items.
+  - **Not done:** none. T-14 changes the match query to this Form A.
+  - **Learn:** [Form A and intent](../../learn/form-a-and-intent.md), [Profiles](../../learn/profiles.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
