@@ -1,8 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import type { FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { modelCheckResponse, type AnalyticsEvent } from '@roomsie/contract'
-import { ModelUnavailable, modelsOf } from '../src/models/models'
+import { analyticsEvent, modelCheckResponse, type AnalyticsEvent } from '@roomsie/contract'
+import { ModelUnavailable } from '../src/models/models'
+import { modelSettings } from '../src/models/settings'
 import { testApp, type TestApp } from './app'
 
 const deepseek = 'https://api.deepseek.com/chat/completions'
@@ -25,15 +26,15 @@ const answer = (content: string, usage: Record<string, unknown> = { prompt_token
   Response.json({ choices: [{ message: { role: 'assistant', content } }], usage })
 const timeout = () => new DOMException('The operation timed out.', 'TimeoutError')
 
-/** A request with a fake analytics, so a test reads the events that the module records. */
+/** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
 function fakeRequest() {
   const events: AnalyticsEvent[] = []
-  const log = { info: vi.fn(), warn: vi.fn(), error: vi.fn() }
-  const req = { server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(event) } }, log, user: null } as unknown as FastifyRequest
+  const log = { info: vi.fn(), error: vi.fn() }
+  const req = { server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(analyticsEvent.parse(event)) } }, log, user: null } as unknown as FastifyRequest
   return { req, events }
 }
 
-const models = modelsOf({ deepseekKey: keys.DEEPSEEK_API_KEY, geminiKey: keys.GEMINI_API_KEY, primary: 'deepseek-flash', fallback: 'gemini-3.5-flash-lite', timeoutMs: 10_000 })
+const models = modelSettings.parse(keys)!
 const intent = z.object({ intent: z.enum(['room', 'flatmate', 'unclear']) })
 const session = '0198f2c4-7a10-7c4e-9a3b-5d2e8f6a1b20'
 const ask = (req: FastifyRequest) => models.json({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room chahiye powai mein' }], schema: intent, session })
@@ -52,7 +53,7 @@ describe('the models module', () => {
       body: { model: 'deepseek-flash', response_format: { type: 'json_object' }, messages: [{ role: 'system', content: 'Fill the intent slot.' }, { role: 'user', content: 'room chahiye powai mein' }] },
     })
     expect(events).toEqual([{
-      name: 'model_called', role: 'extractor', model: 'deepseek-flash', tokensIn: 120, cachedTokensIn: 100, tokensOut: 8,
+      name: 'model_called', eventVersion: 1, role: 'extractor', model: 'deepseek-flash', tokensIn: 120, cachedTokensIn: 100, tokensOut: 8,
       ms: expect.any(Number), fallback: false, outcome: 'ok', session,
     }])
   })
@@ -72,11 +73,19 @@ describe('the models module', () => {
   })
 
   it('asks DeepSeek once more after an answer that fails its schema, then Gemini', async () => {
-    const requests = fakeVendors({ deepseek: [answer('{"intent":"villa"}'), answer('not json')], gemini: [answer('{"intent":"unclear"}')] })
+    const requests = fakeVendors({ deepseek: [answer('{"intent":"villa"}'), new Response('<html>Bad gateway</html>')], gemini: [answer('{"intent":"unclear"}')] })
     const { req, events } = fakeRequest()
     expect(await ask(req)).toEqual({ intent: 'unclear' })
     expect(requests.map((r) => r.url)).toEqual([deepseek, deepseek, gemini])
     expect(events.map((e) => 'outcome' in e && e.outcome)).toEqual(['invalid', 'invalid', 'ok'])
+  })
+
+  it('throws at once, and reports it, after a 4xx other than 429, such as a bad key', async () => {
+    const requests = fakeVendors({ deepseek: [new Response('bad key', { status: 401 })] })
+    const { req } = fakeRequest()
+    await expect(ask(req)).rejects.toBeInstanceOf(ModelUnavailable)
+    expect(requests).toHaveLength(1)
+    expect(req.log.error).toHaveBeenCalled()
   })
 
   it('throws, and reports it, when Gemini also fails', async () => {
@@ -89,7 +98,7 @@ describe('the models module', () => {
   it('gives the text of a text call, with no JSON mode', async () => {
     const requests = fakeVendors({ deepseek: [answer('Powai has many rooms near the lake.')] })
     const { req } = fakeRequest()
-    expect(await models.text({ req, role: 'composer', system: 'Reply in the language of the user.', messages: [{ role: 'user', content: 'Powai?' }] })).toBe('Powai has many rooms near the lake.')
+    expect(await models.text({ req, role: 'composer', system: 'Reply in the language of the user.', messages: [{ role: 'user', content: 'Powai?' }], session: null })).toBe('Powai has many rooms near the lake.')
     expect(requests[0]!.body).not.toHaveProperty('response_format')
   })
 })
@@ -99,14 +108,20 @@ describe('the model check route', () => {
   beforeAll(async () => { t = await testApp(['moderator', 'member'], undefined, { MODERATOR_UIDS: 'uid-moderator', ...keys }) })
   afterAll(() => t.close())
 
-  it('asks each model one time, for moderators only', async () => {
-    fakeVendors({ deepseek: [answer('ok')], gemini: [new Response('down', { status: 503 })] })
+  it('asks each model one time, for moderators only, and shows a bad key as no answer', async () => {
+    fakeVendors({ deepseek: [new Response('bad key', { status: 401 })], gemini: [answer('ok', { prompt_tokens: 90, completion_tokens: 6 })] })
     const res = await t.call('moderator', 'POST', '/v1/admin/model-check')
     expect(res.statusCode).toBe(200)
     expect(modelCheckResponse.parse(res.json()).models).toEqual([
-      { model: 'deepseek-flash', answered: true, ms: expect.any(Number), tokensIn: 120, tokensOut: 8 },
-      { model: 'gemini-3.5-flash-lite', answered: false, ms: expect.any(Number), tokensIn: 0, tokensOut: 0 },
+      { model: 'deepseek-flash', answered: false, ms: expect.any(Number), tokensIn: 0, tokensOut: 0 },
+      { model: 'gemini-3.5-flash-lite', answered: true, ms: expect.any(Number), tokensIn: 90, tokensOut: 6 },
     ])
     expect((await t.call('member', 'POST', '/v1/admin/model-check')).statusCode).toBe(404)
+  })
+
+  it('gives 503 when the keys are not set', async () => {
+    const bare = await testApp(['moderator'], undefined, { MODERATOR_UIDS: 'uid-moderator' })
+    expect((await bare.call('moderator', 'POST', '/v1/admin/model-check')).statusCode).toBe(503)
+    await bare.close()
   })
 })

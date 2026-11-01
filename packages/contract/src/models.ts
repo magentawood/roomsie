@@ -4,7 +4,7 @@ import { z } from 'zod'
 export const modelRoles = ['router', 'extractor', 'observer', 'composer', 'advisor', 'check'] as const
 export type ModelRole = (typeof modelRoles)[number]
 
-/** One answer of each model to a short prompt: the check of the keys after a deploy (T-11). */
+/** One answer of each model to a short prompt (T-11). */
 export const modelCheckResponse = z.object({
   models: z.array(z.object({ model: z.string(), answered: z.boolean(), ms: z.int(), tokensIn: z.int(), tokensOut: z.int() })),
 })
