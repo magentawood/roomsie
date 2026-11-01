@@ -484,7 +484,7 @@ export const observations = pgTable('observations', {
   value: text('value').notNull(),
   kind: observationKindEnum('kind').notNull(),
   evidence: text('evidence').notNull(),
-  /** The quoted turn. No note outlives the words that it quotes. */
+  /** No note outlives the words that it quotes. */
   turnId: uuid('turn_id').notNull().references(() => chatTurns.id, { onDelete: 'cascade' }),
   confidence: real('confidence').notNull(),
   visible: boolean('visible').notNull().default(true),

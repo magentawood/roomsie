@@ -12,10 +12,8 @@ export const observation = z.strictObject({
   kind: z.enum(observationKinds),
   /** Verbatim, so no trim. T-36 checks that the quote is in the turn. */
   evidence: z.string().max(2000).refine((quote) => quote.trim() !== '', 'The quote is empty'),
-  /** The id of the chat turn that the quote comes from. */
   turn: z.uuid(),
   confidence: z.number().min(0).max(1),
-  /** Only its owner sees a note, never another person (PD7a). */
   visible: z.boolean().default(true),
 })
 export type Observation = z.infer<typeof observation>

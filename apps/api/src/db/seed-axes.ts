@@ -18,7 +18,6 @@ const mustHaveLabels: Record<(typeof mustHaveKeys)[number], string> = {
 }
 const MUST_HAVES = mustHaveKeys.map((key, i) => ({ key, label: mustHaveLabels[key], sortOrder: i + 1, active: true }))
 
-/** The starter topics of Form B (T-35). T-36 changes them when it tunes the observer. */
 const OBSERVATION_TOPICS = [
   { key: 'guest_frequency', label: 'Guests and partners who stay over' },
   { key: 'work_pattern', label: 'Work hours and work from home' },
