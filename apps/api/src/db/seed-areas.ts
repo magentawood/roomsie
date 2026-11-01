@@ -144,7 +144,6 @@ const AREAS: AreaSeed[] = [
   ] },
 ]
 
-/** The area groups next to each area group (T-14). */
 const NEIGHBOURS: Record<string, string[]> = {
   'south-mumbai': ['lower-parel-worli'],
   'lower-parel-worli': ['south-mumbai', 'dadar-sion', 'bandra-santacruz'],

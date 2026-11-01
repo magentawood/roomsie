@@ -1,18 +1,15 @@
 import {
-  childTypes, maxAge, minAge, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type WhosMoving,
+  budgetBands as bands, childTypes, maxAge, minAge, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type WhosMoving,
 } from '@roomsie/contract'
 import { labels } from './listing-steps'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
 
-export const budgetBands = [
-  { id: 'under_10k', label: 'Under ₹10k', min: null, max: 10000 },
-  { id: 'under_15k', label: 'Under ₹15k', min: null, max: 15000 },
-  { id: 'under_25k', label: 'Under ₹25k', min: null, max: 25000 },
-  { id: 'under_35k', label: 'Under ₹35k', min: null, max: 35000 },
-  { id: 'above_35k', label: 'Above ₹35k', min: 35000, max: null },
-] as const
-export type BudgetBand = (typeof budgetBands)[number]['id']
+export type BudgetBand = (typeof bands)[number]['id']
+const bandLabels: Record<BudgetBand, string> = {
+  under_10k: 'Under ₹10k', under_15k: 'Under ₹15k', under_25k: 'Under ₹25k', under_35k: 'Under ₹35k', above_35k: 'Above ₹35k',
+}
+export const budgetBands = bands.map((band) => ({ ...band, label: bandLabels[band.id] }))
 
 /** A budget that the chat set can fit no band. */
 export const bandOf = (min: number | null, max: number | null): BudgetBand | null =>

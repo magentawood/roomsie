@@ -35,3 +35,12 @@ export const formA = z.strictObject({
 })
 export type FormA = z.infer<typeof formA>
 export type Budget = z.infer<typeof budget>
+
+/** The budget bands of the chips (interface-shape.md). The band above 35k has no maximum. */
+export const budgetBands = [
+  { id: 'under_10k', min: null, max: 10_000 },
+  { id: 'under_15k', min: null, max: 15_000 },
+  { id: 'under_25k', min: null, max: 25_000 },
+  { id: 'under_35k', min: null, max: 35_000 },
+  { id: 'above_35k', min: 35_000, max: null },
+] as const
