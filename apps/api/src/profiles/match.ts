@@ -1,8 +1,9 @@
-import { and, count, desc, eq, sql, type SQL } from 'drizzle-orm'
+import { and, count, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
 import { mustHaveKeys, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { textArray } from '../db/sql'
+import { formBPoints } from '../observations/read'
 import { moveGap, mustHaveSql, near, type BaseSearch } from '../ranking'
 import { visiblePeople } from './read'
 
@@ -39,16 +40,16 @@ function meets(key: MustHaveKey): SQL {
   const answer = axis === 'gender'
     ? sql`${profiles.gender}::text`
     : sql`(select ${profileLifestyle.value} from ${profileLifestyle} where ${profileLifestyle.profileId} = ${profiles.id} and ${profileLifestyle.axisKey} = ${axis})`
-  return sql`(${answer} = any(${textArray(values)}))`
+  return sql`(${inArray(answer, [...values])})`
 }
 
 const theirDealbreakerIn = (keys: MustHaveKey[]) => sql`exists (select 1 from ${profileMustHaves}
-  where ${profileMustHaves.profileId} = ${profiles.id} and ${profileMustHaves.weight} = 'dealbreaker' and ${profileMustHaves.mustHaveKey} = any(${textArray(keys)}))`
+  where ${profileMustHaves.profileId} = ${profiles.id} and ${profileMustHaves.weight} = 'dealbreaker' and ${inArray(profileMustHaves.mustHaveKey, keys)})`
 
 export type PeopleSearch = BaseSearch & {
   searcher: ReturnType<typeof searcherMustHaves>
-  /** The Form B points of the person with this user id. */
-  formBPoints: (personUserId: SQL) => SQL
+  /** A Form B note counts only above this confidence. */
+  formBFloor: number
 }
 
 /** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
@@ -74,7 +75,7 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
       didntSay: sql<MustHaveKey[]>`${rank.didntSay}`.as('didnt_say'),
       isFull: sql<boolean>`(cardinality(${rank.didntSay}) = 0 and not ${theirDealbreakerIn(searcher.gaps)})`.as('is_full'),
       prefsMet: sql<number>`${rank.prefsMet}`.as('prefs_met'),
-      points: sql<number>`${search.formBPoints(sql`${profiles.userId}`)}`.as('points'),
+      points: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('points'),
       moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
       .orderBy(sql`is_full desc, prefs_met desc, points desc, move_gap asc nulls last`, desc(profiles.createdAt))
