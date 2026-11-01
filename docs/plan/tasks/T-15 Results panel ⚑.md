@@ -39,16 +39,45 @@ Shows matches as cards: people and places.
 - [[T-50 Found a place, share, feedback]]
 
 ## Done when
-- [ ] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query
-- [ ] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
-- [ ] It updates only when a form value or weight changes. It never changes the order during a scroll
-- [ ] A card shows the Best match label and the Didn't say label of PD3a
-- [ ] The empty panel shows No relevant results and the suggested posts (PD6c)
-- [ ] The listing detail in the results panel has the "Ask in chat" button of the designs
-- [ ] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query
+- [x] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data
+- [x] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
+- [x] It updates only when a form value or weight changes. It never changes the order during a scroll
+- [x] A card shows the Best match label and the Didn't say label of PD3a
+- [x] The empty panel shows No relevant results and the suggested posts (PD6c)
+- [x] The listing detail in the results panel has the "Ask in chat" button of the designs
+- [x] A grid of person cards uses the prototype cards, the Form A contract and sample data
 
 ^done
 
 ## Read first
 - [interface-shape.md](../../interface-shape.md)
 - [pd-03a-flatmate-matching.md](../../decisions/pd-03a-flatmate-matching.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by code-ankittt
+
+- **Modules:**
+  - **`apps/web/lib/results.ts` (new):** the pure rules of the panel. They give the header, the moment that the panel shows, the form key, the "Didn't say" line and the update rule.
+  - **`apps/web/components/results/` (new):** the results panel, and the results card in the chat.
+  - **The chat screen:** the split view on a desktop, and "Show all" on a phone (PD6a).
+  - **The cards:** a label over the photo, and an `onOpen` that opens the card in the panel.
+  - **The place detail:** an `onBack` and the "Ask in chat" button.
+  - **The theme:** a blue badge token for "Best match".
+  - **`apps/web/lib/api.ts`:** a guest can call a public route, such as the areas.
+- **Seams for the tests:**
+  - The unit tests of `lib/results.ts`: the header, when the panel shows, the form key, the "Didn't say" line and the update rule.
+  - A browser check at 402 px and 1440 px of `/chat?preview=results` and `/chat?preview=empty`.
+- **Decisions:**
+  - **The preview:** the assistant (T-12) does not fill Form A, and the match query (T-14) does not exist. Thus, `/chat?preview=results` and `/chat?preview=empty` show the panel with sample data. A "Sample data" badge shows on the panel. T-14 removes the preview. The user decided this on 2026-11-02.
+  - **When the panel shows:** when intent, area and budget have a value (interface-shape.md, hole 3).
+  - **The header:** the noun of the intent ("Rooms", "PGs", "Flats", "People"), the areas and the budget, then the count. With no intent, it reads "Everything in Mumbai" (drafts section 14).
+  - **The update rule:** the key of the form has the values and the weights, not the sources. Thus, a confirmed default gives no new results. New results wait while the person scrolls, and show 1.5 seconds after the last scroll (PD6c).
+  - **The labels:** "Best match" is a blue pill, and "Didn't say: …" is a grey pill. Each sits on the top left of the photo. The blue is the Tailwind blue, because the token file has no blue yet.
+  - **A card opens:** a guest sees the sign-in wall (PD6b). A place opens in the panel. A person opens on the person page.
+  - **"Ask in chat":** it closes the detail, and starts the chat input with "About <the title>: ".
+  - **The plan:** the connection to the match query moves to T-14. The user decided the same split for T-20.
+- **Out of scope:**
+  - the "12 more matches" banner and the "Hid 8" note of PD6c
+  - the compare selection (T-49)
+  - the kind pills of the place cards (Owner, Broker, PG)

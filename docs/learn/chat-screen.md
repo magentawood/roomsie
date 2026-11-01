@@ -43,5 +43,6 @@
 
 ## Tickets
 
-- T-10: [#172](https://github.com/magentawood/roomsie/pull/172), 2026-10-27. The chat screen, the input, the sign-in wall, the shell of a guest, and "Start looking" on the home stub. The results and the split view wait for T-08, T-14 and T-15.
+- T-10: [#172](https://github.com/magentawood/roomsie/pull/172), 2026-10-27. The chat screen, the input, the sign-in wall, the shell of a guest, and "Start looking" on the home stub.
 - T-12: [#189](https://github.com/magentawood/roomsie/pull/189), 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.
+- T-15: the results panel and the split view. [The results panel](results-panel.md) tells how they work.

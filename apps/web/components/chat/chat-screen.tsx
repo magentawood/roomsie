@@ -3,16 +3,20 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { goalResponse, newGoalResponse, turnResponse, type GoalResponse } from '@roomsie/contract'
+import { formA, goalResponse, listingTitle, newGoalResponse, turnResponse, type GoalResponse, type ListingResponse } from '@roomsie/contract'
 import { ApiError, chatApi, errorText } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, keyAction, readStored, writeStored } from '../../lib/chat'
-import { queryKeys } from '../../lib/queries'
+import { queryKeys, useAreaLabels } from '../../lib/queries'
+import { areaName, panelReady, panelTitle, type ResultsPage } from '../../lib/results'
+import { sampleEmpty, sampleForm, sampleMatches } from '../../lib/sample-results'
+import { ResultsCard } from '../results/results-card'
+import { ResultsPanel } from '../results/results-panel'
 import { Button } from '../ui/button'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
-function ChatInput({ grow, autoFocus, onSend }: { grow: 'up' | 'down'; autoFocus?: boolean; onSend: (text: string) => void }) {
-  const [text, setText] = useState('')
+function ChatInput({ grow, autoFocus, initialText = '', onSend }: { grow: 'up' | 'down'; autoFocus?: boolean; initialText?: string; onSend: (text: string) => void }) {
+  const [text, setText] = useState(initialText)
   const box = useRef<HTMLTextAreaElement>(null)
   useLayoutEffect(() => {
     const el = box.current!
@@ -106,8 +110,16 @@ function useChat() {
   return { turns, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 
-/** The chat of a goal (flow 02). The person sees their message at once, and the reply when it comes. */
-export function ChatScreen() {
+export type Preview = 'results' | 'empty'
+
+const emptyForm = formA.parse({})
+const noResults: ResultsPage = { results: [], suggested: [] }
+
+/**
+ * The chat of a goal, and the results beside it (flow 02). The person sees their message at once, and the reply when it comes.
+ * The grid is not connected to the match query yet, so `preview` shows the panel with sample data (T-15).
+ */
+export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, send, loadingGoal } = useChat()
   const [failed, setFailed] = useState<string | null>(null)
   const submit = (text: string) => {
@@ -115,12 +127,28 @@ export function ChatScreen() {
     send.mutate(text, { onError: (err) => setFailed(errorText(err)) })
   }
   const pending = send.isPending || failed ? send.variables : undefined
+  const areaLabels = useAreaLabels()
+  const form = preview ? sampleForm : emptyForm
+  const page = preview === 'empty' ? sampleEmpty : preview ? sampleMatches : noResults
+  const ready = panelReady(form)
+  // The panel is open beside the chat on a desktop. On a phone, the chat fills the screen until "Show all" (PD6a).
+  const [closed, setClosed] = useState(false)
+  const [showAll, setShowAll] = useState(false)
+  const [draft, setDraft] = useState({ text: '', n: 0 })
+  const openResults = () => { setClosed(false); setShowAll(true) }
+  const closeResults = () => { setClosed(true); setShowAll(false) }
+  const askInChat = (listing: ListingResponse) => {
+    setDraft(({ n }) => ({ text: `About ${listingTitle(listing)}: `, n: n + 1 }))
+    setShowAll(false)
+  }
+
   if (loadingGoal) return <main className="flex-1" aria-busy="true" />
-  if (!turns.length && pending === undefined) return <EmptyChat onSend={submit} />
+  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={submit} />
+  const split = ready && !closed
   return (
-    <main className="flex min-h-0 flex-1 flex-col">
+    <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
-      <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
+      <div className={`col-start-1 row-start-1 flex min-h-0 flex-col-reverse overflow-y-auto ${showAll ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
           {turns.map((turn) => (
             <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
@@ -133,12 +161,18 @@ export function ChatScreen() {
                 : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
           )}
+          {ready && <li><ResultsCard title={panelTitle(form, areaName(areaLabels))} count={page.results.length} onOpen={openResults} /></li>}
         </ol>
       </div>
-      <div className="px-5 pb-28 lg:px-6 lg:pb-6">
-        {/* It comes after the first send, so it keeps the focus of the person. */}
-        <ChatInput grow="up" autoFocus onSend={submit} />
+      <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
+        {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
+        <ChatInput key={draft.n} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.n > 0} initialText={draft.text} onSend={submit} />
       </div>
+      {ready && (
+        <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${showAll ? 'grid' : 'hidden'} ${closed ? 'lg:hidden' : 'lg:grid'}`}>
+          <ResultsPanel form={form} page={page} sample={Boolean(preview)} onClose={closeResults} onAskInChat={askInChat} />
+        </div>
+      )}
     </main>
   )
 }
