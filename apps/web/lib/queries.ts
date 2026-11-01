@@ -7,7 +7,7 @@ import {
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { areaTree } from './areas'
-import { useUser } from './auth'
+import { useAuth, useUser } from './auth'
 import { badgeCount } from './messages'
 
 /** The cache keys of the API data. A change sets or refreshes its key. */
@@ -113,8 +113,9 @@ export function useProfile() {
 }
 
 /** The areas change only with a deploy, so one fetch serves the visit. */
+/** Public: the chat of a guest names the areas too (PD6b). */
 export function useAreas() {
-  const user = useUser()
+  const { user } = useAuth()
   return useQuery({ queryKey: queryKeys.areas, queryFn: () => api(user, '/v1/areas', areasResponse), staleTime: Infinity })
 }
 

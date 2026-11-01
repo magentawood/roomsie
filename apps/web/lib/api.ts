@@ -37,9 +37,12 @@ async function request<T>(path: string, headers: Record<string, string>, schema:
   return schema.parse(json)
 }
 
-/** Calls the API as the signed-in user. getIdToken() gives the cached token, and we never store it (ADR-0007). */
-export async function api<T>(user: User, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
-  return request(path, requestHeaders(await user.getIdToken(), null, options.body !== undefined), schema, options)
+/**
+ * Calls the API as the signed-in user. getIdToken() gives the cached token, and we never store it (ADR-0007).
+ * `null`: a guest, for a public route only, such as the areas of the chat (PD6b).
+ */
+export async function api<T>(user: User | null, path: string, schema: z.ZodType<T>, options: Options = {}): Promise<T> {
+  return request(path, requestHeaders(user ? await user.getIdToken() : null, null, options.body !== undefined), schema, options)
 }
 
 /** Calls the API of the chat, which is open to a visitor (PD6b): with the token, the visitor key, or both. */

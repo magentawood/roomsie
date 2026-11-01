@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import {
   Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Clock, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
-  LayersThree01, MessageCircle01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
+  LayersThree01, MessageChatCircle, MessageCircle01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
 } from '@untitledui/icons'
 import { listingTitle, type ListingResponse } from '@roomsie/contract'
 import { labels } from '../../lib/listing-steps'
@@ -97,14 +97,16 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
   )
 }
 
-/** The detail of a place: the four kinds of the Product file (T-43). */
-export function PlaceDetail({ listing }: { listing: ListingResponse }) {
+/** The detail of a place: the four kinds of the Product file (T-43). In the results panel, `onBack` closes it and `onAskInChat` shows "Ask in chat" (T-15). */
+export function PlaceDetail({ listing, onBack, onAskInChat }: { listing: ListingResponse; onBack?: () => void; onAskInChat?: () => void }) {
   const areaLabels = useAreaLabels()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
   const [messaging, setMessaging] = useState(false)
   const { share, copied } = useShare(title)
-  const back = useBack()
+  const routerBack = useBack()
+  const back = onBack ?? routerBack
+  const askInChat = onAskInChat && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={onAskInChat}>Ask in chat</Button>
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
   const address = addressLine(listing)
   const money = moveIn(listing)
@@ -133,12 +135,13 @@ export function PlaceDetail({ listing }: { listing: ListingResponse }) {
     <>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-secondary bg-primary px-5 py-3 lg:hidden">
         <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
-        <PhoneMenu listing={listing} onReport={() => setReporting(true)} share={share} />
+        <div className="flex items-center gap-2">{askInChat}<PhoneMenu listing={listing} onReport={() => setReporting(true)} share={share} /></div>
       </div>
       <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 md:px-6 md:py-8 ${listing.mine ? '' : 'pb-40 lg:pb-8'}`}>
         <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-4 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
           <div className="flex gap-2">
+            {askInChat}
             {!listing.mine && <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setReporting(true)}>Report</Button>}
             <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>{copied ? 'Link copied' : 'Share'}</Button>
             {!listing.mine && <SaveButton kind="places" id={listing.id} />}
