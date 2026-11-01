@@ -18,7 +18,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
   const lifestyle = lifestyleSummary(card)
   return (
     <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
-      <CardLink href={href} onOpen={onOpen} hidden className="flex aspect-3/2 items-center justify-center bg-secondary">
+      <CardLink href={href} onOpen={onOpen} decorative className="flex aspect-3/2 items-center justify-center bg-secondary">
         {photo
           ? <img src={photo.url} alt="" className="size-full object-cover" />
           : <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials(card.fullName)}</span>}
