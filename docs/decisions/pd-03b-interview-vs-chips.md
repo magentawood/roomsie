@@ -18,8 +18,8 @@ The team asked what the AI interview adds to the chip filters.
 **The form is the source of truth, not the model.**
 
 - A structured form runs in parallel with all of the chat.
-- For each slot, the form records if the user stated the value or the model inferred it.
-- An inferred value never fills a slot silently.
+- For each slot, the form records if the user stated the value, or if it is a default.
+- The model never infers a slot value. A vague answer is `unclear` ([PD15](pd-15-form-a-contract.md)).
 - If a value contradicts an earlier value, the assistant confirms it with the user. It never overwrites the earlier value.
 - Confidence is the empty slot. It is not a number that the model reports about itself.
 

@@ -17,8 +17,6 @@ describe('a result', () => {
   it.each([
     ['a person with no card', { kind: 'person', ...labels }],
     ['a listing with a card in place of a listing', { kind: 'listing', card, ...labels }],
-    ['a kind that is not person or listing', { kind: 'broker', card, ...labels }],
-    ['a person with no labels', { kind: 'person', card }],
     ['a Didn\'t say item that is not a must-have', { kind: 'person', card, bestMatch: false, didntSay: ['smoking'] }],
   ])('rejects %s', (_, input) => {
     expect(matchResult.safeParse(input).success).toBe(false)

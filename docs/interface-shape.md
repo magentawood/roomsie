@@ -123,7 +123,7 @@ Why: [PD6c](decisions/pd-06c-interface-holes.md)
 |---|---|
 | Chat contradicts earlier chat | Ask which to keep |
 | Manual edit contradicts earlier chat | Manual edit wins. The assistant tells this one time. |
-| Inference contradicts anything | Inference never wins. Propose it. |
+| A vague answer | The slot becomes `unclear`. The assistant asks again, and never guesses. |
 
 Why: [PD6c](decisions/pd-06c-interface-holes.md)
 

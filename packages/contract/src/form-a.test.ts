@@ -11,6 +11,7 @@ describe('Form A', () => {
     expect(form.budget).toEqual(empty)
     expect(form.lifestyle.food).toEqual(empty)
     expect(form.mustHaves.couple_friendly).toEqual(empty)
+    expect(form.version).toBe(1)
   })
 
   it.each([
@@ -44,6 +45,9 @@ describe('Form A', () => {
     ['a budget minimum above its maximum', { budget: { value: { min: 30_000, max: 20_000 }, source: 'stated' } }],
     ['a budget with no amount', { budget: { value: { min: null, max: null }, source: 'stated' } }],
     ['a stated slot of no areas', { areas: { value: [], source: 'stated' } }],
+    ['a slot name that Form A does not have', { whosmoving: { value: 'student', source: 'stated' } }],
+    ['the words of the person in a slot', { lifestyle: { smoking: { value: 'non_smoker', source: 'stated', evidence: 'no smoke' } } }],
+    ['a form of a different version', { version: 2 }],
   ])('rejects %s', (_, input) => {
     expect(formA.safeParse(input).success).toBe(false)
   })
