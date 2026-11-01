@@ -112,8 +112,7 @@ export function useProfile() {
   })
 }
 
-/** The areas change only with a deploy, so one fetch serves the visit. */
-/** Public: the chat of a guest names the areas too (PD6b). */
+/** The areas change only with a deploy, so one fetch serves the visit. Public: the chat of a guest names the areas too (PD6b). */
 export function useAreas() {
   const { user } = useAuth()
   return useQuery({ queryKey: queryKeys.areas, queryFn: () => api(user, '/v1/areas', areasResponse), staleTime: Infinity })
