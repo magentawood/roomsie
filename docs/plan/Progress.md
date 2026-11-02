@@ -14,15 +14,15 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**224 of 329 done · 68%**
+**227 of 329 done · 69%**
 
-`████████████████░░░░░░░░`
+`█████████████████░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
+| [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
 | [[P2 Chat]] | 8 / 14 | 37 / 65 | 57% |
 | [[P3 Data and trust]] | 16 / 19 | 77 / 86 | 90% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**21 free tasks are open · 58 build hours.**
+**20 free tasks are open · 57 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -62,7 +62,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-17 Carry chat into account]] | P2 | 2 | ⬜ can start | 0 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | 0 | [[T-27 Eval run]] | P2 | 3 | ⬜ can start | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
-| 0 | [[T-29 Abuse test]] | P1 | 1 | ⬜ can start | 0 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | 0 | [[T-36 Observer]] | P2 | 8 | ⬜ can start | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ can start | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
@@ -133,7 +132,7 @@ flowchart LR
   T22b["T-22b<br/>Waitlist screen"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::ready
-  T29["T-29<br/>Abuse test"]:::ready
+  T29["T-29<br/>Abuse test"]:::done
   T34["T-34 ⚑<br/>Router"]:::done
   T35["T-35<br/>Form B contract"]:::done
   T36["T-36<br/>Observer"]:::ready
@@ -280,7 +279,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 29/35
+## P1 Platform — 32/35
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -306,7 +305,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-40 Nightly backups]] · 0/3
 > ![[T-40 Nightly backups#^done]]
 
-> [!todo]- ⬜ [[T-29 Abuse test]] · 0/3
+> [!todo]- ✅ [[T-29 Abuse test]] · 3/3
 > ![[T-29 Abuse test#^done]]
 
 > [!todo]- ✅ [[T-51 Migrations in the deploy ⚑]] · 3/3
