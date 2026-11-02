@@ -1,5 +1,5 @@
 import { resultsPageSize, type FormA, type MatchResult, type MustHaveKey, type ResultsResponse } from '@roomsie/contract'
-import { budgetLine } from './person'
+import { budgetPhrase } from './person'
 
 /** What a search found, in the pages that loaded. `total` counts the results of all pages. */
 export type Found = { results: MatchResult[]; total: number; suggested: MatchResult[] }
@@ -33,8 +33,7 @@ export function panelTitle(form: FormA, label: (slug: string) => string) {
   const areas = known(form.areas)
   const budget = known(form.budget)
   const scope = `${intent ? nouns[intent] : 'Everything'} in ${areas ? areaPhrase(areas, label) : 'Mumbai'}`
-  // A budget has a minimum or a maximum, so it always has a line.
-  return budget ? `${scope} ${budgetLine({ budgetMin: budget.min, budgetMax: budget.max })!.toLowerCase()}` : scope
+  return budget ? `${scope} ${budgetPhrase(budget)}` : scope
 }
 
 export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
@@ -42,6 +41,7 @@ export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
 /**
  * The panel is a pure function of the form (PD6c): the values and the weights, never the sources.
  * Thus a stated value that confirms a default gives the same key, and no new query. Each form is a `formA` parse, so its keys have one order.
+ * The replacer drops each `source` key at any depth, and only the slots have one.
  */
 export const formKey = (form: FormA) => JSON.stringify(form, (key, value: unknown) => (key === 'source' ? undefined : value))
 
