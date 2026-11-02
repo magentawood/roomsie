@@ -440,9 +440,12 @@ describe('the hidden religion and community filter (T-58)', () => {
     const next = await sent(goal, 'Jain or Hindu, preferably')
     expect(next.turns[1].text).toBe(areasQuestion)
     expect(next.form.religionPreference).toEqual({ source: 'stated', value: { values: ['jain', 'hindu'], weight: 'prefer' } })
-    // The log of PD3c: each turn keeps the preference that it stated, also the one that the next turn replaced.
+    fakeVendors({ deepseek: [scored({ religionPreference: { values: ['jain', 'hindu'], weight: 'prefer' } })] })
+    await sent(goal, 'yes, Jain or Hindu, preferably')
+    // The log of PD3c: each turn keeps the preference that it stated, also one that the next turn replaced, and one that it states again.
     expect((await userParts(goal.id)).map((parts) => (parts as { preferences?: object }).preferences)).toEqual([
       { religionPreference: { values: ['jain'], weight: 'dealbreaker' } },
+      { religionPreference: { values: ['jain', 'hindu'], weight: 'prefer' } },
       { religionPreference: { values: ['jain', 'hindu'], weight: 'prefer' } },
     ])
   })

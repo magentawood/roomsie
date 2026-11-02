@@ -16,7 +16,7 @@ import { extractorPrompt } from './prompt'
 export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null } })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, preferences: {} })
 
 /**
  * An answer to "which one should I keep?" that names no value (PD3b): a choice word alone, or with "wala" or "one",
@@ -100,19 +100,22 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   // The hidden filter of PD3c (T-58). A newer statement wins with no question, and no line of the reply names it.
   const within = (key: string, pattern: RegExp) => new RegExp(`"${key}"\\s*:\\s*\\{[^}]*${pattern.source}`)
   const sure = (pattern: RegExp) => passes(scored, pattern, settings.minProbability)
-  const preference = <K extends 'religionPreference' | 'communityPreference'>(key: K) => {
+  const preferenceOf = (key: 'religionPreference' | 'communityPreference') => {
     const stated = answer[key]
-    const kept = stated?.values.filter((value) => value !== 'unclear' && sure(within(key, jsonListItem('values', value))))
-    if (!kept?.length) return {}
-    const weight = stated!.weight !== 'unclear' && sure(within(key, jsonString('weight', stated!.weight))) ? stated!.weight : 'unclear'
-    return { [key]: { source: 'stated', value: { values: kept, weight } } }
+    const values = stated?.values.filter((value) => value !== 'unclear' && sure(within(key, jsonListItem('values', value))))
+    if (!values?.length) return undefined
+    return { values, weight: stated!.weight !== 'unclear' && sure(within(key, jsonString('weight', stated!.weight))) ? stated!.weight : 'unclear' }
   }
-  const { ownReligion, ownCommunity } = answer
+  const religionPreference = preferenceOf('religionPreference')
+  const communityPreference = preferenceOf('communityPreference')
+  const preferences = { ...(religionPreference && { religionPreference }), ...(communityPreference && { communityPreference }) }
+  const isOwn = <V extends string>(key: string, value: V | null | undefined): value is Exclude<V, 'unclear'> => !!value && value !== 'unclear' && sure(jsonString(key, value))
   const ownValues = {
-    religion: ownReligion && ownReligion !== 'unclear' && sure(jsonString('ownReligion', ownReligion)) ? ownReligion : null,
-    community: ownCommunity && ownCommunity !== 'unclear' && sure(jsonString('ownCommunity', ownCommunity)) ? ownCommunity : null,
+    religion: isOwn('ownReligion', answer.ownReligion) ? answer.ownReligion : null,
+    community: isOwn('ownCommunity', answer.ownCommunity) ? answer.ownCommunity : null,
   }
   const applied = applyValues(turn.form, values, openConflicts.map((c) => c.slot))
-  const form = { ...applied.form, ...preference('religionPreference'), ...preference('communityPreference') }
-  return { ...applied, form, settled, ambiguous, failed: false, ownValues }
+  const stated = Object.fromEntries(Object.entries(preferences).map(([slot, value]) => [slot, { source: 'stated', value }]))
+  const form = { ...applied.form, ...stated }
+  return { ...applied, form, settled, ambiguous, failed: false, ownValues, preferences }
 }

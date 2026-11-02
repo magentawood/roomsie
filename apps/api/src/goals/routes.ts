@@ -1,4 +1,3 @@
-import { isDeepStrictEqual } from 'node:util'
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
@@ -6,8 +5,6 @@ import { errorResponse, formA, goalResponse, newGoalResponse, turnBody, turnResp
 import { runTurn, type AssistantDeps } from '../assistant/assistant'
 import { optionalUser, type AuthOptions } from '../auth'
 import { createGoal, createVisitorSession, goalOf, lastReplyOf, saveTurn, turnsOf, visitorSessionOf, type Asker } from './store'
-
-const hiddenSlots = ['religionPreference', 'communityPreference'] as const
 
 /** The user agent only goes into the device hash, so any length passes. */
 const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional(), 'user-agent': z.string().optional() })
@@ -46,9 +43,8 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const last = await lastReplyOf(options.db, goal.id)
     const { text } = req.body
-    const { form, reply: answer, conflicts, label, ownValues } = await runTurn({ goalId: goal.id, text, last, form: goal.form }, { ...options, req })
+    const { form, reply: answer, conflicts, label, ownValues, preferences } = await runTurn({ goalId: goal.id, text, last, form: goal.form }, { ...options, req })
     // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
-    const preferences = Object.fromEntries(hiddenSlots.filter((slot) => !isDeepStrictEqual(goal.form[slot], form[slot])).map((slot) => [slot, form[slot].value]))
     const parts = { ...label, ...(Object.keys(preferences).length && { preferences }) }
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, form, { text, parts, ownValues }, answer)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })

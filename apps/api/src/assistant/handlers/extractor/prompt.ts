@@ -32,10 +32,10 @@ Rules:
 ${lifestyle}
   } | null,
   "mustHaves": { ${mustHaveKeys.map((k) => `"${k}"`).join(', ')}: ${list([...mustHaveWeights, 'unclear'])} } | null,
-  "religionPreference": { "values": [${list(religions)}], "weight": ${list([...mustHaveWeights, 'unclear'])} } | null,
-  "communityPreference": { "values": [${list(communities)}], "weight": ${list([...mustHaveWeights, 'unclear'])} } | null,
-  "ownReligion": ${list(religions)} | null,
-  "ownCommunity": ${list(communities)} | null
+  "religionPreference": { "values": [${list([...religions, 'unclear'])}], "weight": ${list([...mustHaveWeights, 'unclear'])} } | null,
+  "communityPreference": { "values": [${list([...communities, 'unclear'])}], "weight": ${list([...mustHaveWeights, 'unclear'])} } | null,
+  "ownReligion": ${list([...religions, 'unclear'])} | null,
+  "ownCommunity": ${list([...communities, 'unclear'])} | null
 }
 
 The slots:
