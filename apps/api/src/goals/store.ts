@@ -47,24 +47,25 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, createdAt: chatTurns.createdAt }
-const shown = (turn: { id: string; role: 'user' | 'assistant'; text: string; createdAt: Date }) => ({ ...turn, createdAt: turn.createdAt.toISOString() })
+const toChatTurn = (turn: { id: string; role: 'user' | 'assistant'; text: string; createdAt: Date }) => ({ ...turn, createdAt: turn.createdAt.toISOString() })
 
 export async function turnsOf(db: Db, goalId: string) {
   const rows = await db.select(turnFields).from(chatTurns).where(eq(chatTurns.goalId, goalId)).orderBy(asc(chatTurns.createdAt))
-  return rows.map(shown)
+  return rows.map(toChatTurn)
 }
 
-/** The last reply of the assistant, and the slot that it asked about. */
+/** The question of the last reply of the assistant, and the slot that it asked about. */
 export async function lastReplyOf(db: Db, goalId: string) {
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
-  const parts = assistantParts.safeParse(last?.parts)
-  return last ? { text: last.text, asked: parts.success ? parts.data.asked : null } : null
+  if (!last) return null
+  const parts = assistantParts.safeParse(last.parts)
+  return parts.success ? { question: parts.data.question ?? last.text, asked: parts.data.asked } : { question: last.text, asked: null }
 }
 
 /**
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
- * would otherwise replace the form of the first. Returns false when the goal changed.
+ * would otherwise replace the form of the first. Returns null when the goal changed.
  */
 export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userText: string, reply: AssistantReply) {
   return db.transaction(async (tx) => {
@@ -75,7 +76,7 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
     const [userTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: 'typed', text: userText, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
-    return [shown(userTurn!), shown(assistantTurn!)] satisfies TurnResponse['turns']
+    return [toChatTurn(userTurn!), toChatTurn(assistantTurn!)] satisfies TurnResponse['turns']
   })
 }
 

@@ -101,14 +101,14 @@ describe('the models module', () => {
     const tokens = [{ token: '{"intent":"', logprob: -0.01 }, { token: 'room', logprob: -0.4 }, { token: '"}', logprob: 0 }]
     const requests = fakeVendors({ deepseek: [answer('{"intent":"room"}', undefined, tokens)] })
     const { req } = fakeRequest()
-    expect(await models.scored({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: intent, session })).toEqual({ value: { intent: 'room' }, tokens })
+    expect(await models.scored({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: intent, session })).toEqual({ value: { intent: 'room' }, tokens, model: 'deepseek-flash' })
     expect(requests[0]!.body).toMatchObject({ logprobs: true, response_format: { type: 'json_object' } })
   })
 
   it('asks Gemini with no logprobs field, because Gemini refuses it, and gives no probabilities', async () => {
     const requests = fakeVendors({ deepseek: [new Response('busy', { status: 503 })], gemini: [answer('{"intent":"room"}')] })
     const { req } = fakeRequest()
-    expect(await models.scored({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: intent, session })).toEqual({ value: { intent: 'room' }, tokens: null })
+    expect(await models.scored({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: intent, session })).toEqual({ value: { intent: 'room' }, tokens: null, model: 'gemini-3.5-flash-lite' })
     expect(requests[1]!.body).not.toHaveProperty('logprobs')
   })
 })
