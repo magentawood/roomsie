@@ -49,7 +49,7 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 - The image builds from the repo root, because the API needs the workspace packages. The install skips scripts, because the root `prepare` script needs `git`.
 - The Supabase dashboard can show only general regions, and "Asia-Pacific" can put a project in Seoul. Make a project with the CLI: `supabase projects create <name> --region ap-south-1`.
 - A deployment takes approximately 3 to 5 minutes. Lightsail keeps the previous version until the new version passes the health check.
-- **The web is live first.** Vercel finishes approximately four minutes before Lightsail, so for some minutes the new web reads the old API. Thus, each new field of a response has a default in `packages/contract` (api.md). On 2026-11-02 a required new field gave "Something went wrong" to a new chat for those minutes.
+- **The web is live first.** Vercel finishes approximately four minutes before Lightsail, so for some minutes the new web reads the old API. Thus, each new field of a response has a default in `packages/contract` ([api.md](../standards/api.md)).
 - Lightsail shows the environment of each deployment in the AWS console. Only give AWS console access to people who can see the secrets.
 
 ## Tickets
