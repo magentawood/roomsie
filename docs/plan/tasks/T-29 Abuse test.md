@@ -33,7 +33,7 @@ Attack our own site before strangers do.
 ## Done when
 - [ ] A script opens 100 anonymous sessions
 - [ ] The per-device and per-network limits stop the requests when a device or network goes over them
-- [ ] When spend reaches the ceiling, the chat changes to chips only and shows no error page
+- [ ] When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert
 
 ^done
 

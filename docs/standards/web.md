@@ -26,7 +26,7 @@ These rules apply to `apps/web`: Next.js 16, React 19 and TanStack Query. The ru
 - Each page renders on each request. Do not give a page a page-level `revalidate`, and cache data with the option of `fetch`. Why: a static page cannot have the new nonce, so the policy blocks its scripts. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Do not use the `style` prop or `eval`. Use classes. Why: the server render writes the prop as a style attribute, and the policy blocks the attribute and `eval`. A share card of `next/og` is a PNG, not HTML, so it can use the prop. ([ADR-0007](../decisions/0007-web-rendering-and-auth-transport.md))
 - Ask for login only when a user opens one listing or person, sends a message, or reaches the turn cap. Browse and filters need no login. Why: the product is open until that step. ([PD6b](../decisions/pd-06b-login-gate-and-search.md), [PD9](../decisions/pd-09-pre-login-limits.md))
-- The sign-in wall never shows before the results. It is a modal that the user can close, and the results stay on the screen. Why: a user signs in after they see something that they want. ([PD9](../decisions/pd-09-pre-login-limits.md))
+- The sign-in wall never shows before the results, except at the backstop of PD9. It is a modal that the user can close, and the results stay on the screen. Why: a user signs in after they see something that they want. ([PD9](../decisions/pd-09-pre-login-limits.md))
 
 ## Pages and content
 

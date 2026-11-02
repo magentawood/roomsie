@@ -10,7 +10,7 @@ The product team (founder and product) settles these calls. Engineers do not.
 - Ask one question at a time. Read the recommendation aloud, then decide.
 - Record each answer in the named PD record. Then delete the question from this file.
 - These calls are soft. Until an answer arrives, the build uses a default in config, not in code (T-21, T-38 "Done when").
-- Do not ask again what a record decides. For example, [PD9](../decisions/pd-09-pre-login-limits.md) decides five typed turns and chips-only at the ceiling.
+- Do not ask again what a record decides. For example, [PD9](../decisions/pd-09-pre-login-limits.md) decides five typed turns, and an alert, not a stop, at the daily spend amount.
 
 ## Round 1
 
@@ -18,7 +18,7 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ❓ What is the daily model-spend ceiling in rupees? What are the first values for the rate limits?
 
-- **Today:** no value. PD9 settles the mechanism, not the numbers (`docs/decisions/pd-09-pre-login-limits.md:27-39`). F-03 gives only a monthly example of ₹20,000 (`docs/team-plan.json`). The alert starts at 70% of the ceiling. Web searches count in it (`docs/team-plan.json`).
+- **Today:** T-21 put first values in config, as guesses until two to three months of data: ₹500 a day, 10, 100 and 500 new visitor chats in 24 hours for each device, IP address and IP range, and 10 typed turns a minute ([pre-login-limits.md](../pre-login-limits.md)). The amount is an alert at 70% and 100%, not a stop (PD9). F-03 gives a monthly example of ₹20,000. Web searches count in the spend.
 - **Options:** a) ₹300 a day. b) ₹500 a day. c) ₹1,000 a day. For the rate limits: strict values, or large values that we make tighter from the logs.
 - **Blocks:** T-21, T-29 (soft: config values).
 - **Record:** [PD9](../decisions/pd-09-pre-login-limits.md)

@@ -33,14 +33,15 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       visitorKey = session.key
     }
     const id = await createGoal(options.db, asker)
-    return reply.code(201).send({ id, form: formA.parse({}), turns: [], visitorKey, typedTurnsLeft: await typedTurnsLeft(options.db, asker, options.limits) })
+    const form = formA.parse({})
+    return reply.code(201).send({ id, form, turns: [], visitorKey, typedTurnsLeft: await typedTurnsLeft(options.db, asker, form, options.limits) })
   })
 
   app.get('/goals/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 200: goalResponse, 404: errorResponse } } }, async (req, reply) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
-    return { id: goal.id, form: goal.form, turns: await turnsOf(options.db, goal.id), typedTurnsLeft: await typedTurnsLeft(options.db, asker, options.limits) }
+    return { id: goal.id, form: goal.form, turns: await turnsOf(options.db, goal.id), typedTurnsLeft: await typedTurnsLeft(options.db, asker, goal.form, options.limits) }
   })
 
   app.post('/goals/:id/turns', {
@@ -69,7 +70,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
     for (const event of turn.events) v1.analytics.track(req, event)
-    return { form: turn.form, turns, typedTurnsLeft: await typedTurnsLeft(options.db, asker, options.limits) }
+    return { form: turn.form, turns, typedTurnsLeft: await typedTurnsLeft(options.db, asker, turn.form, options.limits) }
   })
 }
 

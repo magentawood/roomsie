@@ -720,7 +720,11 @@ export const articlePassages = pgTable('article_passages', {
 
 /** The model spend of each day in IST, and the highest alert that went: 70 or 100 (PD9, T-21). The models module owns it. */
 export const modelSpend = pgTable('model_spend', {
-  day: date('day').primaryKey(),
+  id: id(),
+  day: date('day').notNull(),
   rupees: numeric('rupees', { precision: 14, scale: 6 }).notNull().default('0'),
-  alerted: smallint('alerted').notNull().default(0),
-}).enableRLS()
+  alertedPercent: smallint('alerted_percent').notNull().default(0),
+  createdAt: createdAt(),
+}, (t) => ({
+  dayIdx: uniqueIndex('model_spend_day_idx').on(t.day),
+})).enableRLS()

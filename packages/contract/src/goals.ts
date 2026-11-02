@@ -45,6 +45,11 @@ export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, ch
 /** The limits of PD9 that refuse a turn or a new visitor chat (T-21). */
 export const limitRefusal = z.object({ error: z.string(), limit: z.enum(['turn_cap', 'too_many_chats', 'too_fast']) })
 export type LimitRefusal = z.infer<typeof limitRefusal>
+/** The rate limits that the event `limit_hit` names. */
+export const rateLimits = ['device', 'ip', 'ip_range', 'too_fast'] as const
+export type RateLimit = (typeof rateLimits)[number]
+/** The wall of the turn cap (drafts section 17). The API sends it as the text of the refusal. */
+export const capWall = { title: 'Sign in to keep chatting', text: 'Your search and results stay.' } as const
 export type TurnResponse = z.infer<typeof turnResponse>
 
 /* The handlers of the assistant (PD7a). A change of a field gives the schema a new version. */

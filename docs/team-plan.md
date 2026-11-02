@@ -972,7 +972,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-29 · Abuse test: 100 fake sessions** — done when:
 - A script opens 100 anonymous sessions
 - The per-device and per-network limits stop the requests when a device or network goes over them
-- When spend reaches the ceiling, the chat changes to chips only and shows no error page
+- When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert
 - Read first: `docs/pre-login-limits.md`
 
 **T-41 · Listings API: four kinds of lister** — done when:
@@ -1148,7 +1148,7 @@ Examine the numbers and the bug list. Then set the order of v1.
 
 1. This check is in production, on a phone and on a laptop. A person can go from chat to results to sign-in to a message request and an accepted chat, without help.
 2. Report, block and account deletion work.
-3. The abuse test trips the limits. The spend ceiling falls back to chips.
+3. The abuse test trips the limits. The spend alert goes to the team.
 4. There is no open P1 bug. A P1 bug is one of these:
    - A person sees data that they should not see.
    - Sign-in does not work.

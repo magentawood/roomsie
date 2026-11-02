@@ -16,9 +16,6 @@ export const nextPage = ({ page, total }: Pick<ResultsResponse, 'page' | 'total'
 type Slot = FormA['intent'] | FormA['areas'] | FormA['budget']
 const known = <S extends Slot>(slot: S) => (slot.value === 'unclear' ? null : slot.value as Exclude<S['value'], 'unclear' | null>)
 
-/** The panel shows first when the person gave intent, area and budget (PD6c, interface-shape.md hole 3). */
-export const panelReady = (form: FormA) => Boolean(known(form.intent) && known(form.areas) && known(form.budget))
-
 const nouns: Record<Exclude<FormA['intent']['value'], 'unclear' | null>, string> = { room: 'Rooms', pg: 'PGs', whole_flat: 'Flats', flatmates: 'People' }
 
 function areaPhrase(slugs: readonly string[], label: (slug: string) => string) {
