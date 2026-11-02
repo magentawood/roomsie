@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { capWall, formA, goalResponse, listingTitle, newGoalResponse, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, listingTitle, newGoalResponse, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type LimitRefusal, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
@@ -124,8 +124,8 @@ const emptyForm = formA.parse({})
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, form: chatForm, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
-  /** The line of a failed send. A limit on new chats adds a sign-in button (drafts section 34). */
-  const [failed, setFailed] = useState<{ text: string; signIn: boolean } | null>(null)
+  /** The line of a failed send, and the limit of PD9 that refused it. */
+  const [failed, setFailed] = useState<{ text: string; limit: LimitRefusal['limit'] | null } | null>(null)
   const [wall, setWall] = useState(false)
   const [capped, setCapped] = useState(false)
   const pending = send.isPending || failed ? send.variables?.text : undefined
@@ -147,7 +147,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       onSuccess: (sent) => { if (sent.typedTurnsLeft === 0) setWall(true) },
       onError: (err) => {
         const limit = limitOf(err)
-        if (limit !== 'turn_cap') return setFailed({ text: errorText(err), signIn: limit === 'too_many_chats' })
+        if (limit !== 'turn_cap') return setFailed({ text: errorText(err), limit })
         send.reset()
         setCapped(true)
         setWall(true)
@@ -156,9 +156,10 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   }
   const sendText = (text: string) => submit({ body: { text }, text })
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
+  // A sign-in lifts the limit on new chats. The line of the limit has a sign-in button (drafts section 34).
+  const chatsOverLimit = !signedIn && failed?.limit === 'too_many_chats'
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
-  // A tap also starts a chat, so the chips stay away while new chats are over their limit.
-  const chipSlot = send.isPending || failed?.signIn ? null : chipsOf(turns, chatForm)
+  const chipSlot = send.isPending ? null : chipsOf(turns, chatForm, chatsOverLimit)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
@@ -183,7 +184,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
               {failed ? (
                 <div role="alert" className="flex flex-col items-start gap-3">
                   <p className="text-md text-error-primary">{failed.text}</p>
-                  {failed.signIn && <div className="w-fit"><GoogleSignIn /></div>}
+                  {chatsOverLimit && <div className="w-fit"><GoogleSignIn /></div>}
                 </div>
               ) : <p className="text-md text-tertiary">Thinking…</p>}
             </li>

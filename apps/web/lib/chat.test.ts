@@ -40,8 +40,9 @@ describe('the chips of the chat (T-09)', () => {
     ({ id: crypto.randomUUID(), role, text: 'text', chips, createdAt: new Date().toISOString() })
   const empty = formA.parse({})
 
-  it('starts a new goal with the place types', () => {
+  it('starts a new goal with the place types, except while new chats are over their limit', () => {
     expect(chipsOf([], empty)).toBe('intent')
+    expect(chipsOf([], empty, true)).toBeNull()
     expect(chipsOf([], formA.parse({ intent: { source: 'stated', value: 'pg' } }))).toBeNull()
   })
 
