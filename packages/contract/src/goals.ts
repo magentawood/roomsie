@@ -63,7 +63,8 @@ export const extractorOutput = z.strictObject({
   form: formA,
   changed: z.array(z.enum(formASlots)),
   conflicts: z.array(z.strictObject({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })),
-  ambiguous: ambiguousArea.nullable(),
+  /** Each name of two or more areas in the turn. The reply asks about each one. */
+  ambiguous: z.array(ambiguousArea),
   /** No model gave an answer, so the form did not change. */
   failed: z.boolean(),
 })
@@ -73,11 +74,13 @@ export type ExtractorOutput = z.output<typeof extractorOutput>
 export const assistantParts = z.strictObject({
   version: z.literal(1).default(1),
   asked: z.strictObject({ slot: z.enum(formASlots), conflict: z.boolean() }).nullable(),
+  /** The question of the reply, with no line before it. The extractor of the next turn reads it. */
+  question: z.string().nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 
 /** What the reply writer reads: the output of the extractor, and the question of the last reply. */
-export const replyInput = extractorOutput.extend({ asked: assistantParts.shape.asked })
+export const replyInput = extractorOutput.extend({ asked: assistantParts.shape.asked, lastQuestion: z.string().nullable() })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })

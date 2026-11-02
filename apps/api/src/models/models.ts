@@ -59,9 +59,9 @@ type Outcome<T> = { outcome: 'ok'; value: T } | { outcome: 'invalid' | 'failed' 
 type Answer<T> = Outcome<T> & { usage: ModelUsage; refused?: number }
 const noUsage: ModelUsage = { tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 }
 
-type Read<T> = (content: string, tokens: Token[] | null) => T | undefined
+type Read<T> = (content: string, tokens: Token[] | null, model: string) => T | undefined
 
-async function readAnswer<T>(res: Response | null, read: Read<T>): Promise<Answer<T>> {
+async function readAnswer<T>(res: Response | null, read: Read<T>, model: string): Promise<Answer<T>> {
   if (!res?.ok) return { outcome: 'failed', usage: noUsage, ...(res && res.status !== 429 && res.status < 500 && { refused: res.status }) }
   let json: unknown
   try {
@@ -73,7 +73,7 @@ async function readAnswer<T>(res: Response | null, read: Read<T>): Promise<Answe
   const body = completion.safeParse(json)
   const usage = body.success ? body.data.usage : noUsage
   const choice = body.success ? body.data.choices[0]! : undefined
-  const value = choice ? read(choice.message.content ?? '', choice.logprobs?.content ?? null) : undefined
+  const value = choice ? read(choice.message.content ?? '', choice.logprobs?.content ?? null, model) : undefined
   return value === undefined ? { outcome: 'invalid', usage } : { outcome: 'ok', value, usage }
 }
 
@@ -95,7 +95,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
       }),
       signal: AbortSignal.timeout(timeoutMs),
     }).catch(() => null)
-    const answer = await readAnswer(res, read)
+    const answer = await readAnswer(res, read, model)
     const ms = Math.round(performance.now() - started)
     const record = { role: call.role, model, ...answer.usage, ms, fallback: model === fallback, outcome: answer.outcome, session: call.session }
     call.req.server.analytics.track(call.req, { name: 'model_called', ...record })
@@ -123,9 +123,10 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   return {
     json: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true }, parseWith(call.schema)),
     /** A JSON call that also gives the probability of each token. Gemini gives none, so `tokens` is then null. */
-    scored: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true, logprobs: true }, (content, tokens) => {
+    /** `model` tells the vendor of the answer: DeepSeek gives token probabilities, and Gemini does not. */
+    scored: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true, logprobs: true }, (content, tokens, model) => {
       const value = parseWith(call.schema)(content)
-      return value === undefined ? undefined : { value, tokens }
+      return value === undefined ? undefined : { value, tokens, model }
     }),
     text: (call: ModelCall) => run(call, { json: false }, readText),
     /** One short prompt to each model, with no fallback: the live check of the keys. */

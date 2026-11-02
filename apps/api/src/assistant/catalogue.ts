@@ -4,8 +4,11 @@ import { listAreas } from '../areas'
 import type { Db } from '../db/client'
 import { lifestyleAxes, mustHaves } from '../db/schema'
 
-/** Letters and digits of each script, so a word in Devanagari stays. */
-const normal = (words: string) => words.toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
+/** Letters and digits of each script, so a word in Devanagari stays. A nukta goes, so "सांताक्रूज़" and "सांताक्रूज" are one name. */
+const normalized = (words: string) => words.normalize('NFD').replace(/\u093C/g, '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
+
+/** The name of an area and its other names, in each script. */
+export const namesOf = (area: { name: string; aliases: string[] }) => [area.name, ...area.aliases]
 
 /** The seed data that the assistant reads: the areas with their names, and the labels of the questions. */
 async function load(db: Db) {
@@ -16,14 +19,24 @@ async function load(db: Db) {
   ])
   // A name of two areas, such as "Andheri", gives both.
   const byName = new Map<string, string[]>()
+  const spelling = new Map<string, string>()
   for (const area of areas) {
-    for (const name of [area.name, ...area.aliases]) byName.set(normal(name), [...new Set([...(byName.get(normal(name)) ?? []), area.slug])])
+    for (const name of namesOf(area)) {
+      byName.set(normalized(name), [...new Set([...(byName.get(normalized(name)) ?? []), area.slug])])
+      if (!spelling.has(normalized(name))) spelling.set(normalized(name), name)
+    }
   }
   return {
     areas,
     bySlug: new Map(areas.map((a) => [a.slug, a])),
     /** The areas of a name that the person typed, or none for a name that is not in the seed. */
-    areasNamed: (words: string) => byName.get(normal(words)) ?? [],
+    areasNamed: (words: string) => byName.get(normalized(words)) ?? [],
+    /** The seeded names inside longer words, as "Andheri" in "Andheri station". A name inside a longer found name does not count. */
+    namesIn: (words: string) => {
+      const found = [...byName.keys()].filter((name) => saidIn(words, name)).sort((a, b) => b.length - a.length)
+      const outer = found.filter((name, i) => !found.slice(0, i).some((longer) => saidIn(longer, name)))
+      return outer.map((name) => ({ words: spelling.get(name)!, slugs: byName.get(name)! }))
+    },
     questions: new Map(axes.map((a) => [a.key as LifestyleAxis, a.question])),
     mustHaveLabels: new Map(musts.map((m) => [m.key, m.label])),
   }
@@ -41,4 +54,4 @@ export function catalogueOf(db: Db) {
 }
 
 /** The words of the person must be in the turn: the model copies them, it does not write them (PD7). */
-export const saidIn = (text: string, words: string) => normal(words).length > 0 && ` ${normal(text)} `.includes(` ${normal(words)} `)
+export const saidIn = (text: string, words: string) => normalized(words).length > 0 && ` ${normalized(text)} `.includes(` ${normalized(words)} `)

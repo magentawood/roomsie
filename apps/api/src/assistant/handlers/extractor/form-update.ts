@@ -1,10 +1,9 @@
+import { isDeepStrictEqual } from 'node:util'
 import { formA, slotPath, type Budget, type ExtractorOutput, type FormA, type FormASlot } from '@roomsie/contract'
 
 /** The values of one turn, as the slots of Form A. */
 export type SlotValues = Partial<Record<FormASlot, unknown>>
 type Slot = { source: 'empty' | 'stated' | 'default'; value: unknown }
-
-const same = (a: unknown, b: unknown) => JSON.stringify(a) === JSON.stringify(b)
 
 export function slotOf(form: FormA, slot: FormASlot): Slot {
   const [group, key] = slotPath(slot)
@@ -51,11 +50,11 @@ export function applyValues(form: FormA, values: SlotValues, answering: FormASlo
       value = both
     } else if (later === 'unclear' && source === 'stated' && earlier !== 'unclear') {
       continue
-    } else if (!open && earlier !== 'unclear' && !same(earlier, later)) {
+    } else if (!open && earlier !== 'unclear' && !isDeepStrictEqual(earlier, later)) {
       conflicts.push({ slot, earlier, later })
       continue
     }
-    if (source === 'stated' && same(earlier, value)) continue
+    if (source === 'stated' && isDeepStrictEqual(earlier, value)) continue
     next = withSlot(next, slot, value)
     changed.push(slot)
   }

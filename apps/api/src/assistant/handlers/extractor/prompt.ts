@@ -1,5 +1,5 @@
 import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers, type ExtractorInput } from '@roomsie/contract'
-import type { Catalogue } from '../../catalogue'
+import { namesOf, type Catalogue } from '../../catalogue'
 
 const list = (values: readonly string[]) => values.join(' | ')
 
@@ -8,7 +8,7 @@ const list = (values: readonly string[]) => values.join(' | ')
  * so the cache of the vendor applies, and the model does not have to know Mumbai (PD7).
  */
 export function extractorPrompt(catalogue: Catalogue) {
-  const areas = catalogue.areas.map((a) => `${a.slug}: ${[a.name, ...a.aliases].join(', ')}`).join('\n')
+  const areas = catalogue.areas.map((a) => `${a.slug}: ${namesOf(a).join(', ')}`).join('\n')
   const lifestyle = Object.entries(lifestyleAnswers).map(([axis, values]) => `    "${axis}": ${list([...values, 'unclear'])}`).join('\n')
   return `You fill a form from one message of a person who looks for a flat, a room, a PG or flatmates in Mumbai.
 The person writes in English, Hindi, Marathi or a mix, in Latin or Devanagari script.

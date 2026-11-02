@@ -6,8 +6,7 @@ import { runTurn, type AssistantDeps } from '../assistant/assistant'
 import { optionalUser, type AuthOptions } from '../auth'
 import { createGoal, createVisitorSession, goalOf, lastReplyOf, saveTurn, turnsOf, visitorSessionOf, type Asker } from './store'
 
-/** A long user agent is cut, not refused: it only goes into the device hash. */
-const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional(), 'user-agent': z.string().optional().transform((ua) => ua?.slice(0, 500)) })
+const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional() })
 const params = z.object({ id: z.uuid() })
 
 /** The chat of a goal is open to a visitor, with no sign-in (PD6b). The visitor key is the only way into a visitor goal. */
@@ -43,7 +42,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const last = await lastReplyOf(options.db, goal.id)
     const { text } = req.body
-    const { form, reply: answer, conflicts } = await runTurn({ goalId: goal.id, text, lastQuestion: last?.text ?? null, asked: last?.asked ?? null, form: goal.form }, { ...options, req })
+    const { form, reply: answer, conflicts } = await runTurn({ goalId: goal.id, text, lastQuestion: last?.question ?? null, asked: last?.asked ?? null, form: goal.form }, { ...options, req })
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, form, text, answer)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
