@@ -9,7 +9,7 @@ tags:
 
 _What the assistant understands and says, and the router in front of it._
 
-**64 hours** of build work, at 3.76h a day. The last task ends on Sat 10 Oct.
+**69 hours** of build work, at 4.06h a day. The last task ends on Thu 5 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -28,3 +28,4 @@ This note is part of [[roomsie launch]].
 11. [[T-17 Carry chat into account]] — Tue 6 Oct → Wed 7 Oct, 2h
 12. [[T-10 Chat screen and split view ⚑]] — Wed 7 Oct → Fri 9 Oct, 8h
 13. [[T-09 Chip flow ⚑]] — Fri 9 Oct → Sat 10 Oct, 6h
+14. [[T-59 More chips]] — Wed 4 Nov → Thu 5 Nov, 5h

@@ -1936,6 +1936,31 @@
    "issue": 194
   },
   {
+   "id": "T-59",
+   "title": "Chips for the other closed questions",
+   "plain": "Tap buttons for the closed questions after the budget, so a person types less.",
+   "role": "P2",
+   "hours": 5,
+   "start": "2026-11-04",
+   "end": "2026-11-05",
+   "deps": [
+    "T-09"
+   ],
+   "done": [
+    "Room type, who is moving, the eight lifestyle questions and the must-have weights show their answers as chips under the question, as the chips of T-09",
+    "The chips come from the slot definitions and the catalogue, not from a model. A tap never calls a model",
+    "The chips have a design on the drafts page, and the user approves it before the build"
+   ],
+   "read": [
+    "docs/ai-agent-design.md",
+    "docs/decisions/pd-15-form-a-contract.md",
+    "docs/interface-shape.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
    "id": "T-46",
    "title": "ID verification",
    "plain": "A person checks an ID and a selfie, and roomsie keeps only the result.",

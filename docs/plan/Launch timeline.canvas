@@ -501,6 +501,15 @@
    "color": "1"
   },
   {
+   "id": "task-T-59",
+   "type": "text",
+   "text": "**[[T-59 More chips|T-59 More chips]]**\n5h · Wed 4 Nov → Thu 5 Nov",
+   "x": 9020,
+   "y": 520,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "lane-P3",
    "type": "group",
    "label": "P3 Data and trust",
@@ -1939,6 +1948,13 @@
    "fromNode": "task-T-16b",
    "fromSide": "right",
    "toNode": "task-T-58",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-09-T-59",
+   "fromNode": "task-T-09",
+   "fromSide": "right",
+   "toNode": "task-T-59",
    "toSide": "left"
   },
   {
