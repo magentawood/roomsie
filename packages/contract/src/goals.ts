@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { formA, identityPreference } from './form-a'
+import { formA, identityPreference, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { areaSlug, requiredText } from './shared'
 
@@ -78,6 +78,7 @@ export const extractorOutput = z.strictObject({
   failed: z.boolean(),
   /** What the person stated about themselves in this turn. Null: not in this turn. */
   ownValues,
+  preferences: statedPreferences,
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
@@ -122,14 +123,12 @@ export const turnLabel = routerAnswer.extend({ routerBand: z.enum(scopeBands).nu
 export type TurnLabel = z.output<typeof turnLabel>
 
 /** What a typed turn keeps: the label of the router, and the hidden preferences that the turn stated, as the log of PD3c (T-58). */
-export const userTurnParts = turnLabel.extend({
-  preferences: z.strictObject({ religionPreference: identityPreference(religions).strict(), communityPreference: identityPreference(communities).strict() }).partial().optional(),
-}).strict()
+export const userTurnParts = turnLabel.extend({ preferences: statedPreferences.optional() }).strict()
 export type UserTurnParts = z.output<typeof userTurnParts>
 
 /** What the reply writer reads: the output of the extractor, the question of the last reply, and the label of the turn. */
 // The reply never names the own values of the person (T-58), so it does not read them.
-export const replyInput = extractorOutput.omit({ ownValues: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
+export const replyInput = extractorOutput.omit({ ownValues: true, preferences: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })

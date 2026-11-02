@@ -46,14 +46,11 @@ function meets(key: MustHaveKey): SQL {
 const theirDealbreakerIn = (keys: MustHaveKey[]) => sql`exists (select 1 from ${profileMustHaves}
   where ${profileMustHaves.profileId} = ${profiles.id} and ${profileMustHaves.weight} = 'dealbreaker' and ${inArray(profileMustHaves.mustHaveKey, keys)})`
 
-/** The hidden filter of PD3c (T-58): the stated preferences of the searcher. */
-export type IdentitySearch = FormA['religionPreference']['value'] | FormA['communityPreference']['value']
-
 /**
  * "Only" removes the people who stated a different value, and "preferably" adds a point to the order.
  * A person who stated nothing stays, and no label tells it (PC-31).
  */
-function identitySql(column: typeof profiles.religion | typeof profiles.community, preference: IdentitySearch) {
+function identitySql(column: typeof profiles.religion | typeof profiles.community, preference: PeopleSearch['religionPreference' | 'communityPreference']) {
   if (!preference) return { filter: undefined, point: sql`0` }
   const stated = sql`${column}::text = any(${textArray(preference.values)})`
   return preference.weight === 'dealbreaker'
@@ -64,16 +61,16 @@ function identitySql(column: typeof profiles.religion | typeof profiles.communit
 export type PeopleSearch = BaseSearch & {
   searcher: ReturnType<typeof searcherMustHaves>
   formBFloor: number
-  religion: IdentitySearch
-  community: IdentitySearch
+  religionPreference: FormA['religionPreference']['value']
+  communityPreference: FormA['communityPreference']['value']
 }
 
 /** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
 export async function matchingPeople(db: Db, search: PeopleSearch) {
   const mustHaves = mustHaveSql(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
   const { budget, moveDate, searcher } = search
-  const religion = identitySql(profiles.religion, search.religion)
-  const community = identitySql(profiles.community, search.community)
+  const religion = identitySql(profiles.religion, search.religionPreference)
+  const community = identitySql(profiles.community, search.communityPreference)
 
   const conditions = [
     ...visiblePeople(search.viewerUserId),
