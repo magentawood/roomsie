@@ -8,6 +8,7 @@ start: 2026-11-03
 end: 2026-11-06
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/194
 tags:
   - task
   - p3
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P3 Data and trust]], task 11 of 19  
 **When:** Tue 3 Nov → Fri 6 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#194](https://github.com/magentawood/roomsie/issues/194)
 
 Filters the people of a search on a community or religion preference that the searcher stated, and never shows the filter.
 

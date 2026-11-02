@@ -68,7 +68,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ can start | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
-| 0 | [[T-58 Community filter]] | P3 | 8 | ⬜ can start | 0 | no issue at this time |
+| 0 | [[T-58 Community filter]] | P3 | 8 | ⬜ can start | 0 | [#194](https://github.com/magentawood/roomsie/issues/194) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
