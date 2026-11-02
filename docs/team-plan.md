@@ -666,8 +666,8 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - It writes the reply from the form and the last two turns, never from the full chat
 - It replies in the language that the person used
 - It never states a fact about a specific person
-- An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
-- Each open product call that this task uses has a default in config or seed data, not in code. F-12 and F-13 confirms it
+- An off-topic message gets one line and the question again. Legal, tax and safety questions get a hand-off line with a real source, then the question again
+- Each open product call that this task uses has a default in config or seed data, not in code. F-14 (PC-15) confirms it
 - Read first: `docs/scope-policy.md`
 
 **T-24 · Event logging table** — done when:
@@ -836,7 +836,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 **T-38 · Advisor: articles first, then web search after sign-in** — done when:
 - Answers to consulting questions come from the articles first, and give the name of the article
 - If the articles do not answer a general question, signed-in users get a web_search answer from DeepSeek, or from Gemini Google Search grounding as fallback. A visitor who has not signed in gets a hedged general answer
-- The assistant answers law, tax, area safety and claims about a person only from articles, or hands them off. It never uses the web for them
+- The assistant answers law, tax, area safety and claims about a person only from articles: the general picture, then a pointer to a real source. With no article, it hands them off. It never uses the web for them
 - Web searches count toward the daily spend ceiling
 - Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
 - Read first: `docs/scope-policy.md`, `docs/extensibility.md`

@@ -34,10 +34,55 @@ The assistant writes its answers and stays on the topic.
 - [ ] It writes the reply from the form and the last two turns, never from the full chat
 - [ ] It replies in the language that the person used
 - [ ] It never states a fact about a specific person
-- [ ] An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-12 and F-13 confirms it
+- [ ] An off-topic message gets one line and the question again. Legal, tax and safety questions get a hand-off line with a real source, then the question again
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 (PC-15) confirms it
 
 ^done
 
 ## Read first
 - [scope-policy.md](../../scope-policy.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by pulkitshringi
+
+- **Modules:**
+  - **The contract:** new schemas with a version for the composer: its input and its answer. The other schemas do not change.
+  - **The reply writer:** the code makes the plan of each reply as before. The plan has the filled slots, the conflicts, the next question, the chips and the asked slot. On a core typed turn, the composer writes the words of that plan. Its interface does not change.
+  - **The composer (a new handler of the assistant):** one JSON call through the model module, with the role `composer`. It has a fixed system prompt and an output check.
+  - **The model module:** a call can have a deadline. The deadline applies to all the attempts of the call: the retry and the fallback too.
+  - **The fixed lines:** a new data file with each fixed line in five languages. Zod checks the file when the API starts. The lines go out of the code of the reply writer.
+  - **The settings of the assistant:** `COMPOSER_DEADLINE_MS`, with the default 2500.
+  - **The goals store:** it reads the last two turns of a goal, and the language of the last typed turn.
+  - **The docs:** PD10 and scope-policy.md tell the hand-off line until T-38. The assistant standards tell the deadline and the output check. A learn page tells how the composer works.
+  - **The plan:** done items 4 and 5 of T-13 and done item 3 of T-38 change (see the decisions).
+- **Seams for the tests:**
+  - The tests of the turn route, with the fake vendors: a reply in Hinglish, a rejected reply, a late composer, and a failed composer. Each test checks the text, the parts and the form.
+  - The tests of the turn route for the fixed lines: an off-topic turn, a legal question and a tap, each in Hinglish or Marathi.
+  - Unit tests of the output check and of the file of the fixed lines.
+  - A live check after the deploy, in the chat on roomsie.in: one answer in English, one in Hinglish and one in Marathi.
+- **Decisions:**
+  - **The code plans and the model writes (the user, 2026-11-02):** the code decides what the reply says. The composer only writes the words of the plan. It cannot remove the question or add a fact. If the composer fails, the scripted reply goes out (why: PD7a).
+  - **The composer runs on each core typed turn (the user):** the other turns keep a scripted reply with no model call after the router. These are taps, and off-topic, adversarial and sensitive turns (why: PD7a, PD10).
+  - **A deadline for the composer (the user):** `COMPOSER_DEADLINE_MS` limits the full call, with no long chain of retries. If the composer misses the deadline, the scripted reply goes out. The `model_called` event gives the time of each call, so T-27 can tune the deadline.
+  - **The languages of the fixed lines (the user):** English, Hinglish, Hindi in Devanagari, and Marathi in Latin and in Devanagari. Only the short fixed lines change language. The questions after a tap or a fallback stay in English, as the chips (why: PD7, PC-09).
+  - **The language of a reply:** a typed turn uses the register of its router label. A tap and the line "send it again" use the register of the last typed turn. The language `other`, or no register, gives English. A mixed message in Latin script gives Hinglish.
+  - **The home of the fixed lines (the user):** a JSON data file, not code and not a table. A test fails when a line has no text for a language. Our drafts are the default until PC-15 of F-14 gives the lines.
+  - **Legal, tax and safety questions (the user):** a fixed hand-off line with a real source, then the question again. For an agreement or a dispute, the source is a lawyer. For stamp duty and registration, it is the IGR Maharashtra site. The general picture comes from the articles of T-38 (why: PD10, band 2b). General questions keep the line "noted" until T-38.
+  - **No fact about a specific person (the user):** the composer gets only the plan, the two forms of the person, and the last two turns. It never gets a listing, a profile or a result. The prompt forbids names and claims about a person. The output check rejects a text when:
+    - it is longer than the limit
+    - it has a phone number, an email address or a link
+    - it has a number that is not in the plan or in the message
+    - it has a name that is not in the plan. A name from the message of the person does not pass.
+  - **The last two turns:** the two stored turns before the current message, and the current message. Nothing older (why: PD7a, the assistant standards).
+  - **Form B:** the observations of the person from the table. The list is empty until T-36.
+  - **The answer of the composer:** a JSON object with a version and the text. The fixed system prompt comes first, so the cache of the vendor applies (why: PD7).
+  - **Three done items changed (the user, 2026-11-02):** in item 4 of T-13, a legal question gets a hand-off line now. Item 3 of T-38 adds the general picture. Item 5 names F-14 (PC-15), not F-12 and F-13.
+- **Out of scope:**
+  - the advisor, the articles and the general picture (T-38)
+  - the observer that fills Form B (T-36)
+  - a reply that arrives after the results panel moves
+  - the translation of the interview questions and the lifestyle questions
+  - the score of the composer on the eval set, and a new value of the deadline (T-27, M-03)
+  - the final text of the fixed lines and the hand-off sources (PC-15 of F-14)
+  - the comparison of cards in the chat (T-49)
