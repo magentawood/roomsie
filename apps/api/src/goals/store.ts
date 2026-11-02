@@ -54,13 +54,14 @@ export async function turnsOf(db: Db, goalId: string) {
   return rows.map(toChatTurn)
 }
 
-/** The question of the last reply of the assistant, and the slot that it asked about. */
+/** The question of the last reply of the assistant, the slot that it asked about, and its open conflicts. */
 export async function lastReplyOf(db: Db, goalId: string) {
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
-  const parts = assistantParts.safeParse(last.parts)
-  return parts.success ? { question: parts.data.question ?? last.text, asked: parts.data.asked } : { question: last.text, asked: null }
+  // Only saveTurn writes an assistant turn, with the parts of the reply.
+  const { question, asked, conflicts } = assistantParts.parse(last.parts)
+  return { question: question ?? last.text, asked, conflicts }
 }
 
 /**

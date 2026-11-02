@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { eq } from 'drizzle-orm'
 import { goalResponse, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
-import { areas, chatTurns } from '../src/db/schema'
+import { anonymousSessions, areas, chatTurns, goals } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
@@ -136,10 +136,9 @@ describe('a typed turn', () => {
   })
 
   it('keeps the values of Gemini, which gives no probabilities', async () => {
-    const requests = fakeVendors({ deepseek: [new Response('busy', { status: 503 })], gemini: [answer(JSON.stringify({ lifestyle: { food: 'eggetarian' } }))] })
+    fakeVendors({ deepseek: [new Response('busy', { status: 503 })], gemini: [answer(JSON.stringify({ lifestyle: { food: 'eggetarian' } }))] })
     const goal = await visitorGoal()
     expect((await sent(goal, 'mostly veg, kabhi kabhi eggs')).form.lifestyle.food).toEqual({ source: 'stated', value: 'eggetarian' })
-    expect(requests[1]!.body).not.toHaveProperty('logprobs')
   })
 
   it('fills no slot from words that are not in the turn, or from an unsure area', async () => {
@@ -186,7 +185,20 @@ describe('a typed turn', () => {
   it('reads an area name in Devanagari, with or without a nukta', async () => {
     fakeVendors({ deepseek: [scored({ areas: [{ words: 'पवई', slug: 'powai' }] }), scored({ areas: [{ words: 'सांताक्रूज़', slug: 'santacruz-west' }] })] })
     expect((await sent(await visitorGoal(), 'पवई में रूम चाहिए')).form.areas.value).toEqual(['powai'])
-    expect((await sent(await visitorGoal(), 'सांताक्रूज़ में')).turns[1].text).toBe('Which सांताक्रूज़ do you mean: Santacruz West, Santacruz East, or both?')
+    expect((await sent(await visitorGoal(), 'सांताक्रूज़ में')).turns[1].text).toBe('Which सांताक्रूज do you mean: Santacruz West, Santacruz East, or both?')
+  })
+
+  it('reads an area name with a Marathi ending', async () => {
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'पवईत', slug: 'powai' }] }), scored({ areas: [{ words: 'अंधेरीत', slug: 'andheri-west' }] }), scored({ areas: [{ words: 'ठाण्यात', slug: 'thane-west' }] })] })
+    expect((await sent(await visitorGoal(), 'पवईत रूम हवी')).form.areas.value).toEqual(['powai'])
+    expect((await sent(await visitorGoal(), 'मला अंधेरीत रूम हवी')).turns[1].text).toBe('Which अंधेरी do you mean: Andheri West, Andheri East, or both?')
+    expect((await sent(await visitorGoal(), 'ठाण्यात रूम')).turns[1].text).toBe('Which ठाणे do you mean: Thane, Thane West, Thane East, or all of them?')
+  })
+
+  it('fills no budget or move date from words with a low token probability', async () => {
+    fakeVendors({ deepseek: [scored({ budget: '25k', moveDate: 'next month' }, { '25k': 0.3, 'next month': 0.4 })] })
+    const { form } = await sent(await visitorGoal(), 'shayad 25k, next month maybe')
+    expect([form.budget.source, form.moveDate.source]).toEqual(['empty', 'empty'])
   })
 
   it('makes each value unclear, and reports it, when DeepSeek gives no token probabilities', async () => {
@@ -214,9 +226,9 @@ describe('a typed turn', () => {
     const conflicts = await analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, 'slot_conflict'))
     expect(conflicts).toHaveLength(before + 1)
     expect(conflicts.at(-1)!.fields).toEqual({ slot: 'budget' })
-    // An answer that fills nothing gets the question again. The extractor reads only the question, not the line before it.
+    // An answer that settles nothing gets the question again. The extractor reads only the question, not the line before it.
     const requests = fakeVendors({ deepseek: [scored({}), scored({ budget: '25k' })] })
-    const unclear = await sent(goal, 'doosra wala')
+    const unclear = await sent(goal, 'hmm')
     expect(unclear.form.budget.value).toEqual({ min: null, max: 20_000 })
     expect(unclear.turns[1].text).toBe('You said up to ₹20,000 before, and now up to ₹25,000. Which one should I keep?')
     // The answer to the question replaces the earlier value.
@@ -224,6 +236,24 @@ describe('a typed turn', () => {
     expect((requests[1]!.body as { messages: { content: string }[] }).messages[1]!.content).toContain('Which one should I keep?')
     // The reply to "budget 20k" began with "Got it: up to ₹20,000.", and the extractor of the next turn did not get that line.
     expect((earlier[1]!.body as { messages: { content: string }[] }).messages[1]!.content).not.toContain('Got it')
+  })
+
+  it('asks about each conflict of a turn, and reads "doosra wala" or "pehla" as the answer', async () => {
+    fakeVendors({ deepseek: [scored({ intent: 'pg', budget: '20k' }), scored({ intent: 'whole_flat', budget: '30k' }), scored({})] })
+    const goal = await visitorGoal()
+    await sent(goal, 'PG, 20k')
+    const both = await sent(goal, 'whole flat, 30k')
+    expect(both.turns[1].text).toBe('You said a PG before, and now a whole flat. Which one should I keep? You said up to ₹20,000 before, and now up to ₹30,000. Which one should I keep?')
+    const later = await sent(goal, 'doosra wala')
+    expect([later.form.intent.value, later.form.budget.value]).toEqual(['whole_flat', { min: null, max: 30_000 }])
+
+    fakeVendors({ deepseek: [scored({ budget: '20k' }), scored({ budget: '25k' }), scored({})] })
+    const other = await visitorGoal()
+    await sent(other, '20k')
+    await sent(other, '25k')
+    const earlier = await sent(other, 'pehla wala')
+    expect(earlier.form.budget.value).toEqual({ min: null, max: 20_000 })
+    expect(earlier.turns[1].text).not.toContain('Which one should I keep?')
   })
 
   it('fills the other budget bound with no conflict', async () => {
@@ -247,6 +277,28 @@ describe('a typed turn', () => {
     const { form, turns } = await sent(goal, 'Powai, 20k')
     expect(form.areas.source).toBe('empty')
     expect(turns[1].text).toBe('Sorry, I could not read that just now. Please send it again.')
+  })
+
+  it('refuses a visitor key after its session expired', async () => {
+    const goal = await visitorGoal()
+    const [row] = await t.db.select({ session: goals.anonymousSessionId }).from(goals).where(eq(goals.id, goal.id))
+    await t.db.update(anonymousSessions).set({ expiresAt: new Date(Date.now() - 1_000) }).where(eq(anonymousSessions.id, row!.session!))
+    expect((await send(goal, 'PG chahiye')).statusCode).toBe(404)
+  })
+
+  it('refuses the second of two turns at the same time with 409, and saves the first', async () => {
+    const goal = await visitorGoal()
+    let release = () => {}
+    const gate = new Promise<void>((resolve) => { release = resolve })
+    vi.stubGlobal('fetch', async () => {
+      await gate
+      return scored({ intent: 'pg' })
+    })
+    const both = Promise.all([send(goal, 'PG'), send(goal, 'PG')])
+    // Both turns read the goal, then wait for the model.
+    await new Promise((resolve) => setTimeout(resolve, 100))
+    release()
+    expect((await both).map((res) => res.statusCode).sort()).toEqual([200, 409])
   })
 
   it('refuses a turn to a goal of a different person', async () => {

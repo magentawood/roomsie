@@ -2,6 +2,7 @@ import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHa
 import { reportError } from '@roomsie/config/report'
 import { ModelUnavailable, vendorOf } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
+import { phrase, plainWords } from '../../words'
 import type { AssistantDeps, Handler, TurnState } from '../../assistant'
 import { parseBudget } from './budget-words'
 import { applyValues, type SlotValues } from './form-update'
@@ -10,10 +11,21 @@ import { parseMoveDate } from './move-date-words'
 import { extractorPrompt, extractorMessage } from './prompt'
 
 /** Free text to Form A slots. The model only picks values and copies words. Code reads numbers and dates, and checks the probability (PD7). */
-export const extractor: Handler = async (turn, deps) => extractorOutput.omit({ version: true }).parse(await extract(turn, deps))
+// The full versioned schema checks the output (api.md). The next handler reads only its fields.
+export const extractor: Handler = async (turn, deps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], ambiguous: [], failed })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed })
+
+/** An answer to "which one should I keep?" that names no value, as "doosra wala" or "pehla" (PD3b). */
+const laterWords = phrase('doosra|dusra|doosri|dusri|doosre|dusre|second|2nd|new|naya|nayi|naye|latest|navin|दूसरा|दूसरी|दूसरे|दुसरा|दुसरी|दुसरे|नया|नई|नए|नवीन|नवा')
+const earlierWords = phrase('pehla|pehli|pahla|pehle wala|pehle vala|first|1st|old|purana|purani|purane|earlier|previous|pahila|pahile|juna|पहला|पहली|पहले वाला|पहिला|पहिले|पुराना|पुरानी|जुना|जुने')
+function choiceIn(text: string): 'earlier' | 'later' | null {
+  const words = plainWords(text).replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
+  const later = laterWords.test(words)
+  const earlier = earlierWords.test(words)
+  return later === earlier ? null : later ? 'later' : 'earlier'
+}
 
 async function extract(turn: TurnState, { req, db, models, settings, today }: AssistantDeps) {
   const catalogue = await catalogueOf(db)
@@ -58,8 +70,7 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   const ambiguous: AmbiguousArea[] = []
   for (const { words, slug } of answer.areas ?? []) {
     if (!saidIn(turn.text, words)) continue
-    const exact = catalogue.areasNamed(words)
-    const named = exact.length ? [{ words, slugs: exact }] : catalogue.namesIn(words)
+    const named = catalogue.namesIn(words)
     for (const name of named) {
       if (name.slugs.length > 1) {
         if (!ambiguous.some((a) => a.words === name.words)) ambiguous.push(name)
@@ -68,11 +79,19 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
     if (!named.length && slug && namedInTurn(slug) && passesGate('slug', slug)) areas.push(slug)
   }
   if (areas.length) values.areas = [...new Set(areas)]
-  const budget = answer.budget && saidIn(turn.text, answer.budget) ? parseBudget(answer.budget) : null
+  // Words with a low probability leave the slot empty: a budget or a date has no "unclear" value.
+  const budget = answer.budget && saidIn(turn.text, answer.budget) && passesGate('budget', answer.budget) ? parseBudget(answer.budget) : null
   if (budget) values.budget = budget
-  const moveDate = answer.moveDate && saidIn(turn.text, answer.moveDate) ? parseMoveDate(answer.moveDate, today()) : null
+  const moveDate = answer.moveDate && saidIn(turn.text, answer.moveDate) && passesGate('moveDate', answer.moveDate) ? parseMoveDate(answer.moveDate, today()) : null
   if (moveDate) values.moveDate = moveDate
+  // The open conflicts: a value for the slot wins, or "doosra wala" or "pehla" picks one of the two values.
+  const choice = choiceIn(turn.text)
+  const settled: FormASlot[] = []
+  for (const { slot, earlier, later } of turn.openConflicts) {
+    if (values[slot] === undefined && choice) values[slot] = choice === 'later' ? later : earlier
+    if (values[slot] !== undefined && values[slot] !== 'unclear') settled.push(slot)
+  }
   if (misaligned) reportError(new Error(unscored ? 'DeepSeek gave no token probabilities' : 'The token probabilities do not match the answer'), { where: 'assistant.extractor', log: req.log })
 
-  return { ...applyValues(turn.form, values, turn.asked?.conflict ? turn.asked.slot : null), ambiguous, failed: false }
+  return { ...applyValues(turn.form, values, turn.openConflicts.map((c) => c.slot)), settled, ambiguous, failed: false }
 }
