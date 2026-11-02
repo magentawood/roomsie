@@ -49,7 +49,7 @@ Attack our own site before strangers do.
   - **The alert check (new):** `POST /v1/admin/alert-check`, for a moderator only, as the model check of T-11. The live API sends one Telegram message through the code of the spend alert. It answers 503 when the Telegram settings are not set. The interface changes.
   - **The docs:** the learn page of the limits tells how to run the abuse test and the alert check before the launch (go/no-go check 3 of PD11).
 - **Seams for the tests:**
-  - A test of the alert check route: a moderator sends one message to the fake Telegram, a person who is not a moderator gets 403, and no Telegram settings give 503.
+  - A test of the alert check route: a moderator sends one message to the fake Telegram, a person who is not a moderator gets 404, as for the model check, and no Telegram settings give 503.
   - The script runs one time against roomsie.in, and its report goes in the PR.
   - The alert check runs one time on roomsie.in from the signed-in Safari of the user, and the message goes to the team group.
 - **Decisions:**
