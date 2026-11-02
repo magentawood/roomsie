@@ -32,8 +32,12 @@ export function writeStored(key: StoredKey, value: string | null) {
 /** At sign-out, so the next person on this browser cannot open the chat. */
 export const forgetChat = () => Object.values(chatStorage).forEach((key) => writeStored(key, null))
 
-/** The chips under the newest question, while its slot is empty or unclear. A new goal starts with the place types (T-09). */
-export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: FormA): ChipSlot | null {
+/**
+ * The chips under the newest question, while its slot is empty or unclear. A new goal starts with the place types (T-09).
+ * A tap also starts a chat, so no chips show while new chats are over their limit (T-21).
+ */
+export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: FormA, chatsOverLimit = false): ChipSlot | null {
+  if (chatsOverLimit) return null
   const newest = turns.at(-1)
   const slot = newest ? newest.chips : 'intent'
   return slot && isOpenSlot(form[slot]) ? slot : null

@@ -81,6 +81,7 @@ Stops abuse of the AI and a very large bill.
   - **The counter past the cap (the user, review round 2):** a visitor past five typed turns with no results sees no line of the free messages. The line comes back, at 0, when results show or at the backstop.
   - **From the standards (review):** a request whose address from the load balancer is not an IP address gets 400, because Zod parses each byte from outside (api.md). The Telegram call has a timeout, as each call to an outside service.
   - **The cap across goals (review):** the cap waits until any goal of the visitor session showed results, so a new empty goal does not hide the cap.
+  - **No chips while new chats are over their limit (browser check):** a tap also starts a chat, so it gets the same refusal. A sign-in brings them back.
   - **The moment of the cap:** the wall opens when a turn uses the last free typed turn, and the server sends `wall_hit` with that turn. A typed turn after it gets `turn_cap` with no event.
   - **T-29 (the user, review round 1):** its item about the spend says "When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert". Go/no-go check 3 says "The spend alert goes to the team".
   - **The design (the user, 2026-11-02):** drafts section 34 (Figma node 590:29811) holds the two limit messages, with our tokens. Each line comes in the thread in place of the reply, in the error text colour. The line of too many chats has a "Sign in with Google" button.
