@@ -15641,6 +15641,7 @@
                             "type": "string"
                           },
                           "chips": {
+                            "default": null,
                             "nullable": true,
                             "type": "string",
                             "enum": [
@@ -15666,6 +15667,7 @@
                       }
                     },
                     "typedTurnsLeft": {
+                      "default": null,
                       "nullable": true,
                       "type": "integer",
                       "minimum": 0,
@@ -17242,6 +17244,7 @@
                             "type": "string"
                           },
                           "chips": {
+                            "default": null,
                             "nullable": true,
                             "type": "string",
                             "enum": [
@@ -17267,6 +17270,7 @@
                       }
                     },
                     "typedTurnsLeft": {
+                      "default": null,
                       "nullable": true,
                       "type": "integer",
                       "minimum": 0,
@@ -18923,6 +18927,7 @@
                                 "type": "string"
                               },
                               "chips": {
+                                "default": null,
                                 "nullable": true,
                                 "type": "string",
                                 "enum": [
@@ -18965,6 +18970,7 @@
                                 "type": "string"
                               },
                               "chips": {
+                                "default": null,
                                 "nullable": true,
                                 "type": "string",
                                 "enum": [
@@ -18994,6 +19000,7 @@
                       "maxItems": 2
                     },
                     "typedTurnsLeft": {
+                      "default": null,
                       "nullable": true,
                       "type": "integer",
                       "minimum": 0,

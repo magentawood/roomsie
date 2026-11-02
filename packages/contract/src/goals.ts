@@ -14,9 +14,10 @@ export const formASlots = [
 export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
-export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable(), createdAt: z.iso.datetime() })
+// The defaults read the reply of the API before a deploy: Vercel is live a few minutes before the API (api.md).
+export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null), createdAt: z.iso.datetime() })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
-const typedTurnsLeft = z.number().int().min(0).nullable()
+const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
 export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
