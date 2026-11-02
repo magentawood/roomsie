@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { formA, identityPreference, statedPreferences } from './form-a'
+import { budgetBands, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { areaSlug, requiredText } from './shared'
 
@@ -14,12 +14,31 @@ export const formASlots = [
 export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
-export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), createdAt: z.iso.datetime() })
+/** `chips`: the chips that the question of an assistant turn offers (T-09). */
+export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable(), createdAt: z.iso.datetime() })
 export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn) })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
-export const turnBody = z.strictObject({ text: requiredText(2000) })
+/** A tap on a chip: one place type, one to ten area groups, or one budget band. It calls no model (T-09). */
+export const chipTap = z.discriminatedUnion('slot', [
+  z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
+  z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
+  z.strictObject({ slot: z.literal('budget'), value: z.enum(budgetBands.map((band) => band.id)) }),
+])
+export type ChipTap = z.infer<typeof chipTap>
+
+/** The text of a tap in the chat: the chip label, or the names of the areas. */
+export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
+  switch (tap.slot) {
+    case 'intent': return intentLabels[tap.value]
+    case 'areas': return tap.value.map(areaName).join(', ')
+    case 'budget': return budgetBands.find((band) => band.id === tap.value)!.label
+  }
+}
+/** A typed message, or a chip tap. */
+export const turnBody = z.union([z.strictObject({ text: requiredText(2000) }), z.strictObject({ tap: chipTap })])
+export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
 export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]) })
 export type TurnResponse = z.infer<typeof turnResponse>
@@ -91,6 +110,8 @@ export const assistantParts = z.strictObject({
   question: z.string().nullable().default(null),
   /** The conflicts that the reply asks about. They stay open until a turn settles them. */
   conflicts: z.array(slotConflict).default([]),
+  /** The chips that the question offers: only with the plain question of intent, areas or budget (T-09). */
+  chips: z.enum(chipSlots).nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 

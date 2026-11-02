@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { chatStorage, forgetChat, keyAction, readStored, writeStored } from './chat'
+import { formA, type GoalResponse } from '@roomsie/contract'
+import { chatStorage, chipsOf, forgetChat, keyAction, readStored, toggled, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -33,3 +34,28 @@ describe('the stored chat', () => {
     expect(() => writeStored(chatStorage.goal, 'goal-1')).not.toThrow()
   })
 })
+
+describe('the chips of the chat (T-09)', () => {
+  const turn = (role: 'user' | 'assistant', chips: 'intent' | 'areas' | 'budget' | null = null): GoalResponse['turns'][number] =>
+    ({ id: crypto.randomUUID(), role, text: 'text', chips, createdAt: new Date().toISOString() })
+  const empty = formA.parse({})
+
+  it('starts a new goal with the place types', () => {
+    expect(chipsOf([], empty)).toBe('intent')
+    expect(chipsOf([], formA.parse({ intent: { source: 'stated', value: 'pg' } }))).toBeNull()
+  })
+
+  it('shows the chips of the newest question while its slot is empty or unclear', () => {
+    expect(chipsOf([turn('user'), turn('assistant', 'areas')], empty)).toBe('areas')
+    expect(chipsOf([turn('user'), turn('assistant', 'intent')], formA.parse({ intent: { source: 'stated', value: 'unclear' } }))).toBe('intent')
+    expect(chipsOf([turn('user'), turn('assistant', 'areas')], formA.parse({ areas: { source: 'stated', value: ['thane'] } }))).toBeNull()
+    expect(chipsOf([turn('user'), turn('assistant')], empty)).toBeNull()
+    expect(chipsOf([turn('assistant', 'areas'), turn('user')], empty)).toBeNull()
+  })
+
+  it('turns an area on and off', () => {
+    expect(toggled(['thane'], 'navi-mumbai')).toEqual(['thane', 'navi-mumbai'])
+    expect(toggled(['thane', 'navi-mumbai'], 'thane')).toEqual(['navi-mumbai'])
+  })
+})
+

@@ -15640,6 +15640,15 @@
                           "text": {
                             "type": "string"
                           },
+                          "chips": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "intent",
+                              "areas",
+                              "budget"
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -15650,6 +15659,7 @@
                           "id",
                           "role",
                           "text",
+                          "chips",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -17177,6 +17187,15 @@
                           "text": {
                             "type": "string"
                           },
+                          "chips": {
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "intent",
+                              "areas",
+                              "budget"
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -17187,6 +17206,7 @@
                           "id",
                           "role",
                           "text",
+                          "chips",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -17232,18 +17252,113 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "text": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 2000
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 2000
+                      }
+                    },
+                    "required": [
+                      "text"
+                    ],
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "tap": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "intent"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "room",
+                                  "pg",
+                                  "whole_flat",
+                                  "flatmates",
+                                  "unclear"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "areas"
+                                ]
+                              },
+                              "value": {
+                                "minItems": 1,
+                                "maxItems": 10,
+                                "type": "array",
+                                "items": {
+                                  "type": "string",
+                                  "maxLength": 60,
+                                  "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                                }
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "budget"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "under_10k",
+                                  "under_15k",
+                                  "under_25k",
+                                  "under_35k",
+                                  "above_35k"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "tap"
+                    ],
+                    "additionalProperties": false
                   }
-                },
-                "required": [
-                  "text"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -18746,6 +18861,15 @@
                               "text": {
                                 "type": "string"
                               },
+                              "chips": {
+                                "nullable": true,
+                                "type": "string",
+                                "enum": [
+                                  "intent",
+                                  "areas",
+                                  "budget"
+                                ]
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -18756,6 +18880,7 @@
                               "id",
                               "role",
                               "text",
+                              "chips",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -18778,6 +18903,15 @@
                               "text": {
                                 "type": "string"
                               },
+                              "chips": {
+                                "nullable": true,
+                                "type": "string",
+                                "enum": [
+                                  "intent",
+                                  "areas",
+                                  "budget"
+                                ]
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -18788,6 +18922,7 @@
                               "id",
                               "role",
                               "text",
+                              "chips",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -18801,6 +18936,25 @@
                   "required": [
                     "form",
                     "turns"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
                   ],
                   "additionalProperties": false
                 }

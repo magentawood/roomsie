@@ -51,9 +51,18 @@ export type Budget = z.infer<typeof budget>
 
 /** The budget bands of the chips (interface-shape.md). The band above 35k has no maximum. */
 export const budgetBands = [
-  { id: 'under_10k', min: null, max: 10_000 },
-  { id: 'under_15k', min: null, max: 15_000 },
-  { id: 'under_25k', min: null, max: 25_000 },
-  { id: 'under_35k', min: null, max: 35_000 },
-  { id: 'above_35k', min: 35_000, max: null },
+  { id: 'under_10k', min: null, max: 10_000, label: 'Under ₹10k' },
+  { id: 'under_15k', min: null, max: 15_000, label: 'Under ₹15k' },
+  { id: 'under_25k', min: null, max: 25_000, label: 'Under ₹25k' },
+  { id: 'under_35k', min: null, max: 35_000, label: 'Under ₹35k' },
+  { id: 'above_35k', min: 35_000, max: null, label: 'Above ₹35k' },
 ] as const
+export type BudgetBand = (typeof budgetBands)[number]['id']
+
+/** The slots that the chat offers as chips (T-09). */
+export const chipSlots = ['intent', 'areas', 'budget'] as const
+export type ChipSlot = (typeof chipSlots)[number]
+/** The place-type chips, as the designs name them (PD15). */
+export const intentLabels = {
+  room: 'A room in a shared flat', pg: 'A PG or hostel', whole_flat: 'A whole flat', flatmates: 'People to rent with', unclear: 'Not sure, help me pick',
+} satisfies Record<(typeof intents)[number], string>
