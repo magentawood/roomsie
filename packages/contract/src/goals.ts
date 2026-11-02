@@ -19,14 +19,12 @@ export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
-/** A tap calls no model (T-09). */
 export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
   z.strictObject({ slot: z.literal('budget'), value: z.enum(budgetBands.map((band) => band.id)) }),
 ])
 export type ChipTap = z.infer<typeof chipTap>
-/** What a chip turn keeps. */
 export const chipTurnParts = z.strictObject({ version: z.literal(1).default(1), tap: chipTap })
 export type ChipTurnParts = z.output<typeof chipTurnParts>
 

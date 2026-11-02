@@ -60,6 +60,9 @@ export const budgetBands = [
 export type BudgetBand = (typeof budgetBands)[number]['id']
 export const budgetBandOf = (id: BudgetBand) => budgetBands.find((band) => band.id === id)!
 
+/** A slot that the assistant still asks about. */
+export const isOpenSlot = ({ source, value }: { source: string; value: unknown }) => source === 'empty' || value === 'unclear'
+
 export const chipSlots = ['intent', 'areas', 'budget'] as const
 export type ChipSlot = (typeof chipSlots)[number]
 /** The place-type chips, as the designs name them (PD15). */

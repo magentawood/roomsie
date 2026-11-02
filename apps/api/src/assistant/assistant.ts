@@ -22,7 +22,6 @@ export type TurnState = {
 const usesExtractor = ({ band, kinds }: TurnLabel) =>
   band !== 'out_of_scope' && band !== 'adversarial' && !(kinds.includes('question') && !kinds.includes('filters'))
 
-/** What each turn starts from: the goal, the last reply and the form. */
 export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form'>
 
 /** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */

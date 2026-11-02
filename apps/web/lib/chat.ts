@@ -1,4 +1,4 @@
-import { intents, type ChipSlot, type FormA, type GoalResponse } from '@roomsie/contract'
+import { intents, isOpenSlot, type ChipSlot, type FormA, type GoalResponse } from '@roomsie/contract'
 
 export const canSend = (text: string) => text.trim().length > 0
 
@@ -36,7 +36,7 @@ export const forgetChat = () => Object.values(chatStorage).forEach((key) => writ
 export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: FormA): ChipSlot | null {
   const newest = turns.at(-1)
   const slot = newest ? newest.chips : 'intent'
-  return slot && (form[slot].source === 'empty' || form[slot].value === 'unclear') ? slot : null
+  return slot && isOpenSlot(form[slot]) ? slot : null
 }
 
 /** After "Not sure, help me pick", the four place types show again. */
