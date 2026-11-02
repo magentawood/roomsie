@@ -1,6 +1,6 @@
 # PD7a — Agent architecture: a router with small handlers
 
-**Status:** Settled. Changed on 2026-10-24. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-11-02. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -86,8 +86,12 @@ multi-agent, and not one large model. **All of it ships at launch.**
 
 ## Consequences
 
-- The router and the extractor are two sequential calls before the panel
-  moves. Do not add a third hop without a measurement.
+- The router and the extractor are two parallel calls before the panel
+  moves, so the router adds no wait (2026-11-02, T-34). The cost is one small
+  router call on each typed message, and an extractor answer that an
+  off-topic, adversarial or question-only turn drops. One call with the two
+  jobs costs less, but a prompt change for one job can break the other. Do not
+  add a sequential hop without a measurement.
 - Six handlers is a design. Twelve is a maintenance problem for five
   part-time engineers.
 - Measure cost for each interview and each handler from day one. The cost for

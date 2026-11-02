@@ -180,7 +180,7 @@ flowchart LR
     B[Typed slot answer] --> B1["**low**<br/>router + extractor"]
     C[Something revealing] --> C1["**low**<br/>router + extractor + observer<br/>last two in parallel"]
     D[Consulting question] --> D1["**medium**<br/>router + advisor + retrieval<br/>+ composer"]
-    E[Off topic] --> E1["**low**<br/>router only, then a script"]
+    E[Off topic] --> E1["**low**<br/>router + extractor in parallel,<br/>then a script"]
 
     classDef zero fill:#FDF2CE,stroke:#9A7206,color:#33260A
     classDef low fill:#FFE3EC,stroke:#C42D63,color:#2A0D17
@@ -201,7 +201,7 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 ## Cost, honestly
 
 - Added calls: one router call for each free-text turn. This call is small, and chip taps do not use it.
-- **Watch 1: latency adds up.** Keep the router very small. Do not add a third sequential hop without a measurement.
+- **Watch 1: latency adds up.** Keep the router very small. It runs in parallel with the extractor (PD7a). Do not add a sequential hop without a measurement.
 - **Watch 2: do not let this grow.** For four part-time engineers, twelve handlers is a maintenance problem.
 - Measure the cost of each completed interview from the first day. Record this cost for each handler.
 
