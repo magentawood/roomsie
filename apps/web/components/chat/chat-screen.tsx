@@ -124,13 +124,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const held = useHeldResults(form, preview ? samples[preview] : results.data)
   const shown = ready ? held.shown : null
   const title = shown ? panelTitle(shown.form, (slug) => areaLabels[slug] ?? slug) : ''
-  // New results come as the card in the chat. On a desktop, the panel opens beside the chat on the next send or a tap of the card.
-  // On a phone, the chat fills the screen until "Show all". The size never changes while the person reads (PD6a).
-  const [view, setView] = useState<'chat' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'chat')
+  // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
+  const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const [draft, setDraft] = useState({ text: '', version: 0 })
   const submit = (text: string) => {
     setFailed(null)
-    if (shown && view === 'chat') setView('split')
+    if (shown && view === 'unopened') setView('split')
     send.mutate(text, { onError: (err) => setFailed(errorText(err)) })
   }
   const askInChat = (listing: ListingResponse) => {

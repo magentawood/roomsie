@@ -1,4 +1,4 @@
-import { mustHaveKeys, requestCapMessage, requestExpiryDays, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
+import { mustHaveKeys, requestCapMessage, requestExpiryDays, type Budget, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
 import { rupees } from './listing-steps'
 import { profileLabels } from './profile-form'
 
@@ -10,10 +10,16 @@ const intentLabels: Record<Exclude<CardResponse['intent'], 'unclear'>, string> =
 }
 export const lookingFor = (card: CardResponse) => (card.intent === 'unclear' ? null : intentLabels[card.intent])
 
-export function budgetLine({ budgetMin: min, budgetMax: max }: Pick<CardResponse, 'budgetMin' | 'budgetMax'>) {
+/** "₹12,000 to ₹18,000", "under ₹15,000" or "from ₹35,000": the card line and the header of the results (T-15). */
+export function budgetPhrase({ min, max }: Budget) {
   if (min !== null && max !== null) return `${rupees(min)} to ${rupees(max)}`
-  if (max !== null) return `Under ${rupees(max)}`
-  return min === null ? null : `From ${rupees(min)}`
+  return max !== null ? `under ${rupees(max)}` : `from ${rupees(min!)}`
+}
+
+export function budgetLine({ budgetMin: min, budgetMax: max }: Pick<CardResponse, 'budgetMin' | 'budgetMax'>) {
+  if (min === null && max === null) return null
+  const phrase = budgetPhrase({ min, max })
+  return phrase[0]!.toUpperCase() + phrase.slice(1)
 }
 
 /** The answers of another person: the designs say "Their days", not "Your days". */
