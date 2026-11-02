@@ -1,4 +1,4 @@
-import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type SlotConflict } from '@roomsie/contract'
+import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type SlotConflict, type TurnLabel } from '@roomsie/contract'
 import type { z } from 'zod'
 import type { AssistantDeps, Handler } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
@@ -6,8 +6,17 @@ import { slotOf } from '../extractor/form-update'
 import { questionFor, replyLines, valueText } from './texts'
 
 const parts = (asked: AssistantParts['asked'], question: string | null, conflicts: SlotConflict[]): AssistantParts => ({ version: 1, asked, question, conflicts })
-/** The reply: what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */
-const reply = (ack: string, question: string, asked: AssistantParts['asked'], conflicts: SlotConflict[] = []) => ({ text: ack + question, parts: parts(asked, question, conflicts) })
+
+/** The line before the reply, by the band of the turn (PD10, T-34). */
+function leadOf({ band, danger }: TurnLabel) {
+  switch (band) {
+    case 'general': case 'consequential': return `${replyLines.noted} `
+    case 'out_of_scope': return `${replyLines.outOfScope} `
+    case 'adversarial': return `${replyLines.adversarial} `
+    case 'sensitive': return danger ? `${replyLines.sensitive} ${replyLines.danger} ` : `${replyLines.sensitive} `
+    case 'core': return ''
+  }
+}
 
 /**
  * A scripted reply, with no model: what the turn filled, then one question (PD7a). The conflicts come first: the new ones,
@@ -16,14 +25,20 @@ const reply = (ack: string, question: string, asked: AssistantParts['asked'], co
  */
 export const replyWriter: Handler = async (turn, deps) => {
   const { form, changed, conflicts, settled, ambiguous, failed, last } = turn
-  return { reply: assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last }), deps)) }
+  return { reply: assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label: turn.label }), deps)) }
 }
 
 const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps) => {
   const catalogue = await catalogueOf(db)
-  if (turn.failed) return { text: replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? []) }
+  const lead = leadOf(turn.label)
+  if (turn.failed) return { text: lead + replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? []) }
   const filled = turn.changed.filter((slot) => slotOf(turn.form, slot).value !== 'unclear')
-  const ack = filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : ''
+  const ack = lead + (filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : '')
+  /** The reply: the lead, what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */
+  const reply = (before: string, question: string, asked: AssistantParts['asked'], conflicts: SlotConflict[] = []) => ({
+    text: before + (turn.label.band === 'out_of_scope' ? replyLines.backToIt(question) : question),
+    parts: parts(asked, question, conflicts),
+  })
 
   const open = (turn.last?.conflicts ?? []).filter(({ slot }) => !turn.settled.includes(slot) && !turn.conflicts.some((c) => c.slot === slot))
   const conflicts = [...turn.conflicts, ...open]

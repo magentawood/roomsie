@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { formASlots } from './goals'
+import { formASlots, scopeBands } from './goals'
 import { modelRoles, modelUsage } from './models'
 import { reportReasons } from './reports'
 
@@ -22,6 +22,8 @@ export const analyticsEvent = z.discriminatedUnion('name', [
   }),
   /** A typed value that contradicts an earlier value. The assistant asks which to keep (PD3b). Many on one slot show a bad question. */
   z.strictObject({ name: z.literal('slot_conflict'), eventVersion: version1, slot: z.enum(formASlots) }),
+  /** The band that a typed turn used (T-34). The label with the text stays on the chat turn. */
+  z.strictObject({ name: z.literal('turn_routed'), eventVersion: version1, band: z.enum(scopeBands) }),
   z.strictObject({ name: z.literal('report_filed'), eventVersion: version1, subject: target, reason: z.enum(reportReasons) }),
 ])
 export type AnalyticsEvent = z.input<typeof analyticsEvent>

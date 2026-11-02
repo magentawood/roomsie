@@ -2,25 +2,17 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { eq } from 'drizzle-orm'
 import type { FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { analyticsEvent, modelCheckResponse, type AnalyticsEvent } from '@roomsie/contract'
+import { modelCheckResponse } from '@roomsie/contract'
 import { ModelUnavailable } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
 import { events as eventRows } from '../src/analytics/schema'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
-import { answer, deepseek, fakeVendors, gemini, keys } from './vendors'
+import { answer, deepseek, fakeRequest, fakeVendors, gemini, keys } from './vendors'
 
 const timeout = () => new DOMException('The operation timed out.', 'TimeoutError')
 /** A response whose headers came, and whose body then failed. */
 const brokenBody = (err: Error) => ({ ok: true, status: 200, json: () => Promise.reject(err) }) as unknown as Response
-
-/** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
-function fakeRequest() {
-  const events: AnalyticsEvent[] = []
-  const log = { info: vi.fn(), error: vi.fn() }
-  const req = { server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(analyticsEvent.parse(event)) } }, log, user: null } as unknown as FastifyRequest
-  return { req, events }
-}
 
 const models = modelSettings.parse(keys)!
 const intent = z.object({ intent: z.enum(['room', 'flatmate', 'unclear']) })
