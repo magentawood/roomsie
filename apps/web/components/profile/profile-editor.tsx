@@ -29,6 +29,25 @@ import { LogOutRow } from './log-out-row'
 
 const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
 
+/** The hint tells the purpose, as the DPDP Act asks, and not the filter (drafts section 32, T-58). */
+const ownValueHint = 'Optional. Never on your card. We use it only to match you with people who ask for it.'
+
+/** An optional field of the hidden filter of PD3c. The first option clears it. */
+function OptionalSelect<V extends string>({ label, placeholder, labels, value, onChange }: {
+  label: string; placeholder: string; labels: Record<V, string>; value: V | null; onChange: (value: V | null) => void
+}) {
+  return (
+    <Field label={label} hint={ownValueHint}>
+      {(id) => (
+        <select id={id} className={inputClass} value={value ?? ''} onChange={(e) => onChange((e.target.value || null) as V | null)}>
+          <option value="">{placeholder}</option>
+          {(Object.entries(labels) as [V, string][]).map(([key, text]) => <option key={key} value={key}>{text}</option>)}
+        </select>
+      )}
+    </Field>
+  )
+}
+
 export function Section({ title, helper, children }: { title: string; helper: string; children: ReactNode }) {
   return (
     <section className="flex flex-col gap-5">
@@ -140,6 +159,10 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
           <TextInput label="Job Role" value={draft.jobRole} onChange={(jobRole) => set({ jobRole })} placeholder="eg. Product designer" maxLength={profileTextLimits.jobRole} />
         </div>
         <ChoiceChips label="Gender" required labels={profileLabels.gender} value={draft.gender} onChange={(gender) => gender && set({ gender })} />
+        <div className="grid gap-5 md:grid-cols-2">
+          <OptionalSelect label="Religion" placeholder="Select your religion" labels={profileLabels.religion} value={draft.religion} onChange={(religion) => set({ religion })} />
+          <OptionalSelect label="Community" placeholder="Select your community" labels={profileLabels.community} value={draft.community} onChange={(community) => set({ community })} />
+        </div>
       </Section>
 
       <Section title="Photos" helper={profile.photos.length < maxProfilePhotos

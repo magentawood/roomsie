@@ -5457,6 +5457,45 @@
                         "non_binary"
                       ]
                     },
+                    "religion": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "hindu",
+                        "muslim",
+                        "christian",
+                        "sikh",
+                        "jain",
+                        "buddhist",
+                        "parsi",
+                        "jewish",
+                        "none",
+                        "other"
+                      ]
+                    },
+                    "community": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "gujarati",
+                        "marathi",
+                        "marwari",
+                        "kutchi",
+                        "sindhi",
+                        "punjabi",
+                        "bengali",
+                        "bihari",
+                        "uttar_pradesh",
+                        "odia",
+                        "tamil",
+                        "telugu",
+                        "kannadiga",
+                        "malayali",
+                        "konkani",
+                        "north_east",
+                        "other"
+                      ]
+                    },
                     "visibility": {
                       "type": "string",
                       "enum": [
@@ -5499,6 +5538,8 @@
                     "mustHaves",
                     "verified",
                     "gender",
+                    "religion",
+                    "community",
                     "visibility",
                     "missing",
                     "hiddenForReview"
@@ -5735,6 +5776,45 @@
                         "non_binary"
                       ]
                     },
+                    "religion": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "hindu",
+                        "muslim",
+                        "christian",
+                        "sikh",
+                        "jain",
+                        "buddhist",
+                        "parsi",
+                        "jewish",
+                        "none",
+                        "other"
+                      ]
+                    },
+                    "community": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "gujarati",
+                        "marathi",
+                        "marwari",
+                        "kutchi",
+                        "sindhi",
+                        "punjabi",
+                        "bengali",
+                        "bihari",
+                        "uttar_pradesh",
+                        "odia",
+                        "tamil",
+                        "telugu",
+                        "kannadiga",
+                        "malayali",
+                        "konkani",
+                        "north_east",
+                        "other"
+                      ]
+                    },
                     "visibility": {
                       "type": "string",
                       "enum": [
@@ -5777,6 +5857,8 @@
                     "mustHaves",
                     "verified",
                     "gender",
+                    "religion",
+                    "community",
                     "visibility",
                     "missing",
                     "hiddenForReview"
@@ -6001,6 +6083,45 @@
                         "dealbreaker"
                       ]
                     }
+                  },
+                  "religion": {
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "hindu",
+                      "muslim",
+                      "christian",
+                      "sikh",
+                      "jain",
+                      "buddhist",
+                      "parsi",
+                      "jewish",
+                      "none",
+                      "other"
+                    ]
+                  },
+                  "community": {
+                    "nullable": true,
+                    "type": "string",
+                    "enum": [
+                      "gujarati",
+                      "marathi",
+                      "marwari",
+                      "kutchi",
+                      "sindhi",
+                      "punjabi",
+                      "bengali",
+                      "bihari",
+                      "uttar_pradesh",
+                      "odia",
+                      "tamil",
+                      "telugu",
+                      "kannadiga",
+                      "malayali",
+                      "konkani",
+                      "north_east",
+                      "other"
+                    ]
                   }
                 },
                 "additionalProperties": false
@@ -6213,6 +6334,45 @@
                         "non_binary"
                       ]
                     },
+                    "religion": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "hindu",
+                        "muslim",
+                        "christian",
+                        "sikh",
+                        "jain",
+                        "buddhist",
+                        "parsi",
+                        "jewish",
+                        "none",
+                        "other"
+                      ]
+                    },
+                    "community": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "gujarati",
+                        "marathi",
+                        "marwari",
+                        "kutchi",
+                        "sindhi",
+                        "punjabi",
+                        "bengali",
+                        "bihari",
+                        "uttar_pradesh",
+                        "odia",
+                        "tamil",
+                        "telugu",
+                        "kannadiga",
+                        "malayali",
+                        "konkani",
+                        "north_east",
+                        "other"
+                      ]
+                    },
                     "visibility": {
                       "type": "string",
                       "enum": [
@@ -6255,6 +6415,8 @@
                     "mustHaves",
                     "verified",
                     "gender",
+                    "religion",
+                    "community",
                     "visibility",
                     "missing",
                     "hiddenForReview"
@@ -11904,6 +12066,185 @@
                           }
                         },
                         "additionalProperties": false
+                      },
+                      "religionPreference": {
+                        "default": {
+                          "source": "empty",
+                          "value": null
+                        },
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "enum": [
+                                  "empty"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "nullable": true,
+                                "enum": [
+                                  null
+                                ]
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "enum": [
+                                  "stated",
+                                  "default"
+                                ]
+                              },
+                              "value": {
+                                "type": "object",
+                                "properties": {
+                                  "values": {
+                                    "minItems": 1,
+                                    "maxItems": 10,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "hindu",
+                                        "muslim",
+                                        "christian",
+                                        "sikh",
+                                        "jain",
+                                        "buddhist",
+                                        "parsi",
+                                        "jewish",
+                                        "none",
+                                        "other"
+                                      ]
+                                    }
+                                  },
+                                  "weight": {
+                                    "type": "string",
+                                    "enum": [
+                                      "prefer",
+                                      "dealbreaker",
+                                      "unclear"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "values",
+                                  "weight"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "communityPreference": {
+                        "default": {
+                          "source": "empty",
+                          "value": null
+                        },
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "enum": [
+                                  "empty"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "nullable": true,
+                                "enum": [
+                                  null
+                                ]
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "enum": [
+                                  "stated",
+                                  "default"
+                                ]
+                              },
+                              "value": {
+                                "type": "object",
+                                "properties": {
+                                  "values": {
+                                    "minItems": 1,
+                                    "maxItems": 17,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "gujarati",
+                                        "marathi",
+                                        "marwari",
+                                        "kutchi",
+                                        "sindhi",
+                                        "punjabi",
+                                        "bengali",
+                                        "bihari",
+                                        "uttar_pradesh",
+                                        "odia",
+                                        "tamil",
+                                        "telugu",
+                                        "kannadiga",
+                                        "malayali",
+                                        "konkani",
+                                        "north_east",
+                                        "other"
+                                      ]
+                                    }
+                                  },
+                                  "weight": {
+                                    "type": "string",
+                                    "enum": [
+                                      "prefer",
+                                      "dealbreaker",
+                                      "unclear"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "values",
+                                  "weight"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
                       }
                     },
                     "additionalProperties": false
@@ -15083,6 +15424,185 @@
                             "couple_friendly"
                           ],
                           "additionalProperties": false
+                        },
+                        "religionPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 10,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "hindu",
+                                          "muslim",
+                                          "christian",
+                                          "sikh",
+                                          "jain",
+                                          "buddhist",
+                                          "parsi",
+                                          "jewish",
+                                          "none",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "communityPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 17,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "gujarati",
+                                          "marathi",
+                                          "marwari",
+                                          "kutchi",
+                                          "sindhi",
+                                          "punjabi",
+                                          "bengali",
+                                          "bihari",
+                                          "uttar_pradesh",
+                                          "odia",
+                                          "tamil",
+                                          "telugu",
+                                          "kannadiga",
+                                          "malayali",
+                                          "konkani",
+                                          "north_east",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -15094,7 +15614,9 @@
                         "budget",
                         "moveDate",
                         "lifestyle",
-                        "mustHaves"
+                        "mustHaves",
+                        "religionPreference",
+                        "communityPreference"
                       ],
                       "additionalProperties": false
                     },
@@ -16439,6 +16961,185 @@
                             "couple_friendly"
                           ],
                           "additionalProperties": false
+                        },
+                        "religionPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 10,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "hindu",
+                                          "muslim",
+                                          "christian",
+                                          "sikh",
+                                          "jain",
+                                          "buddhist",
+                                          "parsi",
+                                          "jewish",
+                                          "none",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "communityPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 17,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "gujarati",
+                                          "marathi",
+                                          "marwari",
+                                          "kutchi",
+                                          "sindhi",
+                                          "punjabi",
+                                          "bengali",
+                                          "bihari",
+                                          "uttar_pradesh",
+                                          "odia",
+                                          "tamil",
+                                          "telugu",
+                                          "kannadiga",
+                                          "malayali",
+                                          "konkani",
+                                          "north_east",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -16450,7 +17151,9 @@
                         "budget",
                         "moveDate",
                         "lifestyle",
-                        "mustHaves"
+                        "mustHaves",
+                        "religionPreference",
+                        "communityPreference"
                       ],
                       "additionalProperties": false
                     },
@@ -17825,6 +18528,185 @@
                             "couple_friendly"
                           ],
                           "additionalProperties": false
+                        },
+                        "religionPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 10,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "hindu",
+                                          "muslim",
+                                          "christian",
+                                          "sikh",
+                                          "jain",
+                                          "buddhist",
+                                          "parsi",
+                                          "jewish",
+                                          "none",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "communityPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 17,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "gujarati",
+                                          "marathi",
+                                          "marwari",
+                                          "kutchi",
+                                          "sindhi",
+                                          "punjabi",
+                                          "bengali",
+                                          "bihari",
+                                          "uttar_pradesh",
+                                          "odia",
+                                          "tamil",
+                                          "telugu",
+                                          "kannadiga",
+                                          "malayali",
+                                          "konkani",
+                                          "north_east",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
                         }
                       },
                       "required": [
@@ -17836,7 +18718,9 @@
                         "budget",
                         "moveDate",
                         "lifestyle",
-                        "mustHaves"
+                        "mustHaves",
+                        "religionPreference",
+                        "communityPreference"
                       ],
                       "additionalProperties": false
                     },

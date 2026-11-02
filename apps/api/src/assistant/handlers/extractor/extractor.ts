@@ -1,4 +1,4 @@
-import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot } from '@roomsie/contract'
+import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot, type OwnValues } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import { nullIfUnavailable } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
@@ -6,7 +6,7 @@ import { plainText } from '../../words'
 import type { AssistantDeps, TurnState } from '../../assistant'
 import { parseBudget } from './budget-words'
 import { applyValues, type SlotValues } from './form-update'
-import { jsonString, passes, probabilityOfMatch, unscoredDeepSeek } from '../gate'
+import { jsonListItem, jsonString, passes, probabilityOfMatch, unscoredDeepSeek } from '../gate'
 import { turnMessage } from '../turn-message'
 import { parseMoveDate } from './move-date-words'
 import { extractorPrompt } from './prompt'
@@ -16,7 +16,7 @@ import { extractorPrompt } from './prompt'
 export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, own: { religion: null, community: null } })
 
 /**
  * An answer to "which one should I keep?" that names no value (PD3b): a choice word alone, or with "wala" or "one",
@@ -97,5 +97,22 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   }
   if (misaligned) reportError(new Error(unscored ? 'DeepSeek gave no token probabilities' : 'The token probabilities do not match the answer'), { where: 'assistant.extractor', log: req.log })
 
-  return { ...applyValues(turn.form, values, openConflicts.map((c) => c.slot)), settled, ambiguous, failed: false }
+  // The hidden filter of PD3c (T-58). A newer statement wins with no question, and no line of the reply names it.
+  const within = (key: string, pattern: RegExp) => new RegExp(`"${key}"\\s*:\\s*\\{[^}]*${pattern.source}`)
+  const sure = (pattern: RegExp) => passes(scored, pattern, settings.minProbability)
+  const preference = <K extends 'religionPreference' | 'communityPreference'>(key: K) => {
+    const stated = answer[key]
+    const kept = stated && stated.values.filter((value) => sure(within(key, jsonListItem('values', value))))
+    if (!kept?.length) return {}
+    const weight = stated!.weight !== 'unclear' && sure(within(key, jsonString('weight', stated!.weight))) ? stated!.weight : 'unclear'
+    return { [key]: { source: 'stated', value: { values: kept, weight } } }
+  }
+  const ownOf = (key: 'ownReligion' | 'ownCommunity') => {
+    const value = answer[key]
+    return value && sure(jsonString(key, value)) ? value : null
+  }
+  const own = { religion: ownOf('ownReligion'), community: ownOf('ownCommunity') } as OwnValues
+  const applied = applyValues(turn.form, values, openConflicts.map((c) => c.slot))
+  const form = { ...applied.form, ...preference('religionPreference'), ...preference('communityPreference') }
+  return { ...applied, form, settled, ambiguous, failed: false, own }
 }

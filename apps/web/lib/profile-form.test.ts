@@ -3,7 +3,7 @@ import type { ProfileResponse } from '@roomsie/contract'
 import { bandOf, describesYou, editBody, formOf, pickDescribesYou } from './profile-form'
 
 const saved: ProfileResponse = {
-  id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', jobRole: null, commuteAddress: null, bio: null,
+  id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', religion: null, community: null, jobRole: null, commuteAddress: null, bio: null,
   managedByParent: false, intent: 'unclear', whosMoving: 'working', areas: ['bandra-santacruz'], budgetMin: null, budgetMax: 25000, moveDate: null,
   photos: [], lifestyle: { food: 'veg' }, mustHaves: { veg_kitchen: 'dealbreaker' }, visibility: 'live', missing: [], hiddenForReview: false, verified: false,
 }
@@ -31,6 +31,8 @@ describe('the body of an edit', () => {
   it('sends only the fields that changed', () => {
     const form = formOf(saved)
     expect(editBody(form, form)).toEqual({})
+    expect(editBody(form, { ...form, religion: 'jain' })).toEqual({ religion: 'jain' })
+    expect(editBody({ ...form, community: 'gujarati' }, { ...form, community: null })).toEqual({ community: null })
     expect(editBody(form, { ...form, fullName: 'Divya S', areas: ['bandra-santacruz', 'thane'], hidden: true }))
       .toEqual({ fullName: 'Divya S', areas: ['bandra-santacruz', 'thane'], hidden: true })
   })

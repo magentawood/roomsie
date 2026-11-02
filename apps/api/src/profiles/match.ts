@@ -1,5 +1,5 @@
 import { and, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
-import { mustHaveKeys, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
+import { mustHaveKeys, type FormA, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { textArray } from '../db/sql'
@@ -46,15 +46,34 @@ function meets(key: MustHaveKey): SQL {
 const theirDealbreakerIn = (keys: MustHaveKey[]) => sql`exists (select 1 from ${profileMustHaves}
   where ${profileMustHaves.profileId} = ${profiles.id} and ${profileMustHaves.weight} = 'dealbreaker' and ${inArray(profileMustHaves.mustHaveKey, keys)})`
 
+/** The hidden filter of PD3c (T-58): the stated preferences of the searcher. */
+export type IdentitySearch = FormA['religionPreference']['value'] | FormA['communityPreference']['value']
+
+/**
+ * "Only" removes the people who stated a different value, and "preferably" adds a point to the order.
+ * A person who stated nothing stays, and no label tells it (PC-31).
+ */
+function identitySql(column: typeof profiles.religion | typeof profiles.community, preference: IdentitySearch) {
+  if (!preference) return { filter: undefined, point: sql`0` }
+  const stated = sql`${column}::text = any(${textArray(preference.values)})`
+  return preference.weight === 'dealbreaker'
+    ? { filter: sql`(${column} is null or ${stated})`, point: sql`0` }
+    : { filter: undefined, point: sql`(case when ${stated} then 1 else 0 end)` }
+}
+
 export type PeopleSearch = BaseSearch & {
   searcher: ReturnType<typeof searcherMustHaves>
   formBFloor: number
+  religion: IdentitySearch
+  community: IdentitySearch
 }
 
 /** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
 export async function matchingPeople(db: Db, search: PeopleSearch) {
   const mustHaves = mustHaveSql(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
   const { budget, moveDate, searcher } = search
+  const religion = identitySql(profiles.religion, search.religion)
+  const community = identitySql(profiles.community, search.community)
 
   const conditions = [
     ...visiblePeople(search.viewerUserId),
@@ -66,6 +85,8 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
     moveDate && near(sql`${profiles.moveDate}`, moveDate),
     ...mustHaves.filters,
     searcher.fails.length && sql`not ${theirDealbreakerIn(searcher.fails)}`,
+    religion.filter,
+    community.filter,
   ].filter((c): c is SQL => !!c)
 
   const [rows, total] = await Promise.all([
@@ -77,7 +98,8 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
       formBPoints: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('form_b_points'),
       moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
-      .orderBy(sql`is_full desc, prefs_met desc, form_b_points desc, move_gap asc nulls last`, desc(profiles.createdAt))
+      // The points of a hidden preference change only the order, never a label (T-58).
+      .orderBy(sql`is_full desc, ${mustHaves.prefsMet} + ${religion.point} + ${community.point} desc, form_b_points desc, move_gap asc nulls last`, desc(profiles.createdAt))
       .limit(search.limit).offset(search.offset),
     db.$count(profiles, and(...conditions)),
   ])

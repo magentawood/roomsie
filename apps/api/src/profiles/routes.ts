@@ -14,6 +14,7 @@ import { deletePhotos, photoUploadLink, type Storage } from '../storage'
 import { connectionWith, sentToday } from '../requests/read'
 import { maskFields } from '../text/mask-contacts'
 import { lockAccount } from '../users'
+import { ownValuesOf } from '../goals/store'
 import { answersOf, cardView, missingFields, profileOf, profileView, visibleCards, type Profile } from './read'
 
 /** Each free-text field that the person writes (PD17). */
@@ -30,7 +31,9 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     preHandler,
     schema: { body: createProfileBody, response: { 201: profileResponse, 409: errorResponse } },
   }, async (req, reply) => {
-    const [made] = await db.insert(profiles).values({ userId: req.user!.id, ...maskFields(req.body, ['fullName']) }).onConflictDoNothing().returning()
+    // The person may have stated their religion or community in a chat before (T-58).
+    const own = await ownValuesOf(db, req.user!.id)
+    const [made] = await db.insert(profiles).values({ userId: req.user!.id, ...maskFields(req.body, ['fullName']), ...own }).onConflictDoNothing().returning()
     if (!made) return reply.code(409).send({ error: 'the profile exists' })
     return reply.code(201).send(await ownProfileView(made))
   })

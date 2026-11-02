@@ -43,8 +43,8 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const last = await lastReplyOf(options.db, goal.id)
     const { text } = req.body
-    const { form, reply: answer, conflicts, label } = await runTurn({ goalId: goal.id, text, last, form: goal.form }, { ...options, req })
-    const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, form, { text, label }, answer)
+    const { form, reply: answer, conflicts, label, own } = await runTurn({ goalId: goal.id, text, last, form: goal.form }, { ...options, req })
+    const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, form, { text, label, own }, answer)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
     for (const { slot } of conflicts) v1.analytics.track(req, { name: 'slot_conflict', slot })
