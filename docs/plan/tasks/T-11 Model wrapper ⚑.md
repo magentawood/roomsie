@@ -2,7 +2,7 @@
 id: T-11
 title: "Model wrapper: DeepSeek with Gemini fallback"
 owner: "P2 Chat"
-sequence: "2 of 13"
+sequence: "2 of 14"
 hours: 4
 start: 2026-09-24
 end: 2026-09-25
@@ -18,7 +18,7 @@ tags:
 
 # T-11 · Model wrapper: DeepSeek with Gemini fallback
 
-**Owner:** [[P2 Chat]], task 2 of 13  
+**Owner:** [[P2 Chat]], task 2 of 14  
 **When:** Thu 24 Sep → Fri 25 Sep · 4 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#15](https://github.com/magentawood/roomsie/issues/15)

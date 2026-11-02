@@ -2,7 +2,7 @@
 id: T-09
 title: "Chip flow for intent, area, budget"
 owner: "P2 Chat"
-sequence: "13 of 13"
+sequence: "13 of 14"
 hours: 6
 start: 2026-10-09
 end: 2026-10-10
@@ -18,7 +18,7 @@ tags:
 
 # T-09 · Chip flow for intent, area, budget
 
-**Owner:** [[P2 Chat]], task 13 of 13  
+**Owner:** [[P2 Chat]], task 13 of 14  
 **When:** Fri 9 Oct → Sat 10 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#26](https://github.com/magentawood/roomsie/issues/26)
@@ -34,7 +34,7 @@ Buttons under the chat. People tap and do not have to type.
 - [[D-02 Chat screen designs ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-59 More chips]]
 
 ## Done when
 - [ ] Intent shows as the five place types of PD15, area as the area groups of PD2, and budget as bands
@@ -45,3 +45,39 @@ Buttons under the chat. People tap and do not have to type.
 
 ## Read first
 - [interface-shape.md](../../interface-shape.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by n3rxv
+
+- **Modules:**
+  - **The contract:** the turn body is typed text or a tap. A tap has a slot (intent, areas or budget) and its value: a place type, one to ten area groups, or a budget band. The labels of the place types and the budget bands go in the contract, so the API and the web use the same text. Each assistant turn of the goal and turn responses tells the chips that its question offers, or none. The interface changes.
+  - **The turn runner and the turn route:** a tap skips the router and the extractor, and calls no model. It writes its slot as stated, as the answer to its question, and the scripted reply follows. The tap turn is saved with the input method `chip`, and the API writes its text from the value. A tap sends no `turn_routed` event.
+  - **The reply writer:** when the question asks intent and intent is `unclear`, the help line comes before the question. The reply keeps the chips that it offers: only with the plain question of intent, areas or budget.
+  - **The goals store:** it saves a tap turn and its slot and value. It reads the chips of each assistant turn.
+  - **The web:** the chat screen shows the chips under the newest question, and the intent chips under the input of an empty chat. The area chips toggle, and "Done" sends them. The chips are off while a reply is pending.
+  - **The docs:** a learn page tells how a chip tap works. interface-shape.md tells where the chips sit.
+  - **The plan:** the new task T-59, chips for the other closed questions.
+- **Seams for the tests:**
+  - The tests of the turn route, with the fake vendors: a tap of each slot fills the form, calls no model, saves a chip turn with the label as its text, and the reply offers the chips of the next question. "Not sure" gives the help line and the intent chips again. A value that is not a chip gets 400. A reply that asks about a conflict or an area name with two places offers no chips. A typed answer still works. A reopened goal gives the chips of each assistant turn.
+  - A web unit test of the rule that picks the chips to show, and of the area toggle.
+  - A browser check at 390 px and 1440 px, with the local API: the empty chat, a tap through intent, two areas and budget to the results panel, and a typed answer in place of a tap.
+- **Decisions:**
+  - **Three slots (the user, 2026-11-02):** chips only for intent, areas and budget. The other closed questions get chips in T-59.
+  - **Many areas (the user):** the ten area groups of PD2 show as chips. Each tap turns a group on or off, and "Done" sends all the groups in one tap turn. A sub-area works only when the person types it (why: PD2, interface-shape.md).
+  - **"Not sure, help me pick" (the user):** the tap writes intent as `unclear`. The reply gives the help line, then the intent question, and the four place-type chips show again. A typed answer that leaves intent `unclear` gets the same reply. The help line: "No stress. A room in a shared flat: your own room, the rest shared. A PG or hostel: meals often in, house rules always. A whole flat: all yours, rent and all. People to rent with: find your people first, then the place. Which one sounds like you?"
+  - **The place (the user):** the chips sit in the thread, under the newest question. They go away when the next reply comes. On a new goal, the intent chips sit under the input of the empty chat. A tap shows as a message of the person.
+  - **A tap is a turn with no model (why: agent-architecture.md):** the person turn has the input method `chip` and the chip label as its text. The reply is the scripted acknowledgement and the next question.
+  - **A tap answers its slot:** its value goes in, also over an earlier value. Chips show only for an empty or `unclear` slot, so a tap seldom replaces a value.
+  - **No chips** under a question about a conflict, an area name with two places, or a must-have weight.
+  - **The chip labels come from the slot definitions (why: PD6c):** the place types "A room in a shared flat", "A PG or hostel", "A whole flat", "People to rent with" and "Not sure, help me pick" (PD15). The budget bands "Under ₹10k", "Under ₹15k", "Under ₹25k", "Under ₹35k" and "Above ₹35k" (interface-shape.md). The names of the ten area groups.
+  - **Taps do not count (why: PD9):** a tap turn is apart from a typed turn, so T-21 counts only the typed turns. No new event: each turn keeps its input method.
+  - **A reopened goal** shows the chips of its newest question again. Typing always works.
+  - **The design:** drafts section 33, with our tokens, at 390 px and 1440 px. The user approves it before the build.
+  - **T-59 (the user):** a new task for the chips of the other closed questions: room type, who is moving, the eight lifestyle questions and the must-have weights.
+- **Out of scope:**
+  - the chips of the other closed questions (T-59)
+  - the turn cap, and the chips-only mode at the spend ceiling (T-21)
+  - sub-area chips
+  - the onboarding screens of flow 01, and a lister chip (T-48)
+  - replies from the model (T-13)
