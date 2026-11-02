@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
-import { countLine, didntSayLine, formKey, foundIn, nextPage, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
+import { countLine, didntSayLine, formKey, joinPages, nextPage, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
 import { listing, testId } from './test-listing'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
@@ -123,13 +123,13 @@ describe('the pages of a search', () => {
   const page = (n: number, patch: Partial<ResultsResponse>): ResultsResponse => ({ results: [], total: 0, page: n, suggestions: [], ...patch })
 
   it('puts the results of each page in one grid, with the newest total', () => {
-    expect(foundIn({ pages: [page(1, { results: [place(1)], total: 21 }), page(2, { results: [place(2)], total: 22 })] }))
+    expect(joinPages({ pages: [page(1, { results: [place(1)], total: 21 }), page(2, { results: [place(2)], total: 22 })] }))
       .toEqual({ results: [place(1), place(2)], total: 22, suggested: [] })
   })
 
   it('puts the suggested posts of each relaxed search in one list', () => {
     const suggestions = [{ relaxed: { kind: 'budget' as const, max: 35000 }, results: [place(3)] }, { relaxed: { kind: 'area' as const, area: 'andheri-goregaon' }, results: [place(4)] }]
-    expect(foundIn({ pages: [page(1, { suggestions })] })).toEqual({ results: [], total: 0, suggested: [place(3), place(4)] })
+    expect(joinPages({ pages: [page(1, { suggestions })] })).toEqual({ results: [], total: 0, suggested: [place(3), place(4)] })
   })
 
   it('asks for the next page until the pages hold the total', () => {

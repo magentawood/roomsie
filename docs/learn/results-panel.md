@@ -8,7 +8,7 @@
 - The **header** tells what the panel shows. It narrows from "Everything in Mumbai" to "Rooms in Powai–Vikhroli under ₹25,000 · 8 results".
 - A **label** sits on the photo of a card. "Best match" means that the person stated three or more preferences, and the card meets all of them. "Didn't say: smoking" means that the card did not answer a dealbreaker ([PD3a](../decisions/pd-03a-flatmate-matching.md)).
 - With no match, the panel shows "No relevant results" and the **suggested posts** ([PD6c](../decisions/pd-06c-interface-holes.md)).
-- On a phone, the chat fills the screen. A **results card** in the chat opens the panel with "Show all", and the input stays at the bottom ([PD6a](../decisions/pd-06a-mobile-split-view.md)).
+- New results come as a **results card** in the chat. On a desktop, the panel opens beside the chat on the next send, or when the person opens the card. On a phone, the chat fills the screen, and "Show all" on the card opens the panel above the input. The size never changes while the person reads ([PD6a](../decisions/pd-06a-mobile-split-view.md)).
 
 ## How it fits our project
 

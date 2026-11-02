@@ -112,16 +112,10 @@ function useChat() {
 
 const emptyForm = formA.parse({})
 
-/**
- * The chat of a goal, and the results of its form beside it (flow 02). The person sees their message at once, and the reply when it comes.
- */
+/** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, form: chatForm, send, loadingGoal } = useChat()
   const [failed, setFailed] = useState<string | null>(null)
-  const submit = (text: string) => {
-    setFailed(null)
-    send.mutate(text, { onError: (err) => setFailed(errorText(err)) })
-  }
   const pending = send.isPending || failed ? send.variables : undefined
   const areaLabels = useAreaLabels()
   const form = preview ? sampleForm : chatForm
@@ -130,9 +124,15 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const held = useHeldResults(form, preview ? samples[preview] : results.data)
   const shown = ready ? held.shown : null
   const title = shown ? panelTitle(shown.form, (slug) => areaLabels[slug] ?? slug) : ''
-  // The panel is open beside the chat on a desktop. On a phone, the chat fills the screen until "Show all" (PD6a).
-  const [view, setView] = useState<'split' | 'all' | 'closed'>('split')
+  // New results come as the card in the chat. On a desktop, the panel opens beside the chat on the next send or a tap of the card.
+  // On a phone, the chat fills the screen until "Show all". The size never changes while the person reads (PD6a).
+  const [view, setView] = useState<'chat' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'chat')
   const [draft, setDraft] = useState({ text: '', version: 0 })
+  const submit = (text: string) => {
+    setFailed(null)
+    if (shown && view === 'chat') setView('split')
+    send.mutate(text, { onError: (err) => setFailed(errorText(err)) })
+  }
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
     setView('split')
@@ -140,7 +140,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
 
   if (loadingGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={submit} />
-  const split = shown !== null && view !== 'closed'
+  const split = shown !== null && (view === 'split' || view === 'all')
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
@@ -171,7 +171,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={submit} />
       </div>
       {shown && (
-        <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${view === 'closed' ? 'lg:hidden' : 'lg:grid'}`}>
+        <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
           <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />

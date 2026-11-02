@@ -98,9 +98,9 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
   )
 }
 
-/** The results panel of flow 02: a pure function of Form A (PD6c). A card opens here: a place in the panel, a person on its page. */
+/** The results panel of flow 02: a pure function of Form A (PD6c). */
 export function ResultsPanel({ title, found, held: { hold, release }, more, sample, onClose, onAskInChat }: {
-  title: string; found: Found; held: ReturnType<typeof useHeldResults>; more?: More; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+  title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
