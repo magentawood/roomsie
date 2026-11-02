@@ -22,9 +22,10 @@ All the values are first guesses in config, until two to three months of data ([
 | The wall, the button and the two messages | `apps/web/components/chat/chat-screen.tsx` |
 
 - **A device** is one IP address with one browser. The database keeps only the hashes of the device, the address and its range (/24 for IPv4, /48 for IPv6), never the address.
-- **The IP address** comes from the load balancer of Lightsail. The API trusts one hop of `X-Forwarded-For`, so an address that the browser writes in the header does not count.
-- **A typed turn over a limit** gets its refusal before the router and the extractor, so it costs nothing. The cap sends `wall_hit`, and each rate limit sends `limit_hit` with its name.
+- **The IP address** comes from the load balancer of Lightsail. The API trusts one hop of `X-Forwarded-For`, so an address that the browser writes in the header does not count. Zod checks that it is an IP address, and the request log never writes it.
+- **A typed turn over a limit** gets its refusal before the router and the extractor, so it costs nothing. Each rate limit sends `limit_hit` with its name.
 - **The count of typed turns** is `turn_count` of the visitor session, across all its goals. A signed-in person has no cap and no session limit.
+- **The line of the free messages** shows the typed turns before the wall. Past the cap with no results, it hides until results show or the backstop comes. The turn that uses the last free turn opens the wall and sends `wall_hit`.
 
 ## The choice we made
 

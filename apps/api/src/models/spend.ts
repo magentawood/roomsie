@@ -4,8 +4,8 @@ import type { ModelUsage } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import type { Db } from '../db/client'
 import { modelSpend } from '../db/schema'
-import { vendorOf } from './models'
-import type { SpendSettings } from './settings'
+import type { Vendor } from './models'
+import { modelPrices, usdToInr, type SpendSettings } from './settings'
 
 const inRupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 
@@ -17,17 +17,18 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
     if (!settings.telegram) return log.warn({ text }, 'spend alert')
     const res = await fetch(`https://api.telegram.org/bot${settings.telegram.token}/sendMessage`, {
       method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ chat_id: settings.telegram.chatId, text }),
+      // The close of the server waits for the spend, so a slow Telegram must not hold it.
+      signal: AbortSignal.timeout(10_000),
     })
     if (!res.ok) throw new Error(`Telegram answered ${res.status}`)
   }
 
-  async function add(model: string, usage: ModelUsage) {
-    // The settings let only a model name of a known vendor through.
-    const price = settings.prices[vendorOf(model)!]
+  async function add(vendor: Vendor, usage: ModelUsage) {
+    const price = modelPrices[vendor]
     const dollars = ((usage.tokensIn - usage.cachedTokensIn) * price.in + usage.cachedTokensIn * price.cachedIn + usage.tokensOut * price.out) / 1e6
     if (!dollars) return
     const day = today()
-    const [row] = await db.insert(modelSpend).values({ day, rupees: String(dollars * settings.usdToInr) })
+    const [row] = await db.insert(modelSpend).values({ day, rupees: String(dollars * usdToInr) })
       .onConflictDoUpdate({ target: modelSpend.day, set: { rupees: sql`${modelSpend.rupees} + excluded.rupees` } })
       .returning({ rupees: modelSpend.rupees })
     const total = Number(row!.rupees)
@@ -41,8 +42,8 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
 
   return {
     /** The call does not wait for it. A failure goes to the error report, never to the person. */
-    record(model: string, usage: ModelUsage) {
-      const done: Promise<void> = add(model, usage)
+    record(vendor: Vendor, usage: ModelUsage) {
+      const done: Promise<void> = add(vendor, usage)
         .catch((err: unknown) => reportError(err, { where: 'models.spend', log }))
         .finally(() => pending.delete(done))
       pending.add(done)

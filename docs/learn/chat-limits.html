@@ -77,9 +77,10 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li><strong>A device</strong> is one IP address with one browser. The database keeps only the hashes of the device, the address and its range (/24 for IPv4, /48 for IPv6), never the address.</li>
-<li><strong>The IP address</strong> comes from the load balancer of Lightsail. The API trusts one hop of <code>X-Forwarded-For</code>, so an address that the browser writes in the header does not count.</li>
-<li><strong>A typed turn over a limit</strong> gets its refusal before the router and the extractor, so it costs nothing. The cap sends <code>wall_hit</code>, and each rate limit sends <code>limit_hit</code> with its name.</li>
+<li><strong>The IP address</strong> comes from the load balancer of Lightsail. The API trusts one hop of <code>X-Forwarded-For</code>, so an address that the browser writes in the header does not count. Zod checks that it is an IP address, and the request log never writes it.</li>
+<li><strong>A typed turn over a limit</strong> gets its refusal before the router and the extractor, so it costs nothing. Each rate limit sends <code>limit_hit</code> with its name.</li>
 <li><strong>The count of typed turns</strong> is <code>turn_count</code> of the visitor session, across all its goals. A signed-in person has no cap and no session limit.</li>
+<li><strong>The line of the free messages</strong> shows the typed turns before the wall. Past the cap with no results, it hides until results show or the backstop comes. The turn that uses the last free turn opens the wall and sends <code>wall_hit</code>.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>

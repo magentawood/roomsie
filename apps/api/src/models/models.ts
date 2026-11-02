@@ -34,7 +34,7 @@ const readText = (content: string) => content.trim() || undefined
 
 // Both vendors serve the chat format of OpenAI, so one request fits both (PD7).
 const vendors = ['deepseek', 'gemini'] as const
-type Vendor = (typeof vendors)[number]
+export type Vendor = (typeof vendors)[number]
 const urls: Record<Vendor, string> = {
   deepseek: 'https://api.deepseek.com/chat/completions',
   gemini: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
@@ -104,7 +104,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     const ms = Math.round(performance.now() - started)
     const record = { role: call.role, model, ...answer.usage, ms, fallback: model === fallback, outcome: answer.outcome, session: call.session }
     call.req.server.analytics.track(call.req, { name: 'model_called', ...record })
-    call.req.server.spend.record(model, answer.usage)
+    call.req.server.spend.record(vendor, answer.usage)
     call.req.log.info(record, 'model call')
     return { ...answer, ms }
   }

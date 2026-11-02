@@ -15,7 +15,7 @@ export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
 export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable(), createdAt: z.iso.datetime() })
-/** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null for a signed-in person. */
+/** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable()
 export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft })
 export type GoalResponse = z.infer<typeof goalResponse>

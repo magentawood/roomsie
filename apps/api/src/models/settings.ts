@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { unsetIfEmpty } from '../env-values'
-import { modelsOf, vendorOf } from './models'
+import { modelsOf, vendorOf, type Vendor } from './models'
 
 const vendorModel = z.string().refine((name) => vendorOf(name) !== undefined, 'a model name starts with deepseek- or gemini-')
 
@@ -17,19 +17,20 @@ export const modelSettings = z.object({
   : undefined))
 
 /** The dollars of a million tokens of each vendor, at the highest price of docs/model-selection.md, so the estimate is high. */
-const prices = { deepseek: { in: 0.3, cachedIn: 0.012, out: 1.2 }, gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 } }
+export const modelPrices: Record<Vendor, { in: number; cachedIn: number; out: number }> = {
+  deepseek: { in: 0.3, cachedIn: 0.012, out: 1.2 },
+  gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 },
+}
+export const usdToInr = 88
 
 /** The daily amount of PD9: never a stop, only the alerts at 70% and 100% (T-21). The first values are guesses (PC-10). */
 export const spendSettings = z.object({
   DAILY_SPEND_RUPEES: z.coerce.number().positive().default(500),
-  USD_TO_INR: z.coerce.number().positive().default(88),
   // Unset: the alert is only a log line, for local work and the tests.
   TELEGRAM_BOT_TOKEN: unsetIfEmpty,
   TELEGRAM_CHAT_ID: unsetIfEmpty,
 }).transform((s) => ({
   dailyRupees: s.DAILY_SPEND_RUPEES,
-  prices,
-  usdToInr: s.USD_TO_INR,
   telegram: s.TELEGRAM_BOT_TOKEN && s.TELEGRAM_CHAT_ID ? { token: s.TELEGRAM_BOT_TOKEN, chatId: s.TELEGRAM_CHAT_ID } : null,
 }))
 export type SpendSettings = z.output<typeof spendSettings>
