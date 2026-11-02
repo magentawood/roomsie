@@ -1,5 +1,6 @@
 {
   "repo": "magentawood/roomsie",
+  "prePush": "corepack pnpm secrets",
   "vaultPath": ".",
   "standardsPath": "docs/standards",
   "decisionsPath": "docs/decisions",
