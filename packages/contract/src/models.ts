@@ -10,5 +10,3 @@ export type ModelUsage = z.infer<typeof modelUsage>
 
 /** One answer of each model to a short prompt (T-11). */
 export const modelCheckResponse = z.object({ models: z.array(modelUsage.extend({ model: z.string(), answered: z.boolean(), ms: z.int().min(0) })) })
-/** The live check of the bot of the spend alert (T-29). */
-export const alertCheckResponse = z.object({ sent: z.literal(true) })

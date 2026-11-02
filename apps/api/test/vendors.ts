@@ -22,12 +22,12 @@ export const coreLabel = { kinds: ['filters'], band: 'core', register: { languag
  * The calls of the router get the replies of `router`, or `coreLabel` from DeepSeek when the test gives none.
  * `requests` has the other calls, `requests.router` the calls of the router, and `requests.telegram` the alerts of the spend.
  */
-export function fakeVendors(replies: Replies & { router?: Replies }) {
+export function fakeVendors(replies: Replies & { router?: Replies; telegram?: Response[] }) {
   const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], telegram: [] as SentRequest[] })
   vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
     if (url.startsWith('https://api.telegram.org/')) {
       requests.telegram.push({ url, body: JSON.parse(String(init.body)) as Record<string, unknown>, authorization: null })
-      return Response.json({ ok: true })
+      return replies.telegram?.shift() ?? Response.json({ ok: true })
     }
     const body = JSON.parse(String(init.body)) as { messages: { content: string }[] }
     const isRouter = body.messages[0]?.content === routerPrompt

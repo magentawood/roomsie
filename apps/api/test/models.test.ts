@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { eq } from 'drizzle-orm'
 import type { FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { alertCheckResponse, modelCheckResponse } from '@roomsie/contract'
+import { modelCheckResponse } from '@roomsie/contract'
 import { ModelUnavailable } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
 import { events as eventRows } from '../src/analytics/schema'
@@ -142,19 +142,29 @@ describe('the model check route', () => {
 })
 
 describe('the alert check route (T-29)', () => {
-  it('sends one Telegram message through the spend alert, for moderators only, and gives 503 with no Telegram settings', async () => {
-    const t = await testApp(['moderator', 'member'], undefined, { MODERATOR_UIDS: 'uid-moderator', TELEGRAM_BOT_TOKEN: 'bot-token', TELEGRAM_CHAT_ID: '-100123' })
+  let t: TestApp<'moderator' | 'member'>
+  beforeAll(async () => {
+    t = await testApp(['moderator', 'member'], undefined, { MODERATOR_UIDS: 'uid-moderator', TELEGRAM_BOT_TOKEN: 'bot-token', TELEGRAM_CHAT_ID: '-100123' })
+  })
+  afterAll(async () => { await t.close() })
+
+  it('sends one Telegram message through the spend alert, for moderators only', async () => {
     const requests = fakeVendors({})
-    const res = await t.call('moderator', 'POST', '/v1/admin/alert-check')
-    expect([res.statusCode, alertCheckResponse.parse(res.json())]).toEqual([200, { sent: true }])
+    expect((await t.call('moderator', 'POST', '/v1/admin/alert-check')).statusCode).toBe(204)
     expect(requests.telegram.map((r) => [r.url, r.body])).toEqual([['https://api.telegram.org/botbot-token/sendMessage', { chat_id: '-100123', text: 'roomsie: the spend alert works.' }]])
     expect((await t.call('member', 'POST', '/v1/admin/alert-check')).statusCode).toBe(404)
     expect(requests.telegram).toHaveLength(1)
-    await t.close()
+  })
 
+  it('gives 502 with the answer of Telegram when the bot or the chat is wrong', async () => {
+    fakeVendors({ telegram: [new Response('Unauthorized', { status: 401 })] })
+    const res = await t.call('moderator', 'POST', '/v1/admin/alert-check')
+    expect([res.statusCode, res.json()]).toEqual([502, { error: 'Telegram answered 401' }])
+  })
+
+  it('gives 503 when the Telegram settings are not set', async () => {
     const bare = await testApp(['moderator'], undefined, { MODERATOR_UIDS: 'uid-moderator' })
     expect((await bare.call('moderator', 'POST', '/v1/admin/alert-check')).statusCode).toBe(503)
     await bare.close()
   })
 })
-
