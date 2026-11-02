@@ -1,4 +1,7 @@
-import type { Token } from '../../../models/models'
+import { vendorOf, type Token } from '../../../models/models'
+
+/** Gemini gives no token probabilities. An answer of DeepSeek with none is unscored, and its values are not sure (T-12). */
+export const unscoredDeepSeek = (tokens: Token[] | null, model: string) => !tokens && vendorOf(model) === 'deepseek'
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 

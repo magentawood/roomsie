@@ -91,11 +91,10 @@ export type AssistantParts = z.infer<typeof assistantParts>
 export const routerKinds = ['filters', 'context', 'question'] as const
 /** The scope bands of PD10. `general` and `consequential` are the bands 2a and 2b. */
 export const scopeBands = ['core', 'general', 'consequential', 'out_of_scope', 'adversarial', 'sensitive'] as const
-export type ScopeBand = (typeof scopeBands)[number]
 const register = z.strictObject({ language: z.enum(['english', 'hindi', 'marathi', 'mixed', 'other']), script: z.enum(['latin', 'devanagari', 'mixed']) })
 
-/** The router reads what the extractor reads. */
-export const routerInput = extractorInput
+/** What the router reads: the typed turn and the last question of the assistant, as the extractor. Each handler has its own schema (assistant.md). */
+export const routerInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
 /** The answer of the router model: the kinds, the band, the register for the reply writer (PD7), and two flags. */
 // Not strict, as the extractor answer.
 export const routerAnswer = z.object({
@@ -111,10 +110,10 @@ export const routerAnswer = z.object({
 export type RouterAnswer = z.output<typeof routerAnswer>
 
 /**
- * The label of a typed turn, on the turn of the person. `band` is the band that the turn used. `said` is the band of the router:
- * a band below the threshold, or a failed router, makes the turn core. `said` is null when no router answered.
+ * The label of a typed turn, on the turn of the person. `band` is the band that the turn used, and `routerBand` the band of the router.
+ * A band below the threshold makes the turn core, with no kinds and no flags. `routerBand` is null when no router answered.
  */
-export const turnLabel = routerAnswer.extend({ band: z.enum(scopeBands), said: z.enum(scopeBands).nullable(), register: register.nullable() }).strict()
+export const turnLabel = routerAnswer.extend({ routerBand: z.enum(scopeBands).nullable(), register: register.nullable() }).strict()
 export type TurnLabel = z.output<typeof turnLabel>
 
 /** What the reply writer reads: the output of the extractor, the question of the last reply, and the label of the turn. */

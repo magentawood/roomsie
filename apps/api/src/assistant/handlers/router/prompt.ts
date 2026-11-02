@@ -26,4 +26,4 @@ band: the one band of the message.
 
 register: the language and the script of the message. Hindi or Marathi words with English words is the language "mixed".
 danger: true only when the message tells of danger to the person or to others, such as self-harm, suicide or violence.
-community: true only when the person states a preference about the community, religion or caste of flatmates or neighbours.`
+community: true only when the person states a preference about the community, religion or caste of flatmates or neighbours. Such a preference is core, as any other preference of the search.`

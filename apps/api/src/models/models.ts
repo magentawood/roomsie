@@ -53,6 +53,11 @@ export type ModelCall = {
 
 /** No model gave a valid answer. The caller selects what the user sees. */
 export class ModelUnavailable extends Error {}
+/** For a caller with its own result for no answer: null in place of ModelUnavailable. */
+export function nullIfUnavailable(err: unknown): null {
+  if (err instanceof ModelUnavailable) return null
+  throw err
+}
 
 type Outcome<T> = { outcome: 'ok'; value: T } | { outcome: 'invalid' | 'failed' }
 /** `refused` is the status of a 4xx other than 429: a bad key or an empty balance. */
