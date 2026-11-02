@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { eq, sql } from 'drizzle-orm'
+import { asc, eq, sql } from 'drizzle-orm'
 import { createHash } from 'node:crypto'
 import { goalResponse, limitRefusal, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
@@ -52,7 +52,8 @@ const tapToResults = async (goal: { id: string; key: string }) => {
 }
 const eventsNamed = async (name: string) => {
   await t.flushEvents()
-  return analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, name))
+  // Postgres gives no order without ORDER BY. The id is a UUIDv7, so it orders two events of the same millisecond.
+  return analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, name)).orderBy(asc(eventRows.createdAt), asc(eventRows.id))
 }
 const refusal = (res: { json: () => unknown }) => limitRefusal.parse(res.json())
 

@@ -368,7 +368,7 @@ describe('the router', () => {
     expect(form.intent).toEqual(noIntent)
   })
 
-  it('notes a housing question, and keeps only the filters of the same message', async () => {
+  it('notes a general question, hands a consequential one off, and keeps only the filters of the same message', async () => {
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question'], band: 'general' }) })
     const only = await turn('is a deposit of two months normal?', { band: 'general', kinds: ['question'] })
     expect(only.reply).toBe(`Good question. I can't answer that one yet, but I've noted it. ${intentQuestion}`)
@@ -376,7 +376,8 @@ describe('the router', () => {
 
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question', 'filters'], band: 'consequential' }) })
     const both = await turn('I want a room. Is the area safe at night?', { band: 'consequential' })
-    expect(both.reply).toBe(`Good question. I can't answer that one yet, but I've noted it. ${roomAck}`)
+    expect(both.reply).toBe('That needs a real answer, not a guess from me. For an agreement, a dispute or tax, ask a lawyer or a CA. '
+      + `For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there. ${roomAck}`)
     expect(both.form.intent).toEqual(roomIntent)
   })
 

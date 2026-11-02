@@ -1,13 +1,16 @@
 import { vi } from 'vitest'
 import type { FastifyRequest } from 'fastify'
 import { analyticsEvent, type AnalyticsEvent, type RouterAnswer } from '@roomsie/contract'
+import { composerPrompt } from '../src/assistant/handlers/composer/prompt'
 import { routerPrompt } from '../src/assistant/handlers/router/prompt'
 
 export const deepseek = 'https://api.deepseek.com/chat/completions'
 export const gemini = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
 export const keys = { DEEPSEEK_API_KEY: 'deepseek-key', GEMINI_API_KEY: 'gemini-key' }
 
-type Reply = Response | Error
+/** A reply that never comes: the call ends only when its signal aborts, as at a deadline. */
+export const hang = Symbol('hang')
+type Reply = Response | Error | typeof hang
 type Replies = { deepseek?: Reply[]; gemini?: Reply[] }
 type SentRequest = { url: string; body: Record<string, unknown>; authorization: string | null }
 
@@ -20,22 +23,27 @@ export const coreLabel = { kinds: ['filters'], band: 'core', register: { languag
 /**
  * Each vendor answers with the next reply of its list. A reply that is an Error makes fetch throw it, as a timeout does.
  * The calls of the router get the replies of `router`, or `coreLabel` from DeepSeek when the test gives none.
- * `requests` has the other calls, `requests.router` the calls of the router, and `requests.telegram` the alerts of the spend.
+ * The calls of the composer get the replies of `composer`, or fail when the test gives none, so the scripted reply goes out.
+ * `requests` has the other calls, `requests.router` and `requests.composer` the calls of those handlers, and `requests.telegram` the alerts of the spend.
  */
-export function fakeVendors(replies: Replies & { router?: Replies; telegram?: Response[] }) {
-  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], telegram: [] as SentRequest[] })
+export function fakeVendors(replies: Replies & { router?: Replies; composer?: Replies; telegram?: Response[] }) {
+  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], composer: [] as SentRequest[], telegram: [] as SentRequest[] })
   vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
     if (url.startsWith('https://api.telegram.org/')) {
       requests.telegram.push({ url, body: JSON.parse(String(init.body)) as Record<string, unknown>, authorization: null })
       return replies.telegram?.shift() ?? Response.json({ ok: true })
     }
     const body = JSON.parse(String(init.body)) as { messages: { content: string }[] }
-    const isRouter = body.messages[0]?.content === routerPrompt
-    ;(isRouter ? requests.router : requests).push({ url, body, authorization: new Headers(init.headers).get('authorization') })
-    const lists = isRouter ? replies.router : replies
-    const reply = isRouter && !lists ? scored(coreLabel) : (url === deepseek ? lists?.deepseek : lists?.gemini)?.shift()
+    const system = body.messages[0]?.content
+    const handler = system === routerPrompt ? 'router' : system === composerPrompt ? 'composer' : null
+    ;(handler ? requests[handler] : requests).push({ url, body, authorization: new Headers(init.headers).get('authorization') })
+    if (handler === 'router' && !replies.router) return scored(coreLabel)
+    if (handler === 'composer' && !replies.composer) return down()
+    const lists = handler ? replies[handler] : replies
+    const reply = (url === deepseek ? lists?.deepseek : lists?.gemini)?.shift()
     if (!reply) throw new Error(`no reply left for ${url}`)
     if (reply instanceof Error) throw reply
+    if (reply === hang) return new Promise<Response>((_, reject) => init.signal?.addEventListener('abort', () => reject(init.signal?.reason)))
     return reply
   })
   return requests

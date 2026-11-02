@@ -1,6 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
+import { z } from 'zod'
+import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { saveOwnValues } from '../profiles/own-values'
@@ -68,6 +69,23 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   // Only saveTurn writes an assistant turn, and no row is older than this schema: T-12 is the first code that writes parts.
   const parts = assistantParts.parse(last.parts)
   return { ...parts, question: parts.question ?? last.text }
+}
+
+/** The last two turns of a goal: what the composer reads of the chat, never the full chat (PD7a). */
+export async function recentTurnsOf(db: Db, goalId: string) {
+  const rows = await db.select({ role: chatTurns.role, text: chatTurns.text }).from(chatTurns)
+    .where(eq(chatTurns.goalId, goalId)).orderBy(desc(chatTurns.createdAt)).limit(2)
+  return rows.reverse()
+}
+
+// A typed turn from before the router (T-34) has no register.
+const withRegister = z.object({ register: turnLabel.shape.register })
+/** The register of the last typed turn of a goal. Null: no typed turn, or no register on it. */
+export async function lastRegisterOf(db: Db, goalId: string) {
+  const [row] = await db.select({ parts: chatTurns.parts }).from(chatTurns)
+    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed')))
+    .orderBy(desc(chatTurns.createdAt)).limit(1)
+  return (row && withRegister.safeParse(row.parts).data?.register) ?? null
 }
 
 export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTurnParts })

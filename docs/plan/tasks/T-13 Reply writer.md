@@ -66,9 +66,9 @@ The assistant writes its answers and stays on the topic.
   - **The composer runs on each core typed turn (the user):** the other turns keep a scripted reply with no model call after the router. These are taps, and off-topic, adversarial and sensitive turns (why: PD7a, PD10).
   - **A deadline for the composer (the user):** `COMPOSER_DEADLINE_MS` limits the full call, with no long chain of retries. If the composer misses the deadline, the scripted reply goes out. The `model_called` event gives the time of each call, so T-27 can tune the deadline.
   - **The languages of the fixed lines (the user):** English, Hinglish, Hindi in Devanagari, and Marathi in Latin and in Devanagari. Only the short fixed lines change language. The questions after a tap or a fallback stay in English, as the chips (why: PD7, PC-09).
-  - **The language of a reply:** a typed turn uses the register of its router label. A tap and the line "send it again" use the register of the last typed turn. The language `other`, or no register, gives English. A mixed message in Latin script gives Hinglish.
+  - **The language of a reply:** a typed turn uses the register of its router label. A tap, and a typed turn with no label, use the register of the last typed turn (implementation, 2026-11-02). The language `other`, or no register, gives English. A mixed message in Latin script gives Hinglish.
   - **The home of the fixed lines (the user):** a JSON data file, not code and not a table. A test fails when a line has no text for a language. Our drafts are the default until PC-15 of F-14 gives the lines.
-  - **Legal, tax and safety questions (the user):** a fixed hand-off line with a real source, then the question again. For an agreement or a dispute, the source is a lawyer. For stamp duty and registration, it is the IGR Maharashtra site. The general picture comes from the articles of T-38 (why: PD10, band 2b). General questions keep the line "noted" until T-38.
+  - **Legal, tax and safety questions (the user):** a fixed hand-off line with a real source, then the question again. For an agreement, a dispute or tax, the source is a lawyer or a CA. For stamp duty and registration, it is the IGR Maharashtra site. For the safety of an area, the person visits it after dark and asks the people who live there (the user, implementation). The general picture comes from the articles of T-38 (why: PD10, band 2b). General questions keep the line "noted" until T-38.
   - **No fact about a specific person (the user):** the composer gets only the plan, the two forms of the person, and the last two turns. It never gets a listing, a profile or a result. The prompt forbids names and claims about a person. The output check rejects a text when:
     - it is longer than the limit
     - it has a phone number, an email address or a link
@@ -76,6 +76,7 @@ The assistant writes its answers and stays on the topic.
     - it has a name that is not in the plan. A name from the message of the person does not pass.
   - **The last two turns:** the two stored turns before the current message, and the current message. Nothing older (why: PD7a, the assistant standards).
   - **Form B:** the observations of the person from the table. The list is empty until T-36.
+  - **The plan that the composer reads:** the scripted reply. Its fixed lines are in the language of the person already, and the composer keeps them (implementation).
   - **The answer of the composer:** a JSON object with a version and the text. The fixed system prompt comes first, so the cache of the vendor applies (why: PD7).
   - **Three done items changed (the user, 2026-11-02):** in item 4 of T-13, a legal question gets a hand-off line now. Item 3 of T-38 adds the general picture. Item 5 names F-14 (PC-15), not F-12 and F-13.
 - **Out of scope:**

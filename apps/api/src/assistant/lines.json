@@ -1,0 +1,65 @@
+{
+  "failed": {
+    "en": "Sorry, I could not read that just now. Please send it again.",
+    "hi-Latn": "Sorry, yeh message abhi padha nahi ja saka. Please ek baar phir bhejiye.",
+    "hi": "माफ़ कीजिए, यह संदेश अभी पढ़ा नहीं जा सका। कृपया इसे फिर से भेजिए।",
+    "mr-Latn": "Maaf kara, ha message aatta vachta aala nahi. Krupaya punha pathva.",
+    "mr": "माफ करा, हा संदेश आत्ता वाचता आला नाही. कृपया पुन्हा पाठवा."
+  },
+  "done": {
+    "en": "That is all I need for now. Have a look at the results.",
+    "hi-Latn": "Abhi ke liye itna kaafi hai. Ab results dekhiye.",
+    "hi": "अभी के लिए इतना काफ़ी है। अब नतीजे देखिए।",
+    "mr-Latn": "Aattasathi evdha purey aahe. Aata results bagha.",
+    "mr": "आत्तासाठी एवढं पुरे आहे. आता निकाल बघा."
+  },
+  "noted": {
+    "en": "Good question. I can't answer that one yet, but I've noted it.",
+    "hi-Latn": "Achha sawaal hai. Iska jawaab abhi mere paas nahi hai, par yeh note ho gaya hai.",
+    "hi": "अच्छा सवाल है। इसका जवाब अभी मेरे पास नहीं है, पर यह नोट हो गया है।",
+    "mr-Latn": "Changla prashna aahe. Yacha uttar aatta maajhyakade nahi, pan he nondavun thevla aahe.",
+    "mr": "चांगला प्रश्न आहे. याचं उत्तर आत्ता माझ्याकडे नाही, पण हे नोंदवून ठेवलं आहे."
+  },
+  "handoff": {
+    "en": "That needs a real answer, not a guess from me. For an agreement, a dispute or tax, ask a lawyer or a CA. For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there.",
+    "hi-Latn": "Iska sahi jawaab chahiye, mera andaaza nahi. Agreement, jhagde ya tax ke liye kisi lawyer ya CA se poochiye. Stamp duty aur registration ke liye IGR Maharashtra ki site dekhiye. Kisi area ki safety ke liye, raat mein wahan jaakar dekhiye aur wahan rehne waalon se poochiye.",
+    "hi": "इसका सही जवाब चाहिए, मेरा अंदाज़ा नहीं। एग्रीमेंट, विवाद या टैक्स के लिए किसी वकील या CA से पूछिए। स्टैम्प ड्यूटी और रजिस्ट्रेशन के लिए IGR महाराष्ट्र की साइट देखिए। किसी इलाके की सुरक्षा के लिए, रात में वहाँ जाकर देखिए और वहाँ रहने वालों से पूछिए।",
+    "mr-Latn": "Yacha khara uttar hava, maajha andaaz nahi. Karar, vaad kinva karasathi vakilala kinva CA la vichara. Stamp duty ani nondanisathi IGR Maharashtra chi site bagha. Ekhadya bhagachya surakshitatesathi, ratri tithe jaun bagha ani tithe rahanarya lokanna vichara.",
+    "mr": "याचं खरं उत्तर हवं, माझा अंदाज नाही. करार, वाद किंवा करासाठी वकिलाला किंवा CA ला विचारा. स्टॅम्प ड्युटी आणि नोंदणीसाठी IGR महाराष्ट्रची साइट बघा. एखाद्या भागाच्या सुरक्षिततेसाठी, रात्री तिथे जाऊन बघा आणि तिथे राहणाऱ्या लोकांना विचारा."
+  },
+  "outOfScope": {
+    "en": "That one's outside what I can help with.",
+    "hi-Latn": "Yeh roomsie ke kaam se bahar hai.",
+    "hi": "यह roomsie के काम से बाहर है।",
+    "mr-Latn": "He roomsie chya kaamachya baaher aahe.",
+    "mr": "हे roomsie च्या कामाच्या बाहेर आहे."
+  },
+  "backToIt": {
+    "en": "Back to it: {question}",
+    "hi-Latn": "Wapas aapki search par: {question}",
+    "hi": "वापस आपकी खोज पर: {question}",
+    "mr-Latn": "Parat tumchya shodhakade: {question}",
+    "mr": "परत तुमच्या शोधाकडे: {question}"
+  },
+  "adversarial": {
+    "en": "Let's get back to your search.",
+    "hi-Latn": "Chaliye, wapas aapki search par aate hain.",
+    "hi": "चलिए, वापस आपकी खोज पर आते हैं।",
+    "mr-Latn": "Chala, parat tumchya shodhakade yeuya.",
+    "mr": "चला, परत तुमच्या शोधाकडे येऊया."
+  },
+  "sensitive": {
+    "en": "Thanks for telling me, and I'm sorry you're dealing with that.",
+    "hi-Latn": "Batane ke liye shukriya. Afsos hai ki aap is sab se guzar rahe hain.",
+    "hi": "बताने के लिए शुक्रिया। अफ़सोस है कि आप इस सब से गुज़र रहे हैं।",
+    "mr-Latn": "Sangitlyabaddal dhanyavaad. Tumhala he sagla sosava lagtay, yacha mala khed vatto.",
+    "mr": "सांगितल्याबद्दल धन्यवाद. तुम्हाला हे सगळं सोसावं लागतंय, याचा मला खेद वाटतो."
+  },
+  "danger": {
+    "en": "If you're not safe right now, call 112, or Tele-MANAS on 14416 (free, 24x7).",
+    "hi-Latn": "Agar aap abhi surakshit nahi hain, to 112 par call kijiye, ya Tele-MANAS ko 14416 par (free, 24x7).",
+    "hi": "अगर आप अभी सुरक्षित नहीं हैं, तो 112 पर कॉल कीजिए, या Tele-MANAS को 14416 पर (मुफ़्त, 24x7)।",
+    "mr-Latn": "Tumhi aatta surakshit nasal, tar 112 la call kara, kinva Tele-MANAS la 14416 var (free, 24x7).",
+    "mr": "तुम्ही आत्ता सुरक्षित नसाल, तर 112 ला कॉल करा, किंवा Tele-MANAS ला 14416 वर (मोफत, 24x7)."
+  }
+}

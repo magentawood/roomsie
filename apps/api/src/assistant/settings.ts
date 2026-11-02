@@ -10,6 +10,8 @@ export const assistantSettings = z.object({
   ASSISTANT_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
   /** Below this token probability, the band of the router is not sure, and the turn is core (T-34). T-27 tunes it. */
   ROUTER_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
+  /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). T-27 tunes it. */
+  COMPOSER_DEADLINE_MS: z.coerce.number().int().positive().default(2500),
   /** The order of the questions. `lifestyle` is the eight lifestyle questions in seed order. */
   ASSISTANT_QUESTION_ORDER: z.string().default('intent,areas,budget,moveDate,lifestyle')
     .transform((s) => s.split(',').map((item) => item.trim()))
@@ -17,6 +19,7 @@ export const assistantSettings = z.object({
 }).transform((s) => ({
   minProbability: s.ASSISTANT_MIN_PROBABILITY,
   routerMinProbability: s.ROUTER_MIN_PROBABILITY,
+  composerDeadlineMs: s.COMPOSER_DEADLINE_MS,
   questionOrder: [...new Set(s.ASSISTANT_QUESTION_ORDER.flatMap((item) => (item === 'lifestyle' ? lifestyleSlots : [item])))],
 }))
 export type AssistantSettings = z.output<typeof assistantSettings>

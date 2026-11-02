@@ -1,10 +1,12 @@
 import type { FastifyRequest } from 'fastify'
-import { budgetBandOf, formA, tapText, type AssistantParts, type ChipTap, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
+import { budgetBandOf, formA, formASlots, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf } from './catalogue'
+import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
-import { replyWriter } from './handlers/reply/reply'
+import { slotOf } from './handlers/extractor/form-update'
+import { replyLanguageOf, replyWriter } from './handlers/reply/reply'
 import { routeTurn } from './handlers/router/router'
 import type { AssistantSettings } from './settings'
 
@@ -15,6 +17,8 @@ export type TurnState = {
   text: string
   /** The last reply of the assistant: its question, the slot that it asked about, and its open conflicts. */
   last: AssistantParts | null
+  /** The register of the last typed turn: the language of a tap, and of a turn with no label (T-13). */
+  lastRegister: TurnLabel['register']
   form: FormA
 } & Omit<ExtractorOutput, 'version' | 'form'>
 
@@ -22,14 +26,29 @@ export type TurnState = {
 const usesExtractor = ({ band, kinds }: TurnLabel) =>
   band !== 'out_of_scope' && band !== 'adversarial' && !(kinds.includes('question') && !kinds.includes('filters'))
 
-export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form'>
+export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegister'>
+/** What only the composer reads: the last two turns and the Form B notes of the person (PD7a). */
+export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 
 /** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */
-export async function runTurn(input: TurnInput & { text: string }, deps: AssistantDeps) {
+export async function runTurn({ context, ...input }: TurnInput & { text: string; context: ComposerContext }, deps: AssistantDeps) {
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   const turn = { ...start, ...(usesExtractor(label) && extracted), label }
-  return { form: turn.form, reply: await replyWriter(turn, deps), conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
+  const scripted = await replyWriter(turn, deps)
+  // Only a core turn gets the composer. A failed turn keeps its fixed line (T-13).
+  const reply = label.band === 'core' && !turn.failed ? await composed(scripted, turn, context, deps) : scripted
+  return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
+}
+
+/** The scripted reply with the words of the composer, or as it is when the composer gives none. */
+async function composed(reply: AssistantReply, turn: TurnState & { label: TurnLabel }, context: ComposerContext, deps: AssistantDeps) {
+  const form = Object.fromEntries(formASlots.flatMap((slot) => {
+    const { source, value } = slotOf(turn.form, slot)
+    return source === 'empty' ? [] : [[slot, value]]
+  }))
+  const text = await composer(turn.goalId, { version: 1, language: replyLanguageOf(turn), draft: reply.text, form, ...context, message: turn.text }, deps)
+  return text ? { ...reply, text } : reply
 }
 
 /** A tap needs no router: each chip is an answer about the search. */

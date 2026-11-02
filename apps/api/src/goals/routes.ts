@@ -6,7 +6,8 @@ import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistan
 import { optionalUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
-import { createGoal, createVisitorSession, goalOf, lastReplyOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
+import { observationsOf } from '../observations/read'
+import { createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
 const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional(), 'user-agent': z.string().optional() })
@@ -59,9 +60,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       v1.analytics.track(req, { name: 'limit_hit', limit: 'too_fast' })
       return reply.code(429).send({ error: limitLines.too_fast, limit: 'too_fast' })
     }
-    const input = { goalId: goal.id, last, form: goal.form }
+    const input = { goalId: goal.id, last, form: goal.form, lastRegister: await lastRegisterOf(options.db, goal.id) }
     const deps = { ...options, req }
-    const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn(input, req.body.text, deps)
+    const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn(input, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, turn.form, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
@@ -74,8 +75,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   })
 }
 
-async function typedTurn(input: TurnInput, text: string, deps: AssistantDeps) {
-  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences } = await runTurn({ ...input, text }, deps)
+async function typedTurn(input: TurnInput, text: string, asker: Asker, deps: AssistantDeps) {
+  const owner = asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! }
+  const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, owner)])
+  const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
+  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences } = await runTurn({ ...input, text, context }, deps)
   // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
   const parts = { ...label, ...(Object.keys(preferences).length && { preferences }) }
   const events: AnalyticsEvent[] = [...conflicts.map(({ slot }) => ({ name: 'slot_conflict' as const, slot })), { name: 'turn_routed', band: label.band }]

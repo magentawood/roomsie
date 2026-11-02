@@ -158,10 +158,31 @@ export type TurnLabel = z.output<typeof turnLabel>
 export const userTurnParts = turnLabel.extend({ preferences: statedPreferences.optional() }).strict()
 export type UserTurnParts = z.output<typeof userTurnParts>
 
-/** What the reply writer reads: the output of the extractor, the question of the last reply, and the label of the turn. */
+/** The languages of a reply (PD7, PC-09): English, Hinglish, Hindi, and Marathi in Latin and in Devanagari script. */
+export const replyLanguages = ['en', 'hi-Latn', 'hi', 'mr-Latn', 'mr'] as const
+export type ReplyLanguage = (typeof replyLanguages)[number]
+
+/** What the reply writer reads: the output of the extractor, the question of the last reply, the label of the turn, and the language of the reply. */
 // The reply never names the own values or the hidden preferences (T-58), so it does not read them.
-export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
+export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true })
+  .extend({ last: assistantParts.nullable(), label: turnLabel, language: z.enum(replyLanguages) })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
 export type AssistantReply = z.output<typeof assistantReply>
+
+/** What the composer reads: the plan of the reply, the two forms of the person, and the last two turns, never the full chat (PD7a). */
+export const composerInput = z.strictObject({
+  version: z.literal(1).default(1),
+  language: z.enum(replyLanguages),
+  /** The scripted reply: the plan. Its fixed lines can be in the language already. The composer keeps its facts and its question. */
+  draft: z.string().min(1),
+  /** The filled slots of Form A. */
+  form: z.partialRecord(z.enum(formASlots), z.unknown()),
+  formB: z.array(z.strictObject({ key: z.string(), value: z.string() })),
+  turns: z.array(z.strictObject({ role: z.enum(['user', 'assistant']), text: z.string() })).max(2),
+  message: z.string(),
+})
+export type ComposerInput = z.output<typeof composerInput>
+/** The answer of the composer model. Not strict, as the extractor answer. */
+export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
