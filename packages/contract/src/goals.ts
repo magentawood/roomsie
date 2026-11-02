@@ -37,8 +37,7 @@ const words = z.string().trim().min(1).max(100)
  * The answer of the model. A slot that the turn does not mention is null or absent.
  * Areas, budget and move date are the words of the person: code reads them (PD7).
  */
-// Not strict, unlike the other handler schemas: a key that the model adds or misspells only leaves its slot empty,
-// and the next question asks for it. A strict schema would refuse the whole answer, then retry and fall back (T-12 review).
+// Not strict: an unknown key from the model leaves its slot empty, and does not refuse the whole answer.
 export const extractorAnswer = z.object({
   version: z.literal(1).default(1),
   intent: choice(intents),
@@ -58,7 +57,7 @@ export const extractorAnswer = z.object({
 export const ambiguousArea = z.strictObject({ words: z.string(), slugs: z.array(areaSlug).min(2) })
 export type AmbiguousArea = z.infer<typeof ambiguousArea>
 
-/** A new value of a stated slot. The assistant asks which value to keep (PD3b). */
+/** A new value of a stated slot. The assistant asks which value to keep (PD3b). The `formA` parse of the extractor output is the only check of the two values. */
 export const slotConflict = z.strictObject({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })
 export type SlotConflict = z.infer<typeof slotConflict>
 
@@ -77,10 +76,10 @@ export const extractorOutput = z.strictObject({
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
-/** What an assistant turn keeps: the slot that it asked about, and if the question is a conflict of two values (PD3b). */
+/** What an assistant turn keeps: the slot that it asked about, its question, and its open conflicts (PD3b). */
 export const assistantParts = z.strictObject({
   version: z.literal(1).default(1),
-  asked: z.strictObject({ slot: z.enum(formASlots), conflict: z.boolean() }).nullable(),
+  asked: z.strictObject({ slot: z.enum(formASlots) }).nullable(),
   /** The question of the reply, with no line before it. The extractor of the next turn reads it. */
   question: z.string().nullable().default(null),
   /** The conflicts that the reply asks about. They stay open until a turn settles them. */
@@ -89,7 +88,7 @@ export const assistantParts = z.strictObject({
 export type AssistantParts = z.infer<typeof assistantParts>
 
 /** What the reply writer reads: the output of the extractor, and the question of the last reply. */
-export const replyInput = extractorOutput.extend({ asked: assistantParts.shape.asked, lastQuestion: z.string().nullable(), openConflicts: z.array(slotConflict) })
+export const replyInput = extractorOutput.extend({ last: assistantParts.nullable() })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })

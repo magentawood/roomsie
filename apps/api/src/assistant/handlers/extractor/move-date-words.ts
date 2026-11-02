@@ -1,4 +1,4 @@
-import { isDevanagari, phrase, plainWords } from '../../words'
+import { byStem, isDevanagari, phrase, plainWords } from '../../words'
 import { numberWords } from './number-words'
 
 const monthWords: Record<string, number> = Object.fromEntries([
@@ -13,7 +13,8 @@ const week = 'week|hafte|hafta|athavdyat|हफ्ते|हफ्ता|सप�
 const now = phrase('asap|immediately|now|abhi|turant|lagech|right away|as soon as possible|अभी|तुरंत|लगेच|ताबडतोब|आत्ता')
 const notNow = phrase('not now|abhi nahi|abhi nahin|lagech nahi|अभी नहीं|अभी नही|आत्ता नाही|लगेच नाही')
 const nextMonth = phrase(`(?:${next}) (?:${month})`)
-const monthAfterNext = phrase(`(?:${next}) (?:to|ke) (?:${next}) (?:${month})`)
+/** "next to next month", "agle ke agle mahine", "पुढच्या पुढच्या महिन्यात". */
+const monthAfterNext = phrase(`(?:${next})(?: (?:to|ke|के))? (?:${next}) (?:${month})`)
 const thisMonth = phrase(`(?:this|is|ya|इस|या) (?:${month})`)
 const nextWeek = phrase(`(?:${next}) (?:${week})`)
 const monthEnd = phrase('end|ant|अंत|आखिर|अखेर|शेवटी')
@@ -39,8 +40,7 @@ const addMonths = ({ y, m, d }: Day, months: number): Day => {
 const countOf = (word: string) => (/^\d+$/.test(word) ? Number(word) : numberWords[word])
 
 /** A month name, also with a Marathi ending, as "डिसेंबरमध्ये" or "जानेवारीत". */
-const devanagariMonths = Object.keys(monthWords).filter((w) => isDevanagari(w) && w.length >= 3)
-const monthOf = (word: string) => monthWords[word] ?? monthWords[devanagariMonths.find((w) => word.startsWith(w)) ?? '']
+const monthOf = byStem(monthWords, (w) => isDevanagari(w) && w.length >= 3)
 
 /** A date with a month and no year is the next one, so "January" in November is next year. */
 function inMonth(text: string, words: string[], today: Day): Day | null {

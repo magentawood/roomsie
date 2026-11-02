@@ -161,7 +161,7 @@ describe('a typed turn', () => {
   it('takes a slug of the model only from an area named in the turn, or in a question about the areas', async () => {
     const goal = await visitorGoal()
     // A reply that names Bandra West, but asks about the budget.
-    await t.db.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: 'Got it: Bandra West. What is your monthly budget?', parts: { version: 1, asked: { slot: 'budget', conflict: false } } })
+    await t.db.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: 'Got it: Bandra West. What is your monthly budget?', parts: { version: 1, asked: { slot: 'budget' } } })
     fakeVendors({ deepseek: [scored({ areas: [{ words: 'there', slug: 'bandra-west' }] })] })
     expect((await sent(goal, 'somewhere there')).form.areas.source).toBe('empty')
   })
@@ -193,6 +193,13 @@ describe('a typed turn', () => {
     expect((await sent(await visitorGoal(), 'पवईत रूम हवी')).form.areas.value).toEqual(['powai'])
     expect((await sent(await visitorGoal(), 'मला अंधेरीत रूम हवी')).turns[1].text).toBe('Which अंधेरी do you mean: Andheri West, Andheri East, or both?')
     expect((await sent(await visitorGoal(), 'ठाण्यात रूम')).turns[1].text).toBe('Which ठाणे do you mean: Thane, Thane West, Thane East, or all of them?')
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'माटुंग्याला', slug: 'matunga' }] })] })
+    expect((await sent(await visitorGoal(), 'माटुंग्याला रूम हवी')).form.areas.value).toEqual(['matunga'])
+  })
+
+  it('keeps budget words that the tokens of DeepSeek do not match, as Devanagari in byte tokens', async () => {
+    fakeVendors({ deepseek: [answer(JSON.stringify({ budget: 'पंधरा ते वीस हजार' }), undefined, [{ token: '{"budget":"\\u092a', logprob: -2 }, { token: '..."}', logprob: -2 }])] })
+    expect((await sent(await visitorGoal(), 'बजट पंधरा ते वीस हजार')).form.budget.value).toEqual({ min: 15_000, max: 20_000 })
   })
 
   it('fills no budget or move date from words with a low token probability', async () => {
@@ -254,6 +261,22 @@ describe('a typed turn', () => {
     const earlier = await sent(other, 'pehla wala')
     expect(earlier.form.budget.value).toEqual({ min: null, max: 20_000 })
     expect(earlier.turns[1].text).not.toContain('Which one should I keep?')
+  })
+
+  it('does not take a choice word inside a sentence as the answer, and reads a choice that the model calls unclear', async () => {
+    fakeVendors({ deepseek: [scored({ budget: '20k' }), scored({ budget: '25k' }), scored({ moveDate: '1st December' })] })
+    const goal = await visitorGoal()
+    await sent(goal, '20k')
+    await sent(goal, '25k')
+    const sentence = await sent(goal, 'move date 1st December')
+    expect(sentence.form.budget.value).toEqual({ min: null, max: 20_000 })
+    expect(sentence.turns[1].text).toContain('Which one should I keep?')
+
+    fakeVendors({ deepseek: [scored({ intent: 'pg' }), scored({ intent: 'room' }), scored({ intent: 'unclear' }, { unclear: 0.9 })] })
+    const other = await visitorGoal()
+    await sent(other, 'PG')
+    await sent(other, 'room')
+    expect((await sent(other, 'दुसरं')).form.intent.value).toBe('room')
   })
 
   it('fills the other budget bound with no conflict', async () => {

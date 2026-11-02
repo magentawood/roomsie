@@ -1,6 +1,6 @@
 # Assistant standards
 
-These rules apply to the assistant in `apps/api`: the model calls, the handlers, Form A and Form B. The other API rules are in [api.md](api.md).
+These rules apply to the assistant in `apps/api`: the model calls, the handlers, Form A and Form B. The rules in [_index.md](_index.md) and [api.md](api.md) also apply.
 
 - Call a model only through the one model module. The module holds the timeout, the retry, the fallback and the token counts. Why: a vendor change is then a config change. ([PD7](../decisions/pd-07-models.md))
 - Parse each model output with Zod. If it fails, retry one time on the same model, then on the fallback. Why: the model is never the source of truth. ([PD7](../decisions/pd-07-models.md), [PD7a](../decisions/pd-07a-agent-architecture.md))
