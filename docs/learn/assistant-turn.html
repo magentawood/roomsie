@@ -40,16 +40,17 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>A <strong>goal</strong> is one move, with its own chat and its own Form A (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A <strong>turn</strong> is one message: the person types it, and the assistant replies.</li>
 <li>A <strong>visitor</strong> chats with no sign-in (<a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>). The first goal of a visitor makes a <strong>visitor session</strong>, and the API gives the browser a <strong>visitor key</strong> one time.</li>
-<li>A <strong>handler</strong> is one step of a turn. The <strong>extractor</strong> changes the text into Form A slots. The <strong>reply writer</strong> writes the reply. The router, the observer and the advisor become more handlers (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
+<li>A <strong>handler</strong> is one step of a turn. The <strong>extractor</strong> changes the text into Form A slots. The <strong>reply writer</strong> writes the reply. The <strong>router</strong> labels each message at the same time as the extractor: see <a href="router.html">The router</a>. The observer and the advisor become more handlers (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
 <li>The <strong>token probability</strong> is the probability that the model gave to each piece of its answer. The extractor uses it as a <strong>gate</strong>: a value that the model was not sure of becomes <code>unclear</code> (<a href="../decisions/pd-07-models.md">PD7</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
-                                                  ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini
+                                                  ├─ router ────▶ models.scored(): the label    } at the
+                                                  ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini   } same time
                                                   │     ├─ the gate on the token probabilities
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
-                                                  └─ reply writer: &quot;Got it: …&quot; and one question
+                                                  └─ reply writer: the line of the band, &quot;Got it: …&quot; and one question
                                   saveTurn(): the two turns and the form, then the events
 </code></pre>
 <table>
@@ -69,7 +70,7 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>apps/api/src/goals/store.ts</code></td>
 </tr>
 <tr>
-<td>The entry point and the list of handlers</td>
+<td>The entry point: the router and the extractor at the same time</td>
 <td><code>apps/api/src/assistant/assistant.ts</code></td>
 </tr>
 <tr>

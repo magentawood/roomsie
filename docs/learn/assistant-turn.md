@@ -6,18 +6,19 @@
 
 - A **goal** is one move, with its own chat and its own Form A ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A **turn** is one message: the person types it, and the assistant replies.
 - A **visitor** chats with no sign-in ([PD6b](../decisions/pd-06b-login-gate-and-search.md)). The first goal of a visitor makes a **visitor session**, and the API gives the browser a **visitor key** one time.
-- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** writes the reply. The router, the observer and the advisor become more handlers ([PD7a](../decisions/pd-07a-agent-architecture.md)).
+- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** writes the reply. The **router** labels each message at the same time as the extractor: see [The router](router.md). The observer and the advisor become more handlers ([PD7a](../decisions/pd-07a-agent-architecture.md)).
 - The **token probability** is the probability that the model gave to each piece of its answer. The extractor uses it as a **gate**: a value that the model was not sure of becomes `unclear` ([PD7](../decisions/pd-07-models.md)).
 
 ## How it fits our project
 
 ```
 the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
-                                                  ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini
+                                                  ├─ router ────▶ models.scored(): the label    } at the
+                                                  ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini   } same time
                                                   │     ├─ the gate on the token probabilities
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
-                                                  └─ reply writer: "Got it: …" and one question
+                                                  └─ reply writer: the line of the band, "Got it: …" and one question
                                   saveTurn(): the two turns and the form, then the events
 ```
 
@@ -25,7 +26,7 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
 |---|---|
 | The routes: start a goal, read a goal, send a turn | `apps/api/src/goals/routes.ts` |
 | The goals, the turns and the visitor sessions | `apps/api/src/goals/store.ts` |
-| The entry point and the list of handlers | `apps/api/src/assistant/assistant.ts` |
+| The entry point: the router and the extractor at the same time | `apps/api/src/assistant/assistant.ts` |
 | The extractor, its prompt, the gate and the parsers | `apps/api/src/assistant/handlers/extractor/` |
 | The reply writer and its lines | `apps/api/src/assistant/handlers/reply/` |
 | The schemas of the routes and the handlers | `packages/contract/src/goals.ts` |

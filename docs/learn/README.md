@@ -37,6 +37,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Postgres drivers](postgres-drivers.md): a driver is the library that connects the API to Postgres. We use postgres.js under Drizzle, with prepared statements off for the Supabase pooler.
 - [Profiles and cards](profiles.md): a signed-in user makes one profile with a name, an age of 18 or more and a gender; the card goes live by itself when it is complete, and other users read it through the API.
 - [The results panel](results-panel.md): the results panel shows the matches of Form A as cards beside the chat. It changes only when the form changes.
+- [The router](router.md): the router labels each typed message of the chat with its kinds and its scope band, so the turn does only the work that the message needs.
 - [Saved](saved.md): a signed-in user saves a place or a person with the Save button, and sees them again under Saved, in the tabs Places and People.
 - [Secret scanning](secret-scanning.md): gitleaks finds a password or a key in the code before the secret goes into the shared git history. Run `pnpm secrets` before each pull request.
 - [Sign-in and tokens](sign-in-and-tokens.md): the web signs in with Google through Firebase. The API checks the ID token locally and loads the `users` row.
