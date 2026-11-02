@@ -24,10 +24,12 @@ const budget = z.strictObject({ min: rupees.nullable(), max: rupees.nullable() }
 /** A stated preference of the hidden filter: the values, and how strong (PD3c, T-58). An unclear weight acts as a preference. */
 export const identityPreference = <L extends readonly [string, ...string[]]>(list: L) =>
   z.object({ values: z.array(z.enum(list)).min(1).max(list.length), weight: z.enum([...mustHaveWeights, 'unclear']) })
-export const religionPreference = identityPreference(religions).strict()
-export const communityPreference = identityPreference(communities).strict()
+const religionPreference = identityPreference(religions).strict()
+const communityPreference = identityPreference(communities).strict()
 /** The hidden preferences that one typed turn stated: the log of PD3c (T-58). */
 export const statedPreferences = z.strictObject({ religionPreference, communityPreference }).partial()
+/** The two hidden slots of Form A. */
+export type HiddenSlot = keyof z.infer<typeof statedPreferences>
 
 /** What the assistant knows of one move. It drives the match query (PD7a, PD15). */
 export const formA = z.strictObject({

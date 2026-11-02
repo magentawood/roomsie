@@ -26,5 +26,5 @@ export async function runTurn(input: Pick<TurnState, 'goalId' | 'text' | 'last' 
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   const turn = { ...start, ...(usesExtractor(label) && extracted), label }
-  return { form: turn.form, reply: await replyWriter(turn, deps), conflicts: turn.conflicts, label, ownValues: turn.ownValues, preferences: turn.preferences }
+  return { form: turn.form, reply: await replyWriter(turn, deps), conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
 }

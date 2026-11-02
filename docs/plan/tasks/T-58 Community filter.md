@@ -83,6 +83,7 @@ Filters the people of a search on a community or religion preference that the se
   - **A parent-run profile (the user, review round 2):** the chat statements of the parent also fill the religion and the community of the profile that the parent runs, as for any profile.
   - **The results route (the user, review round 2):** the search uses the hidden slots of the form that the request sends. The log of PD3c is the chat turn, the only place where the app sets the filter.
   - **The log of a turn (review round 2):** the extractor gives the preferences that it kept, so a turn that states the same preference again is in the log too.
+  - **Typed hidden preferences (the user, review of the fixes):** the extractor builds the two hidden slots with explicit typed keys, not a shorter form that loses the key types.
   - **The optional fields:** a design on the drafts page, with our tokens, that the user approves before the build. Only the person sees the values. The person card, the person page and each answer to a different person omit them.
   - **The design (the user, 2026-11-02):** drafts section 32 (Figma node 580:28444). Two optional selects, Religion and Community, after Gender in "The Basics", with no required mark. The hint under each: "Optional. Never on your card. We use it only to match you with people who ask for it." The hint tells the purpose, as the DPDP Act asks.
 - **Out of scope:**

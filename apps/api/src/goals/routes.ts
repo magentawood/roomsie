@@ -43,7 +43,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const last = await lastReplyOf(options.db, goal.id)
     const { text } = req.body
-    const { form, reply: answer, conflicts, label, ownValues, preferences } = await runTurn({ goalId: goal.id, text, last, form: goal.form }, { ...options, req })
+    const { form, reply: answer, conflicts, label, ownValues, hiddenPreferences: preferences } = await runTurn({ goalId: goal.id, text, last, form: goal.form }, { ...options, req })
     // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
     const parts = { ...label, ...(Object.keys(preferences).length && { preferences }) }
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, form, { text, parts, ownValues }, answer)

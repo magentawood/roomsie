@@ -78,7 +78,8 @@ export const extractorOutput = z.strictObject({
   failed: z.boolean(),
   /** What the person stated about themselves in this turn. Null: not in this turn. */
   ownValues,
-  preferences: statedPreferences,
+  /** The hidden religion and community preferences that this turn stated (PD3c). */
+  hiddenPreferences: statedPreferences,
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
@@ -127,8 +128,8 @@ export const userTurnParts = turnLabel.extend({ preferences: statedPreferences.o
 export type UserTurnParts = z.output<typeof userTurnParts>
 
 /** What the reply writer reads: the output of the extractor, the question of the last reply, and the label of the turn. */
-// The reply never names the own values of the person (T-58), so it does not read them.
-export const replyInput = extractorOutput.omit({ ownValues: true, preferences: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
+// The reply never names the own values or the hidden preferences (T-58), so it does not read them.
+export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
