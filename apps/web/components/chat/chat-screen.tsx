@@ -63,8 +63,6 @@ function EmptyChat({ onSend }: { onSend: (text: string) => void }) {
   )
 }
 
-type Turn = GoalResponse['turns'][number]
-
 /** The goal of this browser, kept in local storage, so a reload opens the same chat. */
 function useChat() {
   const { user, loading } = useAuth()
@@ -124,7 +122,9 @@ export function ChatScreen() {
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
       <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
         <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
-          {turns.map((turn) => <TurnLine key={turn.id} turn={turn} />)}
+          {turns.map((turn) => (
+            <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
+          ))}
           {pending !== undefined && (
             <li className="flex flex-col gap-6">
               <UserText text={pending} />
@@ -147,6 +147,3 @@ function UserText({ text }: { text: string }) {
   return <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
 }
 
-function TurnLine({ turn }: { turn: Turn }) {
-  return <li>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
-}

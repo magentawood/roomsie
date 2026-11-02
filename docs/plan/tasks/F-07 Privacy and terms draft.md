@@ -35,6 +35,7 @@ The text for the legal pages.
 - [ ] It says that the system stores chat messages, and that account deletion deletes them
 - [ ] It says that chat text goes to DeepSeek, which stores it in China
 - [ ] The team emails DeepSeek to opt out of training before launch
+- [ ] For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)
 - [ ] The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
 
 ^done
