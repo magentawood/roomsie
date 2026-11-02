@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { and, count, eq, sql } from 'drizzle-orm'
-import { goalResponse, newGoalResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
+import { goalResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
 import { anonymousSessions, areas, chatTurns, goals } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -416,3 +416,54 @@ describe('the router', () => {
     expect(failed.form.intent).toEqual(roomIntent)
   })
 })
+
+describe('the hidden religion and community filter (T-58)', () => {
+  const ownOf = async (goalId: string) => (await t.db.select({ religion: goals.ownReligion, community: goals.ownCommunity }).from(goals).where(eq(goals.id, goalId)))[0]
+  const profileOf = async (who: 'asha' | 'ravi') => profileResponse.parse((await t.call(who, 'GET', '/v1/me/profile')).json())
+  const userTurn = (who: 'asha' | 'ravi', goalId: string, text: string) => t.call(who, 'POST', `/v1/goals/${goalId}/turns`, { text })
+  const userGoal = async (who: 'asha' | 'ravi') => newGoalResponse.parse((await t.call(who, 'POST', '/v1/goals')).json()).id
+  const areasQuestion = 'Which areas of Mumbai work for you?'
+
+  it('fills a hidden slot from a stated preference with no line in the reply, and a newer preference replaces it with no question', async () => {
+    fakeVendors({ deepseek: [scored({ intent: 'room', religionPreference: { values: ['jain'], weight: 'dealbreaker' } })] })
+    const goal = await visitorGoal()
+    const first = await sent(goal, 'room chahiye, only Jain flatmates')
+    expect(first.turns[1].text).toBe(`Got it: a room in a shared flat. ${areasQuestion}`)
+    expect(first.form.religionPreference).toEqual({ source: 'stated', value: { values: ['jain'], weight: 'dealbreaker' } })
+
+    fakeVendors({ deepseek: [scored({ religionPreference: { values: ['jain', 'hindu'], weight: 'prefer' } })] })
+    const next = await sent(goal, 'Jain or Hindu, preferably')
+    expect(next.turns[1].text).toBe(areasQuestion)
+    expect(next.form.religionPreference).toEqual({ source: 'stated', value: { values: ['jain', 'hindu'], weight: 'prefer' } })
+  })
+
+  it('keeps only the values that pass the threshold, and a weight that does not pass is unclear', async () => {
+    fakeVendors({ deepseek: [scored({ communityPreference: { values: ['gujarati', 'marwari'], weight: 'dealbreaker' } }, { marwari: 0.5, dealbreaker: 0.5 })] })
+    const { form } = await sent(await visitorGoal(), 'Gujarati or Marwari only')
+    expect(form.communityPreference).toEqual({ source: 'stated', value: { values: ['gujarati'], weight: 'unclear' } })
+  })
+
+  it('keeps what a visitor states about themselves on the goal, with no line in the reply', async () => {
+    fakeVendors({ deepseek: [scored({ ownReligion: 'jain', ownCommunity: 'gujarati' })] })
+    const goal = await visitorGoal()
+    const { turns } = await sent(goal, "I'm a Gujarati Jain")
+    expect(turns[1].text).toBe('What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?')
+    expect(await ownOf(goal.id)).toEqual({ religion: 'jain', community: 'gujarati' })
+  })
+
+  it('gives a new profile the values that the person stated in a chat, and then the newer statement wins', async () => {
+    const goalId = await userGoal('asha')
+    fakeVendors({ deepseek: [scored({ ownReligion: 'sikh' })] })
+    expect((await userTurn('asha', goalId, "I'm Sikh")).statusCode).toBe(200)
+    const made = profileResponse.parse((await t.call('asha', 'POST', '/v1/me/profile', { fullName: 'Asha Rao', age: 26, gender: 'female' })).json())
+    expect(made).toMatchObject({ religion: 'sikh', community: null })
+
+    expect((await t.call('asha', 'PATCH', '/v1/me/profile', { religion: 'hindu' })).statusCode).toBe(200)
+    fakeVendors({ deepseek: [scored({ ownReligion: 'jain', ownCommunity: 'marathi' })] })
+    expect((await userTurn('asha', goalId, "I'm Jain, from a Marathi family")).statusCode).toBe(200)
+    expect(await profileOf('asha')).toMatchObject({ religion: 'jain', community: 'marathi' })
+    expect((await t.call('asha', 'PATCH', '/v1/me/profile', { community: null })).statusCode).toBe(200)
+    expect(await profileOf('asha')).toMatchObject({ religion: 'jain', community: null })
+  })
+})
+

@@ -78,6 +78,7 @@ Filters the people of a search on a community or religion preference that the se
   - **Where the own values go (the user):** each turn puts them on its goal, also for a visitor. When the person has a profile, they also go on the profile. A new profile takes the latest stated values of the goals of the person.
   - **T-17 (the user):** a new done item: "When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement".
   - **The optional fields:** a design on the drafts page, with our tokens, that the user approves before the build. Only the person sees the values. The person card, the person page and each answer to a different person omit them.
+  - **The design (the user, 2026-11-02):** drafts section 32 (Figma node 580:28444). Two optional selects, Religion and Community, after Gender in "The Basics", with no required mark. The hint under each: "Optional. Never on your card. We use it only to match you with people who ask for it." The hint tells the purpose, as the DPDP Act asks.
 - **Out of scope:**
   - caste values
   - a filter on listings (PD3d)

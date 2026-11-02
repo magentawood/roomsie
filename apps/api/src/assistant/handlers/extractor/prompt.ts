@@ -1,4 +1,4 @@
-import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers } from '@roomsie/contract'
+import { communities, intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers } from '@roomsie/contract'
 import { namesOf, type Catalogue } from '../../catalogue'
 
 const list = (values: readonly string[]) => values.join(' | ')
@@ -31,7 +31,11 @@ Rules:
   "lifestyle": {
 ${lifestyle}
   } | null,
-  "mustHaves": { ${mustHaveKeys.map((k) => `"${k}"`).join(', ')}: ${list([...mustHaveWeights, 'unclear'])} } | null
+  "mustHaves": { ${mustHaveKeys.map((k) => `"${k}"`).join(', ')}: ${list([...mustHaveWeights, 'unclear'])} } | null,
+  "religionPreference": { "values": [${list(religions)}], "weight": ${list([...mustHaveWeights, 'unclear'])} } | null,
+  "communityPreference": { "values": [${list(communities)}], "weight": ${list([...mustHaveWeights, 'unclear'])} } | null,
+  "ownReligion": ${list(religions)} | null,
+  "ownCommunity": ${list(communities)} | null
 }
 
 The slots:
@@ -39,6 +43,9 @@ The slots:
 - roomType: private = a room for one person, or a PG with single sharing. shared = a room for two or more, or a PG with double or triple sharing.
 - whosMoving: student, first_job = starting a first job, working, couple, family, friends = a group of friends.
 - lifestyle: what the person is like. your_days: out_most_days, home_most_days, night_shifts, student.
+- religionPreference and communityPreference: only when the person states a preference about the religion or the community of the flatmates. dealbreaker: "only", "strictly", "must". prefer: "preferably", "better if". A broad word gives each value that it covers: "South Indian" is tamil, telugu, kannadiga and malayali. "North Indian" is punjabi, uttar_pradesh, bihari and marwari. "Maharashtrian" is marathi. "Goan" is konkani.
+- ownReligion and ownCommunity: only when the person states their own religion or community, such as "I'm Jain" or "main Gujarati hoon". Not the religion of their family, and not a preference. Never infer them from a name, a diet, an area or a festival. "I eat Jain food" is food: jain, and no ownReligion.
+- A caste is never a value of these slots. Leave a caste out.
 - mustHaves: what the person wants of the place or the flatmates. dealbreaker = they must have it ("only", "must", "strictly", "no ... at all"). prefer = they would like it ("preferably", "better if"). unclear = they want it, but not how much.
 
 Budget words: the amount and the words around it, such as "under 25k", "bees hazaar tak", "15-20k", "1.5 lakh", "35k se upar", "max 18000".

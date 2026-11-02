@@ -392,3 +392,48 @@ describe('the suggested posts and the event', () => {
     expect(rows.map((r) => [r.name, r.fields])).toEqual([['results_shown', { count: 1 }], ['results_shown', { count: 0 }]])
   })
 })
+
+describe('the hidden religion and community filter (T-58)', () => {
+  type Who = 'seeker' | 'quiet' | 'hindu' | 'jain' | 'gujarati'
+  let t: TestApp<Who>
+  const cards = {} as Record<Who, string>
+  const flatmates = { intent: stated('flatmates'), areas: stated(['bandra-santacruz']), budget: stated({ min: null, max: 20000 }) }
+  const names = (results: MatchResult[]) => results.map((r) => (Object.keys(cards) as Who[]).find((who) => cards[who] === idOf(r)))
+
+  beforeAll(async () => {
+    t = await testApp(['seeker', 'quiet', 'hindu', 'jain', 'gujarati'])
+    await seedCatalogues(t.db)
+    // In this order: the newer card of two equal cards comes first.
+    cards.seeker = await person(t, 'seeker', {}, 'male')
+    cards.quiet = await person(t, 'quiet', {})
+    cards.hindu = await person(t, 'hindu', { religion: 'hindu' })
+    cards.jain = await person(t, 'jain', { religion: 'jain', community: 'marwari' })
+    cards.gujarati = await person(t, 'gujarati', { community: 'gujarati' })
+  })
+  afterAll(() => t.close())
+
+  it('removes with "only" the people who stated a different value, keeps the people who stated nothing, and labels nobody', async () => {
+    const religion = await search(t, 'seeker', { ...flatmates, religionPreference: stated({ values: ['jain'], weight: 'dealbreaker' }) })
+    expect(names(religion.results)).toEqual(['gujarati', 'jain', 'quiet'])
+    expect(religion.results.map((r) => [r.bestMatch, r.didntSay])).toEqual([[false, []], [false, []], [false, []]])
+    const community = await search(t, 'seeker', { ...flatmates, communityPreference: stated({ values: ['gujarati', 'bengali'], weight: 'dealbreaker' }) })
+    expect(names(community.results)).toEqual(['gujarati', 'hindu', 'quiet'])
+  })
+
+  it('puts the people of a "preferably" first, removes nobody, and an unclear weight does the same', async () => {
+    for (const weight of ['prefer', 'unclear']) {
+      const found = await search(t, 'seeker', { ...flatmates, religionPreference: stated({ values: ['jain'], weight }) })
+      expect(names(found.results)).toEqual(['jain', 'gujarati', 'hindu', 'quiet'])
+      expect(found.results.every((r) => !r.bestMatch && !r.didntSay.length)).toBe(true)
+    }
+  })
+
+  it('never sends the religion or the community of a card', async () => {
+    const res = await t.call('seeker', 'POST', '/v1/results', { form: flatmates, page: 1 })
+    for (const result of res.json().results) {
+      expect(result.card).not.toHaveProperty('religion')
+      expect(result.card).not.toHaveProperty('community')
+    }
+  })
+})
+

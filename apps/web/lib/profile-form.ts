@@ -1,5 +1,5 @@
 import {
-  budgetBands as bands, childTypes, maxAge, minAge, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type WhosMoving,
+  budgetBands as bands, childTypes, maxAge, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
 } from '@roomsie/contract'
 import { labels } from './listing-steps'
 
@@ -33,7 +33,7 @@ export type ProfileForm = Required<Omit<ProfileEditBody, 'photoKeys' | 'intent'>
 export const formOf = (p: ProfileResponse): ProfileForm => ({
   fullName: p.fullName, age: p.age ?? minAge, gender: p.gender, jobRole: p.jobRole, commuteAddress: p.commuteAddress, bio: p.bio,
   managedByParent: p.managedByParent, whosMoving: p.whosMoving, areas: p.areas, budgetMin: p.budgetMin, budgetMax: p.budgetMax,
-  moveDate: p.moveDate, hidden: p.visibility === 'hidden', lifestyle: p.lifestyle, mustHaves: p.mustHaves,
+  moveDate: p.moveDate, hidden: p.visibility === 'hidden', lifestyle: p.lifestyle, mustHaves: p.mustHaves, religion: p.religion, community: p.community,
 })
 
 /** The answers that changed: a new value, or null for a cleared one. */
@@ -58,6 +58,15 @@ export function editBody(saved: ProfileForm, draft: ProfileForm): ProfileEditBod
 
 export const profileLabels = {
   gender: { male: 'Male', female: 'Female', non_binary: 'Non-Binary' },
+  religion: {
+    hindu: 'Hindu', muslim: 'Muslim', christian: 'Christian', sikh: 'Sikh', jain: 'Jain', buddhist: 'Buddhist', parsi: 'Parsi', jewish: 'Jewish',
+    none: 'No religion', other: 'Other',
+  } satisfies Record<Religion, string>,
+  community: {
+    gujarati: 'Gujarati', marathi: 'Marathi', marwari: 'Marwari', kutchi: 'Kutchi', sindhi: 'Sindhi', punjabi: 'Punjabi', bengali: 'Bengali', bihari: 'Bihari',
+    uttar_pradesh: 'Uttar Pradesh', odia: 'Odia', tamil: 'Tamil', telugu: 'Telugu', kannadiga: 'Kannadiga', malayali: 'Malayali', konkani: 'Konkani',
+    north_east: 'North East', other: 'Other',
+  } satisfies Record<Community, string>,
   describesYou: {
     student: 'Student', first_job: 'Starting my first job', working: 'Working and looking for a better place', couple: 'Couple',
     family: 'Family', friends: 'Group of friends', parent: 'Looking for my son or daughter',

@@ -101,10 +101,10 @@ describe('the sub-areas (0011, 0012 and the seed)', () => {
       writeFileSync(join(folder, 'meta/_journal.json'), JSON.stringify({ ...journal, entries: journal.entries.filter((e) => e.idx <= 10) }))
       await migrate(db, { migrationsFolder: folder })
       await db.execute(sql`insert into areas (slug, name, is_launch_area, sort_order) values ('andheri-goregaon', 'Andheri–Goregaon', true, 1)`)
-      // SQL, not the schema of today: the users table of 0010 has fewer columns (T-55).
+      // SQL, not the schema of today: the users table of 0010 has fewer columns (T-55), and so has the profiles table (T-58).
       const user = { id: uuidv7() }
       await db.execute(sql`insert into users (id, auth_provider_id) values (${user.id}, 'a')`)
-      await db.insert(profiles).values({ userId: user.id, fullName: 'A', areas: ['andheri-goregaon'] })
+      await db.execute(sql`insert into profiles (id, user_id, full_name, areas) values (${uuidv7()}, ${user.id}, 'A', array['andheri-goregaon'])`)
       const [listing] = await db.insert(listings).values({ ownerUserId: user.id, kind: 'owner_flat', areaSlug: 'andheri-goregaon' }).returning()
 
       await migrateAndSeed(db, migrationsFolder)

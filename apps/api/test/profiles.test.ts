@@ -129,6 +129,17 @@ describe('photos', () => {
 })
 
 describe('a card', () => {
+  it('saves the religion and the community, and shows them only to the person (T-58)', async () => {
+    const lister = await own('lister')
+    expect((await edit('lister', { religion: 'jain', community: 'gujarati' })).statusCode).toBe(200)
+    expect(await own('lister')).toMatchObject({ religion: 'jain', community: 'gujarati' })
+    const seen = (await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).json()
+    expect(seen).not.toHaveProperty('religion')
+    expect(seen).not.toHaveProperty('community')
+    expect((await edit('lister', { religion: 'brahmin' })).statusCode).toBe(400)
+    await edit('lister', { religion: null, community: null })
+  })
+
   it('shows a live card to others, with no gender, and refuses the own card, a hidden card, a block either way, a draft and a suspended account', async () => {
     const lister = await own('lister')
     const seen = cardResponse.parse((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).json())

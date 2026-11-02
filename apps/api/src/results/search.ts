@@ -37,6 +37,7 @@ export async function searchResults(deps: Deps, form: FormA, viewerUserId: strin
     if (intent === 'flatmates') {
       const { rows, total } = await matchingPeople(db, {
         ...common, areas, budget, limit, offset, searcher: searcherMustHaves(answers), formBFloor: matching.formBFloor,
+        religion: form.religionPreference.value, community: form.communityPreference.value,
       })
       return { results: await personResults(deps, rows), total }
     }

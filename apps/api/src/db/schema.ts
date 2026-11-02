@@ -16,8 +16,8 @@ import {
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import {
-  amenities, bathrooms, bedsFree, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
+  listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -37,6 +37,8 @@ export const roomTypeEnum = pgEnum('room_type', roomTypes)
 /** The choice itself; the contract maps it to a type and a household (PD15). */
 export const whosMovingEnum = pgEnum('whos_moving', whosMovingAnswers)
 export const genderEnum = pgEnum('gender', genders)
+export const religionEnum = pgEnum('religion', religions)
+export const communityEnum = pgEnum('community', communities)
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn', 'expired'])
 export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
@@ -169,6 +171,9 @@ export const profiles = pgTable('profiles', {
   managedByParent: boolean('managed_by_parent').notNull().default(false),
   /** Required when the profile is made (PD8). Null only in rows from before T-16a. */
   gender: genderEnum('gender'),
+  /** Optional, and only the person sees them. The profile field or the own chat of the person states them, never a guess (PD3c, T-58). */
+  religion: religionEnum('religion'),
+  community: communityEnum('community'),
 
   // Form A — the hard constraints that drive the match query (T-14).
   intent: intentEnum('intent').notNull().default('unclear'),
@@ -445,6 +450,9 @@ export const goals = pgTable('goals', {
   title: text('title'),
   /** Form A of this move, as the assistant has filled it. Partial by definition. */
   form: jsonb('form').notNull().default({}),
+  /** What the person stated about themselves in this chat, for the profile, also of a visitor (PD3c, T-58). */
+  ownReligion: religionEnum('own_religion'),
+  ownCommunity: communityEnum('own_community'),
   status: goalStatusEnum('status').notNull().default('open'),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
