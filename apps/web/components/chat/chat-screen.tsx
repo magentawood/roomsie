@@ -103,14 +103,14 @@ function useChat() {
         const made = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
         if (made.visitorKey) writeStored(chatStorage.visitorKey, made.visitorKey)
         writeStored(chatStorage.goal, made.id)
-        queryClient.setQueryData(queryKeys.goal(made.id), { id: made.id, form: made.form, turns: [], typedTurnsLeft: made.typedTurnsLeft })
+        queryClient.setQueryData<GoalResponse>(queryKeys.goal(made.id), { id: made.id, form: made.form, turns: [], typedTurnsLeft: made.typedTurnsLeft, outsidePlaces: made.outsidePlaces })
         setGoalId(made.id)
         id = made.id
       }
       return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
     },
-    onSuccess: ({ id, form, turns, typedTurnsLeft }) => {
-      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns], typedTurnsLeft }))
+    onSuccess: ({ id, form, turns, typedTurnsLeft, outsidePlaces }) => {
+      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns], typedTurnsLeft, outsidePlaces }))
     },
   })
   const turns = goal.data?.turns ?? []
