@@ -39,7 +39,7 @@ Shows matches as cards: people and places.
 - [[T-50 Found a place, share, feedback]]
 
 ## Done when
-- [x] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query · [#188](https://github.com/magentawood/roomsie/pull/188)
 - [x] The header says what it shows, from Everything in Mumbai down to People in Powai under 20k · [#188](https://github.com/magentawood/roomsie/pull/188)
 - [x] It updates only when a form value or weight changes. It never changes the order during a scroll · [#188](https://github.com/magentawood/roomsie/pull/188)
 - [x] A card shows the Best match label and the Didn't say label of PD3a · [#188](https://github.com/magentawood/roomsie/pull/188)
@@ -65,22 +65,28 @@ Shows matches as cards: people and places.
   - **The place detail:** an `onBack` and the "Ask in chat" button.
   - **The theme:** a blue badge token for "Best match".
   - **`apps/web/lib/api.ts`:** a guest can call a public route, such as the areas.
+  - **`apps/web/lib/queries.ts` (review of n3rxv):** `useResults()`, the pages of `POST /v1/results` (T-14) for a form.
 - **Seams for the tests:**
   - The unit tests of `lib/results.ts`: the header, when the panel shows, the form key, the "Didn't say" line and the update rule.
   - A browser check at 402 px and 1440 px of `/chat?preview=results` and `/chat?preview=empty`.
+  - The unit tests of `resultsPage()`, and of the update rule for a next page (review of n3rxv).
+  - A browser check of `/chat` on a local API with 25 rooms: the count, the next page, "Show all" on a phone, the empty panel and a failed search (review of n3rxv).
 - **Decisions:**
-  - **The preview:** the assistant (T-12) does not fill Form A, and the match query (T-14) does not exist. Thus, `/chat?preview=results` and `/chat?preview=empty` show the panel with sample data. A "Sample data" badge shows on the panel. T-14 removes the preview. The user decided this on 2026-11-02.
+  - **The match query (review of n3rxv):** the panel shows the results of `POST /v1/results` (T-14) for the form of the chat. T-12 and T-14 merged before the review, so Niruv Bhardwaj decided on 2026-11-02 that T-15 connects them.
+  - **The preview:** `/chat?preview=results` and `/chat?preview=empty` show the panel with sample data and a "Sample data" badge. They show each card kind and the empty panel with no listings, so they stay (review of n3rxv).
+  - **The next page (review of n3rxv):** a line at the end of the grid loads the next 20 results when it comes into view, as in a message thread. The header and the results card count all the results.
+  - **One search for each form (review of n3rxv):** the cache never searches again for one form, so the order of a form never moves. Thus, the next page of the form on the screen shows at once, also during a scroll. It loads only while the newest form is on the screen. A sign-in clears the cache, so the results load again for the person.
+  - **While new results load (review of n3rxv):** the panel keeps the results on the screen and their header. A failed search shows "The results did not load." and "Try again" in the chat.
   - **When the panel shows:** when intent, area and budget have a value (interface-shape.md, hole 3).
   - **The header:** the noun of the intent ("Rooms", "PGs", "Flats", "People"), the areas and the budget, then the count. With no intent, it reads "Everything in", then the areas, or "Mumbai" with no area (drafts section 14).
   - **The update rule:** the key of the form has the values and the weights, not the sources. Thus, a confirmed default gives no new results. New results wait while the person scrolls or has a place open, and show 1.5 seconds after the last scroll or the return. The header waits with the grid, so the two always agree (PD6c, review round 1). A unit test of `lib/results.ts` keeps this rule. The screen has no component test (review of the fixes).
   - **The labels:** "Best match" is a blue pill, and "Didn't say: …" is a grey pill. Each sits on the top left of the photo. The blue is the Tailwind blue, because the token file has no blue yet. The blue tone has its own blue dot, though "Best match" shows no dot (review of the fixes).
   - **A card opens:** a guest sees the sign-in wall (PD6b), and the card opens after the sign-in. The tap waits for the auth check, as in the app shell, so a signed-in person never sees the wall. A place opens in the panel. A person opens on the person page.
-  - **The sample (review round 1):** it states three preferences, so its "Best match" labels obey PD3a. It mixes the five kinds on purpose, to show each card. It borrows the test listing until T-14 removes it.
+  - **The sample (review round 1):** it states three preferences, so its "Best match" labels obey PD3a. It mixes the five kinds on purpose, to show each card. It borrows the test listing, because a sample place needs each field of a listing.
   - **The area names (review round 1):** while the names load, the header shows the slug, and a place card shows no area, as on the other screens.
   - **A place in the panel on a phone (review round 2):** its Message and Save bar sits at the bottom of the panel, not of the screen, so the chat input stays free (PD6a).
   - **The sort control:** "Best Matches" stays, with one option (PD3a and the designs).
   - **"Ask in chat":** it closes the detail, and starts the chat input with "About <the title>: ".
-  - **The plan:** the connection to the match query moves to T-14. The user decided the same split for T-20.
 - **Out of scope:**
   - the "12 more matches" banner and the "Hid 8" note of PD6c
   - the compare selection (T-49)
@@ -89,9 +95,8 @@ Shows matches as cards: people and places.
 ## Log
 
 - **2026-11-02 · [#188](https://github.com/magentawood/roomsie/pull/188)**
-  - **Change:** the results panel shows the person and place cards beside the chat, with the header states, the "Best match" and "Didn't say" labels, and "No relevant results" with the suggested posts. On a phone, "Show all" opens the panel above the input. A place opens in the panel, with "Ask in chat". `/chat?preview=results` and `/chat?preview=empty` show sample data.
+  - **Change:** the results panel shows the results of the match query for the form of the chat, beside the chat, a page at a time. It has the header states, the "Best match" and "Didn't say" labels, and "No relevant results" with the suggested posts. On a phone, "Show all" opens the panel above the input. A place opens in the panel, with "Ask in chat". `/chat?preview=results` and `/chat?preview=empty` show sample data.
   - **Why:** the panel is the second half of the chat ([PD6c](../../decisions/pd-06c-interface-holes.md), [PD6a](../../decisions/pd-06a-mobile-split-view.md)).
   - **Ticked:** all seven items.
-  - **Not done:** the connection to the match query moved to T-14.
   - **Learn:** [The results panel](../../learn/results-panel.md)
   - **Journal:** [2026-11](../../journal/2026-11.md)

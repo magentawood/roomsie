@@ -70,6 +70,10 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>apps/web/components/chat/chat-screen.tsx</code></td>
 </tr>
 <tr>
+<td>The search: the pages of <code>POST /v1/results</code> for a form</td>
+<td><code>useResults()</code> in <code>apps/web/lib/queries.ts</code></td>
+</tr>
+<tr>
 <td>The sample data of the preview</td>
 <td><code>apps/web/lib/sample-results.ts</code></td>
 </tr>
@@ -77,9 +81,10 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li><strong>The panel is a pure function of the form.</strong> <code>formKey()</code> keeps the values and the weights of Form A, not the sources. Thus, a confirmed default gives the same key and no new results.</li>
-<li><strong>The order never moves under the person.</strong> While the person scrolls, new results wait. They show 1.5 seconds after the last scroll. <code>panelUpdate()</code> holds this rule.</li>
+<li><strong>The panel searches the form of the chat.</strong> It shows when intent, area and budget have a value. It loads 20 results, then the next 20 when the person comes to the end of the grid (<a href="match-query.html">The match query</a>).</li>
+<li><strong>The order never moves under the person.</strong> While the person scrolls, new results wait. They show 1.5 seconds after the last scroll. <code>panelUpdate()</code> holds this rule. The cache never searches again for one form, so the next page of the form on the screen adds cards only at the end.</li>
 <li><strong>A card opens in place.</strong> A place opens its detail in the panel, with "Ask in chat". A person opens on the person page. A guest gets the sign-in wall (<a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>).</li>
-<li><strong>The preview.</strong> The assistant (T-12) does not fill Form A yet, and the match query (T-14) does not exist. To see the panel, open <code>/chat?preview=results</code> or <code>/chat?preview=empty</code>. A "Sample data" badge shows on the panel. T-14 removes the preview.</li>
+<li><strong>The preview.</strong> To see each card kind and the empty panel with no listings, open <code>/chat?preview=results</code> or <code>/chat?preview=empty</code>. A "Sample data" badge shows on the panel.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -89,12 +94,12 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>The area names come from the API.</strong> While they load, a slug reads as words: <code>powai-vikhroli</code> reads "Powai Vikhroli". <code>areaName()</code> does this.</li>
+<li><strong>The area names come from the API.</strong> While they load, the header shows the slug, such as <code>powai-vikhroli</code>.</li>
 <li><strong>The areas route is public.</strong> <code>api()</code> takes no user for a public route, so the chat of a guest can name the areas.</li>
 <li><strong>Headless Chrome is at least 500 px wide.</strong> To check the phone layout, set the size through the DevTools protocol (<code>Emulation.setDeviceMetricsOverride</code>), not with <code>--window-size</code>.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
-<li>T-15: the results panel, the labels, the empty state, the split view and the preview.</li>
+<li>T-15: the results panel, the labels, the empty state, the split view, the search of the form and the preview.</li>
 </ul>
 </main>
