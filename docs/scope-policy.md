@@ -99,7 +99,7 @@ Why: [PD10](decisions/pd-10-scope-bands.md)
 
 Why: [PD10](decisions/pd-10-scope-bands.md)
 
-### 4. Adversarial — scripted, logged, no model call
+### 4. Adversarial — scripted, logged, no model call after the router
 
 - **Classified as adversarial, not off-topic.**
 - Defences:

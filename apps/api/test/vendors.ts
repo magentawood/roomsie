@@ -9,7 +9,10 @@ export const keys = { DEEPSEEK_API_KEY: 'deepseek-key', GEMINI_API_KEY: 'gemini-
 
 type Reply = Response | Error
 type Replies = { deepseek?: Reply[]; gemini?: Reply[] }
-type Request = { url: string; body: Record<string, unknown>; authorization: string | null }
+type SentRequest = { url: string; body: Record<string, unknown>; authorization: string | null }
+
+/** A vendor that is down. */
+export const down = () => new Response('down', { status: 500 })
 
 /** A sure label of the router for a message about the search: the label of a test that gives the router no replies. */
 export const coreLabel = { kinds: ['filters'], band: 'core', register: { language: 'english', script: 'latin' }, danger: false, community: false }
@@ -20,7 +23,7 @@ export const coreLabel = { kinds: ['filters'], band: 'core', register: { languag
  * `requests` has the other calls, and `requests.router` the calls of the router.
  */
 export function fakeVendors(replies: Replies & { router?: Replies }) {
-  const requests = Object.assign([] as Request[], { router: [] as Request[] })
+  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[] })
   vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
     const body = JSON.parse(String(init.body)) as { messages: { content: string }[] }
     const isRouter = body.messages[0]?.content === routerPrompt

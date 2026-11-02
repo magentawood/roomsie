@@ -22,9 +22,9 @@ export type TurnState = {
 } & Omit<ExtractorOutput, 'version' | 'form'>
 export type Handler = (turn: TurnState, deps: AssistantDeps) => Promise<Partial<TurnState>>
 
-/** The extractor fills Form A, unless the turn is off topic, adversarial, or only a question of band 2 (PD10, T-34). */
+/** The extractor fills Form A, unless the turn is off topic, adversarial, or only a question (PD10, T-34). */
 const usesExtractor = ({ band, kinds }: TurnLabel) =>
-  band === 'core' || band === 'sensitive' || ((band === 'general' || band === 'consequential') && kinds.includes('filters'))
+  band !== 'out_of_scope' && band !== 'adversarial' && !(kinds.includes('question') && !kinds.includes('filters'))
 
 /** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */
 export async function runTurn(input: Pick<TurnState, 'goalId' | 'text' | 'last' | 'form'>, deps: AssistantDeps) {

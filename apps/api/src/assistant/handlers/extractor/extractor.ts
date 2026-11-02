@@ -1,12 +1,12 @@
 import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
-import { ModelUnavailable, vendorOf } from '../../../models/models'
+import { nullIfUnavailable } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
 import { plainText } from '../../words'
 import type { AssistantDeps, Handler, TurnState } from '../../assistant'
 import { parseBudget } from './budget-words'
 import { applyValues, type SlotValues } from './form-update'
-import { probabilityOf } from './gate'
+import { probabilityOf, unscoredDeepSeek } from './gate'
 import { parseMoveDate } from './move-date-words'
 import { extractorPrompt, extractorMessage } from './prompt'
 
@@ -38,15 +38,12 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   const scored = await models.scored({
     req, role: 'extractor', session: turn.goalId, schema: extractorAnswer,
     system: extractorPrompt(catalogue), messages: [{ role: 'user', content: extractorMessage(input) }],
-  }).catch((err: unknown) => {
-    if (err instanceof ModelUnavailable) return null
-    throw err
-  })
+  }).catch(nullIfUnavailable)
   if (!scored) return noExtraction(turn.form, true)
   const { value: answer, tokens, model } = scored
 
   // Gemini gives no probabilities, so its values pass. DeepSeek with no probabilities, or a value that its tokens do not hold, is unclear (T-12).
-  const unscored = !tokens && vendorOf(model) === 'deepseek'
+  const unscored = unscoredDeepSeek(tokens, model)
   let misaligned = unscored
   const passesGate = (key: string, value: string) => {
     if (value === 'unclear') return true

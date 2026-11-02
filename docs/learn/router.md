@@ -10,7 +10,7 @@
 
 | Band | The reply | Form A |
 |---|---|---|
-| Core | The normal reply | The extractor fills it |
+| Core | The normal reply | The extractor fills it, unless the message is only a question |
 | General or consequential (band 2) | "Good question. I can't answer that one yet, but I've noted it.", then the question | Only when the message also has filter details |
 | Out of scope | "That one's outside what I can help with. Back to it: …" | Not changed |
 | Adversarial | "Let's get back to your search.", then the question | Not changed |
@@ -27,7 +27,7 @@
 | The line of each band | `apps/api/src/assistant/handlers/reply/` |
 | The answer, the label and the `turn_routed` event | `packages/contract/src/goals.ts`, `events.ts` |
 
-- **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too.
+- **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. `routerBand` keeps the band that the router gave.
 - **The label stays with the message.** It goes on the typed turn of the person, so account deletion removes it. The `turn_routed` event has only the band.
 - **The adapter.** The router calls one classifier. A different model, such as Jev, is a different classifier, and the turn does not change ([extensibility.md](../extensibility.md)).
 

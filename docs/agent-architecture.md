@@ -69,7 +69,7 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md), [PD3b](decisions/pd-03b-int
 
 ## The router
 
-The router classifies each turn first.
+The router labels each typed turn. The extractor starts at the same time, and the label decides if its answer applies (PD7a).
 
 | Turn type | Handler | Model |
 |---|---|---|
@@ -127,7 +127,8 @@ flowchart TD
     K -->|Chip tap| SCR[Scripted next question]
     K -->|Free text| R[["**Router**<br/>small model"]]
 
-    R -->|slot answer| EX[["**Extractor**<br/>small, constrained to enums"]]
+    K -->|Free text, at the same time| EX[["**Extractor**<br/>small, constrained to enums"]]
+    R -->|slot answer: keep its answer| EX
     R -->|revealing| OB[["**Observer**<br/>small, must quote the user"]]
     R -->|consulting| AD[["**Advisor**<br/>small + retrieval"]]
     R -->|off topic| RED[Scripted redirect]
