@@ -1,11 +1,11 @@
 import { formA, type CardResponse, type FormA, type ListingResponse, type MatchResult } from '@roomsie/contract'
 import type { ResultsPage } from './results'
-// Borrowed from the tests until T-14 removes this file.
+// Borrowed from the tests: a sample place needs each field of a listing.
 import { listing as emptyListing } from './test-listing'
 
 /**
- * The data of `/chat?preview=results` and `?preview=empty` (T-15). The assistant (T-12) does not fill Form A yet,
- * and the match query (T-14) does not exist, so the panel shows these. TODO(T-14): remove the preview with this file.
+ * The data of `/chat?preview=results` and `?preview=empty` (T-15). They show each card kind and the empty state
+ * with no listings and no chat, for a check of the designs.
  */
 export const previews = ['results', 'empty'] as const
 export type Preview = (typeof previews)[number]
@@ -42,7 +42,8 @@ const personMatch = (card: CardResponse, labels: Labels = {}): MatchResult => ({
  * The five card kinds of the Product file, in the Best Matches order of PD3a: the "Didn't say" cards last.
  * The mix of kinds is on purpose, to show each card. A real "room" search gives rooms only (PD3a).
  */
-export const sampleMatches: ResultsPage = {
+const sampleMatches: ResultsPage = {
+  total: 8,
   results: [
     placeMatch(place(1, { kind: 'room_in_flat', placeType: '3bhk', roomType: 'private', rates: [{ sharing: null, rent: 18000, deposit: 36000 }], vegOnlyKitchen: true, smokingAllowed: false, alcoholAllowed: false }), { bestMatch: true }),
     personMatch(person(2, { lifestyle: { food: 'veg', smoking: 'non_smoker', drinks: 'none_at_home', guests: 'guests_welcome', sleep: 'night_owl' } }), { bestMatch: true }),
@@ -57,10 +58,13 @@ export const sampleMatches: ResultsPage = {
 }
 
 /** No match in the budget: the suggested posts are the next band and a neighbouring area group (PD6c). */
-export const sampleEmpty: ResultsPage = {
+const sampleEmpty: ResultsPage = {
+  total: 0,
   results: [],
   suggested: [
     placeMatch(place(9, { kind: 'room_in_flat', placeType: '2bhk', roomType: 'private', rates: [{ sharing: null, rent: 28000, deposit: 56000 }] })),
     placeMatch(place(10, { kind: 'room_in_flat', placeType: '3bhk', roomType: 'shared', areaSlug: 'andheri-goregaon', rates: [{ sharing: null, rent: 14000, deposit: 28000 }] })),
   ],
 }
+
+export const samplePages: Record<Preview, ResultsPage> = { results: sampleMatches, empty: sampleEmpty }

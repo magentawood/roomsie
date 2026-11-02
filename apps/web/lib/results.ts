@@ -1,8 +1,15 @@
-import type { FormA, MatchResult, MustHaveKey } from '@roomsie/contract'
+import type { FormA, MatchResult, MustHaveKey, ResultsResponse } from '@roomsie/contract'
 import { rupees } from './listing-steps'
 
-/** What the match query gives the panel. TODO(T-14): the response schema of the match route replaces this type. */
-export type ResultsPage = { results: MatchResult[]; suggested: MatchResult[] }
+/** The cards of a search, as the panel shows them. `total` counts the results of all pages. */
+export type ResultsPage = { results: MatchResult[]; total: number; suggested: MatchResult[] }
+
+/** The pages of a search as one grid. Only a search that finds nothing has suggested posts, on its first page (T-14). */
+export const resultsPage = ({ pages }: { pages: ResultsResponse[] }): ResultsPage => ({
+  results: pages.flatMap((page) => page.results),
+  total: pages.at(-1)!.total,
+  suggested: pages[0]!.suggestions.flatMap((suggestion) => suggestion.results),
+})
 
 type Slot = FormA['intent'] | FormA['areas'] | FormA['budget']
 const known = <S extends Slot>(slot: S) => (slot.source === 'empty' || slot.value === 'unclear' ? null : slot.value as Exclude<S['value'], 'unclear' | null>)
@@ -66,17 +73,16 @@ export function didntSayLine(result: Pick<MatchResult, 'kind' | 'didntSay'>) {
 
 /**
  * The update rule of PD6c: a new form key waits while the person scrolls or reads, and applies when they are idle.
- * Results for the key on the screen change nothing, so the order never moves under the person.
+ * Results for the key on the screen show at once: a search never runs again for one key, so they only add the next page at the end.
  */
-export type PanelState<T> = { shown: { key: string; page: T }; pending: { key: string; page: T } | null; busy: boolean }
+export type PanelState<T> = { shown: { key: string; page: T } | null; pending: { key: string; page: T } | null; busy: boolean }
 export type PanelEvent<T> = { type: 'arrive'; key: string; page: T } | { type: 'busy' } | { type: 'idle' }
 
 export function panelUpdate<T>(state: PanelState<T>, event: PanelEvent<T>): PanelState<T> {
   switch (event.type) {
     case 'arrive': {
-      if ((state.pending ?? state.shown).key === event.key) return state
       const next = { key: event.key, page: event.page }
-      return state.busy ? { ...state, pending: next } : { ...state, shown: next, pending: null }
+      return state.busy && state.shown && state.shown.key !== event.key ? { ...state, pending: next } : { ...state, shown: next, pending: null }
     }
     case 'busy': return state.busy ? state : { ...state, busy: true }
     case 'idle': return { shown: state.pending ?? state.shown, pending: null, busy: false }

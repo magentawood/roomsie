@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { formA, type FormA } from '@roomsie/contract'
-import { countLine, didntSayLine, formKey, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
+import { formA, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
+import { countLine, didntSayLine, formKey, panelReady, panelTitle, panelUpdate, resultsPage, type PanelState } from './results'
+import { listing } from './test-listing'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
 const stated = <V>(value: V) => ({ source: 'stated' as const, value })
@@ -86,7 +87,7 @@ describe('the update rule', () => {
     state = panelUpdate(state, { type: 'busy' })
     state = panelUpdate(state, arrive('b'))
     state = panelUpdate(state, arrive('c'))
-    expect(state.shown.key).toBe('a')
+    expect(state.shown?.key).toBe('a')
     state = panelUpdate(state, { type: 'idle' })
     expect(state).toEqual({ shown: { key: 'c', page: 'page c' }, pending: null, busy: false })
   })
@@ -96,13 +97,38 @@ describe('the update rule', () => {
     const arriveForm = (f: FormA) => ({ type: 'arrive' as const, key: formKey(f), page: f })
     const start: PanelState<FormA> = { shown: { key: formKey(under(25000)), page: under(25000) }, pending: null, busy: false }
     let state = panelUpdate(panelUpdate(start, { type: 'busy' }), arriveForm(under(20000)))
-    expect(panelTitle(state.shown.page, label)).toBe('Rooms in Mumbai under ₹25,000')
+    expect(panelTitle(state.shown!.page, label)).toBe('Rooms in Mumbai under ₹25,000')
     state = panelUpdate(state, { type: 'idle' })
-    expect(panelTitle(state.shown.page, label)).toBe('Rooms in Mumbai under ₹20,000')
+    expect(panelTitle(state.shown!.page, label)).toBe('Rooms in Mumbai under ₹20,000')
   })
 
-  it('ignores results for the form that is already on the screen', () => {
-    const state = panelUpdate(idle, arrive('a'))
-    expect(panelUpdate(state, { type: 'arrive', key: 'a', page: 'reordered' })).toBe(state)
+  it('shows the first results at once', () => {
+    expect(panelUpdate({ shown: null, pending: null, busy: true }, arrive('a')).shown).toEqual({ key: 'a', page: 'page a' })
+  })
+
+  it('adds the next page of the form on the screen at once, also while the person scrolls', () => {
+    const state = panelUpdate({ ...idle, busy: true }, { type: 'arrive', key: '0', page: 'pages 1 and 2' })
+    expect(state.shown).toEqual({ key: '0', page: 'pages 1 and 2' })
+  })
+
+  it('drops the held results when the form goes back to the one on the screen', () => {
+    let state = panelUpdate({ ...idle, busy: true }, arrive('a'))
+    state = panelUpdate(state, arrive('0'))
+    expect(state).toEqual({ shown: { key: '0', page: 'page 0' }, pending: null, busy: true })
+  })
+})
+
+describe('the pages of a search', () => {
+  const place = (n: number): MatchResult => ({ kind: 'listing', listing: listing({ id: `0199e4b0-0000-7000-8000-${String(n).padStart(12, '0')}` }), bestMatch: false, didntSay: [] })
+  const page = (n: number, patch: Partial<ResultsResponse>): ResultsResponse => ({ results: [], total: 0, page: n, suggestions: [], ...patch })
+
+  it('puts the results of each page in one grid, with the newest total', () => {
+    expect(resultsPage({ pages: [page(1, { results: [place(1)], total: 21 }), page(2, { results: [place(2)], total: 22 })] }))
+      .toEqual({ results: [place(1), place(2)], total: 22, suggested: [] })
+  })
+
+  it('puts the suggested posts of each relaxed search in one list', () => {
+    const suggestions = [{ relaxed: { kind: 'budget' as const, max: 35000 }, results: [place(3)] }, { relaxed: { kind: 'area' as const, area: 'andheri-goregaon' }, results: [place(4)] }]
+    expect(resultsPage({ pages: [page(1, { suggestions })] })).toEqual({ results: [], total: 0, suggested: [place(3), place(4)] })
   })
 })
