@@ -50,7 +50,7 @@ Open "Design-free work" in `docs/plan/Progress.md`. It comes from `docs/team-pla
 ## How to do a task
 
 0. The hook turns on by itself when you open the repo in Claude Code, and on `pnpm install` after T-02. If it is off, run `git config core.hooksPath .githooks` one time in the clone. The hook checks the doc limits and the generated files before each commit.
-   - Claude Code also keeps `main` current with [`tools/sync-main.sh`](../tools/sync-main.sh). It tells you when `main` moves on GitHub.
+    - Claude Code also keeps `main` current. At the start of a session and before your messages, [`tools/sync-main.sh`](../tools/sync-main.sh) fast-forwards `main`. It tells you when `main` moves on GitHub.
 1. Take the next free task. Start it with `/agentic-devkit:build-feature <ID>`. It assigns the issue to you before its first question.
 2. Open its note in `docs/plan/tasks/`. Read the description, "Needs first", "Done when" and "Read first".
 3. Make a branch from `main`. Do the work. Obey the code rules in [docs/standards/](standards/_index.md).

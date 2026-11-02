@@ -78,8 +78,10 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-to-do-a-task">How to do a task</h2>
 <ol start="0">
-<li>The hook turns on by itself when you open the repo in Claude Code, and on <code>pnpm install</code> after T-02. If it is off, run <code>git config core.hooksPath .githooks</code> one time in the clone. The hook checks the doc limits and the generated files before each commit.
-   - Claude Code also keeps <code>main</code> current with <a href="../tools/sync-main.sh"><code>tools/sync-main.sh</code></a>. It tells you when <code>main</code> moves on GitHub.</li>
+<li>The hook turns on by itself when you open the repo in Claude Code, and on <code>pnpm install</code> after T-02. If it is off, run <code>git config core.hooksPath .githooks</code> one time in the clone. The hook checks the doc limits and the generated files before each commit.<ul>
+<li>Claude Code also keeps <code>main</code> current. At the start of a session and before your messages, <a href="../tools/sync-main.sh"><code>tools/sync-main.sh</code></a> fast-forwards <code>main</code>. It tells you when <code>main</code> moves on GitHub.</li>
+</ul>
+</li>
 <li>Take the next free task. Start it with <code>/agentic-devkit:build-feature &lt;ID&gt;</code>. It assigns the issue to you before its first question.</li>
 <li>Open its note in <code>docs/plan/tasks/</code>. Read the description, "Needs first", "Done when" and "Read first".</li>
 <li>Make a branch from <code>main</code>. Do the work. Obey the code rules in <a href="standards/_index.md">docs/standards/</a>.</li>
