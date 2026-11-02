@@ -122,8 +122,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
 
   return {
     json: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true }, parseWith(call.schema)),
-    /** A JSON call that also gives the probability of each token. Gemini gives none, so `tokens` is then null. */
-    /** `model` tells the vendor of the answer: DeepSeek gives token probabilities, and Gemini does not. */
+    /** A JSON call with the probability of each token of DeepSeek. `model` names the vendor. Gemini gives `tokens: null`. */
     scored: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true, logprobs: true }, (content, tokens, model) => {
       const value = parseWith(call.schema)(content)
       return value === undefined ? undefined : { value, tokens, model }

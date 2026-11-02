@@ -28,16 +28,16 @@ function budgetOf(earlier: Budget, later: Budget): Budget | 'conflict' {
 
 /**
  * Puts the values of a turn into the form. A value never replaces an earlier stated value: that is a conflict,
- * and the assistant asks which to keep (PD3b). `answering` is the slot of that question: its value wins.
+ * and the assistant asks which to keep (PD3b). `answering` are the slots of that question: their values win.
  * A new area adds to the areas of the form (T-12).
  */
-export function applyValues(form: FormA, values: SlotValues, answering: FormASlot | null) {
+export function applyValues(form: FormA, values: SlotValues, answering: FormASlot[]) {
   let next = form
   const changed: FormASlot[] = []
   const conflicts: ExtractorOutput['conflicts'] = []
   for (const [slot, later] of Object.entries(values) as [FormASlot, unknown][]) {
     const { source, value: earlier } = slotOf(next, slot)
-    const open = source !== 'stated' || slot === answering
+    const open = source !== 'stated' || answering.includes(slot)
     let value = later
     if (slot === 'areas' && Array.isArray(earlier)) {
       value = [...new Set([...earlier, ...(later as string[])])].slice(0, 20)

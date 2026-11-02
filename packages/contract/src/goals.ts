@@ -5,7 +5,6 @@ import { areaSlug, requiredText } from './shared'
 
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
 export const visitorKeyHeader = 'x-visitor-key'
-export const maxTurnLength = 2000
 
 /** Each slot of Form A that the assistant can fill or ask about. */
 export const formASlots = [
@@ -20,7 +19,7 @@ export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
-export const turnBody = z.strictObject({ text: requiredText(maxTurnLength) })
+export const turnBody = z.strictObject({ text: requiredText(2000) })
 /** The typed turn of the person and the reply of the assistant. */
 export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]) })
 export type TurnResponse = z.infer<typeof turnResponse>
@@ -38,6 +37,8 @@ const words = z.string().trim().min(1).max(100)
  * The answer of the model. A slot that the turn does not mention is null or absent.
  * Areas, budget and move date are the words of the person: code reads them (PD7).
  */
+// Not strict, unlike the other handler schemas: a key that the model adds or misspells only leaves its slot empty,
+// and the next question asks for it. A strict schema would refuse the whole answer, then retry and fall back (T-12 review).
 export const extractorAnswer = z.object({
   version: z.literal(1).default(1),
   intent: choice(intents),
@@ -57,12 +58,18 @@ export const extractorAnswer = z.object({
 export const ambiguousArea = z.strictObject({ words: z.string(), slugs: z.array(areaSlug).min(2) })
 export type AmbiguousArea = z.infer<typeof ambiguousArea>
 
+/** A new value of a stated slot. The assistant asks which value to keep (PD3b). */
+export const slotConflict = z.strictObject({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })
+export type SlotConflict = z.infer<typeof slotConflict>
+
 /** What the extractor gives. */
 export const extractorOutput = z.strictObject({
   version: z.literal(1).default(1),
   form: formA,
   changed: z.array(z.enum(formASlots)),
-  conflicts: z.array(z.strictObject({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })),
+  conflicts: z.array(slotConflict),
+  /** The slots of the open conflicts that this turn settled, with a value or with "doosra wala". */
+  settled: z.array(z.enum(formASlots)),
   /** Each name of two or more areas in the turn. The reply asks about each one. */
   ambiguous: z.array(ambiguousArea),
   /** No model gave an answer, so the form did not change. */
@@ -76,11 +83,13 @@ export const assistantParts = z.strictObject({
   asked: z.strictObject({ slot: z.enum(formASlots), conflict: z.boolean() }).nullable(),
   /** The question of the reply, with no line before it. The extractor of the next turn reads it. */
   question: z.string().nullable().default(null),
+  /** The conflicts that the reply asks about. They stay open until a turn settles them. */
+  conflicts: z.array(slotConflict).default([]),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 
 /** What the reply writer reads: the output of the extractor, and the question of the last reply. */
-export const replyInput = extractorOutput.extend({ asked: assistantParts.shape.asked, lastQuestion: z.string().nullable() })
+export const replyInput = extractorOutput.extend({ asked: assistantParts.shape.asked, lastQuestion: z.string().nullable(), openConflicts: z.array(slotConflict) })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
