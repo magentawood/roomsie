@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**196 of 319 done · 61%**
+**196 of 320 done · 61%**
 
 `███████████████░░░░░░░░░`
 
@@ -30,7 +30,7 @@ This note is part of [[roomsie launch]].
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 6 / 14 | 19 / 41 | 46% |
+| [[Founder]] | 6 / 14 | 19 / 42 | 45% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -509,7 +509,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 19/41
+## Founder — 19/42
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -526,7 +526,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-06 Seed areas picked]] · 0/2
 > ![[F-06 Seed areas picked#^done]]
 
-> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/6
+> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/7
 > ![[F-07 Privacy and terms draft#^done]]
 
 > [!todo]- 🟡 [[F-09 ADR exceptions]] · 1/2
