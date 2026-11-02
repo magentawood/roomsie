@@ -117,7 +117,7 @@ Why: [PD10](decisions/pd-10-scope-bands.md)
 ### 5. Sensitive — handled elsewhere, not redirected
 
 - Scope: disclosures about violence, divorce, job loss or distress. All matters that involve a minor.
-- A stated community or religion preference is not in this band. It is a stated preference ([PD3c](decisions/pd-03c-exclusionary-preferences.md)). The router labels it, and T-58 filters on it.
+- A stated community or religion preference is not in this band. It is a stated preference ([PD3c](decisions/pd-03c-exclusionary-preferences.md)). The router labels it, and the hidden filter of PD3c applies it. A caste is not a value of the filter.
 - **These must not get the off-topic redirect.**
 - [`assistant-risks.md`](assistant-risks.md) section [4.4](assistant-risks.md#44-vulnerable-disclosures) tells how to handle this band.
 

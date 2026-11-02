@@ -28,7 +28,7 @@
   | Tidiness | Very tidy, Tidy enough, Relaxed about mess |
   | Pets | No pets, Fine with pets |
 
-- **No community question** ([PD3c](pd-03c-exclusionary-preferences.md)).
+- **No community question** ([PD3c](pd-03c-exclusionary-preferences.md)). Two hidden slots keep a stated religion or community preference (T-58). No chip, question or label shows them.
 - **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly. A dealbreaker filters, and a preference ranks ([PD3a](pd-03a-flatmate-matching.md)).
 - **Sources.** Each slot of Form A has a value and a source: `stated`, `default` or `empty`. The system does not guess a value, so there is no `inferred` source. The words of the person stay only in Form B ([PD7a](pd-07a-agent-architecture.md)).
 - **Unclear.** A vague answer becomes `unclear`, never a guess. Then the assistant asks again. Each enum of Form A has `unclear`, also the eight lifestyle questions. The profile form and the cards keep the answers of the designs.
