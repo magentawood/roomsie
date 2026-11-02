@@ -9,7 +9,7 @@ import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { formKey, panelReady, panelTitle } from '../../lib/results'
-import { samplePages, sampleForm, type Preview } from '../../lib/sample-results'
+import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults } from '../results/results-panel'
 import { Button } from '../ui/button'
@@ -114,7 +114,6 @@ const emptyForm = formA.parse({})
 
 /**
  * The chat of a goal, and the results of its form beside it (flow 02). The person sees their message at once, and the reply when it comes.
- * `preview` shows the panel with sample data: see `lib/sample-results.ts`.
  */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, form: chatForm, send, loadingGoal } = useChat()
@@ -128,7 +127,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const form = preview ? sampleForm : chatForm
   const ready = panelReady(form)
   const results = useResults(ready && !preview ? form : null)
-  const held = useHeldResults(form, preview ? samplePages[preview] : results.data)
+  const held = useHeldResults(form, preview ? samples[preview] : results.data)
   const shown = ready ? held.shown : null
   const title = shown ? panelTitle(shown.form, (slug) => areaLabels[slug] ?? slug) : ''
   // The panel is open beside the chat on a desktop. On a phone, the chat fills the screen until "Show all" (PD6a).
@@ -158,8 +157,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
                 : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
           )}
-          {shown && <li><ResultsCard title={title} count={shown.page.total} onOpen={() => setView('all')} /></li>}
-          {results.isError && (
+          {shown && <li><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>}
+          {results.isError && !results.isFetchNextPageError && (
             <li role="alert" className="flex items-center gap-3 text-sm text-error-primary">
               The results did not load.
               <Button variant="secondary" size="sm" onClick={() => void results.refetch()}>Try again</Button>
@@ -174,7 +173,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       {shown && (
         <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${view === 'closed' ? 'lg:hidden' : 'lg:grid'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
-          <ResultsPanel title={title} page={shown.page} hold={held.hold} release={held.release} sample={Boolean(preview)}
+          <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />
         </div>
       )}

@@ -1,7 +1,7 @@
 import { formA, type CardResponse, type FormA, type ListingResponse, type MatchResult } from '@roomsie/contract'
-import type { ResultsPage } from './results'
+import type { Found } from './results'
 // Borrowed from the tests: a sample place needs each field of a listing.
-import { listing as emptyListing } from './test-listing'
+import { listing as emptyListing, testId as id } from './test-listing'
 
 /**
  * The data of `/chat?preview=results` and `?preview=empty` (T-15). They show each card kind and the empty state
@@ -21,7 +21,6 @@ export const sampleForm: FormA = formA.parse({
   },
 })
 
-const id = (n: number) => `0199e4b0-0000-7000-8000-${String(n).padStart(12, '0')}`
 const live = { status: 'live', areaSlug: 'powai-vikhroli', availableFrom: '2026-11-15', verified: true } as const
 
 const place = (n: number, patch: Partial<ListingResponse>): ListingResponse => emptyListing({ id: id(n), ...live, ...patch })
@@ -42,7 +41,7 @@ const personMatch = (card: CardResponse, labels: Labels = {}): MatchResult => ({
  * The five card kinds of the Product file, in the Best Matches order of PD3a: the "Didn't say" cards last.
  * The mix of kinds is on purpose, to show each card. A real "room" search gives rooms only (PD3a).
  */
-const sampleMatches: ResultsPage = {
+const sampleMatches: Found = {
   total: 8,
   results: [
     placeMatch(place(1, { kind: 'room_in_flat', placeType: '3bhk', roomType: 'private', rates: [{ sharing: null, rent: 18000, deposit: 36000 }], vegOnlyKitchen: true, smokingAllowed: false, alcoholAllowed: false }), { bestMatch: true }),
@@ -58,7 +57,7 @@ const sampleMatches: ResultsPage = {
 }
 
 /** No match in the budget: the suggested posts are the next band and a neighbouring area group (PD6c). */
-const sampleEmpty: ResultsPage = {
+const sampleEmpty: Found = {
   total: 0,
   results: [],
   suggested: [
@@ -67,4 +66,4 @@ const sampleEmpty: ResultsPage = {
   ],
 }
 
-export const samplePages: Record<Preview, ResultsPage> = { results: sampleMatches, empty: sampleEmpty }
+export const samples: Record<Preview, Found> = { results: sampleMatches, empty: sampleEmpty }

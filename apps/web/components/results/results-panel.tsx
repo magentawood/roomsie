@@ -6,46 +6,53 @@ import { FaceSad } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
 import { useAreaLabels, type useResults } from '../../lib/queries'
-import { countLine, didntSayLine, formKey, panelUpdate, type PanelState, type ResultsPage } from '../../lib/results'
+import { countLine, didntSayLine, formKey, panelUpdate, type Found, type PanelState } from '../../lib/results'
 import { PlaceCard } from '../listings/place-card'
 import { PersonCard } from '../people/person-card'
 import { PlaceDetail } from '../places/place-detail'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Badge } from '../ui/badge'
+import { Button } from '../ui/button'
 import { CloseButton } from '../ui/modal'
 
 /** How long the panel waits after the last scroll or read before it applies a new form (PD6c). */
 const idleMs = 1500
 
-type Shown = { form: FormA; page: ResultsPage }
+type Shown = { form: FormA; found: Found }
 
-/**
- * The results on the screen and the form that they answer, so the header and the grid change together (PD6c).
- * `page`: the results of `form`, or undefined while they load. `shown` is null until the first results come.
- */
-export function useHeldResults(form: FormA, page: ResultsPage | undefined) {
+/** The results on the screen and the form that they answer, so the header and the grid change together (PD6c). */
+export function useHeldResults(form: FormA, found: Found | undefined) {
   const key = formKey(form)
-  const [state, dispatch] = useReducer(panelUpdate<Shown>, null, (): PanelState<Shown> => ({ shown: page ? { key, page: { form, page } } : null, pending: null, busy: false }))
+  const [state, dispatch] = useReducer(panelUpdate<Shown>, null, (): PanelState<Shown> => ({ shown: found ? { key, value: { form, found } } : null, pending: null, busy: false }))
   const idleTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  useEffect(() => { if (page) dispatch({ type: 'arrive', key, page: { form, page } }) }, [key, form, page])
+  useEffect(() => { if (found) dispatch({ type: 'arrive', key, value: { form, found } }) }, [key, form, found])
   useEffect(() => () => clearTimeout(idleTimer.current), [])
   const hold = useCallback(() => { clearTimeout(idleTimer.current); dispatch({ type: 'busy' }) }, [])
   const release = () => { clearTimeout(idleTimer.current); idleTimer.current = setTimeout(() => dispatch({ type: 'idle' }), idleMs) }
-  return { shown: state.shown?.page ?? null, hold, release }
+  return { shown: state.shown?.value ?? null, hold, release }
 }
 
-type More = Pick<ReturnType<typeof useResults>, 'fetchNextPage' | 'isFetchingNextPage'>
+type More = Pick<ReturnType<typeof useResults>, 'fetchNextPage' | 'isFetchingNextPage' | 'isFetchNextPageError'>
 
-/** The line at the end of the grid. It loads the next page when it comes into view. */
-function NextPage({ more: { fetchNextPage, isFetchingNextPage } }: { more: More }) {
-  const line = useRef<HTMLParagraphElement>(null)
+function NextPage({ more: { fetchNextPage, isFetchingNextPage, isFetchNextPageError } }: { more: More }) {
+  const line = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    if (isFetchingNextPage) return
+    // A failed page waits for "Try again", so the line in view does not ask again and again.
+    if (isFetchingNextPage || isFetchNextPageError) return
     const seen = new IntersectionObserver(([entry]) => { if (entry?.isIntersecting) void fetchNextPage() })
     seen.observe(line.current!)
     return () => seen.disconnect()
-  }, [fetchNextPage, isFetchingNextPage])
-  return <p ref={line} className="py-4 text-center text-xs text-tertiary">{isFetchingNextPage && 'Loading more results…'}</p>
+  }, [fetchNextPage, isFetchingNextPage, isFetchNextPageError])
+  return (
+    <div ref={line} className="flex items-center justify-center gap-3 py-4 text-xs text-tertiary">
+      {isFetchingNextPage ? 'Loading more results…' : isFetchNextPageError && (
+        <>
+          <span role="alert" className="text-error-primary">The next results did not load.</span>
+          <Button variant="secondary" size="sm" onClick={() => void fetchNextPage()}>Try again</Button>
+        </>
+      )}
+    </div>
+  )
 }
 
 function MatchLabel({ result }: { result: MatchResult }) {
@@ -91,13 +98,10 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
   )
 }
 
-/**
- * The results panel of flow 02: a pure function of Form A (PD6c). A card opens here: a place in the panel, a person on its page.
- * `more`: the next page of the search. `sample`: the preview shows that the data is not real.
- */
-export function ResultsPanel({ title, page, hold, release, more, sample, onClose, onAskInChat }: {
-  title: string; page: ResultsPage; more?: More; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
-} & Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>) {
+/** The results panel of flow 02: a pure function of Form A (PD6c). A card opens here: a place in the panel, a person on its page. */
+export function ResultsPanel({ title, found, held: { hold, release }, more, sample, onClose, onAskInChat }: {
+  title: string; found: Found; held: ReturnType<typeof useHeldResults>; more?: More; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+}) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [open, setOpen] = useState<ListingResponse | null>(null)
@@ -129,7 +133,7 @@ export function ResultsPanel({ title, page, hold, release, more, sample, onClose
             <header className="flex items-start justify-between gap-3 border-b border-secondary px-5 py-4 lg:px-6">
               <div className="flex flex-col gap-1">
                 <h2 className="text-lg font-semibold text-primary">
-                  {title} <span className="font-normal text-tertiary">· {countLine(page.total)}</span>
+                  {title} <span className="font-normal text-tertiary">· {countLine(found.total)}</span>
                 </h2>
                 {sample && <span><Badge tone="warning">Sample data</Badge></span>}
               </div>
@@ -141,9 +145,9 @@ export function ResultsPanel({ title, page, hold, release, more, sample, onClose
               </div>
             </header>
             <div onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 lg:px-6">
-              {page.results.length
-                ? <ResultGrid results={page.results} onOpen={setTapped} />
-                : <NoResults suggested={page.suggested} onOpen={setTapped} />}
+              {found.results.length
+                ? <ResultGrid results={found.results} onOpen={setTapped} />
+                : <NoResults suggested={found.suggested} onOpen={setTapped} />}
               {more && <NextPage more={more} />}
             </div>
           </>

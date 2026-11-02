@@ -106,8 +106,6 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const { share, copied } = useShare(title)
   const routerBack = useBack()
   const back = panel?.onBack ?? routerBack
-  // In the panel, the bar sits at the bottom of the panel, so the chat input stays free (PD6a).
-  const inPanel = panel !== undefined
   const askInChat = panel && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={panel.onAskInChat}>Ask in chat</Button>
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
   const address = addressLine(listing)
@@ -139,7 +137,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
         <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
         <div className="flex items-center gap-2">{askInChat}<PhoneMenu listing={listing} onReport={() => setReporting(true)} share={share} /></div>
       </div>
-      <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 md:px-6 md:py-8 ${listing.mine || inPanel ? '' : 'pb-40 lg:pb-8'}`}>
+      <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 md:px-6 md:py-8 ${listing.mine || panel ? '' : 'pb-40 lg:pb-8'}`}>
         <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-4 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
           <div className="flex gap-2">
@@ -163,8 +161,9 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
         {!listing.mine && <div className="hidden lg:block"><MessageLister listing={listing} onMessage={() => setMessaging(true)} /></div>}
         {parts.map(([partTitle, body]) => body && <Section key={partTitle} title={partTitle}>{body}</Section>)}
       </article>
+      {/* In the panel, the bar sits at the bottom of the panel, so the chat input stays free (PD6a). */}
       {!listing.mine && (
-        <div className={`${inPanel ? 'sticky' : 'fixed inset-x-0'} bottom-0 z-30 flex flex-col gap-3 border-t border-secondary bg-primary p-4 lg:hidden`}>
+        <div className={`${panel ? 'sticky' : 'fixed inset-x-0'} bottom-0 z-30 flex flex-col gap-3 border-t border-secondary bg-primary p-4 lg:hidden`}>
           <MessageLister listing={listing} onMessage={() => setMessaging(true)} />
           <SaveButton kind="places" id={listing.id} className="w-full py-2.5" />
         </div>

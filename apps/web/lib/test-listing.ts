@@ -1,8 +1,10 @@
 import type { ListingResponse } from '@roomsie/contract'
 
+export const testId = (n: number) => `0199e4b0-0000-7000-8000-${String(n).padStart(12, '0')}`
+
 /** A listing for the tests: empty, except for the patch. */
 export const listing = (patch: Partial<ListingResponse>): ListingResponse => ({
-  id: '0199e4b0-0000-7000-8000-000000000001', kind: 'owner_flat', status: 'draft',
+  id: testId(1), kind: 'owner_flat', status: 'draft',
   pgName: null, areaSlug: null, address: null, shareAddress: false, building: null, street: null, landmark: null, pincode: null,
   nearestStation: null, walkStation: null, walkBus: null, walkMarket: null, walkGym: null, walkMall: null,
   placeType: null, furnishing: null, roomType: null, floor: null, carpetAreaSqft: null,
