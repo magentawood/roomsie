@@ -37,9 +37,9 @@ Buttons under the chat. People tap and do not have to type.
 - [[T-59 More chips]]
 
 ## Done when
-- [ ] Intent shows as the five place types of PD15, area as the area groups of PD2, and budget as bands
-- [ ] Each tap writes to the form. A tap never calls a model
-- [ ] If a person types and does not tap, the typed answer still works
+- [x] Intent shows as the five place types of PD15, area as the area groups of PD2, and budget as bands · [#197](https://github.com/magentawood/roomsie/pull/197)
+- [x] Each tap writes to the form. A tap never calls a model · [#197](https://github.com/magentawood/roomsie/pull/197)
+- [x] If a person types and does not tap, the typed answer still works · [#197](https://github.com/magentawood/roomsie/pull/197)
 
 ^done
 
@@ -82,3 +82,13 @@ Buttons under the chat. People tap and do not have to type.
   - sub-area chips
   - the onboarding screens of flow 01, and a lister chip (T-48)
   - replies from the model (T-13)
+
+## Log
+
+- **2026-11-02 · [#197](https://github.com/magentawood/roomsie/pull/197)**
+  - **Change:** the chat shows chips for the place type, the areas and the budget, under the newest question and under the input of an empty chat. A tap is a turn with no model: its value answers its slot, its label is the text of the turn, and the scripted reply offers the chips of the next question. "Not sure, help me pick" gets the help line. A typed answer still works.
+  - **Why:** [PD6c](../../decisions/pd-06c-interface-holes.md), [PD9](../../decisions/pd-09-pre-login-limits.md), [interface-shape.md](../../interface-shape.md)
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [The chat chips](../../learn/chat-chips.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
