@@ -19,7 +19,7 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 | 2b Adjacent, consequential | Law, tax, area safety, claims about a listing or person. **Corpus only. Never improvised.** If no article applies, hand off. **Never a bare refusal.** |
 | 3 Out of scope | One short, warm scripted line, **no model call after the router**. Ask the interview question again. It counts in the turn cap (PD9). |
 | 4 Adversarial | Scripted and logged. No model call after the router. |
-| 5 Sensitive | **Never redirected.** [assistant-risks.md](../assistant-risks.md) sections 4.4 and 4.1 apply. |
+| 5 Sensitive | **Never redirected.** [assistant-risks.md](../assistant-risks.md) section 4.4 applies. A stated community preference is not in this band ([PD3c](pd-03c-exclusionary-preferences.md)). |
 
 - Area safety is in 2b on purpose. Never give a verdict from model knowledge. Answer with corpus facts: lighting, transport at night, and what roomsie users in the area said.
 - Adversarial defences: SQL ranks, not the assistant. It states no facts about listings. Assume the system prompt leaks. Third-party text is always data.
@@ -46,7 +46,7 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 - We accept that 2a answers from model knowledge will sometimes be incorrect. That is the correct trade. All answers that are expensive when incorrect stay on the corpus-or-hand-off side.
 - The ~30 articles are approximately one week of work for two marketing people. They can write them before the product exists.
 - The eval set tests each band with its own pass condition, in Hindi, Marathi and Hinglish too. If a redirect works only in English, it is not a redirect.
-- Go/no-go check 7 (PD11): the router flags off-topic messages with no model call. The advisor never answers law, tax or safety from the web.
+- Go/no-go check 7 (PD11): the router flags off-topic messages, with no model call after the router. The advisor never answers law, tax or safety from the web.
 
 ## Sources
 

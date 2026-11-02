@@ -6,9 +6,10 @@ import { plainText } from '../../words'
 import type { AssistantDeps, Handler, TurnState } from '../../assistant'
 import { parseBudget } from './budget-words'
 import { applyValues, type SlotValues } from './form-update'
-import { probabilityOf, unscoredDeepSeek } from './gate'
+import { probabilityOf, unscoredDeepSeek } from '../gate'
+import { turnMessage } from '../turn-message'
 import { parseMoveDate } from './move-date-words'
-import { extractorPrompt, extractorMessage } from './prompt'
+import { extractorPrompt } from './prompt'
 
 /** Free text to Form A slots. The model only picks values and copies words. Code reads numbers and dates, and checks the probability (PD7). */
 // The versioned schema checks the output (assistant.md).
@@ -37,7 +38,7 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   const input = extractorInput.parse({ text: turn.text, lastQuestion: turn.last?.question ?? null })
   const scored = await models.scored({
     req, role: 'extractor', session: turn.goalId, schema: extractorAnswer,
-    system: extractorPrompt(catalogue), messages: [{ role: 'user', content: extractorMessage(input) }],
+    system: extractorPrompt(catalogue), messages: [{ role: 'user', content: turnMessage(input) }],
   }).catch(nullIfUnavailable)
   if (!scored) return noExtraction(turn.form, true)
   const { value: answer, tokens, model } = scored

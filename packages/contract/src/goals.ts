@@ -88,15 +88,14 @@ export const assistantParts = z.strictObject({
 export type AssistantParts = z.infer<typeof assistantParts>
 
 /** What a message is (PD7a). One message can be more than one kind. */
-export const routerKinds = ['filters', 'context', 'question'] as const
+const routerKinds = ['filters', 'context', 'question'] as const
 /** The scope bands of PD10. `general` and `consequential` are the bands 2a and 2b. */
 export const scopeBands = ['core', 'general', 'consequential', 'out_of_scope', 'adversarial', 'sensitive'] as const
 const register = z.strictObject({ language: z.enum(['english', 'hindi', 'marathi', 'mixed', 'other']), script: z.enum(['latin', 'devanagari', 'mixed']) })
 
 /** What the router reads: the typed turn and the last question of the assistant, as the extractor. Each handler has its own schema (assistant.md). */
 export const routerInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
-/** The answer of the router model: the kinds, the band, the register for the reply writer (PD7), and two flags. */
-// Not strict, as the extractor answer.
+/** The answer of the router model: the kinds, the band, the register for the reply writer (PD7), and two flags. Not strict, as the extractor answer. */
 export const routerAnswer = z.object({
   version: z.literal(1).default(1),
   kinds: z.array(z.enum(routerKinds)).max(routerKinds.length),

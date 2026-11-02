@@ -1,6 +1,6 @@
 # PD11 — Public launch on 8 November
 
-**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-27. The date moved to 8 November on 2026-10-28 (T-33). · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. The date moved on 2026-09-26. Changed on 2026-10-27. The date moved to 8 November on 2026-10-28 (T-33). Check 7 changed on 2026-11-02 (T-34). · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -35,7 +35,7 @@ Engineering go/no-go checks (from `team-plan.md`):
 4. No open P1 bug.
 5. The legal pages are live. There is a named moderator.
 6. A record of eval results exists. No-go if extraction gets fewer than 7 in 10 slots correct, or fills slots on vague sentences and does not mark them unclear.
-7. The router flags off-topic messages with no model call. The observer rejects each observation with no user quote. The advisor never answers law, tax or safety from the web.
+7. The router flags off-topic messages, with no model call after the router. The observer rejects each observation with no user quote. The advisor never answers law, tax or safety from the web.
 8. Last night's backup exists. A restore worked one or more times.
 
 Seeding (checked on the bug-fix day): a minimum of 150 profiles across Mumbai. Marketing seeds the F-06 areas first. Do not move the date.

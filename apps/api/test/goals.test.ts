@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { and, eq } from 'drizzle-orm'
-import { goalResponse, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
+import { and, count, eq, sql } from 'drizzle-orm'
+import { goalResponse, newGoalResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
 import { anonymousSessions, areas, chatTurns, goals } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -326,18 +326,18 @@ describe('the router', () => {
   const routed = (fields: object, unsure?: Record<string, number>) => ({ router: { deepseek: [scored({ ...coreLabel, ...fields }, unsure)] } })
   const labelOf = async (goalId: string) =>
     (await t.db.select({ parts: chatTurns.parts }).from(chatTurns).where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'))))[0]!.parts
-  const routedCount = async (band: string) => {
+  const routedCount = async (band: TurnLabel['band']) => {
     await t.flushEvents()
-    return (await analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, 'turn_routed')))
-      .filter((row) => (row.fields as { band: string }).band === band).length
+    const [row] = await analytics.db.select({ n: count() }).from(eventRows).where(and(eq(eventRows.name, 'turn_routed'), sql`${eventRows.fields}->>'band' = ${band}`))
+    return row!.n
   }
   /** One turn: its reply, its form, the label on the turn, and one `turn_routed` event with the band that the turn used. */
-  async function turn(text: string, label: Record<string, unknown>) {
+  async function turn(text: string, label: Partial<TurnLabel> & Pick<TurnLabel, 'band'>) {
     const goal = await visitorGoal()
-    const before = await routedCount(label.band as string)
+    const before = await routedCount(label.band)
     const { form, turns } = await sent(goal, text)
     expect(await labelOf(goal.id)).toMatchObject(label)
-    expect(await routedCount(label.band as string)).toBe(before + 1)
+    expect(await routedCount(label.band)).toBe(before + 1)
     return { form, reply: turns[1].text }
   }
   const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
@@ -347,7 +347,7 @@ describe('the router', () => {
 
   it('lets a core message fill Form A as before', async () => {
     fakeVendors({ deepseek: [room()] })
-    const { form, reply } = await turn('room chahiye', { ...coreLabel, band: 'core', routerBand: 'core' })
+    const { form, reply } = await turn('room chahiye', { ...coreLabel, routerBand: 'core' })
     expect(reply).toBe(roomAck)
     expect(form.intent).toEqual(roomIntent)
   })
@@ -395,6 +395,13 @@ describe('the router', () => {
     const danger = await turn('I am not safe at home, I need a room now', { band: 'sensitive', danger: true })
     expect(danger.reply).toBe(`Thanks for telling me, and I'm sorry you're dealing with that. If you're not safe right now, call 112, or Tele-MANAS on 14416 (free, 24x7). ${roomAck}`)
     expect(danger.form.intent).toEqual(roomIntent)
+  })
+
+  it('does not ask for a sensitive message again when the extractor fails', async () => {
+    fakeVendors({ deepseek: [down()], gemini: [down()], ...routed({ kinds: ['context'], band: 'sensitive' }) })
+    const { form, reply } = await turn('I lost my job today', { band: 'sensitive' })
+    expect(reply).toBe(`Thanks for telling me, and I'm sorry you're dealing with that. ${intentQuestion}`)
+    expect(form.intent).toEqual(noIntent)
   })
 
   it('makes a turn core when the router is not sure, or does not answer', async () => {

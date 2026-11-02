@@ -20,8 +20,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
 | Answer to a closed question | Extractor → Form A | Small, enums only |
 | Personal detail | Observer → Form B | Small |
 | Consulting question | Advisor | Small + retrieval |
-| Off topic | Scripted redirect | None |
-| Adversarial or safety signal | Scripted response, logged | None |
+| Off topic | Scripted redirect | None after the router |
+| Adversarial or safety signal | Scripted response, logged | None after the router |
 
 - The router runs on DeepSeek Flash behind its own adapter. When Jev access
   arrives, Jev gets a trial on the eval set.
