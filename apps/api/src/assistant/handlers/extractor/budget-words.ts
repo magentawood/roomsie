@@ -1,20 +1,23 @@
 import type { Budget } from '@roomsie/contract'
+import { isDevanagari, phrase, plainWords } from '../../words'
 import { numberWords } from './number-words'
 
 const multipliers: Record<string, number> = {
   k: 1_000, thousand: 1_000, hazaar: 1_000, hazar: 1_000, hajar: 1_000, hajaar: 1_000, हजार: 1_000,
   l: 100_000, lakh: 100_000, lakhs: 100_000, lac: 100_000, lacs: 100_000, लाख: 100_000,
 }
-/** A phrase as whole words. `\b` does not see the edges of a Devanagari word. */
-const phrase = (words: string) => new RegExp(`(?:^| )(?:${words})(?= |$)`)
 /** Words that make the amount a minimum. Without one, a single amount is the maximum, as the budget bands are. */
-const minimum = phrase('above|over|more than|min|minimum|at ?least|kam se kam|upar|jyada|zyada|jast|plus|starting|से ज्यादा|से अधिक|ऊपर|कम से कम|पेक्षा जास्त|किमान')
+const minimum = phrase('above|over|more than|min|minimum|at ?least|kam se kam|upar|jyada|zyada|jast|plus|starting|ज्यादा|अधिक|ऊपर|कम से कम|जास्त|किमान')
 /** "not more than 20k" or "20k se zyada nahi" is a maximum. */
 const notMore = phrase('(?:not|no) (?:more than|above|over)|(?:jyada|zyada|jast|upar) (?:nahi|nahin|nako)|(?:ज्यादा|अधिक|ऊपर|जास्त) (?:नहीं|नही|नाही|नको)')
 /** The words that join the two ends of a range, as in "15 se 20 hazaar". */
 const rangeWords = new Set(['to', 'se', 'te', 'and', 'aur', 'ani', 'से', 'ते', 'और', 'आणि'])
 
 type Amount = { value: number; multiplier: number | null; at: number }
+
+/** A unit with a Marathi ending, as "लाखापर्यंत" or "हजारांपेक्षा", starts with the unit. */
+const unitStems = Object.keys(multipliers).filter((unit) => isDevanagari(unit) || unit.length >= 4)
+const unitOf = (word: string) => multipliers[word] ?? multipliers[unitStems.find((stem) => word.startsWith(stem)) ?? '']
 
 function amountsIn(words: string[]): Amount[] {
   const amounts: Amount[] = []
@@ -25,8 +28,8 @@ function amountsIn(words: string[]): Amount[] {
     if (value !== undefined) {
       amounts.push({ value: value + half, multiplier: null, at })
       half = 0
-    } else if (multipliers[word] && amounts.length && amounts.at(-1)!.multiplier === null) {
-      amounts.at(-1)!.multiplier = multipliers[word]
+    } else if (unitOf(word) && amounts.length && amounts.at(-1)!.multiplier === null) {
+      amounts.at(-1)!.multiplier = unitOf(word)!
     }
   })
   return amounts
@@ -34,7 +37,7 @@ function amountsIn(words: string[]): Amount[] {
 
 /** Two amounts are a range only when a range word joins them. "20k for 2 people" is one amount. */
 const isRange = (words: string[], [low, high]: Amount[]) =>
-  !!low && !!high && words.slice(low.at + 1, high.at).some((w) => rangeWords.has(w)) && words.slice(low.at + 1, high.at).every((w) => rangeWords.has(w) || !!multipliers[w])
+  !!low && !!high && words.slice(low.at + 1, high.at).some((w) => rangeWords.has(w)) && words.slice(low.at + 1, high.at).every((w) => rangeWords.has(w) || !!unitOf(w))
 
 /** A bare amount below 100 is in thousands, as in "20 tak". From 100 to 999 the unit is not known, so it gives null. */
 const rupeesOf = ({ value, multiplier }: Amount) => {
@@ -45,11 +48,11 @@ const rupeesOf = ({ value, multiplier }: Amount) => {
 
 /** The monthly budget in the words of the person, or null if the words give no amount (PD7: code parses numbers, not the model). */
 export function parseBudget(words: string): Budget | null {
-  const text = words.normalize('NFD').replace(/\u093C/g, '').toLowerCase()
-    .replace(/[०-९]/g, (d) => String(d.charCodeAt(0) - 0x966))
+  const text = plainWords(words)
     .replace(/(\d),(?=\d)/g, '$1')
     .replace(/₹|\brs\b\.?|\binr\b/g, ' ')
-    .replace(/(\d)\s*-\s*(\d)/g, '$1 to $2')
+    // "15-20k", and "15k-20k" with a unit on each end.
+    .replace(/(\d(?:k|l|lakhs?|lacs?)?)\s*[-–]\s*(?=\d)/g, '$1 to ')
     .replace(/(\d)(k|l|lakhs?|lacs?)\b/g, '$1 $2')
     .replace(/\+/g, ' plus ')
   const parts = text.split(/[^\p{L}\p{M}\p{N}.]+/u).map((w) => w.replace(/^\.+|\.+$/g, '')).filter(Boolean)
