@@ -11,7 +11,8 @@ import { buildServer } from '../src/server'
 import type { Storage } from '../src/storage'
 import type { IdStore } from '../src/id-store'
 import type { AnalyticsDb } from '../src/analytics/client'
-import { modelSettings } from '../src/models/settings'
+import { limitSettings } from '../src/goals/settings'
+import { modelSettings, spendSettings } from '../src/models/settings'
 import { assistantSettings } from '../src/assistant/settings'
 
 type Method = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
@@ -76,6 +77,9 @@ export function testIdStore() {
   return { idStore, uploads, views, deleted, matches, face }
 }
 
+/** The other test files send many turns from one address, so their limits are high. A test of a limit sets its own values. */
+const noLimits = { VISITOR_TURN_CAP: '1000', VISITOR_TURN_BACKSTOP: '1000', VISITOR_SESSIONS_PER_DEVICE: '1000', VISITOR_SESSIONS_PER_IP: '1000', VISITOR_SESSIONS_PER_IP_RANGE: '1000', TYPED_TURNS_PER_MINUTE: '1000' }
+
 export const testAreas = [
   { slug: 'bandra-santacruz', name: 'Bandra–Santacruz' },
   { slug: 'bandra', name: 'Bandra', parentSlug: 'bandra-santacruz' },
@@ -95,7 +99,7 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   const tokens = {} as Record<U, string>
   // Each user signs in with a verified email, as Google gives it (T-55).
   for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
-  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore, analyticsDb, models: modelSettings.parse(settings), assistant: assistantSettings.parse(settings), today: () => '2026-11-02' })
+  const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore, analyticsDb, models: modelSettings.parse(settings), assistant: assistantSettings.parse(settings), limits: limitSettings.parse({ ...noLimits, ...settings }), spend: spendSettings.parse(settings), today: () => '2026-11-02' })
   // The alerts go out after the reply, so a call also waits for them.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })

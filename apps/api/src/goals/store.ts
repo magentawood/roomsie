@@ -7,14 +7,14 @@ import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
 const sessionDays = 30
-const hashOf = (value: string) => createHash('sha256').update(value).digest('hex')
+export const hashOf = (value: string) => createHash('sha256').update(value).digest('hex')
 const expiry = () => new Date(Date.now() + sessionDays * 86_400_000)
 
 /** A new visitor session. The key goes to the browser one time, and the database keeps only its hash. */
-export async function createVisitorSession(db: Db, device: { ip: string; userAgent: string }) {
+export async function createVisitorSession(db: Db, network: { deviceHash: string; ipHash: string; ipRangeHash: string }) {
   const key = randomBytes(32).toString('base64url')
   const [row] = await db.insert(anonymousSessions)
-    .values({ keyHash: hashOf(key), deviceHash: hashOf(`${device.ip}|${device.userAgent}`), expiresAt: expiry() })
+    .values({ keyHash: hashOf(key), ...network, expiresAt: expiry() })
     .returning({ id: anonymousSessions.id })
   return { id: row!.id, key }
 }
@@ -29,7 +29,7 @@ export async function visitorSessionOf(db: Db, key: string) {
 
 /** Who asks: a signed-in person, a visitor session, or both before T-17 moves the goals of the session. */
 export type Asker = { userId: string | null; sessionId: string | null }
-const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
+export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
   userId ? eq(goals.userId, userId) : sql`false`,
   sessionId ? eq(goals.anonymousSessionId, sessionId) : sql`false`,
 )!
@@ -83,6 +83,10 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
       .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null
     if (goal.asker.userId) await saveOwnValues(tx, goal.asker.userId, userTurn.ownValues)
+    // The cap of PD9 counts only the typed turns of a visitor (T-21).
+    else if (goal.asker.sessionId && userTurn.inputMethod === 'typed') {
+      await tx.update(anonymousSessions).set({ turnCount: sql`${anonymousSessions.turnCount} + 1` }).where(eq(anonymousSessions.id, goal.asker.sessionId))
+    }
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
     const parts = userTurn.inputMethod === 'typed' ? userTurnParts.parse(userTurn.parts) : chipTurnParts.parse(userTurn.parts)
     const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: userTurn.inputMethod, text: userTurn.text, parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)

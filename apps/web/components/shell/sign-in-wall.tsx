@@ -3,8 +3,10 @@
 import { CloseButton, ModalFrame } from '../ui/modal'
 import { GoogleSignIn, LegalLine } from './google-sign-in'
 
-/** "Sign in to continue" of drafts section 17, with the text of D-02. T-21 shows it at the turn cap. */
-export function SignInWall({ onClose }: { onClose: () => void }) {
+/** The wall of drafts section 17: "Sign in to continue" with the text of D-02, or the copy of the turn cap (T-21). */
+export function SignInWall({ title = 'Sign in to continue', text = 'Unlimited chats and multiple goals, all synced up with your account.', onClose }: {
+  title?: string; text?: string; onClose: () => void
+}) {
   return (
     <ModalFrame labelledBy="sign-in-wall-title" onClose={onClose} sheet>
       <div className="flex flex-col gap-8 p-6">
@@ -12,8 +14,8 @@ export function SignInWall({ onClose }: { onClose: () => void }) {
           <span aria-hidden className="mx-auto -mt-3 h-1 w-9 rounded-full bg-quaternary lg:hidden" />
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-1">
-              <h2 id="sign-in-wall-title" className="text-lg font-semibold text-primary">Sign in to continue</h2>
-              <p className="text-sm text-tertiary">Unlimited chats and multiple goals, all synced up with your account.</p>
+              <h2 id="sign-in-wall-title" className="text-lg font-semibold text-primary">{title}</h2>
+              <p className="text-sm text-tertiary">{text}</p>
             </div>
             <CloseButton onClose={onClose} />
           </div>

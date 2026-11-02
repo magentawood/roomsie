@@ -104,6 +104,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     const ms = Math.round(performance.now() - started)
     const record = { role: call.role, model, ...answer.usage, ms, fallback: model === fallback, outcome: answer.outcome, session: call.session }
     call.req.server.analytics.track(call.req, { name: 'model_called', ...record })
+    call.req.server.spend.record(model, answer.usage)
     call.req.log.info(record, 'model call')
     return { ...answer, ms }
   }

@@ -15665,6 +15665,12 @@
                         "additionalProperties": false
                       }
                     },
+                    "typedTurnsLeft": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
                     "visitorKey": {
                       "nullable": true,
                       "type": "string"
@@ -15674,7 +15680,36 @@
                     "id",
                     "form",
                     "turns",
+                    "typedTurnsLeft",
                     "visitorKey"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "limit": {
+                      "type": "string",
+                      "enum": [
+                        "turn_cap",
+                        "too_many_chats",
+                        "too_fast"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "limit"
                   ],
                   "additionalProperties": false
                 }
@@ -17211,12 +17246,19 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "typedTurnsLeft": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
                     }
                   },
                   "required": [
                     "id",
                     "form",
-                    "turns"
+                    "turns",
+                    "typedTurnsLeft"
                   ],
                   "additionalProperties": false
                 }
@@ -18931,11 +18973,18 @@
                       },
                       "minItems": 2,
                       "maxItems": 2
+                    },
+                    "typedTurnsLeft": {
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
                     }
                   },
                   "required": [
                     "form",
-                    "turns"
+                    "turns",
+                    "typedTurnsLeft"
                   ],
                   "additionalProperties": false
                 }
@@ -18955,6 +19004,34 @@
                   },
                   "required": [
                     "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "limit": {
+                      "type": "string",
+                      "enum": [
+                        "turn_cap",
+                        "too_many_chats",
+                        "too_fast"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "limit"
                   ],
                   "additionalProperties": false
                 }
@@ -18993,6 +19070,34 @@
                   },
                   "required": [
                     "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    },
+                    "limit": {
+                      "type": "string",
+                      "enum": [
+                        "turn_cap",
+                        "too_many_chats",
+                        "too_fast"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "error",
+                    "limit"
                   ],
                   "additionalProperties": false
                 }

@@ -20,11 +20,15 @@ export const coreLabel = { kinds: ['filters'], band: 'core', register: { languag
 /**
  * Each vendor answers with the next reply of its list. A reply that is an Error makes fetch throw it, as a timeout does.
  * The calls of the router get the replies of `router`, or `coreLabel` from DeepSeek when the test gives none.
- * `requests` has the other calls, and `requests.router` the calls of the router.
+ * `requests` has the other calls, `requests.router` the calls of the router, and `requests.telegram` the alerts of the spend.
  */
 export function fakeVendors(replies: Replies & { router?: Replies }) {
-  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[] })
+  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], telegram: [] as SentRequest[] })
   vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
+    if (url.startsWith('https://api.telegram.org/')) {
+      requests.telegram.push({ url, body: JSON.parse(String(init.body)) as Record<string, unknown>, authorization: null })
+      return Response.json({ ok: true })
+    }
     const body = JSON.parse(String(init.body)) as { messages: { content: string }[] }
     const isRouter = body.messages[0]?.content === routerPrompt
     ;(isRouter ? requests.router : requests).push({ url, body, authorization: new Headers(init.headers).get('authorization') })
@@ -56,6 +60,6 @@ export function scored(fields: object, unsure: Record<string, number> = {}) {
 export function fakeRequest() {
   const events: AnalyticsEvent[] = []
   const log = { info: vi.fn(), error: vi.fn() }
-  const req = { server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(analyticsEvent.parse(event)) } }, log, user: null } as unknown as FastifyRequest
+  const req = { server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(analyticsEvent.parse(event)) }, spend: { record: () => {} } }, log, user: null } as unknown as FastifyRequest
   return { req, events }
 }
