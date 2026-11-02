@@ -74,6 +74,7 @@ Buttons under the chat. People tap and do not have to type.
   - **Taps do not count (why: PD9):** a tap turn is apart from a typed turn, so T-21 counts only the typed turns. No new event: each turn keeps its input method.
   - **A reopened goal** shows the chips of its newest question again. Typing always works.
   - **The design (the user, 2026-11-02):** drafts section 33 (Figma node 583:47584), with our tokens, at the phone and desktop sizes. The chips are the Tag of the design system: a round mark for one pick, a square mark for many. The user approves it before the build.
+  - **The failed line keeps the chips (the user, review round 2):** when no model reads a typed message, the reply "Sorry, I could not read that just now" keeps the chips of the last question. On a first message, it keeps the place types of the empty chat. A tap needs no model, so the person can go on.
   - **T-59 (the user):** a new task for the chips of the other closed questions: room type, who is moving, the eight lifestyle questions and the must-have weights.
 - **Out of scope:**
   - the chips of the other closed questions (T-59)

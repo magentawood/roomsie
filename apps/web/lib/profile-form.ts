@@ -5,7 +5,6 @@ import { labels } from './listing-steps'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
 
-
 /** A budget that the chat set can fit no band. */
 export const bandOf = (min: number | null, max: number | null): BudgetBand | null =>
   bands.find((b) => b.min === min && b.max === max)?.id ?? null
