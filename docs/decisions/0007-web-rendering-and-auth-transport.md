@@ -28,6 +28,9 @@
 
 **2. `Authorization: Bearer <Firebase ID token>` is the single authentication
 mechanism.** It is the same on web, Android and iOS. We use no session cookies.
+The one exception is the visitor key of a chat before sign-in (T-12, 2026-11-02):
+the API makes a random key, the browser sends it in the header `X-Visitor-Key`,
+and the database keeps only its hash. It opens only the goals of its visitor session.
 
 **3. `users.tokens_valid_after timestamptz not null default now()` ships in the
 first migration.** The check is in the auth middleware from day one. It
