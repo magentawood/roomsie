@@ -45,6 +45,7 @@ The tests prove the limits of the IP address and the IP range, and the limit of 
 - **The cost is an estimate.** It uses the highest price of each vendor in [model-selection.md](../model-selection.md), with no off-peak or cache discount for Gemini, so the estimate is high. A change of a model inside one vendor keeps the price of that vendor.
 - **Each alert goes one time a day, also from two machines.** The update of `alerted` is the lock: only one call moves it past 70 or 100.
 - **The router and the extractor run at the same time,** so two writes of the spend can come together. The total of the row is right, because each write adds to it.
+- **The waitlist takes three emails from each chat** (T-22a). A lock for the chat (`pg_advisory_xact_lock`) comes before the count, so two joins at the same time cannot both pass it. A plain count, then an insert, lets them both pass. The limit comes before the check of the email. Thus, a chat at the limit gives 429 for each email, and it cannot tell which emails are on the list.
 - **The other test files have very high limits** (`noLimits` in `test/app.ts`), because they send many turns from one address. The tests of the limits set their own small values.
 
 ## Tickets
@@ -52,3 +53,4 @@ The tests prove the limits of the IP address and the IP range, and the limit of 
 - T-21: the cap, the backstop, the rate limits and the spend alerts.
 - T-29: the abuse test of the limits.
 - T-17: a sign-in carries the visitor chat into the account.
+- T-22a: [#204](https://github.com/magentawood/roomsie/pull/204), the limit of three waitlist emails for each chat.

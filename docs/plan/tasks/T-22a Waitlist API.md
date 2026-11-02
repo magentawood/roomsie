@@ -32,8 +32,8 @@ The server part: know the Mumbai area groups, and save waitlist emails from plac
 - [[T-22b Waitlist screen]]
 
 ## Done when
-- [ ] The API tells if a place is in a Mumbai area group, by its name or another name
-- [ ] The system saves each waitlist entry with its place
+- [x] The API tells if a place is in a Mumbai area group, by its name or another name · [#204](https://github.com/magentawood/roomsie/pull/204)
+- [x] The system saves each waitlist entry with its place · [#204](https://github.com/magentawood/roomsie/pull/204)
 
 ^done
 
@@ -77,3 +77,13 @@ The server part: know the Mumbai area groups, and save waitlist emails from plac
   - a change to the text of the assistant reply
   - a confirmation email, the invites, and an analytics event
   - a waitlist place as an area group (PD2, "Revisit when")
+
+## Log
+
+- **2026-11-03 · [#204](https://github.com/magentawood/roomsie/pull/204)**
+  - **Change:** the contract has a list of the places outside Mumbai, with their other names. Each typed turn checks the place words of the extractor model against the list, and the goal keeps each outside place of the chat. `POST /v1/goals/:id/waitlist` saves an email with a place that the chat named, with a maximum of three emails for each chat.
+  - **Why:** visitors from outside Mumbai go to the waitlist ([PD2](../../decisions/pd-02-launch-market.md)), and a search with no Mumbai area shows the waitlist screen ([PD6c](../../decisions/pd-06c-interface-holes.md)).
+  - **Ticked:** "The API tells if a place is in a Mumbai area group, by its name or another name", and "The system saves each waitlist entry with its place"
+  - **Not done:** none
+  - **Learn:** [areas.md](../../learn/areas.md), [chat-limits.md](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

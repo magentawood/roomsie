@@ -34,18 +34,37 @@ Andheri–Goregaon            (group: parent is null)
 - **The search** ignores case, spaces and punctuation, and it matches the other names. Thus "kandivli" finds Kandivali East.
 - Section 23 of the drafts page in Figma shows each screen.
 
+## Places outside Mumbai
+
+A visitor can ask for a place where Roomsie is not live, for example Vasai or Pune. That place goes to the waitlist (PD2).
+
+- **The list:** the contract package holds the waitlist places, each with its name and its other names, for example "Virar" and "Bangalore". The list is not a table, because no row links to a waitlist place.
+- **The match:** the assistant finds these names with the same match as the Mumbai names, so Devanagari names and Marathi endings also work. A test makes sure that no waitlist name is also a Mumbai name.
+- **Only a place to live:** the check reads only the place words that the extractor model copies. Thus, "shifting from Pune, need a PG in Powai" gives Powai, and Pune does not go to the waitlist.
+- **The goal keeps them:** the goal and each turn reply give `outsidePlaces`, with each outside place of any turn of the chat. The web shows the waitlist screen or the waitlist line from it (T-22b).
+- **The waitlist:** `POST /v1/goals/:id/waitlist` saves an email with a place that the chat named. The rules for the entries of a chat are in [the limits of the chat](chat-limits.md).
+
+```
+"room in Powai or Vasai"  →  form.areas = [powai]   outsidePlaces = [vasai-virar]
+"room in Bandraa" (typo)  →  no area, no outside place: the assistant asks again
+```
+
 ## The choice we made
 
 - The ten groups, the sub-areas and where Mumbai ends: [PD2](../decisions/pd-02-launch-market.md).
 - The rules of the build: the [spec](../specs/sub-areas.md).
+- The waitlist places and the waitlist route: the spec in the [T-22a task note](../plan/tasks/T-22a%20Waitlist%20API.md), [#204](https://github.com/magentawood/roomsie/pull/204).
 
 ## Gotchas
 
 - A listing from before the sub-areas can have a whole group. It stays live, but its next edit must pick a sub-area: the API gives 422, and `missing` holds `areaSlug`.
 - The match query must use the expansion. A plain array overlap misses Versova for a seeker who picked Andheri West.
 - The seed numbers the areas in the order of its list. Put a new place where it belongs, not at the end.
+- A new waitlist name must not be a Mumbai name. For example, "Naigaon" is a Mumbai name in Parel, so it cannot be an other name of Vasai–Virar. The areas test fails for such a name.
+- A slug of a waitlist place stays in the goals that named it. To remove a place from the list, also change those goals in a migration.
 
 ## Tickets
 
 - [T-56 Sub-areas API](../plan/tasks/T-56%20Sub-areas%20API.md)
 - [T-57 Sub-area pickers](../plan/tasks/T-57%20Sub-area%20pickers.md)
+- [T-22a Waitlist API](../plan/tasks/T-22a%20Waitlist%20API.md): [#204](https://github.com/magentawood/roomsie/pull/204), 2026-11-03. The places outside Mumbai and the waitlist.
