@@ -95,6 +95,8 @@ Changes a typed sentence into tidy form slots.
   - **A model that does not answer:** the API saves the turn, and Form A does not change. A fixed reply asks the person to try again. No error page shows.
   - **The event `interview_started`:** the first turn of a goal fires it, through `track()` (why: T-24).
   - **The open product calls:** PC-09 (languages) and PC-39 (the order of the questions) are in F-14, not F-11. On 2026-11-02, the user settled both with their recommended options: PC-09 in [PD7](../../decisions/pd-07-models.md), and PC-39 in [PD6c](../../decisions/pd-06c-interface-holes.md). The order of the questions is the setting `ASSISTANT_QUESTION_ORDER`.
+  - **Review of #189, account deletion:** DeepSeek has no API to delete the text of a user. F-07 owns a deletion request to DeepSeek and Google for each deleted account. The user decided this on 2026-11-02.
+  - **Review of #189, the Devanagari area names:** the seed gives each area its Devanagari names, from a table of Hindi and Marathi spellings (PC-09). The user decided this on 2026-11-02.
 - **Out of scope:**
   - the turn cap, the rate limits and the turn count (T-21)
   - the chips (T-09)
