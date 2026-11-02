@@ -37,6 +37,7 @@ Keeps a chat from before sign-up when the person signs up.
 - [ ] Nothing is lost, and the assistant never asks the same thing two times
 - [ ] The goals of the session, with their chat turns, move to the account
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [ ] When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement
 
 ^done
 

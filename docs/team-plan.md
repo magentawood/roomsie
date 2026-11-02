@@ -906,6 +906,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Nothing is lost, and the assistant never asks the same thing two times
 - The goals of the session, with their chat turns, move to the account
 - Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement
 - Read first: `docs/seo-with-gated-products.md`, `docs/extensibility.md`
 
 **T-39 · Analytics in its own database, with scheduled jobs** — done when:
