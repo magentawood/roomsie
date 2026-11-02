@@ -657,10 +657,9 @@ describe('the waitlist (T-22a)', () => {
     expect(await entriesOf(goal.id)).toEqual([])
   })
 
-  it('takes three emails from one chat, and refuses the fourth with 429', async () => {
+  it('takes three emails from one chat, then refuses each email with 429, also one on the list', async () => {
     const goal = await vasaiGoal()
     for (const name of ['a', 'b', 'c']) expect((await join(goal, { email: `${name}@three.example.com`, place: 'vasai-virar' })).statusCode).toBe(204)
-    // A used chat refuses an email on the list too, so it cannot tell which emails are on the list.
     for (const email of ['d@three.example.com', 'a@three.example.com']) expect((await join(goal, { email, place: 'vasai-virar' })).statusCode).toBe(429)
     expect(await entriesOf(goal.id)).toHaveLength(3)
   })
@@ -677,5 +676,6 @@ describe('the waitlist (T-22a)', () => {
     const goal = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
     expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/turns`, { text: 'room in Pune' })).statusCode).toBe(200)
     expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/waitlist`, { email: 'asha@example.com', place: 'pune' })).statusCode).toBe(204)
+    expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/waitlist`, { email: 'ravi@example.com', place: 'pune' })).statusCode).toBe(404)
   })
 })

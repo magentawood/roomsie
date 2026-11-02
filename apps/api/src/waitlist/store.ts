@@ -8,7 +8,7 @@ export function joinWaitlist(db: Db, { email, place, goalId }: { email: string; 
   return db.transaction(async (tx) => {
     // Two joins of one chat at the same time must not both pass the count.
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${goalId}, 0))`)
-    // The limit comes first: a used chat refuses each email, so it cannot tell which emails are on the list.
+    // The limit comes first: a chat at the limit gives 429 for each email, also for one on the list.
     const [row] = await tx.select({ entries: count() }).from(waitlist).where(eq(waitlist.goalId, goalId))
     if (row!.entries >= waitlistEntriesPerGoal) return false
     await tx.insert(waitlist).values({ email, area: place, goalId }).onConflictDoNothing()

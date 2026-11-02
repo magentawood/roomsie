@@ -625,7 +625,7 @@ export const saves = pgTable('saves', {
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
-  /** The waitlist place outside Mumbai (PD2). */
+  /** PD2. */
   area: text('area').$type<WaitlistPlace>().notNull(),
   /** The chat that named the place. A chat adds a few entries at most (T-22a). */
   goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'set null' }),

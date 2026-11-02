@@ -64,10 +64,11 @@ The server part: know the Mumbai area groups, and save waitlist emails from plac
   - **One entry for each email and place (the user):** the same email and place a second time change nothing.
   - **The entry comes from a chat (the user):** the request gives the goal, with the visitor key or the sign-in, as the other goal routes. The API accepts only a place that the goal named. A goal adds a maximum of three entries. Thus, a script must first pass the chat limits of [PD9](../../decisions/pd-09-pre-login-limits.md).
   - **The answers:**
-    - 204 for a new entry and for a repeated entry. Thus, the API does not tell if an email is on the list.
+    - 204 for a new entry and for a repeated entry, while the goal has entries left. Thus, the API does not tell if an email is on the list.
     - 404 for a goal of a different person.
     - 400 for a place that the goal did not name.
-    - 429 for the fourth entry of a goal.
+    - 429 for each email after the third entry of a goal, also for an email on the list (the user, at the review).
+    - A goal below the limit can still test one email: the 429 comes one email later. Each test costs one chat, and the chat limits of PD9 apply (the user, at the review).
   - **The email:** the API removes the spaces at the two ends and makes it lowercase. The logs never show it ([ADR-0016](../../decisions/0016-credentials-and-secrets.md)).
   - **The list is in the contract, not in a table:** no row links to a waitlist place. The web reads the names from the same list.
   - **The names:** the match of the Mumbai areas also reads Devanagari names and Marathi endings. Thus, the waitlist places can have Devanagari names.
