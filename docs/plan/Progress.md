@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**217 of 329 done · 66%**
+**224 of 329 done · 68%**
 
 `████████████████░░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
-| [[P2 Chat]] | 7 / 14 | 30 / 65 | 46% |
+| [[P2 Chat]] | 8 / 14 | 37 / 65 | 57% |
 | [[P3 Data and trust]] | 16 / 19 | 77 / 86 | 90% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**22 free tasks are open · 63 build hours.**
+**21 free tasks are open · 58 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -57,12 +57,12 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[T-13 Reply writer]] | P2 | 4 | ⬜ can start | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| 0 | [[T-21 Turn cap and spend ceiling]] | P2 | 5 | ⬜ can start | 1 | [#41](https://github.com/magentawood/roomsie/issues/41) |
 | 0 | [[T-22a Waitlist API]] | P4 | 2 | ⬜ can start | 1 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-17 Carry chat into account]] | P2 | 2 | ⬜ can start | 0 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | 0 | [[T-27 Eval run]] | P2 | 3 | ⬜ can start | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
+| 0 | [[T-29 Abuse test]] | P1 | 1 | ⬜ can start | 0 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | 0 | [[T-36 Observer]] | P2 | 8 | ⬜ can start | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ can start | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
@@ -71,7 +71,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
-| 1 | [[T-29 Abuse test]] | P1 | 1 | ⬜ waits | 0 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | 1 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 
@@ -124,7 +123,7 @@ flowchart LR
   T33["T-33<br/>Invite-only gate"]:::done
   T23a["T-23a<br/>Landing page"]:::done
   T24["T-24<br/>Event logging"]:::done
-  T21["T-21<br/>Turn cap and spend ceiling"]:::ready
+  T21["T-21<br/>Turn cap and spend ceiling"]:::done
   T18a["T-18a ⚑<br/>Message request API"]:::doing
   T20["T-20<br/>Account deletion"]:::done
   T53["T-53<br/>Delete the Firebase user"]:::done
@@ -134,7 +133,7 @@ flowchart LR
   T22b["T-22b<br/>Waitlist screen"]:::todo
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::ready
-  T29["T-29<br/>Abuse test"]:::todo
+  T29["T-29<br/>Abuse test"]:::ready
   T34["T-34 ⚑<br/>Router"]:::done
   T35["T-35<br/>Form B contract"]:::done
   T36["T-36<br/>Observer"]:::ready
@@ -317,7 +316,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 30/65
+## P2 Chat — 37/65
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -340,7 +339,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-36 Observer]] · 0/6
 > ![[T-36 Observer#^done]]
 
-> [!todo]- ⬜ [[T-21 Turn cap and spend ceiling]] · 0/7
+> [!todo]- ✅ [[T-21 Turn cap and spend ceiling]] · 7/7
 > ![[T-21 Turn cap and spend ceiling#^done]]
 
 > [!todo]- ⬜ [[T-38 Advisor]] · 0/5
