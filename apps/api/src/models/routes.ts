@@ -13,10 +13,12 @@ export function modelRoutes(v1: FastifyInstance, options: AuthOptions & { models
   })
 
   app.post('/admin/alert-check', { preHandler: requireModerator(options), schema: { response: { 204: noContent, 404: errorResponse, 502: errorResponse, 503: errorResponse } } }, async (_req, reply) => {
-    // A bad token or chat gives the answer of Telegram, so the check names the setting to fix.
-    const sent = await v1.spend.sendTestAlert().catch((err: unknown) => (err instanceof Error ? err.message : 'Telegram failed'))
-    if (typeof sent === 'string') return reply.code(502).send({ error: sent })
-    if (!sent) return reply.code(503).send({ error: 'the Telegram settings are not set' })
+    try {
+      if (!await v1.spend.sendTestAlert()) return reply.code(503).send({ error: 'the Telegram settings are not set' })
+    } catch (err) {
+      // The status of Telegram tells a wrong token (401) from a wrong chat (400).
+      return reply.code(502).send({ error: (err as Error).message })
+    }
     return reply.code(204).send(null)
   })
 }

@@ -58,6 +58,7 @@ Attack our own site before strangers do.
   - **Item 1 (the user):** "A script opens 100 anonymous sessions" changed to "A script asks for 100 anonymous sessions from one device, and the limit refuses each one after the first 10".
   - **The turn cap:** the script also checks the cap of five typed turns. It costs approximately ₹0.02 in model calls.
   - **Not live:** the limit of typed turns in a minute. A visitor reaches the cap of five before the limit of ten, so only a signed-in person can trip it. The tests of T-21 prove it.
+  - **From the review:** the alert check gives 502 with the status of Telegram when the bot token or the chat is wrong, and 204 with no body when the message goes. The script checks the first values of PD9: exactly 10 sessions open, and the cap is five.
   - **The device:** the script uses one fixed user agent. Thus, it uses up only its own device count. A browser on the same network keeps its own count.
 - **Out of scope:**
   - a test in CI against roomsie.in
