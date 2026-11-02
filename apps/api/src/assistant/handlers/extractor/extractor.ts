@@ -3,17 +3,17 @@ import { reportError } from '@roomsie/config/report'
 import { nullIfUnavailable } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
 import { plainText } from '../../words'
-import type { AssistantDeps, Handler, TurnState } from '../../assistant'
+import type { AssistantDeps, TurnState } from '../../assistant'
 import { parseBudget } from './budget-words'
 import { applyValues, type SlotValues } from './form-update'
-import { probabilityOf, unscoredDeepSeek } from '../gate'
+import { jsonString, passes, probabilityOfMatch, unscoredDeepSeek } from '../gate'
 import { turnMessage } from '../turn-message'
 import { parseMoveDate } from './move-date-words'
 import { extractorPrompt } from './prompt'
 
 /** Free text to Form A slots. The model only picks values and copies words. Code reads numbers and dates, and checks the probability (PD7). */
 // The versioned schema checks the output (assistant.md).
-export const extractor: Handler = async (turn, deps) => extractorOutput.parse(await extract(turn, deps))
+export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
 export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed })
@@ -48,17 +48,11 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   let misaligned = unscored
   const passesGate = (key: string, value: string) => {
     if (value === 'unclear') return true
-    if (!tokens) return !unscored
-    const probability = probabilityOf(tokens, key, value)
-    if (probability === null) misaligned = true
-    return probability !== null && probability >= settings.minProbability
+    if (tokens && probabilityOfMatch(tokens, jsonString(key, value)) === null) misaligned = true
+    return passes(scored, jsonString(key, value), settings.minProbability)
   }
   // Copied words can come as byte tokens or as \u escapes, which the tokens do not match. Then only a low probability that matched leaves the slot empty.
-  const wordsPass = (key: string, words: string) => {
-    if (!tokens) return !unscored
-    const probability = probabilityOf(tokens, key, words)
-    return probability === null || probability >= settings.minProbability
-  }
+  const wordsPass = (key: string, words: string) => passes(scored, jsonString(key, words), settings.minProbability, 1)
   const values: SlotValues = {}
   const putValue = (slot: FormASlot, key: string, value: string | null | undefined) => {
     if (value != null) values[slot] = passesGate(key, value) ? value : 'unclear'

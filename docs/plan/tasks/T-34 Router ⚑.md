@@ -59,7 +59,7 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
   - **The reply writer:** a scripted line for each band, then the next question. Its input gets the label.
   - **The settings of the assistant:** `ROUTER_MIN_PROBABILITY`, with the default 0.8.
   - **The goals store and the turn route:** the label goes on the typed turn of the person, and the route sends `turn_routed`. The interface of the route does not change.
-  - **The docs:** PD7a and agent-architecture.md tell two parallel calls. PD10, scope-policy.md and the assistant standards tell "no model call after the router" (done item 2). scope-policy.md tells that a stated community preference follows PD3c. A learn page tells how the router works.
+  - **The docs:** PD7a and agent-architecture.md tell two parallel calls. PD10, PD11 (go/no-go check 7), scope-policy.md and the assistant standards tell "no model call after the router" (done item 2). scope-policy.md tells that a stated community preference follows PD3c. A learn page tells how the router works.
   - **The plan:** done items 2 and 3 change (see the decisions). The new task T-58 builds the hidden community filter.
 - **Seams for the tests:**
   - The tests of the router, with the fake vendors: a confident label, a label below the threshold, Gemini with no probabilities, DeepSeek with no probabilities, and a failed call.
@@ -78,6 +78,7 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
   - **Personal context:** the label records it for the observer of T-36. Nothing more runs now.
   - **A band that is not sure (review round 1):** the label keeps no kinds and no flags. Thus, a guess of the router never goes into the log of PD3c, and never drops the answer of the extractor. `routerBand` keeps the band of the router, for the tuning of T-27.
   - **A flag or the question kind that is not sure (review round 2):** a sure band keeps `danger`, `community` and the question kind only when each passes `ROUTER_MIN_PROBABILITY` too.
+  - **PD10 and PD11 (the user, 2026-11-02, review of the fixes):** PD11 check 7 tells "no model call after the router". The band 5 row of PD10 tells that a stated community preference is not in the band (PD3c).
   - **A failed extractor (review round 2):** only a core turn asks the person to send the message again. A turn of a different band gets its line and the next question.
   - **A stated community or religion preference (the user):** the label sets `community`. This is the log of each stated exclusion of PD3c. The prompt of the router tells that it is core. T-58 builds the hidden filter on stated values only (PD3c, mitigation 1: never infer).
   - **The scripted lines are in English** until the reply writer of T-13.

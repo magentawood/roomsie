@@ -1,7 +1,6 @@
 import { vi } from 'vitest'
 import type { FastifyRequest } from 'fastify'
-import type { z } from 'zod'
-import { analyticsEvent, type AnalyticsEvent, type routerAnswer } from '@roomsie/contract'
+import { analyticsEvent, type AnalyticsEvent, type RouterAnswer } from '@roomsie/contract'
 import { routerPrompt } from '../src/assistant/handlers/router/prompt'
 
 export const deepseek = 'https://api.deepseek.com/chat/completions'
@@ -16,7 +15,7 @@ type SentRequest = { url: string; body: Record<string, unknown>; authorization: 
 export const down = () => new Response('down', { status: 500 })
 
 /** A sure label of the router for a message about the search: the label of a test that gives the router no replies. */
-export const coreLabel = { kinds: ['filters'], band: 'core', register: { language: 'english', script: 'latin' }, danger: false, community: false } satisfies z.input<typeof routerAnswer>
+export const coreLabel = { kinds: ['filters'], band: 'core', register: { language: 'english', script: 'latin' }, danger: false, community: false } satisfies Omit<RouterAnswer, 'version'>
 
 /**
  * Each vendor answers with the next reply of its list. A reply that is an Error makes fetch throw it, as a timeout does.
