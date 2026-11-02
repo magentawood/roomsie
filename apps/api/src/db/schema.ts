@@ -461,7 +461,7 @@ export const chatTurns = pgTable('chat_turns', {
   role: turnRoleEnum('role').notNull(),
   inputMethod: turnInputEnum('input_method'),
   text: text('text').notNull(),
-  /** The cards and chips an assistant turn showed, to redraw a reopened goal. */
+  /** The cards and chips an assistant turn showed, to redraw a reopened goal. On a typed turn of the person: the label of the router (T-34). */
   parts: jsonb('parts'),
   createdAt: createdAt(),
 }, (t) => ({
