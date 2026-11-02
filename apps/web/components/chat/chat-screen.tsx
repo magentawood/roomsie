@@ -157,7 +157,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const sendText = (text: string) => submit({ body: { text }, text })
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
-  const chipSlot = send.isPending ? null : chipsOf(turns, chatForm)
+  // A tap also starts a chat, so the chips stay away while new chats are over their limit.
+  const chipSlot = send.isPending || failed?.signIn ? null : chipsOf(turns, chatForm)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
