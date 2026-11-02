@@ -89,7 +89,7 @@ messages. The chat shows no notice (PC-27).
   cost risk is volume and abuse, not unit cost. PD9 owns the controls:
   - rate limits for each device and network, because there is no user
   - an anonymous turn cap
-  - a daily spend ceiling.
+  - a daily spend alert.
 - Measure: the rank of each area page, chat starts from an area page, slots
   filled on arrival, and interview completion warm against cold.
 - Area-page numbers need users, and at launch there are none.

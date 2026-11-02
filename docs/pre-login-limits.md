@@ -28,6 +28,7 @@ Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
 - **Hard rule: the cap cannot stop the chat until the panel renders a minimum of one time.**
 - If slots are missing at turn five, continue until results exist. Then stop.
+- **The backstop:** at 15 typed turns, the wall comes also with no results.
 
 Why: [PD9](decisions/pd-09-pre-login-limits.md)
 
@@ -59,29 +60,30 @@ Why: [PD9](decisions/pd-09-pre-login-limits.md)
 | Sessions per IP | Catches the naive case |
 | Sessions per IP range | Catches the less naive case |
 | Turns per minute | Stops a script that runs at full speed |
-| **Daily spend ceiling** | The backstop. Global, not for each user. |
+| **Daily spend amount** | An alert, not a stop. Global, not for each user. |
 
-**Where these live:**
+**Where these live:** in the database. The typed turns and the visitor sessions come from their tables, and the spend from one row for each day. A deploy or a second API machine does not change a count.
 
-- ADR 0009 rejected serverless.
-- The API is a single machine that runs for a long time. It keeps the counters in-process.
-- This works today. **It fails at two machines.**
-- When counters exist, a second machine is not a one-line config change.
-- Record this dependency today.
+**The first values are guesses** in config, until two to three months of data (PC-10):
+
+| Limit | First value |
+|---|---|
+| Typed turns before the wall | 5, and the backstop at 15 |
+| New visitor sessions in 24 hours | 10 for each device, 100 for each IP address, 500 for each IP range |
+| Typed turns in a minute | 10 for each person |
+| Daily spend amount | ₹500 |
+
+A session limit gets "Too many chats from this network today. Sign in, or come back tomorrow.", with a Sign in button. The limit of a minute gets "You're sending fast. Wait a moment, then send it again." 
 
 Why: [PD9](decisions/pd-09-pre-login-limits.md), [ADR 0009](decisions/0009-hosting-and-region.md)
 
 ---
 
-## What happens at the ceiling
+## What happens at the daily spend amount
 
-- It is not an outage. **Degrade to the zero-cost path.**
-- The chip-driven flow runs no models:
-  - Intent, area and budget use scripted questions with enum answers.
-  - The panel is a SQL query.
-- At the spend ceiling, the assistant does not accept free text. It uses only chips.
-- Nobody sees an error page.
-- **Alert before the ceiling, not at it.** The alert starts at 70% of the daily budget.
+- **The chat keeps working.** The amount is not a stop.
+- A Telegram message goes to the team group at 70% and at 100%, one time each day.
+- The turn cap and the rate limits stop abuse.
 
 Why: [PD9](decisions/pd-09-pre-login-limits.md)
 

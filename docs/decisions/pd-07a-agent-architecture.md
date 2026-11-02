@@ -102,7 +102,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
   `packages/contract`.
 - Each handler gets its own eval score. This is easier, because each handler
   has one job.
-- Web searches count against the daily spend ceiling.
+- Web searches count in the daily model spend.
 - Each question with no article becomes the next article.
 - Consulting questions never write to Form A or Form B.
 - **Still open (testing): the router model.** DeepSeek runs the router at

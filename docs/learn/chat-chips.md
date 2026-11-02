@@ -39,4 +39,4 @@
 
 - T-09: the chips of intent, areas and budget.
 - T-59: the chips of the other closed questions.
-- T-21: the turn cap counts only typed turns, and the chat changes to chips only at the spend ceiling.
+- T-21: the turn cap counts only typed turns.

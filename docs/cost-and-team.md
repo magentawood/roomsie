@@ -41,8 +41,7 @@ The PD9 controls are a budget control, not only a safety control:
 - A rate limit for each device and for each network
 - A cap on anonymous turns before the login request
 - The cheapest model and the shortest context for anonymous turns
-- A hard daily spend ceiling, with a defined behaviour when spend gets to it
-- An alert when daily spend crosses a threshold, before the ceiling
+- A daily spend amount, with an alert at 70% and at 100%. The chat keeps working (PD9)
 
 **Measure from day one:**
 
