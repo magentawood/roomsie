@@ -30,7 +30,8 @@ Add a rule only in one of these two conditions:
 
 | File | Area |
 |---|---|
-| [api.md](api.md) | `apps/api`: Fastify, Zod, auth, storage, errors, limits and the assistant |
+| [api.md](api.md) | `apps/api`: Fastify, Zod, auth, storage, errors and limits |
+| [assistant.md](assistant.md) | The assistant: model calls, the handlers, Form A and Form B |
 | [database.md](database.md) | Drizzle, the schema, migrations, ids and stored data |
 | [web.md](web.md) | `apps/web`: Next.js, React, TanStack Query and auth in the browser |
 | [`styling.md`](styling.md) | Tailwind v4, theme tokens and the Untitled UI pipeline |

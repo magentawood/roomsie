@@ -1,0 +1,24 @@
+# Assistant standards
+
+These rules apply to the assistant in `apps/api`: the model calls, the handlers, Form A and Form B. The other API rules are in [api.md](api.md).
+
+- Call a model only through the one model module. The module holds the timeout, the retry, the fallback and the token counts. Why: a vendor change is then a config change. ([PD7](../decisions/pd-07-models.md))
+- Parse each model output with Zod. If it fails, retry one time on the same model, then on the fallback. Why: the model is never the source of truth. ([PD7](../decisions/pd-07-models.md), [PD7a](../decisions/pd-07a-agent-architecture.md))
+- Each extractor enum has an `unclear` value. Why: without it, the extractor fills slots with guesses. ([PD7](../decisions/pd-07-models.md))
+- Handler inputs and outputs are `z.strictObject` schemas with a version, in `packages/contract`. Why: one job and one eval for each handler, and misspelled keys fail. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- The reply writer reads Form A, Form B and the last two turns. It never reads the full transcript. Why: the cost of a full transcript increases with each turn. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD5](../decisions/pd-05-team-and-budget.md))
+- Reject each Form B observation that has no verbatim quote from the user. Why: a profile fact must point to the words of the user. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- Delete a Form B note with a database action, never through the model. Why: the form is the source of truth. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- The model never infers a slot value. If chat contradicts an earlier chat value, ask the user which to keep. Never overwrite it silently. Log each conflict. Why: the form, not the model, is the source of truth. ([PD3b](../decisions/pd-03b-interview-vs-chips.md), [PD6c](../decisions/pd-06c-interface-holes.md), [PD15](../decisions/pd-15-form-a-contract.md))
+- A manual filter edit wins against a chat value, and the assistant tells the user one time. Why: a manual tap is explicit and recent. ([PD6c](../decisions/pd-06c-interface-holes.md))
+- Results come from SQL, never from model text. The model never ranks results. Why: then no text in a listing can move the listing up. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD10](../decisions/pd-10-scope-bands.md))
+- Chip taps, off-topic turns and adversarial turns get a scripted reply with no model call. Log each adversarial turn. Why: these turns need no model, and they cost nothing. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD10](../decisions/pd-10-scope-bands.md))
+- Get the chips for a closed question from the slot definition, not from a model call. Why: a second model call makes latency and cost two times larger. ([PD6c](../decisions/pd-06c-interface-holes.md))
+- Third-party text, such as listing and profile text, is always data, never instructions. Why: other people write that text, and some will try to control the model. ([PD10](../decisions/pd-10-scope-bands.md))
+- Law, tax, area safety and claims about a listing or a person come from our articles only. If no article applies, hand off. Never improvise. Why: an incorrect answer here does the most damage. ([PD10](../decisions/pd-10-scope-bands.md))
+- Consulting questions never write to Form A or Form B. Why: a general question is not a fact about the user. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- Never infer or suggest a community or religion preference. Record it only when the user states it. Why: a stated value serves a preference, and an inferred value makes one. ([PD3c](../decisions/pd-03c-exclusionary-preferences.md))
+- Apply a stated exclusion on the server, as removed query rows. Log each exclusion with its turn. Why: the excluded person never sees the filter, and the log is our defence. ([PD3c](../decisions/pd-03c-exclusionary-preferences.md))
+- Do not add a third sequential model call before the panel moves, unless a measurement supports it. Why: the latency of each call adds up, and users notice three seconds in a chat. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- Use no vector store. The advisor finds articles with Postgres full-text search. Why: the corpus is dozens of documents. ([PD7a](../decisions/pd-07a-agent-architecture.md))
+- For each model call, log tokens in, tokens out and the model, with the session. Why: the cost for each completed interview is a launch metric. ([PD5](../decisions/pd-05-team-and-budget.md), [PD7a](../decisions/pd-07a-agent-architecture.md))

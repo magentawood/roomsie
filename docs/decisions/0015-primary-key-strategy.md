@@ -111,7 +111,9 @@ Collisions are not a practical concern:
 To overwrite another row is structurally impossible:
 
 - To overwrite, you must use `UPDATE`. `UPDATE` never runs on a client-supplied
-  id without `WHERE user_id = <id from the verified JWT>`.
+  id without `WHERE user_id = <id from the verified JWT>`. The goal of a visitor
+  (T-12, 2026-11-02) has the visitor session that the hash of the visitor key gives
+  in its `WHERE`, in place of the user id.
 - If a malicious client guesses an id, the worst result is that its own insert
   fails.
 
