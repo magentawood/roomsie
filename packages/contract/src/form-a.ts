@@ -60,8 +60,10 @@ export const budgetBands = [
 export type BudgetBand = (typeof budgetBands)[number]['id']
 export const budgetBandOf = (id: BudgetBand) => budgetBands.find((band) => band.id === id)!
 
+/** The state of one slot, as each slot of Form A has it. */
+export type SlotState = { source: 'empty' | 'stated' | 'default'; value: unknown }
 /** A slot that the assistant still asks about. */
-export const isOpenSlot = ({ source, value }: { source: string; value: unknown }) => source === 'empty' || value === 'unclear'
+export const isOpenSlot = ({ source, value }: SlotState) => source === 'empty' || value === 'unclear'
 
 export const chipSlots = ['intent', 'areas', 'budget'] as const
 export type ChipSlot = (typeof chipSlots)[number]

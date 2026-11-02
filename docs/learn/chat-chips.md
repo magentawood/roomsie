@@ -18,7 +18,7 @@
 | The turn route: a typed message or a tap | `apps/api/src/goals/routes.ts` |
 | The chips on the screen | `apps/web/components/chat/chips.tsx`, and `chipsOf()` in `apps/web/lib/chat.ts` |
 
-- **Which chips show.** The reply writer sets `chips` only with the plain question of intent, areas or budget. A question about a conflict, an area name with two places or a must-have weight offers no chips. The web shows the chips of the newest turn while their slot is empty or `unclear`. A new goal starts with the place types.
+- **Which chips show.** The reply writer sets `chips` only with the plain question of intent, areas or budget. A question about a conflict, an area name with two places or a must-have weight offers no chips. When no model reads a typed message, the line "Sorry, I could not read that just now" keeps the chips of the last question, or the place types on a first message, because a tap needs no model. The web shows the chips of the newest turn while their slot is empty or `unclear`. A new goal starts with the place types.
 - **Areas take several picks.** Each tap turns an area group on or off, and Done sends all of them in one turn. A sub-area works when the person types it.
 - **"Not sure, help me pick"** writes intent as `unclear`. The reply is the help line, which ends with its own question, and the four place types show again.
 - **The saved turn** has the input method `chip`, and its parts keep the tap with a version. A typed turn keeps the label of the router.

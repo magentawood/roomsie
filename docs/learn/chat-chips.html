@@ -74,7 +74,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>Which chips show.</strong> The reply writer sets <code>chips</code> only with the plain question of intent, areas or budget. A question about a conflict, an area name with two places or a must-have weight offers no chips. The web shows the chips of the newest turn while their slot is empty or <code>unclear</code>. A new goal starts with the place types.</li>
+<li><strong>Which chips show.</strong> The reply writer sets <code>chips</code> only with the plain question of intent, areas or budget. A question about a conflict, an area name with two places or a must-have weight offers no chips. When no model reads a typed message, the line "Sorry, I could not read that just now" keeps the chips of the last question, or the place types on a first message, because a tap needs no model. The web shows the chips of the newest turn while their slot is empty or <code>unclear</code>. A new goal starts with the place types.</li>
 <li><strong>Areas take several picks.</strong> Each tap turns an area group on or off, and Done sends all of them in one turn. A sub-area works when the person types it.</li>
 <li><strong>"Not sure, help me pick"</strong> writes intent as <code>unclear</code>. The reply is the help line, which ends with its own question, and the four place types show again.</li>
 <li><strong>The saved turn</strong> has the input method <code>chip</code>, and its parts keep the tap with a version. A typed turn keeps the label of the router.</li>
