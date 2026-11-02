@@ -19,7 +19,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Error reporting](error-reporting.md): each error that a user gets, in the browser or in the API, goes to Sentry through one `reportError`, with the place in the code and the `users.id`, and with no message text, token, IP address or phone number.
 - [Form A and intent](form-a-and-intent.md): Form A is the set of typed answers that drives matching, and intent is its first answer: the kind of place that a seeker wants.
 - [Form B notes](form-b-notes.md): Form B is the set of notes that the assistant keeps about a person, each with a quote and its message.
-- [The hidden religion and community filter](hidden-filter.md): a searcher who states a religion or a community preference sees only the people who fit it, and nobody sees that the filter exists.
+- [The hidden religion and community filter](hidden-filter.md): a religion or a community preference that a searcher states removes or reorders the people in the results, and nobody sees that the filter exists.
 - [ID checks and the Verified badge](id-checks.md): a person sends an ID photo and a live selfie, a named reviewer decides, and roomsie keeps only the result.
 - [The invite gate](invite-gate.md): until the launch on 8 November, only the invited emails and the moderators can sign in, and moderators change the list and the opening time on `/admin/invites`.
 - [The landing page](landing-page.md): `/` is the public page that explains Roomsie. The server renders it, and moderators edit its quotes, links and details on admin pages with no code change.

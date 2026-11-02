@@ -1,4 +1,4 @@
-import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot, type OwnValues } from '@roomsie/contract'
+import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import { nullIfUnavailable } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
@@ -16,7 +16,7 @@ import { extractorPrompt } from './prompt'
 export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, own: { religion: null, community: null } })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null } })
 
 /**
  * An answer to "which one should I keep?" that names no value (PD3b): a choice word alone, or with "wala" or "one",
@@ -102,17 +102,17 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   const sure = (pattern: RegExp) => passes(scored, pattern, settings.minProbability)
   const preference = <K extends 'religionPreference' | 'communityPreference'>(key: K) => {
     const stated = answer[key]
-    const kept = stated && stated.values.filter((value) => sure(within(key, jsonListItem('values', value))))
+    const kept = stated?.values.filter((value) => value !== 'unclear' && sure(within(key, jsonListItem('values', value))))
     if (!kept?.length) return {}
     const weight = stated!.weight !== 'unclear' && sure(within(key, jsonString('weight', stated!.weight))) ? stated!.weight : 'unclear'
     return { [key]: { source: 'stated', value: { values: kept, weight } } }
   }
-  const ownOf = (key: 'ownReligion' | 'ownCommunity') => {
-    const value = answer[key]
-    return value && sure(jsonString(key, value)) ? value : null
+  const { ownReligion, ownCommunity } = answer
+  const ownValues = {
+    religion: ownReligion && ownReligion !== 'unclear' && sure(jsonString('ownReligion', ownReligion)) ? ownReligion : null,
+    community: ownCommunity && ownCommunity !== 'unclear' && sure(jsonString('ownCommunity', ownCommunity)) ? ownCommunity : null,
   }
-  const own = { religion: ownOf('ownReligion'), community: ownOf('ownCommunity') } as OwnValues
   const applied = applyValues(turn.form, values, openConflicts.map((c) => c.slot))
   const form = { ...applied.form, ...preference('religionPreference'), ...preference('communityPreference') }
-  return { ...applied, form, settled, ambiguous, failed: false, own }
+  return { ...applied, form, settled, ambiguous, failed: false, ownValues }
 }

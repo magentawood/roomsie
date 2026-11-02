@@ -1,9 +1,9 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, type AssistantParts, formA, type AssistantReply, type FormA, type OwnValues, type TurnLabel, type TurnResponse } from '@roomsie/contract'
+import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
+import { assistantParts, type AssistantParts, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
-import { stateOwnValues } from '../profiles/own-values'
+import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
 const sessionDays = 30
@@ -69,17 +69,18 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
  * would otherwise replace the form of the first. Returns null when the goal changed.
  */
-export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userTurn: { text: string; label: TurnLabel; own: OwnValues }, reply: AssistantReply) {
+export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userTurn: { text: string; parts: UserTurnParts; ownValues: OwnValues }, reply: AssistantReply) {
   return db.transaction(async (tx) => {
-    const { religion, community } = userTurn.own
-    const own = { ...(religion && { ownReligion: religion }), ...(community && { ownCommunity: community }) }
-    const [changed] = await tx.update(goals).set({ form, ...own, updatedAt: new Date() })
+    const { religion, community } = userTurn.ownValues
+    const now = new Date()
+    const own = { ...(religion && { ownReligion: religion, ownReligionAt: now }), ...(community && { ownCommunity: community, ownCommunityAt: now }) }
+    const [changed] = await tx.update(goals).set({ form, ...own, updatedAt: now })
       // A JS date has milliseconds, and the default of the column has microseconds.
       .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null
-    if (goal.asker.userId) await stateOwnValues(tx, goal.asker.userId, userTurn.own)
+    if (goal.asker.userId) await saveOwnValues(tx, goal.asker.userId, userTurn.ownValues)
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
-    const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: 'typed', text: userTurn.text, parts: userTurn.label, createdAt: sql`clock_timestamp()` }).returning(turnFields)
+    const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: 'typed', text: userTurn.text, parts: userTurnParts.parse(userTurn.parts), createdAt: sql`clock_timestamp()` }).returning(turnFields)
     const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     return [toChatTurn(userRow!), toChatTurn(assistantTurn!)] satisfies TurnResponse['turns']
   })
@@ -93,8 +94,10 @@ export async function deleteGoalsOf(tx: Tx, userId: string) {
 
 /** The latest religion and community that the person stated in a chat, for a new profile (PD3c, T-58). */
 export async function ownValuesOf(db: Db, userId: string): Promise<OwnValues> {
-  const latest = async (column: typeof goals.ownReligion | typeof goals.ownCommunity) =>
-    (await db.select({ value: column }).from(goals).where(and(eq(goals.userId, userId), sql`${column} is not null`)).orderBy(desc(goals.updatedAt)).limit(1))[0]?.value ?? null
-  const [religion, community] = await Promise.all([latest(goals.ownReligion), latest(goals.ownCommunity)])
-  return { religion, community } as OwnValues
+  const mine = eq(goals.userId, userId)
+  const [[religion], [community]] = await Promise.all([
+    db.select({ value: goals.ownReligion }).from(goals).where(and(mine, isNotNull(goals.ownReligion))).orderBy(desc(goals.ownReligionAt)).limit(1),
+    db.select({ value: goals.ownCommunity }).from(goals).where(and(mine, isNotNull(goals.ownCommunity))).orderBy(desc(goals.ownCommunityAt)).limit(1),
+  ])
+  return { religion: religion?.value ?? null, community: community?.value ?? null }
 }

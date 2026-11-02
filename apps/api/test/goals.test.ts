@@ -419,12 +419,17 @@ describe('the router', () => {
 
 describe('the hidden religion and community filter (T-58)', () => {
   const ownOf = async (goalId: string) => (await t.db.select({ religion: goals.ownReligion, community: goals.ownCommunity }).from(goals).where(eq(goals.id, goalId)))[0]
-  const profileOf = async (who: 'asha' | 'ravi') => profileResponse.parse((await t.call(who, 'GET', '/v1/me/profile')).json())
-  const userTurn = (who: 'asha' | 'ravi', goalId: string, text: string) => t.call(who, 'POST', `/v1/goals/${goalId}/turns`, { text })
-  const userGoal = async (who: 'asha' | 'ravi') => newGoalResponse.parse((await t.call(who, 'POST', '/v1/goals')).json()).id
+  const ashaProfile = async () => profileResponse.parse((await t.call('asha', 'GET', '/v1/me/profile')).json())
+  const ashaGoal = async () => newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json()).id
+  const ashaSays = async (goalId: string, text: string, fields: object) => {
+    fakeVendors({ deepseek: [scored(fields)] })
+    expect((await t.call('asha', 'POST', `/v1/goals/${goalId}/turns`, { text })).statusCode).toBe(200)
+  }
+  const userParts = async (goalId: string) =>
+    (await t.db.select({ parts: chatTurns.parts }).from(chatTurns).where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'))).orderBy(chatTurns.createdAt)).map((row) => row.parts)
   const areasQuestion = 'Which areas of Mumbai work for you?'
 
-  it('fills a hidden slot from a stated preference with no line in the reply, and a newer preference replaces it with no question', async () => {
+  it('fills a hidden slot from a stated preference with no line in the reply, keeps it on the turn, and a newer preference replaces it with no question', async () => {
     fakeVendors({ deepseek: [scored({ intent: 'room', religionPreference: { values: ['jain'], weight: 'dealbreaker' } })] })
     const goal = await visitorGoal()
     const first = await sent(goal, 'room chahiye, only Jain flatmates')
@@ -435,12 +440,19 @@ describe('the hidden religion and community filter (T-58)', () => {
     const next = await sent(goal, 'Jain or Hindu, preferably')
     expect(next.turns[1].text).toBe(areasQuestion)
     expect(next.form.religionPreference).toEqual({ source: 'stated', value: { values: ['jain', 'hindu'], weight: 'prefer' } })
+    // The log of PD3c: each turn keeps the preference that it stated, also the one that the next turn replaced.
+    expect((await userParts(goal.id)).map((parts) => (parts as { preferences?: object }).preferences)).toEqual([
+      { religionPreference: { values: ['jain'], weight: 'dealbreaker' } },
+      { religionPreference: { values: ['jain', 'hindu'], weight: 'prefer' } },
+    ])
   })
 
-  it('keeps only the values that pass the threshold, and a weight that does not pass is unclear', async () => {
-    fakeVendors({ deepseek: [scored({ communityPreference: { values: ['gujarati', 'marwari'], weight: 'dealbreaker' } }, { marwari: 0.5, dealbreaker: 0.5 })] })
-    const { form } = await sent(await visitorGoal(), 'Gujarati or Marwari only')
+  it('keeps only the values that pass the threshold and are not unclear, and a weight that does not pass is unclear', async () => {
+    fakeVendors({ deepseek: [scored({ communityPreference: { values: ['gujarati', 'marwari', 'unclear'], weight: 'dealbreaker' }, ownReligion: 'unclear' }, { marwari: 0.5, dealbreaker: 0.5 })] })
+    const goal = await visitorGoal()
+    const { form } = await sent(goal, 'Gujarati or Marwari only, same as me')
     expect(form.communityPreference).toEqual({ source: 'stated', value: { values: ['gujarati'], weight: 'unclear' } })
+    expect(await ownOf(goal.id)).toEqual({ religion: null, community: null })
   })
 
   it('keeps what a visitor states about themselves on the goal, with no line in the reply', async () => {
@@ -451,19 +463,20 @@ describe('the hidden religion and community filter (T-58)', () => {
     expect(await ownOf(goal.id)).toEqual({ religion: 'jain', community: 'gujarati' })
   })
 
-  it('gives a new profile the values that the person stated in a chat, and then the newer statement wins', async () => {
-    const goalId = await userGoal('asha')
-    fakeVendors({ deepseek: [scored({ ownReligion: 'sikh' })] })
-    expect((await userTurn('asha', goalId, "I'm Sikh")).statusCode).toBe(200)
+  it('gives a new profile the latest values that the person stated, by the time of the statement, and then the newer statement wins', async () => {
+    const older = await ashaGoal()
+    const newer = await ashaGoal()
+    await ashaSays(older, "I'm Sikh", { ownReligion: 'sikh' })
+    await ashaSays(newer, "I'm Hindu, from Pune", { ownReligion: 'hindu', ownCommunity: 'marathi' })
+    // A later turn in the older goal states nothing, so it does not make "Sikh" the newer statement.
+    await ashaSays(older, 'room chahiye', { intent: 'room' })
     const made = profileResponse.parse((await t.call('asha', 'POST', '/v1/me/profile', { fullName: 'Asha Rao', age: 26, gender: 'female' })).json())
-    expect(made).toMatchObject({ religion: 'sikh', community: null })
+    expect(made).toMatchObject({ religion: 'hindu', community: 'marathi' })
 
-    expect((await t.call('asha', 'PATCH', '/v1/me/profile', { religion: 'hindu' })).statusCode).toBe(200)
-    fakeVendors({ deepseek: [scored({ ownReligion: 'jain', ownCommunity: 'marathi' })] })
-    expect((await userTurn('asha', goalId, "I'm Jain, from a Marathi family")).statusCode).toBe(200)
-    expect(await profileOf('asha')).toMatchObject({ religion: 'jain', community: 'marathi' })
+    expect((await t.call('asha', 'PATCH', '/v1/me/profile', { religion: 'christian' })).statusCode).toBe(200)
+    await ashaSays(older, "I'm Jain", { ownReligion: 'jain' })
+    expect(await ashaProfile()).toMatchObject({ religion: 'jain', community: 'marathi' })
     expect((await t.call('asha', 'PATCH', '/v1/me/profile', { community: null })).statusCode).toBe(200)
-    expect(await profileOf('asha')).toMatchObject({ religion: 'jain', community: null })
+    expect(await ashaProfile()).toMatchObject({ religion: 'jain', community: null })
   })
 })
-

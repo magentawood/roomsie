@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { formA } from './form-a'
-import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
+import { formA, identityPreference } from './form-a'
+import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { areaSlug, requiredText } from './shared'
 
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
@@ -32,8 +32,6 @@ export const extractorInput = z.strictObject({ version: z.literal(1).default(1),
 const choice = <V extends readonly [string, ...string[]]>(values: V) => z.enum(values).nullish()
 const answer = <A extends LifestyleAxis>(axis: A) => z.enum([...lifestyleAnswers[axis], 'unclear']).nullish()
 const words = z.string().trim().min(1).max(100)
-const identityAnswer = <L extends readonly [string, ...string[]]>(list: L) =>
-  z.object({ values: z.array(z.enum(list)).min(1).max(list.length), weight: z.enum([...mustHaveWeights, 'unclear']) })
 /**
  * The answer of the model. A slot that the turn does not mention is null or absent.
  * Areas, budget and move date are the words of the person: code reads them (PD7).
@@ -52,11 +50,10 @@ export const extractorAnswer = z.object({
     your_days: answer('your_days'), sleep: answer('sleep'), tidiness: answer('tidiness'), pets: answer('pets'),
   } satisfies Record<LifestyleAxis, z.ZodType>).nullish(),
   mustHaves: z.partialRecord(z.enum(mustHaveKeys), choice([...mustHaveWeights, 'unclear'])).nullish(),
-  /** The hidden filter of PD3c (T-58): a preference about flatmates, and what the person states about themselves. */
-  religionPreference: identityAnswer(religions).nullish(),
-  communityPreference: identityAnswer(communities).nullish(),
-  ownReligion: choice(religions),
-  ownCommunity: choice(communities),
+  religionPreference: identityPreference([...religions, 'unclear']).nullish(),
+  communityPreference: identityPreference([...communities, 'unclear']).nullish(),
+  ownReligion: choice([...religions, 'unclear']),
+  ownCommunity: choice([...communities, 'unclear']),
 })
 
 /** A name of two or more areas, such as "Andheri". */
@@ -66,10 +63,6 @@ export type AmbiguousArea = z.infer<typeof ambiguousArea>
 /** A new value of a stated slot. The assistant asks which value to keep (PD3b). The `formA` parse of the extractor output is the only check of the two values. */
 export const slotConflict = z.strictObject({ slot: z.enum(formASlots), earlier: z.unknown(), later: z.unknown() })
 export type SlotConflict = z.infer<typeof slotConflict>
-
-/** The religion and the community that the person states about themselves (PD3c, T-58). Null: not in this turn. */
-export const ownValues = z.strictObject({ religion: z.enum(religions).nullable(), community: z.enum(communities).nullable() })
-export type OwnValues = z.infer<typeof ownValues>
 
 /** What the extractor gives. */
 export const extractorOutput = z.strictObject({
@@ -83,7 +76,8 @@ export const extractorOutput = z.strictObject({
   ambiguous: z.array(ambiguousArea),
   /** No model gave an answer, so the form did not change. */
   failed: z.boolean(),
-  own: ownValues,
+  /** What the person stated about themselves in this turn. Null: not in this turn. */
+  ownValues,
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
@@ -127,9 +121,15 @@ export type RouterAnswer = z.output<typeof routerAnswer>
 export const turnLabel = routerAnswer.extend({ routerBand: z.enum(scopeBands).nullable(), register: register.nullable() }).strict()
 export type TurnLabel = z.output<typeof turnLabel>
 
+/** What a typed turn keeps: the label of the router, and the hidden preferences that the turn stated, as the log of PD3c (T-58). */
+export const userTurnParts = turnLabel.extend({
+  preferences: z.strictObject({ religionPreference: identityPreference(religions).strict(), communityPreference: identityPreference(communities).strict() }).partial().optional(),
+}).strict()
+export type UserTurnParts = z.output<typeof userTurnParts>
+
 /** What the reply writer reads: the output of the extractor, the question of the last reply, and the label of the turn. */
 // The reply never names the own values of the person (T-58), so it does not read them.
-export const replyInput = extractorOutput.omit({ own: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
+export const replyInput = extractorOutput.omit({ ownValues: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })

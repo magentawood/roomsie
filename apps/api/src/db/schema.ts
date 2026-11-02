@@ -450,9 +450,11 @@ export const goals = pgTable('goals', {
   title: text('title'),
   /** Form A of this move, as the assistant has filled it. Partial by definition. */
   form: jsonb('form').notNull().default({}),
-  /** What the person stated about themselves in this chat, for the profile, also of a visitor (PD3c, T-58). */
+  /** What the person stated about themselves in this chat, and when, for the profile, also of a visitor (PD3c, T-58). */
   ownReligion: religionEnum('own_religion'),
+  ownReligionAt: timestamp('own_religion_at', { withTimezone: true }),
   ownCommunity: communityEnum('own_community'),
+  ownCommunityAt: timestamp('own_community_at', { withTimezone: true }),
   status: goalStatusEnum('status').notNull().default('open'),
   createdAt: createdAt(),
   updatedAt: updatedAt(),

@@ -1,5 +1,5 @@
 {
-  "id": "6786e474-9922-4635-ba0b-82d89836fd03",
+  "id": "7cd84f4b-b84b-40e1-861d-4a8574dea2d6",
   "prevId": "12b15457-4f7c-4925-82e8-ae5919cb5455",
   "version": "7",
   "dialect": "postgresql",
@@ -975,10 +975,22 @@
           "primaryKey": false,
           "notNull": false
         },
+        "own_religion_at": {
+          "name": "own_religion_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
         "own_community": {
           "name": "own_community",
           "type": "community",
           "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "own_community_at": {
+          "name": "own_community_at",
+          "type": "timestamp with time zone",
           "primaryKey": false,
           "notNull": false
         },
