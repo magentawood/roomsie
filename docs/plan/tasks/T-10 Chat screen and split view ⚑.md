@@ -37,8 +37,8 @@ The main screen: chat on one side, results on the other.
 
 ## Done when
 - [x] The landing button opens a full-screen chat · [#172](https://github.com/magentawood/roomsie/pull/172)
-- [ ] When results exist, the screen splits into chat and results
-- [ ] On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom
+- [x] When results exist, the screen splits into chat and results · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom · [#188](https://github.com/magentawood/roomsie/pull/188)
 - [x] Nothing changes size while the person types · [#172](https://github.com/magentawood/roomsie/pull/172)
 - [x] The sign-in button of T-05 and the sign-in wall of T-21 use the design of D-02 · [#172](https://github.com/magentawood/roomsie/pull/172)
 
@@ -87,3 +87,9 @@ The main screen: chat on one side, results on the other.
   - **Not done:** "When results exist, the screen splits into chat and results" and "On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom": blocked by T-08 (the Form A contract), then T-14 and T-15. T-08 is now in the dependencies of T-10.
   - **Learn:** [The chat screen and the sign-in wall](../../learn/chat-screen.md)
   - **Journal:** [2026-10](../../journal/2026-10.md)
+
+- **2026-11-02 · [#188](https://github.com/magentawood/roomsie/pull/188)**
+  - **Change:** the results panel of T-15 completes the split view. When results exist, a results card shows in the chat. On a desktop, the panel opens beside the chat on a send or a tap of the card. On a phone, "Show all" opens the results above the chat input.
+  - **Why:** [PD6a](../../decisions/pd-06a-mobile-split-view.md)
+  - **Ticked:** "When results exist, the screen splits into chat and results", "On a phone, the chat fills the screen. Results show as a card in the chat, and Show all opens them with the chat input at the bottom"
+  - **Learn:** [The results panel](../../learn/results-panel.md)

@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**203 of 320 done · 63%**
+**205 of 320 done · 64%**
 
 `███████████████░░░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
-| [[P2 Chat]] | 4 / 13 | 21 / 61 | 34% |
+| [[P2 Chat]] | 5 / 13 | 23 / 61 | 38% |
 | [[P3 Data and trust]] | 15 / 18 | 72 / 81 | 89% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -48,12 +48,12 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**24 free tasks are open · 78 build hours.**
+**23 free tasks are open · 70 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| 0 | [[T-10 Chat screen and split view ⚑]] | P2 | 8 | 🟡 in progress | 1 | [#12](https://github.com/magentawood/roomsie/issues/12) |
+| 0 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ can start | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | 0 | [[T-34 Router ⚑]] | P2 | 6 | ⬜ can start | 0 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
@@ -69,7 +69,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ can start | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
-| 1 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ waits | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
@@ -107,13 +106,13 @@ flowchart LR
   T02["T-02 ⚑<br/>Scaffold monorepo"]:::done
   T18b["T-18b ⚑<br/>Person and connect screens"]:::done
   T06["T-06 ⚑<br/>Database schema"]:::done
-  T10["T-10 ⚑<br/>Chat screen and split view"]:::doing
+  T10["T-10 ⚑<br/>Chat screen and split view"]:::done
   T11["T-11 ⚑<br/>Model wrapper"]:::done
   T05["T-05 ⚑<br/>Google sign-in"]:::done
   T15["T-15 ⚑<br/>Results panel"]:::done
   M03["M-03<br/>Eval sentences"]:::ready
   T12["T-12 ⚑<br/>Extraction"]:::done
-  T09["T-09 ⚑<br/>Chip flow"]:::todo
+  T09["T-09 ⚑<br/>Chip flow"]:::ready
   T14["T-14 ⚑<br/>Match query"]:::done
   T04["T-04<br/>Deploy to Mumbai"]:::done
   T16a["T-16a ⚑<br/>Profile API"]:::done
@@ -313,7 +312,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 21/61
+## P2 Chat — 23/61
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -348,7 +347,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-17 Carry chat into account]] · 0/4
 > ![[T-17 Carry chat into account#^done]]
 
-> [!todo]- 🟡 [[T-10 Chat screen and split view ⚑]] · 3/5
+> [!todo]- ✅ [[T-10 Chat screen and split view ⚑]] · 5/5
 > ![[T-10 Chat screen and split view ⚑#^done]]
 
 > [!todo]- ⬜ [[T-09 Chip flow ⚑]] · 0/3
