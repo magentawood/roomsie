@@ -45,7 +45,7 @@ Shows matches as cards: people and places.
 - [x] A card shows the Best match label and the Didn't say label of PD3a · [#188](https://github.com/magentawood/roomsie/pull/188)
 - [x] The empty panel shows No relevant results and the suggested posts (PD6c) · [#188](https://github.com/magentawood/roomsie/pull/188)
 - [x] The listing detail in the results panel has the "Ask in chat" button of the designs · [#188](https://github.com/magentawood/roomsie/pull/188)
-- [x] A grid of person cards uses the prototype cards, the Form A contract and sample data · [#188](https://github.com/magentawood/roomsie/pull/188)
+- [x] A grid of person cards uses the prototype cards, the Form A contract and sample data. When T-14 lands, the grid connects to the match query · [#188](https://github.com/magentawood/roomsie/pull/188)
 
 ^done
 
@@ -75,8 +75,9 @@ Shows matches as cards: people and places.
   - **The match query (review of n3rxv):** the panel shows the results of `POST /v1/results` (T-14) for the form of the chat. T-12 and T-14 merged before the review, so Niruv Bhardwaj decided on 2026-11-02 that T-15 connects them.
   - **The preview:** `/chat?preview=results` and `/chat?preview=empty` show the panel with sample data and a "Sample data" badge. They show each card kind and the empty panel with no listings, so they stay (review of n3rxv).
   - **The next page (review of n3rxv):** a line at the end of the grid loads the next 20 results when it comes into view, as in a message thread. The header and the results card count all the results.
-  - **One search for each form (review of n3rxv):** the cache never searches again for one form, so the order of a form never moves. Thus, the next page of the form on the screen shows at once, also during a scroll. It loads only while the newest form is on the screen. A sign-in clears the cache, so the results load again for the person.
+  - **One search for each form (review of n3rxv):** the cache keeps each form and never searches it again, so the order of a form never moves. Thus, the next page of the form on the screen shows at once, also during a scroll. It loads only while the newest form is on the screen. A sign-in clears the cache, so the results load again for the person.
   - **While new results load (review of n3rxv):** the panel keeps the results on the screen and their header. A failed search shows "The results did not load." and "Try again" in the chat.
+  - **A failed next page (review round 1 of n3rxv):** the end of the grid shows "The next results did not load." and "Try again". The line does not ask again until the tap.
   - **When the panel shows:** when intent, area and budget have a value (interface-shape.md, hole 3).
   - **The header:** the noun of the intent ("Rooms", "PGs", "Flats", "People"), the areas and the budget, then the count. With no intent, it reads "Everything in", then the areas, or "Mumbai" with no area (drafts section 14).
   - **The update rule:** the key of the form has the values and the weights, not the sources. Thus, a confirmed default gives no new results. New results wait while the person scrolls or has a place open, and show 1.5 seconds after the last scroll or the return. The header waits with the grid, so the two always agree (PD6c, review round 1). A unit test of `lib/results.ts` keeps this rule. The screen has no component test (review of the fixes).

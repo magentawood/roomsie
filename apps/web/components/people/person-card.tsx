@@ -6,7 +6,7 @@ import { shortDate } from '../../lib/place-detail'
 import { Badge } from '../ui/badge'
 import { CardLabel, CardLink } from '../ui/card-link'
 
-/** The person card of sections 14 and 19 of the drafts. `label`: the match label over the photo (T-15). */
+/** The person card of sections 14 and 19 of the drafts. */
 export function PersonCard({ card, action, label, onOpen }: { card: CardResponse; action?: ReactNode; label?: ReactNode; onOpen?: () => void }) {
   const href = `/people/${card.id}`
   const photo = card.photos[0]

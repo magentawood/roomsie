@@ -5,7 +5,7 @@ import { rentAmount } from '../../lib/listing-steps'
 import { Badge } from '../ui/badge'
 import { CardLabel, CardLink } from '../ui/card-link'
 
-/** The result card of the designs for a place. `label`: the match label over the photo (T-15). */
+/** The result card of the designs for a place. */
 export function PlaceCard({ listing, areaName, action, label, onOpen }: {
   listing: ListingResponse; areaName?: string; action?: ReactNode; label?: ReactNode; onOpen?: () => void
 }) {
