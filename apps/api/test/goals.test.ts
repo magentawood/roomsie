@@ -559,6 +559,16 @@ describe('a chip tap (T-09)', () => {
     expect([typed.turns[1].text, typed.turns[1].chips]).toEqual([helpLine, 'intent'])
   })
 
+  it('keeps the chips of the last question when no model reads a typed answer', async () => {
+    fakeVendors({ deepseek: [down()], gemini: [down()] })
+    const goal = await visitorGoal()
+    await tap(goal, { slot: 'intent', value: 'room' })
+    const failed = await sent(goal, 'Powai, 20k')
+    expect([failed.turns[1].text, failed.turns[1].chips]).toEqual(['Sorry, I could not read that just now. Please send it again.', 'areas'])
+    const [last] = await t.db.select({ parts: chatTurns.parts }).from(chatTurns).where(eq(chatTurns.id, failed.turns[1].id))
+    expect(last!.parts).toMatchObject({ asked: { slot: 'areas' }, question: 'Which areas of Mumbai work for you?', chips: 'areas' })
+  })
+
   it('answers its slot: its value replaces an earlier value', async () => {
     fakeVendors({})
     const goal = await visitorGoal()
