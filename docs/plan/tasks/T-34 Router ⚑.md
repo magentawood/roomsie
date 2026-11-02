@@ -36,10 +36,10 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
 - [[T-58 Community filter]]
 
 ## Done when
-- [ ] Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope
-- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no model call after the router, and the system logs them
-- [ ] The pipeline runs only the handlers that the router picks. The extractor starts with the router, and the turn uses its answer only when the router picks it
-- [ ] The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline
+- [x] Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope · [#193](https://github.com/magentawood/roomsie/pull/193)
+- [x] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no model call after the router, and the system logs them · [#193](https://github.com/magentawood/roomsie/pull/193)
+- [x] The pipeline runs only the handlers that the router picks. The extractor starts with the router, and the turn uses its answer only when the router picks it · [#193](https://github.com/magentawood/roomsie/pull/193)
+- [x] The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline · [#193](https://github.com/magentawood/roomsie/pull/193)
 
 ^done
 
@@ -90,3 +90,13 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
   - a cancel of the extractor call when the router answers first
   - the score of the router on the eval set (T-27, M-03)
   - chip taps: the chat has none yet
+
+## Log
+
+- **2026-11-02 · [#193](https://github.com/magentawood/roomsie/pull/193)**
+  - **Change:** the router labels each typed message with its kinds, its scope band, its register and two flags, at the same time as the extractor. The band selects a scripted line, and the turn drops the answer of the extractor for an off-topic, adversarial or question-only message. The label goes on the typed turn, and `turn_routed` counts the bands.
+  - **Why:** [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md)
+  - **Ticked:** all four items.
+  - **Not done:** none.
+  - **Learn:** [The router](../../learn/router.md), [The assistant turn](../../learn/assistant-turn.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

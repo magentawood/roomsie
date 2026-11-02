@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**205 of 325 done · 63%**
+**209 of 325 done · 64%**
 
 `███████████████░░░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
-| [[P2 Chat]] | 5 / 13 | 23 / 61 | 38% |
+| [[P2 Chat]] | 6 / 13 | 27 / 61 | 44% |
 | [[P3 Data and trust]] | 15 / 19 | 72 / 86 | 84% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -48,12 +48,11 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**24 free tasks are open · 78 build hours.**
+**23 free tasks are open · 72 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| 0 | [[T-34 Router ⚑]] | P2 | 6 | ⬜ can start | 1 | [#63](https://github.com/magentawood/roomsie/issues/63) |
 | 0 | [[T-09 Chip flow ⚑]] | P2 | 6 | ⬜ can start | 0 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
@@ -69,12 +68,12 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ can start | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| 0 | [[T-58 Community filter]] | P3 | 8 | ⬜ can start | 0 | no issue at this time |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-29 Abuse test]] | P1 | 1 | ⬜ waits | 0 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | 1 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| 1 | [[T-58 Community filter]] | P3 | 8 | ⬜ waits | 0 | no issue at this time |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 
 ### Waits on product calls
@@ -137,7 +136,7 @@ flowchart LR
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::ready
   T29["T-29<br/>Abuse test"]:::todo
-  T34["T-34 ⚑<br/>Router"]:::ready
+  T34["T-34 ⚑<br/>Router"]:::done
   T35["T-35<br/>Form B contract"]:::done
   T36["T-36<br/>Observer"]:::ready
   T37["T-37<br/>Articles and search"]:::done
@@ -152,7 +151,7 @@ flowchart LR
   T55["T-55<br/>Message alerts"]:::done
   T56["T-56<br/>Sub-areas API"]:::done
   T57["T-57<br/>Sub-area pickers"]:::done
-  T58["T-58<br/>Community filter"]:::todo
+  T58["T-58<br/>Community filter"]:::ready
   T46["T-46<br/>ID verification"]:::done
   T47["T-47<br/>Saved"]:::done
   T48["T-48<br/>Onboarding questions"]:::ready
@@ -317,7 +316,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 23/61
+## P2 Chat — 27/61
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -331,7 +330,7 @@ flowchart LR
 > [!todo]- ✅ [[T-12 Extraction ⚑]] · 7/7
 > ![[T-12 Extraction ⚑#^done]]
 
-> [!todo]- ⬜ [[T-34 Router ⚑]] · 0/4
+> [!todo]- ✅ [[T-34 Router ⚑]] · 4/4
 > ![[T-34 Router ⚑#^done]]
 
 > [!todo]- ⬜ [[T-13 Reply writer]] · 0/5
