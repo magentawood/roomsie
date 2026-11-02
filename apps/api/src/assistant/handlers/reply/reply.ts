@@ -5,7 +5,7 @@ import { catalogueOf } from '../../catalogue'
 import { slotOf } from '../extractor/form-update'
 import { questionFor, replyLines, valueText } from './texts'
 
-const parts = (asked: AssistantParts['asked'], question: string | null, conflicts: SlotConflict[] = []): AssistantParts => ({ version: 1, asked, question, conflicts })
+const parts = (asked: AssistantParts['asked'], question: string | null, conflicts: SlotConflict[]): AssistantParts => ({ version: 1, asked, question, conflicts })
 /** The reply: what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */
 const reply = (ack: string, question: string, asked: AssistantParts['asked'], conflicts: SlotConflict[] = []) => ({ text: ack + question, parts: parts(asked, question, conflicts) })
 
@@ -15,34 +15,32 @@ const reply = (ack: string, question: string, asked: AssistantParts['asked'], co
  * then the next empty or unclear slot.
  */
 export const replyWriter: Handler = async (turn, deps) => {
-  const { form, changed, conflicts, settled, ambiguous, failed, asked, lastQuestion, openConflicts } = turn
-  return { reply: assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, asked, lastQuestion, openConflicts }), deps)) }
+  const { form, changed, conflicts, settled, ambiguous, failed, last } = turn
+  return { reply: assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last }), deps)) }
 }
 
 const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps) => {
   const catalogue = await catalogueOf(db)
-  if (turn.failed) return { text: replyLines.failed, parts: parts(turn.asked, turn.lastQuestion, turn.openConflicts) }
+  if (turn.failed) return { text: replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? []) }
   const filled = turn.changed.filter((slot) => slotOf(turn.form, slot).value !== 'unclear')
   const ack = filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : ''
 
-  const open = turn.openConflicts.filter(({ slot }) => !turn.settled.includes(slot) && !turn.conflicts.some((c) => c.slot === slot))
+  const open = (turn.last?.conflicts ?? []).filter(({ slot }) => !turn.settled.includes(slot) && !turn.conflicts.some((c) => c.slot === slot))
   const conflicts = [...turn.conflicts, ...open]
   if (conflicts.length) {
     const lines = conflicts.map(({ slot, earlier, later }) => replyLines.conflict(valueText(slot, earlier, catalogue), valueText(slot, later, catalogue)))
-    return reply(ack, lines.join(' '), { slot: conflicts[0]!.slot, conflict: true }, conflicts)
+    return reply(ack, lines.join(' '), { slot: conflicts[0]!.slot }, conflicts)
   }
   if (turn.ambiguous.length) {
     const lines = turn.ambiguous.map(({ words, slugs }) => replyLines.ambiguous(words, slugs.map((slug) => catalogue.bySlug.get(slug)?.name ?? slug)))
-    return reply(ack, lines.join(' '), { slot: 'areas', conflict: false })
+    return reply(ack, lines.join(' '), { slot: 'areas' })
   }
   const unclearWeightSlot = mustHaveKeys.map((key) => `mustHaves.${key}` as const).find((slot) => slotOf(turn.form, slot).value === 'unclear')
-  if (unclearWeightSlot) {
-    return reply(ack, replyLines.weight(catalogue.mustHaveLabels.get(slotPath(unclearWeightSlot)[1]!) ?? unclearWeightSlot), { slot: unclearWeightSlot, conflict: false })
-  }
+  if (unclearWeightSlot) return reply(ack, replyLines.weight(catalogue.mustHaveLabels.get(slotPath(unclearWeightSlot)[1]!) ?? unclearWeightSlot), { slot: unclearWeightSlot })
   const next = settings.questionOrder.find((slot) => {
     const { source, value } = slotOf(turn.form, slot)
     return source === 'empty' || value === 'unclear'
   })
-  if (!next) return { text: ack + replyLines.done, parts: parts(null, null) }
-  return reply(ack, questionFor(next, catalogue), { slot: next, conflict: false })
+  if (!next) return { text: ack + replyLines.done, parts: parts(null, null, []) }
+  return reply(ack, questionFor(next, catalogue), { slot: next })
 }

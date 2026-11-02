@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import type { AssistantParts, AssistantReply, ExtractorOutput, FormA, SlotConflict } from '@roomsie/contract'
+import type { AssistantParts, AssistantReply, ExtractorOutput, FormA } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
@@ -12,10 +12,8 @@ export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; sett
 export type TurnState = {
   goalId: string
   text: string
-  lastQuestion: string | null
-  asked: AssistantParts['asked']
-  /** The conflicts that the last reply asked about. */
-  openConflicts: SlotConflict[]
+  /** The last reply of the assistant: its question, the slot that it asked about, and its open conflicts. */
+  last: AssistantParts | null
   form: FormA
   reply: AssistantReply | null
 } & Omit<ExtractorOutput, 'version' | 'form'>
@@ -24,7 +22,7 @@ export type Handler = (turn: TurnState, deps: AssistantDeps) => Promise<Partial<
 /** The steps of a typed turn, in order (PD7a). The router, the observer and the advisor are more handlers here. */
 const handlers: Handler[] = [extractor, replyWriter]
 
-export async function runTurn(input: Pick<TurnState, 'goalId' | 'text' | 'lastQuestion' | 'asked' | 'openConflicts' | 'form'>, deps: AssistantDeps) {
+export async function runTurn(input: Pick<TurnState, 'goalId' | 'text' | 'last' | 'form'>, deps: AssistantDeps) {
   let turn: TurnState = { ...input, ...noExtraction(input.form, false), reply: null }
   for (const handler of handlers) turn = { ...turn, ...(await handler(turn, deps)) }
   return { form: turn.form, reply: turn.reply!, conflicts: turn.conflicts }

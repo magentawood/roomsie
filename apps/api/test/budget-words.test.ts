@@ -62,6 +62,8 @@ describe('the budget parser', () => {
     ['2 लाखांपर्यंत', { min: null, max: 200_000 }],
     ['२० हजारांपेक्षा जास्त', { min: 20_000, max: null }],
     ['२० हजारांपेक्षा जास्त नाही', { min: null, max: 20_000 }],
+    ['15 k - 20 k', { min: 15_000, max: 20_000 }],
+    ['15 hazaar - 20 hazaar', { min: 15_000, max: 20_000 }],
   ])('reads %s', (words, budget) => {
     expect(parseBudget(words)).toEqual(budget)
   })

@@ -1,5 +1,5 @@
 import type { Budget } from '@roomsie/contract'
-import { isDevanagari, phrase, plainWords } from '../../words'
+import { byStem, isDevanagari, phrase, plainWords } from '../../words'
 import { numberWords } from './number-words'
 
 const multipliers: Record<string, number> = {
@@ -15,9 +15,10 @@ const rangeWords = new Set(['to', 'se', 'te', 'and', 'aur', 'ani', 'से', '�
 
 type Amount = { value: number; multiplier: number | null; at: number }
 
-/** A unit with a Marathi ending, as "लाखापर्यंत" or "हजारांपेक्षा", starts with the unit. */
-const unitStems = Object.keys(multipliers).filter((unit) => isDevanagari(unit) || unit.length >= 4)
-const unitOf = (word: string) => multipliers[word] ?? multipliers[unitStems.find((stem) => word.startsWith(stem)) ?? '']
+/** A unit, also with a Marathi ending, as "लाखापर्यंत" or "हजारांपेक्षा". */
+const unitOf = byStem(multipliers, (unit) => isDevanagari(unit) || unit.length >= 4)
+/** The units that people write next to the digits, as "20k" or "1.5L". */
+const gluedUnits = 'k|l|lakhs?|lacs?'
 
 function amountsIn(words: string[]): Amount[] {
   const amounts: Amount[] = []
@@ -51,9 +52,9 @@ export function parseBudget(words: string): Budget | null {
   const text = plainWords(words)
     .replace(/(\d),(?=\d)/g, '$1')
     .replace(/₹|\brs\b\.?|\binr\b/g, ' ')
-    // "15-20k", and "15k-20k" with a unit on each end.
-    .replace(/(\d(?:k|l|lakhs?|lacs?)?)\s*[-–]\s*(?=\d)/g, '$1 to ')
-    .replace(/(\d)(k|l|lakhs?|lacs?)\b/g, '$1 $2')
+    // "15-20k", "15k-20k" and "15 hazaar - 20 hazaar".
+    .replace(new RegExp(`(\\d(?:\\s*(?:${gluedUnits}|thousand|ha[zj]aa?r|हजार|लाख))?)\\s*[-–]\\s*(?=\\d)`, 'g'), '$1 to ')
+    .replace(new RegExp(`(\\d)(${gluedUnits})\\b`, 'g'), '$1 $2')
     .replace(/\+/g, ' plus ')
   const parts = text.split(/[^\p{L}\p{M}\p{N}.]+/u).map((w) => w.replace(/^\.+|\.+$/g, '')).filter(Boolean)
   const amounts = amountsIn(parts)

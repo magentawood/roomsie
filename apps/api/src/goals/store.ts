@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, formA, type AssistantReply, type FormA, type TurnResponse } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, formA, type AssistantReply, type FormA, type TurnResponse } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 
@@ -54,14 +54,14 @@ export async function turnsOf(db: Db, goalId: string) {
   return rows.map(toChatTurn)
 }
 
-/** The question of the last reply of the assistant, the slot that it asked about, and its open conflicts. */
-export async function lastReplyOf(db: Db, goalId: string) {
+/** The parts of the last reply of the assistant, with its text as the question when the parts have none. */
+export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantParts | null> {
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
-  // Only saveTurn writes an assistant turn, with the parts of the reply.
-  const { question, asked, conflicts } = assistantParts.parse(last.parts)
-  return { question: question ?? last.text, asked, conflicts }
+  // Only saveTurn writes an assistant turn, and no row is older than this schema: T-12 is the first code that writes parts.
+  const parts = assistantParts.parse(last.parts)
+  return { ...parts, question: parts.question ?? last.text }
 }
 
 /**
