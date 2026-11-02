@@ -36,6 +36,21 @@ describe('the router', () => {
     expect(await route()).toMatchObject({ band: 'core', routerBand: 'out_of_scope' })
   })
 
+  it('keeps a flag, or the question kind, only when it passes the threshold', async () => {
+    const fields = { ...coreLabel, kinds: ['question', 'filters'], danger: true, community: true }
+    /** `fields` with the probability 0.6 on the character after `before`. */
+    const unsureAfter = (before: string) => {
+      const content = JSON.stringify(fields)
+      const tokens = [...content].map((token) => ({ token, logprob: 0 }))
+      tokens[content.indexOf(before) + before.length]!.logprob = Math.log(0.6)
+      return answer(content, undefined, tokens)
+    }
+    fakeVendors({ router: { deepseek: [unsureAfter('"community":')] } })
+    expect(await route()).toMatchObject({ band: 'core', kinds: ['question', 'filters'], danger: true, community: false })
+    fakeVendors({ router: { deepseek: [unsureAfter('"kinds":["')] } })
+    expect(await route()).toMatchObject({ kinds: ['filters'], community: true })
+  })
+
   it('gives an empty core label when no model answers', async () => {
     fakeVendors({ router: { deepseek: [down()], gemini: [down()] } })
     expect(await route()).toEqual({ version: 1, kinds: [], band: 'core', routerBand: null, register: null, danger: false, community: false })

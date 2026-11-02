@@ -78,7 +78,7 @@ The router labels each typed turn. The extractor starts at the same time, and th
 | Something revealing | Observer → Form B | Small |
 | Consulting question | Advisor, grounded | Small + retrieval |
 | Off topic | Scripted redirect | **None** |
-| Safety signal | Scripted response, logged | **None** |
+| Safety signal | Scripted response, logged. The extractor keeps the filters of the message (T-34). | **None** after the router |
 
 - One turn can be more than one type. **Run the Extractor and the Observer in parallel** on the same input.
 - **Keep the router rules-based where possible.** A chip tap needs no classification. Only free text needs the classifier.

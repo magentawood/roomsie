@@ -26,7 +26,7 @@ tags:
 > [!warning] Critical path
 > If this task is late, the launch is late.
 
-One cheap model call decides what a message is. Thus, it decides which handlers run. *Example: "write my essay" gets a polite scripted line, with no model call, and is logged.*
+One cheap model call decides what a message is. Thus, it decides which handlers run. *Example: "write my essay" gets a polite scripted line, with no model call after the router, and is logged.*
 
 ## Needs first
 - [[T-12 Extraction ⚑]]
@@ -76,7 +76,9 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
   - **Sensitive (the user):** "Thanks for telling me, and I'm sorry you're dealing with that." With `danger`, also: "If you're not safe right now, call 112, or Tele-MANAS on 14416 (free, 24x7)." Then the next question. The answer of the extractor applies to Form A. Nothing of the disclosure goes into Form A or a profile (why: assistant-risks.md, 4.4).
   - **The log (the user):** the label goes on the typed turn of the person, in the main database. Thus, account deletion removes it. The `turn_routed` event has the band only, never the text.
   - **Personal context:** the label records it for the observer of T-36. Nothing more runs now.
-  - **A band that is not sure (review round 1):** the label keeps no kinds and no flags. Thus, a guess of the router never goes into the log of PD3c, and never drops the answer of the extractor.
+  - **A band that is not sure (review round 1):** the label keeps no kinds and no flags. Thus, a guess of the router never goes into the log of PD3c, and never drops the answer of the extractor. `routerBand` keeps the band of the router, for the tuning of T-27.
+  - **A flag or the question kind that is not sure (review round 2):** a sure band keeps `danger`, `community` and the question kind only when each passes `ROUTER_MIN_PROBABILITY` too.
+  - **A failed extractor (review round 2):** only a core turn asks the person to send the message again. A turn of a different band gets its line and the next question.
   - **A stated community or religion preference (the user):** the label sets `community`. This is the log of each stated exclusion of PD3c. The prompt of the router tells that it is core. T-58 builds the hidden filter on stated values only (PD3c, mitigation 1: never infer).
   - **The scripted lines are in English** until the reply writer of T-13.
   - **Done items 2 and 3 changed (the user, 2026-11-02):** "no more model calls" became "no model call after the router". Item 3 now tells that the extractor starts with the router.

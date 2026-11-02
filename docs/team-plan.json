@@ -1514,7 +1514,7 @@
   {
    "id": "T-34",
    "title": "Router: sort each typed message and flag what we should not answer",
-   "plain": "One cheap model call decides what a message is. Thus, it decides which handlers run. *Example: \"write my essay\" gets a polite scripted line, with no model call, and is logged.*",
+   "plain": "One cheap model call decides what a message is. Thus, it decides which handlers run. *Example: \"write my essay\" gets a polite scripted line, with no model call after the router, and is logged.*",
    "role": "P2",
    "hours": 6,
    "start": "2026-09-27",

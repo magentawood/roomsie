@@ -1,6 +1,6 @@
-import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type SlotConflict, type TurnLabel } from '@roomsie/contract'
+import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type AssistantReply, type SlotConflict, type TurnLabel } from '@roomsie/contract'
 import type { z } from 'zod'
-import type { AssistantDeps, Handler } from '../../assistant'
+import type { AssistantDeps, TurnState } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
 import { slotOf } from '../extractor/form-update'
 import { questionFor, replyLines, valueText } from './texts'
@@ -23,15 +23,16 @@ function leadOf({ band, danger }: TurnLabel) {
  * and the open ones that the answer did not settle. Then each name of two areas, then an unclear must-have weight (PD15),
  * then the next empty or unclear slot.
  */
-export const replyWriter: Handler = async (turn, deps) => {
-  const { form, changed, conflicts, settled, ambiguous, failed, last } = turn
-  return { reply: assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label: turn.label }), deps)) }
+export async function replyWriter(turn: TurnState, deps: AssistantDeps): Promise<AssistantReply> {
+  const { form, changed, conflicts, settled, ambiguous, failed, last, label } = turn
+  return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label }), deps))
 }
 
 const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps) => {
   const catalogue = await catalogueOf(db)
   const lead = leadOf(turn.label)
-  if (turn.failed) return { text: lead + replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? []) }
+  // Only a core turn asks the person to send the message again: never after a disclosure (T-34).
+  if (turn.failed && turn.label.band === 'core') return { text: replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? []) }
   const filled = turn.changed.filter((slot) => slotOf(turn.form, slot).value !== 'unclear')
   const ack = lead + (filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : '')
   /** The reply: the lead, what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */

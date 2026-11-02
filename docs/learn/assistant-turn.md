@@ -27,7 +27,8 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
 | The routes: start a goal, read a goal, send a turn | `apps/api/src/goals/routes.ts` |
 | The goals, the turns and the visitor sessions | `apps/api/src/goals/store.ts` |
 | The entry point: the router and the extractor at the same time | `apps/api/src/assistant/assistant.ts` |
-| The extractor, its prompt, the gate and the parsers | `apps/api/src/assistant/handlers/extractor/` |
+| The extractor, its prompt and the parsers | `apps/api/src/assistant/handlers/extractor/` |
+| The gate on the token probabilities, and the message of a turn, for each handler | `apps/api/src/assistant/handlers/gate.ts`, `turn-message.ts` |
 | The reply writer and its lines | `apps/api/src/assistant/handlers/reply/` |
 | The schemas of the routes and the handlers | `packages/contract/src/goals.ts` |
 

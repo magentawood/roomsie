@@ -1,4 +1,4 @@
-import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers, type ExtractorInput } from '@roomsie/contract'
+import { intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, roomTypes, whosMovingAnswers } from '@roomsie/contract'
 import { namesOf, type Catalogue } from '../../catalogue'
 
 const list = (values: readonly string[]) => values.join(' | ')
@@ -48,7 +48,3 @@ Move date words: such as "1st Dec", "December", "next month", "agle mahine", "mo
 The areas of Mumbai. Each line is "slug: names":
 ${areas}`
 }
-
-/** The message of one turn. The model gets the last question, never the full chat (PD7a). */
-export const extractorMessage = ({ text, lastQuestion }: ExtractorInput) =>
-  `${lastQuestion ? `Last question of the assistant: ${lastQuestion}\n` : ''}Message of the person: ${text}`
