@@ -31,8 +31,8 @@ All the values are first guesses in config, until two to three months of data ([
 
 Go/no-go check 3 of [PD11](../decisions/pd-11-launch.md) needs two checks on roomsie.in (T-29):
 
-1. **The abuse test:** `node tools/abuse-test.mjs`. The script asks for 100 visitor sessions from one device, and the device limit must refuse each one after the first 10. Then it taps to results and sends typed turns until the cap refuses one. It prints a report, and it fails when a limit does not stop it. It costs approximately ₹0.02. A second run in 24 hours opens no session, because the first run used up the count of its device.
-2. **The alert check:** a moderator sends `POST /v1/admin/alert-check`, as the model check. The live API sends "roomsie: the spend alert works." to the team group through the code of the spend alert.
+1. **The abuse test:** `node tools/abuse-test.mjs`. The script asks for 100 visitor sessions from one device, and the device limit must refuse each one after the first 10. Then it taps to results and sends typed turns until the cap refuses one. It prints a report, and it fails when a limit does not stop it. It costs approximately ₹0.02, and it adds its sessions and events to the analytics. A second run in 24 hours opens no session, because the first run used up the count of its device.
+2. **The alert check:** a moderator sends `POST /v1/admin/alert-check`, as the model check. The live API sends "roomsie: the spend alert works." to the team group through the code of the spend alert. A wrong bot token or chat gives 502 with the answer of Telegram.
 
 The tests prove the limits of the IP address and the IP range, and the limit of a minute. The script does not trip them, so the network of the person who runs it is not blocked.
 
