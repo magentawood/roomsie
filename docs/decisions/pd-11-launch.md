@@ -31,7 +31,7 @@ Engineering go/no-go checks (from `team-plan.md`):
 
 1. In production, on a phone and a laptop, a person goes from the chat to a message request and an accepted chat (PD17).
 2. Report, block and account deletion work.
-3. The abuse test trips the limits. The spend ceiling falls back to chips.
+3. The abuse test trips the limits. The spend alert goes to the team.
 4. No open P1 bug.
 5. The legal pages are live. There is a named moderator.
 6. A record of eval results exists. No-go if extraction gets fewer than 7 in 10 slots correct, or fills slots on vague sentences and does not mark them unclear.

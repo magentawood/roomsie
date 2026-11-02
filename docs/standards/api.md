@@ -32,5 +32,5 @@ These rules apply to `apps/api`. The rules in [_index.md](_index.md) also apply.
 - Buffer the analytics writes and flush them in batches. Why: the analytics database then gets a small number of large inserts. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - Each event is a versioned Zod schema in `packages/contract`, with `event_version` on each row. Why: a field name is expensive to change after millions of rows carry it. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - Keep the turn cap value in config, not in code. Chip taps do not count as turns. Why: the cap is a conversion lever that we will change. ([PD9](../decisions/pd-09-pre-login-limits.md))
-- At the daily spend ceiling, change the chat to chips only. Never show an error page. Send an alert at 70% of the budget. Why: the product continues to work, and a person looks before users see an effect. ([PD9](../decisions/pd-09-pre-login-limits.md))
-- Do not add a second API machine while the rate limit counters are in the process. Why: two machines give two times each limit. ([PD9](../decisions/pd-09-pre-login-limits.md))
+- At the daily spend amount, keep the chat working. Send an alert at 70% and at 100% of the amount. Why: a stop would also stop the people that we want, and the alert lets a person look at the cause. ([PD9](../decisions/pd-09-pre-login-limits.md))
+- Count each limit from the database, never in the memory of the API. Why: a deploy resets a counter in memory, and two machines give two times each limit. ([PD9](../decisions/pd-09-pre-login-limits.md))

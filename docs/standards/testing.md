@@ -18,7 +18,7 @@ These rules apply to the CI gate, tests and assistant evals. The rules in [_inde
   - `tokens_valid_after` revocation.
   - Chat rate limits.
   - Queue seen-exclusion and reject suppression.
-- Test the pre-login limits: the turn cap, the rate limits, and the change to chips at the spend ceiling. Why: the abuse test is a go/no-go check. ([PD9](../decisions/pd-09-pre-login-limits.md), [PD11](../decisions/pd-11-launch.md))
+- Test the pre-login limits: the turn cap, the rate limits, and the alerts of the daily spend. Why: the abuse test is a go/no-go check. ([PD9](../decisions/pd-09-pre-login-limits.md), [PD11](../decisions/pd-11-launch.md))
 - Run API integration tests with Vitest against a disposable Postgres database. Never mock the database. Why: the queue rules are mostly SQL, so a mock tests nothing that ships. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Put the test data for the queue rules in a shared fixture. Do not copy it into each test. Why: the setup is not simple. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))
 - Do not require or add snapshot tests on UI components while the design changes. Do not require component coverage. Why: assertions on a UI that changes each week cost time and find nothing. ([ADR-0013](../decisions/0013-ci-gate-and-testing.md))

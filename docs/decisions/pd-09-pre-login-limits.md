@@ -1,6 +1,6 @@
 # PD9 — Abuse and cost limits on the pre-login chat
 
-**Status:** Settled. Changed on 2026-10-26. · **Date:** 2026-09-20 · **Deciders:** Yash; the look of the wall: n3rxv, for the founders
+**Status:** Settled. Changed on 2026-11-02 (T-21). · **Date:** 2026-09-20 · **Deciders:** Yash; the look of the wall, and the changes of T-21: n3rxv, for the founders
 
 ## Context
 
@@ -10,7 +10,7 @@
 
 ## Decision
 
-**In one line:** The pre-login chat uses a turn cap of 5 free-text turns and rate limits, with a global daily spend ceiling as the backstop.
+**In one line:** The pre-login chat uses a turn cap of 5 free-text turns and rate limits, counted in the database, and the team gets an alert when the daily model spend gets near its amount.
 
 **Use the two: a turn cap and rate limits, with a cap of 5.**
 
@@ -19,6 +19,7 @@ The turn cap:
 - After five free-text turns, the user must sign in to continue.
 - Intent, area and budget are chip-driven. **Chip taps do not count.**
 - **Hard rule: the cap cannot stop the chat until the panel renders a minimum of one time.** If slots are missing at turn five, continue until results exist. Then stop.
+- **The backstop:** at 15 typed turns, the wall comes also when no results show. A script that never gives a budget cannot chat with no end (2026-11-02).
 - **The listings stay on the screen.** Gate the chat, not the results.
 - The wall is the sign-in modal of the designs (Figma `218:21361`), over the blurred screen. On a phone, the modal is a sheet.
 - The user can close the modal, then scroll and filter the panel. The chat input becomes a sign-in button. The button and a tap on a chat chip open the modal again.
@@ -32,13 +33,16 @@ Rate limits:
 | Sessions for each IP | Catches the naive case |
 | Sessions for each IP range | Catches the less naive case |
 | Turns each minute | Stops a script that runs at full speed |
-| **Daily spend ceiling** | The backstop. Global, not for each user. |
+| **Daily spend amount** | An alert, not a stop. Global, not for each user. |
 
-At the ceiling:
+- **The counts come from the database:** the typed turns and the visitor sessions from their tables, and the spend from one row for each day (2026-11-02). A deploy and a second API machine do not change a count.
+- **The first values are guesses** in config: ₹500 a day; 10 new visitor sessions in 24 hours for each device, 100 for each IP address, 500 for each IP range; 10 typed turns a minute for each person. The team revises them with two to three months of data (PC-10 of F-14).
+- **A plain message for each limit:** too many sessions gets "Too many chats from this network today. Sign in, or come back tomorrow.", with a Sign in button. Too many turns in a minute gets "You're sending fast. Wait a moment, then send it again." A signed-in person has no session limit.
 
-- It is not an outage. **Degrade to the zero-cost path.** The chat uses only chips and does not accept free text. The panel is a SQL query.
-- Nobody sees an error page.
-- **Alert before the ceiling, not at it.** The alert starts at 70% of the daily budget.
+At the daily spend amount (changed on 2026-11-02):
+
+- **The chat keeps working.** The amount does not stop typed turns.
+- A Telegram message goes to the team group at 70% and at 100% of the amount, one time each day.
 
 ## Rationale
 
@@ -50,17 +54,19 @@ At the ceiling:
 - The modal asks at the moment of the cap, and its close button gives the results back.
 - The cap is a conversion lever, and it is cheap to change. If it is too low, users leave before they invest effort. If it is too high, we pay for tyre-kickers.
 - The device limit stops one browser that starts fifty interviews.
-- At the ceiling, the product continues to work. But it does not understand sentences until the window resets. The alert lets a person look before users see an effect.
+- The amount is an alert, not a stop: the turn cap and the rate limits stop abuse, and a stop would also stop the people that we want. The alert lets a person look at the cause.
+- Counts in the database survive a deploy, and a second machine reads the same counts. The cost is one or two small queries on a typed turn, and one write on a model call.
 - The budget risk remains abuse, not legitimate use. A thousand interviews a month cost 12 to 25 dollars, against a base of 50 to 80 dollars a month.
 
 ## Alternatives rejected
 
 - **A locked chat input with a line of text as the wall** (the first plan). The designs use a modal, and the designs set v0 ([PD14](pd-14-v0-is-the-figma-designs.md)).
+- **Chips only at the daily ceiling** (the first plan, 2026-09-20 to 2026-11-02). A busy day would stop the chat for real users. The alerts and the rate limits replace it.
+- **Counters in the memory of the API** (the first plan). Each deploy resets them, and a second machine doubles each limit.
+- **No backstop.** A script that never gives a budget could chat with no end.
 
 ## Consequences
 
-- The API is a single machine. It keeps the counters in-process. **This fails at two machines**, because each machine has its own counters, and two machines double the limit.
-- Thus, a second machine is not a one-line config change, which ADR 0009 says. Record this dependency.
 - Measure from day one. If you do not measure it, you cannot see it:
   - Cost for each completed interview, for each handler. This is the unit that matters.
   - Anonymous sessions that reach results. This shows if the no-wall-before-results rule works.
@@ -69,7 +75,9 @@ At the ceiling:
   - Spend by hour.
   - **Blocked sessions by limit type. This is the most important metric.** A rate limit that silently blocks human users is worse than the abuse that it prevents.
 - Out-of-scope turns count against the cap (PD10).
-- Go/no-go check 3: the abuse test trips the limits, and the spend ceiling falls back to chips (PD11).
+- `limit_hit` records the rate limit that stopped a person, and `wall_hit` the turn cap (T-21).
+- Go/no-go check 3: the abuse test trips the limits, and the spend alert goes (PD11).
+- **Revisit** when two to three months of data show the sign-in rate at the wall and the blocked sessions by limit type.
 
 ## Sources
 

@@ -132,7 +132,7 @@ At this time, the interview runs **before login**.
 - A rate limit for each device and each network, not for each user
 - A maximum number of turns in an anonymous session before the chat asks for login
 - A cheaper model or a shorter context for anonymous turns
-- A hard daily spend ceiling, with a defined behaviour when the spend gets to the ceiling
+- A daily spend amount, with an alert before the amount and at it
 
 Decision PD9 tracks these protections.
 
