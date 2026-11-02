@@ -34,9 +34,9 @@ Stops abuse of the AI and a very large bill.
 
 ## Done when
 - [ ] A visitor gets five typed turns before sign-in. Chip taps do not count
-- [ ] The sign-in wall never appears before results show. The results stay on the screen, and the user can close the wall to use them
+- [ ] The sign-in wall never appears before results show, except at the backstop of 15 typed turns. The results stay on the screen, and the user can close the wall to use them
 - [ ] Limits apply per device and per network
-- [ ] At the daily spend ceiling, the chat changes to chips only
+- [ ] At the daily spend ceiling, the chat keeps working, and the team gets an alert
 - [ ] An alert starts when the daily model spend is more than 70% of the ceiling
 - [ ] The turn cap fires the 'wall hit' event on the server, through track() of T-24
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
@@ -45,3 +45,43 @@ Stops abuse of the AI and a very large bill.
 
 ## Read first
 - [pre-login-limits.md](../../pre-login-limits.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by n3rxv
+
+- **Modules:**
+  - **The contract:** the goal and turn responses tell a visitor the typed turns that are left, and tell a signed-in person nothing. The refusal of a limit has a code: `turn_cap`, `too_many_chats` or `too_fast`. A new event, `limit_hit`, records the limit. The interface changes.
+  - **The database:** a migration adds the hash of the IP address and the hash of the IP range to each visitor session, and a table of the model spend of each day, with the alerts that went.
+  - **The limits module (new):** it reads each count from the database: the typed turns of a visitor session, the new visitor sessions of a device, an IP address and an IP range in the last 24 hours, and the typed turns of a person in the last minute. The settings hold each value.
+  - **The model wrapper:** each attempt adds its cost to the spend of the day. The settings hold the price of each model. At 70% and at 100% of the daily amount, one Telegram message goes to the team group, one time each day.
+  - **The goals routes:** a new visitor session over a limit gets `too_many_chats`. A typed turn over the cap gets `turn_cap` and the `wall_hit` event, and a typed turn over the rate gets `too_fast`. Each refusal comes before a model call. A chip tap has no limit.
+  - **The server:** it trusts one proxy, the load balancer of Lightsail, so the IP address of a request is the address of the person.
+  - **The deploy:** the deploy workflow gives the API the Telegram bot token and the chat ID.
+  - **The web:** "Free messages remaining: N" under the input of a visitor. At the cap, the sign-in wall of drafts section 17. After a close, the input is a "Sign in to keep chatting" button, and a chip tap opens the wall again. The two limit messages, in the thread.
+  - **The docs:** PD9, pre-login-limits.md, PD11 check 3 and the API standards. A learn page tells how the limits work.
+- **Seams for the tests:**
+  - The tests of the routes, with the fake vendors: the cap after five typed turns when results show, with no model call and with `wall_hit`; no wall before results until the backstop; chip taps that do not count; no cap for a signed-in person; the typed turns that are left; `too_many_chats` for a device, an IP address and an IP range; `too_fast`; `limit_hit` with each limit.
+  - The tests of the model wrapper: the cost of each attempt adds to the spend of the day, and each alert goes one time, with a fake Telegram.
+  - A server test: the IP address of a request comes from the header of the load balancer.
+  - A browser check at 390 px and 1440 px, with the local API: the line of the free messages, the wall at the cap, the closed state and its button, and the two limit messages.
+- **Decisions:**
+  - **The counts are in the database (the user, 2026-11-02):** the typed turns and the visitor sessions come from their tables, and a table keeps the spend of each day. A deploy and a second API machine do not change a count. PD9, pre-login-limits.md and the API standards change to match.
+  - **First values (the user):** these are first guesses in config. The team revises them with two to three months of data (PC-10 of F-14). The daily amount is ₹500. A device gets 10 new visitor sessions in 24 hours, an IP address 100, and an IP range 500. A person gets 10 typed turns in a minute. The cap stays at five typed turns (PD9).
+  - **A plain message for each limit (the user):** too many sessions: "Too many chats from this network today. Sign in, or come back tomorrow.", with a Sign in button. Too many turns in a minute: "You're sending fast. Wait a moment, then send it again.", with no button, because a sign-in does not change that limit.
+  - **The spend never stops the chat (the user):** at the daily amount, the chat keeps working. A Telegram message goes to the team group at 70% (₹350) and at 100% (₹500), one time each day. This replaces the chips-only mode of PD9. Item 4 changed with the approval of the user.
+  - **The backstop (the user):** the wall never comes before results show, except at 15 typed turns. Item 2 changed with the approval of the user.
+  - **What counts (why: PD9):** only typed turns count, across all the goals of a visitor session. A signed-in person has no cap and no session limits. The limit of turns in a minute applies to each person.
+  - **Results show** when intent, areas and budget have known values, as the panel of the web.
+  - **The wall (why: PD9, drafts section 17):** "Sign in to keep chatting" and "Your search and results stay." After a close, the input is a "Sign in to keep chatting" button, and "Free messages remaining: 0" is under it. A visitor sees "Free messages remaining: N" from the first turn.
+  - **No model call over a limit:** the API refuses a typed turn before the router and the extractor.
+  - **The events (why: PD9):** the server sends `wall_hit` at the cap. `limit_hit` tells which limit stopped a person, the metric that PD9 calls the most important.
+  - **The IP address:** the API trusts one proxy hop. The database keeps only the hashes of the address and of its range (/24 for IPv4, /48 for IPv6), never the address.
+  - **The spend:** the cost of each attempt is its tokens times the price of its model. The prices come from model-selection.md, at the full price, so the estimate is high. A day starts at midnight IST.
+  - **The design:** drafts section 34 holds the two limit messages, with our tokens. The user approves it before the build.
+- **Out of scope:**
+  - an A/B test of the cap
+  - the abuse test (T-29)
+  - the move of a visitor chat into the account (T-17)
+  - a dashboard of the metrics: the events go to the analytics database only
+  - chips for the other closed questions (T-59)

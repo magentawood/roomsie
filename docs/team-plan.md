@@ -806,9 +806,9 @@ Every screen and every assistant handler is merged, and is live behind the invit
 
 **T-21 · Five-turn cap, rate limits, spend ceiling** — done when:
 - A visitor gets five typed turns before sign-in. Chip taps do not count
-- The sign-in wall never appears before results show. The results stay on the screen, and the user can close the wall to use them
+- The sign-in wall never appears before results show, except at the backstop of 15 typed turns. The results stay on the screen, and the user can close the wall to use them
 - Limits apply per device and per network
-- At the daily spend ceiling, the chat changes to chips only
+- At the daily spend ceiling, the chat keeps working, and the team gets an alert
 - An alert starts when the daily model spend is more than 70% of the ceiling
 - The turn cap fires the 'wall hit' event on the server, through track() of T-24
 - Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
