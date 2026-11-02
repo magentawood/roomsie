@@ -92,8 +92,21 @@ describe('the composer', () => {
   })
 
   it('sends the scripted reply when the text of the composer fails the check', async () => {
-    fakeVendors({ deepseek: [room()], ...composed('Rahul bhi room dhoondh raha hai, 9876543210 pe call karo.') })
+    const requests = fakeVendors({ deepseek: [room()], ...composed('Rahul bhi room dhoondh raha hai, 9876543210 pe call karo.') })
     expectScripted(await send(await visitorGoal(), { text: 'room chahiye, Rahul ke saath' }))
+    expect(requests.composer).toHaveLength(1)
+  })
+
+  it('keeps a turn that states a hidden preference away from the composer, also as an earlier turn (PD3c)', async () => {
+    const goal = await visitorGoal()
+    const first = fakeVendors({ deepseek: [room()], ...routed({ community: true, register: hinglish }), ...composed('Jain flatmates, noted.') })
+    expectScripted(await send(goal, { text: 'room chahiye, sirf jain flatmates' }))
+    expect(first.composer).toEqual([])
+
+    const next = fakeVendors({ deepseek: [scored({ areas: [{ words: 'Powai', slug: 'powai' }] })], ...routed({ register: hinglish }), ...composed('Powai, done! Ab results dekhiye.') })
+    await send(goal, { text: 'Powai mein' })
+    const message = (next.composer[0]!.body as { messages: { content: string }[] }).messages[1]!.content
+    expect(JSON.parse(message).turns).toEqual([{ role: 'assistant', text: roomAck }])
   })
 
   it('sends the scripted reply when the composer misses its deadline, with no second attempt', async () => {

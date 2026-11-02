@@ -27,9 +27,9 @@ function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage) {
  * and the open ones that the answer did not settle. Then each name of two areas, then an unclear must-have weight (PD15),
  * then the next empty or unclear slot. The fixed lines are in the language of the turn, or else of the last typed turn.
  */
-export async function replyWriter(turn: TurnState & { label: TurnLabel }, deps: AssistantDeps) {
-  const { form, changed, conflicts, settled, ambiguous, failed, last, label } = turn
-  return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label, language: replyLanguageOf(turn) }), deps))
+export async function replyWriter(turn: TurnState & { label: TurnLabel; language: ReplyLanguage }, deps: AssistantDeps) {
+  const { form, changed, conflicts, settled, ambiguous, failed, last, label, language } = turn
+  return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label, language }), deps))
 }
 
 export const replyLanguageOf = ({ label, lastRegister }: Pick<TurnState, 'lastRegister'> & { label: TurnLabel }) => languageOf(label.register ?? lastRegister)

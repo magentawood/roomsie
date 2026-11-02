@@ -73,11 +73,14 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   return { ...parts, question: parts.question ?? last.text }
 }
 
-/** The last two turns of a goal: what the composer reads of the chat, never the full chat (PD7a). */
+// The label of a typed turn sets `community`, and `preferences` holds what the extractor kept (T-34, T-58).
+const statesHidden = z.union([z.object({ community: z.literal(true) }), z.object({ preferences: z.record(z.string(), z.unknown()) })])
+
+/** The last two turns of a goal: what the composer reads of the chat, never the full chat (PD7a). A turn that states a hidden preference stays out (PD3c). */
 export async function recentTurnsOf(db: Db, goalId: string) {
-  const rows = await db.select({ role: chatTurns.role, text: chatTurns.text }).from(chatTurns)
+  const rows = await db.select({ role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(eq(chatTurns.goalId, goalId)).orderBy(desc(chatTurns.createdAt)).limit(2)
-  return rows.reverse()
+  return rows.reverse().filter(({ role, parts }) => role === 'assistant' || !statesHidden.safeParse(parts).success).map(({ role, text }) => ({ role, text }))
 }
 
 // A typed turn from before the router (T-34) has no register.

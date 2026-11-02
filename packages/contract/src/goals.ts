@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { budgetBandOf, budgetBands, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
+import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
 
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
@@ -175,14 +176,16 @@ export type AssistantReply = z.output<typeof assistantReply>
 export const composerInput = z.strictObject({
   version: z.literal(1).default(1),
   language: z.enum(replyLanguages),
-  /** The scripted reply: the plan. Its fixed lines can be in the language already. The composer keeps its facts and its question. */
+  /** The scripted reply: the plan. */
   draft: z.string().min(1),
   /** The filled slots of Form A. */
   form: z.partialRecord(z.enum(formASlots), z.unknown()),
-  formB: z.array(z.strictObject({ key: z.string(), value: z.string() })),
+  formB: z.array(observation.pick({ key: true, value: true })),
   turns: z.array(z.strictObject({ role: z.enum(['user', 'assistant']), text: z.string() })).max(2),
   message: z.string(),
 })
 export type ComposerInput = z.output<typeof composerInput>
 /** The answer of the composer model. Not strict, as the extractor answer. */
 export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
+/** What the composer gives: the words of the reply, after the output check. */
+export const composerOutput = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1) })

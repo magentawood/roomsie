@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import { budgetBandOf, formA, formASlots, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
+import { budgetBandOf, formA, formASlots, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf } from './catalogue'
@@ -35,18 +35,21 @@ export async function runTurn({ context, ...input }: TurnInput & { text: string;
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   const turn = { ...start, ...(usesExtractor(label) && extracted), label }
-  const scripted = await replyWriter(turn, deps)
-  const reply = label.band === 'core' && !turn.failed ? await composed(scripted, turn, context, deps) : scripted
+  const language = replyLanguageOf(turn)
+  const scripted = await replyWriter({ ...turn, language }, deps)
+  // The composer never reads a turn that states a hidden preference, so no reply can name it (PD3c, T-58).
+  const statesHidden = label.community || Object.keys(turn.hiddenPreferences).length > 0
+  const reply = label.band === 'core' && !turn.failed && !statesHidden ? await composeReply(scripted, turn, language, context, deps) : scripted
   return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
 }
 
-async function composed(reply: AssistantReply, turn: TurnState & { label: TurnLabel }, context: ComposerContext, deps: AssistantDeps) {
+async function composeReply(reply: AssistantReply, turn: TurnState, language: ReplyLanguage, context: ComposerContext, deps: AssistantDeps) {
   const form = Object.fromEntries(formASlots.flatMap((slot) => {
     const { source, value } = slotOf(turn.form, slot)
     return source === 'empty' ? [] : [[slot, value]]
   }))
-  const text = await composer(turn.goalId, { version: 1, language: replyLanguageOf(turn), draft: reply.text, form, ...context, message: turn.text }, deps)
-  return text ? { ...reply, text } : reply
+  const composed = await composer(turn.goalId, { version: 1, language, draft: reply.text, form, ...context, message: turn.text }, deps)
+  return composed ? { ...reply, text: composed.text } : reply
 }
 
 /** A tap needs no router: each chip is an answer about the search. */
@@ -67,5 +70,5 @@ export async function runTap(input: TurnInput & { tap: ChipTap }, deps: Assistan
   // A tap answers its slot: its value replaces an earlier value, also a list of areas (T-09).
   const form = formA.parse({ ...input.form, [tap.slot]: { source: 'stated', value: slotValueOf(tap) } })
   const turn = { ...input, text, ...noExtraction(form, false), changed: [tap.slot], label: tapLabel }
-  return { text, form, reply: await replyWriter(turn, deps), ownValues: turn.ownValues }
+  return { text, form, reply: await replyWriter({ ...turn, language: replyLanguageOf(turn) }, deps), ownValues: turn.ownValues }
 }

@@ -47,7 +47,7 @@ The assistant writes its answers and stays on the topic.
 **Approved:** 2026-11-02, by pulkitshringi
 
 - **Modules:**
-  - **The contract:** new schemas with a version for the composer: its input and its answer. The input of the reply writer gets the reply language (review round 1).
+  - **The contract:** new schemas with a version for the composer: its input, the answer of the model and its output. The input of the reply writer gets the reply language (review round 1).
   - **The reply writer:** the code makes the plan of each reply as before. The plan has the filled slots, the conflicts, the next question, the chips and the asked slot. On a core typed turn, the composer writes the words of that plan. Its interface does not change.
   - **The composer (a new handler of the assistant):** one JSON call through the model module, with the role `composer`. It has a fixed system prompt and an output check.
   - **The model module:** a call can have a deadline. The deadline applies to all the attempts of the call: the retry and the fallback too.
@@ -75,6 +75,7 @@ The assistant writes its answers and stays on the topic.
     - it has a number that is not in the plan or in the message
     - it has a name that is not in the plan. A name from the message of the person does not pass.
   - **The limits of the name check (the user, review round 1):** a new name at the start of a sentence, and a name in Devanagari, pass the check. A stricter check rejects most good replies in Hinglish, Hindi and Marathi. The prompt rule and the eval sentences of T-27 cover the two limits.
+  - **A hidden preference (the user, review round 2):** a turn that states a hidden religion or community preference gets the scripted reply, with no composer call. An earlier user turn that states one stays out of the last two turns of the composer. Thus, no reply names the preference (why: PD3c, T-58).
   - **A late composer (review round 1):** it gives a log line and its `model_called` event, not an error report. The scripted reply covers it.
   - **The last two turns:** the two stored turns before the current message, and the current message. Nothing older (why: PD7a, the assistant standards).
   - **Form B:** the observations of the person from the table. The list is empty until T-36.

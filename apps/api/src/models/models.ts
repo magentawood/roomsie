@@ -113,7 +113,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
 
   async function run<T>(call: ModelCall, mode: Mode, read: Read<T>) {
     const deadline = call.deadlineMs === undefined ? undefined : AbortSignal.timeout(call.deadlineMs)
-    const late = () => deadline?.aborted === true
+    const late = () => deadline?.aborted
     const first = await attempt(call, primary, mode, read, deadline)
     // Gemini answers, but a person must fix the key or the balance of DeepSeek.
     if (first.refused) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
@@ -121,7 +121,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     const last = second.outcome === 'ok' || late() ? second : await attempt(call, fallback, mode, read, deadline)
     if (last.outcome === 'ok') return last.value
     const err = new ModelUnavailable(`No model answered the ${call.role}: the last attempt was ${last.outcome}`)
-    // A caller with a deadline has its own fallback, so a late answer is a log line and an event, not an error.
+    // A caller with a deadline has its own fallback, so this is no error report.
     if (late()) call.req.log.warn({ role: call.role }, 'no model answered before the deadline')
     else reportError(err, { where: `models.${call.role}`, userId: call.req.user?.id, log: call.req.log })
     throw err
