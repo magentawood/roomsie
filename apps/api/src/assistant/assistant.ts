@@ -9,17 +9,13 @@ import type { AssistantSettings } from './settings'
 
 export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; settings: AssistantSettings; today: () => string }
 
-/** One typed turn. */
 export type TurnState = {
   goalId: string
   text: string
   /** The last reply of the assistant: its question, the slot that it asked about, and its open conflicts. */
   last: AssistantParts | null
   form: FormA
-  /** The label of the router. Null until the router answers. */
-  label: TurnLabel | null
 } & Omit<ExtractorOutput, 'version' | 'form'>
-export type Handler = (turn: TurnState, deps: AssistantDeps) => Promise<Partial<TurnState>>
 
 /** The extractor fills Form A, unless the turn is off topic, adversarial, or only a question (PD10, T-34). */
 const usesExtractor = ({ band, kinds }: TurnLabel) =>
@@ -27,8 +23,8 @@ const usesExtractor = ({ band, kinds }: TurnLabel) =>
 
 /** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */
 export async function runTurn(input: Pick<TurnState, 'goalId' | 'text' | 'last' | 'form'>, deps: AssistantDeps) {
-  const start: TurnState = { ...input, ...noExtraction(input.form, false), label: null }
+  const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
-  const turn: TurnState = { ...start, ...(usesExtractor(label) && extracted), label }
+  const turn = { ...start, ...(usesExtractor(label) && extracted), label }
   return { form: turn.form, reply: await replyWriter(turn, deps), conflicts: turn.conflicts, label }
 }

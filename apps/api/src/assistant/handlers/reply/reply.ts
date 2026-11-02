@@ -1,4 +1,4 @@
-import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type AssistantReply, type SlotConflict, type TurnLabel } from '@roomsie/contract'
+import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type SlotConflict, type TurnLabel } from '@roomsie/contract'
 import type { z } from 'zod'
 import type { AssistantDeps, TurnState } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
@@ -23,7 +23,7 @@ function leadOf({ band, danger }: TurnLabel) {
  * and the open ones that the answer did not settle. Then each name of two areas, then an unclear must-have weight (PD15),
  * then the next empty or unclear slot.
  */
-export async function replyWriter(turn: TurnState, deps: AssistantDeps): Promise<AssistantReply> {
+export async function replyWriter(turn: TurnState & { label: TurnLabel }, deps: AssistantDeps) {
   const { form, changed, conflicts, settled, ambiguous, failed, last, label } = turn
   return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label }), deps))
 }

@@ -49,6 +49,13 @@ describe('the router', () => {
     expect(await route()).toMatchObject({ band: 'core', kinds: ['question', 'filters'], danger: true, community: false })
     fakeVendors({ router: { deepseek: [unsureAfter('"kinds":["')] } })
     expect(await route()).toMatchObject({ kinds: ['filters'], community: true })
+    fakeVendors({ router: { deepseek: [unsureAfter('"danger":')] } })
+    expect(await route()).toMatchObject({ danger: false, community: true })
+  })
+
+  it('keeps the flags of Gemini, which gives no probabilities', async () => {
+    fakeVendors({ router: { deepseek: [down()], gemini: [answer(JSON.stringify({ ...coreLabel, band: 'sensitive', danger: true, community: true }))] } })
+    expect(await route()).toMatchObject({ band: 'sensitive', danger: true, community: true })
   })
 
   it('gives an empty core label when no model answers', async () => {

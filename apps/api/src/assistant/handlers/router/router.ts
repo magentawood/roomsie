@@ -1,17 +1,18 @@
 import { routerAnswer, routerInput, turnLabel, type RouterAnswer, type TurnLabel } from '@roomsie/contract'
 import { nullIfUnavailable } from '../../../models/models'
 import type { AssistantDeps, TurnState } from '../../assistant'
-import { probabilityAt, unscoredDeepSeek } from '../gate'
+import { jsonListItem, jsonString, jsonTrue, passes } from '../gate'
 import { turnMessage } from '../turn-message'
 import { routerPrompt } from './prompt'
 
 type Turn = Pick<TurnState, 'goalId' | 'text' | 'last'>
 type Deps = Pick<AssistantDeps, 'req' | 'models' | 'settings'>
-/** `sure`: the band passes the threshold. The kinds and the flags of the answer hold only what passes it. */
-type Classified = { answer: RouterAnswer; sure: boolean }
 
-/** The adapter of the router: a different model, such as Jev, is a different classifier (PD7a). Null: no answer. */
-type Classifier = (turn: Turn, deps: Deps) => Promise<Classified | null>
+/**
+ * The adapter of the router: a different model, such as Jev, is a different classifier (PD7a). Null: no answer.
+ * `sure`: the band passes the threshold. The kinds and the flags of the answer hold only what passes it.
+ */
+type Classifier = (turn: Turn, deps: Deps) => Promise<{ answer: RouterAnswer; sure: boolean } | null>
 
 /** The router on the model module (PD7). */
 const modelClassifier: Classifier = async (turn, { req, models, settings }) => {
@@ -21,16 +22,16 @@ const modelClassifier: Classifier = async (turn, { req, models, settings }) => {
     req, role: 'router', session: turn.goalId, schema: routerAnswer, system: routerPrompt, messages: [{ role: 'user', content: turnMessage(input) }],
   }).catch(nullIfUnavailable)
   if (!scored) return null
-  const { value: answer, tokens, model } = scored
-  const passes = (pattern: RegExp) => (tokens ? (probabilityAt(tokens, pattern) ?? 0) >= settings.routerMinProbability : !unscoredDeepSeek(tokens, model))
+  const { value: answer } = scored
+  const sure = (pattern: RegExp) => passes(scored, pattern, settings.routerMinProbability)
   // A guess never drops the answer of the extractor, and never goes into the log of PD3c (T-34).
   return {
-    sure: passes(new RegExp(`"band"\\s*:\\s*"(${answer.band})"`, 'd')),
+    sure: sure(jsonString('band', answer.band)),
     answer: {
       ...answer,
-      kinds: answer.kinds.filter((kind) => kind !== 'question' || passes(/"kinds"\s*:\s*\[[^\]]*"(question)"/d)),
-      danger: answer.danger && passes(/"danger"\s*:\s*(true)/d),
-      community: answer.community && passes(/"community"\s*:\s*(true)/d),
+      kinds: answer.kinds.filter((kind) => kind !== 'question' || sure(jsonListItem('kinds', 'question'))),
+      danger: answer.danger && sure(jsonTrue('danger')),
+      community: answer.community && sure(jsonTrue('community')),
     },
   }
 }

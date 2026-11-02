@@ -28,7 +28,6 @@ export type TurnResponse = z.infer<typeof turnResponse>
 
 /** What the extractor reads: the typed turn and the last question of the assistant, never the full chat. */
 export const extractorInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
-export type ExtractorInput = z.output<typeof extractorInput>
 
 const choice = <V extends readonly [string, ...string[]]>(values: V) => z.enum(values).nullish()
 const answer = <A extends LifestyleAxis>(axis: A) => z.enum([...lifestyleAnswers[axis], 'unclear']).nullish()
@@ -95,6 +94,7 @@ const register = z.strictObject({ language: z.enum(['english', 'hindi', 'marathi
 
 /** What the router reads: the typed turn and the last question of the assistant, as the extractor. Each handler has its own schema (assistant.md). */
 export const routerInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
+export type RouterInput = z.output<typeof routerInput>
 /** The answer of the router model: the kinds, the band, the register for the reply writer (PD7), and two flags. Not strict, as the extractor answer. */
 export const routerAnswer = z.object({
   version: z.literal(1).default(1),
