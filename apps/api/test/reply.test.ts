@@ -103,11 +103,26 @@ describe('the composer', () => {
     expectScripted(await send(goal, { text: 'room chahiye, sirf jain flatmates' }))
     expect(first.composer).toEqual([])
 
+    await expectComposedWithout(goal)
+  })
+
+  it('keeps a turn away from the composer when only the extractor finds the hidden preference (PD3c)', async () => {
+    const goal = await visitorGoal()
+    const first = fakeVendors({ deepseek: [scored({ intent: 'room', religionPreference: { values: ['jain'], weight: 'dealbreaker' } })], ...composed('Jain flatmates, noted.') })
+    expectScripted(await send(goal, { text: 'room chahiye, sirf jain flatmates' }))
+    expect(first.composer).toEqual([])
+    await expectComposedWithout(goal)
+  })
+
+  /** The next turn gets the words of the composer, and the composer did not read the earlier user turn. */
+  async function expectComposedWithout(goal: Goal) {
     const next = fakeVendors({ deepseek: [scored({ areas: [{ words: 'Powai', slug: 'powai' }] })], ...routed({ register: hinglish }), ...composed('Powai, done! Ab results dekhiye.') })
-    await send(goal, { text: 'Powai mein' })
+    const { reply, form } = await send(goal, { text: 'Powai mein' })
+    expect(reply).toMatchObject({ text: 'Powai, done! Ab results dekhiye.', chips: null })
+    expect(form.areas).toEqual({ source: 'stated', value: ['powai'] })
     const message = (next.composer[0]!.body as { messages: { content: string }[] }).messages[1]!.content
     expect(JSON.parse(message).turns).toEqual([{ role: 'assistant', text: roomAck }])
-  })
+  }
 
   it('sends the scripted reply when the composer misses its deadline, with no second attempt', async () => {
     const requests = fakeVendors({ deepseek: [room()], composer: { deepseek: [hang] } })

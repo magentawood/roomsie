@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import { budgetBandOf, formA, formASlots, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
+import { budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf } from './catalogue'
@@ -37,9 +37,8 @@ export async function runTurn({ context, ...input }: TurnInput & { text: string;
   const turn = { ...start, ...(usesExtractor(label) && extracted), label }
   const language = replyLanguageOf(turn)
   const scripted = await replyWriter({ ...turn, language }, deps)
-  // The composer never reads a turn that states a hidden preference, so no reply can name it (PD3c, T-58).
-  const statesHidden = label.community || Object.keys(turn.hiddenPreferences).length > 0
-  const reply = label.band === 'core' && !turn.failed && !statesHidden ? await composeReply(scripted, turn, language, context, deps) : scripted
+  const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
+  const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, language, context, deps) : scripted
   return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
 }
 

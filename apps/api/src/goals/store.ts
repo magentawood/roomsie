@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { saveOwnValues } from '../profiles/own-values'
@@ -73,14 +73,13 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   return { ...parts, question: parts.question ?? last.text }
 }
 
-// The label of a typed turn sets `community`, and `preferences` holds what the extractor kept (T-34, T-58).
-const statesHidden = z.union([z.object({ community: z.literal(true) }), z.object({ preferences: z.record(z.string(), z.unknown()) })])
-
 /** The last two turns of a goal: what the composer reads of the chat, never the full chat (PD7a). A turn that states a hidden preference stays out (PD3c). */
 export async function recentTurnsOf(db: Db, goalId: string) {
   const rows = await db.select({ role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(eq(chatTurns.goalId, goalId)).orderBy(desc(chatTurns.createdAt)).limit(2)
-  return rows.reverse().filter(({ role, parts }) => role === 'assistant' || !statesHidden.safeParse(parts).success).map(({ role, text }) => ({ role, text }))
+  // Only a typed turn passes userTurnParts.
+  const hides = (parts: unknown) => { const typed = userTurnParts.safeParse(parts); return typed.success && statesHiddenPreference(typed.data) }
+  return rows.reverse().filter(({ parts }) => !hides(parts)).map(({ role, text }) => ({ role, text }))
 }
 
 // A typed turn from before the router (T-34) has no register.

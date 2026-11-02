@@ -1,9 +1,9 @@
 import type { ComposerInput } from '@roomsie/contract'
 import { maskContacts } from '../../../text/mask-contacts'
 
-// A reply in Hinglish, Hindi or Marathi runs longer than the English plan.
-const minLength = 300
-const growth = 2
+// The cap on the length of a text. A reply in Hinglish, Hindi or Marathi runs longer than the English plan.
+const capFloor = 300
+const capGrowth = 2
 /** Words that a reply can write with a capital letter in any place. */
 const commonNames = new Set(['roomsie', 'mumbai', 'pg', 'bhk', 'ok'])
 const email = /\S+@\S+\.\S+/
@@ -21,7 +21,7 @@ function capitalsInside(text: string) {
 
 /** The output check of the composer (T-13). A name from the words of the person fails too, also at the start of a sentence. */
 export function passesCheck(text: string, { draft, message, turns, formB }: Pick<ComposerInput, 'draft' | 'message' | 'turns' | 'formB'>) {
-  if (text.length > Math.max(minLength, draft.length * growth)) return false
+  if (text.length > Math.max(capFloor, draft.length * capGrowth)) return false
   if (maskContacts(text) !== text || email.test(text) || link.test(text)) return false
 
   // "₹20,000" in the draft lets "20k" and "20 hazaar" through, and "₹1,50,000" lets "1.5 lakh" through.

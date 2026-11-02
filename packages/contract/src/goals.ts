@@ -158,6 +158,9 @@ export type TurnLabel = z.output<typeof turnLabel>
 /** What a typed turn keeps: the label of the router, and the hidden preferences that the turn stated, as the log of PD3c (T-58). */
 export const userTurnParts = turnLabel.extend({ preferences: statedPreferences.optional() }).strict()
 export type UserTurnParts = z.output<typeof userTurnParts>
+/** A typed turn that states a hidden preference: the composer never reads it, so no reply names it (PD3c, T-58). */
+export const statesHiddenPreference = ({ community, preferences }: Pick<UserTurnParts, 'community' | 'preferences'>) =>
+  community || Object.keys(preferences ?? {}).length > 0
 
 /** The languages of a reply (PD7, PC-09): English, Hinglish, Hindi, and Marathi in Latin and in Devanagari script. */
 export const replyLanguages = ['en', 'hi-Latn', 'hi', 'mr-Latn', 'mr'] as const
