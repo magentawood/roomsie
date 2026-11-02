@@ -6,7 +6,7 @@
 
 - **Two lists:** religion (Hindu, Muslim, Jain and more) and community, by region or language (Gujarati, Marathi, Tamil and more). There is no caste value ([PD3c](../decisions/pd-03c-exclusionary-preferences.md)).
 - **The preference of the searcher** goes into two **hidden slots** of Form A: `religionPreference` and `communityPreference`. Each has the values and a weight.
-- **"Only"** (a dealbreaker) removes the people who stated a different value. **"Preferably"**, and an unclear weight, count as one more met preference in the order, and remove nobody.
+- **"Only"** (a dealbreaker) removes the people who stated a different value. **"Preferably"**, and an unclear weight, add one point to the order, never to "Best match" or "Didn't say", and remove nobody.
 - **The own values of a person** come only from what the person states: the two optional fields of the profile, or the own chat ("I'm Jain"). A person who stated nothing always stays in the results, with no label (PC-31).
 
 ## How it fits our project

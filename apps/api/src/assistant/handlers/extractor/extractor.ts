@@ -1,4 +1,4 @@
-import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot } from '@roomsie/contract'
+import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot, type HiddenSlot } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import { nullIfUnavailable } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
@@ -16,7 +16,7 @@ import { extractorPrompt } from './prompt'
 export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, preferences: {} })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, hiddenPreferences: {} })
 
 /**
  * An answer to "which one should I keep?" that names no value (PD3b): a choice word alone, or with "wala" or "one",
@@ -100,22 +100,22 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
   // The hidden filter of PD3c (T-58). A newer statement wins with no question, and no line of the reply names it.
   const within = (key: string, pattern: RegExp) => new RegExp(`"${key}"\\s*:\\s*\\{[^}]*${pattern.source}`)
   const sure = (pattern: RegExp) => passes(scored, pattern, settings.minProbability)
-  const preferenceOf = (key: 'religionPreference' | 'communityPreference') => {
-    const stated = answer[key]
-    const values = stated?.values.filter((value) => value !== 'unclear' && sure(within(key, jsonListItem('values', value))))
-    if (!values?.length) return undefined
-    return { values, weight: stated!.weight !== 'unclear' && sure(within(key, jsonString('weight', stated!.weight))) ? stated!.weight : 'unclear' }
+  const preferenceOf = (key: HiddenSlot) => {
+    const answered = answer[key]
+    const kept = answered?.values.filter((value) => value !== 'unclear' && sure(within(key, jsonListItem('values', value))))
+    if (!kept?.length) return undefined
+    return { values: kept, weight: answered!.weight !== 'unclear' && sure(within(key, jsonString('weight', answered!.weight))) ? answered!.weight : 'unclear' }
   }
   const religionPreference = preferenceOf('religionPreference')
   const communityPreference = preferenceOf('communityPreference')
-  const preferences = { ...(religionPreference && { religionPreference }), ...(communityPreference && { communityPreference }) }
-  const isOwn = <V extends string>(key: string, value: V | null | undefined): value is Exclude<V, 'unclear'> => !!value && value !== 'unclear' && sure(jsonString(key, value))
-  const ownValues = {
-    religion: isOwn('ownReligion', answer.ownReligion) ? answer.ownReligion : null,
-    community: isOwn('ownCommunity', answer.ownCommunity) ? answer.ownCommunity : null,
-  }
+  const hiddenPreferences = { ...(religionPreference && { religionPreference }), ...(communityPreference && { communityPreference }) }
+  const own = (key: string, value: string | null | undefined) => (value && value !== 'unclear' && sure(jsonString(key, value)) ? value : null)
+  const ownValues = { religion: own('ownReligion', answer.ownReligion), community: own('ownCommunity', answer.ownCommunity) }
   const applied = applyValues(turn.form, values, openConflicts.map((c) => c.slot))
-  const stated = Object.fromEntries(Object.entries(preferences).map(([slot, value]) => [slot, { source: 'stated', value }]))
-  const form = { ...applied.form, ...stated }
-  return { ...applied, form, settled, ambiguous, failed: false, ownValues, preferences }
+  const form = {
+    ...applied.form,
+    ...(religionPreference && { religionPreference: { source: 'stated' as const, value: religionPreference } }),
+    ...(communityPreference && { communityPreference: { source: 'stated' as const, value: communityPreference } }),
+  }
+  return { ...applied, form, settled, ambiguous, failed: false, ownValues, hiddenPreferences }
 }

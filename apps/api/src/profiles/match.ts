@@ -1,5 +1,5 @@
 import { and, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
-import { mustHaveKeys, type FormA, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
+import { mustHaveKeys, type FormA, type HiddenSlot, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { textArray } from '../db/sql'
@@ -50,7 +50,7 @@ const theirDealbreakerIn = (keys: MustHaveKey[]) => sql`exists (select 1 from ${
  * "Only" removes the people who stated a different value, and "preferably" adds a point to the order.
  * A person who stated nothing stays, and no label tells it (PC-31).
  */
-function identitySql(column: typeof profiles.religion | typeof profiles.community, preference: PeopleSearch['religionPreference' | 'communityPreference']) {
+function identitySql(column: typeof profiles.religion | typeof profiles.community, preference: PeopleSearch[HiddenSlot]) {
   if (!preference) return { filter: undefined, point: sql`0` }
   const stated = sql`${column}::text = any(${textArray(preference.values)})`
   return preference.weight === 'dealbreaker'
