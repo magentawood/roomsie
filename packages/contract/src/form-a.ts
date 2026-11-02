@@ -22,8 +22,8 @@ const budget = z.strictObject({ min: rupees.nullable(), max: rupees.nullable() }
   .refine((b) => b.min == null || b.max == null || b.min <= b.max, 'The minimum is above the maximum')
 
 /** A stated preference of the hidden filter: the values, and how strong (PD3c, T-58). An unclear weight acts as a preference. */
-const identityPreference = <L extends readonly [string, ...string[]]>(list: L) =>
-  slot(z.strictObject({ values: z.array(z.enum(list)).min(1).max(list.length), weight: z.enum([...mustHaveWeights, 'unclear']) }))
+export const identityPreference = <L extends readonly [string, ...string[]]>(list: L) =>
+  z.object({ values: z.array(z.enum(list)).min(1).max(list.length), weight: z.enum([...mustHaveWeights, 'unclear']) })
 
 /** What the assistant knows of one move. It drives the match query (PD7a, PD15). */
 export const formA = z.strictObject({
@@ -37,8 +37,8 @@ export const formA = z.strictObject({
   lifestyle: z.strictObject(lifestyle).prefault({}),
   mustHaves: z.strictObject(mustHaves).prefault({}),
   /** Hidden: no chip, question, label or results header shows them (PD3c, T-58). */
-  religionPreference: identityPreference(religions),
-  communityPreference: identityPreference(communities),
+  religionPreference: slot(identityPreference(religions).strict()),
+  communityPreference: slot(identityPreference(communities).strict()),
 })
 export type FormA = z.infer<typeof formA>
 export type Budget = z.infer<typeof budget>

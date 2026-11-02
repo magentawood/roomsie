@@ -1,12 +1,12 @@
 # The hidden religion and community filter
 
-**In one line:** a searcher who states a religion or a community preference sees only the people who fit it, and nobody sees that the filter exists.
+**In one line:** a religion or a community preference that a searcher states removes or reorders the people in the results, and nobody sees that the filter exists.
 
 ## What it is
 
 - **Two lists:** religion (Hindu, Muslim, Jain and more) and community, by region or language (Gujarati, Marathi, Tamil and more). There is no caste value ([PD3c](../decisions/pd-03c-exclusionary-preferences.md)).
 - **The preference of the searcher** goes into two **hidden slots** of Form A: `religionPreference` and `communityPreference`. Each has the values and a weight.
-- **"Only"** (a dealbreaker) removes the people who stated a different value. **"Preferably"**, and an unclear weight, put the people with a matching value first, and remove nobody.
+- **"Only"** (a dealbreaker) removes the people who stated a different value. **"Preferably"**, and an unclear weight, count as one more met preference in the order, and remove nobody.
 - **The own values of a person** come only from what the person states: the two optional fields of the profile, or the own chat ("I'm Jain"). A person who stated nothing always stays in the results, with no label (PC-31).
 
 ## How it fits our project
@@ -20,8 +20,8 @@
 | The two optional fields | `apps/web/components/profile/profile-editor.tsx` |
 
 - **Hidden from everyone.** The reply never names the slots: they are not in the list of the slots that the assistant talks about. A card, a person page and the results never send the values of a person.
-- **The newer statement wins.** A statement in the chat replaces the field, and a change of the field replaces the chat. The chat never asks which one to keep, because the question would show the filter.
-- **A visitor** keeps the own values on the goal. A new profile takes the latest stated values of the goals of the person.
+- **The newer statement wins.** A statement in the chat replaces the field, and a change of the field replaces the chat. The chat never asks which one to keep, because the question would show the filter. Each typed turn keeps the hidden preference that it stated, as the log of PD3c.
+- **A visitor** keeps the own values on the goal, with the time of each statement. A new profile takes the latest stated values of the goals of the person, by that time.
 - **The gate.** As with each value of the extractor, a value below `ASSISTANT_MIN_PROBABILITY` does not count. A weight below it is `unclear`.
 
 ## The choice we made

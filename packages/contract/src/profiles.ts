@@ -43,6 +43,9 @@ export const communities = [
 ] as const
 export type Religion = (typeof religions)[number]
 export type Community = (typeof communities)[number]
+/** The religion and the community that a person states about themselves. Only the person sees them (PD3c, T-58). */
+export const ownValues = z.strictObject({ religion: z.enum(religions).nullable(), community: z.enum(communities).nullable() })
+export type OwnValues = z.infer<typeof ownValues>
 
 /** roomsie is for adults (PD16). */
 export const minAge = 18
@@ -82,9 +85,7 @@ export const profileEditBody = z.strictObject({
   hidden: z.boolean(),
   lifestyle: lifestyleEdit,
   mustHaves: z.partialRecord(z.enum(mustHaveKeys), weight.nullable()),
-  /** Optional, and only the person sees them (PD3c, T-58). */
-  religion: z.enum(religions).nullable(),
-  community: z.enum(communities).nullable(),
+  ...ownValues.shape,
 }).partial()
 export type ProfileEditBody = z.infer<typeof profileEditBody>
 
@@ -104,8 +105,7 @@ export type CardResponse = z.infer<typeof cardResponse>
 
 export const profileResponse = cardResponse.extend({
   gender: z.enum(genders),
-  religion: z.enum(religions).nullable(),
-  community: z.enum(communities).nullable(),
+  ...ownValues.shape,
   visibility: z.enum(visibilities),
   /** The fields that the card needs before it goes live. */
   missing: z.array(z.enum(liveCardFields)),

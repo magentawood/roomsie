@@ -32,7 +32,7 @@ const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUpload
 /** The hint tells the purpose, as the DPDP Act asks, and not the filter (drafts section 32, T-58). */
 const ownValueHint = 'Optional. Never on your card. We use it only to match you with people who ask for it.'
 
-/** An optional field of the hidden filter of PD3c. The first option clears it. */
+/** An optional field of the hidden filter of PD3c. */
 function OptionalSelect<V extends string>({ label, placeholder, labels, value, onChange }: {
   label: string; placeholder: string; labels: Record<V, string>; value: V | null; onChange: (value: V | null) => void
 }) {

@@ -428,6 +428,18 @@ describe('the hidden religion and community filter (T-58)', () => {
     }
   })
 
+  it('never filters or orders listings on it (PD3d)', async () => {
+    const lister = await t.call('quiet', 'POST', '/v1/listings', { kind: 'room_in_flat' })
+    const id = listingResponse.parse(lister.json()).id
+    expect((await t.call('quiet', 'PATCH', `/v1/listings/${id}`, { areaSlug: 'bandra', roomType: 'private', rates: [{ rent: 19000 }] })).statusCode).toBe(200)
+    expect((await t.call('quiet', 'POST', `/v1/listings/${id}/status`, { status: 'live' })).statusCode).toBe(200)
+    const room = { intent: stated('room'), areas: stated(['bandra']), budget: stated({ min: null, max: 20000 }) }
+    const plain = await search(t, 'seeker', room)
+    const only = await search(t, 'seeker', { ...room, religionPreference: stated({ values: ['jain'], weight: 'dealbreaker' }), communityPreference: stated({ values: ['tamil'], weight: 'prefer' }) })
+    expect(plain.results.map(idOf)).toEqual([id])
+    expect(only.results).toEqual(plain.results)
+  })
+
   it('never sends the religion or the community of a card', async () => {
     const res = await t.call('seeker', 'POST', '/v1/results', { form: flatmates, page: 1 })
     for (const result of res.json().results) {

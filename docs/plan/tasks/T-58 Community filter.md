@@ -77,6 +77,9 @@ Filters the people of a search on a community or religion preference that the se
   - **The newer statement wins (the user):** a statement in the chat replaces the value of the field, and a change of the field replaces the value of the chat.
   - **Where the own values go (the user):** each turn puts them on its goal, also for a visitor. When the person has a profile, they also go on the profile. A new profile takes the latest stated values of the goals of the person.
   - **T-17 (the user):** a new done item: "When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement".
+  - **The log of PD3c (review round 1):** each typed turn keeps the hidden preference that it stated, next to the label of the router. A preference that a later turn replaces stays in the log.
+  - **The time of a statement (review round 1):** the goal keeps the time of each own value. A new profile takes the value with the latest time, not the goal with the latest turn.
+  - **`unclear` (review round 1):** the model can answer `unclear` for a value, as for each enum of the extractor. The extractor drops it, so it fills nothing and asks nothing.
   - **The optional fields:** a design on the drafts page, with our tokens, that the user approves before the build. Only the person sees the values. The person card, the person page and each answer to a different person omit them.
   - **The design (the user, 2026-11-02):** drafts section 32 (Figma node 580:28444). Two optional selects, Religion and Community, after Gender in "The Basics", with no required mark. The hint under each: "Optional. Never on your card. We use it only to match you with people who ask for it." The hint tells the purpose, as the DPDP Act asks.
 - **Out of scope:**

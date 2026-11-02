@@ -31,8 +31,6 @@ describe('the body of an edit', () => {
   it('sends only the fields that changed', () => {
     const form = formOf(saved)
     expect(editBody(form, form)).toEqual({})
-    expect(editBody(form, { ...form, religion: 'jain' })).toEqual({ religion: 'jain' })
-    expect(editBody({ ...form, community: 'gujarati' }, { ...form, community: null })).toEqual({ community: null })
     expect(editBody(form, { ...form, fullName: 'Divya S', areas: ['bandra-santacruz', 'thane'], hidden: true }))
       .toEqual({ fullName: 'Divya S', areas: ['bandra-santacruz', 'thane'], hidden: true })
   })

@@ -98,7 +98,6 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
       formBPoints: sql<number>`${search.viewerUserId ? formBPoints(search.viewerUserId, sql`${profiles.userId}`, search.formBFloor) : sql`0`}`.as('form_b_points'),
       moveGap: sql<number | null>`${moveGap(sql`${profiles.moveDate}`, moveDate)}`.as('move_gap'),
     }).from(profiles).where(and(...conditions))
-      // The points of a hidden preference change only the order, never a label (T-58).
       .orderBy(sql`is_full desc, ${mustHaves.prefsMet} + ${religion.point} + ${community.point} desc, form_b_points desc, move_gap asc nulls last`, desc(profiles.createdAt))
       .limit(search.limit).offset(search.offset),
     db.$count(profiles, and(...conditions)),

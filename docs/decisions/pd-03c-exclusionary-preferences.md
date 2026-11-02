@@ -37,7 +37,7 @@ A stated community filter acts only on what candidates stated themselves. A cand
 **The hidden filter (T-58, 2026-11-02):**
 
 - **Two lists:** religion, and community by region or language. The lists are in the contract. No caste: a caste filter needs a written legal opinion and its own decision record.
-- **The searcher:** the chat fills two hidden slots of Form A. "Only" removes the people who stated a different value. "Preferably" puts the people with a matching value first, and removes nobody. No chip, question, label or results header shows the filter, and listings never filter on it ([PD3d](pd-03d-listing-identity-restrictions.md)).
+- **The searcher:** the chat fills two hidden slots of Form A, and each typed turn keeps the preference that it stated (mitigation 6). "Only" removes the people who stated a different value. "Preferably" counts as one more met preference in the order, and removes nobody. No chip, question, label or results header shows the filter, and listings never filter on it ([PD3d](pd-03d-listing-identity-restrictions.md)).
 - **The candidate:** the own values come only from what the person states: two optional profile fields, or the own chat. The newer statement wins. Only the person sees the values.
 - **The purpose:** the hint of each field tells it, as the DPDP Act asks: "Optional. Never on your card. We use it only to match you with people who ask for it."
 

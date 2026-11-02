@@ -35,12 +35,12 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="the-hidden-religion-and-community-filter">The hidden religion and community filter</h1>
-<p><strong>In one line:</strong> a searcher who states a religion or a community preference sees only the people who fit it, and nobody sees that the filter exists.</p>
+<p><strong>In one line:</strong> a religion or a community preference that a searcher states removes or reorders the people in the results, and nobody sees that the filter exists.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li><strong>Two lists:</strong> religion (Hindu, Muslim, Jain and more) and community, by region or language (Gujarati, Marathi, Tamil and more). There is no caste value (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>).</li>
 <li><strong>The preference of the searcher</strong> goes into two <strong>hidden slots</strong> of Form A: <code>religionPreference</code> and <code>communityPreference</code>. Each has the values and a weight.</li>
-<li><strong>"Only"</strong> (a dealbreaker) removes the people who stated a different value. <strong>"Preferably"</strong>, and an unclear weight, put the people with a matching value first, and remove nobody.</li>
+<li><strong>"Only"</strong> (a dealbreaker) removes the people who stated a different value. <strong>"Preferably"</strong>, and an unclear weight, count as one more met preference in the order, and remove nobody.</li>
 <li><strong>The own values of a person</strong> come only from what the person states: the two optional fields of the profile, or the own chat ("I'm Jain"). A person who stated nothing always stays in the results, with no label (PC-31).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -76,8 +76,8 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li><strong>Hidden from everyone.</strong> The reply never names the slots: they are not in the list of the slots that the assistant talks about. A card, a person page and the results never send the values of a person.</li>
-<li><strong>The newer statement wins.</strong> A statement in the chat replaces the field, and a change of the field replaces the chat. The chat never asks which one to keep, because the question would show the filter.</li>
-<li><strong>A visitor</strong> keeps the own values on the goal. A new profile takes the latest stated values of the goals of the person.</li>
+<li><strong>The newer statement wins.</strong> A statement in the chat replaces the field, and a change of the field replaces the chat. The chat never asks which one to keep, because the question would show the filter. Each typed turn keeps the hidden preference that it stated, as the log of PD3c.</li>
+<li><strong>A visitor</strong> keeps the own values on the goal, with the time of each statement. A new profile takes the latest stated values of the goals of the person, by that time.</li>
 <li><strong>The gate.</strong> As with each value of the extractor, a value below <code>ASSISTANT_MIN_PROBABILITY</code> does not count. A weight below it is <code>unclear</code>.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
