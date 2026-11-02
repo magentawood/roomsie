@@ -8,6 +8,7 @@ start: 2026-11-04
 end: 2026-11-05
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/198
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 14 of 14  
 **When:** Wed 4 Nov → Thu 5 Nov · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#198](https://github.com/magentawood/roomsie/issues/198)
 
 Tap buttons for the closed questions after the budget, so a person types less.
 
