@@ -144,6 +144,45 @@ const AREAS: AreaSeed[] = [
   ] },
 ]
 
+/**
+ * The Devanagari spellings of the words of the area names: Hindi first, then Marathi where it differs (PD7, PC-09).
+ * A name or an alias gets its Devanagari forms when the table has each of its words.
+ */
+const DEVANAGARI: Record<string, string[]> = {
+  West: ['पश्चिम', 'वेस्ट'], East: ['पूर्व', 'ईस्ट'], South: ['साउथ', 'दक्षिण'], Mumbai: ['मुंबई'], Navi: ['नवी'], Lower: ['लोअर'], Upper: ['अपर'],
+  Road: ['रोड'], Nagar: ['नगर'], Hill: ['हिल'], Village: ['विलेज'], Gardens: ['गार्डन्स'], Garden: ['गार्डन'], Estate: ['इस्टेट'], Central: ['सेंट्रल'],
+  Lines: ['लाइन्स'], Parade: ['परेड'], Gaon: ['गांव', 'गाव'], Colony: ['कॉलोनी'], Station: ['स्टेशन'], Lake: ['लेक'], Market: ['मार्केट'], Point: ['पॉइंट'],
+  Andheri: ['अंधेरी'], Goregaon: ['गोरेगांव', 'गोरेगाव'], Jogeshwari: ['जोगेश्वरी'], Lokhandwala: ['लोखंडवाला'], Versova: ['वर्सोवा', 'वेसावे'],
+  Oshiwara: ['ओशिवरा'], Marol: ['मरोल', 'मरोळ'], Saki: ['साकी'], Naka: ['नाका'], Sakinaka: ['साकीनाका'], Amboli: ['अंबोली'], Chakala: ['चकाला'],
+  Sahar: ['सहार'], Airport: ['एयरपोर्ट'], Yari: ['यारी'], Gokuldham: ['गोकुलधाम'], Dindoshi: ['दिंडोशी'], Aarey: ['आरे'], Film: ['फिल्म'], City: ['सिटी'],
+  Bandra: ['बांद्रा', 'वांद्रे'], Khar: ['खार'], Santacruz: ['सांताक्रूज', 'सांताक्रुझ'], Santa: ['सांता'], Cruz: ['क्रूज', 'क्रुझ'], Kalina: ['कलिना', 'कालिना'],
+  Vile: ['विले'], Parle: ['पार्ले'], Juhu: ['जुहू'], Pali: ['पाली'], Carter: ['कार्टर'], Bandstand: ['बैंडस्टैंड'], Kherwadi: ['खेरवाडी'], Vakola: ['वाकोला'],
+  Powai: ['पवई'], Hiranandani: ['हीरानंदानी', 'हिरानंदानी'], Chandivali: ['चांदिवली'], Vikhroli: ['विक्रोली', 'विक्रोळी'], Kanjurmarg: ['कांजुरमार्ग', 'कांजूरमार्ग'],
+  Bhandup: ['भांडुप'], Mulund: ['मुलुंड'], Worli: ['वर्ली', 'वरळी'], Parel: ['परेल', 'परळ'], Prabhadevi: ['प्रभादेवी'], Mahalaxmi: ['महालक्ष्मी'],
+  Mahalakshmi: ['महालक्ष्मी'], Lalbaug: ['लालबाग'], Sewri: ['सेवरी', 'शिवडी'], Dadar: ['दादर'], Mahim: ['माहिम', 'माहीम'], Matunga: ['माटुंगा'],
+  Sion: ['सायन', 'शीव'], Wadala: ['वडाला', 'वडाळा'], Dharavi: ['धारावी'], Colaba: ['कोलाबा', 'कुलाबा'], Cuffe: ['कफ'], Churchgate: ['चर्चगेट'], Fort: ['फोर्ट'],
+  Marine: ['मरीन'], Girgaon: ['गिरगांव', 'गिरगाव'], Girgaum: ['गिरगांव', 'गिरगाव'], Grant: ['ग्रांट'], Malabar: ['मलबार'], Tardeo: ['ताडदेव'],
+  Byculla: ['भायखला', 'भायखळा'], Mazgaon: ['मझगांव', 'माझगाव'], Nariman: ['नरीमन'], Chowpatty: ['चौपाटी'], Walkeshwar: ['वालकेश्वर'], Dongri: ['डोंगरी'],
+  Malad: ['मलाड', 'मालाड'], Kandivali: ['कांदिवली'], Kandivli: ['कांदिवली'], Charkop: ['चारकोप'], Thakur: ['ठाकुर', 'ठाकूर'], Borivali: ['बोरीवली', 'बोरिवली'],
+  Borivli: ['बोरीवली', 'बोरिवली'], Gorai: ['गोराई'], Dahisar: ['दहिसर'], Mira: ['मीरा'], Bhayandar: ['भायंदर', 'भाईंदर'], Bhayander: ['भायंदर', 'भाईंदर'],
+  Chembur: ['चेंबूर', 'चेम्बूर'], Ghatkopar: ['घाटकोपर'], Tilak: ['तिलक', 'टिळक'], Tilaknagar: ['तिलकनगर', 'टिळकनगर'], Kurla: ['कुर्ला'],
+  Vidyavihar: ['विद्याविहार'], Chunabhatti: ['चुनाभट्टी'], Deonar: ['देवनार'], Govandi: ['गोवंडी'], Mankhurd: ['मानखुर्द'], Trombay: ['ट्रॉम्बे', 'तुर्भे'],
+  Thane: ['ठाणे', 'थाने'], Naupada: ['नौपाडा'], Ghodbunder: ['घोडबंदर'], Manpada: ['मानपाडा'], Kasarvadavali: ['कासारवडवली'], Kasarvadavli: ['कासारवडवली'],
+  Kolshet: ['कोलशेत'], Balkum: ['बालकुम', 'बाळकुम'], Majiwada: ['माजिवडा', 'माजिवाडा'], Majiwade: ['माजिवडे'], Pokhran: ['पोखरण'], Vasant: ['वसंत'],
+  Vihar: ['विहार'], Vartak: ['वर्तक'], Wagle: ['वागले'], Kopri: ['कोपरी'], Kalwa: ['कलवा', 'कळवा'], Mumbra: ['मुंब्रा'], Diva: ['दिवा'],
+  Airoli: ['ऐरोली'], Digha: ['दिघा'], Ghansoli: ['घनसोली', 'घणसोली'], Kopar: ['कोपर'], Khairane: ['खैरने', 'खैरणे'], Koparkhairane: ['कोपरखैरणे'],
+  Rabale: ['रबाले', 'रबाळे'], Turbhe: ['तुर्भे'], Mahape: ['महापे'], Vashi: ['वाशी'], Sanpada: ['सानपाडा'], Juinagar: ['जुईनगर'], Nerul: ['नेरुल', 'नेरूळ'],
+  Seawoods: ['सीवुड्स'], CBD: ['सीबीडी'], Belapur: ['बेलापुर', 'बेलापूर'], Kharghar: ['खारघर'], Mansarovar: ['मानसरोवर'], Khandeshwar: ['खांदेश्वर'],
+  Kamothe: ['कामोठे'], Kalamboli: ['कलंबोली', 'कळंबोली'], Panvel: ['पनवेल'], Ulwe: ['उलवे'], Taloja: ['तलोजा', 'तळोजा'],
+}
+
+/** Each Devanagari form of a name. "Andheri West" gives "अंधेरी पश्चिम" and "अंधेरी वेस्ट". */
+function devanagariOf(name: string): string[] {
+  const words = name.split(/[\s–()-]+/).filter(Boolean)
+  if (!words.length || !words.every((word) => DEVANAGARI[word]?.length)) return []
+  return words.reduce<string[]>((forms, word) => forms.flatMap((form) => DEVANAGARI[word]!.map((d) => (form ? `${form} ${d}` : d))), [''])
+}
+
 const NEIGHBOURS: Record<string, string[]> = {
   'south-mumbai': ['lower-parel-worli'],
   'lower-parel-worli': ['south-mumbai', 'dadar-sion', 'bandra-santacruz'],
@@ -158,7 +197,11 @@ const NEIGHBOURS: Record<string, string[]> = {
 }
 
 const rows = (list: AreaSeed[], parentSlug: string | null = null): (typeof areas.$inferInsert)[] =>
-  list.flatMap(({ areas: children = [], ...area }) => [{ ...area, parentSlug, neighbours: NEIGHBOURS[area.slug] ?? [] }, ...rows(children, area.slug)])
+  list.flatMap(({ areas: children = [], ...area }) => {
+    const latin = [area.name, ...(area.aliases ?? [])]
+    const aliases = [...new Set([...(area.aliases ?? []), ...latin.flatMap(devanagariOf)])]
+    return [{ ...area, aliases, parentSlug, neighbours: NEIGHBOURS[area.slug] ?? [] }, ...rows(children, area.slug)]
+  })
 
 export async function seedAreas(db: Db) {
   await db.insert(areas).values(rows(AREAS).map((row, i) => ({ ...row, sortOrder: i + 1 })))
