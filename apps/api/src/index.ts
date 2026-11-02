@@ -21,6 +21,8 @@ const app = buildServer({
   models: env.models,
   matching: env.matching,
   assistant: env.assistant,
+  limits: env.limits,
+  spend: env.spend,
   storage: r2Storage({
     accountId: env.R2_ACCOUNT_ID,
     accessKeyId: env.R2_ACCESS_KEY_ID,

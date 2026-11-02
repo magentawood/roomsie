@@ -26,6 +26,9 @@ import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
 import type { Models } from './models/models'
+import { spendSettings, type SpendSettings } from './models/settings'
+import { spendOf, type Spend } from './models/spend'
+import { limitSettings, type LimitSettings } from './goals/settings'
 import { modelRoutes } from './models/routes'
 import { moderationRoutes } from './moderation/routes'
 import { profileRoutes } from './profiles/routes'
@@ -45,20 +48,26 @@ declare module 'fastify' {
   interface FastifyInstance {
     alerts: Alerts
     analytics: Analytics
+    spend: Spend
   }
 }
 
 /** The date of today in Mumbai, as an ISO date. */
 const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
-export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; today?: () => string } & AuthOptions) {
-  const app = Fastify({ logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]'] } }).withTypeProvider<ZodTypeProvider>()
+export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; limits?: LimitSettings; spend?: SpendSettings; today?: () => string } & AuthOptions) {
+  // The load balancer of Lightsail adds the address of the person as the last X-Forwarded-For entry (T-21).
+  const app = Fastify({ trustProxy: (_address: string, hop: number) => hop === 0, logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]'] } }).withTypeProvider<ZodTypeProvider>()
+  const today = options.today ?? todayInIst
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
   const analytics = analyticsOf(options.analyticsDb, app.log)
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())
+  const spend = spendOf({ db: options.db, settings: options.spend ?? spendSettings.parse({}), today, log: app.log })
+  app.decorate('spend', spend)
+  app.addHook('onClose', () => spend.settled())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
@@ -121,7 +130,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       articleRoutes(v1, options)
       modelRoutes(v1, options)
       resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
-      goalRoutes(v1, { ...options, settings: options.assistant ?? assistantSettings.parse({}), today: options.today ?? todayInIst })
+      goalRoutes(v1, { ...options, settings: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today })
     },
     { prefix: '/v1' },
   )

@@ -11,7 +11,7 @@
  */
 import { sql, type SQL } from 'drizzle-orm'
 import {
-  pgTable, pgEnum, uuid, text, integer, real, boolean, date, timestamp, jsonb,
+  pgTable, pgEnum, uuid, text, integer, smallint, numeric, real, boolean, date, timestamp, jsonb,
   primaryKey, uniqueIndex, index, check, unique, foreignKey, customType,
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
@@ -426,8 +426,11 @@ export const anonymousSessions = pgTable('anonymous_sessions', {
   id: id(),
   /** The SHA-256 of the visitor key. Only the browser has the key, so a log line with the id opens no chat (T-12). */
   keyHash: text('key_hash').notNull(),
-  /** Per-device, per-network hash. Feeds the rate limits in T-21. */
+  /** The hash of the IP address and the user agent: one device on one network (T-21). */
   deviceHash: text('device_hash').notNull(),
+  /** The hashes of the IP address and of its range, never the address (T-21). Null on a session from before T-21. */
+  ipHash: text('ip_hash'),
+  ipRangeHash: text('ip_range_hash'),
   /** Typed turns only — chip taps are free and do not count (T-21). */
   turnCount: integer('turn_count').notNull().default(0),
   /** Set when the visitor signs in and the chat is carried over (T-17). */
@@ -438,6 +441,8 @@ export const anonymousSessions = pgTable('anonymous_sessions', {
 }, (t) => ({
   keyIdx: uniqueIndex('anonymous_sessions_key_idx').on(t.keyHash),
   deviceIdx: index('anonymous_sessions_device_idx').on(t.deviceHash),
+  ipIdx: index('anonymous_sessions_ip_idx').on(t.ipHash),
+  ipRangeIdx: index('anonymous_sessions_ip_range_idx').on(t.ipRangeHash),
   claimedIdx: index('anonymous_sessions_claimed_idx').on(t.claimedByUserId),
 })).enableRLS()
 
@@ -712,3 +717,10 @@ export const articlePassages = pgTable('article_passages', {
   positionUnique: unique('article_passages_position_unique').on(t.articleId, t.position),
   searchIdx: index('article_passages_search_idx').using('gin', t.search),
 })).enableRLS()
+
+/** The model spend of each day in IST, and the highest alert that went: 70 or 100 (PD9, T-21). The models module owns it. */
+export const modelSpend = pgTable('model_spend', {
+  day: date('day').primaryKey(),
+  rupees: numeric('rupees', { precision: 14, scale: 6 }).notNull().default('0'),
+  alerted: smallint('alerted').notNull().default(0),
+}).enableRLS()

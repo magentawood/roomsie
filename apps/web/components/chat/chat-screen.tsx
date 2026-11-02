@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
 import { formA, goalResponse, listingTitle, newGoalResponse, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
-import { ApiError, chatApi, errorText } from '../../lib/api'
+import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
@@ -12,6 +12,8 @@ import { formKey, panelReady, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults } from '../results/results-panel'
+import { GoogleSignIn } from '../shell/google-sign-in'
+import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
 import { Chips } from './chips'
 
@@ -101,26 +103,31 @@ function useChat() {
         const made = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
         if (made.visitorKey) writeStored(chatStorage.visitorKey, made.visitorKey)
         writeStored(chatStorage.goal, made.id)
-        queryClient.setQueryData(queryKeys.goal(made.id), { id: made.id, form: made.form, turns: [] })
+        queryClient.setQueryData(queryKeys.goal(made.id), { id: made.id, form: made.form, turns: [], typedTurnsLeft: made.typedTurnsLeft })
         setGoalId(made.id)
         id = made.id
       }
       return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
     },
-    onSuccess: ({ id, form, turns }) => {
-      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns] }))
+    onSuccess: ({ id, form, turns, typedTurnsLeft }) => {
+      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns], typedTurnsLeft }))
     },
   })
   const turns = goal.data?.turns ?? []
-  return { turns, form: goal.data?.form ?? emptyForm, send, loadingGoal: goalId !== null && goal.isPending && !gone }
+  // A sign-in lifts the cap, and the goal in the cache still has the count of the visitor.
+  const typedTurnsLeft = user ? null : goal.data?.typedTurnsLeft ?? null
+  return { turns, form: goal.data?.form ?? emptyForm, typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 
 const emptyForm = formA.parse({})
 
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
-  const { turns, form: chatForm, send, loadingGoal } = useChat()
-  const [failed, setFailed] = useState<string | null>(null)
+  const { turns, form: chatForm, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
+  /** The line of a failed send. A limit on new chats adds a sign-in button (drafts section 34). */
+  const [failed, setFailed] = useState<{ text: string; signIn: boolean } | null>(null)
+  const [wall, setWall] = useState(false)
+  const [capped, setCapped] = useState(false)
   const pending = send.isPending || failed ? send.variables?.text : undefined
   const areaLabels = useAreaLabels()
   const form = preview ? sampleForm : chatForm
@@ -132,13 +139,23 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const [draft, setDraft] = useState({ text: '', version: 0 })
+  // The turn cap of PD9: after the wall, the input is a sign-in button, and a chip tap opens the wall again.
+  const atCap = !signedIn && (capped || (typedTurnsLeft === 0 && ready))
   const submit = (turn: Outgoing) => {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
-    send.mutate(turn, { onError: (err) => setFailed(errorText(err)) })
+    send.mutate(turn, {
+      onError: (err) => {
+        const limit = limitOf(err)
+        if (limit !== 'turn_cap') return setFailed({ text: errorText(err), signIn: limit === 'too_many_chats' })
+        send.reset()
+        setCapped(true)
+        setWall(true)
+      },
+    })
   }
   const sendText = (text: string) => submit({ body: { text }, text })
-  const tap = (chip: ChipTap) => submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) })
+  const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
   const chipSlot = send.isPending ? null : chipsOf(turns, chatForm)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
@@ -162,9 +179,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {pending !== undefined && (
             <li className="flex flex-col gap-6">
               <UserText text={pending} />
-              {failed
-                ? <p role="alert" className="text-md text-error-primary">{failed}</p>
-                : <p className="text-md text-tertiary">Thinking…</p>}
+              {failed ? (
+                <div role="alert" className="flex flex-col items-start gap-3">
+                  <p className="text-md text-error-primary">{failed.text}</p>
+                  {failed.signIn && <div className="w-fit"><GoogleSignIn /></div>}
+                </div>
+              ) : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
           )}
           {shown && <li><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>}
@@ -178,7 +198,10 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       </div>
       <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
         {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
-        <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText} />
+        {atCap
+          ? <Button variant="primary" size="lg" className="w-full" onClick={() => setWall(true)}>Sign in to keep chatting</Button>
+          : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText} />}
+        {typedTurnsLeft !== null && <p className="mt-2 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
       </div>
       {shown && (
         <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
@@ -187,6 +210,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />
         </div>
       )}
+      {wall && !signedIn && <SignInWall title="Sign in to keep chatting" text="Your search and results stay." onClose={() => setWall(false)} />}
     </main>
   )
 }

@@ -1,6 +1,6 @@
 import type { User } from 'firebase/auth'
 import type { z } from 'zod'
-import { errorResponse, incompleteListingResponse, inviteRefusalResponse, visitorKeyHeader, type GoLiveField, type InviteRefusal } from '@roomsie/contract'
+import { errorResponse, incompleteListingResponse, inviteRefusalResponse, limitRefusal, visitorKeyHeader, type GoLiveField, type InviteRefusal, type LimitRefusal } from '@roomsie/contract'
 import { apiUrl } from './api-url'
 import { chatStorage, readStored } from './chat'
 
@@ -60,6 +60,12 @@ export function errorText(err: unknown) {
 export function missingFields(err: unknown): GoLiveField[] | null {
   const incomplete = err instanceof ApiError && err.status === 422 ? incompleteListingResponse.safeParse(err.body) : null
   return incomplete?.success ? incomplete.data.missing : null
+}
+
+/** The limit of PD9 that refused a turn or a new chat (T-21), or null for a different error. */
+export function limitOf(err: unknown): LimitRefusal['limit'] | null {
+  const parsed = err instanceof ApiError ? limitRefusal.safeParse(err.body) : null
+  return parsed?.success ? parsed.data.limit : null
 }
 
 /** The answer of the gate of T-33, or null for a different error. */

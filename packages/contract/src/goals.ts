@@ -15,7 +15,9 @@ export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
 export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable(), createdAt: z.iso.datetime() })
-export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn) })
+/** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null for a signed-in person. */
+const typedTurnsLeft = z.number().int().min(0).nullable()
+export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
@@ -38,7 +40,11 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000) }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
-export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]) })
+export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft })
+
+/** The limits of PD9 that refuse a turn or a new visitor chat (T-21). */
+export const limitRefusal = z.object({ error: z.string(), limit: z.enum(['turn_cap', 'too_many_chats', 'too_fast']) })
+export type LimitRefusal = z.infer<typeof limitRefusal>
 export type TurnResponse = z.infer<typeof turnResponse>
 
 /* The handlers of the assistant (PD7a). A change of a field gives the schema a new version. */

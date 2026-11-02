@@ -169,6 +169,13 @@
       "when": 1793615346580,
       "tag": "0023_community_filter",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1793625314329,
+      "tag": "0024_limits",
+      "breakpoints": true
     }
   ]
 }
