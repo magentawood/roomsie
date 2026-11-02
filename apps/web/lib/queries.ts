@@ -10,7 +10,7 @@ import { api, ApiError } from './api'
 import { areaTree } from './areas'
 import { useAuth, useUser } from './auth'
 import { badgeCount } from './messages'
-import { formKey, foundIn, nextPage } from './results'
+import { formKey, joinPages, nextPage } from './results'
 
 /** The cache keys of the API data. A change sets or refreshes its key. */
 export const queryKeys = {
@@ -208,7 +208,7 @@ export function useResults(form: FormA | null) {
     queryFn: ({ pageParam }) => api(user, '/v1/results', resultsResponse, { method: 'POST', body: { form, page: pageParam } }),
     initialPageParam: 1,
     getNextPageParam: nextPage,
-    select: foundIn,
+    select: joinPages,
     enabled: form !== null && !loading,
     staleTime: Infinity,
     gcTime: Infinity,

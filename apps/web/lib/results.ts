@@ -1,11 +1,11 @@
 import { resultsPageSize, type FormA, type MatchResult, type MustHaveKey, type ResultsResponse } from '@roomsie/contract'
-import { rupees } from './listing-steps'
+import { budgetLine } from './person'
 
 /** What a search found, in the pages that loaded. `total` counts the results of all pages. */
 export type Found = { results: MatchResult[]; total: number; suggested: MatchResult[] }
 
 /** The pages of a search as one grid. Only a search that finds nothing has suggested posts, on its first page (T-14). */
-export const foundIn = ({ pages }: { pages: ResultsResponse[] }): Found => ({
+export const joinPages = ({ pages }: { pages: ResultsResponse[] }): Found => ({
   results: pages.flatMap((page) => page.results),
   total: pages.at(-1)!.total,
   suggested: pages[0]!.suggestions.flatMap((suggestion) => suggestion.results),
@@ -14,7 +14,7 @@ export const foundIn = ({ pages }: { pages: ResultsResponse[] }): Found => ({
 export const nextPage = ({ page, total }: Pick<ResultsResponse, 'page' | 'total'>) => (page * resultsPageSize < total ? page + 1 : undefined)
 
 type Slot = FormA['intent'] | FormA['areas'] | FormA['budget']
-const known = <S extends Slot>(slot: S) => (slot.source === 'empty' || slot.value === 'unclear' ? null : slot.value as Exclude<S['value'], 'unclear' | null>)
+const known = <S extends Slot>(slot: S) => (slot.value === 'unclear' ? null : slot.value as Exclude<S['value'], 'unclear' | null>)
 
 /** The panel shows first when the person gave intent, area and budget (PD6c, interface-shape.md hole 3). */
 export const panelReady = (form: FormA) => Boolean(known(form.intent) && known(form.areas) && known(form.budget))
@@ -27,33 +27,23 @@ function areaPhrase(slugs: readonly string[], label: (slug: string) => string) {
   return rest.length ? `${first}, ${second} and ${rest.length} more` : `${first} and ${second}`
 }
 
-function budgetPhrase({ min, max }: NonNullable<FormA['budget']['value']>) {
-  if (min !== null && max !== null) return `${rupees(min)} to ${rupees(max)}`
-  return max !== null ? `under ${rupees(max)}` : `from ${rupees(min!)}`
-}
-
 /** The scope of the header: "Everything in Mumbai", then "Flats in Powai–Vikhroli", then "… under ₹20,000" (drafts section 14). */
 export function panelTitle(form: FormA, label: (slug: string) => string) {
   const intent = known(form.intent)
   const areas = known(form.areas)
   const budget = known(form.budget)
   const scope = `${intent ? nouns[intent] : 'Everything'} in ${areas ? areaPhrase(areas, label) : 'Mumbai'}`
-  return budget ? `${scope} ${budgetPhrase(budget)}` : scope
+  // A budget has a minimum or a maximum, so it always has a line.
+  return budget ? `${scope} ${budgetLine({ budgetMin: budget.min, budgetMax: budget.max })!.toLowerCase()}` : scope
 }
 
 export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
 
 /**
  * The panel is a pure function of the form (PD6c): the values and the weights, never the sources.
- * Thus a stated value that confirms a default gives the same key, and no new query.
+ * Thus a stated value that confirms a default gives the same key, and no new query. Each form is a `formA` parse, so its keys have one order.
  */
-export function formKey(form: FormA) {
-  return JSON.stringify([
-    form.intent.value, form.roomType.value, form.whosMoving.value, form.areas.value, form.budget.value, form.moveDate.value,
-    Object.entries(form.lifestyle).map(([axis, slot]) => [axis, slot.value]),
-    Object.entries(form.mustHaves).map(([key, slot]) => [key, slot.value]),
-  ])
-}
+export const formKey = (form: FormA) => JSON.stringify(form, (key, value: unknown) => (key === 'source' ? undefined : value))
 
 /** The answer that a card did not give, for each dealbreaker: a person answers a lifestyle question, a listing has a house rule (PD3a). */
 const unanswered: Record<MatchResult['kind'], Record<MustHaveKey, string>> = {

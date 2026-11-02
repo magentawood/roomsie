@@ -3,10 +3,7 @@ import type { Found } from './results'
 // Borrowed from the tests: a sample place needs each field of a listing.
 import { listing as emptyListing, testId as id } from './test-listing'
 
-/**
- * The data of `/chat?preview=results` and `?preview=empty` (T-15). They show each card kind and the empty state
- * with no listings and no chat, for a check of the designs.
- */
+/** The data of `/chat?preview=results` and `?preview=empty`, for a check of the designs. */
 export const previews = ['results', 'empty'] as const
 export type Preview = (typeof previews)[number]
 
@@ -37,10 +34,7 @@ type Labels = Partial<Pick<MatchResult, 'bestMatch' | 'didntSay'>>
 const placeMatch = (listing: ListingResponse, labels: Labels = {}): MatchResult => ({ kind: 'listing', listing, bestMatch: false, didntSay: [], ...labels })
 const personMatch = (card: CardResponse, labels: Labels = {}): MatchResult => ({ kind: 'person', card, bestMatch: false, didntSay: [], ...labels })
 
-/**
- * The five card kinds of the Product file, in the Best Matches order of PD3a: the "Didn't say" cards last.
- * The mix of kinds is on purpose, to show each card. A real "room" search gives rooms only (PD3a).
- */
+/** The mix of kinds is on purpose, to show each card. A real "room" search gives rooms only (PD3a). */
 const sampleMatches: Found = {
   total: 8,
   results: [

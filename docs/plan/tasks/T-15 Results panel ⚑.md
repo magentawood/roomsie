@@ -69,7 +69,7 @@ Shows matches as cards: people and places.
 - **Seams for the tests:**
   - The unit tests of `lib/results.ts`: the header, when the panel shows, the form key, the "Didn't say" line and the update rule.
   - A browser check at 402 px and 1440 px of `/chat?preview=results` and `/chat?preview=empty`.
-  - The unit tests of `resultsPage()`, and of the update rule for a next page (review of n3rxv).
+  - The unit tests of `joinPages()` and `nextPage()`, and of the update rule for a next page (review of n3rxv).
   - A browser check of `/chat` on a local API with 25 rooms: the count, the next page, "Show all" on a phone, the empty panel and a failed search (review of n3rxv).
 - **Decisions:**
   - **The match query (review of n3rxv):** the panel shows the results of `POST /v1/results` (T-14) for the form of the chat. T-12 and T-14 merged before the review, so Niruv Bhardwaj decided on 2026-11-02 that T-15 connects them.
@@ -77,6 +77,7 @@ Shows matches as cards: people and places.
   - **The next page (review of n3rxv):** a line at the end of the grid loads the next 20 results when it comes into view, as in a message thread. The header and the results card count all the results.
   - **One search for each form (review of n3rxv):** the cache keeps each form and never searches it again, so the order of a form never moves. Thus, the next page of the form on the screen shows at once, also during a scroll. It loads only while the newest form is on the screen. A sign-in clears the cache, so the results load again for the person.
   - **While new results load (review of n3rxv):** the panel keeps the results on the screen and their header. A failed search shows "The results did not load." and "Try again" in the chat.
+  - **When the panel opens (review round 2 of n3rxv):** new results come as the results card in the chat. On a desktop, the panel opens beside the chat on the next send, or when the person opens the card. Thus, the size never changes while the person reads the reply (PD6a). The preview opens with the panel.
   - **A failed next page (review round 1 of n3rxv):** the end of the grid shows "The next results did not load." and "Try again". The line does not ask again until the tap.
   - **When the panel shows:** when intent, area and budget have a value (interface-shape.md, hole 3).
   - **The header:** the noun of the intent ("Rooms", "PGs", "Flats", "People"), the areas and the budget, then the count. With no intent, it reads "Everything in", then the areas, or "Mumbai" with no area (drafts section 14).

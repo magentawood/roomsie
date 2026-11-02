@@ -11,7 +11,6 @@ export function CardLink({ href, onOpen, decorative, className, children }: {
   return <Link href={href} className={className} {...a11y}>{children}</Link>
 }
 
-/** The match label over the photo of a card (T-15). */
 export function CardLabel({ children }: { children?: ReactNode }) {
   return children ? <div className="absolute top-3 left-3">{children}</div> : null
 }
