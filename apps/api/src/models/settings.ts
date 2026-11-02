@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { unsetIfEmpty } from '../env-values'
-import { modelsOf, vendorOf, type Vendor } from './models'
+import { modelsOf, vendorOf } from './models'
 
 const vendorModel = z.string().refine((name) => vendorOf(name) !== undefined, 'a model name starts with deepseek- or gemini-')
 
@@ -16,12 +16,6 @@ export const modelSettings = z.object({
   ? modelsOf({ keys: { deepseek: s.DEEPSEEK_API_KEY, gemini: s.GEMINI_API_KEY }, primary: s.MODEL_PRIMARY, fallback: s.MODEL_FALLBACK, timeoutMs: s.MODEL_TIMEOUT_MS })
   : undefined))
 
-/** The dollars of a million tokens of each vendor, at the highest price of docs/model-selection.md, so the estimate is high. */
-export const modelPrices: Record<Vendor, { in: number; cachedIn: number; out: number }> = {
-  deepseek: { in: 0.3, cachedIn: 0.012, out: 1.2 },
-  gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 },
-}
-export const usdToInr = 88
 
 /** The daily amount of PD9: never a stop, only the alerts at 70% and 100% (T-21). The first values are guesses (PC-10). */
 export const spendSettings = z.object({

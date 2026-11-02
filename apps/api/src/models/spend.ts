@@ -5,8 +5,14 @@ import { reportError } from '@roomsie/config/report'
 import type { Db } from '../db/client'
 import { modelSpend } from '../db/schema'
 import type { Vendor } from './models'
-import { modelPrices, usdToInr, type SpendSettings } from './settings'
+import type { SpendSettings } from './settings'
 
+/** The dollars of a million tokens of each vendor, at the highest price of docs/model-selection.md, so the estimate is high. */
+const modelPrices: Record<Vendor, { in: number; cachedIn: number; out: number }> = {
+  deepseek: { in: 0.3, cachedIn: 0.012, out: 1.2 },
+  gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 },
+}
+const usdToInr = 88
 const inRupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 
 /** The model spend of each day (PD9, T-21). The chat never stops for it: the team gets a Telegram alert at 70% and at 100%. */
