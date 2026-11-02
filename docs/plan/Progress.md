@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**209 of 326 done · 64%**
+**214 of 326 done · 66%**
 
-`███████████████░░░░░░░░░`
+`████████████████░░░░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 9 / 11 | 29 / 35 | 83% |
 | [[P2 Chat]] | 6 / 13 | 27 / 62 | 44% |
-| [[P3 Data and trust]] | 15 / 19 | 72 / 86 | 84% |
+| [[P3 Data and trust]] | 16 / 19 | 77 / 86 | 90% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**23 free tasks are open · 72 build hours.**
+**22 free tasks are open · 64 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -68,7 +68,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-48 Onboarding questions]] | P3 | 5 | ⬜ can start | 0 | [#124](https://github.com/magentawood/roomsie/issues/124) |
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
-| 0 | [[T-58 Community filter]] | P3 | 8 | ⬜ can start | 0 | [#194](https://github.com/magentawood/roomsie/issues/194) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
@@ -151,7 +150,7 @@ flowchart LR
   T55["T-55<br/>Message alerts"]:::done
   T56["T-56<br/>Sub-areas API"]:::done
   T57["T-57<br/>Sub-area pickers"]:::done
-  T58["T-58<br/>Community filter"]:::ready
+  T58["T-58<br/>Community filter"]:::done
   T46["T-46<br/>ID verification"]:::done
   T47["T-47<br/>Saved"]:::done
   T48["T-48<br/>Onboarding questions"]:::ready
@@ -358,7 +357,7 @@ flowchart LR
 > ![[T-09 Chip flow ⚑#^done]]
 
 
-## P3 Data and trust — 72/86
+## P3 Data and trust — 77/86
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -390,7 +389,7 @@ flowchart LR
 > [!todo]- ✅ [[T-43 Listing detail screens]] · 4/4
 > ![[T-43 Listing detail screens#^done]]
 
-> [!todo]- ⬜ [[T-58 Community filter]] · 0/5
+> [!todo]- ✅ [[T-58 Community filter]] · 5/5
 > ![[T-58 Community filter#^done]]
 
 > [!todo]- ✅ [[T-44 Messages API]] · 6/6
