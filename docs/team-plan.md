@@ -747,7 +747,6 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A card with an unanswered dealbreaker shows below the full matches, with what is missing
 - The suggested posts use the next budget band or a neighbouring area group, from a seeded list
 - Each page of results fires the 'results shown' event through track() of T-24
-- The results panel of T-15 shows the results of the match query. The sample data and the preview of T-15 go
 - Read first: `docs/interface-shape.md`, `docs/decisions/pd-03a-flatmate-matching.md`
 
 **M-05 · Drafts of articles 1 to 10** — done when:
@@ -814,7 +813,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/0014-error-tracking.md`
 
 **T-15 · Results panel, built against the contract** — done when:
-- The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data
+- The grid shows the five card kinds of the Product file: flatmate, room in a flat, owner flat, PG or hostel, and broker flat. It uses the Form A contract and sample data. When T-14 lands, the grid connects to the match query
 - The header says what it shows, from Everything in Mumbai down to People in Powai under 20k
 - It updates only when a form value or weight changes. It never changes the order during a scroll
 - A card shows the Best match label and the Didn't say label of PD3a
