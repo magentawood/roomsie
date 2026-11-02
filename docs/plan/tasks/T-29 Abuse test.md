@@ -31,7 +31,7 @@ Attack our own site before strangers do.
 - No task waits on this task.
 
 ## Done when
-- [ ] A script opens 100 anonymous sessions
+- [ ] A script asks for 100 anonymous sessions from one device, and the limit refuses each one after the first 10
 - [ ] The per-device and per-network limits stop the requests when a device or network goes over them
 - [ ] When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert
 
@@ -39,3 +39,27 @@ Attack our own site before strangers do.
 
 ## Read first
 - [pre-login-limits.md](../../pre-login-limits.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by n3rxv
+
+- **Modules:**
+  - **The abuse script (new):** `tools/abuse-test.mjs`, in Node with no new dependency. A person runs it against `https://api.roomsie.in` before the launch. It asks for 100 visitor sessions with one user agent, and it counts the sessions that open and the refusals `too_many_chats`. In one of its sessions, it taps the chips to results, sends five typed turns, and expects `turn_cap` on the sixth. It prints a report, and it fails when a limit does not stop it.
+  - **The alert check (new):** `POST /v1/admin/alert-check`, for a moderator only, as the model check of T-11. The live API sends one Telegram message through the code of the spend alert. It answers 503 when the Telegram settings are not set. The interface changes.
+  - **The docs:** the learn page of the limits tells how to run the abuse test and the alert check before the launch (go/no-go check 3 of PD11).
+- **Seams for the tests:**
+  - A test of the alert check route: a moderator sends one message to the fake Telegram, a person who is not a moderator gets 403, and no Telegram settings give 503.
+  - The script runs one time against roomsie.in, and its report goes in the PR.
+  - The alert check runs one time on roomsie.in from the signed-in Safari of the user, and the message goes to the team group.
+- **Decisions:**
+  - **A light test on roomsie.in (the user, 2026-11-02):** the script trips the device limit only. The limits of the IP address and the IP range stay proven by the tests of T-21, so the network of the user is never blocked for 24 hours.
+  - **The alert check (the user):** a route for moderators proves the bot token and the group of the live API with one message. The tests of T-21 prove the 70% and 100% thresholds. The spend of the day does not change.
+  - **Item 1 (the user):** "A script opens 100 anonymous sessions" changed to "A script asks for 100 anonymous sessions from one device, and the limit refuses each one after the first 10".
+  - **The turn cap:** the script also checks the cap of five typed turns. It costs approximately ₹0.02 in model calls.
+  - **Not live:** the limit of typed turns in a minute. A visitor reaches the cap of five before the limit of ten, so only a signed-in person can trip it. The tests of T-21 prove it.
+  - **The device:** the script uses one fixed user agent. Thus, it uses up only its own device count. A browser on the same network keeps its own count.
+- **Out of scope:**
+  - a test in CI against roomsie.in
+  - the limits of the IP address and the IP range on roomsie.in
+  - a change of a limit value (PC-10 of F-14)
