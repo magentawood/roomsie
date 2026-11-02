@@ -77,7 +77,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Which chips show.</strong> The reply writer sets <code>chips</code> only with the plain question of intent, areas or budget. A question about a conflict, an area name with two places or a must-have weight offers no chips. The web shows the chips of the newest turn while their slot is empty or <code>unclear</code>. A new goal starts with the place types.</li>
 <li><strong>Areas take several picks.</strong> Each tap turns an area group on or off, and Done sends all of them in one turn. A sub-area works when the person types it.</li>
 <li><strong>"Not sure, help me pick"</strong> writes intent as <code>unclear</code>. The reply is the help line, which ends with its own question, and the four place types show again.</li>
-<li><strong>The saved turn</strong> has the input method <code>chip</code>, and its parts are the slot and the value of the tap. A typed turn keeps the label of the router.</li>
+<li><strong>The saved turn</strong> has the input method <code>chip</code>, and its parts keep the tap with a version. A typed turn keeps the label of the router.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -88,7 +88,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>The API writes the text of a tap.</strong> The web shows the same text from <code>tapText()</code> until the answer comes, so the two never disagree.</li>
-<li><strong>A tap answers its slot.</strong> Its value goes in, also over an earlier value, as the answer to a question does.</li>
+<li><strong>A tap answers its slot.</strong> Its value replaces an earlier value, also a list of areas. A typed area adds to the areas.</li>
 <li><strong>The chips go away while a reply is pending.</strong> The reply brings the chips of its own question.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

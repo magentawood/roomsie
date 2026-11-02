@@ -21,7 +21,7 @@
 - **Which chips show.** The reply writer sets `chips` only with the plain question of intent, areas or budget. A question about a conflict, an area name with two places or a must-have weight offers no chips. The web shows the chips of the newest turn while their slot is empty or `unclear`. A new goal starts with the place types.
 - **Areas take several picks.** Each tap turns an area group on or off, and Done sends all of them in one turn. A sub-area works when the person types it.
 - **"Not sure, help me pick"** writes intent as `unclear`. The reply is the help line, which ends with its own question, and the four place types show again.
-- **The saved turn** has the input method `chip`, and its parts are the slot and the value of the tap. A typed turn keeps the label of the router.
+- **The saved turn** has the input method `chip`, and its parts keep the tap with a version. A typed turn keeps the label of the router.
 
 ## The choice we made
 
@@ -32,7 +32,7 @@
 ## Gotchas
 
 - **The API writes the text of a tap.** The web shows the same text from `tapText()` until the answer comes, so the two never disagree.
-- **A tap answers its slot.** Its value goes in, also over an earlier value, as the answer to a question does.
+- **A tap answers its slot.** Its value replaces an earlier value, also a list of areas. A typed area adds to the areas.
 - **The chips go away while a reply is pending.** The reply brings the chips of its own question.
 
 ## Tickets
