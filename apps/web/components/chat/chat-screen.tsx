@@ -69,6 +69,9 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
   )
 }
 
+/** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
+type Outgoing = { body: TurnBody; text: string }
+
 /** The goal of this browser, kept in local storage, so a reload opens the same chat. */
 function useChat() {
   const { user, loading } = useAuth()
@@ -91,9 +94,8 @@ function useChat() {
     setGoalId(null)
   }, [gone])
 
-  /** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
   const send = useMutation({
-    mutationFn: async ({ body }: { body: TurnBody; text: string }) => {
+    mutationFn: async ({ body }: Outgoing) => {
       let id = goalId
       if (!id) {
         const made = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
@@ -130,7 +132,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const [draft, setDraft] = useState({ text: '', version: 0 })
-  const submit = (turn: { body: TurnBody; text: string }) => {
+  const submit = (turn: Outgoing) => {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
     send.mutate(turn, { onError: (err) => setFailed(errorText(err)) })

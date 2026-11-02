@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { errorResponse, formA, goalResponse, newGoalResponse, turnBody, turnResponse, visitorKeyHeader, type AnalyticsEvent, type AssistantParts, type ChipTap, type FormA } from '@roomsie/contract'
-import { runTap, runTurn, type AssistantDeps } from '../assistant/assistant'
+import { errorResponse, formA, goalResponse, newGoalResponse, turnBody, turnResponse, visitorKeyHeader, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
+import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, type AuthOptions } from '../auth'
 import { createGoal, createVisitorSession, goalOf, lastReplyOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
@@ -54,8 +54,6 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   })
 }
 
-type TurnInput = { goalId: string; last: AssistantParts | null; form: FormA }
-
 async function typedTurn(input: TurnInput, text: string, deps: AssistantDeps) {
   const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences } = await runTurn({ ...input, text }, deps)
   // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
@@ -68,6 +66,6 @@ async function typedTurn(input: TurnInput, text: string, deps: AssistantDeps) {
 async function tapTurn(input: TurnInput, tap: ChipTap, deps: AssistantDeps) {
   const tapped = await runTap({ ...input, tap }, deps)
   if (!tapped) return null
-  const user = { text: tapped.text, inputMethod: 'chip', parts: tap, ownValues: { religion: null, community: null } } satisfies UserTurn
+  const user = { text: tapped.text, inputMethod: 'chip', parts: { version: 1, tap }, ownValues: tapped.ownValues } satisfies UserTurn
   return { form: tapped.form, reply: tapped.reply, user, events: [] }
 }

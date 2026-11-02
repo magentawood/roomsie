@@ -1,4 +1,4 @@
-import type { ChipSlot, FormA, GoalResponse } from '@roomsie/contract'
+import { intents, type ChipSlot, type FormA, type GoalResponse } from '@roomsie/contract'
 
 export const canSend = (text: string) => text.trim().length > 0
 
@@ -39,5 +39,7 @@ export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: F
   return slot && (form[slot].source === 'empty' || form[slot].value === 'unclear') ? slot : null
 }
 
-export const toggled = <T>(list: readonly T[], item: T) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item])
+/** After "Not sure, help me pick", the four place types show again. */
+export const placeTypes = (form: FormA) => intents.filter((intent) => intent !== 'unclear' || form.intent.value !== 'unclear')
 
+export const toggled = <T>(list: readonly T[], item: T) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item])

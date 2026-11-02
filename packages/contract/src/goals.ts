@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBands, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
+import { budgetBandOf, budgetBands, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { areaSlug, requiredText } from './shared'
 
@@ -14,29 +14,29 @@ export const formASlots = [
 export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
-/** `chips`: the chips that the question of an assistant turn offers (T-09). */
 export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable(), createdAt: z.iso.datetime() })
 export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn) })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
-/** A tap on a chip: one place type, one to ten area groups, or one budget band. It calls no model (T-09). */
+/** A tap calls no model (T-09). */
 export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
   z.strictObject({ slot: z.literal('budget'), value: z.enum(budgetBands.map((band) => band.id)) }),
 ])
 export type ChipTap = z.infer<typeof chipTap>
+/** What a chip turn keeps. */
+export const chipTurnParts = z.strictObject({ version: z.literal(1).default(1), tap: chipTap })
+export type ChipTurnParts = z.output<typeof chipTurnParts>
 
-/** The text of a tap in the chat: the chip label, or the names of the areas. */
 export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
   switch (tap.slot) {
     case 'intent': return intentLabels[tap.value]
     case 'areas': return tap.value.map(areaName).join(', ')
-    case 'budget': return budgetBands.find((band) => band.id === tap.value)!.label
+    case 'budget': return budgetBandOf(tap.value).label
   }
 }
-/** A typed message, or a chip tap. */
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000) }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
