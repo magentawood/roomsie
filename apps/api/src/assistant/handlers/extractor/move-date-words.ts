@@ -1,20 +1,31 @@
 import { numberWords } from './number-words'
 
 const monthWords: Record<string, number> = Object.fromEntries([
-  'jan january janvari januari', 'feb february farvari februari', 'mar march', 'apr april aprail', 'may mai', 'jun june joon',
-  'jul july julai', 'aug august agast', 'sep sept september sitambar', 'oct october aktubar', 'nov november navambar', 'dec december disambar',
+  'jan january janvari januari जनवरी जानेवारी', 'feb february farvari februari फरवरी फेब्रुवारी', 'mar march मार्च', 'apr april aprail अप्रैल एप्रिल',
+  'may mai मई मे', 'jun june joon जून', 'jul july julai जुलाई जुलै', 'aug august agast अगस्त ऑगस्ट', 'sep sept september sitambar सितंबर सप्टेंबर',
+  'oct october aktubar अक्टूबर ऑक्टोबर', 'nov november navambar नवंबर नोव्हेंबर', 'dec december disambar दिसंबर डिसेंबर',
 ].flatMap((words, i) => words.split(' ').map((w) => [w, i + 1])))
-const now = /\b(asap|immediately|now|abhi|turant|lagech|right away|as soon as possible)\b/
-const nextMonth = /\b(next|agle|agla|pudhchya|pudhcha) (month|mahine|mahina|mahinyat)\b/
-const thisMonth = /\b(this|is|ya) (month|mahine|mahina|mahinyat)\b/
-const monthEnd = /\b(end|ant)\b/
-const nextWeek = /\b(next|agle|agla|pudhchya) (week|hafte|hafta|athavdyat)\b/
-const after = /\b(\w+) (days?|din|divas|weeks?|hafte|haftay|months?|mahine|mahinyanni)\b/
+
+/** A phrase as whole words. `\b` does not see the edges of a Devanagari word. */
+const phrase = (words: string) => new RegExp(`(?:^| )(?:${words})(?= |$)`)
+const next = 'next|agle|agla|pudhchya|pudhcha|pudhil|अगले|अगला|पुढच्या|पुढचा|पुढील'
+const month = 'month|mahine|mahina|mahinyat|महीने|महीना|महिने|महिना|महिन्यात'
+const week = 'week|hafte|hafta|athavdyat|हफ्ते|हफ्ता|सप्ताह|आठवड्यात|आठवडा'
+const now = phrase('asap|immediately|now|abhi|turant|lagech|right away|as soon as possible|अभी|तुरंत|लगेच|ताबडतोब|आत्ता')
+const notNow = phrase('not now|abhi nahi|abhi nahin|lagech nahi|अभी नहीं|अभी नही|आत्ता नाही|लगेच नाही')
+const nextMonth = phrase(`(?:${next}) (?:${month})`)
+const thisMonth = phrase(`(?:this|is|ya|इस|या) (?:${month})`)
+const nextWeek = phrase(`(?:${next}) (?:${week})`)
+const monthEnd = phrase('end|ant|अंत|आखिर|अखेर|शेवटी')
+const mid = phrase('mid|बीच|मध्य')
+const tomorrow = phrase('tomorrow|udya|उद्या')
+const after = /(?:^| )(\S+) (days?|din|divas|दिन|दिनों|दिवस|दिवसांनी|weeks?|hafte|haftay|हफ्ते|हफ्तों|आठवड्यांनी|months?|mahine|mahinyanni|महीने|महीनों|महिन्यांनी)(?= |$)/
 
 type Day = { y: number; m: number; d: number }
 const daysIn = (y: number, m: number) => new Date(Date.UTC(y, m, 0)).getUTCDate()
 const iso = ({ y, m, d }: Day) => `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`
 const valid = (day: Day) => day.m >= 1 && day.m <= 12 && day.d >= 1 && day.d <= daysIn(day.y, day.m)
+const before = (a: Day, b: Day) => iso(a) < iso(b)
 const addDays = ({ y, m, d }: Day, days: number) => {
   const date = new Date(Date.UTC(y, m - 1, d + days))
   return { y: date.getUTCFullYear(), m: date.getUTCMonth() + 1, d: date.getUTCDate() }
@@ -37,40 +48,47 @@ function inMonth(text: string, words: string[], today: Day): Day | null {
   const day = [words[i - 1], words[i + 1]].map((w) => w?.match(/^(\d{1,2})(st|nd|rd|th)?$/)).find(Boolean)
   if (day) return { y, m, d: Number(day[1]) }
   if (monthEnd.test(text)) return { y, m, d: daysIn(y, m) }
-  if (/\bmid\b/.test(text)) return { y, m, d: 15 }
+  if (mid.test(text)) return { y, m, d: 15 }
   return y === today.y && m === today.m ? today : { y, m, d: 1 }
 }
 
-function read(text: string, today: Day): Day | null {
-  const numeric = text.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? text.match(/^(\d{1,2})[/.-](\d{1,2})(?:[/.-](\d{4}))?$/)
+function read(raw: string, today: Day): Day | null {
+  const numeric = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/) ?? raw.match(/^(\d{1,2})[/.-](\d{1,2})(?:[/.-](\d{4}))?$/)
   if (numeric) {
     const [, a, b, c] = numeric
-    return a!.length === 4 ? { y: Number(a), m: Number(b), d: Number(c) } : { y: c ? Number(c) : today.y, m: Number(b), d: Number(a) }
+    if (a!.length === 4) return { y: Number(a), m: Number(b), d: Number(c) }
+    const day = { y: c ? Number(c) : today.y, m: Number(b), d: Number(a) }
+    // A day and a month with no year is the next one, as with a month name.
+    return !c && before(day, today) ? { ...day, y: day.y + 1 } : day
   }
-  const words = text.split(/[^a-z0-9]+/).filter(Boolean)
-  const month = inMonth(text, words, today)
-  if (month) return month
-  if (now.test(text)) return today
-  if (/\btomorrow\b/.test(text)) return addDays(today, 1)
+  const words = raw.split(/[^\p{L}\p{M}\p{N}]+/u).filter(Boolean)
+  const text = words.join(' ')
+  const named = inMonth(text, words, today)
+  if (named) return named
+  if (tomorrow.test(text)) return addDays(today, 1)
   if (nextWeek.test(text)) return addDays(today, 7)
   if (nextMonth.test(text)) {
-    const next = addMonths({ ...today, d: 1 }, 1)
-    return monthEnd.test(text) ? { ...next, d: daysIn(next.y, next.m) } : next
+    const first = addMonths({ ...today, d: 1 }, 1)
+    return monthEnd.test(text) ? { ...first, d: daysIn(first.y, first.m) } : first
   }
-  if (monthEnd.test(text) && /\b(month|mahine|mahina|mahinyacha)\b/.test(text)) return { ...today, d: daysIn(today.y, today.m) }
+  if (monthEnd.test(text) && phrase(month).test(text)) return { ...today, d: daysIn(today.y, today.m) }
   if (thisMonth.test(text)) return today
   const span = text.match(after)
   const count = span && countOf(span[1]!)
-  if (!span || count == null) return null
-  const unit = span[2]!
-  if (/^(days?|din|divas)$/.test(unit)) return addDays(today, count)
-  if (/^(weeks?|hafte|haftay)$/.test(unit)) return addDays(today, count * 7)
-  return addMonths(today, count)
+  if (span && count != null) {
+    const unit = span[2]!
+    if (/^(days?|din|divas|दिन|दिनों|दिवस|दिवसांनी)$/.test(unit)) return addDays(today, count)
+    if (/^(weeks?|hafte|haftay|हफ्ते|हफ्तों|आठवड्यांनी)$/.test(unit)) return addDays(today, count * 7)
+    return addMonths(today, count)
+  }
+  // "Now" comes last, so "abhi nahi, agle mahine" is next month.
+  return now.test(text) && !notNow.test(text) ? today : null
 }
 
 /** The move date in the words of the person, as an ISO date, or null (PD7: code parses dates, not the model). `today` is the date in IST. */
 export function parseMoveDate(words: string, today: string): string | null {
   const [y, m, d] = today.split('-').map(Number) as [number, number, number]
-  const day = read(words.toLowerCase().trim(), { y, m, d })
+  const text = words.normalize('NFD').replace(/़/g, '').toLowerCase().trim().replace(/[०-९]/g, (n) => String(n.charCodeAt(0) - 0x966))
+  const day = read(text, { y, m, d })
   return day && valid(day) ? iso(day) : null
 }
