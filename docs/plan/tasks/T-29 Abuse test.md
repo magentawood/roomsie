@@ -31,9 +31,9 @@ Attack our own site before strangers do.
 - No task waits on this task.
 
 ## Done when
-- [ ] A script asks for 100 anonymous sessions from one device, and the limit refuses each one after the first 10
-- [ ] The per-device and per-network limits stop the requests when a device or network goes over them
-- [ ] When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert
+- [x] A script asks for 100 anonymous sessions from one device, and the limit refuses each one after the first 10 · [#202](https://github.com/magentawood/roomsie/pull/202)
+- [x] The per-device and per-network limits stop the requests when a device or network goes over them · [#202](https://github.com/magentawood/roomsie/pull/202)
+- [x] When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert · [#202](https://github.com/magentawood/roomsie/pull/202)
 
 ^done
 
@@ -64,3 +64,13 @@ Attack our own site before strangers do.
   - a test in CI against roomsie.in
   - the limits of the IP address and the IP range on roomsie.in
   - a change of a limit value (PC-10 of F-14)
+
+## Log
+
+- **2026-11-02 · [#202](https://github.com/magentawood/roomsie/pull/202)**
+  - **Change:** `tools/abuse-test.mjs` asks the live API for 100 visitor sessions from one device, and checks that the device limit refuses each one after the first 10. In one of the sessions, it taps the chips to results and checks that the sixth typed turn gets the cap. The route `POST /v1/admin/alert-check` lets a moderator send one Telegram message through the code of the spend alert.
+  - **Why:** go/no-go check 3 of [PD11](../../decisions/pd-11-launch.md), and the limits of [PD9](../../decisions/pd-09-pre-login-limits.md)
+  - **Ticked:** all three items. Item 2: the run on roomsie.in trips only the device limit, and the tests of T-21 prove the limits of the IP address and the IP range. Item 3: the tests of T-21 prove that the chat keeps working past the amount, and the alert check proves the bot of the live API after the deploy.
+  - **Not done:** none.
+  - **Learn:** [The limits of the chat](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
