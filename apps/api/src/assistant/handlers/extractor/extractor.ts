@@ -1,4 +1,4 @@
-import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot, type HiddenSlot } from '@roomsie/contract'
+import { extractorAnswer, extractorInput, extractorOutput, lifestyleAxes, mustHaveKeys, type AmbiguousArea, type FormA, type FormASlot, type HiddenSlot, type WaitlistPlace } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import { nullIfUnavailable } from '../../../models/models'
 import { catalogueOf, namesOf, saidIn } from '../../catalogue'
@@ -16,7 +16,7 @@ import { extractorPrompt } from './prompt'
 export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, hiddenPreferences: {} })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, hiddenPreferences: {}, outsidePlaces: [] })
 
 /**
  * An answer to "which one should I keep?" that names no value (PD3b): a choice word alone, or with "wala" or "one",
@@ -68,13 +68,16 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
     const area = catalogue.bySlug.get(slug)
     return !!area && namesOf(area).some((name) => saidIn(turn.text, name) || saidIn(areaQuestion, name))
   }
+  // A place outside Mumbai counts only as a place to live, so "shifting from Pune" gives none (T-22a).
   const areas: string[] = []
   const ambiguous: AmbiguousArea[] = []
+  const outsidePlaces = new Set<WaitlistPlace>()
   for (const { words, slug } of answer.areas ?? []) {
     if (!saidIn(turn.text, words)) continue
     const named = catalogue.namesIn(words)
     for (const name of named) {
-      if (name.slugs.length > 1) {
+      if (name.outside) outsidePlaces.add(name.outside)
+      else if (name.slugs.length > 1) {
         if (!ambiguous.some((a) => a.words === name.words)) ambiguous.push(name)
       } else areas.push(name.slugs[0]!)
     }
@@ -117,5 +120,5 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
     ...(religionPreference && { religionPreference: { source: 'stated' as const, value: religionPreference } }),
     ...(communityPreference && { communityPreference: { source: 'stated' as const, value: communityPreference } }),
   }
-  return { ...applied, form, settled, ambiguous, failed: false, ownValues, hiddenPreferences }
+  return { ...applied, form, settled, ambiguous, failed: false, ownValues, hiddenPreferences, outsidePlaces: [...outsidePlaces] }
 }

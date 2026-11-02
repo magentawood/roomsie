@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, waitlistPlace, type WaitlistPlace } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import type { Owner } from '../observations/read'
@@ -50,8 +50,9 @@ export async function createGoal(db: Db, asker: Asker) {
 }
 
 export async function goalOf(db: Db, id: string, asker: Asker) {
-  const [row] = await db.select({ id: goals.id, form: goals.form, updatedAt: goals.updatedAt }).from(goals).where(and(eq(goals.id, id), ownedBy(asker)))
-  return row && { ...row, form: formA.parse(row.form) }
+  const [row] = await db.select({ id: goals.id, form: goals.form, outsidePlaces: goals.outsidePlaces, updatedAt: goals.updatedAt }).from(goals).where(and(eq(goals.id, id), ownedBy(asker)))
+  // A place that leaves the list leaves the goals too.
+  return row && { ...row, form: formA.parse(row.form), outsidePlaces: row.outsidePlaces.flatMap((place) => waitlistPlace.safeParse(place).data ?? []) }
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
@@ -99,12 +100,12 @@ export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
  * would otherwise replace the form of the first. Returns null when the goal changed.
  */
-export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userTurn: UserTurn, reply: AssistantReply) {
+export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, saved: { form: FormA; outsidePlaces: WaitlistPlace[] }, userTurn: UserTurn, reply: AssistantReply) {
   return db.transaction(async (tx) => {
     const { religion, community } = userTurn.ownValues
     const now = new Date()
     const own = { ...(religion && { ownReligion: religion, ownReligionAt: now }), ...(community && { ownCommunity: community, ownCommunityAt: now }) }
-    const [changed] = await tx.update(goals).set({ form, ...own, updatedAt: now })
+    const [changed] = await tx.update(goals).set({ ...saved, ...own, updatedAt: now })
       // A JS date has milliseconds, and the default of the column has microseconds.
       .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null

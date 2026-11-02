@@ -39,7 +39,7 @@ export async function runTurn({ context, ...input }: TurnInput & { text: string;
   const scripted = await replyWriter(turn, deps)
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
-  return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
+  return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces }
 }
 
 async function composeReply(reply: AssistantReply, turn: TurnState & { language: ReplyLanguage }, context: ComposerContext, deps: AssistantDeps) {

@@ -460,6 +460,8 @@ export const goals = pgTable('goals', {
   ownReligionAt: timestamp('own_religion_at', { withTimezone: true }),
   ownCommunity: communityEnum('own_community'),
   ownCommunityAt: timestamp('own_community_at', { withTimezone: true }),
+  /** Each place outside Mumbai that a turn named, for the waitlist (T-22a). */
+  outsidePlaces: text('outside_places').array().notNull().default([]),
   status: goalStatusEnum('status').notNull().default('open'),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -622,12 +624,15 @@ export const saves = pgTable('saves', {
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
-  /** The place outside Mumbai (PD2). */
-  area: text('area'),
+  /** The waitlist place outside Mumbai (PD2). */
+  area: text('area').notNull(),
+  /** The chat that named the place. A chat adds a few entries at most (T-22a). */
+  goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),
 }, (t) => ({
-  emailIdx: uniqueIndex('waitlist_email_idx').on(t.email),
+  emailAreaIdx: uniqueIndex('waitlist_email_area_idx').on(t.email, t.area),
+  goalIdx: index('waitlist_goal_idx').on(t.goalId),
 })).enableRLS()
 
 /** The quotes of real users on the landing page (T-23a). The site module owns them. */

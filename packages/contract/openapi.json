@@ -15739,6 +15739,38 @@
                       "minimum": 0,
                       "maximum": 9007199254740991
                     },
+                    "outsidePlaces": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "vasai-virar",
+                          "kalyan-dombivli",
+                          "bhiwandi",
+                          "ulhasnagar",
+                          "ambernath",
+                          "badlapur",
+                          "karjat",
+                          "uran",
+                          "pune",
+                          "nashik",
+                          "nagpur",
+                          "delhi",
+                          "gurugram",
+                          "noida",
+                          "bengaluru",
+                          "hyderabad",
+                          "chennai",
+                          "kolkata",
+                          "ahmedabad",
+                          "surat",
+                          "jaipur",
+                          "indore",
+                          "goa"
+                        ]
+                      }
+                    },
                     "visitorKey": {
                       "nullable": true,
                       "type": "string"
@@ -15749,6 +15781,7 @@
                     "form",
                     "turns",
                     "typedTurnsLeft",
+                    "outsidePlaces",
                     "visitorKey"
                   ],
                   "additionalProperties": false
@@ -17341,13 +17374,46 @@
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991
+                    },
+                    "outsidePlaces": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "vasai-virar",
+                          "kalyan-dombivli",
+                          "bhiwandi",
+                          "ulhasnagar",
+                          "ambernath",
+                          "badlapur",
+                          "karjat",
+                          "uran",
+                          "pune",
+                          "nashik",
+                          "nagpur",
+                          "delhi",
+                          "gurugram",
+                          "noida",
+                          "bengaluru",
+                          "hyderabad",
+                          "chennai",
+                          "kolkata",
+                          "ahmedabad",
+                          "surat",
+                          "jaipur",
+                          "indore",
+                          "goa"
+                        ]
+                      }
                     }
                   },
                   "required": [
                     "id",
                     "form",
                     "turns",
-                    "typedTurnsLeft"
+                    "typedTurnsLeft",
+                    "outsidePlaces"
                   ],
                   "additionalProperties": false
                 }
@@ -19071,12 +19137,45 @@
                       "type": "integer",
                       "minimum": 0,
                       "maximum": 9007199254740991
+                    },
+                    "outsidePlaces": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "vasai-virar",
+                          "kalyan-dombivli",
+                          "bhiwandi",
+                          "ulhasnagar",
+                          "ambernath",
+                          "badlapur",
+                          "karjat",
+                          "uran",
+                          "pune",
+                          "nashik",
+                          "nagpur",
+                          "delhi",
+                          "gurugram",
+                          "noida",
+                          "bengaluru",
+                          "hyderabad",
+                          "chennai",
+                          "kolkata",
+                          "ahmedabad",
+                          "surat",
+                          "jaipur",
+                          "indore",
+                          "goa"
+                        ]
+                      }
                     }
                   },
                   "required": [
                     "form",
                     "turns",
-                    "typedTurnsLeft"
+                    "typedTurnsLeft",
+                    "outsidePlaces"
                   ],
                   "additionalProperties": false
                 }
@@ -19190,6 +19289,150 @@
                   "required": [
                     "error",
                     "limit"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/goals/{id}/waitlist": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  },
+                  "place": {
+                    "type": "string",
+                    "enum": [
+                      "vasai-virar",
+                      "kalyan-dombivli",
+                      "bhiwandi",
+                      "ulhasnagar",
+                      "ambernath",
+                      "badlapur",
+                      "karjat",
+                      "uran",
+                      "pune",
+                      "nashik",
+                      "nagpur",
+                      "delhi",
+                      "gurugram",
+                      "noida",
+                      "bengaluru",
+                      "hyderabad",
+                      "chennai",
+                      "kolkata",
+                      "ahmedabad",
+                      "surat",
+                      "jaipur",
+                      "indore",
+                      "goa"
+                    ]
+                  }
+                },
+                "required": [
+                  "email",
+                  "place"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "in": "header",
+            "name": "x-visitor-key",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "user-agent",
+            "required": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No body."
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
                   ],
                   "additionalProperties": false
                 }

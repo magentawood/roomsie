@@ -19,6 +19,7 @@ Rules:
 - If the message does not talk about a slot, give null.
 - The last question of the assistant tells you which slot a short answer is for. For example, "20" after a question about the budget is the budget.
 - For areas, budget and moveDate, copy the exact words of the person. Do not change them, translate them or calculate.
+- areas are the places where the person wants to live, also a place outside Mumbai, with the slug null. Not a place that the person moves from.
 - Give only JSON, with this shape:
 
 {

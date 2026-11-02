@@ -3,6 +3,7 @@ import { budgetBandOf, budgetBands, chipSlots, formA, identityPreference, intent
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
+import { waitlistPlace } from './waitlist'
 
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
 export const visitorKeyHeader = 'x-visitor-key'
@@ -19,7 +20,9 @@ export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string 
 export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null), createdAt: z.iso.datetime() })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
-export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft })
+/** Each place outside Mumbai that any turn of the goal named, for the waitlist (PD6c). */
+const outsidePlaces = z.array(waitlistPlace).default([])
+export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
@@ -42,7 +45,7 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000) }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
-export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft })
+export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces })
 
 /** The limits of PD9 that refuse a turn or a new visitor chat (T-21). */
 export const limitRefusal = z.object({ error: z.string(), limit: z.enum(['turn_cap', 'too_many_chats', 'too_fast']) })
@@ -110,6 +113,8 @@ export const extractorOutput = z.strictObject({
   ownValues,
   /** The hidden religion and community preferences that this turn stated (PD3c). */
   hiddenPreferences: statedPreferences,
+  /** The places outside Mumbai where the person wants to live, from the place words of the turn. */
+  outsidePlaces: z.array(waitlistPlace).default([]),
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
