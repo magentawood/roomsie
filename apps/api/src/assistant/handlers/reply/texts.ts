@@ -5,6 +5,8 @@ import type { Catalogue } from '../../catalogue'
 export const replyLines = {
   failed: 'Sorry, I could not read that just now. Please send it again.',
   done: 'That is all I need for now. Have a look at the results.',
+  helpPick: 'No stress. A room in a shared flat: your own room, the rest shared. A PG or hostel: meals often in, house rules always. '
+    + 'A whole flat: all yours, rent and all. People to rent with: find your people first, then the place. Which one sounds like you?',
   conflict: (earlier: string, later: string) => `You said ${earlier} before, and now ${later}. Which one should I keep?`,
   ambiguous: (words: string, names: string[]) => `Which ${words} do you mean: ${names.join(', ')}, or ${names.length === 2 ? 'both' : 'all of them'}?`,
   weight: (label: string) => `Is ${label} a must, so I hide the places without it, or should I only show those places first?`,

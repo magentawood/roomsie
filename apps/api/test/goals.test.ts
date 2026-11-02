@@ -483,3 +483,98 @@ describe('the hidden religion and community filter (T-58)', () => {
     expect(await ashaProfile()).toMatchObject({ religion: 'jain', community: null })
   })
 })
+
+describe('a chip tap (T-09)', () => {
+  const tapped = (goal: { id: string; key: string }, tap: object) =>
+    t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { tap }, headers: { [visitorKeyHeader]: goal.key } })
+  const tap = async (goal: { id: string; key: string }, chip: object) => {
+    const res = await tapped(goal, chip)
+    expect(res.statusCode).toBe(200)
+    return turnResponse.parse(res.json())
+  }
+  const helpLine = 'No stress. A room in a shared flat: your own room, the rest shared. A PG or hostel: meals often in, house rules always. '
+    + 'A whole flat: all yours, rent and all. People to rent with: find your people first, then the place. Which one sounds like you?'
+
+  it('fills its slot with no model call, keeps the chip label as the turn, and offers the chips of the next question', async () => {
+    const requests = fakeVendors({})
+    const goal = await visitorGoal()
+    const before = await startedEvents()
+
+    const intent = await tap(goal, { slot: 'intent', value: 'room' })
+    expect(intent.form.intent).toEqual({ source: 'stated', value: 'room' })
+    expect(intent.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
+      { text: 'A room in a shared flat', chips: null },
+      { text: 'Got it: a room in a shared flat. Which areas of Mumbai work for you?', chips: 'areas' },
+    ])
+
+    const areas = await tap(goal, { slot: 'areas', value: ['bandra-santacruz', 'powai-vikhroli'] })
+    expect(areas.form.areas).toEqual({ source: 'stated', value: ['bandra-santacruz', 'powai-vikhroli'] })
+    expect(areas.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
+      { text: 'Bandra–Santacruz, Powai–Vikhroli', chips: null },
+      { text: 'Got it: Bandra–Santacruz, Powai–Vikhroli. What is your monthly budget?', chips: 'budget' },
+    ])
+
+    const budget = await tap(goal, { slot: 'budget', value: 'under_25k' })
+    expect(budget.form.budget).toEqual({ source: 'stated', value: { min: null, max: 25_000 } })
+    expect(budget.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
+      { text: 'Under ₹25k', chips: null },
+      { text: 'Got it: up to ₹25,000. When do you want to move in?', chips: null },
+    ])
+
+    expect([requests.length, requests.router.length]).toEqual([0, 0])
+    expect(await startedEvents()).toBe(before + 1)
+    const saved = await t.db.select({ inputMethod: chatTurns.inputMethod, parts: chatTurns.parts }).from(chatTurns)
+      .where(and(eq(chatTurns.goalId, goal.id), eq(chatTurns.role, 'user'))).orderBy(chatTurns.createdAt)
+    expect(saved).toEqual([
+      { inputMethod: 'chip', parts: { slot: 'intent', value: 'room' } },
+      { inputMethod: 'chip', parts: { slot: 'areas', value: ['bandra-santacruz', 'powai-vikhroli'] } },
+      { inputMethod: 'chip', parts: { slot: 'budget', value: 'under_25k' } },
+    ])
+    // A reload shows the chips of each question.
+    const reloaded = goalResponse.parse((await t.app.inject({ method: 'GET', url: `/v1/goals/${goal.id}`, headers: { [visitorKeyHeader]: goal.key } })).json())
+    expect(reloaded.turns.map((turn) => turn.chips)).toEqual([null, 'areas', null, 'budget', null, null])
+  })
+
+  it('gives "Not sure, help me pick" the help line and the place-type chips again, as a typed answer that leaves intent unclear', async () => {
+    fakeVendors({})
+    const goal = await visitorGoal()
+    const notSure = await tap(goal, { slot: 'intent', value: 'unclear' })
+    expect(notSure.form.intent).toEqual({ source: 'stated', value: 'unclear' })
+    expect(notSure.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
+      { text: 'Not sure, help me pick', chips: null },
+      { text: helpLine, chips: 'intent' },
+    ])
+    expect((await tap(goal, { slot: 'intent', value: 'pg' })).form.intent).toEqual({ source: 'stated', value: 'pg' })
+
+    fakeVendors({ deepseek: [scored({ intent: 'unclear' })] })
+    const typed = await sent(await visitorGoal(), 'kuch bhi chalega')
+    expect([typed.turns[1].text, typed.turns[1].chips]).toEqual([helpLine, 'intent'])
+  })
+
+  it('refuses a value that is not a chip', async () => {
+    fakeVendors({})
+    const goal = await visitorGoal()
+    for (const chip of [
+      { slot: 'intent', value: 'flat' },
+      { slot: 'areas', value: ['andheri-west'] },
+      { slot: 'areas', value: ['a-made-up-area'] },
+      { slot: 'areas', value: [] },
+      { slot: 'areas', value: ['thane', 'thane'] },
+      { slot: 'budget', value: 'under_5k' },
+      { slot: 'moveDate', value: '2026-12-01' },
+    ]) expect((await tapped(goal, chip)).statusCode).toBe(400)
+    expect((await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { text: 'room', tap: { slot: 'intent', value: 'room' } }, headers: { [visitorKeyHeader]: goal.key } })).statusCode).toBe(400)
+  })
+
+  it('offers no chips under a question about an area name with two places, or about a conflict', async () => {
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'Andheri', slug: 'andheri-west' }] })] })
+    const ambiguous = await sent(await visitorGoal(), 'Andheri mein room')
+    expect([ambiguous.turns[1].text, ambiguous.turns[1].chips]).toEqual(['Which Andheri do you mean: Andheri West, Andheri East, or both?', null])
+
+    fakeVendors({ deepseek: [scored({ budget: '20k' }), scored({ budget: '25k' })] })
+    const goal = await visitorGoal()
+    await sent(goal, 'budget 20k')
+    const conflict = await sent(goal, 'actually 25k')
+    expect([conflict.turns[1].text, conflict.turns[1].chips]).toEqual(['You said up to ₹20,000 before, and now up to ₹25,000. Which one should I keep?', null])
+  })
+})

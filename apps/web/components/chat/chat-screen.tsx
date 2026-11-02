@@ -3,16 +3,17 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { formA, goalResponse, listingTitle, newGoalResponse, turnResponse, type GoalResponse, type ListingResponse } from '@roomsie/contract'
+import { formA, goalResponse, listingTitle, newGoalResponse, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chatStorage, keyAction, readStored, writeStored } from '../../lib/chat'
+import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { formKey, panelReady, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults } from '../results/results-panel'
 import { Button } from '../ui/button'
+import { Chips } from './chips'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
 function ChatInput({ grow, autoFocus, initialText = '', onSend }: { grow: 'up' | 'down'; autoFocus?: boolean; initialText?: string; onSend: (text: string) => void }) {
@@ -46,8 +47,8 @@ function ChatInput({ grow, autoFocus, initialText = '', onSend }: { grow: 'up' |
   )
 }
 
-/** "What are we looking for?" of flow 02: the start of a goal. */
-function EmptyChat({ onSend }: { onSend: (text: string) => void }) {
+/** "What are we looking for?" of flow 02: the start of a goal, with the place-type chips under the input (T-09). */
+function EmptyChat({ onSend, children }: { onSend: (text: string) => void; children: React.ReactNode }) {
   return (
     <main className="isolate flex flex-1 flex-col items-center justify-center gap-10 overflow-hidden bg-chat-glow px-4 pb-24 lg:px-6 lg:pb-0">
       <div className="flex max-w-126 flex-col items-center gap-2 text-center">
@@ -60,8 +61,9 @@ function EmptyChat({ onSend }: { onSend: (text: string) => void }) {
           Ask for anything: a room, a flat, a PG, people to live with, commute distance, or tap below and I’ll write it for you.
         </p>
       </div>
-      <div className="w-full max-w-210">
+      <div className="flex w-full max-w-210 flex-col gap-4">
         <ChatInput grow="down" onSend={onSend} />
+        {children}
       </div>
     </main>
   )
@@ -89,8 +91,9 @@ function useChat() {
     setGoalId(null)
   }, [gone])
 
+  /** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
   const send = useMutation({
-    mutationFn: async (text: string) => {
+    mutationFn: async ({ body }: { body: TurnBody; text: string }) => {
       let id = goalId
       if (!id) {
         const made = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
@@ -100,7 +103,7 @@ function useChat() {
         setGoalId(made.id)
         id = made.id
       }
-      return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body: { text } })) }
+      return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
     },
     onSuccess: ({ id, form, turns }) => {
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns] }))
@@ -116,7 +119,7 @@ const emptyForm = formA.parse({})
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { turns, form: chatForm, send, loadingGoal } = useChat()
   const [failed, setFailed] = useState<string | null>(null)
-  const pending = send.isPending || failed ? send.variables : undefined
+  const pending = send.isPending || failed ? send.variables?.text : undefined
   const areaLabels = useAreaLabels()
   const form = preview ? sampleForm : chatForm
   const ready = panelReady(form)
@@ -127,18 +130,23 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const [draft, setDraft] = useState({ text: '', version: 0 })
-  const submit = (text: string) => {
+  const submit = (turn: { body: TurnBody; text: string }) => {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
-    send.mutate(text, { onError: (err) => setFailed(errorText(err)) })
+    send.mutate(turn, { onError: (err) => setFailed(errorText(err)) })
   }
+  const sendText = (text: string) => submit({ body: { text }, text })
+  const tap = (chip: ChipTap) => submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) })
+  // The chips go away while a reply is pending, and the reply brings the chips of its own question.
+  const chipSlot = send.isPending ? null : chipsOf(turns, chatForm)
+  const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
     setView('split')
   }
 
   if (loadingGoal) return <main className="flex-1" aria-busy="true" />
-  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={submit} />
+  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = shown !== null && (view === 'split' || view === 'all')
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
@@ -148,6 +156,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {turns.map((turn) => (
             <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
           ))}
+          {chips && <li>{chips}</li>}
           {pending !== undefined && (
             <li className="flex flex-col gap-6">
               <UserText text={pending} />
@@ -167,7 +176,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       </div>
       <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
         {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
-        <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={submit} />
+        <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText} />
       </div>
       {shown && (
         <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>

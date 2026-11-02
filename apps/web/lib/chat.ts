@@ -1,3 +1,5 @@
+import type { ChipSlot, FormA, GoalResponse } from '@roomsie/contract'
+
 export const canSend = (text: string) => text.trim().length > 0
 
 /** What a key does in the chat input. `block`: Enter on a blank message adds no line. */
@@ -29,3 +31,13 @@ export function writeStored(key: StoredKey, value: string | null) {
 }
 /** At sign-out, so the next person on this browser cannot open the chat. */
 export const forgetChat = () => Object.values(chatStorage).forEach((key) => writeStored(key, null))
+
+/** The chips under the newest question, while its slot is empty or unclear. A new goal starts with the place types (T-09). */
+export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: FormA): ChipSlot | null {
+  const newest = turns.at(-1)
+  const slot = newest ? newest.chips : 'intent'
+  return slot && (form[slot].source === 'empty' || form[slot].value === 'unclear') ? slot : null
+}
+
+export const toggled = <T>(list: readonly T[], item: T) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item])
+

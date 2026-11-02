@@ -67,6 +67,16 @@ export function CheckChip({ label, checked, disabled, onToggle }: { label: strin
   )
 }
 
+/** A chip with a round mark that acts at once, as the chips of the chat (T-09). */
+export function TapChip({ label, disabled, onTap }: { label: string; disabled?: boolean; onTap: () => void }) {
+  return (
+    <button type="button" disabled={disabled} onClick={onTap} className={`${chip(false)} disabled:cursor-not-allowed disabled:opacity-50`}>
+      <span aria-hidden className={mark(false, true)} />
+      {label}
+    </button>
+  )
+}
+
 /** A picked value as a tag with ×, as the Tag "X close" of the designs. */
 export function RemoveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (

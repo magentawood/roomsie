@@ -1,11 +1,12 @@
-import { assistantReply, mustHaveKeys, replyInput, slotPath, type AssistantParts, type SlotConflict, type TurnLabel } from '@roomsie/contract'
+import { assistantReply, chipSlots, mustHaveKeys, replyInput, slotPath, type AssistantParts, type SlotConflict, type TurnLabel } from '@roomsie/contract'
 import type { z } from 'zod'
 import type { AssistantDeps, TurnState } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
 import { slotOf } from '../extractor/form-update'
 import { questionFor, replyLines, valueText } from './texts'
 
-const parts = (asked: AssistantParts['asked'], question: string | null, conflicts: SlotConflict[]): AssistantParts => ({ version: 1, asked, question, conflicts })
+const parts = (asked: AssistantParts['asked'], question: string | null, conflicts: SlotConflict[], chips: AssistantParts['chips'] = null): AssistantParts =>
+  ({ version: 1, asked, question, conflicts, chips })
 
 /** The line before the reply, by the band of the turn (PD10, T-34). */
 function leadOf({ band, danger }: TurnLabel) {
@@ -32,13 +33,13 @@ const write = async (turn: z.output<typeof replyInput>, { db, settings }: Assist
   const catalogue = await catalogueOf(db)
   const lead = leadOf(turn.label)
   // Only a core turn asks the person to send the message again: never after a disclosure (T-34).
-  if (turn.failed && turn.label.band === 'core') return { text: replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? []) }
+  if (turn.failed && turn.label.band === 'core') return { text: replyLines.failed, parts: parts(turn.last?.asked ?? null, turn.last?.question ?? null, turn.last?.conflicts ?? [], turn.last?.chips) }
   const filled = turn.changed.filter((slot) => slotOf(turn.form, slot).value !== 'unclear')
   const ack = lead + (filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : '')
   /** The reply: the lead, what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */
-  const reply = (before: string, question: string, asked: AssistantParts['asked'], conflicts: SlotConflict[] = []) => ({
+  const reply = (before: string, question: string, asked: AssistantParts['asked'], conflicts: SlotConflict[] = [], chips: AssistantParts['chips'] = null) => ({
     text: before + (turn.label.band === 'out_of_scope' ? replyLines.backToIt(question) : question),
-    parts: parts(asked, question, conflicts),
+    parts: parts(asked, question, conflicts, chips),
   })
 
   const open = (turn.last?.conflicts ?? []).filter(({ slot }) => !turn.settled.includes(slot) && !turn.conflicts.some((c) => c.slot === slot))
@@ -58,5 +59,7 @@ const write = async (turn: z.output<typeof replyInput>, { db, settings }: Assist
     return source === 'empty' || value === 'unclear'
   })
   if (!next) return { text: ack + replyLines.done, parts: parts(null, null, []) }
-  return reply(ack, questionFor(next, catalogue), { slot: next })
+  // "Not sure, help me pick" gets the help line, which ends with its own question (T-09).
+  const question = next === 'intent' && slotOf(turn.form, 'intent').value === 'unclear' ? replyLines.helpPick : questionFor(next, catalogue)
+  return reply(ack, question, { slot: next }, [], chipSlots.find((slot) => slot === next) ?? null)
 }

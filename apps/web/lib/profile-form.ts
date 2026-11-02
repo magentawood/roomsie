@@ -1,14 +1,11 @@
 import {
-  budgetBands as bands, childTypes, maxAge, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
+  budgetBands as bands, type BudgetBand, childTypes, maxAge, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
 } from '@roomsie/contract'
 import { labels } from './listing-steps'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
 
-export type BudgetBand = (typeof bands)[number]['id']
-const bandLabels: Record<BudgetBand, string> = {
-  under_10k: 'Under ₹10k', under_15k: 'Under ₹15k', under_25k: 'Under ₹25k', under_35k: 'Under ₹35k', above_35k: 'Above ₹35k',
-}
+const bandLabels = Object.fromEntries(bands.map((band) => [band.id, band.label])) as Record<BudgetBand, string>
 
 /** A budget that the chat set can fit no band. */
 export const bandOf = (min: number | null, max: number | null): BudgetBand | null =>

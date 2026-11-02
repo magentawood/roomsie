@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, type AssistantParts, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTap, type ChipTap, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { saveOwnValues } from '../profiles/own-values'
@@ -47,8 +47,10 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
   return row && { ...row, form: formA.parse(row.form) }
 }
 
-const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, createdAt: chatTurns.createdAt }
-const toChatTurn = (turn: { id: string; role: 'user' | 'assistant'; text: string; createdAt: Date }) => ({ ...turn, createdAt: turn.createdAt.toISOString() })
+const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
+/** The chips of an assistant turn go out. The label of a typed turn never does. */
+const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) =>
+  ({ ...turn, chips: turn.role === 'assistant' ? assistantParts.parse(parts).chips : null, createdAt: turn.createdAt.toISOString() })
 
 export async function turnsOf(db: Db, goalId: string) {
   const rows = await db.select(turnFields).from(chatTurns).where(eq(chatTurns.goalId, goalId)).orderBy(asc(chatTurns.createdAt))
@@ -65,11 +67,14 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   return { ...parts, question: parts.question ?? last.text }
 }
 
+/** The turn of the person: a typed message with the label of the router, or a chip tap (T-09). */
+export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTap })
+
 /**
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
  * would otherwise replace the form of the first. Returns null when the goal changed.
  */
-export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userTurn: { text: string; parts: UserTurnParts; ownValues: OwnValues }, reply: AssistantReply) {
+export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, form: FormA, userTurn: UserTurn, reply: AssistantReply) {
   return db.transaction(async (tx) => {
     const { religion, community } = userTurn.ownValues
     const now = new Date()
@@ -80,7 +85,8 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
     if (!changed) return null
     if (goal.asker.userId) await saveOwnValues(tx, goal.asker.userId, userTurn.ownValues)
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
-    const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: 'typed', text: userTurn.text, parts: userTurnParts.parse(userTurn.parts), createdAt: sql`clock_timestamp()` }).returning(turnFields)
+    const parts = userTurn.inputMethod === 'typed' ? userTurnParts.parse(userTurn.parts) : chipTap.parse(userTurn.parts)
+    const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: userTurn.inputMethod, text: userTurn.text, parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     return [toChatTurn(userRow!), toChatTurn(assistantTurn!)] satisfies TurnResponse['turns']
   })
