@@ -46,3 +46,41 @@ Filters the people of a search on a community or religion preference that the se
 - [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
 - [scope-policy.md](../../scope-policy.md)
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by n3rxv
+
+- **Modules:**
+  - **The contract:** two value lists, religion and community. Form A gets two hidden slots, the religion preference and the community preference. Each holds a list of values and a weight. The profile gets the own religion and the own community of the person. The person card omits them. The extractor answer gets the two preferences and the two own values.
+  - **The database:** a migration adds the own religion and the own community to `profiles` and to `goals`. Each is a nullable enum.
+  - **The extractor:** its prompt and its answer get the two preferences and the two own values. The gate on the token probabilities applies to each value.
+  - **The turn route and the goals store:** the own values of a turn go on the goal, and on the profile of a signed-in person.
+  - **The profile routes:** a new profile takes the latest stated own values from the goals of the person.
+  - **The people search:** "only" removes the people who stated a different value. "Preferably" adds one point to the order.
+  - **The reply writer:** it never acknowledges or asks about the hidden slots.
+  - **The web:** the profile editor gets the two optional fields, after the user approves their design.
+  - **The docs:** PD3c, PD15 and scope-policy.md. A learn page tells how the hidden filter works.
+  - **The plan:** T-17 gets one more done item (see the decisions).
+- **Seams for the tests:**
+  - The tests of the turn route, with the fake vendors: a stated preference fills a hidden slot with no line in the reply, and the own values go on the goal and on the profile. The newer statement wins.
+  - The tests of the results route: "only" removes the people who stated a different value, a person who stated nothing stays with no label, "preferably" changes the order and no label, and listings do not change.
+  - The tests of the profile routes: the two fields save, the person card and the person page do not show them, and a new profile takes the values of the goals.
+  - A browser check of the profile editor at 390 px and 1440 px.
+- **Decisions:**
+  - **Two hidden slots (the user, 2026-11-02):** the religion preference and the community preference of the searcher. The chat fills them. No chip, question, label, results header or "Got it" line shows them (why: PD3c).
+  - **Two value lists (the user):** religion: Hindu, Muslim, Christian, Sikh, Jain, Buddhist, Parsi, Jewish, No religion, Other. Community: Gujarati, Marathi, Marwari, Kutchi, Sindhi, Punjabi, Bengali, Bihari, Uttar Pradesh, Odia, Tamil, Telugu, Kannadiga, Malayali, Konkani, North East, Other. A broad word in the chat gives a set: "South Indian" gives Tamil, Telugu, Kannadiga and Malayali. "North Indian" gives Punjabi, Uttar Pradesh, Bihari and Marwari. "Maharashtrian" gives Marathi, and "Goan" gives Konkani.
+  - **No caste:** caste is not a value. A caste preference in the chat gets only the `community` flag of the router label. A caste filter needs a written legal opinion and its own decision record.
+  - **"Only" (the user):** in the people search, a dealbreaker preference removes the people who stated a different value on that list. A person who stated nothing on that list stays, with no label (PC-31). Listings never filter on it (why: PD3d).
+  - **"Preferably" (the user):** a soft preference adds one point to the order for the people who stated a value of the preference. It removes nobody, and it never counts for "Best match" or "Didn't say". An unclear weight acts as "preferably", because a question would show the filter.
+  - **The own values (the user):** they come only from what the person states: the two optional profile fields, or the own chat ("I'm Jain"). roomsie never infers them from a name, a diet, an area or a festival (why: PD3c, mitigation 1).
+  - **The newer statement wins (the user):** a statement in the chat replaces the value of the field, and a change of the field replaces the value of the chat.
+  - **Where the own values go (the user):** each turn puts them on its goal, also for a visitor. When the person has a profile, they also go on the profile. A new profile takes the latest stated values of the goals of the person.
+  - **T-17 (the user):** a new done item: "When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement".
+  - **The optional fields:** a design on the drafts page, with our tokens, that the user approves before the build. Only the person sees the values. The person card, the person page and each answer to a different person omit them.
+- **Out of scope:**
+  - caste values
+  - a filter on listings (PD3d)
+  - the public policy page of PD3c (T-23b)
+  - the move of visitor goals at sign-in (T-17)
+  - a learned ranking (PD3c, mitigation 3)
