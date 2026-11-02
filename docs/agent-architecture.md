@@ -90,10 +90,9 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 
 - The composer is the only expensive call. It writes the free text that goes back to the user.
 - It gets Form A, Form B and the last two turns. It does not get the transcript at all.
-- **Many turns do not need the composer:**
-  - A chip tap gets a scripted question.
-  - A clean slot answer gets a scripted acknowledgement and the next question.
-- The composer runs when the reply genuinely needs new text. These turns are a minority.
+- **Code plans each reply, and the composer only writes its words.** The plan holds the acknowledgement, the next question, the conflicts and the chips. The composer cannot remove the question or add a fact.
+- **Many turns do not need the composer:** a chip tap, an off-topic, adversarial or sensitive turn, and a turn that no extractor could read. These turns get the scripted reply.
+- The composer runs on each core typed turn, inside a deadline. When it is late, or its text fails the output check, the scripted reply goes out.
 
 ---
 

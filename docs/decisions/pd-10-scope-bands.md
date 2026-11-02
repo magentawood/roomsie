@@ -16,7 +16,7 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 |---|---|
 | 1 Core | The interview. |
 | 2a Adjacent, general | Answer. Prefer the corpus and cite it. If the corpus has no entry, signed-in users get a web search, and visitors get model knowledge, plainly hedged (PD7a). |
-| 2b Adjacent, consequential | Law, tax, area safety, claims about a listing or person. **Corpus only. Never improvised.** If no article applies, hand off. **Never a bare refusal.** |
+| 2b Adjacent, consequential | Law, tax, area safety, claims about a listing or person. **Corpus only. Never improvised.** If no article applies, hand off. **Never a bare refusal.** Until the articles of T-38, a fixed hand-off line names real sources. |
 | 3 Out of scope | One short, warm scripted line, **no model call after the router**. Ask the interview question again. It counts in the turn cap (PD9). |
 | 4 Adversarial | Scripted and logged. No model call after the router. |
 | 5 Sensitive | **Never redirected.** [assistant-risks.md](../assistant-risks.md) section 4.4 applies. A stated community preference is not in this band ([PD3c](pd-03c-exclusionary-preferences.md)). |

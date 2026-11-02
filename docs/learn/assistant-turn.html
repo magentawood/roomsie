@@ -35,12 +35,12 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="the-assistant-turn">The assistant turn</h1>
-<p><strong>In one line:</strong> one entry point fills Form A from each typed message, and writes a scripted reply with the next question.</p>
+<p><strong>In one line:</strong> one entry point fills Form A from each typed message, and writes a reply with the next question.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>A <strong>goal</strong> is one move, with its own chat and its own Form A (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A <strong>turn</strong> is one message: the person types it, and the assistant replies.</li>
 <li>A <strong>visitor</strong> chats with no sign-in (<a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>). The first goal of a visitor makes a <strong>visitor session</strong>, and the API gives the browser a <strong>visitor key</strong> one time.</li>
-<li>A <strong>handler</strong> is one step of a turn. The <strong>extractor</strong> changes the text into Form A slots. The <strong>reply writer</strong> writes the reply. The <strong>router</strong> labels each message at the same time as the extractor: see <a href="router.html">The router</a>. The observer and the advisor become more handlers (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
+<li>A <strong>handler</strong> is one step of a turn. The <strong>extractor</strong> changes the text into Form A slots. The <strong>reply writer</strong> plans the reply, and the <strong>composer</strong> writes its words: see <a href="composer.html">The composer</a>. The <strong>router</strong> labels each message at the same time as the extractor: see <a href="router.html">The router</a>. The observer and the advisor become more handlers (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
 <li>The <strong>token probability</strong> is the probability that the model gave to each piece of its answer. The extractor uses it as a <strong>gate</strong>: a value that the model was not sure of becomes <code>unclear</code> (<a href="../decisions/pd-07-models.md">PD7</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -50,7 +50,8 @@ details.callout[open] summary{color:var(--fg)}
                                                   │     ├─ the gate on the token probabilities
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
-                                                  └─ reply writer: the line of the band, &quot;Got it: …&quot; and one question
+                                                  ├─ reply writer: the line of the band, &quot;Got it: …&quot; and one question
+                                                  └─ composer, on a core turn: the words in the language of the person
                                   saveTurn(): the two turns and the form, then the events
 </code></pre>
 <table>
@@ -97,7 +98,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The area names.</strong> A name of the seed gives its areas, also inside longer words, as "Andheri station". The seed has each name in Devanagari too, and a Marathi ending counts, as "अंधेरीत" or "ठाण्यात". A name of two areas, such as "Andheri", leaves the slot empty, and the reply asks "Andheri West, Andheri East, or both?", one line for each such name. A slug that the model picked counts only if its name is in the turn, or in that area question.</li>
 <li><strong>The gate.</strong> Only DeepSeek gives token probabilities. Below <code>ASSISTANT_MIN_PROBABILITY</code> (0.8), a value becomes <code>unclear</code>. A value that the tokens do not hold also becomes <code>unclear</code>, and the API reports it, as an answer of DeepSeek with no probabilities does. Gemini gives none, so its values have no gate.</li>
 <li><strong>Conflicts.</strong> A new value never replaces an earlier stated value (<a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>). The reply asks which value to keep, and the assistant turn keeps that question. The next answer for that slot wins. Each conflict of a turn gets its question. "doosra wala" or "नया" keeps the new value, and "pehla" or "जुना" keeps the earlier value. An answer that settles nothing gets the question again. The extractor reads only the question of the last reply, not the "Got it" line before it. The event <code>slot_conflict</code> records the slot. A new area adds to the areas, and a new budget bound can fill the other bound.</li>
-<li><strong>The reply.</strong> Code writes it, with no model, in English only. A conflict comes first, then a name of two areas, then an unclear must-have weight (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>), then the next empty or unclear slot in <code>ASSISTANT_QUESTION_ORDER</code>. T-13 replaces this handler.</li>
+<li><strong>The reply.</strong> Code plans it. A conflict comes first, then a name of two areas, then an unclear must-have weight (<a href="../decisions/pd-15-form-a-contract.md">PD15</a>), then the next empty or unclear slot in <code>ASSISTANT_QUESTION_ORDER</code>. On a core turn, the composer writes its words.</li>
 <li><strong>The events.</strong> The first turn of a goal fires <code>interview_started</code>. Each conflict fires <code>slot_conflict</code>, after the save.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>

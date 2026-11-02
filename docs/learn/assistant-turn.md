@@ -1,12 +1,12 @@
 # The assistant turn
 
-**In one line:** one entry point fills Form A from each typed message, and writes a scripted reply with the next question.
+**In one line:** one entry point fills Form A from each typed message, and writes a reply with the next question.
 
 ## What it is
 
 - A **goal** is one move, with its own chat and its own Form A ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A **turn** is one message: the person types it, and the assistant replies.
 - A **visitor** chats with no sign-in ([PD6b](../decisions/pd-06b-login-gate-and-search.md)). The first goal of a visitor makes a **visitor session**, and the API gives the browser a **visitor key** one time.
-- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** writes the reply. The **router** labels each message at the same time as the extractor: see [The router](router.md). The observer and the advisor become more handlers ([PD7a](../decisions/pd-07a-agent-architecture.md)).
+- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** plans the reply, and the **composer** writes its words: see [The composer](composer.md). The **router** labels each message at the same time as the extractor: see [The router](router.md). The observer and the advisor become more handlers ([PD7a](../decisions/pd-07a-agent-architecture.md)).
 - The **token probability** is the probability that the model gave to each piece of its answer. The extractor uses it as a **gate**: a value that the model was not sure of becomes `unclear` ([PD7](../decisions/pd-07-models.md)).
 
 ## How it fits our project
@@ -18,7 +18,8 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
                                                   │     ├─ the gate on the token probabilities
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
-                                                  └─ reply writer: the line of the band, "Got it: …" and one question
+                                                  ├─ reply writer: the line of the band, "Got it: …" and one question
+                                                  └─ composer, on a core turn: the words in the language of the person
                                   saveTurn(): the two turns and the form, then the events
 ```
 
@@ -37,7 +38,7 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
 - **The area names.** A name of the seed gives its areas, also inside longer words, as "Andheri station". The seed has each name in Devanagari too, and a Marathi ending counts, as "अंधेरीत" or "ठाण्यात". A name of two areas, such as "Andheri", leaves the slot empty, and the reply asks "Andheri West, Andheri East, or both?", one line for each such name. A slug that the model picked counts only if its name is in the turn, or in that area question.
 - **The gate.** Only DeepSeek gives token probabilities. Below `ASSISTANT_MIN_PROBABILITY` (0.8), a value becomes `unclear`. A value that the tokens do not hold also becomes `unclear`, and the API reports it, as an answer of DeepSeek with no probabilities does. Gemini gives none, so its values have no gate.
 - **Conflicts.** A new value never replaces an earlier stated value ([PD3b](../decisions/pd-03b-interview-vs-chips.md)). The reply asks which value to keep, and the assistant turn keeps that question. The next answer for that slot wins. Each conflict of a turn gets its question. "doosra wala" or "नया" keeps the new value, and "pehla" or "जुना" keeps the earlier value. An answer that settles nothing gets the question again. The extractor reads only the question of the last reply, not the "Got it" line before it. The event `slot_conflict` records the slot. A new area adds to the areas, and a new budget bound can fill the other bound.
-- **The reply.** Code writes it, with no model, in English only. A conflict comes first, then a name of two areas, then an unclear must-have weight ([PD15](../decisions/pd-15-form-a-contract.md)), then the next empty or unclear slot in `ASSISTANT_QUESTION_ORDER`. T-13 replaces this handler.
+- **The reply.** Code plans it. A conflict comes first, then a name of two areas, then an unclear must-have weight ([PD15](../decisions/pd-15-form-a-contract.md)), then the next empty or unclear slot in `ASSISTANT_QUESTION_ORDER`. On a core turn, the composer writes its words.
 - **The events.** The first turn of a goal fires `interview_started`. Each conflict fires `slot_conflict`, after the save.
 
 ## The choice we made

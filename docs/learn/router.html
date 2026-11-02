@@ -39,8 +39,8 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>The <strong>router</strong> is one small model call for each typed message. It starts at the same time as the extractor (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
-<li>Its <strong>label</strong> has the <strong>kinds</strong> (filter details, personal context, a question), the <strong>band</strong> (<a href="../decisions/pd-10-scope-bands.md">PD10</a>), the <strong>register</strong> (the language and the script, for the reply writer of T-13), and two flags: <code>danger</code> and <code>community</code>.</li>
-<li>The band selects the first line of the reply:</li>
+<li>Its <strong>label</strong> has the <strong>kinds</strong> (filter details, personal context, a question), the <strong>band</strong> (<a href="../decisions/pd-10-scope-bands.md">PD10</a>), the <strong>register</strong> (the language and the script of the reply: see <a href="composer.html">The composer</a>), and two flags: <code>danger</code> and <code>community</code>.</li>
+<li>The band selects the first line of the reply. Each line is in the language of the person:</li>
 </ul>
 <table>
 <thead>
@@ -57,8 +57,13 @@ details.callout[open] summary{color:var(--fg)}
 <td>The extractor fills it, unless the message is only a question</td>
 </tr>
 <tr>
-<td>General or consequential (band 2)</td>
+<td>General (band 2a)</td>
 <td>"Good question. I can't answer that one yet, but I've noted it.", then the question</td>
+<td>Only when the message also has filter details</td>
+</tr>
+<tr>
+<td>Consequential (band 2b)</td>
+<td>A hand-off line that names a lawyer or a CA, the IGR Maharashtra site, and a visit after dark, then the question</td>
 <td>Only when the message also has filter details</td>
 </tr>
 <tr>
@@ -100,7 +105,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The line of each band</td>
-<td><code>apps/api/src/assistant/handlers/reply/</code></td>
+<td><code>apps/api/src/assistant/handlers/reply/</code>, and the texts in <code>apps/api/src/assistant/lines.json</code></td>
 </tr>
 <tr>
 <td>The answer, the label and the <code>turn_routed</code> event</td>
