@@ -78,7 +78,7 @@ Stops abuse of the AI and a very large bill.
   - **The events (why: PD9):** the server sends `wall_hit` at the cap. `limit_hit` tells which limit stopped a person, the metric that PD9 calls the most important.
   - **The IP address:** the API trusts one proxy hop. The database keeps only the hashes of the address and of its range (/24 for IPv4, /48 for IPv6), never the address.
   - **The spend:** the cost of each attempt is its tokens times the price of its model. The prices come from model-selection.md, at the full price, so the estimate is high. A day starts at midnight IST.
-  - **The design:** drafts section 34 holds the two limit messages, with our tokens. The user approves it before the build.
+  - **The design (the user, 2026-11-02):** drafts section 34 (Figma node 590:29811) holds the two limit messages, with our tokens. Each line comes in the thread in place of the reply, in the error text colour. The line of too many chats has a "Sign in with Google" button.
 - **Out of scope:**
   - an A/B test of the cap
   - the abuse test (T-29)
