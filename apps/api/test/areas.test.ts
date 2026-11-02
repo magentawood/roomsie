@@ -1,8 +1,9 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { areasResponse } from '@roomsie/contract'
+import { areasResponse, waitlistPlaces } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { offlineStorage, routesOnlyOptions } from '../scripts/openapi'
 import { matchingAreas } from '../src/areas'
+import { catalogueOf } from '../src/assistant/catalogue'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { buildServer } from '../src/server'
 
@@ -55,5 +56,15 @@ describe('the areas that match a pick', () => {
   it('matches a pocket with the areas above it, and not with the pocket next to it', () => {
     expect(matchingAreas(parentOf, ['versova'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova'])
     expect(matchingAreas(parentOf, ['versova', 'thane'])).toEqual(['andheri-goregaon', 'andheri-west', 'versova', 'thane', 'thane-west'])
+  })
+})
+
+describe('the waitlist places', () => {
+  it('have no name that is also a Mumbai name, so a Mumbai visitor never gets the waitlist', async () => {
+    await seedCatalogues(testDb.db)
+    const catalogue = await catalogueOf(testDb.db)
+    for (const [slug, place] of Object.entries(waitlistPlaces)) {
+      for (const name of [place.name, ...place.aliases]) expect(catalogue.namesIn(name), name).toEqual([{ words: name, slugs: [], outside: slug }])
+    }
   })
 })
