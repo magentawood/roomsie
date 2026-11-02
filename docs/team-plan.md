@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-58.
 
 ---
 
@@ -24,7 +24,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-207 of the 244 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+215 of the 252 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
@@ -32,7 +32,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow | 64 | -30 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 109 | -75 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 117 | -83 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
@@ -102,16 +102,17 @@ Finish line: Sat 10 Oct. 64 hours.
 | 8 | T-42 · Listing flow and My listings screens | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
 | 9 | T-57 · Sub-area pickers | 8 | Fri 30 Oct → Tue 3 Nov | T-56 |
 | 10 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
-| 11 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
-| 12 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| 13 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
-| 14 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
-| 15 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
-| 16 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
-| 17 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
-| 18 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| 11 | T-58 · Hidden community filter | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
+| 12 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
+| 13 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| 14 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
+| 15 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 16 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| 17 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| 18 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| 19 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
 
-Finish line: Tue 24 Nov. 109 hours.
+Finish line: Tue 24 Nov. 117 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -247,14 +248,15 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 8 | T-42 | Listing flow and My listings screens | 8 | Thu 29 Oct | Sun 1 Nov | CP3 | T-41 | [#118](https://github.com/magentawood/roomsie/issues/118) |
 | P3 Data and trust | 9 | T-57 | Sub-area pickers | 8 | Fri 30 Oct | Tue 3 Nov | CP3 | T-56 | [#164](https://github.com/magentawood/roomsie/issues/164) |
 | P3 Data and trust | 10 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
-| P3 Data and trust | 11 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
-| P3 Data and trust | 12 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 13 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
-| P3 Data and trust | 14 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
-| P3 Data and trust | 15 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
-| P3 Data and trust | 16 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
-| P3 Data and trust | 17 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| P3 Data and trust | 18 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| P3 Data and trust | 11 | T-58 | Hidden community filter | 8 | Tue 3 Nov | Fri 6 Nov | CP3 | T-34, T-14, T-16b | no issue at this time |
+| P3 Data and trust | 12 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| P3 Data and trust | 13 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| P3 Data and trust | 14 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
+| P3 Data and trust | 15 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 16 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| P3 Data and trust | 17 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| P3 Data and trust | 18 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| P3 Data and trust | 19 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
@@ -365,6 +367,7 @@ gantt
     T-42 Listing flow and My listings screens :t42, 2026-10-29, 4d
     T-57 Sub-area pickers :t57, 2026-10-30, 5d
     T-43 Listing detail screens :t43, 2026-11-02, 3d
+    T-58 Hidden community filter :t58, 2026-11-03, 4d
     T-44 Messages API :t44, 2026-11-05, 4d
     T-45 Messages screens :t45, 2026-11-09, 3d
     T-55 Message alerts - email and push :t55, 2026-11-12, 3d
@@ -647,8 +650,8 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 
 **T-34 · Router: sort each typed message and flag what we should not answer** — done when:
 - Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope
-- It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no more model calls, and the system logs them
-- The pipeline runs only the handlers the router picks
+- It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no model call after the router, and the system logs them
+- The pipeline runs only the handlers that the router picks. The extractor starts with the router, and the turn uses its answer only when the router picks it
 - The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline
 - Read first: `docs/agent-architecture.md`, `docs/scope-policy.md`, `docs/extensibility.md`
 
@@ -728,6 +731,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-42 | Listing flow and My listings screens | P3 | 8 | Thu 29 Oct → Sun 1 Nov | T-41 |
 | T-57 | Sub-area pickers | P3 | 8 | Fri 30 Oct → Tue 3 Nov | T-56 |
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
+| T-58 | Hidden community filter | P3 | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
@@ -1025,6 +1029,14 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Report, share and save are on each detail screen
 - The listing detail has the Save button of T-47, and a saved place opens its detail
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
+
+**T-58 · Hidden community filter** — done when:
+- A stated community or religion preference of the searcher goes into a hidden Form A slot. No chip, question, label or results header shows it
+- The own community of a person comes only from what the person states: their chat, or an optional profile field. roomsie never infers it from a name, a diet, an area or a festival
+- The filter removes only the people who stated a different community. A person who stated nothing stays in the results, with no label. Nobody is told (PC-31)
+- The optional profile field has a design on the drafts page, and the user approves it before the build
+- PD3c, PD15 and docs/scope-policy.md record the filter and its sources
+- Read first: `docs/decisions/pd-03c-exclusionary-preferences.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/scope-policy.md`, `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
 **T-44 · Messages API** — done when:
 - Who can message whom follows PD17

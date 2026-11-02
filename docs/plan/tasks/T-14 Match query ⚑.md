@@ -2,7 +2,7 @@
 id: T-14
 title: "Match query API"
 owner: "P3 Data and trust"
-sequence: "2 of 18"
+sequence: "2 of 19"
 hours: 6
 start: 2026-09-29
 end: 2026-10-03
@@ -18,7 +18,7 @@ tags:
 
 # T-14 · Match query API
 
-**Owner:** [[P3 Data and trust]], task 2 of 18  
+**Owner:** [[P3 Data and trust]], task 2 of 19  
 **When:** Tue 29 Sep → Sat 3 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#27](https://github.com/magentawood/roomsie/issues/27)
@@ -37,6 +37,7 @@ Takes what a person wants and returns the people who fit.
 - [[T-15 Results panel ⚑]]
 - [[T-19 Report and block]]
 - [[T-22a Waitlist API]]
+- [[T-58 Community filter]]
 
 ## Done when
 - [x] It returns the matching people for a form state · [#187](https://github.com/magentawood/roomsie/pull/187)

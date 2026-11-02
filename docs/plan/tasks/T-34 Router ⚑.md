@@ -33,12 +33,12 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
 - [[T-06 Database schema ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-58 Community filter]]
 
 ## Done when
 - [ ] Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope
-- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no more model calls, and the system logs them
-- [ ] The pipeline runs only the handlers the router picks
+- [ ] It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no model call after the router, and the system logs them
+- [ ] The pipeline runs only the handlers that the router picks. The extractor starts with the router, and the turn uses its answer only when the router picks it
 - [ ] The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline
 
 ^done
@@ -47,3 +47,42 @@ One cheap model call decides what a message is. Thus, it decides which handlers 
 - [agent-architecture.md](../../agent-architecture.md)
 - [scope-policy.md](../../scope-policy.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by n3rxv
+
+- **Modules:**
+  - **The contract:** new schemas with a version for the router: its input, its answer and the label of a typed turn. A new analytics event, `turn_routed`. The existing schemas do not change.
+  - **The router (a new handler of the assistant):** one classifier interface, the adapter. The first classifier is a scored JSON call through the model module, with the role `router`. Its fixed prompt holds the kinds, the bands and the register.
+  - **The turn runner of the assistant:** it starts the router and the extractor at the same time. Then it uses the answer of the extractor only when the label lets it. Its interface does not change.
+  - **The reply writer:** a scripted line for each band, then the next question. Its input gets the label.
+  - **The settings of the assistant:** `ROUTER_MIN_PROBABILITY`, with the default 0.8.
+  - **The goals store and the turn route:** the label goes on the typed turn of the person, and the route sends `turn_routed`. The interface of the route does not change.
+  - **The docs:** PD7a and agent-architecture.md tell two parallel calls. scope-policy.md tells that a stated community preference follows PD3c. A learn page tells how the router works.
+  - **The plan:** done items 2 and 3 change (see the decisions). The new task T-58 builds the hidden community filter.
+- **Seams for the tests:**
+  - The tests of the router, with the fake vendors: a confident label, a label below the threshold, Gemini with no probabilities, DeepSeek with no probabilities, and a failed call.
+  - The tests of the turn route, with the fake vendors: one test for each band and one for a failed router. Each test checks the reply, the form, the label on the turn and the `turn_routed` event.
+  - A live check after the deploy, in the chat on roomsie.in: an off-topic message, a housing question and a filter answer.
+- **Decisions:**
+  - **One router call for each typed message,** through the model module, with the role `router`, on DeepSeek Flash with the Gemini fallback (why: PD7, PD7a). The classifier is behind its own adapter. Thus, Jev can replace it with no change to the pipeline.
+  - **Two parallel calls (the user, 2026-11-02):** the router and the extractor start at the same time. Thus, a reply takes no more time than before. When the label is out of scope, adversarial, or only a question, the turn drops the answer of the extractor. The extractor call is not cancelled. PD7a and agent-architecture.md change from two sequential calls to two parallel calls.
+  - **The answer of the router:** the kinds (filter details, personal context, a question; one message can have more than one), the band (core, general, consequential, out of scope, adversarial, sensitive; why: PD10), the register (the language and the script, for the reply writer of T-13; why: PD7), `danger` and `community`.
+  - **An unsure or failed router (the user):** the turn is core, and the answer of the extractor applies as before. A scripted line needs a label at or above `ROUTER_MIN_PROBABILITY`, from the token probabilities of DeepSeek. A Gemini label passes, as in the extractor. A DeepSeek label with no probabilities is core.
+  - **A housing question, until the advisor of T-38 (the user):** "Good question. I can't answer that one yet, but I've noted it." Then the next question. When the message also has filter details, the answer of the extractor applies. A message that is only a question writes nothing to Form A (why: the assistant standards).
+  - **Out of scope:** "That one's outside what I can help with. Back to it: <the next question>" (why: PD10, scope-policy.md).
+  - **Adversarial:** "Let's get back to your search." Then the next question. The answer of the extractor does not apply.
+  - **Sensitive (the user):** "Thanks for telling me, and I'm sorry you're dealing with that." With `danger`, also: "If you're not safe right now, call 112, or Tele-MANAS on 14416 (free, 24x7)." Then the next question. The answer of the extractor applies to Form A. Nothing of the disclosure goes into Form A or a profile (why: assistant-risks.md, 4.4).
+  - **The log (the user):** the label goes on the typed turn of the person, in the main database. Thus, account deletion removes it. The `turn_routed` event has the band only, never the text.
+  - **Personal context:** the label records it for the observer of T-36. Nothing more runs now.
+  - **A stated community or religion preference (the user):** the label sets `community`. This is the log of each stated exclusion of PD3c. The turn continues as core. T-58 builds the hidden filter on stated values only (PD3c, mitigation 1: never infer).
+  - **The scripted lines are in English** until the reply writer of T-13.
+  - **Done items 2 and 3 changed (the user, 2026-11-02):** "no more model calls" became "no model call after the router". Item 3 now tells that the extractor starts with the router.
+- **Out of scope:**
+  - the advisor (T-38), the observer (T-36) and the composer (T-13)
+  - the hidden community filter (T-58)
+  - the turn cap and the count of off-topic turns (T-21)
+  - a cancel of the extractor call when the router answers first
+  - the score of the router on the eval set (T-27, M-03)
+  - chip taps: the chat has none yet
