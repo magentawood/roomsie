@@ -1525,8 +1525,8 @@
    ],
    "done": [
     "Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope",
-    "It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no more model calls, and the system logs them",
-    "The pipeline runs only the handlers the router picks",
+    "It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no model call after the router, and the system logs them",
+    "The pipeline runs only the handlers that the router picks. The extractor starts with the router, and the turn uses its answer only when the router picks it",
     "The classifier is behind its own adapter. Thus, the team can try Jev against the eval set and not change the pipeline"
    ],
    "read": [
@@ -1903,6 +1903,36 @@
    "cp": "CP3",
    "critical": false,
    "issue": 164
+  },
+  {
+   "id": "T-58",
+   "title": "Hidden community filter",
+   "plain": "Filters the people of a search on a community or religion preference that the searcher stated, and never shows the filter.",
+   "role": "P3",
+   "hours": 8,
+   "start": "2026-11-03",
+   "end": "2026-11-06",
+   "deps": [
+    "T-34",
+    "T-14",
+    "T-16b"
+   ],
+   "done": [
+    "A stated community or religion preference of the searcher goes into a hidden Form A slot. No chip, question, label or results header shows it",
+    "The own community of a person comes only from what the person states: their chat, or an optional profile field. roomsie never infers it from a name, a diet, an area or a festival",
+    "The filter removes only the people who stated a different community. A person who stated nothing stays in the results, with no label. Nobody is told (PC-31)",
+    "The optional profile field has a design on the drafts page, and the user approves it before the build",
+    "PD3c, PD15 and docs/scope-policy.md record the filter and its sources"
+   ],
+   "read": [
+    "docs/decisions/pd-03c-exclusionary-preferences.md",
+    "docs/decisions/pd-15-form-a-contract.md",
+    "docs/scope-policy.md",
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   },
   {
    "id": "T-46",

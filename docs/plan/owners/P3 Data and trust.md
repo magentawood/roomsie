@@ -9,7 +9,7 @@ tags:
 
 _The data and the matching, then the screens that show them and the advisor._
 
-**109 hours** of build work, at 6.41h a day. The last task ends on Tue 24 Nov.
+**117 hours** of build work, at 6.88h a day. The last task ends on Tue 24 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -25,11 +25,12 @@ This note is part of [[roomsie launch]].
 8. [[T-42 Listing flow screens]] — Thu 29 Oct → Sun 1 Nov, 8h
 9. [[T-57 Sub-area pickers]] — Fri 30 Oct → Tue 3 Nov, 8h
 10. [[T-43 Listing detail screens]] — Mon 2 Nov → Wed 4 Nov, 5h
-11. [[T-44 Messages API]] — Thu 5 Nov → Sun 8 Nov, 8h
-12. [[T-45 Messages screens]] — Mon 9 Nov → Wed 11 Nov, 6h
-13. [[T-55 Message alerts]] — Thu 12 Nov → Sat 14 Nov, 6h
-14. [[T-46 ID verification]] — Thu 12 Nov → Sun 15 Nov, 12h
-15. [[T-47 Saved]] — Mon 16 Nov → Tue 17 Nov, 4h
-16. [[T-48 Onboarding questions]] — Wed 18 Nov → Fri 20 Nov, 5h
-17. [[T-49 Compare cards]] — Sat 21 Nov → Sun 22 Nov, 4h
-18. [[T-50 Found a place, share, feedback]] — Mon 23 Nov → Tue 24 Nov, 4h
+11. [[T-58 Community filter]] — Tue 3 Nov → Fri 6 Nov, 8h
+12. [[T-44 Messages API]] — Thu 5 Nov → Sun 8 Nov, 8h
+13. [[T-45 Messages screens]] — Mon 9 Nov → Wed 11 Nov, 6h
+14. [[T-55 Message alerts]] — Thu 12 Nov → Sat 14 Nov, 6h
+15. [[T-46 ID verification]] — Thu 12 Nov → Sun 15 Nov, 12h
+16. [[T-47 Saved]] — Mon 16 Nov → Tue 17 Nov, 4h
+17. [[T-48 Onboarding questions]] — Wed 18 Nov → Fri 20 Nov, 5h
+18. [[T-49 Compare cards]] — Sat 21 Nov → Sun 22 Nov, 4h
+19. [[T-50 Found a place, share, feedback]] — Mon 23 Nov → Tue 24 Nov, 4h

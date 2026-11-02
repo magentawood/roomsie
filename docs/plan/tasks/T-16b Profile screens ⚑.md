@@ -35,6 +35,7 @@ The screens where a person says who they are and adds photos.
 
 ## Unblocks
 - [[M-06 Beta invites ⚑]]
+- [[T-58 Community filter]]
 
 ## Done when
 - [x] A user can create and edit a profile on the web, with the fields of T-16a · [#156](https://github.com/magentawood/roomsie/pull/156)

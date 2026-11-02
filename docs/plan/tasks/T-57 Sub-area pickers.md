@@ -2,7 +2,7 @@
 id: T-57
 title: "Sub-area pickers"
 owner: "P3 Data and trust"
-sequence: "9 of 18"
+sequence: "9 of 19"
 hours: 8
 start: 2026-10-30
 end: 2026-11-03
@@ -17,7 +17,7 @@ tags:
 
 # T-57 · Sub-area pickers
 
-**Owner:** [[P3 Data and trust]], task 9 of 18  
+**Owner:** [[P3 Data and trust]], task 9 of 19  
 **When:** Fri 30 Oct → Tue 3 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#164](https://github.com/magentawood/roomsie/issues/164)
