@@ -68,7 +68,7 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
     const area = catalogue.bySlug.get(slug)
     return !!area && namesOf(area).some((name) => saidIn(turn.text, name) || saidIn(areaQuestion, name))
   }
-  // A place outside Mumbai counts only as a place to live, so "shifting from Pune" gives none (T-22a).
+  // The prompt asks only for places to live, so "shifting from Pune" gives no outside place (T-22a).
   const areas: string[] = []
   const ambiguous: AmbiguousArea[] = []
   const outsidePlaces = new Set<WaitlistPlace>()
