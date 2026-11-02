@@ -31,10 +31,10 @@ The assistant writes its answers and stays on the topic.
 - [[T-49 Compare cards]]
 
 ## Done when
-- [ ] It writes the reply from the form and the last two turns, never from the full chat
-- [ ] It replies in the language that the person used
-- [ ] It never states a fact about a specific person
-- [ ] An off-topic message gets one line and the question again. Legal, tax and safety questions get a hand-off line with a real source, then the question again
+- [x] It writes the reply from the form and the last two turns, never from the full chat · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [x] It replies in the language that the person used · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [x] It never states a fact about a specific person · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [x] An off-topic message gets one line and the question again. Legal, tax and safety questions get a hand-off line with a real source, then the question again · [#203](https://github.com/magentawood/roomsie/pull/203)
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 (PC-15) confirms it
 
 ^done
@@ -90,3 +90,13 @@ The assistant writes its answers and stays on the topic.
   - the score of the composer on the eval set, and a new value of the deadline (T-27, M-03)
   - the final text of the fixed lines and the hand-off sources (PC-15 of F-14)
   - the comparison of cards in the chat (T-49)
+
+## Log
+
+- **2026-11-03 · [#203](https://github.com/magentawood/roomsie/pull/203)**
+  - **Change:** code plans each reply, and the composer writes its words in the language of the person, inside a deadline and with an output check. The fixed lines move to a data file in five languages, and a legal, tax or safety question gets a hand-off line with real sources.
+  - **Why:** [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD7](../../decisions/pd-07-models.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec.
+  - **Ticked:** items 1, 2, 3 and 4.
+  - **Not done:** item 5, blocked by F-14: PC-15 confirms the fixed lines and the hand-off sources. The defaults are in the data file.
+  - **Learn:** [The composer](../../learn/composer.md), [The router](../../learn/router.md), [The assistant turn](../../learn/assistant-turn.md), [Models](../../learn/models.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

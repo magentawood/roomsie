@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**227 of 329 done · 69%**
+**231 of 329 done · 70%**
 
 `█████████████████░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
-| [[P2 Chat]] | 8 / 14 | 37 / 65 | 57% |
+| [[P2 Chat]] | 8 / 14 | 41 / 65 | 63% |
 | [[P3 Data and trust]] | 16 / 19 | 77 / 86 | 90% |
 | [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -56,7 +56,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
-| 0 | [[T-13 Reply writer]] | P2 | 4 | ⬜ can start | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
+| 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 0 | [[T-22a Waitlist API]] | P4 | 2 | ⬜ can start | 1 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
@@ -115,7 +115,7 @@ flowchart LR
   T16a["T-16a ⚑<br/>Profile API"]:::done
   T16b["T-16b ⚑<br/>Profile screens"]:::done
   T03["T-03<br/>CI checks"]:::done
-  T13["T-13<br/>Reply writer"]:::ready
+  T13["T-13<br/>Reply writer"]:::doing
   T07["T-07<br/>Error reporting"]:::done
   T17["T-17<br/>Carry chat into account"]:::ready
   T19["T-19<br/>Report and block"]:::done
@@ -315,7 +315,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 37/65
+## P2 Chat — 41/65
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -332,7 +332,7 @@ flowchart LR
 > [!todo]- ✅ [[T-34 Router ⚑]] · 4/4
 > ![[T-34 Router ⚑#^done]]
 
-> [!todo]- ⬜ [[T-13 Reply writer]] · 0/5
+> [!todo]- 🟡 [[T-13 Reply writer]] · 4/5
 > ![[T-13 Reply writer#^done]]
 
 > [!todo]- ⬜ [[T-36 Observer]] · 0/6
