@@ -7,7 +7,7 @@ import { optionalUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
-import { createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
+import { createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
 const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional(), 'user-agent': z.string().optional() })
@@ -76,8 +76,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 }
 
 async function typedTurn(input: TurnInput, text: string, asker: Asker, deps: AssistantDeps) {
-  const owner = asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! }
-  const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, owner)])
+  const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
   const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences } = await runTurn({ ...input, text, context }, deps)
   // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).

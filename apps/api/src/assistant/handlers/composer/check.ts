@@ -16,10 +16,7 @@ function capitalsInside(text: string) {
   return text.split(/(?<=[.!?।])\s+/).flatMap((sentence) => wordsIn(sentence).slice(1).filter(isCapital))
 }
 
-/**
- * The output check of the composer (T-13). A text fails when it is long, has contact details or a link, has a number that
- * is not in the draft or the message, or has a name that is not in the draft. A name from the words of the person fails too.
- */
+/** The output check of the composer (T-13). A name from the words of the person fails too, also at the start of a sentence. */
 export function passesCheck(text: string, { draft, message, turns, formB }: Pick<ComposerInput, 'draft' | 'message' | 'turns' | 'formB'>) {
   if (text.length > Math.max(300, draft.length * 2)) return false
   if (maskContacts(text) !== text || email.test(text) || link.test(text)) return false

@@ -36,7 +36,7 @@ runTurn() ── router + extractor ──▶ replyWriter(): the plan, with the 
 
 - **What the composer reads.** The plan, the filled slots of Form A, the Form B notes of the person, the last two turns and the new message. It never reads the full chat, a listing, a profile or a result ([assistant.md](../standards/assistant.md)).
 - **Which turns.** Only a core typed turn that the extractor could read. A tap, and an off-topic, adversarial or sensitive turn, keep the scripted reply.
-- **The deadline.** `COMPOSER_DEADLINE_MS` (2500) is the time for all the attempts of the call together. After it, no retry and no fallback start. The event `model_called` has the time of each attempt, so T-27 can tune the value.
+- **The deadline.** `COMPOSER_DEADLINE_MS` (2500) is the time for all the attempts of the call together. After it, no retry and no fallback start, and the API logs a line, not an error report. The event `model_called` has the time of each attempt, so T-27 can tune the value.
 - **The output check.** A text fails when it is longer than two times the plan (at least 300 characters), or has a phone number, an email address or a link. It also fails when it has a number that is not in the plan or the message. "₹20,000" lets "20k" through. A capital word inside a sentence must be in the plan. A capital word from the words of the person fails, also at the start of a sentence, unless the plan has it. This check stops "Rahul says …".
 - **The language of a tap.** A tap has no text, so it uses the register of the last typed turn. A typed turn with no router label does the same.
 
@@ -48,7 +48,7 @@ runTurn() ── router + extractor ──▶ replyWriter(): the plan, with the 
 ## Gotchas
 
 - **The interview questions stay in English** after a tap or a fallback, as the chips. Only the fixed lines change language.
-- **Devanagari has no capitals,** so the name check does not see a name in Devanagari. The prompt and the eval set of T-27 cover it.
+- **The name check has two limits.** A new name at the start of a sentence passes, because Hinglish sentences start with capital words such as "Kab". Devanagari has no capitals, so a name in Devanagari passes too. The prompt and the eval set of T-27 cover both.
 - **A false rejection is safe.** The scripted reply goes out, in English with the fixed lines translated.
 - **The fake vendors of the tests know a composer call by its prompt.** A test that gives no composer replies gets a failed composer, so the scripted reply goes out. `hang` makes a call wait until its signal aborts.
 - **The fixed lines are drafts.** A native speaker checks each text before launch (PC-15 of F-14).

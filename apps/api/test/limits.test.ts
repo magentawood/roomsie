@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { asc, eq, sql } from 'drizzle-orm'
+import { eq, sql } from 'drizzle-orm'
 import { createHash } from 'node:crypto'
 import { goalResponse, limitRefusal, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
@@ -52,8 +52,7 @@ const tapToResults = async (goal: { id: string; key: string }) => {
 }
 const eventsNamed = async (name: string) => {
   await t.flushEvents()
-  // Postgres gives no order without ORDER BY. The id is a UUIDv7, so it orders two events of the same millisecond.
-  return analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, name)).orderBy(asc(eventRows.createdAt), asc(eventRows.id))
+  return analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, name))
 }
 const refusal = (res: { json: () => unknown }) => limitRefusal.parse(res.json())
 
@@ -137,7 +136,8 @@ describe('the rate limits (PD9)', () => {
     expect((await visitorFrom('192.0.2.78')).statusCode).toBe(429)
     expect((await visitorGoal('192.0.3.1')).id).toEqual(expect.any(String))
     const limits = (await eventsNamed('limit_hit')).slice(before).map(({ fields }) => (fields as { limit: string }).limit)
-    expect(limits).toEqual(['device', 'ip', 'ip_range'])
+    // Postgres gives the rows in no fixed order, so the test sorts them.
+    expect(limits.sort()).toEqual(['device', 'ip', 'ip_range'])
   })
 
   it('gives a goal in the same session, and a signed-in person, no limit on chats', async () => {

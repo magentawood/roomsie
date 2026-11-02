@@ -38,10 +38,12 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
   sessionId ? eq(goals.anonymousSessionId, sessionId) : sql`false`,
 )!
 
-/** A signed-in person owns the goal, else the visitor session. */
+/** A signed-in person owns a goal or a Form B note, else the visitor session. */
+export const ownerOf = (asker: Asker) => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+
 export async function createGoal(db: Db, asker: Asker) {
   const [row] = await db.insert(goals)
-    .values(asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+    .values(ownerOf(asker))
     .returning({ id: goals.id })
   return row!.id
 }

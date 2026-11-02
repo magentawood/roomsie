@@ -121,7 +121,9 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     const last = second.outcome === 'ok' || late() ? second : await attempt(call, fallback, mode, read, deadline)
     if (last.outcome === 'ok') return last.value
     const err = new ModelUnavailable(`No model answered the ${call.role}: the last attempt was ${last.outcome}`)
-    reportError(err, { where: `models.${call.role}`, userId: call.req.user?.id, log: call.req.log })
+    // A caller with a deadline has its own fallback, so a late answer is a log line and an event, not an error.
+    if (late()) call.req.log.warn({ role: call.role }, 'no model answered before the deadline')
+    else reportError(err, { where: `models.${call.role}`, userId: call.req.user?.id, log: call.req.log })
     throw err
   }
 

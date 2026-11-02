@@ -36,12 +36,10 @@ export async function runTurn({ context, ...input }: TurnInput & { text: string;
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   const turn = { ...start, ...(usesExtractor(label) && extracted), label }
   const scripted = await replyWriter(turn, deps)
-  // Only a core turn gets the composer. A failed turn keeps its fixed line (T-13).
   const reply = label.band === 'core' && !turn.failed ? await composed(scripted, turn, context, deps) : scripted
   return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
 }
 
-/** The scripted reply with the words of the composer, or as it is when the composer gives none. */
 async function composed(reply: AssistantReply, turn: TurnState & { label: TurnLabel }, context: ComposerContext, deps: AssistantDeps) {
   const form = Object.fromEntries(formASlots.flatMap((slot) => {
     const { source, value } = slotOf(turn.form, slot)

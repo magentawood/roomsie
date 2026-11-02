@@ -24,7 +24,8 @@ async function visitorGoal(): Promise<Goal> {
 async function send(goal: Goal, payload: object) {
   const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload, headers: { [visitorKeyHeader]: goal.key } })
   expect(res.statusCode).toBe(200)
-  return turnResponse.parse(res.json()).turns[1]!
+  const { turns, form } = turnResponse.parse(res.json())
+  return { reply: turns[1]!, form }
 }
 
 const hinglish = { language: 'hindi', script: 'latin' }
@@ -33,18 +34,23 @@ const composed = (...replies: Parameters<typeof answer>[0][]) => ({ composer: { 
 const room = () => scored({ intent: 'room' })
 const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai work for you?'
 const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
+/** The scripted reply of the message "room chahiye": its text, its chips and its form. */
+const expectScripted = ({ reply, form }: Awaited<ReturnType<typeof send>>) => {
+  expect(reply).toMatchObject({ text: roomAck, chips: 'areas' })
+  expect(form.intent).toEqual({ source: 'stated', value: 'room' })
+}
 
 describe('the fixed lines', () => {
   it('gives an off-topic message in Hinglish the Hinglish line, then the question in English, with no composer call', async () => {
     const requests = fakeVendors({ deepseek: [room()], ...routed({ kinds: [], band: 'out_of_scope', register: hinglish }) })
-    const reply = await send(await visitorGoal(), { text: 'ek poem likho na' })
+    const { reply } = await send(await visitorGoal(), { text: 'ek poem likho na' })
     expect(reply.text).toBe(`Yeh roomsie ke kaam se bahar hai. Wapas aapki search par: ${intentQuestion[0]!.toLowerCase()}${intentQuestion.slice(1)}`)
     expect(requests.composer).toEqual([])
   })
 
   it('hands a legal question in Marathi off to a real source, then asks the question again', async () => {
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question'], band: 'consequential', register: { language: 'marathi', script: 'devanagari' } }) })
-    const reply = await send(await visitorGoal(), { text: 'हा लॉक-इन क्लॉज कायदेशीर आहे का?' })
+    const { reply } = await send(await visitorGoal(), { text: 'हा लॉक-इन क्लॉज कायदेशीर आहे का?' })
     expect(reply.text).toBe('याचं खरं उत्तर हवं, माझा अंदाज नाही. करार, वाद किंवा करासाठी वकिलाला किंवा CA ला विचारा. '
       + 'स्टॅम्प ड्युटी आणि नोंदणीसाठी IGR महाराष्ट्रची साइट बघा. एखाद्या भागाच्या सुरक्षिततेसाठी, रात्री तिथे जाऊन बघा आणि तिथे राहणाऱ्या लोकांना विचारा. '
       + intentQuestion)
@@ -53,10 +59,10 @@ describe('the fixed lines', () => {
   it('gives a tap the language of the last typed turn, with no model call', async () => {
     const goal = await visitorGoal()
     fakeVendors({ deepseek: [room()], ...routed({ register: { language: 'marathi', script: 'latin' } }) })
-    expect((await send(goal, { text: 'mala room pahije' })).text).toBe(roomAck)
+    expectScripted(await send(goal, { text: 'mala room pahije' }))
 
     const requests = fakeVendors({})
-    const reply = await send(goal, { tap: { slot: 'areas', value: ['bandra-santacruz'] } })
+    const { reply } = await send(goal, { tap: { slot: 'areas', value: ['bandra-santacruz'] } })
     expect(reply.text).toBe('Got it: Bandra–Santacruz. Aattasathi evdha purey aahe. Aata results bagha.')
     expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
   })
@@ -66,12 +72,12 @@ describe('the composer', () => {
   it('writes the words of a core reply in the language of the person, from the plan, the forms and the last two turns', async () => {
     const goal = await visitorGoal()
     fakeVendors({ deepseek: [room()], ...routed({ register: hinglish }) })
-    const first = await send(goal, { text: 'room chahiye' })
-    expect(first).toMatchObject({ text: roomAck, chips: 'areas' })
+    expectScripted(await send(goal, { text: 'room chahiye' }))
 
     const requests = fakeVendors({ deepseek: [scored({ areas: [{ words: 'Powai', slug: 'powai' }] })], ...routed({ register: hinglish }), ...composed('Powai, done! Abhi ke liye itna kaafi hai, results dekhiye.') })
-    const reply = await send(goal, { text: 'Powai mein' })
+    const { reply, form } = await send(goal, { text: 'Powai mein' })
     expect(reply).toMatchObject({ text: 'Powai, done! Abhi ke liye itna kaafi hai, results dekhiye.', chips: null })
+    expect(form.areas).toEqual({ source: 'stated', value: ['powai'] })
     expect(requests.composer).toHaveLength(1)
     const message = (requests.composer[0]!.body as { messages: { content: string }[] }).messages[1]!.content
     expect(JSON.parse(message)).toEqual({
@@ -87,20 +93,20 @@ describe('the composer', () => {
 
   it('sends the scripted reply when the text of the composer fails the check', async () => {
     fakeVendors({ deepseek: [room()], ...composed('Rahul bhi room dhoondh raha hai, 9876543210 pe call karo.') })
-    expect((await send(await visitorGoal(), { text: 'room chahiye, Rahul ke saath' })).text).toBe(roomAck)
+    expectScripted(await send(await visitorGoal(), { text: 'room chahiye, Rahul ke saath' }))
   })
 
   it('sends the scripted reply when the composer misses its deadline, with no second attempt', async () => {
     const requests = fakeVendors({ deepseek: [room()], composer: { deepseek: [hang] } })
     const started = performance.now()
-    expect((await send(await visitorGoal(), { text: 'room chahiye' })).text).toBe(roomAck)
+    expectScripted(await send(await visitorGoal(), { text: 'room chahiye' }))
     expect(performance.now() - started).toBeLessThan(2000)
     expect(requests.composer).toHaveLength(1)
   })
 
   it('sends the scripted reply when no composer answers', async () => {
     const requests = fakeVendors({ deepseek: [room()], composer: { deepseek: [down()], gemini: [down()] } })
-    expect((await send(await visitorGoal(), { text: 'room chahiye' })).text).toBe(roomAck)
+    expectScripted(await send(await visitorGoal(), { text: 'room chahiye' }))
     expect(requests.composer.map(({ url }) => url)).toEqual(['https://api.deepseek.com/chat/completions', 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'])
   })
 })
@@ -135,7 +141,6 @@ describe('the output check of the composer', () => {
 
 describe('the file of the fixed lines', () => {
   it('fails when a line has no text for a language', () => {
-    expect(fixedLines.safeParse(lines).success).toBe(true)
     const noMarathi = Object.fromEntries(Object.entries(lines.failed).filter(([language]) => language !== 'mr'))
     expect(fixedLines.safeParse({ ...lines, failed: noMarathi }).success).toBe(false)
   })

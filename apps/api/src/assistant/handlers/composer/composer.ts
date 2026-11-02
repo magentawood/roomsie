@@ -4,10 +4,7 @@ import type { AssistantDeps } from '../../assistant'
 import { passesCheck } from './check'
 import { composerPrompt } from './prompt'
 
-/**
- * The words of the scripted reply, in the language of the person (PD7a). One call with a deadline for all its attempts.
- * Null: no answer in time, or a text that fails the output check. Then the scripted reply goes out.
- */
+/** Null: no answer before the deadline, or a text that fails the check. Then the scripted reply goes out (PD7a). */
 export async function composer(goalId: string, input: ComposerInput, { req, models, settings }: Pick<AssistantDeps, 'req' | 'models' | 'settings'>) {
   if (!models) return null
   const data = composerInput.parse(input)
