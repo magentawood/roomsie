@@ -17,7 +17,7 @@ export function modelRoutes(v1: FastifyInstance, options: AuthOptions & { models
       if (!await v1.spend.sendTestAlert()) return reply.code(503).send({ error: 'the Telegram settings are not set' })
     } catch (err) {
       // The status of Telegram tells a wrong token (401) from a wrong chat (400).
-      return reply.code(502).send({ error: (err as Error).message })
+      return reply.code(502).send({ error: err instanceof Error ? err.message : 'Telegram failed' })
     }
     return reply.code(204).send(null)
   })
