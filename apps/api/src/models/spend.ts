@@ -55,6 +55,12 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
       pending.add(done)
     },
     settled: async () => { await Promise.all(pending) },
+    /** One message through the alert, to check the bot and the group of the live API (T-29). False: no Telegram settings. */
+    async check() {
+      if (!settings.telegram) return false
+      await alert('roomsie: the spend alert works.')
+      return true
+    },
   }
 }
 export type Spend = ReturnType<typeof spendOf>

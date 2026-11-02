@@ -27,6 +27,15 @@ All the values are first guesses in config, until two to three months of data ([
 - **The count of typed turns** is `turn_count` of the visitor session, across all its goals. A signed-in person has no cap and no session limit.
 - **The line of the free messages** shows the typed turns before the wall. Past the cap with no results, it hides until results show or the backstop comes. The turn that uses the last free turn opens the wall and sends `wall_hit`.
 
+## Check the limits before the launch
+
+Go/no-go check 3 of [PD11](../decisions/pd-11-launch.md) needs two checks on roomsie.in (T-29):
+
+1. **The abuse test:** `node tools/abuse-test.mjs`. The script asks for 100 visitor sessions from one device, and the device limit must refuse each one after the first 10. Then it taps to results and sends typed turns until the cap refuses one. It prints a report, and it fails when a limit does not stop it. It costs approximately ₹0.02. A second run in 24 hours opens no session, because the first run used up the count of its device.
+2. **The alert check:** a moderator sends `POST /v1/admin/alert-check`, as the model check. The live API sends "roomsie: the spend alert works." to the team group through the code of the spend alert.
+
+The tests prove the limits of the IP address and the IP range, and the limit of a minute. The script does not trip them, so the network of the person who runs it is not blocked.
+
 ## The choice we made
 
 - The counts are in the database, and the spend is an alert, not a stop: [PD9](../decisions/pd-09-pre-login-limits.md).
