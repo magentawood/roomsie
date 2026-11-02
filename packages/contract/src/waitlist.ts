@@ -40,6 +40,5 @@ export const waitlistBody = z.strictObject({
   email: z.string().trim().toLowerCase().pipe(z.email().max(254)),
   place: waitlistPlace,
 })
-export type WaitlistBody = z.infer<typeof waitlistBody>
 /** The number of emails that one chat can add (T-22a). */
 export const waitlistEntriesPerGoal = 3

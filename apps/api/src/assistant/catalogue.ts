@@ -17,6 +17,9 @@ function withEndings(name: string): string[] {
   return stems.flatMap((stem) => endings.map((ending) => stem + ending))
 }
 
+/** A seeded name: its areas, or the waitlist place outside Mumbai that it names. */
+type NameMatch = { words: string; slugs: string[]; outside?: WaitlistPlace }
+
 /** The name of an area and its other names, in each script. */
 export const namesOf = (area: { name: string; aliases: readonly string[] }) => [area.name, ...area.aliases]
 
@@ -29,16 +32,16 @@ async function load(db: Db) {
   ])
   // A name of two areas, such as "Andheri", gives both. A name with a Marathi ending keeps the plain name as `words`.
   // A waitlist place has no areas: `outside` names it. One match finds both, so the longer name wins.
-  const byName = new Map<string, { words: string; slugs: string[]; outside?: WaitlistPlace }>()
-  const add = (key: string, words: string, slug: string | null, outside?: WaitlistPlace) => {
+  const byName = new Map<string, NameMatch>()
+  const add = (key: string, words: string, slugs: string[], outside?: WaitlistPlace) => {
     const known = byName.get(key)
-    byName.set(key, { words: known?.words ?? words, slugs: [...new Set([...(known?.slugs ?? []), ...(slug ? [slug] : [])])], ...(outside && { outside }) })
+    byName.set(key, { words: known?.words ?? words, slugs: [...new Set([...(known?.slugs ?? []), ...slugs])], ...(outside && { outside }) })
   }
-  const addNames = (names: string[], slug: string | null, outside?: WaitlistPlace) => {
-    for (const name of names) for (const form of [name, ...withEndings(name)]) add(plainText(form), name, slug, outside)
+  const addNames = (names: string[], slugs: string[], outside?: WaitlistPlace) => {
+    for (const name of names) for (const form of [name, ...withEndings(name)]) add(plainText(form), name, slugs, outside)
   }
-  for (const area of areas) addNames(namesOf(area), area.slug)
-  for (const slug of waitlistPlaceSlugs) addNames(namesOf(waitlistPlaces[slug]), null, slug)
+  for (const area of areas) addNames(namesOf(area), [area.slug])
+  for (const slug of waitlistPlaceSlugs) addNames(namesOf(waitlistPlaces[slug]), [], slug)
   const longestName = Math.max(...[...byName.keys()].map((name) => name.split(' ').length))
   return {
     areas,
@@ -46,7 +49,7 @@ async function load(db: Db) {
     /** The seeded names in a text, longest first, as "अंधेरी" in "अंधेरीत". Each gives the name as the seed spells it, and its areas. */
     namesIn: (text: string) => {
       const tokens = plainText(text).split(' ')
-      const found: { words: string; slugs: string[]; outside?: WaitlistPlace }[] = []
+      const found: NameMatch[] = []
       for (let i = 0; i < tokens.length; i++) {
         for (let n = Math.min(longestName, tokens.length - i); n >= 1; n--) {
           const hit = byName.get(tokens.slice(i, i + n).join(' '))

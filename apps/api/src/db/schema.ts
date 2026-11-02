@@ -18,6 +18,7 @@ import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
   listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  type WaitlistPlace,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -461,7 +462,7 @@ export const goals = pgTable('goals', {
   ownCommunity: communityEnum('own_community'),
   ownCommunityAt: timestamp('own_community_at', { withTimezone: true }),
   /** Each place outside Mumbai that a turn named, for the waitlist (T-22a). */
-  outsidePlaces: text('outside_places').array().notNull().default([]),
+  outsidePlaces: text('outside_places').array().$type<WaitlistPlace[]>().notNull().default([]),
   status: goalStatusEnum('status').notNull().default('open'),
   createdAt: createdAt(),
   updatedAt: updatedAt(),

@@ -52,7 +52,7 @@ The server part: know the Mumbai area groups, and save waitlist emails from plac
 - **Seams for the tests:**
   - The goals API tests, with the fake models:
     - A turn that names "Vasai" gives the outside place.
-    - A turn with Bandra and Vasai gives the area and the outside place.
+    - A turn with Powai and Vasai gives the area and the outside place. "Bandra" alone names two sub-areas.
     - A reload of the goal keeps the place.
   - The waitlist route tests, in the goals API tests.
   - A unit test of the list: no name of a waitlist place is also a name of a Mumbai area.

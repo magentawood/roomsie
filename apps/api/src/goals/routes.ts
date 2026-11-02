@@ -76,7 +76,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces }
   })
 
-  // Only a place that the chat named, and a few emails for each chat: a script must first pass the chat limits (T-22a).
+  // A named place and three emails a chat: a script must first pass the chat limits (T-22a).
   app.post('/goals/:id/waitlist', {
     preHandler: optionalUser(options),
     schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 429: errorResponse } },
@@ -84,7 +84,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const goal = await goalOf(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]))
     if (!goal) return reply.code(404).send({ error: 'not found' })
     if (!goal.outsidePlaces.includes(req.body.place)) return reply.code(400).send({ error: 'not valid: place' })
-    const joined = await joinWaitlist(options.db, { email: req.body.email, area: req.body.place, goalId: goal.id })
+    const joined = await joinWaitlist(options.db, { ...req.body, goalId: goal.id })
     if (!joined) return reply.code(429).send({ error: 'This chat cannot add more emails to the waitlist.' })
     return reply.code(204).send(null)
   })

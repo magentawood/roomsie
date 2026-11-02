@@ -114,7 +114,7 @@ export const extractorOutput = z.strictObject({
   /** The hidden religion and community preferences that this turn stated (PD3c). */
   hiddenPreferences: statedPreferences,
   /** The places outside Mumbai where the person wants to live, from the place words of the turn. */
-  outsidePlaces: z.array(waitlistPlace).default([]),
+  outsidePlaces: z.array(waitlistPlace),
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
@@ -172,8 +172,8 @@ export const replyLanguages = ['en', 'hi-Latn', 'hi', 'mr-Latn', 'mr'] as const
 export type ReplyLanguage = (typeof replyLanguages)[number]
 
 /** What the reply writer reads: the output of the extractor, the question of the last reply, the label of the turn, and the language of the reply. */
-// The reply never names the own values or the hidden preferences (T-58), so it does not read them.
-export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true })
+// The reply never names the own values or the hidden preferences (T-58), so it does not read them. The web shows the outside places (T-22b).
+export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true, outsidePlaces: true })
   .extend({ last: assistantParts.nullable(), label: turnLabel, language: z.enum(replyLanguages) })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */

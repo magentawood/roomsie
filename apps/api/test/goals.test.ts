@@ -636,7 +636,8 @@ describe('the waitlist (T-22a)', () => {
   async function vasaiGoal() {
     fakeVendors({ deepseek: [scored({ areas: [{ words: 'Vasai', slug: null }] })] })
     const goal = await visitorGoal()
-    await sent(goal, 'room in Vasai')
+    const { form, outsidePlaces } = await sent(goal, 'room in Vasai')
+    expect([form.areas.source, outsidePlaces]).toEqual(['empty', ['vasai-virar']])
     return goal
   }
 
@@ -661,6 +662,13 @@ describe('the waitlist (T-22a)', () => {
     for (const name of ['a', 'b', 'c']) expect((await join(goal, { email: `${name}@example.com`, place: 'vasai-virar' })).statusCode).toBe(204)
     expect((await join(goal, { email: 'd@example.com', place: 'vasai-virar' })).statusCode).toBe(429)
     expect((await join(goal, { email: 'a@example.com', place: 'vasai-virar' })).statusCode).toBe(204)
+    expect(await entriesOf(goal.id)).toHaveLength(3)
+  })
+
+  it('takes three emails also from joins at the same time', async () => {
+    const goal = await vasaiGoal()
+    const codes = await Promise.all(['a', 'b', 'c', 'd', 'e'].map((name) => join(goal, { email: `${name}@same-time.example.com`, place: 'vasai-virar' })))
+    expect(codes.map((res) => res.statusCode).sort()).toEqual([204, 204, 204, 429, 429])
     expect(await entriesOf(goal.id)).toHaveLength(3)
   })
 

@@ -3,7 +3,7 @@ import { areasResponse, waitlistPlaces } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { offlineStorage, routesOnlyOptions } from '../scripts/openapi'
 import { matchingAreas } from '../src/areas'
-import { catalogueOf } from '../src/assistant/catalogue'
+import { catalogueOf, namesOf } from '../src/assistant/catalogue'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { buildServer } from '../src/server'
 
@@ -64,7 +64,7 @@ describe('the waitlist places', () => {
     await seedCatalogues(testDb.db)
     const catalogue = await catalogueOf(testDb.db)
     for (const [slug, place] of Object.entries(waitlistPlaces)) {
-      for (const name of [place.name, ...place.aliases]) expect(catalogue.namesIn(name), name).toEqual([{ words: name, slugs: [], outside: slug }])
+      for (const name of namesOf(place)) expect(catalogue.namesIn(name), name).toEqual([{ words: name, slugs: [], outside: slug }])
     }
   })
 })
