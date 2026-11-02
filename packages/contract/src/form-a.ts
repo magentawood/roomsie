@@ -58,8 +58,8 @@ export const budgetBands = [
   { id: 'above_35k', min: 35_000, max: null, label: 'Above ₹35k' },
 ] as const
 export type BudgetBand = (typeof budgetBands)[number]['id']
+export const budgetBandOf = (id: BudgetBand) => budgetBands.find((band) => band.id === id)!
 
-/** The slots that the chat offers as chips (T-09). */
 export const chipSlots = ['intent', 'areas', 'budget'] as const
 export type ChipSlot = (typeof chipSlots)[number]
 /** The place-type chips, as the designs name them (PD15). */

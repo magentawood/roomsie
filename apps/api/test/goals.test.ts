@@ -289,6 +289,8 @@ describe('a typed turn', () => {
     const { form, turns } = await sent(goal, 'Powai, 20k')
     expect(form.areas.source).toBe('empty')
     expect(turns[1].text).toBe('Sorry, I could not read that just now. Please send it again.')
+    // A first turn keeps the place-type chips of the empty chat (T-09).
+    expect(turns[1].chips).toBe('intent')
   })
 
   it('refuses a visitor key after its session expired', async () => {
@@ -492,6 +494,10 @@ describe('a chip tap (T-09)', () => {
     expect(res.statusCode).toBe(200)
     return turnResponse.parse(res.json())
   }
+  const routedEvents = async () => {
+    await t.flushEvents()
+    return (await analytics.db.select().from(eventRows).where(eq(eventRows.name, 'turn_routed'))).length
+  }
   const helpLine = 'No stress. A room in a shared flat: your own room, the rest shared. A PG or hostel: meals often in, house rules always. '
     + 'A whole flat: all yours, rent and all. People to rent with: find your people first, then the place. Which one sounds like you?'
 
@@ -499,6 +505,7 @@ describe('a chip tap (T-09)', () => {
     const requests = fakeVendors({})
     const goal = await visitorGoal()
     const before = await startedEvents()
+    const routedBefore = await routedEvents()
 
     const intent = await tap(goal, { slot: 'intent', value: 'room' })
     expect(intent.form.intent).toEqual({ source: 'stated', value: 'room' })
@@ -526,10 +533,11 @@ describe('a chip tap (T-09)', () => {
     const saved = await t.db.select({ inputMethod: chatTurns.inputMethod, parts: chatTurns.parts }).from(chatTurns)
       .where(and(eq(chatTurns.goalId, goal.id), eq(chatTurns.role, 'user'))).orderBy(chatTurns.createdAt)
     expect(saved).toEqual([
-      { inputMethod: 'chip', parts: { slot: 'intent', value: 'room' } },
-      { inputMethod: 'chip', parts: { slot: 'areas', value: ['bandra-santacruz', 'powai-vikhroli'] } },
-      { inputMethod: 'chip', parts: { slot: 'budget', value: 'under_25k' } },
+      { inputMethod: 'chip', parts: { version: 1, tap: { slot: 'intent', value: 'room' } } },
+      { inputMethod: 'chip', parts: { version: 1, tap: { slot: 'areas', value: ['bandra-santacruz', 'powai-vikhroli'] } } },
+      { inputMethod: 'chip', parts: { version: 1, tap: { slot: 'budget', value: 'under_25k' } } },
     ])
+    expect(await routedEvents()).toBe(routedBefore)
     // A reload shows the chips of each question.
     const reloaded = goalResponse.parse((await t.app.inject({ method: 'GET', url: `/v1/goals/${goal.id}`, headers: { [visitorKeyHeader]: goal.key } })).json())
     expect(reloaded.turns.map((turn) => turn.chips)).toEqual([null, 'areas', null, 'budget', null, null])
@@ -549,6 +557,15 @@ describe('a chip tap (T-09)', () => {
     fakeVendors({ deepseek: [scored({ intent: 'unclear' })] })
     const typed = await sent(await visitorGoal(), 'kuch bhi chalega')
     expect([typed.turns[1].text, typed.turns[1].chips]).toEqual([helpLine, 'intent'])
+  })
+
+  it('answers its slot: its value replaces an earlier value', async () => {
+    fakeVendors({})
+    const goal = await visitorGoal()
+    await tap(goal, { slot: 'areas', value: ['thane'] })
+    expect((await tap(goal, { slot: 'areas', value: ['navi-mumbai'] })).form.areas.value).toEqual(['navi-mumbai'])
+    await tap(goal, { slot: 'intent', value: 'room' })
+    expect((await tap(goal, { slot: 'intent', value: 'unclear' })).form.intent).toEqual({ source: 'stated', value: 'unclear' })
   })
 
   it('refuses a value that is not a chip', async () => {

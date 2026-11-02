@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, type AssistantParts, chipTap, type ChipTap, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { saveOwnValues } from '../profiles/own-values'
@@ -67,8 +67,7 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   return { ...parts, question: parts.question ?? last.text }
 }
 
-/** The turn of the person: a typed message with the label of the router, or a chip tap (T-09). */
-export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTap })
+export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTurnParts })
 
 /**
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
@@ -85,7 +84,7 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
     if (!changed) return null
     if (goal.asker.userId) await saveOwnValues(tx, goal.asker.userId, userTurn.ownValues)
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
-    const parts = userTurn.inputMethod === 'typed' ? userTurnParts.parse(userTurn.parts) : chipTap.parse(userTurn.parts)
+    const parts = userTurn.inputMethod === 'typed' ? userTurnParts.parse(userTurn.parts) : chipTurnParts.parse(userTurn.parts)
     const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: userTurn.inputMethod, text: userTurn.text, parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     return [toChatTurn(userRow!), toChatTurn(assistantTurn!)] satisfies TurnResponse['turns']

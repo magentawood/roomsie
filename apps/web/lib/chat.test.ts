@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { formA, type GoalResponse } from '@roomsie/contract'
-import { chatStorage, chipsOf, forgetChat, keyAction, readStored, toggled, writeStored } from './chat'
+import { formA, type ChipSlot, type GoalResponse } from '@roomsie/contract'
+import { chatStorage, chipsOf, forgetChat, keyAction, placeTypes, readStored, toggled, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -36,7 +36,7 @@ describe('the stored chat', () => {
 })
 
 describe('the chips of the chat (T-09)', () => {
-  const turn = (role: 'user' | 'assistant', chips: 'intent' | 'areas' | 'budget' | null = null): GoalResponse['turns'][number] =>
+  const turn = (role: 'user' | 'assistant', chips: ChipSlot | null = null): GoalResponse['turns'][number] =>
     ({ id: crypto.randomUUID(), role, text: 'text', chips, createdAt: new Date().toISOString() })
   const empty = formA.parse({})
 
@@ -53,9 +53,13 @@ describe('the chips of the chat (T-09)', () => {
     expect(chipsOf([turn('assistant', 'areas'), turn('user')], empty)).toBeNull()
   })
 
+  it('shows the four place types again after "Not sure, help me pick"', () => {
+    expect(placeTypes(empty)).toEqual(['room', 'pg', 'whole_flat', 'flatmates', 'unclear'])
+    expect(placeTypes(formA.parse({ intent: { source: 'stated', value: 'unclear' } }))).toEqual(['room', 'pg', 'whole_flat', 'flatmates'])
+  })
+
   it('turns an area on and off', () => {
     expect(toggled(['thane'], 'navi-mumbai')).toEqual(['thane', 'navi-mumbai'])
     expect(toggled(['thane', 'navi-mumbai'], 'thane')).toEqual(['navi-mumbai'])
   })
 })
-

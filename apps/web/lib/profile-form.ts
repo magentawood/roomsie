@@ -5,7 +5,6 @@ import { labels } from './listing-steps'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
 
-const bandLabels = Object.fromEntries(bands.map((band) => [band.id, band.label])) as Record<BudgetBand, string>
 
 /** A budget that the chat set can fit no band. */
 export const bandOf = (min: number | null, max: number | null): BudgetBand | null =>
@@ -89,7 +88,7 @@ export const profileLabels = {
   weights: { prefer: 'Prefer', dealbreaker: 'Dealbreaker' },
   missing: { whosMoving: 'What best describes you', areas: 'The areas you look in', budget: 'Your budget' },
   missingChildType: 'What your son or daughter does',
-  budget: bandLabels,
+  budget: Object.fromEntries(bands.map((band) => [band.id, band.label])) as Record<BudgetBand, string>,
 }
 
 export const firstName = (fullName: string) => fullName.split(/\s+/)[0] ?? fullName
