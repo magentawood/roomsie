@@ -33,11 +33,11 @@ Filters the people of a search on a community or religion preference that the se
 - No task waits on this task.
 
 ## Done when
-- [ ] A stated community or religion preference of the searcher goes into a hidden Form A slot. No chip, question, label or results header shows it
-- [ ] The own community of a person comes only from what the person states: their chat, or an optional profile field. roomsie never infers it from a name, a diet, an area or a festival
-- [ ] The filter removes only the people who stated a different community. A person who stated nothing stays in the results, with no label. Nobody is told (PC-31)
-- [ ] The optional profile field has a design on the drafts page, and the user approves it before the build
-- [ ] PD3c, PD15 and docs/scope-policy.md record the filter and its sources
+- [x] A stated community or religion preference of the searcher goes into a hidden Form A slot. No chip, question, label or results header shows it · [#196](https://github.com/magentawood/roomsie/pull/196)
+- [x] The own community of a person comes only from what the person states: their chat, or an optional profile field. roomsie never infers it from a name, a diet, an area or a festival · [#196](https://github.com/magentawood/roomsie/pull/196)
+- [x] The filter removes only the people who stated a different community. A person who stated nothing stays in the results, with no label. Nobody is told (PC-31) · [#196](https://github.com/magentawood/roomsie/pull/196)
+- [x] The optional profile field has a design on the drafts page, and the user approves it before the build · [#196](https://github.com/magentawood/roomsie/pull/196)
+- [x] PD3c, PD15 and docs/scope-policy.md record the filter and its sources · [#196](https://github.com/magentawood/roomsie/pull/196)
 
 ^done
 
@@ -92,3 +92,13 @@ Filters the people of a search on a community or religion preference that the se
   - the public policy page of PD3c (T-23b)
   - the move of visitor goals at sign-in (T-17)
   - a learned ranking (PD3c, mitigation 3)
+
+## Log
+
+- **2026-11-02 · [#196](https://github.com/magentawood/roomsie/pull/196)**
+  - **Change:** a stated religion or community preference fills a hidden slot of Form A. "Only" removes the people who stated a different value, and "preferably" adds one point to the order. The own values of a person come from two optional profile fields or the own chat, and the newer statement wins. Each typed turn keeps the preference that it stated.
+  - **Why:** [PD3c](../../decisions/pd-03c-exclusionary-preferences.md), [PD15](../../decisions/pd-15-form-a-contract.md)
+  - **Ticked:** all five items.
+  - **Not done:** none.
+  - **Learn:** [The hidden religion and community filter](../../learn/hidden-filter.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
