@@ -7,6 +7,7 @@
 - **The turn cap.** A visitor with no account gets five typed turns. Then "Sign in to keep chatting" comes, and the results stay on the screen. Chip taps do not count. The wall never comes before results show, except at the backstop of 15 typed turns ([PD9](../decisions/pd-09-pre-login-limits.md)).
 - **The rate limits.** They stop a script, not a person: new visitor chats in 24 hours for each device, each IP address and each IP range, and typed turns in a minute for each person.
 - **The daily spend.** Each model call adds its cost to the row of the day. At 70% and at 100% of the amount, one Telegram message goes to the team group. The chat never stops for money.
+- **The secrets of the alert:** `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, the bot and the group of the backup alerts (T-40). The deploy workflow gives them to the API. Unset, the alert is only a log line.
 
 All the values are first guesses in config, until two to three months of data ([pre-login-limits.md](../pre-login-limits.md)).
 
@@ -31,7 +32,7 @@ All the values are first guesses in config, until two to three months of data ([
 
 ## Gotchas
 
-- **The cost is an estimate.** It uses the full price of each vendor, and DeepSeek costs half off-peak, so the estimate is high.
+- **The cost is an estimate.** It uses the highest price of each vendor in [model-selection.md](../model-selection.md), with no off-peak or cache discount for Gemini, so the estimate is high. A change of a model inside one vendor keeps the price of that vendor.
 - **Each alert goes one time a day, also from two machines.** The update of `alerted` is the lock: only one call moves it past 70 or 100.
 - **The router and the extractor run at the same time,** so two writes of the spend can come together. The total of the row is right, because each write adds to it.
 - **The other test files have very high limits** (`noLimits` in `test/app.ts`), because they send many turns from one address. The tests of the limits set their own small values.

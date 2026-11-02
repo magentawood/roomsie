@@ -57,7 +57,7 @@ const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asi
 
 export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; limits?: LimitSettings; spend?: SpendSettings; today?: () => string } & AuthOptions) {
   // The load balancer of Lightsail adds the address of the person as the last X-Forwarded-For entry (T-21).
-  const app = Fastify({ trustProxy: (_address: string, hop: number) => hop === 0, logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]'] } }).withTypeProvider<ZodTypeProvider>()
+  const app = Fastify({ trustProxy: (_address: string, hop: number) => hop === 0, logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]', 'req.remoteAddress'] } }).withTypeProvider<ZodTypeProvider>()
   const today = options.today ?? todayInIst
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)

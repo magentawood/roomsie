@@ -3,12 +3,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { formA, goalResponse, listingTitle, newGoalResponse, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, listingTitle, newGoalResponse, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
-import { formKey, panelReady, panelTitle } from '../../lib/results'
+import { formKey, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults } from '../results/results-panel'
@@ -145,6 +145,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
     send.mutate(turn, {
+      // The wall opens at the moment of the cap (PD9).
+      onSuccess: (sent) => { if (sent.typedTurnsLeft === 0 && panelReady(sent.form)) setWall(true) },
       onError: (err) => {
         const limit = limitOf(err)
         if (limit !== 'turn_cap') return setFailed({ text: errorText(err), signIn: limit === 'too_many_chats' })
@@ -210,7 +212,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />
         </div>
       )}
-      {wall && !signedIn && <SignInWall title="Sign in to keep chatting" text="Your search and results stay." onClose={() => setWall(false)} />}
+      {wall && !signedIn && <SignInWall title={capWall.title} text={capWall.text} onClose={() => setWall(false)} />}
     </main>
   )
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { formA, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
-import { countLine, didntSayLine, formKey, joinPages, nextPage, panelReady, panelTitle, panelUpdate, type PanelState } from './results'
+import { formA, panelReady, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
+import { countLine, didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, type PanelState } from './results'
 import { listing, testId } from './test-listing'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)

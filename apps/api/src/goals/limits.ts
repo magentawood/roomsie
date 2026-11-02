@@ -1,13 +1,13 @@
 import { isIPv4 } from 'node:net'
 import { and, count, eq, gt, or, sql } from 'drizzle-orm'
-import { isOpenSlot, type FormA } from '@roomsie/contract'
+import { capWall, panelReady, type FormA, type LimitRefusal, type RateLimit } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import type { LimitSettings } from './settings'
-import { hashOf, ownedBy, type Asker } from './store'
+import { hashOf, ownedBy, type Asker, type Network } from './store'
 
 export const limitLines = {
-  turn_cap: 'Sign in to keep chatting. Your search and results stay.',
+  turn_cap: `${capWall.title}. ${capWall.text}`,
   too_many_chats: 'Too many chats from this network today. Sign in, or come back tomorrow.',
   too_fast: "You're sending fast. Wait a moment, then send it again.",
 } as const
@@ -24,12 +24,11 @@ export function ipRangeOf(ip: string) {
 }
 
 /** The device and the network of a request, as hashes only (T-21). */
-export const networkOf = ({ ip, userAgent }: { ip: string; userAgent: string }) =>
+export const networkOf = ({ ip, userAgent }: { ip: string; userAgent: string }): Network =>
   ({ deviceHash: hashOf(`${ip}|${userAgent}`), ipHash: hashOf(ip), ipRangeHash: hashOf(ipRangeOf(ip)) })
-export type Network = ReturnType<typeof networkOf>
 
 /** The limit that a new visitor session goes over, or null (PD9). A day is the last 24 hours. */
-export async function chatLimitOf(db: Db, network: Network, settings: LimitSettings) {
+export async function chatLimitOf(db: Db, network: Network, settings: LimitSettings): Promise<RateLimit | null> {
   const [row] = await db.select({
     device: sql<number>`count(*) filter (where ${anonymousSessions.deviceHash} = ${network.deviceHash})`.mapWith(Number),
     ip: sql<number>`count(*) filter (where ${anonymousSessions.ipHash} = ${network.ipHash})`.mapWith(Number),
@@ -38,33 +37,31 @@ export async function chatLimitOf(db: Db, network: Network, settings: LimitSetti
     gt(anonymousSessions.createdAt, sql`now() - interval '24 hours'`),
     or(eq(anonymousSessions.deviceHash, network.deviceHash), eq(anonymousSessions.ipRangeHash, network.ipRangeHash)),
   ))
-  if (row!.device >= settings.sessionsPerDevice) return 'device' as const
-  if (row!.ip >= settings.sessionsPerIp) return 'ip' as const
-  if (row!.range >= settings.sessionsPerIpRange) return 'ip_range' as const
+  if (row!.device >= settings.sessionsPerDevice) return 'device'
+  if (row!.ip >= settings.sessionsPerIp) return 'ip'
+  if (row!.range >= settings.sessionsPerIpRange) return 'ip_range'
   return null
 }
-
-/** Results show when intent, areas and budget have values, as the panel of the web. */
-const resultsShow = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
 
 async function typedTurnsOf(db: Db, sessionId: string) {
   const [row] = await db.select({ turnCount: anonymousSessions.turnCount }).from(anonymousSessions).where(eq(anonymousSessions.id, sessionId))
   return row?.turnCount ?? 0
 }
 
-/** Only a visitor has a cap. A signed-in person gets null. */
-export async function typedTurnsLeft(db: Db, asker: Asker, settings: LimitSettings) {
+/** The typed turns before the wall can come: to the cap, or to the backstop when no results show past the cap. */
+export async function typedTurnsLeft(db: Db, asker: Asker, form: FormA, settings: LimitSettings) {
   if (asker.userId || !asker.sessionId) return null
-  return Math.max(0, settings.turnCap - await typedTurnsOf(db, asker.sessionId))
+  const used = await typedTurnsOf(db, asker.sessionId)
+  return Math.max(0, (used >= settings.turnCap && !panelReady(form) ? settings.turnBackstop : settings.turnCap) - used)
 }
 
 /** The limit that a typed turn goes over, or null. The cap waits for results, until the backstop (PD9, T-21). */
-export async function turnLimitOf(db: Db, asker: Asker, form: FormA, settings: LimitSettings) {
+export async function turnLimitOf(db: Db, asker: Asker, form: FormA, settings: LimitSettings): Promise<LimitRefusal['limit'] | null> {
   if (!asker.userId && asker.sessionId) {
     const used = await typedTurnsOf(db, asker.sessionId)
-    if (used >= settings.turnBackstop || (used >= settings.turnCap && resultsShow(form))) return 'turn_cap' as const
+    if (used >= settings.turnBackstop || (used >= settings.turnCap && panelReady(form))) return 'turn_cap'
   }
   const [row] = await db.select({ n: count() }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
     .where(and(ownedBy(asker), eq(chatTurns.inputMethod, 'typed'), gt(chatTurns.createdAt, sql`now() - interval '1 minute'`)))
-  return row!.n >= settings.typedTurnsPerMinute ? 'too_fast' as const : null
+  return row!.n >= settings.typedTurnsPerMinute ? 'too_fast' : null
 }

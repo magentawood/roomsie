@@ -31,6 +31,7 @@ Why: [PD7](decisions/pd-07-models.md)
 | DeepSeek V4.1 Flash, off-peak | $0.15 | $0.60 |
 | DeepSeek V4.1 Flash, cache hit | ~$0.006 | — |
 
+- **The spend alert of T-21** uses the highest price of each vendor: Gemini 3.5 Flash-Lite with no cache discount, and DeepSeek V4.1 Flash at twice the off-peak price, as an estimate of its peak price.
 - **DeepSeek prices change with the clock.** Peak is 01:00 to 04:00 and 06:00 to 10:00 UTC, Monday to Friday.
 - In IST, peak is 06:30 to 09:30 and 11:30 to 15:30.
 - Thus, the same interview has different costs at different hours.

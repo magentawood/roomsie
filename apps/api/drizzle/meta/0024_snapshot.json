@@ -1,5 +1,5 @@
 {
-  "id": "c622cb6a-3dcb-44f5-a8e2-70bcac0890b7",
+  "id": "3fbfce62-29cb-4ba4-8388-d601ef838494",
   "prevId": "7cd84f4b-b84b-40e1-861d-4a8574dea2d6",
   "version": "7",
   "dialect": "postgresql",
@@ -2082,10 +2082,16 @@
       "name": "model_spend",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true
+        },
         "day": {
           "name": "day",
           "type": "date",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "rupees": {
@@ -2095,15 +2101,38 @@
           "notNull": true,
           "default": "'0'"
         },
-        "alerted": {
-          "name": "alerted",
+        "alerted_percent": {
+          "name": "alerted_percent",
           "type": "smallint",
           "primaryKey": false,
           "notNull": true,
           "default": 0
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "model_spend_day_idx": {
+          "name": "model_spend_day_idx",
+          "columns": [
+            {
+              "expression": "day",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

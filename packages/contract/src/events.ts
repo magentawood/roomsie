@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { formASlots, scopeBands } from './goals'
+import { formASlots, rateLimits, scopeBands } from './goals'
 import { modelRoles, modelUsage } from './models'
 import { reportReasons } from './reports'
 
@@ -26,6 +26,6 @@ export const analyticsEvent = z.discriminatedUnion('name', [
   z.strictObject({ name: z.literal('turn_routed'), eventVersion: version1, band: z.enum(scopeBands) }),
   z.strictObject({ name: z.literal('report_filed'), eventVersion: version1, subject: target, reason: z.enum(reportReasons) }),
   /** A rate limit that stopped a person: the metric of PD9 that shows if a limit stops human users (T-21). */
-  z.strictObject({ name: z.literal('limit_hit'), eventVersion: version1, limit: z.enum(['device', 'ip', 'ip_range', 'too_fast']) }),
+  z.strictObject({ name: z.literal('limit_hit'), eventVersion: version1, limit: z.enum(rateLimits) }),
 ])
 export type AnalyticsEvent = z.input<typeof analyticsEvent>

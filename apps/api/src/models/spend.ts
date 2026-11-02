@@ -7,8 +7,7 @@ import { modelSpend } from '../db/schema'
 import { vendorOf } from './models'
 import type { SpendSettings } from './settings'
 
-const alertPercents = [70, 100] as const
-const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
+const inRupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 
 /** The model spend of each day (PD9, T-21). The chat never stops for it: the team gets a Telegram alert at 70% and at 100%. */
 export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendSettings; today: () => string; log: FastifyBaseLogger }) {
@@ -32,11 +31,11 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
       .onConflictDoUpdate({ target: modelSpend.day, set: { rupees: sql`${modelSpend.rupees} + excluded.rupees` } })
       .returning({ rupees: modelSpend.rupees })
     const total = Number(row!.rupees)
-    for (const percent of alertPercents) {
+    for (const percent of [70, 100]) {
       if (total < (settings.dailyRupees * percent) / 100) break
-      // Only one call of the day moves `alerted` to this percent, so each alert goes one time, also from two machines.
-      const [moved] = await db.update(modelSpend).set({ alerted: percent }).where(and(eq(modelSpend.day, day), lt(modelSpend.alerted, percent))).returning()
-      if (moved) await alert(`roomsie: the model spend of today is ${rupees(total)}, ${percent}% of the daily amount of ${rupees(settings.dailyRupees)}.`)
+      // Only one call of the day moves `alertedPercent` to this percent, so each alert goes one time, also from two machines.
+      const [moved] = await db.update(modelSpend).set({ alertedPercent: percent }).where(and(eq(modelSpend.day, day), lt(modelSpend.alertedPercent, percent))).returning()
+      if (moved) await alert(`roomsie: the model spend of today is ${inRupees(total)}, ${percent}% of the daily amount of ${inRupees(settings.dailyRupees)}.`)
     }
   }
 

@@ -64,6 +64,8 @@ export const budgetBandOf = (id: BudgetBand) => budgetBands.find((band) => band.
 export type SlotState = { source: 'empty' | 'stated' | 'default'; value: unknown }
 /** A slot that the assistant still asks about. */
 export const isOpenSlot = ({ source, value }: SlotState) => source === 'empty' || value === 'unclear'
+/** Results show when intent, areas and budget have values: the panel of the web, and the turn cap of PD9 (T-21). */
+export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
 
 export const chipSlots = ['intent', 'areas', 'budget'] as const
 export type ChipSlot = (typeof chipSlots)[number]

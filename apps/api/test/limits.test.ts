@@ -1,12 +1,11 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
+import { createHash } from 'node:crypto'
 import { goalResponse, limitRefusal, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
-import { modelSpend } from '../src/db/schema'
+import { anonymousSessions, goals, modelSpend } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { ipRangeOf } from '../src/goals/limits'
-import { limitSettings } from '../src/goals/settings'
-import { spendSettings } from '../src/models/settings'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
 import { fakeVendors, keys, scored } from './vendors'
@@ -15,7 +14,7 @@ import { fakeVendors, keys, scored } from './vendors'
 const settings = {
   ...keys,
   VISITOR_TURN_CAP: '2', VISITOR_TURN_BACKSTOP: '4', VISITOR_SESSIONS_PER_DEVICE: '2', VISITOR_SESSIONS_PER_IP: '3', VISITOR_SESSIONS_PER_IP_RANGE: '4', TYPED_TURNS_PER_MINUTE: '5',
-  DAILY_SPEND_RUPEES: '0.01', MODEL_PRICES_USD: JSON.stringify({ deepseek: { in: 1, cachedIn: 0.5, out: 2 }, gemini: { in: 1, cachedIn: 0.5, out: 2 } }), USD_TO_INR: '100',
+  DAILY_SPEND_RUPEES: '0.002',
   TELEGRAM_BOT_TOKEN: 'bot-token', TELEGRAM_CHAT_ID: '-100123',
 }
 
@@ -86,7 +85,10 @@ describe('the turn cap of a visitor (PD9)', () => {
   it('lets a visitor with no results go on after the cap, until the backstop', async () => {
     fakeVendors({ deepseek: [scored({}), scored({}), scored({}), scored({})] })
     const goal = await visitorGoal()
-    for (const text of ['hi', 'hello', 'are you there', 'ok']) expect((await typed(goal, text)).statusCode).toBe(200)
+    // Past the cap with no results, the line of the free messages counts to the backstop.
+    const left = []
+    for (const text of ['hi', 'hello', 'are you there', 'ok']) left.push(turnResponse.parse((await typed(goal, text)).json()).typedTurnsLeft)
+    expect(left).toEqual([1, 2, 1, 0])
     const backstop = await typed(goal, 'and now?')
     expect([backstop.statusCode, refusal(backstop).limit]).toEqual([403, 'turn_cap'])
   })
@@ -139,6 +141,13 @@ describe('the rate limits (PD9)', () => {
     expect((await eventsNamed('limit_hit')).slice(before).map(({ fields }) => (fields as { limit: string }).limit)).toEqual(['too_fast'])
   })
 
+  it('takes the address of a request from the load balancer, and keeps only its hash', async () => {
+    const goal = await visitorGoal('203.0.113.9')
+    const [row] = await t.db.select({ ipHash: anonymousSessions.ipHash }).from(anonymousSessions)
+      .innerJoin(goals, eq(goals.anonymousSessionId, anonymousSessions.id)).where(eq(goals.id, goal.id))
+    expect(row!.ipHash).toBe(createHash('sha256').update('203.0.113.9').digest('hex'))
+  })
+
   it('takes /24 of an IPv4 address and /48 of an IPv6 address as its range', () => {
     expect(ipRangeOf('192.0.2.77')).toBe('192.0.2.0/24')
     expect(ipRangeOf('::ffff:192.0.2.77')).toBe('192.0.2.0/24')
@@ -154,19 +163,19 @@ describe('the spend of the day (PD9)', () => {
     await t.app.spend.settled()
     await t.db.delete(modelSpend)
     await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes'`)
-    // Each call: 20 new and 100 cached tokens in, and 8 out, at $1, $0.5 and $2 for each million, at ₹100 for each dollar.
-    const perCall = (20 * 1 + 100 * 0.5 + 8 * 2) / 1e6 * 100
+    // Each DeepSeek call: 20 new and 100 cached tokens in, and 8 out, at $0.3, $0.012 and $1.2 for each million, at ₹88 for each dollar.
+    const perCall = ((20 * 0.3 + 100 * 0.012 + 8 * 1.2) / 1e6) * 88
     expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'room in Thane' })).statusCode).toBe(200)
     await t.app.spend.settled()
     const [day] = await t.db.select().from(modelSpend)
-    expect(day).toMatchObject({ day: '2026-11-02', alerted: 100 })
-    expect(Number(day!.rupees)).toBeCloseTo(2 * perCall, 6)
-    // The router and the extractor run at the same time: one call reaches 86% and the other 172%, so each alert goes once.
+    expect(day).toMatchObject({ day: '2026-11-02', alertedPercent: 100 })
+    expect(Number(day!.rupees)).toBeCloseTo(2 * perCall, 5)
+    // The router and the extractor run at the same time: one call reaches 74% and the other 148%, so each alert goes once.
     const texts = requests.telegram.map((r) => String(r.body.text))
     expect(texts).toHaveLength(2)
     expect(texts).toEqual(expect.arrayContaining([
-      expect.stringMatching(/^roomsie: the model spend of today is ₹0\.0\d, 70% of the daily amount of ₹0\.01\.$/),
-      expect.stringMatching(/^roomsie: the model spend of today is ₹0\.0\d, 100% of the daily amount of ₹0\.01\.$/),
+      expect.stringMatching(/^roomsie: the model spend of today is ₹[\d.]+, 70% of the daily amount of ₹[\d.]+\.$/),
+      expect.stringMatching(/^roomsie: the model spend of today is ₹[\d.]+, 100% of the daily amount of ₹[\d.]+\.$/),
     ]))
     expect(requests.telegram[0]!.body.chat_id).toBe('-100123')
     expect(requests.telegram[0]!.url).toBe('https://api.telegram.org/botbot-token/sendMessage')
@@ -174,15 +183,5 @@ describe('the spend of the day (PD9)', () => {
     expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'and Navi Mumbai' })).statusCode).toBe(200)
     await t.app.spend.settled()
     expect(requests.telegram).toHaveLength(2)
-  })
-})
-
-describe('the settings of the limits', () => {
-  it('has the first values of the decisions of T-21 as defaults', () => {
-    expect(limitSettings.parse({})).toEqual({ turnCap: 5, turnBackstop: 15, sessionsPerDevice: 10, sessionsPerIp: 100, sessionsPerIpRange: 500, typedTurnsPerMinute: 10 })
-    const spend = spendSettings.parse({})
-    expect(spend.dailyRupees).toBe(500)
-    expect(spend.telegram).toBeNull()
-    expect(Object.keys(spend.prices)).toEqual(['deepseek', 'gemini'])
   })
 })

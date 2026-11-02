@@ -10,8 +10,11 @@ const sessionDays = 30
 export const hashOf = (value: string) => createHash('sha256').update(value).digest('hex')
 const expiry = () => new Date(Date.now() + sessionDays * 86_400_000)
 
+/** The device and the network of a request, as hashes only (T-21). */
+export type Network = { deviceHash: string; ipHash: string; ipRangeHash: string }
+
 /** A new visitor session. The key goes to the browser one time, and the database keeps only its hash. */
-export async function createVisitorSession(db: Db, network: { deviceHash: string; ipHash: string; ipRangeHash: string }) {
+export async function createVisitorSession(db: Db, network: Network) {
   const key = randomBytes(32).toString('base64url')
   const [row] = await db.insert(anonymousSessions)
     .values({ keyHash: hashOf(key), ...network, expiresAt: expiry() })
@@ -83,7 +86,6 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
       .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null
     if (goal.asker.userId) await saveOwnValues(tx, goal.asker.userId, userTurn.ownValues)
-    // The cap of PD9 counts only the typed turns of a visitor (T-21).
     else if (goal.asker.sessionId && userTurn.inputMethod === 'typed') {
       await tx.update(anonymousSessions).set({ turnCount: sql`${anonymousSessions.turnCount} + 1` }).where(eq(anonymousSessions.id, goal.asker.sessionId))
     }
