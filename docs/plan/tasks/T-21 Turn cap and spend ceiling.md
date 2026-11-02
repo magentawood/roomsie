@@ -33,13 +33,13 @@ Stops abuse of the AI and a very large bill.
 - [[T-29 Abuse test]]
 
 ## Done when
-- [ ] A visitor gets five typed turns before sign-in. Chip taps do not count
-- [ ] The sign-in wall never appears before results show, except at the backstop of 15 typed turns. The results stay on the screen, and the user can close the wall to use them
-- [ ] Limits apply per device and per network
-- [ ] At the daily spend ceiling, the chat keeps working, and the team gets an alert
-- [ ] An alert starts when the daily model spend is more than 70% of the ceiling
-- [ ] The turn cap fires the 'wall hit' event on the server, through track() of T-24
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it
+- [x] A visitor gets five typed turns before sign-in. Chip taps do not count · [#200](https://github.com/magentawood/roomsie/pull/200)
+- [x] The sign-in wall never appears before results show, except at the backstop of 15 typed turns. The results stay on the screen, and the user can close the wall to use them · [#200](https://github.com/magentawood/roomsie/pull/200)
+- [x] Limits apply per device and per network · [#200](https://github.com/magentawood/roomsie/pull/200)
+- [x] At the daily spend ceiling, the chat keeps working, and the team gets an alert · [#200](https://github.com/magentawood/roomsie/pull/200)
+- [x] An alert starts when the daily model spend is more than 70% of the ceiling · [#200](https://github.com/magentawood/roomsie/pull/200)
+- [x] The turn cap fires the 'wall hit' event on the server, through track() of T-24 · [#200](https://github.com/magentawood/roomsie/pull/200)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-14 confirms it · [#200](https://github.com/magentawood/roomsie/pull/200)
 
 ^done
 
@@ -91,3 +91,13 @@ Stops abuse of the AI and a very large bill.
   - the move of a visitor chat into the account (T-17)
   - a dashboard of the metrics: the events go to the analytics database only
   - chips for the other closed questions (T-59)
+
+## Log
+
+- **2026-11-02 · [#200](https://github.com/magentawood/roomsie/pull/200)**
+  - **Change:** a visitor gets five typed turns once results show, with a backstop at 15, and then the sign-in wall of drafts section 17. New visitor chats have limits for each device, IP address and IP range, and typed turns a limit for each minute, with the messages of drafts section 34. Each model call adds its cost to the spend of the day, and the team gets a Telegram alert at 70% and 100%; the chat never stops for money. The counts come from the database.
+  - **Why:** [PD9](../../decisions/pd-09-pre-login-limits.md), [pre-login-limits.md](../../pre-login-limits.md)
+  - **Ticked:** all seven items. Item 7: the first values are defaults in config, and F-14 (PC-10) confirms or changes them.
+  - **Not done:** none.
+  - **Learn:** [The limits of the chat](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
