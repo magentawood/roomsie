@@ -75,6 +75,8 @@ budget. This takes approximately three turns.
 
 **Chips are the floor, not the ceiling.**
 
+**Where the chips sit.** In the thread, under the newest question. They go away when the next reply comes. A new goal shows the place types under the input. A tap calls no model ([how the chips work](learn/chat-chips.md)).
+
 **Where the interview ends, revised.** It does not end.
 
 - The open questions start when results are on the screen.
