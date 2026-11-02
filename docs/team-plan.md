@@ -970,7 +970,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/team-plan.md`
 
 **T-29 · Abuse test: 100 fake sessions** — done when:
-- A script opens 100 anonymous sessions
+- A script asks for 100 anonymous sessions from one device, and the limit refuses each one after the first 10
 - The per-device and per-network limits stop the requests when a device or network goes over them
 - When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert
 - Read first: `docs/pre-login-limits.md`
