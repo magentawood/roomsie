@@ -2,13 +2,15 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminInvitesResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
-  type SavedKind,
+  adminInvitesResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsPageSize, resultsResponse,
+  savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
+  type FormA, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError } from './api'
 import { areaTree } from './areas'
 import { useAuth, useUser } from './auth'
 import { badgeCount } from './messages'
+import { formKey, resultsPage } from './results'
 
 /** The cache keys of the API data. A change sets or refreshes its key. */
 export const queryKeys = {
@@ -33,6 +35,7 @@ export const queryKeys = {
   adminFeedback: ['admin', 'feedback'],
   site: ['site'],
   goal: (id: string) => ['goal', id],
+  results: (formKey: string) => ['results', formKey],
 } as const
 
 export function useMe() {
@@ -192,4 +195,21 @@ export function useMessagesBadge() {
 export function useAlertSettings() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.alerts, queryFn: () => api(user, '/v1/me/alerts', alertSettings) })
+}
+
+/**
+ * The results of a form, a page at a time (T-14). `null`: no search yet. A guest searches too (PD6b).
+ * A search never runs again for one form, so the order of a form never moves under the person (PD6c). A sign-in clears the cache.
+ */
+export function useResults(form: FormA | null) {
+  const { user, loading } = useAuth()
+  return useInfiniteQuery({
+    queryKey: queryKeys.results(form ? formKey(form) : ''),
+    queryFn: ({ pageParam }) => api(user, '/v1/results', resultsResponse, { method: 'POST', body: { form, page: pageParam } }),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.page * resultsPageSize < last.total ? last.page + 1 : undefined),
+    select: resultsPage,
+    enabled: form !== null && !loading,
+    staleTime: Infinity,
+  })
 }

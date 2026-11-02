@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { FaceSad } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
-import { useAreaLabels } from '../../lib/queries'
+import { useAreaLabels, type useResults } from '../../lib/queries'
 import { countLine, didntSayLine, formKey, panelUpdate, type PanelState, type ResultsPage } from '../../lib/results'
 import { PlaceCard } from '../listings/place-card'
 import { PersonCard } from '../people/person-card'
@@ -19,16 +19,33 @@ const idleMs = 1500
 
 type Shown = { form: FormA; page: ResultsPage }
 
-/** The results on the screen and the form that they answer, so the header and the grid change together (PD6c). */
-export function useHeldResults(form: FormA, page: ResultsPage) {
+/**
+ * The results on the screen and the form that they answer, so the header and the grid change together (PD6c).
+ * `page`: the results of `form`, or undefined while they load. `shown` is null until the first results come.
+ */
+export function useHeldResults(form: FormA, page: ResultsPage | undefined) {
   const key = formKey(form)
-  const [state, dispatch] = useReducer(panelUpdate<Shown>, { shown: { key, page: { form, page } }, pending: null, busy: false } satisfies PanelState<Shown>)
+  const [state, dispatch] = useReducer(panelUpdate<Shown>, null, (): PanelState<Shown> => ({ shown: page ? { key, page: { form, page } } : null, pending: null, busy: false }))
   const idleTimer = useRef<ReturnType<typeof setTimeout>>(undefined)
-  useEffect(() => dispatch({ type: 'arrive', key, page: { form, page } }), [key, form, page])
+  useEffect(() => { if (page) dispatch({ type: 'arrive', key, page: { form, page } }) }, [key, form, page])
   useEffect(() => () => clearTimeout(idleTimer.current), [])
   const hold = useCallback(() => { clearTimeout(idleTimer.current); dispatch({ type: 'busy' }) }, [])
   const release = () => { clearTimeout(idleTimer.current); idleTimer.current = setTimeout(() => dispatch({ type: 'idle' }), idleMs) }
-  return { ...state.shown.page, hold, release }
+  return { shown: state.shown?.page ?? null, hold, release }
+}
+
+type More = Pick<ReturnType<typeof useResults>, 'fetchNextPage' | 'isFetchingNextPage'>
+
+/** The line at the end of the grid. It loads the next page when it comes into view. */
+function NextPage({ more: { fetchNextPage, isFetchingNextPage } }: { more: More }) {
+  const line = useRef<HTMLParagraphElement>(null)
+  useEffect(() => {
+    if (isFetchingNextPage) return
+    const seen = new IntersectionObserver(([entry]) => { if (entry?.isIntersecting) void fetchNextPage() })
+    seen.observe(line.current!)
+    return () => seen.disconnect()
+  }, [fetchNextPage, isFetchingNextPage])
+  return <p ref={line} className="py-4 text-center text-xs text-tertiary">{isFetchingNextPage && 'Loading more results…'}</p>
 }
 
 function MatchLabel({ result }: { result: MatchResult }) {
@@ -76,11 +93,11 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
 
 /**
  * The results panel of flow 02: a pure function of Form A (PD6c). A card opens here: a place in the panel, a person on its page.
- * `sample`: the preview of T-15 shows that the data is not real.
+ * `more`: the next page of the search. `sample`: the preview shows that the data is not real.
  */
-export function ResultsPanel({ title, held: { page, hold, release }, sample, onClose, onAskInChat }: {
-  title: string; held: ReturnType<typeof useHeldResults>; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
-}) {
+export function ResultsPanel({ title, page, hold, release, more, sample, onClose, onAskInChat }: {
+  title: string; page: ResultsPage; more?: More; sample?: boolean; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+} & Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [open, setOpen] = useState<ListingResponse | null>(null)
@@ -112,7 +129,7 @@ export function ResultsPanel({ title, held: { page, hold, release }, sample, onC
             <header className="flex items-start justify-between gap-3 border-b border-secondary px-5 py-4 lg:px-6">
               <div className="flex flex-col gap-1">
                 <h2 className="text-lg font-semibold text-primary">
-                  {title} <span className="font-normal text-tertiary">· {countLine(page.results.length)}</span>
+                  {title} <span className="font-normal text-tertiary">· {countLine(page.total)}</span>
                 </h2>
                 {sample && <span><Badge tone="warning">Sample data</Badge></span>}
               </div>
@@ -127,6 +144,7 @@ export function ResultsPanel({ title, held: { page, hold, release }, sample, onC
               {page.results.length
                 ? <ResultGrid results={page.results} onOpen={setTapped} />
                 : <NoResults suggested={page.suggested} onOpen={setTapped} />}
+              {more && <NextPage more={more} />}
             </div>
           </>
         )}
