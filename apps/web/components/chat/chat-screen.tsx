@@ -139,14 +139,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const [draft, setDraft] = useState({ text: '', version: 0 })
-  // The turn cap of PD9: after the wall, the input is a sign-in button, and a chip tap opens the wall again.
-  const atCap = !signedIn && (capped || (typedTurnsLeft === 0 && ready))
+  const atCap = !signedIn && (capped || typedTurnsLeft === 0)
   const submit = (turn: Outgoing) => {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
     send.mutate(turn, {
-      // The wall opens at the moment of the cap (PD9).
-      onSuccess: (sent) => { if (sent.typedTurnsLeft === 0 && panelReady(sent.form)) setWall(true) },
+      onSuccess: (sent) => { if (sent.typedTurnsLeft === 0) setWall(true) },
       onError: (err) => {
         const limit = limitOf(err)
         if (limit !== 'turn_cap') return setFailed({ text: errorText(err), signIn: limit === 'too_many_chats' })
@@ -201,7 +199,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
         {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
         {atCap
-          ? <Button variant="primary" size="lg" className="w-full" onClick={() => setWall(true)}>Sign in to keep chatting</Button>
+          ? <Button variant="primary" size="lg" className="w-full" onClick={() => setWall(true)}>{capWall.title}</Button>
           : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText} />}
         {typedTurnsLeft !== null && <p className="mt-2 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
       </div>

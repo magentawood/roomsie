@@ -4,11 +4,13 @@ import { createHash } from 'node:crypto'
 import { goalResponse, limitRefusal, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
 import { anonymousSessions, goals, modelSpend } from '../src/db/schema'
+import { limitSettings } from '../src/goals/settings'
+import { spendSettings } from '../src/models/settings'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { ipRangeOf } from '../src/goals/limits'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
-import { fakeVendors, keys, scored } from './vendors'
+import { answer, down, fakeVendors, keys, scored } from './vendors'
 
 // Small values, so each test reaches its limit in a few calls. The defaults have their own test.
 const settings = {
@@ -34,7 +36,9 @@ afterEach(() => { vi.unstubAllGlobals() })
 /** A new visitor goal from one network address, as the load balancer adds it after any address that the client sent. */
 const visitorFrom = (ip: string, userAgent = 'phone') =>
   t.app.inject({ method: 'POST', url: '/v1/goals', headers: { 'x-forwarded-for': `203.0.113.250, ${ip}`, 'user-agent': userAgent } })
-async function visitorGoal(ip = '198.51.100.1', userAgent = `agent-${Math.random()}`) {
+let freshRange = 0
+/** By default, each test chat comes from its own IP range, so the limits of the other tests do not stop it. */
+async function visitorGoal(ip = `10.20.${freshRange++}.1`, userAgent = `agent-${Math.random()}`) {
   const res = await visitorFrom(ip, userAgent)
   expect(res.statusCode).toBe(201)
   const goal = newGoalResponse.parse(res.json())
@@ -59,10 +63,12 @@ describe('the turn cap of a visitor (PD9)', () => {
     expect(goal.typedTurnsLeft).toBe(2)
     await tapToResults(goal)
     expect(goalResponse.parse((await t.app.inject({ method: 'GET', url: `/v1/goals/${goal.id}`, headers: { [visitorKeyHeader]: goal.key } })).json()).typedTurnsLeft).toBe(2)
-    expect(turnResponse.parse((await typed(goal, 'near the station')).json()).typedTurnsLeft).toBe(1)
-    expect(turnResponse.parse((await typed(goal, 'any gym nearby?')).json()).typedTurnsLeft).toBe(0)
-    const calls = requests.length + requests.router.length
     const walls = (await eventsNamed('wall_hit')).length
+    expect(turnResponse.parse((await typed(goal, 'near the station')).json()).typedTurnsLeft).toBe(1)
+    // The turn that reaches the cap sends wall_hit, because the wall opens at that moment.
+    expect(turnResponse.parse((await typed(goal, 'any gym nearby?')).json()).typedTurnsLeft).toBe(0)
+    expect((await eventsNamed('wall_hit')).length).toBe(walls + 1)
+    const calls = requests.length + requests.router.length
 
     const capped = await typed(goal, 'one more')
     expect(capped.statusCode).toBe(403)
@@ -85,22 +91,24 @@ describe('the turn cap of a visitor (PD9)', () => {
   it('lets a visitor with no results go on after the cap, until the backstop', async () => {
     fakeVendors({ deepseek: [scored({}), scored({}), scored({}), scored({})] })
     const goal = await visitorGoal()
-    // Past the cap with no results, the line of the free messages counts to the backstop.
+    // Past the cap with no results, the line of the free messages hides until the backstop (the user, T-21).
     const left = []
     for (const text of ['hi', 'hello', 'are you there', 'ok']) left.push(turnResponse.parse((await typed(goal, text)).json()).typedTurnsLeft)
-    expect(left).toEqual([1, 2, 1, 0])
+    expect(left).toEqual([1, null, null, 0])
     const backstop = await typed(goal, 'and now?')
     expect([backstop.statusCode, refusal(backstop).limit]).toEqual([403, 'turn_cap'])
   })
 
-  it('gives a signed-in person no cap and no count', async () => {
+  it('gives a signed-in person no cap and no count, also on a visitor goal before T-17 moves it', async () => {
     fakeVendors({ deepseek: [scored({}), scored({}), scored({})] })
-    const created = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
-    expect(created.typedTurnsLeft).toBeNull()
+    const goal = await visitorGoal()
+    await tapToResults(goal)
+    const token = await t.idToken('uid-asha', { claims: { email: 'asha@example.com', email_verified: true } })
     for (const text of ['one', 'two', 'three']) {
-      const res = await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text })
-      expect(turnResponse.parse(res.json()).typedTurnsLeft).toBeNull()
+      const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { text }, headers: { authorization: `Bearer ${token}`, [visitorKeyHeader]: goal.key } })
+      expect([res.statusCode, turnResponse.parse(res.json()).typedTurnsLeft]).toEqual([200, null])
     }
+    expect(newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json()).typedTurnsLeft).toBeNull()
   })
 })
 
@@ -141,6 +149,10 @@ describe('the rate limits (PD9)', () => {
     expect((await eventsNamed('limit_hit')).slice(before).map(({ fields }) => (fields as { limit: string }).limit)).toEqual(['too_fast'])
   })
 
+  it('refuses a new visitor chat when the address of the load balancer is not an IP address', async () => {
+    expect((await visitorFrom('not-an-address')).statusCode).toBe(400)
+  })
+
   it('takes the address of a request from the load balancer, and keeps only its hash', async () => {
     const goal = await visitorGoal('203.0.113.9')
     const [row] = await t.db.select({ ipHash: anonymousSessions.ipHash }).from(anonymousSessions)
@@ -150,7 +162,6 @@ describe('the rate limits (PD9)', () => {
 
   it('takes /24 of an IPv4 address and /48 of an IPv6 address as its range', () => {
     expect(ipRangeOf('192.0.2.77')).toBe('192.0.2.0/24')
-    expect(ipRangeOf('::ffff:192.0.2.77')).toBe('192.0.2.0/24')
     expect(ipRangeOf('2001:db8:1:2::1')).toBe('2001:db8:1::/48')
     expect(ipRangeOf('2001:0db8:0001:ffff:0:0:0:2')).toBe('2001:db8:1::/48')
   })
@@ -185,3 +196,28 @@ describe('the spend of the day (PD9)', () => {
     expect(requests.telegram).toHaveLength(2)
   })
 })
+
+describe('the spend of a fallback attempt', () => {
+  it('adds the cost of each attempt at the price of its vendor', async () => {
+    fakeVendors({ deepseek: [down()], gemini: [answer(JSON.stringify({}))] })
+    const created = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
+    await t.app.spend.settled()
+    await t.db.delete(modelSpend)
+    await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes'`)
+    expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'room in Thane' })).statusCode).toBe(200)
+    await t.app.spend.settled()
+    // The router on DeepSeek, the failed DeepSeek attempt with no tokens, and the extractor on Gemini, which has no cache discount.
+    const deepseekCall = ((20 * 0.3 + 100 * 0.012 + 8 * 1.2) / 1e6) * 88
+    const geminiCall = ((20 * 0.3 + 100 * 0.3 + 8 * 2.5) / 1e6) * 88
+    const [day] = await t.db.select().from(modelSpend)
+    expect(Number(day!.rupees)).toBeCloseTo(deepseekCall + geminiCall, 5)
+  })
+})
+
+describe('the settings of the limits', () => {
+  it('has the first values that the user decided as defaults', () => {
+    expect(limitSettings.parse({})).toEqual({ turnCap: 5, turnBackstop: 15, sessionsPerDevice: 10, sessionsPerIp: 100, sessionsPerIpRange: 500, typedTurnsPerMinute: 10 })
+    expect(spendSettings.parse({})).toEqual({ dailyRupees: 500, telegram: null })
+  })
+})
+

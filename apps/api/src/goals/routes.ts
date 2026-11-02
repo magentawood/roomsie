@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, turnBody, turnResponse, visitorKeyHeader, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
 import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, type AuthOptions } from '../auth'
-import { chatLimitOf, limitLines, networkOf, turnLimitOf, typedTurnsLeft } from './limits'
+import { chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { createGoal, createVisitorSession, goalOf, lastReplyOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
@@ -18,11 +18,12 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   const askerOf = async (req: FastifyRequest, key: string | undefined): Promise<Asker> =>
     ({ userId: req.user?.id ?? null, sessionId: key ? await visitorSessionOf(options.db, key) : null })
 
-  app.post('/goals', { preHandler: optionalUser(options), schema: { headers, response: { 201: newGoalResponse, 429: limitRefusal } } }, async (req, reply) => {
+  app.post('/goals', { preHandler: optionalUser(options), schema: { headers, response: { 201: newGoalResponse, 400: errorResponse, 429: limitRefusal } } }, async (req, reply) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     let visitorKey: string | null = null
     if (!asker.userId && !asker.sessionId) {
       const network = networkOf({ ip: req.ip, userAgent: req.headers['user-agent'] ?? '' })
+      if (!network) return reply.code(400).send({ error: 'not valid: address' })
       const limit = await chatLimitOf(options.db, network, options.limits)
       if (limit) {
         v1.analytics.track(req, { name: 'limit_hit', limit })
@@ -53,14 +54,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const last = await lastReplyOf(options.db, goal.id)
     // A limit refuses a typed turn before any model call. A tap has no limit (PD9, T-21).
-    const limit = 'text' in req.body ? await turnLimitOf(options.db, asker, goal.form, options.limits) : null
-    if (limit === 'turn_cap') {
-      v1.analytics.track(req, { name: 'wall_hit' })
-      return reply.code(403).send({ error: limitLines.turn_cap, limit })
-    }
-    if (limit === 'too_fast') {
-      v1.analytics.track(req, { name: 'limit_hit', limit })
-      return reply.code(429).send({ error: limitLines.too_fast, limit })
+    const leftBefore = await typedTurnsLeft(options.db, asker, goal.form, options.limits)
+    if ('text' in req.body && leftBefore === 0) return reply.code(403).send({ error: limitLines.turn_cap, limit: 'turn_cap' })
+    if ('text' in req.body && await tooFast(options.db, asker, options.limits)) {
+      v1.analytics.track(req, { name: 'limit_hit', limit: 'too_fast' })
+      return reply.code(429).send({ error: limitLines.too_fast, limit: 'too_fast' })
     }
     const input = { goalId: goal.id, last, form: goal.form }
     const deps = { ...options, req }
@@ -70,7 +68,10 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
     for (const event of turn.events) v1.analytics.track(req, event)
-    return { form: turn.form, turns, typedTurnsLeft: await typedTurnsLeft(options.db, asker, turn.form, options.limits) }
+    const left = await typedTurnsLeft(options.db, asker, turn.form, options.limits)
+    // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
+    if (left === 0 && leftBefore !== 0) v1.analytics.track(req, { name: 'wall_hit' })
+    return { form: turn.form, turns, typedTurnsLeft: left }
   })
 }
 

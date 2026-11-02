@@ -1,6 +1,7 @@
 import { isIPv4 } from 'node:net'
+import { z } from 'zod'
 import { and, count, eq, gt, or, sql } from 'drizzle-orm'
-import { capWall, panelReady, type FormA, type LimitRefusal, type RateLimit } from '@roomsie/contract'
+import { capWall, panelReady, type FormA, type RateLimit } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import type { LimitSettings } from './settings'
@@ -13,19 +14,25 @@ export const limitLines = {
 } as const
 
 /** The network around an address: the /24 of IPv4, or the /48 of IPv6. */
-export function ipRangeOf(ip: string) {
-  const address = ip.startsWith('::ffff:') && isIPv4(ip.slice(7)) ? ip.slice(7) : ip
+export function ipRangeOf(address: string) {
   if (isIPv4(address)) return `${address.split('.').slice(0, 3).join('.')}.0/24`
   const [head = '', tail = ''] = address.split('::')
   const left = head ? head.split(':') : []
   const right = tail ? tail.split(':') : []
-  const groups = address.includes('::') ? [...left, ...Array<string>(8 - left.length - right.length).fill('0'), ...right] : left
+  const groups = [...left, ...Array<string>(8 - left.length - right.length).fill('0'), ...right]
   return `${groups.slice(0, 3).map((group) => parseInt(group, 16).toString(16)).join(':')}::/48`
 }
 
-/** The device and the network of a request, as hashes only (T-21). */
-export const networkOf = ({ ip, userAgent }: { ip: string; userAgent: string }): Network =>
-  ({ deviceHash: hashOf(`${ip}|${userAgent}`), ipHash: hashOf(ip), ipRangeHash: hashOf(ipRangeOf(ip)) })
+const ipAddress = z.union([z.ipv4(), z.ipv6()])
+
+/** The hashes of the device and the network of a request, or null for an address that is not an IP address. */
+export function networkOf({ ip, userAgent }: { ip: string; userAgent: string }): Network | null {
+  // The load balancer gives the address, but the header is still text from outside (api.md).
+  const parsed = ipAddress.safeParse(ip.replace(/^::ffff:(?=\d+\.)/, ''))
+  if (!parsed.success) return null
+  const address = parsed.data
+  return { deviceHash: hashOf(`${address}|${userAgent}`), ipHash: hashOf(address), ipRangeHash: hashOf(ipRangeOf(address)) }
+}
 
 /** The limit that a new visitor session goes over, or null (PD9). A day is the last 24 hours. */
 export async function chatLimitOf(db: Db, network: Network, settings: LimitSettings): Promise<RateLimit | null> {
@@ -43,25 +50,22 @@ export async function chatLimitOf(db: Db, network: Network, settings: LimitSetti
   return null
 }
 
-async function typedTurnsOf(db: Db, sessionId: string) {
-  const [row] = await db.select({ turnCount: anonymousSessions.turnCount }).from(anonymousSessions).where(eq(anonymousSessions.id, sessionId))
-  return row?.turnCount ?? 0
-}
-
-/** The typed turns before the wall can come: to the cap, or to the backstop when no results show past the cap. */
+/**
+ * The typed turns of a visitor before the wall. 0: the next typed turn gets the wall. The cap waits for results, until the backstop (PD9).
+ * Null: no count to show, for a signed-in person, or past the cap before results show (the user, T-21).
+ */
 export async function typedTurnsLeft(db: Db, asker: Asker, form: FormA, settings: LimitSettings) {
   if (asker.userId || !asker.sessionId) return null
-  const used = await typedTurnsOf(db, asker.sessionId)
-  return Math.max(0, (used >= settings.turnCap && !panelReady(form) ? settings.turnBackstop : settings.turnCap) - used)
+  const [row] = await db.select({ used: anonymousSessions.turnCount }).from(anonymousSessions).where(eq(anonymousSessions.id, asker.sessionId))
+  const used = row?.used ?? 0
+  if (used >= settings.turnBackstop) return 0
+  if (used < settings.turnCap) return settings.turnCap - used
+  return panelReady(form) ? 0 : null
 }
 
-/** The limit that a typed turn goes over, or null. The cap waits for results, until the backstop (PD9, T-21). */
-export async function turnLimitOf(db: Db, asker: Asker, form: FormA, settings: LimitSettings): Promise<LimitRefusal['limit'] | null> {
-  if (!asker.userId && asker.sessionId) {
-    const used = await typedTurnsOf(db, asker.sessionId)
-    if (used >= settings.turnBackstop || (used >= settings.turnCap && panelReady(form))) return 'turn_cap'
-  }
+/** A person over the limit of typed turns in a minute, signed in or not. */
+export async function tooFast(db: Db, asker: Asker, settings: LimitSettings) {
   const [row] = await db.select({ n: count() }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
     .where(and(ownedBy(asker), eq(chatTurns.inputMethod, 'typed'), gt(chatTurns.createdAt, sql`now() - interval '1 minute'`)))
-  return row!.n >= settings.typedTurnsPerMinute ? 'too_fast' : null
+  return row!.n >= settings.typedTurnsPerMinute
 }
