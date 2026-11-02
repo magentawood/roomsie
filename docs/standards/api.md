@@ -28,6 +28,7 @@ These rules apply to `apps/api`. The rules in [_index.md](_index.md) also apply.
 
 ## Errors, analytics and limits
 
+- Give each call to an outside service a timeout. Why: a service that hangs holds a row lock, a request or the close of the server. (Rule candidates of [#175](https://github.com/magentawood/roomsie/pull/175) and [#200](https://github.com/magentawood/roomsie/pull/200))
 - Report errors only through `reportError(err, context)`. Never call the Sentry SDK directly. Why: the planned move to Crashlytics then changes one file for each app. ([ADR-0014](../decisions/0014-error-tracking.md))
 - Buffer the analytics writes and flush them in batches. Why: the analytics database then gets a small number of large inserts. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - Each event is a versioned Zod schema in `packages/contract`, with `event_version` on each row. Why: a field name is expensive to change after millions of rows carry it. ([ADR-0012](../decisions/0012-analytics-event-store.md))

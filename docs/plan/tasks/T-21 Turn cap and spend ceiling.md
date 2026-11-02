@@ -54,7 +54,7 @@ Stops abuse of the AI and a very large bill.
   - **The contract:** the goal and turn responses tell a visitor the typed turns that are left, and tell a signed-in person nothing. The refusal of a limit has a code: `turn_cap`, `too_many_chats` or `too_fast`. A new event, `limit_hit`, records the limit. The interface changes.
   - **The database:** a migration adds the hash of the IP address and the hash of the IP range to each visitor session, and a table of the model spend of each day, with the alerts that went.
   - **The limits module (new):** it reads each count from the database: the typed turns of a visitor session, the new visitor sessions of a device, an IP address and an IP range in the last 24 hours, and the typed turns of a person in the last minute. The settings hold each value.
-  - **The model wrapper:** each attempt adds its cost to the spend of the day. The settings hold the price of each model. At 70% and at 100% of the daily amount, one Telegram message goes to the team group, one time each day.
+  - **The model wrapper:** each attempt adds its cost to the spend of the day. The spend module holds the price of each vendor. At 70% and at 100% of the daily amount, one Telegram message goes to the team group, one time each day.
   - **The goals routes:** a new visitor session over a limit gets `too_many_chats`. A typed turn over the cap gets `turn_cap` and the `wall_hit` event, and a typed turn over the rate gets `too_fast`. Each refusal comes before a model call. A chip tap has no limit.
   - **The server:** it trusts one proxy, the load balancer of Lightsail, so the IP address of a request is the address of the person.
   - **The deploy:** the deploy workflow gives the API the Telegram bot token and the chat ID.
@@ -79,6 +79,8 @@ Stops abuse of the AI and a very large bill.
   - **The IP address:** the API trusts one proxy hop. The database keeps only the hashes of the address and of its range (/24 for IPv4, /48 for IPv6), never the address.
   - **The spend:** the cost of each attempt is its tokens times the price of its model. The prices come from model-selection.md, at the full price, so the estimate is high. A day starts at midnight IST.
   - **The counter past the cap (the user, review round 2):** a visitor past five typed turns with no results sees no line of the free messages. The line comes back, at 0, when results show or at the backstop.
+  - **From the standards (review):** a request whose address from the load balancer is not an IP address gets 400, because Zod parses each byte from outside (api.md). The Telegram call has a timeout, as each call to an outside service.
+  - **The cap across goals (review):** the cap waits until any goal of the visitor session showed results, so a new empty goal does not hide the cap.
   - **The moment of the cap:** the wall opens when a turn uses the last free typed turn, and the server sends `wall_hit` with that turn. A typed turn after it gets `turn_cap` with no event.
   - **T-29 (the user, review round 1):** its item about the spend says "When spend reaches the daily amount, the chat keeps working, and the team gets the Telegram alert". Go/no-go check 3 says "The spend alert goes to the team".
   - **The design (the user, 2026-11-02):** drafts section 34 (Figma node 590:29811) holds the two limit messages, with our tokens. Each line comes in the thread in place of the reply, in the error text colour. The line of too many chats has a "Sign in with Google" button.

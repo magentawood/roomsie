@@ -7,7 +7,7 @@ import { anonymousSessions, goals, modelSpend } from '../src/db/schema'
 import { limitSettings } from '../src/goals/settings'
 import { spendSettings } from '../src/models/settings'
 import { seedCatalogues } from '../src/db/seed-axes'
-import { ipRangeOf } from '../src/goals/limits'
+import { ipAddress, ipRangeOf } from '../src/goals/limits'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
 import { answer, down, fakeVendors, keys, scored } from './vendors'
@@ -65,7 +65,6 @@ describe('the turn cap of a visitor (PD9)', () => {
     expect(goalResponse.parse((await t.app.inject({ method: 'GET', url: `/v1/goals/${goal.id}`, headers: { [visitorKeyHeader]: goal.key } })).json()).typedTurnsLeft).toBe(2)
     const walls = (await eventsNamed('wall_hit')).length
     expect(turnResponse.parse((await typed(goal, 'near the station')).json()).typedTurnsLeft).toBe(1)
-    // The turn that reaches the cap sends wall_hit, because the wall opens at that moment.
     expect(turnResponse.parse((await typed(goal, 'any gym nearby?')).json()).typedTurnsLeft).toBe(0)
     expect((await eventsNamed('wall_hit')).length).toBe(walls + 1)
     const calls = requests.length + requests.router.length
@@ -79,22 +78,31 @@ describe('the turn cap of a visitor (PD9)', () => {
     expect((await turn(goal, { tap: { slot: 'intent', value: 'pg' } })).statusCode).toBe(200)
   })
 
-  it('counts the typed turns of each goal of the visitor session', async () => {
+  it('counts the typed turns, and the results, of each goal of the visitor session', async () => {
     fakeVendors({ deepseek: [scored({}), scored({})] })
     const first = await visitorGoal()
     await tapToResults(first)
     await typed(first, 'hello')
     const second = newGoalResponse.parse((await t.app.inject({ method: 'POST', url: '/v1/goals', headers: { [visitorKeyHeader]: first.key } })).json())
     expect(second.typedTurnsLeft).toBe(1)
+    await typed(first, 'and one more')
+    // A new empty goal does not hide the results of the first goal from the cap.
+    const third = newGoalResponse.parse((await t.app.inject({ method: 'POST', url: '/v1/goals', headers: { [visitorKeyHeader]: first.key } })).json())
+    expect(third.typedTurnsLeft).toBe(0)
+    expect((await typed({ id: third.id, key: first.key }, 'hi')).statusCode).toBe(403)
   })
 
   it('lets a visitor with no results go on after the cap, until the backstop', async () => {
     fakeVendors({ deepseek: [scored({}), scored({}), scored({}), scored({})] })
     const goal = await visitorGoal()
+    const walls = (await eventsNamed('wall_hit')).length
     // Past the cap with no results, the line of the free messages hides until the backstop (the user, T-21).
     const left = []
-    for (const text of ['hi', 'hello', 'are you there', 'ok']) left.push(turnResponse.parse((await typed(goal, text)).json()).typedTurnsLeft)
-    expect(left).toEqual([1, null, null, 0])
+    for (const text of ['hi', 'hello', 'are you there']) left.push(turnResponse.parse((await typed(goal, text)).json()).typedTurnsLeft)
+    expect(left).toEqual([1, null, null])
+    expect((await eventsNamed('wall_hit')).length).toBe(walls)
+    expect(turnResponse.parse((await typed(goal, 'ok')).json()).typedTurnsLeft).toBe(0)
+    expect((await eventsNamed('wall_hit')).length).toBe(walls + 1)
     const backstop = await typed(goal, 'and now?')
     expect([backstop.statusCode, refusal(backstop).limit]).toEqual([403, 'turn_cap'])
   })
@@ -142,7 +150,7 @@ describe('the rate limits (PD9)', () => {
     const before = (await eventsNamed('limit_hit')).length
     const created = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
     // The tests before this one sent typed turns as asha. A minute later they no longer count.
-    await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes'`)
+    await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes' where goal_id in (select id from goals where user_id = ${t.ids.asha})`)
     for (const text of ['one', 'two', 'three', 'four', 'five']) expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text })).statusCode).toBe(200)
     const fast = await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'six' })
     expect([fast.statusCode, refusal(fast)]).toEqual([429, { error: "You're sending fast. Wait a moment, then send it again.", limit: 'too_fast' }])
@@ -154,33 +162,46 @@ describe('the rate limits (PD9)', () => {
   })
 
   it('takes the address of a request from the load balancer, and keeps only its hash', async () => {
-    const goal = await visitorGoal('203.0.113.9')
-    const [row] = await t.db.select({ ipHash: anonymousSessions.ipHash }).from(anonymousSessions)
-      .innerJoin(goals, eq(goals.anonymousSessionId, anonymousSessions.id)).where(eq(goals.id, goal.id))
-    expect(row!.ipHash).toBe(createHash('sha256').update('203.0.113.9').digest('hex'))
+    const hashOfGoal = async (id: string) => (await t.db.select({ ipHash: anonymousSessions.ipHash }).from(anonymousSessions)
+      .innerJoin(goals, eq(goals.anonymousSessionId, anonymousSessions.id)).where(eq(goals.id, id)))[0]!.ipHash
+    const sha256 = (text: string) => createHash('sha256').update(text).digest('hex')
+    expect(await hashOfGoal((await visitorGoal('203.0.113.9')).id)).toBe(sha256('203.0.113.9'))
+    // An IPv4 address in its IPv6 form counts as the IPv4 address.
+    expect(await hashOfGoal((await visitorGoal('::ffff:203.0.113.10')).id)).toBe(sha256('203.0.113.10'))
   })
 
   it('takes /24 of an IPv4 address and /48 of an IPv6 address as its range', () => {
-    expect(ipRangeOf('192.0.2.77')).toBe('192.0.2.0/24')
-    expect(ipRangeOf('2001:db8:1:2::1')).toBe('2001:db8:1::/48')
-    expect(ipRangeOf('2001:0db8:0001:ffff:0:0:0:2')).toBe('2001:db8:1::/48')
+    const rangeOf = (ip: string) => ipRangeOf(ipAddress.parse(ip))
+    expect(rangeOf('192.0.2.77')).toBe('192.0.2.0/24')
+    expect(rangeOf('::ffff:192.0.2.77')).toBe('192.0.2.0/24')
+    expect(rangeOf('2001:db8:1:2::1')).toBe('2001:db8:1::/48')
+    expect(rangeOf('2001:0db8:0001:ffff:0:0:0:2')).toBe('2001:db8:1::/48')
   })
 })
 
 describe('the spend of the day (PD9)', () => {
-  it('adds the cost of each model attempt, and sends each Telegram alert one time', async () => {
-    const requests = fakeVendors({ deepseek: [scored({}), scored({}), scored({})] })
+  // Each call: 20 new and 100 cached tokens in, and 8 out, at the dollars of a million tokens of its vendor, at ₹88 for each dollar.
+  const callCost = { deepseek: ((20 * 0.3 + 100 * 0.012 + 8 * 1.2) / 1e6) * 88, gemini: ((20 * 0.3 + 100 * 0.3 + 8 * 2.5) / 1e6) * 88 }
+  /** A goal of asha, with no spend today and none of her typed turns in the last minute. */
+  async function freshSpend() {
     const created = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
     await t.app.spend.settled()
     await t.db.delete(modelSpend)
-    await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes'`)
-    // Each DeepSeek call: 20 new and 100 cached tokens in, and 8 out, at $0.3, $0.012 and $1.2 for each million, at ₹88 for each dollar.
-    const perCall = ((20 * 0.3 + 100 * 0.012 + 8 * 1.2) / 1e6) * 88
-    expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'room in Thane' })).statusCode).toBe(200)
+    await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes' where goal_id in (select id from goals where user_id = ${t.ids.asha})`)
+    return created.id
+  }
+  const spendOfToday = async () => {
     await t.app.spend.settled()
-    const [day] = await t.db.select().from(modelSpend)
+    return (await t.db.select().from(modelSpend))[0]!
+  }
+
+  it('adds the cost of each model attempt, and sends each Telegram alert one time', async () => {
+    const requests = fakeVendors({ deepseek: [scored({}), scored({}), scored({})] })
+    const goalId = await freshSpend()
+    expect((await t.call('asha', 'POST', `/v1/goals/${goalId}/turns`, { text: 'room in Thane' })).statusCode).toBe(200)
+    const day = await spendOfToday()
     expect(day).toMatchObject({ day: '2026-11-02', alertedPercent: 100 })
-    expect(Number(day!.rupees)).toBeCloseTo(2 * perCall, 5)
+    expect(Number(day.rupees)).toBeCloseTo(2 * callCost.deepseek, 5)
     // The router and the extractor run at the same time: one call reaches 74% and the other 148%, so each alert goes once.
     const texts = requests.telegram.map((r) => String(r.body.text))
     expect(texts).toHaveLength(2)
@@ -191,26 +212,17 @@ describe('the spend of the day (PD9)', () => {
     expect(requests.telegram[0]!.body.chat_id).toBe('-100123')
     expect(requests.telegram[0]!.url).toBe('https://api.telegram.org/botbot-token/sendMessage')
     // The chat keeps working past the daily amount, and no alert goes again.
-    expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'and Navi Mumbai' })).statusCode).toBe(200)
+    expect((await t.call('asha', 'POST', `/v1/goals/${goalId}/turns`, { text: 'and Navi Mumbai' })).statusCode).toBe(200)
     await t.app.spend.settled()
     expect(requests.telegram).toHaveLength(2)
   })
-})
 
-describe('the spend of a fallback attempt', () => {
-  it('adds the cost of each attempt at the price of its vendor', async () => {
+  it('adds the cost of a fallback attempt at the price of its vendor', async () => {
     fakeVendors({ deepseek: [down()], gemini: [answer(JSON.stringify({}))] })
-    const created = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
-    await t.app.spend.settled()
-    await t.db.delete(modelSpend)
-    await t.db.execute(sql`update chat_turns set created_at = created_at - interval '2 minutes'`)
-    expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'room in Thane' })).statusCode).toBe(200)
-    await t.app.spend.settled()
-    // The router on DeepSeek, the failed DeepSeek attempt with no tokens, and the extractor on Gemini, which has no cache discount.
-    const deepseekCall = ((20 * 0.3 + 100 * 0.012 + 8 * 1.2) / 1e6) * 88
-    const geminiCall = ((20 * 0.3 + 100 * 0.3 + 8 * 2.5) / 1e6) * 88
-    const [day] = await t.db.select().from(modelSpend)
-    expect(Number(day!.rupees)).toBeCloseTo(deepseekCall + geminiCall, 5)
+    const goalId = await freshSpend()
+    expect((await t.call('asha', 'POST', `/v1/goals/${goalId}/turns`, { text: 'room in Thane' })).statusCode).toBe(200)
+    // The router on DeepSeek, the failed DeepSeek attempt with no tokens, and the extractor on Gemini.
+    expect(Number((await spendOfToday()).rupees)).toBeCloseTo(callCost.deepseek + callCost.gemini, 5)
   })
 })
 
@@ -220,4 +232,3 @@ describe('the settings of the limits', () => {
     expect(spendSettings.parse({})).toEqual({ dailyRupees: 500, telegram: null })
   })
 })
-
