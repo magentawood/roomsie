@@ -41,3 +41,36 @@ Show the results in each Mumbai area, and a waitlist form outside Mumbai.
 ## Read first
 - [pd-02-launch-market.md](../../decisions/pd-02-launch-market.md)
 - [pd-06c-interface-holes.md](../../decisions/pd-06c-interface-holes.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by n3rxv
+
+- **Modules:**
+  - **The waitlist route:** `POST /v1/goals/:id/waitlist` accepts each waitlist place, also a place that the chat did not name. It still needs the goal, and a goal still adds a maximum of three entries. The interface changes: the 400 for a place that the chat did not name goes away.
+  - **The panel of the web:** a pure function selects the content of the panel from the form and the outside places: the results, the waitlist screen, or the results with one waitlist line.
+  - **The waitlist form of the web (new):** the email, the area, and the Join button, with an error under each field. The area takes a name or an other name of a waitlist place, with the names as suggestions.
+  - **The memory of the browser:** it keeps each place that the person joined for each chat.
+  - **The chat screen:** it opens the panel for the waitlist screen. On a phone, the waitlist form is in the thread, under the reply.
+  - **The docs:** the learn pages of the areas and the limits tell the new rule of the place.
+- **Seams for the tests:**
+  - The tests of the waitlist route: a waitlist place that the chat did not name gets 204. A place that is not a waitlist place gets 400. The limit of three stays.
+  - Unit tests of the web:
+    - The content of the panel: a Mumbai area gives the results, an outside place with no Mumbai area gives the waitlist screen, and the two give the results and one line.
+    - The typed area: a name and an other name give their place. A Mumbai area and an unknown name give no place.
+    - The memory of a join for each chat and place.
+  - A browser check on local dev at 390 px and 1440 px: the waitlist screen, the line, an invalid email, and the joined state.
+  - A live check after the deploy, from the Safari of the user: a visitor chat that names Pune shows the waitlist screen, and an invalid email shows its error. The check joins no real email.
+- **Decisions:**
+  - **The area field (the user, 2026-11-03):** it takes each of the 31 waitlist places, typed, with the names as suggestions. It starts with the newest outside place of the chat. The API accepts each waitlist place. This replaces the rule of T-22a "the API accepts only a place that the goal named". The entry still needs a chat, and a chat still adds a maximum of three entries.
+  - **The waitlist screen (the user):** it opens when the chat names a place outside Mumbai and has no Mumbai area, also before the place type and the budget. On a computer it is the panel, with the header "Pune is not open yet". On a phone, the form is in the thread (drafts section 18).
+  - **The waitlist line (PD6c):** a search with a Mumbai area and an outside place shows the results, and one waitlist line above the first card: the email and Join, for the newest outside place. The person can close the line.
+  - **The joined state (the user):** after a join, "You're on the Pune waitlist" takes the place of the form or the line. The browser keeps it for each chat and place.
+  - **A signed-in person:** the email field starts with the email of the Google account, so a join needs one tap.
+  - **The errors:** an email that is not valid shows "Enter a valid email address" under the field, at the tap on Join. The 429 shows the text of the API.
+  - **"Look in Mumbai":** three area groups as examples, Andheri–Goregaon, Bandra–Santacruz and Powai–Vikhroli. A tap is the area chip of T-09, so the results come.
+  - **Item 1:** each Mumbai area is live (PD2, #162), so a search in it shows its results. The test of the content of the panel covers it.
+- **Out of scope:**
+  - the text of the assistant reply, and its chips in the chat
+  - the preferences banner
+  - an email that confirms a join, and an analytics event
