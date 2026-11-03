@@ -14,7 +14,7 @@ import { Button } from '../ui/button'
 import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
 import { CloseButton, ModalFrame } from '../ui/modal'
 
-/** "Explore for now" closes the dialog for this visit of the browser tab. */
+/** "Explore for now", the close button, Escape and a click outside close the dialog for this visit of the browser tab. */
 const skipKey = 'roomsie:skip-profile'
 
 export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
@@ -37,7 +37,7 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
     : age > maxAge ? `Enter an age of ${maxAge} or less.` : undefined
   const ready = fullName !== null && gender !== null
   return (
-    <ModalFrame labelledBy="create-profile-title" onClose={onClose} middle>
+    <ModalFrame labelledBy="create-profile-title" onClose={onClose} place="middle">
       <form className="relative flex flex-col gap-5 p-5 sm:p-6" onSubmit={(e) => {
         e.preventDefault()
         setTried(true)
@@ -47,7 +47,7 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
           <LogoMark className="size-10 text-primary" />
           <div>
             <h2 id="create-profile-title" className="text-lg font-semibold text-primary">You’ve logged in!</h2>
-            <p className="text-sm text-tertiary">Please review your basic details and complete your profile.</p>
+            <p className="text-sm text-tertiary">Please review your basic details and complete your profile</p>
           </div>
         </div>
         <TextInput label="Full Name" required value={fullName} onChange={setFullName} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />

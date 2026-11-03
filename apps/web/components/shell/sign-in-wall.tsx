@@ -8,7 +8,7 @@ export function SignInWall({ title = 'Sign in to continue', text = 'Unlimited ch
   title?: string; text?: string; onClose: () => void
 }) {
   return (
-    <ModalFrame labelledBy="sign-in-wall-title" onClose={onClose} sheet>
+    <ModalFrame labelledBy="sign-in-wall-title" onClose={onClose} place="sheet">
       <div className="flex flex-col gap-8 p-6">
         <div className="flex flex-col gap-4">
           <span aria-hidden className="mx-auto -mt-3 h-1 w-9 rounded-full bg-quaternary lg:hidden" />
