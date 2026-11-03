@@ -24,7 +24,6 @@ export function blockRoutes(v1: FastifyInstance, options: AuthOptions) {
       // ADR-0015: a retried tap, or a second block of the same person, adds nothing.
       await tx.insert(blocks).values({ id: req.body.id, blockerUserId, blockedUserId: blocked.userId }).onConflictDoNothing()
       await declineOpenBetween(tx, blockerUserId, blocked.userId)
-      // A block hides each person from the other, also in the comparisons that each keeps (T-49).
       await forgetInComparisons(tx, req.body.profileId, 'Not available', blockerUserId)
       if (own) await forgetInComparisons(tx, own.id, 'Not available', blocked.userId)
     })

@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, goneFromComparison, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, type Owner } from '../observations/read'
@@ -130,12 +130,9 @@ export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
 }
 
-/**
- * A person keeps only a name in the comparisons of people that others keep (T-49): "Deleted user" in each chat after an account
- * deletion (PD19), and "Not available" in the chats of the other person after a block, which hides each from the other.
- */
+/** Leaves only a name for this person in the comparisons that others keep (PD19, T-49). */
 export async function forgetInComparisons(tx: Tx, profileId: string, fullName: 'Deleted user' | 'Not available', ofUserId?: string) {
-  const gone = goneFromComparison(profileId, fullName)
+  const gone: PersonOption = { id: profileId, fullName, age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false }
   await tx.update(chatTurns).set({
     parts: sql`jsonb_set(${chatTurns.parts}, '{comparison,options}', (
       select jsonb_agg(case when option->>'id' = ${profileId} then ${JSON.stringify(gone)}::jsonb else option end order by n)

@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { assistantParts, goalResponse, listingResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type CompareRequest } from '@roomsie/contract'
+import { assistantParts, goalResponse, listingResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type CompareRequest, type GoalResponse } from '@roomsie/contract'
 import { desc, eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { chatTurns } from '../src/db/schema'
@@ -45,6 +45,7 @@ const answer = async (text: string, compare: CompareRequest) => {
   expect(res.statusCode).toBe(200)
   return turnResponse.parse(res.json()).turns[1]
 }
+const personTables = (goal: GoalResponse) => goal.turns.flatMap((turn) => (turn.comparison?.kind === 'person' ? [turn.comparison] : []))
 
 describe('the comparison of selected cards (T-49)', () => {
   it('compares the selected places from their database fields, in the given order, with no composer call', async () => {
@@ -129,7 +130,7 @@ describe('the comparison of selected cards (T-49)', () => {
   it('turns a deleted person into "Deleted user" in each saved comparison (PD19)', async () => {
     expect((await t.call('asha', 'DELETE', '/v1/me')).statusCode).toBe(204)
     const goal = goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json())
-    const people = goal.turns.flatMap((turn) => (turn.comparison?.kind === 'person' ? [turn.comparison] : []))
+    const people = personTables(goal)
     expect(people).toHaveLength(1)
     expect(people[0]!.options[0]).toEqual({
       id: expect.any(String), fullName: 'Deleted user', age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false,
@@ -140,8 +141,21 @@ describe('the comparison of selected cards (T-49)', () => {
 
   it('turns a blocked person into "Not available" in the saved comparisons of the blocker', async () => {
     expect((await t.call('seeker', 'POST', '/v1/blocks', { id: uuidv7(), profileId: people[1] })).statusCode).toBe(204)
-    const goal = goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json())
-    const table = goal.turns.flatMap((turn) => (turn.comparison?.kind === 'person' ? [turn.comparison] : []))[0]!
+    const table = personTables(goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json()))[0]!
     expect(table.options[1]).toMatchObject({ id: people[1], fullName: 'Not available', age: null, jobRole: null, lifestyle: {} })
+  })
+
+  it('after a block, the blocker is "Not available" in the chats of the blocked person, and a third chat keeps the values', async () => {
+    const cards = [await t.liveCard('owner', 'Om Kale'), await t.liveCard('broker', 'Bina Das')]
+    const comparedBy = async (who: Who) => {
+      const goal = newGoalResponse.parse((await t.call(who, 'POST', '/v1/goals')).json()).id
+      fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+      expect((await ask('compare', { kind: 'person', ids: cards }, who, goal)).statusCode).toBe(200)
+      return async () => goalResponse.parse((await t.call(who, 'GET', `/v1/goals/${goal}`)).json()).turns.at(-1)!.comparison!.options[0]
+    }
+    const [ravisFirst, thirdsFirst] = [await comparedBy('ravi'), await comparedBy('pgOwner')]
+    expect((await t.call('owner', 'POST', '/v1/blocks', { id: uuidv7(), profileId: people[1] })).statusCode).toBe(204)
+    expect(await ravisFirst()).toMatchObject({ id: cards[0], fullName: 'Not available', age: null })
+    expect(await thirdsFirst()).toMatchObject({ id: cards[0], fullName: 'Om Kale', age: 25 })
   })
 })

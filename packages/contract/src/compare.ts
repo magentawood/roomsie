@@ -33,7 +33,3 @@ export const comparison = z.discriminatedUnion('kind', [
 ])
 export type Comparison = z.infer<typeof comparison>
 export type PersonOption = z.infer<typeof personOption>
-
-/** A person with only a name, in a comparison that another person keeps: after an account deletion (PD19) or a block. */
-export const goneFromComparison = (id: string, fullName: 'Deleted user' | 'Not available'): PersonOption =>
-  ({ id, fullName, age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false })

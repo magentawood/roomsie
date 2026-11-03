@@ -69,7 +69,7 @@
     "mr-Latn": "Option 1 tumchya uttaranshi sarvat jast julto.",
     "mr": "Option 1 तुमच्या उत्तरांशी सर्वात जास्त जुळतो."
   },
-  "cheapestLine": {
+  "compareCheapest": {
     "en": "Option {option} needs the least cash to move in: {amount}.",
     "hi-Latn": "Option {option} mein shift hone ke liye sabse kam cash lagega: {amount}.",
     "hi": "Option {option} में शिफ़्ट होने के लिए सबसे कम नक़द लगेगा: {amount}।",

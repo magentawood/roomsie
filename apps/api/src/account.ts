@@ -40,8 +40,6 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * The events stay, but the analytics id goes, so no event points to the person (T-24).
  *
  * The messages stay for the other person (T-44).
- *
- * Each comparison of people that other people keep shows "Deleted user" for this person (T-49).
  */
 export async function deleteAccount(
   { db, storage, idStore, firebaseAdmin }: { db: Db; storage: Pick<Storage, 'deleteObjects'>; idStore?: IdStore; firebaseAdmin: Pick<FirebaseAdmin, 'deleteUser'> | null },

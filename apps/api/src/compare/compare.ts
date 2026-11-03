@@ -15,14 +15,13 @@ function placeOf(listing: Listing, { rates, verified }: Parts) {
 const personOf = ({ id, fullName, age, jobRole, whosMoving, budgetMin, budgetMax, moveDate }: Profile, { lifestyle, verified }: Pick<CardResponse, 'lifestyle' | 'verified'>): PersonOption =>
   ({ id, fullName, age, jobRole, whosMoving, budgetMin, budgetMax, moveDate, lifestyle, verified })
 
-/** The table of the selected cards, in the order of the request (T-49). Null: a card that the viewer cannot see. */
+/** The table of the selected cards, in the order of the request (T-49). Null: a card that the viewer cannot see, or a listing of the viewer. */
 export async function comparisonOf(db: Db, viewerUserId: string, { kind, ids }: CompareRequest): Promise<Comparison | null> {
   if (kind === 'person') {
     const [rows, answers] = await Promise.all([visibleCards(db, viewerUserId, ids), answersFor(db, ids)])
     return rows.length === ids.length ? comparison.parse({ kind, options: inOrder(ids, rows).map((row) => personOf(row, answers(row.id))) }) : null
   }
-  const [listings, parts] = await Promise.all([visibleListings(db, viewerUserId, ids), partsOf(db, ids)])
   // The results never show the own listing of the viewer, so a comparison does not either.
-  const rows = listings.filter((listing) => listing.ownerUserId !== viewerUserId)
+  const [rows, parts] = await Promise.all([visibleListings(db, viewerUserId, ids, { notOwn: true }), partsOf(db, ids)])
   return rows.length === ids.length ? comparison.parse({ kind, options: inOrder(ids, rows).map((listing) => placeOf(listing, parts(listing.id))) }) : null
 }

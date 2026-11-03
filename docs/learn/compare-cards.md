@@ -16,7 +16,7 @@
 | The request and the table | `compareRequest` and `comparison` in `packages/contract/src/compare.ts` |
 | The cash to move in | `moveInOf()` in `packages/contract/src/listings.ts`, also for the place detail |
 | The table from the database | `comparisonOf()` in `apps/api/src/compare/compare.ts` |
-| The reply | `comparisonReply()` in `apps/api/src/assistant/assistant.ts`, and the lines `compareBest` and `cheapestLine` |
+| The reply | `comparisonReply()` in `apps/api/src/assistant/assistant.ts`, and the lines `compareBest` and `compareCheapest` |
 | A deleted or blocked person | `forgetInComparisons()` in `apps/api/src/goals/store.ts`, called by the account deletion and the block |
 | The selection, the rows and the picker | `apps/web/lib/compare.ts`, with unit tests |
 | The table on the screen | `apps/web/components/chat/comparison.tsx` |
