@@ -64,6 +64,13 @@ export function scored(fields: object, unsure: Record<string, number> = {}) {
   return answer(content, undefined, tokens)
 }
 
+/** A sure label of the router, with `fields` in place of those of `coreLabel`. */
+export const routed = (fields: object, unsure?: Record<string, number>) => ({ router: { deepseek: [scored({ ...coreLabel, ...fields }, unsure)] } })
+/** The extractor answer of the message "room chahiye", and the scripted reply around it. */
+export const room = () => scored({ intent: 'room' })
+export const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai work for you?'
+export const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
+
 /** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
 export function fakeRequest() {
   const events: AnalyticsEvent[] = []

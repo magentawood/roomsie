@@ -2,7 +2,7 @@ import { assistantReply, chipSlots, isOpenSlot, mustHaveKeys, replyInput, slotPa
 import type { z } from 'zod'
 import type { AssistantDeps, TurnState } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
-import { backToIt, languageOf, lineOf } from '../../lines'
+import { backToIt, lineOf } from '../../lines'
 import { slotOf } from '../extractor/form-update'
 import { questionFor, replyLines, valueText } from './texts'
 
@@ -31,8 +31,6 @@ export async function replyWriter(turn: TurnState & { label: TurnLabel; language
   const { form, changed, conflicts, settled, ambiguous, failed, last, label, language } = turn
   return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label, language }), deps))
 }
-
-export const replyLanguageOf = ({ label, lastRegister }: Pick<TurnState, 'lastRegister'> & { label: TurnLabel }) => languageOf(label.register ?? lastRegister)
 
 const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps) => {
   const catalogue = await catalogueOf(db)

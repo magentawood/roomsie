@@ -47,6 +47,7 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 - The ~30 articles are approximately one week of work for two marketing people. They can write them before the product exists.
 - The eval set tests each band with its own pass condition, in Hindi, Marathi and Hinglish too. If a redirect works only in English, it is not a redirect.
 - Go/no-go check 7 (PD11): the router flags off-topic messages, with no model call after the router. The advisor never answers law, tax or safety from the web.
+- The fixed lines of the assistant are in a data file, with a text for each reply language (2026-11-02, T-13): the line of each band, the hand-off line, "send it again" and the last line. The product team changes them with no code change. PC-15 of F-14 gives the final text.
 
 ## Sources
 

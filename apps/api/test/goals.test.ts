@@ -6,7 +6,7 @@ import { anonymousSessions, areas, chatTurns, goals } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
-import { answer, coreLabel, down, fakeVendors, keys, scored } from './vendors'
+import { answer, coreLabel, down, fakeVendors, intentQuestion, keys, room, roomAck, routed, scored } from './vendors'
 
 let t: TestApp<'asha' | 'ravi'>
 let analytics: TestAnalyticsDb
@@ -323,9 +323,6 @@ describe('a typed turn', () => {
 })
 
 describe('the router', () => {
-  const room = () => scored({ intent: 'room' })
-  /** A sure label of the router, with `fields` in place of those of `coreLabel`. */
-  const routed = (fields: object, unsure?: Record<string, number>) => ({ router: { deepseek: [scored({ ...coreLabel, ...fields }, unsure)] } })
   const labelOf = async (goalId: string) =>
     (await t.db.select({ parts: chatTurns.parts }).from(chatTurns).where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'))))[0]!.parts
   const routedCount = async (band: TurnLabel['band']) => {
@@ -342,8 +339,6 @@ describe('the router', () => {
     expect(await routedCount(label.band)).toBe(before + 1)
     return { form, reply: turns[1].text }
   }
-  const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
-  const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai work for you?'
   const noIntent = { source: 'empty', value: null }
   const roomIntent = { source: 'stated', value: 'room' }
 

@@ -6,8 +6,9 @@ import { catalogueOf } from './catalogue'
 import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
 import { slotOf } from './handlers/extractor/form-update'
-import { replyLanguageOf, replyWriter } from './handlers/reply/reply'
+import { replyWriter } from './handlers/reply/reply'
 import { routeTurn } from './handlers/router/router'
+import { languageOf } from './lines'
 import type { AssistantSettings } from './settings'
 
 export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; settings: AssistantSettings; today: () => string }
@@ -34,20 +35,19 @@ export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 export async function runTurn({ context, ...input }: TurnInput & { text: string; context: ComposerContext }, deps: AssistantDeps) {
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
-  const turn = { ...start, ...(usesExtractor(label) && extracted), label }
-  const language = replyLanguageOf(turn)
-  const scripted = await replyWriter({ ...turn, language }, deps)
+  const turn = { ...start, ...(usesExtractor(label) && extracted), label, language: languageOf(label.register ?? input.lastRegister) }
+  const scripted = await replyWriter(turn, deps)
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
-  const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, language, context, deps) : scripted
+  const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
   return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences }
 }
 
-async function composeReply(reply: AssistantReply, turn: TurnState, language: ReplyLanguage, context: ComposerContext, deps: AssistantDeps) {
+async function composeReply(reply: AssistantReply, turn: TurnState & { language: ReplyLanguage }, context: ComposerContext, deps: AssistantDeps) {
   const form = Object.fromEntries(formASlots.flatMap((slot) => {
     const { source, value } = slotOf(turn.form, slot)
     return source === 'empty' ? [] : [[slot, value]]
   }))
-  const composed = await composer(turn.goalId, { version: 1, language, draft: reply.text, form, ...context, message: turn.text }, deps)
+  const composed = await composer(turn.goalId, { version: 1, language: turn.language, draft: reply.text, form, ...context, message: turn.text }, deps)
   return composed ? { ...reply, text: composed.text } : reply
 }
 
@@ -69,5 +69,5 @@ export async function runTap(input: TurnInput & { tap: ChipTap }, deps: Assistan
   // A tap answers its slot: its value replaces an earlier value, also a list of areas (T-09).
   const form = formA.parse({ ...input.form, [tap.slot]: { source: 'stated', value: slotValueOf(tap) } })
   const turn = { ...input, text, ...noExtraction(form, false), changed: [tap.slot], label: tapLabel }
-  return { text, form, reply: await replyWriter({ ...turn, language: replyLanguageOf(turn) }, deps), ownValues: turn.ownValues }
+  return { text, form, reply: await replyWriter({ ...turn, language: languageOf(input.lastRegister) }, deps), ownValues: turn.ownValues }
 }

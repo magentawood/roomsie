@@ -191,4 +191,4 @@ export type ComposerInput = z.output<typeof composerInput>
 /** The answer of the composer model. Not strict, as the extractor answer. */
 export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
 /** What the composer gives: the words of the reply, after the output check. */
-export const composerOutput = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1) })
+export const composerOutput = composerAnswer.strict()

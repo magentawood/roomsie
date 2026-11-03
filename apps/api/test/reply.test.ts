@@ -5,7 +5,7 @@ import { fixedLines } from '../src/assistant/lines'
 import lines from '../src/assistant/lines.json'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
-import { answer, coreLabel, down, fakeVendors, hang, keys, scored } from './vendors'
+import { answer, down, fakeVendors, hang, intentQuestion, keys, room, roomAck, routed, scored } from './vendors'
 
 let t: TestApp<'asha'>
 beforeAll(async () => {
@@ -29,11 +29,7 @@ async function send(goal: Goal, payload: object) {
 }
 
 const hinglish = { language: 'hindi', script: 'latin' }
-const routed = (fields: object) => ({ router: { deepseek: [scored({ ...coreLabel, ...fields })] } })
 const composed = (...replies: Parameters<typeof answer>[0][]) => ({ composer: { deepseek: replies.map((text) => answer(JSON.stringify({ text }))) } })
-const room = () => scored({ intent: 'room' })
-const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai work for you?'
-const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
 /** The scripted reply of the message "room chahiye": its text, its chips and its form. */
 const expectScripted = ({ reply, form }: Awaited<ReturnType<typeof send>>) => {
   expect(reply).toMatchObject({ text: roomAck, chips: 'areas' })
@@ -155,6 +151,14 @@ describe('the output check of the composer', () => {
     expect(check('Powai, 20k. Mail rooms@example.com.')).toBe(false)
     expect(check('Powai, 20k. See https://example.com.')).toBe(false)
     expect(check('Powai, 20k. See nobroker.in for more.')).toBe(false)
+  })
+
+  it('rejects a text that drops the question of the plan', () => {
+    expect(check('Powai, 20k tak, noted.')).toBe(false)
+  })
+
+  it('passes the pronoun I, which is no name', () => {
+    expect(check("Powai, up to ₹20,000. I'll ask one thing: when should I plan your move?", "I need Powai, I'm fine with 20k")).toBe(true)
   })
 
   it('rejects a number that is not in the plan or the message', () => {
