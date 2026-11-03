@@ -32,9 +32,9 @@ Show the results in each Mumbai area, and a waitlist form outside Mumbai.
 - No task waits on this task.
 
 ## Done when
-- [ ] A search in any Mumbai area shows its results
-- [ ] A visitor from outside Mumbai gets a waitlist form with "Roomsie is only in Mumbai for now", not an empty panel
-- [ ] A search with Mumbai and other places shows the Mumbai results and one waitlist line (PD6c)
+- [x] A search in any Mumbai area shows its results · [#206](https://github.com/magentawood/roomsie/pull/206)
+- [x] A visitor from outside Mumbai gets a waitlist form with "Roomsie is only in Mumbai for now", not an empty panel · [#206](https://github.com/magentawood/roomsie/pull/206)
+- [x] A search with Mumbai and other places shows the Mumbai results and one waitlist line (PD6c) · [#206](https://github.com/magentawood/roomsie/pull/206)
 
 ^done
 
@@ -76,3 +76,13 @@ Show the results in each Mumbai area, and a waitlist form outside Mumbai.
   - the text of the assistant reply, and its chips in the chat
   - the preferences banner
   - an email that confirms a join, and an analytics event
+
+## Log
+
+- **2026-11-03 · [#206](https://github.com/magentawood/roomsie/pull/206)**
+  - **Change:** a chat with a place outside Mumbai and no Mumbai area shows the waitlist screen: the panel on a computer, the form in the thread on a phone. A chat with Mumbai and a place outside it shows the results and one waitlist line. The area field takes each waitlist place, and the API accepts it. The browser keeps each join for each chat.
+  - **Why:** [PD6c](../../decisions/pd-06c-interface-holes.md), [PD2](../../decisions/pd-02-launch-market.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Areas, sub-areas and pockets](../../learn/areas.md), [The limits of the chat](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
