@@ -3,12 +3,12 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
 import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
-import { optionalUser, type AuthOptions } from '../auth'
+import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
-import { createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
+import { claimSession, createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
 const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional(), 'user-agent': z.string().optional() })
@@ -74,6 +74,15 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
     if (after.state === 'wall' && before.state !== 'wall') v1.analytics.track(req, { name: 'wall_hit' })
     return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces }
+  })
+
+  // At sign-in, the web moves the visitor chat to the account. A second claim moves nothing (T-17).
+  app.post('/goals/claim', {
+    preHandler: requireUser(options),
+    schema: { headers: z.object({ [visitorKeyHeader]: z.string().min(1).max(100) }), response: { 204: noContent } },
+  }, async (req, reply) => {
+    await claimSession(options.db, req.headers[visitorKeyHeader], req.user!.id)
+    return reply.code(204).send(null)
   })
 
   // A named place and three emails a chat: a script must first pass the chat limits (T-22a).

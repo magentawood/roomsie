@@ -31,7 +31,7 @@ export function profileRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     preHandler,
     schema: { body: createProfileBody, response: { 201: profileResponse, 409: errorResponse } },
   }, async (req, reply) => {
-    const ownValues = await ownValuesOf(db, req.user!.id)
+    const ownValues = await ownValuesOf(db, { userId: req.user!.id })
     const [made] = await db.insert(profiles).values({ userId: req.user!.id, ...maskFields(req.body, ['fullName']), ...ownValues }).onConflictDoNothing().returning()
     if (!made) return reply.code(409).send({ error: 'the profile exists' })
     return reply.code(201).send(await ownProfileView(made))

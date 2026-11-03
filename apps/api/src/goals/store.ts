@@ -1,10 +1,10 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
-import type { Owner } from '../observations/read'
+import { moveObservations, type Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
@@ -126,12 +126,31 @@ export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
 }
 
-/** The latest religion and community that the person stated in a chat, for a new profile (PD3c, T-58). */
-export async function ownValuesOf(db: Db, userId: string): Promise<OwnValues> {
-  const mine = eq(goals.userId, userId)
+/** The latest religion and community that the person stated in a chat, for a new profile or a claim (PD3c, T-58). */
+export async function ownValuesOf(db: Db | Tx, owner: Owner): Promise<OwnValues> {
+  const mine = 'userId' in owner ? eq(goals.userId, owner.userId) : eq(goals.anonymousSessionId, owner.anonymousSessionId)
   const [[religion], [community]] = await Promise.all([
     db.select({ value: goals.ownReligion }).from(goals).where(and(mine, isNotNull(goals.ownReligion))).orderBy(desc(goals.ownReligionAt)).limit(1),
     db.select({ value: goals.ownCommunity }).from(goals).where(and(mine, isNotNull(goals.ownCommunity))).orderBy(desc(goals.ownCommunityAt)).limit(1),
   ])
   return { religion: religion?.value ?? null, community: community?.value ?? null }
+}
+
+/**
+ * At sign-in (T-17): the goals of the visitor session move to the account, with their turns, and the Form B notes of the session.
+ * The own values of the goals go to the profile, as the newer statement. The session stays, claimed, and its key ends.
+ */
+export function claimSession(db: Db, key: string, userId: string) {
+  return db.transaction(async (tx) => {
+    // The row lock makes a second claim at the same time wait, then find no session to claim.
+    const [session] = await tx.update(anonymousSessions).set({ claimedByUserId: userId, expiresAt: sql`now()` })
+      .where(and(eq(anonymousSessions.keyHash, hashOf(key)), gt(anonymousSessions.expiresAt, sql`now()`), isNull(anonymousSessions.claimedByUserId)))
+      .returning({ id: anonymousSessions.id })
+    if (!session) return
+    const owner = { anonymousSessionId: session.id }
+    const own = await ownValuesOf(tx, owner)
+    await tx.update(goals).set({ userId, anonymousSessionId: null }).where(eq(goals.anonymousSessionId, session.id))
+    await moveObservations(tx, { ...owner, userId })
+    await saveOwnValues(tx, userId, own)
+  })
 }

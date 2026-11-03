@@ -4,7 +4,10 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { useQueryClient } from '@tanstack/react-query'
 import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
+import { reportError } from '@roomsie/config/report'
+import { ApiError } from './api'
 import { forgetChat } from './chat'
+import { claimVisitorChat } from './claim'
 import { firebaseAuth } from './firebase'
 
 type Auth = { user: User | null; loading: boolean; signIn: () => Promise<void>; signOut: () => Promise<void> }
@@ -20,6 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (uid.current !== (user?.uid ?? null)) queryClient.clear()
     uid.current = user?.uid ?? null
     setState({ user, loading: false })
+    // The visitor chat of this browser moves to the account at the sign-in, or at the next load after a failed claim (T-17).
+    // After a claim, the chat loads again as the account.
+    if (user) {
+      claimVisitorChat(user).then(async (moved) => { if (moved) await queryClient.invalidateQueries() }).catch((err: unknown) => {
+        // The invite gate (T-33) refuses an account with a 4xx, and the chat stays a visitor chat.
+        if (!(err instanceof ApiError) || err.status >= 500) reportError(err, { where: 'claim' })
+      })
+    }
   }), [queryClient])
   const value: Auth = {
     ...state,
