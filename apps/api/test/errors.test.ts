@@ -1,6 +1,7 @@
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
+import { DrizzleQueryError } from 'drizzle-orm'
 import type { ErrorEvent } from '@sentry/node'
-import { privacyOptions } from '@roomsie/config/report'
+import { privacyOptions, reportError } from '@roomsie/config/report'
 import { offlineStorage } from '../scripts/openapi'
 import { createAnalyticsDb } from '../src/analytics/client'
 import { flushSentry, startSentry } from '../src/sentry'
@@ -50,6 +51,15 @@ describe('reportError', () => {
     const messages = events.flatMap((e) => e.exception?.values ?? []).map((v) => v.value).join('\n')
     expect(messages).toContain('params: [removed]')
     expect(messages).not.toContain('newAccount')
+  })
+
+  it('logs a failed query with no values, so an email stays out of the log', async () => {
+    const log = { error: vi.fn() }
+    reportError(new DrizzleQueryError('insert into "waitlist" ("email", "area") values ($1, $2)', ['asha@example.com', 'pune']), { where: 'waitlist', log })
+    const { err } = log.error.mock.calls[0]![0] as { err: Error }
+    expect(err.message).toBe('Failed query: insert into "waitlist" ("email", "area") values ($1, $2)\nparams: [removed]')
+    expect(JSON.stringify({ ...err, stack: err.stack })).not.toContain('asha@example.com')
+    await sent()
   })
 
   it('reports a best-effort failure with the person, and the route still succeeds', async () => {

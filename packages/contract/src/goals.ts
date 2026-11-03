@@ -99,7 +99,7 @@ export type SlotConflict = z.infer<typeof slotConflict>
 
 /** What the extractor gives. */
 export const extractorOutput = z.strictObject({
-  version: z.literal(2).default(2),
+  version: z.literal(3).default(3),
   form: formA,
   changed: z.array(z.enum(formASlots)),
   conflicts: z.array(slotConflict),
@@ -113,7 +113,7 @@ export const extractorOutput = z.strictObject({
   ownValues,
   /** The hidden religion and community preferences that this turn stated (PD3c). */
   hiddenPreferences: statedPreferences,
-  /** The places outside Mumbai where the person wants to live, from the place words of the turn. */
+  /** The places outside Mumbai where the person wants to live, from the place words of the turn (T-22a). */
   outsidePlaces: z.array(waitlistPlace),
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>

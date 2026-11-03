@@ -42,7 +42,7 @@ A visitor can ask for a place where Roomsie is not live, for example Vasai or Pu
 - **The match:** the assistant finds these names with the same match as the Mumbai names, so Devanagari names and Marathi endings also work. A test makes sure that no waitlist name is also a Mumbai name.
 - **Only a place to live:** the check reads only the place words that the extractor model copies. Thus, "shifting from Pune, need a PG in Powai" gives Powai, and Pune does not go to the waitlist.
 - **The goal keeps them:** the goal and each turn reply give `outsidePlaces`, with each outside place of any turn of the chat. The web shows the waitlist screen or the waitlist line from it (T-22b).
-- **The waitlist:** `POST /v1/goals/:id/waitlist` saves an email with a place that the chat named. The rules for the entries of a chat are in [the limits of the chat](chat-limits.md).
+- **The waitlist:** `POST /v1/goals/:id/waitlist` saves an email with a place that the chat named. The rules for the entries of a chat are in [the limits of the chat](chat-limits.md). An account deletion removes the entries of the chats of the person.
 
 ```
 "room in Powai or Vasai"  →  form.areas = [powai]   outsidePlaces = [vasai-virar]

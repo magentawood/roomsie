@@ -98,7 +98,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The cost is an estimate.</strong> It uses the highest price of each vendor in <a href="../model-selection.md">model-selection.md</a>, with no off-peak or cache discount for Gemini, so the estimate is high. A change of a model inside one vendor keeps the price of that vendor.</li>
 <li><strong>Each alert goes one time a day, also from two machines.</strong> The update of <code>alerted</code> is the lock: only one call moves it past 70 or 100.</li>
 <li><strong>The router and the extractor run at the same time,</strong> so two writes of the spend can come together. The total of the row is right, because each write adds to it.</li>
-<li><strong>The waitlist takes three emails from each chat</strong> (T-22a). A lock for the chat (<code>pg_advisory_xact_lock</code>) comes before the count, so two joins at the same time cannot both pass it. A plain count, then an insert, lets them both pass. The limit comes before the check of the email. Thus, a chat at the limit gives 429 for each email, and it cannot tell which emails are on the list.</li>
+<li><strong>The waitlist takes three emails from each chat</strong> (T-22a). A lock for the chat (<code>pg_advisory_xact_lock</code>) comes before the count, so two joins at the same time cannot both pass it. The limit comes before the check of the email. Thus, a chat at the limit gives 429 for each email, and it cannot tell which emails are on the list.</li>
 <li><strong>The other test files have very high limits</strong> (<code>noLimits</code> in <code>test/app.ts</code>), because they send many turns from one address. The tests of the limits set their own small values.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

@@ -625,10 +625,10 @@ export const saves = pgTable('saves', {
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
-  /** PD2. */
+  /** The place outside Mumbai (PD2). */
   area: text('area').$type<WaitlistPlace>().notNull(),
-  /** The chat that named the place. A chat adds a few entries at most (T-22a). */
-  goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'set null' }),
+  /** The chat that named the place. A chat adds a few entries at most, and an account deletion removes them with its chats (T-22a). */
+  goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'cascade' }),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),
 }, (t) => ({

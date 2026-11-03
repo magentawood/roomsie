@@ -31,7 +31,7 @@ async function load(db: Db) {
     db.select({ key: mustHaves.key, label: mustHaves.label }).from(mustHaves),
   ])
   // A name of two areas, such as "Andheri", gives both. A name with a Marathi ending keeps the plain name as `words`.
-  // A waitlist place has no areas: `outside` names it. One match finds both, so the longer name wins.
+  // The area names and the waitlist names share one map, so the longer name wins.
   const byName = new Map<string, NameMatch>()
   const add = (key: string, words: string, slugs: string[], outside?: WaitlistPlace) => {
     const known = byName.get(key)

@@ -99,12 +99,12 @@ export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
  * would otherwise replace the form of the first. Returns null when the goal changed.
  */
-export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, goalFields: { form: FormA; outsidePlaces: WaitlistPlace[] }, userTurn: UserTurn, reply: AssistantReply) {
+export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: Asker }, changes: { form: FormA; outsidePlaces: WaitlistPlace[] }, userTurn: UserTurn, reply: AssistantReply) {
   return db.transaction(async (tx) => {
     const { religion, community } = userTurn.ownValues
     const now = new Date()
     const own = { ...(religion && { ownReligion: religion, ownReligionAt: now }), ...(community && { ownCommunity: community, ownCommunityAt: now }) }
-    const [changed] = await tx.update(goals).set({ ...goalFields, ...own, updatedAt: now })
+    const [changed] = await tx.update(goals).set({ ...changes, ...own, updatedAt: now })
       // A JS date has milliseconds, and the default of the column has microseconds.
       .where(and(eq(goals.id, goal.id), ownedBy(goal.asker), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${goal.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
     if (!changed) return null
