@@ -59,8 +59,11 @@ function partsOf(words: string) {
   return text.split(/[^\p{L}\p{M}\p{N}.]+/u).map((w) => w.replace(/^\.+|\.+$/g, '')).filter(Boolean)
 }
 
-/** The rupees of each amount with a unit, as "tees hazaar" or "20k" (T-13). */
-export const unitAmountsIn = (words: string) => amountsIn(partsOf(words)).flatMap((a) => (a.multiplier ? [rupeesOf(a)!] : []))
+/** The rupees of each amount in words with its unit next to it, as "tees hazaar" (T-13). Digits and "do log k liye" are not in it. */
+export function wordAmountsIn(words: string) {
+  const parts = partsOf(words)
+  return amountsIn(parts).flatMap((a) => (!/\d/.test(parts[a.at]!) && unitOf(parts[a.at + 1] ?? '') ? [rupeesOf(a)!] : []))
+}
 
 /** The monthly budget in the words of the person, or null if the words give no amount (PD7: code parses numbers, not the model). */
 export function parseBudget(words: string): Budget | null {

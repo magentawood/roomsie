@@ -165,6 +165,9 @@ describe('the output check of the composer', () => {
     expect(check('Powai, 25k tak. Kab shift karna hai?')).toBe(false)
     expect(check('Powai, tees hazaar tak. Kab shift karna hai?')).toBe(false)
     expect(check('Powai, bees hazaar tak. Kab shift karna hai?')).toBe(true)
+    // "k" after a digit is "ke" here, not thousands.
+    expect(check('Powai, 20k tak, 2 log k liye. Kab shift karna hai?', 'Powai 2 log 20k')).toBe(true)
+    expect(check('Powai, 20k tak, do log k liye. Kab shift karna hai?', 'Powai do log 20k')).toBe(true)
   })
 
   it('rejects a name that is not in the plan, also a name from the message', () => {

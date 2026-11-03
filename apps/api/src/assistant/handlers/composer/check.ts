@@ -1,7 +1,7 @@
 import type { ComposerInput } from '@roomsie/contract'
 import { maskContacts } from '../../../text/mask-contacts'
 import { plainWords } from '../../words'
-import { unitAmountsIn } from '../extractor/budget-words'
+import { wordAmountsIn } from '../extractor/budget-words'
 
 /** Words that a reply can write with a capital letter in any place: they are not names. */
 const alwaysCapital = new Set(['roomsie', 'mumbai', 'pg', 'bhk', 'ok'])
@@ -9,8 +9,7 @@ const isPronounI = (word: string) => /^i(?:['’](?:m|ve|ll|d))?$/i.test(word)
 const email = /\S+@\S+\.\S+/
 const link = /https?:\/\/|www\.|\b[\w-]+\.(?:com|in|org|net|co|io|me|app)\b/i
 
-/** The digits of a text, and each amount in words with a unit, as "tees hazaar". */
-const numbersIn = (text: string) => [...(plainWords(text).match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((n) => Number(n.replaceAll(',', ''))), ...unitAmountsIn(text)]
+const numbersIn = (text: string) => [...(plainWords(text).match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((n) => Number(n.replaceAll(',', ''))), ...wordAmountsIn(text)]
 const wordsIn = (text: string) => text.split(/\s+/).map((word) => word.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '')).filter(Boolean)
 const isCapital = (word: string) => /^\p{Lu}/u.test(word)
 
