@@ -85,7 +85,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>The reply of the own profile has <code>visibility</code> and <code>missing</code>, so the profile screens can tell why a card is not live.</li>
 <li><code>GET /v1/people/:id</code> uses the rule that Saved and the match query use (<code>visiblePeople</code>). It also gives the connection with the viewer for the person detail at <code>/people/[id]</code> (<a href="message-requests.html">Message requests</a>).</li>
 <li>A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.</li>
-<li>After a sign-in, the app shell opens the create dialog "You've logged in!" when the account has no profile. It asks the name, the age and the gender. "Explore for now" and the close button close it until the browser tab closes.</li>
+<li>After a sign-in, the app shell opens the create dialog "You've logged in!" when the account has no profile. It asks the name, the age and the gender. Each way to close it hides it until the browser tab closes.</li>
 <li>The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.</li>
 <li>"Delete my account" calls <code>DELETE /v1/me</code>, then signs out.</li>
 </ul>
