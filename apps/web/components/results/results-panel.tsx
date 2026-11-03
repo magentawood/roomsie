@@ -99,8 +99,8 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
 }
 
 /** The results panel of flow 02: a pure function of Form A (PD6c). */
-export function ResultsPanel({ title, found, held: { hold, release }, more, sample, line, onClose, onAskInChat }: {
-  title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; line?: ReactNode; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+export function ResultsPanel({ title, found, held: { hold, release }, more, sample, notice, onClose, onAskInChat }: {
+  title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
@@ -145,7 +145,7 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
               </div>
             </header>
             <div onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 lg:px-6">
-              {line}
+              {notice}
               {found.results.length
                 ? <ResultGrid results={found.results} onOpen={setTapped} />
                 : <NoResults suggested={found.suggested} onOpen={setTapped} />}

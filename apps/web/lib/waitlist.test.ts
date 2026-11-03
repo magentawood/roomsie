@@ -34,6 +34,8 @@ describe('the typed area of the waitlist form', () => {
     expect(placeOf('Vasai Virar')).toBe('vasai-virar')
     expect(placeOf('Pimpri-Chinchwad')).toBe('pune')
     expect(placeOf('पुणे')).toBe('pune')
+    // A name in Devanagari matches with or without the nukta, as in the chat.
+    expect(placeOf('चंडीगढ')).toBe('chandigarh')
   })
 
   it('gives no place for a Mumbai area or an unknown name', () => {

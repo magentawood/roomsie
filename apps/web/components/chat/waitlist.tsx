@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState, type FormEvent, type ReactNode } from 'react'
+import { useId, useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Mail01, MarkerPin01 } from '@untitledui/icons'
 import { noContent, waitlistBody, waitlistPlace, waitlistPlaceNames, type WaitlistPlace } from '@roomsie/contract'
@@ -16,14 +16,13 @@ import { CloseButton } from '../ui/modal'
 const nameOf = (place: WaitlistPlace) => waitlistPlaceNames[place].name
 /** Examples of Mumbai areas, not a list of the open areas (drafts section 18). */
 const mumbaiExamples = ['andheri-goregaon', 'bandra-santacruz', 'powai-vikhroli']
-const emailError = 'Enter a valid email address'
-/** The email after the check of the contract, or null. */
-const checkedEmail = (email: string) => waitlistBody.shape.email.safeParse(email).data ?? null
 
 // Each form and line of a chat reads the same joins, so a join in one shows in each.
 function useJoin(goalId: string) {
   const { user } = useAuth()
   const queryClient = useQueryClient()
+  const [email, setEmail] = useState(user?.email ?? '')
+  const [emailError, setEmailError] = useState<string>()
   const joins = useQuery({ queryKey: queryKeys.waitlistJoins(goalId), queryFn: () => joinedPlaces(goalId), staleTime: Infinity })
   const join = useMutation({
     mutationFn: (body: { email: string; place: WaitlistPlace }) => chatApi(user, `/v1/goals/${goalId}/waitlist`, noContent, { method: 'POST', body }),
@@ -32,37 +31,41 @@ function useJoin(goalId: string) {
       queryClient.setQueryData(queryKeys.waitlistJoins(goalId), joinedPlaces(goalId))
     },
   })
-  return { join, joined: joins.data ?? [], accountEmail: user?.email ?? '' }
+  /** Joins with the email after its check. Null: a place that is not valid, which its form tells. */
+  const send = (place: WaitlistPlace | null) => {
+    const checked = waitlistBody.shape.email.safeParse(email).data
+    setEmailError(checked ? undefined : 'Enter a valid email address')
+    if (checked && place) join.mutate({ email: checked, place })
+  }
+  // For a few minutes of a deploy, the old API refuses a place that the chat did not name (api.md).
+  const failure = join.isError ? (join.error instanceof ApiError && join.error.status === 400 ? 'We could not add this place just now. Try again in a few minutes.' : errorText(join.error)) : undefined
+  return { joined: joins.data ?? [], email, setEmail, emailError, send, failure, pending: join.isPending }
 }
 
-function EmailInput({ id, value, onChange, invalid }: { id?: string; value: string; onChange: (value: string) => void; invalid: boolean }) {
+function IconInput({ icon: Icon, invalid, ...input }: { icon: typeof Mail01; invalid: boolean } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="relative flex-1">
-      <Mail01 size={20} aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-fg-quaternary" />
-      <input id={id} type="email" autoComplete="email" placeholder="you@example.com" aria-label={id ? undefined : 'Email'} aria-invalid={invalid}
-        value={value} onChange={(e) => onChange(e.target.value)} className={`${inputClass} pl-10.5`} />
+      <Icon size={20} aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-fg-quaternary" />
+      <input {...input} aria-invalid={invalid} className={`${inputClass} pl-10.5`} />
     </div>
   )
 }
+const emailInput = { icon: Mail01, type: 'email', autoComplete: 'email', placeholder: 'you@example.com' } as const
 
 /** The form of the waitlist screen: the email, and the area, which takes each waitlist place (T-22b). */
 export function WaitlistForm({ goalId, place: chatPlace, footer }: { goalId: string; place: WaitlistPlace; footer?: ReactNode }) {
-  const { join, joined, accountEmail } = useJoin(goalId)
-  const [email, setEmail] = useState(accountEmail)
+  const { joined, email, setEmail, emailError, send, failure, pending } = useJoin(goalId)
   const [area, setArea] = useState(nameOf(chatPlace))
-  const [errors, setErrors] = useState<{ email?: string; area?: string }>({})
+  const [areaError, setAreaError] = useState<string>()
   const suggestions = useId()
   const typedPlace = placeOf(area)
   const place = typedPlace ?? chatPlace
   const done = joined.includes(place)
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    const checked = checkedEmail(email)
-    setErrors({ email: checked ? undefined : emailError, area: typedPlace ? undefined : 'Pick a place outside Mumbai from the list' })
-    if (checked && typedPlace) join.mutate({ email: checked, place: typedPlace })
+    setAreaError(typedPlace ? undefined : 'Pick a place outside Mumbai from the list')
+    send(typedPlace)
   }
-  // The API before T-22b takes only a place that the chat named, and a deploy has a few minutes of it (api.md).
-  const failure = join.isError && (join.error instanceof ApiError && join.error.status === 400 ? 'We could not add this place just now. Try again in a few minutes.' : errorText(join.error))
   return (
     <section aria-label="Waitlist" className="flex flex-col gap-5 rounded-xl border border-secondary bg-primary p-5 shadow-xs lg:p-6">
       <div role={done ? 'status' : undefined} className="flex flex-col gap-1">
@@ -71,19 +74,14 @@ export function WaitlistForm({ goalId, place: chatPlace, footer }: { goalId: str
       </div>
       {!done && (
         <form noValidate onSubmit={submit} className="flex flex-col gap-4">
-          <Field label="Email" error={errors.email}>
-            {(id) => <EmailInput id={id} value={email} onChange={setEmail} invalid={Boolean(errors.email)} />}
+          <Field label="Email" error={emailError}>
+            {(id) => <IconInput id={id} {...emailInput} invalid={Boolean(emailError)} value={email} onChange={(e) => setEmail(e.target.value)} />}
           </Field>
-          <Field label="Area" hint="We took this from your chat. Change it if you need to." error={errors.area}>
-            {(id) => (
-              <div className="relative">
-                <MarkerPin01 size={20} aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-fg-quaternary" />
-                <input id={id} list={suggestions} autoComplete="off" aria-invalid={Boolean(errors.area)} value={area} onChange={(e) => setArea(e.target.value)} className={`${inputClass} pl-10.5`} />
-                <datalist id={suggestions}>{waitlistPlace.options.map((slug) => <option key={slug} value={nameOf(slug)} />)}</datalist>
-              </div>
-            )}
+          <Field label="Area" hint="We took this from your chat. Change it if you need to." error={areaError}>
+            {(id) => <IconInput id={id} icon={MarkerPin01} list={suggestions} autoComplete="off" invalid={Boolean(areaError)} value={area} onChange={(e) => setArea(e.target.value)} />}
           </Field>
-          <Button type="submit" variant="primary" size="lg" className="w-full" disabled={join.isPending}>Join the waitlist</Button>
+          <datalist id={suggestions}>{waitlistPlace.options.map((slug) => <option key={slug} value={nameOf(slug)} />)}</datalist>
+          <Button type="submit" variant="primary" size="lg" className="w-full" disabled={pending}>Join the waitlist</Button>
           {failure && <p role="alert" className="text-sm text-error-primary">{failure}</p>}
         </form>
       )}
@@ -128,17 +126,13 @@ export function WaitlistPanel({ goalId, place, onPick, onClose }: { goalId: stri
 
 /** One waitlist line above the results of a search with Mumbai and a place outside it (PD6c). */
 export function WaitlistLine({ goalId, place, onClose }: { goalId: string; place: WaitlistPlace; onClose: () => void }) {
-  const { join, joined, accountEmail } = useJoin(goalId)
-  const [email, setEmail] = useState(accountEmail)
-  const [error, setError] = useState<string>()
+  const { joined, email, setEmail, emailError, send, failure, pending } = useJoin(goalId)
   const done = joined.includes(place)
   const submit = (event: FormEvent) => {
     event.preventDefault()
-    const checked = checkedEmail(email)
-    setError(checked ? undefined : emailError)
-    if (checked) join.mutate({ email: checked, place })
+    send(place)
   }
-  const failure = error ?? (join.isError ? errorText(join.error) : undefined)
+  const error = emailError ?? failure
   return (
     <section aria-label="Waitlist" className="mb-5 flex flex-col gap-3 rounded-xl border border-secondary bg-secondary p-4">
       <div className="flex items-start gap-3">
@@ -151,10 +145,10 @@ export function WaitlistLine({ goalId, place, onClose }: { goalId: string; place
       {!done && (
         <form noValidate onSubmit={submit} className="flex flex-col gap-1.5">
           <div className="flex gap-2">
-            <EmailInput value={email} onChange={setEmail} invalid={Boolean(error)} />
-            <Button type="submit" variant="primary" size="lg" disabled={join.isPending}>Join</Button>
+            <IconInput aria-label="Email" {...emailInput} invalid={Boolean(emailError)} value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Button type="submit" variant="primary" size="lg" disabled={pending}>Join</Button>
           </div>
-          {failure && <p role="alert" className="text-sm text-error-primary">{failure}</p>}
+          {error && <p role="alert" className="text-sm text-error-primary">{error}</p>}
         </form>
       )}
     </section>

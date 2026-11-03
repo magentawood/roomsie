@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap, type WaitlistPlace } from '@roomsie/contract'
+import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
 import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
@@ -67,7 +67,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn(input, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
     // A place that a turn names again moves to the end, so the newest place is last (T-22b).
-    const named = new Set<WaitlistPlace>(turn.outsidePlaces)
+    const named = new Set(turn.outsidePlaces)
     const outsidePlaces = [...goal.outsidePlaces.filter((place) => !named.has(place)), ...named]
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form: turn.form, outsidePlaces }, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })

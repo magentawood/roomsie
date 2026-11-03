@@ -2,14 +2,15 @@ import { z } from 'zod'
 import { isOpenSlot, panelReady, waitlistPlace, waitlistPlaceNames, type FormA, type WaitlistPlace } from '@roomsie/contract'
 import { chatStorage, readStored, writeStored } from './chat'
 
-/** What the panel shows (PD6c). A place outside Mumbai with no Mumbai area gets the waitlist screen, also before the place type and the budget. Null: no panel yet. */
+/** The content of the panel (PD6c). Null: no panel yet. */
 export function panelContent(form: FormA, outsidePlaces: readonly WaitlistPlace[]) {
   if (outsidePlaces.length && isOpenSlot(form.areas)) return 'waitlist'
   if (!panelReady(form)) return null
   return outsidePlaces.length ? 'results-with-line' : 'results'
 }
 
-const plain = (text: string) => text.toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
+// As the match of the chat: no nukta, and one space between the words.
+const plain = (text: string) => text.normalize('NFD').replace(/\u093C/g, '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
 
 /** The waitlist place of a typed name or other name. Null: a Mumbai area or an unknown name. */
 export function placeOf(text: string): WaitlistPlace | null {

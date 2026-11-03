@@ -139,10 +139,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const shown = ready ? held.shown : null
   const title = shown ? panelTitle(shown.form, (slug) => areaLabels[slug] ?? slug) : ''
   // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
+  // The waitlist screen is the exception: it is the panel of a chat with no Mumbai area, also after a reload (T-22b).
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const panel = preview ? null : panelContent(chatForm, outsidePlaces)
-  const newestOutside = goalId && outsidePlaces.at(-1)
-  // The waitlist screen is the panel of a chat with no Mumbai area, from the reply that names the place (T-22b).
+  const newestOutside = outsidePlaces.at(-1)
+  // The goal and its newest place outside Mumbai, for the waitlist (T-22b).
+  const waitlist = goalId && newestOutside ? { goalId, place: newestOutside } : null
   const waitlistOpen = panel === 'waitlist' && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
   const [draft, setDraft] = useState({ text: '', version: 0 })
@@ -163,7 +165,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   }
   const sendText = (text: string) => submit({ body: { text }, text })
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
-  const pickArea = (slug: string) => tap({ slot: 'areas', value: [slug] })
+  // A pick in the waitlist screen is a send, so the panel opens again with the results.
+  const pickArea = (slug: string) => { setView('split'); tap({ slot: 'areas', value: [slug] }) }
   // A sign-in lifts the limit on new chats. The line of the limit has a sign-in button (drafts section 34).
   const chatsOverLimit = !signedIn && failed?.limit === 'too_many_chats'
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
@@ -185,9 +188,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {turns.map((turn) => (
             <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
           ))}
-          {panel === 'waitlist' && newestOutside && (
+          {panel === 'waitlist' && waitlist && (
             // On a phone the form is in the thread (drafts section 18).
-            <li className="lg:hidden"><WaitlistForm goalId={goalId} place={newestOutside} footer={<LookInMumbai onPick={pickArea} />} /></li>
+            <li className="lg:hidden"><WaitlistForm key={waitlist.place} {...waitlist} footer={<LookInMumbai onPick={pickArea} />} /></li>
           )}
           {chips && <li>{chips}</li>}
           {pending !== undefined && (
@@ -221,13 +224,13 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
           <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
-            line={panel === 'results-with-line' && newestOutside && !lineClosed ? <WaitlistLine goalId={goalId} place={newestOutside} onClose={() => setLineClosed(true)} /> : undefined}
+            notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />
         </div>
       )}
-      {panel === 'waitlist' && newestOutside && (
+      {panel === 'waitlist' && waitlist && (
         <div className={`hidden min-h-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-secondary ${waitlistOpen ? 'lg:grid' : ''}`}>
-          <WaitlistPanel goalId={goalId} place={newestOutside} onPick={pickArea} onClose={() => setView('closed')} />
+          <WaitlistPanel key={waitlist.place} {...waitlist} onPick={pickArea} onClose={() => setView('closed')} />
         </div>
       )}
       {wall && !signedIn && <SignInWall title={capWall.title} text={capWall.text} onClose={() => setWall(false)} />}
