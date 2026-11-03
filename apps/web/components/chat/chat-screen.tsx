@@ -10,6 +10,7 @@ import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
+import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../../lib/compare'
 import { formKey, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
@@ -17,10 +18,14 @@ import { ResultsPanel, useHeldResults } from '../results/results-panel'
 import { LookInMumbai, WaitlistForm, WaitlistLine, WaitlistPanel } from './waitlist'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
+import { RemoveChip } from '../ui/choice'
 import { Chips } from './chips'
+import { ComparisonTable } from './comparison'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
-function ChatInput({ grow, autoFocus, initialText = '', onSend }: { grow: 'up' | 'down'; autoFocus?: boolean; initialText?: string; onSend: (text: string) => void }) {
+function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in bandra for 3 friends...', onSend }: {
+  grow: 'up' | 'down'; autoFocus?: boolean; initialText?: string; placeholder?: string; onSend: (text: string) => void
+}) {
   const [text, setText] = useState(initialText)
   const box = useRef<HTMLTextAreaElement>(null)
   useLayoutEffect(() => {
@@ -36,7 +41,7 @@ function ChatInput({ grow, autoFocus, initialText = '', onSend }: { grow: 'up' |
     <div className="relative h-16">
       <form onSubmit={(e) => { e.preventDefault(); send() }}
         className={`absolute inset-x-0 z-10 flex items-end gap-2 rounded-xl border border-secondary bg-primary px-3.5 py-3 shadow-md focus-within:outline-2 focus-within:outline-focus-ring ${grow === 'up' ? 'bottom-0' : 'top-0'}`}>
-        <textarea ref={box} aria-label="Message" rows={1} autoFocus={autoFocus} value={text} placeholder="3 bhk in bandra for 3 friends..."
+        <textarea ref={box} aria-label="Message" rows={1} autoFocus={autoFocus} value={text} placeholder={placeholder}
           className="max-h-28 flex-1 resize-none bg-transparent py-2 text-md text-primary outline-none placeholder:text-placeholder"
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -145,6 +150,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const waitlistOpen = panel === 'waitlist' && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
   const [draft, setDraft] = useState({ text: '', version: 0 })
+  const [picked, setPicked] = useState<Picked[]>([])
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
   const submit = (turn: Outgoing) => {
     setFailed(null)
@@ -152,14 +158,18 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     send.mutate(turn, {
       onSuccess: (sent) => { if (sent.typedTurnsLeft === 0) setWall(true) },
       onError: (err) => {
-        if (limitOf(err) !== 'turn_cap') return setFailed(errorText(err))
+        if (limitOf(err) !== 'turn_cap') return setFailed(compareRefusal(errorText(err)) ?? errorText(err))
         send.reset()
         setCapped(true)
         setWall(true)
       },
     })
   }
-  const sendText = (text: string) => submit({ body: { text }, text })
+  // With two cards or more selected, a question gets their comparison (T-49).
+  const sendText = (text: string) => {
+    const compare = compareOf(picked, shown?.found.results.map((result) => pickOf(result).id) ?? [])
+    submit({ body: { text, ...(compare && { compare }) }, text })
+  }
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
   // A pick in the waitlist screen is a send, so the panel opens with the results once the search is ready.
   const pickArea = (slug: string) => { setView('split'); tap({ slot: 'areas', value: [slug] }) }
@@ -180,7 +190,14 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       <div className={`col-start-1 row-start-1 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
           {turns.map((turn) => (
-            <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
+            <li key={turn.id}>
+              {turn.role === 'user' ? <UserText text={turn.text} /> : (
+                <div className="flex flex-col gap-4">
+                  <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>
+                  {turn.comparison && <ComparisonTable table={turn.comparison} />}
+                </div>
+              )}
+            </li>
           ))}
           {panel === 'waitlist' && waitlist && (
             // On a phone the form is in the thread (drafts section 18).
@@ -203,10 +220,19 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         </ol>
       </div>
       <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
+        {picked.length > 0 && !atCap && (
+          <div className="mb-2 flex flex-col gap-1.5">
+            <div role="group" aria-label="Selected to compare" className="flex flex-wrap gap-2">
+              {picked.map((card) => <RemoveChip key={card.id} label={card.name} onRemove={() => setPicked(toggledPick(picked, card))} />)}
+            </div>
+            {picked.length === 1 && <p className="text-xs text-tertiary">Select one more card to compare.</p>}
+          </div>
+        )}
         {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
         {atCap
           ? <Button variant="primary" size="lg" className="w-full" onClick={() => setWall(true)}>{capWall.title}</Button>
-          : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText} />}
+          : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText}
+              placeholder={picked[0] && (picked[0].kind === 'place' ? 'Ask about the listings…' : 'Ask about these people…')} />}
         {typedTurnsLeft !== null && <p className="mt-2 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
       </div>
       {shown && (
@@ -214,7 +240,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
           <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
-            more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />
+            more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat}
+            picked={picked} onPick={(card) => setPicked(toggledPick(picked, card))} onClearPicks={() => setPicked([])} />
         </div>
       )}
       {panel === 'waitlist' && waitlist && (

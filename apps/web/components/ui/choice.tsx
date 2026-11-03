@@ -57,10 +57,10 @@ export function MultiChips<T extends string>({ label, labels, only, value, onCha
   )
 }
 
-/** An off chip can still show checked, as an area under a picked area. */
-export function CheckChip({ label, checked, disabled, onToggle }: { label: string; checked: boolean; disabled?: boolean; onToggle: () => void }) {
+/** An off chip can still show checked, as an area under a picked area. `name`: the accessible name, when the label alone is not clear. */
+export function CheckChip({ label, name, checked, disabled, onToggle }: { label: string; name?: string; checked: boolean; disabled?: boolean; onToggle: () => void }) {
   return (
-    <button type="button" role="checkbox" aria-checked={checked} disabled={disabled} onClick={onToggle}
+    <button type="button" role="checkbox" aria-checked={checked} aria-label={name} disabled={disabled} onClick={onToggle}
       className={`${chip(checked)} disabled:cursor-not-allowed disabled:opacity-50`}>
       <span className={mark(checked, false)}>{checked && <svg viewBox="0 0 12 12" className="size-3 text-primary_on-brand" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2.5 6l2.5 2.5 4.5-5" /></svg>}</span>
       {label}

@@ -37,7 +37,7 @@ describe('the stored chat', () => {
 
 describe('the chips of the chat (T-09)', () => {
   const turn = (role: 'user' | 'assistant', chips: ChipSlot | null = null): GoalResponse['turns'][number] =>
-    ({ id: crypto.randomUUID(), role, text: 'text', chips, createdAt: new Date().toISOString() })
+    ({ id: crypto.randomUUID(), role, text: 'text', chips, comparison: null, createdAt: new Date().toISOString() })
   const empty = formA.parse({})
 
   it('starts a new goal with the place types', () => {
