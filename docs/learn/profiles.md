@@ -48,3 +48,4 @@
 - T-16a: [#155](https://github.com/magentawood/roomsie/pull/155), 2026-10-26. The profile API, the photos, one card, the gender and the lister on a listing.
 - T-16b: [#156](https://github.com/magentawood/roomsie/pull/156), 2026-10-26. The profile page, the create and delete dialogs, and the budget rule of the bands.
 - T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and the connection with the viewer.
+- T-60: [#210](https://github.com/magentawood/roomsie/pull/210), 2026-11-03. The create dialog as the pop-up "You've logged in!" of flow 01: the close button, the mark of the logo, and the middle of a phone screen.

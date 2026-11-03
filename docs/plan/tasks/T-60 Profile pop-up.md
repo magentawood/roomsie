@@ -31,9 +31,9 @@ After the first sign-in, a pop-up asks the basic details and starts the profile.
 - No task waits on this task.
 
 ## Done when
-- [ ] After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file, and the age of PD16
-- [ ] "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up
-- [ ] The profile completion card shows the new percentage after the save
+- [x] After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file, and the age of PD16 · [#210](https://github.com/magentawood/roomsie/pull/210)
+- [x] "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up · [#210](https://github.com/magentawood/roomsie/pull/210)
+- [x] The profile completion card shows the new percentage after the save · [#210](https://github.com/magentawood/roomsie/pull/210)
 
 ^done
 
@@ -63,3 +63,13 @@ After the first sign-in, a pop-up asks the basic details and starts the profile.
   - the answers of the onboarding in the new profile (who is moving, the areas and the budget)
   - a change to the profile page
   - an analytics event of the pop-up
+
+## Log
+
+- **2026-11-03 · [#210](https://github.com/magentawood/roomsie/pull/210)**
+  - **Change:** the create dialog is the pop-up "You've logged in!" of flow 01: a close button, the mark of the logo, "Email *" in grey, the spacing of the design, and the middle of a phone screen. It keeps the age of PD16. Each close hides it for the visit of the tab, and it shows again until the profile exists.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD16](../../decisions/pd-16-profiles.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Profiles](../../learn/profiles.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

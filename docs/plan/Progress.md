@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**244 of 332 done · 73%**
+**247 of 332 done · 74%**
 
 `██████████████████░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
 | [[P2 Chat]] | 9 / 14 | 46 / 65 | 71% |
-| [[P3 Data and trust]] | 17 / 20 | 80 / 89 | 90% |
+| [[P3 Data and trust]] | 18 / 20 | 83 / 89 | 93% |
 | [[P4 Content and moderation]] | 7 / 8 | 33 / 35 | 94% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**17 free tasks are open · 50 build hours.**
+**16 free tasks are open · 47 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -64,7 +64,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | 0 | [[T-59 More chips]] | P2 | 5 | ⬜ can start | 0 | [#198](https://github.com/magentawood/roomsie/issues/198) |
-| 0 | [[T-60 Profile pop-up]] | P3 | 3 | ⬜ can start | 0 | [#208](https://github.com/magentawood/roomsie/issues/208) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
@@ -152,7 +151,7 @@ flowchart LR
   T48["T-48<br/>Onboarding questions"]:::done
   T49["T-49<br/>Compare cards"]:::todo
   T50["T-50<br/>Found a place, share, feedback"]:::ready
-  T60["T-60<br/>Profile pop-up"]:::ready
+  T60["T-60<br/>Profile pop-up"]:::done
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::done
   F03 --> F04
@@ -359,7 +358,7 @@ flowchart LR
 > ![[T-59 More chips#^done]]
 
 
-## P3 Data and trust — 80/89
+## P3 Data and trust — 83/89
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -418,7 +417,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-50 Found a place, share, feedback]] · 0/3
 > ![[T-50 Found a place, share, feedback#^done]]
 
-> [!todo]- ⬜ [[T-60 Profile pop-up]] · 0/3
+> [!todo]- ✅ [[T-60 Profile pop-up]] · 3/3
 > ![[T-60 Profile pop-up#^done]]
 
 
