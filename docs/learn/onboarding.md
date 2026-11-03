@@ -16,7 +16,7 @@
 |---|---|
 | The start answers | `goalStart` in `packages/contract/src/goals.ts` |
 | The answers into Form A, and the line | `runStart()` in `apps/api/src/assistant/assistant.ts` |
-| The goal and its first turn, in one transaction | `startGoal()` in `apps/api/src/goals/store.ts` |
+| The goal and its first turn, in one transaction | `createGoal()` in `apps/api/src/goals/store.ts` |
 | The steps, Previous, Skip and the start answers | `apps/web/lib/onboarding.ts`, with unit tests |
 | The screens | `apps/web/components/onboarding/onboarding.tsx`, at `apps/web/app/start/page.tsx` |
 | The percentage | `completionOf()` in `apps/api/src/profiles/read.ts`, as `completion` of the own profile |
