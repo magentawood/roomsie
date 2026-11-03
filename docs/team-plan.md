@@ -1107,7 +1107,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
 
 **T-60 · Profile pop-up after the first sign-in** — done when:
-- After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file
+- After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file, and the age of PD16
 - "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up
 - The profile completion card shows the new percentage after the save
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/0017-schema-v1-shape.md`

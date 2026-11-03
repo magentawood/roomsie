@@ -2101,7 +2101,7 @@
     "T-48"
    ],
    "done": [
-    "After the first sign-in, the pop-up \"You've logged in!\" of flow 01 asks the full name, the email and the gender, as in the Product file",
+    "After the first sign-in, the pop-up \"You've logged in!\" of flow 01 asks the full name, the email and the gender, as in the Product file, and the age of PD16",
     "\"Go to my profile\" saves the profile and opens it, and \"Explore for now\" closes the pop-up",
     "The profile completion card shows the new percentage after the save"
    ],
