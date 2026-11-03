@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isOpenSlot, panelReady, waitlistPlace, waitlistPlaceNames, type FormA, type WaitlistPlace } from '@roomsie/contract'
+import { isOpenSlot, panelReady, plainText, waitlistPlace, waitlistPlaceNames, type FormA, type WaitlistPlace } from '@roomsie/contract'
 import { chatStorage, readStored, writeStored } from './chat'
 
 /** The content of the panel (PD6c). Null: no panel yet. */
@@ -9,13 +9,11 @@ export function panelContent(form: FormA, outsidePlaces: readonly WaitlistPlace[
   return outsidePlaces.length ? 'results-with-line' : 'results'
 }
 
-// As the match of the chat: no nukta, and one space between the words.
-const plain = (text: string) => text.normalize('NFD').replace(/\u093C/g, '').toLowerCase().replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()
-
 /** The waitlist place of a typed name or other name. Null: a Mumbai area or an unknown name. */
 export function placeOf(text: string): WaitlistPlace | null {
-  const typed = plain(text)
-  return waitlistPlace.options.find((slug) => [waitlistPlaceNames[slug].name, ...waitlistPlaceNames[slug].aliases].some((name) => plain(name) === typed)) ?? null
+  // The same form of the words as the match of the chat.
+  const typed = plainText(text)
+  return waitlistPlace.options.find((slug) => [waitlistPlaceNames[slug].name, ...waitlistPlaceNames[slug].aliases].some((name) => plainText(name) === typed)) ?? null
 }
 
 // The browser can hold a value from an older version, so it is checked.

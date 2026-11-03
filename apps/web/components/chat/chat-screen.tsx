@@ -143,7 +143,6 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const panel = preview ? null : panelContent(chatForm, outsidePlaces)
   const newestOutside = outsidePlaces.at(-1)
-  // The goal and its newest place outside Mumbai, for the waitlist (T-22b).
   const waitlist = goalId && newestOutside ? { goalId, place: newestOutside } : null
   const waitlistOpen = panel === 'waitlist' && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
@@ -165,7 +164,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   }
   const sendText = (text: string) => submit({ body: { text }, text })
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
-  // A pick in the waitlist screen is a send, so the panel opens again with the results.
+  // A pick in the waitlist screen is a send, so the panel opens with the results once the search is ready.
   const pickArea = (slug: string) => { setView('split'); tap({ slot: 'areas', value: [slug] }) }
   // A sign-in lifts the limit on new chats. The line of the limit has a sign-in button (drafts section 34).
   const chatsOverLimit = !signedIn && failed?.limit === 'too_many_chats'

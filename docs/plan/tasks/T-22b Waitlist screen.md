@@ -68,7 +68,7 @@ Show the results in each Mumbai area, and a waitlist form outside Mumbai.
   - **The joined state (the user):** after a join, "You're on the Pune waitlist" takes the place of the form or the line. The browser keeps it for each chat and place.
   - **A signed-in person:** the email field starts with the email of the Google account, so a join needs one tap.
   - **The errors:** an email that is not valid shows "Enter a valid email address" under the field, at the tap on Join. The 429 shows the text of the API.
-  - **"Look in Mumbai":** three area groups as examples, Andheri–Goregaon, Bandra–Santacruz and Powai–Vikhroli. A tap is the area chip of T-09, so the results come.
+  - **"Look in Mumbai":** three area groups as examples, Andheri–Goregaon, Bandra–Santacruz and Powai–Vikhroli. A tap is the area chip of T-09, so the results come when the chat has the place type and the budget too.
   - **The newest place (review):** a place that a turn names again moves to the end of the outside places of the goal, so the form starts with the place that the person named last. The goal and turn responses give this order.
   - **The minutes of a deploy (review, api.md):** the old API refuses a place that the chat did not name. The form then shows "We could not add this place just now. Try again in a few minutes."
   - **Item 1:** each Mumbai area is live (PD2, #162), so a search in it shows its results. The test of the content of the panel covers it.

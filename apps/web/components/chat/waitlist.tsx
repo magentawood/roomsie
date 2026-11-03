@@ -1,10 +1,10 @@
 'use client'
 
-import { useId, useState, type FormEvent, type InputHTMLAttributes, type ReactNode } from 'react'
+import { useId, useState, type InputHTMLAttributes, type ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Mail01, MarkerPin01 } from '@untitledui/icons'
 import { noContent, waitlistBody, waitlistPlace, waitlistPlaceNames, type WaitlistPlace } from '@roomsie/contract'
-import { ApiError, chatApi, errorText } from '../../lib/api'
+import { chatApi, errorText } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { queryKeys, useAreaLabels } from '../../lib/queries'
 import { joinedPlaces, placeOf, rememberJoin } from '../../lib/waitlist'
@@ -13,12 +13,15 @@ import { TapChip } from '../ui/choice'
 import { Field, inputClass } from '../ui/field'
 import { CloseButton } from '../ui/modal'
 
+/** A chat, and the newest place outside Mumbai that it named (T-22b). */
+type WaitlistOf = { goalId: string; place: WaitlistPlace }
+
 const nameOf = (place: WaitlistPlace) => waitlistPlaceNames[place].name
 /** Examples of Mumbai areas, not a list of the open areas (drafts section 18). */
 const mumbaiExamples = ['andheri-goregaon', 'bandra-santacruz', 'powai-vikhroli']
 
 // Each form and line of a chat reads the same joins, so a join in one shows in each.
-function useJoin(goalId: string) {
+function useJoinForm(goalId: string) {
   const { user } = useAuth()
   const queryClient = useQueryClient()
   const [email, setEmail] = useState(user?.email ?? '')
@@ -31,41 +34,36 @@ function useJoin(goalId: string) {
       queryClient.setQueryData(queryKeys.waitlistJoins(goalId), joinedPlaces(goalId))
     },
   })
-  /** Joins with the email after its check. Null: a place that is not valid, which its form tells. */
-  const send = (place: WaitlistPlace | null) => {
-    const checked = waitlistBody.shape.email.safeParse(email).data
+  /** The email after the check of the contract, or null with the error under the field. */
+  const checkEmail = () => {
+    const checked = waitlistBody.shape.email.safeParse(email).data ?? null
     setEmailError(checked ? undefined : 'Enter a valid email address')
-    if (checked && place) join.mutate({ email: checked, place })
+    return checked
   }
-  // For a few minutes of a deploy, the old API refuses a place that the chat did not name (api.md).
-  const failure = join.isError ? (join.error instanceof ApiError && join.error.status === 400 ? 'We could not add this place just now. Try again in a few minutes.' : errorText(join.error)) : undefined
-  return { joined: joins.data ?? [], email, setEmail, emailError, send, failure, pending: join.isPending }
+  const emailProps = { icon: Mail01, type: 'email', autoComplete: 'email', placeholder: 'you@example.com', value: email, 'aria-invalid': Boolean(emailError), onChange: (e: { target: { value: string } }) => setEmail(e.target.value) } as const
+  return { joined: joins.data ?? [], emailProps, emailError, checkEmail, join: (checked: string, place: WaitlistPlace) => join.mutate({ email: checked, place }), error: join.isError ? join.error : null, pending: join.isPending }
 }
 
-function IconInput({ icon: Icon, invalid, ...input }: { icon: typeof Mail01; invalid: boolean } & InputHTMLAttributes<HTMLInputElement>) {
+function IconInput({ icon: Icon, ...input }: { icon: typeof Mail01 } & InputHTMLAttributes<HTMLInputElement>) {
   return (
     <div className="relative flex-1">
       <Icon size={20} aria-hidden className="pointer-events-none absolute top-1/2 left-3.5 -translate-y-1/2 text-fg-quaternary" />
-      <input {...input} aria-invalid={invalid} className={`${inputClass} pl-10.5`} />
+      <input {...input} className={`${inputClass} pl-10.5`} />
     </div>
   )
 }
-const emailInput = { icon: Mail01, type: 'email', autoComplete: 'email', placeholder: 'you@example.com' } as const
 
 /** The form of the waitlist screen: the email, and the area, which takes each waitlist place (T-22b). */
-export function WaitlistForm({ goalId, place: chatPlace, footer }: { goalId: string; place: WaitlistPlace; footer?: ReactNode }) {
-  const { joined, email, setEmail, emailError, send, failure, pending } = useJoin(goalId)
+export function WaitlistForm({ goalId, place: chatPlace, footer }: WaitlistOf & { footer?: ReactNode }) {
+  const { joined, emailProps, emailError, checkEmail, join, error, pending } = useJoinForm(goalId)
   const [area, setArea] = useState(nameOf(chatPlace))
   const [areaError, setAreaError] = useState<string>()
   const suggestions = useId()
   const typedPlace = placeOf(area)
   const place = typedPlace ?? chatPlace
   const done = joined.includes(place)
-  const submit = (event: FormEvent) => {
-    event.preventDefault()
-    setAreaError(typedPlace ? undefined : 'Pick a place outside Mumbai from the list')
-    send(typedPlace)
-  }
+  // For a few minutes of a deploy, the old API refuses a place that the chat did not name (api.md).
+  const failure = error && (errorText(error) === 'not valid: place' ? 'We could not add this place just now. Try again in a few minutes.' : errorText(error))
   return (
     <section aria-label="Waitlist" className="flex flex-col gap-5 rounded-xl border border-secondary bg-primary p-5 shadow-xs lg:p-6">
       <div role={done ? 'status' : undefined} className="flex flex-col gap-1">
@@ -73,12 +71,15 @@ export function WaitlistForm({ goalId, place: chatPlace, footer }: { goalId: str
         <p className="text-sm text-tertiary">{!done && 'Roomsie is only in Mumbai for now. '}We'll email you once, on the day {nameOf(place)} opens.</p>
       </div>
       {!done && (
-        <form noValidate onSubmit={submit} className="flex flex-col gap-4">
-          <Field label="Email" error={emailError}>
-            {(id) => <IconInput id={id} {...emailInput} invalid={Boolean(emailError)} value={email} onChange={(e) => setEmail(e.target.value)} />}
-          </Field>
+        <form noValidate className="flex flex-col gap-4" onSubmit={(event) => {
+          event.preventDefault()
+          const checked = checkEmail()
+          setAreaError(typedPlace ? undefined : 'Pick a place outside Mumbai from the list')
+          if (checked && typedPlace) join(checked, typedPlace)
+        }}>
+          <Field label="Email" error={emailError}>{(id) => <IconInput id={id} {...emailProps} />}</Field>
           <Field label="Area" hint="We took this from your chat. Change it if you need to." error={areaError}>
-            {(id) => <IconInput id={id} icon={MarkerPin01} list={suggestions} autoComplete="off" invalid={Boolean(areaError)} value={area} onChange={(e) => setArea(e.target.value)} />}
+            {(id) => <IconInput id={id} icon={MarkerPin01} list={suggestions} autoComplete="off" aria-invalid={Boolean(areaError)} value={area} onChange={(e) => setArea(e.target.value)} />}
           </Field>
           <datalist id={suggestions}>{waitlistPlace.options.map((slug) => <option key={slug} value={nameOf(slug)} />)}</datalist>
           <Button type="submit" variant="primary" size="lg" className="w-full" disabled={pending}>Join the waitlist</Button>
@@ -102,7 +103,7 @@ export function LookInMumbai({ onPick }: { onPick: (areaSlug: string) => void })
 }
 
 /** The panel of a search with no Mumbai area (PD6c). */
-export function WaitlistPanel({ goalId, place, onPick, onClose }: { goalId: string; place: WaitlistPlace; onPick: (areaSlug: string) => void; onClose: () => void }) {
+export function WaitlistPanel({ goalId, place, onPick, onClose }: WaitlistOf & { onPick: (areaSlug: string) => void; onClose: () => void }) {
   return (
     <section aria-label="Waitlist" className="flex min-h-0 flex-col bg-primary">
       <header className="flex items-start justify-between gap-3 border-b border-secondary px-5 py-4 lg:px-6">
@@ -125,14 +126,10 @@ export function WaitlistPanel({ goalId, place, onPick, onClose }: { goalId: stri
 }
 
 /** One waitlist line above the results of a search with Mumbai and a place outside it (PD6c). */
-export function WaitlistLine({ goalId, place, onClose }: { goalId: string; place: WaitlistPlace; onClose: () => void }) {
-  const { joined, email, setEmail, emailError, send, failure, pending } = useJoin(goalId)
+export function WaitlistLine({ goalId, place, onClose }: WaitlistOf & { onClose: () => void }) {
+  const { joined, emailProps, emailError, checkEmail, join, error, pending } = useJoinForm(goalId)
   const done = joined.includes(place)
-  const submit = (event: FormEvent) => {
-    event.preventDefault()
-    send(place)
-  }
-  const error = emailError ?? failure
+  const message = emailError ?? (error ? errorText(error) : undefined)
   return (
     <section aria-label="Waitlist" className="mb-5 flex flex-col gap-3 rounded-xl border border-secondary bg-secondary p-4">
       <div className="flex items-start gap-3">
@@ -143,12 +140,16 @@ export function WaitlistLine({ goalId, place, onClose }: { goalId: string; place
         <CloseButton onClose={onClose} />
       </div>
       {!done && (
-        <form noValidate onSubmit={submit} className="flex flex-col gap-1.5">
+        <form noValidate className="flex flex-col gap-1.5" onSubmit={(event) => {
+          event.preventDefault()
+          const checked = checkEmail()
+          if (checked) join(checked, place)
+        }}>
           <div className="flex gap-2">
-            <IconInput aria-label="Email" {...emailInput} invalid={Boolean(emailError)} value={email} onChange={(e) => setEmail(e.target.value)} />
+            <IconInput aria-label="Email" {...emailProps} />
             <Button type="submit" variant="primary" size="lg" disabled={pending}>Join</Button>
           </div>
-          {error && <p role="alert" className="text-sm text-error-primary">{error}</p>}
+          {message && <p role="alert" className="text-sm text-error-primary">{message}</p>}
         </form>
       )}
     </section>
