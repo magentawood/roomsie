@@ -148,12 +148,12 @@ flowchart LR
   T57["T-57<br/>Sub-area pickers"]:::done
   T58["T-58<br/>Community filter"]:::done
   T59["T-59<br/>More chips"]:::ready
-  T60["T-60<br/>Profile pop-up"]:::todo
   T46["T-46<br/>ID verification"]:::done
   T47["T-47<br/>Saved"]:::done
   T48["T-48<br/>Onboarding questions"]:::ready
   T49["T-49<br/>Compare cards"]:::todo
   T50["T-50<br/>Found a place, share, feedback"]:::ready
+  T60["T-60<br/>Profile pop-up"]:::todo
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::done
   F03 --> F04
@@ -251,7 +251,6 @@ flowchart LR
   T14 --> T58
   T16b --> T58
   T09 --> T59
-  T48 --> T60
   T05 --> T46
   T06 --> T46
   F13 --> T46
@@ -265,6 +264,7 @@ flowchart LR
   T15 --> T49
   T15 --> T50
   T24 --> T50
+  T48 --> T60
   T04 --> T51
   T06 --> T51
   T05 --> T52
@@ -395,9 +395,6 @@ flowchart LR
 > [!todo]- ✅ [[T-58 Community filter]] · 5/5
 > ![[T-58 Community filter#^done]]
 
-> [!todo]- ⬜ [[T-60 Profile pop-up]] · 0/3
-> ![[T-60 Profile pop-up#^done]]
-
 > [!todo]- ✅ [[T-44 Messages API]] · 6/6
 > ![[T-44 Messages API#^done]]
 
@@ -421,6 +418,9 @@ flowchart LR
 
 > [!todo]- ⬜ [[T-50 Found a place, share, feedback]] · 0/3
 > ![[T-50 Found a place, share, feedback#^done]]
+
+> [!todo]- ⬜ [[T-60 Profile pop-up]] · 0/3
+> ![[T-60 Profile pop-up#^done]]
 
 
 ## P4 Content and moderation — 33/35

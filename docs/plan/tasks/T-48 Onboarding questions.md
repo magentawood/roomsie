@@ -2,7 +2,7 @@
 id: T-48
 title: "Onboarding questions"
 owner: "P3 Data and trust"
-sequence: "18 of 20"
+sequence: "17 of 20"
 hours: 5
 start: 2026-11-18
 end: 2026-11-20
@@ -17,7 +17,7 @@ tags:
 
 # T-48 · Onboarding questions
 
-**Owner:** [[P3 Data and trust]], task 18 of 20  
+**Owner:** [[P3 Data and trust]], task 17 of 20  
 **When:** Wed 18 Nov → Fri 20 Nov · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#124](https://github.com/magentawood/roomsie/issues/124)
@@ -50,7 +50,7 @@ The first questions before the chat: purpose, who is moving, place type, budget 
 - **Modules:**
   - **The contract:** the body of `POST /v1/goals` takes optional start answers: the place type, who is moving, one area group and the budget band, with the values of the chips. The interface changes.
   - **The goals routes and the assistant:** a new goal with start answers writes them into Form A as stated answers, as a tap does. The reply writer writes one assistant turn that confirms them and asks the next question. The visitor limits of PD9 apply as for each new visitor chat. The typed turns do not change.
-  - **The onboarding of the web (new):** the route `/start`, with the steps of flow 01: purpose, who is moving, place type, budget and area. Each step has Previous, Skip and Next, and a progress bar. Then "Sign in to continue", with Google or as a guest. Then the chat.
+  - **The onboarding of the web (new):** the route `/start`, with the steps of flow 01: purpose, who is moving, place type, budget and area. Each step has Previous, Skip and Next. The bar of the designs shows the four questions after the purpose. Then "Sign in to continue", with Google or as a guest. Then the chat.
   - **The entry of the web:** "Open Roomsie", "New goal" and a chat with no goal open `/start`. A person with a stored chat goes to the chat.
   - **The profile completion card of the web (new):** the percentage of the profile, in the sidebar on a computer and as the floating card on a phone, with a close button and a link to the profile.
   - **The illustrations:** the images of flow 01, from the Product file, as compressed images in the web.

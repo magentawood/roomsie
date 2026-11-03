@@ -32,7 +32,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips | 69 | -35 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Profile pop-up, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback | 120 | -86 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 120 | -86 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
@@ -104,17 +104,17 @@ Finish line: Thu 5 Nov. 69 hours.
 | 9 | T-57 · Sub-area pickers | 8 | Fri 30 Oct → Tue 3 Nov | T-56 |
 | 10 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | 11 | T-58 · Hidden community filter | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
-| 12 | T-60 · Profile pop-up after the first sign-in | 3 | Wed 4 Nov → Thu 5 Nov | T-48 |
-| 13 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
-| 14 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| 15 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
-| 16 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
-| 17 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
-| 18 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
-| 19 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
-| 20 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| 12 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
+| 13 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| 14 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
+| 15 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 16 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| 17 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| 18 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| 19 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| 20 | T-60 · Profile pop-up after the first sign-in | 3 | Wed 25 Nov | T-48 |
 
-Finish line: Tue 24 Nov. 120 hours.
+Finish line: Wed 25 Nov. 120 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -252,15 +252,15 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 9 | T-57 | Sub-area pickers | 8 | Fri 30 Oct | Tue 3 Nov | CP3 | T-56 | [#164](https://github.com/magentawood/roomsie/issues/164) |
 | P3 Data and trust | 10 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
 | P3 Data and trust | 11 | T-58 | Hidden community filter | 8 | Tue 3 Nov | Fri 6 Nov | CP3 | T-34, T-14, T-16b | [#194](https://github.com/magentawood/roomsie/issues/194) |
-| P3 Data and trust | 12 | T-60 | Profile pop-up after the first sign-in | 3 | Wed 4 Nov | Thu 5 Nov | CP3 | T-48 | no issue at this time |
-| P3 Data and trust | 13 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
-| P3 Data and trust | 14 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 15 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
-| P3 Data and trust | 16 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
-| P3 Data and trust | 17 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
-| P3 Data and trust | 18 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
-| P3 Data and trust | 19 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| P3 Data and trust | 20 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| P3 Data and trust | 12 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
+| P3 Data and trust | 13 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| P3 Data and trust | 14 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
+| P3 Data and trust | 15 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 16 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| P3 Data and trust | 17 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| P3 Data and trust | 18 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| P3 Data and trust | 19 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| P3 Data and trust | 20 | T-60 | Profile pop-up after the first sign-in | 3 | Wed 25 Nov | Wed 25 Nov | CP3 | T-48 | no issue at this time |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
@@ -373,7 +373,6 @@ gantt
     T-57 Sub-area pickers :t57, 2026-10-30, 5d
     T-43 Listing detail screens :t43, 2026-11-02, 3d
     T-58 Hidden community filter :t58, 2026-11-03, 4d
-    T-60 Profile pop-up after the first sign-in :t60, 2026-11-04, 2d
     T-44 Messages API :t44, 2026-11-05, 4d
     T-45 Messages screens :t45, 2026-11-09, 3d
     T-55 Message alerts - email and push :t55, 2026-11-12, 3d
@@ -382,6 +381,7 @@ gantt
     T-48 Onboarding questions :t48, 2026-11-18, 3d
     T-49 Compare selected cards :t49, 2026-11-21, 2d
     T-50 Found a place share and feedback :t50, 2026-11-23, 2d
+    T-60 Profile pop-up after the first sign-in :t60, 2026-11-25, 1d
     section P4 Content and moderation
     T-23a Landing page from the Figma design :t23a, 2026-09-24, 4d
     T-23b Privacy terms and grievance pages :t23b, 2026-09-27, 3d
@@ -739,7 +739,6 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-58 | Hidden community filter | P3 | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
 | T-59 | Chips for the other closed questions | P2 | 5 | Wed 4 Nov → Thu 5 Nov | T-09 |
-| T-60 | Profile pop-up after the first sign-in | P3 | 3 | Wed 4 Nov → Thu 5 Nov | T-48 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
@@ -748,6 +747,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-48 | Onboarding questions | P3 | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
 | T-49 | Compare selected cards | P3 | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
 | T-50 | Found a place, share and feedback | P3 | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| T-60 | Profile pop-up after the first sign-in | P3 | 3 | Wed 25 Nov | T-48 |
 
 **T-14 · Match query API** — done when:
 - It returns the matching people for a form state
@@ -1053,12 +1053,6 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The chips have a design on the drafts page, and the user approves it before the build
 - Read first: `docs/ai-agent-design.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/interface-shape.md`
 
-**T-60 · Profile pop-up after the first sign-in** — done when:
-- After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file
-- "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up
-- The profile completion card shows the new percentage after the save
-- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/0017-schema-v1-shape.md`
-
 **T-44 · Messages API** — done when:
 - Who can message whom follows PD17
 - Messages arrive live through Supabase Realtime broadcast
@@ -1111,6 +1105,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate
 - The feedback popover saves the feedback of the user
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/pd-06b-login-gate-and-search.md`
+
+**T-60 · Profile pop-up after the first sign-in** — done when:
+- After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file
+- "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up
+- The profile completion card shows the new percentage after the save
+- Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/decisions/0017-schema-v1-shape.md`
 
 ### CP4 · Launch — Mon 12 Oct
 

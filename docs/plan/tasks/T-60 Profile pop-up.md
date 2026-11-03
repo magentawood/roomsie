@@ -2,10 +2,10 @@
 id: T-60
 title: "Profile pop-up after the first sign-in"
 owner: "P3 Data and trust"
-sequence: "12 of 20"
+sequence: "20 of 20"
 hours: 3
-start: 2026-11-04
-end: 2026-11-05
+start: 2026-11-25
+end: 2026-11-25
 checkpoint: CP3
 critical: false
 tags:
@@ -16,8 +16,8 @@ tags:
 
 # T-60 · Profile pop-up after the first sign-in
 
-**Owner:** [[P3 Data and trust]], task 12 of 20  
-**When:** Wed 4 Nov → Thu 5 Nov · 3 hours  
+**Owner:** [[P3 Data and trust]], task 20 of 20  
+**When:** Wed 25 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** no issue at this time
 

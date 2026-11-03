@@ -37,4 +37,4 @@
 ## Tickets
 
 - T-17: the claim of the visitor chat at sign-in.
-- T-48: the onboarding questions after sign-in, which a moved goal can answer already.
+- T-48: [the onboarding](onboarding.md) asks its questions before the sign-in, and a guest goal from it moves at the sign-in as each visitor goal does.

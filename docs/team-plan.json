@@ -1961,30 +1961,6 @@
    "issue": 198
   },
   {
-   "id": "T-60",
-   "title": "Profile pop-up after the first sign-in",
-   "plain": "After the first sign-in, a pop-up asks the basic details and starts the profile.",
-   "role": "P3",
-   "hours": 3,
-   "start": "2026-11-04",
-   "end": "2026-11-05",
-   "deps": [
-    "T-48"
-   ],
-   "done": [
-    "After the first sign-in, the pop-up \"You've logged in!\" of flow 01 asks the full name, the email and the gender, as in the Product file",
-    "\"Go to my profile\" saves the profile and opens it, and \"Explore for now\" closes the pop-up",
-    "The profile completion card shows the new percentage after the save"
-   ],
-   "read": [
-    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
-    "docs/decisions/0017-schema-v1-shape.md"
-   ],
-   "cp": "CP3",
-   "critical": false,
-   "issue": null
-  },
-  {
    "id": "T-46",
    "title": "ID verification",
    "plain": "A person checks an ID and a selfie, and roomsie keeps only the result.",
@@ -2112,6 +2088,30 @@
    "cp": "CP3",
    "critical": false,
    "issue": 126
+  },
+  {
+   "id": "T-60",
+   "title": "Profile pop-up after the first sign-in",
+   "plain": "After the first sign-in, a pop-up asks the basic details and starts the profile.",
+   "role": "P3",
+   "hours": 3,
+   "start": "2026-11-25",
+   "end": "2026-11-25",
+   "deps": [
+    "T-48"
+   ],
+   "done": [
+    "After the first sign-in, the pop-up \"You've logged in!\" of flow 01 asks the full name, the email and the gender, as in the Product file",
+    "\"Go to my profile\" saves the profile and opens it, and \"Explore for now\" closes the pop-up",
+    "The profile completion card shows the new percentage after the save"
+   ],
+   "read": [
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md",
+    "docs/decisions/0017-schema-v1-shape.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   },
   {
    "id": "T-51",

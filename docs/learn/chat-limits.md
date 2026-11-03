@@ -20,6 +20,7 @@ All the values are first guesses in config, until two to three months of data ([
 | The refusals: `turn_cap`, `too_many_chats`, `too_fast` | the goals routes, with `limitRefusal` of `packages/contract` |
 | The spend of each day and the alerts | `apps/api/src/models/spend.ts`, and the table `model_spend` |
 | The wall, the button and the two messages | `apps/web/components/chat/chat-screen.tsx` |
+| The refusal of a new chat, next to "Sign up with Google" | `apps/web/components/onboarding/onboarding.tsx` |
 
 - **A device** is one IP address with one browser. The database keeps only the hashes of the device, the address and its range (/24 for IPv4, /48 for IPv6), never the address.
 - **The IP address** comes from the load balancer of Lightsail. The API trusts one hop of `X-Forwarded-For`, so an address that the browser writes in the header does not count. Zod checks that it is an IP address, and the request log never writes it.
@@ -54,3 +55,4 @@ The tests prove the limits of the IP address and the IP range, and the limit of 
 - T-29: the abuse test of the limits.
 - T-17: a sign-in carries the visitor chat into the account.
 - T-22a: [#204](https://github.com/magentawood/roomsie/pull/204), the limit of three waitlist emails for each chat.
+- T-48: the onboarding makes each new chat, so it shows the refusal of new chats ([the onboarding](onboarding.md)).
