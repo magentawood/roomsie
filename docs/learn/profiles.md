@@ -26,7 +26,7 @@
 - The reply of the own profile has `visibility` and `missing`, so the profile screens can tell why a card is not live.
 - `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`). It also gives the connection with the viewer for the person detail at `/people/[id]` ([Message requests](message-requests.md)).
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.
-- After a sign-in, the app shell opens the create dialog when the account has no profile. "Explore for now" closes it until the browser tab closes.
+- After a sign-in, the app shell opens the create dialog "You've logged in!" when the account has no profile. It asks the name, the age and the gender. "Explore for now" and the close button close it until the browser tab closes.
 - The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.
 - "Delete my account" calls `DELETE /v1/me`, then signs out.
 
@@ -34,7 +34,7 @@
 
 - The fields, adults only, the parent and the visibility rule: [PD16](../decisions/pd-16-profiles.md). The Form A fields: [PD15](../decisions/pd-15-form-a-contract.md). The gender: [PD8](../decisions/pd-08-verification.md).
 - The routes, the follow-up choice of a parent and the lister: the spec of T-16a ([#36](https://github.com/magentawood/roomsie/issues/36)).
-- The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b ([#98](https://github.com/magentawood/roomsie/issues/98)).
+- The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b ([#98](https://github.com/magentawood/roomsie/issues/98)). The look of the create dialog of flow 01, and when it shows: the spec of T-60 ([#208](https://github.com/magentawood/roomsie/issues/208)).
 
 ## Gotchas
 
