@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { areasResponse, waitlistPlaces } from '@roomsie/contract'
+import { areasResponse, waitlistPlaceNames } from '@roomsie/contract'
 import { createTestDb, type TestDb } from './db'
 import { offlineStorage, routesOnlyOptions } from '../scripts/openapi'
 import { matchingAreas } from '../src/areas'
@@ -63,7 +63,7 @@ describe('the waitlist places', () => {
   it('have no name that is also a Mumbai name, so a Mumbai visitor never gets the waitlist', async () => {
     await seedCatalogues(testDb.db)
     const catalogue = await catalogueOf(testDb.db)
-    for (const [slug, place] of Object.entries(waitlistPlaces)) {
+    for (const [slug, place] of Object.entries(waitlistPlaceNames)) {
       for (const name of namesOf(place)) expect(catalogue.namesIn(name), name).toEqual([{ words: name, slugs: [], outside: slug }])
     }
   })

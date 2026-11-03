@@ -23,9 +23,10 @@ export type TurnState = {
   form: FormA
 } & Omit<ExtractorOutput, 'version' | 'form'>
 
-/** The extractor fills Form A, unless the turn is off topic, adversarial, or only a question (PD10, T-34). */
-const usesExtractor = ({ band, kinds }: TurnLabel) =>
-  band !== 'out_of_scope' && band !== 'adversarial' && !(kinds.includes('question') && !kinds.includes('filters'))
+/** An off-topic or adversarial turn is not about the search (PD10, T-34). */
+const aboutTheSearch = ({ band }: TurnLabel) => band !== 'out_of_scope' && band !== 'adversarial'
+/** The extractor fills Form A, unless the turn is not about the search, or only a question (PD10, T-34). */
+const usesExtractor = (label: TurnLabel) => aboutTheSearch(label) && !(label.kinds.includes('question') && !label.kinds.includes('filters'))
 
 export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegister'>
 /** What only the composer reads: the last two turns and the Form B notes of the person (PD7a). */
@@ -35,8 +36,8 @@ export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 export async function runTurn({ context, ...input }: TurnInput & { text: string; context: ComposerContext }, deps: AssistantDeps) {
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
-  // A question can name a place outside Mumbai too, and the outside places fill no slot of Form A (T-22a).
-  const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: extracted.outsidePlaces, label, language: languageOf(label.register ?? input.lastRegister) }
+  // A question can name an outside place too, though it fills no slot of Form A (T-22a).
+  const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
   const scripted = await replyWriter(turn, deps)
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted

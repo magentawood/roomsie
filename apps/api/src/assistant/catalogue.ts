@@ -1,5 +1,5 @@
 import { asc } from 'drizzle-orm'
-import { waitlistPlace, waitlistPlaces, type LifestyleAxis, type WaitlistPlace } from '@roomsie/contract'
+import { waitlistPlace, waitlistPlaceNames, type LifestyleAxis, type WaitlistPlace } from '@roomsie/contract'
 import { listAreas } from '../areas'
 import type { Db } from '../db/client'
 import { lifestyleAxes, mustHaves } from '../db/schema'
@@ -41,7 +41,7 @@ async function load(db: Db) {
     for (const name of names) for (const form of [name, ...withEndings(name)]) add(plainText(form), name, slugs, outside)
   }
   for (const area of areas) addNames(namesOf(area), [area.slug])
-  for (const slug of waitlistPlace.options) addNames(namesOf(waitlistPlaces[slug]), [], slug)
+  for (const slug of waitlistPlace.options) addNames(namesOf(waitlistPlaceNames[slug]), [], slug)
   const longestName = Math.max(...[...byName.keys()].map((name) => name.split(' ').length))
   return {
     areas,

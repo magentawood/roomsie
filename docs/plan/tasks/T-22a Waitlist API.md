@@ -69,6 +69,7 @@ The server part: know the Mumbai area groups, and save waitlist emails from plac
     - 400 for a place that the goal did not name.
     - 429 for each email after the third entry of a goal, also for an email on the list (the user, at the review).
     - A goal below the limit can still test one email: the 429 comes one email later. Each test costs one chat, and the chat limits of PD9 apply (the user, at the review).
+  - **The turns that give a place (n3rxv, extensive review):** a search turn and a question. An off-topic or adversarial turn is not about the search, so it gives no place (PD10).
   - **An account deletion (n3rxv, extensive review):** it deletes the waitlist entries of the chats of the person, with the chats (DPDP).
   - **The email:** the API removes the spaces at the two ends and makes it lowercase. The logs never show it ([ADR-0016](../../decisions/0016-credentials-and-secrets.md)).
   - **The list is in the contract, not in a table:** no row links to a waitlist place. The web reads the names from the same list.

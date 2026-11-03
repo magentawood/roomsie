@@ -625,14 +625,14 @@ export const saves = pgTable('saves', {
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
-  /** The place outside Mumbai (PD2). */
+  /** The column keeps the name `area` from before T-22a. */
   place: text('area').$type<WaitlistPlace>().notNull(),
   /** The chat that named the place. An account deletion removes the entry with the chat (DPDP). */
   goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),
 }, (t) => ({
-  emailAreaIdx: uniqueIndex('waitlist_email_area_idx').on(t.email, t.place),
+  emailPlaceIdx: uniqueIndex('waitlist_email_area_idx').on(t.email, t.place),
   goalIdx: index('waitlist_goal_idx').on(t.goalId),
 })).enableRLS()
 

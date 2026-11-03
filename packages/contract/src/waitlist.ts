@@ -1,10 +1,7 @@
 import { z } from 'zod'
 
-/**
- * The places outside Mumbai where a visitor joins the waitlist: the places of PD2, then the large cities.
- * Each has its name and the spellings that visitors type. No name is also a Mumbai name (areas test).
- */
-export const waitlistPlaces = {
+/** The waitlist places: those of PD2, then the large cities. No name is also a Mumbai name (areas test). */
+export const waitlistPlaceNames = {
   'vasai-virar': { name: 'Vasai–Virar', aliases: ['Vasai', 'Virar', 'Nalasopara', 'Nala Sopara', 'Vasai Road', 'Vasai West', 'Vasai East', 'Virar West', 'Virar East', 'वसई', 'विरार', 'नालासोपारा'] },
   'kalyan-dombivli': { name: 'Kalyan–Dombivli', aliases: ['Kalyan', 'Dombivli', 'Dombivali', 'Kalyan West', 'Kalyan East', 'Dombivli West', 'Dombivli East', 'Titwala', 'कल्याण', 'डोंबिवली', 'टिटवाळा'] },
   bhiwandi: { name: 'Bhiwandi', aliases: ['Bhivandi', 'भिवंडी'] },
@@ -37,8 +34,8 @@ export const waitlistPlaces = {
   chandigarh: { name: 'Chandigarh', aliases: ['चंडीगढ़'] },
   kochi: { name: 'Kochi', aliases: ['Cochin', 'Ernakulam', 'कोच्चि'] },
 } satisfies Record<string, { name: string; aliases: readonly string[] }>
-export type WaitlistPlace = keyof typeof waitlistPlaces
-export const waitlistPlace = z.enum(Object.keys(waitlistPlaces) as [WaitlistPlace, ...WaitlistPlace[]])
+export type WaitlistPlace = keyof typeof waitlistPlaceNames
+export const waitlistPlace = z.enum(Object.keys(waitlistPlaceNames) as [WaitlistPlace, ...WaitlistPlace[]])
 
 /** One entry of the waitlist, from the chat that named its place. */
 export const waitlistBody = z.strictObject({

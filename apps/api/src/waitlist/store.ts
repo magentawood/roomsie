@@ -5,7 +5,6 @@ import { waitlist } from '../db/schema'
 
 /** The number of emails that one chat can add (T-22a). */
 const entriesPerGoal = 3
-export const waitlistFullLine = 'This chat cannot add more emails to the waitlist.'
 
 /** Saves one entry of a chat. The same email and place again change nothing. False: the chat has no entries left. */
 export function joinWaitlist(db: Db, { email, place, goalId }: { email: string; place: WaitlistPlace; goalId: string }) {
