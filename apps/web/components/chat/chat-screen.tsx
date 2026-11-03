@@ -4,10 +4,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { capWall, formA, goalResponse, listingTitle, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, goalTitle, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
+import { canSend, chatStorage, chipsOf, keyAction, writeStored } from '../../lib/chat'
+import { deployRefusal, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../../lib/compare'
@@ -21,6 +22,8 @@ import { Button } from '../ui/button'
 import { RemoveChip } from '../ui/choice'
 import { Chips } from './chips'
 import { ComparisonTable } from './comparison'
+import { FoundFlow } from './found-dialogs'
+import { GoalHeader } from '../goals/goal-list'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
 function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in bandra for 3 friends...', onSend }: {
@@ -81,16 +84,14 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
 /** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
 type Outgoing = { body: TurnBody; text: string }
 
-/** The id of the goal of this browser: undefined until the browser reads it, null when it has none. */
-type StoredGoalId = string | null | undefined
-
-/** The goal of this browser, kept in local storage, so a reload opens the same chat. */
+/** The goal of the address, else the last goal of this browser, so a reload opens the same chat. */
 function useChat() {
   const { user, loading } = useAuth()
   const queryClient = useQueryClient()
+  const router = useRouter()
   // Local storage exists only in the browser, so the server render and the first render have not read the goal yet.
-  const [goalId, setGoalId] = useState<StoredGoalId>()
-  useEffect(() => setGoalId(readStored(chatStorage.goal)), [])
+  const goalId = useCurrentGoalId()
+  useEffect(() => { if (goalId) writeStored(chatStorage.goal, goalId) }, [goalId])
   const goal = useQuery({
     queryKey: queryKeys.goal(goalId ?? ''),
     queryFn: () => chatApi(user, `/v1/goals/${goalId}`, goalResponse),
@@ -103,8 +104,8 @@ function useChat() {
   useEffect(() => {
     if (!gone) return
     writeStored(chatStorage.goal, null)
-    setGoalId(null)
-  }, [gone])
+    router.replace('/start')
+  }, [gone, router])
 
   const send = useMutation({
     mutationFn: async ({ body }: Outgoing) => {
@@ -112,25 +113,28 @@ function useChat() {
       return { id: goalId, ...(await chatApi(user, `/v1/goals/${goalId}/turns`, turnResponse, { method: 'POST', body })) }
     },
     onSuccess: ({ id, turns, ...rest }) => {
-      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ ...rest, id, turns: [...(old?.turns ?? []), ...turns] }))
+      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ status: 'open', ...rest, id, turns: [...(old?.turns ?? []), ...turns] }))
+      // A turn can change the title of the goal in the list (T-50).
+      void queryClient.invalidateQueries({ queryKey: queryKeys.goals })
     },
   })
   const turns = goal.data?.turns ?? []
   // A sign-in lifts the cap, and the goal in the cache still has the count of the visitor.
   const typedTurnsLeft = user ? null : goal.data?.typedTurnsLeft ?? null
-  return { goalId, turns, form: goal.data?.form ?? emptyForm, outsidePlaces: goal.data?.outsidePlaces ?? [], typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
+  return { goalId, turns, form: goal.data?.form ?? emptyForm, outsidePlaces: goal.data?.outsidePlaces ?? [], closed: goal.data?.status === 'closed', typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 
 const emptyForm = formA.parse({})
 
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
-  const { goalId, turns, form: chatForm, outsidePlaces, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
+  const { goalId, turns, form: chatForm, outsidePlaces, closed, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
   const router = useRouter()
   // A chat starts on the onboarding, which makes its goal (T-48).
   const noGoal = goalId === null && !preview
   useEffect(() => { if (noGoal) router.replace('/start') }, [noGoal, router])
   const [failed, setFailed] = useState<string | null>(null)
+  const [finding, setFinding] = useState(false)
   const [wall, setWall] = useState(false)
   const [capped, setCapped] = useState(false)
   const pending = send.isPending || failed ? send.variables?.text : undefined
@@ -179,7 +183,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // A pick in the waitlist screen is a send, so the panel opens with the results once the search is ready.
   const pickArea = (slug: string) => { setView('split'); tap({ slot: 'areas', value: [slug] }) }
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
-  const chipSlot = send.isPending ? null : chipsOf(turns, chatForm)
+  const chipSlot = send.isPending || closed ? null : chipsOf(turns, chatForm)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
@@ -189,10 +193,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   if (loadingGoal || noGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
+  const goalName = goalTitle(chatForm, (slug) => areaLabels[slug] ?? slug)
   return (
-    <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
+    <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
+      {!preview && <GoalHeader title={goalName} closed={closed} onFound={() => setFinding(true)} />}
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
-      <div className={`col-start-1 row-start-1 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
+      <div className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
           {turns.map((turn) => (
             <li key={turn.id}>
@@ -224,7 +230,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           )}
         </ol>
       </div>
-      <div className="col-start-1 row-start-2 px-5 pb-28 lg:px-6 lg:pb-6">
+      <div className="col-start-1 row-start-3 px-5 pb-28 lg:px-6 lg:pb-6">
+        {closed && goalId ? <ClosedBar goalId={goalId} /> : <>
         {picked.length > 0 && !atCap && (
           <div className="mb-2 flex flex-col gap-1.5">
             <div role="group" aria-label="Selected to compare" className="flex flex-wrap gap-2">
@@ -239,9 +246,10 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText}
               placeholder={picked[0] && (picked[0].kind === 'place' ? 'Ask about the listings…' : 'Ask about these people…')} />}
         {typedTurnsLeft !== null && <p className="mt-2 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
+        </>}
       </div>
       {shown && (
-        <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
+        <div className={`col-start-1 row-start-2 min-h-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
           <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
@@ -250,15 +258,39 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         </div>
       )}
       {panel === 'waitlist' && waitlist && (
-        <div className={`hidden min-h-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-secondary ${waitlistOpen ? 'lg:grid' : ''}`}>
+        <div className={`hidden min-h-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-l lg:border-secondary ${waitlistOpen ? 'lg:grid' : ''}`}>
           <WaitlistPanel key={waitlist.place} {...waitlist} onPick={pickArea} onClose={() => setView('closed')} />
         </div>
       )}
       {wall && !signedIn && <SignInWall title={capWall.title} text={capWall.text} onClose={() => setWall(false)} />}
+      {finding && goalId && <FoundFlow goalId={goalId} title={goalName} onDone={() => setFinding(false)} />}
     </main>
   )
 }
 
 function UserText({ text }: { text: string }) {
   return <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
+}
+
+/** A closed goal is read-only: its chat and its results stay, and "Reopen" opens it again (T-50). */
+function ClosedBar({ goalId }: { goalId: string }) {
+  const { user } = useAuth()
+  const queryClient = useQueryClient()
+  const reopen = useMutation({
+    mutationFn: () => chatApi(user, `/v1/goals/${goalId}/reopen`, noContent, { method: 'POST' }),
+    onSuccess: () => {
+      queryClient.setQueryData<GoalResponse>(queryKeys.goal(goalId), (old) => old && { ...old, status: 'open' })
+      void queryClient.invalidateQueries({ queryKey: queryKeys.goals })
+    },
+  })
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border border-secondary bg-secondary p-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm font-medium text-secondary">You closed this goal.</p>
+      <div className="flex gap-3">
+        <Button variant="secondary" size="sm" disabled={reopen.isPending} onClick={() => reopen.mutate()}>Reopen</Button>
+        <Button variant="primary" size="sm" href="/start">Start a new goal</Button>
+      </div>
+      {reopen.error && <p role="alert" className="text-sm text-error-primary">{deployRefusal(reopen.error) ?? errorText(reopen.error)}</p>}
+    </div>
+  )
 }

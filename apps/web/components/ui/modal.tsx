@@ -10,6 +10,8 @@ const places = {
   bottom: 'inset-x-4 mb-4 max-w-100 rounded-2xl sm:my-auto',
   /** A full-width sheet at the bottom, and a card in the middle from the `lg` width. */
   sheet: 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-120 lg:rounded-2xl',
+  /** The sheet, with the width of the feedback pop-up from the `lg` width (T-50). */
+  wideSheet: 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-145 lg:rounded-2xl',
   /** A card in the middle at each width. */
   middle: 'inset-x-4 my-auto max-w-100 rounded-2xl',
 }

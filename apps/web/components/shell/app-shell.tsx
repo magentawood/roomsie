@@ -11,6 +11,7 @@ import { Badge } from '../ui/badge'
 import { Button, type Icon } from '../ui/button'
 import { CompletionCard } from '../profile/completion-card'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
+import { GoalList } from '../goals/goal-list'
 import { Logo } from './logo'
 import { GoogleSignIn } from './google-sign-in'
 import { SignInWall } from './sign-in-wall'
@@ -57,12 +58,13 @@ function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
   const { user, loading } = useAuth()
   return (
     <aside className="sticky top-0 hidden h-dvh w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-6 lg:flex">
-      <div className="flex flex-col gap-6">
+      <div className="flex min-h-0 flex-1 flex-col gap-6 pb-6">
         <Link href="/chat" className="px-2 text-primary"><Logo className="h-6.5 w-auto" /></Link>
         <div className="flex gap-2">
           <Button variant="primary" size="sm" iconLeading={Plus} {...linkTo('/listings/new')}>New Listing</Button>
           <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo('/start')}>New Goal</Button>
         </div>
+        <GoalList />
       </div>
       <div className="flex flex-col gap-4">
         <nav className="flex flex-col gap-1">

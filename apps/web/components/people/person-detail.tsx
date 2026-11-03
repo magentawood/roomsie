@@ -27,7 +27,7 @@ const lifestyleIcons: Record<LifestyleAxis, Icon> = {
 export function PersonDetail({ person }: { person: PersonResponse }) {
   const areaLabels = useAreaLabels()
   const saved = useSaved('people', person.id)
-  const { share, copied } = useShare(person.fullName)
+  const { share, status, dialog: shareDialog } = useShare(person.fullName, `/people/${person.id}`)
   const [sheet, setSheet] = useState<'say_hi' | 'report' | 'block' | null>(null)
   const name = firstName(person.fullName)
   const target = { profileId: person.id, firstName: name }
@@ -61,11 +61,11 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
           <div className="flex gap-2">
             <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setSheet('report')}>Report</Button>
             <Button variant="secondary" size="xs" iconTrailing={SlashCircle01} onClick={() => setSheet('block')}>Block</Button>
-            <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>{copied ? 'Link copied' : 'Share'}</Button>
+            <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
             <SaveButton kind="people" id={person.id} />
           </div>
         </div>
-        {copied && <p role="status" className="text-sm text-tertiary lg:hidden">Link copied</p>}
+        {status && <p role="status" className="text-sm text-tertiary">{status}</p>}
         {person.photos.length
           ? <Photos photos={person.photos} />
           : <span className="flex aspect-3/2 w-full items-center justify-center rounded-xl bg-secondary text-xl font-semibold text-tertiary">{initials(person.fullName)}</span>}
@@ -96,6 +96,7 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
       {sheet === 'say_hi' && <SayHiSheet target={target} onClose={close} />}
       {sheet === 'report' && <ReportSheet target={target} onClose={close} />}
       {sheet === 'block' && <BlockSheet target={target} onClose={close} onBlocked={back} />}
+      {shareDialog}
     </>
   )
 }

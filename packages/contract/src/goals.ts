@@ -228,4 +228,5 @@ export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), 
 export type GoalsResponse = z.infer<typeof goalsResponse>
 /** The answer of the pop-up "Where did you find it?". Only the event keeps it. */
 export const closeAnswer = z.enum(['roomsie', 'elsewhere', 'dropped'])
+export type CloseAnswer = z.infer<typeof closeAnswer>
 export const closeGoalBody = z.strictObject({ where: closeAnswer })
