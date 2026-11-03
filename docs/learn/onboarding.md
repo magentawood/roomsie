@@ -36,7 +36,7 @@
 
 ## Gotchas
 
-- **An area must be an area group.** A sub-area or an unknown area gets 400 `not valid: areas`, before a visitor session exists.
+- **An area must be an area group.** A sub-area or an unknown area gets 400 `not valid: area`, before a visitor session exists.
 - **The minutes of a deploy.** Vercel goes live before the API. The old API ignores the start answers and makes an empty goal, so the chat opens on its empty screen, "What are we looking for?". The old API also gives no `completion`, so the card does not show.
 - **The art of each step** is a square image. A computer shows a tall part of it, and a phone a wide band. `x` and `y` in the screen code set the part that shows.
 - **The footer has no email.** The designs show one, but the code keeps emails out of the repo.
