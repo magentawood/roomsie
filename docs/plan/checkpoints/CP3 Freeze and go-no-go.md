@@ -61,6 +61,7 @@ This note is part of [[roomsie launch]].
 - [[T-57 Sub-area pickers]] — P3 Data and trust
 - [[T-43 Listing detail screens]] — P3 Data and trust
 - [[T-59 More chips]] — P2 Chat
+- [[T-60 Profile pop-up]] — P3 Data and trust
 - [[T-58 Community filter]] — P3 Data and trust
 - [[T-44 Messages API]] — P3 Data and trust
 - [[T-45 Messages screens]] — P3 Data and trust

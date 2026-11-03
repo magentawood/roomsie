@@ -623,6 +623,15 @@
    "height": 84
   },
   {
+   "id": "task-T-60",
+   "type": "text",
+   "text": "**[[T-60 Profile pop-up|T-60 Profile pop-up]]**\n3h · Wed 4 Nov → Thu 5 Nov",
+   "x": 9020,
+   "y": 906,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "task-T-44",
    "type": "text",
    "text": "**[[T-44 Messages API|T-44 Messages API]]**\n8h · Thu 5 Nov → Sun 8 Nov",
@@ -1955,6 +1964,13 @@
    "fromNode": "task-T-09",
    "fromSide": "right",
    "toNode": "task-T-59",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-48-T-60",
+   "fromNode": "task-T-48",
+   "fromSide": "right",
+   "toNode": "task-T-60",
    "toSide": "left"
   },
   {
