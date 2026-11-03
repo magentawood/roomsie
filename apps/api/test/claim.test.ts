@@ -1,5 +1,5 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { eq } from 'drizzle-orm'
+import { and, eq } from 'drizzle-orm'
 import { goalResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { anonymousSessions, chatTurns, goals, observations, profiles, waitlist } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -36,7 +36,7 @@ describe('the claim of a visitor chat at sign-in (T-17)', () => {
     const join = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/waitlist`, payload: { email: 'asha@example.com', place: 'vasai-virar' }, headers: { [visitorKeyHeader]: goal.key } })
     expect(join.statusCode).toBe(204)
     const sessionId = await sessionOf(goal.id)
-    const [turn] = await t.db.select({ id: chatTurns.id }).from(chatTurns).where(eq(chatTurns.goalId, goal.id)).limit(1)
+    const [turn] = await t.db.select({ id: chatTurns.id }).from(chatTurns).where(and(eq(chatTurns.goalId, goal.id), eq(chatTurns.role, 'user'))).orderBy(chatTurns.createdAt).limit(1)
     await t.db.insert(observations).values({ anonymousSessionId: sessionId, key: 'work_pattern', value: 'works in Powai', kind: 'context', evidence: 'room chahiye', turnId: turn!.id, confidence: 0.9 })
 
     expect((await claim('asha', goal.key)).statusCode).toBe(204)

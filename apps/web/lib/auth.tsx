@@ -20,13 +20,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const uid = useRef<string | null>(null)
   const { mutate: claim } = useMutation({
     mutationFn: claimVisitorChat,
-    onSuccess: async (moved) => {
-      if (!moved) return
-      // queries.ts imports this file, so its keys load at run time, as push does.
+    onSuccess: async (claimed) => {
+      if (!claimed) return
+      // queries.ts imports this file, so its keys load at run time.
       const { queryKeys } = await import('./queries')
-      await queryClient.invalidateQueries({ queryKey: queryKeys.profile })
       const goalId = readStored(chatStorage.goal)
-      if (goalId) await queryClient.invalidateQueries({ queryKey: queryKeys.goal(goalId) })
+      const changed = [queryKeys.profile, ...(goalId ? [queryKeys.goal(goalId)] : [])]
+      await Promise.all(changed.map((queryKey) => queryClient.invalidateQueries({ queryKey })))
     },
     // The invite gate (T-33) refuses the account, and the chat stays a visitor chat.
     onError: (err) => { if (!refusalOf(err)) reportError(err, { where: 'claim' }) },
