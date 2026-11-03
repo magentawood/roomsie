@@ -77,7 +77,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The address names the goal.</strong> <code>/chat?goal=&lt;id&gt;</code> opens that goal, and local storage keeps the last one, so <code>/chat</code> opens it again (<a href="chat-screen.html">the chat screen</a>).</li>
+<li><strong>The address names the goal.</strong> <code>/chat?goal=&lt;id&gt;</code> opens that goal. Local storage keeps the last goal that the API gave, so <code>/chat</code> opens it again, and a link to a goal of a different person changes nothing (<a href="chat-screen.html">the chat screen</a>).</li>
 <li><strong>Only the owner</strong> closes, reopens or sends feedback: the token of the person, or the visitor key of the session.</li>
 <li><strong>A closed goal refuses a typed turn and a tap</strong> with 409, before any model call. A second close or reopen changes nothing and logs nothing.</li>
 <li><strong>The events</strong> <code>goal_closed</code> (with the answer) and <code>goal_reopened</code> count the found places (<a href="analytics-events.html">analytics events</a>). The goal row keeps only its status.</li>
@@ -90,7 +90,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>The minutes of a deploy.</strong> The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". <code>deployRefusal()</code> turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.</li>
-<li><strong>A reopen and a second close</strong> show the feedback pop-up again, and the API answers "You sent feedback for this goal already."</li>
+<li><strong>A reopen and a second close</strong> ask no feedback again: the close answers <code>askFeedback: false</code> when the goal has its feedback.</li>
 <li><strong>The status "found" became "closed"</strong>, because a dropped plan is not a found place. No code wrote "found", so the migration was safe for the API before it.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

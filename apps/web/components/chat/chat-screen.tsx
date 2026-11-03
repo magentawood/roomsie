@@ -7,7 +7,7 @@ import { ArrowRight } from '@untitledui/icons'
 import { capWall, formA, goalResponse, goalTitle, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chatStorage, chipsOf, keyAction, writeStored } from '../../lib/chat'
+import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
 import { deployRefusal, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
@@ -89,9 +89,7 @@ function useChat() {
   const { user, loading } = useAuth()
   const queryClient = useQueryClient()
   const router = useRouter()
-  // Local storage exists only in the browser, so the server render and the first render have not read the goal yet.
   const goalId = useCurrentGoalId()
-  useEffect(() => { if (goalId) writeStored(chatStorage.goal, goalId) }, [goalId])
   const goal = useQuery({
     queryKey: queryKeys.goal(goalId ?? ''),
     queryFn: () => chatApi(user, `/v1/goals/${goalId}`, goalResponse),
@@ -100,12 +98,15 @@ function useChat() {
     staleTime: Infinity,
     retry: (count, err) => count < 2 && !(err instanceof ApiError && err.status === 404),
   })
+  // Only a goal that the API gave becomes the last goal, so a link to the goal of a different person changes nothing.
+  useEffect(() => { if (goal.data) writeStored(chatStorage.goal, goal.data.id) }, [goal.data])
   const gone = goal.error instanceof ApiError && goal.error.status === 404
   useEffect(() => {
     if (!gone) return
-    writeStored(chatStorage.goal, null)
-    router.replace('/start')
-  }, [gone, router])
+    const last = readStored(chatStorage.goal)
+    if (last === goalId) writeStored(chatStorage.goal, null)
+    router.replace(last && last !== goalId ? '/chat' : '/start')
+  }, [gone, goalId, router])
 
   const send = useMutation({
     mutationFn: async ({ body }: Outgoing) => {
@@ -134,7 +135,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const noGoal = goalId === null && !preview
   useEffect(() => { if (noGoal) router.replace('/start') }, [noGoal, router])
   const [failed, setFailed] = useState<string | null>(null)
-  const [finding, setFinding] = useState(false)
+  const [foundOpen, setFoundOpen] = useState(false)
   const [wall, setWall] = useState(false)
   const [capped, setCapped] = useState(false)
   const pending = send.isPending || failed ? send.variables?.text : undefined
@@ -150,8 +151,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
   const panel = preview ? null : panelContent(chatForm, outsidePlaces)
   const newestOutside = outsidePlaces.at(-1)
-  const waitlist = goalId && newestOutside ? { goalId, place: newestOutside } : null
-  const waitlistOpen = panel === 'waitlist' && view !== 'closed'
+  // A closed goal is read-only, so it has no waitlist and no area picks (T-50).
+  const waitlist = goalId && newestOutside && !closed ? { goalId, place: newestOutside } : null
+  const waitlistOpen = panel === 'waitlist' && waitlist !== null && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
   const [draft, setDraft] = useState({ text: '', version: 0 })
   // A selection belongs to one list of results, so a new search starts a new one, and Option 1 is always the best match (T-49).
@@ -196,7 +198,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const goalName = goalTitle(chatForm, (slug) => areaLabels[slug] ?? slug)
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
-      {!preview && <GoalHeader title={goalName} closed={closed} onFound={() => setFinding(true)} />}
+      {!preview && <GoalHeader title={goalName} closed={closed} onFound={() => setFoundOpen(true)} />}
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
       <div className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
@@ -263,7 +265,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         </div>
       )}
       {wall && !signedIn && <SignInWall title={capWall.title} text={capWall.text} onClose={() => setWall(false)} />}
-      {finding && goalId && <FoundFlow goalId={goalId} title={goalName} onDone={() => setFinding(false)} />}
+      {foundOpen && goalId && <FoundFlow goalId={goalId} title={goalName} onDone={() => setFoundOpen(false)} />}
     </main>
   )
 }

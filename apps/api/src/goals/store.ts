@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalsResponse, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import { areaNames } from '../areas'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
@@ -59,20 +59,20 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
 }
 
 /** The goals of the asker, newest first, with the title that the designs give a goal (T-50). */
-export async function goalsOf(db: Db, asker: Asker): Promise<GoalsResponse['goals']> {
+export async function goalsOf(db: Db, asker: Asker) {
   const rows = await db.select({ id: goals.id, form: goals.form, status: goals.status, createdAt: goals.createdAt })
     .from(goals).where(ownedBy(asker)).orderBy(desc(goals.createdAt))
   const forms = rows.map(({ form }) => formA.parse(form))
-  const names = await areaNames(db, forms.flatMap(({ areas }) => (Array.isArray(areas.value) ? areas.value.slice(0, 1) : [])))
+  const names = await areaNames(db, forms.flatMap(({ areas }) => (Array.isArray(areas.value) ? areas.value : [])))
   return rows.map(({ id, status, createdAt }, i) => ({ id, status, title: goalTitle(forms[i]!, (slug) => names.get(slug) ?? slug), createdAt: createdAt.toISOString() }))
 }
 
-/** A close or a reopen by the owner (T-50). Null: no goal of the asker. False: the goal had that status already. */
-export async function setGoalStatus(db: Db, id: string, asker: Asker, status: GoalStatus) {
+/** A close or a reopen by the owner (T-50). Null: no goal of the asker. */
+export async function setGoalStatus(db: Db, id: string, asker: Asker, status: GoalStatus): Promise<'changed' | 'unchanged' | null> {
   // A new updated_at stops a turn that another tab started before the change (saveTurn).
   const [changed] = await db.update(goals).set({ status, updatedAt: new Date() })
     .where(and(eq(goals.id, id), ownedBy(asker), ne(goals.status, status))).returning({ id: goals.id })
-  return changed ? true : (await goalOf(db, id, asker)) ? false : null
+  return changed ? 'changed' : (await goalOf(db, id, asker)) ? 'unchanged' : null
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
@@ -143,7 +143,7 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
   })
 }
 
-/** At account deletion. The cascades remove the chat turns, the waitlist entries of the chats, and the goals of a claimed visitor session. */
+/** At account deletion. The cascades remove the chat turns, the waitlist entries and the feedback of the goals, and the goals of a claimed visitor session. */
 export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(goals).where(eq(goals.userId, userId))
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))

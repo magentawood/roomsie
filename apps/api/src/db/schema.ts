@@ -660,10 +660,7 @@ export const siteDetails = pgTable('site_details', {
   createdAt: createdAt(),
 }).enableRLS()
 
-/**
- * Feedback: of a signed-in person on the landing page (T-23a), or of the owner of a closed goal, with a face (T-50).
- * The goal gives the owner of the pop-up feedback, also of a visitor. The feedback module owns it.
- */
+/** Landing-page feedback of a person (T-23a), or pop-up feedback of a closed goal (T-50). The feedback module owns it. */
 export const feedback = pgTable('feedback', {
   id: id(),
   userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),

@@ -225,8 +225,9 @@ export function goalTitle(form: FormA, label: (slug: string) => string) {
 }
 
 export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), title: z.string(), status: goalStatus, createdAt: z.iso.datetime() })) })
-export type GoalsResponse = z.infer<typeof goalsResponse>
 /** The answer of the pop-up "Where did you find it?". Only the event keeps it. */
 export const closeAnswer = z.enum(['roomsie', 'elsewhere', 'dropped'])
 export type CloseAnswer = z.infer<typeof closeAnswer>
 export const closeGoalBody = z.strictObject({ where: closeAnswer })
+/** `askFeedback`: the goal has no feedback yet, so the web shows the feedback pop-up. */
+export const closeGoalResponse = z.object({ askFeedback: z.boolean() })

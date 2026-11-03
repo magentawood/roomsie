@@ -64,11 +64,11 @@ Close a search when the user finds a place, share a card, and send feedback.
 - **Decisions:**
   - **The scope (the user, 2026-11-03):** T-50 also builds the chat header, the goal title, the goal list of the sidebar and the goal switcher of the phone. T-10 gave them to T-17 and T-50, and T-17 did not build them. A new done item records this (the user).
   - **The title (the user):** code builds it from Form A, with the first area: "Room hunting in <area>", "Teaming up to rent around <area>", "Flat hunting in <area>", "PG hunting in <area>", and "Looking in <area>" with no place type. With no area: "New goal".
-  - **A closed goal (the user):** it stays in the list with a "Closed" mark, and it is read-only. "Reopen" opens it again (the user).
+  - **A closed goal (the user):** it stays in the list with a "Closed" mark, and it is read-only. "Reopen" opens it again (the user). The header shows the same mark in place of "I Found a Place" (the user, review).
   - **The answers of the pop-up:** On Roomsie, Somewhere else, and None, I dropped the plan. Each answer closes the goal. The status "found" becomes "closed", so a dropped plan is not "found". The answer goes only into the event of the close. A reopen logs its own event.
   - **The feedback (the user):** the pop-up shows after a close. A face is required, and the text is optional. Cancel and ✕ skip it.
   - **Visitors (the user):** a visitor closes and reopens own goals, and sends the feedback of the pop-up.
-  - **The spam limit (the user):** one feedback for each closed goal, from its owner. The chat limits of [PD9](../../decisions/pd-09-pre-login-limits.md) already limit the goals of a visitor.
+  - **The spam limit (the user):** one feedback for each closed goal, from its owner. After a reopen, the next close shows no feedback pop-up (review). The chat limits of [PD9](../../decisions/pd-09-pre-login-limits.md) already limit the goals of a visitor.
   - **Share (the user):** the full modal. The ticks start empty. Share sends each ticked conversation the message "<title>: <link>", then says "Shared with N people". A person with no conversation sees only the link button.
   - **A phone (the user):** the modal is a bottom sheet, and "Share link" opens the share sheet of the phone. A computer has "Copy link".
   - **The link in a thread (the user):** only a link to a place or a person on roomsie.in is tappable, so no outside link can mislead.

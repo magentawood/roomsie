@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { CheckSquare, ChevronDown, Home02 } from '@untitledui/icons'
-import { goalHref, useCurrentGoalId } from '../../lib/goals'
+import { errorText } from '../../lib/api'
+import { deployRefusal, goalHref, useCurrentGoalId } from '../../lib/goals'
 import { useGoals } from '../../lib/queries'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -11,6 +12,8 @@ import { Button } from '../ui/button'
 export function GoalList({ onPick }: { onPick?: () => void }) {
   const goals = useGoals()
   const currentId = useCurrentGoalId()
+  // The API before T-50 has no list, so for the minutes of a deploy the list stays empty.
+  if (goals.error && !deployRefusal(goals.error)) return <p role="alert" className="px-3 text-sm text-error-primary">{errorText(goals.error)}</p>
   if (!goals.data?.goals.length) return null
   return (
     <ul aria-label="Your goals" className="flex min-h-0 flex-col gap-1 overflow-y-auto">

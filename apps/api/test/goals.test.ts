@@ -762,9 +762,10 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
     expect((await asVisitor(other, 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })).statusCode).toBe(404)
     expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })).statusCode).toBe(404)
     expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'nowhere' })).statusCode).toBe(400)
-    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })).statusCode).toBe(204)
+    const closed = await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })
+    expect([closed.statusCode, closed.json()]).toEqual([200, { askFeedback: true }])
     // A second close changes nothing, so it logs nothing.
-    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'roomsie' })).statusCode).toBe(204)
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'roomsie' })).statusCode).toBe(200)
     expect((await eventsOf('goal_closed')).slice(closedBefore)).toEqual([{ where: 'elsewhere' }])
     expect(goalResponse.parse((await asVisitor(goal, 'GET', `/v1/goals/${goal.id}`)).json()).status).toBe('closed')
     expect((await listOf(goal))[0]!.status).toBe('closed')
@@ -785,7 +786,7 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
   it('closes the goal of a signed-in person, and not the goal of a different person', async () => {
     const goal = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
     expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(404)
-    expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(204)
+    expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(200)
     expect((await listOf('asha')).find(({ id }) => id === goal.id)!.status).toBe('closed')
   })
 })

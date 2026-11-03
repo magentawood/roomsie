@@ -18282,8 +18282,24 @@
           }
         ],
         "responses": {
-          "204": {
-            "description": "No body."
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "askFeedback": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "askFeedback"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "404": {
             "description": "Default Response",

@@ -217,7 +217,7 @@ export function useResults(form: FormA | null) {
   })
 }
 
-/** The goals of the person or of the visitor, newest first (T-50). The API before T-50 has no list, so a 404 shows none. */
+/** The goals of the person or of the visitor, newest first (T-50). */
 export function useGoals() {
   const { user, loading } = useAuth()
   return useQuery({ queryKey: queryKeys.goals, queryFn: () => chatApi(user, '/v1/goals', goalsResponse), enabled: !loading, retry: false })

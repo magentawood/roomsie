@@ -10,7 +10,7 @@ import { message, messageTextLimit, noContent, requestExpiryDays, type Conversat
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { cacheMessage } from '../../lib/live'
-import { cardLinks } from '../../lib/goals'
+import { cardLinks } from '../../lib/share'
 import { clockTime, profileOf, threadDays } from '../../lib/messages'
 import { queryKeys, useMessages } from '../../lib/queries'
 import { DetailMenu } from '../detail/parts'
@@ -36,10 +36,9 @@ function Header({ other, listingId, name, about, menu }: { other: OtherPerson; l
   )
 }
 
-/** A shared card is a link of this site, and only such a link is tappable (T-50). */
+/** A shared card is a link of roomsie.in, and only such a link is tappable (T-50). */
 function MessageText({ text }: { text: string }) {
-  if (typeof window === 'undefined') return text
-  return cardLinks(text, window.location.origin).map((part, i) => (typeof part === 'string' ? part
+  return cardLinks(text).map((part, i) => (typeof part === 'string' ? part
     : <Link key={i} href={part.href} className="rounded-sm underline outline-focus-ring focus-visible:outline-2">{part.text}</Link>))
 }
 

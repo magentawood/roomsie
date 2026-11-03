@@ -21,7 +21,7 @@
 | The header, the list and the switcher | `apps/web/components/goals/goal-list.tsx` |
 | The two pop-ups | `apps/web/components/chat/found-dialogs.tsx` |
 
-- **The address names the goal.** `/chat?goal=<id>` opens that goal, and local storage keeps the last one, so `/chat` opens it again ([the chat screen](chat-screen.md)).
+- **The address names the goal.** `/chat?goal=<id>` opens that goal. Local storage keeps the last goal that the API gave, so `/chat` opens it again, and a link to a goal of a different person changes nothing ([the chat screen](chat-screen.md)).
 - **Only the owner** closes, reopens or sends feedback: the token of the person, or the visitor key of the session.
 - **A closed goal refuses a typed turn and a tap** with 409, before any model call. A second close or reopen changes nothing and logs nothing.
 - **The events** `goal_closed` (with the answer) and `goal_reopened` count the found places ([analytics events](analytics-events.md)). The goal row keeps only its status.
@@ -34,7 +34,7 @@
 ## Gotchas
 
 - **The minutes of a deploy.** The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". `deployRefusal()` turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.
-- **A reopen and a second close** show the feedback pop-up again, and the API answers "You sent feedback for this goal already."
+- **A reopen and a second close** ask no feedback again: the close answers `askFeedback: false` when the goal has its feedback.
 - **The status "found" became "closed"**, because a dropped plan is not a found place. No code wrote "found", so the migration was safe for the API before it.
 
 ## Tickets

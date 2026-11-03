@@ -2,13 +2,13 @@ import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import {
-  closeGoalBody, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
+  closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
   type AnalyticsEvent, type ChipTap, type Comparison,
 } from '@roomsie/contract'
 import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { comparisonOf } from '../compare/compare'
-import { saveGoalFeedback } from '../feedback/read'
+import { hasGoalFeedback, saveGoalFeedback } from '../feedback/read'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
@@ -62,17 +62,19 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     ({ goals: await goalsOf(options.db, await askerOf(req, req.headers[visitorKeyHeader])) }))
 
   // Safe to repeat: only a change of the status logs an event (T-50).
-  app.post('/goals/:id/close', { preHandler: optionalUser(options), schema: { headers, params, body: closeGoalBody, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
-    const changed = await setGoalStatus(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]), 'closed')
-    if (changed === null) return reply.code(404).send({ error: 'not found' })
-    if (changed) v1.analytics.track(req, { name: 'goal_closed', where: req.body.where })
-    return reply.code(204).send(null)
+  app.post('/goals/:id/close', {
+    preHandler: optionalUser(options), schema: { headers, params, body: closeGoalBody, response: { 200: closeGoalResponse, 404: errorResponse } },
+  }, async (req, reply) => {
+    const change = await setGoalStatus(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]), 'closed')
+    if (!change) return reply.code(404).send({ error: 'not found' })
+    if (change === 'changed') v1.analytics.track(req, { name: 'goal_closed', where: req.body.where })
+    return { askFeedback: !(await hasGoalFeedback(options.db, req.params.id)) }
   })
 
   app.post('/goals/:id/reopen', { preHandler: optionalUser(options), schema: { headers, params, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
-    const changed = await setGoalStatus(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]), 'open')
-    if (changed === null) return reply.code(404).send({ error: 'not found' })
-    if (changed) v1.analytics.track(req, { name: 'goal_reopened' })
+    const change = await setGoalStatus(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]), 'open')
+    if (!change) return reply.code(404).send({ error: 'not found' })
+    if (change === 'changed') v1.analytics.track(req, { name: 'goal_reopened' })
     return reply.code(204).send(null)
   })
 
