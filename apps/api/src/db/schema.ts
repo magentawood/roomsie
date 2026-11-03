@@ -18,6 +18,7 @@ import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
   listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  type WaitlistPlace,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -460,6 +461,8 @@ export const goals = pgTable('goals', {
   ownReligionAt: timestamp('own_religion_at', { withTimezone: true }),
   ownCommunity: communityEnum('own_community'),
   ownCommunityAt: timestamp('own_community_at', { withTimezone: true }),
+  /** Each place outside Mumbai that a turn named, for the waitlist (T-22a). */
+  outsidePlaces: text('outside_places').array().$type<WaitlistPlace[]>().notNull().default([]),
   status: goalStatusEnum('status').notNull().default('open'),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -622,12 +625,15 @@ export const saves = pgTable('saves', {
 export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
-  /** The place outside Mumbai (PD2). */
-  area: text('area'),
+  /** The column keeps the name `area` from before T-22a. */
+  place: text('area').$type<WaitlistPlace>().notNull(),
+  /** The chat that named the place. An account deletion removes the entry with the chat (DPDP). */
+  goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),
 }, (t) => ({
-  emailIdx: uniqueIndex('waitlist_email_idx').on(t.email),
+  emailPlaceIdx: uniqueIndex('waitlist_email_area_idx').on(t.email, t.place),
+  goalIdx: index('waitlist_goal_idx').on(t.goalId),
 })).enableRLS()
 
 /** The quotes of real users on the landing page (T-23a). The site module owns them. */

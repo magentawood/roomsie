@@ -100,17 +100,17 @@ function useChat() {
     mutationFn: async ({ body }: Outgoing) => {
       let id = goalId
       if (!id) {
-        const made = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
-        if (made.visitorKey) writeStored(chatStorage.visitorKey, made.visitorKey)
+        const { visitorKey, ...made } = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
+        if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
         writeStored(chatStorage.goal, made.id)
-        queryClient.setQueryData(queryKeys.goal(made.id), { id: made.id, form: made.form, turns: [], typedTurnsLeft: made.typedTurnsLeft })
+        queryClient.setQueryData<GoalResponse>(queryKeys.goal(made.id), made)
         setGoalId(made.id)
         id = made.id
       }
       return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
     },
-    onSuccess: ({ id, form, turns, typedTurnsLeft }) => {
-      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ id, form, turns: [...(old?.turns ?? []), ...turns], typedTurnsLeft }))
+    onSuccess: ({ id, turns, ...rest }) => {
+      queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ ...rest, id, turns: [...(old?.turns ?? []), ...turns] }))
     },
   })
   const turns = goal.data?.turns ?? []

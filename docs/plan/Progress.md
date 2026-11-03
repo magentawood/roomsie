@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**231 of 329 done · 70%**
+**233 of 329 done · 71%**
 
 `█████████████████░░░░░░░`
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
 | [[P2 Chat]] | 8 / 14 | 41 / 65 | 63% |
 | [[P3 Data and trust]] | 16 / 19 | 77 / 86 | 90% |
-| [[P4 Content and moderation]] | 5 / 8 | 28 / 35 | 80% |
+| [[P4 Content and moderation]] | 6 / 8 | 30 / 35 | 86% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**20 free tasks are open · 57 build hours.**
+**19 free tasks are open · 55 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -57,10 +57,10 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
-| 0 | [[T-22a Waitlist API]] | P4 | 2 | ⬜ can start | 1 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | 0 | [[T-17 Carry chat into account]] | P2 | 2 | ⬜ can start | 0 | [#32](https://github.com/magentawood/roomsie/issues/32) |
+| 0 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ can start | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 0 | [[T-27 Eval run]] | P2 | 3 | ⬜ can start | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | 0 | [[T-36 Observer]] | P2 | 8 | ⬜ can start | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
@@ -68,7 +68,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | 0 | [[T-59 More chips]] | P2 | 5 | ⬜ can start | 0 | [#198](https://github.com/magentawood/roomsie/issues/198) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
-| 1 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ waits | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
@@ -128,8 +127,8 @@ flowchart LR
   T53["T-53<br/>Delete the Firebase user"]:::done
   T54["T-54<br/>Photos domain"]:::done
   T23b["T-23b<br/>Legal pages"]:::todo
-  T22a["T-22a<br/>Waitlist API"]:::ready
-  T22b["T-22b<br/>Waitlist screen"]:::todo
+  T22a["T-22a<br/>Waitlist API"]:::done
+  T22b["T-22b<br/>Waitlist screen"]:::ready
   T25["T-25<br/>Uptime monitor"]:::done
   T27["T-27<br/>Eval run"]:::ready
   T29["T-29<br/>Abuse test"]:::done
@@ -420,7 +419,7 @@ flowchart LR
 > ![[T-50 Found a place, share, feedback#^done]]
 
 
-## P4 Content and moderation — 28/35
+## P4 Content and moderation — 30/35
 
 > [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
@@ -437,7 +436,7 @@ flowchart LR
 > [!todo]- ✅ [[T-20 Account deletion]] · 6/6
 > ![[T-20 Account deletion#^done]]
 
-> [!todo]- ⬜ [[T-22a Waitlist API]] · 0/2
+> [!todo]- ✅ [[T-22a Waitlist API]] · 2/2
 > ![[T-22a Waitlist API#^done]]
 
 > [!todo]- ⬜ [[T-22b Waitlist screen]] · 0/3

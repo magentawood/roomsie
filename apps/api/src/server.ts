@@ -9,7 +9,7 @@ import {
   type ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
-import { reportError } from '@roomsie/config/report'
+import { reportError, withoutQueryValues } from '@roomsie/config/report'
 import { deleteAccount } from './account'
 import { alertsOf, type Alerts } from './alerts/alerts'
 import type { AnalyticsDb } from './analytics/client'
@@ -81,7 +81,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
     }
     // A 4xx is a fault of the request. Fastify writes the log line of each error (T-07).
     if ((err.statusCode ?? 500) >= 500) reportError(err, { where: `${req.method} ${req.routeOptions.url}`, userId: req.user?.id })
-    throw err
+    throw withoutQueryValues(err)
   })
   // Saved uses PUT, and the listing flow uses PATCH and DELETE. The default allows only GET, HEAD and POST.
   app.register(cors, { origin: options.webOrigin, methods: ['GET', 'HEAD', 'POST', 'PUT', 'PATCH', 'DELETE'] })

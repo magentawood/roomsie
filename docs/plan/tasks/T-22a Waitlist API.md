@@ -32,10 +32,60 @@ The server part: know the Mumbai area groups, and save waitlist emails from plac
 - [[T-22b Waitlist screen]]
 
 ## Done when
-- [ ] The API tells if a place is in a Mumbai area group, by its name or another name
-- [ ] The system saves each waitlist entry with its place
+- [x] The API tells if a place is in a Mumbai area group, by its name or another name · [#204](https://github.com/magentawood/roomsie/pull/204)
+- [x] The system saves each waitlist entry with its place · [#204](https://github.com/magentawood/roomsie/pull/204)
 
 ^done
 
 ## Read first
 - [pd-02-launch-market.md](../../decisions/pd-02-launch-market.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by pulkitshringi
+
+- **Modules:**
+  - **The contract:** a new constant gives the waitlist places, each with its slug, its name and its other names. The goal response and the turn response get the outside places of the goal. A new body gives the waitlist entry. The interface changes.
+  - **The extractor:** it checks the place words that its model copies against the waitlist places, with the name match of the Mumbai areas. Its prompt gets one line: the areas are only the places where the person wants to live. Its output gets the outside places of the turn. The interface changes.
+  - **The goals store and routes:** the goal keeps each outside place of its turns, with no duplicates. A new route `POST /v1/goals/:id/waitlist` saves an entry. The interface changes.
+  - **The schema and a migration:** the goals table gets the outside places. The waitlist table gets the goal, and its unique rule changes from the email to the email and the place.
+- **Seams for the tests:**
+  - The goals API tests, with the fake models:
+    - A turn that names "Vasai" gives the outside place.
+    - A turn with Powai and Vasai gives the area and the outside place. "Bandra" alone names two sub-areas.
+    - A reload of the goal keeps the place.
+  - The waitlist route tests, in the goals API tests.
+  - A unit test of the list: no name of a waitlist place is also a name of a Mumbai area.
+- **Decisions:**
+  - **The check is in the chat (the user, 2026-11-03):** the chat is the only search. Each typed turn checks its words against the waitlist places. The turn response and the goal response give the outside places to the web (T-22b). The Mumbai names keep the match of T-56.
+  - **A seeded list (the user):** the eight waitlist places of [PD2](../../decisions/pd-02-launch-market.md) and the large cities of India. Each place has its other names, for example "Virar" and "Bangalore". A name that is not in a list gives no area and no outside place. Thus, the assistant asks again, as before.
+  - **The place words of the model (the user, at the implementation):** the check reads only the place words that the model copies. Thus, "shifting from Pune" gives no outside place. A turn with no model answer gives no outside place.
+  - **The whole chat (the user):** the goal keeps each outside place of any turn, with no duplicates. A later turn does not remove a place.
+  - **One entry for each email and place (the user):** the same email and place a second time change nothing.
+  - **The entry comes from a chat (the user):** the request gives the goal, with the visitor key or the sign-in, as the other goal routes. The API accepts only a place that the goal named. A goal adds a maximum of three entries. Thus, a script must first pass the chat limits of [PD9](../../decisions/pd-09-pre-login-limits.md).
+  - **The answers:**
+    - 204 for a new entry and for a repeated entry, while the goal has entries left. Thus, the API does not tell if an email is on the list.
+    - 404 for a goal of a different person.
+    - 400 for a place that the goal did not name.
+    - 429 for each email after the third entry of a goal, also for an email on the list (the user, at the review).
+    - A goal below the limit can still test one email: the 429 comes one email later. Each test costs one chat, and the chat limits of PD9 apply (the user, at the review).
+  - **The turns that give a place (n3rxv, extensive review):** a search turn and a question. An off-topic or adversarial turn is not about the search, so it gives no place (PD10).
+  - **An account deletion (n3rxv, extensive review):** it deletes the waitlist entries of the chats of the person, with the chats (DPDP).
+  - **The email:** the API removes the spaces at the two ends and makes it lowercase. The logs never show it ([ADR-0016](../../decisions/0016-credentials-and-secrets.md)).
+  - **The list is in the contract, not in a table:** no row links to a waitlist place. The web reads the names from the same list.
+  - **The names:** the match of the Mumbai areas also reads Devanagari names and Marathi endings. Thus, the waitlist places can have Devanagari names.
+- **Out of scope:**
+  - the waitlist screen and the waitlist line (T-22b)
+  - a change to the text of the assistant reply
+  - a confirmation email, the invites, and an analytics event
+  - a waitlist place as an area group (PD2, "Revisit when")
+
+## Log
+
+- **2026-11-03 · [#204](https://github.com/magentawood/roomsie/pull/204)**
+  - **Change:** the contract has a list of the places outside Mumbai, with their other names. Each typed turn checks the place words of the extractor model against the list, and the goal keeps each outside place of the chat. `POST /v1/goals/:id/waitlist` saves an email with a place that the chat named, with a maximum of three emails for each chat.
+  - **Why:** visitors from outside Mumbai go to the waitlist ([PD2](../../decisions/pd-02-launch-market.md)), and a search with no Mumbai area shows the waitlist screen ([PD6c](../../decisions/pd-06c-interface-holes.md)).
+  - **Ticked:** "The API tells if a place is in a Mumbai area group, by its name or another name", and "The system saves each waitlist entry with its place"
+  - **Not done:** none
+  - **Learn:** [areas.md](../../learn/areas.md), [chat-limits.md](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

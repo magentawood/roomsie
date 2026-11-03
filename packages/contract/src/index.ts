@@ -33,6 +33,7 @@ export * from './saved'
 export * from './shared'
 export * from './site'
 export * from './verification'
+export * from './waitlist'
 
 /** A 204 with no body. `type: 'null'` tells the OpenAPI document to give the 204 no content, not a JSON `null`. */
 export const noContent = z.null().meta({ type: 'null', description: 'No body.' })

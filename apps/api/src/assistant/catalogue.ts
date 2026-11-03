@@ -1,5 +1,5 @@
 import { asc } from 'drizzle-orm'
-import type { LifestyleAxis } from '@roomsie/contract'
+import { waitlistPlace, waitlistPlaceNames, type LifestyleAxis, type WaitlistPlace } from '@roomsie/contract'
 import { listAreas } from '../areas'
 import type { Db } from '../db/client'
 import { lifestyleAxes, mustHaves } from '../db/schema'
@@ -17,8 +17,11 @@ function withEndings(name: string): string[] {
   return stems.flatMap((stem) => endings.map((ending) => stem + ending))
 }
 
+/** A seeded name: its areas, or the waitlist place outside Mumbai that it names. */
+type NameMatch = { words: string; slugs: string[]; outside?: WaitlistPlace }
+
 /** The name of an area and its other names, in each script. */
-export const namesOf = (area: { name: string; aliases: string[] }) => [area.name, ...area.aliases]
+export const namesOf = (area: { name: string; aliases: readonly string[] }) => [area.name, ...area.aliases]
 
 /** The seed data that the assistant reads: the areas with their names, and the labels of the questions. */
 async function load(db: Db) {
@@ -28,17 +31,17 @@ async function load(db: Db) {
     db.select({ key: mustHaves.key, label: mustHaves.label }).from(mustHaves),
   ])
   // A name of two areas, such as "Andheri", gives both. A name with a Marathi ending keeps the plain name as `words`.
-  const byName = new Map<string, { words: string; slugs: string[] }>()
-  const add = (key: string, slug: string, words: string) => {
+  // The area names and the waitlist names share one map, so the longer name wins.
+  const byName = new Map<string, NameMatch>()
+  const add = (key: string, words: string, slugs: string[], outside?: WaitlistPlace) => {
     const known = byName.get(key)
-    byName.set(key, { words: known?.words ?? words, slugs: [...new Set([...(known?.slugs ?? []), slug])] })
+    byName.set(key, { words: known?.words ?? words, slugs: [...new Set([...(known?.slugs ?? []), ...slugs])], ...(outside && { outside }) })
   }
-  for (const area of areas) {
-    for (const name of namesOf(area)) {
-      add(plainText(name), area.slug, name)
-      for (const form of withEndings(name)) add(plainText(form), area.slug, name)
-    }
+  const addNames = (names: string[], slugs: string[], outside?: WaitlistPlace) => {
+    for (const name of names) for (const form of [name, ...withEndings(name)]) add(plainText(form), name, slugs, outside)
   }
+  for (const area of areas) addNames(namesOf(area), [area.slug])
+  for (const slug of waitlistPlace.options) addNames(namesOf(waitlistPlaceNames[slug]), [], slug)
   const longestName = Math.max(...[...byName.keys()].map((name) => name.split(' ').length))
   return {
     areas,
@@ -46,7 +49,7 @@ async function load(db: Db) {
     /** The seeded names in a text, longest first, as "अंधेरी" in "अंधेरीत". Each gives the name as the seed spells it, and its areas. */
     namesIn: (text: string) => {
       const tokens = plainText(text).split(' ')
-      const found: { words: string; slugs: string[] }[] = []
+      const found: NameMatch[] = []
       for (let i = 0; i < tokens.length; i++) {
         for (let n = Math.min(longestName, tokens.length - i); n >= 1; n--) {
           const hit = byName.get(tokens.slice(i, i + n).join(' '))

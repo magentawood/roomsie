@@ -6,7 +6,7 @@ import { projectId, testTokens } from './tokens'
 import { tombstoneKey } from '../src/account'
 import {
   anonymousSessions, areas, blocks, chatTurns, connectionRequests, goals, listingFlatmates, listingRates, listings, observations, observationTopics, profiles, reports, saves,
-  users,
+  users, waitlist,
 } from '../src/db/schema'
 import { buildServer } from '../src/server'
 import { offlineStorage } from '../scripts/openapi'
@@ -97,6 +97,8 @@ describe('DELETE /v1/me', () => {
     ])
     await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'broker_or_spam' })
     await db.insert(blocks).values({ blockerUserId: gone.id, blockedUserId: stays.id })
+    // Each chat named Pune, and the person joined the waitlist from it (T-22a).
+    await db.insert(waitlist).values([{ email: 'gone@example.com', place: 'pune', goalId: goneSeed.goalIds[0]! }, { email: 'stays@example.com', place: 'pune', goalId: staysSeed.goalIds[0]! }])
     // Each saved the other's place and card (T-47).
     await db.insert(saves).values([
       { userId: gone.id, listingId: staysSeed.listingId }, { userId: gone.id, profileId: staysSeed.profile.id },
@@ -123,6 +125,7 @@ describe('DELETE /v1/me', () => {
     expect(await db.select().from(observations).where(eq(observations.userId, gone.id))).toHaveLength(0)
     expect(await db.select().from(observations).where(eq(observations.anonymousSessionId, goneSeed.sessionId))).toHaveLength(0)
     expect(await db.select().from(saves).where(eq(saves.userId, stays.id))).toHaveLength(0)
+    expect(await db.select({ email: waitlist.email }).from(waitlist).where(inArray(waitlist.email, ['gone@example.com', 'stays@example.com']))).toEqual([{ email: 'stays@example.com' }])
     // The other person keeps all of theirs.
     expect(await db.select().from(goals).where(inArray(goals.id, staysSeed.goalIds))).toHaveLength(2)
     expect(await db.select().from(chatTurns).where(inArray(chatTurns.goalId, staysSeed.goalIds))).toHaveLength(2)
