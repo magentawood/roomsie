@@ -4,9 +4,11 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
 import type { Icon } from './button'
 
-/** Where a modal sits on a phone. With no place, it sits at the bottom. */
+/** Where a modal sits on a phone. */
 const places = {
+  /** A card at the bottom, and in the middle from the `sm` width. */
   bottom: 'inset-x-4 mb-4 max-w-100 rounded-2xl sm:my-auto',
+  /** A full-width sheet at the bottom, up to the `lg` width. */
   sheet: 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-120 lg:rounded-2xl',
   middle: 'inset-x-4 my-auto max-w-100 rounded-2xl',
 }

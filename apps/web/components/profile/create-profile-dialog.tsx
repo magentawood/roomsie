@@ -9,12 +9,12 @@ import { useUser } from '../../lib/auth'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useProfile } from '../../lib/queries'
 import { useTabFlag } from '../../lib/tab-flag'
-import { LogoMark } from '../shell/logo'
+import { Logo } from '../shell/logo'
 import { Button } from '../ui/button'
 import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
 import { CloseButton, ModalFrame } from '../ui/modal'
 
-/** "Explore for now", the close button, Escape and a click outside close the dialog for this visit of the browser tab. */
+/** In the gate, each close hides the dialog for this visit of the browser tab. */
 const skipKey = 'roomsie:skip-profile'
 
 export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
@@ -38,15 +38,16 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
   const ready = fullName !== null && gender !== null
   return (
     <ModalFrame labelledBy="create-profile-title" onClose={onClose} place="middle">
-      <form className="relative flex flex-col gap-5 p-5 sm:p-6" onSubmit={(e) => {
+      <form className="flex flex-col gap-5 p-4 sm:p-6" onSubmit={(e) => {
         e.preventDefault()
         setTried(true)
         if (ready && age !== null && !ageError) create.mutate({ fullName, age, gender })
       }}>
         <div className="flex flex-col items-center gap-3 text-center">
-          <LogoMark className="size-10 text-primary" />
+          {/* The viewBox shows the mark of the logo without its name. */}
+          <Logo viewBox="0 0 27 26" className="size-10 text-primary" />
           <div>
-            <h2 id="create-profile-title" className="text-lg font-semibold text-primary">You’ve logged in!</h2>
+            <h2 id="create-profile-title" className="text-md font-semibold text-primary">You’ve logged in!</h2>
             <p className="text-sm text-tertiary">Please review your basic details and complete your profile</p>
           </div>
         </div>
