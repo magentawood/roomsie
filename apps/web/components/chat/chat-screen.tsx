@@ -165,9 +165,10 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       },
     })
   }
-  // With two cards or more selected, a question gets their comparison (T-49).
+  // With two cards or more selected, a question gets their comparison (T-49). On a phone the chat comes back, so the answer shows.
   const sendText = (text: string) => {
     const compare = compareOf(picked, shown?.found.results.map((result) => pickOf(result).id) ?? [])
+    if (compare) setView('split')
     submit({ body: { text, ...(compare && { compare }) }, text })
   }
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
