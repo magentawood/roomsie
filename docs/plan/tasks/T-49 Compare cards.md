@@ -66,9 +66,11 @@ Select some cards, and the assistant compares them in the chat.
   - **The rows (the user):** places start with Rent, Move-in cash, Deposit and Station, as the design. People start with Age, Job, Budget, Move date, Food, Smoking and Verified. Tick-boxes under each table add or remove fields with no new request.
   - **The sign-in (PD6b):** a selection needs a sign-in, as the opening of a card.
   - **The move-in cash:** one month of rent and the deposit, and the brokerage of a broker flat. A PG uses its lowest rent and its deposit.
-  - **The selection:** it stays until the person clears it. A reload shows each comparison again, because the turn keeps it, with the values of that time.
+  - **The selection:** it stays until the person clears it, the results change, or the person leaves the page, so Option 1 is always the best match of the results (review). A reload shows each comparison again, because the turn keeps it, with the values of that time.
   - **The count:** the message counts as a typed turn of PD9, because the router runs on it.
+  - **The bands (review):** a question in the bands out of scope, adversarial or sensitive, or with the danger flag, goes to the normal chat, with its own reply (PD10).
   - **The privacy (PD3c, PD16):** a person comparison shows only what the card shows to others: never the hidden religion or community, and never the bio.
+  - **A deleted person (the user, 2026-11-03, review):** the account deletion turns that person into "Deleted user" in each saved comparison, as PD19 asks.
 - **Out of scope:**
   - the commute to an office (the question of the design)
   - the box "Roomsie noticed" and the follow-up chips under a reply
