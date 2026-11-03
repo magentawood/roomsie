@@ -9,7 +9,7 @@ import { useUser } from '../../lib/auth'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useProfile } from '../../lib/queries'
 import { useTabFlag } from '../../lib/tab-flag'
-import { Logo } from '../shell/logo'
+import { Logo, markViewBox } from '../shell/logo'
 import { Button } from '../ui/button'
 import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
 import { CloseButton, ModalFrame } from '../ui/modal'
@@ -38,14 +38,13 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
   const ready = fullName !== null && gender !== null
   return (
     <ModalFrame labelledBy="create-profile-title" onClose={onClose} place="middle">
-      <form className="flex flex-col gap-5 p-4 sm:p-6" onSubmit={(e) => {
+      <form className="flex flex-col gap-4 px-4 pt-6 pb-4 sm:p-6" onSubmit={(e) => {
         e.preventDefault()
         setTried(true)
         if (ready && age !== null && !ageError) create.mutate({ fullName, age, gender })
       }}>
-        <div className="flex flex-col items-center gap-3 text-center">
-          {/* The viewBox shows the mark of the logo without its name. */}
-          <Logo viewBox="0 0 27 26" className="size-10 text-primary" />
+        <div className="mb-2 flex flex-col items-center gap-4 text-center">
+          <Logo viewBox={markViewBox} className="size-10 text-primary" />
           <div>
             <h2 id="create-profile-title" className="text-md font-semibold text-primary">You’ve logged in!</h2>
             <p className="text-sm text-tertiary">Please review your basic details and complete your profile</p>
@@ -67,7 +66,7 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
           <Button variant="primary" size="lg" type="submit" disabled={!ready || create.isPending}>Go to my profile</Button>
           <Button variant="secondary" size="lg" onClick={onClose}>Explore for now</Button>
         </div>
-        {/* Last for the tab key, so the dialog opens with the focus on the name. */}
+        {/* Last for the tab key, so the dialog opens with the focus on the name. The open dialog is fixed, so it places the button. */}
         <span className="absolute top-3 right-3 sm:top-4 sm:right-4"><CloseButton onClose={onClose} /></span>
       </form>
     </ModalFrame>

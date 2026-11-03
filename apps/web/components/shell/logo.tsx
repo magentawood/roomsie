@@ -1,6 +1,9 @@
 import type { SVGProps } from 'react'
 
-/** The Roomsie logo with its name, from the Figma design system. It takes the text colour. */
+/** The box of the mark: the first three paths of the logo, without the name. */
+export const markViewBox = '0 0 27 26'
+
+/** The Roomsie logo with its name, from the Figma design system. It takes the text colour. `viewBox={markViewBox}` shows the mark only. */
 export function Logo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 106 26" fill="currentColor" role="img" aria-label="Roomsie" {...props}>
