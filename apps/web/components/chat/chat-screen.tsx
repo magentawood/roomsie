@@ -76,12 +76,15 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
 /** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
 type Outgoing = { body: TurnBody; text: string }
 
+/** The goal of this browser: undefined until the browser reads it, null when it has none. */
+type StoredGoal = string | null | undefined
+
 /** The goal of this browser, kept in local storage, so a reload opens the same chat. */
 function useChat() {
   const { user, loading } = useAuth()
   const queryClient = useQueryClient()
   // Local storage exists only in the browser, so the server render and the first render have not read the goal yet.
-  const [goalId, setGoalId] = useState<string | null>()
+  const [goalId, setGoalId] = useState<StoredGoal>()
   useEffect(() => setGoalId(readStored(chatStorage.goal)), [])
   const goal = useQuery({
     queryKey: queryKeys.goal(goalId ?? ''),

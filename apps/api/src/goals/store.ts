@@ -42,11 +42,11 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
-/** A new goal. A goal of the onboarding (T-48) has its id, its Form A and the first line of the assistant. */
-export function createGoal(db: Db, asker: Asker, start?: { id: string; form: FormA; reply: AssistantReply }) {
+/** A new goal. A goal of the onboarding (T-48) has its Form A and the first line of the assistant. */
+export function createGoal(db: Db, asker: Asker, start?: { form: FormA; reply: AssistantReply }) {
   return db.transaction(async (tx) => {
-    const [goal] = await tx.insert(goals).values({ ...ownerOf(asker), ...(start && { id: start.id, form: start.form }) }).returning({ id: goals.id })
-    const turns = start ? await tx.insert(chatTurns).values({ goalId: start.id, role: 'assistant', text: start.reply.text, parts: start.reply.parts }).returning(turnFields) : []
+    const [goal] = await tx.insert(goals).values({ ...ownerOf(asker), ...(start && { form: start.form }) }).returning({ id: goals.id })
+    const turns = start ? await tx.insert(chatTurns).values({ goalId: goal!.id, role: 'assistant', text: start.reply.text, parts: start.reply.parts }).returning(turnFields) : []
     return { id: goal!.id, turns: turns.map(toChatTurn) }
   })
 }
@@ -71,7 +71,7 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
-  // Only saveTurn writes an assistant turn, and no row is older than this schema: T-12 is the first code that writes parts.
+  // Only saveTurn and createGoal write an assistant turn, and no row is older than this schema: T-12 is the first code that writes parts.
   const parts = assistantParts.parse(last.parts)
   return { ...parts, question: parts.question ?? last.text }
 }

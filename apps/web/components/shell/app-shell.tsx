@@ -6,6 +6,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import { Bookmark, ChevronLeft, Key01, MessageCircle01, Plus, User01 } from '@untitledui/icons'
 import { useAuth } from '../../lib/auth'
 import { useMessagesBadge } from '../../lib/queries'
+import { useTabFlag } from '../../lib/tab-flag'
 import { Badge } from '../ui/badge'
 import { Button, type Icon } from '../ui/button'
 import { CompletionCard } from '../profile/completion-card'
@@ -52,7 +53,7 @@ function MessagesItem({ look, linkTo }: { look: NavLook; linkTo: LinkTo }) {
   return useAuth().user ? <MessagesCount look={look} /> : <NavItem look={look} icon={MessageCircle01} label="Messages" link={linkTo('/messages')} />
 }
 
-function Sidebar({ linkTo }: { linkTo: LinkTo }) {
+function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
   const { user, loading } = useAuth()
   return (
     <aside className="sticky top-0 hidden h-dvh w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-6 lg:flex">
@@ -69,7 +70,7 @@ function Sidebar({ linkTo }: { linkTo: LinkTo }) {
           <NavItem look="sidebar" icon={Bookmark} label="Saved" link={linkTo('/saved')} />
           <NavItem look="sidebar" icon={Key01} label="My listings" link={linkTo('/listings')} />
         </nav>
-        {user && <CompletionCard look="sidebar" />}
+        {card}
         {user ? (
           <Link href="/profile" className="flex items-center gap-3 rounded-xl border border-secondary p-3 outline-focus-ring hover:bg-primary_hover focus-visible:outline-2">
             {user.photoURL
@@ -110,6 +111,9 @@ export function AppShell({ children, mobileNav = true, fixed }: { children: Reac
   const router = useRouter()
   const [pendingHref, setPendingHref] = useState<string | null>(null)
   const linkTo: LinkTo = (href) => (user ? { href } : { onClick: () => setPendingHref(href) })
+  // One close hides the card in the sidebar and on the phone, for this visit of the tab.
+  const [cardClosed, closeCard] = useTabFlag('roomsie:hide-completion')
+  const card = (look: 'sidebar' | 'phone') => user && !cardClosed && <CompletionCard look={look} onClose={closeCard} />
   useEffect(() => {
     if (!user || !pendingHref) return
     setPendingHref(null)
@@ -117,9 +121,9 @@ export function AppShell({ children, mobileNav = true, fixed }: { children: Reac
   }, [user, pendingHref, router])
   return (
     <div className={`flex ${fixed ? 'h-dvh' : 'min-h-dvh'}`}>
-      <Sidebar linkTo={linkTo} />
+      <Sidebar linkTo={linkTo} card={card('sidebar')} />
       <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${mobileNav && !fixed ? 'pb-24 lg:pb-0' : ''}`}>
-        {user && <CompletionCard look="phone" />}
+        {card('phone')}
         {children}
       </div>
       {mobileNav && <MobileNav linkTo={linkTo} />}

@@ -18,23 +18,14 @@ import { Button } from '../ui/button'
 import { ChoiceCard, ChoiceChips } from '../ui/choice'
 import { StepBar } from '../ui/step-bar'
 
-/** The art of each step, from the Product file. `position`: the part of the image in the band of a phone, then on a computer. */
-const art: Record<Step, { name: string; position: string }> = {
-  purpose: { name: 'purpose', position: 'object-[50%_77%] lg:object-[33%_50%]' },
-  whosMoving: { name: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
-  intent: { name: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
-  budget: { name: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
-  area: { name: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
-  signIn: { name: 'sign-in', position: 'object-[50%_77%] lg:object-[87%_50%]' },
-}
-
-const copy: Record<Step, { title: string; text?: string }> = {
-  purpose: { title: 'What brings you to Roomsie?' },
-  whosMoving: { title: 'Who’s moving?', text: 'So I show you the right kind of places.' },
-  intent: { title: 'What kind of place?', text: 'Pick one. You can add more later in the chat.' },
-  budget: { title: 'Budget per month?', text: 'Your share of the rent.' },
-  area: { title: 'Where do you want to live?', text: 'Pick one for now. Or skip and I’ll look across Mumbai.' },
-  signIn: { title: 'Sign in to continue', text: 'Unlimited chats and multiple goals, all synced up with your account.' },
+/** Each step of the Product file: its words, its art, and the part of the art in the band of a phone, then on a computer. */
+const screens: Record<Step, { title: string; text?: string; art: string; position: string }> = {
+  purpose: { title: 'What brings you to Roomsie?', art: 'purpose', position: 'object-[50%_77%] lg:object-[33%_50%]' },
+  whosMoving: { title: 'Who’s moving?', text: 'So I show you the right kind of places.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
+  intent: { title: 'What kind of place?', text: 'Pick one. You can add more later in the chat.', art: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
+  budget: { title: 'Budget per month?', text: 'Your share of the rent.', art: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
+  area: { title: 'Where do you want to live?', text: 'Pick one for now. Or skip and I’ll look across Mumbai.', art: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
+  signIn: { title: 'Sign in to continue', text: 'Unlimited chats and multiple goals, all synced up with your account.', art: 'sign-in', position: 'object-[50%_77%] lg:object-[87%_50%]' },
 }
 
 function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onChange: (answers: Answers) => void }) {
@@ -43,7 +34,7 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
   switch (step) {
     case 'purpose':
       return (
-        <div role="radiogroup" aria-label={copy.purpose.title} className="flex flex-col gap-4 text-left">
+        <div role="radiogroup" aria-label={screens.purpose.title} className="flex flex-col gap-4 text-left">
           <ChoiceCard icon={Home03} title="I’m looking for a place" subtitle="A room, a flat, a PG, or people to live with" selected={answers.purpose === 'look'} onSelect={() => pick('purpose')('look')} />
           <ChoiceCard icon={Key01} title="I have a place to list" subtitle="A room in my flat, a whole flat, a PG, or a flat I broker" selected={answers.purpose === 'list'} onSelect={() => pick('purpose')('list')} />
         </div>
@@ -51,7 +42,7 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
     case 'whosMoving':
       return (
         <div className="flex flex-col gap-6">
-          <ChoiceChips labelHidden label={copy.whosMoving.title} labels={profileLabels.describesYou} value={answers.whosMoving}
+          <ChoiceChips labelHidden label={screens.whosMoving.title} labels={profileLabels.describesYou} value={answers.whosMoving}
             onChange={(whosMoving) => onChange({ ...answers, whosMoving: whosMoving ?? undefined, childType: undefined })} />
           {answers.whosMoving === 'parent' && (
             <div className="flex flex-col gap-3">
@@ -62,11 +53,11 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
         </div>
       )
     case 'intent':
-      return <ChoiceChips labelHidden label={copy.intent.title} labels={intentLabels} value={answers.intent} onChange={pick('intent')} />
+      return <ChoiceChips labelHidden label={screens.intent.title} labels={intentLabels} value={answers.intent} onChange={pick('intent')} />
     case 'budget':
-      return <ChoiceChips labelHidden label={copy.budget.title} labels={profileLabels.budget} value={answers.budget} onChange={pick('budget')} />
+      return <ChoiceChips labelHidden label={screens.budget.title} labels={profileLabels.budget} value={answers.budget} onChange={pick('budget')} />
     case 'area':
-      return <ChoiceChips labelHidden label={copy.area.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.area} onChange={pick('area')} />
+      return <ChoiceChips labelHidden label={screens.area.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.area} onChange={pick('area')} />
     case 'signIn':
       return null
   }
@@ -106,18 +97,18 @@ export function Onboarding() {
   }
   const google = () => {
     setSignInError(null)
-    signIn().then((signedIn) => { if (signedIn) finish(signedIn) }, (err: unknown) => setSignInError(errorText(err)))
+    signIn().then((signedInUser) => { if (signedInUser) finish(signedInUser) }, (err: unknown) => setSignInError(errorText(err)))
   }
   const busy = start.isPending || start.isSuccess
   const error = signInError ?? (start.isError ? errorText(start.error) : null)
   const bar = progressOf(step, answers)
-  const { title, text } = copy[step]
+  const { title, text, art, position } = screens[step]
 
   if (loading || hasChat !== false) return <main className="min-h-dvh" aria-busy="true" />
   return (
     <div className="flex min-h-dvh flex-col bg-primary lg:flex-row">
       <div className="relative h-52 shrink-0 lg:sticky lg:top-0 lg:h-dvh lg:w-5/9 lg:[clip-path:polygon(0_0,94%_0,85%_30%,94%_59%,85%_100%,0_100%)]">
-        <img src={`/onboarding/${art[step].name}.webp`} alt="" className={`size-full object-cover ${art[step].position}`} />
+        <img src={`/onboarding/${art}.webp`} alt="" className={`size-full object-cover ${position}`} />
         <p className="absolute bottom-8 left-8 hidden text-sm text-primary_on-dark lg:block">© Roomsie 2026</p>
       </div>
       <main className="flex flex-1 flex-col gap-8 p-6 lg:px-20 lg:py-10">

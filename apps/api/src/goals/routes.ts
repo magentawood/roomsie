@@ -1,6 +1,5 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { uuidv7 } from 'uuidv7'
 import { z } from 'zod'
 import { errorResponse, formA, goalResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
 import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
@@ -23,10 +22,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     ({ userId: req.user?.id ?? null, sessionId: key ? await visitorSessionOf(options.db, key) : null })
 
   app.post('/goals', { preHandler: optionalUser(options), schema: { headers, body: goalStart.nullish(), response: { 201: newGoalResponse, 400: errorResponse, 429: limitRefusal } } }, async (req, reply) => {
-    // The onboarding starts a goal with its answers (T-48). Its reply takes the id of the goal, as each turn does, so a start mints the id here.
-    // The check of the answers comes before a visitor session exists.
-    const start = req.body ? await runStart({ goalId: uuidv7(), last: null, form: formA.parse({}), lastRegister: null, start: req.body }, { ...options, req }) : undefined
-    if (start === null) return reply.code(400).send({ error: 'not valid: areas' })
+    // The onboarding starts a goal with its answers, checked before a visitor session exists (T-48).
+    const start = req.body ? await runStart({ last: null, form: formA.parse({}), lastRegister: null, start: req.body }, { ...options, req }) : undefined
+    if (start === null) return reply.code(400).send({ error: 'not valid: area' })
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     let visitorKey: string | null = null
     if (!asker.userId && !asker.sessionId) {

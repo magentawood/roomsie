@@ -58,6 +58,7 @@ export const budgetBands = [
   { id: 'above_35k', min: 35_000, max: null, label: 'Above ₹35k' },
 ] as const
 export type BudgetBand = (typeof budgetBands)[number]['id']
+export const budgetBandId = z.enum(budgetBands.map((band) => band.id))
 export const budgetBandOf = (id: BudgetBand) => budgetBands.find((band) => band.id === id)!
 
 /** The state of one slot, as each slot of Form A has it. */

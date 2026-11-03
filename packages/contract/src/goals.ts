@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBandOf, budgetBands, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
+import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
@@ -29,7 +29,7 @@ export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().null
 export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
-  z.strictObject({ slot: z.literal('budget'), value: z.enum(budgetBands.map((band) => band.id)) }),
+  z.strictObject({ slot: z.literal('budget'), value: budgetBandId }),
 ])
 export type ChipTap = z.infer<typeof chipTap>
 /** The answers of the onboarding of flow 01 that start a goal, with the values of the chips. Each step can be skipped (T-48). */
@@ -37,7 +37,7 @@ export const goalStart = z.strictObject({
   intent: z.enum(intents).optional(),
   whosMoving: z.enum(whosMovingAnswers).exclude(['unclear']).optional(),
   area: areaSlug.optional(),
-  budget: z.enum(budgetBands.map((band) => band.id)).optional(),
+  budget: budgetBandId.optional(),
 })
 export type GoalStart = z.infer<typeof goalStart>
 export const chipTurnParts = z.strictObject({ version: z.literal(1).default(1), tap: chipTap })

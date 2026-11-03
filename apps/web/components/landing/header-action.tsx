@@ -14,7 +14,7 @@ export function HeaderAction() {
   const [error, setError] = useState<string | null>(null)
   const signInToChat = () => {
     setError(null)
-    signIn().then((signedIn) => { if (signedIn) router.push('/start') }, (err: unknown) => setError(errorText(err)))
+    signIn().then((signedInUser) => { if (signedInUser) router.push('/start') }, (err: unknown) => setError(errorText(err)))
   }
 
   if (loading) return <span aria-hidden className="h-8 w-22 xl:h-10 xl:w-45" />
