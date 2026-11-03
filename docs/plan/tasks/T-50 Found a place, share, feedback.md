@@ -32,6 +32,7 @@ Close a search when the user finds a place, share a card, and send feedback.
 - No task waits on this task.
 
 ## Done when
+- [ ] The chat header shows the goal title and “I found a place”, and the sidebar and the phone switcher list the goals of the person
 - [ ] "I found a place" closes the goal, as in its popover, and logs an event
 - [ ] Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate
 - [ ] The feedback popover saves the feedback of the user
@@ -41,3 +42,42 @@ Close a search when the user finds a place, share a card, and send feedback.
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [pd-06b-login-gate-and-search.md](../../decisions/pd-06b-login-gate-and-search.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by n3rxv
+
+- **Modules:**
+  - **The contract:** a goal gets its title, which code builds from Form A, and its status. A new list of the goals of a person. A close request with the answer of the pop-up. A feedback gets a face and the goal of the pop-up. Two new events: a closed goal with its answer, and a reopened goal. The interface changes.
+  - **The goals of the API:** the list of the goals of a person or of a visitor session, newest first. A close and a reopen by the owner of the goal. A closed goal refuses a typed turn and a tap. The status "found" becomes "closed". The interface changes.
+  - **The feedback of the API:** the feedback of the pop-up has a face, an optional text and its goal. A person or a visitor sends it for an own closed goal, one time for each goal. The landing form stays as it is, with a sign-in. The admin feedback list shows the face. The interface changes.
+  - **The chat of the web:** a header with the goal title and "I Found a Place". On a phone, the title with ▾ opens the goal switcher, and a tick icon opens the pop-up. The pop-up "Yay! Where did you find it?" has three answers, then the feedback pop-up follows. A closed goal shows its chat and its results, and in place of the input: "You closed this goal", "Reopen" and "Start a new goal".
+  - **The sidebar of the web:** the list of the goals under New Goal, with a "Closed" mark.
+  - **The Share modal of the web:** on the place detail and the person detail. The conversations of the person with ticks, Share, and Copy link. On a phone, a bottom sheet with "Share link", which opens the share sheet of the phone.
+  - **The thread of the web:** a link to a place or a person on roomsie.in is tappable. Other links stay plain text.
+- **Seams for the tests:**
+  - The tests of the goals routes: the list (a person, a visitor, the order, the title); a close and a reopen (only the owner, the events); a closed goal refuses a turn and a tap.
+  - The tests of the feedback route: a face is required with a goal; a person and a visitor, only for an own closed goal; one for each goal; the landing form still needs a sign-in; the admin list shows the face.
+  - Unit tests: the title from Form A (contract); the tappable links and the text of a shared card (web).
+  - A browser check on local dev at 390 px and 1440 px: the header and the list, a close with the feedback, the closed chat and a reopen, the Share modal with conversations, and a tappable link in a thread.
+  - A live check after the deploy, from the Safari of the user.
+- **Decisions:**
+  - **The scope (the user, 2026-11-03):** T-50 also builds the chat header, the goal title, the goal list of the sidebar and the goal switcher of the phone. T-10 gave them to T-17 and T-50, and T-17 did not build them. A new done item records this (the user).
+  - **The title (the user):** code builds it from Form A, with the first area: "Room hunting in <area>", "Teaming up to rent around <area>", "Flat hunting in <area>", "PG hunting in <area>", and "Looking in <area>" with no place type. With no area: "New goal".
+  - **A closed goal (the user):** it stays in the list with a "Closed" mark, and it is read-only. "Reopen" opens it again (the user).
+  - **The answers of the pop-up:** On Roomsie, Somewhere else, and None, I dropped the plan. Each answer closes the goal. The status "found" becomes "closed", so a dropped plan is not "found". The answer goes only into the event of the close. A reopen logs its own event.
+  - **The feedback (the user):** the pop-up shows after a close. A face is required, and the text is optional. Cancel and ✕ skip it.
+  - **Visitors (the user):** a visitor closes and reopens own goals, and sends the feedback of the pop-up.
+  - **The spam limit (the user):** one feedback for each closed goal, from its owner. The chat limits of [PD9](../../decisions/pd-09-pre-login-limits.md) already limit the goals of a visitor.
+  - **Share (the user):** the full modal. The ticks start empty. Share sends each ticked conversation the message "<title>: <link>", then says "Shared with N people". A person with no conversation sees only the link button.
+  - **A phone (the user):** the modal is a bottom sheet, and "Share link" opens the share sheet of the phone. A computer has "Copy link".
+  - **The link in a thread (the user):** only a link to a place or a person on roomsie.in is tappable, so no outside link can mislead.
+  - **The login gate ([PD6b](../../decisions/pd-06b-login-gate-and-search.md)):** a shared link opens the card behind the sign-in, as today.
+  - **The copy:** the text of the design, with its typos fixed.
+  - **The deploy window:** the new response fields have defaults, and the old API gives a clear error to a new request.
+- **Out of scope:**
+  - "Is this the same move?" and a merge of two goals
+  - a hide of the own profile card when a goal closes: the profile has its own hide
+  - an analytics event of a share
+  - a message type that shows a card in a thread
+  - a rename of a goal by the person

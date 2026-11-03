@@ -1101,6 +1101,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/scope-policy.md`
 
 **T-50 · Found a place, share and feedback** — done when:
+- The chat header shows the goal title and “I found a place”, and the sidebar and the phone switcher list the goals of the person
 - "I found a place" closes the goal, as in its popover, and logs an event
 - Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate
 - The feedback popover saves the feedback of the user

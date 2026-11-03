@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**250 of 332 done · 75%**
+**250 of 333 done · 75%**
 
 `██████████████████░░░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
 | [[P2 Chat]] | 9 / 14 | 46 / 65 | 71% |
-| [[P3 Data and trust]] | 19 / 20 | 86 / 89 | 97% |
+| [[P3 Data and trust]] | 19 / 20 | 86 / 90 | 96% |
 | [[P4 Content and moderation]] | 7 / 8 | 33 / 35 | 94% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
@@ -357,7 +357,7 @@ flowchart LR
 > ![[T-59 More chips#^done]]
 
 
-## P3 Data and trust — 86/89
+## P3 Data and trust — 86/90
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -413,7 +413,7 @@ flowchart LR
 > [!todo]- ✅ [[T-49 Compare cards]] · 3/3
 > ![[T-49 Compare cards#^done]]
 
-> [!todo]- ⬜ [[T-50 Found a place, share, feedback]] · 0/3
+> [!todo]- ⬜ [[T-50 Found a place, share, feedback]] · 0/4
 > ![[T-50 Found a place, share, feedback#^done]]
 
 > [!todo]- ✅ [[T-60 Profile pop-up]] · 3/3
