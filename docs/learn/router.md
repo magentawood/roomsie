@@ -5,13 +5,14 @@
 ## What it is
 
 - The **router** is one small model call for each typed message. It starts at the same time as the extractor ([PD7a](../decisions/pd-07a-agent-architecture.md)).
-- Its **label** has the **kinds** (filter details, personal context, a question), the **band** ([PD10](../decisions/pd-10-scope-bands.md)), the **register** (the language and the script, for the reply writer of T-13), and two flags: `danger` and `community`.
-- The band selects the first line of the reply:
+- Its **label** has the **kinds** (filter details, personal context, a question), the **band** ([PD10](../decisions/pd-10-scope-bands.md)), the **register** (the language and the script of the reply: see [The composer](composer.md)), and two flags: `danger` and `community`.
+- The band selects the first line of the reply. Each line is in the language of the person:
 
 | Band | The reply | Form A |
 |---|---|---|
 | Core | The normal reply | The extractor fills it, unless the message is only a question |
-| General or consequential (band 2) | "Good question. I can't answer that one yet, but I've noted it.", then the question | Only when the message also has filter details |
+| General (band 2a) | "Good question. I can't answer that one yet, but I've noted it.", then the question | Only when the message also has filter details |
+| Consequential (band 2b) | A hand-off line that names a lawyer or a CA, the IGR Maharashtra site, and a visit after dark, then the question | Only when the message also has filter details |
 | Out of scope | "That one's outside what I can help with. Back to it: …" | Not changed |
 | Adversarial | "Let's get back to your search.", then the question | Not changed |
 | Sensitive | A short acknowledgement. With `danger`, also 112 and Tele-MANAS 14416 | The extractor fills it |
@@ -24,7 +25,7 @@
 |---|---|
 | The prompt, the classifier and the label | `apps/api/src/assistant/handlers/router/` |
 | The two calls at the same time, and when the extractor answer applies | `apps/api/src/assistant/assistant.ts` |
-| The line of each band | `apps/api/src/assistant/handlers/reply/` |
+| The line of each band | `apps/api/src/assistant/handlers/reply/`, and the texts in `apps/api/src/assistant/lines.json` |
 | The answer, the label and the `turn_routed` event | `packages/contract/src/goals.ts`, `events.ts` |
 
 - **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. `routerBand` keeps the band that the router gave. A sure band keeps `danger`, `community` and the question kind only when each passes the threshold too.

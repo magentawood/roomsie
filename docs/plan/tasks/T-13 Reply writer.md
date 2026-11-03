@@ -31,13 +31,76 @@ The assistant writes its answers and stays on the topic.
 - [[T-49 Compare cards]]
 
 ## Done when
-- [ ] It writes the reply from the form and the last two turns, never from the full chat
-- [ ] It replies in the language that the person used
-- [ ] It never states a fact about a specific person
-- [ ] An off-topic message gets one line and the question again. Legal and safety questions get the general picture, then a pointer to a real source
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-12 and F-13 confirms it
+- [x] It writes the reply from the form and the last two turns, never from the full chat · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [x] It replies in the language that the person used · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [x] It never states a fact about a specific person · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [x] An off-topic message gets one line and the question again. Legal, tax and safety questions get a hand-off line with a real source, then the question again · [#203](https://github.com/magentawood/roomsie/pull/203)
+- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-14 (PC-15) confirms it
 
 ^done
 
 ## Read first
 - [scope-policy.md](../../scope-policy.md)
+
+## Spec
+
+**Approved:** 2026-11-02, by pulkitshringi
+
+- **Modules:**
+  - **The contract:** new schemas with a version for the composer: its input, the answer of the model and its output. The input of the reply writer gets the reply language (review round 1).
+  - **The reply writer:** the code makes the plan of each reply as before. The plan has the filled slots, the conflicts, the next question, the chips and the asked slot. On a core typed turn, the composer writes the words of that plan. Its interface does not change.
+  - **The composer (a new handler of the assistant):** one JSON call through the model module, with the role `composer`. It has a fixed system prompt and an output check.
+  - **The model module:** a call can have a deadline. The deadline applies to all the attempts of the call: the retry and the fallback too.
+  - **The fixed lines:** a new data file with each fixed line in five languages. Zod checks the file when the API starts. The lines go out of the code of the reply writer.
+  - **The settings of the assistant:** `COMPOSER_DEADLINE_MS`, with the default 2500.
+  - **The goals store:** it reads the last two turns of a goal, and the language of the last typed turn.
+  - **The docs:** PD10 and scope-policy.md tell the hand-off line until T-38. The assistant standards tell the deadline and the output check. A learn page tells how the composer works.
+  - **The plan:** done items 4 and 5 of T-13 and done item 3 of T-38 change (see the decisions).
+- **Seams for the tests:**
+  - The tests of the turn route, with the fake vendors: a reply in Hinglish, a rejected reply, a late composer, and a failed composer. Each test checks the text, the parts and the form.
+  - The tests of the turn route for the fixed lines: an off-topic turn, a legal question and a tap, each in Hinglish or Marathi.
+  - Unit tests of the output check and of the file of the fixed lines.
+  - A live check after the deploy, in the chat on roomsie.in: one answer in English, one in Hinglish and one in Marathi.
+- **Decisions:**
+  - **The code plans and the model writes (the user, 2026-11-02):** the code decides what the reply says. The composer only writes the words of the plan. It cannot remove the question or add a fact. If the composer fails, the scripted reply goes out (why: PD7a).
+  - **The composer runs on each core typed turn (the user):** the other turns keep a scripted reply with no model call after the router. These are taps, and off-topic, adversarial and sensitive turns (why: PD7a, PD10).
+  - **A deadline for the composer (the user):** `COMPOSER_DEADLINE_MS` limits the full call, with no long chain of retries. If the composer misses the deadline, the scripted reply goes out. The `model_called` event gives the time of each call, so T-27 can tune the deadline.
+  - **The languages of the fixed lines (the user):** English, Hinglish, Hindi in Devanagari, and Marathi in Latin and in Devanagari. Only the short fixed lines change language. The questions after a tap or a fallback stay in English, as the chips (why: PD7, PC-09).
+  - **The language of a reply:** a typed turn uses the register of its router label. A tap, and a typed turn with no label, use the register of the last typed turn (implementation, 2026-11-02). The language `other`, or no register, gives English. A mixed message in Latin script gives Hinglish.
+  - **The home of the fixed lines (the user):** a JSON data file, not code and not a table. A test fails when a line has no text for a language. Our drafts are the default until PC-15 of F-14 gives the lines.
+  - **Legal, tax and safety questions (the user):** a fixed hand-off line with a real source, then the question again. For an agreement, a dispute or tax, the source is a lawyer or a CA. For stamp duty and registration, it is the IGR Maharashtra site. For the safety of an area, the person visits it after dark and asks the people who live there (the user, implementation). The general picture comes from the articles of T-38 (why: PD10, band 2b). General questions keep the line "noted" until T-38.
+  - **No fact about a specific person (the user):** the composer gets only the plan, the two forms of the person, and the last two turns. It never gets a listing, a profile or a result. The prompt forbids names and claims about a person. The output check rejects a text when:
+    - it is longer than the limit
+    - it has a phone number, an email address or a link
+    - it has a number that is not in the plan or in the message
+    - it has a name that is not in the plan. A name from the message of the person does not pass.
+  - **The limits of the name check (the user, review round 1):** a new name at the start of a sentence, and a name in Devanagari, pass the check. A stricter check rejects most good replies in Hinglish, Hindi and Marathi. The prompt rule and the eval sentences of T-27 cover the two limits.
+  - **A lower-case name (n3rxv, extensive review round 2):** a name that the person types in lower case, for example "rahul ke saath", passes when the reply writes it at the start of a sentence. A stricter check rejects most good Hinglish replies that start with a word of the person. The eval sentences of T-27 cover it.
+  - **Numbers in words (n3rxv, extensive review, the round on the fixes):** the output check reads digits, and a Hindi or Marathi number word with its unit next to it, as "tees hazaar". An amount in English words ("thirty thousand") and a bare number word ("tees tak") pass. Many number words are also common words, for example "do" and "ek". The prompt rule and the eval sentences of T-27 cover them.
+  - **The amount parser (n3rxv, the round on the fixes):** the output check uses the amount parser of the extractor in `budget-words.ts`, as the reply writer uses `form-update.ts`.
+  - **A hidden preference (the user, review round 2):** a turn that states a hidden religion or community preference gets the scripted reply, with no composer call. An earlier user turn that states one stays out of the last two turns of the composer. Thus, no reply names the preference (why: PD3c, T-58).
+  - **A turn that no model read (implementation, extensive review):** it gets the line "send it again" in the language of the person, with no composer call. The models failed on this turn already.
+  - **A late composer (review round 1):** it gives a log line and its `model_called` event, not an error report. The scripted reply covers it.
+  - **The last two turns:** the two stored turns before the current message, and the current message. Nothing older (why: PD7a, the assistant standards).
+  - **Form B:** the observations of the person from the table. The list is empty until T-36.
+  - **The plan that the composer reads:** the scripted reply. Its fixed lines are in the language of the person already, and the composer keeps them (implementation).
+  - **The answer of the composer:** a JSON object with a version and the text. The fixed system prompt comes first, so the cache of the vendor applies (why: PD7).
+  - **Three done items changed (the user, 2026-11-02):** in item 4 of T-13, a legal question gets a hand-off line now. Item 3 of T-38 adds the general picture. Item 5 names F-14 (PC-15), not F-12 and F-13.
+- **Out of scope:**
+  - the advisor, the articles and the general picture (T-38)
+  - the observer that fills Form B (T-36)
+  - a reply that arrives after the results panel moves
+  - the translation of the interview questions and the lifestyle questions
+  - the score of the composer on the eval set, and a new value of the deadline (T-27, M-03)
+  - the final text of the fixed lines and the hand-off sources (PC-15 of F-14)
+  - the comparison of cards in the chat (T-49)
+
+## Log
+
+- **2026-11-03 · [#203](https://github.com/magentawood/roomsie/pull/203)**
+  - **Change:** code plans each reply, and the composer writes its words in the language of the person, inside a deadline and with an output check. The fixed lines move to a data file in five languages, and a legal, tax or safety question gets a hand-off line with real sources.
+  - **Why:** [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD7](../../decisions/pd-07-models.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec.
+  - **Ticked:** items 1, 2, 3 and 4.
+  - **Not done:** item 5, blocked by F-14: PC-15 confirms the fixed lines and the hand-off sources. The defaults are in the data file.
+  - **Learn:** [The composer](../../learn/composer.md), [The router](../../learn/router.md), [The assistant turn](../../learn/assistant-turn.md), [Models](../../learn/models.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

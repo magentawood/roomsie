@@ -92,6 +92,13 @@ multi-agent, and not one large model. **All of it ships at launch.**
   off-topic, adversarial or question-only turn drops. One call with the two
   jobs costs less, but a prompt change for one job can break the other. Do not
   add a sequential hop without a measurement.
+- Code plans each reply, and the composer writes only its words (2026-11-02,
+  T-13). The composer is a sequential hop after the extractor on a core typed
+  turn. One deadline, `COMPOSER_DEADLINE_MS`, limits all its attempts, and it
+  is the limit of the wait that this hop adds until T-27 measures it. An
+  output check stops a text with a contact detail, a link, or a number or a
+  name that is not in the plan. When the composer is late, fails or does not
+  pass, the scripted reply goes out.
 - Six handlers is a design. Twelve is a maintenance problem for five
   part-time engineers.
 - Measure cost for each interview and each handler from day one. The cost for

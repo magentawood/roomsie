@@ -9,13 +9,14 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Analytics events](analytics-events.md): the API records what people do, for example "connect sent", in an `events` table of a second database, with no text and no `users.id`.
 - [Areas, sub-areas and pockets](areas.md): the areas table holds three levels (area groups, sub-areas and pockets), and a pick of an area includes each area under it.
 - [Articles and the blog](articles.md): the Roomsie team writes each article as a Markdown file in the repo, each deploy of the API loads the files into the database, the blog shows them, and the Advisor searches their passages.
-- [The assistant turn](assistant-turn.md): one entry point fills Form A from each typed message, and writes a scripted reply with the next question.
+- [The assistant turn](assistant-turn.md): one entry point fills Form A from each typed message, and writes a reply with the next question.
 - [Backups](backups.md): each night, a GitHub workflow dumps the two databases, checks each restore, and keeps fourteen encrypted dumps in R2.
 - [Building the API](building-the-api.md): `tsx` runs the TypeScript API in development, and `tsup` builds our code into one JavaScript file. The Docker image installs the libraries next to it.
 - [The chat chips](chat-chips.md): the first three questions of the chat (place type, areas and budget) show tap buttons under the question, and a tap writes the answer into Form A with no model call.
 - [The limits of the chat](chat-limits.md): a visitor gets five typed messages before the sign-in wall, the API stops a device or a network that starts too many chats and a person who types too fast, and the team gets an alert when the model spend of the day gets near its amount.
 - [The chat screen and the sign-in wall](chat-screen.md): `/chat` starts each goal. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
 - [CI checks](ci-checks.md): GitHub checks each pull request automatically, and `main` accepts a merge only when the checks pass and a teammate approves.
+- [The composer](composer.md): code plans each reply, and the composer writes the words of that plan in the language of the person, inside a deadline.
 - [Content-Security-Policy](content-security-policy.md): each page of the web tells the browser which scripts, styles and hosts it can use, so a script that an attacker puts into a page does not run and cannot take the sign-in.
 - [Deploys](deploys.md): Vercel publishes the web from `main` and builds a preview for each pull request. A GitHub workflow deploys the API as a Docker image to AWS Lightsail in Mumbai.
 - [Error reporting](error-reporting.md): each error that a user gets, in the browser or in the API, goes to Sentry through one `reportError`, with the place in the code and the `users.id`, and with no message text, token, IP address or phone number.

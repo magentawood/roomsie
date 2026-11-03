@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { budgetBandOf, budgetBands, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
+import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
 
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
@@ -157,11 +158,37 @@ export type TurnLabel = z.output<typeof turnLabel>
 /** What a typed turn keeps: the label of the router, and the hidden preferences that the turn stated, as the log of PD3c (T-58). */
 export const userTurnParts = turnLabel.extend({ preferences: statedPreferences.optional() }).strict()
 export type UserTurnParts = z.output<typeof userTurnParts>
+/** A typed turn that states a hidden preference: the composer never reads it, so no reply names it (PD3c, T-58). */
+export const statesHiddenPreference = ({ community, preferences }: Pick<UserTurnParts, 'community' | 'preferences'>) =>
+  community || Object.keys(preferences ?? {}).length > 0
 
-/** What the reply writer reads: the output of the extractor, the question of the last reply, and the label of the turn. */
+/** The languages of a reply (PD7, PC-09): English, Hinglish, Hindi, and Marathi in Latin and in Devanagari script. */
+export const replyLanguages = ['en', 'hi-Latn', 'hi', 'mr-Latn', 'mr'] as const
+export type ReplyLanguage = (typeof replyLanguages)[number]
+
+/** What the reply writer reads: the output of the extractor, the question of the last reply, the label of the turn, and the language of the reply. */
 // The reply never names the own values or the hidden preferences (T-58), so it does not read them.
-export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true }).extend({ last: assistantParts.nullable(), label: turnLabel })
+export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true })
+  .extend({ last: assistantParts.nullable(), label: turnLabel, language: z.enum(replyLanguages) })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */
 export const assistantReply = z.strictObject({ version: z.literal(1).default(1), text: z.string().min(1), parts: assistantParts })
 export type AssistantReply = z.output<typeof assistantReply>
+
+/** What the composer reads: the plan of the reply, the two forms of the person, and the last two turns, never the full chat (PD7a). */
+export const composerInput = z.strictObject({
+  version: z.literal(1).default(1),
+  language: z.enum(replyLanguages),
+  /** The scripted reply: the plan. */
+  draft: z.string().min(1),
+  /** The filled slots of Form A. */
+  form: z.partialRecord(z.enum(formASlots), z.unknown()),
+  formB: z.array(observation.pick({ key: true, value: true })),
+  turns: z.array(z.strictObject({ role: z.enum(['user', 'assistant']), text: z.string() })).max(2),
+  message: z.string(),
+})
+export type ComposerInput = z.output<typeof composerInput>
+/** The answer of the composer model. Not strict, as the extractor answer. */
+export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
+/** What the composer gives: the words of the reply, after the output check. */
+export const composerOutput = composerAnswer.strict()

@@ -1,8 +1,10 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, isNotNull, or, sql, type SQL } from 'drizzle-orm'
-import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
+import { z } from 'zod'
+import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
+import type { Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
@@ -37,10 +39,12 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
   sessionId ? eq(goals.anonymousSessionId, sessionId) : sql`false`,
 )!
 
-/** A signed-in person owns the goal, else the visitor session. */
+/** A signed-in person owns a goal or a Form B note, else the visitor session. */
+export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+
 export async function createGoal(db: Db, asker: Asker) {
   const [row] = await db.insert(goals)
-    .values(asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+    .values(ownerOf(asker))
     .returning({ id: goals.id })
   return row!.id
 }
@@ -68,6 +72,25 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   // Only saveTurn writes an assistant turn, and no row is older than this schema: T-12 is the first code that writes parts.
   const parts = assistantParts.parse(last.parts)
   return { ...parts, question: parts.question ?? last.text }
+}
+
+/** The last two turns of a goal: what the composer reads of the chat, never the full chat (PD7a). A turn that states a hidden preference stays out (PD3c). */
+export async function recentTurnsOf(db: Db, goalId: string) {
+  const rows = await db.select({ role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
+    .where(eq(chatTurns.goalId, goalId)).orderBy(desc(chatTurns.createdAt)).limit(2)
+  // Only a typed turn passes userTurnParts.
+  const hides = (parts: unknown) => { const typed = userTurnParts.safeParse(parts); return typed.success && statesHiddenPreference(typed.data) }
+  return rows.reverse().filter(({ parts }) => !hides(parts)).map(({ role, text }) => ({ role, text }))
+}
+
+// A typed turn from before the router (T-34) has no register.
+const withRegister = z.object({ register: turnLabel.shape.register })
+/** The register of the last typed turn of a goal. Null: no typed turn, or no register on it. */
+export async function lastRegisterOf(db: Db, goalId: string) {
+  const [row] = await db.select({ parts: chatTurns.parts }).from(chatTurns)
+    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed')))
+    .orderBy(desc(chatTurns.createdAt)).limit(1)
+  return (row && withRegister.safeParse(row.parts).data?.register) ?? null
 }
 
 export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTurnParts })

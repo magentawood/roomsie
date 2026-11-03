@@ -1,23 +1,14 @@
 import { slotPath, type Budget, type FormASlot, type LifestyleAxis } from '@roomsie/contract'
 import type { Catalogue } from '../../catalogue'
 
-/** The scripted lines of the reply writer, in English only, until T-13 writes replies with the model. */
+/** The English templates of the plan of a reply. The composer writes their words in the language of the person (T-13). */
 export const replyLines = {
-  failed: 'Sorry, I could not read that just now. Please send it again.',
-  done: 'That is all I need for now. Have a look at the results.',
   helpPick: 'No stress. A room in a shared flat: your own room, the rest shared. A PG or hostel: meals often in, house rules always. '
     + 'A whole flat: all yours, rent and all. People to rent with: find your people first, then the place. Which one sounds like you?',
   conflict: (earlier: string, later: string) => `You said ${earlier} before, and now ${later}. Which one should I keep?`,
   ambiguous: (words: string, names: string[]) => `Which ${words} do you mean: ${names.join(', ')}, or ${names.length === 2 ? 'both' : 'all of them'}?`,
   weight: (label: string) => `Is ${label} a must, so I hide the places without it, or should I only show those places first?`,
   ack: (parts: string[]) => `Got it: ${parts.join(', ')}.`,
-  /** The first lines of a turn that is not core (T-34). */
-  noted: "Good question. I can't answer that one yet, but I've noted it.",
-  outOfScope: "That one's outside what I can help with.",
-  backToIt: (question: string) => `Back to it: ${question[0]!.toLowerCase()}${question.slice(1)}`,
-  adversarial: "Let's get back to your search.",
-  sensitive: "Thanks for telling me, and I'm sorry you're dealing with that.",
-  danger: "If you're not safe right now, call 112, or Tele-MANAS on 14416 (free, 24x7).",
 }
 
 const questions: Partial<Record<FormASlot, string>> = {

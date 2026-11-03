@@ -49,6 +49,8 @@ export type ModelCall = {
   messages: { role: 'user' | 'assistant'; content: string }[]
   /** The cost of an interview is the sum of the calls of its session (PD5). */
   session: string | null
+  /** The time for all the attempts together. After it, no attempt starts, and the call gives ModelUnavailable. */
+  deadlineMs?: number
 }
 
 /** No model gave a valid answer. The caller selects what the user sees. */
@@ -85,7 +87,7 @@ async function readAnswer<T>(res: Response | null, read: Read<T>, model: string)
 /** The only code that calls a model (PD7, ADR-0014). */
 export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<Vendor, string>; primary: string; fallback: string; timeoutMs: number }) {
   type Mode = { json: boolean; logprobs?: boolean }
-  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>) {
+  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>, deadline?: AbortSignal) {
     // The settings let only a model name of a known vendor through.
     const vendor = vendorOf(model)!
     const started = performance.now()
@@ -98,7 +100,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
         model, messages: [{ role: 'system', content: call.system }, ...call.messages],
         ...(json && { response_format: { type: 'json_object' } }), ...(logprobs && vendor === 'deepseek' && { logprobs: true }),
       }),
-      signal: AbortSignal.timeout(timeoutMs),
+      signal: deadline ? AbortSignal.any([AbortSignal.timeout(timeoutMs), deadline]) : AbortSignal.timeout(timeoutMs),
     }).catch(() => null)
     const answer = await readAnswer(res, read, model)
     const ms = Math.round(performance.now() - started)
@@ -110,14 +112,18 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   }
 
   async function run<T>(call: ModelCall, mode: Mode, read: Read<T>) {
-    const first = await attempt(call, primary, mode, read)
+    const deadline = call.deadlineMs === undefined ? undefined : AbortSignal.timeout(call.deadlineMs)
+    const late = () => deadline?.aborted
+    const first = await attempt(call, primary, mode, read, deadline)
     // Gemini answers, but a person must fix the key or the balance of DeepSeek.
     if (first.refused) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
-    const second = first.outcome === 'invalid' ? await attempt(call, primary, mode, read) : first
-    const last = second.outcome === 'ok' ? second : await attempt(call, fallback, mode, read)
+    const second = first.outcome === 'invalid' && !late() ? await attempt(call, primary, mode, read, deadline) : first
+    const last = second.outcome === 'ok' || late() ? second : await attempt(call, fallback, mode, read, deadline)
     if (last.outcome === 'ok') return last.value
     const err = new ModelUnavailable(`No model answered the ${call.role}: the last attempt was ${last.outcome}`)
-    reportError(err, { where: `models.${call.role}`, userId: call.req.user?.id, log: call.req.log })
+    // A caller with a deadline has its own fallback, so this is no error report.
+    if (late()) call.req.log.warn({ role: call.role }, 'no model answered before the deadline')
+    else reportError(err, { where: `models.${call.role}`, userId: call.req.user?.id, log: call.req.log })
     throw err
   }
 

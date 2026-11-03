@@ -6,7 +6,7 @@ import { anonymousSessions, areas, chatTurns, goals } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
-import { answer, coreLabel, down, fakeVendors, keys, scored } from './vendors'
+import { answer, coreLabel, down, fakeVendors, intentQuestion, keys, room, roomAck, routed, scored, sentMessageOf } from './vendors'
 
 let t: TestApp<'asha' | 'ravi'>
 let analytics: TestAnalyticsDb
@@ -99,7 +99,7 @@ describe('a typed turn', () => {
     // The next turn gets the last question, and is not the start of an interview.
     const next = fakeVendors({ deepseek: [scored({ lifestyle: { food: 'veg' } })] })
     expect((await sent(goal, 'veg')).form.lifestyle.food).toEqual({ source: 'stated', value: 'veg' })
-    expect((next[0]!.body as { messages: { content: string }[] }).messages[1]!.content).toBe('Last question of the assistant: What do you eat?\nMessage of the person: veg')
+    expect(sentMessageOf(next[0]!)).toBe('Last question of the assistant: What do you eat?\nMessage of the person: veg')
     expect(await startedEvents()).toBe(before + 1)
   })
 
@@ -229,9 +229,9 @@ describe('a typed turn', () => {
     expect(unclear.turns[1].text).toBe('You said up to ₹20,000 before, and now up to ₹25,000. Which one should I keep?')
     // The answer to the question replaces the earlier value.
     expect((await sent(goal, '25k')).form.budget.value).toEqual({ min: null, max: 25_000 })
-    expect((requests[1]!.body as { messages: { content: string }[] }).messages[1]!.content).toContain('Which one should I keep?')
+    expect(sentMessageOf(requests[1]!)).toContain('Which one should I keep?')
     // The reply to "budget 20k" began with "Got it: up to ₹20,000.", and the extractor of the next turn did not get that line.
-    expect((earlier[1]!.body as { messages: { content: string }[] }).messages[1]!.content).not.toContain('Got it')
+    expect(sentMessageOf(earlier[1]!)).not.toContain('Got it')
   })
 
   it('asks about each conflict of a turn, and reads "doosra wala" or "pehla" as the answer', async () => {
@@ -323,9 +323,6 @@ describe('a typed turn', () => {
 })
 
 describe('the router', () => {
-  const room = () => scored({ intent: 'room' })
-  /** A sure label of the router, with `fields` in place of those of `coreLabel`. */
-  const routed = (fields: object, unsure?: Record<string, number>) => ({ router: { deepseek: [scored({ ...coreLabel, ...fields }, unsure)] } })
   const labelOf = async (goalId: string) =>
     (await t.db.select({ parts: chatTurns.parts }).from(chatTurns).where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'))))[0]!.parts
   const routedCount = async (band: TurnLabel['band']) => {
@@ -342,8 +339,6 @@ describe('the router', () => {
     expect(await routedCount(label.band)).toBe(before + 1)
     return { form, reply: turns[1].text }
   }
-  const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
-  const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai work for you?'
   const noIntent = { source: 'empty', value: null }
   const roomIntent = { source: 'stated', value: 'room' }
 
@@ -368,7 +363,7 @@ describe('the router', () => {
     expect(form.intent).toEqual(noIntent)
   })
 
-  it('notes a housing question, and keeps only the filters of the same message', async () => {
+  it('notes a general question, hands a consequential one off, and keeps only the filters of the same message', async () => {
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question'], band: 'general' }) })
     const only = await turn('is a deposit of two months normal?', { band: 'general', kinds: ['question'] })
     expect(only.reply).toBe(`Good question. I can't answer that one yet, but I've noted it. ${intentQuestion}`)
@@ -376,7 +371,8 @@ describe('the router', () => {
 
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question', 'filters'], band: 'consequential' }) })
     const both = await turn('I want a room. Is the area safe at night?', { band: 'consequential' })
-    expect(both.reply).toBe(`Good question. I can't answer that one yet, but I've noted it. ${roomAck}`)
+    expect(both.reply).toBe('That needs a real answer, not a guess from me. For an agreement, a dispute or tax, ask a lawyer or a CA. '
+      + `For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there. ${roomAck}`)
     expect(both.form.intent).toEqual(roomIntent)
   })
 

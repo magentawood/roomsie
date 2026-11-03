@@ -51,6 +51,7 @@ Rules:
 - **The corpus rule is absolute.**
 - If the answer is not in the corpus, say so. Then tell the user where to get a real answer.
 - **Never a bare refusal.** Give the general shape first. Then say which part needs a real source.
+- Until the articles of T-38, the assistant has no general shape to give. Each 2b question gets one fixed hand-off line with real sources, in the language of the person. Then the interview question comes again.
 
 - Sample 2b reply:
 
@@ -89,6 +90,7 @@ Why: [PD10](decisions/pd-10-scope-bands.md)
 - **Keep the redirect short and warm.**
 - **In the same reply, ask the interview question again.**
 - **No lecture.** Use one line.
+- The line is in the language of the person. The interview question stays in English, as the chips.
 - **They count against the turn cap** of five turns.
 - The turn cap handles free-chatbot abuse alone, with nothing more.
 

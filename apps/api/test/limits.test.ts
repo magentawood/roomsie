@@ -136,7 +136,8 @@ describe('the rate limits (PD9)', () => {
     expect((await visitorFrom('192.0.2.78')).statusCode).toBe(429)
     expect((await visitorGoal('192.0.3.1')).id).toEqual(expect.any(String))
     const limits = (await eventsNamed('limit_hit')).slice(before).map(({ fields }) => (fields as { limit: string }).limit)
-    expect(limits).toEqual(['device', 'ip', 'ip_range'])
+    // Postgres gives the rows in no fixed order, so the test sorts them.
+    expect(limits.sort()).toEqual(['device', 'ip', 'ip_range'])
   })
 
   it('gives a goal in the same session, and a signed-in person, no limit on chats', async () => {
