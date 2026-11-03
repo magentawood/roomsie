@@ -1,9 +1,10 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { capWall, formA, goalResponse, listingTitle, newGoalResponse, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type LimitRefusal, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, listingTitle, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
@@ -14,7 +15,6 @@ import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults } from '../results/results-panel'
 import { LookInMumbai, WaitlistForm, WaitlistLine, WaitlistPanel } from './waitlist'
-import { GoogleSignIn } from '../shell/google-sign-in'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
 import { Chips } from './chips'
@@ -76,17 +76,20 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
 /** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
 type Outgoing = { body: TurnBody; text: string }
 
+/** The id of the goal of this browser: undefined until the browser reads it, null when it has none. */
+type StoredGoalId = string | null | undefined
+
 /** The goal of this browser, kept in local storage, so a reload opens the same chat. */
 function useChat() {
   const { user, loading } = useAuth()
   const queryClient = useQueryClient()
-  const [goalId, setGoalId] = useState<string | null>(null)
-  // Local storage exists only in the browser, so the server render and the first render have no goal.
+  // Local storage exists only in the browser, so the server render and the first render have not read the goal yet.
+  const [goalId, setGoalId] = useState<StoredGoalId>()
   useEffect(() => setGoalId(readStored(chatStorage.goal)), [])
   const goal = useQuery({
     queryKey: queryKeys.goal(goalId ?? ''),
     queryFn: () => chatApi(user, `/v1/goals/${goalId}`, goalResponse),
-    enabled: goalId !== null && !loading,
+    enabled: Boolean(goalId) && !loading,
     // The turns of this tab update the cache, so only a reload reads the goal again.
     staleTime: Infinity,
     retry: (count, err) => count < 2 && !(err instanceof ApiError && err.status === 404),
@@ -100,16 +103,8 @@ function useChat() {
 
   const send = useMutation({
     mutationFn: async ({ body }: Outgoing) => {
-      let id = goalId
-      if (!id) {
-        const { visitorKey, ...made } = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
-        if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
-        writeStored(chatStorage.goal, made.id)
-        queryClient.setQueryData<GoalResponse>(queryKeys.goal(made.id), made)
-        setGoalId(made.id)
-        id = made.id
-      }
-      return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
+      if (!goalId) throw new Error('The chat has no goal: the onboarding makes it (T-48)')
+      return { id: goalId, ...(await chatApi(user, `/v1/goals/${goalId}/turns`, turnResponse, { method: 'POST', body })) }
     },
     onSuccess: ({ id, turns, ...rest }) => {
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ ...rest, id, turns: [...(old?.turns ?? []), ...turns] }))
@@ -126,8 +121,11 @@ const emptyForm = formA.parse({})
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { goalId, turns, form: chatForm, outsidePlaces, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
-  /** The line of a failed send, and the limit of PD9 that refused it. */
-  const [failed, setFailed] = useState<{ text: string; limit: LimitRefusal['limit'] | null } | null>(null)
+  const router = useRouter()
+  // A chat starts on the onboarding, which makes its goal (T-48).
+  const noGoal = goalId === null && !preview
+  useEffect(() => { if (noGoal) router.replace('/start') }, [noGoal, router])
+  const [failed, setFailed] = useState<string | null>(null)
   const [wall, setWall] = useState(false)
   const [capped, setCapped] = useState(false)
   const pending = send.isPending || failed ? send.variables?.text : undefined
@@ -154,8 +152,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     send.mutate(turn, {
       onSuccess: (sent) => { if (sent.typedTurnsLeft === 0) setWall(true) },
       onError: (err) => {
-        const limit = limitOf(err)
-        if (limit !== 'turn_cap') return setFailed({ text: errorText(err), limit })
+        if (limitOf(err) !== 'turn_cap') return setFailed(errorText(err))
         send.reset()
         setCapped(true)
         setWall(true)
@@ -166,17 +163,15 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
   // A pick in the waitlist screen is a send, so the panel opens with the results once the search is ready.
   const pickArea = (slug: string) => { setView('split'); tap({ slot: 'areas', value: [slug] }) }
-  // A sign-in lifts the limit on new chats. The line of the limit has a sign-in button (drafts section 34).
-  const chatsOverLimit = !signedIn && failed?.limit === 'too_many_chats'
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
-  const chipSlot = send.isPending ? null : chipsOf(turns, chatForm, chatsOverLimit)
+  const chipSlot = send.isPending ? null : chipsOf(turns, chatForm)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
     setView('split')
   }
 
-  if (loadingGoal) return <main className="flex-1" aria-busy="true" />
+  if (loadingGoal || noGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
   return (
@@ -195,12 +190,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {pending !== undefined && (
             <li className="flex flex-col gap-6">
               <UserText text={pending} />
-              {failed ? (
-                <div role="alert" className="flex flex-col items-start gap-3">
-                  <p className="text-md text-error-primary">{failed.text}</p>
-                  {chatsOverLimit && <div className="w-fit"><GoogleSignIn /></div>}
-                </div>
-              ) : <p className="text-md text-tertiary">Thinking…</p>}
+              {failed ? <p role="alert" className="text-md text-error-primary">{failed}</p> : <p className="text-md text-tertiary">Thinking…</p>}
             </li>
           )}
           {shown && <li><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>}

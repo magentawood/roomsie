@@ -9,7 +9,7 @@ tags:
 
 _The data and the matching, then the screens that show them and the advisor._
 
-**117 hours** of build work, at 6.88h a day. The last task ends on Tue 24 Nov.
+**120 hours** of build work, at 7.06h a day. The last task ends on Wed 25 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -34,3 +34,4 @@ This note is part of [[roomsie launch]].
 17. [[T-48 Onboarding questions]] — Wed 18 Nov → Fri 20 Nov, 5h
 18. [[T-49 Compare cards]] — Sat 21 Nov → Sun 22 Nov, 4h
 19. [[T-50 Found a place, share, feedback]] — Mon 23 Nov → Tue 24 Nov, 4h
+20. [[T-60 Profile pop-up]] — Wed 25 Nov, 3h

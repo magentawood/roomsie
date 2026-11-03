@@ -5517,6 +5517,13 @@
                     },
                     "hiddenForReview": {
                       "type": "boolean"
+                    },
+                    "completion": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   },
                   "required": [
@@ -5542,7 +5549,8 @@
                     "community",
                     "visibility",
                     "missing",
-                    "hiddenForReview"
+                    "hiddenForReview",
+                    "completion"
                   ],
                   "additionalProperties": false
                 }
@@ -5836,6 +5844,13 @@
                     },
                     "hiddenForReview": {
                       "type": "boolean"
+                    },
+                    "completion": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   },
                   "required": [
@@ -5861,7 +5876,8 @@
                     "community",
                     "visibility",
                     "missing",
-                    "hiddenForReview"
+                    "hiddenForReview",
+                    "completion"
                   ],
                   "additionalProperties": false
                 }
@@ -6394,6 +6410,13 @@
                     },
                     "hiddenForReview": {
                       "type": "boolean"
+                    },
+                    "completion": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   },
                   "required": [
@@ -6419,7 +6442,8 @@
                     "community",
                     "visibility",
                     "missing",
-                    "hiddenForReview"
+                    "hiddenForReview",
+                    "completion"
                   ],
                   "additionalProperties": false
                 }
@@ -14215,6 +14239,56 @@
     },
     "/v1/goals": {
       "post": {
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "intent": {
+                    "type": "string",
+                    "enum": [
+                      "room",
+                      "pg",
+                      "whole_flat",
+                      "flatmates",
+                      "unclear"
+                    ]
+                  },
+                  "whosMoving": {
+                    "type": "string",
+                    "enum": [
+                      "student",
+                      "first_job",
+                      "working",
+                      "couple",
+                      "family",
+                      "friends"
+                    ]
+                  },
+                  "area": {
+                    "type": "string",
+                    "maxLength": 60,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                  },
+                  "budget": {
+                    "type": "string",
+                    "enum": [
+                      "under_10k",
+                      "under_15k",
+                      "under_25k",
+                      "under_35k",
+                      "above_35k"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
         "parameters": [
           {
             "schema": {

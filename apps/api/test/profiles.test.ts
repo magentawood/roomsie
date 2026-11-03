@@ -1,13 +1,13 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
-import { cardResponse, listingResponse, profileResponse, profileUploadUrlResponse } from '@roomsie/contract'
+import { cardResponse, lifestyleAnswers, lifestyleAxes, listingResponse, profileResponse, profileUploadUrlResponse } from '@roomsie/contract'
 import { areas, blocks, profiles, users } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import type { Storage } from '../src/storage'
 import { offlineStorage } from '../scripts/openapi'
 import { testApp, type TestApp } from './app'
 
-type Who = 'lister' | 'seeker' | 'parent' | 'newcomer'
+type Who = 'lister' | 'seeker' | 'parent' | 'newcomer' | 'finisher'
 const deleted: string[] = []
 let r2Down = false
 const storage: Storage = {
@@ -19,7 +19,7 @@ const storage: Storage = {
 }
 let t: TestApp<Who>
 beforeAll(async () => {
-  t = await testApp(['lister', 'seeker', 'parent', 'newcomer'], storage)
+  t = await testApp(['lister', 'seeker', 'parent', 'newcomer', 'finisher'], storage)
   await seedCatalogues(t.db)
 })
 afterAll(() => t.close())
@@ -31,6 +31,22 @@ const own = async (who: Who) => profileResponse.parse((await t.call(who, 'GET', 
 const complete = { whosMoving: 'working', areas: ['bandra'], budgetMax: 20000 }
 const photoKey = (profileId: string, n: number) => `profiles/${profileId}/0199e4b0-0000-7000-8000-00000000000${n}.jpg`
 
+describe('the completion of a profile (T-48)', () => {
+  it('gives 11 parts of equal weight, with the eight lifestyle answers as one part and a photo as one part', async () => {
+    const completion = async () => (await own('finisher')).completion
+    const me = profileResponse.parse((await create('finisher')).json())
+    await edit('finisher', { ...complete, moveDate: '2026-12-01', jobRole: 'Designer', bio: 'Early riser.' })
+    expect(await completion()).toBe(82)
+    const lifestyle = Object.fromEntries(lifestyleAxes.map((axis) => [axis, lifestyleAnswers[axis][0]]))
+    await edit('finisher', { lifestyle: { ...lifestyle, pets: null } })
+    expect(await completion()).toBe(82)
+    await edit('finisher', { lifestyle })
+    expect(await completion()).toBe(91)
+    expect((await edit('finisher', { photoKeys: [photoKey(me.id, 1)] })).statusCode).toBe(200)
+    expect(await completion()).toBe(100)
+  })
+})
+
 describe('the own profile', () => {
   it('makes one profile with the name, the age and the gender, and lists what the card still needs', async () => {
     expect((await t.call('lister', 'GET', '/v1/me/profile')).statusCode).toBe(404)
@@ -39,7 +55,7 @@ describe('the own profile', () => {
     expect((await t.call(null, 'POST', '/v1/me/profile', { fullName: 'Shruti Rao', age: 30, gender: 'female' })).statusCode).toBe(401)
     const made = await create('lister', { fullName: 'Shruti Rao', age: 30, gender: 'female' })
     expect(made.statusCode).toBe(201)
-    expect(profileResponse.parse(made.json())).toMatchObject({ fullName: 'Shruti Rao', gender: 'female', visibility: 'draft', missing: ['whosMoving', 'areas', 'budget'] })
+    expect(profileResponse.parse(made.json())).toMatchObject({ fullName: 'Shruti Rao', gender: 'female', visibility: 'draft', missing: ['whosMoving', 'areas', 'budget'], completion: 27 })
     expect((await create('lister')).statusCode).toBe(409)
   })
 

@@ -1,5 +1,5 @@
 import { and, eq, inArray, isNull, ne } from 'drizzle-orm'
-import { liveCardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
+import { lifestyleAxes, liveCardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
 import { noBlockBetween } from '../blocks/read'
 import type { Db, Tx } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
@@ -12,6 +12,15 @@ type Answers = Pick<CardResponse, 'lifestyle' | 'mustHaves' | 'verified'>
 
 export const missingFields = (p: Profile): ProfileResponse['missing'] =>
   liveCardFields.filter((f) => ({ whosMoving: p.whosMoving === 'unclear', areas: !p.areas.length, budget: p.budgetMin === null && p.budgetMax === null })[f])
+
+/** 11 parts of equal weight, and the eight lifestyle answers are one part (the spec of T-48). */
+export function completionOf(p: Profile, lifestyle: Answers['lifestyle']) {
+  const parts = [
+    p.photoKeys.length > 0, p.fullName, p.age !== null, p.gender !== null, p.whosMoving !== 'unclear', p.areas.length > 0,
+    p.budgetMin !== null || p.budgetMax !== null, p.moveDate, p.jobRole, p.bio, lifestyleAxes.every((axis) => lifestyle[axis]),
+  ]
+  return Math.round((parts.filter(Boolean).length * 100) / parts.length)
+}
 
 /**
  * The people that a viewer can see: a live card of an active account that reports did not hide, so suspended and deleted people never appear.
@@ -66,7 +75,7 @@ export function cardView(p: Profile, answers: Answers, storage: Storage): CardRe
 }
 
 export function profileView(p: Profile, answers: Answers, storage: Storage): ProfileResponse {
-  return { ...cardView(p, answers, storage), gender: p.gender!, religion: p.religion, community: p.community, visibility: p.visibility, missing: missingFields(p), hiddenForReview: p.hiddenAt !== null }
+  return { ...cardView(p, answers, storage), gender: p.gender!, religion: p.religion, community: p.community, visibility: p.visibility, missing: missingFields(p), hiddenForReview: p.hiddenAt !== null, completion: completionOf(p, answers.lifestyle) }
 }
 
 /** The name, the first photo and the account status of people, by user id (T-44). A deleted account has no profile. */

@@ -2,7 +2,7 @@
 id: T-48
 title: "Onboarding questions"
 owner: "P3 Data and trust"
-sequence: "17 of 19"
+sequence: "17 of 20"
 hours: 5
 start: 2026-11-18
 end: 2026-11-20
@@ -17,12 +17,12 @@ tags:
 
 # T-48 · Onboarding questions
 
-**Owner:** [[P3 Data and trust]], task 17 of 19  
+**Owner:** [[P3 Data and trust]], task 17 of 20  
 **When:** Wed 18 Nov → Fri 20 Nov · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#124](https://github.com/magentawood/roomsie/issues/124)
 
-The first questions after sign-in: area, budget, place type, who is moving and purpose.
+The first questions before the chat: purpose, who is moving, place type, budget and area.
 
 ## Needs first
 - [[T-05 Google sign-in ⚑]]
@@ -30,15 +30,60 @@ The first questions after sign-in: area, budget, place type, who is moving and p
 - [[F-11 Intake and profile calls ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-60 Profile pop-up]]
 
 ## Done when
-- [ ] The screens of flow 01 ask the area, the monthly budget, the place type, who is moving and the purpose, as in the Product file
-- [ ] The answers fill the same Form A slots that the chat fills
-- [ ] The profile completion card shows the percentage, as in the designs
+- [x] The screens of flow 01 ask the area, the monthly budget, the place type, who is moving and the purpose, as in the Product file · [#207](https://github.com/magentawood/roomsie/pull/207)
+- [x] The answers fill the same Form A slots that the chat fills · [#207](https://github.com/magentawood/roomsie/pull/207)
+- [x] The profile completion card shows the percentage, as in the designs · [#207](https://github.com/magentawood/roomsie/pull/207)
 
 ^done
 
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [intake-and-profile.md](../../product-calls/intake-and-profile.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by n3rxv
+
+- **Modules:**
+  - **The contract:** the body of `POST /v1/goals` takes optional start answers: the place type, who is moving, one area group and the budget band, with the values of the chips. The interface changes.
+  - **The goals routes and the assistant:** a new goal with start answers writes them into Form A as stated answers, as a tap does. The reply writer writes one assistant turn that confirms them and asks the next question. The visitor limits of PD9 apply as for each new visitor chat. The typed turns do not change.
+  - **The onboarding of the web (new):** the route `/start`, with the steps of flow 01: purpose, who is moving, place type, budget and area. Each step has Previous, Skip and Next. The bar of the designs shows the four questions after the purpose. Then "Sign in to continue", with Google or as a guest. Then the chat.
+  - **The entry of the web:** "Open Roomsie", "New goal" and a chat with no goal open `/start`. A person with a stored chat goes to the chat.
+  - **The profiles of the API:** the own profile gives `completion`, the percentage of the profile. The interface changes.
+  - **The profile completion card of the web (new):** the percentage of the profile, in the sidebar on a computer and above the chat on a phone, with a close button and a link to the profile.
+  - **The illustrations:** the images of flow 01, from the Product file, as compressed images in the web.
+  - **The plan:** the new task T-60 "Profile pop-up after the first sign-in", and the new description of T-48.
+- **Seams for the tests:**
+  - The tests of the goals route: a new goal with start answers has them in Form A, as stated answers, and one assistant turn with the next question. A start with no answers asks the first question. A start answer that is not valid gets 400. The visitor limits apply.
+  - Unit tests of the web: the steps and their order, Skip and Previous, the start answers from the steps, and the path of a lister.
+  - The tests of the profile route: the percentage of a profile.
+  - A browser check on local dev at 390 px and 1440 px: each step, a skip, the sign-in step as a guest, the chat with the summary line and the results, and the completion card.
+  - A live check after the deploy, from a fresh browser on roomsie.in: the steps as a guest, and the chat with the summary line.
+- **Decisions:**
+  - **Before sign-in, as the designs (the user, 2026-11-03):** the steps come first, then "Sign in to continue" with Google or "Guest login", then the chat. This replaces "the first questions after sign-in" in the description of T-48 (why: PD14). A person who is signed in skips the sign-in step.
+  - **The steps (the Product file, flow 01):** "What brings you to Roomsie?", "Who's moving?", "What kind of place?", "Budget per month?" and "Where do you want to live?", with the values of the chips of T-09 and the who's-moving answers of PD15. A skipped step leaves its slot empty, and the chat asks it later.
+  - **A lister:** "I have a place to list" goes to "Sign in to continue" with Google only, then to the listing flow.
+  - **One start request (the user):** the chat starts with the answers in Form A, and one assistant line that confirms them and asks the next question. The answers fill the same slots as the chat (item 2).
+  - **The percentage (the user):** 11 parts of equal weight: a photo, the name, the age, the gender, who is moving, the areas, the budget, the move date, the job, the bio, and the eight lifestyle answers as one part. The card has no "more discoverable" claim.
+  - **The pop-up "You've logged in!" (the user):** not in T-48. The new task T-60 builds it.
+  - **The card on a phone (the user, 2026-11-03, review):** it sits in the page above the chat, not over it, so it never covers the first line and the chips. The close button hides it.
+  - **The percentage in the API (the user, 2026-11-03, review):** the API works it out, because the web has no business logic. In the minutes of a deploy, the old API gives no percentage, and the card hides.
+  - **The empty chat screen (the user, 2026-11-03, review):** "What are we looking for?" stays for a chat with no line, as in the minutes of a deploy.
+  - **The footer (the user):** "© Roomsie 2026", with no email, because emails stay out of the repo.
+- **Out of scope:**
+  - the pop-up after the first sign-in (T-60)
+  - a change to the listing flow
+  - an analytics event of the steps
+
+## Log
+
+- **2026-11-03 · [#207](https://github.com/magentawood/roomsie/pull/207)**
+  - **Change:** `/start` asks the steps of flow 01, then "Sign in to continue", and one start request makes the goal with the answers in Form A and one assistant line. "Start looking", "Open Roomsie", "New Goal", "+" and a chat with no goal open it. The API gives the percentage of the profile, and the completion card shows it in the sidebar and above the chat of a phone.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD15](../../decisions/pd-15-form-a-contract.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [The onboarding and the profile completion card](../../learn/onboarding.md), [The chat screen and the sign-in wall](../../learn/chat-screen.md), [The limits of the chat](../../learn/chat-limits.md), [The visitor chat at sign-in](../../learn/visitor-chat-claim.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

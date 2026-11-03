@@ -14,7 +14,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Building the API](building-the-api.md): `tsx` runs the TypeScript API in development, and `tsup` builds our code into one JavaScript file. The Docker image installs the libraries next to it.
 - [The chat chips](chat-chips.md): the first three questions of the chat (place type, areas and budget) show tap buttons under the question, and a tap writes the answer into Form A with no model call.
 - [The limits of the chat](chat-limits.md): a visitor gets five typed messages before the sign-in wall, the API stops a device or a network that starts too many chats and a person who types too fast, and the team gets an alert when the model spend of the day gets near its amount.
-- [The chat screen and the sign-in wall](chat-screen.md): `/chat` starts each goal. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
+- [The chat screen and the sign-in wall](chat-screen.md): `/chat` is the chat of the goal that the onboarding started. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
 - [CI checks](ci-checks.md): GitHub checks each pull request automatically, and `main` accepts a merge only when the checks pass and a teammate approves.
 - [The composer](composer.md): code plans each reply, and the composer writes the words of that plan in the language of the person, inside a deadline.
 - [Content-Security-Policy](content-security-policy.md): each page of the web tells the browser which scripts, styles and hosts it can use, so a script that an attacker puts into a page does not run and cannot take the sign-in.
@@ -35,6 +35,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Model hosting and where user text goes](model-hosting-and-data.md): each chat message goes to a model provider, and the provider decides where the text is stored and if it trains on it; roomsie sends user text to the DeepSeek API.
 - [The model wrapper](models.md): each call of the API to a language model goes through one module, which asks DeepSeek first, asks Gemini when DeepSeek fails, and records the tokens of each attempt.
 - [Moderation: reports, blocks and the admin screen](moderation.md): a user reports or blocks a person; reports can hide a card or a listing at once, and a moderator reviews each report on the admin screen and dismisses it, keeps the hide, or suspends the account.
+- [The onboarding and the profile completion card](onboarding.md): `/start` asks the first questions of flow 01, then the sign-in, and one request starts the goal with the answers in Form A. The completion card shows how much of the profile is done.
 - [OpenAPI from Zod](openapi-from-zod.md): the API makes its OpenAPI document from the Zod schemas in `packages/contract`. The document is committed, and a test fails when it is out of date.
 - [Place detail and listing reports](place-detail.md): a signed-in user opens the full detail of a place, and can report it; a safety report, or reports from two people, hide the listing at once.
 - [pnpm, Corepack and Turborepo](pnpm-and-corepack.md): pnpm installs the packages of the monorepo, Corepack gives each developer the same pnpm version, and Turborepo runs the tasks of all packages with one command.

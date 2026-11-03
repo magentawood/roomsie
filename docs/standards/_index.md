@@ -51,6 +51,10 @@ These rules apply to all code.
 - Apps share code only through `packages/`. An app never imports from a different app. Why: each app builds and deploys independently. ([ADR-0003](../decisions/0003-api-as-separate-service.md), [ADR-0010](../decisions/0010-monorepo-tooling.md))
 - Error reports, model calls, emails and pushes each go through one internal module. Application code never imports those SDKs. Why: a vendor change then touches one module. ([ADR-0014](../decisions/0014-error-tracking.md), [PD7](../decisions/pd-07-models.md), [ADR-0019](../decisions/0019-alerts-by-ses-and-fcm.md))
 
+### Comments and docs
+
+- A change updates each comment and learn page that names what it changes: for example the writers of a table, the parts of account deletion, or an error text. Why: a stale line tells the next reader something false. (Rule candidates of [#204](https://github.com/magentawood/roomsie/pull/204) and [#207](https://github.com/magentawood/roomsie/pull/207))
+
 ### Credentials
 
 - Secrets exist only in the environment of `apps/api`. They are never in `apps/web`: not in a config file, an env var or an import. Why: web code goes to the browser. ([ADR-0016](../decisions/0016-credentials-and-secrets.md))

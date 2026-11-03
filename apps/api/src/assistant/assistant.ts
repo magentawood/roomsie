@@ -1,8 +1,8 @@
 import type { FastifyRequest } from 'fastify'
-import { budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
+import { budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
-import { catalogueOf } from './catalogue'
+import { catalogueOf, type Catalogue } from './catalogue'
 import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
 import { slotOf } from './handlers/extractor/form-update'
@@ -62,14 +62,28 @@ function slotValueOf(tap: ChipTap) {
   return { min, max }
 }
 
-/** No model call (PD9). Null: an area that is not an area group. */
+const isAreaGroup = (catalogue: Catalogue, slug: string) => catalogue.bySlug.get(slug)?.parent === null
+
+/** The reply to answers that need no model: a chip tap, or the answers of the onboarding (PD9, T-48). */
+const scriptedReply = ({ last, lastRegister }: Pick<TurnInput, 'last' | 'lastRegister'>, form: FormA, changed: FormASlot[], deps: AssistantDeps) =>
+  replyWriter({ ...noExtraction(form, false), changed, last, label: tapLabel, language: languageOf(lastRegister) }, deps)
+
+/** The answers of the onboarding, before the goal exists (T-48). Null: an area that is not an area group. */
+export async function runStart(input: Omit<TurnInput, 'goalId'> & { start: GoalStart }, deps: AssistantDeps) {
+  const { area, budget, ...stated } = input.start
+  if (area && !isAreaGroup(await catalogueOf(deps.db), area)) return null
+  const answers = { ...stated, ...(area && { areas: [area] }), ...(budget && { budget: slotValueOf({ slot: 'budget', value: budget }) }) }
+  const form = formA.parse({ ...input.form, ...Object.fromEntries(Object.entries(answers).map(([slot, value]) => [slot, { source: 'stated', value }])) })
+  return { form, reply: await scriptedReply(input, form, Object.keys(answers) as FormASlot[], deps) }
+}
+
+/** Null: an area that is not an area group. */
 export async function runTap(input: TurnInput & { tap: ChipTap }, deps: AssistantDeps) {
   const { tap } = input
   const catalogue = await catalogueOf(deps.db)
-  if (tap.slot === 'areas' && !tap.value.every((slug) => catalogue.bySlug.get(slug)?.parent === null)) return null
+  if (tap.slot === 'areas' && !tap.value.every((slug) => isAreaGroup(catalogue, slug))) return null
   const text = tapText(tap, (slug) => catalogue.bySlug.get(slug)!.name)
   // A tap answers its slot: its value replaces an earlier value, also a list of areas (T-09).
   const form = formA.parse({ ...input.form, [tap.slot]: { source: 'stated', value: slotValueOf(tap) } })
-  const turn = { ...input, text, ...noExtraction(form, false), changed: [tap.slot], label: tapLabel }
-  return { text, form, reply: await replyWriter({ ...turn, language: languageOf(input.lastRegister) }, deps), ownValues: turn.ownValues }
+  return { text, form, reply: await scriptedReply(input, form, [tap.slot], deps), ownValues: { religion: null, community: null } }
 }

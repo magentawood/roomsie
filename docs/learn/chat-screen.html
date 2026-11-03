@@ -35,10 +35,10 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="the-chat-screen-and-the-sign-in-wall">The chat screen and the sign-in wall</h1>
-<p><strong>In one line:</strong> <code>/chat</code> starts each goal. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.</p>
+<p><strong>In one line:</strong> <code>/chat</code> is the chat of the goal that the onboarding started. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
-<li>The <strong>chat screen</strong> is at <code>/chat</code>. The empty chat shows "What are we looking for?" of flow 02. The landing page of T-23a keeps <code>/</code>.</li>
+<li>The <strong>chat screen</strong> is at <code>/chat</code>. A goal with no answer shows "What are we looking for?" of flow 02. With no goal on the browser, <code>/chat</code> goes to <a href="onboarding.html">the onboarding</a>. The landing page of T-23a keeps <code>/</code>.</li>
 <li>The <strong>chat input</strong> is a text box with a Send button. Enter sends, and Shift+Enter makes a new line. A blank message never sends.</li>
 <li>The <strong>sign-in wall</strong> is "Sign in to continue", with "Sign in with Google" and the legal line. It is a modal on a desktop and a sheet at the bottom of a phone. The user can close it.</li>
 <li>The <strong>app shell</strong> is the sidebar on a desktop and the bar at the bottom of a phone. For a guest, the sidebar shows "Sign in with Google" in place of the account card.</li>
@@ -79,7 +79,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The first message starts a goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
+<li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
 <li><strong>A reload opens the same chat.</strong> Local storage keeps the id of the open goal and the visitor key, never a sign-in token. A sign-out removes both, so the next person on the browser cannot open the chat.</li>
 <li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
 <li><strong>A link from outside</strong> to a page that needs an account still opens the full-page sign-in of <code>SignInGate</code>.</li>
@@ -105,5 +105,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>T-10: <a href="https://github.com/magentawood/roomsie/pull/172">#172</a>, 2026-10-27. The chat screen, the input, the sign-in wall, the shell of a guest, and "Start looking" on the home stub.</li>
 <li>T-12: <a href="https://github.com/magentawood/roomsie/pull/189">#189</a>, 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.</li>
 <li>T-15: the results panel and the split view. <a href="results-panel.html">The results panel</a> tells how they work.</li>
+<li>T-48: the onboarding starts each goal, and New Goal and "+" open it (<a href="onboarding.html">the onboarding</a>).</li>
 </ul>
 </main>

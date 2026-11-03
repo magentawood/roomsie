@@ -1,10 +1,10 @@
 # The chat screen and the sign-in wall
 
-**In one line:** `/chat` starts each goal. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
+**In one line:** `/chat` is the chat of the goal that the onboarding started. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
 
 ## What it is
 
-- The **chat screen** is at `/chat`. The empty chat shows "What are we looking for?" of flow 02. The landing page of T-23a keeps `/`.
+- The **chat screen** is at `/chat`. A goal with no answer shows "What are we looking for?" of flow 02. With no goal on the browser, `/chat` goes to [the onboarding](onboarding.md). The landing page of T-23a keeps `/`.
 - The **chat input** is a text box with a Send button. Enter sends, and Shift+Enter makes a new line. A blank message never sends.
 - The **sign-in wall** is "Sign in to continue", with "Sign in with Google" and the legal line. It is a modal on a desktop and a sheet at the bottom of a phone. The user can close it.
 - The **app shell** is the sidebar on a desktop and the bar at the bottom of a phone. For a guest, the sidebar shows "Sign in with Google" in place of the account card.
@@ -20,7 +20,7 @@
 | The sign-in button and the legal line of D-02 | `apps/web/components/shell/google-sign-in.tsx`: `<GoogleSignIn />` and `<LegalLine />`, also on the full-page sign-in |
 | The shell | `apps/web/components/shell/app-shell.tsx` |
 
-- **Each message goes to the assistant** ([the assistant turn](assistant-turn.md)). The first message starts a goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.
+- **Each message goes to the assistant** ([the assistant turn](assistant-turn.md)). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.
 - **A reload opens the same chat.** Local storage keeps the id of the open goal and the visitor key, never a sign-in token. A sign-out removes both, so the next person on the browser cannot open the chat.
 - **The shell gates the taps of a guest.** New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.
 - **A link from outside** to a page that needs an account still opens the full-page sign-in of `SignInGate`.
@@ -46,3 +46,4 @@
 - T-10: [#172](https://github.com/magentawood/roomsie/pull/172), 2026-10-27. The chat screen, the input, the sign-in wall, the shell of a guest, and "Start looking" on the home stub.
 - T-12: [#189](https://github.com/magentawood/roomsie/pull/189), 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.
 - T-15: the results panel and the split view. [The results panel](results-panel.md) tells how they work.
+- T-48: the onboarding starts each goal, and New Goal and "+" open it ([the onboarding](onboarding.md)).
