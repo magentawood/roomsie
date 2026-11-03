@@ -11,7 +11,8 @@ import { joinWaitlist } from '../waitlist/store'
 import { claimSession, createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
-const headers = z.object({ [visitorKeyHeader]: z.string().min(1).max(100).optional(), 'user-agent': z.string().optional() })
+const visitorKey = z.string().min(1).max(100)
+const headers = z.object({ [visitorKeyHeader]: visitorKey.optional(), 'user-agent': z.string().optional() })
 const params = z.object({ id: z.uuid() })
 
 /** The chat of a goal is open to a visitor, with no sign-in (PD6b). The visitor key is the only way into a visitor goal. */
@@ -76,10 +77,10 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces }
   })
 
-  // At sign-in, the web moves the visitor chat to the account. A second claim moves nothing (T-17).
+  // Safe to repeat: a second claim moves nothing (T-17).
   app.post('/goals/claim', {
     preHandler: requireUser(options),
-    schema: { headers: z.object({ [visitorKeyHeader]: z.string().min(1).max(100) }), response: { 204: noContent } },
+    schema: { headers: z.object({ [visitorKeyHeader]: visitorKey }), response: { 204: noContent } },
   }, async (req, reply) => {
     await claimSession(options.db, req.headers[visitorKeyHeader], req.user!.id)
     return reply.code(204).send(null)

@@ -5,8 +5,8 @@ import { useQueryClient } from '@tanstack/react-query'
 import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
 import { reportError } from '@roomsie/config/report'
-import { ApiError } from './api'
-import { forgetChat } from './chat'
+import { refusalOf } from './api'
+import { chatStorage, forgetChat, readStored } from './chat'
 import { claimVisitorChat } from './claim'
 import { firebaseAuth } from './firebase'
 
@@ -23,12 +23,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (uid.current !== (user?.uid ?? null)) queryClient.clear()
     uid.current = user?.uid ?? null
     setState({ user, loading: false })
-    // The visitor chat of this browser moves to the account at the sign-in, or at the next load after a failed claim (T-17).
-    // After a claim, the chat loads again as the account.
     if (user) {
-      claimVisitorChat(user).then(async (moved) => { if (moved) await queryClient.invalidateQueries() }).catch((err: unknown) => {
-        // The invite gate (T-33) refuses an account with a 4xx, and the chat stays a visitor chat.
-        if (!(err instanceof ApiError) || err.status >= 500) reportError(err, { where: 'claim' })
+      claimVisitorChat(user).then(async (moved) => {
+        if (!moved) return
+        // queries.ts imports this file, so its keys load at run time, as push does.
+        const { queryKeys } = await import('./queries')
+        const goalId = readStored(chatStorage.goal)
+        await Promise.all([queryClient.invalidateQueries({ queryKey: queryKeys.profile }), goalId && queryClient.invalidateQueries({ queryKey: queryKeys.goal(goalId) })])
+      }).catch((err: unknown) => {
+        // The invite gate (T-33) refuses the account, and the chat stays a visitor chat.
+        if (!refusalOf(err)) reportError(err, { where: 'claim' })
       })
     }
   }), [queryClient])

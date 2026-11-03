@@ -127,8 +127,8 @@ export async function deleteGoalsOf(tx: Tx, userId: string) {
 }
 
 /** The latest religion and community that the person stated in a chat, for a new profile or a claim (PD3c, T-58). */
-export async function ownValuesOf(db: Db | Tx, owner: Owner): Promise<OwnValues> {
-  const mine = 'userId' in owner ? eq(goals.userId, owner.userId) : eq(goals.anonymousSessionId, owner.anonymousSessionId)
+export async function ownValuesOf(db: Db | Tx, asker: Asker): Promise<OwnValues> {
+  const mine = ownedBy(asker)
   const [[religion], [community]] = await Promise.all([
     db.select({ value: goals.ownReligion }).from(goals).where(and(mine, isNotNull(goals.ownReligion))).orderBy(desc(goals.ownReligionAt)).limit(1),
     db.select({ value: goals.ownCommunity }).from(goals).where(and(mine, isNotNull(goals.ownCommunity))).orderBy(desc(goals.ownCommunityAt)).limit(1),
@@ -136,10 +136,7 @@ export async function ownValuesOf(db: Db | Tx, owner: Owner): Promise<OwnValues>
   return { religion: religion?.value ?? null, community: community?.value ?? null }
 }
 
-/**
- * At sign-in (T-17): the goals of the visitor session move to the account, with their turns, and the Form B notes of the session.
- * The own values of the goals go to the profile, as the newer statement. The session stays, claimed, and its key ends.
- */
+/** At sign-in (T-17). The turns and the waitlist entries follow their goal, and the claimed session stays (T-35). */
 export function claimSession(db: Db, key: string, userId: string) {
   return db.transaction(async (tx) => {
     // The row lock makes a second claim at the same time wait, then find no session to claim.
@@ -147,10 +144,9 @@ export function claimSession(db: Db, key: string, userId: string) {
       .where(and(eq(anonymousSessions.keyHash, hashOf(key)), gt(anonymousSessions.expiresAt, sql`now()`), isNull(anonymousSessions.claimedByUserId)))
       .returning({ id: anonymousSessions.id })
     if (!session) return
-    const owner = { anonymousSessionId: session.id }
-    const own = await ownValuesOf(tx, owner)
+    const own = await ownValuesOf(tx, { userId: null, sessionId: session.id })
     await tx.update(goals).set({ userId, anonymousSessionId: null }).where(eq(goals.anonymousSessionId, session.id))
-    await moveObservations(tx, { ...owner, userId })
+    await moveObservations(tx, { anonymousSessionId: session.id, userId })
     await saveOwnValues(tx, userId, own)
   })
 }
