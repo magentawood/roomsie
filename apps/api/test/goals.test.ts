@@ -659,10 +659,16 @@ describe('the waitlist (T-22a)', () => {
     expect(await entriesOf(goal.id)).toEqual([{ email: 'priya@example.com', place: 'vasai-virar' }])
   })
 
-  it('refuses a place that the chat did not name, an email that is not valid, and a goal of a different person', async () => {
+  it('takes each waitlist place, also one that the chat did not name (T-22b)', async () => {
+    const goal = await vasaiGoal()
+    expect((await join(goal, { email: 'a@typed.example.com', place: 'pune' })).statusCode).toBe(204)
+    expect(await entriesOf(goal.id)).toEqual([{ email: 'a@typed.example.com', place: 'pune' }])
+  })
+
+  it('refuses a place that is not on the waitlist, an email that is not valid, and a goal of a different person', async () => {
     const goal = await vasaiGoal()
     const other = await visitorGoal()
-    expect((await join(goal, { email: 'a@refused.example.com', place: 'pune' })).statusCode).toBe(400)
+    expect((await join(goal, { email: 'a@refused.example.com', place: 'bandra' })).statusCode).toBe(400)
     expect((await join(goal, { email: 'not an email', place: 'vasai-virar' })).statusCode).toBe(400)
     expect((await join(goal, { email: 'a@refused.example.com', place: 'vasai-virar' }, other.key)).statusCode).toBe(404)
     expect(await entriesOf(goal.id)).toEqual([])

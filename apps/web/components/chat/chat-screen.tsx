@@ -8,10 +8,12 @@ import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
+import { panelContent } from '../../lib/waitlist'
 import { formKey, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults } from '../results/results-panel'
+import { LookInMumbai, WaitlistForm, WaitlistLine, WaitlistPanel } from './waitlist'
 import { GoogleSignIn } from '../shell/google-sign-in'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
@@ -116,14 +118,14 @@ function useChat() {
   const turns = goal.data?.turns ?? []
   // A sign-in lifts the cap, and the goal in the cache still has the count of the visitor.
   const typedTurnsLeft = user ? null : goal.data?.typedTurnsLeft ?? null
-  return { turns, form: goal.data?.form ?? emptyForm, typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
+  return { goalId, turns, form: goal.data?.form ?? emptyForm, outsidePlaces: goal.data?.outsidePlaces ?? [], typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 
 const emptyForm = formA.parse({})
 
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
-  const { turns, form: chatForm, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
+  const { goalId, turns, form: chatForm, outsidePlaces, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
   /** The line of a failed send, and the limit of PD9 that refused it. */
   const [failed, setFailed] = useState<{ text: string; limit: LimitRefusal['limit'] | null } | null>(null)
   const [wall, setWall] = useState(false)
@@ -138,6 +140,11 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const title = shown ? panelTitle(shown.form, (slug) => areaLabels[slug] ?? slug) : ''
   // The panel opens on a send or a card tap, never while the person reads (PD6a). After a close, only a tap opens it.
   const [view, setView] = useState<'unopened' | 'split' | 'all' | 'closed'>(preview ? 'split' : 'unopened')
+  const content = preview ? null : panelContent(chatForm, outsidePlaces)
+  const outside = goalId && outsidePlaces.at(-1)
+  // The waitlist screen opens with the reply that names the place (T-22b).
+  const waitlistOpen = content === 'waitlist' && view !== 'closed'
+  const [lineClosed, setLineClosed] = useState(false)
   const [draft, setDraft] = useState({ text: '', version: 0 })
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
   const submit = (turn: Outgoing) => {
@@ -168,7 +175,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
 
   if (loadingGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
-  const split = shown !== null && (view === 'split' || view === 'all')
+  const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
@@ -177,6 +184,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {turns.map((turn) => (
             <li key={turn.id}>{turn.role === 'user' ? <UserText text={turn.text} /> : <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>}</li>
           ))}
+          {content === 'waitlist' && outside && (
+            // On a phone the form is in the thread, and on a computer after the panel closes (drafts section 18).
+            <li className={view === 'closed' ? '' : 'lg:hidden'}>
+              <WaitlistForm goalId={goalId} place={outside} footer={<LookInMumbai onPick={(slug) => tap({ slot: 'areas', value: [slug] })} />} />
+            </li>
+          )}
           {chips && <li>{chips}</li>}
           {pending !== undefined && (
             <li className="flex flex-col gap-6">
@@ -209,7 +222,13 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         <div className={`col-start-1 row-start-1 min-h-0 lg:col-start-2 lg:row-span-2 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
           <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
+            line={content === 'results-with-line' && outside && !lineClosed ? <WaitlistLine goalId={goalId} place={outside} onClose={() => setLineClosed(true)} /> : undefined}
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat} />
+        </div>
+      )}
+      {content === 'waitlist' && outside && (
+        <div className={`hidden min-h-0 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:border-l lg:border-secondary ${waitlistOpen ? 'lg:grid' : ''}`}>
+          <WaitlistPanel goalId={goalId} place={outside} onPick={(slug) => tap({ slot: 'areas', value: [slug] })} onClose={() => setView('closed')} />
         </div>
       )}
       {wall && !signedIn && <SignInWall title={capWall.title} text={capWall.text} onClose={() => setWall(false)} />}
