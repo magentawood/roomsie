@@ -35,7 +35,8 @@ export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 export async function runTurn({ context, ...input }: TurnInput & { text: string; context: ComposerContext }, deps: AssistantDeps) {
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
-  const turn = { ...start, ...(usesExtractor(label) && extracted), label, language: languageOf(label.register ?? input.lastRegister) }
+  // A question can name a place outside Mumbai too, and the outside places fill no slot of Form A (T-22a).
+  const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: extracted.outsidePlaces, label, language: languageOf(label.register ?? input.lastRegister) }
   const scripted = await replyWriter(turn, deps)
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted

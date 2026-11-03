@@ -7,7 +7,7 @@ import { optionalUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
-import { joinWaitlist } from '../waitlist/store'
+import { joinWaitlist, waitlistFullLine } from '../waitlist/store'
 import { createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
@@ -85,7 +85,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!goal) return reply.code(404).send({ error: 'not found' })
     if (!goal.outsidePlaces.includes(req.body.place)) return reply.code(400).send({ error: 'not valid: place' })
     const joined = await joinWaitlist(options.db, { ...req.body, goalId: goal.id })
-    if (!joined) return reply.code(429).send({ error: 'This chat cannot add more emails to the waitlist.' })
+    if (!joined) return reply.code(429).send({ error: waitlistFullLine })
     return reply.code(204).send(null)
   })
 }

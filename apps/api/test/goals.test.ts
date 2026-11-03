@@ -621,6 +621,12 @@ describe('the places outside Mumbai (T-22a)', () => {
     expect((await read(goal)).outsidePlaces).toEqual(['vasai-virar', 'pune'])
   })
 
+  it('gives the outside place of a question, which fills no slot (PD10)', async () => {
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'Pune', slug: null }] })], ...routed({ kinds: ['question'], band: 'general' }) })
+    const { form, outsidePlaces } = await sent(await visitorGoal(), 'Is Roomsie in Pune?')
+    expect([form.areas.source, outsidePlaces]).toEqual(['empty', ['pune']])
+  })
+
   it('gives no outside place for a city that is not a place to live, or that the turn does not have', async () => {
     fakeVendors({ deepseek: [scored({ intent: 'pg', areas: [{ words: 'Powai', slug: 'powai' }, { words: 'Delhi', slug: null }] })] })
     const goal = await visitorGoal()
@@ -632,7 +638,7 @@ describe('the places outside Mumbai (T-22a)', () => {
 describe('the waitlist (T-22a)', () => {
   const join = (goal: { id: string; key: string }, body: object, key = goal.key) =>
     t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/waitlist`, payload: body, headers: { [visitorKeyHeader]: key } })
-  const entriesOf = (goalId: string) => t.db.select({ email: waitlist.email, area: waitlist.area }).from(waitlist).where(eq(waitlist.goalId, goalId))
+  const entriesOf = (goalId: string) => t.db.select({ email: waitlist.email, place: waitlist.place }).from(waitlist).where(eq(waitlist.goalId, goalId))
   async function vasaiGoal() {
     fakeVendors({ deepseek: [scored({ areas: [{ words: 'Vasai', slug: null }] })] })
     const goal = await visitorGoal()
@@ -645,7 +651,7 @@ describe('the waitlist (T-22a)', () => {
     const goal = await vasaiGoal()
     expect((await join(goal, { email: '  Priya@Example.com ', place: 'vasai-virar' })).statusCode).toBe(204)
     expect((await join(goal, { email: 'priya@example.com', place: 'vasai-virar' })).statusCode).toBe(204)
-    expect(await entriesOf(goal.id)).toEqual([{ email: 'priya@example.com', area: 'vasai-virar' }])
+    expect(await entriesOf(goal.id)).toEqual([{ email: 'priya@example.com', place: 'vasai-virar' }])
   })
 
   it('refuses a place that the chat did not name, an email that is not valid, and a goal of a different person', async () => {

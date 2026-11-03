@@ -19,16 +19,18 @@ const phone = /(?:\+91[\s-]?|\b(?:91[\s-]?|0)?)[6-9](?:[\s-]?\d){9}\b/g
 // A failed query of Drizzle ends with its values, for example the text of a message.
 const queryValues = /\nparams: [\s\S]*$/
 
-/** A failed query with no values, for a log line: an email or a phone number of the values stays out of the log (ADR-0016). */
+const removeQueryValues = (text: string) => text.replace(queryValues, '\nparams: [removed]')
+
+/** A failed query without its values, so no email or phone number goes to the log (ADR-0016). */
 export function withoutQueryValues(err: unknown) {
   if (!(err instanceof Error) || !queryValues.test(err.message)) return err
-  const clean = new Error(err.message.replace(queryValues, '\nparams: [removed]'))
+  const clean = new Error(removeQueryValues(err.message))
   clean.stack = err.stack?.replace(err.message, clean.message)
   return clean
 }
 
 function scrubText<T>(value: T): T {
-  if (typeof value === 'string') return value.replace(queryValues, '\nparams: [removed]').replace(phone, '[phone]') as T
+  if (typeof value === 'string') return removeQueryValues(value).replace(phone, '[phone]') as T
   if (Array.isArray(value)) return value.map(scrubText) as T
   if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, scrubText(v)])) as T
   return value

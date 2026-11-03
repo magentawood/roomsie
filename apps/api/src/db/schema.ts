@@ -626,13 +626,13 @@ export const waitlist = pgTable('waitlist', {
   id: id(),
   email: text('email').notNull(),
   /** The place outside Mumbai (PD2). */
-  area: text('area').$type<WaitlistPlace>().notNull(),
-  /** The chat that named the place. A chat adds a few entries at most, and an account deletion removes them with its chats (T-22a). */
-  goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'cascade' }),
+  place: text('area').$type<WaitlistPlace>().notNull(),
+  /** The chat that named the place. An account deletion removes the entry with the chat (DPDP). */
+  goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),
 }, (t) => ({
-  emailAreaIdx: uniqueIndex('waitlist_email_area_idx').on(t.email, t.area),
+  emailAreaIdx: uniqueIndex('waitlist_email_area_idx').on(t.email, t.place),
   goalIdx: index('waitlist_goal_idx').on(t.goalId),
 })).enableRLS()
 

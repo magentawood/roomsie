@@ -98,7 +98,7 @@ describe('DELETE /v1/me', () => {
     await db.insert(reports).values({ reporterUserId: gone.id, subjectUserId: stays.id, reason: 'broker_or_spam' })
     await db.insert(blocks).values({ blockerUserId: gone.id, blockedUserId: stays.id })
     // Each chat named Pune, and the person joined the waitlist from it (T-22a).
-    await db.insert(waitlist).values([{ email: 'gone@example.com', area: 'pune', goalId: goneSeed.goalIds[0]! }, { email: 'stays@example.com', area: 'pune', goalId: staysSeed.goalIds[0]! }])
+    await db.insert(waitlist).values([{ email: 'gone@example.com', place: 'pune', goalId: goneSeed.goalIds[0]! }, { email: 'stays@example.com', place: 'pune', goalId: staysSeed.goalIds[0]! }])
     // Each saved the other's place and card (T-47).
     await db.insert(saves).values([
       { userId: gone.id, listingId: staysSeed.listingId }, { userId: gone.id, profileId: staysSeed.profile.id },

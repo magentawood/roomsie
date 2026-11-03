@@ -1,5 +1,5 @@
 {
-  "id": "83ae7de8-ec28-485e-8b6e-0465b798cf3b",
+  "id": "40bd0727-3c21-4253-bffb-f350db047ce6",
   "prevId": "3fbfce62-29cb-4ba4-8388-d601ef838494",
   "version": "7",
   "dialect": "postgresql",
@@ -3833,7 +3833,7 @@
           "name": "goal_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "created_at": {
           "name": "created_at",
