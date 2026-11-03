@@ -10,25 +10,26 @@ const chip = (selected: boolean) =>
 const mark = (selected: boolean, round: boolean) =>
   `flex size-4 shrink-0 items-center justify-center border ${round ? 'rounded-full' : 'rounded-sm'} ${selected ? 'border-transparent bg-brand-solid' : 'border-primary bg-primary'}`
 
-function Group({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
+/** `labelHidden`: a heading above names the question, and the chips sit in the middle, as in the onboarding of flow 01. */
+function Group({ label, required, hint, labelHidden, children }: { label: string; required?: boolean; hint?: string; labelHidden?: boolean; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-1.5">
-      <legend className="mb-1.5 text-sm font-medium text-secondary">
+      <legend className={labelHidden ? 'sr-only' : 'mb-1.5 text-sm font-medium text-secondary'}>
         {label}
         {required && <span className="text-error-primary"> *</span>}
       </legend>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <div className={`flex flex-wrap gap-2 ${labelHidden ? 'justify-center' : ''}`}>{children}</div>
       {hint && <p className="text-sm text-tertiary">{hint}</p>}
     </fieldset>
   )
 }
 
 /** Pick one, as the Tag chips of the designs. A second tap clears it. */
-export function ChoiceChips<T extends string>({ label, labels, value, onChange, required, hint }: {
-  label: string; labels: Record<T, string>; value: T | null | undefined; onChange: (value: T | null) => void; required?: boolean; hint?: string
+export function ChoiceChips<T extends string>({ label, labels, value, onChange, required, hint, labelHidden }: {
+  label: string; labels: Record<T, string>; value: T | null | undefined; onChange: (value: T | null) => void; required?: boolean; hint?: string; labelHidden?: boolean
 }) {
   return (
-    <Group label={label} required={required} hint={hint}>
+    <Group label={label} required={required} hint={hint} labelHidden={labelHidden}>
       {options(labels).map((o) => {
         const selected = value === o.value
         return (

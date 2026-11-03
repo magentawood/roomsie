@@ -8,6 +8,7 @@ import { useAuth } from '../../lib/auth'
 import { useMessagesBadge } from '../../lib/queries'
 import { Badge } from '../ui/badge'
 import { Button, type Icon } from '../ui/button'
+import { CompletionCard } from '../profile/completion-card'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { Logo } from './logo'
 import { GoogleSignIn } from './google-sign-in'
@@ -59,7 +60,7 @@ function Sidebar({ linkTo }: { linkTo: LinkTo }) {
         <Link href="/chat" className="px-2 text-primary"><Logo className="h-6.5 w-auto" /></Link>
         <div className="flex gap-2">
           <Button variant="primary" size="sm" iconLeading={Plus} {...linkTo('/listings/new')}>New Listing</Button>
-          <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo('/chat')}>New Goal</Button>
+          <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo('/start')}>New Goal</Button>
         </div>
       </div>
       <div className="flex flex-col gap-4">
@@ -68,6 +69,7 @@ function Sidebar({ linkTo }: { linkTo: LinkTo }) {
           <NavItem look="sidebar" icon={Bookmark} label="Saved" link={linkTo('/saved')} />
           <NavItem look="sidebar" icon={Key01} label="My listings" link={linkTo('/listings')} />
         </nav>
+        {user && <CompletionCard look="sidebar" />}
         {user ? (
           <Link href="/profile" className="flex items-center gap-3 rounded-xl border border-secondary p-3 outline-focus-ring hover:bg-primary_hover focus-visible:outline-2">
             {user.photoURL
@@ -94,7 +96,7 @@ function MobileNav({ linkTo }: { linkTo: LinkTo }) {
         <NavItem look="phone" icon={Key01} label="My Listings" link={linkTo('/listings')} />
         <NavItem look="phone" icon={User01} label="Profile" link={linkTo('/profile')} />
       </div>
-      <LinkOrButton link={linkTo('/chat')} label="New goal"
+      <LinkOrButton link={linkTo('/start')} label="New goal"
         className="flex size-14 items-center justify-center rounded-full bg-brand-solid text-primary_on-brand shadow-sm outline-focus-ring hover:bg-brand-solid_hover focus-visible:outline-2 focus-visible:outline-offset-2">
         <Plus size={24} aria-hidden />
       </LinkOrButton>
@@ -116,7 +118,10 @@ export function AppShell({ children, mobileNav = true, fixed }: { children: Reac
   return (
     <div className={`flex ${fixed ? 'h-dvh' : 'min-h-dvh'}`}>
       <Sidebar linkTo={linkTo} />
-      <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${mobileNav && !fixed ? 'pb-24 lg:pb-0' : ''}`}>{children}</div>
+      <div className={`flex min-h-0 min-w-0 flex-1 flex-col ${mobileNav && !fixed ? 'pb-24 lg:pb-0' : ''}`}>
+        {user && <CompletionCard look="phone" />}
+        {children}
+      </div>
       {mobileNav && <MobileNav linkTo={linkTo} />}
       {user && <CreateProfileGate />}
       {pendingHref && !user && !loading && <SignInWall onClose={() => setPendingHref(null)} />}
