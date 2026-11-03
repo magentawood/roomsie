@@ -66,7 +66,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const deps = { ...options, req }
     const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn(input, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
-    const outsidePlaces = [...new Set([...goal.outsidePlaces, ...turn.outsidePlaces])]
+    // A place that a turn names again moves to the end, so the newest place is last (T-22b).
+    const named = new Set(turn.outsidePlaces)
+    const outsidePlaces = [...goal.outsidePlaces.filter((place) => !named.has(place)), ...named]
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form: turn.form, outsidePlaces }, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
@@ -86,14 +88,13 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     return reply.code(204).send(null)
   })
 
-  // A named place and three emails a chat: a script must first pass the chat limits (T-22a).
+  // Three emails a chat: a script must first pass the chat limits (T-22a).
   app.post('/goals/:id/waitlist', {
     preHandler: optionalUser(options),
     schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 429: errorResponse } },
   }, async (req, reply) => {
     const goal = await goalOf(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]))
     if (!goal) return reply.code(404).send({ error: 'not found' })
-    if (!goal.outsidePlaces.includes(req.body.place)) return reply.code(400).send({ error: 'not valid: place' })
     const joined = await joinWaitlist(options.db, { ...req.body, goalId: goal.id })
     if (!joined) return reply.code(429).send({ error: 'This chat cannot add more emails to the waitlist.' })
     return reply.code(204).send(null)

@@ -23,3 +23,8 @@ const uuidv7Time = (id: string) => parseInt(id.replaceAll('-', '').slice(0, 12),
 /** An id that the client makes: a UUIDv7 with a time at most 5 minutes from the server clock (ADR-0015). */
 export const clientId = z.uuid({ version: 'v7' })
   .refine((id) => Math.abs(Date.now() - uuidv7Time(id)) <= idClockSkew, 'The time in the id is more than 5 minutes off')
+
+/** The words of a person in one form: no nukta, lower case, Devanagari digits as 0 to 9. The parsers and the catalogue read this form. */
+export const plainWords = (text: string) => text.normalize('NFD').replace(/\u093C/g, '').toLowerCase().replace(/[०-९]/g, (d) => String(d.charCodeAt(0) - 0x966))
+/** Letters and digits of each script, as plain words joined by one space. */
+export const plainText = (text: string) => plainWords(text).replace(/[^\p{L}\p{M}\p{N}]+/gu, ' ').trim()

@@ -37,7 +37,7 @@ export const waitlistPlaceNames = {
 export type WaitlistPlace = keyof typeof waitlistPlaceNames
 export const waitlistPlace = z.enum(Object.keys(waitlistPlaceNames) as [WaitlistPlace, ...WaitlistPlace[]])
 
-/** One entry of the waitlist, from the chat that named its place. */
+/** One entry of the waitlist, from a chat. */
 export const waitlistBody = z.strictObject({
   email: z.string().trim().toLowerCase().pipe(z.email().max(254)),
   place: waitlistPlace,

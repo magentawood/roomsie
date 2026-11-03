@@ -9,8 +9,8 @@ export function keyAction(press: { key: string; shiftKey: boolean; isComposing: 
   return canSend(text) ? 'send' : 'block'
 }
 
-/** The browser keeps the open goal and the visitor key of the API, never a sign-in token (ADR-0007). */
-export const chatStorage = { goal: 'roomsie.goal', visitorKey: 'roomsie.visitorKey' } as const
+/** The browser keeps the open goal, the visitor key of the API and the waitlist joins, never a sign-in token (ADR-0007). */
+export const chatStorage = { goal: 'roomsie.goal', visitorKey: 'roomsie.visitorKey', waitlist: 'roomsie.waitlist' } as const
 type StoredKey = (typeof chatStorage)[keyof typeof chatStorage]
 
 /** A private window or a blocked site storage throws: then the chat lives only until a reload. */
