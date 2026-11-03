@@ -52,7 +52,7 @@ The first questions before the chat: purpose, who is moving, place type, budget 
   - **The goals routes and the assistant:** a new goal with start answers writes them into Form A as stated answers, as a tap does. The reply writer writes one assistant turn that confirms them and asks the next question. The visitor limits of PD9 apply as for each new visitor chat. The typed turns do not change.
   - **The onboarding of the web (new):** the route `/start`, with the steps of flow 01: purpose, who is moving, place type, budget and area. Each step has Previous, Skip and Next. The bar of the designs shows the four questions after the purpose. Then "Sign in to continue", with Google or as a guest. Then the chat.
   - **The entry of the web:** "Open Roomsie", "New goal" and a chat with no goal open `/start`. A person with a stored chat goes to the chat.
-  - **The profile completion card of the web (new):** the percentage of the profile, in the sidebar on a computer and as the floating card on a phone, with a close button and a link to the profile.
+  - **The profile completion card of the web (new):** the percentage of the profile, in the sidebar on a computer and above the chat on a phone, with a close button and a link to the profile.
   - **The illustrations:** the images of flow 01, from the Product file, as compressed images in the web.
   - **The plan:** the new task T-60 "Profile pop-up after the first sign-in", and the new description of T-48.
 - **Seams for the tests:**
@@ -67,6 +67,7 @@ The first questions before the chat: purpose, who is moving, place type, budget 
   - **One start request (the user):** the chat starts with the answers in Form A, and one assistant line that confirms them and asks the next question. The answers fill the same slots as the chat (item 2).
   - **The percentage (the user):** 11 parts of equal weight: a photo, the name, the age, the gender, who is moving, the areas, the budget, the move date, the job, the bio, and the eight lifestyle answers as one part. The card has no "more discoverable" claim.
   - **The pop-up "You've logged in!" (the user):** not in T-48. The new task T-60 builds it.
+  - **The card on a phone (the user, 2026-11-03, review):** it sits in the page above the chat, not over it, so it never covers the first line and the chips. The close button hides it.
 - **Out of scope:**
   - the pop-up after the first sign-in (T-60)
   - a change to the listing flow
