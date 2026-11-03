@@ -4,17 +4,24 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { XClose } from '@untitledui/icons'
 import type { Icon } from './button'
 
-/** The frame of each modal: the native dialog, its backdrop and the close on a backdrop click. `sheet`: a bottom sheet on a phone. */
-export function ModalFrame({ labelledBy, onClose, sheet, children }: { labelledBy: string; onClose: () => void; sheet?: boolean; children: ReactNode }) {
+/** Where a modal sits at each width. */
+const places = {
+  /** A card at the bottom of a phone, and in the middle from the `sm` width. */
+  bottom: 'inset-x-4 mb-4 max-w-100 rounded-2xl sm:my-auto',
+  /** A full-width sheet at the bottom, and a card in the middle from the `lg` width. */
+  sheet: 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-120 lg:rounded-2xl',
+  /** A card in the middle at each width. */
+  middle: 'inset-x-4 my-auto max-w-100 rounded-2xl',
+}
+
+/** The frame of each modal: the native dialog, its backdrop and the close on a backdrop click. */
+export function ModalFrame({ labelledBy, onClose, place = 'bottom', children }: { labelledBy: string; onClose: () => void; place?: keyof typeof places; children: ReactNode }) {
   const dialog = useRef<HTMLDialogElement>(null)
   useEffect(() => dialog.current?.showModal(), [])
-  const place = sheet
-    ? 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-120 lg:rounded-2xl'
-    : 'inset-x-4 mb-4 max-w-100 rounded-2xl sm:my-auto'
   return (
     // A click on the backdrop has the dialog as its target. A click in the panel has a child as its target.
     <dialog ref={dialog} aria-labelledby={labelledBy} onClose={onClose} onClick={(e) => e.target === e.currentTarget && onClose()}
-      className={`mx-auto mt-auto w-auto bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm ${place}`}>
+      className={`mx-auto mt-auto w-auto bg-primary shadow-xl backdrop:bg-overlay/70 backdrop:backdrop-blur-sm ${places[place]}`}>
       {children}
     </dialog>
   )

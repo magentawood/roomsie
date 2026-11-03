@@ -1,7 +1,8 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
 import { createHash } from 'node:crypto'
-import { goalResponse, limitRefusal, newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
+import { z } from 'zod'
+import { goalResponse, limitRefusal, newGoalResponse, rateLimits, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
 import { anonymousSessions, goals, modelSpend } from '../src/db/schema'
 import { limitSettings } from '../src/goals/settings'
@@ -50,10 +51,14 @@ const typed = (goal: { id: string; key: string }, text: string) => turn(goal, { 
 const tapToResults = async (goal: { id: string; key: string }) => {
   for (const tap of [{ slot: 'intent', value: 'room' }, { slot: 'areas', value: ['thane'] }, { slot: 'budget', value: 'under_25k' }]) expect((await turn(goal, { tap })).statusCode).toBe(200)
 }
+/** Callers take the rows after a count. */
 const eventsNamed = async (name: string) => {
   await t.flushEvents()
-  return analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, name))
+  return analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, name)).orderBy(eventRows.createdAt, eventRows.id)
 }
+const limitHit = z.object({ limit: z.enum(rateLimits) })
+/** The limit of each `limit_hit` event after the first `before`. */
+const limitsAfter = async (before: number) => (await eventsNamed('limit_hit')).slice(before).map(({ fields }) => limitHit.parse(fields).limit)
 const refusal = (res: { json: () => unknown }) => limitRefusal.parse(res.json())
 
 describe('the turn cap of a visitor (PD9)', () => {
@@ -142,9 +147,7 @@ describe('the rate limits (PD9)', () => {
     await visitorGoal('192.0.2.77')
     expect((await visitorFrom('192.0.2.78')).statusCode).toBe(429)
     expect((await visitorGoal('192.0.3.1')).id).toEqual(expect.any(String))
-    const limits = (await eventsNamed('limit_hit')).slice(before).map(({ fields }) => (fields as { limit: string }).limit)
-    // Postgres gives the rows in no fixed order, so the test sorts them.
-    expect(limits.sort()).toEqual(['device', 'ip', 'ip_range'])
+    expect(await limitsAfter(before)).toEqual(['device', 'ip', 'ip_range'])
   })
 
   it('gives a goal in the same session, and a signed-in person, no limit on chats', async () => {
@@ -162,7 +165,7 @@ describe('the rate limits (PD9)', () => {
     for (const text of ['one', 'two', 'three', 'four', 'five']) expect((await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text })).statusCode).toBe(200)
     const fast = await t.call('asha', 'POST', `/v1/goals/${created.id}/turns`, { text: 'six' })
     expect([fast.statusCode, refusal(fast)]).toEqual([429, { error: "You're sending fast. Wait a moment, then send it again.", limit: 'too_fast' }])
-    expect((await eventsNamed('limit_hit')).slice(before).map(({ fields }) => (fields as { limit: string }).limit)).toEqual(['too_fast'])
+    expect(await limitsAfter(before)).toEqual(['too_fast'])
   })
 
   it('refuses a new visitor chat when the address of the load balancer is not an IP address', async () => {

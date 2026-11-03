@@ -26,7 +26,7 @@
 - The reply of the own profile has `visibility` and `missing`, so the profile screens can tell why a card is not live.
 - `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`). It also gives the connection with the viewer for the person detail at `/people/[id]` ([Message requests](message-requests.md)).
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.
-- After a sign-in, the app shell opens the create dialog when the account has no profile. "Explore for now" closes it until the browser tab closes.
+- After a sign-in, the app shell opens the create dialog "You've logged in!" when the account has no profile. It asks the name, the age and the gender. Each way to close it hides it until the browser tab closes.
 - The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.
 - "Delete my account" calls `DELETE /v1/me`, then signs out.
 
@@ -34,7 +34,7 @@
 
 - The fields, adults only, the parent and the visibility rule: [PD16](../decisions/pd-16-profiles.md). The Form A fields: [PD15](../decisions/pd-15-form-a-contract.md). The gender: [PD8](../decisions/pd-08-verification.md).
 - The routes, the follow-up choice of a parent and the lister: the spec of T-16a ([#36](https://github.com/magentawood/roomsie/issues/36)).
-- The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b ([#98](https://github.com/magentawood/roomsie/issues/98)).
+- The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b ([#98](https://github.com/magentawood/roomsie/issues/98)). The look of the create dialog of flow 01, and when it shows: the spec of T-60 ([#208](https://github.com/magentawood/roomsie/issues/208)).
 
 ## Gotchas
 
@@ -48,3 +48,4 @@
 - T-16a: [#155](https://github.com/magentawood/roomsie/pull/155), 2026-10-26. The profile API, the photos, one card, the gender and the lister on a listing.
 - T-16b: [#156](https://github.com/magentawood/roomsie/pull/156), 2026-10-26. The profile page, the create and delete dialogs, and the budget rule of the bands.
 - T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and the connection with the viewer.
+- T-60: [#210](https://github.com/magentawood/roomsie/pull/210), 2026-11-03. The create dialog as the pop-up "You've logged in!" of flow 01: the close button, the mark of the logo, and the middle of a phone screen.

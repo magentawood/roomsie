@@ -219,7 +219,7 @@ describe('a typed turn', () => {
     expect(second.form.budget.value).toEqual({ min: null, max: 20_000 })
     expect(second.turns[1].text).toBe('You said up to ₹20,000 before, and now up to ₹25,000. Which one should I keep?')
     await t.flushEvents()
-    const conflicts = await analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, 'slot_conflict'))
+    const conflicts = await analytics.db.select({ fields: eventRows.fields }).from(eventRows).where(eq(eventRows.name, 'slot_conflict')).orderBy(eventRows.createdAt, eventRows.id)
     expect(conflicts).toHaveLength(before + 1)
     expect(conflicts.at(-1)!.fields).toEqual({ slot: 'budget' })
     // An answer that settles nothing gets the question again. The extractor reads only the question, not the line before it.

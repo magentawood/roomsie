@@ -31,12 +31,45 @@ After the first sign-in, a pop-up asks the basic details and starts the profile.
 - No task waits on this task.
 
 ## Done when
-- [ ] After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file
-- [ ] "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up
-- [ ] The profile completion card shows the new percentage after the save
+- [x] After the first sign-in, the pop-up "You've logged in!" of flow 01 asks the full name, the email and the gender, as in the Product file, and the age of PD16 · [#210](https://github.com/magentawood/roomsie/pull/210)
+- [x] "Go to my profile" saves the profile and opens it, and "Explore for now" closes the pop-up · [#210](https://github.com/magentawood/roomsie/pull/210)
+- [x] The profile completion card shows the new percentage after the save · [#210](https://github.com/magentawood/roomsie/pull/210)
 
 ^done
 
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [0017-schema-v1-shape.md](../../decisions/0017-schema-v1-shape.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by n3rxv
+
+- **Modules:**
+  - **The create-profile dialog of the web** (`components/profile/create-profile-dialog.tsx`): the pop-up "You've logged in!" of flow 01, as in the Product file: a close button, the mark of the logo, the required mark of the email, and the middle of a phone screen. It keeps the age field. The interface does not change.
+  - **The modal frame of the web** (`components/ui/modal.tsx`): an option that puts a modal in the middle of a phone screen.
+  - **The logo of the web** (`components/shell/logo.tsx`): `markViewBox`, the box that shows the mark of the logo without the name.
+  - **The plan:** the new text of done item 1.
+- **Seams for the tests:**
+  - A browser check on local dev at 390 px and 1440 px, with a local API: a signed-in person with no profile gets the pop-up over the chat. The close button and "Explore for now" hide it for the visit of the tab. An age under 18 shows its error. "Go to my profile" with a name, an age and a gender saves the profile and opens it. Back on the chat, the card shows 27%.
+  - The API tests of the profile route already cover the save and the percentage (T-48). No new API test.
+  - A live check after the deploy: the page loads with the new dialog code. The full flow needs an account with no profile, so the local browser check covers it.
+- **Decisions:**
+  - **The age (the user, 2026-11-03):** the pop-up keeps the age field, because PD16 requires an age of 18 or more. The Product file has no age field. Done item 1 names the age.
+  - **When it shows (the user):** on each visit of a signed-in person with no profile, on each page but the profile page, until the profile exists. Each close hides it for the visit of the tab: "Explore for now", the close button, Escape and a click outside (the user, 2026-11-03, review).
+  - **The new percentage (T-48):** the save writes the new profile into the cache, so the card shows its percentage with no reload.
+  - **The details (the Product file):** the close button, the mark of the logo, "Email *", and the middle of a phone screen.
+- **Out of scope:**
+  - the answers of the onboarding in the new profile (who is moving, the areas and the budget)
+  - a change to the profile page
+  - an analytics event of the pop-up
+
+## Log
+
+- **2026-11-03 · [#210](https://github.com/magentawood/roomsie/pull/210)**
+  - **Change:** the create dialog is the pop-up "You've logged in!" of flow 01: a close button, the mark of the logo, "Email *" in grey, the spacing of the design, and the middle of a phone screen. It keeps the age of PD16. Each close hides it for the visit of the tab, and it shows again until the profile exists.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD16](../../decisions/pd-16-profiles.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Profiles](../../learn/profiles.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
