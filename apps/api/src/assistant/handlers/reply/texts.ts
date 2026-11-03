@@ -30,7 +30,7 @@ export function questionFor(slot: FormASlot, catalogue: Catalogue) {
 }
 
 const intentText: Record<string, string> = { room: 'a room in a shared flat', pg: 'a PG', whole_flat: 'a whole flat', flatmates: 'flatmates to rent with' }
-const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
+export const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
 const budgetText = ({ min, max }: Budget) => (min != null && max != null ? `${rupees(min)} to ${rupees(max)}` : max != null ? `up to ${rupees(max)}` : `${rupees(min!)} or more`)
 const dateText = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const humanize = (value: string) => value.replaceAll('_', ' ')

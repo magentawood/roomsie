@@ -58,8 +58,10 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
 /** The chips of an assistant turn go out. The label of a typed turn never does. */
-const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) =>
-  ({ ...turn, chips: turn.role === 'assistant' ? assistantParts.parse(parts).chips : null, createdAt: turn.createdAt.toISOString() })
+const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
+  const { chips, comparison } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null }
+  return { ...turn, chips, comparison, createdAt: turn.createdAt.toISOString() }
+}
 
 export async function turnsOf(db: Db, goalId: string) {
   const rows = await db.select(turnFields).from(chatTurns).where(eq(chatTurns.goalId, goalId)).orderBy(asc(chatTurns.createdAt))

@@ -1,0 +1,104 @@
+import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
+import { goalResponse, listingResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type CompareRequest } from '@roomsie/contract'
+import { seedCatalogues } from '../src/db/seed-axes'
+import { testApp, type TestApp } from './app'
+import { fakeVendors, keys, room, routed, scored } from './vendors'
+
+type Who = 'seeker' | 'owner' | 'broker' | 'pgOwner' | 'asha' | 'ravi'
+let t: TestApp<Who>
+const ids = {} as Record<'owner' | 'broker' | 'pg' | 'draft', string>
+let people: [string, string]
+let goalId: string
+
+/** A place of `who`, live unless `live` is false. */
+async function place(who: Who, kind: 'owner_flat' | 'broker_flat' | 'pg', edits: object, live = true) {
+  const made = listingResponse.parse((await t.call(who, 'POST', '/v1/listings', { kind })).json())
+  expect((await t.call(who, 'PATCH', `/v1/listings/${made.id}`, { areaSlug: 'bandra', ...edits })).statusCode).toBe(200)
+  if (live) expect((await t.call(who, 'POST', `/v1/listings/${made.id}/status`, { status: 'live' })).statusCode).toBe(200)
+  return made.id
+}
+
+beforeAll(async () => {
+  t = await testApp(['seeker', 'owner', 'broker', 'pgOwner', 'asha', 'ravi'], undefined, keys)
+  await seedCatalogues(t.db)
+  ids.owner = await place('owner', 'owner_flat', {
+    rates: [{ rent: 20_000, deposit: 40_000 }], maintenance: 1000, nearestStation: 'Bandra', walkStation: '10_min', availableFrom: '2026-12-01', minStay: '6_months', furnishing: 'semi',
+  })
+  ids.broker = await place('broker', 'broker_flat', { rates: [{ rent: 25_000, deposit: 50_000 }], brokerage: 25_000 })
+  ids.pg = await place('pgOwner', 'pg', { pgName: 'Shivraj PG', sharing: ['single', 'double'], rates: [{ sharing: 'single', rent: 18_000, deposit: 18_000 }, { sharing: 'double', rent: 12_000, deposit: 12_000 }] })
+  ids.draft = await place('owner', 'owner_flat', { rates: [{ rent: 30_000 }] }, false)
+  people = [await t.liveCard('asha', 'Asha Rao'), await t.liveCard('ravi', 'Ravi Shah')]
+  expect((await t.call('asha', 'PATCH', '/v1/me/profile', { religion: 'hindu', community: 'marathi', bio: 'Early riser.', jobRole: 'Designer' })).statusCode).toBe(200)
+  goalId = newGoalResponse.parse((await t.call('seeker', 'POST', '/v1/goals')).json()).id
+})
+afterAll(() => t.close())
+afterEach(() => { vi.unstubAllGlobals() })
+
+const ask = (text: string, compare: CompareRequest, who: Who = 'seeker', goal = goalId) => t.call(who, 'POST', `/v1/goals/${goal}/turns`, { text, compare })
+const answer = async (text: string, compare: CompareRequest) => {
+  const res = await ask(text, compare)
+  expect(res.statusCode).toBe(200)
+  return turnResponse.parse(res.json()).turns[1]
+}
+
+describe('the comparison of selected cards (T-49)', () => {
+  it('compares the selected places from their database fields, in the given order, with no composer call', async () => {
+    const requests = fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    const reply = await answer('which one is the cheapest to move in?', { kind: 'place', ids: [ids.broker, ids.owner, ids.pg] })
+    expect(reply.text).toBe('Option 1 matches your answers best. Option 3 needs the least cash to move in: ₹24,000.')
+    expect(reply.comparison).toMatchObject({
+      kind: 'place',
+      options: [
+        { id: ids.broker, rent: 25_000, deposit: 50_000, brokerage: 25_000, moveInCash: 100_000 },
+        {
+          id: ids.owner, rent: 20_000, deposit: 40_000, moveInCash: 60_000, maintenance: 1000, nearestStation: 'Bandra', walkStation: '10_min',
+          availableFrom: '2026-12-01', minStay: '6_months', furnishing: 'semi', verified: false,
+        },
+        // A PG gives its lowest rent and the deposit of that rent.
+        { id: ids.pg, title: 'Shivraj PG', rent: 12_000, deposit: 12_000, moveInCash: 24_000 },
+      ],
+    })
+    expect(requests.composer).toEqual([])
+    // A reload shows the same table, because the turn keeps it.
+    const goal = goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json())
+    expect(goal.turns.at(-1)!.comparison).toEqual(reply.comparison)
+  })
+
+  it('compares people with only the fields of their cards: never the religion, the community or the bio', async () => {
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    const reply = await answer('compare these two', { kind: 'person', ids: people })
+    expect(reply.text).toBe('Option 1 matches your answers best.')
+    expect(reply.comparison?.kind).toBe('person')
+    const [asha] = reply.comparison!.options
+    expect(asha).toMatchObject({ id: people[0], fullName: 'Asha Rao', age: 25, jobRole: 'Designer', whosMoving: 'working', budgetMax: 20_000, verified: false })
+    expect(JSON.stringify(reply.comparison)).not.toMatch(/hindu|marathi|Early riser|religion|community|bio/)
+  })
+
+  it('answers a filter with the normal chat, also with cards selected', async () => {
+    fakeVendors({ deepseek: [room()], ...routed({ kinds: ['filters'] }) })
+    const reply = await answer('a room please', { kind: 'place', ids: [ids.owner, ids.pg] })
+    expect(reply.comparison).toBeNull()
+    expect(reply.text).not.toMatch(/^Option/)
+  })
+
+  it('refuses a card that the person cannot see, a card of the other kind, one card, five cards and a guest, before any model call', async () => {
+    const requests = fakeVendors({})
+    const status = async (compare: object, who: Who = 'seeker') => (await t.call(who, 'POST', `/v1/goals/${goalId}/turns`, { text: 'compare', compare })).statusCode
+    expect(await status({ kind: 'place', ids: [ids.owner, ids.draft] })).toBe(400)
+    expect(await status({ kind: 'place', ids: [ids.owner, people[0]] })).toBe(400)
+    expect(await status({ kind: 'place', ids: [ids.owner] })).toBe(400)
+    expect(await status({ kind: 'place', ids: [ids.owner, ids.broker, ids.pg, ids.draft, people[0]] })).toBe(400)
+    const visitor = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
+    const guest = await t.app.inject({ method: 'POST', url: `/v1/goals/${visitor.id}/turns`, payload: { text: 'compare', compare: { kind: 'place', ids: [ids.owner, ids.pg] } }, headers: { [visitorKeyHeader]: visitor.visitorKey! } })
+    expect(guest.statusCode).toBe(401)
+    expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
+  })
+
+  it('reads a person card only through the visibility rules', async () => {
+    // A hidden card is not visible to others.
+    expect(profileResponse.parse((await t.call('ravi', 'PATCH', '/v1/me/profile', { hidden: true })).json()).visibility).toBe('hidden')
+    fakeVendors({})
+    expect((await ask('compare', { kind: 'person', ids: people })).statusCode).toBe(400)
+    expect((await t.call('ravi', 'PATCH', '/v1/me/profile', { hidden: false })).statusCode).toBe(200)
+  })
+})

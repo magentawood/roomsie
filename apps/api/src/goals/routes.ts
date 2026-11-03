@@ -1,9 +1,11 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { errorResponse, formA, goalResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
+import { errorResponse, formA, goalResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap, type Comparison } from '@roomsie/contract'
 import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
+import { comparisonOf } from '../compare/compare'
+import type { Storage } from '../storage'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
@@ -16,7 +18,7 @@ const headers = z.object({ [visitorKeyHeader]: visitorKey.optional(), 'user-agen
 const params = z.object({ id: z.uuid() })
 
 /** The chat of a goal is open to a visitor, with no sign-in (PD6b). The visitor key is the only way into a visitor goal. */
-export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<AssistantDeps, 'req'> & { limits: LimitSettings }) {
+export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<AssistantDeps, 'req'> & { limits: LimitSettings; storage: Storage }) {
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const askerOf = async (req: FastifyRequest, key: string | undefined): Promise<Asker> =>
     ({ userId: req.user?.id ?? null, sessionId: key ? await visitorSessionOf(options.db, key) : null })
@@ -52,11 +54,18 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 
   app.post('/goals/:id/turns', {
     preHandler: optionalUser(options),
-    schema: { headers, params, body: turnBody, response: { 200: turnResponse, 400: errorResponse, 403: limitRefusal, 404: errorResponse, 409: errorResponse, 429: limitRefusal } },
+    schema: { headers, params, body: turnBody, response: { 200: turnResponse, 400: errorResponse, 401: errorResponse, 403: limitRefusal, 404: errorResponse, 409: errorResponse, 429: limitRefusal } },
   }, async (req, reply) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
+    // A comparison needs a sign-in, as a card does (PD6b), and cards that the person can see. Both before any model call (T-49).
+    let comparison: Comparison | null = null
+    if ('text' in req.body && req.body.compare) {
+      if (!req.user) return reply.code(401).send({ error: 'sign in to compare' })
+      comparison = await comparisonOf(options.db, options.storage, req.user.id, req.body.compare)
+      if (!comparison) return reply.code(400).send({ error: 'not valid: compare' })
+    }
     const last = await lastReplyOf(options.db, goal.id)
     // A limit refuses a typed turn before any model call. A tap has no limit (PD9, T-21).
     const before = await capStateOf(options.db, asker, options.limits)
@@ -67,7 +76,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     }
     const input = { goalId: goal.id, last, form: goal.form, lastRegister: await lastRegisterOf(options.db, goal.id) }
     const deps = { ...options, req }
-    const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn(input, req.body.text, asker, deps)
+    const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, comparison }, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
     // A place that a turn names again moves to the end, so the newest place is last (T-22b).
     const named = new Set(turn.outsidePlaces)
@@ -104,7 +113,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   })
 }
 
-async function typedTurn(input: TurnInput, text: string, asker: Asker, deps: AssistantDeps) {
+async function typedTurn(input: TurnInput & { comparison: Comparison | null }, text: string, asker: Asker, deps: AssistantDeps) {
   const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
   const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces } = await runTurn({ ...input, text, context }, deps)

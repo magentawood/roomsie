@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import { budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
+import { assistantParts, budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf, type Catalogue } from './catalogue'
@@ -7,8 +7,9 @@ import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
 import { slotOf } from './handlers/extractor/form-update'
 import { replyWriter } from './handlers/reply/reply'
+import { rupees } from './handlers/reply/texts'
 import { routeTurn } from './handlers/router/router'
-import { languageOf } from './lines'
+import { compareCash, languageOf, lineOf } from './lines'
 import type { AssistantSettings } from './settings'
 
 export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; settings: AssistantSettings; today: () => string }
@@ -32,15 +33,29 @@ export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegist
 /** What only the composer reads: the last two turns and the Form B notes of the person (PD7a). */
 export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 
+/** With cards selected, a question gets the comparison, and a message with filters goes to the normal chat (T-49). */
+const comparesOn = ({ kinds, band, danger }: TurnLabel) =>
+  kinds.includes('question') && !kinds.includes('filters') && !danger && (band === 'core' || band === 'general' || band === 'consequential')
+
+/** The scripted reply of a comparison: code builds the table, and no model reads a card (scope-policy.md). */
+function comparisonReply(table: Comparison, language: ReplyLanguage): AssistantReply {
+  const best = lineOf('compareBest', language)
+  if (table.kind === 'person') return { version: 1, text: best, parts: assistantParts.parse({ asked: null, comparison: table }) }
+  const cheapest = table.options.reduce((low, option, i) => (option.moveInCash < table.options[low]!.moveInCash ? i : low), 0)
+  const text = `${best} ${compareCash(cheapest + 1, rupees(table.options[cheapest]!.moveInCash), language)}`
+  return { version: 1, text, parts: assistantParts.parse({ asked: null, comparison: table }) }
+}
+
 /** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */
-export async function runTurn({ context, ...input }: TurnInput & { text: string; context: ComposerContext }, deps: AssistantDeps) {
+export async function runTurn({ context, comparison, ...input }: TurnInput & { text: string; context: ComposerContext; comparison: Comparison | null }, deps: AssistantDeps) {
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
   const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
-  const scripted = await replyWriter(turn, deps)
+  const compared = comparison && comparesOn(label) ? comparisonReply(comparison, turn.language) : null
+  const scripted = compared ?? await replyWriter(turn, deps)
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
-  const reply = label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
+  const reply = !compared && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
   return { form: turn.form, reply, conflicts: turn.conflicts, label, ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces }
 }
 
