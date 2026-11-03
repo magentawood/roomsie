@@ -8,7 +8,7 @@
 - The **film** in the hero and the videos of "Tell it." and "It searches." are MP4 files in the web app. They play muted in a loop. When the person turns off motion, each shows its first frame.
 - The **quotes** ("What our early users say") are real quotes that a moderator adds. The section shows only when five quotes or more exist, and then it shows the five newest.
 - The **site details** are the links of Instagram, WhatsApp, Facebook and LinkedIn, the contact email and the organisation number. Each part shows only when a moderator sets it. Each save adds a new row, and the newest row counts, so the table keeps who changed what and when.
-- **Feedback** goes into our database. Sign-in is necessary to send it. Moderators read it on an admin page.
+- **Feedback** goes into our database. Sign-in is necessary to send it. Moderators read it on an admin page, with the feedback of a closed goal ([goals](goals.md)).
 
 ## How it fits our project
 
