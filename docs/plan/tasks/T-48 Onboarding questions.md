@@ -33,9 +33,9 @@ The first questions before the chat: purpose, who is moving, place type, budget 
 - [[T-60 Profile pop-up]]
 
 ## Done when
-- [ ] The screens of flow 01 ask the area, the monthly budget, the place type, who is moving and the purpose, as in the Product file
-- [ ] The answers fill the same Form A slots that the chat fills
-- [ ] The profile completion card shows the percentage, as in the designs
+- [x] The screens of flow 01 ask the area, the monthly budget, the place type, who is moving and the purpose, as in the Product file · [#207](https://github.com/magentawood/roomsie/pull/207)
+- [x] The answers fill the same Form A slots that the chat fills · [#207](https://github.com/magentawood/roomsie/pull/207)
+- [x] The profile completion card shows the percentage, as in the designs · [#207](https://github.com/magentawood/roomsie/pull/207)
 
 ^done
 
@@ -77,3 +77,13 @@ The first questions before the chat: purpose, who is moving, place type, budget 
   - the pop-up after the first sign-in (T-60)
   - a change to the listing flow
   - an analytics event of the steps
+
+## Log
+
+- **2026-11-03 · [#207](https://github.com/magentawood/roomsie/pull/207)**
+  - **Change:** `/start` asks the steps of flow 01, then "Sign in to continue", and one start request makes the goal with the answers in Form A and one assistant line. "Start looking", "Open Roomsie", "New Goal", "+" and a chat with no goal open it. The API gives the percentage of the profile, and the completion card shows it in the sidebar and above the chat of a phone.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD15](../../decisions/pd-15-form-a-contract.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [The onboarding and the profile completion card](../../learn/onboarding.md), [The chat screen and the sign-in wall](../../learn/chat-screen.md), [The limits of the chat](../../learn/chat-limits.md), [The visitor chat at sign-in](../../learn/visitor-chat-claim.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
