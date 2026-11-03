@@ -33,11 +33,11 @@ Keeps a chat from before sign-up when the person signs up.
 - No task waits on this task.
 
 ## Done when
-- [ ] When a visitor signs in, the account gets what the visitor told the assistant before sign-in
-- [ ] Nothing is lost, and the assistant never asks the same thing two times
-- [ ] The goals of the session, with their chat turns, move to the account
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
-- [ ] When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement
+- [x] When a visitor signs in, the account gets what the visitor told the assistant before sign-in · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] Nothing is lost, and the assistant never asks the same thing two times · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] The goals of the session, with their chat turns, move to the account · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement · [#205](https://github.com/magentawood/roomsie/pull/205)
 
 ^done
 
@@ -77,3 +77,13 @@ Keeps a chat from before sign-up when the person signs up.
   - a merge of two goals of the same move
   - the onboarding of T-48 and the questions that a moved goal answered
   - an analytics event of the claim
+
+## Log
+
+- **2026-11-03 · [#205](https://github.com/magentawood/roomsie/pull/205)**
+  - **Change:** at sign-in, the web sends one claim request, `POST /v1/goals/claim`. One transaction moves each goal of the visitor session to the account, with its turns, Form A, outside places and waitlist entries, and the Form B notes of the session. The own values of the goals go to the profile, and the visitor key ends.
+  - **Why:** the goals move to the account at login ([ADR-0017](../../decisions/0017-schema-v1-shape.md), [seo-with-gated-products.md](../../seo-with-gated-products.md)), and the decisions of the spec.
+  - **Ticked:** all five items. Item 4: T-17 uses no open product call, and F-11 is closed.
+  - **Not done:** none.
+  - **Learn:** [The visitor chat at sign-in](../../learn/visitor-chat-claim.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
