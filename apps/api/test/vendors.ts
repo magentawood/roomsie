@@ -64,6 +64,9 @@ export function scored(fields: object, unsure: Record<string, number> = {}) {
   return answer(content, undefined, tokens)
 }
 
+/** The text that a model request sent after its system prompt. */
+export const sentMessageOf = (request: SentRequest) => (request.body as { messages: { content: string }[] }).messages[1]!.content
+
 /** A sure label of the router, with `fields` in place of those of `coreLabel`. */
 export const routed = (fields: object, unsure?: Record<string, number>) => ({ router: { deepseek: [scored({ ...coreLabel, ...fields }, unsure)] } })
 /** The extractor answer of the message "room chahiye", and the scripted reply around it. */

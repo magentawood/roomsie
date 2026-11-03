@@ -75,6 +75,7 @@ The assistant writes its answers and stays on the topic.
     - it has a number that is not in the plan or in the message
     - it has a name that is not in the plan. A name from the message of the person does not pass.
   - **The limits of the name check (the user, review round 1):** a new name at the start of a sentence, and a name in Devanagari, pass the check. A stricter check rejects most good replies in Hinglish, Hindi and Marathi. The prompt rule and the eval sentences of T-27 cover the two limits.
+  - **A lower-case name (n3rxv, extensive review round 2):** a name that the person types in lower case, for example "rahul ke saath", passes when the reply writes it at the start of a sentence. A stricter check rejects most good Hinglish replies that start with a word of the person. The eval sentences of T-27 cover it.
   - **A hidden preference (the user, review round 2):** a turn that states a hidden religion or community preference gets the scripted reply, with no composer call. An earlier user turn that states one stays out of the last two turns of the composer. Thus, no reply names the preference (why: PD3c, T-58).
   - **A turn that no model read (implementation, extensive review):** it gets the line "send it again" in the language of the person, with no composer call. The models failed on this turn already.
   - **A late composer (review round 1):** it gives a log line and its `model_called` event, not an error report. The scripted reply covers it.

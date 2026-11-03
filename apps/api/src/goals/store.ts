@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
+import type { Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
@@ -39,7 +40,7 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 )!
 
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
-export const ownerOf = (asker: Asker) => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
 export async function createGoal(db: Db, asker: Asker) {
   const [row] = await db.insert(goals)

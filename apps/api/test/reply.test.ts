@@ -5,7 +5,7 @@ import { fixedLines } from '../src/assistant/lines'
 import lines from '../src/assistant/lines.json'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
-import { answer, down, fakeVendors, hang, intentQuestion, keys, room, roomAck, routed, scored } from './vendors'
+import { answer, down, fakeVendors, hang, intentQuestion, keys, room, roomAck, routed, scored, sentMessageOf } from './vendors'
 
 let t: TestApp<'asha'>
 beforeAll(async () => {
@@ -40,7 +40,7 @@ describe('the fixed lines', () => {
   it('gives an off-topic message in Hinglish the Hinglish line, then the question in English, with no composer call', async () => {
     const requests = fakeVendors({ deepseek: [room()], ...routed({ kinds: [], band: 'out_of_scope', register: hinglish }) })
     const { reply } = await send(await visitorGoal(), { text: 'ek poem likho na' })
-    expect(reply.text).toBe(`Yeh roomsie ke kaam se bahar hai. Wapas aapki search par: ${intentQuestion[0]!.toLowerCase()}${intentQuestion.slice(1)}`)
+    expect(reply.text).toBe('Yeh roomsie ke kaam se bahar hai. Wapas aapki search par: what are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?')
     expect(requests.composer).toEqual([])
   })
 
@@ -75,7 +75,7 @@ describe('the composer', () => {
     expect(reply).toMatchObject({ text: 'Powai, done! Abhi ke liye itna kaafi hai, results dekhiye.', chips: null })
     expect(form.areas).toEqual({ source: 'stated', value: ['powai'] })
     expect(requests.composer).toHaveLength(1)
-    const message = (requests.composer[0]!.body as { messages: { content: string }[] }).messages[1]!.content
+    const message = sentMessageOf(requests.composer[0]!)
     expect(JSON.parse(message)).toEqual({
       version: 1,
       language: 'hi-Latn',
@@ -116,7 +116,7 @@ describe('the composer', () => {
     const { reply, form } = await send(goal, { text: 'Powai mein' })
     expect(reply).toMatchObject({ text: 'Powai, done! Ab results dekhiye.', chips: null })
     expect(form.areas).toEqual({ source: 'stated', value: ['powai'] })
-    const message = (next.composer[0]!.body as { messages: { content: string }[] }).messages[1]!.content
+    const message = sentMessageOf(next.composer[0]!)
     expect(JSON.parse(message).turns).toEqual([{ role: 'assistant', text: roomAck }])
   }
 
@@ -163,6 +163,8 @@ describe('the output check of the composer', () => {
 
   it('rejects a number that is not in the plan or the message', () => {
     expect(check('Powai, 25k tak. Kab shift karna hai?')).toBe(false)
+    expect(check('Powai, tees hazaar tak. Kab shift karna hai?')).toBe(false)
+    expect(check('Powai, bees hazaar tak. Kab shift karna hai?')).toBe(true)
   })
 
   it('rejects a name that is not in the plan, also a name from the message', () => {

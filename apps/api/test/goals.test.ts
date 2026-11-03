@@ -6,7 +6,7 @@ import { anonymousSessions, areas, chatTurns, goals } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
-import { answer, coreLabel, down, fakeVendors, intentQuestion, keys, room, roomAck, routed, scored } from './vendors'
+import { answer, coreLabel, down, fakeVendors, intentQuestion, keys, room, roomAck, routed, scored, sentMessageOf } from './vendors'
 
 let t: TestApp<'asha' | 'ravi'>
 let analytics: TestAnalyticsDb
@@ -99,7 +99,7 @@ describe('a typed turn', () => {
     // The next turn gets the last question, and is not the start of an interview.
     const next = fakeVendors({ deepseek: [scored({ lifestyle: { food: 'veg' } })] })
     expect((await sent(goal, 'veg')).form.lifestyle.food).toEqual({ source: 'stated', value: 'veg' })
-    expect((next[0]!.body as { messages: { content: string }[] }).messages[1]!.content).toBe('Last question of the assistant: What do you eat?\nMessage of the person: veg')
+    expect(sentMessageOf(next[0]!)).toBe('Last question of the assistant: What do you eat?\nMessage of the person: veg')
     expect(await startedEvents()).toBe(before + 1)
   })
 
@@ -229,9 +229,9 @@ describe('a typed turn', () => {
     expect(unclear.turns[1].text).toBe('You said up to ₹20,000 before, and now up to ₹25,000. Which one should I keep?')
     // The answer to the question replaces the earlier value.
     expect((await sent(goal, '25k')).form.budget.value).toEqual({ min: null, max: 25_000 })
-    expect((requests[1]!.body as { messages: { content: string }[] }).messages[1]!.content).toContain('Which one should I keep?')
+    expect(sentMessageOf(requests[1]!)).toContain('Which one should I keep?')
     // The reply to "budget 20k" began with "Got it: up to ₹20,000.", and the extractor of the next turn did not get that line.
-    expect((earlier[1]!.body as { messages: { content: string }[] }).messages[1]!.content).not.toContain('Got it')
+    expect(sentMessageOf(earlier[1]!)).not.toContain('Got it')
   })
 
   it('asks about each conflict of a turn, and reads "doosra wala" or "pehla" as the answer', async () => {

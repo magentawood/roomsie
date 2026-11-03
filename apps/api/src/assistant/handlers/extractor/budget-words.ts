@@ -47,8 +47,8 @@ const rupeesOf = ({ value, multiplier }: Amount) => {
   return value < 1_000 ? null : Math.round(value)
 }
 
-/** The monthly budget in the words of the person, or null if the words give no amount (PD7: code parses numbers, not the model). */
-export function parseBudget(words: string): Budget | null {
+/** The words of a text, with the units apart from the digits and the ends of a range joined by "to". */
+function partsOf(words: string) {
   const text = plainWords(words)
     .replace(/(\d),(?=\d)/g, '$1')
     .replace(/₹|\brs\b\.?|\binr\b/g, ' ')
@@ -56,7 +56,15 @@ export function parseBudget(words: string): Budget | null {
     .replace(new RegExp(`(\\d(?:\\s*(?:${gluedUnits}|thousand|ha[zj]aa?r|हजार|लाख))?)\\s*[-–]\\s*(?=\\d)`, 'g'), '$1 to ')
     .replace(new RegExp(`(\\d)(${gluedUnits})\\b`, 'g'), '$1 $2')
     .replace(/\+/g, ' plus ')
-  const parts = text.split(/[^\p{L}\p{M}\p{N}.]+/u).map((w) => w.replace(/^\.+|\.+$/g, '')).filter(Boolean)
+  return text.split(/[^\p{L}\p{M}\p{N}.]+/u).map((w) => w.replace(/^\.+|\.+$/g, '')).filter(Boolean)
+}
+
+/** The rupees of each amount with a unit, as "tees hazaar" or "20k" (T-13). */
+export const unitAmountsIn = (words: string) => amountsIn(partsOf(words)).flatMap((a) => (a.multiplier ? [rupeesOf(a)!] : []))
+
+/** The monthly budget in the words of the person, or null if the words give no amount (PD7: code parses numbers, not the model). */
+export function parseBudget(words: string): Budget | null {
+  const parts = partsOf(words)
   const amounts = amountsIn(parts)
   if (isRange(parts, amounts)) {
     const [low, high] = amounts as [Amount, Amount]
