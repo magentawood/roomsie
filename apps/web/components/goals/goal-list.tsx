@@ -33,17 +33,19 @@ const switcherId = 'goal-switcher'
 /** The bar above the chat: the goal title and "I Found a Place". On a phone the title opens the list of goals (flow 02). */
 export function GoalHeader({ title, closed, onFound }: { title: string; closed: boolean; onFound: () => void }) {
   const hideSwitcher = () => document.getElementById(switcherId)?.hidePopover()
+  // The profile card can sit above the header on a phone, so the list opens under the title, wherever it is.
+  const placeSwitcher = (button: HTMLElement) => { document.getElementById(switcherId)!.style.top = `${button.getBoundingClientRect().bottom + 8}px` }
   return (
     <header className="col-start-1 row-start-1 flex items-center justify-between gap-3 border-b border-secondary px-5 py-3 lg:px-6 lg:py-4">
       <div className="hidden min-w-0 items-center gap-3 lg:flex">
         <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-tertiary text-fg-quaternary"><Home02 size={20} aria-hidden /></span>
         <h1 className="truncate text-md font-medium text-primary">{title}</h1>
       </div>
-      <button type="button" popoverTarget={switcherId} aria-label={`${title}: your goals`}
+      <button type="button" popoverTarget={switcherId} aria-label={`${title}: your goals`} onClick={(e) => placeSwitcher(e.currentTarget)}
         className="flex min-w-0 items-center gap-1 rounded-md text-md font-medium text-primary outline-focus-ring focus-visible:outline-2 lg:hidden">
         <span className="truncate">{title}</span><ChevronDown size={20} aria-hidden className="shrink-0" />
       </button>
-      <div id={switcherId} popover="auto" className="fixed inset-auto top-14 left-4 m-0 max-h-[70dvh] w-72 flex-col rounded-md border border-secondary bg-primary p-2 shadow-xl open:flex">
+      <div id={switcherId} popover="auto" className="fixed inset-auto left-4 m-0 max-h-[70dvh] w-72 flex-col rounded-md border border-secondary bg-primary p-2 shadow-xl open:flex">
         <GoalList onPick={hideSwitcher} />
       </div>
       {closed ? <Badge tone="gray" dot={false}>Closed</Badge> : (
