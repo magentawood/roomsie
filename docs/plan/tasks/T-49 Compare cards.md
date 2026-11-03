@@ -32,12 +32,60 @@ Select some cards, and the assistant compares them in the chat.
 - No task waits on this task.
 
 ## Done when
-- [ ] A user selects two or more cards, and the chat shows them above the input, as in "Listings selected"
-- [ ] The assistant compares only the selected cards, and only from their database fields
-- [ ] scope-policy.md allows the comparison before the build starts. Today, the assistant states no facts about listings
+- [x] A user selects two or more cards, and the chat shows them above the input, as in "Listings selected" · [#211](https://github.com/magentawood/roomsie/pull/211)
+- [x] The assistant compares only the selected cards, and only from their database fields · [#211](https://github.com/magentawood/roomsie/pull/211)
+- [x] scope-policy.md allows the comparison before the build starts. Today, the assistant states no facts about listings · [#211](https://github.com/magentawood/roomsie/pull/211)
 
 ^done
 
 ## Read first
 - [pd-14-v0-is-the-figma-designs.md](../../decisions/pd-14-v0-is-the-figma-designs.md)
 - [scope-policy.md](../../scope-policy.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by n3rxv
+
+- **Modules:**
+  - **The policy:** `scope-policy.md` and [PD10](../../decisions/pd-10-scope-bands.md) allow one exception to "The assistant states no facts about listings": the comparison table that code builds from the database fields of the selected cards. No model reads a listing or a person.
+  - **The contract:** a typed turn can carry `compare`: the kind (places or people) and the ids of 2 to 4 cards, in the order of the results. A chat turn gets `comparison`, with a default for the minutes of a deploy. The interface changes.
+  - **The comparison of the API (new):** it reads the selected cards with the visibility rules of the results, and gives each option its fields: for a place, the rent, the deposit, the move-in cash, the maintenance, the station and its walk, the date from which it is free, and more; for a person, the age, the job, the budget, the move date, the lifestyle answers and the Verified badge.
+  - **The assistant turn:** with `compare`, a turn that the router labels as a question, and not as filters, gets a scripted reply: the best-match line, for places the line of the least cash to move in, and the table. A 2b question gets the hand-off line first (review, PD10). A turn with filters goes to the normal chat. The composer does not run on a comparison.
+  - **The results panel of the web:** a "Selected" tick on each card, and the bar "N Selected" with a clear button.
+  - **The chat of the web:** the selected cards as chips above the input, with "Ask about the listings…", and the comparison table under the reply, with a link to each card and tick-boxes to add or remove fields.
+- **Seams for the tests:**
+  - The tests of the turn route: a question with `compare` gives the comparison, with the fields of the database and the options in the given order, and no composer call. A filter with `compare` goes to the normal chat. A card that the person cannot see, a mix of kinds, one card or five cards get 400. A person comparison has no religion, community or bio. The move-in cash of a broker flat has the brokerage, and a PG uses its lowest rent.
+  - Unit tests of the web: the rules of the selection (one kind, at most 4, a second tap clears), the default rows, and the field picker.
+  - A browser check on local dev at 390 px and 1440 px: select places, the chips above the input, a question, the line and the table, a field added with the picker, a reload, the clear button, and a comparison of people.
+  - A live check after the deploy, from the Safari of the user: select two places, ask, and read the table.
+- **Decisions:**
+  - **The policy (the user, 2026-11-03):** code builds the comparison from the database fields. No model reads a listing or a person, so a lister's text cannot change the answer and no number is made up. This replaces "the assistant states no facts about listings" for this table only.
+  - **The best match (the user):** the line names the option that matched best. The options are numbered in the order of the results, which the match query gives, so SQL still ranks.
+  - **The trigger (the user):** the router decides with its "question" label: with cards selected, a question gets the comparison, and a message with filters goes to the normal chat. The router prompt does not change.
+  - **The cards (the user):** places or people, 2 to 4 cards, one kind for each comparison. A tap on a card of the other kind starts a new selection.
+  - **The rows (the user):** places start with Rent, Move-in cash, Deposit and Station, as the design. People start with Age, Job, Budget, Move date, Food, Smoking and Verified. Tick-boxes under each table add or remove fields with no new request.
+  - **The sign-in (PD6b):** a selection needs a sign-in, as the opening of a card.
+  - **The move-in cash:** one month of rent and the deposit, and the brokerage of a broker flat. A PG uses its lowest rent and its deposit.
+  - **The selection:** it stays until the person clears it, the results change, or the person leaves the page, so Option 1 is always the best match of the results (review). A reload shows each comparison again, because the turn keeps it, with the values of that time.
+  - **The count:** the message counts as a typed turn of PD9, because the router runs on it.
+  - **The bands (review):** a question in the bands out of scope, adversarial or sensitive, or with the danger flag, goes to the normal chat, with its own reply (PD10).
+  - **The privacy (PD3c, PD16):** a person comparison shows only what the card shows to others: never the hidden religion or community, and never the bio.
+  - **A deleted person (the user, 2026-11-03, review):** the account deletion turns that person into "Deleted user" in each saved comparison, as PD19 asks.
+  - **A block (the user, 2026-11-03, review):** a block turns each of the two people into "Not available" in the saved comparisons of the other. A hide for review and a suspension keep the values, because moderation can undo them. A saved place comparison keeps the listing of a blocked owner: its fields tell about the place, not the person, and its link opens "not found".
+  - **The order (review):** the API trusts the order of the ids, which the web takes from the results that the API gave. A mobile app sends them in the same order.
+- **Out of scope:**
+  - the commute to an office (the question of the design)
+  - the box "Roomsie noticed" and the follow-up chips under a reply
+  - the sort menu of the results
+  - a comparison across goals
+  - an analytics event of a comparison
+
+## Log
+
+- **2026-11-03 · [#211](https://github.com/magentawood/roomsie/pull/211)**
+  - **Change:** a person selects 2 to 4 places or people in the results, and the chat shows them as chips above the input. A question gets the comparison table, which code builds from the database fields, with the best-match line and, for places, the least cash to move in. "Change the fields" adds or removes rows. A deleted person becomes "Deleted user" and a block makes each of the two people "Not available" in the saved comparisons.
+  - **Why:** [PD10](../../decisions/pd-10-scope-bands.md), [scope-policy.md](../../scope-policy.md), [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD19](../../decisions/pd-19-retention.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Comparing cards](../../learn/compare-cards.md), [Moderation](../../learn/moderation.md), [The composer](../../learn/composer.md), [The assistant turn](../../learn/assistant-turn.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

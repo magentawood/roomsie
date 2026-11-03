@@ -15790,6 +15790,298 @@
                               "budget"
                             ]
                           },
+                          "comparison": {
+                            "default": null,
+                            "nullable": true,
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "place"
+                                    ]
+                                  },
+                                  "options": {
+                                    "minItems": 2,
+                                    "maxItems": 4,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        },
+                                        "maintenance": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "brokerage": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "nearestStation": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 120
+                                        },
+                                        "walkStation": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "5_min",
+                                            "10_min",
+                                            "15_min",
+                                            "30_min",
+                                            "not_close"
+                                          ]
+                                        },
+                                        "availableFrom": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        "minStay": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "3_months",
+                                            "6_months",
+                                            "12_months",
+                                            "flexible"
+                                          ]
+                                        },
+                                        "furnishing": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "fully",
+                                            "semi",
+                                            "unfurnished"
+                                          ]
+                                        },
+                                        "verified": {
+                                          "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "string"
+                                        },
+                                        "rent": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "deposit": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveInCash": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "maintenance",
+                                        "brokerage",
+                                        "nearestStation",
+                                        "walkStation",
+                                        "availableFrom",
+                                        "minStay",
+                                        "furnishing",
+                                        "verified",
+                                        "title",
+                                        "rent",
+                                        "deposit",
+                                        "moveInCash"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "options"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "person"
+                                    ]
+                                  },
+                                  "options": {
+                                    "minItems": 2,
+                                    "maxItems": 4,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        },
+                                        "fullName": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "age": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 18,
+                                          "maximum": 99
+                                        },
+                                        "jobRole": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "whosMoving": {
+                                          "type": "string",
+                                          "enum": [
+                                            "student",
+                                            "first_job",
+                                            "working",
+                                            "couple",
+                                            "family",
+                                            "friends",
+                                            "unclear"
+                                          ]
+                                        },
+                                        "budgetMin": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "budgetMax": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveDate": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        "lifestyle": {
+                                          "type": "object",
+                                          "properties": {
+                                            "food": {
+                                              "type": "string",
+                                              "enum": [
+                                                "veg",
+                                                "non_veg",
+                                                "eggetarian",
+                                                "jain"
+                                              ]
+                                            },
+                                            "smoking": {
+                                              "type": "string",
+                                              "enum": [
+                                                "non_smoker",
+                                                "smoker",
+                                                "smoke_outside"
+                                              ]
+                                            },
+                                            "drinks": {
+                                              "type": "string",
+                                              "enum": [
+                                                "none_at_home",
+                                                "fine_at_home"
+                                              ]
+                                            },
+                                            "guests": {
+                                              "type": "string",
+                                              "enum": [
+                                                "weekends_only",
+                                                "guests_welcome",
+                                                "guests_rarely"
+                                              ]
+                                            },
+                                            "your_days": {
+                                              "type": "string",
+                                              "enum": [
+                                                "out_most_days",
+                                                "home_most_days",
+                                                "night_shifts",
+                                                "student"
+                                              ]
+                                            },
+                                            "sleep": {
+                                              "type": "string",
+                                              "enum": [
+                                                "night_owl",
+                                                "early_bird"
+                                              ]
+                                            },
+                                            "tidiness": {
+                                              "type": "string",
+                                              "enum": [
+                                                "very_tidy",
+                                                "tidy_enough",
+                                                "relaxed_about_mess"
+                                              ]
+                                            },
+                                            "pets": {
+                                              "type": "string",
+                                              "enum": [
+                                                "no_pets",
+                                                "fine_with_pets"
+                                              ]
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "verified": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "fullName",
+                                        "age",
+                                        "jobRole",
+                                        "whosMoving",
+                                        "budgetMin",
+                                        "budgetMax",
+                                        "moveDate",
+                                        "lifestyle",
+                                        "verified"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "options"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -15801,6 +16093,7 @@
                           "role",
                           "text",
                           "chips",
+                          "comparison",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -17434,6 +17727,298 @@
                               "budget"
                             ]
                           },
+                          "comparison": {
+                            "default": null,
+                            "nullable": true,
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "place"
+                                    ]
+                                  },
+                                  "options": {
+                                    "minItems": 2,
+                                    "maxItems": 4,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        },
+                                        "maintenance": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "brokerage": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "nearestStation": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 120
+                                        },
+                                        "walkStation": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "5_min",
+                                            "10_min",
+                                            "15_min",
+                                            "30_min",
+                                            "not_close"
+                                          ]
+                                        },
+                                        "availableFrom": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        "minStay": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "3_months",
+                                            "6_months",
+                                            "12_months",
+                                            "flexible"
+                                          ]
+                                        },
+                                        "furnishing": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "fully",
+                                            "semi",
+                                            "unfurnished"
+                                          ]
+                                        },
+                                        "verified": {
+                                          "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "string"
+                                        },
+                                        "rent": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "deposit": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveInCash": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "maintenance",
+                                        "brokerage",
+                                        "nearestStation",
+                                        "walkStation",
+                                        "availableFrom",
+                                        "minStay",
+                                        "furnishing",
+                                        "verified",
+                                        "title",
+                                        "rent",
+                                        "deposit",
+                                        "moveInCash"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "options"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "person"
+                                    ]
+                                  },
+                                  "options": {
+                                    "minItems": 2,
+                                    "maxItems": 4,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        },
+                                        "fullName": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "age": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 18,
+                                          "maximum": 99
+                                        },
+                                        "jobRole": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "whosMoving": {
+                                          "type": "string",
+                                          "enum": [
+                                            "student",
+                                            "first_job",
+                                            "working",
+                                            "couple",
+                                            "family",
+                                            "friends",
+                                            "unclear"
+                                          ]
+                                        },
+                                        "budgetMin": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "budgetMax": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveDate": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        "lifestyle": {
+                                          "type": "object",
+                                          "properties": {
+                                            "food": {
+                                              "type": "string",
+                                              "enum": [
+                                                "veg",
+                                                "non_veg",
+                                                "eggetarian",
+                                                "jain"
+                                              ]
+                                            },
+                                            "smoking": {
+                                              "type": "string",
+                                              "enum": [
+                                                "non_smoker",
+                                                "smoker",
+                                                "smoke_outside"
+                                              ]
+                                            },
+                                            "drinks": {
+                                              "type": "string",
+                                              "enum": [
+                                                "none_at_home",
+                                                "fine_at_home"
+                                              ]
+                                            },
+                                            "guests": {
+                                              "type": "string",
+                                              "enum": [
+                                                "weekends_only",
+                                                "guests_welcome",
+                                                "guests_rarely"
+                                              ]
+                                            },
+                                            "your_days": {
+                                              "type": "string",
+                                              "enum": [
+                                                "out_most_days",
+                                                "home_most_days",
+                                                "night_shifts",
+                                                "student"
+                                              ]
+                                            },
+                                            "sleep": {
+                                              "type": "string",
+                                              "enum": [
+                                                "night_owl",
+                                                "early_bird"
+                                              ]
+                                            },
+                                            "tidiness": {
+                                              "type": "string",
+                                              "enum": [
+                                                "very_tidy",
+                                                "tidy_enough",
+                                                "relaxed_about_mess"
+                                              ]
+                                            },
+                                            "pets": {
+                                              "type": "string",
+                                              "enum": [
+                                                "no_pets",
+                                                "fine_with_pets"
+                                              ]
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "verified": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "fullName",
+                                        "age",
+                                        "jobRole",
+                                        "whosMoving",
+                                        "budgetMin",
+                                        "budgetMax",
+                                        "moveDate",
+                                        "lifestyle",
+                                        "verified"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "options"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -17445,6 +18030,7 @@
                           "role",
                           "text",
                           "chips",
+                          "comparison",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -17547,6 +18133,33 @@
                         "type": "string",
                         "minLength": 1,
                         "maxLength": 2000
+                      },
+                      "compare": {
+                        "type": "object",
+                        "properties": {
+                          "kind": {
+                            "type": "string",
+                            "enum": [
+                              "place",
+                              "person"
+                            ]
+                          },
+                          "ids": {
+                            "minItems": 2,
+                            "maxItems": 4,
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "format": "uuid",
+                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                            }
+                          }
+                        },
+                        "required": [
+                          "kind",
+                          "ids"
+                        ],
+                        "additionalProperties": false
                       }
                     },
                     "required": [
@@ -19158,6 +19771,298 @@
                                   "budget"
                                 ]
                               },
+                              "comparison": {
+                                "default": null,
+                                "nullable": true,
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "place"
+                                        ]
+                                      },
+                                      "options": {
+                                        "minItems": 2,
+                                        "maxItems": 4,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid",
+                                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                            },
+                                            "maintenance": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "brokerage": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "nearestStation": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 120
+                                            },
+                                            "walkStation": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "enum": [
+                                                "5_min",
+                                                "10_min",
+                                                "15_min",
+                                                "30_min",
+                                                "not_close"
+                                              ]
+                                            },
+                                            "availableFrom": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "format": "date",
+                                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                            },
+                                            "minStay": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "enum": [
+                                                "3_months",
+                                                "6_months",
+                                                "12_months",
+                                                "flexible"
+                                              ]
+                                            },
+                                            "furnishing": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "enum": [
+                                                "fully",
+                                                "semi",
+                                                "unfurnished"
+                                              ]
+                                            },
+                                            "verified": {
+                                              "type": "boolean"
+                                            },
+                                            "title": {
+                                              "type": "string"
+                                            },
+                                            "rent": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "deposit": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "moveInCash": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "maintenance",
+                                            "brokerage",
+                                            "nearestStation",
+                                            "walkStation",
+                                            "availableFrom",
+                                            "minStay",
+                                            "furnishing",
+                                            "verified",
+                                            "title",
+                                            "rent",
+                                            "deposit",
+                                            "moveInCash"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "options"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "person"
+                                        ]
+                                      },
+                                      "options": {
+                                        "minItems": 2,
+                                        "maxItems": 4,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid",
+                                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                            },
+                                            "fullName": {
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 80
+                                            },
+                                            "age": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 18,
+                                              "maximum": 99
+                                            },
+                                            "jobRole": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 80
+                                            },
+                                            "whosMoving": {
+                                              "type": "string",
+                                              "enum": [
+                                                "student",
+                                                "first_job",
+                                                "working",
+                                                "couple",
+                                                "family",
+                                                "friends",
+                                                "unclear"
+                                              ]
+                                            },
+                                            "budgetMin": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "budgetMax": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "moveDate": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "format": "date",
+                                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                            },
+                                            "lifestyle": {
+                                              "type": "object",
+                                              "properties": {
+                                                "food": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "veg",
+                                                    "non_veg",
+                                                    "eggetarian",
+                                                    "jain"
+                                                  ]
+                                                },
+                                                "smoking": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "non_smoker",
+                                                    "smoker",
+                                                    "smoke_outside"
+                                                  ]
+                                                },
+                                                "drinks": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "none_at_home",
+                                                    "fine_at_home"
+                                                  ]
+                                                },
+                                                "guests": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "weekends_only",
+                                                    "guests_welcome",
+                                                    "guests_rarely"
+                                                  ]
+                                                },
+                                                "your_days": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "out_most_days",
+                                                    "home_most_days",
+                                                    "night_shifts",
+                                                    "student"
+                                                  ]
+                                                },
+                                                "sleep": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "night_owl",
+                                                    "early_bird"
+                                                  ]
+                                                },
+                                                "tidiness": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "very_tidy",
+                                                    "tidy_enough",
+                                                    "relaxed_about_mess"
+                                                  ]
+                                                },
+                                                "pets": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "no_pets",
+                                                    "fine_with_pets"
+                                                  ]
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            "verified": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "fullName",
+                                            "age",
+                                            "jobRole",
+                                            "whosMoving",
+                                            "budgetMin",
+                                            "budgetMax",
+                                            "moveDate",
+                                            "lifestyle",
+                                            "verified"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "options"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                ]
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -19169,6 +20074,7 @@
                               "role",
                               "text",
                               "chips",
+                              "comparison",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -19201,6 +20107,298 @@
                                   "budget"
                                 ]
                               },
+                              "comparison": {
+                                "default": null,
+                                "nullable": true,
+                                "oneOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "place"
+                                        ]
+                                      },
+                                      "options": {
+                                        "minItems": 2,
+                                        "maxItems": 4,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid",
+                                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                            },
+                                            "maintenance": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "brokerage": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "nearestStation": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 120
+                                            },
+                                            "walkStation": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "enum": [
+                                                "5_min",
+                                                "10_min",
+                                                "15_min",
+                                                "30_min",
+                                                "not_close"
+                                              ]
+                                            },
+                                            "availableFrom": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "format": "date",
+                                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                            },
+                                            "minStay": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "enum": [
+                                                "3_months",
+                                                "6_months",
+                                                "12_months",
+                                                "flexible"
+                                              ]
+                                            },
+                                            "furnishing": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "enum": [
+                                                "fully",
+                                                "semi",
+                                                "unfurnished"
+                                              ]
+                                            },
+                                            "verified": {
+                                              "type": "boolean"
+                                            },
+                                            "title": {
+                                              "type": "string"
+                                            },
+                                            "rent": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "deposit": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "moveInCash": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "maintenance",
+                                            "brokerage",
+                                            "nearestStation",
+                                            "walkStation",
+                                            "availableFrom",
+                                            "minStay",
+                                            "furnishing",
+                                            "verified",
+                                            "title",
+                                            "rent",
+                                            "deposit",
+                                            "moveInCash"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "options"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "person"
+                                        ]
+                                      },
+                                      "options": {
+                                        "minItems": 2,
+                                        "maxItems": 4,
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "id": {
+                                              "type": "string",
+                                              "format": "uuid",
+                                              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                            },
+                                            "fullName": {
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 80
+                                            },
+                                            "age": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 18,
+                                              "maximum": 99
+                                            },
+                                            "jobRole": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 80
+                                            },
+                                            "whosMoving": {
+                                              "type": "string",
+                                              "enum": [
+                                                "student",
+                                                "first_job",
+                                                "working",
+                                                "couple",
+                                                "family",
+                                                "friends",
+                                                "unclear"
+                                              ]
+                                            },
+                                            "budgetMin": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "budgetMax": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "moveDate": {
+                                              "nullable": true,
+                                              "type": "string",
+                                              "format": "date",
+                                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                            },
+                                            "lifestyle": {
+                                              "type": "object",
+                                              "properties": {
+                                                "food": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "veg",
+                                                    "non_veg",
+                                                    "eggetarian",
+                                                    "jain"
+                                                  ]
+                                                },
+                                                "smoking": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "non_smoker",
+                                                    "smoker",
+                                                    "smoke_outside"
+                                                  ]
+                                                },
+                                                "drinks": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "none_at_home",
+                                                    "fine_at_home"
+                                                  ]
+                                                },
+                                                "guests": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "weekends_only",
+                                                    "guests_welcome",
+                                                    "guests_rarely"
+                                                  ]
+                                                },
+                                                "your_days": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "out_most_days",
+                                                    "home_most_days",
+                                                    "night_shifts",
+                                                    "student"
+                                                  ]
+                                                },
+                                                "sleep": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "night_owl",
+                                                    "early_bird"
+                                                  ]
+                                                },
+                                                "tidiness": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "very_tidy",
+                                                    "tidy_enough",
+                                                    "relaxed_about_mess"
+                                                  ]
+                                                },
+                                                "pets": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "no_pets",
+                                                    "fine_with_pets"
+                                                  ]
+                                                }
+                                              },
+                                              "additionalProperties": false
+                                            },
+                                            "verified": {
+                                              "type": "boolean"
+                                            }
+                                          },
+                                          "required": [
+                                            "id",
+                                            "fullName",
+                                            "age",
+                                            "jobRole",
+                                            "whosMoving",
+                                            "budgetMin",
+                                            "budgetMax",
+                                            "moveDate",
+                                            "lifestyle",
+                                            "verified"
+                                          ],
+                                          "additionalProperties": false
+                                        }
+                                      }
+                                    },
+                                    "required": [
+                                      "kind",
+                                      "options"
+                                    ],
+                                    "additionalProperties": false
+                                  }
+                                ]
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -19212,6 +20410,7 @@
                               "role",
                               "text",
                               "chips",
+                              "comparison",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -19281,6 +20480,25 @@
             }
           },
           "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
             "description": "Default Response",
             "content": {
               "application/json": {

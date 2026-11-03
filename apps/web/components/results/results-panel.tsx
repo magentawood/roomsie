@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { FaceSad } from '@untitledui/icons'
+import { FaceSad, XClose } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
+import { pickOf, type Picked, type Picks } from '../../lib/compare'
 import { useAreaLabels, type useResults } from '../../lib/queries'
 import { countLine, didntSayLine, formKey, panelUpdate, type Found, type PanelState } from '../../lib/results'
 import { PlaceCard } from '../listings/place-card'
@@ -13,6 +14,7 @@ import { PlaceDetail } from '../places/place-detail'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
+import { CheckChip } from '../ui/choice'
 import { CloseButton } from '../ui/modal'
 
 /** How long the panel waits after the last scroll or read before it applies a new form (PD6c). */
@@ -61,24 +63,34 @@ function MatchLabel({ result }: { result: MatchResult }) {
   return didntSay ? <Badge tone="gray" dot={false}>{didntSay}</Badge> : null
 }
 
-function ResultGrid({ results, onOpen }: { results: MatchResult[]; onOpen: (result: MatchResult) => void }) {
+/** `picks`: the "Selected" tick of "Listings selected". The sample results of a preview have none. */
+function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   const areaLabels = useAreaLabels()
   return (
     <ul className="grid gap-4 sm:grid-cols-2">
-      {results.map((result) => (
-        <li key={result.kind === 'person' ? result.card.id : result.listing.id}>
-          {result.kind === 'person'
-            ? <PersonCard card={result.card} label={<MatchLabel result={result} />} onOpen={() => onOpen(result)} />
-            : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaLabels[result.listing.areaSlug] : undefined}
-                label={<MatchLabel result={result} />} onOpen={() => onOpen(result)} />}
-        </li>
-      ))}
+      {results.map((result) => {
+        const card = pickOf(result)
+        const picked = Boolean(picks?.picked.some((p) => p.id === card.id))
+        const label = (
+          <div className="flex flex-wrap items-center gap-2">
+            {picks && <CheckChip label={picked ? 'Selected' : 'Select'} ariaLabel={`Compare ${card.name}`} checked={picked} onToggle={() => picks.onPick(card)} />}
+            <MatchLabel result={result} />
+          </div>
+        )
+        return (
+          <li key={card.id}>
+            {result.kind === 'person'
+              ? <PersonCard card={result.card} label={label} onOpen={() => onOpen(result)} />
+              : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaLabels[result.listing.areaSlug] : undefined} label={label} onOpen={() => onOpen(result)} />}
+          </li>
+        )
+      })}
     </ul>
   )
 }
 
 /** "No relevant results" and the suggested posts of flow 02 (PD6c). */
-function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (result: MatchResult) => void }) {
+function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-3 py-6 text-center">
@@ -91,7 +103,7 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
       {suggested.length > 0 && (
         <section className="flex flex-col gap-4">
           <h3 className="border-b border-dashed border-secondary pb-4 text-md font-medium text-primary">Suggested posts</h3>
-          <ResultGrid results={suggested} onOpen={onOpen} />
+          <ResultGrid results={suggested} picks={picks} onOpen={onOpen} />
         </section>
       )}
     </div>
@@ -99,13 +111,17 @@ function NoResults({ suggested, onOpen }: { suggested: MatchResult[]; onOpen: (r
 }
 
 /** The results panel of flow 02: a pure function of Form A (PD6c). */
-export function ResultsPanel({ title, found, held: { hold, release }, more, sample, notice, onClose, onAskInChat }: {
-  title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+export function ResultsPanel({ title, found, held: { hold, release }, more, sample, notice, picks: { picked, onPick, onClear }, onClose, onAskInChat }: {
+  title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode
+  picks: Picks; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const [open, setOpen] = useState<ListingResponse | null>(null)
   const [tapped, setTapped] = useState<MatchResult | null>(null)
+  // A selection needs a sign-in, as the opening of a card (PD6b).
+  const [wall, setWall] = useState(false)
+  const picks = sample ? undefined : { picked, onPick: (card: Picked) => (user ? onPick(card) : setWall(true)) }
 
   // A guest signs in to open one card (PD6b), and the card opens after the sign-in. The results stay behind the wall.
   // The tap waits for the auth check, so a signed-in person never sees the wall, as in the app shell.
@@ -146,14 +162,20 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
             </header>
             <div onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 lg:px-6">
               {notice}
+              {picked.length > 0 && (
+                <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-secondary bg-secondary py-2 pr-2 pl-4">
+                  <p className="text-md font-medium text-primary">{picked.length} Selected</p>
+                  <Button variant="tertiary" size="sm" iconLeading={XClose} label="Clear the selection" onClick={onClear} />
+                </div>
+              )}
               {found.results.length
-                ? <ResultGrid results={found.results} onOpen={setTapped} />
-                : <NoResults suggested={found.suggested} onOpen={setTapped} />}
+                ? <ResultGrid results={found.results} picks={picks} onOpen={setTapped} />
+                : <NoResults suggested={found.suggested} picks={picks} onOpen={setTapped} />}
               {more && <NextPage more={more} />}
             </div>
           </>
         )}
-      {tapped && !user && !loading && <SignInWall onClose={() => setTapped(null)} />}
+      {(tapped || wall) && !user && !loading && <SignInWall onClose={() => { setTapped(null); setWall(false) }} />}
     </section>
   )
 }

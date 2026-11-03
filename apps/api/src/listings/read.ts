@@ -59,9 +59,9 @@ export function listingView(listing: Listing, { rates, flatmates, lister, verifi
   }
 }
 
-/** The listings of these ids that the viewer can see. */
-export const visibleListings = (db: Db, viewerUserId: string, ids: string[]) =>
-  db.select().from(listings).where(and(inArray(listings.id, ids), visibleListing(viewerUserId)))
+/** The listings of these ids that the viewer can see. `notOwn`: not the own listings of the viewer. */
+export const visibleListings = (db: Db, viewerUserId: string, ids: string[], { notOwn = false } = {}) =>
+  db.select().from(listings).where(and(inArray(listings.id, ids), visibleListing(viewerUserId), notOwn ? ne(listings.ownerUserId, viewerUserId) : undefined))
 
 /** The listings of these ids, in each state. */
 export const listingsByIds = (db: Db, ids: string[]) => db.select().from(listings).where(inArray(listings.id, ids))
@@ -75,10 +75,14 @@ export const ownerOfVisibleListing = (db: Db | Tx, listingId: string, viewerUser
     eq(listings.id, listingId), visibleListing(viewerUserId), activeOwner ? activeAccount(listings.ownerUserId) : undefined, ne(listings.ownerUserId, viewerUserId),
   ))
 
+/** The title of a row, whose room type can be `unclear`. */
+export const rowTitle = (listing: Pick<Listing, 'kind' | 'pgName' | 'placeType' | 'roomType'>) =>
+  listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType })
+
 export async function titleOf(db: Db, listingId: string) {
   const [listing] = await db.select({ kind: listings.kind, pgName: listings.pgName, placeType: listings.placeType, roomType: listings.roomType })
     .from(listings).where(eq(listings.id, listingId))
-  return listing && listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType })
+  return listing && rowTitle(listing)
 }
 
 /** A report or a moderator hides a listing for review (T-19); a dismiss shows it again. */

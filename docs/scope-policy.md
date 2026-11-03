@@ -106,7 +106,7 @@ Why: [PD10](decisions/pd-10-scope-bands.md)
 - **Classified as adversarial, not off-topic.**
 - Defences:
   1. **The assistant does not rank.** SQL does.
-  2. **The assistant states no facts about listings.** Results are cards from the database, not prose.
+  2. **The assistant states no facts about listings.** Results are cards from the database, not prose. Exception: code builds the comparison of selected cards from the database, and no model reads a card (T-49).
   3. **Assume the system prompt leaks.** Put nothing in it that must stay secret.
 - Log the attempts.
 - **This includes third-party text.** A broker who gets a payment for each introduction has a reason to try.

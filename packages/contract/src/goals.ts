@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
+import { comparison, compareRequest } from './compare'
 import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
 import { waitlistPlace } from './waitlist'
@@ -17,7 +18,9 @@ export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
 
 // Vercel is live minutes before the API; the defaults read its old replies (api.md).
-export const chatTurn = z.object({ id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null), createdAt: z.iso.datetime() })
+export const chatTurn = z.object({
+  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null), comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
+})
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
 /** Each place outside Mumbai that any turn of the goal named, for the waitlist (PD6c). */
@@ -50,7 +53,7 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
     case 'budget': return budgetBandOf(tap.value).label
   }
 }
-export const turnBody = z.union([z.strictObject({ text: requiredText(2000) }), z.strictObject({ tap: chipTap })])
+export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
 export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces })
@@ -136,6 +139,7 @@ export const assistantParts = z.strictObject({
   conflicts: z.array(slotConflict).default([]),
   /** The chips that the question offers: only with the plain question of intent, areas or budget (T-09). */
   chips: z.enum(chipSlots).nullable().default(null),
+  comparison: comparison.nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 

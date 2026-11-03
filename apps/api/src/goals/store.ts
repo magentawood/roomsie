@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, type Owner } from '../observations/read'
@@ -57,9 +57,11 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
-/** The chips of an assistant turn go out. The label of a typed turn never does. */
-const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) =>
-  ({ ...turn, chips: turn.role === 'assistant' ? assistantParts.parse(parts).chips : null, createdAt: turn.createdAt.toISOString() })
+/** The chips and the comparison of an assistant turn go out. The label of a typed turn never does. */
+const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
+  const { chips, comparison } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null }
+  return { ...turn, chips, comparison, createdAt: turn.createdAt.toISOString() }
+}
 
 export async function turnsOf(db: Db, goalId: string) {
   const rows = await db.select(turnFields).from(chatTurns).where(eq(chatTurns.goalId, goalId)).orderBy(asc(chatTurns.createdAt))
@@ -71,7 +73,7 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
-  // Only saveTurn and createGoal write assistant turns, each with parts (T-12).
+  // Only saveTurn and createGoal write assistant turns, each with parts (T-12). forgetInComparisons rewrites a comparison in them (T-49).
   const parts = assistantParts.parse(last.parts)
   return { ...parts, question: parts.question ?? last.text }
 }
@@ -126,6 +128,19 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
 export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(goals).where(eq(goals.userId, userId))
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
+}
+
+/** Leaves only a name for this person in the comparisons that others keep (PD19, T-49). */
+export async function forgetInComparisons(tx: Tx, profileId: string, fullName: 'Deleted user' | 'Not available', ofUserId?: string) {
+  const gone: PersonOption = { id: profileId, fullName, age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false }
+  await tx.update(chatTurns).set({
+    parts: sql`jsonb_set(${chatTurns.parts}, '{comparison,options}', (
+      select jsonb_agg(case when option->>'id' = ${profileId} then ${JSON.stringify(gone)}::jsonb else option end order by n)
+      from jsonb_array_elements(${chatTurns.parts}->'comparison'->'options') with ordinality as options(option, n)))`,
+  }).where(and(
+    sql`${chatTurns.parts}->'comparison'->>'kind' = 'person' and ${chatTurns.parts}->'comparison'->'options' @> ${JSON.stringify([{ id: profileId }])}::jsonb`,
+    ofUserId ? inArray(chatTurns.goalId, tx.select({ id: goals.id }).from(goals).where(eq(goals.userId, ofUserId))) : undefined,
+  ))
 }
 
 /** The latest religion and community that the person stated in a chat, for a new profile or a claim (PD3c, T-58). */

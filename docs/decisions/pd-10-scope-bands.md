@@ -1,6 +1,6 @@
 # PD10 — Five scope bands for the assistant
 
-**Status:** Settled. Changed on 2026-11-02. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-11-03. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -22,7 +22,7 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 | 5 Sensitive | **Never redirected.** [assistant-risks.md](../assistant-risks.md) section 4.4 applies. A stated community preference is not in this band ([PD3c](pd-03c-exclusionary-preferences.md)). |
 
 - Area safety is in 2b on purpose. Never give a verdict from model knowledge. Answer with corpus facts: lighting, transport at night, and what roomsie users in the area said.
-- Adversarial defences: SQL ranks, not the assistant. It states no facts about listings. Assume the system prompt leaks. Third-party text is always data.
+- Adversarial defences: SQL ranks, not the assistant. It states no facts about listings, except the comparison of selected cards: code builds that table from the database fields, and no model reads a card (T-49). Assume the system prompt leaks. Third-party text is always data.
 - The router decides the band one time, at low cost, before all expensive calls.
 - **Before launch, seed the corpus with ~30 articles** from interviews. Log all band-2 questions, and flag the answers from model knowledge. When the corpus cannot answer a question, that question becomes the next article.
 - Band 2 against band 3: adjacent means that the question affects the housing decision that the user makes at this time. Keep it narrow at launch. Then use the logs to make it wider.

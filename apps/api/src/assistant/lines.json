@@ -61,5 +61,19 @@
     "hi": "अगर आप अभी सुरक्षित नहीं हैं, तो 112 पर कॉल कीजिए, या Tele-MANAS को 14416 पर (मुफ़्त, 24x7)।",
     "mr-Latn": "Tumhi aatta surakshit nasal, tar 112 la call kara, kinva Tele-MANAS la 14416 var (free, 24x7).",
     "mr": "तुम्ही आत्ता सुरक्षित नसाल, तर 112 ला कॉल करा, किंवा Tele-MANAS ला 14416 वर (मोफत, 24x7)."
+  },
+  "compareBest": {
+    "en": "Option 1 matches your answers best.",
+    "hi-Latn": "Option 1 aapke jawaabon se sabse zyada match karta hai.",
+    "hi": "Option 1 आपके जवाबों से सबसे ज़्यादा मेल खाता है।",
+    "mr-Latn": "Option 1 tumchya uttaranshi sarvat jast julto.",
+    "mr": "Option 1 तुमच्या उत्तरांशी सर्वात जास्त जुळतो."
+  },
+  "compareCheapest": {
+    "en": "Option {option} needs the least cash to move in: {amount}.",
+    "hi-Latn": "Option {option} mein shift hone ke liye sabse kam cash lagega: {amount}.",
+    "hi": "Option {option} में शिफ़्ट होने के लिए सबसे कम नक़द लगेगा: {amount}।",
+    "mr-Latn": "Option {option} madhe shift honyasathi sarvat kami cash lagel: {amount}.",
+    "mr": "Option {option} मध्ये शिफ्ट होण्यासाठी सर्वात कमी रोख लागेल: {amount}."
   }
 }

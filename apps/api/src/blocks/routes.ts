@@ -3,7 +3,8 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { blockBody, errorResponse, noContent } from '@roomsie/contract'
 import { requireUser, type AuthOptions } from '../auth'
 import { blocks } from '../db/schema'
-import { ownerOfProfile } from '../profiles/read'
+import { forgetInComparisons } from '../goals/store'
+import { ownerOfProfile, profileOf } from '../profiles/read'
 import { declineOpenBetween } from '../requests/read'
 
 export function blockRoutes(v1: FastifyInstance, options: AuthOptions) {
@@ -18,10 +19,13 @@ export function blockRoutes(v1: FastifyInstance, options: AuthOptions) {
     // Each state of the card, so that the recipient of a request can block its sender.
     const [blocked] = await ownerOfProfile(db, req.body.profileId, blockerUserId)
     if (!blocked) return reply.code(404).send({ error: 'not found' })
+    const own = await profileOf(db, blockerUserId)
     await db.transaction(async (tx) => {
       // ADR-0015: a retried tap, or a second block of the same person, adds nothing.
       await tx.insert(blocks).values({ id: req.body.id, blockerUserId, blockedUserId: blocked.userId }).onConflictDoNothing()
       await declineOpenBetween(tx, blockerUserId, blocked.userId)
+      await forgetInComparisons(tx, req.body.profileId, 'Not available', blockerUserId)
+      if (own) await forgetInComparisons(tx, own.id, 'Not available', blocked.userId)
     })
     return reply.code(204).send(null)
   })
