@@ -32,9 +32,9 @@ Select some cards, and the assistant compares them in the chat.
 - No task waits on this task.
 
 ## Done when
-- [ ] A user selects two or more cards, and the chat shows them above the input, as in "Listings selected"
-- [ ] The assistant compares only the selected cards, and only from their database fields
-- [ ] scope-policy.md allows the comparison before the build starts. Today, the assistant states no facts about listings
+- [x] A user selects two or more cards, and the chat shows them above the input, as in "Listings selected" · [#211](https://github.com/magentawood/roomsie/pull/211)
+- [x] The assistant compares only the selected cards, and only from their database fields · [#211](https://github.com/magentawood/roomsie/pull/211)
+- [x] scope-policy.md allows the comparison before the build starts. Today, the assistant states no facts about listings · [#211](https://github.com/magentawood/roomsie/pull/211)
 
 ^done
 
@@ -79,3 +79,13 @@ Select some cards, and the assistant compares them in the chat.
   - the sort menu of the results
   - a comparison across goals
   - an analytics event of a comparison
+
+## Log
+
+- **2026-11-03 · [#211](https://github.com/magentawood/roomsie/pull/211)**
+  - **Change:** a person selects 2 to 4 places or people in the results, and the chat shows them as chips above the input. A question gets the comparison table, which code builds from the database fields, with the best-match line and, for places, the least cash to move in. "Change the fields" adds or removes rows. A deleted person becomes "Deleted user" and a block makes each of the two people "Not available" in the saved comparisons.
+  - **Why:** [PD10](../../decisions/pd-10-scope-bands.md), [scope-policy.md](../../scope-policy.md), [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD19](../../decisions/pd-19-retention.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [Comparing cards](../../learn/compare-cards.md), [Moderation](../../learn/moderation.md), [The composer](../../learn/composer.md), [The assistant turn](../../learn/assistant-turn.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
