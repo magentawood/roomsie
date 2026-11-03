@@ -29,7 +29,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 
 - **A report of a person** uses the profile id. A user can report each profile but the own profile, also a card that is not live, so that the recipient of a request can report its sender.
 - **A hidden card** leaves the results, the person detail and Saved. It cannot get a request, and its owner cannot send a new one. The owner sees "Hidden for review" on the profile page. "Hide my card" does not bring it back. A hidden listing works in the same way ([Place detail](place-detail.md)).
-- **A block** hides the two people in the results, the person detail, Saved and the listings. An open message request between them becomes declined, so its sender sees "Not available" ([Message requests](message-requests.md)). There is no unblock in v0.
+- **A block** hides the two people in the results, the person detail, Saved and the listings. An open message request between them becomes declined, so its sender sees "Not available" ([Message requests](message-requests.md)). Each saved comparison of the other person shows "Not available" for that person too ([Comparing cards](compare-cards.md)). There is no unblock in v0.
 - **The queue** has one item for each reported person or listing, with all its open reports. Safety reports come first, then the oldest.
 - **Suspend** sets `tokens_valid_after` to now, so each token of the person stops. It also hides the card and the listings, and closes each open report about the person. The open requests that the person sent are withdrawn. The open requests to the person are declined, so their senders see "Not available".
 

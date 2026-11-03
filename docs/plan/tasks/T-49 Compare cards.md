@@ -50,7 +50,7 @@ Select some cards, and the assistant compares them in the chat.
   - **The policy:** `scope-policy.md` and [PD10](../../decisions/pd-10-scope-bands.md) allow one exception to "The assistant states no facts about listings": the comparison table that code builds from the database fields of the selected cards. No model reads a listing or a person.
   - **The contract:** a typed turn can carry `compare`: the kind (places or people) and the ids of 2 to 4 cards, in the order of the results. A chat turn gets `comparison`, with a default for the minutes of a deploy. The interface changes.
   - **The comparison of the API (new):** it reads the selected cards with the visibility rules of the results, and gives each option its fields: for a place, the rent, the deposit, the move-in cash, the maintenance, the station and its walk, the date from which it is free, and more; for a person, the age, the job, the budget, the move date, the lifestyle answers and the Verified badge.
-  - **The assistant turn:** with `compare`, a turn that the router labels as a question, and not as filters, gets a scripted reply: one line and the table. A turn with filters goes to the normal chat. The composer does not run on a comparison.
+  - **The assistant turn:** with `compare`, a turn that the router labels as a question, and not as filters, gets a scripted reply: the best-match line, for places the line of the least cash to move in, and the table. A turn with filters goes to the normal chat. The composer does not run on a comparison.
   - **The results panel of the web:** a "Selected" tick on each card, and the bar "N Selected" with a clear button.
   - **The chat of the web:** the selected cards as chips above the input, with "Ask about the listings…", and the comparison table under the reply, with a link to each card and tick-boxes to add or remove fields.
 - **Seams for the tests:**
@@ -71,6 +71,8 @@ Select some cards, and the assistant compares them in the chat.
   - **The bands (review):** a question in the bands out of scope, adversarial or sensitive, or with the danger flag, goes to the normal chat, with its own reply (PD10).
   - **The privacy (PD3c, PD16):** a person comparison shows only what the card shows to others: never the hidden religion or community, and never the bio.
   - **A deleted person (the user, 2026-11-03, review):** the account deletion turns that person into "Deleted user" in each saved comparison, as PD19 asks.
+  - **A block (the user, 2026-11-03, review):** a block turns each of the two people into "Not available" in the saved comparisons of the other. A hide for review and a suspension keep the values, because moderation can undo them.
+  - **The order (review):** the API trusts the order of the ids, which the web takes from the results that the API gave. A mobile app sends them in the same order.
 - **Out of scope:**
   - the commute to an office (the question of the design)
   - the box "Roomsie noticed" and the follow-up chips under a reply

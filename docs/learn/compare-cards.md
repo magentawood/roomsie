@@ -16,14 +16,14 @@
 | The request and the table | `compareRequest` and `comparison` in `packages/contract/src/compare.ts` |
 | The cash to move in | `moveInOf()` in `packages/contract/src/listings.ts`, also for the place detail |
 | The table from the database | `comparisonOf()` in `apps/api/src/compare/compare.ts` |
-| The reply | `comparisonReply()` in `apps/api/src/assistant/assistant.ts`, and the lines `compareBest` and `compareCash` |
-| A deleted person | `forgetInComparisons()` in `apps/api/src/goals/store.ts`, called by the account deletion |
+| The reply | `comparisonReply()` in `apps/api/src/assistant/assistant.ts`, and the lines `compareBest` and `cheapestLine` |
+| A deleted or blocked person | `forgetInComparisons()` in `apps/api/src/goals/store.ts`, called by the account deletion and the block |
 | The selection, the rows and the picker | `apps/web/lib/compare.ts`, with unit tests |
 | The table on the screen | `apps/web/components/chat/comparison.tsx` |
 
-- **The cards that a person can see.** The API reads each card through the visibility rules of the results. A card that the person cannot see gets 400 `not valid: compare`, and a guest gets 401, both before any model call.
+- **The cards that a person can see.** The API reads each card through the visibility rules of the results, and never the own listing of the person. A card that the person cannot see gets 400 `not valid: compare`, and a guest gets 401, both before any model call.
 - **Only the fields of the table.** The options are strict objects. A person gives only what the card shows to others: never the hidden religion or community ([PD3c](../decisions/pd-03c-exclusionary-preferences.md)), and never the bio.
-- **The values of that time.** The assistant turn keeps the table, so a reload shows it again. When a person deletes the account, each saved comparison shows "Deleted user" in that column ([PD19](../decisions/pd-19-retention.md)).
+- **The values of that time.** The assistant turn keeps the table, so a reload shows it again. When a person deletes the account, each saved comparison shows "Deleted user" in that column ([PD19](../decisions/pd-19-retention.md)). After a block, each of the two people shows "Not available" in the saved comparisons of the other ([Moderation](moderation.md)).
 - **The selection belongs to one list of results.** A new search starts a new selection, so Option 1 is always the best match.
 
 ## The choice we made

@@ -66,11 +66,11 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The reply</td>
-<td><code>comparisonReply()</code> in <code>apps/api/src/assistant/assistant.ts</code>, and the lines <code>compareBest</code> and <code>compareCash</code></td>
+<td><code>comparisonReply()</code> in <code>apps/api/src/assistant/assistant.ts</code>, and the lines <code>compareBest</code> and <code>cheapestLine</code></td>
 </tr>
 <tr>
-<td>A deleted person</td>
-<td><code>forgetInComparisons()</code> in <code>apps/api/src/goals/store.ts</code>, called by the account deletion</td>
+<td>A deleted or blocked person</td>
+<td><code>forgetInComparisons()</code> in <code>apps/api/src/goals/store.ts</code>, called by the account deletion and the block</td>
 </tr>
 <tr>
 <td>The selection, the rows and the picker</td>
@@ -83,9 +83,9 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The cards that a person can see.</strong> The API reads each card through the visibility rules of the results. A card that the person cannot see gets 400 <code>not valid: compare</code>, and a guest gets 401, both before any model call.</li>
+<li><strong>The cards that a person can see.</strong> The API reads each card through the visibility rules of the results, and never the own listing of the person. A card that the person cannot see gets 400 <code>not valid: compare</code>, and a guest gets 401, both before any model call.</li>
 <li><strong>Only the fields of the table.</strong> The options are strict objects. A person gives only what the card shows to others: never the hidden religion or community (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>), and never the bio.</li>
-<li><strong>The values of that time.</strong> The assistant turn keeps the table, so a reload shows it again. When a person deletes the account, each saved comparison shows "Deleted user" in that column (<a href="../decisions/pd-19-retention.md">PD19</a>).</li>
+<li><strong>The values of that time.</strong> The assistant turn keeps the table, so a reload shows it again. When a person deletes the account, each saved comparison shows "Deleted user" in that column (<a href="../decisions/pd-19-retention.md">PD19</a>). After a block, each of the two people shows "Not available" in the saved comparisons of the other (<a href="moderation.html">Moderation</a>).</li>
 <li><strong>The selection belongs to one list of results.</strong> A new search starts a new selection, so Option 1 is always the best match.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
