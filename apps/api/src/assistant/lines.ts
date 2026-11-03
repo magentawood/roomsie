@@ -13,8 +13,8 @@ const lines = fixedLines.parse(file)
 
 export const lineOf = (key: Exclude<(typeof lineKeys)[number], 'backToIt' | 'compareCash'>, language: ReplyLanguage) => lines[key][language]
 
-/** The option of a comparison with the least cash to move in (T-49). */
-export const compareCash = (option: number, amount: string, language: ReplyLanguage) =>
+/** The line of the option of a comparison with the least cash to move in (T-49). */
+export const cheapestLine = (option: number, amount: string, language: ReplyLanguage) =>
   lines.compareCash[language].replace('{option}', String(option)).replace('{amount}', amount)
 
 /** The question stays in English (the spec of T-13), so it starts in lower case after the line. */

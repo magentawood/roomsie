@@ -1,12 +1,14 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { goalResponse, listingResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type CompareRequest } from '@roomsie/contract'
+import { assistantParts, goalResponse, listingResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type CompareRequest } from '@roomsie/contract'
+import { desc, eq } from 'drizzle-orm'
+import { chatTurns } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
 import { fakeVendors, keys, room, routed, scored } from './vendors'
 
 type Who = 'seeker' | 'owner' | 'broker' | 'pgOwner' | 'asha' | 'ravi'
 let t: TestApp<Who>
-const ids = {} as Record<'owner' | 'broker' | 'pg' | 'draft', string>
+const ids = {} as Record<'owner' | 'broker' | 'pg' | 'draft' | 'second' | 'third', string>
 let people: [string, string]
 let goalId: string
 
@@ -27,6 +29,8 @@ beforeAll(async () => {
   ids.broker = await place('broker', 'broker_flat', { rates: [{ rent: 25_000, deposit: 50_000 }], brokerage: 25_000 })
   ids.pg = await place('pgOwner', 'pg', { pgName: 'Shivraj PG', sharing: ['single', 'double'], rates: [{ sharing: 'single', rent: 18_000, deposit: 18_000 }, { sharing: 'double', rent: 12_000, deposit: 12_000 }] })
   ids.draft = await place('owner', 'owner_flat', { rates: [{ rent: 30_000 }] }, false)
+  ids.second = await place('owner', 'owner_flat', { rates: [{ rent: 31_000 }] })
+  ids.third = await place('broker', 'broker_flat', { rates: [{ rent: 32_000 }], brokerage: 32_000 })
   people = [await t.liveCard('asha', 'Asha Rao'), await t.liveCard('ravi', 'Ravi Shah')]
   expect((await t.call('asha', 'PATCH', '/v1/me/profile', { religion: 'hindu', community: 'marathi', bio: 'Early riser.', jobRole: 'Designer' })).statusCode).toBe(200)
   goalId = newGoalResponse.parse((await t.call('seeker', 'POST', '/v1/goals')).json()).id
@@ -74,11 +78,24 @@ describe('the comparison of selected cards (T-49)', () => {
     expect(JSON.stringify(reply.comparison)).not.toMatch(/hindu|marathi|Early riser|religion|community|bio/)
   })
 
-  it('answers a filter with the normal chat, also with cards selected', async () => {
+  it('answers a filter with the normal chat, and a comparison keeps the open question of that reply', async () => {
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['filters'] }) })
     const reply = await answer('a room please', { kind: 'place', ids: [ids.owner, ids.pg] })
     expect(reply.comparison).toBeNull()
     expect(reply.text).not.toMatch(/^Option/)
+    const lastParts = async () => assistantParts.parse((await t.db.select({ parts: chatTurns.parts }).from(chatTurns)
+      .where(eq(chatTurns.goalId, goalId)).orderBy(desc(chatTurns.createdAt)).limit(1))[0]!.parts)
+    const asked = await lastParts()
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    await answer('and which is cheaper?', { kind: 'place', ids: [ids.owner, ids.pg] })
+    expect(await lastParts()).toMatchObject({ asked: asked.asked, question: asked.question })
+  })
+
+  it('hands off a 2b question first, then gives the table (PD10)', async () => {
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'consequential' }) })
+    const reply = await answer('is the agreement of these legal?', { kind: 'place', ids: [ids.owner, ids.pg] })
+    expect(reply.text).toMatch(/^That needs a real answer, not a guess from me\..* Option 1 matches your answers best\./)
+    expect(reply.comparison?.kind).toBe('place')
   })
 
   it('refuses a card that the person cannot see, a card of the other kind, one card, five cards and a guest, before any model call', async () => {
@@ -87,7 +104,8 @@ describe('the comparison of selected cards (T-49)', () => {
     expect(await status({ kind: 'place', ids: [ids.owner, ids.draft] })).toBe(400)
     expect(await status({ kind: 'place', ids: [ids.owner, people[0]] })).toBe(400)
     expect(await status({ kind: 'place', ids: [ids.owner] })).toBe(400)
-    expect(await status({ kind: 'place', ids: [ids.owner, ids.broker, ids.pg, ids.draft, people[0]] })).toBe(400)
+    // Five cards that the person can see: only the count refuses them.
+    expect(await status({ kind: 'place', ids: [ids.owner, ids.broker, ids.pg, ids.second, ids.third] })).toBe(400)
     const visitor = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
     const guest = await t.app.inject({ method: 'POST', url: `/v1/goals/${visitor.id}/turns`, payload: { text: 'compare', compare: { kind: 'place', ids: [ids.owner, ids.pg] } }, headers: { [visitorKeyHeader]: visitor.visitorKey! } })
     expect(guest.statusCode).toBe(401)
@@ -95,10 +113,21 @@ describe('the comparison of selected cards (T-49)', () => {
   })
 
   it('reads a person card only through the visibility rules', async () => {
-    // A hidden card is not visible to others.
     expect(profileResponse.parse((await t.call('ravi', 'PATCH', '/v1/me/profile', { hidden: true })).json()).visibility).toBe('hidden')
     fakeVendors({})
     expect((await ask('compare', { kind: 'person', ids: people })).statusCode).toBe(400)
     expect((await t.call('ravi', 'PATCH', '/v1/me/profile', { hidden: false })).statusCode).toBe(200)
+  })
+
+  it('turns a deleted person into "Deleted user" in each saved comparison (PD19)', async () => {
+    expect((await t.call('asha', 'DELETE', '/v1/me')).statusCode).toBe(204)
+    const goal = goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json())
+    const people = goal.turns.flatMap((turn) => (turn.comparison?.kind === 'person' ? [turn.comparison] : []))
+    expect(people).toHaveLength(1)
+    expect(people[0]!.options[0]).toEqual({
+      id: expect.any(String), fullName: 'Deleted user', age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false,
+    })
+    expect(people[0]!.options[1]).toMatchObject({ fullName: 'Ravi Shah' })
+    expect(JSON.stringify(goal)).not.toMatch(/Asha|Designer/)
   })
 })

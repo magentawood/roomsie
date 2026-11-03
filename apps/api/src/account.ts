@@ -6,7 +6,7 @@ import type { Db } from './db/client'
 import { deleteFeedbackOf } from './feedback/read'
 import { users } from './db/schema'
 import type { FirebaseAdmin } from './firebase-admin'
-import { deleteGoalsOf } from './goals/store'
+import { deleteGoalsOf, forgetInComparisons } from './goals/store'
 import type { IdStore } from './id-store'
 import { deactivateListingsOf, deleteListingsOf, listingPhotoKeysOf } from './listings/read'
 import { deleteObservationsOf } from './observations/read'
@@ -61,7 +61,8 @@ export async function deleteAccount(
     await deleteListingsOf(tx, userId)
     await deleteObservationsOf(tx, userId)
     await deleteGoalsOf(tx, userId)
-    await deleteProfileOf(tx, userId)
+    const [profile] = await deleteProfileOf(tx, userId)
+    if (profile) await forgetInComparisons(tx, profile.id)
     await deleteSavesOf(tx, userId)
     await deletePushTokensOf(tx, userId)
     await deleteFeedbackOf(tx, userId)

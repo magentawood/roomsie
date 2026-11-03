@@ -53,7 +53,6 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
     case 'budget': return budgetBandOf(tap.value).label
   }
 }
-/** `compare`: the selected cards. A question with them gets the comparison (T-49). */
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
@@ -140,7 +139,6 @@ export const assistantParts = z.strictObject({
   conflicts: z.array(slotConflict).default([]),
   /** The chips that the question offers: only with the plain question of intent, areas or budget (T-09). */
   chips: z.enum(chipSlots).nullable().default(null),
-  /** The table of a comparison of the selected cards (T-49). */
   comparison: comparison.nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>

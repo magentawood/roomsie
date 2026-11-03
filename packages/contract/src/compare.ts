@@ -15,8 +15,8 @@ export const compareRequest = z.strictObject({
 })
 export type CompareRequest = z.infer<typeof compareRequest>
 
-/** A place: its database fields, and the cash to move in, which the API adds up. A PG gives its lowest rent. */
-const placeOption = z.object({
+/** A place: its database fields, and the cash to move in (`moveInOf`). */
+const placeOption = z.strictObject({
   id: z.uuid(),
   title: z.string(),
   rent: rupees,
@@ -32,9 +32,9 @@ const placeOption = z.object({
   verified: z.boolean(),
 })
 /** A person: only what the card shows to others (PD16), never the hidden religion or community (PD3c), and never the bio. */
-const personOption = cardResponse.pick({ id: true, fullName: true, age: true, jobRole: true, whosMoving: true, budgetMin: true, budgetMax: true, moveDate: true, lifestyle: true, verified: true })
+const personOption = z.strictObject(cardResponse.pick({ id: true, fullName: true, age: true, jobRole: true, whosMoving: true, budgetMin: true, budgetMax: true, moveDate: true, lifestyle: true, verified: true }).shape)
 
-/** The table of a comparison, which code builds from the database (scope-policy.md). The turn keeps the values of its time. */
+/** The table of a comparison, which code builds from the database (scope-policy.md). Strict, so no other field of a card can go in. */
 export const comparison = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('place'), options: z.array(placeOption).min(2).max(maxCompared) }),
   z.object({ kind: z.literal('person'), options: z.array(personOption).min(2).max(maxCompared) }),

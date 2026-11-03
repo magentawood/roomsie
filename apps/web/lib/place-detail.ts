@@ -1,4 +1,4 @@
-import type { ListingKind, ListingResponse } from '@roomsie/contract'
+import { moveInOf, type ListingKind, type ListingResponse } from '@roomsie/contract'
 import { labels, rupees } from './listing-steps'
 
 export type Line<L extends string = string> = { label: L; value: string }
@@ -6,16 +6,17 @@ type Flatmate = ListingResponse['flatmates'][number]
 
 const linesWithValues = <L extends string>(all: [L, string | null | undefined][]): Line<L>[] =>
   all.filter((l): l is [L, string] => l[1] != null).map(([label, value]) => ({ label, value }))
-const ifSet = <T>(v: T | null, text: (v: T) => string) => (v === null ? null : text(v))
+export const ifSet = <T>(v: T | null, text: (v: T) => string) => (v === null ? null : text(v))
 
-/** The money to move in: the first rent, the deposit and the brokerage. A PG gives its lowest rent. */
+/** The lines of the money to move in (`moveInOf`). */
 export function moveIn(listing: ListingResponse) {
-  const rate = listing.rates.toSorted((a, b) => a.rent - b.rent)[0]
-  if (!rate) return null
+  const money = moveInOf(listing.rates, listing.brokerage)
+  if (!money) return null
+  const { rate, total } = money
   const rentLabel = listing.kind === 'pg' && rate.sharing ? `First month’s rent, ${labels.sharing[rate.sharing].toLowerCase()} sharing` : 'First month’s rent'
   return {
     lines: linesWithValues([[rentLabel, rupees(rate.rent)], ['Deposit', ifSet(rate.deposit, rupees)], ['Brokerage', ifSet(listing.brokerage, rupees)]]),
-    total: rupees(rate.rent + (rate.deposit ?? 0) + (listing.brokerage ?? 0)),
+    total: rupees(total),
   }
 }
 

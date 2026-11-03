@@ -103,4 +103,4 @@ export const hideCardForReview = (tx: Tx, profileId: string) =>
 export const unpublishCardOf = (db: Db, userId: string) => db.update(profiles).set({ visibility: 'hidden', updatedAt: new Date() }).where(eq(profiles.userId, userId))
 export const profilePhotoKeysOf = async (tx: Tx, userId: string) =>
   (await tx.select({ keys: profiles.photoKeys }).from(profiles).where(eq(profiles.userId, userId))).flatMap((r) => r.keys)
-export const deleteProfileOf = (tx: Tx, userId: string) => tx.delete(profiles).where(eq(profiles.userId, userId))
+export const deleteProfileOf = (tx: Tx, userId: string) => tx.delete(profiles).where(eq(profiles.userId, userId)).returning({ id: profiles.id })

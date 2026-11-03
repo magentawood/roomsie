@@ -5,7 +5,6 @@ import { errorResponse, formA, goalResponse, goalStart, limitRefusal, newGoalRes
 import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { comparisonOf } from '../compare/compare'
-import type { Storage } from '../storage'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
@@ -18,7 +17,7 @@ const headers = z.object({ [visitorKeyHeader]: visitorKey.optional(), 'user-agen
 const params = z.object({ id: z.uuid() })
 
 /** The chat of a goal is open to a visitor, with no sign-in (PD6b). The visitor key is the only way into a visitor goal. */
-export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<AssistantDeps, 'req'> & { limits: LimitSettings; storage: Storage }) {
+export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<AssistantDeps, 'req'> & { limits: LimitSettings }) {
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const askerOf = async (req: FastifyRequest, key: string | undefined): Promise<Asker> =>
     ({ userId: req.user?.id ?? null, sessionId: key ? await visitorSessionOf(options.db, key) : null })
@@ -63,7 +62,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     let comparison: Comparison | null = null
     if ('text' in req.body && req.body.compare) {
       if (!req.user) return reply.code(401).send({ error: 'sign in to compare' })
-      comparison = await comparisonOf(options.db, options.storage, req.user.id, req.body.compare)
+      comparison = await comparisonOf(options.db, req.user.id, req.body.compare)
       if (!comparison) return reply.code(400).send({ error: 'not valid: compare' })
     }
     const last = await lastReplyOf(options.db, goal.id)

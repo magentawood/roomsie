@@ -9,7 +9,7 @@ import { slotOf } from './handlers/extractor/form-update'
 import { replyWriter } from './handlers/reply/reply'
 import { rupees } from './handlers/reply/texts'
 import { routeTurn } from './handlers/router/router'
-import { compareCash, languageOf, lineOf } from './lines'
+import { cheapestLine, languageOf, lineOf } from './lines'
 import type { AssistantSettings } from './settings'
 
 export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; settings: AssistantSettings; today: () => string }
@@ -26,24 +26,27 @@ export type TurnState = {
 
 /** An off-topic or adversarial turn is not about the search (PD10, T-34). */
 const aboutTheSearch = ({ band }: TurnLabel) => band !== 'out_of_scope' && band !== 'adversarial'
+const onlyQuestion = ({ kinds }: TurnLabel) => kinds.includes('question') && !kinds.includes('filters')
 /** The extractor fills Form A, unless the turn is not about the search, or only a question (PD10, T-34). */
-const usesExtractor = (label: TurnLabel) => aboutTheSearch(label) && !(label.kinds.includes('question') && !label.kinds.includes('filters'))
+const usesExtractor = (label: TurnLabel) => aboutTheSearch(label) && !onlyQuestion(label)
 
 export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegister'>
 /** What only the composer reads: the last two turns and the Form B notes of the person (PD7a). */
 export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 
 /** With cards selected, a question gets the comparison, and a message with filters goes to the normal chat (T-49). */
-const comparesOn = ({ kinds, band, danger }: TurnLabel) =>
-  kinds.includes('question') && !kinds.includes('filters') && !danger && (band === 'core' || band === 'general' || band === 'consequential')
+const comparesOn = (label: TurnLabel) => onlyQuestion(label) && aboutTheSearch(label) && label.band !== 'sensitive' && !label.danger
 
-/** The scripted reply of a comparison: code builds the table, and no model reads a card (scope-policy.md). */
-function comparisonReply(table: Comparison, language: ReplyLanguage): AssistantReply {
+/**
+ * The scripted reply of a comparison: code builds the table, and no model reads a card (scope-policy.md). A 2b question gets
+ * the hand-off first (PD10). The question and the conflicts of the last reply stay open, so the next turn goes on with them.
+ */
+function comparisonReply(table: Comparison, { language, label, last }: { language: ReplyLanguage; label: TurnLabel; last: AssistantParts | null }): AssistantReply {
+  const lead = label.band === 'consequential' ? `${lineOf('handoff', language)} ` : ''
   const best = lineOf('compareBest', language)
-  if (table.kind === 'person') return { version: 1, text: best, parts: assistantParts.parse({ asked: null, comparison: table }) }
-  const cheapest = table.options.reduce((low, option, i) => (option.moveInCash < table.options[low]!.moveInCash ? i : low), 0)
-  const text = `${best} ${compareCash(cheapest + 1, rupees(table.options[cheapest]!.moveInCash), language)}`
-  return { version: 1, text, parts: assistantParts.parse({ asked: null, comparison: table }) }
+  const cheapest = table.kind === 'place' && table.options.reduce((low, option, i) => (option.moveInCash < low.option.moveInCash ? { option, i } : low), { option: table.options[0]!, i: 0 })
+  const text = lead + (cheapest ? `${best} ${cheapestLine(cheapest.i + 1, rupees(cheapest.option.moveInCash), language)}` : best)
+  return { version: 1, text, parts: assistantParts.parse({ ...(last ?? { asked: null }), comparison: table }) }
 }
 
 /** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */
@@ -52,7 +55,7 @@ export async function runTurn({ context, comparison, ...input }: TurnInput & { t
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
   const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
-  const compared = comparison && comparesOn(label) ? comparisonReply(comparison, turn.language) : null
+  const compared = comparison && comparesOn(label) ? comparisonReply(comparison, turn) : null
   const scripted = compared ?? await replyWriter(turn, deps)
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   const reply = !compared && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted

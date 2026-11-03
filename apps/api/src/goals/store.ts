@@ -57,7 +57,7 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
-/** The chips of an assistant turn go out. The label of a typed turn never does. */
+/** The chips and the comparison of an assistant turn go out. The label of a typed turn never does. */
 const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
   const { chips, comparison } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null }
   return { ...turn, chips, comparison, createdAt: turn.createdAt.toISOString() }
@@ -125,6 +125,16 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
 }
 
 /** At account deletion. The cascades remove the chat turns, the waitlist entries of the chats, and the goals of a claimed visitor session. */
+/** A deleted person is "Deleted user" in each comparison of people that other people keep (PD19, T-49). */
+export async function forgetInComparisons(tx: Tx, profileId: string) {
+  const deleted = { id: profileId, fullName: 'Deleted user', age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false }
+  await tx.update(chatTurns).set({
+    parts: sql`jsonb_set(${chatTurns.parts}, '{comparison,options}', (
+      select jsonb_agg(case when option->>'id' = ${profileId} then ${JSON.stringify(deleted)}::jsonb else option end order by n)
+      from jsonb_array_elements(${chatTurns.parts}->'comparison'->'options') with ordinality as options(option, n)))`,
+  }).where(sql`${chatTurns.parts}->'comparison'->>'kind' = 'person' and ${chatTurns.parts}->'comparison'->'options' @> ${JSON.stringify([{ id: profileId }])}::jsonb`)
+}
+
 export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(goals).where(eq(goals.userId, userId))
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))

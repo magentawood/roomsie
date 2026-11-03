@@ -1,28 +1,26 @@
-import { comparison, listingTitle, type CompareRequest, type Comparison } from '@roomsie/contract'
+import { comparison, moveInOf, type CardResponse, type CompareRequest, type Comparison } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { inOrder } from '../in-order'
-import { partsOf, visibleListings, type Listing, type Parts } from '../listings/read'
-import { answersFor, cardView, visibleCards } from '../profiles/read'
-import type { Storage } from '../storage'
+import { partsOf, rowTitle, visibleListings, type Listing, type Parts } from '../listings/read'
+import { answersFor, visibleCards, type Profile } from '../profiles/read'
 
-/** One month of rent, the deposit, and the brokerage of a broker flat. A PG gives its lowest rent and the deposit of that rent. */
 function placeOf(listing: Listing, { rates, verified }: Parts) {
-  const [rate] = rates.toSorted((a, b) => a.rent - b.rent)
-  if (!rate) return null
-  const title = listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType })
-  return { ...listing, title, rent: rate.rent, deposit: rate.deposit, moveInCash: rate.rent + (rate.deposit ?? 0) + (listing.brokerage ?? 0), verified }
+  // A live listing has a rent (T-41).
+  const { rate, total } = moveInOf(rates, listing.brokerage)!
+  const { id, maintenance, brokerage, nearestStation, walkStation, availableFrom, minStay, furnishing } = listing
+  return { id, title: rowTitle(listing), rent: rate.rent, deposit: rate.deposit, moveInCash: total, maintenance, brokerage, nearestStation, walkStation, availableFrom, minStay, furnishing, verified }
 }
 
-/**
- * The table of the selected cards that the viewer can see, in the order of the request (T-49). Null: a card that the viewer
- * cannot see. The contract keeps only the fields of the table, so a person gives only what the card shows to others.
- */
-export async function comparisonOf(db: Db, storage: Storage, viewerUserId: string, { kind, ids }: CompareRequest): Promise<Comparison | null> {
+/** Only what the card shows to others (PD16), never the hidden religion or community (PD3c), and never the bio. */
+const personOf = ({ id, fullName, age, jobRole, whosMoving, budgetMin, budgetMax, moveDate }: Profile, { lifestyle, verified }: Pick<CardResponse, 'lifestyle' | 'verified'>) =>
+  ({ id, fullName, age, jobRole, whosMoving, budgetMin, budgetMax, moveDate, lifestyle, verified })
+
+/** The table of the selected cards, in the order of the request (T-49). Null: a card that the viewer cannot see. */
+export async function comparisonOf(db: Db, viewerUserId: string, { kind, ids }: CompareRequest): Promise<Comparison | null> {
   if (kind === 'person') {
     const [rows, answers] = await Promise.all([visibleCards(db, viewerUserId, ids), answersFor(db, ids)])
-    return rows.length === ids.length ? comparison.parse({ kind, options: inOrder(ids, rows).map((row) => cardView(row, answers(row.id), storage)) }) : null
+    return rows.length === ids.length ? comparison.parse({ kind, options: inOrder(ids, rows).map((row) => personOf(row, answers(row.id))) }) : null
   }
   const [rows, parts] = await Promise.all([visibleListings(db, viewerUserId, ids), partsOf(db, ids)])
-  const options = inOrder(ids, rows).map((listing) => placeOf(listing, parts(listing.id)))
-  return rows.length === ids.length && options.every(Boolean) ? comparison.parse({ kind, options }) : null
+  return rows.length === ids.length ? comparison.parse({ kind, options: inOrder(ids, rows).map((listing) => placeOf(listing, parts(listing.id))) }) : null
 }

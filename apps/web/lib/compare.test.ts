@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { Comparison } from '@roomsie/contract'
+import { toggled } from './chat'
 import { compareOf, compareRefusal, firstFields, fieldsOf, tableOf, toggledPick, type Picked } from './compare'
 
 const place = (id: string): Picked => ({ kind: 'place', id, name: `Place ${id}` })
@@ -44,12 +45,14 @@ describe('the table of a comparison', () => {
     ])
   })
 
-  it('shows the fields that the picker adds, in the order of the fields', () => {
-    expect(tableOf(places, ['furnishing', 'rent']).map((row) => row.label)).toEqual(['Rent', 'Furnishing'])
+  it('adds and removes the rows of the picker, in the order of the fields', () => {
+    const withFurnishing = toggled(firstFields.place, 'furnishing')
+    expect(tableOf(places, withFurnishing).map((row) => row.label)).toEqual(['Rent', 'Move-in cash', 'Deposit', 'Station', 'Furnishing'])
+    expect(tableOf(places, toggled(withFurnishing, 'deposit')).map((row) => row.label)).toEqual(['Rent', 'Move-in cash', 'Station', 'Furnishing'])
   })
 
   it('gives people the seven first rows, and the picker each field of the card', () => {
-    expect(firstFields.person).toHaveLength(7)
+    expect(firstFields.person).toEqual(['age', 'jobRole', 'budget', 'moveDate', 'food', 'smoking', 'verified'])
     expect(fieldsOf('person').map((field) => field.label)).toEqual(expect.arrayContaining(['Age', 'Job', 'Budget', 'Move date', 'Food', 'Smoking', 'Verified', 'Pets']))
     const people: Comparison = {
       kind: 'person',

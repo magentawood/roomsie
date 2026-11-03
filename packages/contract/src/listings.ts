@@ -169,6 +169,12 @@ export const placeTypeLabels: Record<(typeof placeTypes)[number], string> = {
 }
 export const roomTypeLabels: Record<(typeof listingRoomTypes)[number], string> = { private: 'Private room', shared: 'Shared room' }
 
+/** The money to move in: one month of the lowest rent, its deposit, and the brokerage of a broker flat. A PG gives its lowest rent. */
+export function moveInOf<R extends { rent: number; deposit: number | null }>(rates: readonly R[], brokerage: number | null) {
+  const rate = rates.toSorted((a, b) => a.rent - b.rent)[0]
+  return rate && { rate, total: rate.rent + (rate.deposit ?? 0) + (brokerage ?? 0) }
+}
+
 /** The title of a listing, in the web and in an alert: "2 BHK, full flat", "Private room in 3 BHK" or the PG name. */
 export function listingTitle(listing: Pick<ListingResponse, 'kind' | 'pgName' | 'placeType' | 'roomType'>) {
   if (listing.kind === 'pg') return listing.pgName ?? 'New listing'

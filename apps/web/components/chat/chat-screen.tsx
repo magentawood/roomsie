@@ -150,7 +150,11 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const waitlistOpen = panel === 'waitlist' && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
   const [draft, setDraft] = useState({ text: '', version: 0 })
-  const [picked, setPicked] = useState<Picked[]>([])
+  // A selection belongs to one list of results, so a new search starts a new one, and Option 1 is always the best match (T-49).
+  const [picks, setPicks] = useState({ key: '', picked: [] as Picked[] })
+  const resultsKey = shown ? formKey(shown.form) : ''
+  const picked = picks.key === resultsKey ? picks.picked : []
+  const setPicked = (next: Picked[]) => setPicks({ key: resultsKey, picked: next })
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
   const submit = (turn: Outgoing) => {
     setFailed(null)
@@ -167,7 +171,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   }
   // With two cards or more selected, a question gets their comparison (T-49). On a phone the chat comes back, so the answer shows.
   const sendText = (text: string) => {
-    const compare = compareOf(picked, shown?.found.results.map((result) => pickOf(result).id) ?? [])
+    const compare = compareOf(picked, shown ? [...shown.found.results, ...shown.found.suggested].map((result) => pickOf(result).id) : [])
     if (compare) setView('split')
     submit({ body: { text, ...(compare && { compare }) }, text })
   }
@@ -242,7 +246,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat}
-            picked={picked} onPick={(card) => setPicked(toggledPick(picked, card))} onClearPicks={() => setPicked([])} />
+            picks={{ picked, onPick: (card) => setPicked(toggledPick(picked, card)), onClear: () => setPicked([]) }} />
         </div>
       )}
       {panel === 'waitlist' && waitlist && (

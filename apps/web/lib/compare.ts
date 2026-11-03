@@ -1,16 +1,17 @@
 import { lifestyleAxes, listingTitle, maxCompared, type CompareKind, type CompareRequest, type Comparison, type LifestyleAxis, type MatchResult } from '@roomsie/contract'
 import { labels, rupees } from './listing-steps'
 import { budgetLine } from './person'
-import { shortDate } from './place-detail'
+import { ifSet, shortDate } from './place-detail'
 import { profileLabels } from './profile-form'
 
 /** A selected card, with the name of its chip above the input (T-49). */
 export type Picked = { kind: CompareKind; id: string; name: string }
+/** The selection of the results panel. */
+export type Picks = { picked: Picked[]; onPick: (card: Picked) => void; onClear: () => void }
 
 export const pickOf = (result: MatchResult): Picked =>
   result.kind === 'person' ? { kind: 'person', id: result.card.id, name: result.card.fullName } : { kind: 'place', id: result.listing.id, name: listingTitle(result.listing) }
 
-/** A second tap clears a card, a card of the other kind starts a new selection, and a fifth card changes nothing. */
 export function toggledPick(picked: Picked[], card: Picked): Picked[] {
   if (picked.some((p) => p.id === card.id)) return picked.filter((p) => p.id !== card.id)
   if (picked[0] && picked[0].kind !== card.kind) return [card]
@@ -28,8 +29,7 @@ type Option<K extends CompareKind> = Extract<Comparison, { kind: K }>['options']
 type Field<K extends CompareKind> = { label: string; text: (option: Option<K>) => string | null }
 
 const yesNo = (value: boolean) => (value ? 'Yes' : 'No')
-const money = (amount: number | null) => (amount === null ? null : rupees(amount))
-const answer = (axis: LifestyleAxis): Field<'person'> => ({
+const lifestyleField = (axis: LifestyleAxis): Field<'person'> => ({
   label: axis === 'your_days' ? 'Their days' : profileLabels.axes[axis],
   text: ({ lifestyle }) => { const value = lifestyle[axis]; return value ? (profileLabels.answers[axis] as Record<string, string>)[value]! : null },
 })
@@ -39,10 +39,10 @@ const fields = {
   place: {
     rent: { label: 'Rent', text: (o) => `${rupees(o.rent)}/mo` },
     moveInCash: { label: 'Move-in cash', text: (o) => rupees(o.moveInCash) },
-    deposit: { label: 'Deposit', text: (o) => money(o.deposit) },
+    deposit: { label: 'Deposit', text: (o) => ifSet(o.deposit, rupees) },
     station: { label: 'Station', text: (o) => [o.nearestStation, o.walkStation && labels.walkTime[o.walkStation]].filter(Boolean).join(', ') || null },
-    maintenance: { label: 'Maintenance', text: (o) => money(o.maintenance) },
-    brokerage: { label: 'Brokerage', text: (o) => money(o.brokerage) },
+    maintenance: { label: 'Maintenance', text: (o) => ifSet(o.maintenance, rupees) },
+    brokerage: { label: 'Brokerage', text: (o) => ifSet(o.brokerage, rupees) },
     availableFrom: { label: 'Available from', text: (o) => o.availableFrom && shortDate(o.availableFrom) },
     minStay: { label: 'Minimum stay', text: (o) => o.minStay && labels.minStay[o.minStay] },
     furnishing: { label: 'Furnishing', text: (o) => o.furnishing && labels.furnishing[o.furnishing] },
@@ -54,7 +54,7 @@ const fields = {
     budget: { label: 'Budget', text: budgetLine },
     moveDate: { label: 'Move date', text: (o) => o.moveDate && shortDate(o.moveDate) },
     whosMoving: { label: 'Who’s moving', text: (o) => (o.whosMoving === 'unclear' ? null : profileLabels.describesYou[o.whosMoving]) },
-    ...Object.fromEntries(lifestyleAxes.map((axis) => [axis, answer(axis)])) as Record<LifestyleAxis, Field<'person'>>,
+    ...Object.fromEntries(lifestyleAxes.map((axis) => [axis, lifestyleField(axis)])) as Record<LifestyleAxis, Field<'person'>>,
     verified: { label: 'Verified', text: (o) => yesNo(o.verified) },
   } satisfies Record<string, Field<'person'>>,
 }
@@ -63,12 +63,11 @@ const fields = {
 export const firstFields: Record<CompareKind, string[]> = {
   place: ['rent', 'moveInCash', 'deposit', 'station'],
   person: ['age', 'jobRole', 'budget', 'moveDate', 'food', 'smoking', 'verified'],
-}
+} satisfies { [K in CompareKind]: (keyof (typeof fields)[K])[] }
 
-/** The fields of the picker under a table. */
 export const fieldsOf = (kind: CompareKind) => Object.entries(fields[kind]).map(([field, { label }]) => ({ field, label }))
 
-/** The rows of the shown fields, in the order of the fields, with a dash for a value that the card does not have. */
+/** A dash for a value that the card does not have. */
 export function tableOf(table: Comparison, shown: string[]) {
   const all = Object.entries(fields[table.kind]) as [string, Field<CompareKind>][]
   return all.filter(([field]) => shown.includes(field))

@@ -75,10 +75,14 @@ export const ownerOfVisibleListing = (db: Db | Tx, listingId: string, viewerUser
     eq(listings.id, listingId), visibleListing(viewerUserId), activeOwner ? activeAccount(listings.ownerUserId) : undefined, ne(listings.ownerUserId, viewerUserId),
   ))
 
+/** The title of a row, whose room type can be `unclear`. */
+export const rowTitle = (listing: Pick<Listing, 'kind' | 'pgName' | 'placeType' | 'roomType'>) =>
+  listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType })
+
 export async function titleOf(db: Db, listingId: string) {
   const [listing] = await db.select({ kind: listings.kind, pgName: listings.pgName, placeType: listings.placeType, roomType: listings.roomType })
     .from(listings).where(eq(listings.id, listingId))
-  return listing && listingTitle({ ...listing, roomType: listing.roomType === 'unclear' ? null : listing.roomType })
+  return listing && rowTitle(listing)
 }
 
 /** A report or a moderator hides a listing for review (T-19); a dismiss shows it again. */

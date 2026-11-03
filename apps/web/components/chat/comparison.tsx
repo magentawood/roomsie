@@ -10,7 +10,7 @@ import { CheckChip } from '../ui/choice'
 
 /** The table of "Compare answer", which code builds from the database (T-49). The picker adds or removes rows with no new request. */
 export function ComparisonTable({ table }: { table: Comparison }) {
-  const [shown, setShown] = useState(firstFields[table.kind])
+  const [shown, setShown] = useState<string[]>(firstFields[table.kind])
   const nameOf = (option: Comparison['options'][number]) => ('title' in option ? option.title : option.fullName)
   return (
     <section aria-label="Comparison" className="flex flex-col gap-3">

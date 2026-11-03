@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { FaceSad, XClose } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
-import { pickOf, type Picked } from '../../lib/compare'
+import { pickOf, type Picked, type Picks } from '../../lib/compare'
 import { useAreaLabels, type useResults } from '../../lib/queries'
 import { countLine, didntSayLine, formKey, panelUpdate, type Found, type PanelState } from '../../lib/results'
 import { PlaceCard } from '../listings/place-card'
@@ -63,10 +63,8 @@ function MatchLabel({ result }: { result: MatchResult }) {
   return didntSay ? <Badge tone="gray" dot={false}>{didntSay}</Badge> : null
 }
 
-/** Picks: the "Selected" tick of "Listings selected". The sample results of a preview have none. */
-type Picks = { picked: Picked[]; onPick: (card: Picked) => void }
-
-function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?: Picks; onOpen: (result: MatchResult) => void }) {
+/** `picks`: the "Selected" tick of "Listings selected". The sample results of a preview have none. */
+function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   const areaLabels = useAreaLabels()
   return (
     <ul className="grid gap-4 sm:grid-cols-2">
@@ -92,7 +90,7 @@ function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?
 }
 
 /** "No relevant results" and the suggested posts of flow 02 (PD6c). */
-function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; picks?: Picks; onOpen: (result: MatchResult) => void }) {
+function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-3 py-6 text-center">
@@ -113,9 +111,9 @@ function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; pic
 }
 
 /** The results panel of flow 02: a pure function of Form A (PD6c). */
-export function ResultsPanel({ title, found, held: { hold, release }, more, sample, notice, picked, onPick, onClearPicks, onClose, onAskInChat }: {
+export function ResultsPanel({ title, found, held: { hold, release }, more, sample, notice, picks: { picked, onPick, onClear }, onClose, onAskInChat }: {
   title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode
-  picked: Picked[]; onPick: (card: Picked) => void; onClearPicks: () => void; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+  picks: Picks; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
 }) {
   const { user, loading } = useAuth()
   const router = useRouter()
@@ -167,7 +165,7 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
               {picked.length > 0 && (
                 <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-secondary bg-secondary py-2 pr-2 pl-4">
                   <p className="text-md font-medium text-primary">{picked.length} Selected</p>
-                  <Button variant="tertiary" size="sm" iconLeading={XClose} label="Clear the selection" onClick={onClearPicks} />
+                  <Button variant="tertiary" size="sm" iconLeading={XClose} label="Clear the selection" onClick={onClear} />
                 </div>
               )}
               {found.results.length
