@@ -35,6 +35,7 @@ export const queryKeys = {
   adminFeedback: ['admin', 'feedback'],
   site: ['site'],
   goal: (id: string) => ['goal', id],
+  waitlistJoins: (goalId: string) => ['waitlist', goalId],
   results: (formKey: string) => ['results', formKey],
 } as const
 

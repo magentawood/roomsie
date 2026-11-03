@@ -1,7 +1,7 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
+import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap, type WaitlistPlace } from '@roomsie/contract'
 import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
@@ -66,7 +66,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const deps = { ...options, req }
     const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn(input, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
-    const outsidePlaces = [...new Set([...goal.outsidePlaces, ...turn.outsidePlaces])]
+    // A place that a turn names again moves to the end, so the newest place is last (T-22b).
+    const named = new Set<WaitlistPlace>(turn.outsidePlaces)
+    const outsidePlaces = [...goal.outsidePlaces.filter((place) => !named.has(place)), ...named]
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form: turn.form, outsidePlaces }, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
@@ -86,7 +88,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     return reply.code(204).send(null)
   })
 
-  // Three emails a chat, for each waitlist place: a script must first pass the chat limits (T-22a, T-22b).
+  // Three emails a chat: a script must first pass the chat limits (T-22a).
   app.post('/goals/:id/waitlist', {
     preHandler: optionalUser(options),
     schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 429: errorResponse } },

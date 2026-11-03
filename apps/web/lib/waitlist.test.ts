@@ -7,7 +7,7 @@ const stated = <T,>(value: T) => ({ source: 'stated' as const, value })
 const ready = formA.parse({ intent: stated('room'), areas: stated(['bandra']), budget: stated({ min: null, max: 25_000 }) })
 
 describe('the content of the panel (PD6c)', () => {
-  it('gives the results for a Mumbai area, also in a sub-area or a pocket', () => {
+  it('gives the results for a Mumbai sub-area or area group', () => {
     expect(panelContent(ready, [])).toBe('results')
     expect(panelContent(formA.parse({ ...ready, areas: stated(['powai-vikhroli']) }), [])).toBe('results')
   })
@@ -31,6 +31,8 @@ describe('the typed area of the waitlist form', () => {
     expect(placeOf('Pune')).toBe('pune')
     expect(placeOf('  bangalore ')).toBe('bengaluru')
     expect(placeOf('Vasai-Virar')).toBe('vasai-virar')
+    expect(placeOf('Vasai Virar')).toBe('vasai-virar')
+    expect(placeOf('Pimpri-Chinchwad')).toBe('pune')
     expect(placeOf('पुणे')).toBe('pune')
   })
 

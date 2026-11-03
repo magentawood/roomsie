@@ -616,9 +616,10 @@ describe('the places outside Mumbai (T-22a)', () => {
     const first = await sent(goal, 'Powai ya Vasai mein room')
     expect(first.form.areas).toEqual({ source: 'stated', value: ['powai'] })
     expect(first.outsidePlaces).toEqual(['vasai-virar'])
-    expect((await sent(goal, 'पुण्यात पण चालेल, Virar bhi')).outsidePlaces).toEqual(['vasai-virar', 'pune'])
-    expect((await sent(goal, 'budget 20k')).outsidePlaces).toEqual(['vasai-virar', 'pune'])
-    expect((await read(goal)).outsidePlaces).toEqual(['vasai-virar', 'pune'])
+    // A place that a turn names again moves to the end, so the newest place is last (T-22b).
+    expect((await sent(goal, 'पुण्यात पण चालेल, Virar bhi')).outsidePlaces).toEqual(['pune', 'vasai-virar'])
+    expect((await sent(goal, 'budget 20k')).outsidePlaces).toEqual(['pune', 'vasai-virar'])
+    expect((await read(goal)).outsidePlaces).toEqual(['pune', 'vasai-virar'])
   })
 
   it('gives the outside place of a question, which fills no slot (PD10)', async () => {
