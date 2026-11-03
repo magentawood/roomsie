@@ -65,8 +65,8 @@ function slotValueOf(tap: ChipTap) {
 const isAreaGroup = (catalogue: Catalogue, slug: string) => catalogue.bySlug.get(slug)?.parent === null
 
 /** The reply to answers that need no model: a chip tap, or the answers of the onboarding (PD9, T-48). */
-const scriptedReply = (input: Omit<TurnInput, 'goalId'>, form: FormA, changed: FormASlot[], deps: AssistantDeps) =>
-  replyWriter({ ...input, text: '', ...noExtraction(form, false), changed, label: tapLabel, language: languageOf(input.lastRegister) }, deps)
+const scriptedReply = ({ last, lastRegister }: Pick<TurnInput, 'last' | 'lastRegister'>, form: FormA, changed: FormASlot[], deps: AssistantDeps) =>
+  replyWriter({ ...noExtraction(form, false), changed, last, label: tapLabel, language: languageOf(lastRegister) }, deps)
 
 /** The answers of the onboarding, before the goal exists (T-48). Null: an area that is not an area group. */
 export async function runStart(input: Omit<TurnInput, 'goalId'> & { start: GoalStart }, deps: AssistantDeps) {
@@ -85,6 +85,5 @@ export async function runTap(input: TurnInput & { tap: ChipTap }, deps: Assistan
   const text = tapText(tap, (slug) => catalogue.bySlug.get(slug)!.name)
   // A tap answers its slot: its value replaces an earlier value, also a list of areas (T-09).
   const form = formA.parse({ ...input.form, [tap.slot]: { source: 'stated', value: slotValueOf(tap) } })
-  // A tap states no religion and no community.
-  return { text, form, reply: await scriptedReply(input, form, [tap.slot], deps), ownValues: noExtraction(form, false).ownValues }
+  return { text, form, reply: await scriptedReply(input, form, [tap.slot], deps), ownValues: { religion: null, community: null } }
 }

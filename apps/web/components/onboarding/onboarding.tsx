@@ -18,7 +18,7 @@ import { Button } from '../ui/button'
 import { ChoiceCard, ChoiceChips } from '../ui/choice'
 import { StepBar } from '../ui/step-bar'
 
-/** Each step of the Product file: its words, its art, and the part of the art in the band of a phone, then on a computer. */
+/** `position`: the crop of the art on a phone, then on a computer. */
 const screens: Record<Step, { title: string; text?: string; art: string; position: string }> = {
   purpose: { title: 'What brings you to Roomsie?', art: 'purpose', position: 'object-[50%_77%] lg:object-[33%_50%]' },
   whosMoving: { title: 'Who’s moving?', text: 'So I show you the right kind of places.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },

@@ -27,7 +27,7 @@ function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage) {
  * and the open ones that the answer did not settle. Then each name of two areas, then an unclear must-have weight (PD15),
  * then the next empty or unclear slot.
  */
-export async function replyWriter(turn: Omit<TurnState, 'goalId'> & { label: TurnLabel; language: ReplyLanguage }, deps: AssistantDeps) {
+export async function replyWriter(turn: Pick<TurnState, 'form' | 'changed' | 'conflicts' | 'settled' | 'ambiguous' | 'failed' | 'last'> & { label: TurnLabel; language: ReplyLanguage }, deps: AssistantDeps) {
   const { form, changed, conflicts, settled, ambiguous, failed, last, label, language } = turn
   return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label, language }), deps))
 }

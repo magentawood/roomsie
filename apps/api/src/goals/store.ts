@@ -71,7 +71,7 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
-  // Only saveTurn and createGoal write an assistant turn, and no row is older than this schema: T-12 is the first code that writes parts.
+  // Only saveTurn and createGoal write assistant turns, each with parts (T-12).
   const parts = assistantParts.parse(last.parts)
   return { ...parts, question: parts.question ?? last.text }
 }

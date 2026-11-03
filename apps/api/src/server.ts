@@ -55,6 +55,16 @@ declare module 'fastify' {
 /** The date of today in Mumbai, as an ISO date. */
 const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
+type RequestBody = { required?: boolean; content?: Record<string, { schema?: { nullable?: boolean } }> }
+
+/** A route that also takes no body has a nullable body schema, but the generator writes each body as required (T-48). */
+function withOptionalBodies<T extends { paths?: object }>(openapi: T): T {
+  for (const path of Object.values(openapi.paths ?? {}) as Record<string, { requestBody?: RequestBody }>[]) {
+    for (const { requestBody } of Object.values(path)) if (requestBody?.content?.['application/json']?.schema?.nullable) requestBody.required = false
+  }
+  return openapi
+}
+
 export function buildServer(options: { webOrigin: string; storage: Storage; messaging: Messaging; mailer?: Mailer; idStore?: IdStore; analyticsDb?: AnalyticsDb; models?: Models; matching?: Matching; assistant?: AssistantSettings; limits?: LimitSettings; spend?: SpendSettings; today?: () => string } & AuthOptions) {
   // The load balancer of Lightsail adds the address of the person as the last X-Forwarded-For entry (T-21).
   const app = Fastify({ trustProxy: (_address: string, hop: number) => hop === 0, logger: { redact: ['req.headers.authorization', 'req.headers["x-visitor-key"]', 'req.remoteAddress'] } }).withTypeProvider<ZodTypeProvider>()
@@ -88,6 +98,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.register(swagger, {
     openapi: { info: { title: 'roomsie API', version: '1' } },
     transform: jsonSchemaTransform,
+    transformObject: (document) => ('openapiObject' in document ? withOptionalBodies(document.openapiObject) : document.swaggerObject),
   })
   app.register(
     async (v1) => {
