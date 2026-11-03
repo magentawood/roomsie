@@ -8,6 +8,7 @@ start: 2026-11-25
 end: 2026-11-25
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/208
 tags:
   - task
   - p3
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P3 Data and trust]], task 20 of 20  
 **When:** Wed 25 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#208](https://github.com/magentawood/roomsie/issues/208)
 
 After the first sign-in, a pop-up asks the basic details and starts the profile.
 

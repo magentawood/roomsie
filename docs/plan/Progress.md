@@ -64,7 +64,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 0 | [[T-50 Found a place, share, feedback]] | P3 | 4 | ⬜ can start | 0 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | 0 | [[T-59 More chips]] | P2 | 5 | ⬜ can start | 0 | [#198](https://github.com/magentawood/roomsie/issues/198) |
-| 0 | [[T-60 Profile pop-up]] | P3 | 3 | ⬜ can start | 0 | no issue at this time |
+| 0 | [[T-60 Profile pop-up]] | P3 | 3 | ⬜ can start | 0 | [#208](https://github.com/magentawood/roomsie/issues/208) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 1 | [[T-49 Compare cards]] | P3 | 4 | ⬜ waits | 0 | [#125](https://github.com/magentawood/roomsie/issues/125) |
