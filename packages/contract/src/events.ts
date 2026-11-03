@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { formASlots, rateLimits, scopeBands } from './goals'
+import { closeAnswer, formASlots, rateLimits, scopeBands } from './goals'
 import { modelRoles, modelUsage } from './models'
 import { reportReasons } from './reports'
 
@@ -27,5 +27,8 @@ export const analyticsEvent = z.discriminatedUnion('name', [
   z.strictObject({ name: z.literal('report_filed'), eventVersion: version1, subject: target, reason: z.enum(reportReasons) }),
   /** A rate limit that stopped a person: the metric of PD9 that shows if a limit stops human users (T-21). */
   z.strictObject({ name: z.literal('limit_hit'), eventVersion: version1, limit: z.enum(rateLimits) }),
+  /** A goal that its owner closed, with the answer of "Where did you find it?" (T-50). */
+  z.strictObject({ name: z.literal('goal_closed'), eventVersion: version1, where: closeAnswer }),
+  z.strictObject({ name: z.literal('goal_reopened'), eventVersion: version1 }),
 ])
 export type AnalyticsEvent = z.input<typeof analyticsEvent>

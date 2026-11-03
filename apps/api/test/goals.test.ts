@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { and, count, eq, sql } from 'drizzle-orm'
-import { goalResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
+import { goalResponse, goalsResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
 import { anonymousSessions, areas, chatTurns, goals, waitlist } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -730,5 +730,62 @@ describe('the waitlist (T-22a)', () => {
     expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/turns`, { text: 'room in Pune' })).statusCode).toBe(200)
     expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/waitlist`, { email: 'asha@example.com', place: 'pune' })).statusCode).toBe(204)
     expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/waitlist`, { email: 'ravi@example.com', place: 'pune' })).statusCode).toBe(404)
+  })
+})
+
+describe('the list, the close and the reopen of goals (T-50)', () => {
+  const asVisitor = (goal: { id: string; key: string }, method: 'GET' | 'POST', url: string, payload?: object) =>
+    t.app.inject({ method, url, payload, headers: { [visitorKeyHeader]: goal.key } })
+  const listOf = async (who: 'asha' | { id: string; key: string }) =>
+    goalsResponse.parse((typeof who === 'string' ? await t.call(who, 'GET', '/v1/goals') : await asVisitor(who, 'GET', '/v1/goals')).json()).goals
+  const eventsOf = async (name: string) => {
+    await t.flushEvents()
+    return (await analytics.db.select().from(eventRows).where(eq(eventRows.name, name)).orderBy(eventRows.createdAt, eventRows.id)).map((e) => e.fields)
+  }
+
+  it('lists the goals of a person and of a visitor, newest first, with their titles', async () => {
+    const older = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals', { intent: 'room', area: 'andheri-goregaon' })).json())
+    const newer = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
+    expect((await listOf('asha')).slice(0, 2)).toEqual([
+      { id: newer.id, title: 'New goal', status: 'open', createdAt: expect.any(String) },
+      { id: older.id, title: 'Room hunting in Andheri–Goregaon', status: 'open', createdAt: expect.any(String) },
+    ])
+    const visitor = await visitorGoal()
+    expect(await listOf(visitor)).toEqual([{ id: visitor.id, title: 'New goal', status: 'open', createdAt: expect.any(String) }])
+    expect(goalsResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/goals' })).json()).goals).toEqual([])
+  })
+
+  it('closes a goal only for its owner, keeps the answer in the event, and refuses a turn and a tap until a reopen', async () => {
+    const goal = await visitorGoal()
+    const other = await visitorGoal()
+    const [closedBefore, reopenedBefore] = [(await eventsOf('goal_closed')).length, (await eventsOf('goal_reopened')).length]
+    expect((await asVisitor(other, 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })).statusCode).toBe(404)
+    expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })).statusCode).toBe(404)
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'nowhere' })).statusCode).toBe(400)
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'elsewhere' })).statusCode).toBe(204)
+    // A second close changes nothing, so it logs nothing.
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'roomsie' })).statusCode).toBe(204)
+    expect((await eventsOf('goal_closed')).slice(closedBefore)).toEqual([{ where: 'elsewhere' }])
+    expect(goalResponse.parse((await asVisitor(goal, 'GET', `/v1/goals/${goal.id}`)).json()).status).toBe('closed')
+    expect((await listOf(goal))[0]!.status).toBe('closed')
+
+    const requests = fakeVendors({})
+    const typed = await send(goal, 'a room in Powai')
+    expect([typed.statusCode, typed.json()]).toEqual([409, { error: 'This goal is closed. Reopen it to keep chatting.' }])
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/turns`, { tap: { slot: 'intent', value: 'room' } })).statusCode).toBe(409)
+    expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
+
+    expect((await asVisitor(other, 'POST', `/v1/goals/${goal.id}/reopen`)).statusCode).toBe(404)
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/reopen`)).statusCode).toBe(204)
+    expect((await eventsOf('goal_reopened')).length).toBe(reopenedBefore + 1)
+    expect(goalResponse.parse((await asVisitor(goal, 'GET', `/v1/goals/${goal.id}`)).json()).status).toBe('open')
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/turns`, { tap: { slot: 'intent', value: 'room' } })).statusCode).toBe(200)
+  })
+
+  it('closes the goal of a signed-in person, and not the goal of a different person', async () => {
+    const goal = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
+    expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(404)
+    expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(204)
+    expect((await listOf('asha')).find(({ id }) => id === goal.id)!.status).toBe('closed')
   })
 })

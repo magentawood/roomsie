@@ -6,6 +6,12 @@ export const listAreas = (db: Db) =>
   db.select({ slug: areas.slug, name: areas.name, parent: areas.parentSlug, aliases: areas.aliases })
     .from(areas).orderBy(asc(areas.sortOrder))
 
+/** The names of these areas, by slug. */
+export async function areaNames(db: Db, slugs: string[]) {
+  const rows = slugs.length ? await db.select({ slug: areas.slug, name: areas.name }).from(areas).where(inArray(areas.slug, slugs)) : []
+  return new Map(rows.map(({ slug, name }) => [slug, name]))
+}
+
 /** The slugs of these that are areas. */
 export const knownAreas = (db: Db, slugs: string[]) => db.select({ slug: areas.slug }).from(areas).where(inArray(areas.slug, slugs))
 

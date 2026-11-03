@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
+import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences, type FormA } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { comparison, compareRequest } from './compare'
 import { observation } from './form-b'
@@ -25,7 +25,11 @@ export const chatTurn = z.object({
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
 /** Each place outside Mumbai that any turn of the goal named, for the waitlist (PD6c). */
 const outsidePlaces = z.array(waitlistPlace).default([])
-export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces })
+/** A goal closes when the person found a place or dropped the plan, and a reopen opens it again (T-50). */
+export const goalStatuses = ['open', 'closed'] as const
+export const goalStatus = z.enum(goalStatuses)
+export type GoalStatus = z.infer<typeof goalStatus>
+export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces, status: goalStatus.default('open') })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
@@ -209,3 +213,19 @@ export type ComposerInput = z.output<typeof composerInput>
 export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
 /** What the composer gives: the words of the reply, after the output check. */
 export const composerOutput = composerAnswer.strict()
+
+const titleLeads = {
+  room: 'Room hunting in', pg: 'PG hunting in', whole_flat: 'Flat hunting in', flatmates: 'Teaming up to rent around', unclear: 'Looking in',
+} satisfies Record<(typeof intents)[number], string>
+
+/** The title of a goal, from its place type and its first area, as the designs name a goal. */
+export function goalTitle(form: FormA, label: (slug: string) => string) {
+  const area = Array.isArray(form.areas.value) ? form.areas.value[0] : undefined
+  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${label(area)}` : 'New goal'
+}
+
+export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), title: z.string(), status: goalStatus, createdAt: z.iso.datetime() })) })
+export type GoalsResponse = z.infer<typeof goalsResponse>
+/** The answer of the pop-up "Where did you find it?". Only the event keeps it. */
+export const closeAnswer = z.enum(['roomsie', 'elsewhere', 'dropped'])
+export const closeGoalBody = z.strictObject({ where: closeAnswer })

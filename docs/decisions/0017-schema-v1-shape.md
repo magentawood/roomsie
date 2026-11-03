@@ -9,7 +9,7 @@
 
 **Goals and the chat**
 
-- A `goals` row is one move: a title, its own search state, a status (open or found) and one owner. The owner is a visitor's session or a user, never both.
+- A `goals` row is one move: a title, its own search state, a status (open or closed: the person found a place or dropped the plan, T-50) and one owner. The owner is a visitor's session or a user, never both.
 - `chat_turns` belongs to a goal, and stores both sides of the chat. An assistant turn keeps the cards and chips that it showed, as JSON. A user turn records if the user typed it or tapped a chip.
 - The profile keeps its own "Your search" for the card. "Fill using our chat" copies from a goal.
 

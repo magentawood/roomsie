@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { feedbackResponse } from '@roomsie/contract'
+import { feedbackResponse, newGoalResponse, visitorKeyHeader } from '@roomsie/contract'
 import { feedback } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -26,16 +26,50 @@ describe('feedback', () => {
     })))
     const items = await listed()
     expect(items).toHaveLength(100)
-    expect(items[0]).toEqual({ id: expect.any(String), text: 'Note 101', createdAt: expect.any(String) })
+    expect(items[0]).toEqual({ id: expect.any(String), text: 'Note 101', rating: null, createdAt: expect.any(String) })
     expect(items.at(-1)!.text).toBe('Note 2')
     expect((await t.call('seeker', 'GET', '/v1/admin/feedback')).statusCode).toBe(404)
     expect((await t.call(null, 'GET', '/v1/admin/feedback')).statusCode).toBe(401)
   })
 
-  it('goes when its person deletes the account', async () => {
+  it('goes when its person deletes the account, also the feedback of a closed goal', async () => {
     expect((await send('leaver', 'Bye')).statusCode).toBe(204)
+    const goal = await closedGoal('leaver')
+    expect((await t.call('leaver', 'POST', `/v1/goals/${goal}/feedback`, { rating: 'bad', text: 'Bye again' })).statusCode).toBe(204)
     expect((await send('seeker', 'Stay')).statusCode).toBe(204)
     expect((await t.call('leaver', 'DELETE', '/v1/me')).statusCode).toBe(204)
     expect((await t.db.select().from(feedback)).map((f) => f.text)).toEqual(['Stay'])
+  })
+})
+
+/** A goal that its owner closed: the pop-up of the feedback follows a close (T-50). */
+async function closedGoal(who: 'seeker' | 'leaver') {
+  const goal = newGoalResponse.parse((await t.call(who, 'POST', '/v1/goals')).json()).id
+  expect((await t.call(who, 'POST', `/v1/goals/${goal}/close`, { where: 'roomsie' })).statusCode).toBe(204)
+  return goal
+}
+
+describe('the feedback of a closed goal (T-50)', () => {
+  it('takes a face and optional words from the owner of a closed goal, one time for each goal', async () => {
+    const open = newGoalResponse.parse((await t.call('seeker', 'POST', '/v1/goals')).json()).id
+    expect((await t.call('seeker', 'POST', `/v1/goals/${open}/feedback`, { rating: 'good' })).statusCode).toBe(409)
+    const goal = await closedGoal('seeker')
+    expect((await t.call('moderator', 'POST', `/v1/goals/${goal}/feedback`, { rating: 'good' })).statusCode).toBe(404)
+    expect((await t.call('seeker', 'POST', `/v1/goals/${goal}/feedback`, { text: 'No face' })).statusCode).toBe(400)
+    expect((await t.call('seeker', 'POST', `/v1/goals/${goal}/feedback`, { rating: 'great' })).statusCode).toBe(400)
+    expect((await t.call('seeker', 'POST', `/v1/goals/${goal}/feedback`, { rating: 'good' })).statusCode).toBe(204)
+    expect((await t.call('seeker', 'POST', `/v1/goals/${goal}/feedback`, { rating: 'bad', text: 'Again' })).statusCode).toBe(409)
+    expect((await t.db.select().from(feedback)).map(({ userId, goalId, rating, text }) => ({ userId, goalId, rating, text }))).toEqual([
+      { userId: null, goalId: goal, rating: 'good', text: null },
+    ])
+  })
+
+  it('takes the feedback of a visitor for the closed goal of the visitor, and the list shows the face with no sender', async () => {
+    const made = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
+    const asVisitor = (url: string, payload?: object) => t.app.inject({ method: 'POST', url, payload, headers: { [visitorKeyHeader]: made.visitorKey! } })
+    expect((await asVisitor(`/v1/goals/${made.id}/close`, { where: 'elsewhere' })).statusCode).toBe(204)
+    expect((await t.call(null, 'POST', `/v1/goals/${made.id}/feedback`, { rating: 'satisfied' })).statusCode).toBe(404)
+    expect((await asVisitor(`/v1/goals/${made.id}/feedback`, { rating: 'satisfied', text: 'Found a flat in two days' })).statusCode).toBe(204)
+    expect(await listed()).toEqual([{ id: expect.any(String), text: 'Found a flat in two days', rating: 'satisfied', createdAt: expect.any(String) }])
   })
 })

@@ -1,7 +1,8 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalsResponse, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import { areaNames } from '../areas'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, type Owner } from '../observations/read'
@@ -52,8 +53,26 @@ export function createGoal(db: Db, asker: Asker, start?: { form: FormA; reply: A
 }
 
 export async function goalOf(db: Db, id: string, asker: Asker) {
-  const [row] = await db.select({ id: goals.id, form: goals.form, outsidePlaces: goals.outsidePlaces, updatedAt: goals.updatedAt }).from(goals).where(and(eq(goals.id, id), ownedBy(asker)))
+  const [row] = await db.select({ id: goals.id, form: goals.form, outsidePlaces: goals.outsidePlaces, status: goals.status, updatedAt: goals.updatedAt })
+    .from(goals).where(and(eq(goals.id, id), ownedBy(asker)))
   return row && { ...row, form: formA.parse(row.form) }
+}
+
+/** The goals of the asker, newest first, with the title that the designs give a goal (T-50). */
+export async function goalsOf(db: Db, asker: Asker): Promise<GoalsResponse['goals']> {
+  const rows = await db.select({ id: goals.id, form: goals.form, status: goals.status, createdAt: goals.createdAt })
+    .from(goals).where(ownedBy(asker)).orderBy(desc(goals.createdAt))
+  const forms = rows.map(({ form }) => formA.parse(form))
+  const names = await areaNames(db, forms.flatMap(({ areas }) => (Array.isArray(areas.value) ? areas.value.slice(0, 1) : [])))
+  return rows.map(({ id, status, createdAt }, i) => ({ id, status, title: goalTitle(forms[i]!, (slug) => names.get(slug) ?? slug), createdAt: createdAt.toISOString() }))
+}
+
+/** A close or a reopen by the owner (T-50). Null: no goal of the asker. False: the goal had that status already. */
+export async function setGoalStatus(db: Db, id: string, asker: Asker, status: GoalStatus) {
+  // A new updated_at stops a turn that another tab started before the change (saveTurn).
+  const [changed] = await db.update(goals).set({ status, updatedAt: new Date() })
+    .where(and(eq(goals.id, id), ownedBy(asker), ne(goals.status, status))).returning({ id: goals.id })
+  return changed ? true : (await goalOf(db, id, asker)) ? false : null
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }

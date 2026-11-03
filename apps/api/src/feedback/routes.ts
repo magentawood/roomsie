@@ -5,7 +5,7 @@ import { errorResponse, feedbackBody, feedbackResponse, noContent } from '@rooms
 import { requireModerator, requireUser, type AuthOptions } from '../auth'
 import { feedback } from '../db/schema'
 
-/** Feedback from a signed-in person, which the moderators read (T-23a). T-50 sends to the same route. */
+/** Feedback from a signed-in person, which the moderators read (T-23a). The feedback of a closed goal goes through the goal routes (T-50). */
 export function feedbackRoutes(v1: FastifyInstance, options: AuthOptions) {
   const { db } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
@@ -16,7 +16,7 @@ export function feedbackRoutes(v1: FastifyInstance, options: AuthOptions) {
   })
 
   app.get('/admin/feedback', { preHandler: requireModerator(options), schema: { response: { 200: feedbackResponse, 404: errorResponse } } }, async () => {
-    const rows = await db.select({ id: feedback.id, text: feedback.text, createdAt: feedback.createdAt })
+    const rows = await db.select({ id: feedback.id, text: feedback.text, rating: feedback.rating, createdAt: feedback.createdAt })
       .from(feedback).orderBy(desc(feedback.createdAt)).limit(100)
     return { feedback: rows.map((f) => ({ ...f, createdAt: f.createdAt.toISOString() })) }
   })
