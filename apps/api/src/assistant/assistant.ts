@@ -37,10 +37,7 @@ export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 /** With cards selected, a question gets the comparison, and a message with filters goes to the normal chat (T-49). */
 const comparesOn = (label: TurnLabel) => onlyQuestion(label) && aboutTheSearch(label) && label.band !== 'sensitive' && !label.danger
 
-/**
- * The scripted reply of a comparison: code builds the table, and no model reads a card (scope-policy.md). A 2b question gets
- * the hand-off first (PD10). The question and the conflicts of the last reply stay open, so the next turn goes on with them.
- */
+/** No model reads a card (scope-policy.md). The question and the conflicts of the last reply stay open. */
 function comparisonReply(table: Comparison, { language, label, last }: { language: ReplyLanguage; label: TurnLabel; last: AssistantParts | null }): AssistantReply {
   const lead = label.band === 'consequential' ? `${lineOf('handoff', language)} ` : ''
   const best = lineOf('compareBest', language)

@@ -1,6 +1,7 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { assistantParts, goalResponse, listingResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type CompareRequest } from '@roomsie/contract'
 import { desc, eq } from 'drizzle-orm'
+import { uuidv7 } from 'uuidv7'
 import { chatTurns } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { testApp, type TestApp } from './app'
@@ -112,6 +113,12 @@ describe('the comparison of selected cards (T-49)', () => {
     expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
   })
 
+  it('refuses the own listing of the person, which the results never show', async () => {
+    fakeVendors({})
+    const own = newGoalResponse.parse((await t.call('owner', 'POST', '/v1/goals')).json())
+    expect((await ask('compare', { kind: 'place', ids: [ids.owner, ids.pg] }, 'owner', own.id)).statusCode).toBe(400)
+  })
+
   it('reads a person card only through the visibility rules', async () => {
     expect(profileResponse.parse((await t.call('ravi', 'PATCH', '/v1/me/profile', { hidden: true })).json()).visibility).toBe('hidden')
     fakeVendors({})
@@ -129,5 +136,12 @@ describe('the comparison of selected cards (T-49)', () => {
     })
     expect(people[0]!.options[1]).toMatchObject({ fullName: 'Ravi Shah' })
     expect(JSON.stringify(goal)).not.toMatch(/Asha|Designer/)
+  })
+
+  it('turns a blocked person into "Not available" in the saved comparisons of the blocker', async () => {
+    expect((await t.call('seeker', 'POST', '/v1/blocks', { id: uuidv7(), profileId: people[1] })).statusCode).toBe(204)
+    const goal = goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json())
+    const table = goal.turns.flatMap((turn) => (turn.comparison?.kind === 'person' ? [turn.comparison] : []))[0]!
+    expect(table.options[1]).toMatchObject({ id: people[1], fullName: 'Not available', age: null, jobRole: null, lifestyle: {} })
   })
 })

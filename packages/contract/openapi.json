@@ -15815,25 +15815,6 @@
                                           "format": "uuid",
                                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                                         },
-                                        "title": {
-                                          "type": "string"
-                                        },
-                                        "rent": {
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "maximum": 100000000
-                                        },
-                                        "deposit": {
-                                          "nullable": true,
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "maximum": 100000000
-                                        },
-                                        "moveInCash": {
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "maximum": 100000000
-                                        },
                                         "maintenance": {
                                           "nullable": true,
                                           "type": "integer",
@@ -15848,7 +15829,9 @@
                                         },
                                         "nearestStation": {
                                           "nullable": true,
-                                          "type": "string"
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 120
                                         },
                                         "walkStation": {
                                           "nullable": true,
@@ -15888,14 +15871,29 @@
                                         },
                                         "verified": {
                                           "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "string"
+                                        },
+                                        "rent": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "deposit": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveInCash": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
                                         }
                                       },
                                       "required": [
                                         "id",
-                                        "title",
-                                        "rent",
-                                        "deposit",
-                                        "moveInCash",
                                         "maintenance",
                                         "brokerage",
                                         "nearestStation",
@@ -15903,7 +15901,11 @@
                                         "availableFrom",
                                         "minStay",
                                         "furnishing",
-                                        "verified"
+                                        "verified",
+                                        "title",
+                                        "rent",
+                                        "deposit",
+                                        "moveInCash"
                                       ],
                                       "additionalProperties": false
                                     }
@@ -17750,25 +17752,6 @@
                                           "format": "uuid",
                                           "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                                         },
-                                        "title": {
-                                          "type": "string"
-                                        },
-                                        "rent": {
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "maximum": 100000000
-                                        },
-                                        "deposit": {
-                                          "nullable": true,
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "maximum": 100000000
-                                        },
-                                        "moveInCash": {
-                                          "type": "integer",
-                                          "minimum": 0,
-                                          "maximum": 100000000
-                                        },
                                         "maintenance": {
                                           "nullable": true,
                                           "type": "integer",
@@ -17783,7 +17766,9 @@
                                         },
                                         "nearestStation": {
                                           "nullable": true,
-                                          "type": "string"
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 120
                                         },
                                         "walkStation": {
                                           "nullable": true,
@@ -17823,14 +17808,29 @@
                                         },
                                         "verified": {
                                           "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "string"
+                                        },
+                                        "rent": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "deposit": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveInCash": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
                                         }
                                       },
                                       "required": [
                                         "id",
-                                        "title",
-                                        "rent",
-                                        "deposit",
-                                        "moveInCash",
                                         "maintenance",
                                         "brokerage",
                                         "nearestStation",
@@ -17838,7 +17838,11 @@
                                         "availableFrom",
                                         "minStay",
                                         "furnishing",
-                                        "verified"
+                                        "verified",
+                                        "title",
+                                        "rent",
+                                        "deposit",
+                                        "moveInCash"
                                       ],
                                       "additionalProperties": false
                                     }
@@ -19792,25 +19796,6 @@
                                               "format": "uuid",
                                               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                                             },
-                                            "title": {
-                                              "type": "string"
-                                            },
-                                            "rent": {
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 100000000
-                                            },
-                                            "deposit": {
-                                              "nullable": true,
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 100000000
-                                            },
-                                            "moveInCash": {
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 100000000
-                                            },
                                             "maintenance": {
                                               "nullable": true,
                                               "type": "integer",
@@ -19825,7 +19810,9 @@
                                             },
                                             "nearestStation": {
                                               "nullable": true,
-                                              "type": "string"
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 120
                                             },
                                             "walkStation": {
                                               "nullable": true,
@@ -19865,14 +19852,29 @@
                                             },
                                             "verified": {
                                               "type": "boolean"
+                                            },
+                                            "title": {
+                                              "type": "string"
+                                            },
+                                            "rent": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "deposit": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "moveInCash": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
                                             }
                                           },
                                           "required": [
                                             "id",
-                                            "title",
-                                            "rent",
-                                            "deposit",
-                                            "moveInCash",
                                             "maintenance",
                                             "brokerage",
                                             "nearestStation",
@@ -19880,7 +19882,11 @@
                                             "availableFrom",
                                             "minStay",
                                             "furnishing",
-                                            "verified"
+                                            "verified",
+                                            "title",
+                                            "rent",
+                                            "deposit",
+                                            "moveInCash"
                                           ],
                                           "additionalProperties": false
                                         }
@@ -20126,25 +20132,6 @@
                                               "format": "uuid",
                                               "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
                                             },
-                                            "title": {
-                                              "type": "string"
-                                            },
-                                            "rent": {
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 100000000
-                                            },
-                                            "deposit": {
-                                              "nullable": true,
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 100000000
-                                            },
-                                            "moveInCash": {
-                                              "type": "integer",
-                                              "minimum": 0,
-                                              "maximum": 100000000
-                                            },
                                             "maintenance": {
                                               "nullable": true,
                                               "type": "integer",
@@ -20159,7 +20146,9 @@
                                             },
                                             "nearestStation": {
                                               "nullable": true,
-                                              "type": "string"
+                                              "type": "string",
+                                              "minLength": 1,
+                                              "maxLength": 120
                                             },
                                             "walkStation": {
                                               "nullable": true,
@@ -20199,14 +20188,29 @@
                                             },
                                             "verified": {
                                               "type": "boolean"
+                                            },
+                                            "title": {
+                                              "type": "string"
+                                            },
+                                            "rent": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "deposit": {
+                                              "nullable": true,
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
+                                            },
+                                            "moveInCash": {
+                                              "type": "integer",
+                                              "minimum": 0,
+                                              "maximum": 100000000
                                             }
                                           },
                                           "required": [
                                             "id",
-                                            "title",
-                                            "rent",
-                                            "deposit",
-                                            "moveInCash",
                                             "maintenance",
                                             "brokerage",
                                             "nearestStation",
@@ -20214,7 +20218,11 @@
                                             "availableFrom",
                                             "minStay",
                                             "furnishing",
-                                            "verified"
+                                            "verified",
+                                            "title",
+                                            "rent",
+                                            "deposit",
+                                            "moveInCash"
                                           ],
                                           "additionalProperties": false
                                         }

@@ -6,7 +6,6 @@ import { profileLabels } from './profile-form'
 
 /** A selected card, with the name of its chip above the input (T-49). */
 export type Picked = { kind: CompareKind; id: string; name: string }
-/** The selection of the results panel. */
 export type Picks = { picked: Picked[]; onPick: (card: Picked) => void; onClear: () => void }
 
 export const pickOf = (result: MatchResult): Picked =>
@@ -67,17 +66,13 @@ export const firstFields: Record<CompareKind, string[]> = {
 
 export const fieldsOf = (kind: CompareKind) => Object.entries(fields[kind]).map(([field, { label }]) => ({ field, label }))
 
-/** A dash for a value that the card does not have. */
 export function tableOf(table: Comparison, shown: string[]) {
   const all = Object.entries(fields[table.kind]) as [string, Field<CompareKind>][]
   return all.filter(([field]) => shown.includes(field))
     .map(([field, { label, text }]) => ({ field, label, cells: table.options.map((option) => (text as (o: typeof option) => string | null)(option) ?? '—') }))
 }
 
-/**
- * The line of a refused comparison. The old API, in the minutes of a deploy, refuses the field `compare` as a body that is not
- * valid (api.md). The new API refuses a card that the person can no longer see. Null: a different refusal.
- */
+/** The old API refuses `compare` as a body that is not valid during a deploy (api.md). */
 export function compareRefusal(error: string) {
   if (error === 'not valid: body') return 'Comparing cards starts in a few minutes. Try again soon.'
   if (error === 'not valid: compare') return 'One of these cards is no longer open. Clear the selection and pick again.'

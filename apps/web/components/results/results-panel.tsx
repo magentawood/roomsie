@@ -73,7 +73,7 @@ function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?
         const picked = Boolean(picks?.picked.some((p) => p.id === card.id))
         const label = (
           <div className="flex flex-wrap items-center gap-2">
-            {picks && <CheckChip label={picked ? 'Selected' : 'Select'} name={`Compare ${card.name}`} checked={picked} onToggle={() => picks.onPick(card)} />}
+            {picks && <CheckChip label={picked ? 'Selected' : 'Select'} ariaLabel={`Compare ${card.name}`} checked={picked} onToggle={() => picks.onPick(card)} />}
             <MatchLabel result={result} />
           </div>
         )

@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import { assistantParts, type AssistantParts, chipTurnParts, goneFromComparison, type ChipTurnParts, formA, type AssistantReply, type FormA, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, type Owner } from '../observations/read'
@@ -73,7 +73,7 @@ export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantPart
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
     .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
-  // Only saveTurn and createGoal write assistant turns, each with parts (T-12).
+  // Only saveTurn and createGoal write assistant turns, each with parts (T-12). forgetInComparisons rewrites a comparison in them (T-49).
   const parts = assistantParts.parse(last.parts)
   return { ...parts, question: parts.question ?? last.text }
 }
@@ -125,19 +125,25 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
 }
 
 /** At account deletion. The cascades remove the chat turns, the waitlist entries of the chats, and the goals of a claimed visitor session. */
-/** A deleted person is "Deleted user" in each comparison of people that other people keep (PD19, T-49). */
-export async function forgetInComparisons(tx: Tx, profileId: string) {
-  const deleted = { id: profileId, fullName: 'Deleted user', age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false }
-  await tx.update(chatTurns).set({
-    parts: sql`jsonb_set(${chatTurns.parts}, '{comparison,options}', (
-      select jsonb_agg(case when option->>'id' = ${profileId} then ${JSON.stringify(deleted)}::jsonb else option end order by n)
-      from jsonb_array_elements(${chatTurns.parts}->'comparison'->'options') with ordinality as options(option, n)))`,
-  }).where(sql`${chatTurns.parts}->'comparison'->>'kind' = 'person' and ${chatTurns.parts}->'comparison'->'options' @> ${JSON.stringify([{ id: profileId }])}::jsonb`)
-}
-
 export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(goals).where(eq(goals.userId, userId))
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
+}
+
+/**
+ * A person keeps only a name in the comparisons of people that others keep (T-49): "Deleted user" in each chat after an account
+ * deletion (PD19), and "Not available" in the chats of the other person after a block, which hides each from the other.
+ */
+export async function forgetInComparisons(tx: Tx, profileId: string, fullName: 'Deleted user' | 'Not available', ofUserId?: string) {
+  const gone = goneFromComparison(profileId, fullName)
+  await tx.update(chatTurns).set({
+    parts: sql`jsonb_set(${chatTurns.parts}, '{comparison,options}', (
+      select jsonb_agg(case when option->>'id' = ${profileId} then ${JSON.stringify(gone)}::jsonb else option end order by n)
+      from jsonb_array_elements(${chatTurns.parts}->'comparison'->'options') with ordinality as options(option, n)))`,
+  }).where(and(
+    sql`${chatTurns.parts}->'comparison'->>'kind' = 'person' and ${chatTurns.parts}->'comparison'->'options' @> ${JSON.stringify([{ id: profileId }])}::jsonb`,
+    ofUserId ? inArray(chatTurns.goalId, tx.select({ id: goals.id }).from(goals).where(eq(goals.userId, ofUserId))) : undefined,
+  ))
 }
 
 /** The latest religion and community that the person stated in a chat, for a new profile or a claim (PD3c, T-58). */
