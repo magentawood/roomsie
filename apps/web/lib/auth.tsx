@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
 import { reportError } from '@roomsie/config/report'
@@ -18,24 +18,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient()
   const [state, setState] = useState<{ user: User | null; loading: boolean }>({ user: null, loading: true })
   const uid = useRef<string | null>(null)
+  const { mutate: claim } = useMutation({
+    mutationFn: claimVisitorChat,
+    onSuccess: async (moved) => {
+      if (!moved) return
+      // queries.ts imports this file, so its keys load at run time, as push does.
+      const { queryKeys } = await import('./queries')
+      await queryClient.invalidateQueries({ queryKey: queryKeys.profile })
+      const goalId = readStored(chatStorage.goal)
+      if (goalId) await queryClient.invalidateQueries({ queryKey: queryKeys.goal(goalId) })
+    },
+    // The invite gate (T-33) refuses the account, and the chat stays a visitor chat.
+    onError: (err) => { if (!refusalOf(err)) reportError(err, { where: 'claim' }) },
+  })
   useEffect(() => onAuthStateChanged(firebaseAuth(), (user) => {
     // The cache holds one account. A change of account, in any tab, empties it.
     if (uid.current !== (user?.uid ?? null)) queryClient.clear()
     uid.current = user?.uid ?? null
     setState({ user, loading: false })
-    if (user) {
-      claimVisitorChat(user).then(async (moved) => {
-        if (!moved) return
-        // queries.ts imports this file, so its keys load at run time, as push does.
-        const { queryKeys } = await import('./queries')
-        const goalId = readStored(chatStorage.goal)
-        await Promise.all([queryClient.invalidateQueries({ queryKey: queryKeys.profile }), goalId && queryClient.invalidateQueries({ queryKey: queryKeys.goal(goalId) })])
-      }).catch((err: unknown) => {
-        // The invite gate (T-33) refuses the account, and the chat stays a visitor chat.
-        if (!refusalOf(err)) reportError(err, { where: 'claim' })
-      })
-    }
-  }), [queryClient])
+    if (user) claim(user)
+  }), [queryClient, claim])
   const value: Auth = {
     ...state,
     signIn: () =>

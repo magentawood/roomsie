@@ -30,19 +30,20 @@ const sessionOf = async (goalId: string) => (await goalOwner(goalId)).sessionId!
 describe('the claim of a visitor chat at sign-in (T-17)', () => {
   it('moves the goals of the session to the account, with the turns, Form A, the outside places, the waitlist entries and the Form B notes', async () => {
     const goal = await visitorGoal()
-    fakeVendors({ deepseek: [scored({ intent: 'room', areas: [{ words: 'Powai', slug: 'powai' }, { words: 'Vasai', slug: null }] })] })
-    expect((await sent(goal, 'room in Powai or Vasai')).outsidePlaces).toEqual(['vasai-virar'])
+    fakeVendors({ deepseek: [scored({ intent: 'room' }), scored({ areas: [{ words: 'Powai', slug: 'powai' }, { words: 'Vasai', slug: null }] })] })
+    await sent(goal, 'room chahiye')
+    expect((await sent(goal, 'Powai or Vasai')).outsidePlaces).toEqual(['vasai-virar'])
     const join = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/waitlist`, payload: { email: 'asha@example.com', place: 'vasai-virar' }, headers: { [visitorKeyHeader]: goal.key } })
     expect(join.statusCode).toBe(204)
     const sessionId = await sessionOf(goal.id)
     const [turn] = await t.db.select({ id: chatTurns.id }).from(chatTurns).where(eq(chatTurns.goalId, goal.id)).limit(1)
-    await t.db.insert(observations).values({ anonymousSessionId: sessionId, key: 'work_pattern', value: 'works in Powai', kind: 'context', evidence: 'room in Powai', turnId: turn!.id, confidence: 0.9 })
+    await t.db.insert(observations).values({ anonymousSessionId: sessionId, key: 'work_pattern', value: 'works in Powai', kind: 'context', evidence: 'room chahiye', turnId: turn!.id, confidence: 0.9 })
 
     expect((await claim('asha', goal.key)).statusCode).toBe(204)
 
     expect(await goalOwner(goal.id)).toEqual({ userId: t.ids.asha, sessionId: null })
     const read = goalResponse.parse((await t.call('asha', 'GET', `/v1/goals/${goal.id}`)).json())
-    expect([read.turns.length, read.form.intent.value, read.form.areas.value, read.outsidePlaces]).toEqual([2, 'room', ['powai'], ['vasai-virar']])
+    expect([read.turns.length, read.form.intent.value, read.form.areas.value, read.outsidePlaces]).toEqual([4, 'room', ['powai'], ['vasai-virar']])
     expect(await t.db.select({ goalId: waitlist.goalId }).from(waitlist).where(eq(waitlist.goalId, goal.id))).toHaveLength(1)
     expect(await t.db.select({ userId: observations.userId, sessionId: observations.anonymousSessionId }).from(observations).where(eq(observations.turnId, turn!.id)))
       .toEqual([{ userId: t.ids.asha, sessionId: null }])
