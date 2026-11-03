@@ -126,7 +126,7 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
     await testDb.drop()
   }
   return {
-    app, db: testDb.db, call, ids, idStore: idFakes, liveListing, liveCard, close, sent: fakes.sent, realtime: fakes.realtime, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken,
+    app, db: testDb.db, call, ids, tokens, idStore: idFakes, liveListing, liveCard, close, sent: fakes.sent, realtime: fakes.realtime, claims: fakes.claims, mails: fakes.mails, pushes: fakes.pushes, idToken,
     flushEvents: () => app.analytics.flush(),
   }
 }

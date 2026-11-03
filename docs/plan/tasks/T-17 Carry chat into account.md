@@ -33,14 +33,57 @@ Keeps a chat from before sign-up when the person signs up.
 - No task waits on this task.
 
 ## Done when
-- [ ] When a visitor signs in, the account gets what the visitor told the assistant before sign-in
-- [ ] Nothing is lost, and the assistant never asks the same thing two times
-- [ ] The goals of the session, with their chat turns, move to the account
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
-- [ ] When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement
+- [x] When a visitor signs in, the account gets what the visitor told the assistant before sign-in · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] Nothing is lost, and the assistant never asks the same thing two times · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] The goals of the session, with their chat turns, move to the account · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#205](https://github.com/magentawood/roomsie/pull/205)
+- [x] When T-17 moves a visitor goal to an account with a profile, the own religion and community of the goal go to the profile, as the newer statement · [#205](https://github.com/magentawood/roomsie/pull/205)
 
 ^done
 
 ## Read first
 - [seo-with-gated-products.md](../../seo-with-gated-products.md)
 - [extensibility.md](../../extensibility.md)
+
+## Spec
+
+**Approved:** 2026-11-03, by n3rxv
+
+- **Modules:**
+  - **The claim route (new):** `POST /v1/goals/claim`, in the goals module. It needs the sign-in token and the visitor key, and it answers 204 with no body. The interface changes.
+  - **The goals store:** one transaction moves each goal of the visitor session to the account, with its chat turns, its outside places and its waitlist entries. It marks the session as claimed by the account, and it ends the visitor key.
+  - **The observations module:** the transaction calls `moveObservations`, which T-35 made for this task. Its interface does not change.
+  - **The profiles module:** the transaction gives the own religion and community of the moved goals to the profile, with the function of T-58. Its interface does not change.
+  - **The web:** after a sign-in, when the browser has a visitor key, it sends the claim request. When the request passes, the browser forgets the key, keeps the goal of the chat, and loads the chat again.
+- **Seams for the tests:**
+  - The tests of the claim route, with the fake models and a visitor chat of two turns:
+    - The goals, the turns, Form A, the outside places, the waitlist entries and the Form B notes belong to the account. The next turn asks the next open question, not an answered one.
+    - The own values go to the profile, and the latest statement of the goals wins.
+    - A second claim, a session that a different account claimed, and an expired key move nothing.
+    - After the claim, the visitor key alone opens no goal.
+    - A request with no token or no visitor key fails.
+  - A unit test of the web: the claim request, then the visitor key is gone and the goal stays.
+  - A live check after the deploy, from the Safari of the user: a sign-out, a visitor chat of two turns, a sign-in from the wall. The chat stays, and the next reply asks the next question.
+- **Decisions:**
+  - **One move request (the user, 2026-11-03):** the web sends one request right after the sign-in. The move is in one place, and it is safe to repeat.
+  - **What moves (items 1 and 3):** each goal of the visitor session, with its chat turns, outside places and waitlist entries, and the Form B notes of the session. The session stays, marked as claimed by the account (T-35: a claimed session is never deleted).
+  - **The own values (item 5, T-58):** if the account has a profile, the own religion and community of a moved goal replace the values of the profile, as the newer statement. Of two goals, the latest statement wins. With no profile, the values stay on the goal.
+  - **Nothing asked two times (item 2):** each moved goal keeps its Form A and its turns, so the chat goes on at the next open question. The other goals of the account stay as separate moves (ADR-0017).
+  - **Safe to repeat:** a second claim moves nothing. A session that a different account claimed moves nothing. An expired key moves nothing.
+  - **The key ends:** the claim ends the visitor session, so its key opens nothing after the sign-in.
+  - **A failed claim:** the web keeps the key and tries again at the next load of a page, so the chat still works. If the invite gate refuses the account (T-33), nothing moves.
+  - **Item 4:** T-17 uses no open product call. F-11 is closed.
+- **Out of scope:**
+  - a merge of two goals of the same move
+  - the onboarding of T-48 and the questions that a moved goal answered
+  - an analytics event of the claim
+
+## Log
+
+- **2026-11-03 · [#205](https://github.com/magentawood/roomsie/pull/205)**
+  - **Change:** at sign-in, the web sends one claim request, `POST /v1/goals/claim`. One transaction moves each goal of the visitor session to the account, with its turns, Form A, outside places and waitlist entries, and the Form B notes of the session. The own values of the goals go to the profile, and the visitor key ends.
+  - **Why:** the goals move to the account at login ([ADR-0017](../../decisions/0017-schema-v1-shape.md), [seo-with-gated-products.md](../../seo-with-gated-products.md)), and the decisions of the spec.
+  - **Ticked:** all five items. Item 4: T-17 uses no open product call, and F-11 is closed.
+  - **Not done:** none.
+  - **Learn:** [The visitor chat at sign-in](../../learn/visitor-chat-claim.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

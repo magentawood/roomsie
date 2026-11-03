@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**233 of 329 done · 71%**
+**238 of 329 done · 72%**
 
 `█████████████████░░░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
-| [[P2 Chat]] | 8 / 14 | 41 / 65 | 63% |
+| [[P2 Chat]] | 9 / 14 | 46 / 65 | 71% |
 | [[P3 Data and trust]] | 16 / 19 | 77 / 86 | 90% |
 | [[P4 Content and moderation]] | 6 / 8 | 30 / 35 | 86% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**19 free tasks are open · 55 build hours.**
+**18 free tasks are open · 53 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -59,7 +59,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[M-03 Eval sentences]] | P5 | 4 | ⬜ can start | 0 | [#21](https://github.com/magentawood/roomsie/issues/21) |
-| 0 | [[T-17 Carry chat into account]] | P2 | 2 | ⬜ can start | 0 | [#32](https://github.com/magentawood/roomsie/issues/32) |
 | 0 | [[T-22b Waitlist screen]] | P4 | 1 | ⬜ can start | 0 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | 0 | [[T-27 Eval run]] | P2 | 3 | ⬜ can start | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | 0 | [[T-36 Observer]] | P2 | 8 | ⬜ can start | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
@@ -116,7 +115,7 @@ flowchart LR
   T03["T-03<br/>CI checks"]:::done
   T13["T-13<br/>Reply writer"]:::doing
   T07["T-07<br/>Error reporting"]:::done
-  T17["T-17<br/>Carry chat into account"]:::ready
+  T17["T-17<br/>Carry chat into account"]:::done
   T19["T-19<br/>Report and block"]:::done
   T33["T-33<br/>Invite-only gate"]:::done
   T23a["T-23a<br/>Landing page"]:::done
@@ -314,7 +313,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 41/65
+## P2 Chat — 46/65
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -346,7 +345,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-27 Eval run]] · 0/4
 > ![[T-27 Eval run#^done]]
 
-> [!todo]- ⬜ [[T-17 Carry chat into account]] · 0/5
+> [!todo]- ✅ [[T-17 Carry chat into account]] · 5/5
 > ![[T-17 Carry chat into account#^done]]
 
 > [!todo]- ✅ [[T-10 Chat screen and split view ⚑]] · 5/5
