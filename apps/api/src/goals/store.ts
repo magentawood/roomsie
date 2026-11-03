@@ -42,6 +42,15 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
+/** A goal from the onboarding (T-48): its Form A and the first line of the assistant. */
+export function startGoal(db: Db, goal: { id: string; asker: Asker; form: FormA }, reply: AssistantReply) {
+  return db.transaction(async (tx) => {
+    await tx.insert(goals).values({ id: goal.id, ...ownerOf(goal.asker), form: goal.form })
+    const [turn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts }).returning(turnFields)
+    return [toChatTurn(turn!)]
+  })
+}
+
 export async function createGoal(db: Db, asker: Asker) {
   const [row] = await db.insert(goals)
     .values(ownerOf(asker))

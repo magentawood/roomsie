@@ -1,14 +1,15 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { uuidv7 } from 'uuidv7'
 import { z } from 'zod'
-import { errorResponse, formA, goalResponse, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
-import { runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
+import { errorResponse, formA, goalResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap } from '@roomsie/contract'
+import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
-import { claimSession, createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
+import { claimSession, createGoal, startGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
 const visitorKey = z.string().min(1).max(100)
@@ -21,7 +22,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   const askerOf = async (req: FastifyRequest, key: string | undefined): Promise<Asker> =>
     ({ userId: req.user?.id ?? null, sessionId: key ? await visitorSessionOf(options.db, key) : null })
 
-  app.post('/goals', { preHandler: optionalUser(options), schema: { headers, response: { 201: newGoalResponse, 400: errorResponse, 429: limitRefusal } } }, async (req, reply) => {
+  app.post('/goals', { preHandler: optionalUser(options), schema: { headers, body: goalStart.nullish(), response: { 201: newGoalResponse, 400: errorResponse, 429: limitRefusal } } }, async (req, reply) => {
+    const id = uuidv7()
+    // The onboarding starts a goal with its answers. The check comes before a visitor session exists (T-48).
+    const start = req.body ? await runStart({ goalId: id, last: null, form: formA.parse({}), lastRegister: null, start: req.body }, { ...options, req }) : undefined
+    if (start === null) return reply.code(400).send({ error: 'not valid: areas' })
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     let visitorKey: string | null = null
     if (!asker.userId && !asker.sessionId) {
@@ -36,8 +41,8 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       asker.sessionId = session.id
       visitorKey = session.key
     }
-    const id = await createGoal(options.db, asker)
-    return reply.code(201).send({ id, form: formA.parse({}), turns: [], visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [] })
+    const goal = start ? { id, turns: await startGoal(options.db, { id, asker, form: start.form }, start.reply) } : { id: await createGoal(options.db, asker), turns: [] }
+    return reply.code(201).send({ ...goal, form: start?.form ?? formA.parse({}), visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [] })
   })
 
   app.get('/goals/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 200: goalResponse, 404: errorResponse } } }, async (req, reply) => {

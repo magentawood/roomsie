@@ -121,6 +121,13 @@ describe('the turn cap of a visitor (PD9)', () => {
 })
 
 describe('the rate limits (PD9)', () => {
+  it('refuses the start of the onboarding over the limit of a device, as each new visitor chat (T-48)', async () => {
+    await visitorGoal('198.51.100.20', 'start-browser')
+    await visitorGoal('198.51.100.20', 'start-browser')
+    const start = await t.app.inject({ method: 'POST', url: '/v1/goals', payload: { intent: 'room' }, headers: { 'x-forwarded-for': '203.0.113.250, 198.51.100.20', 'user-agent': 'start-browser' } })
+    expect([start.statusCode, refusal(start).limit]).toEqual([429, 'too_many_chats'])
+  })
+
   it('refuses a new visitor chat over the limit of a device, an IP address and an IP range, and records each limit', async () => {
     const before = (await eventsNamed('limit_hit')).length
     // A device is one address with one browser. The first address of the header is not the address of the request.

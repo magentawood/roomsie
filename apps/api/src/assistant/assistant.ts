@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import { budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel } from '@roomsie/contract'
+import { budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf } from './catalogue'
@@ -60,6 +60,22 @@ function slotValueOf(tap: ChipTap) {
   if (tap.slot !== 'budget') return tap.value
   const { min, max } = budgetBandOf(tap.value)
   return { min, max }
+}
+
+/** The answers of the onboarding: one scripted reply, with no model call (T-48). Null: an area that is not an area group. */
+export async function runStart(input: TurnInput & { start: GoalStart }, deps: AssistantDeps) {
+  const { start } = input
+  if (start.area && (await catalogueOf(deps.db)).bySlug.get(start.area)?.parent !== null) return null
+  const answers = {
+    ...(start.intent && { intent: start.intent }),
+    ...(start.whosMoving && { whosMoving: start.whosMoving }),
+    ...(start.area && { areas: [start.area] }),
+    ...(start.budget && { budget: slotValueOf({ slot: 'budget', value: start.budget }) }),
+  }
+  const form = formA.parse({ ...input.form, ...Object.fromEntries(Object.entries(answers).map(([slot, value]) => [slot, { source: 'stated', value }])) })
+  const changed = Object.keys(answers) as FormASlot[]
+  const turn = { ...input, text: '', ...noExtraction(form, false), changed, label: tapLabel }
+  return { form, reply: await replyWriter({ ...turn, language: languageOf(input.lastRegister) }, deps) }
 }
 
 /** No model call (PD9). Null: an area that is not an area group. */

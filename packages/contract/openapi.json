@@ -14215,6 +14215,57 @@
     },
     "/v1/goals": {
       "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "nullable": true,
+                "type": "object",
+                "properties": {
+                  "intent": {
+                    "type": "string",
+                    "enum": [
+                      "room",
+                      "pg",
+                      "whole_flat",
+                      "flatmates",
+                      "unclear"
+                    ]
+                  },
+                  "whosMoving": {
+                    "type": "string",
+                    "enum": [
+                      "student",
+                      "first_job",
+                      "working",
+                      "couple",
+                      "family",
+                      "friends",
+                      "unclear"
+                    ]
+                  },
+                  "area": {
+                    "type": "string",
+                    "maxLength": 60,
+                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                  },
+                  "budget": {
+                    "type": "string",
+                    "enum": [
+                      "under_10k",
+                      "under_15k",
+                      "under_25k",
+                      "under_35k",
+                      "above_35k"
+                    ]
+                  }
+                },
+                "additionalProperties": false
+              }
+            }
+          }
+        },
         "parameters": [
           {
             "schema": {

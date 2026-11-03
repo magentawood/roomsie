@@ -482,6 +482,40 @@ describe('the hidden religion and community filter (T-58)', () => {
   })
 })
 
+describe('the start of a goal from the onboarding (T-48)', () => {
+  const start = (body: object) => t.app.inject({ method: 'POST', url: '/v1/goals', payload: body })
+
+  it('fills Form A with the start answers as stated answers, and writes one line that confirms them and asks the next question', async () => {
+    const requests = fakeVendors({})
+    const res = await start({ intent: 'room', whosMoving: 'student', area: 'andheri-goregaon', budget: 'under_25k' })
+    expect(res.statusCode).toBe(201)
+    const goal = newGoalResponse.parse(res.json())
+    expect(goal.form).toMatchObject({
+      intent: { source: 'stated', value: 'room' }, whosMoving: { source: 'stated', value: 'student' },
+      areas: { source: 'stated', value: ['andheri-goregaon'] }, budget: { source: 'stated', value: { min: null, max: 25_000 } },
+    })
+    expect(goal.turns.map(({ role }) => role)).toEqual(['assistant'])
+    expect(goal.turns[0]!.text).toBe('Got it: a room in a shared flat, a student, Andheri–Goregaon, up to ₹25,000. When do you want to move in?')
+    // The full cap of the tests: the answers of the steps are no typed turn (PD9).
+    expect(goal.typedTurnsLeft).toBe(1000)
+    expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
+    // A reload gives the same chat.
+    const read = goalResponse.parse((await t.app.inject({ method: 'GET', url: `/v1/goals/${goal.id}`, headers: { [visitorKeyHeader]: goal.visitorKey! } })).json())
+    expect(read.turns.map(({ text }) => text)).toEqual([goal.turns[0]!.text])
+  })
+
+  it('asks the first question, with its chips, when each step was skipped', async () => {
+    const goal = newGoalResponse.parse((await start({})).json())
+    expect(goal.turns.map(({ text, chips }) => [text, chips])).toEqual([[intentQuestion, 'intent']])
+  })
+
+  it('refuses a start answer that is not valid, also an area that is not an area group', async () => {
+    expect((await start({ intent: 'castle' })).statusCode).toBe(400)
+    expect((await start({ area: 'bandra-west' })).statusCode).toBe(400)
+    expect((await start({ budget: 'under_5k' })).statusCode).toBe(400)
+  })
+})
+
 describe('a chip tap (T-09)', () => {
   const tapped = (goal: { id: string; key: string }, tap: object) =>
     t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { tap }, headers: { [visitorKeyHeader]: goal.key } })

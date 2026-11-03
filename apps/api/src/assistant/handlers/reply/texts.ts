@@ -11,6 +11,8 @@ export const replyLines = {
   ack: (parts: string[]) => `Got it: ${parts.join(', ')}.`,
 }
 
+const whosMovingText: Record<string, string> = { student: 'a student', first_job: 'starting a first job', working: 'working', couple: 'a couple', family: 'a family', friends: 'friends moving together' }
+
 const questions: Partial<Record<FormASlot, string>> = {
   intent: 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?',
   roomType: 'Do you want a private room or a shared room?',
@@ -41,6 +43,7 @@ export function valueText(slot: FormASlot, value: unknown, catalogue: Catalogue)
     case 'areas': return (value as string[]).map((slug) => catalogue.bySlug.get(slug)?.name ?? slug).join(', ')
     case 'budget': return budgetText(value as Budget)
     case 'moveDate': return `from ${dateText(value as string)}`
+    case 'whosMoving': return whosMovingText[value as string] ?? humanize(value as string)
     case 'lifestyle': return `${humanize(key!)}: ${humanize(value as string)}`
     case 'mustHaves': return `${catalogue.mustHaveLabels.get(key!) ?? key} (${value === 'dealbreaker' ? 'a must' : 'preferred'})`
     default: return humanize(value as string)
