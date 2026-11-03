@@ -8,6 +8,7 @@ import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useProfile } from '../../lib/queries'
+import { useTabFlag } from '../../lib/tab-flag'
 import { Logo } from '../shell/logo'
 import { Button } from '../ui/button'
 import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
@@ -73,8 +74,8 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
 export function CreateProfileGate() {
   const profile = useProfile()
   const pathname = usePathname()
-  const [skipped, setSkipped] = useState(() => typeof sessionStorage !== 'undefined' && sessionStorage.getItem(skipKey) === '1')
+  const [skipped, skip] = useTabFlag(skipKey)
   // The profile page offers the dialog itself.
   if (profile.data !== null || skipped || pathname === '/profile') return null
-  return <CreateProfileDialog onClose={() => { sessionStorage.setItem(skipKey, '1'); setSkipped(true) }} />
+  return <CreateProfileDialog onClose={skip} />
 }

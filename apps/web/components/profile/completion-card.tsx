@@ -1,10 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { profileCompletion } from '../../lib/onboarding'
 import { useProfile } from '../../lib/queries'
+import { useTabFlag } from '../../lib/tab-flag'
 import { CloseButton } from '../ui/modal'
 
 /** A close hides the card for this visit of the browser tab, as "Explore for now" does for the create dialog. */
@@ -27,15 +26,16 @@ function Ring({ percent }: { percent: number }) {
 export function CompletionCard({ look }: { look: 'sidebar' | 'phone' }) {
   const profile = useProfile()
   const pathname = usePathname()
-  const [hidden, setHidden] = useState(() => typeof sessionStorage !== 'undefined' && sessionStorage.getItem(hideKey) === '1')
-  const percent = profileCompletion(profile.data ?? null)
+  const [hidden, hide] = useTabFlag(hideKey)
+  // With no profile, nothing is done. Null: the API before T-48, for the minutes of a deploy.
+  const percent = profile.data === null ? 0 : profile.data?.completion
   // The profile page is where the person completes it. On a phone, the card shows on the chat only, as in the designs.
-  if (profile.data === undefined || percent === 100 || hidden || pathname === '/profile' || (look === 'phone' && pathname !== '/chat')) return null
-  const close = <CloseButton onClose={() => { sessionStorage.setItem(hideKey, '1'); setHidden(true) }} />
+  if (percent === undefined || percent === null || percent === 100 || hidden || pathname === '/profile' || (look === 'phone' && pathname !== '/chat')) return null
+  const close = <CloseButton onClose={hide} />
   const body = (
     <span className="flex flex-col gap-1">
       <span className="text-sm font-semibold text-primary">Profile Completion</span>
-      <span className="text-sm text-tertiary">Complete your profile so others can find you.</span>
+      <span className="text-sm text-tertiary">Add the details that are missing from your profile.</span>
     </span>
   )
   const update = <Link href="/profile" className="w-fit rounded-sm text-sm font-semibold text-secondary outline-focus-ring hover:text-secondary_hover focus-visible:outline-2">Update Profile</Link>

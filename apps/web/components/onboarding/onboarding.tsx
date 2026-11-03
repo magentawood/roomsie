@@ -1,16 +1,16 @@
 'use client'
 
-import { useEffect, useState, type CSSProperties } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowLeft, ArrowRight, Home03, Key01, Lock01 } from '@untitledui/icons'
 import { intentLabels, newGoalResponse, type GoalResponse } from '@roomsie/contract'
 import { chatApi, errorText } from '../../lib/api'
+import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
 import { chatStorage, readStored, writeStored } from '../../lib/chat'
-import { firebaseAuth } from '../../lib/firebase'
-import { answered, onboardingSteps, progressOf, skipped, startOf, type Answers, type Step } from '../../lib/onboarding'
+import { answered, progressOf, startOf, stepBeside, withoutAnswer, type Answers, type Step } from '../../lib/onboarding'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
 import { GoogleMark, LegalLine } from '../shell/google-sign-in'
@@ -18,14 +18,14 @@ import { Button } from '../ui/button'
 import { ChoiceCard, ChoiceChips } from '../ui/choice'
 import { StepBar } from '../ui/step-bar'
 
-/** The art of each step, from the Product file. `x`: the part that a computer shows, `y`: the part of the banner of a phone. */
-const art: Record<Step, { name: string; x: string; y: string }> = {
-  purpose: { name: 'purpose', x: '33%', y: '77%' },
-  whosMoving: { name: 'whos-moving', x: '68%', y: '77%' },
-  intent: { name: 'place-type', x: '68%', y: '66%' },
-  budget: { name: 'budget', x: '50%', y: '80%' },
-  area: { name: 'area', x: '87%', y: '90%' },
-  signIn: { name: 'sign-in', x: '87%', y: '77%' },
+/** The art of each step, from the Product file. `position`: the part of the image in the band of a phone, then on a computer. */
+const art: Record<Step, { name: string; position: string }> = {
+  purpose: { name: 'purpose', position: 'object-[50%_77%] lg:object-[33%_50%]' },
+  whosMoving: { name: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
+  intent: { name: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
+  budget: { name: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
+  area: { name: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
+  signIn: { name: 'sign-in', position: 'object-[50%_77%] lg:object-[87%_50%]' },
 }
 
 const copy: Record<Step, { title: string; text?: string }> = {
@@ -38,8 +38,7 @@ const copy: Record<Step, { title: string; text?: string }> = {
 }
 
 function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onChange: (answers: Answers) => void }) {
-  const areas = useAreas().data?.areas ?? []
-  const areaLabels = Object.fromEntries(areas.filter((area) => !area.parent).map((group) => [group.slug, group.name]))
+  const groups = areaTree(useAreas().data?.areas ?? []).groups
   const pick = <K extends keyof Answers>(key: K) => (value: Answers[K] | null) => onChange({ ...answers, [key]: value ?? undefined })
   switch (step) {
     case 'purpose':
@@ -67,7 +66,7 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
     case 'budget':
       return <ChoiceChips labelHidden label={copy.budget.title} labels={profileLabels.budget} value={answers.budget} onChange={pick('budget')} />
     case 'area':
-      return <ChoiceChips labelHidden label={copy.area.title} labels={areaLabels} value={answers.area} onChange={pick('area')} />
+      return <ChoiceChips labelHidden label={copy.area.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.area} onChange={pick('area')} />
     case 'signIn':
       return null
   }
@@ -89,10 +88,7 @@ export function Onboarding() {
     if (stored) router.replace('/chat')
   }, [router])
   const start = useMutation({
-    mutationFn: (asker: User | null) => {
-      const body = startOf(answers)
-      return chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', ...(body && { body }) })
-    },
+    mutationFn: (asker: User | null) => chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', body: startOf(answers) }),
     onSuccess: ({ visitorKey, ...goal }) => {
       if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
       writeStored(chatStorage.goal, goal.id)
@@ -101,19 +97,16 @@ export function Onboarding() {
     },
   })
   const finish = (asker: User | null) => (answers.purpose === 'list' ? router.push('/listings/new') : start.mutate(asker))
-  const steps = onboardingSteps(answers, user !== null)
-  const at = steps.indexOf(step)
-  const previous = steps[at - 1]
+  const previous = stepBeside(step, -1, answers, user !== null)
   const goOn = (next: Answers) => {
-    const after = onboardingSteps(next, user !== null)[at + 1]
+    const after = stepBeside(step, 1, next, user !== null)
     setAnswers(next)
     if (after) setStep(after)
     else finish(user)
   }
   const google = () => {
     setSignInError(null)
-    // signIn also resolves when the person closes the popup, so only a signed-in person moves on.
-    signIn().then(() => { const signedIn = firebaseAuth().currentUser; if (signedIn) finish(signedIn) }, (err: unknown) => setSignInError(errorText(err)))
+    signIn().then((signedIn) => { if (signedIn) finish(signedIn) }, (err: unknown) => setSignInError(errorText(err)))
   }
   const busy = start.isPending || start.isSuccess
   const error = signInError ?? (start.isError ? errorText(start.error) : null)
@@ -124,8 +117,7 @@ export function Onboarding() {
   return (
     <div className="flex min-h-dvh flex-col bg-primary lg:flex-row">
       <div className="relative h-52 shrink-0 lg:sticky lg:top-0 lg:h-dvh lg:w-5/9 lg:[clip-path:polygon(0_0,94%_0,85%_30%,94%_59%,85%_100%,0_100%)]">
-        <img src={`/onboarding/${art[step].name}.webp`} alt="" className="size-full object-cover object-[50%_var(--y)] lg:object-[var(--x)_50%]"
-          style={{ '--x': art[step].x, '--y': art[step].y } as CSSProperties} />
+        <img src={`/onboarding/${art[step].name}.webp`} alt="" className={`size-full object-cover ${art[step].position}`} />
         <p className="absolute bottom-8 left-8 hidden text-sm text-primary_on-dark lg:block">© Roomsie 2026</p>
       </div>
       <main className="flex flex-1 flex-col gap-8 p-6 lg:px-20 lg:py-10">
@@ -148,12 +140,9 @@ export function Onboarding() {
           </div>
           {step !== 'signIn' && (
             <div className="flex items-center justify-between gap-3">
-              {/* Previous of the first step goes back to the home page. */}
-              {previous
-                ? <Button variant="secondary" size="md" iconLeading={ArrowLeft} disabled={busy} onClick={() => setStep(previous)}>Previous</Button>
-                : <Button variant="secondary" size="md" iconLeading={ArrowLeft} href="/">Previous</Button>}
+              <Button variant="secondary" size="md" iconLeading={ArrowLeft} {...(previous ? { disabled: busy, onClick: () => setStep(previous) } : { href: '/' })}>Previous</Button>
               <div className="flex gap-2">
-                <Button variant="secondary" size="md" disabled={busy} onClick={() => goOn(skipped(step, answers))}>Skip</Button>
+                <Button variant="secondary" size="md" disabled={busy} onClick={() => goOn(withoutAnswer(step, answers))}>Skip</Button>
                 <Button variant="primary" size="md" iconTrailing={ArrowRight} disabled={busy || !answered(step, answers)} onClick={() => goOn(answers)}>Next</Button>
               </div>
             </div>

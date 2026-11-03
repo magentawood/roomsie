@@ -42,20 +42,13 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
-/** A goal from the onboarding (T-48): its Form A and the first line of the assistant. */
-export function startGoal(db: Db, goal: { id: string; asker: Asker; form: FormA }, reply: AssistantReply) {
+/** A new goal. A goal of the onboarding (T-48) has its id, its Form A and the first line of the assistant. */
+export function createGoal(db: Db, asker: Asker, start?: { id: string; form: FormA; reply: AssistantReply }) {
   return db.transaction(async (tx) => {
-    await tx.insert(goals).values({ id: goal.id, ...ownerOf(goal.asker), form: goal.form })
-    const [turn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts }).returning(turnFields)
-    return [toChatTurn(turn!)]
+    const [goal] = await tx.insert(goals).values({ ...ownerOf(asker), ...(start && { id: start.id, form: start.form }) }).returning({ id: goals.id })
+    const turns = start ? await tx.insert(chatTurns).values({ goalId: start.id, role: 'assistant', text: start.reply.text, parts: start.reply.parts }).returning(turnFields) : []
+    return { id: goal!.id, turns: turns.map(toChatTurn) }
   })
-}
-
-export async function createGoal(db: Db, asker: Asker) {
-  const [row] = await db.insert(goals)
-    .values(ownerOf(asker))
-    .returning({ id: goals.id })
-  return row!.id
 }
 
 export async function goalOf(db: Db, id: string, asker: Asker) {

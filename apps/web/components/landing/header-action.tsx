@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { errorText } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { firebaseAuth } from '../../lib/firebase'
 import { GoogleMark } from '../shell/google-sign-in'
 import { Button } from '../ui/button'
 
@@ -15,8 +14,7 @@ export function HeaderAction() {
   const [error, setError] = useState<string | null>(null)
   const signInToChat = () => {
     setError(null)
-    // signIn also resolves when the person closes the popup, so only a signed-in person moves on.
-    signIn().then(() => { if (firebaseAuth().currentUser) router.push('/start') }, (err: unknown) => setError(errorText(err)))
+    signIn().then((signedIn) => { if (signedIn) router.push('/start') }, (err: unknown) => setError(errorText(err)))
   }
 
   if (loading) return <span aria-hidden className="h-8 w-22 xl:h-10 xl:w-45" />

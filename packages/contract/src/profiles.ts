@@ -111,6 +111,8 @@ export const profileResponse = cardResponse.extend({
   missing: z.array(z.enum(liveCardFields)),
   /** Reports hid the card until a moderator reviews it (PD18). */
   hiddenForReview: z.boolean(),
+  /** The percentage of the 11 parts of a full profile (T-48). Null: the API before T-48, for the minutes of a deploy. */
+  completion: z.number().int().min(0).max(100).nullable().default(null),
 })
 export type ProfileResponse = z.infer<typeof profileResponse>
 export const profileUploadUrlResponse = uploadUrlReply(profilePhotoKey)

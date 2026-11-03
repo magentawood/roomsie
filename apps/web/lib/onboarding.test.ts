@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { lifestyleAnswers, lifestyleAxes, type ProfileResponse } from '@roomsie/contract'
-import { answered, onboardingSteps, profileCompletion, progressOf, skipped, startOf, type Answers } from './onboarding'
+import { answered, onboardingSteps, progressOf, startOf, stepBeside, withoutAnswer, type Answers } from './onboarding'
 
 const full: Answers = { purpose: 'look', whosMoving: 'student', intent: 'room', budget: 'under_25k', area: 'andheri-goregaon' }
 
@@ -22,7 +21,20 @@ describe('the steps of flow 01', () => {
   })
 })
 
-describe('Next and Skip', () => {
+describe('Previous, Next and Skip', () => {
+  it('goes to the step before and after, on the path of the answers', () => {
+    expect(stepBeside('whosMoving', -1, full, false)).toBe('purpose')
+    expect(stepBeside('purpose', -1, full, false)).toBeUndefined()
+    expect(stepBeside('purpose', 1, { purpose: 'list' }, false)).toBe('signIn')
+    expect(stepBeside('signIn', -1, { purpose: 'list' }, false)).toBe('purpose')
+  })
+
+  it('ends after the area for a signed-in person, and after the purpose for a signed-in lister', () => {
+    expect(stepBeside('area', 1, full, false)).toBe('signIn')
+    expect(stepBeside('area', 1, full, true)).toBeUndefined()
+    expect(stepBeside('purpose', 1, { purpose: 'list' }, true)).toBeUndefined()
+  })
+
   it('opens Next with an answer, and for "Looking for my son or daughter" only with what they do', () => {
     expect(answered('budget', {})).toBe(false)
     expect(answered('budget', full)).toBe(true)
@@ -31,8 +43,8 @@ describe('Next and Skip', () => {
   })
 
   it('clears the answer of a skipped step, and keeps the others', () => {
-    expect(skipped('budget', full)).toEqual({ ...full, budget: undefined })
-    expect(skipped('whosMoving', { whosMoving: 'parent', childType: 'working', area: 'thane' })).toEqual({ area: 'thane', whosMoving: undefined, childType: undefined })
+    expect(withoutAnswer('budget', full)).toEqual({ ...full, budget: undefined })
+    expect(withoutAnswer('whosMoving', { whosMoving: 'parent', childType: 'working', area: 'thane' })).toEqual({ area: 'thane', whosMoving: undefined, childType: undefined })
   })
 })
 
@@ -42,37 +54,10 @@ describe('the start answers of the goal', () => {
   })
 
   it('sends what a son or daughter does as who is moving (PD15)', () => {
-    expect(startOf({ whosMoving: 'parent', childType: 'first_job' })).toEqual({ whosMoving: 'first_job' })
+    expect(JSON.stringify(startOf({ whosMoving: 'parent', childType: 'first_job' }))).toBe('{"whosMoving":"first_job"}')
   })
 
-  it('gives null with no answer, so the chat opens empty', () => {
-    expect(startOf({ purpose: 'look' })).toBeNull()
-  })
-})
-
-describe('the completion of a profile', () => {
-  const profile: ProfileResponse = {
-    id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', religion: null, community: null, jobRole: null, commuteAddress: null, bio: null,
-    managedByParent: false, intent: 'unclear', whosMoving: 'unclear', areas: [], budgetMin: null, budgetMax: null, moveDate: null,
-    photos: [], lifestyle: {}, mustHaves: {}, visibility: 'draft', missing: ['whosMoving', 'areas', 'budget'], hiddenForReview: false, verified: false,
-  }
-  const allLifestyle = Object.fromEntries(lifestyleAxes.map((axis) => [axis, lifestyleAnswers[axis][0]])) as ProfileResponse['lifestyle']
-
-  it('gives 0 with no profile, and 3 of 11 parts for a new profile', () => {
-    expect(profileCompletion(null)).toBe(0)
-    expect(profileCompletion(profile)).toBe(27)
-  })
-
-  it('gives 100 when each of the 11 parts has a value', () => {
-    expect(profileCompletion({
-      ...profile, photos: [{ key: 'profiles/a.webp', url: 'https://example.com/a.webp' }], whosMoving: 'working', areas: ['thane'], budgetMax: 25_000,
-      moveDate: '2026-12-01', jobRole: 'Designer', bio: 'Hi', lifestyle: allLifestyle,
-    })).toBe(100)
-  })
-
-  it('counts the lifestyle answers only when all eight have a value, and a parent only with what the son or daughter does', () => {
-    expect(profileCompletion({ ...profile, lifestyle: { ...allLifestyle, pets: undefined } })).toBe(27)
-    expect(profileCompletion({ ...profile, managedByParent: true, whosMoving: 'unclear' })).toBe(27)
-    expect(profileCompletion({ ...profile, budgetMin: 35_000 })).toBe(36)
+  it('sends no value for a skipped step, so the chat asks it', () => {
+    expect(JSON.stringify(startOf({ purpose: 'look' }))).toBe('{}')
   })
 })

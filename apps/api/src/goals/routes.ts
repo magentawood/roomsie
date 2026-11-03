@@ -9,7 +9,7 @@ import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
-import { claimSession, createGoal, startGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
+import { claimSession, createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
 const visitorKey = z.string().min(1).max(100)
@@ -23,9 +23,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     ({ userId: req.user?.id ?? null, sessionId: key ? await visitorSessionOf(options.db, key) : null })
 
   app.post('/goals', { preHandler: optionalUser(options), schema: { headers, body: goalStart.nullish(), response: { 201: newGoalResponse, 400: errorResponse, 429: limitRefusal } } }, async (req, reply) => {
-    const id = uuidv7()
-    // The onboarding starts a goal with its answers. The check comes before a visitor session exists (T-48).
-    const start = req.body ? await runStart({ goalId: id, last: null, form: formA.parse({}), lastRegister: null, start: req.body }, { ...options, req }) : undefined
+    // The onboarding starts a goal with its answers (T-48). Its reply takes the id of the goal, as each turn does, so a start mints the id here.
+    // The check of the answers comes before a visitor session exists.
+    const start = req.body ? await runStart({ goalId: uuidv7(), last: null, form: formA.parse({}), lastRegister: null, start: req.body }, { ...options, req }) : undefined
     if (start === null) return reply.code(400).send({ error: 'not valid: areas' })
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     let visitorKey: string | null = null
@@ -41,7 +41,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       asker.sessionId = session.id
       visitorKey = session.key
     }
-    const goal = start ? { id, turns: await startGoal(options.db, { id, asker, form: start.form }, start.reply) } : { id: await createGoal(options.db, asker), turns: [] }
+    const goal = await createGoal(options.db, asker, start)
     return reply.code(201).send({ ...goal, form: start?.form ?? formA.parse({}), visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [] })
   })
 

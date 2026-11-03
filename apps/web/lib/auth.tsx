@@ -10,7 +10,8 @@ import { chatStorage, forgetChat, readStored } from './chat'
 import { claimVisitorChat } from './claim'
 import { firebaseAuth } from './firebase'
 
-type Auth = { user: User | null; loading: boolean; signIn: () => Promise<void>; signOut: () => Promise<void> }
+/** `signIn` gives the user, or null when the person closes the popup. */
+type Auth = { user: User | null; loading: boolean; signIn: () => Promise<User | null>; signOut: () => Promise<void> }
 
 const AuthContext = createContext<Auth | null>(null)
 
@@ -42,9 +43,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     ...state,
     signIn: () =>
       signInWithPopup(firebaseAuth(), new GoogleAuthProvider()).then(
-        () => undefined,
+        (credential) => credential.user,
         (err: unknown) => {
-          if (err instanceof FirebaseError && err.code === 'auth/popup-closed-by-user') return
+          if (err instanceof FirebaseError && err.code === 'auth/popup-closed-by-user') return null
           throw err
         },
       ),

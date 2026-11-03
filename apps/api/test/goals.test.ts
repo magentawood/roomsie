@@ -513,6 +513,8 @@ describe('the start of a goal from the onboarding (T-48)', () => {
     expect((await start({ intent: 'castle' })).statusCode).toBe(400)
     expect((await start({ area: 'bandra-west' })).statusCode).toBe(400)
     expect((await start({ budget: 'under_5k' })).statusCode).toBe(400)
+    // "Unclear" is an answer of the chat, not a step of the onboarding.
+    expect((await start({ whosMoving: 'unclear' })).statusCode).toBe(400)
   })
 })
 

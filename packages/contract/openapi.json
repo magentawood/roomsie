@@ -5517,6 +5517,13 @@
                     },
                     "hiddenForReview": {
                       "type": "boolean"
+                    },
+                    "completion": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   },
                   "required": [
@@ -5542,7 +5549,8 @@
                     "community",
                     "visibility",
                     "missing",
-                    "hiddenForReview"
+                    "hiddenForReview",
+                    "completion"
                   ],
                   "additionalProperties": false
                 }
@@ -5836,6 +5844,13 @@
                     },
                     "hiddenForReview": {
                       "type": "boolean"
+                    },
+                    "completion": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   },
                   "required": [
@@ -5861,7 +5876,8 @@
                     "community",
                     "visibility",
                     "missing",
-                    "hiddenForReview"
+                    "hiddenForReview",
+                    "completion"
                   ],
                   "additionalProperties": false
                 }
@@ -6394,6 +6410,13 @@
                     },
                     "hiddenForReview": {
                       "type": "boolean"
+                    },
+                    "completion": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 100
                     }
                   },
                   "required": [
@@ -6419,7 +6442,8 @@
                     "community",
                     "visibility",
                     "missing",
-                    "hiddenForReview"
+                    "hiddenForReview",
+                    "completion"
                   ],
                   "additionalProperties": false
                 }
@@ -14241,8 +14265,7 @@
                       "working",
                       "couple",
                       "family",
-                      "friends",
-                      "unclear"
+                      "friends"
                     ]
                   },
                   "area": {

@@ -122,7 +122,6 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // A chat starts on the onboarding, which makes its goal (T-48).
   const noGoal = goalId === null && !preview
   useEffect(() => { if (noGoal) router.replace('/start') }, [noGoal, router])
-  /** The line of a failed send. */
   const [failed, setFailed] = useState<string | null>(null)
   const [wall, setWall] = useState(false)
   const [capped, setCapped] = useState(false)
