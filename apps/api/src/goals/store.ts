@@ -5,7 +5,7 @@ import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, 
 import { catalogueOf, type Catalogue } from '../assistant/catalogue'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
-import { moveObservations, type Owner } from '../observations/read'
+import { hasObservations, moveObservations, type Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
@@ -42,6 +42,14 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+
+/** The owner has a Form B note, and no reply to the asker had the notes hint yet (T-36). */
+export async function notesHintDue(db: Db, asker: Asker) {
+  if (!(await hasObservations(db, ownerOf(asker)))) return false
+  const hinted = await db.select({ id: chatTurns.id }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
+    .where(and(ownedBy(asker), eq(chatTurns.role, 'assistant'), sql`${chatTurns.parts}->>'notesHint' = 'true'`)).limit(1)
+  return hinted.length === 0
+}
 
 /** A new goal. A goal of the onboarding (T-48) has its Form A and the first line of the assistant. */
 export function createGoal(db: Db, asker: Asker, start?: { form: FormA; reply: AssistantReply }) {
@@ -81,8 +89,8 @@ export async function setGoalStatus(db: Db, id: string, asker: Asker, status: Go
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
 /** The chips and the comparison of an assistant turn go out. The label of a typed turn never does. */
 const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
-  const { chips, comparison } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null }
-  return { ...turn, chips, comparison, createdAt: turn.createdAt.toISOString() }
+  const { chips, comparison, notes } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false }
+  return { ...turn, chips, comparison, notes, createdAt: turn.createdAt.toISOString() }
 }
 
 export async function turnsOf(db: Db, goalId: string) {

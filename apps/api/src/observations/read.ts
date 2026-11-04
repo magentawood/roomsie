@@ -27,6 +27,18 @@ export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, k
   return true
 }
 
+/** The topics that a new note can have. A fixed order keeps the prompt of the observer the same, for the cache of the vendor. */
+export const activeTopics = (db: Db | Tx) =>
+  db.select({ key: observationTopics.key, label: observationTopics.label }).from(observationTopics).where(eq(observationTopics.active, true)).orderBy(asc(observationTopics.key))
+
+export const hasObservations = async (db: Db | Tx, owner: Owner) =>
+  (await db.select({ id: observations.id }).from(observations).where(ownedBy(owner)).limit(1)).length > 0
+
+/** The notes of the owner with the label of their topic, for the owner only (PD7a). */
+export const notesOf = (db: Db | Tx, owner: Owner) =>
+  db.select({ id: observations.id, key: observations.key, label: observationTopics.label, value: observations.value, evidence: observations.evidence })
+    .from(observations).innerJoin(observationTopics, eq(observationTopics.key, observations.key)).where(ownedBy(owner)).orderBy(asc(observations.createdAt))
+
 export async function observationsOf(db: Db | Tx, owner: Owner) {
   const rows = await db.select({
     id: observations.id, key: observations.key, value: observations.value, kind: observations.kind, evidence: observations.evidence,
@@ -42,9 +54,9 @@ export function formBPoints(searcherUserId: string, personUserId: SQL, floor: nu
       and ${observations.visible} and ${other.visible} and ${observations.confidence} > ${floor} and ${other.confidence} > ${floor})`
 }
 
-/** A delete by the user is a direct database action, never an edit by the model (PD7a). */
-export const deleteObservation = (db: Db | Tx, owner: Owner, id: string) =>
-  db.delete(observations).where(and(eq(observations.id, id), ownedBy(owner)))
+/** A delete by the user is a direct database action, never an edit by the model (PD7a). False: the owner has no such note. */
+export const deleteObservation = async (db: Db | Tx, owner: Owner, id: string) =>
+  (await db.delete(observations).where(and(eq(observations.id, id), ownedBy(owner))).returning({ id: observations.id })).length > 0
 
 /** The tombstone keeps the users row, so its cascade does not remove the notes of the user. */
 export const deleteObservationsOf = (tx: Tx, userId: string) => tx.delete(observations).where(eq(observations.userId, userId))

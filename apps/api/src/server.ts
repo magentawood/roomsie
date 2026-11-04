@@ -11,6 +11,7 @@ import {
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { reportError, withoutQueryValues } from '@roomsie/config/report'
 import { deleteAccount } from './account'
+import { afterReplyOf, type AfterReply } from './after-reply'
 import { alertsOf, type Alerts } from './alerts/alerts'
 import type { AnalyticsDb } from './analytics/client'
 import { analyticsOf, type Analytics } from './analytics/track'
@@ -46,6 +47,8 @@ import { verificationRoutes } from './verification/routes'
 
 declare module 'fastify' {
   interface FastifyInstance {
+    /** The observer of the chat runs after the reply (T-36). */
+    afterReply: AfterReply
     alerts: Alerts
     analytics: Analytics
     spend: Spend
@@ -72,6 +75,9 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
+  const afterReply = afterReplyOf('observer', app.log)
+  app.decorate('afterReply', afterReply)
+  app.addHook('onClose', () => afterReply.settled())
   const analytics = analyticsOf(options.analyticsDb, app.log)
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())

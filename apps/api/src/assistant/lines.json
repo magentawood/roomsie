@@ -75,5 +75,26 @@
     "hi": "Option {option} में शिफ़्ट होने के लिए सबसे कम नक़द लगेगा: {amount}।",
     "mr-Latn": "Option {option} madhe shift honyasathi sarvat kami cash lagel: {amount}.",
     "mr": "Option {option} मध्ये शिफ्ट होण्यासाठी सर्वात कमी रोख लागेल: {amount}."
+  },
+  "notesList": {
+    "en": "Here's what I've noted from our chat. To fix a note, tell me what changed.",
+    "hi-Latn": "Humari baat se yeh notes bane hain. Koi note theek karna ho, toh bataiye kya badla.",
+    "hi": "हमारी बात से ये नोट्स बने हैं। कोई नोट ठीक करना हो, तो बताइए क्या बदला।",
+    "mr-Latn": "Aaplya gappanmadhun he notes zhale aahet. Ekhada note badlaycha asel, tar kay badlala te sanga.",
+    "mr": "आपल्या गप्पांमधून हे नोट्स झाले आहेत. एखादा नोट बदलायचा असेल, तर काय बदललं ते सांगा."
+  },
+  "notesEmpty": {
+    "en": "I haven't noted anything about you yet.",
+    "hi-Latn": "Abhi tak aapke baare mein koi note nahi hai.",
+    "hi": "अभी तक आपके बारे में कोई नोट नहीं है।",
+    "mr-Latn": "Ajun tumchyabaddal kahi note nahi.",
+    "mr": "अजून तुमच्याबद्दल काही नोट नाही."
+  },
+  "notesHint": {
+    "en": "I keep short notes from what you tell me. Ask \"what do you know about me?\" to see or delete them.",
+    "hi-Latn": "Aapki baaton ke chhote notes yahan rehte hain. Dekhne ya hatane ke liye poochiye: \"mere baare mein kya pata hai?\"",
+    "hi": "आपकी बातों के छोटे नोट्स यहाँ रहते हैं। देखने या हटाने के लिए पूछिए: \"मेरे बारे में क्या पता है?\"",
+    "mr-Latn": "Tumhi je sangta, tyache chhote notes ithe rahtat. Te baghnyasathi kinva kadhnyasathi vichara: \"majhyabaddal kay mahiti aahe?\"",
+    "mr": "तुम्ही जे सांगता, त्याचे छोटे नोट्स इथे राहतात. ते बघण्यासाठी किंवा काढण्यासाठी विचारा: \"माझ्याबद्दल काय माहिती आहे?\""
   }
 }
