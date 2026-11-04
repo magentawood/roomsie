@@ -43,6 +43,12 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
+/** The owner of a goal now: a claim at sign-in moves a visitor goal to the account (T-17). */
+export async function goalOwnerOf(db: Db, id: string) {
+  const [goal] = await db.select({ userId: goals.userId, sessionId: goals.anonymousSessionId }).from(goals).where(eq(goals.id, id))
+  return goal && ownerOf(goal)
+}
+
 /** The typed turns that the router labelled `context`, oldest first, with their owner: what the backfill of T-36 reads. */
 export async function contextTurnsOf(db: Db) {
   const rows = await db.select({ ...turnFields, userId: goals.userId, sessionId: goals.anonymousSessionId, goalId: chatTurns.goalId })

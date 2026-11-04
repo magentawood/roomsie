@@ -58,14 +58,12 @@ describe('the observer in the chat', () => {
     expect(requests.observer).toHaveLength(0)
   })
 
-  it('saves no note from a general or a consequential question, and calls no observer', async () => {
-    for (const band of ['general', 'consequential'] as const) {
-      const requests = fakeVendors({ deepseek: [room()], ...routed({ band, kinds: ['question', 'context'] }), ...withNote() })
-      const goal = await visitorGoal()
-      await sent(goal, 'room chahiye, I start work at 6 am, what is the usual deposit?')
-      expect(requests.observer, band).toEqual([])
-      expect(await notesOf(goal.key), band).toEqual([])
-    }
+  it('saves no note from a turn that states an own religion or community, and calls no observer (PD3c)', async () => {
+    const requests = fakeVendors({ deepseek: [scored({ intent: 'room', ownReligion: 'jain' })], ...context(), ...withNote() })
+    const goal = await visitorGoal()
+    await sent(goal, 'room chahiye, I am Jain, I start work at 6 am')
+    expect(requests.observer).toEqual([])
+    expect(await notesOf(goal.key)).toEqual([])
   })
 
   it('sends the reply when the observer fails, and saves no note', async () => {
@@ -165,6 +163,22 @@ describe('the delete of a note', () => {
     const { notes } = notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: asha })).json())
     expect(notes).toMatchObject([{ label: 'Work hours and work from home' }])
     expect((await deleteNote(notes[0]!.id, asha)).statusCode).toBe(204)
+    expect(notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: asha })).json()).notes).toEqual([])
+  })
+
+  it('saves the note on the account when the visitor signs in before the observer ends', async () => {
+    const goal = await visitorGoal()
+    let release: (answer: Response) => void = () => {}
+    const answer = new Promise<Response>((resolve) => { release = resolve })
+    fakeVendors({ deepseek: [room()], ...context(), observer: { deepseek: [answer as unknown as Response] } })
+    const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { text: 'room chahiye, I start work at 6 am' }, headers: { [visitorKeyHeader]: goal.key } })
+    expect(res.statusCode).toBe(200)
+    const claim = await t.app.inject({ method: 'POST', url: '/v1/goals/claim', headers: { authorization: `Bearer ${t.tokens.ravi}`, [visitorKeyHeader]: goal.key } })
+    expect(claim.statusCode).toBe(204)
+    release(scored({ notes: [earlyStart] }))
+    await t.app.observerQueue.settled()
+    const ravi = notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: { authorization: `Bearer ${t.tokens.ravi}` } })).json()).notes
+    expect(ravi).toMatchObject([{ evidence: 'I start work at 6 am' }])
   })
 
   it('gives an empty list, and refuses a delete, with no sign-in and no key', async () => {
