@@ -52,6 +52,13 @@ describe('the observer', () => {
     expect(await observe(text)).toMatchObject([{ evidence: 'पार्टनर \u091C\u093Cयादातर यहीं' }])
   })
 
+  it('finds a quote after an emoji, which is two code units', async () => {
+    fakeVendors({ observer: { deepseek: [scored({ notes: [{ ...partner, evidence: 'my partner' }] })] } })
+    expect(await observe('😀 my partner lives with me')).toMatchObject([{ evidence: 'my partner' }])
+    fakeVendors({ observer: { deepseek: [scored({ notes: [{ ...partner, evidence: 'partner lives' }] })] } })
+    expect(await observe('ok 👍 my partner lives with me 👍')).toMatchObject([{ evidence: 'partner lives' }])
+  })
+
   it('drops a topic that is not in the catalogue, or is retired', async () => {
     fakeVendors({ observer: { deepseek: [scored({ notes: [{ ...partner, key: 'retired_topic' }, { ...partner, key: 'pets' }] })] } })
     expect(await observe('my partner basically lives with me')).toEqual([])
@@ -68,6 +75,17 @@ describe('the observer', () => {
     fakeVendors({ observer: { deepseek: [answer(JSON.stringify({ notes: [partner] }), undefined, tokens)] } })
     expect(await observe('my partner basically lives with me')).toMatchObject([{ confidence: 0.5 }])
     expect(request.req.log.error).toHaveBeenCalledTimes(1)
+  })
+
+  it('sends no error report for an answer of DeepSeek with no tokens and no notes', async () => {
+    fakeVendors({ observer: { deepseek: [answer(JSON.stringify({ notes: [] }))] } })
+    expect(await observe('my partner basically lives with me')).toEqual([])
+    expect(request.req.log.error).not.toHaveBeenCalled()
+  })
+
+  it('keeps a note whose model added a key that the contract does not know', async () => {
+    fakeVendors({ observer: { deepseek: [scored({ notes: [{ ...partner, reason: 'stays over' }] }, { guest_frequency: 0.9, concern: 0.8 })] } })
+    expect(await observe('my partner basically lives with me')).toMatchObject([{ key: 'guest_frequency' }])
   })
 
   it('keeps one note for each topic: the first', async () => {

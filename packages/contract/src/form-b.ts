@@ -23,7 +23,7 @@ export const observerInput = z.strictObject({ version: z.literal(1).default(1), 
 /** The answer of the observer model. Code checks the topic and the quote, and gives the confidence (T-36). Not strict, as the extractor answer. */
 export const observerAnswer = z.object({
   version: z.literal(1).default(1),
-  notes: z.array(observation.pick({ key: true, kind: true, value: true, evidence: true })).max(10),
+  notes: z.array(z.object(observation.pick({ key: true, kind: true, value: true, evidence: true }).shape)).max(10),
 })
 
 /** What the observer gives: the notes that passed the checks, and the number of quotes that the turn does not hold. */
@@ -36,7 +36,6 @@ export type ObserverOutput = z.output<typeof observerOutput>
 
 /** The notes of the owner, for "What do you know about me?" (PD7a). Only the owner gets them. */
 export const notesResponse = z.object({
-  // Not strict, as each response: a newer API can add a field (api.md).
   notes: z.array(z.object({ id: z.uuid(), label: z.string(), value: z.string(), evidence: z.string() })),
 })
 export type NotesResponse = z.infer<typeof notesResponse>

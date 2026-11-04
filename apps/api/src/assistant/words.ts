@@ -34,11 +34,13 @@ function fold(text: string) {
 export function quoteIn(text: string, quote: string) {
   const units = fold(text)
   const folded = units.map(({ unit }) => unit).join('')
+  // A unit can be two code units of the string, as an emoji, so each index of the string maps to its unit.
+  const unitAt = units.flatMap(({ unit }, i) => Array<number>(unit.length).fill(i))
   const wanted = fold(quote.trim()).map(({ unit }) => unit).join('')
   if (!wanted) return null
   for (let at = folded.indexOf(wanted); at >= 0; at = folded.indexOf(wanted, at + 1)) {
-    const end = at + wanted.length
-    if (!isWordUnit(folded[at - 1]) && !isWordUnit(folded[end])) return text.slice(units[at]!.from, units[end - 1]!.to)
+    const [first, last] = [unitAt[at]!, unitAt[at + wanted.length - 1]!]
+    if (!isWordUnit(units[first - 1]?.unit) && !isWordUnit(units[last + 1]?.unit)) return text.slice(units[first]!.from, units[last]!.to)
   }
   return null
 }
