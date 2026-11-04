@@ -1,7 +1,10 @@
+import type { SavedKind } from '@roomsie/contract'
 import { siteUrl } from './site'
 
-/** The message that the Share modal sends to each ticked conversation (T-50). */
-export const shareText = (title: string, path: string) => `${title}: ${siteUrl}${path}`
+/** The address of a card on roomsie.in (T-50). */
+export const cardUrl = (kind: SavedKind, id: string) => `${siteUrl}/${kind}/${id}`
+/** The message that the Share modal sends to each ticked conversation. */
+export const shareText = (title: string, url: string) => `${title}: ${url}`
 
 type TextPart = string | { href: string; text: string }
 const cardLink = new RegExp(`(${siteUrl.replace(/[.]/g, '\\.')}/(?:places|people)/[0-9a-f-]{36})(?![\\w/-])`)

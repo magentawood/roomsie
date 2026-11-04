@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
-import { areaNames } from '../areas'
+import { listAreas } from '../areas'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, type Owner } from '../observations/read'
@@ -58,13 +58,19 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
   return row && { ...row, form: formA.parse(row.form) }
 }
 
-/** The goals of the asker, newest first, with the title that the designs give a goal (T-50). */
+/** The title that the designs give a goal, from its Form A (T-50). One builder, so the header and the list agree. */
+async function titlerOf(db: Db) {
+  const names = new Map((await listAreas(db)).map(({ slug, name }) => [slug, name]))
+  return (form: FormA) => goalTitle(form, (slug) => names.get(slug) ?? slug)
+}
+export const titleOf = async (db: Db, form: FormA) => (await titlerOf(db))(form)
+
+/** The 50 newest goals of the asker: a list that grows with each new goal has a limit (T-50). */
 export async function goalsOf(db: Db, asker: Asker) {
   const rows = await db.select({ id: goals.id, form: goals.form, status: goals.status, createdAt: goals.createdAt })
-    .from(goals).where(ownedBy(asker)).orderBy(desc(goals.createdAt))
-  const forms = rows.map(({ form }) => formA.parse(form))
-  const names = await areaNames(db, forms.flatMap(({ areas }) => (Array.isArray(areas.value) ? areas.value : [])))
-  return rows.map(({ id, status, createdAt }, i) => ({ id, status, title: goalTitle(forms[i]!, (slug) => names.get(slug) ?? slug), createdAt: createdAt.toISOString() }))
+    .from(goals).where(ownedBy(asker)).orderBy(desc(goals.createdAt)).limit(50)
+  const title = await titlerOf(db)
+  return rows.map(({ id, form, status, createdAt }) => ({ id, status, title: title(formA.parse(form)), createdAt: createdAt.toISOString() }))
 }
 
 /** A close or a reopen by the owner (T-50). Null: no goal of the asker. */
@@ -172,7 +178,7 @@ export async function ownValuesOf(db: Db | Tx, asker: Asker): Promise<OwnValues>
   return { religion: religion?.value ?? null, community: community?.value ?? null }
 }
 
-/** At sign-in (T-17). The turns and the waitlist entries follow their goal, and the claimed session stays (T-35). */
+/** At sign-in (T-17). The turns, the waitlist entries and the feedback follow their goal, and the claimed session stays (T-35). */
 export function claimSession(db: Db, key: string, userId: string) {
   return db.transaction(async (tx) => {
     // The row lock makes a second claim at the same time wait, then find no session to claim.

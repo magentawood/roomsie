@@ -103,7 +103,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
   const [messaging, setMessaging] = useState(false)
-  const { share, status, dialog: shareDialog } = useShare(title, `/places/${listing.id}`)
+  const { share, status, dialog: shareDialog } = useShare(title, 'places', listing.id)
   const routerBack = useBack()
   const back = panel?.onBack ?? routerBack
   const askInChat = panel && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={panel.onAskInChat}>Ask in chat</Button>

@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { CheckSquare, ChevronDown, Home02 } from '@untitledui/icons'
-import { errorText } from '../../lib/api'
-import { deployRefusal, goalHref, useCurrentGoalId } from '../../lib/goals'
+import { deployRefusal, errorText } from '../../lib/api'
+import { useCurrentGoalId } from '../../lib/goals'
 import { useGoals } from '../../lib/queries'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -19,7 +19,7 @@ export function GoalList({ onPick }: { onPick?: () => void }) {
     <ul aria-label="Your goals" className="flex min-h-0 flex-col gap-1 overflow-y-auto">
       {goals.data.goals.map(({ id, title, status }) => (
         <li key={id}>
-          <Link href={goalHref(id)} onClick={onPick} aria-current={id === currentId ? 'page' : undefined}
+          <Link href={`/chat?goal=${id}`} onClick={onPick} aria-current={id === currentId ? 'page' : undefined}
             className={`flex items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium text-secondary outline-focus-ring focus-visible:outline-2 ${id === currentId ? 'border-secondary bg-primary shadow-xs' : 'border-transparent hover:bg-primary_hover'}`}>
             <Home02 size={20} aria-hidden className="shrink-0 text-fg-quaternary" />
             <span className="truncate">{title}</span>

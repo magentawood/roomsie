@@ -12,6 +12,7 @@ import { Button, type Icon } from '../ui/button'
 import { CompletionCard } from '../profile/completion-card'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { GoalList } from '../goals/goal-list'
+import { newGoalHref } from '../../lib/goals'
 import { Logo } from './logo'
 import { GoogleSignIn } from './google-sign-in'
 import { SignInWall } from './sign-in-wall'
@@ -62,7 +63,7 @@ function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
         <Link href="/chat" className="px-2 text-primary"><Logo className="h-6.5 w-auto" /></Link>
         <div className="flex gap-2">
           <Button variant="primary" size="sm" iconLeading={Plus} {...linkTo('/listings/new')}>New Listing</Button>
-          <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo('/start')}>New Goal</Button>
+          <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo(newGoalHref)}>New Goal</Button>
         </div>
         <GoalList />
       </div>
@@ -99,7 +100,7 @@ function MobileNav({ linkTo }: { linkTo: LinkTo }) {
         <NavItem look="phone" icon={Key01} label="My Listings" link={linkTo('/listings')} />
         <NavItem look="phone" icon={User01} label="Profile" link={linkTo('/profile')} />
       </div>
-      <LinkOrButton link={linkTo('/start')} label="New goal"
+      <LinkOrButton link={linkTo(newGoalHref)} label="New goal"
         className="flex size-14 items-center justify-center rounded-full bg-brand-solid text-primary_on-brand shadow-sm outline-focus-ring hover:bg-brand-solid_hover focus-visible:outline-2 focus-visible:outline-offset-2">
         <Plus size={24} aria-hidden />
       </LinkOrButton>

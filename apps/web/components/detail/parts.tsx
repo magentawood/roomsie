@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { DotsVertical } from '@untitledui/icons'
+import type { SavedKind } from '@roomsie/contract'
 import type { Icon } from '../ui/button'
 import { ShareDialog } from './share-dialog'
 
@@ -76,7 +77,7 @@ export function DetailMenu({ id, items }: { id: string; items: MenuItem[] }) {
 }
 
 /** The Share modal of a card (T-50), and the line that tells what it did. */
-export function useShare(title: string, path: string) {
+export function useShare(title: string, kind: SavedKind, id: string) {
   const [open, setOpen] = useState(false)
   const [status, setStatus] = useState<string | null>(null)
   const done = (line: string | null) => {
@@ -85,7 +86,7 @@ export function useShare(title: string, path: string) {
     setStatus(line)
     setTimeout(() => setStatus(null), 3000)
   }
-  const dialog = open && <ShareDialog title={title} path={path} onDone={done} />
+  const dialog = open && <ShareDialog title={title} kind={kind} id={id} onDone={done} />
   return { share: () => setOpen(true), status, dialog }
 }
 

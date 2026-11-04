@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowLeft, ArrowRight, Home03, Key01, Lock01 } from '@untitledui/icons'
@@ -72,12 +72,13 @@ export function Onboarding() {
   const [step, setStep] = useState<Step>('purpose')
   const [answers, setAnswers] = useState<Answers>({})
   const [signInError, setSignInError] = useState<string | null>(null)
-  // A person with a chat on this browser goes on with it. Local storage exists only in the browser.
+  // A person with a chat on this browser goes on with it, unless they asked for a new goal (T-50). Local storage exists only in the browser.
+  const newGoal = useSearchParams().has('new')
   useEffect(() => {
-    const stored = readStored(chatStorage.goal) !== null
+    const stored = readStored(chatStorage.goal) !== null && !newGoal
     setHasChat(stored)
     if (stored) router.replace('/chat')
-  }, [router])
+  }, [router, newGoal])
   const start = useMutation({
     mutationFn: (asker: User | null) => chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', body: startOf(answers) }),
     onSuccess: ({ visitorKey, ...goal }) => {

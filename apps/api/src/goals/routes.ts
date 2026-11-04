@@ -14,7 +14,7 @@ import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
 import {
-  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, setGoalStatus, turnsOf, visitorSessionOf, type Asker, type UserTurn,
+  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
 } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
@@ -47,7 +47,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       visitorKey = session.key
     }
     const goal = await createGoal(options.db, asker, start)
-    return reply.code(201).send({ ...goal, form: start?.form ?? formA.parse({}), visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [], status: 'open' })
+    const form = start?.form ?? formA.parse({})
+    const turnsLeft = typedTurnsLeft(await capStateOf(options.db, asker, options.limits))
+    return reply.code(201).send({ ...goal, form, visitorKey, typedTurnsLeft: turnsLeft, outsidePlaces: [], status: 'open', title: await titleOf(options.db, form) })
   })
 
   app.get('/goals/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 200: goalResponse, 404: errorResponse } } }, async (req, reply) => {
@@ -55,7 +57,8 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const { id, form, outsidePlaces, status } = goal
-    return { id, form, turns: await turnsOf(options.db, id), typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces, status }
+    const turnsLeft = typedTurnsLeft(await capStateOf(options.db, asker, options.limits))
+    return { id, form, turns: await turnsOf(options.db, id), typedTurnsLeft: turnsLeft, outsidePlaces, status, title: await titleOf(options.db, form) }
   })
 
   app.get('/goals', { preHandler: optionalUser(options), schema: { headers, response: { 200: goalsResponse } } }, async (req) =>
@@ -126,7 +129,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const after = await capStateOf(options.db, asker, options.limits)
     // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
     if (after.state === 'wall' && before.state !== 'wall') v1.analytics.track(req, { name: 'wall_hit' })
-    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces }
+    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title: await titleOf(options.db, turn.form) }
   })
 
   // Safe to repeat: a second claim moves nothing (T-17).
@@ -141,10 +144,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   // Three emails a chat: a script must first pass the chat limits (T-22a).
   app.post('/goals/:id/waitlist', {
     preHandler: optionalUser(options),
-    schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 429: errorResponse } },
+    schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 409: errorResponse, 429: errorResponse } },
   }, async (req, reply) => {
     const goal = await goalOf(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]))
     if (!goal) return reply.code(404).send({ error: 'not found' })
+    if (goal.status === 'closed') return reply.code(409).send({ error: 'This goal is closed. Reopen it to join the waitlist.' })
     const joined = await joinWaitlist(options.db, { ...req.body, goalId: goal.id })
     if (!joined) return reply.code(429).send({ error: 'This chat cannot add more emails to the waitlist.' })
     return reply.code(204).send(null)

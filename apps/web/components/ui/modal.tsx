@@ -39,16 +39,18 @@ export function CloseButton({ onClose }: { onClose: () => void }) {
 
 const tones = { error: 'text-fg-error', success: 'text-fg-success', neutral: 'text-fg-quaternary' }
 
-/** A success icon is for an offer, as "Verify your ID". `titleId` names the dialog. */
-export function ModalHead({ icon: ModalIcon, iconTone = 'error', titleId, title, children, onClose }: {
-  icon: Icon; iconTone?: keyof typeof tones; titleId: string; title: string; children: ReactNode; onClose: () => void
-}) {
+/** A success icon is for an offer, as "Verify your ID". `art`: a picture in place of the icon (T-50). `titleId` names the dialog. */
+export function ModalHead({ icon: ModalIcon, art, iconTone = 'error', titleId, title, children, onClose }: {
+  iconTone?: keyof typeof tones; titleId: string; title: string; children: ReactNode; onClose: () => void
+} & ({ icon: Icon; art?: never } | { art: string; icon?: never })) {
   return (
     <>
       <div className="flex items-start justify-between">
-        <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${tones[iconTone]}`}>
-          <ModalIcon size={20} aria-hidden />
-        </span>
+        {ModalIcon ? (
+          <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${tones[iconTone]}`}>
+            <ModalIcon size={20} aria-hidden />
+          </span>
+        ) : <img src={art} alt="" className="size-29" />}
         <CloseButton onClose={onClose} />
       </div>
       <div className="flex flex-col gap-1">

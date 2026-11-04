@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { User } from 'firebase/auth'
 import { z } from 'zod'
-import { api, ApiError, refusalOf, requestHeaders } from './api'
+import { api, ApiError, errorText, refusalOf, requestHeaders } from './api'
 
 describe('refusalOf', () => {
   it('reads the refusal of the gate, and nothing from a different error', () => {
@@ -36,5 +36,12 @@ describe('api', () => {
     const user = { getIdToken: async () => 'token-1' } as User
     expect(await headersOf(user)).toEqual({ authorization: 'Bearer token-1' })
     expect(await headersOf(null)).toEqual({})
+  })
+})
+
+describe('the minutes of a deploy (T-50)', () => {
+  it('names a route that the old API does not have yet, and leaves a goal that is not found as it is', () => {
+    expect(errorText(new ApiError(404, { message: 'Route POST:/v1/goals/x/close not found', error: 'Not Found', statusCode: 404 }))).toMatch(/few minutes/)
+    expect(errorText(new ApiError(404, { error: 'not found' }))).toBe('not found')
   })
 })

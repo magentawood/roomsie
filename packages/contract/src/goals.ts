@@ -29,7 +29,9 @@ const outsidePlaces = z.array(waitlistPlace).default([])
 export const goalStatuses = ['open', 'closed'] as const
 export const goalStatus = z.enum(goalStatuses)
 export type GoalStatus = z.infer<typeof goalStatus>
-export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces, status: goalStatus.default('open') })
+/** The title that the API builds with `goalTitle` (T-50). */
+const title = z.string().default('New goal')
+export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces, status: goalStatus.default('open'), title })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
@@ -60,7 +62,7 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
-export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces })
+export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces, title })
 
 /** The limits of PD9 that refuse a turn or a new visitor chat (T-21). */
 export const limitRefusal = z.object({ error: z.string(), limit: z.enum(['turn_cap', 'too_many_chats', 'too_fast']) })
@@ -219,9 +221,9 @@ const titleLeads = {
 } satisfies Record<(typeof intents)[number], string>
 
 /** The title of a goal, from its place type and its first area, as the designs name a goal. */
-export function goalTitle(form: FormA, label: (slug: string) => string) {
+export function goalTitle(form: FormA, areaName: (slug: string) => string) {
   const area = Array.isArray(form.areas.value) ? form.areas.value[0] : undefined
-  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${label(area)}` : 'New goal'
+  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${areaName(area)}` : 'New goal'
 }
 
 export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), title: z.string(), status: goalStatus, createdAt: z.iso.datetime() })) })

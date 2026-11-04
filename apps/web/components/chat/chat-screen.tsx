@@ -4,11 +4,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight } from '@untitledui/icons'
-import { capWall, formA, goalResponse, goalTitle, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
-import { deployRefusal, useCurrentGoalId } from '../../lib/goals'
+import { newGoalHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../../lib/compare'
@@ -122,14 +122,14 @@ function useChat() {
   const turns = goal.data?.turns ?? []
   // A sign-in lifts the cap, and the goal in the cache still has the count of the visitor.
   const typedTurnsLeft = user ? null : goal.data?.typedTurnsLeft ?? null
-  return { goalId, turns, form: goal.data?.form ?? emptyForm, outsidePlaces: goal.data?.outsidePlaces ?? [], closed: goal.data?.status === 'closed', typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
+  return { goalId, turns, form: goal.data?.form ?? emptyForm, outsidePlaces: goal.data?.outsidePlaces ?? [], closed: goal.data?.status === 'closed', goalName: goal.data?.title ?? '', typedTurnsLeft, signedIn: user !== null, send, loadingGoal: goalId !== null && goal.isPending && !gone }
 }
 
 const emptyForm = formA.parse({})
 
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
-  const { goalId, turns, form: chatForm, outsidePlaces, closed, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
+  const { goalId, turns, form: chatForm, outsidePlaces, closed, goalName, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
   const router = useRouter()
   // A chat starts on the onboarding, which makes its goal (T-48).
   const noGoal = goalId === null && !preview
@@ -195,7 +195,6 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   if (loadingGoal || noGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
-  const goalName = goalTitle(chatForm, (slug) => areaLabels[slug] ?? slug)
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
       {!preview && <GoalHeader title={goalName} closed={closed} onFound={() => setFoundOpen(true)} />}
@@ -290,9 +289,9 @@ function ClosedBar({ goalId }: { goalId: string }) {
       <p className="text-sm font-medium text-secondary">You closed this goal.</p>
       <div className="flex gap-3">
         <Button variant="secondary" size="sm" disabled={reopen.isPending} onClick={() => reopen.mutate()}>Reopen</Button>
-        <Button variant="primary" size="sm" href="/start">Start a new goal</Button>
+        <Button variant="primary" size="sm" href={newGoalHref}>Start a new goal</Button>
       </div>
-      {reopen.error && <p role="alert" className="text-sm text-error-primary">{deployRefusal(reopen.error) ?? errorText(reopen.error)}</p>}
+      {reopen.error && <p role="alert" className="text-sm text-error-primary">{errorText(reopen.error)}</p>}
     </div>
   )
 }

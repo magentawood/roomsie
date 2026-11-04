@@ -16168,6 +16168,10 @@
                         "closed"
                       ]
                     },
+                    "title": {
+                      "default": "New goal",
+                      "type": "string"
+                    },
                     "visitorKey": {
                       "nullable": true,
                       "type": "string"
@@ -16180,6 +16184,7 @@
                     "typedTurnsLeft",
                     "outsidePlaces",
                     "status",
+                    "title",
                     "visitorKey"
                   ],
                   "additionalProperties": false
@@ -18188,6 +18193,10 @@
                         "open",
                         "closed"
                       ]
+                    },
+                    "title": {
+                      "default": "New goal",
+                      "type": "string"
                     }
                   },
                   "required": [
@@ -18196,7 +18205,8 @@
                     "turns",
                     "typedTurnsLeft",
                     "outsidePlaces",
-                    "status"
+                    "status",
+                    "title"
                   ],
                   "additionalProperties": false
                 }
@@ -20839,13 +20849,18 @@
                           "kochi"
                         ]
                       }
+                    },
+                    "title": {
+                      "default": "New goal",
+                      "type": "string"
                     }
                   },
                   "required": [
                     "form",
                     "turns",
                     "typedTurnsLeft",
-                    "outsidePlaces"
+                    "outsidePlaces",
+                    "title"
                   ],
                   "additionalProperties": false
                 }
@@ -21120,6 +21135,25 @@
             }
           },
           "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
             "description": "Default Response",
             "content": {
               "application/json": {

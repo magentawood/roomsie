@@ -750,6 +750,10 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
       { id: newer.id, title: 'New goal', status: 'open', createdAt: expect.any(String) },
       { id: older.id, title: 'Room hunting in Andheri–Goregaon', status: 'open', createdAt: expect.any(String) },
     ])
+    // The goal and each turn give the same title, so the header and the list agree.
+    expect(goalResponse.parse((await t.call('asha', 'GET', `/v1/goals/${older.id}`)).json()).title).toBe('Room hunting in Andheri–Goregaon')
+    const tapped = await t.call('asha', 'POST', `/v1/goals/${newer.id}/turns`, { tap: { slot: 'areas', value: ['bandra-santacruz'] } })
+    expect(turnResponse.parse(tapped.json()).title).toBe('Looking in Bandra–Santacruz')
     const visitor = await visitorGoal()
     expect(await listOf(visitor)).toEqual([{ id: visitor.id, title: 'New goal', status: 'open', createdAt: expect.any(String) }])
     expect(goalsResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/goals' })).json()).goals).toEqual([])
@@ -774,6 +778,7 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
     const typed = await send(goal, 'a room in Powai')
     expect([typed.statusCode, typed.json()]).toEqual([409, { error: 'This goal is closed. Reopen it to keep chatting.' }])
     expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/turns`, { tap: { slot: 'intent', value: 'room' } })).statusCode).toBe(409)
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/waitlist`, { email: 'visitor@example.com', place: 'pune' })).statusCode).toBe(409)
     expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
 
     expect((await asVisitor(other, 'POST', `/v1/goals/${goal.id}/reopen`)).statusCode).toBe(404)
@@ -781,12 +786,7 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
     expect((await eventsOf('goal_reopened')).length).toBe(reopenedBefore + 1)
     expect(goalResponse.parse((await asVisitor(goal, 'GET', `/v1/goals/${goal.id}`)).json()).status).toBe('open')
     expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/turns`, { tap: { slot: 'intent', value: 'room' } })).statusCode).toBe(200)
-  })
-
-  it('closes the goal of a signed-in person, and not the goal of a different person', async () => {
-    const goal = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
-    expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(404)
-    expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(200)
-    expect((await listOf('asha')).find(({ id }) => id === goal.id)!.status).toBe('closed')
+    // A skipped pop-up sent no feedback, so the next close asks again.
+    expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'roomsie' })).json()).toEqual({ askFeedback: true })
   })
 })

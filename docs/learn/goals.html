@@ -39,8 +39,9 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>A <strong>goal</strong> is one move: one chat, its Form A and its results (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A person or a visitor can have many goals.</li>
-<li>The <strong>title</strong> names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". Code builds it, so it changes when the area changes.</li>
-<li>The <strong>goal list</strong> is in the sidebar on a computer. On a phone, the title above the chat opens it. The newest goal comes first, and a closed goal has a "Closed" mark.</li>
+<li>The <strong>title</strong> names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.</li>
+<li>The <strong>goal list</strong> is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.</li>
+<li><strong>A new goal</strong> starts at <code>/start?new</code>: "New Goal", the phone "+" and "Start a new goal" (<a href="onboarding.html">the onboarding</a>).</li>
 <li><strong>"I found a place"</strong> opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.</li>
 <li>A <strong>closed goal</strong> is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".</li>
 <li>The <strong>feedback pop-up</strong> follows the close: one of five faces, and words if the person wants. Moderators read it on <code>/admin/feedback</code>, with the feedback of <a href="landing-page.html">the landing page</a>.</li>
@@ -56,7 +57,7 @@ details.callout[open] summary{color:var(--fg)}
 <tbody>
 <tr>
 <td>The title and the list</td>
-<td><code>goalTitle()</code> and <code>goalsResponse</code> in <code>packages/contract/src/goals.ts</code>, and <code>GET /v1/goals</code></td>
+<td><code>goalTitle()</code> in <code>packages/contract/src/goals.ts</code>, <code>titleOf()</code> and <code>goalsOf()</code> in <code>apps/api/src/goals/store.ts</code>, and <code>GET /v1/goals</code></td>
 </tr>
 <tr>
 <td>The close and the reopen</td>
@@ -89,8 +90,8 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>The minutes of a deploy.</strong> The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". <code>deployRefusal()</code> turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.</li>
-<li><strong>A reopen and a second close</strong> ask no feedback again: the close answers <code>askFeedback: false</code> when the goal has its feedback.</li>
+<li><strong>The minutes of a deploy.</strong> The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". <code>errorText()</code> turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.</li>
+<li><strong>A reopen and a second close</strong> ask no feedback when the goal has its feedback: the close answers <code>askFeedback</code>. A goal whose pop-up was skipped gets the pop-up again.</li>
 <li><strong>The status "found" became "closed"</strong>, because a dropped plan is not a found place. No code wrote "found", so the migration was safe for the API before it.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

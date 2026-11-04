@@ -5,8 +5,9 @@
 ## What it is
 
 - A **goal** is one move: one chat, its Form A and its results ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A person or a visitor can have many goals.
-- The **title** names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". Code builds it, so it changes when the area changes.
-- The **goal list** is in the sidebar on a computer. On a phone, the title above the chat opens it. The newest goal comes first, and a closed goal has a "Closed" mark.
+- The **title** names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.
+- The **goal list** is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.
+- **A new goal** starts at `/start?new`: "New Goal", the phone "+" and "Start a new goal" ([the onboarding](onboarding.md)).
 - **"I found a place"** opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.
 - A **closed goal** is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".
 - The **feedback pop-up** follows the close: one of five faces, and words if the person wants. Moderators read it on `/admin/feedback`, with the feedback of [the landing page](landing-page.md).
@@ -15,7 +16,7 @@
 
 | Part | Where |
 |---|---|
-| The title and the list | `goalTitle()` and `goalsResponse` in `packages/contract/src/goals.ts`, and `GET /v1/goals` |
+| The title and the list | `goalTitle()` in `packages/contract/src/goals.ts`, `titleOf()` and `goalsOf()` in `apps/api/src/goals/store.ts`, and `GET /v1/goals` |
 | The close and the reopen | `POST /v1/goals/:id/close` and `/reopen`, `setGoalStatus()` in `apps/api/src/goals/store.ts` |
 | The feedback of a goal | `POST /v1/goals/:id/feedback`, `saveGoalFeedback()` in `apps/api/src/feedback/read.ts` |
 | The header, the list and the switcher | `apps/web/components/goals/goal-list.tsx` |
@@ -33,8 +34,8 @@
 
 ## Gotchas
 
-- **The minutes of a deploy.** The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". `deployRefusal()` turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.
-- **A reopen and a second close** ask no feedback again: the close answers `askFeedback: false` when the goal has its feedback.
+- **The minutes of a deploy.** The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". `errorText()` turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.
+- **A reopen and a second close** ask no feedback when the goal has its feedback: the close answers `askFeedback`. A goal whose pop-up was skipped gets the pop-up again.
 - **The status "found" became "closed"**, because a dropped plan is not a found place. No code wrote "found", so the migration was safe for the API before it.
 
 ## Tickets
