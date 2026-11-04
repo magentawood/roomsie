@@ -12,7 +12,7 @@
 
 | Part | Where |
 |---|---|
-| The chip slots, the labels and the tap body | `chipSlots`, `intentLabels`, `budgetBands`, `chipAnswers()`, `chipTap` and `tapText()` in `packages/contract`; the lifestyle labels are `lifestyleAnswerLabels`, which the profile form also uses |
+| The chip slots, the labels and the tap body | `chipSlots`, `intentLabels`, `budgetBands`, `chipLabels()`, `chipTap` and `tapText()` in `packages/contract`; the lifestyle labels are `lifestyleAnswerLabels`, which the profile form also uses |
 | A tap: no router, no extractor, then the scripted reply | `runTap()` in `apps/api/src/assistant/assistant.ts` |
 | The chips that a reply offers | `chips` in the parts of the assistant turn, set by the reply writer |
 | The turn route: a typed message or a tap | `apps/api/src/goals/routes.ts` |

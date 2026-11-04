@@ -617,7 +617,7 @@ describe('a chip tap (T-09)', () => {
     const moving = await tap(goal, { slot: 'whosMoving', value: 'friends' })
     expect([moving.form.whosMoving, moving.turns.map(({ text }) => text)]).toEqual([{ source: 'stated', value: 'friends' }, ['Group of friends', `Got it: friends moving together. ${intentQuestion}`]])
     expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
-    // The web reads this text in the minutes of a deploy (tapRefusal).
+    // The web reads this text in the minutes of a deploy (tapRefusal and compareRefusal).
     const wrong = await tapped(goal, { slot: 'lifestyle.food', value: 'smoker' })
     expect([wrong.statusCode, wrong.json()]).toEqual([400, { error: 'not valid: body' }])
     expect((await tapped(goal, { slot: 'religionPreference', value: { values: ['jain'], weight: 'prefer' } })).statusCode).toBe(400)

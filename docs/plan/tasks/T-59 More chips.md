@@ -65,6 +65,8 @@ Tap buttons for the closed questions after the budget, so a person types less.
   - **A tap:** it fills its slot as a stated answer, its label is the text of the message of the person, and it calls no model ([PD3b](../../decisions/pd-03b-interview-vs-chips.md)).
   - **No chips:** the hidden religion and community slots ([PD15](../../decisions/pd-15-form-a-contract.md)), and a question about a conflict.
   - **The deploy window:** the old API refuses a new tap, and the chat shows a clear line.
+  - **The rule of the error texts (the user, review):** "When the web checks the text of an API error, an API test asserts that text" goes into testing.md, with its row in the log of candidates.
+  - **The types of the chips (the user, review):** the label table stays a simple record; the web parses each tap with the contract.
 - **Out of scope:**
   - a "skip" or "no preference" chip
   - a change of the order of the questions

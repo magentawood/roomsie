@@ -82,11 +82,9 @@ export function slotOf(form: FormA, slot: FormASlot): SlotState {
 }
 
 /** The closed questions, with chips (T-09, T-59). The hidden slots and the move date have none (PD15). */
-export const chipSlots = [
-  'intent', 'areas', 'budget', 'roomType', 'whosMoving',
-  ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
-] as const
+export const chipSlots = formASlots.filter((slot): slot is Exclude<FormASlot, 'moveDate'> => slot !== 'moveDate')
 export type ChipSlot = (typeof chipSlots)[number]
+/** Intent, areas and budget have chips of their own: the help line, several picks, and the bands. */
 export type AnswerChipSlot = Exclude<ChipSlot, 'intent' | 'areas' | 'budget'>
 /** The chip words of room type, who is moving and the weight of a must-have (the drafts, section 35). */
 const roomTypeChipLabels = { private: 'A private room', shared: 'A shared room' } satisfies Record<Exclude<(typeof roomTypes)[number], 'unclear'>, string>

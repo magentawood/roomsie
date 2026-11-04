@@ -9,9 +9,10 @@ import { waitlistPlace } from './waitlist'
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
 export const visitorKeyHeader = 'x-visitor-key'
 
-// Vercel is live minutes before the API; the defaults read its old replies (api.md). An unknown chip slot of a newer API reads as no chips.
+// Vercel is live minutes before the API; the defaults read its old replies (api.md).
 export const chatTurn = z.object({
-  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null).catch(null),
+  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(),
+  chips: z.enum(chipSlots).nullable().default(null).catch(null), // A chip slot of a newer API reads as no chips.
   comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
 })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
