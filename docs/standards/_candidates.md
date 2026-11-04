@@ -39,6 +39,8 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 | 2026-11-04 | [#212](https://github.com/magentawood/roomsie/pull/212) | `GET /v1/goals` had no limit. A list that grows with each action of a person has a limit. |
 | 2026-11-04 | [#213](https://github.com/magentawood/roomsie/pull/213) | A new `chips` value would break a tab with an older bundle. |
 | 2026-11-04 | [#214](https://github.com/magentawood/roomsie/pull/214) | A learn page said that Marathi had the largest decrease; PD7 says one of the largest. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | A value went into a `RegExp` with no escape. Escape each value before it goes into a pattern. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | Two handlers reported the same failure under different conditions. An error report for one failure has one condition in each handler. |
 | 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | The JSON shape of the router prompt still offered the script `mixed`, but the new rule of the prompt gives the script of most of the letters. A prompt changes its shape when a rule removes a value. |
 | 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | The runner sorted the thresholds with `.toSorted()` and no compare function, which sorts numbers as text. Sort numbers with `(a, b) => a - b`. |
 | 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | A research doc showed a gap between two runs with the same prompts and named no cause. A doc that compares two runs names each change between them, or calls the gap noise. |

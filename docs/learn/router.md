@@ -5,7 +5,7 @@
 ## What it is
 
 - The **router** is one small model call for each typed message. It starts at the same time as the extractor ([PD7a](../decisions/pd-07a-agent-architecture.md)).
-- Its **label** has the **kinds** (filter details, personal context, a question), the **band** ([PD10](../decisions/pd-10-scope-bands.md)), the **register** (the language and the script of the reply: see [The composer](composer.md)), and two flags: `danger` and `community`.
+- Its **label** has the **kinds** (filter details, personal context, a question), the **band** ([PD10](../decisions/pd-10-scope-bands.md)), the **register** (the language and the script of the reply: see [The composer](composer.md)), and three flags: `danger`, `community` and `notes`.
 - The band selects the first line of the reply. Each line is in the language of the person:
 
 | Band | The reply | Form A |
@@ -17,6 +17,7 @@
 | Adversarial | "Let's get back to your search.", then the question | Not changed |
 | Sensitive | A short acknowledgement. With `danger`, also 112 and Tele-MANAS 14416 | The extractor fills it |
 
+- `notes` marks the question "what do you know about me?". A scripted line answers it, and the web shows the notes ([Form B notes](form-b-notes.md)).
 - `community` marks a stated community or religion preference. The label is the log that [PD3c](../decisions/pd-03c-exclusionary-preferences.md) asks for. T-58 adds the filter.
 
 ## How it fits our project
@@ -28,7 +29,7 @@
 | The line of each band | `apps/api/src/assistant/handlers/reply/`, and the texts in `apps/api/src/assistant/lines.json` |
 | The answer, the label and the `turn_routed` event | `packages/contract/src/goals.ts`, `events.ts` |
 
-- **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. `routerBand` keeps the band that the router gave. A sure band keeps `danger`, `community` and the question kind only when each passes the threshold too.
+- **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. `routerBand` keeps the band that the router gave. A sure band keeps `danger`, `community`, `notes` and the question kind only when each passes the threshold too.
 - **The label stays with the message.** It goes on the typed turn of the person, so account deletion removes it. The `turn_routed` event has only the band.
 - **The adapter.** The router calls one classifier. A different model, such as Jev, is a different classifier, and the turn does not change ([extensibility.md](../extensibility.md)).
 

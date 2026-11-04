@@ -66,4 +66,4 @@ a typed message ──► router: kind "context"? ──► the reply goes out
 ## Tickets
 
 - T-35: [#185](https://github.com/magentawood/roomsie/pull/185), 2026-11-02. The contract, the two tables, the six starter topics, the observations module and the move at sign-in.
-- T-36: 2026-11-04. The observer, the quote check, four new topics, the notes question, the delete, the backfill and the eval.
+- T-36: [#215](https://github.com/magentawood/roomsie/pull/215), 2026-11-04. The observer, the quote check, four new topics, the notes question, the delete, the backfill and the eval.

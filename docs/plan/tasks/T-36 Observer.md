@@ -33,12 +33,12 @@ Records what chips cannot capture, only when it can quote the user. It discards 
 - No task waits on this task.
 
 ## Done when
-- [ ] The observer turns personal context into Form B observations
-- [ ] Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation
-- [ ] A one-off job backfills Form B from the stored chat turns
-- [ ] It is tested on the eval sentences, and the rejection rate is recorded
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
-- [ ] The user asks the assistant what it noted, and corrects or deletes a note in the chat. A delete is a direct database action, never an edit by the model
+- [x] The observer turns personal context into Form B observations · [#215](https://github.com/magentawood/roomsie/pull/215)
+- [x] Every observation quotes the own words of the user from that turn. If the quote is not word for word in the turn, the system rejects the observation · [#215](https://github.com/magentawood/roomsie/pull/215)
+- [x] A one-off job backfills Form B from the stored chat turns · [#215](https://github.com/magentawood/roomsie/pull/215)
+- [x] It is tested on the eval sentences, and the rejection rate is recorded · [#215](https://github.com/magentawood/roomsie/pull/215)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#215](https://github.com/magentawood/roomsie/pull/215)
+- [x] The user asks the assistant what it noted, and corrects or deletes a note in the chat. A delete is a direct database action, never an edit by the model · [#215](https://github.com/magentawood/roomsie/pull/215)
 
 ^done
 
@@ -97,3 +97,13 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - A change to the matching or to the confidence floor. (T-14)
   - The helpline list of PC-17. (T-34)
   - Changes to the prompts of the router and the extractor. (T-27)
+
+## Log
+
+- **2026-11-04 · [#215](https://github.com/magentawood/roomsie/pull/215)**
+  - **Change:** the observer writes Form B notes from the typed turns with context, after the reply. A quote check drops each note whose words the turn does not hold. "What do you know about me?" shows the notes as cards, with a delete. The PR also adds a one-off backfill, four topics and the observer eval.
+  - **Why:** [PD7a](../../decisions/pd-07a-agent-architecture.md), and the sensitive call of [PD10](../../decisions/pd-10-scope-bands.md).
+  - **Ticked:** all six items.
+  - **Not done:** none. The backfill runs by hand, one time, after the deploy.
+  - **Learn:** [Form B notes](../../learn/form-b-notes.md), [The eval sentences](../../learn/eval-set.md), [The router](../../learn/router.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

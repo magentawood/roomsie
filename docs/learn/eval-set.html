@@ -64,6 +64,14 @@ details.callout[open] summary{color:var(--fg)}
 <td>The runner that scores a model</td>
 <td><code>apps/api/eval/run.ts</code>: <a href="eval-run.html">Running the eval</a></td>
 </tr>
+<tr>
+<td>The personal sentences of the observer, each with its topics</td>
+<td><code>apps/api/eval/observer-sentences.json</code> (T-36)</td>
+</tr>
+<tr>
+<td>The runner of the observer</td>
+<td><code>pnpm eval:observer</code>, with its result in <a href="../research/observer-eval.md">observer-eval.md</a></td>
+</tr>
 </tbody>
 </table>
 <ul>
@@ -81,11 +89,13 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A vague sentence leaves the question open.</strong> "I drink sometimes" is not vague, because the two answers of the drinks question cover it. T-27 rewrote h15 and m11 so that they leave it open.</li>
 <li><strong>The areas, the budget and the move date have no <code>unclear</code> value.</strong> A sentence that is vague about them leaves them empty.</li>
 <li><strong>A name of two areas,</strong> as "Andheri" alone, makes the assistant ask which one, so the labelled sentences use names with one area.</li>
+<li><strong>The set of M-03 has almost no personal context.</strong> Only a few sentences give a Form B note. Thus, T-36 adds 26 personal sentences, each with the topics of its notes. Two of them, about health and religion, must give no note.</li>
 <li><strong>The set is small.</strong> The full eval of PD7 has 200 to 300 sentences; these 50 are its start.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>M-03: the 50 sentences and their check.</li>
 <li>T-27: the register rule, and the new h15 and m11.</li>
+<li>T-36: <a href="https://github.com/magentawood/roomsie/pull/215">#215</a>, 2026-11-04. The personal sentences of the observer, their check and the runner.</li>
 </ul>
 </main>
