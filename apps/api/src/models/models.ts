@@ -4,7 +4,7 @@ import type { ModelRole, ModelUsage } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 
 /** The probability of each token of an answer, as a natural log (PD7). */
-const tokenSchema = z.object({ token: z.string(), logprob: z.number() })
+export const tokenSchema = z.object({ token: z.string(), logprob: z.number() })
 export type Token = z.infer<typeof tokenSchema>
 
 const completion = z.object({

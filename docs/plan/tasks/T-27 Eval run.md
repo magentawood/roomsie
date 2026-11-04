@@ -69,6 +69,8 @@ Test the assistant on real sentences. Fix what it gets wrong.
   - **The copy check (the user, implement):** a name or an amount that the model copies without its Marathi ending, as "ठाणे वेस्ट" from "ठाणे वेस्टमध्ये", counts as said. The check uses the endings of the area catalogue (PC-09).
   - **The spelling of Vile Parle (the user, implement):** the seed also has the joined spelling, "Vileparle" and "विलेपार्ले", for Vile Parle East and West.
   - **Two vague sentences (the user, implement):** h15 and m11 said "I drink sometimes", and the two answers of the drinks question cover that. They now leave the drinks question open, and the Marathi speaker reads the new m11.
+  - **The student rule (the user, review):** the extractor prompt keeps "one word can fill two slots", with "student". It is the only answer of two questions, and only e03 tests it.
+  - **The router shape (the user, review):** the JSON shape of the router offers only the scripts `latin` and `devanagari`. On Gemini, the Marathi script went down by 2 turns, the size of the noise between runs.
   - **The live check:** after the deploy, a Marathi message of a visitor gets a reply in Marathi.
 - **Out of scope:**
   - the composer: its register match, its name check and its deadline (T-61)

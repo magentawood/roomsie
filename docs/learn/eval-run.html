@@ -39,15 +39,16 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li><strong>A run</strong> sends each sentence three times through the extractor and the router of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.</li>
-<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback, so each score is of one model. A sentence runs three times because the answers of a model change. Each count is the sum of the three repeats.</li>
+<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback. A share is of all the repeats, and a count is the mean of one repeat.</li>
 <li><strong>The scores,</strong> for each model and each language:</li>
+<li><strong>Turns with no answer of the extractor:</strong> both attempts failed. Such a turn counts apart, not as wrong slots.</li>
 <li><strong>Labelled slots right:</strong> the slots with a label that get that value.</li>
 <li><strong>Made-up values:</strong> a value in a slot that the label leaves empty.</li>
 <li><strong>Vague slots marked unclear,</strong> and <strong>vague slots with a value.</strong> A value there is a no-go of <a href="../decisions/pd-11-launch.md">PD11</a>, check 6.</li>
 <li><strong>Unclear in a slot with no label:</strong> an extra question, not a wrong value.</li>
 <li><strong>The router:</strong> the language and the main script of the register, and the false alarms. A false alarm is a search that the router puts in a different band, above or below its threshold.</li>
-<li><strong>The calls:</strong> the output that is not valid, the failed attempts, and the median and the 95th percentile of the time of the extractor and of the router.</li>
-<li><strong>The threshold sweep.</strong> The run file keeps each answer of the extractor model with its token probabilities. The runner replays the answers through the extractor at each threshold from 0.5 to 0.95, with no new call.</li>
+<li><strong>The calls:</strong> the output that is not valid, the failed attempts, and the median and the 95th percentile of the time of the extractor and of the router. The times include the failed attempts.</li>
+<li><strong>The threshold sweep.</strong> The run file keeps each answer of the extractor and of the router with its token probabilities. The runner replays the answers through the extractor at each threshold from 0.5 to 0.95, with no new call.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
@@ -68,7 +69,7 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The run files and the reports</td>
-<td><code>apps/api/eval/runs/</code>, which git ignores</td>
+<td><code>apps/api/eval/runs/</code>, which git ignores. A stamp is the time in UTC</td>
 </tr>
 <tr>
 <td>The results of T-27</td>
@@ -80,7 +81,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>Put <code>DEEPSEEK_API_KEY</code>, <code>GEMINI_API_KEY</code> and <code>TEST_DATABASE_URL</code> in <code>apps/api/.env.eval</code>. Git ignores the file. Never paste a key into a chat or a file in git.</li>
 <li>Start the Postgres of the tests. The runner makes a database with the area seed, and drops it at the end.</li>
 <li>In <code>apps/api</code>, run <code>corepack pnpm eval</code>. A run takes approximately three minutes and costs less than ₹50.</li>
-<li>After a change of a parser or of the copy check, run <code>corepack pnpm eval --replay eval/runs/&lt;file&gt;.json</code>. It scores the answers of that run again, with no model call. A change of a prompt needs a new run.</li>
+<li>After a change of a parser or of the copy check, run <code>corepack pnpm eval --replay eval/runs/&lt;file&gt;.json</code>. It scores the answers of that run again, with no model call. A change of a prompt needs a new run. A replay refuses a run file of another version.</li>
 </ol>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>

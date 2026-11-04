@@ -1,26 +1,27 @@
 # The first run of T-27
 
-The run `2026-11-04T0723`, with the prompts and the code of `main` before T-27, scored again with the report of T-27. The summary is [the eval of November 2026](eval-2026-11.md).
+The run `2026-11-04T0723` (UTC), with the prompts and the code of `main` before T-27, scored again with the report of T-27. The summary is [the eval of November 2026](eval-2026-11.md).
 
 50 sentences of the eval set (M-03).
 
 ## deepseek-flash
 
-At the threshold 0.8, 3 repeats of each sentence. Each count is the sum of the repeats. Check 6 of PD11: **no-go**.
+At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **no-go**.
 
 | | All | English | Hinglish | Marathi |
 |---|---|---|---|---|
-| Labelled slots right | 91% (436/477) | 98% (153/156) | 100% (168/168) | 75% (115/153) |
-| Made-up values | 1 | 1 | 0 | 0 |
-| Vague slots marked unclear | 80% (24/30) | 100% (9/9) | 83% (10/12) | 56% (5/9) |
-| Vague slots with a value | 1 | 0 | 1 | 0 |
-| Unclear in a slot with no label | 110 | 9 | 63 | 38 |
+| Turns with no answer of the extractor | 3% (4/150) | 0% (0/45) | 0% (0/54) | 8% (4/51) |
+| Labelled slots right | 93% (436/469) | 98% (153/156) | 100% (168/168) | 79% (115/145) |
+| Made-up values | 0.3 | 0.3 | 0 | 0 |
+| Vague slots marked unclear | 92% (24/26) | 100% (9/9) | 83% (10/12) | 100% (5/5) |
+| Vague slots with a value | 0.3 | 0 | 0.3 | 0 |
+| Unclear in a slot with no label | 36.7 | 3 | 21 | 12.7 |
 | Router language right | 57% (85/150) | 100% (45/45) | 15% (8/54) | 63% (32/51) |
 | Router main script right | 97% (145/150) | 100% (45/45) | 94% (51/54) | 96% (49/51) |
 | False alarms, above / below the threshold | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
 | False flags | 0 | 0 | 0 | 0 |
 | Output not valid / failed, of the attempts | 0 / 14 of 310 | 0 / 1 of 91 | 0 / 3 of 111 | 0 / 10 of 108 |
-| Extractor time, median / 95th percentile | 3481 / 8281 ms | 3403 / 7077 ms | 3323 / 9000 ms | 4359 / 9466 ms |
+| Extractor time, median / 95th percentile | 3739 / 10002 ms | 3403 / 8281 ms | 3481 / 10002 ms | 4610 / 10003 ms |
 | Router time, median / 95th percentile | 1890 / 3006 ms | 1557 / 2766 ms | 1907 / 3091 ms | 1960 / 2911 ms |
 
 ### The threshold sweep
@@ -29,8 +30,8 @@ The recorded answers again, through the extractor at each threshold, with no new
 
 | Threshold | Labelled slots right | Made-up values | Vague slots marked unclear | Vague slots with a value | PD11 |
 |---|---|---|---|---|---|
-| 0.5 to 0.9 (live: 0.8) | 91% (436/477) | 1 | 80% (24/30) | 1 | no-go |
-| 0.95 | 91% (435/477) | 1 | 80% (24/30) | 1 | no-go |
+| 0.5 to 0.9 (live: 0.8) | 93% (436/469) | 0.3 | 92% (24/26) | 0.3 | no-go |
+| 0.95 | 93% (435/469) | 0.3 | 92% (24/26) | 0.3 | no-go |
 
 ### The misses
 
@@ -56,28 +57,26 @@ The recorded answers again, through the extractor at each threshold, with no new
 - m09 · `unclear` with no label (1): roomType
 - m09 · areas: label ["mulund-west"], got nothing (3)
 - m10 · areas: label ["goregaon-east"], got nothing (3)
-- m11 · areas: label ["kandivali-east"], got nothing (3)
-- m11 · intent: label "room", got nothing (3)
-- m11 · lifestyle.drinks: label "unclear", got nothing (3)
+- m11 · no answer of the extractor (3)
 - m12 · `unclear` with no label (2): lifestyle.food, lifestyle.smoking, lifestyle.drinks, lifestyle.guests, lifestyle.your_days, lifestyle.sleep, lifestyle.tidiness
-- m12 · areas: label ["borivali-west"], got nothing (3)
-- m12 · intent: label "room", got nothing (1)
-- m12 · lifestyle.pets: label "unclear", got nothing (1)
+- m12 · areas: label ["borivali-west"], got nothing (2)
+- m12 · no answer of the extractor (1)
 - m13 · `unclear` with no label (1): roomType
 
 **Answers that change between the repeats:** e02, e08, h09, h13, h15, m01, m02, m04, m05, m07, m08, m09, m12, m13.
 
 ## gemini-3.5-flash-lite
 
-At the threshold 0.8, 3 repeats of each sentence. Each count is the sum of the repeats. Check 6 of PD11: **no-go**.
+At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **no-go**.
 
 | | All | English | Hinglish | Marathi |
 |---|---|---|---|---|
+| Turns with no answer of the extractor | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
 | Labelled slots right | 95% (455/477) | 98% (153/156) | 98% (164/168) | 90% (138/153) |
 | Made-up values | 0 | 0 | 0 | 0 |
 | Vague slots marked unclear | 33% (10/30) | 56% (5/9) | 17% (2/12) | 33% (3/9) |
-| Vague slots with a value | 11 | 2 | 6 | 3 |
-| Unclear in a slot with no label | 169 | 24 | 85 | 60 |
+| Vague slots with a value | 3.7 | 0.7 | 2 | 1 |
+| Unclear in a slot with no label | 56.3 | 8 | 28.3 | 20 |
 | Router language right | 53% (80/150) | 100% (45/45) | 11% (6/54) | 57% (29/51) |
 | Router main script right | 95% (143/150) | 100% (45/45) | 100% (54/54) | 86% (44/51) |
 | False alarms, above / below the threshold | 0 / 0 | 0 / 0 | 0 / 0 | 0 / 0 |
@@ -92,7 +91,7 @@ The recorded answers again, through the extractor at each threshold, with no new
 
 | Threshold | Labelled slots right | Made-up values | Vague slots marked unclear | Vague slots with a value | PD11 |
 |---|---|---|---|---|---|
-| 0.5 to 0.95 (live: 0.8) | 95% (455/477) | 0 | 33% (10/30) | 11 | no-go |
+| 0.5 to 0.95 (live: 0.8) | 95% (455/477) | 0 | 33% (10/30) | 3.7 | no-go |
 
 ### The misses
 

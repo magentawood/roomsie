@@ -2,8 +2,8 @@ import { isDeepStrictEqual } from 'node:util'
 import type { AnalyticsEvent, TurnLabel } from '@roomsie/contract'
 import { labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
 
-/** One run of one sentence: the filled slots of Form A, and the label of the router. */
-export type TurnResult = { id: string; repeat: number; values: Record<string, unknown>; label: Pick<TurnLabel, 'register' | 'band' | 'routerBand' | 'danger' | 'community'> }
+/** One run of one sentence: the filled slots of Form A, and the label of the router. `answered`: the extractor model gave an answer. */
+export type TurnResult = { id: string; repeat: number; answered: boolean; values: Record<string, unknown>; label: Pick<TurnLabel, 'register' | 'band' | 'routerBand' | 'danger' | 'community'> }
 /** One attempt of a model call, from the event `model_called`, with the sentence. */
 export type CallResult = { id: string } & Pick<Extract<AnalyticsEvent, { name: 'model_called' }>, 'role' | 'ms' | 'outcome'>
 
@@ -19,18 +19,20 @@ export function mainScript(text: string) {
 const sorted = (value: unknown) => (Array.isArray(value) ? value.toSorted() : value)
 const same = (a: unknown, b: unknown) => isDeepStrictEqual(sorted(a), sorted(b))
 
-export const noCounts = {
-  turns: 0, labelled: 0, right: 0, unclearLabels: 0, unclearRight: 0, vagueFilled: 0, madeUp: 0, extraUnclear: 0,
+export const zeroCounts = {
+  turns: 0, noAnswer: 0, labelled: 0, right: 0, unclearLabels: 0, unclearRight: 0, vagueFilled: 0, madeUp: 0, extraUnclear: 0,
   languageRight: 0, scriptRight: 0, alarmsAbove: 0, alarmsBelow: 0, falseFlags: 0,
 }
-export type Counts = typeof noCounts
+export type Counts = typeof zeroCounts
 
-function countsOf(sentence: EvalSentence, { values, label }: TurnResult): Counts {
-  const labels = labelledSlots(sentence.expected)
+/** A turn with no answer of the extractor counts apart, not as wrong slots: live, the fallback answers it. */
+function countsOf(sentence: EvalSentence, { answered, values, label }: TurnResult): Counts {
+  const labels = answered ? labelledSlots(sentence.expected) : {}
   const [sure, vague] = [Object.entries(labels).filter(([, v]) => v !== 'unclear'), Object.keys(labels).filter((slot) => labels[slot] === 'unclear')]
   const extra = Object.entries(values).filter(([slot]) => !(slot in labels))
   return {
     turns: 1,
+    noAnswer: Number(!answered),
     labelled: sure.length,
     right: sure.filter(([slot, value]) => same(values[slot], value)).length,
     unclearLabels: vague.length,
@@ -46,13 +48,15 @@ function countsOf(sentence: EvalSentence, { values, label }: TurnResult): Counts
   }
 }
 
+export const sentencesById = (sentences: EvalSentence[]) => new Map(sentences.map((s) => [s.id, s]))
+
 export const groups = ['all', ...languages] as const
 export type Group = (typeof groups)[number]
 
 /** The counts of all the turns, and of the turns of each language. Each sentence of the set is a search, with no flag. */
 export function scoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
-  const byId = new Map(sentences.map((s) => [s.id, s]))
-  const scores = Object.fromEntries(groups.map((group) => [group, { ...noCounts }])) as Record<Group, Counts>
+  const byId = sentencesById(sentences)
+  const scores = Object.fromEntries(groups.map((group) => [group, { ...zeroCounts }])) as Record<Group, Counts>
   for (const turn of turns) {
     const sentence = byId.get(turn.id)!
     const counts = countsOf(sentence, turn)
@@ -64,9 +68,9 @@ export function scoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
 /** Check 6 of PD11: no-go if fewer than 7 in 10 labelled slots are right, or a vague slot gets a value. */
 export const goNoGo = (c: Counts) => (c.right >= 0.7 * c.labelled && c.vagueFilled === 0 ? 'go' : 'no-go')
 
-/** The times are of the calls that answered: a failed call is mostly a timeout. Nearest-rank percentiles. */
+/** The times include the failed attempts, which mostly end at the timeout. Nearest-rank percentiles. */
 export function callStats(calls: CallResult[]) {
-  const ms = calls.filter((c) => c.outcome !== 'failed').map((c) => c.ms).toSorted((a, b) => a - b)
+  const ms = calls.map((c) => c.ms).toSorted((a, b) => a - b)
   const at = (share: number) => ms[Math.ceil(share * ms.length) - 1] ?? null
   return { attempts: calls.length, invalid: calls.filter((c) => c.outcome === 'invalid').length, failed: calls.filter((c) => c.outcome === 'failed').length, medianMs: at(0.5), p95Ms: at(0.95) }
 }
@@ -85,10 +89,14 @@ const counted = (counts: Map<string, number>, key: string) => counts.set(key, (c
  * The slots that are `unclear` with no label make one line for each sentence and number: they are extra questions, not wrong values.
  */
 export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
-  const byId = new Map(sentences.map((s) => [s.id, s]))
+  const byId = sentencesById(sentences)
   const misses = new Map<string, number>()
   const extras = new Map<string, Map<string, number>>()
-  for (const { id, values } of turns) {
+  for (const { id, answered, values } of turns) {
+    if (!answered) {
+      counted(misses, `${id} · no answer of the extractor`)
+      continue
+    }
     const labels = labelledSlots(byId.get(id)!.expected)
     for (const slot of new Set([...Object.keys(labels), ...Object.keys(values)])) {
       if (same(values[slot], labels[slot])) continue

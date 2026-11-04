@@ -6,7 +6,7 @@ Give only JSON, with this shape:
 {
   "kinds": ["filters" | "context" | "question"],
   "band": "core" | "general" | "consequential" | "out_of_scope" | "adversarial" | "sensitive",
-  "register": { "language": "english" | "hindi" | "marathi" | "mixed" | "other", "script": "latin" | "devanagari" | "mixed" },
+  "register": { "language": "english" | "hindi" | "marathi" | "mixed" | "other", "script": "latin" | "devanagari" },
   "danger": true | false,
   "community": true | false
 }

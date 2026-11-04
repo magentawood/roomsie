@@ -2,23 +2,34 @@ import { randomUUID } from 'node:crypto'
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import type { FastifyRequest } from 'fastify'
-import { filledSlots, formA, type AnalyticsEvent, type FormA, type TurnLabel } from '@roomsie/contract'
+import { z } from 'zod'
+import { filledSlots, formA, modelRoles, turnLabel, type AnalyticsEvent, type FormA } from '@roomsie/contract'
 import { extractor, noExtraction } from '../src/assistant/handlers/extractor/extractor'
 import { routeTurn } from '../src/assistant/handlers/router/router'
 import { assistantSettings } from '../src/assistant/settings'
 import type { Db } from '../src/db/client'
 import { seedCatalogues } from '../src/db/seed-axes'
-import { ModelUnavailable, modelsOf, type Models, type Token } from '../src/models/models'
+import { ModelUnavailable, modelsOf, tokenSchema, type Models } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
 import { createTestDb } from '../test/db'
 import { reportOf, type ModelScores } from './report'
 import type { CallResult, TurnResult } from './score'
 import { evalSet } from './set'
 
-/** One answer of the extractor model, with its token probabilities, so a replay scores it again with no call. */
-type Recorded = { value: unknown; tokens: Token[] | null; model: string }
-type RunTurn = { id: string; repeat: number; extractor: Recorded | null; label: TurnLabel }
-type ModelRun = { model: string; turns: RunTurn[]; calls: CallResult[] }
+/** One answer of a model with its token probabilities, so a replay scores it again with no call. */
+const recorded = z.strictObject({ value: z.unknown(), tokens: z.array(tokenSchema).nullable(), model: z.string() })
+type Recorded = z.infer<typeof recorded>
+/** The run file. A replay refuses a file of another version. */
+const runFile = z.strictObject({
+  version: z.literal(1),
+  runs: z.array(z.strictObject({
+    model: z.string(),
+    turns: z.array(z.strictObject({ id: z.string(), repeat: z.int(), extractor: recorded.nullable(), router: recorded.nullable(), label: turnLabel })),
+    calls: z.array(z.strictObject({ id: z.string(), role: z.enum(modelRoles), ms: z.number(), outcome: z.enum(['ok', 'invalid', 'failed']) })),
+  })),
+})
+type ModelRun = z.infer<typeof runFile>['runs'][number]
+type RunTurn = ModelRun['turns'][number]
 
 const repeats = 3
 const settings = assistantSettings.parse(process.env)
@@ -52,21 +63,21 @@ async function inPool<T, R>(items: T[], run: (item: T) => Promise<R>) {
   return results
 }
 
-/** The router and the extractor in parallel, as in a live turn (PD7a). The extractor answer is kept for the sweep. */
+/** The router and the extractor in parallel, as in a live turn (PD7a). The run file keeps both answers. */
 async function liveTurn(models: Models, db: Db, id: string, repeat: number, calls: CallResult[]): Promise<RunTurn> {
   const req = requestOf(id, calls)
-  let answer: Recorded | null = null
+  const answers: { extractor?: Recorded; router?: Recorded } = {}
   const recording: Models = {
     ...models,
     scored: async (call) => {
       const scored = await models.scored(call)
-      if (call.role === 'extractor') answer = scored
+      if (call.role === 'extractor' || call.role === 'router') answers[call.role] = scored
       return scored
     },
   }
   const turn = emptyTurn(id)
   const [label] = await Promise.all([routeTurn(turn, { req, models: recording, settings }), extractor(turn, { req, db, models: recording, settings, today })])
-  return { id, repeat, extractor: answer, label }
+  return { id, repeat, extractor: answers.extractor ?? null, router: answers.router ?? null, label }
 }
 
 async function liveRuns(db: Db): Promise<ModelRun[]> {
@@ -108,11 +119,10 @@ async function replayed({ id, extractor: recorded }: RunTurn, db: Db, minProbabi
 }
 
 async function scoresOfRun({ model, turns, calls }: ModelRun, db: Db): Promise<ModelScores> {
-  const sweep = []
-  for (const threshold of thresholds) {
-    const results = await inPool(turns, async (turn): Promise<TurnResult> => ({ id: turn.id, repeat: turn.repeat, values: await replayed(turn, db, threshold), label: turn.label }))
-    sweep.push({ threshold, turns: results })
-  }
+  const sweep = await Promise.all(thresholds.map(async (threshold) => ({
+    threshold,
+    turns: await inPool(turns, async (turn): Promise<TurnResult> => ({ id: turn.id, repeat: turn.repeat, answered: turn.extractor !== null, values: await replayed(turn, db, threshold), label: turn.label })),
+  })))
   return { model, live: settings.minProbability, sweep, calls, repeats }
 }
 
@@ -121,11 +131,12 @@ const { replay } = parseArgs({ options: { replay: { type: 'string' } } }).values
 const { db, drop } = await createTestDb()
 try {
   await seedCatalogues(db)
-  const runs: ModelRun[] = replay ? JSON.parse(await readFile(replay, 'utf8')).runs : await liveRuns(db)
-  const stamp = new Date().toISOString().slice(0, 16).replace(':', '')
+  const runs = replay ? runFile.parse(JSON.parse(await readFile(replay, 'utf8'))).runs : await liveRuns(db)
+  // The stamp is in UTC, as its Z says, with the seconds, so two runs in one minute keep their files.
+  const stamp = `${new Date().toISOString().slice(0, 19).replaceAll(':', '')}Z`
   const folder = new URL('runs/', import.meta.url)
   await mkdir(folder, { recursive: true })
-  if (!replay) await writeFile(new URL(`${stamp}.json`, folder), JSON.stringify({ runs }))
+  if (!replay) await writeFile(new URL(`${stamp}.json`, folder), JSON.stringify({ version: 1, runs } satisfies z.input<typeof runFile>))
   const scores = await Promise.all(runs.map((run) => scoresOfRun(run, db)))
   const report = new URL(`${stamp}.md`, folder)
   await writeFile(report, reportOf(`Eval run ${stamp}${replay ? `, a replay of ${replay}` : ''}`, evalSet.sentences, scores))
