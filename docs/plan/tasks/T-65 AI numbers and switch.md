@@ -8,6 +8,7 @@ start: 2026-11-06
 end: 2026-11-07
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/224
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 17 of 17  
 **When:** Fri 6 Nov → Sat 7 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#224](https://github.com/magentawood/roomsie/issues/224)
 
 The health and the spend of the models, and one switch for an outage.
 

@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**273 of 355 done · 77%**
+**276 of 355 done · 78%**
 
-`██████████████████░░░░░░`
+`███████████████████░░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -27,7 +27,7 @@ This note is part of [[roomsie launch]].
 | [[P3 Data and trust]] | 20 / 21 | 90 / 92 | 98% |
 | [[P4 Content and moderation]] | 7 / 10 | 33 / 43 | 77% |
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
-| [[Design]] | 4 / 7 | 8 / 14 | 57% |
+| [[Design]] | 5 / 7 | 11 / 14 | 79% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 2 | 0 / 8 | 0% |
 | [[Founder]] | 7 / 13 | 21 / 41 | 51% |
@@ -48,11 +48,12 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**10 free tasks are open · 22 build hours.**
+**15 free tasks are open · 38 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| 0 | [[T-62 Admin home]] | P4 | 4 | ⬜ can start | 4 | [#221](https://github.com/magentawood/roomsie/issues/221) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
@@ -61,6 +62,10 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-61 Composer eval]] | P2 | 3 | ⬜ can start | 0 | [#216](https://github.com/magentawood/roomsie/issues/216) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
+| 1 | [[T-63 Admin people and listings]] | P4 | 3 | ⬜ waits | 0 | [#222](https://github.com/magentawood/roomsie/issues/222) |
+| 1 | [[T-64 Model traces]] | P2 | 4 | ⬜ waits | 0 | [#223](https://github.com/magentawood/roomsie/issues/223) |
+| 1 | [[T-65 AI numbers and switch]] | P2 | 3 | ⬜ waits | 0 | [#224](https://github.com/magentawood/roomsie/issues/224) |
+| 1 | [[T-66 Product numbers]] | P3 | 2 | ⬜ waits | 0 | [#225](https://github.com/magentawood/roomsie/issues/225) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 
 ### Waits on product calls
@@ -72,11 +77,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Task | Owner | Hours | Waits on | Issue |
 |---|---|---|---|---|
-| [[T-62 Admin home]] | P4 | 4 | D-07 | no issue at this time |
-| [[T-63 Admin people and listings]] | P4 | 3 | D-07 | no issue at this time |
-| [[T-64 Model traces]] | P2 | 4 | D-07 | no issue at this time |
-| [[T-65 AI numbers and switch]] | P2 | 3 | D-07 | no issue at this time |
-| [[T-66 Product numbers]] | P3 | 2 | D-07 | no issue at this time |
 
 ### Graph
 
@@ -151,14 +151,13 @@ flowchart LR
   T50["T-50<br/>Found a place, share, feedback"]:::done
   T60["T-60<br/>Profile pop-up"]:::done
   T61["T-61<br/>Composer eval"]:::ready
+  T62["T-62<br/>Admin home"]:::ready
+  T63["T-63<br/>Admin people and listings"]:::todo
+  T64["T-64<br/>Model traces"]:::todo
+  T65["T-65<br/>AI numbers and switch"]:::todo
+  T66["T-66<br/>Product numbers"]:::todo
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::done
-  T62["T-62<br/>Admin home"]:::design
-  T63["T-63<br/>Admin people and listings"]:::design
-  T64["T-64<br/>Model traces"]:::design
-  T65["T-65<br/>AI numbers and switch"]:::design
-  T66["T-66<br/>Product numbers"]:::design
-  D07(["D-07<br/>Admin designs"]):::dtask
   F03 --> F04
   F13 --> F07
   M04 --> M05
@@ -269,14 +268,14 @@ flowchart LR
   T24 --> T50
   T48 --> T60
   T27 --> T61
-  T04 --> T51
-  T06 --> T51
-  T05 --> T52
   D07 -.-> T62
   T62 --> T63
   T62 --> T64
   T62 --> T65
   T62 --> T66
+  T04 --> T51
+  T06 --> T51
+  T05 --> T52
   classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f
   classDef doing fill:#e3b341,color:#000,stroke:#e3b341
   classDef ready fill:#3b82f6,color:#fff,stroke:#3b82f6
@@ -498,7 +497,7 @@ flowchart LR
 > ![[T-16b Profile screens ⚑#^done]]
 
 
-## Design — 8/14
+## Design — 11/14
 
 > [!todo]- ✅ [[D-01 Styling decision]] · 1/1
 > ![[D-01 Styling decision#^done]]
@@ -518,7 +517,7 @@ flowchart LR
 > [!todo]- ⬜ [[D-06 Launch visuals]] · 0/1
 > ![[D-06 Launch visuals#^done]]
 
-> [!todo]- ⬜ [[D-07 Admin designs]] · 0/3
+> [!todo]- ✅ [[D-07 Admin designs]] · 3/3
 > ![[D-07 Admin designs#^done]]
 
 

@@ -8,6 +8,7 @@ start: 2026-11-06
 end: 2026-11-07
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/222
 tags:
   - task
   - p4
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P4 Content and moderation]], task 10 of 10  
 **When:** Fri 6 Nov → Sat 7 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#222](https://github.com/magentawood/roomsie/issues/222)
 
 Find a person or a listing, and act on it.
 

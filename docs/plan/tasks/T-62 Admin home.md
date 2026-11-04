@@ -8,6 +8,7 @@ start: 2026-11-05
 end: 2026-11-05
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/221
 tags:
   - task
   - p4
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P4 Content and moderation]], task 9 of 10  
 **When:** Thu 5 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#221](https://github.com/magentawood/roomsie/issues/221)
 
 The admin opens on scorecards, and the pages of today get the new layout.
 

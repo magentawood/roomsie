@@ -8,6 +8,7 @@ start: 2026-11-06
 end: 2026-11-07
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/225
 tags:
   - task
   - p3
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P3 Data and trust]], task 13 of 21  
 **When:** Fri 6 Nov → Sat 7 Nov · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#225](https://github.com/magentawood/roomsie/issues/225)
 
 The funnel of the launch in one place.
 

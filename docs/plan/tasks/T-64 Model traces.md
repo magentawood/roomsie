@@ -8,6 +8,7 @@ start: 2026-11-06
 end: 2026-11-07
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/223
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 16 of 17  
 **When:** Fri 6 Nov → Sat 7 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#223](https://github.com/magentawood/roomsie/issues/223)
 
 Follow one turn of the assistant through its model calls.
 
