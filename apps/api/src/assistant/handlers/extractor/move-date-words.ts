@@ -8,8 +8,8 @@ const monthWords: Record<string, number> = Object.fromEntries([
 ].flatMap((words, i) => words.split(' ').map((w) => [w, i + 1])))
 
 const next = 'next|agle|agla|pudhchya|pudhcha|pudhil|अगले|अगला|पुढच्या|पुढचा|पुढील'
-const month = 'month|mahine|mahina|mahinyat|महीने|महीना|महिने|महिना|महिन्यात'
-const week = 'week|hafte|hafta|athavdyat|हफ्ते|हफ्ता|सप्ताह|आठवड्यात|आठवडा'
+const month = 'month|mahine|mahina|mahinyat|mahinyachya|महीने|महीना|महिने|महिना|महिन्यात|महिन्याच्या'
+const week = 'week|hafte|hafta|athavdyat|athavdyapasun|हफ्ते|हफ्ता|सप्ताह|आठवड्यात|आठवडा|आठवड्यापासून'
 const now = phrase('asap|immediately|now|abhi|turant|lagech|right away|as soon as possible|अभी|तुरंत|लगेच|ताबडतोब|आत्ता')
 const notNow = phrase('not now|abhi nahi|abhi nahin|lagech nahi|अभी नहीं|अभी नही|आत्ता नाही|लगेच नाही')
 const nextMonth = phrase(`(?:${next}) (?:${month})`)
@@ -17,7 +17,7 @@ const nextMonth = phrase(`(?:${next}) (?:${month})`)
 const monthAfterNext = phrase(`(?:${next})(?: (?:to|ke|के))? (?:${next}) (?:${month})`)
 const thisMonth = phrase(`(?:this|is|ya|इस|या) (?:${month})`)
 const nextWeek = phrase(`(?:${next}) (?:${week})`)
-const monthEnd = phrase('end|ant|अंत|आखिर|अखेर|शेवटी')
+const monthEnd = phrase('end|ant|shevti|अंत|आखिर|अखेर|शेवटी')
 const mid = phrase('mid|बीच|मध्य')
 const tomorrow = phrase('tomorrow|udya|उद्या')
 /** A count, then days, weeks or months, as "10 din" or "2 weeks". */
