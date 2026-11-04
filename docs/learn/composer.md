@@ -50,7 +50,7 @@ runTurn() ── router + extractor ──▶ replyWriter(): the plan, with the 
 ## Gotchas
 
 - **The interview questions stay in English** after a tap or a fallback, as the chips. Only the fixed lines change language.
-- **The name check has three limits.** A new name at the start of a sentence passes, because Hinglish sentences start with capital words such as "Kab". A name that the person typed in lower case passes there too. Devanagari has no capitals, so a name in Devanagari passes. T-61 tests the three.
+- **The name check has three limits.** A new name at the start of a sentence passes, because Hinglish sentences start with capital words such as "Kab". A name that the person typed in lower case passes there too. Devanagari has no capitals, so a name in Devanagari passes. In the eval of T-61, no text had a name, so the three limits did not occur ([the eval of the composer](../research/eval-2026-11-composer.md)).
 - **A false rejection is safe.** The scripted reply goes out, in English with the fixed lines translated.
 - **The fake vendors of the tests know a composer call by its prompt.** A test that gives no composer replies gets a failed composer, so the scripted reply goes out. `hang` makes a call wait until its signal aborts.
 - **The fixed lines are drafts.** A native speaker checks each text before launch (PC-15 of F-14).

@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**283 of 355 done · 80%**
+**287 of 355 done · 81%**
 
 `███████████████████░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
-| [[P2 Chat]] | 13 / 17 | 62 / 80 | 78% |
+| [[P2 Chat]] | 13 / 17 | 66 / 80 | 82% |
 | [[P3 Data and trust]] | 20 / 21 | 90 / 92 | 98% |
 | [[P4 Content and moderation]] | 8 / 10 | 37 / 43 | 86% |
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
@@ -58,7 +58,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
-| 0 | [[T-61 Composer eval]] | P2 | 3 | ⬜ can start | 0 | [#216](https://github.com/magentawood/roomsie/issues/216) |
+| 0 | [[T-61 Composer eval]] | P2 | 3 | 🟡 in progress | 0 | [#216](https://github.com/magentawood/roomsie/issues/216) |
 | 0 | [[T-63 Admin people and listings]] | P4 | 3 | ⬜ can start | 0 | [#222](https://github.com/magentawood/roomsie/issues/222) |
 | 0 | [[T-64 Model traces]] | P2 | 4 | ⬜ can start | 0 | [#223](https://github.com/magentawood/roomsie/issues/223) |
 | 0 | [[T-66 Product numbers]] | P3 | 2 | ⬜ can start | 0 | [#225](https://github.com/magentawood/roomsie/issues/225) |
@@ -148,7 +148,7 @@ flowchart LR
   T49["T-49<br/>Compare cards"]:::done
   T50["T-50<br/>Found a place, share, feedback"]:::done
   T60["T-60<br/>Profile pop-up"]:::done
-  T61["T-61<br/>Composer eval"]:::ready
+  T61["T-61<br/>Composer eval"]:::doing
   T62["T-62<br/>Admin home"]:::done
   T63["T-63<br/>Admin people and listings"]:::ready
   T64["T-64<br/>Model traces"]:::ready
@@ -321,7 +321,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 62/80
+## P2 Chat — 66/80
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -365,7 +365,7 @@ flowchart LR
 > [!todo]- ✅ [[T-59 More chips]] · 3/3
 > ![[T-59 More chips#^done]]
 
-> [!todo]- ⬜ [[T-61 Composer eval]] · 0/6
+> [!todo]- 🟡 [[T-61 Composer eval]] · 4/6
 > ![[T-61 Composer eval#^done]]
 
 > [!todo]- ⬜ [[T-64 Model traces]] · 0/6

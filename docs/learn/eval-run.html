@@ -79,12 +79,16 @@ details.callout[open] summary{color:var(--fg)}
 <td>The results of T-27</td>
 <td><a href="../research/eval-2026-11.md">the eval of November 2026</a></td>
 </tr>
+<tr>
+<td>The results of T-61</td>
+<td><a href="../research/eval-2026-11-composer.md">the eval of the composer and the router bands</a></td>
+</tr>
 </tbody>
 </table>
 <ol>
 <li>Put <code>DEEPSEEK_API_KEY</code>, <code>GEMINI_API_KEY</code> and <code>TEST_DATABASE_URL</code> in <code>apps/api/.env.eval</code>. Git ignores the file. Never paste a key into a chat or a file in git.</li>
 <li>Start the Postgres of the tests. The runner makes a database with the area seed, and drops it at the end.</li>
-<li>In <code>apps/api</code>, run <code>corepack pnpm eval</code>. A run takes approximately three minutes and costs less than ₹50.</li>
+<li>In <code>apps/api</code>, run <code>corepack pnpm eval</code>. A run takes approximately seven minutes and makes approximately 1,700 model calls. At the high prices of the spend module, it costs less than ₹150.</li>
 <li>After a change of a parser or of the copy check, run <code>corepack pnpm eval --replay eval/runs/&lt;file&gt;.json</code>. It scores the answers of that run again, with no model call. A change of a prompt needs a new run. A replay refuses a run file of another version.</li>
 <li>To score two runs together, give <code>--replay</code> two times. The repeats of the second file come after the repeats of the first file.</li>
 </ol>

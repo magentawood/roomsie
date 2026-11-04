@@ -28,10 +28,11 @@
 | The scores and the report | `apps/api/eval/score.ts` (unit tests in `test/eval-score.test.ts`) and `apps/api/eval/report.ts` |
 | The run files and the reports | `apps/api/eval/runs/`, which git ignores. A stamp is the time in UTC |
 | The results of T-27 | [the eval of November 2026](../research/eval-2026-11.md) |
+| The results of T-61 | [the eval of the composer and the router bands](../research/eval-2026-11-composer.md) |
 
 1. Put `DEEPSEEK_API_KEY`, `GEMINI_API_KEY` and `TEST_DATABASE_URL` in `apps/api/.env.eval`. Git ignores the file. Never paste a key into a chat or a file in git.
 2. Start the Postgres of the tests. The runner makes a database with the area seed, and drops it at the end.
-3. In `apps/api`, run `corepack pnpm eval`. A run takes approximately three minutes and costs less than ₹50.
+3. In `apps/api`, run `corepack pnpm eval`. A run takes approximately seven minutes and makes approximately 1,700 model calls. At the high prices of the spend module, it costs less than ₹150.
 4. After a change of a parser or of the copy check, run `corepack pnpm eval --replay eval/runs/<file>.json`. It scores the answers of that run again, with no model call. A change of a prompt needs a new run. A replay refuses a run file of another version.
 5. To score two runs together, give `--replay` two times. The repeats of the second file come after the repeats of the first file.
 

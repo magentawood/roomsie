@@ -31,12 +31,12 @@ Score the replies of the assistant, and the messages that are not a search.
 - No task waits on this task.
 
 ## Done when
-- [ ] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags
+- [x] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags · [#219](https://github.com/magentawood/roomsie/pull/219)
 - [ ] ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands
-- [ ] The runner scores the language and the script of each reply of the composer
-- [ ] The runner scores the output check of the composer, with the three limits of the name check
+- [x] The runner scores the language and the script of each reply of the composer · [#219](https://github.com/magentawood/roomsie/pull/219)
+- [x] The runner scores the output check of the composer, with the three limits of the name check · [#219](https://github.com/magentawood/roomsie/pull/219)
 - [ ] COMPOSER_DEADLINE_MS gets its value from the measured times of the composer
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#219](https://github.com/magentawood/roomsie/pull/219)
 
 ^done
 
@@ -94,3 +94,17 @@ Score the replies of the assistant, and the messages that are not a search.
   - a third vendor, such as Qwen
   - a run in CI
   - the full eval of 200 to 300 sentences of PD7
+
+## Log
+
+- **2026-11-04 · [#219](https://github.com/magentawood/roomsie/pull/219)** (a draft until the second run)
+  - **Change:** `pnpm eval` runs the composer as in a live turn, and the router judges the language of each text. The set gets 28 sentences for the router and the name test. The output check gives its reason. The report gives the scores of the other bands, of the composer and of the names, and the values of the two rules.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec.
+  - **Ticked:**
+    - the sentences of the other bands
+    - the language and the script of each reply
+    - the output check with the three limits
+    - the defaults for F-11
+  - **Not done:** the values of `ROUTER_MIN_PROBABILITY` and `COMPOSER_DEADLINE_MS`. They wait on the second run, on 2026-11-05.
+  - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
