@@ -2,7 +2,7 @@
 id: T-27
 title: "Run the eval set and tune the prompt"
 owner: "P2 Chat"
-sequence: "10 of 14"
+sequence: "10 of 15"
 hours: 3
 start: 2026-10-05
 end: 2026-10-06
@@ -17,7 +17,7 @@ tags:
 
 # T-27 · Run the eval set and tune the prompt
 
-**Owner:** [[P2 Chat]], task 10 of 14  
+**Owner:** [[P2 Chat]], task 10 of 15  
 **When:** Mon 5 Oct → Tue 6 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#48](https://github.com/magentawood/roomsie/issues/48)
@@ -28,7 +28,7 @@ Test the assistant on real sentences. Fix what it gets wrong.
 - [[T-12 Extraction ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-61 Composer eval]]
 
 ## Done when
 - [ ] The 50 test sentences go through extraction
@@ -49,10 +49,12 @@ Test the assistant on real sentences. Fix what it gets wrong.
   - **The eval runner (new):** a script of the API package that a person starts. It never runs in CI. It sends each sentence of the eval set through the extractor and the router of the API, with a local database that has the area seed, and writes a run file and a report. The interfaces of the extractor, the router and the model module do not change.
   - **The router prompt (changes):** the register gives the main language and the main script of the message.
   - **The extractor prompt, the date parsers and the default of the extractor threshold (can change):** only by the tuning rule below.
+  - **The copy check of the extractor, and the area seed (change):** a Marathi ending on the last copied word counts, and the seed has the joined spelling of Vile Parle (implement).
   - **The plan (changes):** a new task, T-61, gets the composer items and the other bands of the router.
 - **Seams for the tests:**
   - The scores of the runner: a unit test gives fixed outputs and labels, and checks each score.
   - The router prompt and the date parsers: the tests that exist. Each new parser rule gets a case.
+  - The copy check and the seed: API tests of a turn, as the tests of the Marathi area names.
 - **Decisions:**
   - **The scope (the user, 2026-11-04):** the extractor and the router. The register match of the composer, the limits of its name check, its deadline, and a set of the other bands go to T-61.
   - **The keys (the user):** the runner runs on a computer of the team, with the keys of the models in a local env file that git ignores. The keys never go into the chat or the repo.
@@ -64,6 +66,9 @@ Test the assistant on real sentences. Fix what it gets wrong.
   - **The scores:** the labelled slots that are correct; the made-up values, which are values in a slot that the label leaves empty; the share of the `unclear` labels that come out `unclear`; the output that is not valid; the language and the main script of the router; the false alarms; and the time of each call, as the median and the 95th percentile. Each score is given for each model and each language.
   - **The threshold sweep:** the run file keeps each answer of a model with its token probabilities. The runner replays the answers through the extractor at thresholds from 0.5 to 0.95, with no new model call.
   - **The results:** the reports of the first run and of the last run go into `docs/research/`. The run files stay in a local folder that git ignores.
+  - **The copy check (the user, implement):** a name or an amount that the model copies without its Marathi ending, as "ठाणे वेस्ट" from "ठाणे वेस्टमध्ये", counts as said. The check uses the endings of the area catalogue (PC-09).
+  - **The spelling of Vile Parle (the user, implement):** the seed also has the joined spelling, "Vileparle" and "विलेपार्ले", for Vile Parle East and West.
+  - **Two vague sentences (the user, implement):** h15 and m11 said "I drink sometimes", and the two answers of the drinks question cover that. They now leave the drinks question open, and the Marathi speaker reads the new m11.
   - **The live check:** after the deploy, a Marathi message of a visitor gets a reply in Marathi.
 - **Out of scope:**
   - the composer: its register match, its name check and its deadline (T-61)

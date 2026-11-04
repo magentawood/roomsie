@@ -510,6 +510,15 @@
    "height": 84
   },
   {
+   "id": "task-T-61",
+   "type": "text",
+   "text": "**[[T-61 Composer eval|T-61 Composer eval]]**\n3h · Thu 5 Nov → Fri 6 Nov",
+   "x": 9240,
+   "y": 616,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "lane-P3",
    "type": "group",
    "label": "P3 Data and trust",
@@ -2062,6 +2071,13 @@
    "fromNode": "task-T-48",
    "fromSide": "right",
    "toNode": "task-T-60",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-27-T-61",
+   "fromNode": "task-T-27",
+   "fromSide": "right",
+   "toNode": "task-T-61",
    "toSide": "left"
   },
   {
