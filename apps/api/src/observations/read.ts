@@ -35,12 +35,6 @@ export async function turnsWithNotes(db: Db | Tx, turnIds: string[]) {
   return new Set((await db.selectDistinct({ id: observations.turnId }).from(observations).where(inArray(observations.turnId, turnIds))).map(({ id }) => id))
 }
 
-export const noteTurnOf = async (db: Db | Tx, owner: Owner, key: string) =>
-  (await db.select({ turn: observations.turnId }).from(observations).where(and(ownedBy(owner), eq(observations.key, key))))[0]?.turn
-
-export const hasObservations = async (db: Db | Tx, owner: Owner) =>
-  (await db.select({ id: observations.id }).from(observations).where(ownedBy(owner)).limit(1)).length > 0
-
 /** The notes of the owner with the label of their topic, for the owner only (PD7a). */
 export const notesOf = (db: Db | Tx, owner: Owner) =>
   db.select({ id: observations.id, label: observationTopics.label, value: observations.value, evidence: observations.evidence })

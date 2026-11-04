@@ -18,14 +18,14 @@ afterEach(() => { vi.unstubAllGlobals() })
 
 const noObserver = { observer: { deepseek: [down()], gemini: [down()] } }
 /** A typed turn from before the observer: the observer fails, so the turn has no note. */
-async function oldTurn(key: string, goalId: string, text: string, kinds = ['filters', 'context']) {
-  fakeVendors({ deepseek: [room()], ...routed({ kinds }), ...noObserver })
+async function oldTurn(key: string, goalId: string, text: string, kinds = ['filters', 'context'], extracted = room()) {
+  fakeVendors({ deepseek: [extracted], ...routed({ kinds }), ...noObserver })
   const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goalId}/turns`, payload: { text }, headers: { [visitorKeyHeader]: key } })
   await t.app.observerQueue.settled()
   return turnResponse.parse(res.json()).turns[0]
 }
 const note = (value: string, evidence: string) => ({ key: 'work_pattern', kind: 'context', value, evidence })
-const backfill = (apply: boolean) => backfillNotes(t.db, { req: fakeRequest().req, models: modelSettings.parse(keys)!, settings: assistantSettings.parse({}) }, { apply })
+const backfill = (apply: boolean, before = new Date()) => backfillNotes(t.db, { req: fakeRequest().req, models: modelSettings.parse(keys)!, settings: assistantSettings.parse({}) }, { apply, before })
 
 describe('the backfill of Form B (T-36)', () => {
   it('counts the turns with context and writes nothing without --apply, then writes their notes oldest first, one time', async () => {
@@ -51,5 +51,24 @@ describe('the backfill of Form B (T-36)', () => {
     expect(await backfill(true)).toMatchObject({ turns: 1, saved: 0 })
     expect(again.observer).toHaveLength(1)
     expect(await t.db.select().from(observations)).toMatchObject([{ value: 'Works from home' }])
+  })
+
+  it('reads no turn from the time of --before on, so a note that the person deleted does not come back', async () => {
+    const goal = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
+    await t.db.delete(observations)
+    await oldTurn(goal.visitorKey!, goal.id, 'room chahiye, I start work at 7 am')
+    const cut = new Date()
+    await oldTurn(goal.visitorKey!, goal.id, 'room chahiye, I go to the gym at 6 am')
+    const counted = await backfill(false, cut)
+    const all = await backfill(false)
+    expect(all.turns - counted.turns).toBe(1)
+  })
+
+  it('reads no turn of a goal where the person stated an own religion or community (PD3c)', async () => {
+    const goal = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
+    const before = (await backfill(false)).turns
+    await oldTurn(goal.visitorKey!, goal.id, 'room chahiye, I am Jain', ['filters', 'context'], scored({ intent: 'room', ownReligion: 'jain' }))
+    await oldTurn(goal.visitorKey!, goal.id, 'room chahiye, I start work at 8 am')
+    expect((await backfill(false)).turns).toBe(before)
   })
 })

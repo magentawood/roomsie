@@ -26,12 +26,8 @@ describe('the eval sentences of the observer (T-36)', () => {
     for (const { id, text, script } of sentences) expect(script, id).toBe(isDevanagari(text) ? 'devanagari' : 'latin')
   })
 
-  it('labels each sentence with topics of the seed, and some sentences with no note', () => {
-    for (const { id, expected } of sentences) expect(expected.filter((key) => !observationTopicKeys.includes(key)), id).toEqual([])
-    expect(sentences.some((s) => s.expected.length === 0)).toBe(true)
-  })
-
-  it('uses each topic of the seed at least one time', () => {
+  it('uses each topic of the seed and no other, and has some sentences with no note', () => {
     expect(new Set(sentences.flatMap((s) => s.expected))).toEqual(new Set(observationTopicKeys))
+    expect(sentences.some((s) => s.expected.length === 0)).toBe(true)
   })
 })

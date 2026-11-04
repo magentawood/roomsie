@@ -15,16 +15,13 @@ export type ObserverDeps = Pick<AssistantDeps, 'req' | 'db' | 'models' | 'settin
 /** The probability of the topic and the kind of a note, from the tokens of the answer (PD3b). Null: the tokens do not hold them. */
 function confidenceOf(tokens: Token[], { key, kind }: Pick<Note, 'key' | 'kind'>) {
   const keyPart = jsonField('key', escapeRegExp(key))
-  const kindPart = jsonField('kind', `(${escapeRegExp(kind)})`)
-  const kindP = probabilityOfMatch(tokens, new RegExp(`${keyPart}[^{}]*${kindPart}`))
+  const kindP = probabilityOfMatch(tokens, new RegExp(`${keyPart}[^{}]*${jsonString('kind', kind).source}`))
   const keyP = probabilityOfMatch(tokens, jsonString('key', key))
   return kindP === null || keyP === null ? null : keyP * kindP
 }
 
 /** The Form B notes of one typed turn (PD7a). */
-export async function observer(turn: ObserverTurn, deps: ObserverDeps) {
-  return observerOutput.parse(await observe(turn, deps))
-}
+export const observer = async (turn: ObserverTurn, deps: ObserverDeps) => observerOutput.parse(await observe(turn, deps))
 
 async function observe(turn: ObserverTurn, { req, db, models, settings }: ObserverDeps) {
   if (!models) return { notes: [], rejected: 0 }

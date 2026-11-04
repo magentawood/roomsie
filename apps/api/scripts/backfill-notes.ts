@@ -1,4 +1,5 @@
-/** The one-off backfill of Form B (T-36): `pnpm backfill:notes` counts the turns and the cost, and `--apply` writes the notes. */
+/** The one-off backfill of Form B (T-36): `pnpm backfill:notes --before=<the deploy time>` counts the turns and the cost, and `--apply` writes the notes. */
+import { parseArgs } from 'node:util'
 import Fastify from 'fastify'
 import { z } from 'zod'
 import { assistantSettings } from '../src/assistant/settings'
@@ -9,7 +10,10 @@ import { backfillNotes } from '../src/observations/backfill'
 import { todayInIst } from '../src/today'
 import { scriptRequest } from './script-request'
 
-const apply = process.argv.includes('--apply')
+const args = parseArgs({ options: { apply: { type: 'boolean', default: false }, before: { type: 'string' } } }).values
+const before = z.iso.datetime({ offset: true }).transform((at) => new Date(at)).safeParse(args.before)
+if (!before.success) throw new Error('Give --before with the time of the T-36 deploy, as --before=2026-11-04T12:00:00+05:30.')
+const { apply } = args
 const models = modelSettings.parse(process.env)
 if (!models) throw new Error('Set DEEPSEEK_API_KEY and GEMINI_API_KEY.')
 const db = createDb(z.url().parse(process.env.DATABASE_URL))
@@ -18,8 +22,7 @@ const { log } = Fastify({ logger: { level: 'warn' } })
 const server = { analytics: { track: () => {} }, spend: spendOf({ db, settings: spendSettings.parse(process.env), today: todayInIst, log }) }
 const deps = { req: scriptRequest(server, log), models, settings: assistantSettings.parse(process.env) }
 
-const { turns, estimatedRupees } = await backfillNotes(db, deps, { apply: false })
-console.log(`${turns} turns to read, about ₹${estimatedRupees.toFixed(2)} at most.${apply ? '' : ' Run again with --apply to write the notes.'}`)
-if (apply) console.log(`Saved ${(await backfillNotes(db, deps, { apply: true })).saved} notes.`)
+const { turns, estimatedRupees, saved } = await backfillNotes(db, deps, { apply, before: before.data })
+console.log(`${turns} turns to read, about ₹${estimatedRupees.toFixed(2)} at most. ${apply ? `Saved ${saved} notes.` : 'Run again with --apply to write the notes.'}`)
 await server.spend.settled()
 await db.$client.end()

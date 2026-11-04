@@ -5,7 +5,7 @@ import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, 
 import { catalogueOf, type Catalogue } from '../assistant/catalogue'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
-import { hasObservations, moveObservations, type Owner } from '../observations/read'
+import { moveObservations, observationsOf, type Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
@@ -49,20 +49,23 @@ export async function goalOwnerOf(db: Db, id: string) {
   return goal && ownerOf(goal)
 }
 
-/** The typed turns that the router labelled `context`, oldest first, with their owner: what the backfill of T-36 reads. */
-export async function contextTurnsOf(db: Db) {
-  const rows = await db.select({ ...turnFields, userId: goals.userId, sessionId: goals.anonymousSessionId, goalId: chatTurns.goalId })
-    .from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
-    .where(and(eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'), sql`${chatTurns.parts}->'kinds' ? 'context'`)).orderBy(asc(chatTurns.createdAt))
+/**
+ * The typed turns before `before` that the router labelled `context`, oldest first, with their owner: what the backfill of T-36 reads.
+ * `ownValue`: the goal holds an own religion or community (PD3c).
+ */
+export async function contextTurnsOf(db: Db, before: Date) {
+  const rows = await db.select({
+    ...turnFields, userId: goals.userId, sessionId: goals.anonymousSessionId, goalId: chatTurns.goalId,
+    ownValue: sql<boolean>`${goals.ownReligion} is not null or ${goals.ownCommunity} is not null`,
+  }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
+    .where(and(eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'), lt(chatTurns.createdAt, before), sql`${chatTurns.parts}->'kinds' ? 'context'`))
+    .orderBy(asc(chatTurns.createdAt))
   return rows.map(({ userId, sessionId, ...turn }) => ({ ...turn, owner: ownerOf({ userId, sessionId }) }))
 }
 
-export const turnTimeOf = async (db: Db, id: string) =>
-  (await db.select({ createdAt: chatTurns.createdAt }).from(chatTurns).where(eq(chatTurns.id, id)))[0]?.createdAt
-
 /** The owner has a Form B note, and no reply to the asker had the notes hint yet (T-36). */
 export async function notesHintDue(db: Db, asker: Asker) {
-  if (!(await hasObservations(db, ownerOf(asker)))) return false
+  if (!(await observationsOf(db, ownerOf(asker))).length) return false
   const hinted = await db.select({ id: chatTurns.id }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
     .where(and(ownedBy(asker), eq(chatTurns.role, 'assistant'), sql`${chatTurns.parts}->>'notesHint' = 'true'`)).limit(1)
   return hinted.length === 0
