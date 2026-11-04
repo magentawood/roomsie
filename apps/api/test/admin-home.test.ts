@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { adminHomeResponse, feedbackResponse } from '@roomsie/contract'
-import { feedback, invites, quotes, reports, siteDetails, verifications } from '../src/db/schema'
+import { adminHomeResponse, adminHomeView } from '@roomsie/contract'
+import { feedback, inviteGate, invites, quotes, reports, siteDetails, verifications } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'moderator' | 'reviewer' | 'both' | 'seeker' | 'other'
@@ -47,25 +47,27 @@ describe('the admin home', () => {
     await report('other', { listingId }, 'fake', 2)
     await report('seeker', { profileId: cards.other }, 'harassment', 5)
     await report('other', { profileId: cards.seeker }, 'under_18', 1)
+    await report('moderator', { profileId: cards.seeker }, 'fake', 10)
     await t.db.insert(feedback).values([
       { userId: t.ids.seeker, text: 'Nice', createdAt: hoursAgo(24) },
       { userId: t.ids.other, text: 'Old', createdAt: hoursAgo(24 * 8) },
     ])
     const [moderation] = await home('moderator')
     if (moderation?.subject !== 'moderation') throw new Error('no moderation card')
-    expect(moderation).toMatchObject({ openReports: 4, lateSafety: 1, lateOther: 1, feedbackThisWeek: 1 })
+    expect(moderation).toMatchObject({ openReports: 5, lateSafety: 1, lateOther: 1, feedbackThisWeek: 1 })
     expect(Math.abs(Date.parse(moderation.oldestReportAt!) - hoursAgo(30).getTime())).toBeLessThan(60_000)
   })
 
   it('counts the ID checks that wait, the late ones of PD8, and the checks verified this week', async () => {
     await check(t.ids.seeker, 26)
     await check(t.ids.other, 3)
+    await check(t.ids.reviewer, 10)
     await check(t.ids.moderator, 30, 'verified')
     await check(t.ids.both, 24 * 9, 'verified')
     const [idChecks] = await home('reviewer')
     if (idChecks?.subject !== 'id_checks') throw new Error('no ID checks card')
-    expect(idChecks).toMatchObject({ waiting: 2, late: 1, verifiedThisWeek: 1 })
-    expect(Math.abs(Date.parse(idChecks.oldestAt!) - hoursAgo(26).getTime())).toBeLessThan(60_000)
+    expect(idChecks).toMatchObject({ waiting: 3, late: 1, verifiedThisWeek: 1 })
+    expect(Math.abs(Date.parse(idChecks.oldestCheckAt!) - hoursAgo(26).getTime())).toBeLessThan(60_000)
   })
 
   it('counts the invites, the quotes and the site details that are set', async () => {
@@ -76,17 +78,16 @@ describe('the admin home', () => {
     // The test database opens roomsie to everyone, so the gate is not invite-only.
     expect(site).toEqual({ subject: 'site_content', invites: 2, inviteOnly: false, quotes: 1, detailsSet: 2 })
   })
-})
 
-describe('the admin feedback list', () => {
-  it('counts each face of the last 7 days', async () => {
-    await t.db.insert(feedback).values([
-      { userId: t.ids.seeker, rating: 'satisfied', createdAt: hoursAgo(2) },
-      { userId: t.ids.other, rating: 'satisfied', createdAt: hoursAgo(30) },
-      { userId: t.ids.both, rating: 'bad', createdAt: hoursAgo(3) },
-      { userId: t.ids.reviewer, rating: 'bad', createdAt: hoursAgo(24 * 8) },
-    ])
-    const res = feedbackResponse.parse((await t.call('moderator', 'GET', '/v1/admin/feedback')).json())
-    expect(res.facesThisWeek).toEqual({ satisfied: 2, good: 0, neutral: 0, bad: 1, unsatisfied: 0 })
+  it('tells when the gate is invite-only', async () => {
+    const [closed] = await t.db.insert(inviteGate).values({ inviteOnly: true }).returning({ id: inviteGate.id })
+    const site = (await home('moderator')).find((c) => c.subject === 'site_content')
+    await t.db.delete(inviteGate).where(eq(inviteGate.id, closed!.id))
+    expect(site).toMatchObject({ inviteOnly: true })
+  })
+
+  it('reads on the web with no card of a subject that the web does not know', () => {
+    const cards = [{ subject: 'people', people: 412 }, { subject: 'site_content', invites: 1, inviteOnly: false, quotes: 0, detailsSet: 0 }]
+    expect(adminHomeView.parse({ cards }).cards.map((c) => c.subject)).toEqual(['site_content'])
   })
 })

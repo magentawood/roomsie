@@ -2,7 +2,6 @@ import { User01 } from '@untitledui/icons'
 
 const sizes = { sm: { box: 'size-8', icon: 16 }, md: { box: 'size-10', icon: 20 } }
 
-/** The Google photo of the person, or an icon when the account has none. */
 export function Avatar({ src, size }: { src: string | null; size: keyof typeof sizes }) {
   const { box, icon } = sizes[size]
   return src

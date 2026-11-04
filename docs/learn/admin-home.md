@@ -34,8 +34,9 @@ GET /v1/admin/home ──▶ the roles of the person
 
 ## Gotchas
 
-- **The late times are settings:** `REPORT_SAFETY_LATE_HOURS`, `REPORT_LATE_HOURS` and `ID_CHECK_LATE_HOURS`. A web text does not repeat their values, because a change of a setting makes the text false.
+- **The late times are settings:** `REPORT_SAFETY_LATE_HOURS`, `REPORT_LATE_HOURS` and `ID_CHECK_LATE_HOURS`. An admin text does not repeat their values. The promises to users, such as "We review … within 4 hours", are the copy of PD18 and PD8, so a change of a setting also changes that copy ([web.md](../standards/web.md)).
 - **The web decides the access from `/v1/me`, not from the home.** In the deploy minutes, the new web can call the old API. Then the home shows an error, not "not found".
+- **A new subject does not break an open tab.** The web reads the home with `adminHomeView`, which drops a card of a subject that its bundle does not know ([api.md](../standards/api.md)).
 - **The ID checks stay with the ID reviewers.** A moderator who is not a reviewer gets "not found" at `/admin/id-checks` ([PD8](../decisions/pd-08-verification.md)).
 
 ## Tickets

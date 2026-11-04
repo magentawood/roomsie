@@ -2,7 +2,7 @@ import type { FastifyReply, FastifyRequest } from 'fastify'
 import { and, eq, isNull, lt, or } from 'drizzle-orm'
 import { createRemoteJWKSet, errors, jwtVerify, type JWTVerifyGetKey } from 'jose'
 import { z } from 'zod'
-import type { MeResponse } from '@roomsie/contract'
+import type { AdminRole, MeResponse } from '@roomsie/contract'
 import { rejoin, tombstoneKey } from './account'
 import type { Db } from './db/client'
 import { users } from './db/schema'
@@ -112,7 +112,7 @@ export function optionalUser(options: AuthOptions) {
 }
 
 /** Each user with none of the roles gets 404, so the admin routes do not show (T-19, T-46, T-62). */
-export const requireRole = (options: AuthOptions, ...roles: ('moderator' | 'reviewer')[]) => [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
+export const requireRole = (options: AuthOptions, ...roles: AdminRole[]) => [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
   if (!roles.some((role) => req.user![role])) return reply.code(404).send({ error: 'not found' })
 }]
 export const requireModerator = (options: AuthOptions) => requireRole(options, 'moderator')

@@ -1,4 +1,4 @@
-import { count, desc } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import { noSiteDetails, type SiteDetails } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { quotes, siteDetails } from '../db/schema'
@@ -11,4 +11,4 @@ export async function latestDetails(db: Db): Promise<SiteDetails> {
   return row ?? noSiteDetails
 }
 
-export const quoteCount = async (db: Db) => (await db.select({ n: count() }).from(quotes))[0]!.n
+export const quoteCount = (db: Db) => db.$count(quotes)

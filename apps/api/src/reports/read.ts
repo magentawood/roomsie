@@ -24,7 +24,7 @@ export async function hasOpenReportAbout(tx: Tx, userId: string) {
   return !!open
 }
 
-/** The open reports, the safety reports and the other reports past their review time (PD18), and the oldest (T-62). */
+/** Late: past the review time of PD18 (T-62). */
 export async function reportCounts(db: Db, { safetyReasons, safetyLateBefore, lateBefore }: { safetyReasons: ReportReason[]; safetyLateBefore: Date; lateBefore: Date }) {
   const safety = inArray(reports.reason, safetyReasons)
   const [row] = await db.select({

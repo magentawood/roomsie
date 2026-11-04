@@ -31,5 +31,6 @@ These rules apply to `apps/web`: Next.js 16, React 19 and TanStack Query. The ru
 
 ## Pages and content
 
+- A web text does not repeat the value of an API setting. A promise of a decision record, such as the review times of PD18, is copy: a change of its setting changes that copy in the same PR. Why: a change of the setting makes the text false. (Rule candidate of [#227](https://github.com/magentawood/roomsie/pull/227): the intro of the reports page, then the empty queue)
 - Build each page from its Figma design. Do not make the pages from `create-next-app`. Why: the Figma designs are the launch look. ([PD12](../decisions/pd-12-team-plan.md), [PD14](../decisions/pd-14-v0-is-the-figma-designs.md))
 - Never blur a photo with CSS. Show the blurred copy that the server made. Why: a CSS blur gives no protection. ([PD8](../decisions/pd-08-verification.md))

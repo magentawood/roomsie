@@ -1,5 +1,6 @@
 import { AdminHome } from '../../components/admin/admin-home'
+import { AdminFrame } from '../../components/admin/admin-page'
 
 export default function AdminPage() {
-  return <AdminHome />
+  return <AdminFrame><AdminHome /></AdminFrame>
 }

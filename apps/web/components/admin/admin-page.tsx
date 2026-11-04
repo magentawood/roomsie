@@ -4,13 +4,13 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { notFound, usePathname } from 'next/navigation'
 import { ArrowLeft } from '@untitledui/icons'
-import type { MeResponse } from '@roomsie/contract'
+import type { AdminRole, MeResponse } from '@roomsie/contract'
 import { useAuth, useUser } from '../../lib/auth'
 import { useMe } from '../../lib/queries'
 import { Logo } from '../shell/logo'
 import { Avatar } from '../ui/avatar'
+import { tabClass } from '../ui/tabs'
 
-type AdminRole = 'moderator' | 'reviewer'
 type Tab = { label: string; href: string }
 
 export const moderationTabs: Tab[] = [{ label: 'Reports', href: '/admin/reports' }, { label: 'Feedback', href: '/admin/feedback' }]
@@ -78,7 +78,7 @@ export function SubjectPage({ role, title, intro, tabs, children }: { role: Admi
             <nav aria-label={title} className="mt-4 flex gap-5">
               {tabs.map((tab) => (
                 <Link key={tab.href} href={tab.href} aria-current={path === tab.href ? 'page' : undefined}
-                  className={`-mb-px border-b-2 px-1 pb-3 text-sm font-semibold outline-focus-ring focus-visible:outline-2 ${path === tab.href ? 'border-brand text-primary' : 'border-transparent text-quaternary hover:text-secondary'}`}>
+                  className={tabClass(path === tab.href)}>
                   {tab.label}
                 </Link>
               ))}

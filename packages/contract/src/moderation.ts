@@ -17,12 +17,25 @@ export const reportQueueItem = z.discriminatedUnion('kind', [
 export type ReportQueueItem = z.infer<typeof reportQueueItem>
 export const reportQueueResponse = z.object({ items: z.array(reportQueueItem) })
 
+export const adminRoles = ['moderator', 'reviewer'] as const
+export type AdminRole = (typeof adminRoles)[number]
+
 const count = z.int().min(0)
-/** The scorecards of the admin home: only the subjects that the person can open (T-62). A late item is past the time of PD18 or PD8. */
+/**
+ * The scorecards of the admin home: only the subjects that the person can open (T-62). A late item is past the time of PD18 or PD8.
+ * "This week" is the last 7 days.
+ */
 export const adminHomeCard = z.discriminatedUnion('subject', [
   z.object({ subject: z.literal('moderation'), openReports: count, lateSafety: count, lateOther: count, oldestReportAt: z.iso.datetime().nullable(), feedbackThisWeek: count }),
-  z.object({ subject: z.literal('id_checks'), waiting: count, oldestAt: z.iso.datetime().nullable(), late: count, verifiedThisWeek: count }),
+  z.object({ subject: z.literal('id_checks'), waiting: count, oldestCheckAt: z.iso.datetime().nullable(), late: count, verifiedThisWeek: count }),
   z.object({ subject: z.literal('site_content'), invites: count, inviteOnly: z.boolean(), quotes: count, detailsSet: count }),
 ])
 export type AdminHomeCard = z.infer<typeof adminHomeCard>
 export const adminHomeResponse = z.object({ cards: z.array(adminHomeCard) })
+/** What the web reads: it drops a card of a subject that it does not know, so a tab with an older bundle shows the other cards. */
+export const adminHomeView = z.object({
+  cards: z.array(z.unknown()).transform((cards) => cards.flatMap((card) => {
+    const known = adminHomeCard.safeParse(card)
+    return known.success ? [known.data] : []
+  })),
+})

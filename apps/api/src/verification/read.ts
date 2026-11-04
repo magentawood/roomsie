@@ -51,8 +51,8 @@ export async function verifiedIds(db: Db, rows: { id: string; userId: string }[]
 export async function idCheckCounts(db: Db, { lateBefore, since }: { lateBefore: Date; since: Date }) {
   const [open, late, verified] = await Promise.all([
     db.select({ waiting: count(), oldest: min(verifications.createdAt) }).from(verifications).where(openCheck()),
-    db.select({ n: count() }).from(verifications).where(and(openCheck(), lt(verifications.createdAt, lateBefore))),
-    db.select({ n: count() }).from(verifications).where(and(eq(verifications.state, 'verified'), gte(verifications.reviewedAt, since))),
+    db.$count(verifications, and(openCheck(), lt(verifications.createdAt, lateBefore))),
+    db.$count(verifications, and(eq(verifications.state, 'verified'), gte(verifications.reviewedAt, since))),
   ])
-  return { waiting: open[0]!.waiting, oldestAt: open[0]!.oldest, late: late[0]!.n, verified: verified[0]!.n }
+  return { waiting: open[0]!.waiting, oldestAt: open[0]!.oldest, late, verified }
 }

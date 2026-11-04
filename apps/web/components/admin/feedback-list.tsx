@@ -10,7 +10,6 @@ import { EmptyState } from '../ui/empty-state'
 
 const sentAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', ...india })
 
-/** The count of each face of the last 7 days, best first (drafts section 37). */
 function FacesThisWeek({ counts }: { counts: Record<FeedbackRating, number> }) {
   const total = feedbackRatings.reduce((sum, r) => sum + counts[r], 0)
   return (

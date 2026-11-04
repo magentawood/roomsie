@@ -10,7 +10,6 @@ import { india } from '../../lib/ist'
 import { useAdminHome } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
-import { AdminFrame } from './admin-page'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
@@ -65,7 +64,7 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
       )
     case 'id_checks':
       return (
-        <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks" footer={card.oldestAt ? `Oldest check: ${ago(card.oldestAt)}` : 'No check waits'}>
+        <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks" footer={card.oldestCheckAt ? `Oldest check: ${ago(card.oldestCheckAt)}` : 'No check waits'}>
           <Metric value={card.waiting} label="Waiting for review" badges={card.late > 0 && <Badge tone="error" dot={false}>{`${card.late} late`}</Badge>} />
           <Metric value={card.verifiedThisWeek} label="Verified this week" />
         </Card>
@@ -81,7 +80,8 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
   }
 }
 
-function Home() {
+/** The admin home: one scorecard for each subject that the person can open (T-62, drafts section 36). */
+export function AdminHome() {
   const user = useUser()
   const home = useAdminHome()
   const now = new Date()
@@ -106,9 +106,4 @@ function Home() {
       </div>
     </main>
   )
-}
-
-/** The admin home: one scorecard for each subject that the person can open (T-62, drafts section 36). */
-export function AdminHome() {
-  return <AdminFrame><Home /></AdminFrame>
 }
