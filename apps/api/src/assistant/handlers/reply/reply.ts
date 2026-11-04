@@ -1,9 +1,8 @@
-import { assistantReply, chipSlots, isOpenSlot, mustHaveKeys, replyInput, slotPath, type AssistantParts, type FormASlot, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
+import { assistantReply, chipSlots, isOpenSlot, mustHaveKeys, replyInput, slotOf, slotPath, type AssistantParts, type FormASlot, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
 import type { z } from 'zod'
 import type { AssistantDeps, TurnState } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
 import { backToIt, lineOf } from '../../lines'
-import { slotOf } from '../extractor/form-update'
 import { questionFor, replyLines, valueText } from './texts'
 
 type PartsOf = Pick<AssistantParts, 'asked' | 'question'> & Partial<Pick<AssistantParts, 'conflicts' | 'chips'>>
@@ -57,7 +56,7 @@ const write = async (turn: z.output<typeof replyInput>, { db, settings }: Assist
     return reply(ack, lines.join(' '), { asked: { slot: 'areas' } })
   }
   const unclearWeightSlot = mustHaveKeys.map((key) => `mustHaves.${key}` as const).find((slot) => slotOf(turn.form, slot).value === 'unclear')
-  if (unclearWeightSlot) return reply(ack, replyLines.weight(catalogue.mustHaveLabels.get(slotPath(unclearWeightSlot)[1]!) ?? unclearWeightSlot), { asked: { slot: unclearWeightSlot } })
+  if (unclearWeightSlot) return reply(ack, replyLines.weight(catalogue.mustHaveLabels.get(slotPath(unclearWeightSlot)[1]!) ?? unclearWeightSlot), { asked: { slot: unclearWeightSlot }, chips: unclearWeightSlot })
   if (!next) return { text: ack + lineOf('done', turn.language), parts: parts({ asked: null, question: null }) }
   // "Not sure, help me pick" gets the help line, which ends with its own question (T-09).
   const question = next === 'intent' && slotOf(turn.form, 'intent').value === 'unclear' ? replyLines.helpPick : questionFor(next, catalogue)

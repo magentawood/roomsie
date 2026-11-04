@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { areaPicks, communities, intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis, type MustHaveKey } from './profiles'
+import { areaPicks, communities, intents, lifestyleAnswerLabels, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis, type MustHaveKey } from './profiles'
 import { rupees } from './shared'
 
 /** No `inferred` source: the system never guesses a value (PD15). A slot that a stored form does not have reads as empty. */
@@ -68,8 +68,28 @@ export const isOpenSlot = ({ source, value }: SlotState) => source === 'empty' |
 /** Results show when intent, areas and budget have values: the panel of the web, and the turn cap of PD9 (T-21). */
 export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
 
-export const chipSlots = ['intent', 'areas', 'budget'] as const
+/** The closed questions, with chips (T-09, T-59). The hidden slots and the move date have none (PD15). */
+export const chipSlots = [
+  'intent', 'areas', 'budget', 'roomType', 'whosMoving',
+  ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
+] as const
 export type ChipSlot = (typeof chipSlots)[number]
+/** The chips of one tap and one fixed list of answers. */
+export type AnswerChipSlot = Exclude<ChipSlot, 'intent' | 'areas' | 'budget'>
+/** The chip words of room type, who is moving and the weight of a must-have (the drafts, section 35). */
+export const roomTypeChipLabels = { private: 'A private room', shared: 'A shared room' } satisfies Record<Exclude<(typeof roomTypes)[number], 'unclear'>, string>
+export const whosMovingChipLabels = {
+  student: 'Student', first_job: 'First job', working: 'Working', couple: 'Couple', family: 'Family', friends: 'Group of friends',
+} satisfies Record<Exclude<(typeof whosMovingAnswers)[number], 'unclear'>, string>
+export const weightChipLabels = { dealbreaker: "It's a must", prefer: 'Show them first' } satisfies Record<(typeof mustHaveWeights)[number], string>
+
+/** The answers of a chip slot, in the order of their chips. */
+export function chipAnswers(slot: AnswerChipSlot): { value: string; label: string }[] {
+  const [group, key] = slot.split('.') as [string, string | undefined]
+  const labels: Record<string, string> = group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels
+    : group === 'lifestyle' ? lifestyleAnswerLabels[key as LifestyleAxis] : weightChipLabels
+  return Object.entries(labels).map(([value, label]) => ({ value, label }))
+}
 /** The place-type chips, as the designs name them (PD15). */
 export const intentLabels = {
   room: 'A room in a shared flat', pg: 'A PG or hostel', whole_flat: 'A whole flat', flatmates: 'People to rent with', unclear: 'Not sure, help me pick',

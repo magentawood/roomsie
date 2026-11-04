@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences, type FormA } from './form-a'
+import { budgetBandId, budgetBandOf, chipAnswers, chipSlots, formA, identityPreference, intentLabels, statedPreferences, type AnswerChipSlot, type FormA, type SlotState } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { comparison, compareRequest } from './compare'
 import { observation } from './form-b'
@@ -16,6 +16,12 @@ export const formASlots = [
 ] as const
 export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
+/** The state of a slot, also of one inside the lifestyle or the must-haves of Form A. */
+export function slotOf(form: FormA, slot: FormASlot): SlotState {
+  const [group, key] = slotPath(slot)
+  const record = form as unknown as Record<string, Record<string, SlotState>>
+  return (key ? record[group]![key] : record[group]) as SlotState
+}
 
 // Vercel is live minutes before the API; the defaults read its old replies (api.md).
 export const chatTurn = z.object({
@@ -37,10 +43,16 @@ export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
+const answerTap = <S extends AnswerChipSlot>(slot: S, values: readonly [string, ...string[]]) => z.strictObject({ slot: z.literal(slot), value: z.enum(values) })
+const known = <V extends string>(values: readonly V[]) => values.filter((value) => value !== 'unclear') as [Exclude<V, 'unclear'>, ...Exclude<V, 'unclear'>[]]
 export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
   z.strictObject({ slot: z.literal('budget'), value: budgetBandId }),
+  answerTap('roomType', known(roomTypes)),
+  answerTap('whosMoving', known(whosMovingAnswers)),
+  ...lifestyleAxes.map((axis) => answerTap(`lifestyle.${axis}`, lifestyleAnswers[axis])),
+  ...mustHaveKeys.map((key) => answerTap(`mustHaves.${key}`, mustHaveWeights)),
 ])
 export type ChipTap = z.infer<typeof chipTap>
 /** The answers of the onboarding of flow 01 that start a goal, with the values of the chips. Each step can be skipped (T-48). */
@@ -59,6 +71,7 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
     case 'intent': return intentLabels[tap.value]
     case 'areas': return tap.value.map(areaName).join(', ')
     case 'budget': return budgetBandOf(tap.value).label
+    default: return chipAnswers(tap.slot).find(({ value }) => value === tap.value)!.label
   }
 }
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])

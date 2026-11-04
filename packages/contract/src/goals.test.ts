@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { formA } from './form-a'
-import { goalResponse, goalTitle, turnResponse } from './goals'
+import { chipAnswers, chipSlots, formA } from './form-a'
+import { chipTap, goalResponse, goalTitle, slotOf, tapText, turnResponse } from './goals'
 
 const olderTurn = { id: '01a19c99-5fa0-7d83-ab48-16626c750a4f', role: 'assistant', text: 'What is your monthly budget?', createdAt: '2026-11-02T14:00:00.000Z' }
 
@@ -30,5 +30,41 @@ describe('the title of a goal (T-50)', () => {
     expect(title({ intent: { value: 'unclear', source: 'stated' }, areas: areas('powai') })).toBe('Looking in Powai')
     expect(title({ areas: areas('powai') })).toBe('Looking in Powai')
     expect(title({ intent: { value: 'room', source: 'stated' } })).toBe('New goal')
+  })
+})
+
+describe('the chips of the closed questions (T-59)', () => {
+  const textOf = (tap: object) => tapText(chipTap.parse(tap), (slug) => slug)
+
+  it('writes the label of the chip as the message of the person', () => {
+    expect(textOf({ slot: 'lifestyle.food', value: 'veg' })).toBe('Veg')
+    expect(textOf({ slot: 'lifestyle.tidiness', value: 'relaxed_about_mess' })).toBe('Relaxed about mess')
+    expect(textOf({ slot: 'mustHaves.veg_kitchen', value: 'dealbreaker' })).toBe("It's a must")
+    expect(textOf({ slot: 'mustHaves.veg_kitchen', value: 'prefer' })).toBe('Show them first')
+    expect(textOf({ slot: 'whosMoving', value: 'friends' })).toBe('Group of friends')
+    expect(textOf({ slot: 'roomType', value: 'private' })).toBe('A private room')
+  })
+
+  it('gives the answers of each question in their order, the must first for a weight', () => {
+    expect(chipAnswers('lifestyle.food').map(({ label }) => label)).toEqual(['Veg', 'Non-veg', 'Eggetarian', 'Jain'])
+    expect(chipAnswers('mustHaves.non_smokers')).toEqual([{ value: 'dealbreaker', label: "It's a must" }, { value: 'prefer', label: 'Show them first' }])
+    expect(chipAnswers('whosMoving').map(({ label }) => label)).toEqual(['Student', 'First job', 'Working', 'Couple', 'Family', 'Group of friends'])
+    expect(chipAnswers('roomType').map(({ label }) => label)).toEqual(['A private room', 'A shared room'])
+  })
+
+  it('refuses an answer that its question does not have, and has no chips for the hidden slots (PD15)', () => {
+    for (const tap of [
+      { slot: 'lifestyle.food', value: 'smoker' }, { slot: 'lifestyle.food', value: 'unclear' }, { slot: 'whosMoving', value: 'unclear' },
+      { slot: 'mustHaves.veg_kitchen', value: 'unclear' }, { slot: 'roomType', value: 'unclear' }, { slot: 'religionPreference', value: 'hindu' },
+    ]) expect(chipTap.safeParse(tap).success).toBe(false)
+    expect(chipSlots).not.toContain('religionPreference')
+    expect(chipSlots).not.toContain('communityPreference')
+    expect(chipSlots).not.toContain('moveDate')
+  })
+
+  it('reads a slot inside the lifestyle or the must-haves', () => {
+    const form = formA.parse({ lifestyle: { food: { value: 'veg', source: 'stated' } } })
+    expect(slotOf(form, 'lifestyle.food')).toEqual({ value: 'veg', source: 'stated' })
+    expect(slotOf(form, 'mustHaves.veg_kitchen').source).toBe('empty')
   })
 })

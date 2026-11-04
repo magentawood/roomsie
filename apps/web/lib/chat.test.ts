@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { formA, type ChipSlot, type GoalResponse } from '@roomsie/contract'
-import { chatStorage, chipsOf, forgetChat, keyAction, placeTypes, readStored, toggled, writeStored } from './chat'
+import { chatStorage, chipsOf, forgetChat, keyAction, placeTypes, readStored, tapRefusal, toggled, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -51,6 +51,17 @@ describe('the chips of the chat (T-09)', () => {
     expect(chipsOf([turn('user'), turn('assistant', 'areas')], formA.parse({ areas: { source: 'stated', value: ['thane'] } }))).toBeNull()
     expect(chipsOf([turn('user'), turn('assistant')], empty)).toBeNull()
     expect(chipsOf([turn('assistant', 'areas'), turn('user')], empty)).toBeNull()
+  })
+
+  it('shows the chips of a question inside the lifestyle or the must-haves, while its slot is open (T-59)', () => {
+    expect(chipsOf([turn('user'), turn('assistant', 'lifestyle.food')], empty)).toBe('lifestyle.food')
+    expect(chipsOf([turn('user'), turn('assistant', 'lifestyle.food')], formA.parse({ lifestyle: { food: { source: 'stated', value: 'veg' } } }))).toBeNull()
+    expect(chipsOf([turn('user'), turn('assistant', 'mustHaves.veg_kitchen')], formA.parse({ mustHaves: { veg_kitchen: { source: 'stated', value: 'unclear' } } }))).toBe('mustHaves.veg_kitchen')
+  })
+
+  it('names the minutes of a deploy when the old API refuses a new chip (T-59)', () => {
+    expect(tapRefusal('not valid: body')).toMatch(/few minutes/)
+    expect(tapRefusal('not valid: areas')).toBeNull()
   })
 
   it('shows the four place types again after "Not sure, help me pick"', () => {

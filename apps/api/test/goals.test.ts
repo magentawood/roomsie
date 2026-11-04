@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { and, count, eq, sql } from 'drizzle-orm'
-import { goalResponse, goalsResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
+import { formA, goalResponse, goalsResponse, newGoalResponse, profileResponse, turnResponse, visitorKeyHeader, type TurnLabel } from '@roomsie/contract'
 import { events as eventRows } from '../src/analytics/schema'
 import { anonymousSessions, areas, chatTurns, goals, waitlist } from '../src/db/schema'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -573,6 +573,55 @@ describe('a chip tap (T-09)', () => {
     // A reload shows the chips of each question.
     const reloaded = goalResponse.parse((await t.app.inject({ method: 'GET', url: `/v1/goals/${goal.id}`, headers: { [visitorKeyHeader]: goal.key } })).json())
     expect(reloaded.turns.map((turn) => turn.chips)).toEqual([null, 'areas', null, 'budget', null, null])
+  })
+
+  it('gives the lifestyle questions their chips, and a tap of an answer fills its slot inside the lifestyle with no model call (T-59)', async () => {
+    const requests = fakeVendors({})
+    const goal = await visitorGoal()
+    // The questions before the lifestyle questions are answered.
+    const form = formA.parse({
+      intent: { source: 'stated', value: 'room' }, areas: { source: 'stated', value: ['bandra-santacruz'] },
+      budget: { source: 'stated', value: { min: null, max: 25_000 } }, moveDate: { source: 'stated', value: '2026-12-01' },
+    })
+    await t.db.update(goals).set({ form }).where(eq(goals.id, goal.id))
+    const food = await tap(goal, { slot: 'lifestyle.food', value: 'veg' })
+    expect(food.form.lifestyle.food).toEqual({ source: 'stated', value: 'veg' })
+    expect(food.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
+      { text: 'Veg', chips: null },
+      { text: 'Got it: food: veg. Do you smoke?', chips: 'lifestyle.smoking' },
+    ])
+    expect((await tap(goal, { slot: 'lifestyle.smoking', value: 'non_smoker' })).turns[1].chips).toBe('lifestyle.drinks')
+    expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
+  })
+
+  it('gives the weight question its two chips, and a tap sets the weight (T-59)', async () => {
+    fakeVendors({ deepseek: [scored({ mustHaves: { veg_kitchen: 'unclear' } })] })
+    const goal = await visitorGoal()
+    const asked = await sent(goal, 'veg kitchen chahiye')
+    expect(asked.turns[1].chips).toBe('mustHaves.veg_kitchen')
+    const requests = fakeVendors({})
+    const weighed = await tap(goal, { slot: 'mustHaves.veg_kitchen', value: 'dealbreaker' })
+    expect(weighed.form.mustHaves.veg_kitchen).toEqual({ source: 'stated', value: 'dealbreaker' })
+    expect(weighed.turns[0].text).toBe("It's a must")
+    expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
+  })
+
+  it('fills room type and who is moving from a tap (T-59)', async () => {
+    fakeVendors({})
+    const goal = await visitorGoal()
+    const room = await tap(goal, { slot: 'roomType', value: 'private' })
+    expect([room.form.roomType, room.turns[0].text]).toEqual([{ source: 'stated', value: 'private' }, 'A private room'])
+    const moving = await tap(goal, { slot: 'whosMoving', value: 'friends' })
+    expect([moving.form.whosMoving, moving.turns[0].text]).toEqual([{ source: 'stated', value: 'friends' }, 'Group of friends'])
+    expect((await tapped(goal, { slot: 'lifestyle.food', value: 'smoker' })).statusCode).toBe(400)
+  })
+
+  it('gives no chips to a conflict question', async () => {
+    fakeVendors({ deepseek: [scored({ lifestyle: { food: 'veg' } }), scored({ lifestyle: { food: 'non_veg' } })] })
+    const goal = await visitorGoal()
+    await sent(goal, 'I eat veg')
+    const conflict = await sent(goal, 'I eat non-veg')
+    expect([conflict.turns[1].text, conflict.turns[1].chips]).toEqual(['You said food: veg before, and now food: non veg. Which one should I keep?', null])
   })
 
   it('gives "Not sure, help me pick" the help line and the place-type chips again, as a typed answer that leaves intent unclear', async () => {
