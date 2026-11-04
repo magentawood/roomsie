@@ -31,9 +31,9 @@ Tap buttons for the closed questions after the budget, so a person types less.
 - No task waits on this task.
 
 ## Done when
-- [ ] Room type, who is moving, the eight lifestyle questions and the must-have weights show their answers as chips under the question, as the chips of T-09
-- [ ] The chips come from the slot definitions and the catalogue, not from a model. A tap never calls a model
-- [ ] The chips have a design on the drafts page, and the user approves it before the build
+- [x] Room type, who is moving, the eight lifestyle questions and the must-have weights show their answers as chips under the question, as the chips of T-09 · [#213](https://github.com/magentawood/roomsie/pull/213)
+- [x] The chips come from the slot definitions and the catalogue, not from a model. A tap never calls a model · [#213](https://github.com/magentawood/roomsie/pull/213)
+- [x] The chips have a design on the drafts page, and the user approves it before the build · [#213](https://github.com/magentawood/roomsie/pull/213)
 
 ^done
 
@@ -71,3 +71,13 @@ Tap buttons for the closed questions after the budget, so a person types less.
   - a "skip" or "no preference" chip
   - a change of the order of the questions
   - chips for the move date
+
+## Log
+
+- **2026-11-04 · [#213](https://github.com/magentawood/roomsie/pull/213)**
+  - **Change:** room type, who is moving, the eight lifestyle questions and the weight of a must-have get one-tap chips under the question, as the chips of T-09. A tap fills its slot, also inside the lifestyle or the must-haves, with no model call. The labels are in the contract, and the profile form, the listing flow and the Got it line use them too.
+  - **Why:** [PD3b](../../decisions/pd-03b-interview-vs-chips.md), [PD15](../../decisions/pd-15-form-a-contract.md), [ai-agent-design.md](../../ai-agent-design.md), and the decisions of the spec.
+  - **Ticked:** all three items.
+  - **Not done:** none.
+  - **Learn:** [The chat chips](../../learn/chat-chips.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
