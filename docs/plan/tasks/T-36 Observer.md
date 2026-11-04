@@ -56,7 +56,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - **The assistant flow:** the interface of a typed turn changes. It tells the route if the observer must run, and it gives the scripted reply for a notes question.
   - **The router:** its prompt and its label get the notes flag. Its interface does not change.
   - **The goals route:** after the reply goes out, it starts the observer in the background. Then it saves the notes on the saved turn of the person.
-  - **The goals routes and the observations module:** a new route lists the notes of the owner with their topic labels, and a new route deletes one note of the owner. The routes use the visitor key of the chat, so they are with the goals routes. The observations module gets their queries. The functions of T-35 do not change.
+  - **The goals routes and the observations module:** a new route lists the notes of the owner with their topic labels. A second new route deletes one note of the owner. The routes use the visitor key of the chat, so they are with the goals routes. The observations module gets their queries. The functions of T-35 do not change.
   - **The seed:** the topic catalogue gets four new topics.
   - **The settings:** two new settings. The confidence of a note from the backup model, and the notes of a sensitive turn.
   - **The lines file:** new lines for the notes reply, the empty reply and the hint, in each reply language.
