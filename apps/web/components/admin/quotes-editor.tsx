@@ -54,29 +54,33 @@ export function QuotesEditor() {
   if (quotes.isPending) return <p className="text-sm text-tertiary">Loading…</p>
   const count = quotes.data.quotes.length
   return (
-    <>
-      <p className="text-sm font-medium text-secondary">
-        {count >= landingQuoteCount
-          ? `Live. The landing page shows the ${landingQuoteCount} newest quotes.`
-          : `${count} of ${landingQuoteCount}. The section goes live at ${landingQuoteCount} quotes.`}
-      </p>
-      <AddQuote />
-      {count === 0
-        ? <EmptyState icon={MessageTextCircle01} title="No quotes yet.">Add the words of real users, with their agreement.</EmptyState>
-        : (
-          <ul className="flex flex-col gap-3">
-            {quotes.data.quotes.map((quote) => (
-              <li key={quote.id} className="flex flex-col gap-2 rounded-xl border border-secondary p-4">
-                <p className="text-md text-primary">“{quote.text}”</p>
-                <p className="flex flex-wrap items-center justify-between gap-2 text-sm text-tertiary">
-                  <span>{quote.name} · added {ago(quote.createdAt)}</span>
-                  <Button variant="link-error" disabled={remove.isPending} onClick={() => remove.mutate(quote.id)}>Delete</Button>
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      {remove.isError && <p role="alert" className="text-sm text-error-primary">{errorText(remove.error)}</p>}
-    </>
+    <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+      <div className="flex flex-col gap-3 lg:w-105 lg:shrink-0">
+        <p className="text-sm font-medium text-secondary">
+          {count >= landingQuoteCount
+            ? `Live. The landing page shows the ${landingQuoteCount} newest quotes.`
+            : `${count} of ${landingQuoteCount}. The section goes live at ${landingQuoteCount} quotes.`}
+        </p>
+        <AddQuote />
+      </div>
+      <div className="flex flex-1 flex-col gap-3 lg:max-w-170">
+        {count === 0
+          ? <EmptyState icon={MessageTextCircle01} title="No quotes yet.">Add the words of real users, with their agreement.</EmptyState>
+          : (
+            <ul className="flex flex-col gap-3">
+              {quotes.data.quotes.map((quote) => (
+                <li key={quote.id} className="flex flex-col gap-2 rounded-xl border border-secondary p-4">
+                  <p className="text-md text-primary">“{quote.text}”</p>
+                  <p className="flex flex-wrap items-center justify-between gap-2 text-sm text-tertiary">
+                    <span>{quote.name} · added {ago(quote.createdAt)}</span>
+                    <Button variant="link-error" disabled={remove.isPending} onClick={() => remove.mutate(quote.id)}>Delete</Button>
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        {remove.isError && <p role="alert" className="text-sm text-error-primary">{errorText(remove.error)}</p>}
+      </div>
+    </div>
   )
 }

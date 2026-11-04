@@ -1,10 +1,10 @@
 import { InvitesEditor } from '../../../components/admin/invites-editor'
-import { ModeratorPage } from '../../../components/admin/moderator-page'
+import { siteContentTabs, SubjectPage } from '../../../components/admin/admin-page'
 
 export default function InvitesPage() {
   return (
-    <ModeratorPage title="Invites" backHref="/admin" intro="Until roomsie opens, only these emails and the moderators can sign in.">
-      <InvitesEditor />
-    </ModeratorPage>
+    <SubjectPage role="moderator" title="Site content" tabs={siteContentTabs} intro="Until roomsie opens, only these emails and the moderators can sign in.">
+      <div className="max-w-180"><InvitesEditor /></div>
+    </SubjectPage>
   )
 }
