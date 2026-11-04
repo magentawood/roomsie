@@ -31,10 +31,10 @@ Test the assistant on real sentences. Fix what it gets wrong.
 - [[T-61 Composer eval]]
 
 ## Done when
-- [ ] The 50 test sentences go through extraction
-- [ ] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear
-- [ ] The team tunes the prompt and saves the results in docs/research/
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] The 50 test sentences go through extraction · [#216](https://github.com/magentawood/roomsie/pull/216)
+- [x] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear · [#216](https://github.com/magentawood/roomsie/pull/216)
+- [x] The team tunes the prompt and saves the results in docs/research/ · [#216](https://github.com/magentawood/roomsie/pull/216)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#216](https://github.com/magentawood/roomsie/pull/216)
 
 ^done
 
@@ -80,3 +80,13 @@ Test the assistant on real sentences. Fix what it gets wrong.
   - a third vendor, such as Qwen
   - a run in CI
   - the full eval of 200 to 300 sentences of PD7
+
+## Log
+
+- **2026-11-04 · [#216](https://github.com/magentawood/roomsie/pull/216)**
+  - **Change:** `pnpm eval` scores the extractor and the router on the 50 eval sentences, three repeats for each of DeepSeek and Gemini, with a threshold sweep by replay. The fixes: a copied word with a Marathi ending counts, two Marathi date forms, the joined spelling of Vile Parle, the router gives the main language and script, and the extractor leaves out the keys that a message does not name. DeepSeek now passes check 6 of PD11. T-61 gets the composer items.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD11](../../decisions/pd-11-launch.md), and the decisions of the spec.
+  - **Ticked:** all four items.
+  - **Not done:** none.
+  - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md), [The assistant turn](../../learn/assistant-turn.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
