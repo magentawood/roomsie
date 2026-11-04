@@ -65,10 +65,8 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
       )
     case 'id_checks':
       return (
-        <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks">
-          <Metric value={card.waiting} label="Waiting for review" badges={card.late > 0
-            ? <Badge tone="error" dot={false}>{`${card.late} late`}</Badge>
-            : card.oldestAt && <Badge tone="gray" dot={false}>{`Oldest ${ago(card.oldestAt)}`}</Badge>} />
+        <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks" footer={card.oldestAt ? `Oldest check: ${ago(card.oldestAt)}` : 'No check waits'}>
+          <Metric value={card.waiting} label="Waiting for review" badges={card.late > 0 && <Badge tone="error" dot={false}>{`${card.late} late`}</Badge>} />
           <Metric value={card.verifiedThisWeek} label="Verified this week" />
         </Card>
       )

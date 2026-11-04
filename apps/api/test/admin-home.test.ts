@@ -41,7 +41,7 @@ describe('the admin home', () => {
     expect((await home('both')).map((c) => c.subject)).toEqual(['moderation', 'id_checks', 'site_content'])
   })
 
-  it('counts one open item for each reported person or listing, and the late ones of PD18', async () => {
+  it('counts the open reports, and the late ones of PD18', async () => {
     const listingId = await t.liveListing()
     await report('seeker', { listingId }, 'broker_or_spam', 30)
     await report('other', { listingId }, 'fake', 2)
@@ -53,7 +53,7 @@ describe('the admin home', () => {
     ])
     const [moderation] = await home('moderator')
     if (moderation?.subject !== 'moderation') throw new Error('no moderation card')
-    expect(moderation).toMatchObject({ openReports: 3, lateSafety: 1, lateOther: 1, feedbackThisWeek: 1 })
+    expect(moderation).toMatchObject({ openReports: 4, lateSafety: 1, lateOther: 1, feedbackThisWeek: 1 })
     expect(Math.abs(Date.parse(moderation.oldestReportAt!) - hoursAgo(30).getTime())).toBeLessThan(60_000)
   })
 

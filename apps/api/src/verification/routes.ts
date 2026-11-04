@@ -1,4 +1,4 @@
-import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify'
+import type { FastifyInstance, FastifyReply } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, asc, count, eq, inArray, sql } from 'drizzle-orm'
 import {
@@ -6,7 +6,7 @@ import {
   verificationResponse,
 } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
-import { requireUser, type AuthOptions } from '../auth'
+import { requireRole, requireUser, type AuthOptions } from '../auth'
 import { verificationAudit, verifications } from '../db/schema'
 import type { IdStore } from '../id-store'
 import { idParams } from '../params'
@@ -20,10 +20,7 @@ export function verificationRoutes(v1: FastifyInstance, options: AuthOptions & {
   const { alerts } = v1
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
-  // Each other user gets 404, so the routes do not show.
-  const reviewerOnly = [preHandler, async (req: FastifyRequest, reply: FastifyReply) => {
-    if (!req.user!.reviewer) return reply.code(404).send({ error: 'not found' })
-  }]
+  const reviewerOnly = requireRole(options, 'reviewer')
   const notSetUp = (reply: FastifyReply) => reply.code(503).send({ error: 'verification is not set up' })
   const checkExists = (reply: FastifyReply) => reply.code(409).send({ error: 'a check is in review or approved' })
 

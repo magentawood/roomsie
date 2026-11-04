@@ -48,8 +48,7 @@ export async function verifiedIds(db: Db, rows: { id: string; userId: string }[]
   return new Set(rows.filter((r) => users.has(r.userId)).map((r) => r.id))
 }
 
-/** The open checks, the oldest, the late ones, and the checks verified since a time (T-62). */
-export async function checkNumbers(db: Db, { lateBefore, since }: { lateBefore: Date; since: Date }) {
+export async function idCheckCounts(db: Db, { lateBefore, since }: { lateBefore: Date; since: Date }) {
   const [open, late, verified] = await Promise.all([
     db.select({ waiting: count(), oldest: min(verifications.createdAt) }).from(verifications).where(openCheck()),
     db.select({ n: count() }).from(verifications).where(and(openCheck(), lt(verifications.createdAt, lateBefore))),

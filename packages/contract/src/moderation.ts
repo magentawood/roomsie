@@ -26,4 +26,3 @@ export const adminHomeCard = z.discriminatedUnion('subject', [
 ])
 export type AdminHomeCard = z.infer<typeof adminHomeCard>
 export const adminHomeResponse = z.object({ cards: z.array(adminHomeCard) })
-

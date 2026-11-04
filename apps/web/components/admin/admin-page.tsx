@@ -3,13 +3,14 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { notFound, usePathname } from 'next/navigation'
-import { ArrowLeft, User01 } from '@untitledui/icons'
+import { ArrowLeft } from '@untitledui/icons'
 import type { MeResponse } from '@roomsie/contract'
 import { useAuth, useUser } from '../../lib/auth'
 import { useMe } from '../../lib/queries'
 import { Logo } from '../shell/logo'
+import { Avatar } from '../ui/avatar'
 
-export type AdminRole = 'moderator' | 'reviewer'
+type AdminRole = 'moderator' | 'reviewer'
 type Tab = { label: string; href: string }
 
 export const moderationTabs: Tab[] = [{ label: 'Reports', href: '/admin/reports' }, { label: 'Feedback', href: '/admin/feedback' }]
@@ -31,9 +32,7 @@ function TopBar({ me, crumb }: { me: MeResponse; crumb?: string }) {
       <span className="flex-1" />
       <Link href="/chat" className="hidden text-sm font-semibold text-secondary hover:text-primary md:inline">Back to roomsie</Link>
       <span className="flex items-center gap-2.5">
-        {user.photoURL
-          ? <img src={user.photoURL} alt="" className="size-8 rounded-full" referrerPolicy="no-referrer" />
-          : <span className="flex size-8 items-center justify-center rounded-full bg-tertiary text-fg-quaternary"><User01 size={16} aria-hidden /></span>}
+        <Avatar src={user.photoURL} size="sm" />
         <span className="hidden flex-col md:flex">
           <span className="text-sm font-semibold text-primary">{user.displayName}</span>
           <span className="text-xs text-tertiary">{roleLabel(me)}</span>
@@ -43,7 +42,7 @@ function TopBar({ me, crumb }: { me: MeResponse; crumb?: string }) {
   )
 }
 
-function Gate({ role, crumb, children }: { role?: AdminRole; crumb?: string; children: ReactNode }) {
+function RoleGate({ role, crumb, children }: { role?: AdminRole; crumb?: string; children: ReactNode }) {
   const me = useMe()
   if (me.isPending) return <p className="p-5 text-sm text-tertiary">Loading…</p>
   if (!me.data || !(role ? me.data[role] : me.data.moderator || me.data.reviewer)) notFound()
@@ -55,15 +54,12 @@ function Gate({ role, crumb, children }: { role?: AdminRole; crumb?: string; chi
   )
 }
 
-/**
- * A moderator or an ID reviewer opens the admin, and only the pages of their role. A guest and each other person
- * see "not found", so the pages do not show that they exist (T-19, T-62).
- */
+/** Each person without the role sees "not found", so the pages do not show (T-19, T-62). */
 export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: ReactNode }) {
   const { user, loading } = useAuth()
   if (loading) return <div className="flex min-h-dvh items-center justify-center text-sm text-tertiary">Loading…</div>
   if (!user) notFound()
-  return <Gate {...props} />
+  return <RoleGate {...props} />
 }
 
 /** One subject of the admin: its header with tabs, then its page (drafts section 37). */

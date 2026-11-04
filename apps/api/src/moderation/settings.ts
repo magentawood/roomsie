@@ -10,7 +10,6 @@ export const moderationSettings = z.object({
   REVIEWER_UIDS: commaList(z.string()).default([]),
   REPORT_HIDE_AT_REPORTERS: z.coerce.number().int().min(1).default(2),
   REPORT_SAFETY_REASONS: commaList(z.enum(reportReasons)).default(['harassment', 'under_18']),
-  /** The response times of PD18 and of the ID check of PD8: the admin home marks an item late after them (T-62). */
   REPORT_SAFETY_LATE_HOURS: z.coerce.number().positive().default(4),
   REPORT_LATE_HOURS: z.coerce.number().positive().default(24),
   ID_CHECK_LATE_HOURS: z.coerce.number().positive().default(24),

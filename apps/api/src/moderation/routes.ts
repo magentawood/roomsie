@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { adminHomeResponse, errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
-import { requireAdmin, requireModerator, type AuthOptions } from '../auth'
+import { requireModerator, requireRole, type AuthOptions } from '../auth'
 import type { Tx } from '../db/client'
 import { hideListingsOf, listingsByIds, listingView, partsOf, setListingHiddenForReview } from '../listings/read'
 import { idParams } from '../params'
@@ -27,7 +27,7 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireModerator(options)
 
-  app.get('/admin/home', { preHandler: requireAdmin(options), schema: { response: { 200: adminHomeResponse, 404: errorResponse } } }, async (req) => ({
+  app.get('/admin/home', { preHandler: requireRole(options, 'moderator', 'reviewer'), schema: { response: { 200: adminHomeResponse, 404: errorResponse } } }, async (req) => ({
     cards: await homeCards(db, moderation, req.user!),
   }))
 

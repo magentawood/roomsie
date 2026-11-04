@@ -5,6 +5,7 @@
 Each page tells what the topic is, how it fits roomsie, the choice we made, and the gotchas. When a later ticket adds to a topic, the team updates its page. The list below is generated from the pages.
 
 <!-- learn:start -->
+- [The admin home](admin-home.md): `/admin` opens on one scorecard for each subject that the person can open, with live numbers, and each card opens its pages.
 - [Alerts: email and browser push](alerts.md): a new request, an accept or a new message sends the other person an email and a browser push with no message text.
 - [Analytics events](analytics-events.md): the API records what people do, for example "connect sent", in an `events` table of a second database, with no text and no `users.id`.
 - [Areas, sub-areas and pockets](areas.md): the areas table holds three levels (area groups, sub-areas and pockets), and a pick of an area includes each area under it.
