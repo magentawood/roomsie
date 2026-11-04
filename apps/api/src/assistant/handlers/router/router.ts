@@ -32,11 +32,12 @@ const modelClassifier: Classifier = async (turn, { req, models, settings }) => {
       kinds: answer.kinds.filter((kind) => kind !== 'question' || sure(jsonListItem('kinds', 'question'))),
       danger: answer.danger && sure(jsonTrue('danger')),
       community: answer.community && sure(jsonTrue('community')),
+      notes: answer.notes && sure(jsonTrue('notes')),
     },
   }
 }
 
-const emptyCore = { kinds: [], band: 'core', danger: false, community: false }
+const emptyCore = { kinds: [], band: 'core', danger: false, community: false, notes: false }
 
 /** The label of a typed turn. A band that is not sure, or no answer, makes the turn core, and the label keeps no kinds and no flags (T-34). */
 export async function routeTurn(turn: Turn, deps: Deps): Promise<TurnLabel> {

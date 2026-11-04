@@ -2,6 +2,7 @@ import { vi } from 'vitest'
 import type { FastifyRequest } from 'fastify'
 import { analyticsEvent, type AnalyticsEvent, type RouterAnswer } from '@roomsie/contract'
 import { composerPrompt } from '../src/assistant/handlers/composer/prompt'
+import { observerIntro } from '../src/assistant/handlers/observer/prompt'
 import { routerPrompt } from '../src/assistant/handlers/router/prompt'
 
 export const deepseek = 'https://api.deepseek.com/chat/completions'
@@ -10,7 +11,7 @@ export const keys = { DEEPSEEK_API_KEY: 'deepseek-key', GEMINI_API_KEY: 'gemini-
 
 /** A reply that never comes: the call ends only when its signal aborts, as at a deadline. */
 export const hang = Symbol('hang')
-type Reply = Response | Error | typeof hang
+type Reply = Response | Promise<Response> | Error | typeof hang
 type Replies = { deepseek?: Reply[]; gemini?: Reply[] }
 type SentRequest = { url: string; body: Record<string, unknown>; authorization: string | null }
 
@@ -18,16 +19,17 @@ type SentRequest = { url: string; body: Record<string, unknown>; authorization: 
 export const down = () => new Response('down', { status: 500 })
 
 /** A sure label of the router for a message about the search: the label of a test that gives the router no replies. */
-export const coreLabel = { kinds: ['filters'], band: 'core', register: { language: 'english', script: 'latin' }, danger: false, community: false } satisfies Omit<RouterAnswer, 'version'>
+export const coreLabel = { kinds: ['filters'], band: 'core', register: { language: 'english', script: 'latin' }, danger: false, community: false, notes: false } satisfies Omit<RouterAnswer, 'version'>
 
 /**
  * Each vendor answers with the next reply of its list. A reply that is an Error makes fetch throw it, as a timeout does.
  * The calls of the router get the replies of `router`, or `coreLabel` from DeepSeek when the test gives none.
  * The calls of the composer get the replies of `composer`, or fail when the test gives none, so the scripted reply goes out.
- * `requests` has the other calls, `requests.router` and `requests.composer` the calls of those handlers, and `requests.telegram` the alerts of the spend.
+ * The calls of the observer get the replies of `observer`, or no notes from DeepSeek when the test gives none.
+ * `requests` has the other calls, `requests.router`, `requests.composer` and `requests.observer` the calls of those handlers, and `requests.telegram` the alerts of the spend.
  */
-export function fakeVendors(replies: Replies & { router?: Replies; composer?: Replies; telegram?: Response[] }) {
-  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], composer: [] as SentRequest[], telegram: [] as SentRequest[] })
+export function fakeVendors(replies: Replies & { router?: Replies; composer?: Replies; observer?: Replies; telegram?: Response[] }) {
+  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], composer: [] as SentRequest[], observer: [] as SentRequest[], telegram: [] as SentRequest[] })
   vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
     if (url.startsWith('https://api.telegram.org/')) {
       requests.telegram.push({ url, body: JSON.parse(String(init.body)) as Record<string, unknown>, authorization: null })
@@ -35,9 +37,10 @@ export function fakeVendors(replies: Replies & { router?: Replies; composer?: Re
     }
     const body = JSON.parse(String(init.body)) as { messages: { content: string }[] }
     const system = body.messages[0]?.content
-    const handler = system === routerPrompt ? 'router' : system === composerPrompt ? 'composer' : null
+    const handler = system === routerPrompt ? 'router' : system === composerPrompt ? 'composer' : system?.startsWith(observerIntro) ? 'observer' : null
     ;(handler ? requests[handler] : requests).push({ url, body, authorization: new Headers(init.headers).get('authorization') })
     if (handler === 'router' && !replies.router) return scored(coreLabel)
+    if (handler === 'observer' && !replies.observer) return scored({ notes: [] })
     if (handler === 'composer' && !replies.composer) return down()
     const lists = handler ? replies[handler] : replies
     const reply = (url === deepseek ? lists?.deepseek : lists?.gemini)?.shift()

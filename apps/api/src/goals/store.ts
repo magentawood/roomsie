@@ -1,11 +1,11 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, lt, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import { catalogueOf, type Catalogue } from '../assistant/catalogue'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
-import { moveObservations, type Owner } from '../observations/read'
+import { moveObservations, observationsOf, type Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
 /** PD19: the chat of a visitor goes 30 days after the last visit. */
@@ -43,6 +43,41 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
+/**
+ * Saves on the owner of a goal now, with the goal row locked. A claim at sign-in waits for the save and then moves the notes,
+ * or the save waits for the claim and then saves on the account (T-17).
+ */
+export function saveOnGoalOwner(db: Db, id: string, save: (tx: Tx, owner: Owner) => Promise<unknown>) {
+  return db.transaction(async (tx) => {
+    const [goal] = await tx.select({ userId: goals.userId, sessionId: goals.anonymousSessionId }).from(goals).where(eq(goals.id, id)).for('update')
+    if (goal) await save(tx, ownerOf(goal))
+  })
+}
+
+/**
+ * What the backfill of T-36 reads: the typed turns with the kind `context` before `before`, oldest first, of the people who did not chat
+ * from `before` on. Only such a person can have seen or deleted a note.
+ */
+export async function contextTurnsOf(db: Db, before: Date) {
+  const later = sql`exists (select 1 from ${chatTurns} later join ${goals} g on g.id = later.goal_id where later.role = 'user' and later.created_at >= ${before.toISOString()}::timestamptz
+    and (g.user_id = ${goals.userId} or g.anonymous_session_id = ${goals.anonymousSessionId}))`
+  const rows = await db.select({
+    ...turnFields, userId: goals.userId, sessionId: goals.anonymousSessionId, goalId: chatTurns.goalId,
+    hasOwnReligionOrCommunity: sql<boolean>`${goals.ownReligion} is not null or ${goals.ownCommunity} is not null`,
+  }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
+    .where(and(eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'), lt(chatTurns.createdAt, before), sql`${chatTurns.parts}->'kinds' ? 'context'`, sql`not ${later}`))
+    .orderBy(asc(chatTurns.createdAt))
+  return rows.map(({ userId, sessionId, ...turn }) => ({ ...turn, owner: ownerOf({ userId, sessionId }) }))
+}
+
+/** The owner has a Form B note, and no reply to the asker had the notes hint yet (T-36). */
+export async function notesHintDue(db: Db, asker: Asker) {
+  if (!(await observationsOf(db, ownerOf(asker))).length) return false
+  const hinted = await db.select({ id: chatTurns.id }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
+    .where(and(ownedBy(asker), eq(chatTurns.role, 'assistant'), sql`${chatTurns.parts}->>'notesHint' = 'true'`)).limit(1)
+  return hinted.length === 0
+}
+
 /** A new goal. A goal of the onboarding (T-48) has its Form A and the first line of the assistant. */
 export function createGoal(db: Db, asker: Asker, start?: { form: FormA; reply: AssistantReply }) {
   return db.transaction(async (tx) => {
@@ -79,10 +114,10 @@ export async function setGoalStatus(db: Db, id: string, asker: Asker, status: Go
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
-/** The chips and the comparison of an assistant turn go out. The label of a typed turn never does. */
+/** The chips, the comparison and the notes flag of an assistant turn go out. The label of a typed turn never does. */
 const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
-  const { chips, comparison } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null }
-  return { ...turn, chips, comparison, createdAt: turn.createdAt.toISOString() }
+  const { chips, comparison, notes } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false }
+  return { ...turn, chips, comparison, notes, createdAt: turn.createdAt.toISOString() }
 }
 
 export async function turnsOf(db: Db, goalId: string) {
@@ -90,10 +125,10 @@ export async function turnsOf(db: Db, goalId: string) {
   return rows.map(toChatTurn)
 }
 
-/** The parts of the last reply of the assistant, with its text as the question when the parts have none. */
-export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantParts | null> {
+/** The parts of the last reply of the assistant, or of the last reply before a time, with its text as the question when the parts have none. */
+export async function lastReplyOf(db: Db, goalId: string, before?: Date): Promise<AssistantParts | null> {
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
-    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
+    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'), before && lt(chatTurns.createdAt, before))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
   // Only saveTurn and createGoal write assistant turns, each with parts (T-12). forgetInComparisons rewrites a comparison in them (T-49).
   const parts = assistantParts.parse(last.parts)

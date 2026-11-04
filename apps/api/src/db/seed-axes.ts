@@ -25,7 +25,13 @@ const OBSERVATION_TOPICS = [
   { key: 'cooking', label: 'Cooking and the kitchen' },
   { key: 'past_flatmates', label: 'What went wrong with past flatmates' },
   { key: 'move_reason', label: 'Why they are moving' },
+  { key: 'languages', label: 'Languages they speak' },
+  { key: 'hobbies_routines', label: 'Hobbies and daily routines' },
+  { key: 'commute', label: 'Commute and workplace' },
+  { key: 'chores_bills', label: 'Sharing chores and bills' },
 ]
+
+export const observationTopicKeys = OBSERVATION_TOPICS.map(({ key }) => key)
 
 export async function seedCatalogues(db: Db) {
   await db.insert(lifestyleAxes).values(LIFESTYLE_AXES)

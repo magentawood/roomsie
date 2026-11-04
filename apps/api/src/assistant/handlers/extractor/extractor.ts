@@ -16,7 +16,7 @@ import { extractorPrompt } from './prompt'
 export const extractor = async (turn: TurnState, deps: AssistantDeps) => extractorOutput.parse(await extract(turn, deps))
 
 /** The fields of a turn that the extractor did not change. `failed`: no model gave an answer. */
-export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, hiddenPreferences: {}, outsidePlaces: [] })
+export const noExtraction = (form: FormA, failed: boolean) => ({ form, changed: [], conflicts: [], settled: [], ambiguous: [], failed, ownValues: { religion: null, community: null }, mentionsOwnValue: false, hiddenPreferences: {}, outsidePlaces: [] })
 
 /**
  * An answer to "which one should I keep?" that names no value (PD3b): a choice word alone, or with "wala" or "one",
@@ -120,5 +120,6 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
     ...(religionPreference && { religionPreference: { source: 'stated' as const, value: religionPreference } }),
     ...(communityPreference && { communityPreference: { source: 'stated' as const, value: communityPreference } }),
   }
-  return { ...applied, form, settled, ambiguous, failed: false, ownValues, hiddenPreferences, outsidePlaces: [...outsidePlaces] }
+  const mentionsOwnValue = answer.ownReligion != null || answer.ownCommunity != null
+  return { ...applied, form, settled, ambiguous, failed: false, ownValues, mentionsOwnValue, hiddenPreferences, outsidePlaces: [...outsidePlaces] }
 }

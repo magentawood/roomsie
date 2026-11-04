@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "sentences": [
+    {"id": "o01", "text": "My last flatmate never cleaned the kitchen and we fought every week, so I want someone tidy", "language": "english", "script": "latin", "expected": ["past_flatmates"]},
+    {"id": "o02", "text": "I work night shifts at a call centre, so I sleep till 2pm", "language": "english", "script": "latin", "expected": ["commute"]},
+    {"id": "o03", "text": "My boyfriend stays over on weekends, is that ok?", "language": "english", "script": "latin", "expected": ["guest_frequency"]},
+    {"id": "o04", "text": "I cook every day, I need a proper kitchen and not just a hot plate", "language": "english", "script": "latin", "expected": ["cooking"]},
+    {"id": "o05", "text": "Moving because my office shifted to BKC and the commute from Thane is killing me", "language": "english", "script": "latin", "expected": ["move_reason", "commute"]},
+    {"id": "o06", "text": "I play the guitar in the evenings, I hope that's not a problem", "language": "english", "script": "latin", "expected": ["hobbies_routines"]},
+    {"id": "o07", "text": "I'd like to split rent and bills equally on Splitwise", "language": "english", "script": "latin", "expected": ["chores_bills"]},
+    {"id": "o08", "text": "I speak Tamil and English, my Hindi is not great", "language": "english", "script": "latin", "expected": ["languages"]},
+    {"id": "o09", "text": "I'm diabetic so I need a fridge for my insulin", "language": "english", "script": "latin", "expected": []},
+    {"id": "o10", "text": "I'm a practising Christian and go to church every Sunday", "language": "english", "script": "latin", "expected": []},
+    {"id": "o11", "text": "pichle flat mein flatmate raat ko 3 baje tak party karta tha, ab shaanti chahiye", "language": "hinglish", "script": "latin", "expected": ["past_flatmates", "noise"]},
+    {"id": "o12", "text": "main ghar se kaam karta hu, din bhar calls hoti hain", "language": "hinglish", "script": "latin", "expected": ["work_pattern"]},
+    {"id": "o13", "text": "meri girlfriend kabhi kabhi weekend pe aati hai", "language": "hinglish", "script": "latin", "expected": ["guest_frequency"]},
+    {"id": "o14", "text": "subah 6 baje gym jaata hu, roz", "language": "hinglish", "script": "latin", "expected": ["hobbies_routines"]},
+    {"id": "o15", "text": "office Andheri East mein hai, metro se jaata hu", "language": "hinglish", "script": "latin", "expected": ["commute"]},
+    {"id": "o16", "text": "मुझे खाना बनाना पसंद है, रोज़ खुद बनाता हूँ", "language": "hinglish", "script": "devanagari", "expected": ["cooking"]},
+    {"id": "o17", "text": "shift kar raha hu kyunki landlord rent badha raha hai", "language": "hinglish", "script": "latin", "expected": ["move_reason"]},
+    {"id": "o18", "text": "safai ka kaam baant lenge, main bartan kar dunga", "language": "hinglish", "script": "latin", "expected": ["chores_bills"]},
+    {"id": "o19", "text": "मी रात्री उशिरापर्यंत काम करते, सकाळी झोपते", "language": "marathi", "script": "devanagari", "expected": ["work_pattern"]},
+    {"id": "o20", "text": "माझ्या आधीच्या रूममेटने कधीच भाडं वेळेवर दिलं नाही", "language": "marathi", "script": "devanagari", "expected": ["past_flatmates"]},
+    {"id": "o21", "text": "मला शांत जागा हवी, मोठा आवाज सहन होत नाही", "language": "marathi", "script": "devanagari", "expected": ["noise"]},
+    {"id": "o22", "text": "मी मराठी आणि हिंदी बोलते", "language": "marathi", "script": "devanagari", "expected": ["languages"]},
+    {"id": "o23", "text": "mi roj sakali yoga karte", "language": "marathi", "script": "latin", "expected": ["hobbies_routines"]},
+    {"id": "o24", "text": "majha office Powai la aahe, bus ne jate", "language": "marathi", "script": "latin", "expected": ["commute"]},
+    {"id": "o25", "text": "aai-baba kadhi kadhi rahayla yetat", "language": "marathi", "script": "latin", "expected": ["guest_frequency"]},
+    {"id": "o26", "text": "navin job mule Mumbai la shift hotey", "language": "marathi", "script": "latin", "expected": ["move_reason"]}
+  ]
+}

@@ -11,6 +11,8 @@ import {
 import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/contract'
 import { reportError, withoutQueryValues } from '@roomsie/config/report'
 import { deleteAccount } from './account'
+import { afterReplyOf, type AfterReply } from './after-reply'
+import { todayInIst } from './today'
 import { alertsOf, type Alerts } from './alerts/alerts'
 import type { AnalyticsDb } from './analytics/client'
 import { analyticsOf, type Analytics } from './analytics/track'
@@ -46,14 +48,12 @@ import { verificationRoutes } from './verification/routes'
 
 declare module 'fastify' {
   interface FastifyInstance {
+    observerQueue: AfterReply
     alerts: Alerts
     analytics: Analytics
     spend: Spend
   }
 }
-
-/** The date of today in Mumbai, as an ISO date. */
-const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
 type RequestBody = { required?: boolean; content?: Record<string, { schema?: { nullable?: boolean } }> }
 
@@ -72,6 +72,9 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
+  const observerQueue = afterReplyOf('observer', app.log)
+  app.decorate('observerQueue', observerQueue)
+  app.addHook('onClose', () => observerQueue.settled())
   const analytics = analyticsOf(options.analyticsDb, app.log)
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())

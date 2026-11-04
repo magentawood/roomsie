@@ -8,7 +8,8 @@ Give only JSON, with this shape:
   "band": "core" | "general" | "consequential" | "out_of_scope" | "adversarial" | "sensitive",
   "register": { "language": "english" | "hindi" | "marathi" | "mixed" | "other", "script": "latin" | "devanagari" },
   "danger": true | false,
-  "community": true | false
+  "community": true | false,
+  "notes": true | false
 }
 
 kinds: each kind that the message has. The list can be empty.
@@ -28,4 +29,5 @@ register: the language and the script of the message.
 - language: the language of the words that are not English. Hindi or Marathi with English words is "hindi" or "marathi", as "mujhe ek shared flat chahiye" (hindi) or "mala ek single room havi" (marathi). "mixed" is Hindi and Marathi together. A message of English words only is "english".
 - script: the script of most of the letters. Devanagari with a word such as "1BHK" or "PG" is "devanagari".
 danger: true only when the message tells of danger to the person or to others, such as self-harm, suicide or violence.
-community: true only when the person states a preference about the community, religion or caste of flatmates or neighbours. Such a preference is core, as any other preference of the search.`
+community: true only when the person states a preference about the community, religion or caste of flatmates or neighbours. Such a preference is core, as any other preference of the search.
+notes: true only when the person asks what the assistant knows, noted or remembers about them, such as "what do you know about me?" or "mere baare mein kya note kiya?". Such a question is core.`

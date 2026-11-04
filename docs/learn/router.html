@@ -39,7 +39,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>The <strong>router</strong> is one small model call for each typed message. It starts at the same time as the extractor (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
-<li>Its <strong>label</strong> has the <strong>kinds</strong> (filter details, personal context, a question), the <strong>band</strong> (<a href="../decisions/pd-10-scope-bands.md">PD10</a>), the <strong>register</strong> (the language and the script of the reply: see <a href="composer.html">The composer</a>), and two flags: <code>danger</code> and <code>community</code>.</li>
+<li>Its <strong>label</strong> has the <strong>kinds</strong> (filter details, personal context, a question), the <strong>band</strong> (<a href="../decisions/pd-10-scope-bands.md">PD10</a>), the <strong>register</strong> (the language and the script of the reply: see <a href="composer.html">The composer</a>), and three flags: <code>danger</code>, <code>community</code> and <code>notes</code>.</li>
 <li>The band selects the first line of the reply. Each line is in the language of the person:</li>
 </ul>
 <table>
@@ -84,6 +84,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
+<li><code>notes</code> marks the question "what do you know about me?". A scripted line answers it, and the web shows the notes (<a href="form-b-notes.html">Form B notes</a>).</li>
 <li><code>community</code> marks a stated community or religion preference. The label is the log that <a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a> asks for. T-58 adds the filter.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -114,7 +115,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>A sure band only.</strong> DeepSeek gives the probability of each token. A band below <code>ROUTER_MIN_PROBABILITY</code> (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. <code>routerBand</code> keeps the band that the router gave. A sure band keeps <code>danger</code>, <code>community</code> and the question kind only when each passes the threshold too.</li>
+<li><strong>A sure band only.</strong> DeepSeek gives the probability of each token. A band below <code>ROUTER_MIN_PROBABILITY</code> (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. <code>routerBand</code> keeps the band that the router gave. A sure band keeps <code>danger</code>, <code>community</code>, <code>notes</code> and the question kind only when each passes the threshold too.</li>
 <li><strong>The label stays with the message.</strong> It goes on the typed turn of the person, so account deletion removes it. The <code>turn_routed</code> event has only the band.</li>
 <li><strong>The adapter.</strong> The router calls one classifier. A different model, such as Jev, is a different classifier, and the turn does not change (<a href="../extensibility.md">extensibility.md</a>).</li>
 </ul>

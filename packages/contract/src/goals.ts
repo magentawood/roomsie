@@ -13,7 +13,8 @@ export const visitorKeyHeader = 'x-visitor-key'
 export const chatTurn = z.object({
   id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(),
   chips: z.enum(chipSlots).nullable().default(null).catch(null), // A chip slot of a newer API reads as no chips.
-  comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
+  comparison: comparison.nullable().default(null),
+  notes: z.boolean().default(false), createdAt: z.iso.datetime(),
 })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
@@ -117,7 +118,7 @@ export type SlotConflict = z.infer<typeof slotConflict>
 
 /** What the extractor gives. */
 export const extractorOutput = z.strictObject({
-  version: z.literal(3).default(3),
+  version: z.literal(4).default(4),
   form: formA,
   changed: z.array(z.enum(formASlots)),
   conflicts: z.array(slotConflict),
@@ -129,6 +130,8 @@ export const extractorOutput = z.strictObject({
   failed: z.boolean(),
   /** What the person stated about themselves in this turn. Null: not in this turn. */
   ownValues,
+  /** The answer named an own religion or community, also an unsure one: the observer then writes no note (PD3c, T-36). */
+  mentionsOwnValue: z.boolean(),
   /** The hidden religion and community preferences that this turn stated (PD3c). */
   hiddenPreferences: statedPreferences,
   /** The places outside Mumbai where the person wants to live, from the place words of the turn (T-22a). */
@@ -147,6 +150,10 @@ export const assistantParts = z.strictObject({
   /** The chips that the question offers: with the plain question of a closed slot, and with the weight question (T-09, T-59). */
   chips: z.enum(chipSlots).nullable().default(null),
   comparison: comparison.nullable().default(null),
+  /** The reply shows the notes of the owner. It keeps no copy, so a deleted note leaves no words in the chat (T-36). */
+  notes: z.boolean().default(false),
+  /** The reply has the notes hint, which each owner gets one time (T-36). */
+  notesHint: z.boolean().default(false),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 
@@ -159,7 +166,7 @@ const register = z.strictObject({ language: z.enum(['english', 'hindi', 'marathi
 /** What the router reads: the typed turn and the last question of the assistant, as the extractor. Each handler has its own schema (assistant.md). */
 export const routerInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
 export type RouterInput = z.output<typeof routerInput>
-/** The answer of the router model: the kinds, the band, the register for the reply writer (PD7), and two flags. Not strict, as the extractor answer. */
+/** The answer of the router model: the kinds, the band, the register for the reply writer (PD7), and its flags. Not strict, as the extractor answer. */
 export const routerAnswer = z.object({
   version: z.literal(1).default(1),
   kinds: z.array(z.enum(routerKinds)).max(routerKinds.length),
@@ -169,6 +176,8 @@ export const routerAnswer = z.object({
   danger: z.boolean(),
   /** The message states a community or religion preference (PD3c). */
   community: z.boolean(),
+  /** The person asks what the assistant noted about them (PD7a). A label of an older turn has no flag. */
+  notes: z.boolean().default(false),
 })
 export type RouterAnswer = z.output<typeof routerAnswer>
 
@@ -192,7 +201,7 @@ export type ReplyLanguage = (typeof replyLanguages)[number]
 
 /** What the reply writer reads: the output of the extractor, the question of the last reply, the label of the turn, and the language of the reply. */
 // The reply never names the own values or the hidden preferences (T-58), so it does not read them. The web shows the outside places (T-22b).
-export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true, outsidePlaces: true })
+export const replyInput = extractorOutput.omit({ ownValues: true, mentionsOwnValue: true, hiddenPreferences: true, outsidePlaces: true })
   .extend({ last: assistantParts.nullable(), label: turnLabel, language: z.enum(replyLanguages) })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */

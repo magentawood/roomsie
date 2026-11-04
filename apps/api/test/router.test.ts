@@ -37,7 +37,7 @@ describe('the router', () => {
   })
 
   it('keeps a flag, or the question kind, only when it passes the threshold', async () => {
-    const fields = { ...coreLabel, kinds: ['question', 'filters'], danger: true, community: true }
+    const fields = { ...coreLabel, kinds: ['question', 'filters'], danger: true, community: true, notes: true }
     /** `fields` with the probability 0.6 on the character after `before`. */
     const unsureAfter = (before: string) => {
       const content = JSON.stringify(fields)
@@ -51,6 +51,8 @@ describe('the router', () => {
     expect(await route()).toMatchObject({ kinds: ['filters'], community: true })
     fakeVendors({ router: { deepseek: [unsureAfter('"danger":')] } })
     expect(await route()).toMatchObject({ danger: false, community: true })
+    fakeVendors({ router: { deepseek: [unsureAfter('"notes":')] } })
+    expect(await route()).toMatchObject({ notes: false, danger: true })
   })
 
   it('keeps the flags of Gemini, which gives no probabilities', async () => {
@@ -60,6 +62,6 @@ describe('the router', () => {
 
   it('gives an empty core label when no model answers', async () => {
     fakeVendors({ router: { deepseek: [down()], gemini: [down()] } })
-    expect(await route()).toEqual({ version: 1, kinds: [], band: 'core', routerBand: null, register: null, danger: false, community: false })
+    expect(await route()).toEqual({ version: 1, kinds: [], band: 'core', routerBand: null, register: null, danger: false, community: false, notes: false })
   })
 })

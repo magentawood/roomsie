@@ -6,7 +6,7 @@ import { backToIt, lineOf } from '../../lines'
 import { questionFor, replyLines, valueText } from './texts'
 
 type PartsOf = Pick<AssistantParts, 'asked' | 'question'> & Partial<Pick<AssistantParts, 'conflicts' | 'chips'>>
-const parts = (of: PartsOf): AssistantParts => ({ version: 1, conflicts: [], chips: null, comparison: null, ...of })
+const parts = (of: PartsOf): AssistantParts => ({ version: 1, conflicts: [], chips: null, comparison: null, notes: false, notesHint: false, ...of })
 const chipSlotOf = (slot: FormASlot | undefined) => chipSlots.find((chip) => chip === slot) ?? null
 
 /** The line before the reply, by the band of the turn (PD10, T-34). A 2b question gets the hand-off until the articles of T-38. */

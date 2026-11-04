@@ -2,19 +2,20 @@ import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import {
-  closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
+  closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, notesResponse, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
   type AnalyticsEvent, type ChipTap, type Comparison,
 } from '@roomsie/contract'
 import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
+import { observer } from '../assistant/handlers/observer/observer'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { comparisonOf } from '../compare/compare'
 import { hasGoalFeedback, saveGoalFeedback } from '../feedback/read'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
-import { observationsOf } from '../observations/read'
+import { deleteObservation, notesOf, observationsOf, saveObservation } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
 import {
-  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
+  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, notesHintDue, ownerOf, recentTurnsOf, saveOnGoalOwner, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
 } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
@@ -117,7 +118,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       v1.analytics.track(req, { name: 'limit_hit', limit: 'too_fast' })
       return reply.code(429).send({ error: limitLines.too_fast, limit: 'too_fast' })
     }
-    const input = { goalId: goal.id, last, form: goal.form, lastRegister: await lastRegisterOf(options.db, goal.id) }
+    const input = { goalId: goal.id, last, form: goal.form, lastRegister: await lastRegisterOf(options.db, goal.id), notesHint: await notesHintDue(options.db, asker) }
     const deps = { ...options, req }
     const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, comparison }, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
@@ -131,7 +132,18 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const after = await capStateOf(options.db, asker, options.limits)
     // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
     if (after.state === 'wall' && before.state !== 'wall') v1.analytics.track(req, { name: 'wall_hit' })
-    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title: await titleOf(options.db, turn.form) }
+    const title = await titleOf(options.db, turn.form)
+    // The last step before the reply: the queue starts the observer after the route sends it (PD7a).
+    const { notePlan } = turn
+    if (notePlan) {
+      v1.observerQueue.later(async () => {
+        const { notes } = await observer({ goalId: goal.id, text: turns[0].text, last }, deps)
+        if (notes.length) await saveOnGoalOwner(options.db, goal.id, async (tx, owner) => {
+          for (const note of notes) await saveObservation(tx, owner, { version: 1, ...note, turn: turns[0].id, visible: notePlan.visible })
+        })
+      })
+    }
+    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title }
   })
 
   // Safe to repeat: a second claim moves nothing (T-17).
@@ -140,6 +152,17 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     schema: { headers: z.object({ [visitorKeyHeader]: visitorKey }), response: { 204: noContent } },
   }, async (req, reply) => {
     await claimSession(options.db, req.headers[visitorKeyHeader], req.user!.id)
+    return reply.code(204).send(null)
+  })
+
+  app.get('/notes', { preHandler: optionalUser(options), schema: { headers, response: { 200: notesResponse } } }, async (req) => {
+    const asker = await askerOf(req, req.headers[visitorKeyHeader])
+    return { notes: asker.userId || asker.sessionId ? await notesOf(options.db, ownerOf(asker)) : [] }
+  })
+
+  app.delete('/notes/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
+    const asker = await askerOf(req, req.headers[visitorKeyHeader])
+    if (!(asker.userId || asker.sessionId) || !(await deleteObservation(options.db, ownerOf(asker), req.params.id).returning()).length) return reply.code(404).send({ error: 'not found' })
     return reply.code(204).send(null)
   })
 
@@ -160,11 +183,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 async function typedTurn(input: TurnInput & { comparison: Comparison | null }, text: string, asker: Asker, deps: AssistantDeps) {
   const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
-  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces } = await runTurn({ ...input, text, context }, deps)
+  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces, notePlan } = await runTurn({ ...input, text, context }, deps)
   // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
   const parts = { ...label, ...(Object.keys(preferences).length && { preferences }) }
   const events: AnalyticsEvent[] = [...conflicts.map(({ slot }) => ({ name: 'slot_conflict' as const, slot })), { name: 'turn_routed', band: label.band }]
-  return { form, reply, user: { text, inputMethod: 'typed', parts, ownValues } satisfies UserTurn, events, outsidePlaces }
+  return { form, reply, user: { text, inputMethod: 'typed', parts, ownValues } satisfies UserTurn, events, outsidePlaces, notePlan }
 }
 
 /** A tap is not one of the typed turns of the turn cap, and has no label of the router (PD9, T-09). */
@@ -172,5 +195,5 @@ async function tapTurn(input: TurnInput, tap: ChipTap, deps: AssistantDeps) {
   const tapped = await runTap({ ...input, tap }, deps)
   if (!tapped) return null
   const user = { text: tapped.text, inputMethod: 'chip', parts: { version: 1, tap }, ownValues: tapped.ownValues } satisfies UserTurn
-  return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [] }
+  return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [], notePlan: null }
 }

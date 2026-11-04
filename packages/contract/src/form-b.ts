@@ -17,3 +17,25 @@ export const observation = z.strictObject({
   visible: z.boolean().default(true),
 })
 export type Observation = z.infer<typeof observation>
+
+/** What the observer reads: the typed turn and the last question of the assistant, as the router (PD7a). */
+export const observerInput = z.strictObject({ version: z.literal(1).default(1), text: z.string(), lastQuestion: z.string().nullable() })
+/** The answer of the observer model. Code checks the topic and the quote, and gives the confidence (T-36). Not strict, as the extractor answer. */
+export const observerAnswer = z.object({
+  version: z.literal(1).default(1),
+  notes: z.array(z.object(observation.pick({ key: true, kind: true, value: true, evidence: true }).shape)).max(10),
+})
+
+/** What the observer gives: the notes that passed the checks, and the number of quotes that the turn does not hold. */
+export const observerOutput = z.strictObject({
+  version: z.literal(1).default(1),
+  notes: z.array(observation.pick({ key: true, kind: true, value: true, evidence: true, confidence: true }).strict()),
+  rejected: z.int().min(0),
+})
+export type ObserverOutput = z.output<typeof observerOutput>
+
+/** The notes of the owner, for "What do you know about me?" (PD7a). Only the owner gets them. */
+export const notesResponse = z.object({
+  notes: z.array(z.object({ id: z.uuid(), label: z.string(), value: z.string(), evidence: z.string() })),
+})
+export type NotesResponse = z.infer<typeof notesResponse>

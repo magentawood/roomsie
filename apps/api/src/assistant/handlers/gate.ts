@@ -1,11 +1,13 @@
 import { vendorOf, type Token } from '../../models/models'
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+export const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+/** The source of a pattern of one JSON string field. `value` is a pattern, so the caller escapes it. */
+export const jsonField = (key: string, value: string) => `"${escapeRegExp(key)}"\\s*:\\s*"${value}"`
 
 /** The patterns of a JSON answer whose first group is the value to score. */
-export const jsonString = (key: string, value: string) => new RegExp(`"${escape(key)}"\\s*:\\s*"(${escape(value)})"`)
-export const jsonTrue = (key: string) => new RegExp(`"${escape(key)}"\\s*:\\s*(true)`)
-export const jsonListItem = (key: string, value: string) => new RegExp(`"${escape(key)}"\\s*:\\s*\\[[^\\]]*"(${escape(value)})"`)
+export const jsonString = (key: string, value: string) => new RegExp(jsonField(key, `(${escapeRegExp(value)})`))
+export const jsonTrue = (key: string) => new RegExp(`"${escapeRegExp(key)}"\\s*:\\s*(true)`)
+export const jsonListItem = (key: string, value: string) => new RegExp(`"${escapeRegExp(key)}"\\s*:\\s*\\[[^\\]]*"(${escapeRegExp(value)})"`)
 
 /** The probability that the model gave to the first group of `pattern`, from the tokens of its answer (PD7). Null: no match. */
 export function probabilityOfMatch(tokens: Token[], pattern: RegExp): number | null {

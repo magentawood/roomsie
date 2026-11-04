@@ -1,6 +1,7 @@
 import type { FastifyBaseLogger } from 'fastify'
 import { eq } from 'drizzle-orm'
 import { reportError } from '@roomsie/config/report'
+import { afterReplyOf } from '../after-reply'
 import type { Db } from '../db/client'
 import { pushTokens } from '../db/schema'
 import type { Mailer } from '../email'
@@ -30,13 +31,7 @@ export type Alerts = {
  */
 export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: FirebaseAdmin | null; webOrigin: string; log: FastifyBaseLogger }): Alerts {
   const { db, mailer, firebaseAdmin, webOrigin, log } = options
-  const pending = new Set<Promise<void>>()
-  // setImmediate: the route sends its reply first.
-  const later = (work: () => Promise<void>) => {
-    const done: Promise<void> = new Promise((next) => setImmediate(next)).then(work)
-      .catch((err: unknown) => reportError(err, { where: 'alerts', log })).finally(() => pending.delete(done))
-    pending.add(done)
-  }
+  const { later, settled } = afterReplyOf('alerts', log)
   const chatLink = (requestId: string) => `${webOrigin}/messages/${requestId}`
 
   /** A first name, or the title of the listing for a lister with no profile. */
@@ -76,8 +71,6 @@ export function alertsOf(options: { db: Db; mailer: Mailer; firebaseAdmin: Fireb
       await tell(toSender ? request.fromUserId : request.toUserId, { kind: 'message', name: await nameOf(message.senderUserId, request.listingId), link: chatLink(request.id) })
     }),
     verification: (userId, result) => later(() => tell(userId, { kind: result, link: `${webOrigin}/profile` })),
-    async settled() {
-      while (pending.size) await Promise.all(pending)
-    },
+    settled,
   }
 }
