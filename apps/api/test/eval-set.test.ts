@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { formA, formASlots, slotOf } from '@roomsie/contract'
+import { formA, formASlots, scopeBands, slotOf } from '@roomsie/contract'
 import { isDevanagari } from '../src/assistant/words'
 import { areaSlugs } from '../src/db/seed-areas'
-import { evalSet, type EvalSentence } from '../eval/set'
+import { evalSet, isSearch, type EvalSentence } from '../eval/set'
 
 const { sentences } = evalSet
 
@@ -13,13 +13,42 @@ const statedForm = ({ lifestyle = {}, mustHaves = {}, ...top }: EvalSentence['ex
 const scriptOf = (text: string) => (isDevanagari(text) ? (/[A-Za-z]/.test(text) ? 'mixed' : 'devanagari') : 'latin')
 
 describe('the eval sentences (M-03)', () => {
-  it('has 50 sentences with one id each: 15 English, 18 Hinglish and 17 Marathi, Marathi in both scripts, some Hinglish in Devanagari, and 10 vague on purpose', () => {
-    const of = (language: string) => sentences.filter((s) => s.language === language)
-    expect(new Set(sentences.map((s) => s.id)).size).toBe(50)
-    expect([of('english').length, of('hinglish').length, of('marathi').length]).toEqual([15, 18, 17])
-    expect(sentences.filter((s) => s.vague)).toHaveLength(10)
+  it('has 56 searches with one id each: 17 English, 20 Hinglish and 19 Marathi, Marathi in both scripts, some Hinglish in Devanagari, and 10 vague on purpose', () => {
+    const searches = sentences.filter(isSearch)
+    const of = (language: string) => searches.filter((s) => s.language === language)
+    expect(new Set(sentences.map((s) => s.id)).size).toBe(sentences.length)
+    expect([of('english').length, of('hinglish').length, of('marathi').length]).toEqual([17, 20, 19])
+    expect(searches.filter((s) => s.vague)).toHaveLength(10)
     expect(['latin', 'devanagari'].every((script) => of('marathi').some((s) => s.script === script))).toBe(true)
     expect(of('hinglish').some((s) => s.script === 'devanagari')).toBe(true)
+  })
+
+  it('has one sentence in each language for each band that is not core, and two sentences with danger, both sensitive (T-61)', () => {
+    for (const band of scopeBands.filter((b) => b !== 'core')) {
+      expect(sentences.filter((s) => s.band === band).map((s) => s.language).toSorted(), band).toEqual(['english', 'hinglish', 'marathi'])
+    }
+    expect(sentences.filter((s) => s.danger).map((s) => s.band)).toEqual(['sensitive', 'sensitive'])
+  })
+
+  it('has two searches with a community preference, in Hinglish and in Marathi (T-61)', () => {
+    expect(sentences.filter((s) => s.community).map((s) => [s.band, s.language])).toEqual([['core', 'hinglish'], ['core', 'marathi']])
+  })
+
+  it('labels no slot of Form A for a sentence that only the router scores (T-61)', () => {
+    for (const { id, expected } of sentences.filter((s) => !isSearch(s))) expect(expected, id).toEqual({})
+  })
+
+  it('has six searches that name a friend: a capital and a lower-case name in English, a lower-case and a Devanagari name in Hinglish and Marathi (T-61)', () => {
+    const typed = ({ id, text, names }: EvalSentence) => {
+      const at = names.map((name) => text.toLowerCase().indexOf(name)).find((i) => i >= 0)
+      expect(at, id).toBeDefined()
+      const name = text.slice(at, at! + names.find((n) => text.toLowerCase().includes(n))!.length)
+      return isDevanagari(name) ? 'devanagari' : /^\p{Lu}/u.test(name) ? 'capital' : 'lower'
+    }
+    const named = sentences.filter((s) => s.names.length > 0)
+    expect(named.every(isSearch)).toBe(true)
+    const forms = (language: string) => named.filter((s) => s.language === language).map(typed).toSorted()
+    expect([forms('english'), forms('hinglish'), forms('marathi')]).toEqual([['capital', 'lower'], ['devanagari', 'lower'], ['devanagari', 'lower']])
   })
 
   it('marks the script of each sentence from its letters', () => {
