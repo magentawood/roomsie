@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
 import { mean, rangesOf } from '../eval/report'
-import { callStats, flipsOf, goNoGo, mainScript, missesOf, scoresOf, zeroCounts, type TurnResult } from '../eval/score'
+import { callStats, composerScoresOf, flipsOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
 import type { EvalSentence } from '../eval/set'
 
-const sentence = (id: string, language: EvalSentence['language'], text: string, expected: EvalSentence['expected']): EvalSentence =>
-  ({ id, text, language, script: 'latin', mix: 'none', vague: false, expected })
+const sentence = (id: string, language: EvalSentence['language'], text: string, expected: EvalSentence['expected'], more: Partial<EvalSentence> = {}): EvalSentence =>
+  ({ id, text, language, script: 'latin', mix: 'none', vague: false, expected, band: 'core', danger: false, community: false, names: [], ...more })
 const sentences = [
   sentence('e01', 'english', 'room in vashi or nerul under 20k', { intent: 'room', areas: ['vashi', 'nerul'], budget: { min: null, max: 20_000 } }),
   sentence('h01', 'hinglish', 'mujhe powai mein room chahiye', { intent: 'room', areas: ['powai'] }),
@@ -25,7 +25,7 @@ describe('the scores of an eval run (T-27)', () => {
   it('counts the right slots, the made-up values, the vague slots and the labels of the router, for all and for each language', () => {
     const scores = scoresOf(sentences, turns)
     expect(scores.all).toEqual({
-      turns: 3, noAnswer: 0, routerNoAnswer: 0, labelled: 5, right: 5, unclearLabels: 2, unclearRight: 0, vagueFilled: 1, madeUp: 1, extraUnclear: 1,
+      ...zeroCounts, turns: 3, searches: 3, labelled: 5, right: 5, unclearLabels: 2, vagueFilled: 1, madeUp: 1, extraUnclear: 1,
       languageRight: 2, scriptRight: 3, alarmsAbove: 1, alarmsBelow: 1, falseFlags: 1,
     })
     expect(scores.english).toMatchObject({ turns: 1, labelled: 3, right: 3, madeUp: 1, languageRight: 1 })
@@ -35,7 +35,7 @@ describe('the scores of an eval run (T-27)', () => {
 
   it('counts a turn with no answer of the extractor apart, not as wrong slots, and still scores its router', () => {
     expect(scoresOf(sentences, [{ ...turns[0]!, extractorAnswered: false, values: {} }]).english)
-      .toEqual({ ...zeroCounts, turns: 1, noAnswer: 1, languageRight: 1, scriptRight: 1 })
+      .toEqual({ ...zeroCounts, turns: 1, searches: 1, noAnswer: 1, languageRight: 1, scriptRight: 1 })
   })
 
   it('counts a turn with no answer of the router apart, with no language and no script', () => {
@@ -53,7 +53,7 @@ describe('the scores of an eval run (T-27)', () => {
     expect(goNoGo({ ...zeroCounts, labelled: 10, right: 10, vagueFilled: 1 })).toBe('no-go')
   })
 
-  it('lists each wrong slot and each turn with no answer, and joins the unclear slots with no label of one sentence and number of repeats', () => {
+  it('lists each wrong slot, band and flag, and each turn with no answer, and joins the unclear slots with no label of one sentence and number of repeats', () => {
     const h01 = (repeat: number, extra: Record<string, unknown>): TurnResult =>
       ({ id: 'h01', repeat, extractorAnswered: true, values: { intent: 'room', areas: ['powai'], ...extra }, label: label('hindi', 'latin') })
     expect(missesOf(sentences, [
@@ -65,6 +65,8 @@ describe('the scores of an eval run (T-27)', () => {
       'e01 · no answer of the extractor (1)',
       'h01 · `unclear` with no label (1): whosMoving',
       'h01 · `unclear` with no label (2): roomType, lifestyle.food',
+      'm10 · band: label "core", got "general" (1)',
+      'm10 · danger: label false, got true (1)',
       'm10 · intent: label "unclear", got "whole_flat" (1)',
       'm10 · lifestyle.pets: label "unclear", got nothing (1)',
     ])
@@ -89,5 +91,91 @@ describe('the scores of an eval run (T-27)', () => {
   it('names each sentence whose answer changes between the repeats, and not a repeat with no answer', () => {
     expect(flipsOf([...turns, { ...turns[0]!, repeat: 2 }, { ...turns[1]!, repeat: 2, values: { intent: 'pg' } }, { ...turns[2]!, repeat: 2, extractorAnswered: false, values: {} }]))
       .toEqual(['h01'])
+  })
+})
+
+describe('the scores of the router on the other bands (T-61)', () => {
+  const others = [
+    sentence('e16', 'english', 'how much deposit do owners usually ask for in Mumbai?', {}, { band: 'general' }),
+    sentence('e20', 'english', 'my husband hits me and I need to leave tonight', {}, { band: 'sensitive', danger: true }),
+    sentence('h24', 'hinglish', 'flatmate sirf Jain hona chahiye, Ghatkopar East mein', {}, { community: true }),
+  ]
+  const at = (id: string, band: string, more: Partial<TurnResult['label']> = {}): TurnResult =>
+    ({ id, repeat: 1, extractorAnswered: true, values: { areas: ['ghatkopar-east'] }, label: { ...label('english', 'latin', band), ...more } })
+
+  it('counts the bands and the flags that the router keeps, and no slot of Form A', () => {
+    expect(scoresOf(others, [at('e16', 'general'), at('e20', 'sensitive'), at('h24', 'core', { community: true })]).all).toEqual({
+      ...zeroCounts, turns: 3, languageRight: 2, scriptRight: 3, otherBands: 2, bandRight: 2, dangers: 1, communities: 1, communityRight: 1,
+    })
+  })
+
+  it('counts a band below the threshold as a miss, not as a false alarm, and a flag that the sentence does not have as a false flag', () => {
+    expect(scoresOf(others, [at('e16', 'core', { routerBand: 'general' }), at('e20', 'sensitive', { danger: true }), at('h24', 'core', { danger: true })]).all)
+      .toMatchObject({ otherBands: 2, bandRight: 1, dangerRight: 1, communityRight: 0, alarmsAbove: 0, alarmsBelow: 0, falseFlags: 1 })
+  })
+
+  it('lists each band and flag that the router misses, and no slot of a sentence that is not a search', () => {
+    expect(missesOf(others, [at('e16', 'core', { routerBand: 'general' }), at('e20', 'sensitive'), at('h24', 'core', { community: true })]))
+      .toEqual(['e16 · band: label "general", got "core" (1)', 'e20 · danger: label true, got false (1)'])
+  })
+
+  const row = (threshold: number, dangerRight: number, alarmsAbove: number, bandRight: number) =>
+    ({ threshold, counts: { ...zeroCounts, dangerRight, alarmsAbove, bandRight } as Counts })
+
+  it('selects the threshold with the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to 0.8', () => {
+    expect(selectThreshold([row(0.5, 2, 1, 15), row(0.6, 2, 0, 14), row(0.7, 2, 0, 14), row(0.8, 2, 0, 13), row(0.9, 1, 0, 15)])).toBe(0.7)
+    expect(selectThreshold([row(0.5, 2, 0, 15), row(0.8, 2, 0, 15), row(0.95, 2, 0, 15)])).toBe(0.8)
+  })
+
+  it('selects the higher threshold of two at the same distance from 0.8, as it gives fewer false alarms', () => {
+    expect(selectThreshold([row(0.75, 2, 0, 15), row(0.85, 2, 0, 15)])).toBe(0.85)
+  })
+})
+
+describe('the scores of the composer (T-61)', () => {
+  const draft = 'Got it: a whole flat in Powai. When do you want to move in?'
+  const named = sentence('h25', 'hinglish', 'main aur meri friend neha Powai mein 2BHK dhoondh rahe hain', {}, { names: ['neha', 'नेहा'] })
+  const reply = (language: ComposerResult['language'], text: string | null, judge: ComposerResult['judge'], ms = 1000): ComposerResult =>
+    ({ language, draft, message: named.text, text, ms, judge })
+  const turn = (id: string, composer: ComposerResult, repeat = 1): TurnResult => ({ ...turns[0]!, id, repeat, composer })
+
+  it('scores the language of the judge and the script of the letters against the reply language that the composer got, and the reason of each failed check', () => {
+    const scores = composerScoresOf([...sentences, named], [
+      turn('h01', reply('hi-Latn', 'Powai mein flat, noted. Aap kab shift karna chahte ho?', { language: 'hindi', script: 'latin' })),
+      // Marathi in Latin letters, and a judge that hears Hindi.
+      turn('m10', reply('mr', 'Powai madhe flat. Tumhi kadhi shift karnar?', { language: 'hindi', script: 'latin' })),
+      // English for a Hinglish reply, with a number that is not in the plan.
+      turn('h25', reply('hi-Latn', 'A flat in Powai for 30k. When do you move?', { language: 'english', script: 'latin' })),
+      turn('e01', reply('en', null, null, 10_000)),
+    ])
+    expect(scores.all).toEqual({ ...zeroComposer(), calls: 4, noAnswer: 1, judged: 3, languageRight: 1, scriptRight: 2, english: 1, failed: 1, new_number: 1 })
+    expect(scores.marathi).toMatchObject({ calls: 1, languageRight: 0, scriptRight: 0 })
+    expect(scores.english).toMatchObject({ calls: 1, noAnswer: 1 })
+  })
+
+  it('counts each reply with the name of the friend: stopped by the check, or through by lower case or Devanagari', () => {
+    const replies = [
+      'Aap aur neha ke liye Powai mein flat. Kab shift karna hai?',
+      'Aap aur Neha ke liye Powai mein flat. Kab shift karna hai?',
+      'नेहा और आपके लिए पवई में फ्लैट। आप कब शिफ़्ट होंगे?',
+      'Powai mein flat, noted. Kab shift karna hai?',
+    ]
+    expect(namesOf([named], replies.map((text, i) => turn('h25', reply('hi-Latn', text, null), i + 1))))
+      .toEqual([{ id: 'h25', replies: 4, withName: 3, stopped: 1, lowerCase: 1, devanagari: 1, other: 0 }])
+  })
+
+  it('lists the capital words at the start of a sentence of a passed text that are not in the plan or the message, the most frequent first', () => {
+    const text = (t: string, i: number) => turn('h25', reply('hi-Latn', t, null), i)
+    expect(startCapitalsOf([text('Rohan aapko call karega. Kab shift karna hai?', 1), text('Kab shift karna hai? Powai, noted.', 2), text('Theek hai, Bandra bhi?', 3)]))
+      .toEqual([['Kab', 2], ['Rohan', 1]])
+  })
+
+  it('counts the calls that answer in time at a step, and selects the smallest step where 9 of 10 do, with at most 4000 ms', () => {
+    const calls = [1000, 1200, 1400, 1600, 1800, 2100, 2200, 2400, 2600].map((ms) => reply('en', 'text', null, ms))
+    const all = [...calls, reply('en', null, null, 10_000)]
+    expect(inTimeAt(all, 2500)).toBe(8)
+    expect(selectDeadline(all)).toBe(3000)
+    expect(selectDeadline([...calls.slice(0, 5), ...[5000, 6000, 7000].map((ms) => reply('en', 'text', null, ms))])).toBe(4000)
+    expect(selectDeadline([])).toBeNull()
   })
 })

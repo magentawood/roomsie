@@ -13,12 +13,19 @@ const numbersIn = (text: string) => [...(plainWords(text).match(/\d[\d,]*(?:\.\d
 const wordsIn = (text: string) => text.split(/\s+/).map((word) => word.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '')).filter(Boolean)
 const isCapital = (word: string) => /^\p{Lu}/u.test(word)
 
+const sentencesIn = (text: string) => text.split(/(?<=[.!?।])\s+/).map(wordsIn)
+
 /** Capital words not at the start of a sentence. Devanagari has no capitals, so only Latin script gets this check. */
-function capitalsInside(text: string) {
-  return text.split(/(?<=[.!?।])\s+/).flatMap((sentence) => wordsIn(sentence).slice(1).filter(isCapital))
+const capitalsInside = (text: string) => sentencesIn(text).flatMap((words) => words.slice(1).filter(isCapital))
+
+/** The capital words at the start of a sentence that are not in the plan or the message: the first limit of the name check. */
+export function newStartCapitals(text: string, { draft, message }: Pick<ComposerInput, 'draft' | 'message'>) {
+  const known = new Set([...wordsIn(`${draft} ${message}`).map((w) => w.toLowerCase()), ...alwaysCapital])
+  return sentencesIn(text).map((words) => words[0]).filter((w): w is string => !!w && isCapital(w) && !known.has(w.toLowerCase()) && !isPronounI(w))
 }
 
-export type CheckFailure = 'too_long' | 'no_question' | 'contact' | 'new_number' | 'their_name' | 'new_capital'
+export const checkFailures = ['too_long', 'no_question', 'contact', 'new_number', 'their_name', 'new_capital'] as const
+export type CheckFailure = (typeof checkFailures)[number]
 
 /**
  * The output check of the composer (T-13). Null: the text passes. A plan with a question needs a question in the text.
