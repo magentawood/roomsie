@@ -1,6 +1,6 @@
 # PD2 — Mumbai first
 
-**Status:** Settled. Changed on 2026-11-04. · **Date:** 2026-09-19 · **Deciders:** Yash; n3rxv for the founders on 2026-10-27
+**Status:** Settled. Changed on 2026-11-04. · **Date:** 2026-09-19 · **Deciders:** Yash; n3rxv for the founders on 2026-10-27; F-06: pulkitshringi for the founders on 2026-11-04
 
 ## Context
 
@@ -17,7 +17,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
   - A pocket is a sub-area inside a sub-area, for example Versova in Andheri West.
   - A pick of an area includes the areas under it.
 - **Where Mumbai ends.** These places are live: the BMC area, Mira–Bhayandar, the Thane Municipal Corporation, and Navi Mumbai with the Panvel nodes and Ulwe. A search for a place outside them, for example Vasai–Virar, Kalyan–Dombivli or Bhiwandi, shows "Roomsie is only in Mumbai for now" and the waitlist form.
-- **Areas to seed first: Navi Mumbai and South Mumbai** (2026-11-04, F-06). Marketing seeds them first, so that the first searches there have full panels. The team outside Mumbai recruits people who move to Mumbai, for each area group. These areas are a seeding plan, not a gate.
+- **Areas to seed first: Navi Mumbai and South Mumbai** (2026-11-04, F-06). Marketing seeds them first, so that the first searches there have full panels. The teammates who live outside Mumbai recruit people who move to Mumbai, for each area group. Their sign-ups count in the minimum of 150 profiles across Mumbai ([PD11](pd-11-launch.md)). These areas are a seeding plan, not a gate.
 
 ## Rationale
 
