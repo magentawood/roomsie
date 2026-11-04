@@ -44,3 +44,52 @@ Score the replies of the assistant, and the messages that are not a search.
 - [model-selection.md](../../model-selection.md)
 - [composer.md](../../learn/composer.md)
 - [eval-set.md](../../learn/eval-set.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by Pulkit.
+
+- **Modules:**
+  - **The eval set (changes):** a sentence can have a band, the flags `danger` and `community`, and the names of other people in each script. A sentence with no band is a search, with no flag. The set gets 23 new sentences:
+    - 15 sentences of the other bands: one in English, one in Hinglish and one in Marathi for each of `general`, `consequential`, `out_of_scope`, `adversarial` and `sensitive`. Two of the `sensitive` sentences have `danger`.
+    - 2 searches with a community preference, with `community`.
+    - 6 searches that name a friend, with the labels of Form A. In English, one name has a capital letter and one is in lower case. In Hinglish and in Marathi, one name is in lower case and one is in Devanagari.
+  - **The eval runner (changes):** the runner calls the reply writer, then the composer, as in a live turn. It does this for each search that the extractor reads and the router labels core. Then the router reads the text of the composer, for its language. The run file gets version 2, with the answers of the composer and of this router call. The runner replays the router answers at each threshold, as it replays the extractor answers.
+  - **The scores and the report (change):** the report gets these parts:
+    - the scores of the router on the other bands, and its threshold sweep
+    - the scores of the composer, and its times at each deadline
+    - the value that each rule below selects
+  - **The output check of the composer (its interface changes):** it gives the reason of a failure, or no reason when the text passes. The composer uses the check as before.
+  - **The settings of the assistant (the values can change):** `ROUTER_MIN_PROBABILITY` and `COMPOSER_DEADLINE_MS`, only by the rules below.
+  - **The composer prompt (can change):** only by the rule of T-27 for a prompt change.
+  - The interfaces of the extractor, the router, the composer and the model module do not change.
+- **Seams for the tests:**
+  - The scores, the sweeps and the rules: the unit tests of the scores. They give fixed answers and labels, and check each score and each selected value.
+  - The output check: the tests of the check that exist. Each reason gets a case.
+  - The eval set: the check of the set that exists. It also checks the new fields and the new counts.
+- **Decisions:**
+  - **The order (the user):** T-61 starts on the main branch of today. After T-36 merges, the branch takes the main branch again, and the runner makes one more live run. T-36 changes the router prompt.
+  - **The language of a reply (the user):** the router reads each text of the composer and gives its language. This router call always uses DeepSeek, also in the run of Gemini, so the judge does not change. Code gives the script from the letters (the rule of T-27). The score is against the reply language that the composer got. Each handler gets its own score ([PD7a](../../decisions/pd-07a-agent-architecture.md)).
+  - **The name test (the user):** the 6 sentences with a friend. For each reply, the report gives: no name, a name that the check stops, or a name that passes, with its limit. A name passes by limit 2 (the person typed it in lower case) or by limit 3 (Devanagari). Limit 1 is a name that the composer makes up. For it, the report lists each capital word at the start of a sentence that is not in the plan or the message. A person reads this list.
+  - **The router threshold (the user):** the DeepSeek answers replay at each threshold from 0.5 to 0.95. The rule selects in this order:
+    1. The most `danger` sentences that keep `danger`.
+    2. The fewest searches with a band that is not core.
+    3. The most sentences of the other bands with their band.
+    4. On a tie, the threshold nearest to 0.8.
+    The value comes from the run after T-36. Gemini gives no token probabilities, so the threshold applies only to DeepSeek.
+  - **The deadline (the user):** the time of a composer call is the time of all its attempts. The steps are 500 ms, from 1500 ms. The rule selects the smallest step where 9 of 10 DeepSeek composer calls give an answer in time. The maximum is 4000 ms. A call with no answer is late. If no step reaches 9 of 10, the value is 4000 ms. The report of each run gives the calls in time at each step. The research page adds the two runs, then applies the rule.
+  - **The runs (the user):** the first run is on the evening of 2026-11-04. The run after T-36 is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.
+  - **The sentences (the user):** Claude writes and labels them in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge (as M-03).
+  - **The scores of the new sentences (the user):** the 17 sentences of the other bands or with `community` count only in the scores of the router. The 6 with a friend count in all the scores.
+  - **The setup (the user, as T-27):** DeepSeek and Gemini get a score each, with one model as the primary and as the fallback. Each sentence runs three times. The composer gets no turns and no Form B notes.
+  - **The composer in the runner (the user):** it runs with no deadline, so the timeout of the model module is its only limit.
+  - **A prompt change (the user, the rule of T-27):** a change of the composer prompt stays only when three things are true. The total score goes up, no language goes down, and the change is a general rule.
+  - **The results (the user):** the reports of the two runs and a research page go into the research folder. The two values change in the settings, the example env file, and each doc that gives them.
+  - **The open product calls (the user, F-11):** the two values stay settings with a default. The fixed lines stay in their data file (PC-15).
+  - **The keys (the user):** the runner reads the keys from the local env file of the eval, which git ignores. Claude copies the two keys from the local env file of the API, and does not show them.
+- **Out of scope:**
+  - a fix of the three limits of the name check (a follow-up task if a name passes)
+  - the `notes` flag of T-36 in the eval set
+  - a third vendor, such as Qwen
+  - a run in CI
+  - the full eval of 200 to 300 sentences of PD7
