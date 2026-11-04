@@ -20,10 +20,7 @@ const stated = (values: Record<string, unknown>) => Object.fromEntries(Object.en
 const statedForm = ({ lifestyle = {}, mustHaves = {}, ...top }: z.infer<typeof sentence>['expected']) =>
   formA.safeParse({ ...stated(top), lifestyle: stated(lifestyle), mustHaves: stated(mustHaves) })
 /** The script of the letters: digits belong to no script. */
-const scriptOf = (text: string) => {
-  const [latin, devanagari] = [/[A-Za-z]/.test(text), isDevanagari(text)]
-  return latin && devanagari ? 'mixed' : devanagari ? 'devanagari' : 'latin'
-}
+const scriptOf = (text: string) => (isDevanagari(text) ? (/[A-Za-z]/.test(text) ? 'mixed' : 'devanagari') : 'latin')
 
 describe('the eval sentences (M-03)', () => {
   it('has 50 sentences with one id each: 15 English, 18 Hinglish and 17 Marathi, Marathi in both scripts, some Hinglish in Devanagari, and 10 vague on purpose', () => {
@@ -31,8 +28,8 @@ describe('the eval sentences (M-03)', () => {
     expect(new Set(sentences.map((s) => s.id)).size).toBe(50)
     expect([of('english').length, of('hinglish').length, of('marathi').length]).toEqual([15, 18, 17])
     expect(sentences.filter((s) => s.vague)).toHaveLength(10)
-    expect(new Set(of('marathi').map((s) => s.script === 'latin'))).toEqual(new Set([true, false]))
-    expect(of('hinglish').some((s) => s.script !== 'latin')).toBe(true)
+    expect(['latin', 'devanagari'].every((script) => of('marathi').some((s) => s.script === script))).toBe(true)
+    expect(of('hinglish').some((s) => s.script === 'devanagari')).toBe(true)
   })
 
   it('marks the script of each sentence from its letters', () => {
@@ -57,7 +54,7 @@ describe('the eval sentences (M-03)', () => {
 
   it('has the forms that people type: Mumbai areas, "20k", "bees hazaar", an amount with a comma and "next month end"', () => {
     const texts = sentences.map((s) => s.text.toLowerCase())
-    for (const phrase of [/20k/, /bees hazaar/, /\d,\d{3}/, /next month end/]) expect(texts.some((t) => phrase.test(t)), String(phrase)).toBe(true)
+    for (const pattern of [/20k/, /bees hazaar/, /\d,\d{3}/, /next month end/]) expect(texts.some((t) => pattern.test(t)), String(pattern)).toBe(true)
     expect(sentences.some((s) => 'areas' in s.expected)).toBe(true)
   })
 })
