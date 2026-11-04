@@ -47,7 +47,7 @@ Score the replies of the assistant, and the messages that are not a search.
 
 ## Spec
 
-**Approved:** 2026-11-04, by Pulkit.
+**Approved:** 2026-11-04, by Pulkit. The change after the merge of T-36: approved on 2026-11-04, by Pulkit.
 
 - **Modules:**
   - **The eval set (changes):** a sentence can have a band, the flags `danger` and `community`, and the names of other people in each script. A sentence with no band is a search, with no flag. The set gets 23 new sentences:
@@ -68,7 +68,7 @@ Score the replies of the assistant, and the messages that are not a search.
   - The output check: the tests of the check that exist. Each reason gets a case.
   - The eval set: the check of the set that exists. It also checks the new fields and the new counts.
 - **Decisions:**
-  - **The order (the user):** T-61 starts on the main branch of today. After T-36 merges, the branch takes the main branch again, and the runner makes one more live run. T-36 changes the router prompt.
+  - **The order (the user):** T-61 started on the main branch of 2026-11-04. T-36 changes the router prompt, and it merged on the same day, before the first run. Thus both runs have the router prompt of T-36.
   - **The language of a reply (the user):** the router reads each text of the composer and gives its language. This router call always uses DeepSeek, also in the run of Gemini, so the judge does not change. Code gives the script from the letters (the rule of T-27). The score is against the reply language that the composer got. Each handler gets its own score ([PD7a](../../decisions/pd-07a-agent-architecture.md)).
   - **The name test (the user):** the 6 sentences with a friend. For each reply, the report gives: no name, a name that the check stops, or a name that passes, with its limit. A name passes by limit 2 (the person typed it in lower case) or by limit 3 (Devanagari). Limit 1 is a name that the composer makes up. For it, the report lists each capital word at the start of a sentence that is not in the plan or the message. A person reads this list.
   - **The router threshold (the user):** the DeepSeek answers replay at each threshold from 0.5 to 0.95. The rule selects in this order:
@@ -76,9 +76,9 @@ Score the replies of the assistant, and the messages that are not a search.
     2. The fewest searches with a band that is not core.
     3. The most sentences of the other bands with their band.
     4. On a tie, the threshold nearest to 0.8.
-    The value comes from the run after T-36. Gemini gives no token probabilities, so the threshold applies only to DeepSeek.
+    The research page adds the two runs, then applies the rule. Gemini gives no token probabilities, so the threshold applies only to DeepSeek.
   - **The deadline (the user):** the time of a composer call is the time of all its attempts. The steps are 500 ms, from 1500 ms. The rule selects the smallest step where 9 of 10 DeepSeek composer calls give an answer in time. The maximum is 4000 ms. A call with no answer is late. If no step reaches 9 of 10, the value is 4000 ms. The report of each run gives the calls in time at each step. The research page adds the two runs, then applies the rule.
-  - **The runs (the user):** the first run is on the evening of 2026-11-04. The run after T-36 is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.
+  - **The runs (the user):** the first run is on the evening of 2026-11-04. The second run is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.
   - **The sentences (the user):** Claude writes and labels them in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge (as M-03).
   - **The scores of the new sentences (the user):** the 17 sentences of the other bands or with `community` count only in the scores of the router. The 6 with a friend count in all the scores.
   - **The setup (the user, as T-27):** DeepSeek and Gemini get a score each, with one model as the primary and as the fallback. Each sentence runs three times. The composer gets no turns and no Form B notes.
