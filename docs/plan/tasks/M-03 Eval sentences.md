@@ -59,6 +59,7 @@ Realistic sentences to test the assistant.
   - **The vague sentences:** the slot that a sentence is vague about has the label `unclear`. The areas, the budget and the move date have no `unclear` value in Form A, so a sentence that is vague about them leaves them empty, and each vague sentence also has one slot with `unclear` (implement).
   - **An empty slot:** a slot that a sentence does not name must stay empty, so the eval also finds a value that a model makes up.
   - **The product calls:** the task uses none. The reference date is data in the file.
+  - **The log of candidates (the user, review):** the rows that became rules move to `docs/standards/_candidates-archive.md`, with their full text, so no PR shortens older rows to fit the word limit.
 - **Out of scope:**
   - the runner that scores a model on the set (T-27)
   - the full eval of 200 to 300 sentences of PD7
