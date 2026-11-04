@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { chipAnswers, chipSlots, formA } from './form-a'
+import { chipLabels, chipSlots, formA } from './form-a'
 import { chipTap, goalResponse, goalTitle, tapText, turnResponse } from './goals'
 
 const olderTurn = { id: '01a19c99-5fa0-7d83-ab48-16626c750a4f', role: 'assistant', text: 'What is your monthly budget?', createdAt: '2026-11-02T14:00:00.000Z' }
@@ -52,10 +52,10 @@ describe('the chips of the closed questions (T-59)', () => {
   })
 
   it('gives the answers of each question in their order, the must first for a weight', () => {
-    expect(chipAnswers('lifestyle.food').map(({ label }) => label)).toEqual(['Veg', 'Non-veg', 'Eggetarian', 'Jain'])
-    expect(chipAnswers('mustHaves.non_smokers')).toEqual([{ value: 'dealbreaker', label: "It's a must" }, { value: 'prefer', label: 'Show them first' }])
-    expect(chipAnswers('whosMoving').map(({ label }) => label)).toEqual(['Student', 'First job', 'Working', 'Couple', 'Family', 'Group of friends'])
-    expect(chipAnswers('roomType').map(({ label }) => label)).toEqual(['A private room', 'A shared room'])
+    expect(Object.values(chipLabels('lifestyle.food'))).toEqual(['Veg', 'Non-veg', 'Eggetarian', 'Jain'])
+    expect(chipLabels('mustHaves.non_smokers')).toEqual({ dealbreaker: "It's a must", prefer: 'Show them first' })
+    expect(Object.values(chipLabels('whosMoving'))).toEqual(['Student', 'First job', 'Working', 'Couple', 'Family', 'Group of friends'])
+    expect(Object.values(chipLabels('roomType'))).toEqual(['A private room', 'A shared room'])
   })
 
   it('refuses an answer that its question does not have, and has no chips for the hidden slots (PD15)', () => {

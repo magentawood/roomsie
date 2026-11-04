@@ -68,13 +68,25 @@ export const isOpenSlot = ({ source, value }: SlotState) => source === 'empty' |
 /** Results show when intent, areas and budget have values: the panel of the web, and the turn cap of PD9 (T-21). */
 export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
 
+/** Each slot of Form A that the assistant can fill or ask about. */
+export const formASlots = [
+  'intent', 'roomType', 'whosMoving', 'areas', 'budget', 'moveDate',
+  ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
+] as const
+export type FormASlot = (typeof formASlots)[number]
+export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
+export function slotOf(form: FormA, slot: FormASlot): SlotState {
+  const [group, key] = slotPath(slot)
+  const record = form as unknown as Record<string, Record<string, SlotState>>
+  return (key ? record[group]![key] : record[group]) as SlotState
+}
+
 /** The closed questions, with chips (T-09, T-59). The hidden slots and the move date have none (PD15). */
 export const chipSlots = [
   'intent', 'areas', 'budget', 'roomType', 'whosMoving',
   ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
 ] as const
 export type ChipSlot = (typeof chipSlots)[number]
-/** The chips of one tap and one fixed list of answers. */
 export type AnswerChipSlot = Exclude<ChipSlot, 'intent' | 'areas' | 'budget'>
 /** The chip words of room type, who is moving and the weight of a must-have (the drafts, section 35). */
 const roomTypeChipLabels = { private: 'A private room', shared: 'A shared room' } satisfies Record<Exclude<(typeof roomTypes)[number], 'unclear'>, string>
@@ -83,11 +95,11 @@ const whosMovingChipLabels = {
 } satisfies Record<Exclude<(typeof whosMovingAnswers)[number], 'unclear'>, string>
 const weightChipLabels = { dealbreaker: "It's a must", prefer: 'Show them first' } satisfies Record<(typeof mustHaveWeights)[number], string>
 
-export function chipAnswers(slot: AnswerChipSlot): { value: string; label: string }[] {
-  const [group, key] = slot.split('.') as [string, string | undefined]
-  const labels: Record<string, string> = group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels
+/** The labels of the answers of a chip slot, by value, in the order of their chips. */
+export function chipLabels(slot: AnswerChipSlot): Record<string, string> {
+  const [group, key] = slotPath(slot)
+  return group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels
     : group === 'lifestyle' ? lifestyleAnswerLabels[key as LifestyleAxis] : weightChipLabels
-  return Object.entries(labels).map(([value, label]) => ({ value, label }))
 }
 /** The place-type chips, as the designs name them (PD15). */
 export const intentLabels = {

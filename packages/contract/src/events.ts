@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { closeAnswer, formASlots, rateLimits, scopeBands } from './goals'
+import { formASlots } from './form-a'
+import { closeAnswer, rateLimits, scopeBands } from './goals'
 import { modelRoles, modelUsage } from './models'
 import { reportReasons } from './reports'
 

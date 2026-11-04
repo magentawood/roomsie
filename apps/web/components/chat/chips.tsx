@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { budgetBands, chipAnswers, chipTap, intentLabels, slotPath, type ChipSlot, type ChipTap, type FormA, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
+import { budgetBands, chipLabels, chipTap, intentLabels, slotPath, type ChipSlot, type ChipTap, type FormA, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import { placeTypes, toggled } from '../../lib/chat'
 import { profileLabels } from '../../lib/profile-form'
 import { useAreas } from '../../lib/queries'
@@ -25,8 +25,7 @@ export function Chips({ slot, form, onTap }: { slot: ChipSlot; form: FormA; onTa
               <TapChip key={intent} label={intentLabels[intent]} onTap={() => onTap({ slot, value: intent })} />)
             : slot === 'budget'
               ? budgetBands.map((band) => <TapChip key={band.id} label={band.label} onTap={() => onTap({ slot, value: band.id })} />)
-              // A closed question of T-59: one tap for each answer of the contract.
-              : chipAnswers(slot).map(({ value, label }) => <TapChip key={value} label={label} onTap={() => onTap(chipTap.parse({ slot, value }))} />)}
+              : Object.entries(chipLabels(slot)).map(([value, label]) => <TapChip key={value} label={label} onTap={() => onTap(chipTap.parse({ slot, value }))} />)}
         </div>
       )}
     </div>

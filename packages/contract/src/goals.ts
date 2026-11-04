@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBandId, budgetBandOf, chipAnswers, chipSlots, formA, identityPreference, intentLabels, statedPreferences, type AnswerChipSlot, type FormA, type SlotState } from './form-a'
+import { budgetBandId, budgetBandOf, chipLabels, chipSlots, formA, type FormA, formASlots, identityPreference, intentLabels, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { comparison, compareRequest } from './compare'
 import { observation } from './form-b'
@@ -9,24 +9,10 @@ import { waitlistPlace } from './waitlist'
 /** A visitor sends this header in place of a sign-in token. Only the API makes the key, and it keeps only its hash (T-12). */
 export const visitorKeyHeader = 'x-visitor-key'
 
-/** Each slot of Form A that the assistant can fill or ask about. */
-export const formASlots = [
-  'intent', 'roomType', 'whosMoving', 'areas', 'budget', 'moveDate',
-  ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
-] as const
-export type FormASlot = (typeof formASlots)[number]
-export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
-export function slotOf(form: FormA, slot: FormASlot): SlotState {
-  const [group, key] = slotPath(slot)
-  const record = form as unknown as Record<string, Record<string, SlotState>>
-  return (key ? record[group]![key] : record[group]) as SlotState
-}
-
-// Vercel is live minutes before the API; the defaults read its old replies (api.md).
-/** A slot that this code does not know yet, from a newer API, shows no chips: a tab with an older bundle keeps working. */
-const chips = z.enum(chipSlots).nullable().default(null).catch(null)
+// Vercel is live minutes before the API; the defaults read its old replies (api.md). An unknown chip slot of a newer API reads as no chips.
 export const chatTurn = z.object({
-  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips, comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
+  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null).catch(null),
+  comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
 })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
@@ -44,15 +30,14 @@ export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
-const answerTap = <S extends AnswerChipSlot, V extends z.ZodType<string>>(slot: S, value: V) => z.strictObject({ slot: z.literal(slot), value })
 export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
   z.strictObject({ slot: z.literal('budget'), value: budgetBandId }),
-  answerTap('roomType', z.enum(roomTypes).exclude(['unclear'])),
-  answerTap('whosMoving', z.enum(whosMovingAnswers).exclude(['unclear'])),
-  ...lifestyleAxes.map((axis) => answerTap(`lifestyle.${axis}`, z.enum(lifestyleAnswers[axis]))),
-  ...mustHaveKeys.map((key) => answerTap(`mustHaves.${key}`, z.enum(mustHaveWeights))),
+  z.strictObject({ slot: z.literal('roomType'), value: z.enum(roomTypes).exclude(['unclear']) }),
+  z.strictObject({ slot: z.literal('whosMoving'), value: z.enum(whosMovingAnswers).exclude(['unclear']) }),
+  ...lifestyleAxes.map((axis) => z.strictObject({ slot: z.literal(`lifestyle.${axis}`), value: z.enum(lifestyleAnswers[axis]) })),
+  ...mustHaveKeys.map((key) => z.strictObject({ slot: z.literal(`mustHaves.${key}`), value: z.enum(mustHaveWeights) })),
 ])
 export type ChipTap = z.infer<typeof chipTap>
 /** The answers of the onboarding of flow 01 that start a goal, with the values of the chips. Each step can be skipped (T-48). */
@@ -71,7 +56,7 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
     case 'intent': return intentLabels[tap.value]
     case 'areas': return tap.value.map(areaName).join(', ')
     case 'budget': return budgetBandOf(tap.value).label
-    default: return chipAnswers(tap.slot).find(({ value }) => value === tap.value)!.label
+    default: return chipLabels(tap.slot)[tap.value]!
   }
 }
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
@@ -159,7 +144,7 @@ export const assistantParts = z.strictObject({
   /** The conflicts that the reply asks about. They stay open until a turn settles them. */
   conflicts: z.array(slotConflict).default([]),
   /** The chips that the question offers: with the plain question of a closed slot, and with the weight question (T-09, T-59). */
-  chips,
+  chips: z.enum(chipSlots).nullable().default(null),
   comparison: comparison.nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>

@@ -33,7 +33,7 @@
 
 - **The API writes the text of a tap.** The web shows the same text from `tapText()` until the answer comes, so the two never disagree.
 - **A tap answers its slot.** Its value replaces an earlier value, also a list of areas, and also a slot inside the lifestyle or the must-haves (`withSlot`). A typed area adds to the areas.
-- **The minutes of a deploy.** The old API refuses a chip of T-59 as `not valid: body`, and the chat says "These buttons start in a few minutes. Type your answer for now." A tab with an older bundle reads a chip slot that it does not know as no chips, so it keeps working.
+- **The minutes of a deploy.** The old API refuses a chip of T-59 as `not valid: body`, and the chat says "These buttons start in a few minutes. Type your answer for now." From this bundle on, a tab reads a chip slot that it does not know as no chips. A tab that still has a bundle from before T-59 fails on the new chips until a reload.
 - **The chips go away while a reply is pending.** The reply brings the chips of its own question.
 
 ## Tickets
