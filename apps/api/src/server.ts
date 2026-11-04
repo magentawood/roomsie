@@ -47,7 +47,6 @@ import { verificationRoutes } from './verification/routes'
 
 declare module 'fastify' {
   interface FastifyInstance {
-    /** The observer of the chat runs after the reply (T-36). */
     observerQueue: AfterReply
     alerts: Alerts
     analytics: Analytics
@@ -56,7 +55,7 @@ declare module 'fastify' {
 }
 
 /** The date of today in Mumbai, as an ISO date. */
-const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+export const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
 type RequestBody = { required?: boolean; content?: Record<string, { schema?: { nullable?: boolean } }> }
 

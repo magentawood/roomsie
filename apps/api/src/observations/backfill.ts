@@ -1,6 +1,6 @@
 import { statesHiddenPreference, userTurnParts } from '@roomsie/contract'
-import { noteVisibilityOf, type AssistantDeps } from '../assistant/assistant'
-import { observer } from '../assistant/handlers/observer/observer'
+import { notePlanOf } from '../assistant/assistant'
+import { observer, type ObserverDeps } from '../assistant/handlers/observer/observer'
 import { observerPrompt } from '../assistant/handlers/observer/prompt'
 import type { Db } from '../db/client'
 import { contextTurnsOf, lastReplyOf, turnTimeOf } from '../goals/store'
@@ -20,12 +20,12 @@ async function hasNewerNote(db: Db, owner: Owner, key: string, at: Date) {
  * The one-off job of T-36: the notes of the typed turns from before the observer, oldest first. A turn with a note is done,
  * so a second run calls no model for it. A note never replaces a note from a newer turn. Without `apply`, it only counts.
  */
-export async function backfillNotes(db: Db, deps: Pick<AssistantDeps, 'req' | 'models' | 'settings'>, { apply }: { apply: boolean }) {
+export async function backfillNotes(db: Db, deps: Omit<ObserverDeps, 'db'>, { apply }: { apply: boolean }) {
   const all = await contextTurnsOf(db)
   const done = await turnsWithNotes(db, all.map(({ id }) => id))
   const turns = all.flatMap((turn) => {
     const label = userTurnParts.safeParse(turn.parts)
-    const plan = !done.has(turn.id) && label.success ? noteVisibilityOf(label.data, statesHiddenPreference(label.data), deps.settings) : null
+    const plan = !done.has(turn.id) && label.success ? notePlanOf(label.data, statesHiddenPreference(label.data), deps.settings) : null
     return plan ? [{ ...turn, visible: plan.visible }] : []
   })
   const prompt = observerPrompt(await activeTopics(db)).length

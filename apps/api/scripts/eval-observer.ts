@@ -2,13 +2,14 @@
  * The eval of the observer (T-36): the live models on the 50 sentences of M-03 and the personal sentences.
  * It uses a disposable local database for the topics, and prints the results as JSON for docs/research/.
  */
-import Fastify, { type FastifyRequest } from 'fastify'
+import Fastify from 'fastify'
 import { observer } from '../src/assistant/handlers/observer/observer'
 import { assistantSettings } from '../src/assistant/settings'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { modelSettings, spendSettings } from '../src/models/settings'
 import { spendOf } from '../src/models/spend'
 import { createTestDb } from '../test/db'
+import { scriptRequest } from './script-request'
 import searchFile from '../eval/sentences.json'
 import personalFile from '../eval/observer-sentences.json'
 
@@ -20,9 +21,7 @@ const { log } = Fastify({ logger: { level: 'warn' } })
 const spend = spendOf({ db: testDb.db, settings: spendSettings.parse({}), today: () => new Date().toISOString().slice(0, 10), log })
 const calls: { model: string; ms: number; outcome: string }[] = []
 const analytics = { track: (_: unknown, event: { name: string; model?: string; ms?: number; outcome?: string }) => { if (event.name === 'model_called') calls.push({ model: event.model!, ms: event.ms!, outcome: event.outcome! }) } }
-// The model module records each call on the analytics and the spend of the server, as for a request.
-const req = { server: { analytics, spend }, log, user: null, analyticsId: null } as unknown as FastifyRequest
-const deps = { req, db: testDb.db, models, settings: assistantSettings.parse(process.env) }
+const deps = { req: scriptRequest({ analytics: { track: analytics.track, flush: async () => {}, close: async () => {} }, spend }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
 
 type Sentence = { id: string; text: string; expected?: string[] }
 async function run(sentences: Sentence[]) {

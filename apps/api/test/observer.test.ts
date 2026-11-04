@@ -61,6 +61,12 @@ describe('the observer', () => {
     expect(await observe('my partner basically lives with me', { OBSERVER_UNSCORED_CONFIDENCE: '0.4' })).toMatchObject([{ confidence: 0.4 }])
   })
 
+  it('gives the confidence of the setting when the tokens of DeepSeek do not hold the topic', async () => {
+    const tokens = [...JSON.stringify({ notes: [] })].map((token) => ({ token, logprob: 0 }))
+    fakeVendors({ observer: { deepseek: [answer(JSON.stringify({ notes: [partner] }), undefined, tokens)] } })
+    expect(await observe('my partner basically lives with me')).toMatchObject([{ confidence: 0.5 }])
+  })
+
   it('keeps one note for each topic: the first', async () => {
     fakeVendors({ observer: { deepseek: [scored({ notes: [partner, { ...partner, value: 'Partner visits', evidence: 'lives with me' }] })] } })
     expect(await observe('my partner basically lives with me')).toMatchObject([{ value: partner.value }])

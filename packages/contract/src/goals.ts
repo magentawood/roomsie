@@ -14,7 +14,6 @@ export const chatTurn = z.object({
   id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(),
   chips: z.enum(chipSlots).nullable().default(null).catch(null), // A chip slot of a newer API reads as no chips.
   comparison: comparison.nullable().default(null),
-  /** The reply shows the notes of the owner, which the web gets from the API (T-36). */
   notes: z.boolean().default(false), createdAt: z.iso.datetime(),
 })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */

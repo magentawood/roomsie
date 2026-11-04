@@ -1,6 +1,6 @@
 import { vendorOf, type Token } from '../../models/models'
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+export const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /** The patterns of a JSON answer whose first group is the value to score. */
 export const jsonString = (key: string, value: string) => new RegExp(`"${escape(key)}"\\s*:\\s*"(${escape(value)})"`)

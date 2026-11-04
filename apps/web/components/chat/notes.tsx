@@ -12,10 +12,7 @@ import { Modal } from '../ui/modal'
 
 type Note = NotesResponse['notes'][number]
 
-/**
- * The answer to "What do you know about me?": the current notes of the owner, never a copy in the turn (T-36).
- * A delete is a direct call to the API, never a message to the model (PD7a).
- */
+/** The answer to "What do you know about me?": the current notes of the owner (T-36). */
 export function NotesList() {
   const { user } = useAuth()
   const queryClient = useQueryClient()

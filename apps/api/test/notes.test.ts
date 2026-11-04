@@ -41,9 +41,9 @@ describe('the observer in the chat', () => {
     const { turns } = await sent(goal, 'room chahiye, I work night shifts')
     expect(turns[1].text).toBe(roomAck)
     expect(requests.observer).toHaveLength(1)
-    const [saved] = await t.db.select().from(observations).where(eq(observations.turnId, turns[0].id))
-    expect(saved).toMatchObject({ key: 'work_pattern', evidence: 'I work night shifts', visible: true, anonymousSessionId: expect.any(String) })
-    expect(await notesOf(goal.key)).toEqual([{ id: saved!.id, key: 'work_pattern', label: 'Work hours and work from home', value: 'Works night shifts', evidence: 'I work night shifts' }])
+    const saved = await t.db.select().from(observations).where(eq(observations.turnId, turns[0].id))
+    expect(saved).toMatchObject([{ key: 'work_pattern', evidence: 'I work night shifts', visible: true, anonymousSessionId: expect.any(String) }])
+    expect(await notesOf(goal.key)).toEqual([{ id: saved[0]!.id, label: 'Work hours and work from home', value: 'Works night shifts', evidence: 'I work night shifts' }])
   })
 
   it.each([
@@ -110,6 +110,16 @@ describe('"What do you know about me?"', () => {
     expect((await sent(goal, 'hmm')).turns[1].text).toContain('I keep short notes from what you tell me.')
   })
 
+  it('counts the notes reply as the hint', async () => {
+    fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
+    const goal = await visitorGoal()
+    await sent(goal, 'room chahiye, I work night shifts')
+    fakeVendors({ deepseek: [scored({})], ...asksNotes() })
+    expect((await sent(goal, 'what do you know about me?')).turns[1].text).not.toContain('I keep short notes')
+    fakeVendors({ deepseek: [scored({})] })
+    expect((await sent(goal, 'ok')).turns[1].text).not.toContain('I keep short notes')
+  })
+
   it('keeps the hint off a sensitive reply, and gives it on the next reply', async () => {
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
@@ -141,7 +151,7 @@ describe('the delete of a note', () => {
     expect(res.statusCode).toBe(200)
     const asha = { authorization: `Bearer ${t.tokens.asha}` }
     const { notes } = notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: asha })).json())
-    expect(notes).toMatchObject([{ key: 'work_pattern' }])
+    expect(notes).toMatchObject([{ label: 'Work hours and work from home' }])
     expect((await deleteNote(notes[0]!.id, asha)).statusCode).toBe(204)
   })
 

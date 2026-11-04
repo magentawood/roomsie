@@ -12,7 +12,7 @@ const ownerColumn = (owner: Owner) => 'userId' in owner
   ? { column: observations.userId, id: owner.userId }
   : { column: observations.anonymousSessionId, id: owner.anonymousSessionId }
 
-export const ownedBy = (owner: Owner) => { const { column, id } = ownerColumn(owner); return eq(column, id) }
+const ownedBy = (owner: Owner) => { const { column, id } = ownerColumn(owner); return eq(column, id) }
 
 /** Saves a Form B note. A newer note on a topic replaces the older note. False: the topic is not in the catalogue, or is retired. */
 export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, kind, evidence, turn, confidence, visible }: Observation) {
@@ -31,13 +31,10 @@ export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, k
 export const activeTopics = (db: Db | Tx) =>
   db.select({ key: observationTopics.key, label: observationTopics.label }).from(observationTopics).where(eq(observationTopics.active, true)).orderBy(asc(observationTopics.key))
 
-/** The ids of these turns that have a note. */
 export async function turnsWithNotes(db: Db | Tx, turnIds: string[]) {
-  if (!turnIds.length) return new Set<string>()
   return new Set((await db.selectDistinct({ id: observations.turnId }).from(observations).where(inArray(observations.turnId, turnIds))).map(({ id }) => id))
 }
 
-/** The turn of the note of the owner on a topic, if any. */
 export const noteTurnOf = async (db: Db | Tx, owner: Owner, key: string) =>
   (await db.select({ turn: observations.turnId }).from(observations).where(and(ownedBy(owner), eq(observations.key, key))))[0]?.turn
 
@@ -46,7 +43,7 @@ export const hasObservations = async (db: Db | Tx, owner: Owner) =>
 
 /** The notes of the owner with the label of their topic, for the owner only (PD7a). */
 export const notesOf = (db: Db | Tx, owner: Owner) =>
-  db.select({ id: observations.id, key: observations.key, label: observationTopics.label, value: observations.value, evidence: observations.evidence })
+  db.select({ id: observations.id, label: observationTopics.label, value: observations.value, evidence: observations.evidence })
     .from(observations).innerJoin(observationTopics, eq(observationTopics.key, observations.key)).where(ownedBy(owner)).orderBy(asc(observations.createdAt))
 
 export async function observationsOf(db: Db | Tx, owner: Owner) {

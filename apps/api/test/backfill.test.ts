@@ -1,5 +1,4 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { eq } from 'drizzle-orm'
 import { newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
 import { assistantSettings } from '../src/assistant/settings'
 import { observations } from '../src/db/schema'
@@ -45,13 +44,12 @@ describe('the backfill of Form B (T-36)', () => {
     expect(await backfill(true)).toMatchObject({ turns: 2, saved: 2 })
     expect(requests.observer).toHaveLength(2)
     // The newer turn wins the topic.
-    const [kept] = await t.db.select().from(observations).where(eq(observations.key, 'work_pattern'))
-    expect(kept).toMatchObject({ value: 'Works from home', turnId: second.id })
+    expect(await t.db.select().from(observations)).toMatchObject([{ key: 'work_pattern', value: 'Works from home', turnId: second.id }])
 
     // A second run reads only the turn whose note the newer turn replaced, and keeps the newer note.
     const again = fakeVendors({ observer: { deepseek: [scored({ notes: [note('Works night shifts', 'I work night shifts')] })] } })
     expect(await backfill(true)).toMatchObject({ turns: 1, saved: 0 })
     expect(again.observer).toHaveLength(1)
-    expect((await t.db.select().from(observations).where(eq(observations.key, 'work_pattern')))[0]).toMatchObject({ value: 'Works from home' })
+    expect(await t.db.select().from(observations)).toMatchObject([{ value: 'Works from home' }])
   })
 })

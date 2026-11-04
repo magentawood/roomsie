@@ -52,11 +52,11 @@ Records what chips cannot capture, only when it can quote the user. It discards 
 
 - **Modules:**
   - **`packages/contract`:** the observer gets an input schema and an answer schema, with a version. The router answer gets one new flag: the person asks what the assistant noted. The assistant parts get two new flags: the reply shows the notes, and the reply has the notes hint. The observation schema does not change.
-  - **The observer handler:** new. It sends one typed turn to the small model. It gives the notes that pass the quote check, with a confidence from the token probabilities.
+  - **The observer handler:** new. It sends one typed turn and the last question of the assistant to the small model, as the router does. It gives the notes that pass the quote check, with a confidence from the token probabilities.
   - **The assistant flow:** the interface of a typed turn changes. It tells the route if the observer must run, and it gives the scripted reply for a notes question.
   - **The router:** its prompt and its label get the notes flag. Its interface does not change.
   - **The goals route:** after the reply goes out, it starts the observer in the background. Then it saves the notes on the saved turn of the person.
-  - **The observations module:** a new route lists the notes of the owner with their topic labels, and deletes one note of the owner. The functions of T-35 do not change.
+  - **The goals routes and the observations module:** a new route lists the notes of the owner with their topic labels, and a new route deletes one note of the owner. The routes use the visitor key of the chat, so they are with the goals routes. The observations module gets their queries. The functions of T-35 do not change.
   - **The seed:** the topic catalogue gets four new topics.
   - **The settings:** two new settings. The confidence of a note from the backup model, and the notes of a sensitive turn.
   - **The lines file:** new lines for the notes reply, the empty reply and the hint, in each reply language.
@@ -77,7 +77,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The quote check accepts a quote when the turn holds the same words in the same order. It ignores capitals, the white space and the Unicode form. The note keeps the quote as the turn has it. (why: PD7a)
   - The topics are the six topics of T-35 and four new topics: languages, hobbies and routines, commute and workplace, and chores and bills.
   - The observer never writes a note about religion, community, caste, health or sexuality. (why: PD3c)
-  - The confidence is the token probability of the topic and the kind, from DeepSeek. A note from the backup model gets the confidence of a setting, with the default 0.5. (why: PD3b, PD7)
+  - The confidence is the token probability of the topic and the kind, from DeepSeek. A note from the backup model gets the confidence of a setting, with the default 0.5. A DeepSeek note whose tokens do not hold the topic gets the same value, and an error report. (the user, in review, why: PD3b, PD7)
   - The observer saves each note that passes the quote check. The confidence floor of PD3a decides if the matching uses it.
   - A sensitive turn gives no note. A setting holds this call: no note, a hidden note, or a usual note. (why: PC-17, PD10)
   - The value of a note is always in English. The quote stays in the words of the person.
@@ -85,7 +85,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The notes reply holds no copy of the notes. The web chat gets the current notes from the API. Thus, the words of a deleted note do not stay in the chat.
   - Each note card shows the topic, the value and the quote. The delete button asks "Delete this note?" first. The delete is a direct database action. (why: PD7a)
   - To correct a note, the person types the correction. The new note replaces the older note on the same topic. (why: PD7a, T-35)
-  - The first reply after the first note of an owner ends with the notes hint, one time for each owner. A sensitive reply or a danger reply gets no hint, so the hint goes on the next reply. (why: assistant-risks.md section 4.4)
+  - The first reply after the first note of an owner ends with the notes hint, one time for each owner. A sensitive reply or a danger reply gets no hint, so the hint goes on the next reply. The reply to "what do you know about me?" counts as the hint. (the user, in review, why: assistant-risks.md section 4.4)
   - Visitors get notes, and see and delete them, as users do. At sign-in, the notes move to the account. (why: T-35)
   - A person runs the one-off script by hand, one time. First it shows the number of turns and the estimated cost. It writes only with `--apply`. It reads only the typed turns with the kind `context`, oldest first. It skips a turn that already has a note.
   - The eval runs the observer on the 50 sentences and on about 24 new personal sentences in English, Hinglish and Marathi. A report in `docs/research/` records the rejection rate and the fraction of notes on the correct topic.

@@ -127,11 +127,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const outsidePlaces = [...goal.outsidePlaces.filter((place) => !named.has(place)), ...named]
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form: turn.form, outsidePlaces }, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
-    const { observe } = turn
-    if (observe) {
+    const { notePlan } = turn
+    if (notePlan) {
       v1.observerQueue.later(async () => {
         const { notes } = await observer({ goalId: goal.id, text: turns[0].text, last }, deps)
-        for (const note of notes) await saveObservation(options.db, ownerOf(asker), { version: 1, ...note, turn: turns[0].id, visible: observe.visible })
+        for (const note of notes) await saveObservation(options.db, ownerOf(asker), { version: 1, ...note, turn: turns[0].id, visible: notePlan.visible })
       })
     }
     if (!last) v1.analytics.track(req, { name: 'interview_started' })
@@ -151,13 +151,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     return reply.code(204).send(null)
   })
 
-  // Only the owner gets the notes: a user, else the session of the visitor key (PD7a).
   app.get('/notes', { preHandler: optionalUser(options), schema: { headers, response: { 200: notesResponse } } }, async (req) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     return { notes: asker.userId || asker.sessionId ? await notesOf(options.db, ownerOf(asker)) : [] }
   })
 
-  // A delete is a direct database action, never an edit by the model (PD7a).
   app.delete('/notes/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     if (!(asker.userId || asker.sessionId) || !(await deleteObservation(options.db, ownerOf(asker), req.params.id))) return reply.code(404).send({ error: 'not found' })
@@ -181,11 +179,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 async function typedTurn(input: TurnInput & { comparison: Comparison | null }, text: string, asker: Asker, deps: AssistantDeps) {
   const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
-  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces, observe } = await runTurn({ ...input, text, context }, deps)
+  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces, notePlan } = await runTurn({ ...input, text, context }, deps)
   // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
   const parts = { ...label, ...(Object.keys(preferences).length && { preferences }) }
   const events: AnalyticsEvent[] = [...conflicts.map(({ slot }) => ({ name: 'slot_conflict' as const, slot })), { name: 'turn_routed', band: label.band }]
-  return { form, reply, user: { text, inputMethod: 'typed', parts, ownValues } satisfies UserTurn, events, outsidePlaces, observe }
+  return { form, reply, user: { text, inputMethod: 'typed', parts, ownValues } satisfies UserTurn, events, outsidePlaces, notePlan }
 }
 
 /** A tap is not one of the typed turns of the turn cap, and has no label of the router (PD9, T-09). */
@@ -193,5 +191,5 @@ async function tapTurn(input: TurnInput, tap: ChipTap, deps: AssistantDeps) {
   const tapped = await runTap({ ...input, tap }, deps)
   if (!tapped) return null
   const user = { text: tapped.text, inputMethod: 'chip', parts: { version: 1, tap }, ownValues: tapped.ownValues } satisfies UserTurn
-  return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [], observe: null }
+  return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [], notePlan: null }
 }

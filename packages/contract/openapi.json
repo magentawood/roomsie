@@ -21548,11 +21548,6 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "key": {
-                            "type": "string",
-                            "maxLength": 60,
-                            "pattern": "^[a-z]+(_[a-z]+)*$"
-                          },
                           "value": {
                             "type": "string",
                             "minLength": 1,
@@ -21572,7 +21567,6 @@
                           }
                         },
                         "required": [
-                          "key",
                           "value",
                           "evidence",
                           "id",
