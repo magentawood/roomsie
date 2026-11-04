@@ -36,6 +36,7 @@ export const queryKeys = {
   site: ['site'],
   goal: (id: string) => ['goal', id],
   goals: ['goals'],
+  notes: ['notes'],
   waitlistJoins: (goalId: string) => ['waitlist', goalId],
   results: (formKey: string) => ['results', formKey],
 } as const

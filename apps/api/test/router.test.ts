@@ -58,8 +58,18 @@ describe('the router', () => {
     expect(await route()).toMatchObject({ band: 'sensitive', danger: true, community: true })
   })
 
+  it('keeps the notes flag only when it passes the threshold (T-36)', async () => {
+    fakeVendors({ router: { deepseek: [scored({ ...coreLabel, kinds: ['question'], notes: true })] } })
+    expect(await route()).toMatchObject({ notes: true })
+    const content = JSON.stringify({ ...coreLabel, kinds: ['question'], notes: true })
+    const tokens = [...content].map((token) => ({ token, logprob: 0 }))
+    tokens[content.indexOf('"notes":') + '"notes":'.length]!.logprob = Math.log(0.6)
+    fakeVendors({ router: { deepseek: [answer(content, undefined, tokens)] } })
+    expect(await route()).toMatchObject({ notes: false })
+  })
+
   it('gives an empty core label when no model answers', async () => {
     fakeVendors({ router: { deepseek: [down()], gemini: [down()] } })
-    expect(await route()).toEqual({ version: 1, kinds: [], band: 'core', routerBand: null, register: null, danger: false, community: false })
+    expect(await route()).toEqual({ version: 1, kinds: [], band: 'core', routerBand: null, register: null, danger: false, community: false, notes: false })
   })
 })

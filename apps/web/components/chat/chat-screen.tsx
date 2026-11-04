@@ -23,6 +23,7 @@ import { RemoveChip } from '../ui/choice'
 import { Chips } from './chips'
 import { ComparisonTable } from './comparison'
 import { FoundFlow } from './found-dialogs'
+import { NotesList } from './notes'
 import { GoalHeader } from '../goals/goal-list'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
@@ -208,6 +209,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
                 <div className="flex flex-col gap-4">
                   <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>
                   {turn.comparison && <ComparisonTable table={turn.comparison} />}
+                  {turn.notes && <NotesList />}
                 </div>
               )}
             </li>

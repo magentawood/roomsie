@@ -16113,6 +16113,10 @@
                               }
                             ]
                           },
+                          "notes": {
+                            "default": false,
+                            "type": "boolean"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -16125,6 +16129,7 @@
                           "text",
                           "chips",
                           "comparison",
+                          "notes",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -18156,6 +18161,10 @@
                               }
                             ]
                           },
+                          "notes": {
+                            "default": false,
+                            "type": "boolean"
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -18168,6 +18177,7 @@
                           "text",
                           "chips",
                           "comparison",
+                          "notes",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -20899,6 +20909,10 @@
                                   }
                                 ]
                               },
+                              "notes": {
+                                "default": false,
+                                "type": "boolean"
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -20911,6 +20925,7 @@
                               "text",
                               "chips",
                               "comparison",
+                              "notes",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -21252,6 +21267,10 @@
                                   }
                                 ]
                               },
+                              "notes": {
+                                "default": false,
+                                "type": "boolean"
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -21264,6 +21283,7 @@
                               "text",
                               "chips",
                               "comparison",
+                              "notes",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -21489,6 +21509,144 @@
         "responses": {
           "204": {
             "description": "No body."
+          }
+        }
+      }
+    },
+    "/v1/notes": {
+      "get": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "in": "header",
+            "name": "x-visitor-key",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "user-agent",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "key": {
+                            "type": "string",
+                            "maxLength": 60,
+                            "pattern": "^[a-z]+(_[a-z]+)*$"
+                          },
+                          "value": {
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 200
+                          },
+                          "evidence": {
+                            "type": "string",
+                            "maxLength": 2000
+                          },
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "label": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "key",
+                          "value",
+                          "evidence",
+                          "id",
+                          "label"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "notes"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/notes/{id}": {
+      "delete": {
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "in": "header",
+            "name": "x-visitor-key",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "user-agent",
+            "required": false
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No body."
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           }
         }
       }
