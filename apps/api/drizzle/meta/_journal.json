@@ -183,6 +183,13 @@
       "when": 1793681419542,
       "tag": "0025_waitlist",
       "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1793710022084,
+      "tag": "0026_goal_close_and_feedback",
+      "breakpoints": true
     }
   ]
 }

@@ -8,6 +8,7 @@
 - The **chat input** is a text box with a Send button. Enter sends, and Shift+Enter makes a new line. A blank message never sends.
 - The **sign-in wall** is "Sign in to continue", with "Sign in with Google" and the legal line. It is a modal on a desktop and a sheet at the bottom of a phone. The user can close it.
 - The **app shell** is the sidebar on a desktop and the bar at the bottom of a phone. For a guest, the sidebar shows "Sign in with Google" in place of the account card.
+- The **goal header** above the chat has the goal title and "I Found a Place". The sidebar lists the goals, and on a phone the title opens the list ([goals](goals.md)).
 
 ## How it fits our project
 
@@ -21,7 +22,7 @@
 | The shell | `apps/web/components/shell/app-shell.tsx` |
 
 - **Each message goes to the assistant** ([the assistant turn](assistant-turn.md)). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.
-- **A reload opens the same chat.** Local storage keeps the id of the open goal and the visitor key, never a sign-in token. A sign-out removes both, so the next person on the browser cannot open the chat.
+- **A reload opens the same chat.** `/chat?goal=<id>` names the goal. Local storage keeps the id of the last goal and the visitor key, never a sign-in token, so `/chat` opens that goal. A sign-out removes both, so the next person on the browser cannot open the chat.
 - **The shell gates the taps of a guest.** New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.
 - **A link from outside** to a page that needs an account still opens the full-page sign-in of `SignInGate`.
 - **`AppShell fixed`** makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.
@@ -47,3 +48,4 @@
 - T-12: [#189](https://github.com/magentawood/roomsie/pull/189), 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.
 - T-15: the results panel and the split view. [The results panel](results-panel.md) tells how they work.
 - T-48: the onboarding starts each goal, and New Goal and "+" open it ([the onboarding](onboarding.md)).
+- T-50: the goal header, the goal list and a closed goal ([goals](goals.md)).

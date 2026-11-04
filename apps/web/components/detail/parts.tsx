@@ -4,6 +4,8 @@ import { useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
 import { DotsVertical } from '@untitledui/icons'
 import type { Icon } from '../ui/button'
+import type { Card } from '../../lib/share'
+import { ShareDialog } from './share-dialog'
 
 export type Fact = { label: string; value: string; icon: Icon }
 
@@ -74,17 +76,18 @@ export function DetailMenu({ id, items }: { id: string; items: MenuItem[] }) {
   )
 }
 
-/** The share sheet of the phone, or a copied link where the browser has none. A closed share sheet rejects, and that is no error. */
-export function useShare(title: string) {
-  const [copied, setCopied] = useState(false)
-  const share = async () => {
-    const url = window.location.href
-    if (navigator.share) return navigator.share({ title, url }).catch(() => undefined)
-    await navigator.clipboard.writeText(url)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+/** The Share modal of a card (T-50), and the line that tells what it did. */
+export function useShare(title: string, card: Card) {
+  const [open, setOpen] = useState(false)
+  const [status, setStatus] = useState<string | null>(null)
+  const done = (line: string | null) => {
+    setOpen(false)
+    if (!line) return
+    setStatus(line)
+    setTimeout(() => setStatus(null), 3000)
   }
-  return { share, copied }
+  const dialog = open && <ShareDialog title={title} card={card} onDone={done} />
+  return { share: () => setOpen(true), status, dialog }
 }
 
 /** Back, or Saved when the detail opened in a new tab. */

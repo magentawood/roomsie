@@ -103,7 +103,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
   const [messaging, setMessaging] = useState(false)
-  const { share, copied } = useShare(title)
+  const { share, status, dialog: shareDialog } = useShare(title, { kind: 'places', id: listing.id })
   const routerBack = useBack()
   const back = panel?.onBack ?? routerBack
   const askInChat = panel && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={panel.onAskInChat}>Ask in chat</Button>
@@ -143,11 +143,11 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
           <div className="flex gap-2">
             {askInChat}
             {!listing.mine && <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setReporting(true)}>Report</Button>}
-            <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>{copied ? 'Link copied' : 'Share'}</Button>
+            <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
             {!listing.mine && <SaveButton kind="places" id={listing.id} />}
           </div>
         </div>
-        {copied && <p role="status" className="text-sm text-tertiary lg:hidden">Link copied</p>}
+        {status && <p role="status" className="text-sm text-tertiary">{status}</p>}
         {listing.mine && <OwnerBar listing={listing} />}
         <Photos photos={listing.photos} />
         <header className="flex flex-col gap-1 border-b border-secondary pb-5">
@@ -169,6 +169,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
         </div>
       )}
       {reporting && <ReportSheet target={{ listingId: listing.id }} onClose={() => setReporting(false)} />}
+      {shareDialog}
       {messaging && <SayHiSheet target={{ listingId: listing.id, kind: listing.kind }} onClose={() => setMessaging(false)} />}
     </>
   )

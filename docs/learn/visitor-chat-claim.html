@@ -40,7 +40,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>A visitor session</strong> holds the chats of a person with no account. The browser keeps its visitor key, and the database keeps only the hash of the key (<a href="assistant-turn.html">the assistant turn</a>).</li>
 <li><strong>The claim</strong> is <code>POST /v1/goals/claim</code>. It needs the sign-in token and the visitor key, and it answers 204. One transaction moves these to the account:</li>
-<li>each goal of the session, with its chat turns, Form A, its outside places and its waitlist entries;</li>
+<li>each goal of the session, with its chat turns, Form A, its outside places, its waitlist entries and its feedback;</li>
 <li>the Form B notes of the session (<a href="form-b-notes.html">Form B notes</a>);</li>
 <li>the latest own religion and community of the goals, to the profile, as the newer statement (<a href="hidden-filter.html">the hidden filter</a>). With no profile, the values stay on the goal, and a new profile reads them.</li>
 <li><strong>The key ends.</strong> The claim marks the session as claimed by the account, and ends it. The old key then opens no chat, and a new chat with it gets a new visitor session.</li>

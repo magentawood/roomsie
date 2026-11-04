@@ -51,9 +51,16 @@ export async function chatApi<T>(user: User | null, path: string, schema: z.ZodT
   return request(path, requestHeaders(token, readStored(chatStorage.visitorKey), options.body !== undefined), schema, options)
 }
 
+/** For the minutes of a deploy, the old API has no new route, and Fastify answers "Route … not found" (api.md). */
+export function deployRefusal(err: unknown) {
+  const body = err instanceof ApiError && err.status === 404 ? err.body : null
+  const message = body && typeof body === 'object' && 'message' in body ? body.message : null
+  return typeof message === 'string' && /^Route .+ not found$/.test(message) ? 'This starts in a few minutes. Try again soon.' : null
+}
+
 export function errorText(err: unknown) {
   const parsed = err instanceof ApiError ? errorResponse.safeParse(err.body) : null
-  return parsed?.success ? parsed.data.error : 'Something went wrong. Try again.'
+  return deployRefusal(err) ?? (parsed?.success ? parsed.data.error : 'Something went wrong. Try again.')
 }
 
 /** The fields that a 422 lists as missing to go live (T-41), or null for a different error. */

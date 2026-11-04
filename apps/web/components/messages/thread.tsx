@@ -10,6 +10,7 @@ import { message, messageTextLimit, noContent, requestExpiryDays, type Conversat
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { cacheMessage } from '../../lib/live'
+import { cardLinks } from '../../lib/share'
 import { clockTime, profileOf, threadDays } from '../../lib/messages'
 import { queryKeys, useMessages } from '../../lib/queries'
 import { DetailMenu } from '../detail/parts'
@@ -35,11 +36,17 @@ function Header({ other, listingId, name, about, menu }: { other: OtherPerson; l
   )
 }
 
+/** A shared card is a link of roomsie.in, and only such a link is tappable (T-50). */
+function MessageText({ text }: { text: string }) {
+  return cardLinks(text).map((part, i) => (typeof part === 'string' ? part
+    : <Link key={i} href={part.href} className="rounded-sm underline outline-focus-ring focus-visible:outline-2">{part.text}</Link>))
+}
+
 function Bubble({ mine, name, at, children }: { mine: boolean; name: string; at: string; children: ReactNode }) {
   return (
     <div className={`flex max-w-80 flex-col gap-1 sm:max-w-md ${mine ? 'self-end' : 'self-start'}`}>
       <p className="flex justify-between gap-3 text-xs text-tertiary"><span className="font-medium text-secondary">{mine ? 'You' : name}</span>{clockTime(at)}</p>
-      <p className={`rounded-lg border border-secondary px-3.5 py-2.5 text-md whitespace-pre-line text-primary ${mine ? 'rounded-tr-none bg-primary' : 'rounded-tl-none bg-secondary'}`}>{children}</p>
+      <p className={`rounded-lg border border-secondary px-3.5 py-2.5 text-md wrap-anywhere whitespace-pre-line text-primary ${mine ? 'rounded-tr-none bg-primary' : 'rounded-tl-none bg-secondary'}`}>{children}</p>
     </div>
   )
 }
@@ -69,7 +76,7 @@ function Messages({ conversationId, name }: { conversationId: string; name: stri
       {threadDays(messages.data.pages.flatMap((p) => p.messages)).map((day) => (
         <div key={day.label} className="flex flex-col gap-4">
           <DayLine label={day.label} />
-          {day.messages.map((m) => <Bubble key={m.id} mine={m.mine} name={name} at={m.createdAt}>{m.text}</Bubble>)}
+          {day.messages.map((m) => <Bubble key={m.id} mine={m.mine} name={name} at={m.createdAt}><MessageText text={m.text} /></Bubble>)}
         </div>
       ))}
     </>

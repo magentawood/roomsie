@@ -22,7 +22,7 @@
 - The visible rule is one rule for the detail, Saved and each other read. A hidden listing thus leaves Saved too.
 - A part of the page with no data does not show.
 - The cards of Saved open the detail.
-- Share opens the share sheet of the phone. Where a browser has no share sheet, it copies the link.
+- Share opens the Share modal (T-50): it sends the card as a message to the ticked conversations, and "Copy link" ("Share link" on a phone) shares the link anywhere. The link opens the card behind the sign-in.
 - A confirmation dialog has its two buttons side by side, also on a phone.
 
 ## The choice we made

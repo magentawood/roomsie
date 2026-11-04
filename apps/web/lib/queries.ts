@@ -1,12 +1,12 @@
 import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
-  areasResponse, conversationsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
+  areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
   adminInvitesResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type FormA, type SavedKind,
 } from '@roomsie/contract'
-import { api, ApiError } from './api'
+import { api, ApiError, chatApi } from './api'
 import { areaTree } from './areas'
 import { useAuth, useUser } from './auth'
 import { badgeCount } from './messages'
@@ -35,6 +35,7 @@ export const queryKeys = {
   adminFeedback: ['admin', 'feedback'],
   site: ['site'],
   goal: (id: string) => ['goal', id],
+  goals: ['goals'],
   waitlistJoins: (goalId: string) => ['waitlist', goalId],
   results: (formKey: string) => ['results', formKey],
 } as const
@@ -214,4 +215,10 @@ export function useResults(form: FormA | null) {
     staleTime: Infinity,
     gcTime: Infinity,
   })
+}
+
+/** The goals of the person or of the visitor, newest first (T-50). */
+export function useGoals() {
+  const { user, loading } = useAuth()
+  return useQuery({ queryKey: queryKeys.goals, queryFn: () => chatApi(user, '/v1/goals', goalsResponse), enabled: !loading, retry: false })
 }

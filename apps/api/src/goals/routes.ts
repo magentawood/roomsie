@@ -1,15 +1,21 @@
 import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
-import { errorResponse, formA, goalResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody, type AnalyticsEvent, type ChipTap, type Comparison } from '@roomsie/contract'
+import {
+  closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
+  type AnalyticsEvent, type ChipTap, type Comparison,
+} from '@roomsie/contract'
 import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { comparisonOf } from '../compare/compare'
+import { hasGoalFeedback, saveGoalFeedback } from '../feedback/read'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
 import { observationsOf } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
-import { claimSession, createGoal, createVisitorSession, goalOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, turnsOf, visitorSessionOf, type Asker, type UserTurn } from './store'
+import {
+  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, ownerOf, recentTurnsOf, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
+} from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
 const visitorKey = z.string().min(1).max(100)
@@ -41,14 +47,51 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       visitorKey = session.key
     }
     const goal = await createGoal(options.db, asker, start)
-    return reply.code(201).send({ ...goal, form: start?.form ?? formA.parse({}), visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [] })
+    const form = start?.form ?? formA.parse({})
+    return reply.code(201).send({
+      ...goal, form, visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [], status: 'open', title: await titleOf(options.db, form),
+    })
   })
 
   app.get('/goals/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 200: goalResponse, 404: errorResponse } } }, async (req, reply) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
-    return { id: goal.id, form: goal.form, turns: await turnsOf(options.db, goal.id), typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: goal.outsidePlaces }
+    const { id, form, outsidePlaces, status } = goal
+    return {
+      id, form, turns: await turnsOf(options.db, id), typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces, status, title: await titleOf(options.db, form),
+    }
+  })
+
+  app.get('/goals', { preHandler: optionalUser(options), schema: { headers, response: { 200: goalsResponse } } }, async (req) =>
+    ({ goals: await goalsOf(options.db, await askerOf(req, req.headers[visitorKeyHeader])) }))
+
+  // Safe to repeat: only a change of the status logs an event (T-50).
+  app.post('/goals/:id/close', {
+    preHandler: optionalUser(options), schema: { headers, params, body: closeGoalBody, response: { 200: closeGoalResponse, 404: errorResponse } },
+  }, async (req, reply) => {
+    const change = await setGoalStatus(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]), 'closed')
+    if (!change) return reply.code(404).send({ error: 'not found' })
+    if (change === 'changed') v1.analytics.track(req, { name: 'goal_closed', where: req.body.where })
+    return { askFeedback: !(await hasGoalFeedback(options.db, req.params.id)) }
+  })
+
+  app.post('/goals/:id/reopen', { preHandler: optionalUser(options), schema: { headers, params, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
+    const change = await setGoalStatus(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]), 'open')
+    if (!change) return reply.code(404).send({ error: 'not found' })
+    if (change === 'changed') v1.analytics.track(req, { name: 'goal_reopened' })
+    return reply.code(204).send(null)
+  })
+
+  // One feedback for each closed goal, from its owner: the limit that lets a visitor send it (T-50).
+  app.post('/goals/:id/feedback', {
+    preHandler: optionalUser(options), schema: { headers, params, body: goalFeedbackBody, response: { 204: noContent, 404: errorResponse, 409: errorResponse } },
+  }, async (req, reply) => {
+    const goal = await goalOf(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]))
+    if (!goal) return reply.code(404).send({ error: 'not found' })
+    if (goal.status !== 'closed') return reply.code(409).send({ error: 'Close the goal first.' })
+    if (!(await saveGoalFeedback(options.db, goal.id, req.body))) return reply.code(409).send({ error: 'You sent feedback for this goal already.' })
+    return reply.code(204).send(null)
   })
 
   app.post('/goals/:id/turns', {
@@ -58,6 +101,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
+    if (goal.status === 'closed') return reply.code(409).send({ error: 'This goal is closed. Reopen it to keep chatting.' })
     // A comparison needs a sign-in, as a card does (PD6b), and cards that the person can see. Both before any model call (T-49).
     let comparison: Comparison | null = null
     if ('text' in req.body && req.body.compare) {
@@ -87,7 +131,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const after = await capStateOf(options.db, asker, options.limits)
     // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
     if (after.state === 'wall' && before.state !== 'wall') v1.analytics.track(req, { name: 'wall_hit' })
-    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces }
+    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title: await titleOf(options.db, turn.form) }
   })
 
   // Safe to repeat: a second claim moves nothing (T-17).
@@ -102,10 +146,11 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   // Three emails a chat: a script must first pass the chat limits (T-22a).
   app.post('/goals/:id/waitlist', {
     preHandler: optionalUser(options),
-    schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 429: errorResponse } },
+    schema: { headers, params, body: waitlistBody, response: { 204: noContent, 400: errorResponse, 404: errorResponse, 409: errorResponse, 429: errorResponse } },
   }, async (req, reply) => {
     const goal = await goalOf(options.db, req.params.id, await askerOf(req, req.headers[visitorKeyHeader]))
     if (!goal) return reply.code(404).send({ error: 'not found' })
+    if (goal.status === 'closed') return reply.code(409).send({ error: 'This goal is closed. Reopen it to join the waitlist.' })
     const joined = await joinWaitlist(options.db, { ...req.body, goalId: goal.id })
     if (!joined) return reply.code(429).send({ error: 'This chat cannot add more emails to the waitlist.' })
     return reply.code(204).send(null)

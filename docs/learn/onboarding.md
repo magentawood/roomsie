@@ -23,7 +23,7 @@
 | The card | `apps/web/components/profile/completion-card.tsx` |
 | The images of the steps | `apps/web/public/onboarding/` |
 
-- **Each chat starts here.** "Start looking", "Open Roomsie", "New Goal" and the phone "+" open `/start`. `/chat` with no goal on the browser goes to `/start`. A person with a goal on the browser goes from `/start` to the chat.
+- **Each chat starts here.** "Start looking" and "Open Roomsie" open `/start`, and a person with a goal on the browser goes from there to the chat. "New Goal", the phone "+" and "Start a new goal" open `/start?new`, which always starts a new goal (T-50). `/chat` with no goal on the browser goes to `/start`.
 - **A skipped step** leaves its slot empty, and the chat asks it later. With no answer, the line asks the first question, with the place-type chips.
 - **"Looking for my son or daughter"** asks one more choice: Student, Starting their first job or Working. That answer is who is moving (PD15).
 - **The limits stay the same** ([the limits of the chat](chat-limits.md)). The start is a new chat, so the limits of new visitor chats apply. A refusal shows under the sign-in buttons, next to "Sign up with Google".

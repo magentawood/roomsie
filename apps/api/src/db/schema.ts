@@ -16,7 +16,7 @@ import {
 } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 import {
-  amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, foodAnswers, furnishings, genders, guestsRules, insideItems, intents,
+  amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, feedbackRatings, foodAnswers, furnishings, genders, goalStatuses, guestsRules, insideItems, intents,
   listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
   type WaitlistPlace,
 } from '@roomsie/contract'
@@ -44,7 +44,8 @@ export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended'
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn', 'expired'])
 export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
 export const visibilityEnum = pgEnum('visibility', visibilities)
-export const goalStatusEnum = pgEnum('goal_status', ['open', 'found'])
+export const goalStatusEnum = pgEnum('goal_status', goalStatuses)
+export const feedbackRatingEnum = pgEnum('feedback_rating', feedbackRatings)
 export const turnRoleEnum = pgEnum('turn_role', ['user', 'assistant'])
 export const turnInputEnum = pgEnum('turn_input', ['typed', 'chip'])
 export const observationKindEnum = pgEnum('observation_kind', observationKinds)
@@ -659,15 +660,19 @@ export const siteDetails = pgTable('site_details', {
   createdAt: createdAt(),
 }).enableRLS()
 
-/** Feedback from a signed-in person (T-23a, T-50). The feedback module owns it. */
+/** Landing-page feedback of a person (T-23a), or pop-up feedback of a closed goal (T-50). The feedback module owns it. */
 export const feedback = pgTable('feedback', {
   id: id(),
-  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  text: text('text').notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'cascade' }),
+  rating: feedbackRatingEnum('rating'),
+  text: text('text'),
   createdAt: createdAt(),
 }, (t) => ({
   createdAtIdx: index('feedback_created_at_idx').on(t.createdAt),
   userIdx: index('feedback_user_idx').on(t.userId),
+  goalIdx: uniqueIndex('feedback_goal_idx').on(t.goalId),
+  oneOwnerCheck: check('feedback_one_owner_check', sql`num_nonnulls(${t.userId}, ${t.goalId}) = 1`),
 })).enableRLS()
 
 /** The emails that can sign in while the gate is closed (T-33). In lower case. The invites module owns it. */

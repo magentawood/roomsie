@@ -42,6 +42,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>The <strong>chat input</strong> is a text box with a Send button. Enter sends, and Shift+Enter makes a new line. A blank message never sends.</li>
 <li>The <strong>sign-in wall</strong> is "Sign in to continue", with "Sign in with Google" and the legal line. It is a modal on a desktop and a sheet at the bottom of a phone. The user can close it.</li>
 <li>The <strong>app shell</strong> is the sidebar on a desktop and the bar at the bottom of a phone. For a guest, the sidebar shows "Sign in with Google" in place of the account card.</li>
+<li>The <strong>goal header</strong> above the chat has the goal title and "I Found a Place". The sidebar lists the goals, and on a phone the title opens the list (<a href="goals.html">goals</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
@@ -80,7 +81,7 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
-<li><strong>A reload opens the same chat.</strong> Local storage keeps the id of the open goal and the visitor key, never a sign-in token. A sign-out removes both, so the next person on the browser cannot open the chat.</li>
+<li><strong>A reload opens the same chat.</strong> <code>/chat?goal=&lt;id&gt;</code> names the goal. Local storage keeps the id of the last goal and the visitor key, never a sign-in token, so <code>/chat</code> opens that goal. A sign-out removes both, so the next person on the browser cannot open the chat.</li>
 <li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
 <li><strong>A link from outside</strong> to a page that needs an account still opens the full-page sign-in of <code>SignInGate</code>.</li>
 <li><strong><code>AppShell fixed</code></strong> makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.</li>
@@ -106,5 +107,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>T-12: <a href="https://github.com/magentawood/roomsie/pull/189">#189</a>, 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.</li>
 <li>T-15: the results panel and the split view. <a href="results-panel.html">The results panel</a> tells how they work.</li>
 <li>T-48: the onboarding starts each goal, and New Goal and "+" open it (<a href="onboarding.html">the onboarding</a>).</li>
+<li>T-50: the goal header, the goal list and a closed goal (<a href="goals.html">goals</a>).</li>
 </ul>
 </main>

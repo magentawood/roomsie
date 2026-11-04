@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences } from './form-a'
+import { budgetBandId, budgetBandOf, chipSlots, formA, identityPreference, intentLabels, statedPreferences, type FormA } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { comparison, compareRequest } from './compare'
 import { observation } from './form-b'
@@ -25,7 +25,15 @@ export const chatTurn = z.object({
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
 /** Each place outside Mumbai that any turn of the goal named, for the waitlist (PD6c). */
 const outsidePlaces = z.array(waitlistPlace).default([])
-export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces })
+/** A goal closes when the person found a place or dropped the plan, and a reopen opens it again (T-50). */
+export const goalStatuses = ['open', 'closed'] as const
+export const goalStatus = z.enum(goalStatuses)
+export type GoalStatus = z.infer<typeof goalStatus>
+/** The title of a goal with no area yet (T-50). */
+export const newGoalTitle = 'New goal'
+/** The title that the API builds with `goalTitle`. */
+const title = z.string().default(newGoalTitle)
+export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces, status: goalStatus.default('open'), title })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
@@ -56,7 +64,7 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
-export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces })
+export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces, title })
 
 /** The limits of PD9 that refuse a turn or a new visitor chat (T-21). */
 export const limitRefusal = z.object({ error: z.string(), limit: z.enum(['turn_cap', 'too_many_chats', 'too_fast']) })
@@ -209,3 +217,21 @@ export type ComposerInput = z.output<typeof composerInput>
 export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
 /** What the composer gives: the words of the reply, after the output check. */
 export const composerOutput = composerAnswer.strict()
+
+const titleLeads = {
+  room: 'Room hunting in', pg: 'PG hunting in', whole_flat: 'Flat hunting in', flatmates: 'Teaming up to rent around', unclear: 'Looking in',
+} satisfies Record<(typeof intents)[number], string>
+
+/** The title of a goal, from its place type and its first area, as the designs name a goal. */
+export function goalTitle(form: FormA, areaName: (slug: string) => string) {
+  const area = Array.isArray(form.areas.value) ? form.areas.value[0] : undefined
+  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${areaName(area)}` : newGoalTitle
+}
+
+export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), title: z.string(), status: goalStatus, createdAt: z.iso.datetime() })) })
+/** The answer of the pop-up "Where did you find it?". Only the event keeps it. */
+export const closeAnswer = z.enum(['roomsie', 'elsewhere', 'dropped'])
+export type CloseAnswer = z.infer<typeof closeAnswer>
+export const closeGoalBody = z.strictObject({ where: closeAnswer })
+/** `askFeedback`: the goal has no feedback yet, so the web shows the feedback pop-up. */
+export const closeGoalResponse = z.object({ askFeedback: z.boolean() })

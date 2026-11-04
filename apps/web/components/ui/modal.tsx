@@ -10,6 +10,8 @@ const places = {
   bottom: 'inset-x-4 mb-4 max-w-100 rounded-2xl sm:my-auto',
   /** A full-width sheet at the bottom, and a card in the middle from the `lg` width. */
   sheet: 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-120 lg:rounded-2xl',
+  /** The sheet, with the width of the feedback pop-up from the `lg` width (T-50). */
+  wideSheet: 'inset-x-0 mb-0 max-w-none rounded-t-2xl lg:inset-x-4 lg:my-auto lg:max-w-145 lg:rounded-2xl',
   /** A card in the middle at each width. */
   middle: 'inset-x-4 my-auto max-w-100 rounded-2xl',
 }
@@ -38,15 +40,17 @@ export function CloseButton({ onClose }: { onClose: () => void }) {
 const tones = { error: 'text-fg-error', success: 'text-fg-success', neutral: 'text-fg-quaternary' }
 
 /** A success icon is for an offer, as "Verify your ID". `titleId` names the dialog. */
-export function ModalHead({ icon: ModalIcon, iconTone = 'error', titleId, title, children, onClose }: {
-  icon: Icon; iconTone?: keyof typeof tones; titleId: string; title: string; children: ReactNode; onClose: () => void
-}) {
+export function ModalHead({ icon: ModalIcon, art, iconTone = 'error', titleId, title, children, onClose }: {
+  iconTone?: keyof typeof tones; titleId: string; title: string; children: ReactNode; onClose: () => void
+} & ({ icon: Icon; art?: never } | { art: string; icon?: never })) {
   return (
     <>
       <div className="flex items-start justify-between">
-        <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${tones[iconTone]}`}>
-          <ModalIcon size={20} aria-hidden />
-        </span>
+        {ModalIcon ? (
+          <span className={`flex size-10 items-center justify-center rounded-md border border-primary shadow-xs ${tones[iconTone]}`}>
+            <ModalIcon size={20} aria-hidden />
+          </span>
+        ) : <img src={art} alt="" className="size-29" />}
         <CloseButton onClose={onClose} />
       </div>
       <div className="flex flex-col gap-1">
