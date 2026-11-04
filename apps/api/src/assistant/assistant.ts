@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import { assistantParts, budgetBandOf, formA, formASlots, slotOf, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
+import { assistantParts, budgetBandOf, filledSlots, formA, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf, type Catalogue } from './catalogue'
@@ -60,11 +60,7 @@ export async function runTurn({ context, comparison, ...input }: TurnInput & { t
 }
 
 async function composeReply(reply: AssistantReply, turn: TurnState & { language: ReplyLanguage }, context: ComposerContext, deps: AssistantDeps) {
-  const form = Object.fromEntries(formASlots.flatMap((slot) => {
-    const { source, value } = slotOf(turn.form, slot)
-    return source === 'empty' ? [] : [[slot, value]]
-  }))
-  const composed = await composer(turn.goalId, { version: 1, language: turn.language, draft: reply.text, form, ...context, message: turn.text }, deps)
+  const composed = await composer(turn.goalId, { version: 1, language: turn.language, draft: reply.text, form: filledSlots(turn.form), ...context, message: turn.text }, deps)
   return composed ? { ...reply, text: composed.text } : reply
 }
 
