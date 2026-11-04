@@ -14,8 +14,7 @@ export type ObserverDeps = Pick<AssistantDeps, 'req' | 'db' | 'models' | 'settin
 
 /** The probability of the topic and the kind of a note, from the tokens of the answer (PD3b). Null: the tokens do not hold them. */
 function confidenceOf(tokens: Token[], { key, kind }: Pick<Note, 'key' | 'kind'>) {
-  const keyPart = jsonField('key', escapeRegExp(key))
-  const kindP = probabilityOfMatch(tokens, new RegExp(`${keyPart}[^{}]*${jsonString('kind', kind).source}`))
+  const kindP = probabilityOfMatch(tokens, new RegExp(`${jsonField('key', escapeRegExp(key))}[^{}]*${jsonString('kind', kind).source}`))
   const keyP = probabilityOfMatch(tokens, jsonString('key', key))
   return kindP === null || keyP === null ? null : keyP * kindP
 }

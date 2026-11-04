@@ -26,7 +26,8 @@ async function sent(goal: Goal, text: string) {
   expect(res.statusCode).toBe(200)
   return turnResponse.parse(res.json())
 }
-const notesOf = async (key: string) => notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: { [visitorKeyHeader]: key } })).json()).notes
+const notesWith = async (headers: Record<string, string>) => notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers })).json()).notes
+const notesOf = (key: string) => notesWith({ [visitorKeyHeader]: key })
 const deleteNote = (id: string, headers: Record<string, string>) => t.app.inject({ method: 'DELETE', url: `/v1/notes/${id}`, headers })
 
 const earlyStart = { key: 'work_pattern', kind: 'context', value: 'Starts work at 6 am', evidence: 'I start work at 6 am' }
@@ -50,12 +51,23 @@ describe('the observer in the chat', () => {
     ['a turn with no context', routed({ kinds: ['filters'] })],
     ['a sensitive turn', routed({ kinds: ['context', 'filters'], band: 'sensitive' })],
     ['a turn that is only a question', routed({ kinds: ['context', 'question'] })],
+    ['a general question', routed({ kinds: ['context', 'question'], band: 'general' })],
+    ['a consequential question', routed({ kinds: ['context', 'question'], band: 'consequential' })],
     ['an off-topic turn', routed({ kinds: ['context'], band: 'out_of_scope' })],
     ['a turn that states a community preference', routed({ kinds: ['context', 'filters'], community: true })],
   ])('calls no observer for %s', async (_, label) => {
     const requests = fakeVendors({ deepseek: [room()], ...label })
     await sent(await visitorGoal(), 'I start work at 6 am, room chahiye')
     expect(requests.observer).toHaveLength(0)
+  })
+
+  it('calls no observer when the extractor fails, or is not sure of an own religion (PD3c)', async () => {
+    for (const extracted of [[down(), down()], [scored({ intent: 'room', ownReligion: 'jain' }, { jain: 0.3 })]]) {
+      const requests = fakeVendors({ deepseek: extracted, gemini: [down()], ...context(), ...withNote() })
+      const goal = await visitorGoal()
+      await sent(goal, 'room chahiye, I am Jain, I start work at 6 am')
+      expect(requests.observer).toEqual([])
+    }
   })
 
   it('saves no note from a turn that states an own religion or community, and calls no observer (PD3c)', async () => {
@@ -160,24 +172,24 @@ describe('the delete of a note', () => {
     const res = await t.call('asha', 'POST', `/v1/goals/${goalRes.id}/turns`, { text: 'room chahiye, I start work at 6 am' })
     expect(res.statusCode).toBe(200)
     const asha = { authorization: `Bearer ${t.tokens.asha}` }
-    const { notes } = notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: asha })).json())
+    const notes = await notesWith(asha)
     expect(notes).toMatchObject([{ label: 'Work hours and work from home' }])
     expect((await deleteNote(notes[0]!.id, asha)).statusCode).toBe(204)
-    expect(notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: asha })).json()).notes).toEqual([])
+    expect(await notesWith(asha)).toEqual([])
   })
 
   it('saves the note on the account when the visitor signs in before the observer ends', async () => {
     const goal = await visitorGoal()
     let release: (answer: Response) => void = () => {}
     const answer = new Promise<Response>((resolve) => { release = resolve })
-    fakeVendors({ deepseek: [room()], ...context(), observer: { deepseek: [answer as unknown as Response] } })
+    fakeVendors({ deepseek: [room()], ...context(), observer: { deepseek: [answer] } })
     const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { text: 'room chahiye, I start work at 6 am' }, headers: { [visitorKeyHeader]: goal.key } })
     expect(res.statusCode).toBe(200)
     const claim = await t.app.inject({ method: 'POST', url: '/v1/goals/claim', headers: { authorization: `Bearer ${t.tokens.ravi}`, [visitorKeyHeader]: goal.key } })
     expect(claim.statusCode).toBe(204)
     release(scored({ notes: [earlyStart] }))
     await t.app.observerQueue.settled()
-    const ravi = notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: { authorization: `Bearer ${t.tokens.ravi}` } })).json()).notes
+    const ravi = await notesWith({ authorization: `Bearer ${t.tokens.ravi}` })
     expect(ravi).toMatchObject([{ evidence: 'I start work at 6 am' }])
   })
 

@@ -11,9 +11,7 @@ import { todayInIst } from '../src/today'
 import { scriptRequest } from './script-request'
 
 const args = parseArgs({ options: { apply: { type: 'boolean', default: false }, before: { type: 'string' } } }).values
-const before = z.iso.datetime({ offset: true }).transform((at) => new Date(at)).safeParse(args.before)
-if (!before.success) throw new Error('Give --before with the time of the T-36 deploy, as --before=2026-11-04T12:00:00+05:30.')
-const { apply } = args
+const before = new Date(z.iso.datetime({ offset: true, error: 'Give --before with the time of the T-36 deploy, as --before=2026-11-04T12:00:00+05:30.' }).parse(args.before))
 const models = modelSettings.parse(process.env)
 if (!models) throw new Error('Set DEEPSEEK_API_KEY and GEMINI_API_KEY.')
 const db = createDb(z.url().parse(process.env.DATABASE_URL))
@@ -22,7 +20,9 @@ const { log } = Fastify({ logger: { level: 'warn' } })
 const server = { analytics: { track: () => {} }, spend: spendOf({ db, settings: spendSettings.parse(process.env), today: todayInIst, log }) }
 const deps = { req: scriptRequest(server, log), models, settings: assistantSettings.parse(process.env) }
 
-const { turns, estimatedRupees, saved } = await backfillNotes(db, deps, { apply, before: before.data })
-console.log(`${turns} turns to read, about ₹${estimatedRupees.toFixed(2)} at most. ${apply ? `Saved ${saved} notes.` : 'Run again with --apply to write the notes.'}`)
+// The count comes first, so the person sees the turns and the cost before a write.
+const { turns, estimatedRupees } = await backfillNotes(db, deps, { apply: false, before })
+console.log(`${turns} turns to read, about ₹${estimatedRupees.toFixed(2)} at most.${args.apply ? '' : ' Run again with --apply to write the notes.'}`)
+if (args.apply) console.log(`Saved ${(await backfillNotes(db, deps, { apply: true, before })).saved} notes.`)
 await server.spend.settled()
 await db.$client.end()

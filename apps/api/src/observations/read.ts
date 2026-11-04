@@ -31,6 +31,10 @@ export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, k
 export const activeTopics = (db: Db | Tx) =>
   db.select({ key: observationTopics.key, label: observationTopics.label }).from(observationTopics).where(eq(observationTopics.active, true)).orderBy(asc(observationTopics.key))
 
+/** The time of the oldest note. No note existed before T-36, so the backfill reads no turn after it. */
+export const oldestObservationAt = async (db: Db | Tx) =>
+  (await db.select({ at: sql<Date>`min(${observations.createdAt})` }).from(observations))[0]?.at ?? null
+
 export async function turnsWithNotes(db: Db | Tx, turnIds: string[]) {
   return new Set((await db.selectDistinct({ id: observations.turnId }).from(observations).where(inArray(observations.turnId, turnIds))).map(({ id }) => id))
 }

@@ -11,7 +11,7 @@ export const keys = { DEEPSEEK_API_KEY: 'deepseek-key', GEMINI_API_KEY: 'gemini-
 
 /** A reply that never comes: the call ends only when its signal aborts, as at a deadline. */
 export const hang = Symbol('hang')
-type Reply = Response | Error | typeof hang
+type Reply = Response | Promise<Response> | Error | typeof hang
 type Replies = { deepseek?: Reply[]; gemini?: Reply[] }
 type SentRequest = { url: string; body: Record<string, unknown>; authorization: string | null }
 

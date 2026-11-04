@@ -43,22 +43,29 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
 
-/** The owner of a goal now: a claim at sign-in moves a visitor goal to the account (T-17). */
-export async function goalOwnerOf(db: Db, id: string) {
-  const [goal] = await db.select({ userId: goals.userId, sessionId: goals.anonymousSessionId }).from(goals).where(eq(goals.id, id))
-  return goal && ownerOf(goal)
+/**
+ * Saves on the owner of a goal now, with the goal row locked. A claim at sign-in waits for the save and then moves the notes,
+ * or the save waits for the claim and then saves on the account (T-17).
+ */
+export function saveOnGoalOwner(db: Db, id: string, save: (tx: Tx, owner: Owner) => Promise<unknown>) {
+  return db.transaction(async (tx) => {
+    const [goal] = await tx.select({ userId: goals.userId, sessionId: goals.anonymousSessionId }).from(goals).where(eq(goals.id, id)).for('update')
+    if (goal) await save(tx, ownerOf(goal))
+  })
 }
 
 /**
- * The typed turns before `before` that the router labelled `context`, oldest first, with their owner: what the backfill of T-36 reads.
- * `ownValue`: the goal holds an own religion or community (PD3c).
+ * What the backfill of T-36 reads: the typed turns with the kind `context` before `before`, oldest first, of the people who did not chat
+ * from `before` on. Only such a person can have seen or deleted a note.
  */
 export async function contextTurnsOf(db: Db, before: Date) {
+  const later = sql`exists (select 1 from ${chatTurns} later join ${goals} g on g.id = later.goal_id where later.role = 'user' and later.created_at >= ${before.toISOString()}::timestamptz
+    and (g.user_id = ${goals.userId} or g.anonymous_session_id = ${goals.anonymousSessionId}))`
   const rows = await db.select({
     ...turnFields, userId: goals.userId, sessionId: goals.anonymousSessionId, goalId: chatTurns.goalId,
-    ownValue: sql<boolean>`${goals.ownReligion} is not null or ${goals.ownCommunity} is not null`,
+    hasOwnReligionOrCommunity: sql<boolean>`${goals.ownReligion} is not null or ${goals.ownCommunity} is not null`,
   }).from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
-    .where(and(eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'), lt(chatTurns.createdAt, before), sql`${chatTurns.parts}->'kinds' ? 'context'`))
+    .where(and(eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'), lt(chatTurns.createdAt, before), sql`${chatTurns.parts}->'kinds' ? 'context'`, sql`not ${later}`))
     .orderBy(asc(chatTurns.createdAt))
   return rows.map(({ userId, sessionId, ...turn }) => ({ ...turn, owner: ownerOf({ userId, sessionId }) }))
 }

@@ -118,7 +118,7 @@ export type SlotConflict = z.infer<typeof slotConflict>
 
 /** What the extractor gives. */
 export const extractorOutput = z.strictObject({
-  version: z.literal(3).default(3),
+  version: z.literal(4).default(4),
   form: formA,
   changed: z.array(z.enum(formASlots)),
   conflicts: z.array(slotConflict),
@@ -130,6 +130,8 @@ export const extractorOutput = z.strictObject({
   failed: z.boolean(),
   /** What the person stated about themselves in this turn. Null: not in this turn. */
   ownValues,
+  /** The answer named an own religion or community, also an unsure one: the observer then writes no note (PD3c, T-36). */
+  mentionsOwnValue: z.boolean(),
   /** The hidden religion and community preferences that this turn stated (PD3c). */
   hiddenPreferences: statedPreferences,
   /** The places outside Mumbai where the person wants to live, from the place words of the turn (T-22a). */
@@ -199,7 +201,7 @@ export type ReplyLanguage = (typeof replyLanguages)[number]
 
 /** What the reply writer reads: the output of the extractor, the question of the last reply, the label of the turn, and the language of the reply. */
 // The reply never names the own values or the hidden preferences (T-58), so it does not read them. The web shows the outside places (T-22b).
-export const replyInput = extractorOutput.omit({ ownValues: true, hiddenPreferences: true, outsidePlaces: true })
+export const replyInput = extractorOutput.omit({ ownValues: true, mentionsOwnValue: true, hiddenPreferences: true, outsidePlaces: true })
   .extend({ last: assistantParts.nullable(), label: turnLabel, language: z.enum(replyLanguages) })
 
 /** What the reply writer gives: the text of the reply, and what the turn keeps. */

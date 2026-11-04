@@ -46,9 +46,9 @@ function comparisonReply(table: Comparison, { language, label, last }: { languag
   return { version: 1, text, parts: assistantParts.parse({ ...(last ?? { asked: null }), comparison: table }) }
 }
 
-/** Null: no observer (PD7a, PC-17). `statesPd3cValue`: a hidden preference, or an own religion or community (PD3c). */
-export function notePlanOf(label: TurnLabel, statesPd3cValue: boolean, { sensitiveNotes }: Pick<AssistantSettings, 'sensitiveNotes'>) {
-  if (!label.kinds.includes('context') || !usesExtractor(label) || statesPd3cValue || label.notes) return null
+/** Null: no observer (PD7a, PC-17). `religionOrCommunity`: the turn may state a preference or an own value (PD3c). */
+export function notePlanOf(label: TurnLabel, religionOrCommunity: boolean, { sensitiveNotes }: Pick<AssistantSettings, 'sensitiveNotes'>) {
+  if (!label.kinds.includes('context') || !usesExtractor(label) || religionOrCommunity || label.notes) return null
   if (label.band !== 'sensitive') return { visible: true }
   return sensitiveNotes === 'none' ? null : { visible: sensitiveNotes === 'visible' }
 }
@@ -70,7 +70,8 @@ export async function runTurn({ context, comparison, ...input }: TurnInput & { t
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
   const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
-  const notePlan = notePlanOf(label, hidden || !!(turn.ownValues.religion || turn.ownValues.community), deps.settings)
+  // A failed extractor cannot tell an own value, so the observer does not run (PD3c).
+  const notePlan = notePlanOf(label, hidden || turn.mentionsOwnValue || turn.failed, deps.settings)
   const fixed = label.notes && label.band === 'core' ? notesReply(context.formB.length > 0, turn)
     : comparison && comparesOn(label) ? comparisonReply(comparison, turn) : null
   const scripted = fixed ?? await replyWriter(turn, deps)

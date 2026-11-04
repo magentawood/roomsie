@@ -15,7 +15,7 @@ import type { LimitSettings } from './settings'
 import { deleteObservation, notesOf, observationsOf, saveObservation } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
 import {
-  claimSession, createGoal, createVisitorSession, goalOf, goalOwnerOf, goalsOf, lastRegisterOf, lastReplyOf, notesHintDue, ownerOf, recentTurnsOf, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
+  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, notesHintDue, ownerOf, recentTurnsOf, saveOnGoalOwner, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
 } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
@@ -138,9 +138,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (notePlan) {
       v1.observerQueue.later(async () => {
         const { notes } = await observer({ goalId: goal.id, text: turns[0].text, last }, deps)
-        // The owner when the notes are saved: the visitor can sign in while the observer runs.
-        const owner = notes.length ? await goalOwnerOf(options.db, goal.id) : undefined
-        for (const note of notes) if (owner) await saveObservation(options.db, owner, { version: 1, ...note, turn: turns[0].id, visible: notePlan.visible })
+        if (notes.length) await saveOnGoalOwner(options.db, goal.id, async (tx, owner) => {
+          for (const note of notes) await saveObservation(tx, owner, { version: 1, ...note, turn: turns[0].id, visible: notePlan.visible })
+        })
       })
     }
     return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title }
