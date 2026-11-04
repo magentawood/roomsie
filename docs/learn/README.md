@@ -21,6 +21,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Content-Security-Policy](content-security-policy.md): each page of the web tells the browser which scripts, styles and hosts it can use, so a script that an attacker puts into a page does not run and cannot take the sign-in.
 - [Deploys](deploys.md): Vercel publishes the web from `main` and builds a preview for each pull request. A GitHub workflow deploys the API as a Docker image to AWS Lightsail in Mumbai.
 - [Error reporting](error-reporting.md): each error that a user gets, in the browser or in the API, goes to Sentry through one `reportError`, with the place in the code and the `users.id`, and with no message text, token, IP address or phone number.
+- [The eval sentences](eval-set.md): 50 sentences that people type when they look for a place, in English, Hinglish and Marathi, each with the correct values of Form A, so a run of the extractor can be scored slot by slot.
 - [Form A and intent](form-a-and-intent.md): Form A is the set of typed answers that drives matching, and intent is its first answer: the kind of place that a seeker wants.
 - [Form B notes](form-b-notes.md): Form B is the set of notes that the assistant keeps about a person, each with a quote and its message.
 - [Goals: the list, the close and the feedback](goals.md): each search is one goal, with a title that code builds from Form A; the person closes it with "I found a place", reopens it when they want, and can send a face and a few words after the close.

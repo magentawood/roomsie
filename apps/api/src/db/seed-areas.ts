@@ -203,8 +203,12 @@ const rows = (list: AreaSeed[], parentSlug: string | null = null): (typeof areas
     return [{ ...area, aliases, parentSlug, neighbours: NEIGHBOURS[area.slug] ?? [] }, ...rows(children, area.slug)]
   })
 
+const seedRows = rows(AREAS)
+/** Each slug of the seed, for a check that needs no database. */
+export const areaSlugs = seedRows.map(({ slug }) => slug)
+
 export async function seedAreas(db: Db) {
-  await db.insert(areas).values(rows(AREAS).map((row, i) => ({ ...row, sortOrder: i + 1 })))
+  await db.insert(areas).values(seedRows.map((row, i) => ({ ...row, sortOrder: i + 1 })))
     .onConflictDoUpdate({
       target: areas.slug,
       set: { name: sql`excluded.name`, parentSlug: sql`excluded.parent_slug`, aliases: sql`excluded.aliases`, sortOrder: sql`excluded.sort_order`, neighbours: sql`excluded.neighbours` },

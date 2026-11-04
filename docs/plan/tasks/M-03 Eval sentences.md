@@ -31,12 +31,46 @@ Realistic sentences to test the assistant.
 - No task waits on this task.
 
 ## Done when
-- [ ] The set has 50 sentences that people really type, in English, Hinglish and Marathi
-- [ ] Mumbai areas, 20k, bees hazaar, next month end
-- [ ] The set includes 10 sentences that are vague on purpose. T1 labels the correct answers
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] The set has 50 sentences that people really type, in English, Hinglish and Marathi · [#214](https://github.com/magentawood/roomsie/pull/214)
+- [x] Mumbai areas, 20k, bees hazaar, next month end · [#214](https://github.com/magentawood/roomsie/pull/214)
+- [x] The set includes 10 sentences that are vague on purpose. T1 labels the correct answers · [#214](https://github.com/magentawood/roomsie/pull/214)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#214](https://github.com/magentawood/roomsie/pull/214)
 
 ^done
 
 ## Read first
 - [model-selection.md](../../model-selection.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by n3rxv
+
+- **Modules:**
+  - **The eval set (new):** `apps/api/eval/sentences.json`. It has the reference date, and 50 sentences. Each sentence has its text, its language, its script, its level of code-mix, a mark if it is vague on purpose, and the correct values of Form A after the parsers of the code. A slot that the label does not name must stay empty.
+  - **The check (new):** an API test that reads the file. The seed of the areas exports its slugs for the check (review). The interface of the API does not change.
+- **Seams for the tests:**
+  - The test of the eval set: each label is a valid value of Form A, and each area slug is in the seed; the file has 50 sentences, 10 of them vague, in the agreed mix of languages; the required phrases are in the set.
+- **Decisions:**
+  - **The format (the user, 2026-11-04):** a JSON file in `apps/api/eval/`, with a test that checks each label.
+  - **The languages (the user):** about 15 English, 18 Hinglish and 17 Marathi, as [PD7](../../decisions/pd-07-models.md) asks. Marathi in Devanagari and in Latin script, and some Hindi in Devanagari among the Hinglish. Each sentence has its level of code-mix: none, light, medium or heavy, from the share of the words of the other language ([the learn page](../../learn/eval-set.md), review).
+  - **The slots (the user):** about 30 sentences on the place type, the areas, the budget and the move date; about 10 that also state a lifestyle answer, a must-have or who is moving; and the 10 vague sentences. No sentence states a religion or a community.
+  - **The authoring (the user):** Claude writes and labels the 50 sentences in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge.
+  - **The labels:** the values of Form A after the parsers: area slugs of the seed, the budget as its minimum and maximum, the move date as a date from the reference date 2026-11-02, and the values of the enums.
+  - **The vague sentences:** the slot that a sentence is vague about has the label `unclear`. The areas, the budget and the move date have no `unclear` value in Form A, so a sentence that is vague about them leaves them empty, and each vague sentence also has one slot with `unclear` (implement).
+  - **An empty slot:** a slot that a sentence does not name must stay empty, so the eval also finds a value that a model makes up.
+  - **The product calls:** the task uses none. The reference date is data in the file.
+  - **The log of candidates (the user, review):** the rows that became rules move to `docs/standards/_candidates-archive.md`, with their full text, so no PR shortens older rows to fit the word limit.
+- **Out of scope:**
+  - the runner that scores a model on the set (T-27)
+  - the full eval of 200 to 300 sentences of PD7
+  - sentences that state a religion or a community
+
+## Log
+
+- **2026-11-04 · [#214](https://github.com/magentawood/roomsie/pull/214)**
+  - **Change:** `apps/api/eval/sentences.json` has 50 sentences that people type, 15 English, 18 Hinglish and 17 Marathi, 10 of them vague on purpose, each with its language, script, level of code-mix and the correct values of Form A. An API test checks each label against Form A and the seed of the areas. The promoted rows of the rule candidates moved to `_candidates-archive.md`.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD15](../../decisions/pd-15-form-a-contract.md), and the decisions of the spec.
+  - **Ticked:** all four items.
+  - **Not done:** none.
+  - **Learn:** [The eval sentences](../../learn/eval-set.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
