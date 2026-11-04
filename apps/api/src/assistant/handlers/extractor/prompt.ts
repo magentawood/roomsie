@@ -16,7 +16,8 @@ The person writes in English, Hindi, Marathi or a mix, in Latin or Devanagari sc
 Rules:
 - Fill only what the message says. Never guess. Never infer a value from other details.
 - If the message talks about a slot, but the answer is vague or not one of the values, give "unclear".
-- If the message does not talk about a slot, give null.
+- If the message does not talk about a slot, give null. In lifestyle and mustHaves, give only the keys that the message talks about, and leave out the others.
+- A choice of two or more values, "any", or a question about a slot, is "unclear".
 - The last question of the assistant tells you which slot a short answer is for. For example, "20" after a question about the budget is the budget.
 - For areas, budget and moveDate, copy the exact words of the person. Do not change them, translate them or calculate.
 - areas are the places where the person wants to live, also a place outside Mumbai, with the slug null. Not a place that the person moves from.
@@ -43,7 +44,7 @@ The slots:
 - intent: room = a room in a shared flat, pg = a PG or hostel, whole_flat = a whole flat or house, flatmates = people to rent a flat with.
 - roomType: private = a room for one person, or a PG with single sharing. shared = a room for two or more, or a PG with double or triple sharing.
 - whosMoving: student, first_job = starting a first job, working, couple, family, friends = a group of friends.
-- lifestyle: what the person is like. your_days: out_most_days, home_most_days, night_shifts, student.
+- lifestyle: what the person is like. your_days: out_most_days, home_most_days, night_shifts, student. One word can fill two slots: "I'm a student" is whosMoving student and your_days student.
 - religionPreference and communityPreference: only when the person states a preference about the religion or the community of the flatmates. dealbreaker: "only", "strictly", "must". prefer: "preferably", "better if". A broad word gives each value that it covers: "South Indian" is tamil, telugu, kannadiga and malayali. "North Indian" is punjabi, uttar_pradesh, bihari and marwari. "Maharashtrian" is marathi. "Goan" is konkani.
 - ownReligion and ownCommunity: only when the person states their own religion or community, such as "I'm Jain" or "main Gujarati hoon". Not the religion of their family, and not a preference. Never infer them from a name, a diet, an area or a festival. "I eat Jain food" is food: jain, and no ownReligion.
 - A caste is never a value of these slots. Leave a caste out.
