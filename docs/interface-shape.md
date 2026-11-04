@@ -73,6 +73,8 @@ budget. This takes approximately three turns.
 | Area | The area groups of [PD2](decisions/pd-02-launch-market.md). The user can select more than one area. |
 | Budget | Bands, not a slider: under 10k, under 15k, under 25k, under 35k, above 35k |
 
+The other closed questions have chips too: room type, who is moving, the eight lifestyle questions and the weight of a must-have (T-59).
+
 **Chips are the floor, not the ceiling.**
 
 **Where the chips sit.** In the thread, under the newest question. They go away when the next reply comes. A new goal shows the place types under the input. A tap calls no model ([how the chips work](learn/chat-chips.md)).

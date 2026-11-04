@@ -12,7 +12,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [The assistant turn](assistant-turn.md): one entry point fills Form A from each typed message, and writes a reply with the next question.
 - [Backups](backups.md): each night, a GitHub workflow dumps the two databases, checks each restore, and keeps fourteen encrypted dumps in R2.
 - [Building the API](building-the-api.md): `tsx` runs the TypeScript API in development, and `tsup` builds our code into one JavaScript file. The Docker image installs the libraries next to it.
-- [The chat chips](chat-chips.md): the first three questions of the chat (place type, areas and budget) show tap buttons under the question, and a tap writes the answer into Form A with no model call.
+- [The chat chips](chat-chips.md): each closed question of the chat (place type, areas, budget, room type, who is moving, the eight lifestyle questions and the weight of a must-have) shows tap buttons under the question, and a tap writes the answer into Form A with no model call.
 - [The limits of the chat](chat-limits.md): a visitor gets five typed messages before the sign-in wall, the API stops a device or a network that starts too many chats and a person who types too fast, and the team gets an alert when the model spend of the day gets near its amount.
 - [The chat screen and the sign-in wall](chat-screen.md): `/chat` is the chat of the goal that the onboarding started. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
 - [CI checks](ci-checks.md): GitHub checks each pull request automatically, and `main` accepts a merge only when the checks pass and a teammate approves.
