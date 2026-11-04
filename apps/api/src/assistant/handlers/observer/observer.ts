@@ -1,4 +1,4 @@
-import { observerAnswer, observerInput, type Observation } from '@roomsie/contract'
+import { observerAnswer, observerInput, observerOutput, type ObserverOutput } from '@roomsie/contract'
 import { nullIfUnavailable, type Token } from '../../../models/models'
 import { activeTopics } from '../../../observations/read'
 import type { AssistantDeps, TurnState } from '../../assistant'
@@ -7,7 +7,7 @@ import { probabilityOfMatch } from '../gate'
 import { turnMessage } from '../turn-message'
 import { observerPrompt } from './prompt'
 
-export type Note = Pick<Observation, 'key' | 'kind' | 'value' | 'evidence' | 'confidence'>
+type Note = ObserverOutput['notes'][number]
 
 /** The probability of the topic and the kind of a note, from the tokens of the answer (PD3b). Null: the tokens do not hold them. */
 function confidenceOf(tokens: Token[], { key, kind }: Pick<Note, 'key' | 'kind'>) {
@@ -22,7 +22,11 @@ function confidenceOf(tokens: Token[], { key, kind }: Pick<Note, 'key' | 'kind'>
  * The Form B notes of one typed turn (PD7a). A note needs a topic of the catalogue and a quote that the turn holds word for word.
  * `rejected`: the notes with a quote that the turn does not hold.
  */
-export async function observer(turn: Pick<TurnState, 'goalId' | 'text' | 'last'>, { req, db, models, settings }: Pick<AssistantDeps, 'req' | 'db' | 'models' | 'settings'>) {
+export async function observer(turn: Pick<TurnState, 'goalId' | 'text' | 'last'>, deps: Pick<AssistantDeps, 'req' | 'db' | 'models' | 'settings'>) {
+  return observerOutput.parse(await observe(turn, deps))
+}
+
+async function observe(turn: Pick<TurnState, 'goalId' | 'text' | 'last'>, { req, db, models, settings }: Pick<AssistantDeps, 'req' | 'db' | 'models' | 'settings'>) {
   if (!models) return { notes: [], rejected: 0 }
   const topics = await activeTopics(db)
   const input = observerInput.parse({ text: turn.text, lastQuestion: turn.last?.question ?? null })

@@ -37,7 +37,7 @@ describe('the router', () => {
   })
 
   it('keeps a flag, or the question kind, only when it passes the threshold', async () => {
-    const fields = { ...coreLabel, kinds: ['question', 'filters'], danger: true, community: true }
+    const fields = { ...coreLabel, kinds: ['question', 'filters'], danger: true, community: true, notes: true }
     /** `fields` with the probability 0.6 on the character after `before`. */
     const unsureAfter = (before: string) => {
       const content = JSON.stringify(fields)
@@ -51,21 +51,13 @@ describe('the router', () => {
     expect(await route()).toMatchObject({ kinds: ['filters'], community: true })
     fakeVendors({ router: { deepseek: [unsureAfter('"danger":')] } })
     expect(await route()).toMatchObject({ danger: false, community: true })
+    fakeVendors({ router: { deepseek: [unsureAfter('"notes":')] } })
+    expect(await route()).toMatchObject({ notes: false, danger: true })
   })
 
   it('keeps the flags of Gemini, which gives no probabilities', async () => {
     fakeVendors({ router: { deepseek: [down()], gemini: [answer(JSON.stringify({ ...coreLabel, band: 'sensitive', danger: true, community: true }))] } })
     expect(await route()).toMatchObject({ band: 'sensitive', danger: true, community: true })
-  })
-
-  it('keeps the notes flag only when it passes the threshold (T-36)', async () => {
-    fakeVendors({ router: { deepseek: [scored({ ...coreLabel, kinds: ['question'], notes: true })] } })
-    expect(await route()).toMatchObject({ notes: true })
-    const content = JSON.stringify({ ...coreLabel, kinds: ['question'], notes: true })
-    const tokens = [...content].map((token) => ({ token, logprob: 0 }))
-    tokens[content.indexOf('"notes":') + '"notes":'.length]!.logprob = Math.log(0.6)
-    fakeVendors({ router: { deepseek: [answer(content, undefined, tokens)] } })
-    expect(await route()).toMatchObject({ notes: false })
   })
 
   it('gives an empty core label when no model answers', async () => {

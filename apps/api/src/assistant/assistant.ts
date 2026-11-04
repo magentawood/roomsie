@@ -30,7 +30,6 @@ const onlyQuestion = ({ kinds }: TurnLabel) => kinds.includes('question') && !ki
 /** The extractor fills Form A, unless the turn is not about the search, or only a question (PD10, T-34). */
 const usesExtractor = (label: TurnLabel) => aboutTheSearch(label) && !onlyQuestion(label)
 
-/** `notesHint`: the owner has a note, and no reply had the notes hint yet (T-36). */
 export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegister'> & { notesHint: boolean }
 /** What only the composer reads: the last two turns and the Form B notes of the person (PD7a). */
 export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
@@ -51,7 +50,7 @@ function comparisonReply(table: Comparison, { language, label, last }: { languag
  * The observer reads a turn with context that the extractor may read, after the reply (PD7a, T-36). Never a turn that states
  * a hidden preference (PD3c). A sensitive turn obeys the setting of PC-17. Null: no observer.
  */
-export function observeOf(label: TurnLabel, hidden: boolean, { sensitiveNotes }: Pick<AssistantSettings, 'sensitiveNotes'>) {
+export function noteVisibilityOf(label: TurnLabel, hidden: boolean, { sensitiveNotes }: Pick<AssistantSettings, 'sensitiveNotes'>) {
   if (!label.kinds.includes('context') || !usesExtractor(label) || hidden || label.notes) return null
   if (label.band !== 'sensitive') return { visible: true }
   return sensitiveNotes === 'none' ? null : { visible: sensitiveNotes === 'visible' }
@@ -59,11 +58,11 @@ export function observeOf(label: TurnLabel, hidden: boolean, { sensitiveNotes }:
 
 /** "What do you know about me?": a scripted line. The web shows the notes, so the turn keeps no copy. The open question stays open (T-36). */
 function notesReply(hasNotes: boolean, { language, last }: { language: ReplyLanguage; last: AssistantParts | null }): AssistantReply {
-  const parts = assistantParts.parse({ ...(last ?? { asked: null }), comparison: null, notes: hasNotes, notesHint: true })
+  const parts = assistantParts.parse({ ...(last ?? { asked: null }), comparison: null, notes: hasNotes, notesHint: hasNotes })
   return { version: 1, text: lineOf(hasNotes ? 'notesList' : 'notesEmpty', language), parts }
 }
 
-/** The hint ends the reply after the first note of the owner, one time (T-36). */
+/** The hint ends the reply after the first note of the owner, one time (T-36). A sensitive reply asks nothing more (assistant-risks.md 4.4). */
 const withNotesHint = (reply: AssistantReply, notesHint: boolean, language: ReplyLanguage): AssistantReply =>
   (notesHint && !reply.parts.notesHint ? { ...reply, text: `${reply.text} ${lineOf('notesHint', language)}`, parts: { ...reply.parts, notesHint: true } } : reply)
 
@@ -74,13 +73,13 @@ export async function runTurn({ context, comparison, ...input }: TurnInput & { t
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
   const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
-  const observe = observeOf(label, hidden, deps.settings)
+  const observe = noteVisibilityOf(label, hidden, deps.settings)
   const fixed = label.notes && label.band === 'core' ? notesReply(context.formB.length > 0, turn)
     : comparison && comparesOn(label) ? comparisonReply(comparison, turn) : null
   const scripted = fixed ?? await replyWriter(turn, deps)
   const reply = !fixed && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
   return {
-    form: turn.form, reply: withNotesHint(reply, input.notesHint, turn.language), conflicts: turn.conflicts, label,
+    form: turn.form, reply: withNotesHint(reply, input.notesHint && label.band !== 'sensitive' && !label.danger, turn.language), conflicts: turn.conflicts, label,
     ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces, observe,
   }
 }

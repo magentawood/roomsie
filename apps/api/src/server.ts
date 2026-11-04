@@ -48,7 +48,7 @@ import { verificationRoutes } from './verification/routes'
 declare module 'fastify' {
   interface FastifyInstance {
     /** The observer of the chat runs after the reply (T-36). */
-    afterReply: AfterReply
+    observerQueue: AfterReply
     alerts: Alerts
     analytics: Analytics
     spend: Spend
@@ -75,9 +75,9 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   const alerts = alertsOf({ db: options.db, mailer: options.mailer ?? noMailer, firebaseAdmin: options.messaging.firebaseAdmin, webOrigin: options.webOrigin, log: app.log })
   app.decorate('alerts', alerts)
   app.addHook('onClose', () => alerts.settled())
-  const afterReply = afterReplyOf('observer', app.log)
-  app.decorate('afterReply', afterReply)
-  app.addHook('onClose', () => afterReply.settled())
+  const observerQueue = afterReplyOf('observer', app.log)
+  app.decorate('observerQueue', observerQueue)
+  app.addHook('onClose', () => observerQueue.settled())
   const analytics = analyticsOf(options.analyticsDb, app.log)
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())

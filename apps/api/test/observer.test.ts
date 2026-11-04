@@ -39,7 +39,7 @@ describe('the observer', () => {
 
   it('rejects a note whose quote is not word for word in the turn, or is part of a longer word', async () => {
     fakeVendors({ observer: { deepseek: [scored({ notes: [partner, { ...partner, key: 'work_pattern', evidence: 'work nights' }] })] } })
-    expect(await observeAll('my partner lives with me, I work night shifts')).toEqual({ notes: [], rejected: 2 })
+    expect(await observeAll('my partner lives with me, I work night shifts')).toEqual({ version: 1, notes: [], rejected: 2 })
     fakeVendors({ observer: { deepseek: [scored({ notes: [{ ...partner, evidence: 'partner basically' }] })] } })
     expect(await observe('my copartner basically lives with me')).toEqual([])
   })

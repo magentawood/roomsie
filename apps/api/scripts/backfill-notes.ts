@@ -1,7 +1,4 @@
-/**
- * The one-off backfill of Form B (T-36): `pnpm backfill:notes` counts the turns and the cost, and `--apply` writes the notes.
- * It needs DATABASE_URL and the two model keys.
- */
+/** The one-off backfill of Form B (T-36): `pnpm backfill:notes` counts the turns and the cost, and `--apply` writes the notes. */
 import Fastify, { type FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { analyticsOf } from '../src/analytics/track'

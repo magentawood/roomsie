@@ -22,7 +22,7 @@ const noObserver = { observer: { deepseek: [down()], gemini: [down()] } }
 async function oldTurn(key: string, goalId: string, text: string, kinds = ['filters', 'context']) {
   fakeVendors({ deepseek: [room()], ...routed({ kinds }), ...noObserver })
   const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goalId}/turns`, payload: { text }, headers: { [visitorKeyHeader]: key } })
-  await t.app.afterReply.settled()
+  await t.app.observerQueue.settled()
   return turnResponse.parse(res.json()).turns[0]
 }
 const note = (value: string, evidence: string) => ({ key: 'work_pattern', kind: 'context', value, evidence })
@@ -32,7 +32,7 @@ describe('the backfill of Form B (T-36)', () => {
   it('counts the turns with context and writes nothing without --apply, then writes their notes oldest first, one time', async () => {
     const goal = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
     const key = goal.visitorKey!
-    const first = await oldTurn(key, goal.id, 'room chahiye, I work night shifts')
+    await oldTurn(key, goal.id, 'room chahiye, I work night shifts')
     await oldTurn(key, goal.id, 'room in Bandra', ['filters'])
     const second = await oldTurn(key, goal.id, 'room chahiye, now I work from home')
 
@@ -47,7 +47,6 @@ describe('the backfill of Form B (T-36)', () => {
     // The newer turn wins the topic.
     const [kept] = await t.db.select().from(observations).where(eq(observations.key, 'work_pattern'))
     expect(kept).toMatchObject({ value: 'Works from home', turnId: second.id })
-    expect(first.id).not.toBe(second.id)
 
     // A second run reads only the turn whose note the newer turn replaced, and keeps the newer note.
     const again = fakeVendors({ observer: { deepseek: [scored({ notes: [note('Works night shifts', 'I work night shifts')] })] } })

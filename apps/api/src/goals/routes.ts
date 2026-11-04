@@ -129,7 +129,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
     const { observe } = turn
     if (observe) {
-      v1.afterReply.later(async () => {
+      v1.observerQueue.later(async () => {
         const { notes } = await observer({ goalId: goal.id, text: turns[0].text, last }, deps)
         for (const note of notes) await saveObservation(options.db, ownerOf(asker), { version: 1, ...note, turn: turns[0].id, visible: observe.visible })
       })

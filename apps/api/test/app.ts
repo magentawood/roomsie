@@ -103,7 +103,7 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   // The alerts and the observer run after the reply, so a call also waits for them.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
-    await Promise.all([app.alerts.settled(), app.afterReply.settled()])
+    await Promise.all([app.alerts.settled(), app.observerQueue.settled()])
     return res
   }
   const ids = {} as Record<U, string>

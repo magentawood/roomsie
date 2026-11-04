@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, lt, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import { catalogueOf, type Catalogue } from '../assistant/catalogue'
@@ -42,6 +42,17 @@ export const ownedBy = ({ userId, sessionId }: Asker): SQL => or(
 
 /** A signed-in person owns a goal or a Form B note, else the visitor session. */
 export const ownerOf = (asker: Asker): Owner => (asker.userId ? { userId: asker.userId } : { anonymousSessionId: asker.sessionId! })
+
+/** The typed turns that the router labelled `context`, oldest first, with their owner: what the backfill of T-36 reads. */
+export async function contextTurnsOf(db: Db) {
+  const rows = await db.select({ ...turnFields, userId: goals.userId, sessionId: goals.anonymousSessionId, goalId: chatTurns.goalId })
+    .from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
+    .where(and(eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'), sql`${chatTurns.parts}->'kinds' ? 'context'`)).orderBy(asc(chatTurns.createdAt))
+  return rows.map(({ userId, sessionId, ...turn }) => ({ ...turn, owner: ownerOf({ userId, sessionId }) }))
+}
+
+export const turnTimeOf = async (db: Db, id: string) =>
+  (await db.select({ createdAt: chatTurns.createdAt }).from(chatTurns).where(eq(chatTurns.id, id)))[0]?.createdAt
 
 /** The owner has a Form B note, and no reply to the asker had the notes hint yet (T-36). */
 export async function notesHintDue(db: Db, asker: Asker) {
@@ -87,7 +98,7 @@ export async function setGoalStatus(db: Db, id: string, asker: Asker, status: Go
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
-/** The chips and the comparison of an assistant turn go out. The label of a typed turn never does. */
+/** The chips, the comparison and the notes flag of an assistant turn go out. The label of a typed turn never does. */
 const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
   const { chips, comparison, notes } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false }
   return { ...turn, chips, comparison, notes, createdAt: turn.createdAt.toISOString() }
@@ -98,10 +109,10 @@ export async function turnsOf(db: Db, goalId: string) {
   return rows.map(toChatTurn)
 }
 
-/** The parts of the last reply of the assistant, with its text as the question when the parts have none. */
-export async function lastReplyOf(db: Db, goalId: string): Promise<AssistantParts | null> {
+/** The parts of the last reply of the assistant, or of the last reply before a time, with its text as the question when the parts have none. */
+export async function lastReplyOf(db: Db, goalId: string, before?: Date): Promise<AssistantParts | null> {
   const [last] = await db.select({ text: chatTurns.text, parts: chatTurns.parts }).from(chatTurns)
-    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'))).orderBy(desc(chatTurns.createdAt)).limit(1)
+    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'assistant'), before && lt(chatTurns.createdAt, before))).orderBy(desc(chatTurns.createdAt)).limit(1)
   if (!last) return null
   // Only saveTurn and createGoal write assistant turns, each with parts (T-12). forgetInComparisons rewrites a comparison in them (T-49).
   const parts = assistantParts.parse(last.parts)

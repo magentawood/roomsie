@@ -1,4 +1,4 @@
-import { and, asc, eq, sql, type SQL } from 'drizzle-orm'
+import { and, asc, eq, inArray, sql, type SQL } from 'drizzle-orm'
 import { alias } from 'drizzle-orm/pg-core'
 import type { Observation } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
@@ -12,7 +12,7 @@ const ownerColumn = (owner: Owner) => 'userId' in owner
   ? { column: observations.userId, id: owner.userId }
   : { column: observations.anonymousSessionId, id: owner.anonymousSessionId }
 
-const ownedBy = (owner: Owner) => { const { column, id } = ownerColumn(owner); return eq(column, id) }
+export const ownedBy = (owner: Owner) => { const { column, id } = ownerColumn(owner); return eq(column, id) }
 
 /** Saves a Form B note. A newer note on a topic replaces the older note. False: the topic is not in the catalogue, or is retired. */
 export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, kind, evidence, turn, confidence, visible }: Observation) {
@@ -30,6 +30,16 @@ export async function saveObservation(db: Db | Tx, owner: Owner, { key, value, k
 /** The topics that a new note can have. A fixed order keeps the prompt of the observer the same, for the cache of the vendor. */
 export const activeTopics = (db: Db | Tx) =>
   db.select({ key: observationTopics.key, label: observationTopics.label }).from(observationTopics).where(eq(observationTopics.active, true)).orderBy(asc(observationTopics.key))
+
+/** The ids of these turns that have a note. */
+export async function turnsWithNotes(db: Db | Tx, turnIds: string[]) {
+  if (!turnIds.length) return new Set<string>()
+  return new Set((await db.selectDistinct({ id: observations.turnId }).from(observations).where(inArray(observations.turnId, turnIds))).map(({ id }) => id))
+}
+
+/** The turn of the note of the owner on a topic, if any. */
+export const noteTurnOf = async (db: Db | Tx, owner: Owner, key: string) =>
+  (await db.select({ turn: observations.turnId }).from(observations).where(and(ownedBy(owner), eq(observations.key, key))))[0]?.turn
 
 export const hasObservations = async (db: Db | Tx, owner: Owner) =>
   (await db.select({ id: observations.id }).from(observations).where(ownedBy(owner)).limit(1)).length > 0

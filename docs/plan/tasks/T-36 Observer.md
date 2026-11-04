@@ -48,7 +48,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
 
 ## Spec
 
-**Approved:** 2026-11-04, by Pulkit.
+**Approved:** 2026-11-04, by Pulkit. The changes in review: approved on 2026-11-04, by Pulkit.
 
 - **Modules:**
   - **`packages/contract`:** the observer gets an input schema and an answer schema, with a version. The router answer gets one new flag: the person asks what the assistant noted. The assistant parts get two new flags: the reply shows the notes, and the reply has the notes hint. The observation schema does not change.
@@ -67,12 +67,13 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The goals route, with the fake vendors: a typed turn with context gives a saved note on that turn. A turn with no context, a sensitive turn or a consulting question gives no note.
   - The observer handler, with the fake vendors: the quote check, the confidence, a topic that is not in the catalogue, and the backup model.
   - The observations route: the list, and the delete for a user and for a visitor. A delete of a note of a different owner fails.
-  - The web chat: the notes cards, the confirm step and the delete.
+  - The web chat: no screen test, because the web has no screen tests. A click-through in the app checks the notes cards, the confirm step and the delete. (the user, in review)
   - The one-off script: it writes each note one time, oldest turn first. Without `--apply`, it writes nothing.
   - The eval file: a test checks its shape and its topics, as the test of M-03 does.
 - **Decisions:**
   - The observer runs only when the router gives the kind `context`, after the reply goes out. It adds no wait to the reply. If it fails, the person sees nothing, and the error goes to the error report. (why: PD7a, this task)
   - The observer obeys the rule of the extractor: no note for a turn that is out of scope, adversarial, or only a question. (why: PD7a, PD10)
+  - A turn that states a community or religion preference gives no note on any topic. (the user, in review, why: PD3c)
   - The quote check accepts a quote when the turn holds the same words in the same order. It ignores capitals, the white space and the Unicode form. The note keeps the quote as the turn has it. (why: PD7a)
   - The topics are the six topics of T-35 and four new topics: languages, hobbies and routines, commute and workplace, and chores and bills.
   - The observer never writes a note about religion, community, caste, health or sexuality. (why: PD3c)
@@ -84,7 +85,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The notes reply holds no copy of the notes. The web chat gets the current notes from the API. Thus, the words of a deleted note do not stay in the chat.
   - Each note card shows the topic, the value and the quote. The delete button asks "Delete this note?" first. The delete is a direct database action. (why: PD7a)
   - To correct a note, the person types the correction. The new note replaces the older note on the same topic. (why: PD7a, T-35)
-  - The first reply after the first note of an owner ends with the notes hint, one time for each owner.
+  - The first reply after the first note of an owner ends with the notes hint, one time for each owner. A sensitive reply or a danger reply gets no hint, so the hint goes on the next reply. (why: assistant-risks.md section 4.4)
   - Visitors get notes, and see and delete them, as users do. At sign-in, the notes move to the account. (why: T-35)
   - A person runs the one-off script by hand, one time. First it shows the number of turns and the estimated cost. It writes only with `--apply`. It reads only the typed turns with the kind `context`, oldest first. It skips a turn that already has a note.
   - The eval runs the observer on the 50 sentences and on about 24 new personal sentences in English, Hinglish and Marathi. A report in `docs/research/` records the rejection rate and the fraction of notes on the correct topic.

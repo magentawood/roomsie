@@ -22,7 +22,7 @@ async function visitorGoal(): Promise<Goal> {
 /** A typed turn. It waits for the observer, which runs after the reply. */
 async function sent(goal: Goal, text: string) {
   const res = await t.app.inject({ method: 'POST', url: `/v1/goals/${goal.id}/turns`, payload: { text }, headers: { [visitorKeyHeader]: goal.key } })
-  await t.app.afterReply.settled()
+  await t.app.observerQueue.settled()
   expect(res.statusCode).toBe(200)
   return turnResponse.parse(res.json())
 }
@@ -98,6 +98,26 @@ describe('"What do you know about me?"', () => {
     expect((await sent(goal, 'hmm')).turns[1].text).toMatch(new RegExp(`${hint.replace(/[?.]/g, '\\$&')}$`))
     fakeVendors({ deepseek: [scored({})] })
     expect((await sent(goal, 'ok')).turns[1].text).not.toContain(hint)
+  })
+
+  it('gives the hint after the first note, also to a person who asked before any note', async () => {
+    fakeVendors({ deepseek: [scored({})], ...asksNotes() })
+    const goal = await visitorGoal()
+    await sent(goal, 'what do you know about me?')
+    fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
+    await sent(goal, 'room chahiye, I work night shifts')
+    fakeVendors({ deepseek: [scored({})] })
+    expect((await sent(goal, 'hmm')).turns[1].text).toContain('I keep short notes from what you tell me.')
+  })
+
+  it('keeps the hint off a sensitive reply, and gives it on the next reply', async () => {
+    fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
+    const goal = await visitorGoal()
+    await sent(goal, 'room chahiye, I work night shifts')
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['context'], band: 'sensitive' }) })
+    expect((await sent(goal, 'I lost my job today')).turns[1].text).not.toContain('I keep short notes')
+    fakeVendors({ deepseek: [scored({})] })
+    expect((await sent(goal, 'ok')).turns[1].text).toContain('I keep short notes')
   })
 })
 
