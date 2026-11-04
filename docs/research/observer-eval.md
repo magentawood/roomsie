@@ -27,8 +27,13 @@ The review added one more rule: night shifts and student days are answers of the
 
 ## The misses
 
-- **o02,** "I work night shifts at a call centre, so I sleep till 2pm": a work note that holds the call centre and the night shifts. The label expects a commute note for the call centre only.
+- **o02,** "I work night shifts at a call centre, so I sleep till 2pm": a work note, "Works night shifts at a call centre, sleeps till 2pm". It breaks the rule of the review, because night shifts are an answer of Form A. The label expects a commute note for the call centre only.
 - **o06,** "I play the guitar in the evenings, I hope that's not a problem": the hobby note, and also a noise note about the guitar. The second note is not in the label.
+
+## The limits of the set
+
+- The personal set has 10 English, 8 Hinglish and 8 Marathi sentences, with no level of code-mix. The rule of `testing.md` asks for a heavy weight of Marathi and code-mix at 25%, 50% and 75% for the eval set of PD7.
+- No count measures the rule of the chips. A miss shows only in the notes, as o02.
 
 ## Findings for other tasks
 

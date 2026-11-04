@@ -92,6 +92,9 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The eval runs the observer on the 50 sentences and on about 24 new personal sentences in English, Hinglish and Marathi. A report in `docs/research/` records the rejection rate and the fraction of notes on the correct topic.
   - F-11: the founder confirmed each default of this list on 2026-11-04.
   - Night shifts and student days are answers of Form A, so they are not notes. (n3rxv, in review)
+  - The backfill reads only the turns before a time that the person who runs it gives, the time of the deploy, so a deleted note does not come back. (n3rxv, in review)
+  - A turn that states the own religion or community of the person gives no note, as a turn with a preference. (n3rxv, in review, why: PD3c)
+  - The delete pop-up says "“{value}” leaves your notes. Your messages stay in the chat." (n3rxv, in review)
 - **Out of scope:**
   - A notes screen on the profile, and an edit button on a note. (why: PD7a)
   - Notes from a chip tap.
@@ -105,6 +108,6 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - **Change:** the observer writes Form B notes from the typed turns with context, after the reply. A quote check drops each note whose words the turn does not hold. "What do you know about me?" shows the notes as cards, with a delete. The PR also adds a one-off backfill, four topics and the observer eval.
   - **Why:** [PD7a](../../decisions/pd-07a-agent-architecture.md), and the sensitive call of [PD10](../../decisions/pd-10-scope-bands.md).
   - **Ticked:** all six items.
-  - **Not done:** none. The backfill runs by hand, one time, after the deploy.
+  - **Not done:** none. The backfill runs by hand, one time, after the deploy, with the time of the deploy in `--before`.
   - **Learn:** [Form B notes](../../learn/form-b-notes.md), [The eval sentences](../../learn/eval-set.md), [The router](../../learn/router.md)
   - **Journal:** [2026-11](../../journal/2026-11.md)

@@ -56,7 +56,7 @@ export function NotesList() {
               <Button variant="destructive" size="lg" className="flex-1" disabled={remove.isPending} onClick={() => remove.mutate(confirming.id)}>Delete</Button>
             </>
           )}>
-          <p>“{confirming.value}” goes, with the words it came from. The assistant does not use it again.</p>
+          <p>“{confirming.value}” leaves your notes. Your messages stay in the chat.</p>
           {remove.isError && <p role="alert" className="mt-2 text-error-primary">{errorText(remove.error)}</p>}
         </Modal>
       )}

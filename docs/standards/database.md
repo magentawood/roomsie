@@ -40,6 +40,6 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 - Mask phone numbers and WhatsApp links in each public free-text field that a user writes, and in each request note, before the save. Use `maskContacts`. The messages of an accepted chat are not masked in v0. Why: a number in a card, a listing or a request can leak. ([PD17](../decisions/pd-17-connect-and-contact.md))
 - Delete a photo in R2 before its database row. If R2 fails, change nothing. Why: a deleted listing must not leave faces in storage. ([PD19](../decisions/pd-19-retention.md))
-- Store each typed message. Why: the observer learns from all messages, and a user keeps the chat after sign-up. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md))
+- Store each typed message. Why: the observer and its backfill read the messages, and a user keeps the chat after sign-up. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md))
 - For verification, store only the result. The result is: verified or not, the method, the timestamp, the returned name, and at most the last 4 digits. Why: we store the result, never the document. ([PD8](../decisions/pd-08-verification.md))
 - Never store the document image or the full Aadhaar number. Delete the document after the check. Why: the Aadhaar Act prohibits Aadhaar copies at an unlicensed private entity, and we do not accept the breach risk. ([PD8](../decisions/pd-08-verification.md))
