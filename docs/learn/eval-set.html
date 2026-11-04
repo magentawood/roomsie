@@ -35,14 +35,14 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="the-eval-sentences">The eval sentences</h1>
-<p><strong>In one line:</strong> 73 sentences that people type to the assistant, in English, Hinglish and Marathi, each with its correct labels. A run thus gives a score to each handler.</p>
+<p><strong>In one line:</strong> 78 sentences that people type to the assistant, in English, Hinglish and Marathi, each with its correct labels. A run thus gives a score to each handler.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li><strong>An eval set</strong> is a fixed list of inputs with their correct answers. A model or a prompt gets a score on it, and two runs can be compared.</li>
 <li><strong>The labels</strong> are the values of Form A after the parsers of the code: area slugs, the budget as its minimum and maximum, the move date as a date, and the values of the enums. The reference date is in the file, so "next month end" has one correct date.</li>
 <li><strong>An empty slot.</strong> A slot that the label does not name must stay empty. The eval thus also finds a value that a model makes up.</li>
 <li><strong>The vague sentences.</strong> 10 sentences are vague on purpose. The slot that they are vague about has the label <code>unclear</code>, and a model that fills it fails (<a href="../decisions/pd-07-models.md">PD7</a>: a model that never abstains fails).</li>
-<li><strong>The band and the flags (T-61).</strong> A sentence with no band is a search. 15 sentences have a band that is not core: one in each language for each band of <a href="../decisions/pd-10-scope-bands.md">PD10</a>. Two of the <code>sensitive</code> sentences have <code>danger</code>. Two searches state a community preference, with <code>community</code> (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>). Only the router scores these 17 sentences, so they have no labels of Form A.</li>
+<li><strong>The band and the flags (T-61).</strong> A sentence with no band is a search. 20 sentences have a band that is not core. Each band of <a href="../decisions/pd-10-scope-bands.md">PD10</a> has one in English, one in Hinglish, one in Hindi in Devanagari and one in Marathi. Two of the <code>sensitive</code> sentences have <code>danger</code>. Two searches state a community preference, with <code>community</code> (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>). Only the router scores these 22 sentences, so they have no labels of Form A.</li>
 <li><strong>The names (T-61).</strong> 6 searches name a friend, with the name in lower case in each script. The runner looks for the name in each text of the composer, for the name check (<a href="composer.html">The composer</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -77,7 +77,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The mix.</strong> 22 English, 26 Hinglish and 25 Marathi. Of the searches: 17, 20 and 19. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).</li>
+<li><strong>The mix.</strong> 22 English, 31 Hinglish and 25 Marathi. Of the searches: 17, 20 and 19. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).</li>
 <li><strong>The level of code-mix</strong> is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and amounts do not count, as "25k" or "12,000". A word with digits, as "1BHK", counts as a word, and a number in words counts as a word of its language. <strong>The script</strong> is the script of the letters: digits belong to no script.</li>
 <li><strong>The language and the register.</strong> The set keeps the script of its letters. The runner gets the expected register from the language of a sentence and its letters, by the rule of the router (<a href="composer.html">The composer</a>).</li>
 <li><strong>The check.</strong> Each label must be a valid Form A, and each area a slug of the seed. The script must agree with the letters. The set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas. The check also keeps the bands, the flags and the forms of the six names (T-61).</li>
@@ -92,13 +92,13 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The areas, the budget and the move date have no <code>unclear</code> value.</strong> A sentence that is vague about them leaves them empty.</li>
 <li><strong>A name of two areas,</strong> as "Andheri" alone, makes the assistant ask which one, so the labelled sentences use names with one area.</li>
 <li><strong>The set of M-03 has almost no personal context.</strong> Only a few sentences give a Form B note. Thus, T-36 adds 26 personal sentences, each with the topics of its notes. Two of them, about health and religion, must give no note.</li>
-<li><strong>The set is small.</strong> The full eval of PD7 has 200 to 300 sentences, and these 73 are its start.</li>
+<li><strong>The set is small.</strong> The full eval of PD7 has 200 to 300 sentences, and these 78 are its start.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>M-03: the 50 sentences and their check.</li>
 <li>T-27: the register rule, and the new h15 and m11.</li>
 <li>T-36: <a href="https://github.com/magentawood/roomsie/pull/215">#215</a>, 2026-11-04. The personal sentences of the observer, their check and the runner.</li>
-<li>T-61: the 15 sentences of the other bands, the 2 with a community preference, and the 6 with a friend.</li>
+<li>T-61: the 20 sentences of the other bands, the 2 with a community preference, and the 6 with a friend.</li>
 </ul>
 </main>

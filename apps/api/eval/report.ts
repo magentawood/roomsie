@@ -1,10 +1,11 @@
+import { scopeBands } from '@roomsie/contract'
 import { checkFailures } from '../src/assistant/handlers/composer/check'
 import { vendorOf } from '../src/models/models'
 import {
-  callStats, composerScoresOf, composersOfSearches, deadlineSteps, failureOf, flipsOf, goNoGo, groups, inTimeAt, missesOf, nameIn, namesOf, scoresOf, selectDeadline, selectThreshold,
-  sentencesById, startCapitalsOf, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
+  callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groups, inTimeAt, missesOf, nameIn, namesOf, registerOf, scoresOf,
+  selectDeadline, selectThreshold, sentencesById, startCapitalsOf, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
 } from './score'
-import type { EvalSentence } from './set'
+import { isSearch, type EvalSentence } from './set'
 
 /** The scores of one model at each threshold of the sweep. `extractorLive` and `routerLive` are the thresholds of the settings. */
 export type ModelScores = { model: string; extractorLive: number; routerLive: number; sweep: { threshold: number; turns: TurnResult[] }[]; calls: CallResult[]; repeats: number }
@@ -68,21 +69,18 @@ function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
   const lines = new Map<string, number>()
   for (const turn of turns) {
     const c = turn.composer
-    if (!c?.text) continue
-    // The scores of one text, so the rules of the scores decide its language and script.
-    const one = composerScoresOf(sentences, [turn]).all
-    if (!one.calls) continue
+    const sentence = byId.get(turn.id)!
+    if (!c?.text || !isSearch(sentence)) continue
+    const { languageRight, scriptRight } = registerOf({ ...c, text: c.text })
     const failure = failureOf(c)
-    const name = nameIn(c.text, byId.get(turn.id)!.names)
-    if (one.languageRight && one.scriptRight && !failure && !name) continue
-    const judge = c.judge ? `the router hears ${c.judge.language}, ${c.judge.script} letters` : 'no answer of the judge'
-    const key = `${turn.id} · ${c.language} · ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: "${c.text.replaceAll('\n', ' ')}"`
-    lines.set(key, (lines.get(key) ?? 0) + 1)
+    const name = nameIn(c.text, sentence.names)
+    if (languageRight && scriptRight && !failure && !name) continue
+    const judge = c.judgeRegister ? `the router hears ${c.judgeRegister.language}, ${c.judgeRegister.script} letters` : 'no answer of the judge'
+    counted(lines, `${turn.id} · ${c.language} · ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: "${c.text.replaceAll('\n', ' ')}"`)
   }
   return [...lines].map(([line, n]) => `${line} (${n})`).toSorted()
 }
 
-/** The rules of T-61 use only the run of DeepSeek: Gemini gives no token probabilities. */
 function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: boolean) {
   const composers = composersOfSearches(sentences, turns)
   const scores = composerScoresOf(sentences, turns)
@@ -93,7 +91,7 @@ function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: b
   const readLines = repliesToRead(sentences, turns)
   const rule = ruled
     ? `The rule of T-61 selects **${selectDeadline(composers) ?? '—'} ms**: the smallest step where 9 of 10 calls answer in time, at most ${deadlineSteps.at(-1)} ms.`
-    : 'The rule of T-61 uses only the run of DeepSeek.'
+    : 'The rule of T-61 uses only the composer calls of DeepSeek (the spec of T-61).'
   return [
     '### The composer', '',
     `${composers.length} calls of the searches, with no deadline: the timeout of the model module is the only limit. The router judges the language of each text, and code counts the letters. A score is against the reply language that the composer got.`, '',
@@ -105,8 +103,8 @@ function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: b
     '| Deadline | Calls in time |', '|---|---|',
     ...deadlineSteps.map((step) => `| ${step} ms | ${share(inTimeAt(composers, step), composers.length)} |`), '',
     '#### The names of a friend', '',
-    'A name passes the check when the person typed it in lower case, or in Devanagari.', '',
-    '| Sentence | Texts | With the name | Stopped by the check | Through: lower case | Through: Devanagari | Through: other |', '|---|---|---|---|---|---|---|',
+    'The name rules of the check miss a name that the person typed in lower case, or a name in Devanagari.', '',
+    '| Sentence | Texts | With the name | Stopped by the name rules | Through: lower case | Through: Devanagari | Through: other |', '|---|---|---|---|---|---|---|',
     ...names.map((n) => `| ${n.id} | ${n.replies} | ${n.withName} | ${n.stopped} | ${n.lowerCase} | ${n.devanagari} | ${n.other} |`), '',
     `**The capital words at the start of a sentence that are not in the plan or the message** (a made-up name passes there): ${capitals.map(([word, n]) => `${word} (${n})`).join(', ') || 'none'}.`, '',
     '#### The texts to read', '',
@@ -137,7 +135,13 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
     `## ${model}`, '',
     `At the threshold ${extractorLive} of the extractor and ${routerLive} of the router, ${repeats} repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **${goNoGo(scores.all)}**.`, '',
     '| | All | English | Hinglish | Marathi |', '|---|---|---|---|---|',
-    ...rows.map(([name, cell]) => `| ${name} | ${groups.map((g) => cell(scores[g], repeats)).join(' | ')} |`), ...callRows, '',
+    ...rows.map(([name, cell]) => `| ${name} | ${groups.map((g) => cell(scores[g], repeats)).join(' | ')} |`),
+    // Each band gets its own pass condition (testing.md): the router gives the band.
+    ...scopeBands.filter((band) => band !== 'core').map((band) => {
+      const of = scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band))
+      return `| · ${band} right | ${groups.map((g) => otherBandsRight[1](of[g], repeats)).join(' | ')} |`
+    }),
+    ...callRows, '',
     '### The threshold sweep', '', 'The recorded answers again, through the extractor at each threshold, with no new call.', '',
     `| Threshold | ${sweepRows.map(([name]) => name).join(' | ')} | PD11 |`, `|---|${sweepRows.map(() => '---|').join('')}---|`,
     ...sweepLines(sweep.map(({ threshold, turns: at }) => {

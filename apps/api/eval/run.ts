@@ -153,7 +153,7 @@ const replayedLabel = ({ id, router: recorded }: RunTurn, routerMinProbability: 
 
 /** The register of the router stays in its answer, also when the band is not sure. */
 const composerOf = ({ composer, judge }: RunTurn): TurnResult['composer'] => composer
-  ? { language: composer.input.language, draft: composer.input.draft, message: composer.input.message, text: composer.text, ms: composer.ms, judge: judge && routerAnswer.parse(judge.value).register }
+  ? { language: composer.input.language, draft: composer.input.draft, message: composer.input.message, text: composer.text, ms: composer.ms, judgeRegister: judge && routerAnswer.parse(judge.value).register }
   : undefined
 
 async function scoresOfRun({ model, turns, calls }: ModelRun, db: Db): Promise<ModelScores> {

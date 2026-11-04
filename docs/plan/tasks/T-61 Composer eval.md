@@ -75,7 +75,7 @@ Score the replies of the assistant, and the messages that are not a search.
     1. The most `danger` sentences that keep `danger`.
     2. The fewest searches with a band that is not core.
     3. The most sentences of the other bands with their band.
-    4. On a tie, the threshold nearest to 0.8.
+    4. On a tie, the threshold nearest to 0.8. Of two at the same distance, the higher (the user, review round 2).
     The research page adds the two runs, then applies the rule. Gemini gives no token probabilities, so the threshold applies only to DeepSeek.
   - **The deadline (the user):** the time of a composer call is the time of all its attempts. The steps are 500 ms, from 1500 ms. The rule selects the smallest step where 9 of 10 DeepSeek composer calls give an answer in time. The maximum is 4000 ms. A call with no answer is late. If no step reaches 9 of 10, the value is 4000 ms. The report of each run gives the calls in time at each step. The research page adds the two runs, then applies the rule.
   - **The runs (the user):** the first run is on the evening of 2026-11-04. The second run is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.

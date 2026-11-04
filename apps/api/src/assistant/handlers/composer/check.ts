@@ -18,7 +18,7 @@ const sentencesIn = (text: string) => text.split(/(?<=[.!?।])\s+/).map(wordsIn
 /** Capital words not at the start of a sentence. Devanagari has no capitals, so only Latin script gets this check. */
 const capitalsInside = (text: string) => sentencesIn(text).flatMap((words) => words.slice(1).filter(isCapital))
 
-/** The capital words at the start of a sentence that are not in the plan or the message: the first limit of the name check. */
+/** The capital words at the start of a sentence that are not in the plan or the message: the first limit of the name check. The eval lists them (T-61). */
 export function newStartCapitals(text: string, { draft, message }: Pick<ComposerInput, 'draft' | 'message'>) {
   const known = new Set([...wordsIn(`${draft} ${message}`).map((w) => w.toLowerCase()), ...alwaysCapital])
   return sentencesIn(text).map((words) => words[0]).filter((w): w is string => !!w && isCapital(w) && !known.has(w.toLowerCase()) && !isPronounI(w))
@@ -41,6 +41,11 @@ export function checkFailure(text: string, { draft, message, turns, formB }: Pic
   const planNumbers = new Set(numbersIn(`${draft} ${message}`).flatMap((n) => [n, n / 1000, n / 100_000]))
   if (numbersIn(text).some((n) => !planNumbers.has(n))) return 'new_number'
 
+  return nameFailure(text, { draft, message, turns, formB })
+}
+
+/** The name rules of the check alone. The eval asks them also of a text that fails a different rule first (T-61). */
+export function nameFailure(text: string, { draft, message, turns, formB }: Pick<ComposerInput, 'draft' | 'message' | 'turns' | 'formB'>): Extract<CheckFailure, 'their_name' | 'new_capital'> | null {
   const planWords = new Set([...wordsIn(draft).map((w) => w.toLowerCase()), ...alwaysCapital])
   const inPlan = (word: string) => planWords.has(word.toLowerCase()) || isPronounI(word)
   const said = [message, ...turns.filter(({ role }) => role === 'user').map(({ text: t }) => t), ...formB.map(({ value }) => value)]

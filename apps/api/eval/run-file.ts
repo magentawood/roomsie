@@ -5,7 +5,7 @@ import { callResult } from './score'
 
 const token: z.ZodType<Token> = z.object({ token: z.string(), logprob: z.number() })
 /** One answer of a model with its token probabilities, so a replay scores it again with no call. */
-export const recordedAnswer = z.strictObject({ value: z.unknown(), tokens: z.array(token).nullable(), model: z.string() })
+const recordedAnswer = z.strictObject({ value: z.unknown(), tokens: z.array(token).nullable(), model: z.string() })
 export type Recorded = z.infer<typeof recordedAnswer>
 /** The composer call of a turn: its input, its text (null: no answer), and the time of all its attempts (T-61). */
 const recordedComposer = z.strictObject({ input: composerInput, text: z.string().nullable(), ms: z.number() })

@@ -123,11 +123,11 @@ describe('the scores of the router on the other bands (T-61)', () => {
       .toEqual(['e16 · band: label "general", got "core" (1)', 'e20 · danger: label true, got false (1)'])
   })
 
-  it('names a sentence of the other bands whose band changes between the repeats, and not one whose values change', () => {
+  it('names a sentence of the other bands whose band changes between the repeats, also with no answer of the extractor, and not one whose values change', () => {
     const again = (turn: TurnResult, more: Partial<TurnResult>) => ({ ...turn, repeat: 2, ...more })
     const e16 = at('e16', 'general')
     const e20 = at('e20', 'sensitive')
-    expect(flipsOf(others, [e16, again(e16, { values: { intent: 'room' } }), e20, again(e20, { label: { ...e20.label, band: 'core' } })])).toEqual(['e20'])
+    expect(flipsOf(others, [e16, again(e16, { values: { intent: 'room' } }), e20, again(e20, { label: { ...e20.label, band: 'core' }, extractorAnswered: false, values: {} })])).toEqual(['e20'])
   })
 
   const row = (threshold: number, dangerRight: number, alarmsAbove: number, bandRight: number) =>
@@ -146,8 +146,8 @@ describe('the scores of the router on the other bands (T-61)', () => {
 describe('the scores of the composer (T-61)', () => {
   const draft = 'Got it: a whole flat in Powai. When do you want to move in?'
   const named = sentence('h25', 'hinglish', 'main aur meri friend neha Powai mein 2BHK dhoondh rahe hain', {}, { names: ['neha', 'नेहा'] })
-  const reply = (language: ComposerResult['language'], text: string | null, judge: ComposerResult['judge'], ms = 1000): ComposerResult =>
-    ({ language, draft, message: named.text, text, ms, judge })
+  const reply = (language: ComposerResult['language'], text: string | null, judgeRegister: ComposerResult['judgeRegister'], ms = 1000): ComposerResult =>
+    ({ language, draft, message: named.text, text, ms, judgeRegister })
   const turn = (id: string, composer: ComposerResult, repeat = 1): TurnResult => ({ ...turns[0]!, id, repeat, composer })
 
   it('scores the language of the judge and the script of the letters against the reply language that the composer got, and the reason of each failed check', () => {
@@ -171,7 +171,7 @@ describe('the scores of the composer (T-61)', () => {
     expect(composersOfSearches([named, general], both).map((c) => c.text)).toEqual(['Powai mein flat. Kab shift karna hai?'])
   })
 
-  it('counts each reply with the name of the friend: stopped by the check, or through by lower case or Devanagari', () => {
+  it('counts each reply with the name of the friend: stopped by the name rules, or through by lower case or Devanagari', () => {
     const replies = [
       'Aap aur neha ke liye Powai mein flat. Kab shift karna hai?',
       'Aap aur Neha ke liye Powai mein flat. Kab shift karna hai?',
@@ -180,6 +180,11 @@ describe('the scores of the composer (T-61)', () => {
     ]
     expect(namesOf([named], replies.map((text, i) => turn('h25', reply('hi-Latn', text, null), i + 1))))
       .toEqual([{ id: 'h25', replies: 4, withName: 3, stopped: 1, lowerCase: 1, devanagari: 1, other: 0 }])
+  })
+
+  it('gives the limit of a name that the name rules miss, also when the text fails the check for a different reason', () => {
+    expect(namesOf([named], [turn('h25', reply('hi-Latn', 'Aap aur neha ke liye Powai mein flat, 30k tak. Kab shift karna hai?', null))]))
+      .toEqual([{ id: 'h25', replies: 1, withName: 1, stopped: 0, lowerCase: 1, devanagari: 0, other: 0 }])
   })
 
   it('gives the limit of a name that the person typed in Devanagari, also when the text writes it in Latin letters', () => {
