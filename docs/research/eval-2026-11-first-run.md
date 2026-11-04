@@ -6,11 +6,12 @@ The run `2026-11-04T0723` (UTC), with the prompts and the code of `main` before 
 
 ## deepseek-flash
 
-At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **no-go**.
+At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **no-go**.
 
 | | All | English | Hinglish | Marathi |
 |---|---|---|---|---|
 | Turns with no answer of the extractor | 3% (4/150) | 0% (0/45) | 0% (0/54) | 8% (4/51) |
+| Turns with no answer of the router | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
 | Labelled slots right | 93% (436/469) | 98% (153/156) | 100% (168/168) | 79% (115/145) |
 | Made-up values | 0.3 | 0.3 | 0 | 0 |
 | Vague slots marked unclear | 92% (24/26) | 100% (9/9) | 83% (10/12) | 100% (5/5) |
@@ -63,15 +64,16 @@ The recorded answers again, through the extractor at each threshold, with no new
 - m12 · no answer of the extractor (1)
 - m13 · `unclear` with no label (1): roomType
 
-**Answers that change between the repeats:** e02, e08, h09, h13, h15, m01, m02, m04, m05, m07, m08, m09, m12, m13.
+**Answers that change between the repeats:** e02, e08, h09, h13, h15, m01, m02, m04, m05, m07, m08, m09, m13.
 
 ## gemini-3.5-flash-lite
 
-At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **no-go**.
+At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **no-go**.
 
 | | All | English | Hinglish | Marathi |
 |---|---|---|---|---|
 | Turns with no answer of the extractor | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
+| Turns with no answer of the router | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
 | Labelled slots right | 95% (455/477) | 98% (153/156) | 98% (164/168) | 90% (138/153) |
 | Made-up values | 0 | 0 | 0 | 0 |
 | Vague slots marked unclear | 33% (10/30) | 56% (5/9) | 17% (2/12) | 33% (3/9) |

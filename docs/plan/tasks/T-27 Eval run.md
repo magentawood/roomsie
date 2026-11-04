@@ -71,6 +71,8 @@ Test the assistant on real sentences. Fix what it gets wrong.
   - **Two vague sentences (the user, implement):** h15 and m11 said "I drink sometimes", and the two answers of the drinks question cover that. They now leave the drinks question open, and the Marathi speaker reads the new m11.
   - **The student rule (the user, review):** the extractor prompt keeps "one word can fill two slots", with "student". It is the only answer of two questions, and only e03 tests it.
   - **The router shape (the user, review):** the JSON shape of the router offers only the scripts `latin` and `devanagari`. On Gemini, the Marathi script went down by 2 turns, the size of the noise between runs.
+  - **The run file (the user, review):** it has a version, so a replay refuses a file of another version.
+  - **The token schema (the user, review):** the runner has its own schema of a token probability, typed by the `Token` type of the model module. The model module keeps its interface.
   - **The live check:** after the deploy, a Marathi message of a visitor gets a reply in Marathi.
 - **Out of scope:**
   - the composer: its register match, its name check and its deadline (T-61)

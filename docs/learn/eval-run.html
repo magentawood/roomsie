@@ -39,9 +39,9 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li><strong>A run</strong> sends each sentence three times through the extractor and the router of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.</li>
-<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback. A share is of all the repeats, and a count is the mean of one repeat.</li>
+<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts.</li>
 <li><strong>The scores,</strong> for each model and each language:</li>
-<li><strong>Turns with no answer of the extractor:</strong> both attempts failed. Such a turn counts apart, not as wrong slots.</li>
+<li><strong>Turns with no answer</strong> of the extractor or of the router: each attempt failed. Such a turn counts apart, not as wrong values.</li>
 <li><strong>Labelled slots right:</strong> the slots with a label that get that value.</li>
 <li><strong>Made-up values:</strong> a value in a slot that the label leaves empty.</li>
 <li><strong>Vague slots marked unclear,</strong> and <strong>vague slots with a value.</strong> A value there is a no-go of <a href="../decisions/pd-11-launch.md">PD11</a>, check 6.</li>

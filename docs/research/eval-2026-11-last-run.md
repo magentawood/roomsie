@@ -6,11 +6,12 @@ The run `2026-11-04T0835Z`, with the prompts and the code of T-27. The summary i
 
 ## deepseek-flash
 
-At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **go**.
+At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **go**.
 
 | | All | English | Hinglish | Marathi |
 |---|---|---|---|---|
 | Turns with no answer of the extractor | 1% (1/150) | 0% (0/45) | 0% (0/54) | 2% (1/51) |
+| Turns with no answer of the router | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
 | Labelled slots right | 99% (472/475) | 99% (155/156) | 99% (166/168) | 100% (151/151) |
 | Made-up values | 1 | 1 | 0 | 0 |
 | Vague slots marked unclear | 97% (28/29) | 89% (8/9) | 100% (12/12) | 100% (8/8) |
@@ -42,15 +43,16 @@ The recorded answers again, through the extractor at each threshold, with no new
 - h17 · mustHaves.tidy_flatmates: label "dealbreaker", got "unclear" (1)
 - m11 · no answer of the extractor (1)
 
-**Answers that change between the repeats:** e08, e12, h01, h06, h17, m11.
+**Answers that change between the repeats:** e08, e12, h01, h06, h17.
 
 ## gemini-3.5-flash-lite
 
-At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **no-go**.
+At the threshold 0.8, 3 repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **no-go**.
 
 | | All | English | Hinglish | Marathi |
 |---|---|---|---|---|
 | Turns with no answer of the extractor | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
+| Turns with no answer of the router | 0% (0/150) | 0% (0/45) | 0% (0/54) | 0% (0/51) |
 | Labelled slots right | 99% (471/477) | 98% (153/156) | 98% (165/168) | 100% (153/153) |
 | Made-up values | 0.7 | 0.7 | 0 | 0 |
 | Vague slots marked unclear | 57% (17/30) | 67% (6/9) | 50% (6/12) | 56% (5/9) |

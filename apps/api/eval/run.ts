@@ -3,29 +3,30 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import type { FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { filledSlots, formA, modelRoles, turnLabel, type AnalyticsEvent, type FormA } from '@roomsie/contract'
+import { filledSlots, formA, turnLabel, type AnalyticsEvent, type FormA, type ModelRole } from '@roomsie/contract'
 import { extractor, noExtraction } from '../src/assistant/handlers/extractor/extractor'
 import { routeTurn } from '../src/assistant/handlers/router/router'
 import { assistantSettings } from '../src/assistant/settings'
 import type { Db } from '../src/db/client'
 import { seedCatalogues } from '../src/db/seed-axes'
-import { ModelUnavailable, modelsOf, tokenSchema, type Models } from '../src/models/models'
+import { ModelUnavailable, modelsOf, type Models, type Token } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
 import { createTestDb } from '../test/db'
 import { reportOf, type ModelScores } from './report'
-import type { CallResult, TurnResult } from './score'
+import { callResult, type CallResult } from './score'
 import { evalSet } from './set'
 
+const token: z.ZodType<Token> = z.object({ token: z.string(), logprob: z.number() })
 /** One answer of a model with its token probabilities, so a replay scores it again with no call. */
-const recorded = z.strictObject({ value: z.unknown(), tokens: z.array(tokenSchema).nullable(), model: z.string() })
-type Recorded = z.infer<typeof recorded>
+const recordedAnswer = z.strictObject({ value: z.unknown(), tokens: z.array(token).nullable(), model: z.string() })
+type Recorded = z.infer<typeof recordedAnswer>
 /** The run file. A replay refuses a file of another version. */
 const runFile = z.strictObject({
   version: z.literal(1),
   runs: z.array(z.strictObject({
     model: z.string(),
-    turns: z.array(z.strictObject({ id: z.string(), repeat: z.int(), extractor: recorded.nullable(), router: recorded.nullable(), label: turnLabel })),
-    calls: z.array(z.strictObject({ id: z.string(), role: z.enum(modelRoles), ms: z.number(), outcome: z.enum(['ok', 'invalid', 'failed']) })),
+    turns: z.array(z.strictObject({ id: z.string(), repeat: z.int(), extractor: recordedAnswer.nullable(), router: recordedAnswer.nullable(), label: turnLabel })),
+    calls: z.array(callResult),
   })),
 })
 type ModelRun = z.infer<typeof runFile>['runs'][number]
@@ -66,12 +67,12 @@ async function inPool<T, R>(items: T[], run: (item: T) => Promise<R>) {
 /** The router and the extractor in parallel, as in a live turn (PD7a). The run file keeps both answers. */
 async function liveTurn(models: Models, db: Db, id: string, repeat: number, calls: CallResult[]): Promise<RunTurn> {
   const req = requestOf(id, calls)
-  const answers: { extractor?: Recorded; router?: Recorded } = {}
+  const answers: Partial<Record<ModelRole, Recorded>> = {}
   const recording: Models = {
     ...models,
     scored: async (call) => {
       const scored = await models.scored(call)
-      if (call.role === 'extractor' || call.role === 'router') answers[call.role] = scored
+      answers[call.role] = scored
       return scored
     },
   }
@@ -119,10 +120,11 @@ async function replayed({ id, extractor: recorded }: RunTurn, db: Db, minProbabi
 }
 
 async function scoresOfRun({ model, turns, calls }: ModelRun, db: Db): Promise<ModelScores> {
-  const sweep = await Promise.all(thresholds.map(async (threshold) => ({
-    threshold,
-    turns: await inPool(turns, async (turn): Promise<TurnResult> => ({ id: turn.id, repeat: turn.repeat, answered: turn.extractor !== null, values: await replayed(turn, db, threshold), label: turn.label })),
-  })))
+  // One pool for each threshold and turn, so `parallel` limits the replays.
+  const jobs = thresholds.flatMap((threshold) => turns.map((turn) => ({ threshold, turn })))
+  const results = await inPool(jobs, async ({ threshold, turn }) =>
+    ({ threshold, id: turn.id, repeat: turn.repeat, extractorAnswered: turn.extractor !== null, values: await replayed(turn, db, threshold), label: turn.label }))
+  const sweep = thresholds.map((threshold) => ({ threshold, turns: results.filter((r) => r.threshold === threshold) }))
   return { model, live: settings.minProbability, sweep, calls, repeats }
 }
 
@@ -132,8 +134,8 @@ const { db, drop } = await createTestDb()
 try {
   await seedCatalogues(db)
   const runs = replay ? runFile.parse(JSON.parse(await readFile(replay, 'utf8'))).runs : await liveRuns(db)
-  // The stamp is in UTC, as its Z says, with the seconds, so two runs in one minute keep their files.
-  const stamp = `${new Date().toISOString().slice(0, 19).replaceAll(':', '')}Z`
+  // Seconds in the stamp: two runs in one minute keep their files.
+  const stamp = new Date().toISOString().replace(/:|\.\d+/g, '')
   const folder = new URL('runs/', import.meta.url)
   await mkdir(folder, { recursive: true })
   if (!replay) await writeFile(new URL(`${stamp}.json`, folder), JSON.stringify({ version: 1, runs } satisfies z.input<typeof runFile>))

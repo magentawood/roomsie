@@ -5,9 +5,9 @@
 ## What it is
 
 - **A run** sends each sentence three times through the extractor and the router of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.
-- **The calls** go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel ([PD7a](../decisions/pd-07a-agent-architecture.md)). The runner gives one model as the primary and as the fallback. A share is of all the repeats, and a count is the mean of one repeat.
+- **The calls** go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel ([PD7a](../decisions/pd-07a-agent-architecture.md)). The runner gives one model as the primary and as the fallback. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts.
 - **The scores,** for each model and each language:
-  - **Turns with no answer of the extractor:** both attempts failed. Such a turn counts apart, not as wrong slots.
+  - **Turns with no answer** of the extractor or of the router: each attempt failed. Such a turn counts apart, not as wrong values.
   - **Labelled slots right:** the slots with a label that get that value.
   - **Made-up values:** a value in a slot that the label leaves empty.
   - **Vague slots marked unclear,** and **vague slots with a value.** A value there is a no-go of [PD11](../decisions/pd-11-launch.md), check 6.

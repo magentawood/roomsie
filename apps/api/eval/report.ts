@@ -6,7 +6,7 @@ export type ModelScores = { model: string; live: number; sweep: { threshold: num
 
 const share = (part: number, whole: number) => (whole ? `${Math.round((100 * part) / whole)}% (${part}/${whole})` : '—')
 /** A count as the mean of one repeat (the spec of T-27). */
-const mean = (count: number, repeats: number) => String(Math.round((10 * count) / repeats) / 10)
+export const mean = (count: number, repeats: number) => String(Math.round((10 * count) / repeats) / 10)
 type Row = [string, (c: Counts, repeats: number) => string]
 /** The rows of the extractor that the threshold changes: the rows of the sweep. */
 const sweepRows: Row[] = [
@@ -17,10 +17,11 @@ const sweepRows: Row[] = [
 ]
 const rows: Row[] = [
   ['Turns with no answer of the extractor', (c) => share(c.noAnswer, c.turns)],
+  ['Turns with no answer of the router', (c) => share(c.routerNoAnswer, c.turns)],
   ...sweepRows,
   ['Unclear in a slot with no label', (c, r) => mean(c.extraUnclear, r)],
-  ['Router language right', (c) => share(c.languageRight, c.turns)],
-  ['Router main script right', (c) => share(c.scriptRight, c.turns)],
+  ['Router language right', (c) => share(c.languageRight, c.turns - c.routerNoAnswer)],
+  ['Router main script right', (c) => share(c.scriptRight, c.turns - c.routerNoAnswer)],
   ['False alarms, above / below the threshold', (c, r) => `${mean(c.alarmsAbove, r)} / ${mean(c.alarmsBelow, r)}`],
   ['False flags', (c, r) => mean(c.falseFlags, r)],
 ]
@@ -44,7 +45,7 @@ function modelReport(sentences: EvalSentence[], { model, live, sweep, calls, rep
   ]
   return [
     `## ${model}`, '',
-    `At the threshold ${live}, ${repeats} repeats of each sentence. A share is of all the repeats, and a count is the mean of one repeat. Check 6 of PD11: **${goNoGo(scores.all)}**.`, '',
+    `At the threshold ${live}, ${repeats} repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **${goNoGo(scores.all)}**.`, '',
     '| | All | English | Hinglish | Marathi |', '|---|---|---|---|---|',
     ...rows.map(([name, cell]) => `| ${name} | ${groups.map((g) => cell(scores[g], repeats)).join(' | ')} |`), ...callRows, '',
     '### The threshold sweep', '', 'The recorded answers again, through the extractor at each threshold, with no new call.', '',

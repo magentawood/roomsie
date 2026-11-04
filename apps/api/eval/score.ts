@@ -1,11 +1,14 @@
 import { isDeepStrictEqual } from 'node:util'
-import type { AnalyticsEvent, TurnLabel } from '@roomsie/contract'
+import { z } from 'zod'
+import { modelRoles, type AnalyticsEvent, type TurnLabel } from '@roomsie/contract'
 import { labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
 
-/** One run of one sentence: the filled slots of Form A, and the label of the router. `answered`: the extractor model gave an answer. */
-export type TurnResult = { id: string; repeat: number; answered: boolean; values: Record<string, unknown>; label: Pick<TurnLabel, 'register' | 'band' | 'routerBand' | 'danger' | 'community'> }
+/** One run of one sentence: the filled slots of Form A, and the label of the router. */
+export type TurnResult = { id: string; repeat: number; extractorAnswered: boolean; values: Record<string, unknown>; label: Pick<TurnLabel, 'register' | 'band' | 'routerBand' | 'danger' | 'community'> }
+const outcomes = ['ok', 'invalid', 'failed'] as const satisfies readonly Extract<AnalyticsEvent, { name: 'model_called' }>['outcome'][]
 /** One attempt of a model call, from the event `model_called`, with the sentence. */
-export type CallResult = { id: string } & Pick<Extract<AnalyticsEvent, { name: 'model_called' }>, 'role' | 'ms' | 'outcome'>
+export const callResult = z.strictObject({ id: z.string(), role: z.enum(modelRoles), ms: z.number(), outcome: z.enum(outcomes) })
+export type CallResult = z.infer<typeof callResult>
 
 /** The language of the router for each language of the set: the language of the words that are not English (the spec of T-27). */
 const routerLanguages = { english: 'english', hinglish: 'hindi', marathi: 'marathi' } as const satisfies Record<EvalLanguage, string>
@@ -20,19 +23,21 @@ const sorted = (value: unknown) => (Array.isArray(value) ? value.toSorted() : va
 const same = (a: unknown, b: unknown) => isDeepStrictEqual(sorted(a), sorted(b))
 
 export const zeroCounts = {
-  turns: 0, noAnswer: 0, labelled: 0, right: 0, unclearLabels: 0, unclearRight: 0, vagueFilled: 0, madeUp: 0, extraUnclear: 0,
+  turns: 0, noAnswer: 0, routerNoAnswer: 0, labelled: 0, right: 0, unclearLabels: 0, unclearRight: 0, vagueFilled: 0, madeUp: 0, extraUnclear: 0,
   languageRight: 0, scriptRight: 0, alarmsAbove: 0, alarmsBelow: 0, falseFlags: 0,
 }
 export type Counts = typeof zeroCounts
 
-/** A turn with no answer of the extractor counts apart, not as wrong slots: live, the fallback answers it. */
-function countsOf(sentence: EvalSentence, { answered, values, label }: TurnResult): Counts {
-  const labels = answered ? labelledSlots(sentence.expected) : {}
+/** A turn with no answer of a handler counts apart, not as wrong values: live, the fallback answers it. */
+function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: TurnResult): Counts {
+  const labels = extractorAnswered ? labelledSlots(sentence.expected) : {}
   const [sure, vague] = [Object.entries(labels).filter(([, v]) => v !== 'unclear'), Object.keys(labels).filter((slot) => labels[slot] === 'unclear')]
   const extra = Object.entries(values).filter(([slot]) => !(slot in labels))
   return {
     turns: 1,
-    noAnswer: Number(!answered),
+    noAnswer: Number(!extractorAnswered),
+    // The router gives no band only when it gave no answer (T-34).
+    routerNoAnswer: Number(label.routerBand === null),
     labelled: sure.length,
     right: sure.filter(([slot, value]) => same(values[slot], value)).length,
     unclearLabels: vague.length,
@@ -75,10 +80,10 @@ export function callStats(calls: CallResult[]) {
   return { attempts: calls.length, invalid: calls.filter((c) => c.outcome === 'invalid').length, failed: calls.filter((c) => c.outcome === 'failed').length, medianMs: at(0.5), p95Ms: at(0.95) }
 }
 
-/** The sentences whose slots, register or band change between the repeats. */
+/** The sentences whose slots, register or band change between the repeats. A turn with no answer is not a change. */
 export function flipsOf(turns: TurnResult[]) {
   const answers = new Map<string, Set<string>>()
-  for (const { id, values, label } of turns) answers.set(id, (answers.get(id) ?? new Set()).add(JSON.stringify([values, label.register, label.band])))
+  for (const { id, values, label } of turns.filter((t) => t.extractorAnswered)) answers.set(id, (answers.get(id) ?? new Set()).add(JSON.stringify([values, label.register, label.band])))
   return [...answers].filter(([, seen]) => seen.size > 1).map(([id]) => id)
 }
 
@@ -92,8 +97,8 @@ export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   const misses = new Map<string, number>()
   const extras = new Map<string, Map<string, number>>()
-  for (const { id, answered, values } of turns) {
-    if (!answered) {
+  for (const { id, extractorAnswered, values } of turns) {
+    if (!extractorAnswered) {
       counted(misses, `${id} · no answer of the extractor`)
       continue
     }
