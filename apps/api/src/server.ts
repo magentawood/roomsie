@@ -12,7 +12,7 @@ import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/c
 import { reportError, withoutQueryValues } from '@roomsie/config/report'
 import { deleteAccount } from './account'
 import { afterReplyOf, type AfterReply } from './after-reply'
-import { todayInIst } from './today'
+import { todayInIst } from './time'
 import { alertsOf, type Alerts } from './alerts/alerts'
 import type { AnalyticsDb } from './analytics/client'
 import { analyticsOf, type Analytics } from './analytics/track'

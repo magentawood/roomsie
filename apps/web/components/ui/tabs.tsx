@@ -1,4 +1,3 @@
-/** The look of a tab, also of the link tabs of the admin. */
 export const tabClass = (selected: boolean) =>
   `-mb-px border-b-2 px-1 pb-3 text-sm font-semibold outline-focus-ring focus-visible:outline-2 ${selected ? 'border-brand text-primary' : 'border-transparent text-quaternary hover:text-secondary'}`
 

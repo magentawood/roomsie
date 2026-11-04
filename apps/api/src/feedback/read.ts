@@ -2,7 +2,7 @@ import { count, eq, gte } from 'drizzle-orm'
 import { noFaces, type GoalFeedbackBody } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { feedback } from '../db/schema'
-import { weekBefore } from '../today'
+import { weekBefore } from '../time'
 
 /**
  * The landing feedback of the person: the tombstone keeps the users row, so its cascade does not remove it (PD19).

@@ -4,7 +4,7 @@ import { feedbackOfWeek } from '../feedback/read'
 import { currentGate, inviteCount } from '../invites/gate'
 import { reportCounts } from '../reports/read'
 import { latestDetails, quoteCount } from '../site/read'
-import { hoursBefore, weekBefore } from '../today'
+import { hoursBefore, weekBefore } from '../time'
 import { idCheckCounts } from '../verification/read'
 import type { Moderation } from './settings'
 
@@ -23,7 +23,7 @@ async function moderationCard(db: Db, settings: Moderation, now: Date): Promise<
 
 async function idChecksCard(db: Db, settings: Moderation, now: Date): Promise<AdminHomeCard> {
   const checks = await idCheckCounts(db, { lateBefore: hoursBefore(now, settings.lateHours.idCheck), since: weekBefore(now) })
-  return { subject: 'id_checks', waiting: checks.waiting, oldestCheckAt: checks.oldestAt?.toISOString() ?? null, late: checks.late, verifiedThisWeek: checks.verified }
+  return { subject: 'id_checks', waiting: checks.waiting, oldestCheckAt: checks.oldestCheckAt?.toISOString() ?? null, late: checks.late, verifiedThisWeek: checks.verified }
 }
 
 async function siteContentCard(db: Db): Promise<AdminHomeCard> {

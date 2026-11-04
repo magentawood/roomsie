@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { feedbackResponse, newGoalResponse, visitorKeyHeader } from '@roomsie/contract'
 import { feedback } from '../src/db/schema'
+import { hoursBefore } from '../src/time'
 import { testApp, type TestApp } from './app'
 
 let t: TestApp<'moderator' | 'seeker' | 'leaver'>
@@ -79,10 +80,10 @@ describe('the feedback of a closed goal (T-50)', () => {
 
 describe('the admin feedback list', () => {
   it('counts each face of the last 7 days', async () => {
-    const ago = (h: number) => new Date(Date.now() - h * 3_600_000)
+    const ago = (hours: number) => hoursBefore(new Date(), hours)
     await t.db.insert(feedback).values([
       { userId: t.ids.seeker, rating: 'satisfied', createdAt: ago(2) },
-      { userId: t.ids.leaver, rating: 'satisfied', createdAt: ago(30) },
+      { userId: t.ids.moderator, rating: 'satisfied', createdAt: ago(30) },
       { userId: t.ids.moderator, rating: 'bad', createdAt: ago(3) },
       { userId: t.ids.seeker, rating: 'bad', createdAt: ago(24 * 8) },
     ])

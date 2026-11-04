@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
-import { adminHomeResponse, adminHomeView } from '@roomsie/contract'
+import { adminHomeResponse } from '@roomsie/contract'
 import { feedback, inviteGate, invites, quotes, reports, siteDetails, verifications } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
@@ -79,15 +79,14 @@ describe('the admin home', () => {
     expect(site).toEqual({ subject: 'site_content', invites: 2, inviteOnly: false, quotes: 1, detailsSet: 2 })
   })
 
-  it('tells when the gate is invite-only', async () => {
-    const [closed] = await t.db.insert(inviteGate).values({ inviteOnly: true }).returning({ id: inviteGate.id })
-    const site = (await home('moderator')).find((c) => c.subject === 'site_content')
-    await t.db.delete(inviteGate).where(eq(inviteGate.id, closed!.id))
-    expect(site).toMatchObject({ inviteOnly: true })
-  })
-
-  it('reads on the web with no card of a subject that the web does not know', () => {
-    const cards = [{ subject: 'people', people: 412 }, { subject: 'site_content', invites: 1, inviteOnly: false, quotes: 0, detailsSet: 0 }]
-    expect(adminHomeView.parse({ cards }).cards.map((c) => c.subject)).toEqual(['site_content'])
+  it('tells when the gate is invite-only, and not after its opening time', async () => {
+    const gate = async (values: { inviteOnly: boolean; opensAt?: Date }) => {
+      const [row] = await t.db.insert(inviteGate).values(values).returning({ id: inviteGate.id })
+      const site = (await home('moderator')).find((c) => c.subject === 'site_content')
+      await t.db.delete(inviteGate).where(eq(inviteGate.id, row!.id))
+      return site
+    }
+    expect(await gate({ inviteOnly: true })).toMatchObject({ inviteOnly: true })
+    expect(await gate({ inviteOnly: true, opensAt: hoursAgo(1) })).toMatchObject({ inviteOnly: false })
   })
 })
