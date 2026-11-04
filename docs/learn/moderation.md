@@ -6,7 +6,7 @@
 
 - A **report** tells the moderator about a person or a listing. It has one of the seven reasons of PD18, and a detail. "Other" needs the detail. The person who is reported is not told who reported.
 - A **block** hides two people from each other. The blocked person is not told.
-- A **moderator** is a signed-in user whose Firebase uid is in the setting `MODERATOR_UIDS`. Only a moderator can open the admin screen at `/admin`.
+- A **moderator** is a signed-in user whose Firebase uid is in the setting `MODERATOR_UIDS`. A moderator or an ID reviewer opens the admin home at `/admin`, and only a moderator opens the queue at `/admin/reports`.
 - A **suspension** stops an account. The person is signed out everywhere, and cannot sign in again.
 
 ## How it fits our project
@@ -24,8 +24,8 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 |---|---|
 | The settings | `apps/api/src/moderation/settings.ts` |
 | Report and block | `POST /v1/reports` and `POST /v1/blocks` |
-| The admin routes | `GET /v1/admin/reports`, and `POST /v1/admin/users/:id/review` or `/v1/admin/listings/:id/review` |
-| The admin screen | `/admin`, in `apps/web/components/admin/report-queue.tsx` |
+| The admin routes | `GET /v1/admin/home`, `GET /v1/admin/reports`, and `POST /v1/admin/users/:id/review` or `/v1/admin/listings/:id/review` |
+| The admin screens | The home at `/admin` ([The admin home](admin-home.md)), and the queue at `/admin/reports`, in `apps/web/components/admin/report-queue.tsx` |
 
 - **A report of a person** uses the profile id. A user can report each profile but the own profile, also a card that is not live, so that the recipient of a request can report its sender.
 - **A hidden card** leaves the results, the person detail and Saved. It cannot get a request, and its owner cannot send a new one. The owner sees "Hidden for review" on the profile page. "Hide my card" does not bring it back. A hidden listing works in the same way ([Place detail](place-detail.md)).
@@ -40,9 +40,9 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 
 ## Gotchas
 
-- **The rules are settings.** `REPORT_HIDE_AT_REPORTERS` (default 2) and `REPORT_SAFETY_REASONS` (default `harassment,under_18`) change the hide rule for people and listings. A change needs a redeploy.
+- **The rules are settings.** `REPORT_HIDE_AT_REPORTERS` (default 2) and `REPORT_SAFETY_REASONS` (default `harassment,under_18`) change the hide rule for people and listings. `REPORT_SAFETY_LATE_HOURS` (4), `REPORT_LATE_HOURS` (24) and `ID_CHECK_LATE_HOURS` (24) set when the admin home marks a report or an ID check late. A change needs a redeploy.
 - **Make a moderator.** Add the Firebase uid of the person to the GitHub secret `MODERATOR_UIDS` (comma-separated), then redeploy the API. With no uid, nobody is a moderator.
-- **A non-moderator gets 404 from the admin routes**, and a guest gets 401. On the web, both see "not found" at `/admin`. Thus, the screen does not show that it exists.
+- **A non-moderator gets 404 from the admin routes**, and a guest gets 401. On the web, both see "not found" at each admin address. Thus, the screen does not show that it exists.
 - **The end of a suspension is not in v0.** A developer changes the status in the database.
 - **A report of a deleted listing** goes to the item of its owner, because the listing is gone.
 

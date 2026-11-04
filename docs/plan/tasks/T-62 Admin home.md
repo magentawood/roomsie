@@ -34,10 +34,10 @@ The admin opens on scorecards, and the pages of today get the new layout.
 - [[T-66 Product numbers]]
 
 ## Done when
-- [ ] /admin opens on a home of scorecards, grouped by subject, with live numbers
-- [ ] The home shows only the cards that the person can open
-- [ ] Reports, ID checks, invites, quotes, site details and feedback use the new layout
-- [ ] A person with no admin role gets the not-found page for each admin address
+- [x] /admin opens on a home of scorecards, grouped by subject, with live numbers · [#227](https://github.com/magentawood/roomsie/pull/227)
+- [x] The home shows only the cards that the person can open · [#227](https://github.com/magentawood/roomsie/pull/227)
+- [x] Reports, ID checks, invites, quotes, site details and feedback use the new layout · [#227](https://github.com/magentawood/roomsie/pull/227)
+- [x] A person with no admin role gets the not-found page for each admin address · [#227](https://github.com/magentawood/roomsie/pull/227)
 
 ^done
 
@@ -45,3 +45,43 @@ The admin opens on scorecards, and the pages of today get the new layout.
 - [admin-panel.md](../../specs/admin-panel.md)
 - [pd-18-moderation.md](../../decisions/pd-18-moderation.md)
 - [pd-08-verification.md](../../decisions/pd-08-verification.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by n3rxv
+
+- **Modules:**
+  - **The contract:** the response of the admin home: a list of the cards that the person can open, each with its numbers. The feedback response gets the faces of the last 7 days. The interface changes.
+  - **The moderation module of the API:** a new route gives the admin home. A moderator gets the cards of Moderation and Site content, an ID reviewer gets the card of ID checks, and a person with both roles gets the three. A person with no role gets 404. The settings get the late times of the reports and the ID checks. The interface changes.
+  - **The feedback module of the API:** the admin list adds the count of each face of the last 7 days. The interface changes.
+  - **The admin pages of the web:** a new layout for each admin page: the top bar, a subject header with tabs, and the body. `/admin` is the home of scorecards. The report queue moves to `/admin/reports`. Reports, feedback, ID checks, invites, quotes and site details use the new layout. A moderator or an ID reviewer opens the home.
+- **Seams for the tests:**
+  - The route test of the admin: the home for a moderator, an ID reviewer, a person with both roles and a person with no role; the numbers of each card from rows of a test database; a late report and a late ID check.
+  - The route test of the feedback: the counts of the faces of the last 7 days.
+  - A browser check on local dev at 390 px and 1440 px: the home, the reports, the ID checks, and the other four pages at 1440 px.
+- **Decisions:**
+  - **The cards (the user):** T-62 builds the cards of Moderation, ID checks and Site content. T-63 to T-66 each add their card with its page.
+  - **One route** gives the home. It sends only the cards that the person can open (the spec).
+  - **The numbers:**
+    - Moderation: the open reports, the late safety reports, the late other reports, the time of the oldest open report, and the feedback of the last 7 days.
+    - ID checks: the checks that wait, the time of the oldest, the late checks, and the checks verified in the last 7 days.
+    - Site content: the invites and the state of the gate, the quotes, and how many of the six site details are set.
+  - **Late:** a safety report after 4 hours, another report after 24 hours ([PD18](../../decisions/pd-18-moderation.md)), and an ID check after 24 hours ([PD8](../../decisions/pd-08-verification.md)). The three times are settings with these defaults.
+  - **Addresses:** `/admin` is the home, and the reports are at `/admin/reports`. The other pages keep their addresses.
+  - **Tabs:** Moderation has Reports and Feedback. Site content has Invites, Quotes and Site details. ID checks has no tabs.
+  - **The phone:** the home, the reports and the ID checks have the layouts of the designs at 390 px. The other pages fit the width.
+  - **The designs:** drafts sections 36 and 37 of the Product file ([D-07](D-07%20Admin%20designs.md)).
+- **Out of scope:**
+  - the cards and the pages of people and listings, the AI pipeline and the product numbers (T-63 to T-66)
+  - the tab "Reviewed" of the ID checks: no list of reviewed checks exists
+  - a change of the actions of the report queue, the ID checks, the invites, the quotes and the site details
+
+## Log
+
+- **2026-11-04 · [#227](https://github.com/magentawood/roomsie/pull/227)**
+  - **Change:** `/admin` opens on scorecards for the subjects of the role of the person, from `GET /v1/admin/home`. The six pages of today use the new layout of drafts sections 36 and 37: a top bar, a subject header with tabs, and the body. The reports moved to `/admin/reports`.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md). The late times come from [PD18](../../decisions/pd-18-moderation.md) and [PD8](../../decisions/pd-08-verification.md).
+  - **Ticked:** the four items.
+  - **Not done:** none.
+  - **Learn:** [The admin home](../../learn/admin-home.md) (new), [Moderation](../../learn/moderation.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

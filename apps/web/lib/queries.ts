@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminInvitesResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
+  adminHomeView, adminInvitesResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type FormA, type SavedKind,
 } from '@roomsie/contract'
@@ -21,6 +21,7 @@ export const queryKeys = {
   saved: (kind: SavedKind) => ['saved', kind],
   profile: ['profile'],
   me: ['me'],
+  adminHome: ['admin', 'home'],
   reportQueue: ['admin', 'reports'],
   conversations: ['conversations'],
   messages: (conversationId: string) => ['messages', conversationId],
@@ -56,6 +57,11 @@ export function useVerification(enabled = true) {
 export function useIdChecks() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.idChecks, queryFn: () => api(user, '/v1/admin/verifications', idCheckQueueResponse) })
+}
+
+export function useAdminHome() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.adminHome, queryFn: () => api(user, '/v1/admin/home', adminHomeView) })
 }
 
 export function useReportQueue() {

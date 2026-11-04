@@ -40,7 +40,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>A <strong>report</strong> tells the moderator about a person or a listing. It has one of the seven reasons of PD18, and a detail. "Other" needs the detail. The person who is reported is not told who reported.</li>
 <li>A <strong>block</strong> hides two people from each other. The blocked person is not told.</li>
-<li>A <strong>moderator</strong> is a signed-in user whose Firebase uid is in the setting <code>MODERATOR_UIDS</code>. Only a moderator can open the admin screen at <code>/admin</code>.</li>
+<li>A <strong>moderator</strong> is a signed-in user whose Firebase uid is in the setting <code>MODERATOR_UIDS</code>. A moderator or an ID reviewer opens the admin home at <code>/admin</code>, and only a moderator opens the queue at <code>/admin/reports</code>.</li>
 <li>A <strong>suspension</strong> stops an account. The person is signed out everywhere, and cannot sign in again.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -69,11 +69,11 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The admin routes</td>
-<td><code>GET /v1/admin/reports</code>, and <code>POST /v1/admin/users/:id/review</code> or <code>/v1/admin/listings/:id/review</code></td>
+<td><code>GET /v1/admin/home</code>, <code>GET /v1/admin/reports</code>, and <code>POST /v1/admin/users/:id/review</code> or <code>/v1/admin/listings/:id/review</code></td>
 </tr>
 <tr>
-<td>The admin screen</td>
-<td><code>/admin</code>, in <code>apps/web/components/admin/report-queue.tsx</code></td>
+<td>The admin screens</td>
+<td>The home at <code>/admin</code> (<a href="admin-home.html">The admin home</a>), and the queue at <code>/admin/reports</code>, in <code>apps/web/components/admin/report-queue.tsx</code></td>
 </tr>
 </tbody>
 </table>
@@ -91,9 +91,9 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>The rules are settings.</strong> <code>REPORT_HIDE_AT_REPORTERS</code> (default 2) and <code>REPORT_SAFETY_REASONS</code> (default <code>harassment,under_18</code>) change the hide rule for people and listings. A change needs a redeploy.</li>
+<li><strong>The rules are settings.</strong> <code>REPORT_HIDE_AT_REPORTERS</code> (default 2) and <code>REPORT_SAFETY_REASONS</code> (default <code>harassment,under_18</code>) change the hide rule for people and listings. <code>REPORT_SAFETY_LATE_HOURS</code> (4), <code>REPORT_LATE_HOURS</code> (24) and <code>ID_CHECK_LATE_HOURS</code> (24) set when the admin home marks a report or an ID check late. A change needs a redeploy.</li>
 <li><strong>Make a moderator.</strong> Add the Firebase uid of the person to the GitHub secret <code>MODERATOR_UIDS</code> (comma-separated), then redeploy the API. With no uid, nobody is a moderator.</li>
-<li><strong>A non-moderator gets 404 from the admin routes</strong>, and a guest gets 401. On the web, both see "not found" at <code>/admin</code>. Thus, the screen does not show that it exists.</li>
+<li><strong>A non-moderator gets 404 from the admin routes</strong>, and a guest gets 401. On the web, both see "not found" at each admin address. Thus, the screen does not show that it exists.</li>
 <li><strong>The end of a suspension is not in v0.</strong> A developer changes the status in the database.</li>
 <li><strong>A report of a deleted listing</strong> goes to the item of its owner, because the listing is gone.</li>
 </ul>

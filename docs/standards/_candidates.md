@@ -34,7 +34,6 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 | 2026-11-03 | [#211](https://github.com/magentawood/roomsie/pull/211) | An update wrote an untyped object into `chat_turns.parts`. A value that code writes into a jsonb column has the type of its contract schema. |
 | 2026-11-03 | [#212](https://github.com/magentawood/roomsie/pull/212) | The chat stored the goal of the address before the API accepted it, so a link to another person's goal cleared the own last goal. |
 | 2026-11-04 | [#212](https://github.com/magentawood/roomsie/pull/212) | `GET /v1/goals` had no limit. A list that grows with each action of a person has a limit. |
-| 2026-11-04 | [#213](https://github.com/magentawood/roomsie/pull/213) | A new `chips` value would break a tab with an older bundle. |
 | 2026-11-04 | [#214](https://github.com/magentawood/roomsie/pull/214) | A learn page said that Marathi had the largest decrease; PD7 says one of the largest. |
 | 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | A value went into a `RegExp` with no escape. Escape each value before it goes into a pattern. |
 | 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | Two handlers reported the same failure under different conditions. An error report for one failure has one condition in each handler. |
@@ -47,3 +46,4 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 | 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The work after the reply saved the notes on the owner of the request, so a visitor who signed in while the observer ran lost the note. Work after the reply reads the owner again when it writes. |
 | 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The router got the flag `notes`, and no eval sentence asks for the notes, so the eval counts only false flags. A new flag of the router gets sentences that must set it, in each reply language. |
 | 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The backfill checks for a newer note, then saves in a second step, so a live note of the same topic that comes between the two can be replaced by an older note. Put the condition of the newer turn in the save. |
+| 2026-11-04 | [#227](https://github.com/magentawood/roomsie/pull/227) | A test of a contract schema alone was in the API integration suite, with a name that told about the web. A test of a contract schema goes in `packages/contract`. |

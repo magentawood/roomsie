@@ -1,26 +1,19 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { desc, eq } from 'drizzle-orm'
-import { adminQuotesResponse, errorResponse, landingQuoteCount, noContent, noSiteDetails, quoteBody, siteDetailsBody, siteResponse, type SiteDetails } from '@roomsie/contract'
+import { adminQuotesResponse, errorResponse, landingQuoteCount, noContent, quoteBody, siteDetailsBody, siteResponse } from '@roomsie/contract'
 import { requireModerator, type AuthOptions } from '../auth'
 import type { Db } from '../db/client'
 import { quotes, siteDetails } from '../db/schema'
 import { idParams } from '../params'
 import { maskContacts } from '../text/mask-contacts'
+import { latestDetails } from './read'
 
 /** The landing page shows a full collage or no quotes (T-23a). */
 async function landingQuotes(db: Db) {
   const newest = await db.select({ id: quotes.id, text: quotes.text, name: quotes.name })
     .from(quotes).orderBy(desc(quotes.createdAt)).limit(landingQuoteCount)
   return newest.length === landingQuoteCount ? newest : []
-}
-
-async function latestDetails(db: Db): Promise<SiteDetails> {
-  const [row] = await db.select({
-    instagram: siteDetails.instagram, whatsapp: siteDetails.whatsapp, facebook: siteDetails.facebook, linkedin: siteDetails.linkedin,
-    contactEmail: siteDetails.contactEmail, orgNumber: siteDetails.orgNumber,
-  }).from(siteDetails).orderBy(desc(siteDetails.createdAt)).limit(1)
-  return row ?? noSiteDetails
 }
 
 /** The quotes and the details of the landing page, which moderators edit (T-23a). */

@@ -1,4 +1,4 @@
-import { and, desc, eq, gt, inArray, isNotNull, lte, or } from 'drizzle-orm'
+import { and, count, desc, eq, gt, gte, inArray, isNotNull, lt, lte, min, or } from 'drizzle-orm'
 import { checkExpiryDays, type VerificationResponse } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { verifications } from '../db/schema'
@@ -46,4 +46,13 @@ export async function verifiedIds(db: Db, rows: { id: string; userId: string }[]
     .where(and(inArray(verifications.userId, rows.map((r) => r.userId)), eq(verifications.state, 'verified')))
   const users = new Set(verified.map((v) => v.userId))
   return new Set(rows.filter((r) => users.has(r.userId)).map((r) => r.id))
+}
+
+export async function idCheckCounts(db: Db, { lateBefore, since }: { lateBefore: Date; since: Date }) {
+  const [open, late, verified] = await Promise.all([
+    db.select({ waiting: count(), oldestCheckAt: min(verifications.createdAt) }).from(verifications).where(openCheck()),
+    db.$count(verifications, and(openCheck(), lt(verifications.createdAt, lateBefore))),
+    db.$count(verifications, and(eq(verifications.state, 'verified'), gte(verifications.reviewedAt, since))),
+  ])
+  return { ...open[0]!, late, verified }
 }

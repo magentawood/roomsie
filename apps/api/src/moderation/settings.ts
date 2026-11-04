@@ -10,5 +10,12 @@ export const moderationSettings = z.object({
   REVIEWER_UIDS: commaList(z.string()).default([]),
   REPORT_HIDE_AT_REPORTERS: z.coerce.number().int().min(1).default(2),
   REPORT_SAFETY_REASONS: commaList(z.enum(reportReasons)).default(['harassment', 'under_18']),
-}).transform((s) => ({ moderatorUids: s.MODERATOR_UIDS, reviewerUids: s.REVIEWER_UIDS, hideAtReporters: s.REPORT_HIDE_AT_REPORTERS, safetyReasons: s.REPORT_SAFETY_REASONS }))
+  // PD18 and PD8: the web copy `reviewTimes` and the ID check text promise these reasons and times.
+  REPORT_SAFETY_LATE_HOURS: z.coerce.number().positive().default(4),
+  REPORT_LATE_HOURS: z.coerce.number().positive().default(24),
+  ID_CHECK_LATE_HOURS: z.coerce.number().positive().default(24),
+}).transform((s) => ({
+  moderatorUids: s.MODERATOR_UIDS, reviewerUids: s.REVIEWER_UIDS, hideAtReporters: s.REPORT_HIDE_AT_REPORTERS, safetyReasons: s.REPORT_SAFETY_REASONS,
+  lateHours: { safetyReport: s.REPORT_SAFETY_LATE_HOURS, report: s.REPORT_LATE_HOURS, idCheck: s.ID_CHECK_LATE_HOURS },
+}))
 export type Moderation = z.output<typeof moderationSettings>

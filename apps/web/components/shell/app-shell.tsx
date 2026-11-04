@@ -13,6 +13,7 @@ import { CompletionCard } from '../profile/completion-card'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { GoalList } from '../goals/goal-list'
 import { newGoalHref } from '../../lib/goals'
+import { Avatar } from '../ui/avatar'
 import { Logo } from './logo'
 import { GoogleSignIn } from './google-sign-in'
 import { SignInWall } from './sign-in-wall'
@@ -76,9 +77,7 @@ function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
         {card}
         {user ? (
           <Link href="/profile" className="flex items-center gap-3 rounded-xl border border-secondary p-3 outline-focus-ring hover:bg-primary_hover focus-visible:outline-2">
-            {user.photoURL
-              ? <img src={user.photoURL} alt="" className="size-10 rounded-full" referrerPolicy="no-referrer" />
-              : <span className="flex size-10 items-center justify-center rounded-full bg-tertiary text-fg-quaternary"><User01 size={20} aria-hidden /></span>}
+            <Avatar src={user.photoURL} size="md" />
             <span className="flex min-w-0 flex-col text-sm">
               <span className="truncate font-semibold text-secondary">{user.displayName}</span>
               <span className="truncate text-tertiary">{user.email}</span>

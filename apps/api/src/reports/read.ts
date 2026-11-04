@@ -1,4 +1,5 @@
-import { and, asc, eq, isNull } from 'drizzle-orm'
+import { and, asc, count, eq, inArray, isNull, lt, min, not, sql } from 'drizzle-orm'
+import type { ReportReason } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { reports } from '../db/schema'
 
@@ -21,4 +22,16 @@ export const actionReportsAbout = (tx: Tx, userId: string) =>
 export async function hasOpenReportAbout(tx: Tx, userId: string) {
   const [open] = await tx.select({ id: reports.id }).from(reports).where(and(eq(reports.subjectUserId, userId), eq(reports.status, 'open'))).limit(1)
   return !!open
+}
+
+/** Late: past the review time of PD18 (T-62). */
+export async function reportCounts(db: Db, { safetyReasons, safetyLateBefore, lateBefore }: { safetyReasons: ReportReason[]; safetyLateBefore: Date; lateBefore: Date }) {
+  const safety = inArray(reports.reason, safetyReasons)
+  const [row] = await db.select({
+    open: count(),
+    lateSafety: sql<number>`count(*) filter (where ${and(safety, lt(reports.createdAt, safetyLateBefore))})`.mapWith(Number),
+    lateOther: sql<number>`count(*) filter (where ${and(not(safety), lt(reports.createdAt, lateBefore))})`.mapWith(Number),
+    oldest: min(reports.createdAt),
+  }).from(reports).where(eq(reports.status, 'open'))
+  return row!
 }

@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
-import { requireModerator, type AuthOptions } from '../auth'
+import { adminHomeResponse, errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
+import { requireModerator, requireRole, type AuthOptions } from '../auth'
 import type { Tx } from '../db/client'
 import { hideListingsOf, listingsByIds, listingView, partsOf, setListingHiddenForReview } from '../listings/read'
 import { idParams } from '../params'
@@ -10,6 +10,7 @@ import { actionReportsAbout, closeReports, openReports } from '../reports/read'
 import { endOpenRequests } from '../requests/read'
 import type { Storage } from '../storage'
 import { suspendAccount } from '../users'
+import { homeCards } from './home'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
 async function suspend(tx: Tx, userId: string) {
@@ -25,6 +26,10 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { s
   const { db, storage, moderation } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireModerator(options)
+
+  app.get('/admin/home', { preHandler: requireRole(options, 'moderator', 'reviewer'), schema: { response: { 200: adminHomeResponse, 404: errorResponse } } }, async (req) => ({
+    cards: await homeCards(db, moderation, req.user!),
+  }))
 
   app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse, 404: errorResponse } } }, async () => {
     const reports = await openReports(db)

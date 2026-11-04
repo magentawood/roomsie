@@ -109,7 +109,7 @@ export function ReportQueue() {
   if (!queue.data.items.length) {
     return (
       <EmptyState icon={CheckCircle} title="No open reports">
-        New reports show here. Review safety reports within 4 hours, and other reports within 24 hours.
+        New reports show here, safety reports first.
       </EmptyState>
     )
   }

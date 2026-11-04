@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { feedbackResponse, newGoalResponse, visitorKeyHeader } from '@roomsie/contract'
 import { feedback } from '../src/db/schema'
+import { hoursBefore } from '../src/time'
 import { testApp, type TestApp } from './app'
 
 let t: TestApp<'moderator' | 'seeker' | 'leaver'>
@@ -74,5 +75,19 @@ describe('the feedback of a closed goal (T-50)', () => {
     expect((await t.call(null, 'POST', `/v1/goals/${made.id}/feedback`, { rating: 'satisfied' })).statusCode).toBe(404)
     expect((await asVisitor(`/v1/goals/${made.id}/feedback`, { rating: 'satisfied', text: 'Found a flat in two days' })).statusCode).toBe(204)
     expect(await listed()).toEqual([{ id: expect.any(String), text: 'Found a flat in two days', rating: 'satisfied', createdAt: expect.any(String) }])
+  })
+})
+
+describe('the admin feedback list', () => {
+  it('counts each face of the last 7 days', async () => {
+    const ago = (hours: number) => hoursBefore(new Date(), hours)
+    await t.db.insert(feedback).values([
+      { userId: t.ids.seeker, rating: 'satisfied', createdAt: ago(2) },
+      { userId: t.ids.moderator, rating: 'satisfied', createdAt: ago(30) },
+      { userId: t.ids.moderator, rating: 'bad', createdAt: ago(3) },
+      { userId: t.ids.seeker, rating: 'bad', createdAt: ago(24 * 8) },
+    ])
+    const res = feedbackResponse.parse((await t.call('moderator', 'GET', '/v1/admin/feedback')).json())
+    expect(res.facesThisWeek).toEqual({ satisfied: 2, good: 0, neutral: 0, bad: 1, unsatisfied: 0 })
   })
 })

@@ -16,3 +16,20 @@ export const reportQueueItem = z.discriminatedUnion('kind', [
 ])
 export type ReportQueueItem = z.infer<typeof reportQueueItem>
 export const reportQueueResponse = z.object({ items: z.array(reportQueueItem) })
+
+export type AdminRole = 'moderator' | 'reviewer'
+
+const count = z.int().min(0)
+/** The scorecards of the admin home: only the subjects that the person can open (T-62). A late item is past the time of PD18 or PD8. */
+export const adminHomeCard = z.discriminatedUnion('subject', [
+  z.object({ subject: z.literal('moderation'), openReports: count, lateSafety: count, lateOther: count, oldestReportAt: z.iso.datetime().nullable(), feedbackThisWeek: count }),
+  z.object({ subject: z.literal('id_checks'), waiting: count, oldestCheckAt: z.iso.datetime().nullable(), late: count, verifiedThisWeek: count }),
+  z.object({ subject: z.literal('site_content'), invites: count, inviteOnly: z.boolean(), quotes: count, detailsSet: count }),
+])
+export type AdminHomeCard = z.infer<typeof adminHomeCard>
+export const adminHomeResponse = z.object({ cards: z.array(adminHomeCard) })
+const subjects: string[] = adminHomeCard.options.map((card) => card.shape.subject.value)
+/** Drops a card of an unknown subject, so a tab with an older bundle shows the other cards. */
+export const adminHomeView = z.object({
+  cards: z.array(z.looseObject({ subject: z.string() })).transform((cards) => cards.filter((card) => subjects.includes(card.subject))).pipe(z.array(adminHomeCard)),
+})
