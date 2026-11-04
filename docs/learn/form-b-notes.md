@@ -33,15 +33,15 @@ a typed message ──► router: kind "context"? ──► the reply goes out
 
 - **When it runs.** Only on a typed turn that the router labels `context`, after the reply goes out. A note never changes the reply that it comes from. Thus, the observer adds no wait.
 - **The quote check.** The quote must be in the message: the same words, in the same order, as whole words. Only the capitals, the white space and the Unicode form can differ. The note keeps the words as the message has them.
-- **The confidence.** It is the token probability of the topic and the kind, from DeepSeek. Gemini gives no probabilities, so its notes get `OBSERVER_UNSCORED_CONFIDENCE` (0.5). At 0.5, the matching does not use the note.
-- **No note:** a sensitive turn, a turn that only asks a question, and an off-topic or adversarial turn. A turn that states a community or religion preference also gives no note. The observer never notes religion, community, caste, health or sexuality, and never repeats a chip answer.
+- **The confidence.** It is the token probability of the topic and the kind, from DeepSeek. Gemini gives no probabilities, so its notes get `OBSERVER_UNSCORED_CONFIDENCE` (0.5). A note of DeepSeek whose tokens do not hold its topic or kind gets it too, with an error report. At 0.5, the matching does not use the note.
+- **No note:** a sensitive turn, a turn that only asks a question, and an off-topic or adversarial turn. A turn that states a community or religion preference also gives no note. The prompt tells the observer never to note religion, community, caste, health or sexuality, or an answer of a chip, as night shifts. No code checks these two rules, so the eval measures them ([observer-eval.md](../research/observer-eval.md)).
 - **"What do you know about me?"** The router flags it, and a scripted line answers. The web gets the current notes from `GET /v1/notes`, so the chat keeps no copy. A delete is `DELETE /v1/notes/:id`, a direct database action. To correct a note, the person types the correction, and the new note replaces the old one.
 - **The hint.** The first reply after the first note of an owner tells the person that they can ask. It comes one time for each owner.
 - **The one-off backfill.** `pnpm backfill:notes` counts the old typed turns with context and the cost. `--apply` writes their notes, oldest first. A note never replaces a note from a newer turn.
 - **The eval.** `pnpm eval:observer` runs the live models on the eval sentences. The result is in [observer-eval.md](../research/observer-eval.md).
 
 - The contract is `observation` in `packages/contract`.
-- The tables are `observations` and `observation_topics`. The observations module of the API owns them. Other modules call its functions: save, list, delete one note, delete the notes of a user, and move the notes of a session.
+- The tables are `observations` and `observation_topics`. The observations module of the API owns them. Other modules call its functions: save, list (`observationsOf`, and `notesOf` with the labels), delete one note, delete the notes of a user, and move the notes of a session. The observer and the backfill also use `activeTopics`, `hasObservations`, `noteTurnOf` and `turnsWithNotes`.
 - At sign-in, T-17 calls `moveObservations`. The notes of the visitor session then belong to the account.
 - Account deletion calls `deleteObservationsOf`.
 - To add a topic, add a row to the topic list in the seed. You do not need a migration. The prompt of the observer lists the active topics.

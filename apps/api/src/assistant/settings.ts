@@ -12,7 +12,7 @@ export const assistantSettings = z.object({
   ROUTER_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
   /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). T-61 tunes it. */
   COMPOSER_DEADLINE_MS: z.coerce.number().int().positive().default(2500),
-  /** The confidence of a note from a model with no token probabilities, as Gemini (T-36). At the floor of PD3a, the matching does not use it. */
+  /** The confidence of a note with no token probabilities: of Gemini, or of DeepSeek whose tokens do not hold the topic (T-36). At the floor of PD3a, the matching does not use it. */
   OBSERVER_UNSCORED_CONFIDENCE: z.coerce.number().min(0).max(1).default(0.5),
   /** The notes of a sensitive turn: none, hidden notes that the matching does not use, or usual notes (PC-17). */
   OBSERVER_SENSITIVE_NOTES: z.enum(['none', 'hidden', 'visible']).default('none'),

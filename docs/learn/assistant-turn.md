@@ -6,7 +6,7 @@
 
 - A **goal** is one move, with its own chat and its own Form A ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A **turn** is one message: the person types it, and the assistant replies.
 - A **visitor** chats with no sign-in ([PD6b](../decisions/pd-06b-login-gate-and-search.md)). The first goal of a visitor makes a **visitor session**, and the API gives the browser a **visitor key** one time.
-- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** plans the reply, and the **composer** writes its words: see [The composer](composer.md). The **router** labels each message at the same time as the extractor: see [The router](router.md). The observer and the advisor become more handlers ([PD7a](../decisions/pd-07a-agent-architecture.md)).
+- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** plans the reply, and the **composer** writes its words: see [The composer](composer.md). The **router** labels each message at the same time as the extractor: see [The router](router.md). The **observer** writes Form B notes after the reply: see [Form B notes](form-b-notes.md). The advisor becomes one more handler ([PD7a](../decisions/pd-07a-agent-architecture.md)).
 - The **token probability** is the probability that the model gave to each piece of its answer. The extractor uses it as a **gate**: a value that the model was not sure of becomes `unclear` ([PD7](../decisions/pd-07-models.md)).
 
 ## How it fits our project
@@ -20,8 +20,11 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
                                                   ├─ reply writer: the line of the band, "Got it: …" and one question
                                                   │     (a question with selected cards: the comparison of code, T-49)
+                                                  │     (the notes question: the notes and a scripted line, T-36)
                                                   └─ composer, on a core turn: the words in the language of the person
                                   saveTurn(): the two turns and the form, then the events
+                                  the reply, with the notes hint one time after the first note
+                                  then, after the reply: the observer, on a turn with context (T-36)
 ```
 
 | Part | Where |

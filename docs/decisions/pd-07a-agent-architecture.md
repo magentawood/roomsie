@@ -83,7 +83,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
   incorrect one. The corpus is almost empty at launch.
 - **The chat does not wander.** The router catches off-topic turns before an
   expensive call.
-- **We store all typed messages,** so the observer can read all of them.
+- **We store all typed messages** for the observer.
 
 ## Consequences
 
@@ -101,7 +101,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
   name that is not in the plan. When the composer is late, fails or does not
   pass, the scripted reply goes out.
 - The observer adds no wait, and costs a call only on a turn with context
-  (2026-11-04, T-36). A failure gives no note, and goes to the error report.
+  (2026-11-04, T-36). A failure goes to the error report.
 - Six handlers is a design. Twelve is a maintenance problem for five
   part-time engineers.
 - Measure cost for each interview and each handler from day one. The cost for
@@ -119,7 +119,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
   launch. When Jev access arrives, try Jev on the eval set.
 
 Superseded: the 2026-09-23 launch plan cut the router, Form B and the
-advisor. They came back on 2026-09-26.
+advisor. On 2026-09-26 they came back, and the advisor got web search after
+sign-in.
 
 ## Alternatives rejected
 
