@@ -18,7 +18,8 @@
 | The runner that scores a model | T-27 |
 
 - **The mix.** 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).
-- **The level of code-mix** is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and numbers do not count. **The script** is the script of the letters: digits belong to no script.
+- **The level of code-mix** is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and digits do not count; a number in words counts as a word of its language. **The script** is the script of the letters: digits belong to no script.
+- **The language and the register.** T-27 compares the register of the router with the language of the sentence: English is `english`, Hinglish in Latin script is `mixed`, Hindi in Devanagari is `hindi`, and Marathi is `marathi`.
 - **The check.** Each label must be a valid Form A and each area a slug of the seed, the script must agree with the letters, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas.
 
 ## The choice we made

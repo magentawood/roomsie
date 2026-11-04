@@ -22,7 +22,7 @@ Add a rule only in one of these two conditions:
 2. Review finds the same mistake two times.
 
 - Review writes each mistake that no rule covers in [_candidates.md](_candidates.md).
-- At the second time, move the mistake into the correct file as a rule, with `Why:` and a source link. Write this in the Progress section of the PR.
+- At the second time, move the mistake into the correct file as a rule, with `Why:` and a source link, and move its row to [_candidates-archive.md](_candidates-archive.md). Write this in the Progress section of the PR.
 - When a record changes, change its rules in the same PR. The most recent record wins.
 - Keep each file below approximately 40 rules and 1,200 words.
 
@@ -37,6 +37,7 @@ Add a rule only in one of these two conditions:
 | [`styling.md`](styling.md) | Tailwind v4, theme tokens and the Untitled UI pipeline |
 | [testing.md](testing.md) | The CI gate, tests and assistant evals |
 | [_candidates.md](_candidates.md) | The log of mistakes that no rule covers |
+| [_candidates-archive.md](_candidates-archive.md) | The candidates that became rules |
 
 ## Rules for all code
 

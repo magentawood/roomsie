@@ -47,7 +47,7 @@ Realistic sentences to test the assistant.
 
 - **Modules:**
   - **The eval set (new):** `apps/api/eval/sentences.json`. It has the reference date, and 50 sentences. Each sentence has its text, its language, its script, its level of code-mix, a mark if it is vague on purpose, and the correct values of Form A after the parsers of the code. A slot that the label does not name must stay empty.
-  - **The check (new):** an API test that reads the file. The interface of the API does not change.
+  - **The check (new):** an API test that reads the file. The seed of the areas exports its slugs for the check (review). The interface of the API does not change.
 - **Seams for the tests:**
   - The test of the eval set: each label is a valid value of Form A, and each area slug is in the seed; the file has 50 sentences, 10 of them vague, in the agreed mix of languages; the required phrases are in the set.
 - **Decisions:**
