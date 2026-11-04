@@ -31,6 +31,8 @@ const OBSERVATION_TOPICS = [
   { key: 'chores_bills', label: 'Sharing chores and bills' },
 ]
 
+export const observationTopicKeys = OBSERVATION_TOPICS.map(({ key }) => key)
+
 export async function seedCatalogues(db: Db) {
   await db.insert(lifestyleAxes).values(LIFESTYLE_AXES)
     .onConflictDoUpdate({

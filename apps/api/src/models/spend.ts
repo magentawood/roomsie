@@ -13,6 +13,11 @@ const modelPrices: Record<Vendor, { in: number; cachedIn: number; out: number }>
   gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 },
 }
 const usdToInr = 88
+/** The rupees of the usage of one call, at the high prices above. */
+export function rupeesOf(vendor: Vendor, usage: ModelUsage) {
+  const price = modelPrices[vendor]
+  return ((usage.tokensIn - usage.cachedTokensIn) * price.in + usage.cachedTokensIn * price.cachedIn + usage.tokensOut * price.out) / 1e6 * usdToInr
+}
 const inRupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 
 /** The model spend of each day (PD9, T-21). The chat never stops for it: the team gets a Telegram alert at 70% and at 100%. */
@@ -30,11 +35,10 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
   }
 
   async function add(vendor: Vendor, usage: ModelUsage) {
-    const price = modelPrices[vendor]
-    const dollars = ((usage.tokensIn - usage.cachedTokensIn) * price.in + usage.cachedTokensIn * price.cachedIn + usage.tokensOut * price.out) / 1e6
-    if (!dollars) return
+    const rupees = rupeesOf(vendor, usage)
+    if (!rupees) return
     const day = today()
-    const [row] = await db.insert(modelSpend).values({ day, rupees: String(dollars * usdToInr) })
+    const [row] = await db.insert(modelSpend).values({ day, rupees: String(rupees) })
       .onConflictDoUpdate({ target: modelSpend.day, set: { rupees: sql`${modelSpend.rupees} + excluded.rupees` } })
       .returning({ rupees: modelSpend.rupees })
     const total = Number(row!.rupees)

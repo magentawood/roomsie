@@ -51,7 +51,7 @@ function comparisonReply(table: Comparison, { language, label, last }: { languag
  * The observer reads a turn with context that the extractor may read, after the reply (PD7a, T-36). Never a turn that states
  * a hidden preference (PD3c). A sensitive turn obeys the setting of PC-17. Null: no observer.
  */
-function observeOf(label: TurnLabel, hidden: boolean, { sensitiveNotes }: AssistantSettings) {
+export function observeOf(label: TurnLabel, hidden: boolean, { sensitiveNotes }: Pick<AssistantSettings, 'sensitiveNotes'>) {
   if (!label.kinds.includes('context') || !usesExtractor(label) || hidden || label.notes) return null
   if (label.band !== 'sensitive') return { visible: true }
   return sensitiveNotes === 'none' ? null : { visible: sensitiveNotes === 'visible' }
