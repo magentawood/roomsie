@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mean, rangesOf } from '../eval/report'
-import { callStats, composerScoresOf, flipsOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
+import { callStats, composerScoresOf, composersOfSearches, flipsOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
 import type { EvalSentence } from '../eval/set'
 
 const sentence = (id: string, language: EvalSentence['language'], text: string, expected: EvalSentence['expected'], more: Partial<EvalSentence> = {}): EvalSentence =>
@@ -114,6 +114,10 @@ describe('the scores of the router on the other bands (T-61)', () => {
       .toMatchObject({ otherBands: 2, bandRight: 1, dangerRight: 1, communityRight: 0, alarmsAbove: 0, alarmsBelow: 0, falseFlags: 1 })
   })
 
+  it('counts a sentence with a community preference in a band that is not core as a false alarm: it is a search of the core band', () => {
+    expect(scoresOf(others, [at('h24', 'sensitive', { community: true })]).all).toMatchObject({ alarmsAbove: 1, communityRight: 1 })
+  })
+
   it('lists each band and flag that the router misses, and no slot of a sentence that is not a search', () => {
     expect(missesOf(others, [at('e16', 'core', { routerBand: 'general' }), at('e20', 'sensitive'), at('h24', 'core', { community: true })]))
       .toEqual(['e16 · band: label "general", got "core" (1)', 'e20 · danger: label true, got false (1)'])
@@ -134,7 +138,7 @@ describe('the scores of the router on the other bands (T-61)', () => {
     expect(selectThreshold([row(0.5, 2, 0, 15), row(0.8, 2, 0, 15), row(0.95, 2, 0, 15)])).toBe(0.8)
   })
 
-  it('selects the higher threshold of two at the same distance from 0.8, as it gives fewer false alarms', () => {
+  it('selects the higher threshold of two at the same distance from 0.8', () => {
     expect(selectThreshold([row(0.75, 2, 0, 15), row(0.85, 2, 0, 15)])).toBe(0.85)
   })
 })
@@ -160,6 +164,13 @@ describe('the scores of the composer (T-61)', () => {
     expect(scores.english).toMatchObject({ calls: 1, noAnswer: 1 })
   })
 
+  it('scores only the composer calls of a search: a sentence of the other bands can reach the composer when its band is not sure', () => {
+    const general = sentence('e16', 'english', 'how much deposit do owners usually ask for in Mumbai?', {}, { band: 'general' })
+    const both = [turn('h25', reply('hi-Latn', 'Powai mein flat. Kab shift karna hai?', null)), turn('e16', reply('en', 'Noted. What is your budget?', null))]
+    expect(composerScoresOf([named, general], both).all.calls).toBe(1)
+    expect(composersOfSearches([named, general], both).map((c) => c.text)).toEqual(['Powai mein flat. Kab shift karna hai?'])
+  })
+
   it('counts each reply with the name of the friend: stopped by the check, or through by lower case or Devanagari', () => {
     const replies = [
       'Aap aur neha ke liye Powai mein flat. Kab shift karna hai?',
@@ -171,9 +182,15 @@ describe('the scores of the composer (T-61)', () => {
       .toEqual([{ id: 'h25', replies: 4, withName: 3, stopped: 1, lowerCase: 1, devanagari: 1, other: 0 }])
   })
 
+  it('gives the limit of a name that the person typed in Devanagari, also when the text writes it in Latin letters', () => {
+    const typed = sentence('m25', 'marathi', 'मी आणि माझी मैत्रीण प्रिया पवईमध्ये फ्लॅट शोधत आहोत', {}, { names: ['priya', 'प्रिया'] })
+    const latin = { ...reply('mr-Latn', 'Priya ani tumhala Powai madhe flat. Kadhi shift karnar?', null), message: typed.text }
+    expect(namesOf([typed], [turn('m25', latin)])).toEqual([{ id: 'm25', replies: 1, withName: 1, stopped: 0, lowerCase: 0, devanagari: 1, other: 0 }])
+  })
+
   it('lists the capital words at the start of a sentence of a passed text that are not in the plan or the message, the most frequent first', () => {
     const text = (t: string, i: number) => turn('h25', reply('hi-Latn', t, null), i)
-    expect(startCapitalsOf([text('Rohan aapko call karega. Kab shift karna hai?', 1), text('Kab shift karna hai? Powai, noted.', 2), text('Theek hai, Bandra bhi?', 3)]))
+    expect(startCapitalsOf([text('Rohan aapko call karega. Kab shift karna hai?', 1), text('Kab shift karna hai? Powai, noted.', 2), text('Theek hai, Bandra bhi?', 3)].map((t) => t.composer!)))
       .toEqual([['Kab', 2], ['Rohan', 1]])
   })
 

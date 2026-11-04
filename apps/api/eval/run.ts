@@ -3,40 +3,20 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import type { FastifyRequest } from 'fastify'
 import { z } from 'zod'
-import { composerInput, filledSlots, formA, turnLabel, type AnalyticsEvent, type FormA, type ModelRole } from '@roomsie/contract'
+import { composerAnswer, composerInput, filledSlots, formA, routerAnswer, type AnalyticsEvent, type FormA, type ModelRole } from '@roomsie/contract'
 import { runTurn } from '../src/assistant/assistant'
 import { extractor, noExtraction } from '../src/assistant/handlers/extractor/extractor'
 import { routeTurn } from '../src/assistant/handlers/router/router'
 import { assistantSettings } from '../src/assistant/settings'
 import type { Db } from '../src/db/client'
 import { seedCatalogues } from '../src/db/seed-axes'
-import { ModelUnavailable, modelsOf, type Models, type Token } from '../src/models/models'
+import { ModelUnavailable, modelsOf, vendorOf, type Models } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
 import { createTestDb } from '../test/db'
 import { reportOf, type ModelScores } from './report'
-import { callResult, type CallResult, type TurnResult } from './score'
+import { mergedRuns, runFile, type ModelRun, type Recorded, type RunTurn } from './run-file'
+import type { CallResult, TurnResult } from './score'
 import { evalSet } from './set'
-
-const token: z.ZodType<Token> = z.object({ token: z.string(), logprob: z.number() })
-/** One answer of a model with its token probabilities, so a replay scores it again with no call. */
-const recordedAnswer = z.strictObject({ value: z.unknown(), tokens: z.array(token).nullable(), model: z.string() })
-type Recorded = z.infer<typeof recordedAnswer>
-/** The composer call of a turn: its input, its text (null: no answer), and the time of all its attempts (T-61). */
-const recordedComposer = z.strictObject({ input: composerInput, text: z.string().nullable(), ms: z.number() })
-/** The run file. A replay refuses a file of another version. Version 2 has the composer and the register of its text (T-61). */
-const runFile = z.strictObject({
-  version: z.literal(2),
-  runs: z.array(z.strictObject({
-    model: z.string(),
-    turns: z.array(z.strictObject({
-      id: z.string(), repeat: z.int(), extractor: recordedAnswer.nullable(), router: recordedAnswer.nullable(), label: turnLabel,
-      composer: recordedComposer.nullable(), judge: turnLabel.shape.register,
-    })),
-    calls: z.array(callResult),
-  })),
-})
-type ModelRun = z.infer<typeof runFile>['runs'][number]
-type RunTurn = ModelRun['turns'][number]
 
 const repeats = 3
 const settings = assistantSettings.parse(process.env)
@@ -81,6 +61,16 @@ function onlyModel(model: string) {
   return models
 }
 
+/** The model module with each scored answer kept by its role, for the run file. */
+const recorder = (models: Models, answers: Partial<Record<ModelRole, Recorded>>): Models => ({
+  ...models,
+  scored: async (call) => {
+    const scored = await models.scored(call)
+    answers[call.role] = scored
+    return scored
+  },
+})
+
 /**
  * A live turn, as in the chat (PD7a): the router and the extractor in parallel, then the reply writer and the composer.
  * The run file keeps each answer. The judge, a router call on one fixed model, then gives the register of the text of the composer (T-61).
@@ -90,22 +80,17 @@ async function liveTurn(models: Models, judge: Models, db: Db, id: string, repea
   const answers: Partial<Record<ModelRole, Recorded>> = {}
   let composer: RunTurn['composer'] = null
   const recording: Models = {
-    ...models,
-    scored: async (call) => {
-      const scored = await models.scored(call)
-      answers[call.role] = scored
-      return scored
-    },
+    ...recorder(models, answers),
     json: async (call) => {
       if (call.role !== 'composer') return models.json(call)
       // The message of the composer is its input as JSON, so the run file gets the plan that the composer got.
       const input = composerInput.parse(JSON.parse(call.messages[0]!.content))
       const start = performance.now()
       const answer = await models.json(call).catch((err: unknown) => {
-        composer = { input, text: null, ms: Math.round(performance.now() - start) }
+        composer = { input, text: null, ms: performance.now() - start }
         throw err
       })
-      composer = { input, text: (answer as { text: string }).text, ms: Math.round(performance.now() - start) }
+      composer = { input, text: composerAnswer.parse(answer).text, ms: performance.now() - start }
       return answer
     },
   }
@@ -115,14 +100,16 @@ async function liveTurn(models: Models, judge: Models, db: Db, id: string, repea
     { req, db, models: recording, settings: { ...settings, composerDeadlineMs: noDeadline }, today },
   )
   const text = (composer as RunTurn['composer'])?.text
+  const judged: Partial<Record<ModelRole, Recorded>> = {}
   // The calls of the judge stay out of the times of the run.
-  const judged = text ? await routeTurn({ goalId, text, last: null }, { req: requestOf(id, []), models: judge, settings }) : null
-  return { id, repeat, extractor: answers.extractor ?? null, router: answers.router ?? null, label, composer, judge: judged?.register ?? null }
+  if (text) await routeTurn({ goalId, text, last: null }, { req: requestOf(id, []), models: recorder(judge, judged), settings })
+  return { id, repeat, extractor: answers.extractor ?? null, router: answers.router ?? null, label, composer, judge: judged.router ?? null }
 }
 
 async function liveRuns(db: Db): Promise<ModelRun[]> {
   const runs: ModelRun[] = []
-  // The judge is the primary model of PD7, DeepSeek, also in the run of the fallback, so the judge does not change (the spec of T-61).
+  // The judge is DeepSeek, also in the run of the fallback, so the judge does not change (the spec of T-61).
+  if (vendorOf(env.MODEL_PRIMARY) !== 'deepseek') throw new Error('The judge of the composer needs a DeepSeek model as MODEL_PRIMARY.')
   const judge = onlyModel(env.MODEL_PRIMARY)
   for (const model of [env.MODEL_PRIMARY, env.MODEL_FALLBACK]) {
     const models = onlyModel(model)
@@ -164,8 +151,10 @@ async function replayed({ id, extractor: recorded }: RunTurn, db: Db, minProbabi
 const replayedLabel = ({ id, router: recorded }: RunTurn, routerMinProbability: number) =>
   routeTurn({ goalId: randomUUID(), text: textOf.get(id)!, last: null }, { req: requestOf(id, []), models: replaying(recorded), settings: { ...settings, routerMinProbability } })
 
-const composerOf = ({ composer, judge }: RunTurn): TurnResult['composer'] =>
-  composer ? { language: composer.input.language, draft: composer.input.draft, message: composer.input.message, text: composer.text, ms: composer.ms, judge } : undefined
+/** The register of the router stays in its answer, also when the band is not sure. */
+const composerOf = ({ composer, judge }: RunTurn): TurnResult['composer'] => composer
+  ? { language: composer.input.language, draft: composer.input.draft, message: composer.input.message, text: composer.text, ms: composer.ms, judge: judge && routerAnswer.parse(judge.value).register }
+  : undefined
 
 async function scoresOfRun({ model, turns, calls }: ModelRun, db: Db): Promise<ModelScores> {
   // One pool for each threshold and turn, so `parallel` limits the replays.
@@ -175,22 +164,7 @@ async function scoresOfRun({ model, turns, calls }: ModelRun, db: Db): Promise<M
     values: await replayed(turn, db, threshold), label: await replayedLabel(turn, threshold), composer: composerOf(turn),
   }))
   const sweep = thresholds.map((threshold) => ({ threshold, turns: results.filter((r) => r.threshold === threshold) }))
-  return { model, live: settings.minProbability, routerLive: settings.routerMinProbability, sweep, calls, repeats: Math.max(...turns.map((t) => t.repeat)) }
-}
-
-/** The runs of several files as one run for each model: the repeats of a later file come after those of the earlier file. */
-function mergedRuns(files: ModelRun[][]) {
-  const merged = new Map<string, ModelRun>()
-  for (const run of files.flat()) {
-    const seen = merged.get(run.model)
-    if (!seen) merged.set(run.model, { ...run, turns: [...run.turns], calls: [...run.calls] })
-    else {
-      const offset = Math.max(...seen.turns.map((t) => t.repeat))
-      seen.turns.push(...run.turns.map((t) => ({ ...t, repeat: t.repeat + offset })))
-      seen.calls.push(...run.calls)
-    }
-  }
-  return [...merged.values()]
+  return { model, extractorLive: settings.minProbability, routerLive: settings.routerMinProbability, sweep, calls, repeats: Math.max(...turns.map((t) => t.repeat)) }
 }
 
 // `--replay <run file>` scores a saved run again with no model call, as after a change of a parser.

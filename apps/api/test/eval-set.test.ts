@@ -23,9 +23,10 @@ describe('the eval sentences (M-03)', () => {
     expect(of('hinglish').some((s) => s.script === 'devanagari')).toBe(true)
   })
 
-  it('has one sentence in each language for each band that is not core, and two sentences with danger, both sensitive (T-61)', () => {
+  it('has a sentence in English, in Hinglish, in Hindi in Devanagari and in Marathi for each band that is not core, and two sentences with danger, both sensitive (T-61)', () => {
     for (const band of scopeBands.filter((b) => b !== 'core')) {
-      expect(sentences.filter((s) => s.band === band).map((s) => s.language).toSorted(), band).toEqual(['english', 'hinglish', 'marathi'])
+      expect(sentences.filter((s) => s.band === band).map((s) => `${s.language} ${s.script}`).toSorted(), band)
+        .toEqual(['english latin', 'hinglish devanagari', 'hinglish latin', expect.stringMatching(/^marathi /)])
     }
     expect(sentences.filter((s) => s.danger).map((s) => s.band)).toEqual(['sensitive', 'sensitive'])
   })
@@ -40,10 +41,11 @@ describe('the eval sentences (M-03)', () => {
 
   it('has six searches that name a friend: a capital and a lower-case name in English, a lower-case and a Devanagari name in Hinglish and Marathi (T-61)', () => {
     const typed = ({ id, text, names }: EvalSentence) => {
-      const at = names.map((name) => text.toLowerCase().indexOf(name)).find((i) => i >= 0)
-      expect(at, id).toBeDefined()
-      const name = text.slice(at, at! + names.find((n) => text.toLowerCase().includes(n))!.length)
-      return isDevanagari(name) ? 'devanagari' : /^\p{Lu}/u.test(name) ? 'capital' : 'lower'
+      const name = names.find((n) => text.toLowerCase().includes(n))
+      expect(name, id).toBeDefined()
+      const at = text.toLowerCase().indexOf(name!)
+      const asTyped = text.slice(at, at + name!.length)
+      return isDevanagari(asTyped) ? 'devanagari' : /^\p{Lu}/u.test(asTyped) ? 'capital' : 'lower'
     }
     const named = sentences.filter((s) => s.names.length > 0)
     expect(named.every(isSearch)).toBe(true)

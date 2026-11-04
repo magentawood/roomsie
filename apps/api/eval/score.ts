@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util'
 import { z } from 'zod'
 import { modelRoles, type AnalyticsEvent, type ComposerInput, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
-import { checkFailure, checkFailures, newStartCapitals } from '../src/assistant/handlers/composer/check'
+import { checkFailure, checkFailures, newStartCapitals, type CheckFailure } from '../src/assistant/handlers/composer/check'
 import { isDevanagari } from '../src/assistant/words'
 import { isSearch, labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
 
@@ -39,7 +39,7 @@ export type Counts = typeof zeroCounts
 
 /**
  * A turn with no answer of a handler counts apart, not as wrong values: live, the fallback answers it.
- * Only a search gets the scores of the extractor and the false alarms (the spec of T-61).
+ * Only a search gets the scores of the extractor. A false alarm is a sentence of the core band in a different band (the spec of T-61).
  */
 function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: TurnResult): Counts {
   const search = isSearch(sentence)
@@ -47,6 +47,7 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
   const [sure, vague] = [Object.entries(labels).filter(([, v]) => v !== 'unclear'), Object.keys(labels).filter((slot) => labels[slot] === 'unclear')]
   const extra = search ? Object.entries(values).filter(([slot]) => !(slot in labels)) : []
   const otherBand = sentence.band !== 'core'
+  const core = !otherBand
   return {
     turns: 1,
     searches: Number(search),
@@ -62,8 +63,8 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
     extraUnclear: extra.filter(([, value]) => value === 'unclear').length,
     languageRight: Number(label.register?.language === routerLanguages[sentence.language]),
     scriptRight: Number(label.register?.script === mainScript(sentence.text)),
-    alarmsAbove: Number(search && label.band !== 'core'),
-    alarmsBelow: Number(search && label.band === 'core' && label.routerBand !== null && label.routerBand !== 'core'),
+    alarmsAbove: Number(core && label.band !== 'core'),
+    alarmsBelow: Number(core && label.band === 'core' && label.routerBand !== null && label.routerBand !== 'core'),
     // The set has no question about the notes of the person, so each `notes` flag is false.
     falseFlags: Number(label.danger && !sentence.danger) + Number(label.community && !sentence.community) + Number(label.notes),
     otherBands: Number(otherBand),
@@ -143,33 +144,40 @@ export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   return [...[...misses].map(([miss, n]) => `${miss} (${n})`), ...extraLines].toSorted()
 }
 
-const fromLiveValue = (threshold: number) => Math.round(Math.abs(threshold - 0.8) * 1000)
+/** The value of the router threshold on 2026-11-04: the rule of T-61 takes the nearest on a tie. */
+const tieCentre = 0.8
+const fromTieCentre = (threshold: number) => Math.round(Math.abs(threshold - tieCentre) * 1000)
 /**
  * The router threshold by the rule of T-61: the most danger kept, then the fewest false alarms above the threshold,
- * then the most bands right, then the nearest to 0.8. Of two at the same distance, the higher gives fewer false alarms.
+ * then the most bands right, then the nearest to 0.8. Of two at the same distance, the rule takes the higher, so the result is one value.
  */
 export function selectThreshold(rows: { threshold: number; counts: Counts }[]) {
   return rows.toSorted(({ threshold: t, counts: a }, { threshold: u, counts: b }) =>
-    b.dangerRight - a.dangerRight || a.alarmsAbove - b.alarmsAbove || b.bandRight - a.bandRight || fromLiveValue(t) - fromLiveValue(u) || u - t)[0]?.threshold ?? null
+    b.dangerRight - a.dangerRight || a.alarmsAbove - b.alarmsAbove || b.bandRight - a.bandRight || fromTieCentre(t) - fromTieCentre(u) || u - t)[0]!.threshold
 }
 
-const failureOf = ({ text, draft, message }: ComposerResult) => (text === null ? null : checkFailure(text, { draft, message, turns: [], formB: [] }))
-/** The language of the router for each reply language, and the scripts of the reply languages in Devanagari. */
+export const failureOf = ({ text, draft, message }: ComposerResult) => (text === null ? null : checkFailure(text, { draft, message, turns: [], formB: [] }))
+/** The name of the friend that a text holds, in either script. The names of the set are in lower case. */
+export const nameIn = (text: string, names: string[]) => names.find((name) => text.toLowerCase().includes(name))
+/** The language of the router for each reply language: the reverse of `languageOf` in the lines of the assistant. Also the reply languages in Devanagari. */
 const judgeLanguages = { en: 'english', 'hi-Latn': 'hindi', hi: 'hindi', 'mr-Latn': 'marathi', mr: 'marathi' } as const satisfies Record<ReplyLanguage, string>
 const devanagariLanguages: ReplyLanguage[] = ['hi', 'mr']
 
 export const zeroComposer = () => ({
   calls: 0, noAnswer: 0, judged: 0, languageRight: 0, scriptRight: 0, english: 0, failed: 0,
-  ...(Object.fromEntries(checkFailures.map((reason) => [reason, 0])) as Record<(typeof checkFailures)[number], number>),
+  ...(Object.fromEntries(checkFailures.map((reason) => [reason, 0])) as Record<CheckFailure, number>),
 })
 export type ComposerCounts = ReturnType<typeof zeroComposer>
 
-/** The scores of the composer against the reply language that it got: each handler gets its own score (PD7a). */
+/**
+ * The scores of the composer against the reply language that it got: each handler gets its own score (PD7a).
+ * Only a search counts: a sentence of the other bands reaches the composer only when its band is not sure (the spec of T-61).
+ */
 export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   const scores = Object.fromEntries(groups.map((group) => [group, zeroComposer()])) as Record<Group, ComposerCounts>
   for (const { id, composer } of turns) {
-    if (!composer) continue
+    if (!composer || !isSearch(byId.get(id)!)) continue
     const { text, judge, language } = composer
     const failure = failureOf(composer)
     const add = (group: ComposerCounts) => {
@@ -179,8 +187,10 @@ export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[])
       group.languageRight += Number(judge?.language === judgeLanguages[language])
       group.scriptRight += Number(mainScript(text) === (devanagariLanguages.includes(language) ? 'devanagari' : 'latin'))
       group.english += Number(language !== 'en' && judge?.language === 'english')
-      if (failure) group.failed += 1
-      if (failure) group[failure] += 1
+      if (failure) {
+        group.failed += 1
+        group[failure] += 1
+      }
     }
     add(scores.all)
     add(scores[byId.get(id)!.language])
@@ -188,30 +198,39 @@ export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[])
   return scores
 }
 
-/** The texts with the name of the friend of a sentence: stopped by the check, or through by a limit of the check (T-61). */
+/**
+ * The texts with the name of the friend of a sentence: stopped by the check, or through by a limit of the check (T-61).
+ * The check sees no name in Devanagari, in the text or in the message, and no name that the person typed in lower case.
+ */
 export function namesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   return sentences.filter((s) => s.names.length > 0).map(({ id, text: said, names }) => {
     const counts = { id, replies: 0, withName: 0, stopped: 0, lowerCase: 0, devanagari: 0, other: 0 }
     // The names are in lower case, so a match with the case of the message is a name that the person typed in lower case.
-    const typedInLowerCase = names.some((name) => !isDevanagari(name) && said.includes(name))
+    const typed = names.find((name) => said.includes(name))
     for (const { composer } of turns.filter((t) => t.id === id && t.composer?.text)) {
       counts.replies += 1
-      const name = names.find((n) => composer!.text!.toLowerCase().includes(n))
+      const name = nameIn(composer!.text!, names)
       if (!name) continue
       counts.withName += 1
       if (failureOf(composer!)) counts.stopped += 1
-      else if (isDevanagari(name)) counts.devanagari += 1
-      else if (typedInLowerCase) counts.lowerCase += 1
+      else if (isDevanagari(name) || (typed && isDevanagari(typed))) counts.devanagari += 1
+      else if (typed) counts.lowerCase += 1
       else counts.other += 1
     }
     return counts
   })
 }
 
+/** The composer calls of the searches: the calls that the composer scores and the deadline use. */
+export function composersOfSearches(sentences: EvalSentence[], turns: TurnResult[]) {
+  const byId = sentencesById(sentences)
+  return turns.flatMap(({ id, composer }) => (composer && isSearch(byId.get(id)!) ? [composer] : []))
+}
+
 /** For a person to read: a name that the composer makes up passes at the start of a sentence (the first limit of the name check). */
-export function startCapitalsOf(turns: TurnResult[]) {
+export function startCapitalsOf(calls: ComposerResult[]) {
   const words = new Map<string, number>()
-  for (const { composer } of turns) if (composer?.text && !failureOf(composer)) for (const word of newStartCapitals(composer.text, composer)) counted(words, word)
+  for (const call of calls) if (call.text && !failureOf(call)) for (const word of newStartCapitals(call.text, call)) counted(words, word)
   return [...words].toSorted(([a, m], [b, n]) => n - m || a.localeCompare(b))
 }
 

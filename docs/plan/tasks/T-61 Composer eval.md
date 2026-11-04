@@ -50,8 +50,8 @@ Score the replies of the assistant, and the messages that are not a search.
 **Approved:** 2026-11-04, by Pulkit. The change after the merge of T-36: approved on 2026-11-04, by Pulkit.
 
 - **Modules:**
-  - **The eval set (changes):** a sentence can have a band, the flags `danger` and `community`, and the names of other people in each script. A sentence with no band is a search, with no flag. The set gets 23 new sentences:
-    - 15 sentences of the other bands: one in English, one in Hinglish and one in Marathi for each of `general`, `consequential`, `out_of_scope`, `adversarial` and `sensitive`. Two of the `sensitive` sentences have `danger`.
+  - **The eval set (changes):** a sentence can have a band, the flags `danger` and `community`, and the names of other people in each script. A sentence with no band is a search, with no flag. The set gets 28 new sentences:
+    - 20 sentences of the other bands, for each of `general`, `consequential`, `out_of_scope`, `adversarial` and `sensitive`. Each band has one in English, one in Hinglish, one in Hindi in Devanagari and one in Marathi. Two of the `sensitive` sentences have `danger`.
     - 2 searches with a community preference, with `community`.
     - 6 searches that name a friend, with the labels of Form A. In English, one name has a capital letter and one is in lower case. In Hinglish and in Marathi, one name is in lower case and one is in Devanagari.
   - **The eval runner (changes):** the runner calls the reply writer, then the composer, as in a live turn. It does this for each search that the extractor reads and the router labels core. Then the router reads the text of the composer, for its language. The run file gets version 2, with the answers of the composer and of this router call. The runner replays the router answers at each threshold, as it replays the extractor answers.
@@ -80,7 +80,8 @@ Score the replies of the assistant, and the messages that are not a search.
   - **The deadline (the user):** the time of a composer call is the time of all its attempts. The steps are 500 ms, from 1500 ms. The rule selects the smallest step where 9 of 10 DeepSeek composer calls give an answer in time. The maximum is 4000 ms. A call with no answer is late. If no step reaches 9 of 10, the value is 4000 ms. The report of each run gives the calls in time at each step. The research page adds the two runs, then applies the rule.
   - **The runs (the user):** the first run is on the evening of 2026-11-04. The second run is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.
   - **The sentences (the user):** Claude writes and labels them in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge (as M-03).
-  - **The scores of the new sentences (the user):** the 17 sentences of the other bands or with `community` count only in the scores of the router. The 6 with a friend count in all the scores.
+  - **The scores of the new sentences (the user):** the 22 sentences of the other bands or with `community` count only in the scores of the router. The 6 with a friend count in all the scores. A false alarm is a sentence of the core band, also with `community`, that the router puts in a different band.
+  - **Hindi in Devanagari (the user, review round 1):** each band also gets a sentence in Hindi in Devanagari, as [the testing standards](../../standards/testing.md) ask. Thus, the first run runs again on 2026-11-04.
   - **The setup (the user, as T-27):** DeepSeek and Gemini get a score each, with one model as the primary and as the fallback. Each sentence runs three times. The composer gets no turns and no Form B notes.
   - **The composer in the runner (the user):** it runs with no deadline, so the timeout of the model module is its only limit.
   - **A prompt change (the user, the rule of T-27):** a change of the composer prompt stays only when three things are true. The total score goes up, no language goes down, and the change is a general rule.
