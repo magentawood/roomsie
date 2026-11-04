@@ -4,7 +4,7 @@ import { modelRoles, type AnalyticsEvent, type TurnLabel } from '@roomsie/contra
 import { labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
 
 /** One run of one sentence: the filled slots of Form A, and the label of the router. */
-export type TurnResult = { id: string; repeat: number; extractorAnswered: boolean; values: Record<string, unknown>; label: Pick<TurnLabel, 'register' | 'band' | 'routerBand' | 'danger' | 'community'> }
+export type TurnResult = { id: string; repeat: number; extractorAnswered: boolean; values: Record<string, unknown>; label: Pick<TurnLabel, 'register' | 'band' | 'routerBand' | 'danger' | 'community' | 'notes'> }
 const outcomes = ['ok', 'invalid', 'failed'] as const satisfies readonly Extract<AnalyticsEvent, { name: 'model_called' }>['outcome'][]
 /** One attempt of a model call, from the event `model_called`, with the sentence. */
 export const callResult = z.strictObject({ id: z.string(), role: z.enum(modelRoles), ms: z.number(), outcome: z.enum(outcomes) })
@@ -49,7 +49,7 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
     scriptRight: Number(label.register?.script === mainScript(sentence.text)),
     alarmsAbove: Number(label.band !== 'core'),
     alarmsBelow: Number(label.band === 'core' && label.routerBand !== null && label.routerBand !== 'core'),
-    falseFlags: Number(label.danger) + Number(label.community),
+    falseFlags: Number(label.danger) + Number(label.community) + Number(label.notes),
   }
 }
 

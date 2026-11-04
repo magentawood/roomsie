@@ -55,7 +55,6 @@ declare module 'fastify' {
   }
 }
 
-
 type RequestBody = { required?: boolean; content?: Record<string, { schema?: { nullable?: boolean } }> }
 
 /** A route that also takes no body has a nullable body schema, but the generator writes each body as required (T-48). */

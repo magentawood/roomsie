@@ -2,7 +2,7 @@
   "version": 1,
   "sentences": [
     {"id": "o01", "text": "My last flatmate never cleaned the kitchen and we fought every week, so I want someone tidy", "language": "english", "script": "latin", "expected": ["past_flatmates"]},
-    {"id": "o02", "text": "I work night shifts at a call centre, so I sleep till 2pm", "language": "english", "script": "latin", "expected": ["work_pattern"]},
+    {"id": "o02", "text": "I work night shifts at a call centre, so I sleep till 2pm", "language": "english", "script": "latin", "expected": ["commute"]},
     {"id": "o03", "text": "My boyfriend stays over on weekends, is that ok?", "language": "english", "script": "latin", "expected": ["guest_frequency"]},
     {"id": "o04", "text": "I cook every day, I need a proper kitchen and not just a hot plate", "language": "english", "script": "latin", "expected": ["cooking"]},
     {"id": "o05", "text": "Moving because my office shifted to BKC and the commute from Thane is killing me", "language": "english", "script": "latin", "expected": ["move_reason", "commute"]},

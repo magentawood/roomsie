@@ -11,7 +11,7 @@ const sentences = [
   sentence('m10', 'marathi', 'रूम घ्यायची की पूर्ण फ्लॅट, गोरेगावमध्ये', { intent: 'unclear', lifestyle: { pets: 'unclear' } }),
 ]
 const label = (language: string, script: string, band = 'core', routerBand: string | null = band) =>
-  ({ register: { language, script }, band, routerBand, danger: false, community: false }) as TurnResult['label']
+  ({ register: { language, script }, band, routerBand, danger: false, community: false, notes: false }) as TurnResult['label']
 const turns: TurnResult[] = [
   // The areas in a different order, and a move date that the sentence does not name.
   { id: 'e01', repeat: 1, extractorAnswered: true, values: { intent: 'room', areas: ['nerul', 'vashi'], budget: { min: null, max: 20_000 }, moveDate: '2026-12-01' }, label: label('english', 'latin') },
@@ -39,7 +39,7 @@ describe('the scores of an eval run (T-27)', () => {
   })
 
   it('counts a turn with no answer of the router apart, with no language and no script', () => {
-    const noRouter = { register: null, band: 'core', routerBand: null, danger: false, community: false } as TurnResult['label']
+    const noRouter = { register: null, band: 'core', routerBand: null, danger: false, community: false, notes: false } as TurnResult['label']
     expect(scoresOf(sentences, [{ ...turns[0]!, label: noRouter }]).english).toMatchObject({ routerNoAnswer: 1, languageRight: 0, scriptRight: 0, alarmsAbove: 0, alarmsBelow: 0 })
   })
 
