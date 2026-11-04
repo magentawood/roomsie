@@ -2,7 +2,7 @@
 id: T-12
 title: "Extraction: free text to form slots"
 owner: "P2 Chat"
-sequence: "4 of 15"
+sequence: "4 of 17"
 hours: 6
 start: 2026-09-26
 end: 2026-09-27
@@ -18,7 +18,7 @@ tags:
 
 # T-12 · Extraction: free text to form slots
 
-**Owner:** [[P2 Chat]], task 4 of 15  
+**Owner:** [[P2 Chat]], task 4 of 17  
 **When:** Sat 26 Sep → Sun 27 Sep · 6 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#23](https://github.com/magentawood/roomsie/issues/23)

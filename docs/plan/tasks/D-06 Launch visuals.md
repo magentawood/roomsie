@@ -2,7 +2,7 @@
 id: D-06
 title: "Launch visuals"
 owner: "Design"
-sequence: "6 of 6"
+sequence: "6 of 7"
 start: 2026-10-09
 end: 2026-10-10
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # D-06 · Launch visuals
 
-**Owner:** [[Design]], task 6 of 6  
+**Owner:** [[Design]], task 6 of 7  
 **When:** Fri 9 Oct → Sat 10 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#52](https://github.com/magentawood/roomsie/issues/52)

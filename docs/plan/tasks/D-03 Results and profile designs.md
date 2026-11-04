@@ -2,7 +2,7 @@
 id: D-03
 title: "Design results, profile and connect screens"
 owner: "Design"
-sequence: "3 of 6"
+sequence: "3 of 7"
 start: 2026-09-25
 end: 2026-09-27
 checkpoint: CP1
@@ -16,7 +16,7 @@ tags:
 
 # D-03 · Design results, profile and connect screens
 
-**Owner:** [[Design]], task 3 of 6  
+**Owner:** [[Design]], task 3 of 7  
 **When:** Fri 25 Sep → Sun 27 Sep  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#19](https://github.com/magentawood/roomsie/issues/19)

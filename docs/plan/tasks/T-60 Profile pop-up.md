@@ -2,7 +2,7 @@
 id: T-60
 title: "Profile pop-up after the first sign-in"
 owner: "P3 Data and trust"
-sequence: "20 of 20"
+sequence: "21 of 21"
 hours: 3
 start: 2026-11-25
 end: 2026-11-25
@@ -17,7 +17,7 @@ tags:
 
 # T-60 · Profile pop-up after the first sign-in
 
-**Owner:** [[P3 Data and trust]], task 20 of 20  
+**Owner:** [[P3 Data and trust]], task 21 of 21  
 **When:** Wed 25 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#208](https://github.com/magentawood/roomsie/issues/208)

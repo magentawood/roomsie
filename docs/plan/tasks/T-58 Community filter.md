@@ -2,7 +2,7 @@
 id: T-58
 title: "Hidden community filter"
 owner: "P3 Data and trust"
-sequence: "11 of 20"
+sequence: "11 of 21"
 hours: 8
 start: 2026-11-03
 end: 2026-11-06
@@ -17,7 +17,7 @@ tags:
 
 # T-58 · Hidden community filter
 
-**Owner:** [[P3 Data and trust]], task 11 of 20  
+**Owner:** [[P3 Data and trust]], task 11 of 21  
 **When:** Tue 3 Nov → Fri 6 Nov · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#194](https://github.com/magentawood/roomsie/issues/194)

@@ -37,6 +37,7 @@ The text for the legal pages.
 - [ ] The team emails DeepSeek to opt out of training before launch
 - [ ] For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)
 - [ ] The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
+- [ ] It says that the team keeps the traces of the assistant for 30 days, with religion and community masked (PD20)
 
 ^done
 

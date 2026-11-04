@@ -2,7 +2,7 @@
 id: D-05
 title: "Design QA on the live build"
 owner: "Design"
-sequence: "5 of 6"
+sequence: "5 of 7"
 start: 2026-10-05
 end: 2026-10-10
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # D-05 · Design QA on the live build
 
-**Owner:** [[Design]], task 5 of 6  
+**Owner:** [[Design]], task 5 of 7  
 **When:** Mon 5 Oct → Sat 10 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#42](https://github.com/magentawood/roomsie/issues/42)

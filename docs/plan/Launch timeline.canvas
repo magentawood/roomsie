@@ -374,7 +374,7 @@
    "x": -20,
    "y": 490,
    "width": 4652,
-   "height": 240,
+   "height": 336,
    "color": "#8B6CFF"
   },
   {
@@ -519,11 +519,29 @@
    "height": 84
   },
   {
+   "id": "task-T-64",
+   "type": "text",
+   "text": "**[[T-64 Model traces|T-64 Model traces]]**\n4h · Fri 6 Nov → Sat 7 Nov",
+   "x": 9460,
+   "y": 520,
+   "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-T-65",
+   "type": "text",
+   "text": "**[[T-65 AI numbers and switch|T-65 AI numbers and switch]]**\n3h · Fri 6 Nov → Sat 7 Nov",
+   "x": 9460,
+   "y": 712,
+   "width": 432,
+   "height": 84
+  },
+  {
    "id": "lane-P3",
    "type": "group",
    "label": "P3 Data and trust",
    "x": -20,
-   "y": 780,
+   "y": 876,
    "width": 4652,
    "height": 336,
    "color": "#2EA44F"
@@ -533,7 +551,7 @@
    "type": "text",
    "text": "**[[T-06 Database schema ⚑|T-06 Database schema]]**\n8h · Thu 24 Sep → Tue 29 Sep",
    "x": 0,
-   "y": 810,
+   "y": 906,
    "width": 1312,
    "height": 84,
    "color": "1"
@@ -543,7 +561,7 @@
    "type": "text",
    "text": "**[[T-14 Match query ⚑|T-14 Match query]]**\n6h · Tue 29 Sep → Sat 3 Oct",
    "x": 1100,
-   "y": 906,
+   "y": 1002,
    "width": 1092,
    "height": 84,
    "color": "1"
@@ -553,7 +571,7 @@
    "type": "text",
    "text": "**[[T-15 Results panel ⚑|T-15 Results panel]]**\n6h · Sat 3 Oct → Thu 8 Oct",
    "x": 1980,
-   "y": 810,
+   "y": 906,
    "width": 1312,
    "height": 84,
    "color": "1"
@@ -563,7 +581,7 @@
    "type": "text",
    "text": "**[[T-18b Person and connect screens ⚑|T-18b Person and connect screens]]**\n4h · Thu 8 Oct → Sat 10 Oct",
    "x": 3080,
-   "y": 906,
+   "y": 1002,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -573,7 +591,7 @@
    "type": "text",
    "text": "**[[T-41 Listings API|T-41 Listings API]]**\n8h · Sun 25 Oct → Wed 28 Oct",
    "x": 6820,
-   "y": 810,
+   "y": 906,
    "width": 872,
    "height": 84
   },
@@ -582,7 +600,7 @@
    "type": "text",
    "text": "**[[T-54 Photos domain|T-54 Photos domain]]**\n1h · Tue 27 Oct",
    "x": 7260,
-   "y": 906,
+   "y": 1002,
    "width": 212,
    "height": 84
   },
@@ -591,7 +609,7 @@
    "type": "text",
    "text": "**[[T-56 Sub-areas API|T-56 Sub-areas API]]**\n6h · Wed 28 Oct → Thu 29 Oct",
    "x": 7480,
-   "y": 906,
+   "y": 1002,
    "width": 432,
    "height": 84
   },
@@ -600,7 +618,7 @@
    "type": "text",
    "text": "**[[T-42 Listing flow screens|T-42 Listing flow screens]]**\n8h · Thu 29 Oct → Sun 1 Nov",
    "x": 7700,
-   "y": 810,
+   "y": 906,
    "width": 872,
    "height": 84
   },
@@ -609,7 +627,7 @@
    "type": "text",
    "text": "**[[T-57 Sub-area pickers|T-57 Sub-area pickers]]**\n8h · Fri 30 Oct → Tue 3 Nov",
    "x": 7920,
-   "y": 906,
+   "y": 1002,
    "width": 1092,
    "height": 84
   },
@@ -618,7 +636,7 @@
    "type": "text",
    "text": "**[[T-43 Listing detail screens|T-43 Listing detail screens]]**\n5h · Mon 2 Nov → Wed 4 Nov",
    "x": 8580,
-   "y": 810,
+   "y": 906,
    "width": 652,
    "height": 84
   },
@@ -627,7 +645,7 @@
    "type": "text",
    "text": "**[[T-58 Community filter|T-58 Community filter]]**\n8h · Tue 3 Nov → Fri 6 Nov",
    "x": 8800,
-   "y": 1002,
+   "y": 1098,
    "width": 872,
    "height": 84
   },
@@ -636,8 +654,17 @@
    "type": "text",
    "text": "**[[T-44 Messages API|T-44 Messages API]]**\n8h · Thu 5 Nov → Sun 8 Nov",
    "x": 9240,
-   "y": 810,
+   "y": 906,
    "width": 872,
+   "height": 84
+  },
+  {
+   "id": "task-T-66",
+   "type": "text",
+   "text": "**[[T-66 Product numbers|T-66 Product numbers]]**\n2h · Fri 6 Nov → Sat 7 Nov",
+   "x": 9460,
+   "y": 1002,
+   "width": 432,
    "height": 84
   },
   {
@@ -645,7 +672,7 @@
    "type": "text",
    "text": "**[[T-45 Messages screens|T-45 Messages screens]]**\n6h · Mon 9 Nov → Wed 11 Nov",
    "x": 10120,
-   "y": 810,
+   "y": 906,
    "width": 652,
    "height": 84
   },
@@ -654,7 +681,7 @@
    "type": "text",
    "text": "**[[T-55 Message alerts|T-55 Message alerts]]**\n6h · Thu 12 Nov → Sat 14 Nov",
    "x": 10780,
-   "y": 810,
+   "y": 906,
    "width": 652,
    "height": 84
   },
@@ -663,7 +690,7 @@
    "type": "text",
    "text": "**[[T-46 ID verification|T-46 ID verification]]**\n12h · Thu 12 Nov → Sun 15 Nov",
    "x": 10780,
-   "y": 906,
+   "y": 1002,
    "width": 872,
    "height": 84
   },
@@ -672,7 +699,7 @@
    "type": "text",
    "text": "**[[T-47 Saved|T-47 Saved]]**\n4h · Mon 16 Nov → Tue 17 Nov",
    "x": 11660,
-   "y": 810,
+   "y": 906,
    "width": 432,
    "height": 84
   },
@@ -681,7 +708,7 @@
    "type": "text",
    "text": "**[[T-48 Onboarding questions|T-48 Onboarding questions]]**\n5h · Wed 18 Nov → Fri 20 Nov",
    "x": 12100,
-   "y": 810,
+   "y": 906,
    "width": 652,
    "height": 84
   },
@@ -690,7 +717,7 @@
    "type": "text",
    "text": "**[[T-49 Compare cards|T-49 Compare cards]]**\n4h · Sat 21 Nov → Sun 22 Nov",
    "x": 12760,
-   "y": 810,
+   "y": 906,
    "width": 432,
    "height": 84
   },
@@ -699,7 +726,7 @@
    "type": "text",
    "text": "**[[T-50 Found a place, share, feedback|T-50 Found a place, share, feedback]]**\n4h · Mon 23 Nov → Tue 24 Nov",
    "x": 13200,
-   "y": 810,
+   "y": 906,
    "width": 432,
    "height": 84
   },
@@ -708,7 +735,7 @@
    "type": "text",
    "text": "**[[T-60 Profile pop-up|T-60 Profile pop-up]]**\n3h · Wed 25 Nov",
    "x": 13640,
-   "y": 810,
+   "y": 906,
    "width": 212,
    "height": 84
   },
@@ -717,7 +744,7 @@
    "type": "group",
    "label": "P4 Content and moderation",
    "x": -20,
-   "y": 1166,
+   "y": 1262,
    "width": 4652,
    "height": 336,
    "color": "#3B82F6"
@@ -727,7 +754,7 @@
    "type": "text",
    "text": "**[[T-23a Landing page|T-23a Landing page]]**\n4h · Thu 24 Sep → Sun 27 Sep",
    "x": 0,
-   "y": 1196,
+   "y": 1292,
    "width": 872,
    "height": 84
   },
@@ -736,7 +763,7 @@
    "type": "text",
    "text": "**[[T-23b Legal pages|T-23b Legal pages]]**\n2h · Sun 27 Sep → Tue 29 Sep",
    "x": 660,
-   "y": 1292,
+   "y": 1388,
    "width": 652,
    "height": 84
   },
@@ -745,7 +772,7 @@
    "type": "text",
    "text": "**[[T-37 Articles and search|T-37 Articles and search]]**\n3h · Tue 29 Sep → Thu 1 Oct",
    "x": 1100,
-   "y": 1196,
+   "y": 1292,
    "width": 652,
    "height": 84
   },
@@ -754,7 +781,7 @@
    "type": "text",
    "text": "**[[T-19 Report and block|T-19 Report and block]]**\n5h · Thu 1 Oct → Mon 5 Oct",
    "x": 1540,
-   "y": 1292,
+   "y": 1388,
    "width": 1092,
    "height": 84
   },
@@ -763,7 +790,7 @@
    "type": "text",
    "text": "**[[T-20 Account deletion|T-20 Account deletion]]**\n3h · Mon 5 Oct → Thu 8 Oct",
    "x": 2420,
-   "y": 1196,
+   "y": 1292,
    "width": 872,
    "height": 84
   },
@@ -772,7 +799,7 @@
    "type": "text",
    "text": "**[[T-22a Waitlist API|T-22a Waitlist API]]**\n2h · Thu 8 Oct → Sat 10 Oct",
    "x": 3080,
-   "y": 1292,
+   "y": 1388,
    "width": 652,
    "height": 84
   },
@@ -781,7 +808,7 @@
    "type": "text",
    "text": "**[[T-22b Waitlist screen|T-22b Waitlist screen]]**\n1h · Thu 8 Oct → Sat 10 Oct",
    "x": 3080,
-   "y": 1388,
+   "y": 1484,
    "width": 652,
    "height": 84
   },
@@ -790,7 +817,25 @@
    "type": "text",
    "text": "**[[T-53 Delete the Firebase user|T-53 Delete the Firebase user]]**\n2h · Tue 27 Oct → Wed 28 Oct",
    "x": 7260,
-   "y": 1196,
+   "y": 1292,
+   "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-T-62",
+   "type": "text",
+   "text": "**[[T-62 Admin home|T-62 Admin home]]**\n4h · Thu 5 Nov",
+   "x": 9240,
+   "y": 1292,
+   "width": 212,
+   "height": 84
+  },
+  {
+   "id": "task-T-63",
+   "type": "text",
+   "text": "**[[T-63 Admin people and listings|T-63 Admin people and listings]]**\n3h · Fri 6 Nov → Sat 7 Nov",
+   "x": 9460,
+   "y": 1292,
    "width": 432,
    "height": 84
   },
@@ -799,7 +844,7 @@
    "type": "group",
    "label": "P5 Accounts and people",
    "x": -20,
-   "y": 1552,
+   "y": 1648,
    "width": 4652,
    "height": 336,
    "color": "#14B8A6"
@@ -809,7 +854,7 @@
    "type": "text",
    "text": "**[[M-03 Eval sentences|M-03 Eval sentences]]**\n4h · Thu 24 Sep → Sun 27 Sep",
    "x": 0,
-   "y": 1582,
+   "y": 1678,
    "width": 872,
    "height": 84
   },
@@ -818,7 +863,7 @@
    "type": "text",
    "text": "**[[T-03 CI checks|T-03 CI checks]]**\n2h · Sun 27 Sep → Tue 29 Sep",
    "x": 660,
-   "y": 1678,
+   "y": 1774,
    "width": 652,
    "height": 84
   },
@@ -827,7 +872,7 @@
    "type": "text",
    "text": "**[[T-24 Event logging|T-24 Event logging]]**\n2h · Tue 29 Sep → Wed 30 Sep",
    "x": 1100,
-   "y": 1582,
+   "y": 1678,
    "width": 432,
    "height": 84
   },
@@ -836,7 +881,7 @@
    "type": "text",
    "text": "**[[T-18a Message request API ⚑|T-18a Message request API]]**\n4h · Wed 30 Sep → Sun 4 Oct",
    "x": 1320,
-   "y": 1678,
+   "y": 1774,
    "width": 1092,
    "height": 84,
    "color": "1"
@@ -846,7 +891,7 @@
    "type": "text",
    "text": "**[[T-16a Profile API ⚑|T-16a Profile API]]**\n5h · Sun 4 Oct → Sat 10 Oct",
    "x": 2200,
-   "y": 1582,
+   "y": 1678,
    "width": 1532,
    "height": 84,
    "color": "1"
@@ -856,7 +901,7 @@
    "type": "text",
    "text": "**[[T-16b Profile screens ⚑|T-16b Profile screens]]**\n3h · Sun 4 Oct → Sat 10 Oct",
    "x": 2200,
-   "y": 1774,
+   "y": 1870,
    "width": 1532,
    "height": 84,
    "color": "1"
@@ -866,7 +911,7 @@
    "type": "group",
    "label": "Design",
    "x": -20,
-   "y": 1938,
+   "y": 2034,
    "width": 4652,
    "height": 240,
    "color": "#FF87AC"
@@ -876,7 +921,7 @@
    "type": "text",
    "text": "**[[D-01 Styling decision|D-01 Styling decision]]**\nThu 24 Sep",
    "x": 0,
-   "y": 1968,
+   "y": 2064,
    "width": 212,
    "height": 84
   },
@@ -885,7 +930,7 @@
    "type": "text",
    "text": "**[[D-02 Chat screen designs ⚑|D-02 Chat screen designs]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 2064,
+   "y": 2160,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -895,7 +940,7 @@
    "type": "text",
    "text": "**[[D-03 Results and profile designs|D-03 Results and profile designs]]**\nFri 25 Sep → Sun 27 Sep",
    "x": 220,
-   "y": 1968,
+   "y": 2064,
    "width": 652,
    "height": 84
   },
@@ -904,7 +949,7 @@
    "type": "text",
    "text": "**[[D-04 Landing and waitlist designs|D-04 Landing and waitlist designs]]**\nMon 28 Sep → Tue 29 Sep",
    "x": 880,
-   "y": 1968,
+   "y": 2064,
    "width": 432,
    "height": 84
   },
@@ -913,7 +958,7 @@
    "type": "text",
    "text": "**[[D-05 Design QA|D-05 Design QA]]**\nMon 5 Oct → Sat 10 Oct",
    "x": 2420,
-   "y": 1968,
+   "y": 2064,
    "width": 1312,
    "height": 84
   },
@@ -922,6 +967,15 @@
    "type": "text",
    "text": "**[[D-06 Launch visuals|D-06 Launch visuals]]**\nFri 9 Oct → Sat 10 Oct",
    "x": 3300,
+   "y": 2160,
+   "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-D-07",
+   "type": "text",
+   "text": "**[[D-07 Admin designs|D-07 Admin designs]]**\nWed 4 Nov → Thu 5 Nov",
+   "x": 9020,
    "y": 2064,
    "width": 432,
    "height": 84
@@ -931,7 +985,7 @@
    "type": "group",
    "label": "M1 Content",
    "x": -20,
-   "y": 2228,
+   "y": 2324,
    "width": 4652,
    "height": 240,
    "color": "#E3B341"
@@ -941,7 +995,7 @@
    "type": "text",
    "text": "**[[M-04 Article interviews|M-04 Article interviews]]**\nThu 24 Sep → Mon 28 Sep",
    "x": 0,
-   "y": 2258,
+   "y": 2354,
    "width": 1092,
    "height": 84
   },
@@ -950,7 +1004,7 @@
    "type": "text",
    "text": "**[[M-05 Article drafts|M-05 Article drafts]]**\nTue 29 Sep → Mon 5 Oct",
    "x": 1100,
-   "y": 2258,
+   "y": 2354,
    "width": 1532,
    "height": 84
   },
@@ -959,7 +1013,7 @@
    "type": "text",
    "text": "**[[M-07 Launch posts|M-07 Launch posts]]**\nWed 30 Sep → Sat 3 Oct",
    "x": 1320,
-   "y": 2354,
+   "y": 2450,
    "width": 872,
    "height": 84
   },
@@ -968,7 +1022,7 @@
    "type": "group",
    "label": "M2 Community",
    "x": -20,
-   "y": 2518,
+   "y": 2614,
    "width": 4652,
    "height": 144,
    "color": "#F9A03F"
@@ -978,7 +1032,7 @@
    "type": "text",
    "text": "**[[M-01 Outreach ⚑|M-01 Outreach]]**\nFri 25 Sep → Sat 26 Sep",
    "x": 220,
-   "y": 2548,
+   "y": 2644,
    "width": 432,
    "height": 84,
    "color": "1"
@@ -988,7 +1042,7 @@
    "type": "text",
    "text": "**[[M-09 Broker calls|M-09 Broker calls]]**\nMon 12 Oct → Mon 19 Oct",
    "x": 3960,
-   "y": 2548,
+   "y": 2644,
    "width": 1752,
    "height": 84
   },
@@ -997,7 +1051,7 @@
    "type": "group",
    "label": "Founder",
    "x": -20,
-   "y": 2712,
+   "y": 2808,
    "width": 4652,
    "height": 432,
    "color": "#B07B4F"
@@ -1007,7 +1061,7 @@
    "type": "text",
    "text": "**[[F-01 Kickoff|F-01 Kickoff]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2742,
+   "y": 2838,
    "width": 212,
    "height": 84
   },
@@ -1016,7 +1070,7 @@
    "type": "text",
    "text": "**[[F-03 Billing and caps|F-03 Billing and caps]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2838,
+   "y": 2934,
    "width": 212,
    "height": 84
   },
@@ -1025,7 +1079,7 @@
    "type": "text",
    "text": "**[[F-04 Accounts in Mumbai|F-04 Accounts in Mumbai]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2934,
+   "y": 3030,
    "width": 212,
    "height": 84
   },
@@ -1034,7 +1088,7 @@
    "type": "text",
    "text": "**[[F-06 Seed areas picked|F-06 Seed areas picked]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 3030,
+   "y": 3126,
    "width": 432,
    "height": 84
   },
@@ -1043,7 +1097,7 @@
    "type": "text",
    "text": "**[[F-07 Privacy and terms draft|F-07 Privacy and terms draft]]**\nFri 25 Sep → Wed 30 Sep",
    "x": 220,
-   "y": 2742,
+   "y": 2838,
    "width": 1312,
    "height": 84
   },
@@ -1052,7 +1106,7 @@
    "type": "text",
    "text": "**[[F-09 ADR exceptions|F-09 ADR exceptions]]**\nSat 26 Sep → Sun 27 Sep",
    "x": 440,
-   "y": 2838,
+   "y": 2934,
    "width": 432,
    "height": 84
   },
@@ -1061,7 +1115,7 @@
    "type": "text",
    "text": "**[[F-08 Moderator named|F-08 Moderator named]]**\nWed 30 Sep → Fri 2 Oct",
    "x": 1320,
-   "y": 2838,
+   "y": 2934,
    "width": 652,
    "height": 84
   },
@@ -1070,7 +1124,7 @@
    "type": "text",
    "text": "**[[F-11 Intake and profile calls ⚑|F-11 Intake and profile calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 2742,
+   "y": 2838,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -1080,7 +1134,7 @@
    "type": "text",
    "text": "**[[F-12 Matching calls ⚑|F-12 Matching calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 2838,
+   "y": 2934,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -1090,7 +1144,7 @@
    "type": "text",
    "text": "**[[F-13 Connect and trust calls ⚑|F-13 Connect and trust calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 2934,
+   "y": 3030,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -1100,7 +1154,7 @@
    "type": "text",
    "text": "**[[F-14 Assistant and limits calls|F-14 Assistant and limits calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 3030,
+   "y": 3126,
    "width": 652,
    "height": 84
   },
@@ -1109,7 +1163,7 @@
    "type": "text",
    "text": "**[[F-02 Domain|F-02 Domain]]**\n2h · Wed 7 Oct → Thu 8 Oct",
    "x": 2860,
-   "y": 2742,
+   "y": 2838,
    "width": 432,
    "height": 84
   },
@@ -1118,7 +1172,7 @@
    "type": "text",
    "text": "**[[F-10 Go-no-go meeting|F-10 Go-no-go meeting]]**\nSat 10 Oct",
    "x": 3520,
-   "y": 2742,
+   "y": 2838,
    "width": 212,
    "height": 84
   },
@@ -1127,7 +1181,7 @@
    "type": "group",
    "label": "Everyone",
    "x": -20,
-   "y": 3194,
+   "y": 3290,
    "width": 4652,
    "height": 144,
    "color": "#9CC3E6"
@@ -1137,7 +1191,7 @@
    "type": "text",
    "text": "**[[A-01 Bug fix day|A-01 Bug fix day]]**\nSun 11 Oct",
    "x": 3740,
-   "y": 3224,
+   "y": 3320,
    "width": 212,
    "height": 84
   },
@@ -1146,7 +1200,7 @@
    "type": "text",
    "text": "**[[A-02 Launch day|A-02 Launch day]]**\nMon 12 Oct",
    "x": 3960,
-   "y": 3224,
+   "y": 3320,
    "width": 212,
    "height": 84
   }
@@ -2011,6 +2065,41 @@
    "fromNode": "task-T-27",
    "fromSide": "right",
    "toNode": "task-T-61",
+   "toSide": "left"
+  },
+  {
+   "id": "e-D-07-T-62",
+   "fromNode": "task-D-07",
+   "fromSide": "right",
+   "toNode": "task-T-62",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-62-T-63",
+   "fromNode": "task-T-62",
+   "fromSide": "right",
+   "toNode": "task-T-63",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-62-T-64",
+   "fromNode": "task-T-62",
+   "fromSide": "right",
+   "toNode": "task-T-64",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-62-T-65",
+   "fromNode": "task-T-62",
+   "fromSide": "right",
+   "toNode": "task-T-65",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-62-T-66",
+   "fromNode": "task-T-62",
+   "fromSide": "right",
+   "toNode": "task-T-66",
    "toSide": "left"
   },
   {

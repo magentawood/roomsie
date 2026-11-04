@@ -2,7 +2,7 @@
 id: T-59
 title: "Chips for the other closed questions"
 owner: "P2 Chat"
-sequence: "14 of 15"
+sequence: "14 of 17"
 hours: 5
 start: 2026-11-04
 end: 2026-11-05
@@ -17,7 +17,7 @@ tags:
 
 # T-59 · Chips for the other closed questions
 
-**Owner:** [[P2 Chat]], task 14 of 15  
+**Owner:** [[P2 Chat]], task 14 of 17  
 **When:** Wed 4 Nov → Thu 5 Nov · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#198](https://github.com/magentawood/roomsie/issues/198)

@@ -2,7 +2,7 @@
 id: T-22b
 title: "Waitlist screen outside Mumbai"
 owner: "P4 Content and moderation"
-sequence: "7 of 8"
+sequence: "7 of 10"
 hours: 1
 start: 2026-10-08
 end: 2026-10-10
@@ -17,7 +17,7 @@ tags:
 
 # T-22b · Waitlist screen outside Mumbai
 
-**Owner:** [[P4 Content and moderation]], task 7 of 8  
+**Owner:** [[P4 Content and moderation]], task 7 of 10  
 **When:** Thu 8 Oct → Sat 10 Oct · 1 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#99](https://github.com/magentawood/roomsie/issues/99)

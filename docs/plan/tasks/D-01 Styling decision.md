@@ -2,7 +2,7 @@
 id: D-01
 title: "Styling decision for launch"
 owner: "Design"
-sequence: "1 of 6"
+sequence: "1 of 7"
 start: 2026-09-24
 end: 2026-09-24
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # D-01 · Styling decision for launch
 
-**Owner:** [[Design]], task 1 of 6  
+**Owner:** [[Design]], task 1 of 7  
 **When:** Thu 24 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#1](https://github.com/magentawood/roomsie/issues/1)
