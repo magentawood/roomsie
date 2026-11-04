@@ -52,11 +52,11 @@ Realistic sentences to test the assistant.
   - The test of the eval set: each label is a valid value of Form A, and each area slug is in the seed; the file has 50 sentences, 10 of them vague, in the agreed mix of languages; the required phrases are in the set.
 - **Decisions:**
   - **The format (the user, 2026-11-04):** a JSON file in `apps/api/eval/`, with a test that checks each label.
-  - **The languages (the user):** about 15 English, 18 Hinglish and 17 Marathi, as [PD7](../../decisions/pd-07-models.md) asks. Marathi in Devanagari and in Latin script, and some Hindi in Devanagari among the Hinglish. Each sentence has its level of code-mix: light, medium or heavy.
+  - **The languages (the user):** about 15 English, 18 Hinglish and 17 Marathi, as [PD7](../../decisions/pd-07-models.md) asks. Marathi in Devanagari and in Latin script, and some Hindi in Devanagari among the Hinglish. Each sentence has its level of code-mix: none, light, medium or heavy.
   - **The slots (the user):** about 30 sentences on the place type, the areas, the budget and the move date; about 10 that also state a lifestyle answer, a must-have or who is moving; and the 10 vague sentences. No sentence states a religion or a community.
   - **The authoring (the user):** Claude writes and labels the 50 sentences in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge.
   - **The labels:** the values of Form A after the parsers: area slugs of the seed, the budget as its minimum and maximum, the move date as a date from the reference date 2026-11-02, and the values of the enums.
-  - **The vague sentences:** the slot that a sentence is vague about has the label `unclear`.
+  - **The vague sentences:** the slot that a sentence is vague about has the label `unclear`. The areas, the budget and the move date have no `unclear` value in Form A, so a sentence that is vague about them leaves them empty, and each vague sentence also has one slot with `unclear` (implement).
   - **An empty slot:** a slot that a sentence does not name must stay empty, so the eval also finds a value that a model makes up.
   - **The product calls:** the task uses none. The reference date is data in the file.
 - **Out of scope:**
