@@ -16,14 +16,13 @@ This note is part of [[roomsie launch]].
 1. [[F-01 Kickoff]] — Thu 24 Sep
 2. [[F-03 Billing and caps]] — Thu 24 Sep
 3. [[F-04 Accounts in Mumbai]] — Thu 24 Sep
-4. [[F-05 Seeding consent text ⚑]] — Thu 24 Sep → Fri 25 Sep
-5. [[F-06 Seed areas picked]] — Thu 24 Sep → Fri 25 Sep
-6. [[F-07 Privacy and terms draft]] — Fri 25 Sep → Wed 30 Sep
-7. [[F-09 ADR exceptions]] — Sat 26 Sep → Sun 27 Sep
-8. [[F-08 Moderator named]] — Wed 30 Sep → Fri 2 Oct
-9. [[F-11 Intake and profile calls ⚑]] — Sun 4 Oct → Tue 6 Oct
-10. [[F-12 Matching calls ⚑]] — Sun 4 Oct → Tue 6 Oct
-11. [[F-13 Connect and trust calls ⚑]] — Sun 4 Oct → Tue 6 Oct
-12. [[F-14 Assistant and limits calls]] — Sun 4 Oct → Tue 6 Oct
-13. [[F-02 Domain]] — Wed 7 Oct → Thu 8 Oct, 2h
-14. [[F-10 Go-no-go meeting]] — Sat 10 Oct
+4. [[F-06 Seed areas picked]] — Thu 24 Sep → Fri 25 Sep
+5. [[F-07 Privacy and terms draft]] — Fri 25 Sep → Wed 30 Sep
+6. [[F-09 ADR exceptions]] — Sat 26 Sep → Sun 27 Sep
+7. [[F-08 Moderator named]] — Wed 30 Sep → Fri 2 Oct
+8. [[F-11 Intake and profile calls ⚑]] — Sun 4 Oct → Tue 6 Oct
+9. [[F-12 Matching calls ⚑]] — Sun 4 Oct → Tue 6 Oct
+10. [[F-13 Connect and trust calls ⚑]] — Sun 4 Oct → Tue 6 Oct
+11. [[F-14 Assistant and limits calls]] — Sun 4 Oct → Tue 6 Oct
+12. [[F-02 Domain]] — Wed 7 Oct → Thu 8 Oct, 2h
+13. [[F-10 Go-no-go meeting]] — Sat 10 Oct

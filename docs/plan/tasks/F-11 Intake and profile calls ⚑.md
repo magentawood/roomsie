@@ -2,7 +2,7 @@
 id: F-11
 title: "Product calls: intake, Form A and profile data"
 owner: "Founder"
-sequence: "9 of 14"
+sequence: "8 of 13"
 start: 2026-10-04
 end: 2026-10-06
 checkpoint: CP3
@@ -17,7 +17,7 @@ tags:
 
 # F-11 · Product calls: intake, Form A and profile data
 
-**Owner:** [[Founder]], task 9 of 14  
+**Owner:** [[Founder]], task 8 of 13  
 **When:** Sun 4 Oct → Tue 6 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#103](https://github.com/magentawood/roomsie/issues/103)
@@ -32,7 +32,6 @@ Decide what the assistant asks, and what a profile holds.
 
 ## Unblocks
 - [[T-08 Form A contract ⚑]]
-- [[F-05 Seeding consent text ⚑]]
 - [[T-06 Database schema ⚑]]
 - [[T-16a Profile API ⚑]]
 - [[T-41 Listings API]]

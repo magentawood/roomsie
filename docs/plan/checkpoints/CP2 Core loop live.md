@@ -23,7 +23,6 @@ This note is part of [[roomsie launch]].
 - [[T-23b Legal pages]] — P4 Content and moderation
 - [[T-34 Router ⚑]] — P2 Chat
 - [[F-07 Privacy and terms draft]] — Founder
-- [[M-02 100 sign-ups]] — M2 Community
 - [[T-13 Reply writer]] — P2 Chat
 - [[T-24 Event logging]] — P5 Accounts and people
 - [[T-05 Google sign-in ⚑]] — P1 Platform

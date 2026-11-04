@@ -14,9 +14,9 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**273 of 339 done · 81%**
+**273 of 332 done · 82%**
 
-`███████████████████░░░░░`
+`████████████████████░░░░`
 
 This note is part of [[roomsie launch]].
 
@@ -29,8 +29,8 @@ This note is part of [[roomsie launch]].
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
-| [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 7 / 14 | 21 / 42 | 50% |
+| [[M2 Community]] | 0 / 2 | 0 / 8 | 0% |
+| [[Founder]] | 7 / 13 | 21 / 40 | 52% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -500,22 +500,16 @@ flowchart LR
 > ![[M-07 Launch posts#^done]]
 
 
-## M2 Community — 0/13
+## M2 Community — 0/8
 
-> [!todo]- ⬜ [[M-01 Seeding form ⚑]] · 0/5
-> ![[M-01 Seeding form ⚑#^done]]
-
-> [!todo]- ⬜ [[M-02 100 sign-ups]] · 0/2
-> ![[M-02 100 sign-ups#^done]]
-
-> [!todo]- ⬜ [[M-06 Beta invites ⚑]] · 0/3
-> ![[M-06 Beta invites ⚑#^done]]
+> [!todo]- ⬜ [[M-01 Outreach ⚑]] · 0/5
+> ![[M-01 Outreach ⚑#^done]]
 
 > [!todo]- ⬜ [[M-09 Broker calls]] · 0/3
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 21/42
+## Founder — 21/40
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -525,9 +519,6 @@ flowchart LR
 
 > [!todo]- ✅ [[F-04 Accounts in Mumbai]] · 4/4
 > ![[F-04 Accounts in Mumbai#^done]]
-
-> [!todo]- ⬜ [[F-05 Seeding consent text ⚑]] · 0/2
-> ![[F-05 Seeding consent text ⚑#^done]]
 
 > [!todo]- ✅ [[F-06 Seed areas picked]] · 2/2
 > ![[F-06 Seed areas picked#^done]]

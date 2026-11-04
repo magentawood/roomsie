@@ -11,7 +11,5 @@ This note is part of [[roomsie launch]].
 
 ## Sequence
 
-1. [[M-01 Seeding form ⚑]] — Fri 25 Sep → Sat 26 Sep
-2. [[M-02 100 sign-ups]] — Sat 26 Sep → Wed 30 Sep
-3. [[M-06 Beta invites ⚑]] — Sat 3 Oct → Sun 11 Oct
-4. [[M-09 Broker calls]] — Mon 12 Oct → Mon 19 Oct
+1. [[M-01 Outreach ⚑]] — Fri 25 Sep → Sat 26 Sep
+2. [[M-09 Broker calls]] — Mon 12 Oct → Mon 19 Oct

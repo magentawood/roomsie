@@ -18,5 +18,4 @@ This note is part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[A-01 Bug fix day]] — Everyone
-- [[M-06 Beta invites ⚑]] — M2 Community
 - [[A-02 Launch day]] — Everyone

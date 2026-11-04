@@ -34,7 +34,6 @@ The screens where a person says who they are and adds photos.
 - [[T-20 Account deletion]]
 
 ## Unblocks
-- [[M-06 Beta invites ⚑]]
 - [[T-58 Community filter]]
 
 ## Done when

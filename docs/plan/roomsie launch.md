@@ -6,7 +6,7 @@ tags:
 
 # roomsie launch
 
-The target date is **Mon 12 Oct 2026**. The fallback date is Wed 14 Oct. The plan has 89 tasks.
+The target date is **Mon 12 Oct 2026**. The fallback date is Wed 14 Oct. The plan has 86 tasks.
 
 ## How to look at it
 

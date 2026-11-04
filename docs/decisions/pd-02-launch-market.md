@@ -17,7 +17,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
   - A pocket is a sub-area inside a sub-area, for example Versova in Andheri West.
   - A pick of an area includes the areas under it.
 - **Where Mumbai ends.** These places are live: the BMC area, Mira–Bhayandar, the Thane Municipal Corporation, and Navi Mumbai with the Panvel nodes and Ulwe. A search for a place outside them, for example Vasai–Virar, Kalyan–Dombivli or Bhiwandi, shows "Roomsie is only in Mumbai for now" and the waitlist form.
-- **Areas to seed first: Navi Mumbai and South Mumbai** (2026-11-04, F-06). Marketing seeds them first, so that the first searches there have full panels. The teammates who live outside Mumbai recruit people who move to Mumbai, for each area group. Their sign-ups count in the minimum of 150 profiles across Mumbai ([PD11](pd-11-launch.md)). These areas are a seeding plan, not a gate.
+- **Areas for outreach first: Navi Mumbai and South Mumbai** (2026-11-04, F-06). Marketing reaches people there first, so that the first searches there have full panels. The teammates who live outside Mumbai reach people who move to Mumbai, for each area group. These areas are an outreach plan, not a gate (M-01).
 
 ## Rationale
 
@@ -27,7 +27,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
 - A person who rents in Mumbai searches across its areas. A closed area loses a real visitor, and a thin panel can still offer the suggested posts of [PD6c](pd-06c-interface-holes.md).
 - Renters and brokers name a sub-area, not a group. Rents differ between the sides of a station: Bandra West and Bandra East are two markets.
 - Dadar, Mahim, Matunga, Sion and Wadala are one central rental market, and no group of the designs has them.
-- The team seeds where it can reach people, not where the demand is highest. A teammate lives in each of the two seed groups, so the team knows people there (F-06).
+- The team starts where it can reach people, not where the demand is highest. A teammate lives in each of the two groups, so the team knows people there (F-06).
 - Mira Road is one stop past Dahisar, and NoBroker and 99acres file it under Mumbai. Mumbra and Diva are in the Thane Municipal Corporation, so the whole corporation is live.
 
 ## Alternatives rejected
@@ -43,7 +43,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
 
 - Brokers control most of the supply.
 - Visitors from outside Mumbai go to a waitlist. The waitlist tells marketing where to open next.
-- An area with few seeded profiles shows a thin panel.
+- An area with few profiles shows a thin panel.
 - A listing in a whole area group from before the sub-areas stays live. Its next edit picks a sub-area.
 
 Superseded (2026-10-24): three neighbourhoods. The designs use the nine area groups ([PD14](pd-14-v0-is-the-figma-designs.md)).
@@ -54,7 +54,7 @@ Superseded (2026-10-27): the nine area groups with no sub-areas. There are ten g
 
 ## Revisit when
 
-- Seeding shows many thin panels in an area group that marketing cannot reach.
+- Many thin panels show in an area group that marketing cannot reach.
 - A city outside Mumbai has a long waitlist.
 - Kalyan–Dombivli or Vasai–Virar has a long waitlist. Each can become a group.
 

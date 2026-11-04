@@ -2,7 +2,7 @@
 id: F-10
 title: "Go/no-go meeting"
 owner: "Founder"
-sequence: "14 of 14"
+sequence: "13 of 13"
 start: 2026-10-10
 end: 2026-10-10
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # F-10 · Go/no-go meeting
 
-**Owner:** [[Founder]], task 14 of 14  
+**Owner:** [[Founder]], task 13 of 13  
 **When:** Sat 10 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#50](https://github.com/magentawood/roomsie/issues/50)

@@ -17,7 +17,7 @@ This note is part of [[roomsie launch]].
 
 ## Due by this checkpoint
 
-- [[M-01 Seeding form ⚑]] — M2 Community
+- [[M-01 Outreach ⚑]] — M2 Community
 - [[T-02 Scaffold monorepo ⚑]] — P1 Platform
 - [[T-35 Form B contract]] — P2 Chat
 - [[D-03 Results and profile designs]] — Design

@@ -2,7 +2,7 @@
 id: M-09
 title: "Broker calls"
 owner: "M2 Community"
-sequence: "4 of 4"
+sequence: "2 of 2"
 start: 2026-10-12
 end: 2026-10-19
 checkpoint: CP5
@@ -16,7 +16,7 @@ tags:
 
 # M-09 · Broker calls
 
-**Owner:** [[M2 Community]], task 4 of 4  
+**Owner:** [[M2 Community]], task 2 of 2  
 **When:** Mon 12 Oct → Mon 19 Oct  
 **Checkpoint:** [[CP5 First-week review]]  
 **Issue:** [#55](https://github.com/magentawood/roomsie/issues/55)
