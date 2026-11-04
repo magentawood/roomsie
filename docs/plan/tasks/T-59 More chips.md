@@ -41,3 +41,31 @@ Tap buttons for the closed questions after the budget, so a person types less.
 - [ai-agent-design.md](../../ai-agent-design.md)
 - [pd-15-form-a-contract.md](../../decisions/pd-15-form-a-contract.md)
 - [interface-shape.md](../../interface-shape.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by n3rxv
+
+- **Modules:**
+  - **The contract:** the chip slots and the taps of the closed questions: room type, who is moving, the eight lifestyle questions and the weight of each must-have. The labels of their answers move into the contract, so the API and the web use one text. The interface changes.
+  - **The assistant:** a tap of each new chip fills its slot as a stated answer, also a slot inside the lifestyle or the must-haves of Form A, with no model call. The scripted reply then asks the next question. The reply to a closed question names its chips, also the question about the weight of a must-have.
+  - **The chat of the web:** the chips of the new slots under the question, with the labels of the contract. The profile form takes its labels from the contract.
+- **Seams for the tests:**
+  - Unit tests of the contract: the label and the tap text of each new slot; a tap refuses an answer that its slot does not have.
+  - The tests of the turn route, with the fake vendors: a tap of a lifestyle answer, a weight, a room type and a who-is-moving answer fills its slot with no model call and asks the next question; the reply to a lifestyle question and to a weight question has its chips; a conflict question has no chips; a hidden slot never has chips.
+  - Unit tests of the web: the chips under the newest question for a new slot.
+  - A browser check on local dev at 390 px and 1440 px: the lifestyle chips, the weight chips, and a tap that asks the next question.
+  - A live check after the deploy, from the Safari of the user.
+- **Decisions:**
+  - **The questions (the user, 2026-11-04):** room type and who is moving get chips when the assistant asks them. The default order of the questions does not change.
+  - **The weight chips (the user):** "It's a must" (a dealbreaker) and "Show them first" (a preference), the same two for each must-have.
+  - **The design (the user):** section 35 "Chat chips for the other questions · T-59" of the drafts page, approved 2026-11-04.
+  - **The chips:** one tap for each answer, with the round mark of the chips of T-09.
+  - **The labels:** the lifestyle labels of the profile form. Who is moving: Student, First job, Working, Couple, Family, Group of friends. Room type: A private room, A shared room.
+  - **A tap:** it fills its slot as a stated answer, its label is the text of the message of the person, and it calls no model ([PD3b](../../decisions/pd-03b-interview-vs-chips.md)).
+  - **No chips:** the hidden religion and community slots ([PD15](../../decisions/pd-15-form-a-contract.md)), and a question about a conflict.
+  - **The deploy window:** the old API refuses a new tap, and the chat shows a clear line.
+- **Out of scope:**
+  - a "skip" or "no preference" chip
+  - a change of the order of the questions
+  - chips for the move date
