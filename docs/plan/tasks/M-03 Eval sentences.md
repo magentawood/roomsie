@@ -31,10 +31,10 @@ Realistic sentences to test the assistant.
 - No task waits on this task.
 
 ## Done when
-- [ ] The set has 50 sentences that people really type, in English, Hinglish and Marathi
-- [ ] Mumbai areas, 20k, bees hazaar, next month end
-- [ ] The set includes 10 sentences that are vague on purpose. T1 labels the correct answers
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] The set has 50 sentences that people really type, in English, Hinglish and Marathi · [#214](https://github.com/magentawood/roomsie/pull/214)
+- [x] Mumbai areas, 20k, bees hazaar, next month end · [#214](https://github.com/magentawood/roomsie/pull/214)
+- [x] The set includes 10 sentences that are vague on purpose. T1 labels the correct answers · [#214](https://github.com/magentawood/roomsie/pull/214)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#214](https://github.com/magentawood/roomsie/pull/214)
 
 ^done
 
@@ -64,3 +64,13 @@ Realistic sentences to test the assistant.
   - the runner that scores a model on the set (T-27)
   - the full eval of 200 to 300 sentences of PD7
   - sentences that state a religion or a community
+
+## Log
+
+- **2026-11-04 · [#214](https://github.com/magentawood/roomsie/pull/214)**
+  - **Change:** `apps/api/eval/sentences.json` has 50 sentences that people type, 15 English, 18 Hinglish and 17 Marathi, 10 of them vague on purpose, each with its language, script, level of code-mix and the correct values of Form A. An API test checks each label against Form A and the seed of the areas. The promoted rows of the rule candidates moved to `_candidates-archive.md`.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD15](../../decisions/pd-15-form-a-contract.md), and the decisions of the spec.
+  - **Ticked:** all four items.
+  - **Not done:** none.
+  - **Learn:** [The eval sentences](../../learn/eval-set.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
