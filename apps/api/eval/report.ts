@@ -1,15 +1,16 @@
-import { scopeBands } from '@roomsie/contract'
 import { checkFailures } from '../src/assistant/handlers/composer/check'
 import { vendorOf } from '../src/models/models'
 import {
-  callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groups, inTimeAt, missesOf, nameIn, namesOf, registerOf, scoresOf,
-  selectDeadline, selectThreshold, sentencesById, startCapitalsOf, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
+  bandScoresOf, callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groupOf, groups, inTimeAt, missesOf, nameIn, namesOf, registerRight,
+  scoresOf, selectDeadline, selectThreshold, sentencesById, startCapitalsOf, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
 } from './score'
 import { isSearch, type EvalSentence } from './set'
 
 /** The scores of one model at each threshold of the sweep. `extractorLive` and `routerLive` are the thresholds of the settings. */
 export type ModelScores = { model: string; extractorLive: number; routerLive: number; sweep: { threshold: number; turns: TurnResult[] }[]; calls: CallResult[]; repeats: number }
 
+const groupNames = { all: 'All', english: 'English', hinglish: 'Hinglish', hindi: 'Hindi in Devanagari', marathi: 'Marathi' } satisfies Record<Group, string>
+const header = [`| | ${groups.map((g) => groupNames[g]).join(' | ')} |`, `|---|${groups.map(() => '---|').join('')}`]
 const share = (part: number, whole: number) => (whole ? `${Math.round((100 * part) / whole)}% (${part}/${whole})` : '—')
 /** A count as the mean of one repeat (the spec of T-27). */
 export const mean = (count: number, repeats: number) => String(Math.round((10 * count) / repeats) / 10)
@@ -71,7 +72,7 @@ function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
     const c = turn.composer
     const sentence = byId.get(turn.id)!
     if (!c?.text || !isSearch(sentence)) continue
-    const { languageRight, scriptRight } = registerOf({ ...c, text: c.text })
+    const { languageRight, scriptRight } = registerRight(c.text, c)
     const failure = failureOf(c)
     const name = nameIn(c.text, sentence.names)
     if (languageRight && scriptRight && !failure && !name) continue
@@ -91,21 +92,21 @@ function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: b
   const readLines = repliesToRead(sentences, turns)
   const rule = ruled
     ? `The rule of T-61 selects **${selectDeadline(composers) ?? '—'} ms**: the smallest step where 9 of 10 calls answer in time, at most ${deadlineSteps.at(-1)} ms.`
-    : 'The rule of T-61 uses only the composer calls of DeepSeek (the spec of T-61).'
+    : 'The rule of T-61 uses only the composer calls of DeepSeek.'
   return [
     '### The composer', '',
     `${composers.length} calls of the searches, with no deadline: the timeout of the model module is the only limit. The router judges the language of each text, and code counts the letters. A score is against the reply language that the composer got.`, '',
-    '| | All | English | Hinglish | Marathi |', '|---|---|---|---|---|',
+    ...header,
     ...composerRows.map(([name, cell]) => `| ${name} | ${groups.map((g) => cell(scores[g])).join(' | ')} |`),
-    `| Time of a call, all its attempts, median / 95th percentile | ${time.medianMs ?? '—'} / ${time.p95Ms ?? '—'} ms | | | |`, '',
+    `| Time of a call, all its attempts, median / 95th percentile | ${time.medianMs ?? '—'} / ${time.p95Ms ?? '—'} ms |${' |'.repeat(groups.length - 1)}`, '',
     '#### The deadline', '',
     `A call with no answer is late. ${rule}`, '',
     '| Deadline | Calls in time |', '|---|---|',
     ...deadlineSteps.map((step) => `| ${step} ms | ${share(inTimeAt(composers, step), composers.length)} |`), '',
     '#### The names of a friend', '',
-    'The name rules of the check miss a name that the person typed in lower case, or a name in Devanagari.', '',
-    '| Sentence | Texts | With the name | Stopped by the name rules | Through: lower case | Through: Devanagari | Through: other |', '|---|---|---|---|---|---|---|',
-    ...names.map((n) => `| ${n.id} | ${n.replies} | ${n.withName} | ${n.stopped} | ${n.lowerCase} | ${n.devanagari} | ${n.other} |`), '',
+    'The name rules of the check miss a name that the person typed in lower case, or a name in Devanagari. A different rule of the check can still stop a text with a missed name.', '',
+    '| Sentence | Texts | With the name | Stopped by the name rules | Missed: lower case | Missed: Devanagari | Missed: other | Missed, but stopped by a different rule |', '|---|---|---|---|---|---|---|---|',
+    ...names.map((n) => `| ${n.id} | ${n.replies} | ${n.withName} | ${n.stopped} | ${n.lowerCase} | ${n.devanagari} | ${n.other} | ${n.stoppedByOtherRule} |`), '',
     `**The capital words at the start of a sentence that are not in the plan or the message** (a made-up name passes there): ${capitals.map(([word, n]) => `${word} (${n})`).join(', ') || 'none'}.`, '',
     '#### The texts to read', '',
     'A wrong language or script, a failed check, or the name of the friend.', '',
@@ -123,10 +124,10 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
   const ruled = vendorOf(model) === 'deepseek'
   const routerSelected = ruled ? selectThreshold(routerRows) : null
   const routerRule = ruled
-    ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to 0.8.`
+    ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to 0.8. Of two at the same distance, the rule takes the higher.`
     : 'Gemini gives no token probabilities, so its rows do not change, and the rule of T-61 uses only the run of DeepSeek.'
   const byId = sentencesById(sentences)
-  const callsOf = (group: Group, role?: CallResult['role']) => callStats(calls.filter((c) => (group === 'all' || byId.get(c.id)?.language === group) && (!role || c.role === role)))
+  const callsOf = (group: Group, role?: CallResult['role']) => callStats(calls.filter((c) => (group === 'all' || groupOf(byId.get(c.id)!) === group) && (!role || c.role === role)))
   const callRows = [
     `| Output not valid / failed, of the attempts | ${groups.map((g) => { const c = callsOf(g); return `${c.invalid} / ${c.failed} of ${c.attempts}` }).join(' | ')} |`,
     ...([['Extractor', 'extractor'], ['Router', 'router'], ['Composer', 'composer']] as const).map(([name, role]) => `| ${name} time, median / 95th percentile | ${groups.map((g) => { const c = callsOf(g, role); return `${c.medianMs ?? '—'} / ${c.p95Ms ?? '—'} ms` }).join(' | ')} |`),
@@ -134,13 +135,9 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
   return [
     `## ${model}`, '',
     `At the threshold ${extractorLive} of the extractor and ${routerLive} of the router, ${repeats} repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **${goNoGo(scores.all)}**.`, '',
-    '| | All | English | Hinglish | Marathi |', '|---|---|---|---|---|',
+    ...header,
     ...rows.map(([name, cell]) => `| ${name} | ${groups.map((g) => cell(scores[g], repeats)).join(' | ')} |`),
-    // Each band gets its own pass condition (testing.md): the router gives the band.
-    ...scopeBands.filter((band) => band !== 'core').map((band) => {
-      const of = scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band))
-      return `| · ${band} right | ${groups.map((g) => otherBandsRight[1](of[g], repeats)).join(' | ')} |`
-    }),
+    ...bandScoresOf(sentences, turns).map(({ band, scores: of }) => `| · ${band} right | ${groups.map((g) => share(of[g].bandRight, of[g].otherBands)).join(' | ')} |`),
     ...callRows, '',
     '### The threshold sweep', '', 'The recorded answers again, through the extractor at each threshold, with no new call.', '',
     `| Threshold | ${sweepRows.map(([name]) => name).join(' | ')} | PD11 |`, `|---|${sweepRows.map(() => '---|').join('')}---|`,

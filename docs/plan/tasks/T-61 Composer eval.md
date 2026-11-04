@@ -59,7 +59,7 @@ Score the replies of the assistant, and the messages that are not a search.
     - the scores of the router on the other bands, and its threshold sweep
     - the scores of the composer, and its times at each deadline
     - the value that each rule below selects
-  - **The output check of the composer (its interface changes):** it gives the reason of a failure, or no reason when the text passes. The composer uses the check as before.
+  - **The output check of the composer (its interface changes):** it gives the reason of a failure, or no reason when the text passes. The composer uses the check as before. The eval also asks the name rules alone, and gets the new capital words at the start of a sentence.
   - **The settings of the assistant (the values can change):** `ROUTER_MIN_PROBABILITY` and `COMPOSER_DEADLINE_MS`, only by the rules below.
   - **The composer prompt (can change):** only by the rule of T-27 for a prompt change.
   - The interfaces of the extractor, the router, the composer and the model module do not change.
@@ -70,7 +70,7 @@ Score the replies of the assistant, and the messages that are not a search.
 - **Decisions:**
   - **The order (the user):** T-61 started on the main branch of 2026-11-04. T-36 changes the router prompt, and it merged on the same day, before the first run. Thus both runs have the router prompt of T-36.
   - **The language of a reply (the user):** the router reads each text of the composer and gives its language. This router call always uses DeepSeek, also in the run of Gemini, so the judge does not change. Code gives the script from the letters (the rule of T-27). The score is against the reply language that the composer got. Each handler gets its own score ([PD7a](../../decisions/pd-07a-agent-architecture.md)).
-  - **The name test (the user):** the 6 sentences with a friend. For each reply, the report gives: no name, a name that the check stops, or a name that passes, with its limit. A name passes by limit 2 (the person typed it in lower case) or by limit 3 (Devanagari). Limit 1 is a name that the composer makes up. For it, the report lists each capital word at the start of a sentence that is not in the plan or the message. A person reads this list.
+  - **The name test (the user):** the 6 sentences with a friend. For each reply, the report gives: no name, a name that the check stops, or a name that passes, with its limit. A name passes by limit 2 (the person typed it in lower case) or by limit 3 (Devanagari). A different rule can still stop a text with a missed name, and the table counts it (review round 2). Limit 1 is a name that the composer makes up. For it, the report lists each capital word at the start of a sentence that is not in the plan or the message. A person reads this list.
   - **The router threshold (the user):** the DeepSeek answers replay at each threshold from 0.5 to 0.95. The rule selects in this order:
     1. The most `danger` sentences that keep `danger`.
     2. The fewest searches with a band that is not core.

@@ -1,7 +1,7 @@
 import { isDeepStrictEqual } from 'node:util'
 import { z } from 'zod'
-import { modelRoles, type AnalyticsEvent, type ComposerInput, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
-import { checkFailure, checkFailures, nameFailure, newStartCapitals, type CheckFailure } from '../src/assistant/handlers/composer/check'
+import { modelRoles, scopeBands, type AnalyticsEvent, type ComposerInput, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
+import { checkFailure, checkFailures, nameFailure, newStartCapitals, type CheckContext, type CheckFailure } from '../src/assistant/handlers/composer/check'
 import { isDevanagari } from '../src/assistant/words'
 import { isSearch, labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
 
@@ -77,8 +77,10 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
 
 export const sentencesById = (sentences: EvalSentence[]) => new Map(sentences.map((s) => [s.id, s]))
 
-export const groups = ['all', ...languages] as const
+/** The groups of the report. The set labels Hindi in Devanagari as Hinglish (M-03), and the report gives it a group of its own (testing.md). */
+export const groups = ['all', ...languages, 'hindi'] as const
 export type Group = (typeof groups)[number]
+export const groupOf = ({ language, script }: Pick<EvalSentence, 'language' | 'script'>): Group => (language === 'hinglish' && script !== 'latin' ? 'hindi' : language)
 
 /** The counts of all the turns, and of the turns of each language. */
 export function scoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
@@ -87,7 +89,7 @@ export function scoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
   for (const turn of turns) {
     const sentence = byId.get(turn.id)!
     const counts = countsOf(sentence, turn)
-    for (const group of [scores.all, scores[sentence.language]]) for (const key of Object.keys(counts) as (keyof Counts)[]) group[key] += counts[key]
+    for (const group of [scores.all, scores[groupOf(sentence)]]) for (const key of Object.keys(counts) as (keyof Counts)[]) group[key] += counts[key]
   }
   return scores
 }
@@ -102,10 +104,7 @@ export function callStats(calls: Pick<CallResult, 'ms' | 'outcome'>[]) {
   return { attempts: calls.length, invalid: calls.filter((c) => c.outcome === 'invalid').length, failed: calls.filter((c) => c.outcome === 'failed').length, medianMs: at(0.5), p95Ms: at(0.95) }
 }
 
-/**
- * The sentences whose slots, register or band change between the repeats. Only the slots of a search count.
- * A search with no answer of the extractor is not a change.
- */
+/** The sentences whose slots, register or band change between the repeats. A search with no answer of the extractor is not a change. */
 export function flipsOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   const answers = new Map<string, Set<string>>()
@@ -160,7 +159,9 @@ export function selectThreshold(rows: { threshold: number; counts: Counts }[]) {
     b.dangerRight - a.dangerRight || a.alarmsAbove - b.alarmsAbove || b.bandRight - a.bandRight || fromTieCentre(t) - fromTieCentre(u) || u - t)[0]!.threshold
 }
 
-export const failureOf = ({ text, draft, message }: ComposerResult) => (text === null ? null : checkFailure(text, { draft, message, turns: [], formB: [] }))
+/** The composer of the eval gets no turns and no Form B notes (the spec of T-61). */
+const contextOf = ({ draft, message }: ComposerResult): CheckContext => ({ draft, message, turns: [], formB: [] })
+export const failureOf = (call: ComposerResult) => (call.text === null ? null : checkFailure(call.text, contextOf(call)))
 /**
  * The name of the friend that a text holds, in either script. The names of the set are in lower case.
  * A part of a word matches, because Marathi and Hindi join an ending to a name, as "प्रियासोबत".
@@ -170,7 +171,7 @@ export const nameIn = (text: string, names: string[]) => names.find((name) => te
 const judgeLanguages = { en: 'english', 'hi-Latn': 'hindi', hi: 'hindi', 'mr-Latn': 'marathi', mr: 'marathi' } as const satisfies Record<ReplyLanguage, string>
 const devanagariLanguages: ReplyLanguage[] = ['hi', 'mr']
 /** The language of the judge and the script of the letters, against the reply language that the composer got. */
-export const registerOf = ({ text, judgeRegister, language }: ComposerResult & { text: string }) => ({
+export const registerRight = (text: string, { judgeRegister, language }: ComposerResult) => ({
   languageRight: judgeRegister?.language === judgeLanguages[language],
   scriptRight: mainScript(text) === (devanagariLanguages.includes(language) ? 'devanagari' : 'latin'),
 })
@@ -195,7 +196,7 @@ export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[])
     const add = (group: ComposerCounts) => {
       group.calls += 1
       if (text === null) return void (group.noAnswer += 1)
-      const { languageRight, scriptRight } = registerOf({ ...composer, text })
+      const { languageRight, scriptRight } = registerRight(text, composer)
       group.judged += Number(judgeRegister !== null)
       group.languageRight += Number(languageRight)
       group.scriptRight += Number(scriptRight)
@@ -206,32 +207,44 @@ export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[])
       }
     }
     add(scores.all)
-    add(scores[byId.get(id)!.language])
+    add(scores[groupOf(byId.get(id)!)])
   }
   return scores
 }
 
 /**
- * The texts with the name of the friend of a sentence: stopped by the name rules of the check, or through by a limit of the rules (T-61).
+ * The texts with the name of the friend of a sentence (T-61): stopped by the name rules of the check, or missed by them, with the limit.
  * The rules see no name in Devanagari, in the text or in the message, and no name that the person typed in lower case.
+ * Of the names that the rules miss, a different rule of the check can still stop the text.
  */
 export function namesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   return sentences.filter((s) => s.names.length > 0).map(({ id, text: said, names }) => {
-    const counts = { id, replies: 0, withName: 0, stopped: 0, lowerCase: 0, devanagari: 0, other: 0 }
+    const counts = { id, replies: 0, withName: 0, stopped: 0, lowerCase: 0, devanagari: 0, other: 0, stoppedByOtherRule: 0 }
     // The names are in lower case, so a match with the case of the message is a name that the person typed in lower case.
     const typed = names.find((name) => said.includes(name))
-    for (const { composer } of turns.filter((t) => t.id === id && t.composer?.text)) {
+    const calls = turns.flatMap(({ id: of, composer }) => (of === id && composer?.text ? [{ call: composer, text: composer.text }] : []))
+    for (const { call, text } of calls) {
       counts.replies += 1
-      const name = nameIn(composer!.text!, names)
+      const name = nameIn(text, names)
       if (!name) continue
       counts.withName += 1
-      if (nameFailure(composer!.text!, { ...composer!, turns: [], formB: [] })) counts.stopped += 1
-      else if (isDevanagari(name) || (typed && isDevanagari(typed))) counts.devanagari += 1
+      if (nameFailure(text, contextOf(call))) {
+        counts.stopped += 1
+        continue
+      }
+      if (isDevanagari(name) || (typed && isDevanagari(typed))) counts.devanagari += 1
       else if (typed) counts.lowerCase += 1
       else counts.other += 1
+      if (failureOf(call)) counts.stoppedByOtherRule += 1
     }
     return counts
   })
+}
+
+/** The scores of the turns of each band that is not core: each band gets its own pass condition (testing.md). */
+export function bandScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
+  const byId = sentencesById(sentences)
+  return scopeBands.filter((band) => band !== 'core').map((band) => ({ band, scores: scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band)) }))
 }
 
 /** The composer calls of the searches: the calls that the composer scores and the deadline use. */

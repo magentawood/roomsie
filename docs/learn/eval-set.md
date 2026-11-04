@@ -1,6 +1,6 @@
 # The eval sentences
 
-**In one line:** 78 sentences that people type to the assistant, in English, Hinglish and Marathi, each with its correct labels. A run thus gives a score to each handler.
+**In one line:** 78 sentences that people type to the assistant, in English, Hinglish, Hindi and Marathi, each with its correct labels. A run thus gives a score to each handler.
 
 ## What it is
 
@@ -21,7 +21,7 @@
 | The personal sentences of the observer, each with its topics | `apps/api/eval/observer-sentences.json` (T-36) |
 | The runner of the observer | `pnpm eval:observer`, with its result in [observer-eval.md](../research/observer-eval.md) |
 
-- **The mix.** 22 English, 31 Hinglish and 25 Marathi. Of the searches: 17, 20 and 19. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).
+- **The mix.** 22 English, 31 Hinglish and 25 Marathi. Of the searches: 17, 20 and 19. The set labels Hindi in Devanagari as Hinglish: 9 of the 31 sentences. The report gives them a column of their own. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).
 - **The level of code-mix** is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and amounts do not count, as "25k" or "12,000". A word with digits, as "1BHK", counts as a word, and a number in words counts as a word of its language. **The script** is the script of the letters: digits belong to no script.
 - **The language and the register.** The set keeps the script of its letters. The runner gets the expected register from the language of a sentence and its letters, by the rule of the router ([The composer](composer.md)).
 - **The check.** Each label must be a valid Form A, and each area a slug of the seed. The script must agree with the letters. The set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas. The check also keeps the bands, the flags and the forms of the six names (T-61).

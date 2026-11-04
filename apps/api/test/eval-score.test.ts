@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mean, rangesOf } from '../eval/report'
-import { callStats, composerScoresOf, composersOfSearches, flipsOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
+import { bandScoresOf, callStats, composerScoresOf, composersOfSearches, failureOf, flipsOf, groupOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
 import type { EvalSentence } from '../eval/set'
 
 const sentence = (id: string, language: EvalSentence['language'], text: string, expected: EvalSentence['expected'], more: Partial<EvalSentence> = {}): EvalSentence =>
@@ -130,6 +130,16 @@ describe('the scores of the router on the other bands (T-61)', () => {
     expect(flipsOf(others, [e16, again(e16, { values: { intent: 'room' } }), e20, again(e20, { label: { ...e20.label, band: 'core' }, extractorAnswered: false, values: {} })])).toEqual(['e20'])
   })
 
+  it('gives each band that is not core its own score, and Hindi in Devanagari its own group', () => {
+    const hindi = sentence('h27', 'hinglish', 'मुंबई में डिपॉज़िट आमतौर पर कितने महीने का होता है?', {}, { band: 'general', script: 'devanagari' })
+    const byBand = bandScoresOf([...others, hindi], [at('e16', 'general'), at('h27', 'core', { routerBand: 'general' }), at('e20', 'sensitive')])
+    expect(byBand.map(({ band, scores }) => [band, scores.all.bandRight, scores.all.otherBands])).toEqual([
+      ['general', 1, 2], ['consequential', 0, 0], ['out_of_scope', 0, 0], ['adversarial', 0, 0], ['sensitive', 1, 1],
+    ])
+    expect(byBand[0]!.scores.hindi).toMatchObject({ otherBands: 1, bandRight: 0 })
+    expect([groupOf(hindi), groupOf(others[2]!)]).toEqual(['hindi', 'hinglish'])
+  })
+
   const row = (threshold: number, dangerRight: number, alarmsAbove: number, bandRight: number) =>
     ({ threshold, counts: { ...zeroCounts, dangerRight, alarmsAbove, bandRight } as Counts })
 
@@ -179,18 +189,19 @@ describe('the scores of the composer (T-61)', () => {
       'Powai mein flat, noted. Kab shift karna hai?',
     ]
     expect(namesOf([named], replies.map((text, i) => turn('h25', reply('hi-Latn', text, null), i + 1))))
-      .toEqual([{ id: 'h25', replies: 4, withName: 3, stopped: 1, lowerCase: 1, devanagari: 1, other: 0 }])
+      .toEqual([{ id: 'h25', replies: 4, withName: 3, stopped: 1, lowerCase: 1, devanagari: 1, other: 0, stoppedByOtherRule: 0 }])
   })
 
   it('gives the limit of a name that the name rules miss, also when the text fails the check for a different reason', () => {
-    expect(namesOf([named], [turn('h25', reply('hi-Latn', 'Aap aur neha ke liye Powai mein flat, 30k tak. Kab shift karna hai?', null))]))
-      .toEqual([{ id: 'h25', replies: 1, withName: 1, stopped: 0, lowerCase: 1, devanagari: 0, other: 0 }])
+    const newNumber = reply('hi-Latn', 'Aap aur neha ke liye Powai mein flat, 30k tak. Kab shift karna hai?', null)
+    expect(failureOf(newNumber)).toBe('new_number')
+    expect(namesOf([named], [turn('h25', newNumber)])).toEqual([{ id: 'h25', replies: 1, withName: 1, stopped: 0, lowerCase: 1, devanagari: 0, other: 0, stoppedByOtherRule: 1 }])
   })
 
   it('gives the limit of a name that the person typed in Devanagari, also when the text writes it in Latin letters', () => {
     const typed = sentence('m25', 'marathi', 'मी आणि माझी मैत्रीण प्रिया पवईमध्ये फ्लॅट शोधत आहोत', {}, { names: ['priya', 'प्रिया'] })
     const latin = { ...reply('mr-Latn', 'Priya ani tumhala Powai madhe flat. Kadhi shift karnar?', null), message: typed.text }
-    expect(namesOf([typed], [turn('m25', latin)])).toEqual([{ id: 'm25', replies: 1, withName: 1, stopped: 0, lowerCase: 0, devanagari: 1, other: 0 }])
+    expect(namesOf([typed], [turn('m25', latin)])).toEqual([{ id: 'm25', replies: 1, withName: 1, stopped: 0, lowerCase: 0, devanagari: 1, other: 0, stoppedByOtherRule: 0 }])
   })
 
   it('lists the capital words at the start of a sentence of a passed text that are not in the plan or the message, the most frequent first', () => {

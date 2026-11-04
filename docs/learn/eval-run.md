@@ -7,15 +7,15 @@
 - **A run** sends each sentence three times through the turn of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.
 - **The calls** go to the real models through the real handlers, as a live turn does ([PD7a](../decisions/pd-07a-agent-architecture.md)). The router and the extractor run in parallel, then the reply writer and the composer. The runner gives one model as the primary and as the fallback. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts.
 - **The judge (T-61).** After the composer, the router reads its text and gives the language. The judge always uses DeepSeek, also in the run of Gemini. Code gives the script from the letters.
-- **The scores,** for each model and each language:
+- **The scores,** for each model and each language. Hindi in Devanagari has its own column (T-61):
   - **Turns with no answer** of the extractor or of the router: each attempt failed. Such a turn counts apart, not as wrong values.
   - **Labelled slots right:** the slots with a label that get that value.
   - **Made-up values:** a value in a slot that the label leaves empty.
   - **Vague slots marked unclear,** and **vague slots with a value.** A value there is a no-go of [PD11](../decisions/pd-11-launch.md), check 6.
   - **Unclear in a slot with no label:** an extra question, not a wrong value.
-  - **The router:** the language and the main script of the register, and the false alarms. A false alarm is a search that the router puts in a different band, above or below its threshold. Also the share of the other bands that the router gets right, and of `danger` and `community` that it keeps (T-61).
+  - **The router:** the language and the main script of the register, and the false alarms. A false alarm is a sentence of the core band that the router puts in a different band, above or below its threshold. Also the share of the other bands that the router gets right, in all and for each band (T-61). Also the share of `danger` and `community` that it keeps.
   - **The composer (T-61):** the language and the script of each text, against the reply language that the composer got. Also the texts in English for a different reply language, and the texts that fail the output check, with the reason. The composer runs with no deadline. Thus, the report gives the share of the calls that answer in time at each deadline from 1500 to 4000 ms.
-  - **The names (T-61):** for each search with a friend, the texts with the name, and if the check stops each one. The report also lists each new capital word at the start of a sentence, for a person to read. A new word is not in the plan or the message.
+  - **The names (T-61):** for each search with a friend, the texts with the name, and if the name rules of the check stop each one. For a name that the rules miss, the report gives the limit, and if a different rule stops the text. The report also lists each new capital word at the start of a sentence, for a person to read. A new word is not in the plan or the message.
   - **The calls:** the output that is not valid and the failed attempts. Also the median and the 95th percentile of the time of each handler. The times include the failed attempts.
 - **The threshold sweep.** The run file keeps each answer of the extractor and of the router with its token probabilities. The runner replays the answers through the extractor and the router at each threshold from 0.5 to 0.95, with no new call.
 - **The rules (T-61).** The report gives the router threshold and the deadline that the rules of [the spec of T-61](../plan/tasks/T-61%20Composer%20eval.md) select.

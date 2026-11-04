@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
-import { checkFailure } from '../src/assistant/handlers/composer/check'
+import { checkFailure, nameFailure } from '../src/assistant/handlers/composer/check'
 import { fixedLines } from '../src/assistant/lines'
 import lines from '../src/assistant/lines.json'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -173,6 +173,21 @@ describe('the output check of the composer', () => {
   it('rejects a name from the words of the person, also at the start of a sentence, and a capital word that is not in the plan', () => {
     expect(check('Powai, 20k tak. Rahul ka flat bhi wahin hai. Kab shift karna hai?', 'Rahul says Powai, bees hazaar')).toBe('their_name')
     expect(check('Powai, 20k tak, and Bandra too. Kab shift karna hai?')).toBe('new_capital')
+  })
+})
+
+describe('the name rules of the output check alone (T-61)', () => {
+  const context = { draft: 'Got it: Powai, up to ₹20,000. When do you want to move in?', message: 'Rahul aur main, Powai mein bees hazaar tak', turns: [], formB: [] }
+
+  it('stops a name from the words of the person, also in a text that a different rule stops first', () => {
+    const text = 'Rahul ke saath Powai, 25k tak. Kab shift karna hai?'
+    expect(checkFailure(text, context)).toBe('new_number')
+    expect(nameFailure(text, context)).toBe('their_name')
+  })
+
+  it('passes a name in lower case and a name in Devanagari, the limits of the rules', () => {
+    expect(nameFailure('Aap aur neha ke liye Powai. Kab shift karna hai?', { ...context, message: 'main aur neha, Powai' })).toBeNull()
+    expect(nameFailure('आप और नेहा के लिए पवई। आप कब शिफ़्ट होंगे?', context)).toBeNull()
   })
 })
 
