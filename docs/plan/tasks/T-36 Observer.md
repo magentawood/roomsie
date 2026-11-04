@@ -92,8 +92,8 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The eval runs the observer on the 50 sentences and on about 24 new personal sentences in English, Hinglish and Marathi. A report in `docs/research/` records the rejection rate and the fraction of notes on the correct topic.
   - F-11: the founder confirmed each default of this list on 2026-11-04.
   - Night shifts and student days are answers of Form A, so they are not notes. (n3rxv, in review)
-  - The backfill reads only the turns before a time that the person who runs it gives, the time of the deploy, so a deleted note does not come back. (n3rxv, in review)
-  - A turn that states the own religion or community of the person gives no note, as a turn with a preference. (n3rxv, in review, why: PD3c)
+  - The backfill reads only the turns before a time that the person who runs it gives, the time of the deploy. It reads no person who chatted from that time on, and refuses a time later than the oldest note, so a deleted note does not come back. (n3rxv, in review)
+  - A turn that states the own religion or community of the person gives no note, as a turn with a preference. A turn whose extractor failed or was not sure of an own value gives none too. The backfill cannot tell the turn, so it reads no turn of a goal with an own value. (n3rxv, in review, why: PD3c)
   - The delete pop-up says "“{value}” leaves your notes. Your messages stay in the chat." (n3rxv, in review)
 - **Out of scope:**
   - A notes screen on the profile, and an edit button on a note. (why: PD7a)
