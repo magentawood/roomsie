@@ -41,7 +41,7 @@ SHORT = {
  "D-01":"Styling decision","D-02":"Chat screen designs","D-03":"Results and profile designs",
  "D-04":"Landing and waitlist designs","D-05":"Design QA","D-06":"Launch visuals",
  "M-04":"Article interviews","M-03":"Eval sentences","M-05":"Article drafts","M-07":"Launch posts",
- "M-01":"Seeding form","M-02":"100 sign-ups","M-06":"Beta invites","M-09":"Broker calls",
+ "M-01":"Outreach","M-02":"100 sign-ups","M-06":"Beta invites","M-09":"Broker calls",
  "F-01":"Kickoff","F-02":"Domain","F-03":"Billing and caps","F-04":"Accounts in Mumbai",
  "F-05":"Seeding consent text","F-06":"Seed areas picked","F-07":"Privacy and terms draft",
  "F-09":"ADR exceptions","F-08":"Moderator named","F-10":"Go-no-go meeting",

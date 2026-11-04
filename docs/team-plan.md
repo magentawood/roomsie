@@ -172,10 +172,8 @@ Finish line: Mon 5 Oct.
 
 | # | Task | When | Waits on |
 |---|---|---|---|
-| 1 | M-01 ⚑ · Seeding form live, outreach starts | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
-| 2 | M-02 · Seeding target: 100 sign-ups | Sat 26 Sep → Wed 30 Sep | M-01 |
-| 3 | M-06 ⚑ · Beta invites to seeded sign-ups | Sat 3 Oct → Sun 11 Oct | M-02, T-16b |
-| 4 | M-09 · Broker calls | Mon 12 Oct → Mon 19 Oct | — |
+| 1 | M-01 ⚑ · Outreach starts: people go to roomsie.in | Fri 25 Sep → Sat 26 Sep | F-06 |
+| 2 | M-09 · Broker calls | Mon 12 Oct → Mon 19 Oct | — |
 
 Finish line: Mon 19 Oct.
 
@@ -186,17 +184,16 @@ Finish line: Mon 19 Oct.
 | 1 | F-01 · Kickoff: names on every role | Thu 24 Sep | — |
 | 2 | F-03 · Billing and hard spend caps | Thu 24 Sep | — |
 | 3 | F-04 · Create accounts in Mumbai regions | Thu 24 Sep | F-03 |
-| 4 | F-05 ⚑ · Consent text for the seeding form | Thu 24 Sep → Fri 25 Sep | F-11 |
-| 5 | F-06 · Pick the areas to seed first | Thu 24 Sep → Fri 25 Sep | — |
-| 6 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
-| 7 | F-09 · Write down the two ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
-| 8 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
-| 9 | F-11 ⚑ · Product calls: intake, Form A and profile data | Sun 4 Oct → Tue 6 Oct | — |
-| 10 | F-12 ⚑ · Product calls: matching rules | Sun 4 Oct → Tue 6 Oct | — |
-| 11 | F-13 ⚑ · Product calls: connect, trust and safety | Sun 4 Oct → Tue 6 Oct | — |
-| 12 | F-14 · Product calls: assistant and limits | Sun 4 Oct → Tue 6 Oct | — |
-| 13 | F-02 · Secure the domain and put the app on it | Wed 7 Oct → Thu 8 Oct | T-04 |
-| 14 | F-10 · Go/no-go meeting | Sat 10 Oct | — |
+| 4 | F-06 · Pick the areas to seed first | Thu 24 Sep → Fri 25 Sep | — |
+| 5 | F-07 · Draft privacy policy, terms, grievance contact | Fri 25 Sep → Wed 30 Sep | F-13 |
+| 6 | F-09 · Write down the two ADR exceptions | Sat 26 Sep → Sun 27 Sep | — |
+| 7 | F-08 · Name the moderator | Wed 30 Sep → Fri 2 Oct | — |
+| 8 | F-11 ⚑ · Product calls: intake, Form A and profile data | Sun 4 Oct → Tue 6 Oct | — |
+| 9 | F-12 ⚑ · Product calls: matching rules | Sun 4 Oct → Tue 6 Oct | — |
+| 10 | F-13 ⚑ · Product calls: connect, trust and safety | Sun 4 Oct → Tue 6 Oct | — |
+| 11 | F-14 · Product calls: assistant and limits | Sun 4 Oct → Tue 6 Oct | — |
+| 12 | F-02 · Secure the domain and put the app on it | Wed 7 Oct → Thu 8 Oct | T-04 |
+| 13 | F-10 · Go/no-go meeting | Sat 10 Oct | — |
 
 Finish line: Sat 10 Oct.
 
@@ -286,24 +283,21 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | M1 Content | 1 | M-04 | Interviews for articles 1 to 10 |  | Thu 24 Sep | Mon 28 Sep | CP1 | — | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | M1 Content | 2 | M-05 | Drafts of articles 1 to 10 |  | Tue 29 Sep | Mon 5 Oct | CP3 | M-04 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | M1 Content | 3 | M-07 | Draft launch posts |  | Wed 30 Sep | Sat 3 Oct | CP3 | — | [#35](https://github.com/magentawood/roomsie/issues/35) |
-| M2 Community | 1 | M-01 ⚑ | Seeding form live, outreach starts |  | Fri 25 Sep | Sat 26 Sep | CP1 | F-05, F-06 | [#14](https://github.com/magentawood/roomsie/issues/14) |
-| M2 Community | 2 | M-02 | Seeding target: 100 sign-ups |  | Sat 26 Sep | Wed 30 Sep | CP2 | M-01 | [#22](https://github.com/magentawood/roomsie/issues/22) |
-| M2 Community | 3 | M-06 ⚑ | Beta invites to seeded sign-ups |  | Sat 3 Oct | Sun 11 Oct | CP4 | M-02, T-16b | [#49](https://github.com/magentawood/roomsie/issues/49) |
-| M2 Community | 4 | M-09 | Broker calls |  | Mon 12 Oct | Mon 19 Oct | CP5 | — | [#55](https://github.com/magentawood/roomsie/issues/55) |
+| M2 Community | 1 | M-01 ⚑ | Outreach starts: people go to roomsie.in |  | Fri 25 Sep | Sat 26 Sep | CP1 | F-06 | [#14](https://github.com/magentawood/roomsie/issues/14) |
+| M2 Community | 2 | M-09 | Broker calls |  | Mon 12 Oct | Mon 19 Oct | CP5 | — | [#55](https://github.com/magentawood/roomsie/issues/55) |
 | Founder | 1 | F-01 | Kickoff: names on every role |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#2](https://github.com/magentawood/roomsie/issues/2) |
 | Founder | 2 | F-03 | Billing and hard spend caps |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#4](https://github.com/magentawood/roomsie/issues/4) |
 | Founder | 3 | F-04 | Create accounts in Mumbai regions |  | Thu 24 Sep | Thu 24 Sep | CP0 | F-03 | [#5](https://github.com/magentawood/roomsie/issues/5) |
-| Founder | 4 | F-05 ⚑ | Consent text for the seeding form |  | Thu 24 Sep | Fri 25 Sep | CP0 | F-11 | [#8](https://github.com/magentawood/roomsie/issues/8) |
-| Founder | 5 | F-06 | Pick the areas to seed first |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
-| Founder | 6 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
-| Founder | 7 | F-09 | Write down the two ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
-| Founder | 8 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
-| Founder | 9 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#103](https://github.com/magentawood/roomsie/issues/103) |
-| Founder | 10 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#104](https://github.com/magentawood/roomsie/issues/104) |
-| Founder | 11 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#105](https://github.com/magentawood/roomsie/issues/105) |
-| Founder | 12 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#106](https://github.com/magentawood/roomsie/issues/106) |
-| Founder | 13 | F-02 | Secure the domain and put the app on it | 2 | Wed 7 Oct | Thu 8 Oct | CP0 | T-04 | [#3](https://github.com/magentawood/roomsie/issues/3) |
-| Founder | 14 | F-10 | Go/no-go meeting |  | Sat 10 Oct | Sat 10 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
+| Founder | 4 | F-06 | Pick the areas to seed first |  | Thu 24 Sep | Fri 25 Sep | CP0 | — | [#9](https://github.com/magentawood/roomsie/issues/9) |
+| Founder | 5 | F-07 | Draft privacy policy, terms, grievance contact |  | Fri 25 Sep | Wed 30 Sep | CP2 | F-13 | [#17](https://github.com/magentawood/roomsie/issues/17) |
+| Founder | 6 | F-09 | Write down the two ADR exceptions |  | Sat 26 Sep | Sun 27 Sep | CP1 | — | [#18](https://github.com/magentawood/roomsie/issues/18) |
+| Founder | 7 | F-08 | Name the moderator |  | Wed 30 Sep | Fri 2 Oct | CP3 | — | [#34](https://github.com/magentawood/roomsie/issues/34) |
+| Founder | 8 | F-11 ⚑ | Product calls: intake, Form A and profile data |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#103](https://github.com/magentawood/roomsie/issues/103) |
+| Founder | 9 | F-12 ⚑ | Product calls: matching rules |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#104](https://github.com/magentawood/roomsie/issues/104) |
+| Founder | 10 | F-13 ⚑ | Product calls: connect, trust and safety |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#105](https://github.com/magentawood/roomsie/issues/105) |
+| Founder | 11 | F-14 | Product calls: assistant and limits |  | Sun 4 Oct | Tue 6 Oct | CP3 | — | [#106](https://github.com/magentawood/roomsie/issues/106) |
+| Founder | 12 | F-02 | Secure the domain and put the app on it | 2 | Wed 7 Oct | Thu 8 Oct | CP0 | T-04 | [#3](https://github.com/magentawood/roomsie/issues/3) |
+| Founder | 13 | F-10 | Go/no-go meeting |  | Sat 10 Oct | Sat 10 Oct | CP3 | — | [#50](https://github.com/magentawood/roomsie/issues/50) |
 | Everyone | 1 | A-01 | Bug fix day |  | Sun 11 Oct | Sun 11 Oct | CP4 | — | [#53](https://github.com/magentawood/roomsie/issues/53) |
 | Everyone | 2 | A-02 | Launch |  | Mon 12 Oct | Mon 12 Oct | CP4 | — | [#54](https://github.com/magentawood/roomsie/issues/54) |
 
@@ -413,15 +407,12 @@ gantt
     M-05 Drafts of articles 1 to 10 :m05, 2026-09-29, 7d
     M-07 Draft launch posts :m07, 2026-09-30, 4d
     section M2 Community
-    M-01 Seeding form live outreach starts :crit, m01, 2026-09-25, 2d
-    M-02 Seeding target - 100 sign-ups :m02, 2026-09-26, 5d
-    M-06 Beta invites to seeded sign-ups :crit, m06, 2026-10-03, 9d
+    M-01 Outreach starts - people go to roomsie.in :crit, m01, 2026-09-25, 2d
     M-09 Broker calls :m09, 2026-10-12, 8d
     section Founder
     F-01 Kickoff - names on every role :f01, 2026-09-24, 1d
     F-03 Billing and hard spend caps :f03, 2026-09-24, 1d
     F-04 Create accounts in Mumbai regions :f04, 2026-09-24, 1d
-    F-05 Consent text for the seeding form :crit, f05, 2026-09-24, 2d
     F-06 Pick the areas to seed first :f06, 2026-09-24, 2d
     F-07 Draft privacy policy terms grievance contact :f07, 2026-09-25, 6d
     F-09 Write down the two ADR exceptions :f09, 2026-09-26, 2d
@@ -453,7 +444,6 @@ Every role has a name. The accounts and billing are live. The styling is decided
 | F-04 | Create accounts in Mumbai regions | F |  | Thu 24 Sep | F-03 |
 | T-08 ⚑ | Form A contract: slots and enums | P2 | 2 | Thu 24 Sep | F-11 |
 | D-02 ⚑ | Design the chat screens | D |  | Thu 24 Sep → Fri 25 Sep | D-01 |
-| F-05 ⚑ | Consent text for the seeding form | F |  | Thu 24 Sep → Fri 25 Sep | F-11 |
 | F-06 | Pick the areas to seed first | F |  | Thu 24 Sep → Fri 25 Sep | — |
 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | P2 | 4 | Thu 24 Sep → Fri 25 Sep | T-08, F-04 |
 | F-02 | Secure the domain and put the app on it | F | 2 | Wed 7 Oct → Thu 8 Oct | T-04 |
@@ -491,10 +481,6 @@ Every role has a name. The accounts and billing are live. The styling is decided
 - The chat with chips, the split view and the phone chat bar exist
 - Read first: `docs/interface-shape.md`
 
-**F-05 · Consent text for the seeding form** — done when:
-- It says what the system collects, that other roomsie users will see the profile, and how to delete it
-- It is short enough to read on a phone
-
 **F-06 · Pick the areas to seed first** — done when:
 - The team chooses the areas to seed first with marketing
 - The team chooses them by where it can really reach people
@@ -526,7 +512,7 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 | M-03 | Write the eval sentences | P5 | 4 | Thu 24 Sep → Sun 27 Sep | — |
 | T-23a | Landing page from the Figma design | P4 | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
 | M-04 | Interviews for articles 1 to 10 | M1 |  | Thu 24 Sep → Mon 28 Sep | — |
-| M-01 ⚑ | Seeding form live, outreach starts | M2 |  | Fri 25 Sep → Sat 26 Sep | F-05, F-06 |
+| M-01 ⚑ | Outreach starts: people go to roomsie.in | M2 |  | Fri 25 Sep → Sat 26 Sep | F-06 |
 | T-35 | Form B contract and table | P2 | 3 | Fri 25 Sep → Sat 26 Sep | T-06, T-08 |
 | D-03 | Design results, profile and connect screens | D |  | Fri 25 Sep → Sun 27 Sep | D-01 |
 | F-09 | Write down the two ADR exceptions | F |  | Sat 26 Sep → Sun 27 Sep | — |
@@ -564,8 +550,8 @@ The monorepo, the schema, sign-in, CI and the model wrapper are merged. The land
 - The notes are saved
 - Read first: `docs/content/corpus-plan.md`
 
-**M-01 · Seeding form live, outreach starts** — done when:
-- The form is live with the consent text, and asks the full profile of PD16
+**M-01 · Outreach starts: people go to roomsie.in** — done when:
+- Outreach sends people to roomsie.in, in Navi Mumbai and South Mumbai first (F-06)
 - Outreach uses the team's own networks, college and company groups, and flat-hunting groups
 - The team invites people to sign up. The team never copies the posts or details of any person
 - Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it
@@ -607,7 +593,6 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 |---|---|---|---|---|---|
 | T-06 ⚑ | Database schema v1 | P3 | 8 | Thu 24 Sep → Tue 29 Sep | F-11 |
 | F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | F-13 |
-| M-02 | Seeding target: 100 sign-ups | M2 |  | Sat 26 Sep → Wed 30 Sep | M-01 |
 | T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04, T-06 |
 | T-03 | CI: typecheck, lint, build, secret scan | P5 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
 | T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
@@ -635,10 +620,6 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)
 - The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
 - Read first: `docs/extensibility.md`, `docs/decisions/pd-19-retention.md`, `docs/decisions/pd-07-models.md`
-
-**M-02 · Seeding target: 100 sign-ups** — done when:
-- There are 100 sign-ups by Wednesday 30 September
-- The count is 250 by Sunday 4 October, because approximately 6 in 10 people will complete a profile
 
 **T-05 · Google sign-in and token checks in the API** — done when:
 - Google sign-in works through Firebase on the web. The token stays in memory
@@ -1132,15 +1113,8 @@ Public launch. The fallback date is Wednesday 14 October.
 
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
-| M-06 ⚑ | Beta invites to seeded sign-ups | M2 |  | Sat 3 Oct → Sun 11 Oct | M-02, T-16b |
 | A-01 | Bug fix day | ALL |  | Sun 11 Oct | — |
 | A-02 | Launch | ALL |  | Mon 12 Oct | — |
-
-**M-06 · Beta invites to seeded sign-ups** — done when:
-- Invites go out on Sat 3 Oct, the day after profile creation works
-- The team helps people complete profiles
-- There are 150 profiles across Mumbai by Sunday 11 October
-- Read first: `docs/decisions/pd-11-launch.md`
 
 **A-01 · Bug fix day** — done when:
 - Engineers spend their two hours on P1 bugs only

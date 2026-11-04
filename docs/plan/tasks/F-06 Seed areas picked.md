@@ -2,7 +2,7 @@
 id: F-06
 title: "Pick the areas to seed first"
 owner: "Founder"
-sequence: "5 of 14"
+sequence: "4 of 13"
 start: 2026-09-24
 end: 2026-09-25
 checkpoint: CP0
@@ -16,7 +16,7 @@ tags:
 
 # F-06 · Pick the areas to seed first
 
-**Owner:** [[Founder]], task 5 of 14  
+**Owner:** [[Founder]], task 4 of 13  
 **When:** Thu 24 Sep → Fri 25 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#9](https://github.com/magentawood/roomsie/issues/9)
@@ -27,7 +27,7 @@ The area groups that marketing seeds first. Not a gate (PD2).
 - Nothing. You can start this task at any time.
 
 ## Unblocks
-- [[M-01 Seeding form ⚑]]
+- [[M-01 Outreach ⚑]]
 
 ## Done when
 - [x] The team chooses the areas to seed first with marketing · [#217](https://github.com/magentawood/roomsie/pull/217)

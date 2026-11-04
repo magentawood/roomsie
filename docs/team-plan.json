@@ -160,26 +160,6 @@
    "issue": 7
   },
   {
-   "id": "F-05",
-   "title": "Consent text for the seeding form",
-   "plain": "What we will do with their data.",
-   "role": "F",
-   "hours": null,
-   "start": "2026-09-24",
-   "end": "2026-09-25",
-   "deps": [
-    "F-11"
-   ],
-   "done": [
-    "It says what the system collects, that other roomsie users will see the profile, and how to delete it",
-    "It is short enough to read on a phone"
-   ],
-   "read": [],
-   "cp": "CP0",
-   "critical": true,
-   "issue": 8
-  },
-  {
    "id": "F-06",
    "title": "Pick the areas to seed first",
    "plain": "The area groups that marketing seeds first. Not a gate (PD2).",
@@ -334,18 +314,17 @@
   },
   {
    "id": "M-01",
-   "title": "Seeding form live, outreach starts",
-   "plain": "A simple sign-up form, and tell people about it.",
+   "title": "Outreach starts: people go to roomsie.in",
+   "plain": "Tell people about roomsie, so they sign up in the app.",
    "role": "M2",
    "hours": null,
    "start": "2026-09-25",
    "end": "2026-09-26",
    "deps": [
-    "F-05",
     "F-06"
    ],
    "done": [
-    "The form is live with the consent text, and asks the full profile of PD16",
+    "Outreach sends people to roomsie.in, in Navi Mumbai and South Mumbai first (F-06)",
     "Outreach uses the team's own networks, college and company groups, and flat-hunting groups",
     "The team invites people to sign up. The team never copies the posts or details of any person",
     "Each open product call that this task uses has a default in config or seed data, not in code. F-06 and F-11 confirms it",
@@ -532,26 +511,6 @@
    "cp": "CP1",
    "critical": false,
    "issue": 21
-  },
-  {
-   "id": "M-02",
-   "title": "Seeding target: 100 sign-ups",
-   "plain": "100 real people before launch.",
-   "role": "M2",
-   "hours": null,
-   "start": "2026-09-26",
-   "end": "2026-09-30",
-   "deps": [
-    "M-01"
-   ],
-   "done": [
-    "There are 100 sign-ups by Wednesday 30 September",
-    "The count is 250 by Sunday 4 October, because approximately 6 in 10 people will complete a profile"
-   ],
-   "read": [],
-   "cp": "CP2",
-   "critical": false,
-   "issue": 22
   },
   {
    "id": "T-12",
@@ -1182,30 +1141,6 @@
    "cp": "CP2",
    "critical": false,
    "issue": 40
-  },
-  {
-   "id": "M-06",
-   "title": "Beta invites to seeded sign-ups",
-   "plain": "Let the 100 seeded people in before the public.",
-   "role": "M2",
-   "hours": null,
-   "start": "2026-10-03",
-   "end": "2026-10-11",
-   "deps": [
-    "M-02",
-    "T-16b"
-   ],
-   "done": [
-    "Invites go out on Sat 3 Oct, the day after profile creation works",
-    "The team helps people complete profiles",
-    "There are 150 profiles across Mumbai by Sunday 11 October"
-   ],
-   "read": [
-    "docs/decisions/pd-11-launch.md"
-   ],
-   "cp": "CP4",
-   "critical": true,
-   "issue": 49
   },
   {
    "id": "T-22a",

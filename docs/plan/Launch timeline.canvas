@@ -970,35 +970,16 @@
    "x": -20,
    "y": 2518,
    "width": 4652,
-   "height": 240,
+   "height": 144,
    "color": "#F9A03F"
   },
   {
    "id": "task-M-01",
    "type": "text",
-   "text": "**[[M-01 Seeding form ⚑|M-01 Seeding form]]**\nFri 25 Sep → Sat 26 Sep",
+   "text": "**[[M-01 Outreach ⚑|M-01 Outreach]]**\nFri 25 Sep → Sat 26 Sep",
    "x": 220,
    "y": 2548,
    "width": 432,
-   "height": 84,
-   "color": "1"
-  },
-  {
-   "id": "task-M-02",
-   "type": "text",
-   "text": "**[[M-02 100 sign-ups|M-02 100 sign-ups]]**\nSat 26 Sep → Wed 30 Sep",
-   "x": 440,
-   "y": 2644,
-   "width": 1092,
-   "height": 84
-  },
-  {
-   "id": "task-M-06",
-   "type": "text",
-   "text": "**[[M-06 Beta invites ⚑|M-06 Beta invites]]**\nSat 3 Oct → Sun 11 Oct",
-   "x": 1980,
-   "y": 2548,
-   "width": 1972,
    "height": 84,
    "color": "1"
   },
@@ -1016,9 +997,9 @@
    "type": "group",
    "label": "Founder",
    "x": -20,
-   "y": 2808,
+   "y": 2712,
    "width": 4652,
-   "height": 528,
+   "height": 432,
    "color": "#B07B4F"
   },
   {
@@ -1026,7 +1007,7 @@
    "type": "text",
    "text": "**[[F-01 Kickoff|F-01 Kickoff]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2838,
+   "y": 2742,
    "width": 212,
    "height": 84
   },
@@ -1035,7 +1016,7 @@
    "type": "text",
    "text": "**[[F-03 Billing and caps|F-03 Billing and caps]]**\nThu 24 Sep",
    "x": 0,
-   "y": 2934,
+   "y": 2838,
    "width": 212,
    "height": 84
   },
@@ -1044,26 +1025,16 @@
    "type": "text",
    "text": "**[[F-04 Accounts in Mumbai|F-04 Accounts in Mumbai]]**\nThu 24 Sep",
    "x": 0,
-   "y": 3030,
+   "y": 2934,
    "width": 212,
    "height": 84
-  },
-  {
-   "id": "task-F-05",
-   "type": "text",
-   "text": "**[[F-05 Seeding consent text ⚑|F-05 Seeding consent text]]**\nThu 24 Sep → Fri 25 Sep",
-   "x": 0,
-   "y": 3126,
-   "width": 432,
-   "height": 84,
-   "color": "1"
   },
   {
    "id": "task-F-06",
    "type": "text",
    "text": "**[[F-06 Seed areas picked|F-06 Seed areas picked]]**\nThu 24 Sep → Fri 25 Sep",
    "x": 0,
-   "y": 3222,
+   "y": 3030,
    "width": 432,
    "height": 84
   },
@@ -1072,7 +1043,7 @@
    "type": "text",
    "text": "**[[F-07 Privacy and terms draft|F-07 Privacy and terms draft]]**\nFri 25 Sep → Wed 30 Sep",
    "x": 220,
-   "y": 2838,
+   "y": 2742,
    "width": 1312,
    "height": 84
   },
@@ -1081,7 +1052,7 @@
    "type": "text",
    "text": "**[[F-09 ADR exceptions|F-09 ADR exceptions]]**\nSat 26 Sep → Sun 27 Sep",
    "x": 440,
-   "y": 2934,
+   "y": 2838,
    "width": 432,
    "height": 84
   },
@@ -1090,7 +1061,7 @@
    "type": "text",
    "text": "**[[F-08 Moderator named|F-08 Moderator named]]**\nWed 30 Sep → Fri 2 Oct",
    "x": 1320,
-   "y": 2934,
+   "y": 2838,
    "width": 652,
    "height": 84
   },
@@ -1099,7 +1070,7 @@
    "type": "text",
    "text": "**[[F-11 Intake and profile calls ⚑|F-11 Intake and profile calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 2838,
+   "y": 2742,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -1109,7 +1080,7 @@
    "type": "text",
    "text": "**[[F-12 Matching calls ⚑|F-12 Matching calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 2934,
+   "y": 2838,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -1119,7 +1090,7 @@
    "type": "text",
    "text": "**[[F-13 Connect and trust calls ⚑|F-13 Connect and trust calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 3030,
+   "y": 2934,
    "width": 652,
    "height": 84,
    "color": "1"
@@ -1129,7 +1100,7 @@
    "type": "text",
    "text": "**[[F-14 Assistant and limits calls|F-14 Assistant and limits calls]]**\nSun 4 Oct → Tue 6 Oct",
    "x": 2200,
-   "y": 3126,
+   "y": 3030,
    "width": 652,
    "height": 84
   },
@@ -1138,7 +1109,7 @@
    "type": "text",
    "text": "**[[F-02 Domain|F-02 Domain]]**\n2h · Wed 7 Oct → Thu 8 Oct",
    "x": 2860,
-   "y": 2838,
+   "y": 2742,
    "width": 432,
    "height": 84
   },
@@ -1147,7 +1118,7 @@
    "type": "text",
    "text": "**[[F-10 Go-no-go meeting|F-10 Go-no-go meeting]]**\nSat 10 Oct",
    "x": 3520,
-   "y": 2838,
+   "y": 2742,
    "width": 212,
    "height": 84
   },
@@ -1156,7 +1127,7 @@
    "type": "group",
    "label": "Everyone",
    "x": -20,
-   "y": 3386,
+   "y": 3194,
    "width": 4652,
    "height": 144,
    "color": "#9CC3E6"
@@ -1166,7 +1137,7 @@
    "type": "text",
    "text": "**[[A-01 Bug fix day|A-01 Bug fix day]]**\nSun 11 Oct",
    "x": 3740,
-   "y": 3416,
+   "y": 3224,
    "width": 212,
    "height": 84
   },
@@ -1175,7 +1146,7 @@
    "type": "text",
    "text": "**[[A-02 Launch day|A-02 Launch day]]**\nMon 12 Oct",
    "x": 3960,
-   "y": 3416,
+   "y": 3224,
    "width": 212,
    "height": 84
   }
@@ -1209,14 +1180,6 @@
    "fromSide": "right",
    "toNode": "task-D-02",
    "toSide": "left"
-  },
-  {
-   "id": "e-F-11-F-05",
-   "fromNode": "task-F-11",
-   "fromSide": "right",
-   "toNode": "task-F-05",
-   "toSide": "left",
-   "color": "1"
   },
   {
    "id": "e-D-03-T-18b",
@@ -1262,14 +1225,6 @@
    "fromNode": "task-T-08",
    "fromSide": "right",
    "toNode": "task-T-10",
-   "toSide": "left",
-   "color": "1"
-  },
-  {
-   "id": "e-F-05-M-01",
-   "fromNode": "task-F-05",
-   "fromSide": "right",
-   "toNode": "task-M-01",
    "toSide": "left",
    "color": "1"
   },
@@ -1362,13 +1317,6 @@
    "toNode": "task-T-15",
    "toSide": "bottom",
    "label": "connect"
-  },
-  {
-   "id": "e-M-01-M-02",
-   "fromNode": "task-M-01",
-   "fromSide": "right",
-   "toNode": "task-M-02",
-   "toSide": "left"
   },
   {
    "id": "e-T-11-T-12",
@@ -1670,21 +1618,6 @@
    "fromSide": "right",
    "toNode": "task-T-23b",
    "toSide": "left"
-  },
-  {
-   "id": "e-M-02-M-06",
-   "fromNode": "task-M-02",
-   "fromSide": "right",
-   "toNode": "task-M-06",
-   "toSide": "left"
-  },
-  {
-   "id": "e-T-16b-M-06",
-   "fromNode": "task-T-16b",
-   "fromSide": "right",
-   "toNode": "task-M-06",
-   "toSide": "left",
-   "color": "1"
   },
   {
    "id": "e-T-14-T-22a",

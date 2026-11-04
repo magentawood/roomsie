@@ -2,7 +2,7 @@
 id: F-14
 title: "Product calls: assistant and limits"
 owner: "Founder"
-sequence: "12 of 14"
+sequence: "11 of 13"
 start: 2026-10-04
 end: 2026-10-06
 checkpoint: CP3
@@ -16,7 +16,7 @@ tags:
 
 # F-14 · Product calls: assistant and limits
 
-**Owner:** [[Founder]], task 12 of 14  
+**Owner:** [[Founder]], task 11 of 13  
 **When:** Sun 4 Oct → Tue 6 Oct  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#106](https://github.com/magentawood/roomsie/issues/106)

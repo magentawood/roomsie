@@ -22,7 +22,6 @@ This note is part of [[roomsie launch]].
 - [[F-04 Accounts in Mumbai]] — Founder
 - [[T-08 Form A contract ⚑]] — P2 Chat
 - [[D-02 Chat screen designs ⚑]] — Design
-- [[F-05 Seeding consent text ⚑]] — Founder
 - [[F-06 Seed areas picked]] — Founder
 - [[T-11 Model wrapper ⚑]] — P2 Chat
 - [[F-02 Domain]] — Founder

@@ -2,7 +2,7 @@
 id: F-02
 title: "Secure the domain and put the app on it"
 owner: "Founder"
-sequence: "13 of 14"
+sequence: "12 of 13"
 hours: 2
 start: 2026-10-07
 end: 2026-10-08
@@ -17,7 +17,7 @@ tags:
 
 # F-02 · Secure the domain and put the app on it
 
-**Owner:** [[Founder]], task 13 of 14  
+**Owner:** [[Founder]], task 12 of 13  
 **When:** Wed 7 Oct → Thu 8 Oct · 2 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#3](https://github.com/magentawood/roomsie/issues/3)
