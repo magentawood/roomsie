@@ -29,8 +29,8 @@ async function sent(goal: Goal, text: string) {
 const notesOf = async (key: string) => notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: { [visitorKeyHeader]: key } })).json()).notes
 const deleteNote = (id: string, headers: Record<string, string>) => t.app.inject({ method: 'DELETE', url: `/v1/notes/${id}`, headers })
 
-const nightShifts = { key: 'work_pattern', kind: 'context', value: 'Works night shifts', evidence: 'I work night shifts' }
-const withNote = (note = nightShifts) => ({ observer: { deepseek: [scored({ notes: [note] })] } })
+const earlyStart = { key: 'work_pattern', kind: 'context', value: 'Starts work at 6 am', evidence: 'I start work at 6 am' }
+const withNote = (note = earlyStart) => ({ observer: { deepseek: [scored({ notes: [note] })] } })
 const context = () => routed({ kinds: ['filters', 'context'] })
 const asksNotes = () => routed({ kinds: ['question'], notes: true })
 
@@ -38,12 +38,12 @@ describe('the observer in the chat', () => {
   it('saves a note on the typed turn of the person, after the reply', async () => {
     const requests = fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
-    const { turns } = await sent(goal, 'room chahiye, I work night shifts')
+    const { turns } = await sent(goal, 'room chahiye, I start work at 6 am')
     expect(turns[1].text).toBe(roomAck)
     expect(requests.observer).toHaveLength(1)
     const saved = await t.db.select().from(observations).where(eq(observations.turnId, turns[0].id))
-    expect(saved).toMatchObject([{ key: 'work_pattern', evidence: 'I work night shifts', visible: true, anonymousSessionId: expect.any(String) }])
-    expect(await notesOf(goal.key)).toEqual([{ id: saved[0]!.id, label: 'Work hours and work from home', value: 'Works night shifts', evidence: 'I work night shifts' }])
+    expect(saved).toMatchObject([{ key: 'work_pattern', evidence: 'I start work at 6 am', visible: true, anonymousSessionId: expect.any(String) }])
+    expect(await notesOf(goal.key)).toEqual([{ id: saved[0]!.id, label: 'Work hours and work from home', value: 'Starts work at 6 am', evidence: 'I start work at 6 am' }])
   })
 
   it.each([
@@ -54,14 +54,24 @@ describe('the observer in the chat', () => {
     ['a turn that states a community preference', routed({ kinds: ['context', 'filters'], community: true })],
   ])('calls no observer for %s', async (_, label) => {
     const requests = fakeVendors({ deepseek: [room()], ...label })
-    await sent(await visitorGoal(), 'I work night shifts, room chahiye')
+    await sent(await visitorGoal(), 'I start work at 6 am, room chahiye')
     expect(requests.observer).toHaveLength(0)
+  })
+
+  it('saves no note from a general or a consequential question, and calls no observer', async () => {
+    for (const band of ['general', 'consequential'] as const) {
+      const requests = fakeVendors({ deepseek: [room()], ...routed({ band, kinds: ['question', 'context'] }), ...withNote() })
+      const goal = await visitorGoal()
+      await sent(goal, 'room chahiye, I start work at 6 am, what is the usual deposit?')
+      expect(requests.observer, band).toEqual([])
+      expect(await notesOf(goal.key), band).toEqual([])
+    }
   })
 
   it('sends the reply when the observer fails, and saves no note', async () => {
     fakeVendors({ deepseek: [room()], ...context(), observer: { deepseek: [down()], gemini: [down()] } })
     const goal = await visitorGoal()
-    expect((await sent(goal, 'room chahiye, I work night shifts')).turns[1].text).toBe(roomAck)
+    expect((await sent(goal, 'room chahiye, I start work at 6 am')).turns[1].text).toBe(roomAck)
     expect(await notesOf(goal.key)).toEqual([])
   })
 })
@@ -70,7 +80,7 @@ describe('"What do you know about me?"', () => {
   it('answers with the notes flag and a scripted line, with no composer, and keeps the open question', async () => {
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
-    await sent(goal, 'room chahiye, I work night shifts')
+    await sent(goal, 'room chahiye, I start work at 6 am')
     const requests = fakeVendors({ deepseek: [scored({})], ...asksNotes() })
     const { turns } = await sent(goal, 'what do you know about me?')
     expect(turns[1]).toMatchObject({ text: "Here's what I've noted from our chat. To fix a note, tell me what changed.", notes: true })
@@ -92,10 +102,10 @@ describe('"What do you know about me?"', () => {
   it('ends the first reply after the first note with the hint, one time', async () => {
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
-    expect((await sent(goal, 'room chahiye, I work night shifts')).turns[1].text).toBe(roomAck)
+    expect((await sent(goal, 'room chahiye, I start work at 6 am')).turns[1].text).toBe(roomAck)
     const hint = "I keep short notes from what you tell me. Ask \"what do you know about me?\" to see or delete them."
     fakeVendors({ deepseek: [scored({})] })
-    expect((await sent(goal, 'hmm')).turns[1].text).toMatch(new RegExp(`${hint.replace(/[?.]/g, '\\$&')}$`))
+    expect((await sent(goal, 'hmm')).turns[1].text.endsWith(hint)).toBe(true)
     fakeVendors({ deepseek: [scored({})] })
     expect((await sent(goal, 'ok')).turns[1].text).not.toContain(hint)
   })
@@ -105,7 +115,7 @@ describe('"What do you know about me?"', () => {
     const goal = await visitorGoal()
     await sent(goal, 'what do you know about me?')
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
-    await sent(goal, 'room chahiye, I work night shifts')
+    await sent(goal, 'room chahiye, I start work at 6 am')
     fakeVendors({ deepseek: [scored({})] })
     expect((await sent(goal, 'hmm')).turns[1].text).toContain('I keep short notes from what you tell me.')
   })
@@ -113,7 +123,7 @@ describe('"What do you know about me?"', () => {
   it('counts the notes reply as the hint', async () => {
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
-    await sent(goal, 'room chahiye, I work night shifts')
+    await sent(goal, 'room chahiye, I start work at 6 am')
     fakeVendors({ deepseek: [scored({})], ...asksNotes() })
     expect((await sent(goal, 'what do you know about me?')).turns[1].text).not.toContain('I keep short notes')
     fakeVendors({ deepseek: [scored({})] })
@@ -123,7 +133,7 @@ describe('"What do you know about me?"', () => {
   it('keeps the hint off a sensitive reply, and gives it on the next reply', async () => {
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
-    await sent(goal, 'room chahiye, I work night shifts')
+    await sent(goal, 'room chahiye, I start work at 6 am')
     fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['context'], band: 'sensitive' }) })
     expect((await sent(goal, 'I lost my job today')).turns[1].text).not.toContain('I keep short notes')
     fakeVendors({ deepseek: [scored({})] })
@@ -135,19 +145,21 @@ describe('the delete of a note', () => {
   it('deletes a note of the owner, as a database action, and refuses a note of a different owner', async () => {
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
     const goal = await visitorGoal()
-    await sent(goal, 'room chahiye, I work night shifts')
+    await sent(goal, 'room chahiye, I start work at 6 am')
     const [note] = await notesOf(goal.key)
     const other = await visitorGoal()
+    const calls = fakeVendors({})
     expect((await deleteNote(note!.id, { [visitorKeyHeader]: other.key })).statusCode).toBe(404)
     expect((await deleteNote(note!.id, { authorization: `Bearer ${t.tokens.ravi}` })).statusCode).toBe(404)
     expect((await deleteNote(note!.id, { [visitorKeyHeader]: goal.key })).statusCode).toBe(204)
+    expect([...calls, ...calls.router, ...calls.composer, ...calls.observer]).toEqual([])
     expect(await notesOf(goal.key)).toEqual([])
   })
 
   it('lists and deletes the notes of a signed-in user', async () => {
     const goalRes = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
     fakeVendors({ deepseek: [room()], ...context(), ...withNote() })
-    const res = await t.call('asha', 'POST', `/v1/goals/${goalRes.id}/turns`, { text: 'room chahiye, I work night shifts' })
+    const res = await t.call('asha', 'POST', `/v1/goals/${goalRes.id}/turns`, { text: 'room chahiye, I start work at 6 am' })
     expect(res.statusCode).toBe(200)
     const asha = { authorization: `Bearer ${t.tokens.asha}` }
     const { notes } = notesResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/notes', headers: asha })).json())

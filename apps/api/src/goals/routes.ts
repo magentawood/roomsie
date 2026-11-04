@@ -127,6 +127,13 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const outsidePlaces = [...goal.outsidePlaces.filter((place) => !named.has(place)), ...named]
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form: turn.form, outsidePlaces }, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
+    if (!last) v1.analytics.track(req, { name: 'interview_started' })
+    for (const event of turn.events) v1.analytics.track(req, event)
+    const after = await capStateOf(options.db, asker, options.limits)
+    // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
+    if (after.state === 'wall' && before.state !== 'wall') v1.analytics.track(req, { name: 'wall_hit' })
+    const title = await titleOf(options.db, turn.form)
+    // The last step before the reply: the queue starts the observer after the route sends it (PD7a).
     const { notePlan } = turn
     if (notePlan) {
       v1.observerQueue.later(async () => {
@@ -134,12 +141,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
         for (const note of notes) await saveObservation(options.db, ownerOf(asker), { version: 1, ...note, turn: turns[0].id, visible: notePlan.visible })
       })
     }
-    if (!last) v1.analytics.track(req, { name: 'interview_started' })
-    for (const event of turn.events) v1.analytics.track(req, event)
-    const after = await capStateOf(options.db, asker, options.limits)
-    // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
-    if (after.state === 'wall' && before.state !== 'wall') v1.analytics.track(req, { name: 'wall_hit' })
-    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title: await titleOf(options.db, turn.form) }
+    return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title }
   })
 
   // Safe to repeat: a second claim moves nothing (T-17).
@@ -158,7 +160,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 
   app.delete('/notes/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
-    if (!(asker.userId || asker.sessionId) || !(await deleteObservation(options.db, ownerOf(asker), req.params.id))) return reply.code(404).send({ error: 'not found' })
+    if (!(asker.userId || asker.sessionId) || !(await deleteObservation(options.db, ownerOf(asker), req.params.id).returning()).length) return reply.code(404).send({ error: 'not found' })
     return reply.code(204).send(null)
   })
 

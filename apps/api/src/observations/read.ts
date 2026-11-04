@@ -61,9 +61,8 @@ export function formBPoints(searcherUserId: string, personUserId: SQL, floor: nu
       and ${observations.visible} and ${other.visible} and ${observations.confidence} > ${floor} and ${other.confidence} > ${floor})`
 }
 
-/** A delete by the user is a direct database action, never an edit by the model (PD7a). False: the owner has no such note. */
-export const deleteObservation = async (db: Db | Tx, owner: Owner, id: string) =>
-  (await db.delete(observations).where(and(eq(observations.id, id), ownedBy(owner))).returning({ id: observations.id })).length > 0
+export const deleteObservation = (db: Db | Tx, owner: Owner, id: string) =>
+  db.delete(observations).where(and(eq(observations.id, id), ownedBy(owner)))
 
 /** The tombstone keeps the users row, so its cascade does not remove the notes of the user. */
 export const deleteObservationsOf = (tx: Tx, userId: string) => tx.delete(observations).where(eq(observations.userId, userId))

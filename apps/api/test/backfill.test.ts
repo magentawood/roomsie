@@ -31,7 +31,7 @@ describe('the backfill of Form B (T-36)', () => {
   it('counts the turns with context and writes nothing without --apply, then writes their notes oldest first, one time', async () => {
     const goal = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
     const key = goal.visitorKey!
-    await oldTurn(key, goal.id, 'room chahiye, I work night shifts')
+    await oldTurn(key, goal.id, 'room chahiye, I start work at 6 am')
     await oldTurn(key, goal.id, 'room in Bandra', ['filters'])
     const second = await oldTurn(key, goal.id, 'room chahiye, now I work from home')
 
@@ -40,14 +40,14 @@ describe('the backfill of Form B (T-36)', () => {
     expect(counted.estimatedRupees).toBeGreaterThan(0)
     expect(await t.db.select().from(observations)).toEqual([])
 
-    const requests = fakeVendors({ observer: { deepseek: [scored({ notes: [note('Works night shifts', 'I work night shifts')] }), scored({ notes: [note('Works from home', 'now I work from home')] })] } })
+    const requests = fakeVendors({ observer: { deepseek: [scored({ notes: [note('Starts work at 6 am', 'I start work at 6 am')] }), scored({ notes: [note('Works from home', 'now I work from home')] })] } })
     expect(await backfill(true)).toMatchObject({ turns: 2, saved: 2 })
     expect(requests.observer).toHaveLength(2)
     // The newer turn wins the topic.
     expect(await t.db.select().from(observations)).toMatchObject([{ key: 'work_pattern', value: 'Works from home', turnId: second.id }])
 
     // A second run reads only the turn whose note the newer turn replaced, and keeps the newer note.
-    const again = fakeVendors({ observer: { deepseek: [scored({ notes: [note('Works night shifts', 'I work night shifts')] })] } })
+    const again = fakeVendors({ observer: { deepseek: [scored({ notes: [note('Starts work at 6 am', 'I start work at 6 am')] })] } })
     expect(await backfill(true)).toMatchObject({ turns: 1, saved: 0 })
     expect(again.observer).toHaveLength(1)
     expect(await t.db.select().from(observations)).toMatchObject([{ value: 'Works from home' }])
