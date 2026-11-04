@@ -1,7 +1,6 @@
 import {
-  budgetBands as bands, type BudgetBand, childTypes, maxAge, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
+  budgetBands as bands, type BudgetBand, childTypes, lifestyleAnswerLabels, maxAge, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
 } from '@roomsie/contract'
-import { labels } from './listing-steps'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
 
@@ -70,16 +69,7 @@ export const profileLabels = {
   axes: {
     food: 'Food', smoking: 'Smoking', drinks: 'Drinks', guests: 'Guests', your_days: 'Your days', sleep: 'Sleep', tidiness: 'Tidiness', pets: 'Pets',
   } satisfies Record<LifestyleAxis, string>,
-  answers: {
-    food: labels.food,
-    smoking: { non_smoker: 'Non-smoker', smoker: 'Smoker', smoke_outside: 'Smoke outside' },
-    drinks: { none_at_home: 'None at home', fine_at_home: 'Fine at home' },
-    guests: { weekends_only: 'Weekends only', guests_welcome: 'Guests welcome', guests_rarely: 'Guests rarely' },
-    your_days: { out_most_days: 'Out most days', home_most_days: 'Home most days', night_shifts: 'Night shifts', student: 'Student' },
-    sleep: { night_owl: 'Night owl', early_bird: 'Early bird' },
-    tidiness: { very_tidy: 'Very tidy', tidy_enough: 'Tidy enough', relaxed_about_mess: 'Relaxed about mess' },
-    pets: { no_pets: 'No pets', fine_with_pets: 'Fine with pets' },
-  },
+  answers: lifestyleAnswerLabels,
   mustHaves: {
     veg_kitchen: 'Veg kitchen', non_smokers: 'Non-smokers', no_alcohol: 'No alcohol at home', women_only: 'Women only',
     men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly',

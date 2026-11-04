@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { areaPicks, communities, intents, lifestyleAnswers, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis, type MustHaveKey } from './profiles'
+import { areaPicks, communities, intents, lifestyleAnswerLabels, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis, type MustHaveKey } from './profiles'
 import { rupees } from './shared'
 
 /** No `inferred` source: the system never guesses a value (PD15). A slot that a stored form does not have reads as empty. */
@@ -68,8 +68,37 @@ export const isOpenSlot = ({ source, value }: SlotState) => source === 'empty' |
 /** Results show when intent, areas and budget have values: the panel of the web, and the turn cap of PD9 (T-21). */
 export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
 
-export const chipSlots = ['intent', 'areas', 'budget'] as const
+/** Each slot of Form A that the assistant can fill or ask about. */
+export const formASlots = [
+  'intent', 'roomType', 'whosMoving', 'areas', 'budget', 'moveDate',
+  ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
+] as const
+export type FormASlot = (typeof formASlots)[number]
+export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
+export function slotOf(form: FormA, slot: FormASlot): SlotState {
+  const [group, key] = slotPath(slot)
+  const record = form as unknown as Record<string, Record<string, SlotState>>
+  return (key ? record[group]![key] : record[group]) as SlotState
+}
+
+/** The closed questions, with chips (T-09, T-59). The hidden slots and the move date have none (PD15). */
+export const chipSlots = formASlots.filter((slot): slot is Exclude<FormASlot, 'moveDate'> => slot !== 'moveDate')
 export type ChipSlot = (typeof chipSlots)[number]
+/** Intent, areas and budget have chips of their own: the help line, several picks, and the bands. */
+export type AnswerChipSlot = Exclude<ChipSlot, 'intent' | 'areas' | 'budget'>
+/** The chip words of room type, who is moving and the weight of a must-have (the drafts, section 35). */
+const roomTypeChipLabels = { private: 'A private room', shared: 'A shared room' } satisfies Record<Exclude<(typeof roomTypes)[number], 'unclear'>, string>
+const whosMovingChipLabels = {
+  student: 'Student', first_job: 'First job', working: 'Working', couple: 'Couple', family: 'Family', friends: 'Group of friends',
+} satisfies Record<Exclude<(typeof whosMovingAnswers)[number], 'unclear'>, string>
+const weightChipLabels = { dealbreaker: "It's a must", prefer: 'Show them first' } satisfies Record<(typeof mustHaveWeights)[number], string>
+
+/** The labels of the answers of a chip slot, by value, in the order of their chips. */
+export function chipLabels(slot: AnswerChipSlot): Record<string, string> {
+  const [group, key] = slotPath(slot)
+  return group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels
+    : group === 'lifestyle' ? lifestyleAnswerLabels[key as LifestyleAxis] : weightChipLabels
+}
 /** The place-type chips, as the designs name them (PD15). */
 export const intentLabels = {
   room: 'A room in a shared flat', pg: 'A PG or hostel', whole_flat: 'A whole flat', flatmates: 'People to rent with', unclear: 'Not sure, help me pick',

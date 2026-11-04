@@ -14,16 +14,16 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**254 of 333 done · 76%**
+**257 of 333 done · 77%**
 
-`██████████████████░░░░░░`
+`███████████████████░░░░░`
 
 This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
-| [[P2 Chat]] | 9 / 14 | 46 / 65 | 71% |
+| [[P2 Chat]] | 10 / 14 | 49 / 65 | 75% |
 | [[P3 Data and trust]] | 20 / 20 | 90 / 90 | 100% |
 | [[P4 Content and moderation]] | 7 / 8 | 33 / 35 | 94% |
 | [[P5 Accounts and people]] | 4 / 6 | 26 / 31 | 84% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**14 free tasks are open · 39 build hours.**
+**13 free tasks are open · 34 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -62,7 +62,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-27 Eval run]] | P2 | 3 | ⬜ can start | 0 | [#48](https://github.com/magentawood/roomsie/issues/48) |
 | 0 | [[T-36 Observer]] | P2 | 8 | ⬜ can start | 0 | [#65](https://github.com/magentawood/roomsie/issues/65) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
-| 0 | [[T-59 More chips]] | P2 | 5 | ⬜ can start | 0 | [#198](https://github.com/magentawood/roomsie/issues/198) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
@@ -143,7 +142,7 @@ flowchart LR
   T56["T-56<br/>Sub-areas API"]:::done
   T57["T-57<br/>Sub-area pickers"]:::done
   T58["T-58<br/>Community filter"]:::done
-  T59["T-59<br/>More chips"]:::ready
+  T59["T-59<br/>More chips"]:::done
   T46["T-46<br/>ID verification"]:::done
   T47["T-47<br/>Saved"]:::done
   T48["T-48<br/>Onboarding questions"]:::done
@@ -311,7 +310,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 46/65
+## P2 Chat — 49/65
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -352,7 +351,7 @@ flowchart LR
 > [!todo]- ✅ [[T-09 Chip flow ⚑]] · 3/3
 > ![[T-09 Chip flow ⚑#^done]]
 
-> [!todo]- ⬜ [[T-59 More chips]] · 0/3
+> [!todo]- ✅ [[T-59 More chips]] · 3/3
 > ![[T-59 More chips#^done]]
 
 

@@ -1,4 +1,4 @@
-import { intents, isOpenSlot, type ChipSlot, type FormA, type GoalResponse } from '@roomsie/contract'
+import { intents, isOpenSlot, slotOf, type ChipSlot, type FormA, type GoalResponse } from '@roomsie/contract'
 
 export const canSend = (text: string) => text.trim().length > 0
 
@@ -36,8 +36,11 @@ export const forgetChat = () => Object.values(chatStorage).forEach((key) => writ
 export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: FormA): ChipSlot | null {
   const newest = turns.at(-1)
   const slot = newest ? newest.chips : 'intent'
-  return slot && isOpenSlot(form[slot]) ? slot : null
+  return slot && isOpenSlot(slotOf(form, slot)) ? slot : null
 }
+
+/** For the minutes of a deploy, the old API refuses a chip of T-59 as a body that is not valid (api.md). */
+export const tapRefusal = (error: string) => (error === 'not valid: body' ? 'These buttons start in a few minutes. Type your answer for now.' : null)
 
 /** After "Not sure, help me pick", the four place types show again. */
 export const placeTypes = (form: FormA) => intents.filter((intent) => intent !== 'unclear' || form.intent.value !== 'unclear')

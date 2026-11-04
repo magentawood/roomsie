@@ -46,8 +46,10 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 | 2026-11-03 | [#207](https://github.com/magentawood/roomsie/pull/207) | The OpenAPI document said that the body of `POST /v1/goals` is required, but the route also takes no body. Fixed: `withOptionalBodies()` in `apps/api/src/server.ts` marks a nullable body as not required. |
 | 2026-11-03 | [#207](https://github.com/magentawood/roomsie/pull/207) | A comment still named saveTurn as the only writer of assistant turns. → rule in `_index.md` ([#207](https://github.com/magentawood/roomsie/pull/207)) |
 | 2026-11-03 | [#207](https://github.com/magentawood/roomsie/pull/207) | A learn page kept an old error text. → rule in `_index.md` ([#207](https://github.com/magentawood/roomsie/pull/207)) |
-| 2026-11-03 | [#210](https://github.com/magentawood/roomsie/pull/210) | A modal put its close button last in the HTML, so `showModal()` focuses the name first. Its screen order and tab order differ. `ModalFrame` can set the element that gets the first focus. |
+| 2026-11-03 | [#210](https://github.com/magentawood/roomsie/pull/210) | A modal put its close button last in the HTML, so its screen order and tab order differ. |
 | 2026-11-03 | [#210](https://github.com/magentawood/roomsie/pull/210) | A test took the rows after a count from a select with no order, so a new earlier row (#207) made it fail at random. → rule in `testing.md` ([#210](https://github.com/magentawood/roomsie/pull/210)) |
-| 2026-11-03 | [#211](https://github.com/magentawood/roomsie/pull/211) | An update wrote an untyped object into `chat_turns.parts`. A value that code writes into a jsonb column has the type of its contract schema. |
-| 2026-11-03 | [#212](https://github.com/magentawood/roomsie/pull/212) | The chat stored the goal of the address before the API accepted it, so a link to another person's goal cleared the own last goal. |
-| 2026-11-04 | [#212](https://github.com/magentawood/roomsie/pull/212) | `GET /v1/goals` had no limit. A list that grows with each action of a person has a limit. |
+| 2026-11-03 | [#211](https://github.com/magentawood/roomsie/pull/211) | An update wrote an untyped object, not of its contract schema, into the jsonb `chat_turns.parts`. |
+| 2026-11-03 | [#212](https://github.com/magentawood/roomsie/pull/212) | The chat stored the goal of the address before the API accepted it. |
+| 2026-11-04 | [#212](https://github.com/magentawood/roomsie/pull/212) | `GET /v1/goals`, a list that grows with each goal, had no limit. |
+| 2026-11-04 | [#213](https://github.com/magentawood/roomsie/pull/213) | A new `chips` value would break a tab with an older bundle. |
+| 2026-11-04 | [#213](https://github.com/magentawood/roomsie/pull/213) | The web read an API error text that no API test asserted, in #211 and #213. → rule in `testing.md` ([#213](https://github.com/magentawood/roomsie/pull/213)) |

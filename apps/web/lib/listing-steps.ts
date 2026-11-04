@@ -1,6 +1,6 @@
 import type { z } from 'zod'
 import {
-  listingEditBody, listingEdits, placeTypeLabels, roomTypeLabels, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse,
+  lifestyleAnswerLabels, listingEditBody, listingEdits, placeTypeLabels, roomTypeLabels, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse,
 } from '@roomsie/contract'
 
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
@@ -145,7 +145,7 @@ export const labels = {
   guestsRule: { none: 'No guests', welcome: 'Guests welcome', day_visits: 'Day visits only' },
   whoCanMoveIn: { men: 'Men', women: 'Women', any: 'Any' },
   whoIsWelcome: { students: 'Students', working_professionals: 'Working professionals', couples: 'Couples', families: 'Families', bachelors: 'Bachelors' },
-  food: { veg: 'Veg', non_veg: 'Non-veg', eggetarian: 'Eggetarian', jain: 'Jain' },
+  food: lifestyleAnswerLabels.food,
   insideItems: {
     bed: 'Bed', mattress: 'Mattress', wardrobe: 'Wardrobe', study_table: 'Study table', chair: 'Chair', sofa: 'Sofa', dining_table: 'Dining table', tv: 'TV',
     fridge: 'Fridge', washing_machine: 'Washing machine', microwave: 'Microwave', ac: 'AC', geyser: 'Geyser', water_purifier: 'Water purifier',

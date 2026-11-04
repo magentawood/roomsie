@@ -7,7 +7,7 @@ import { ArrowRight } from '@untitledui/icons'
 import { capWall, formA, goalResponse, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chatStorage, chipsOf, keyAction, readStored, writeStored } from '../../lib/chat'
+import { canSend, chatStorage, chipsOf, keyAction, readStored, tapRefusal, writeStored } from '../../lib/chat'
 import { newGoalHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
@@ -168,7 +168,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     send.mutate(turn, {
       onSuccess: (sent) => { if (sent.typedTurnsLeft === 0) setWall(true) },
       onError: (err) => {
-        if (limitOf(err) !== 'turn_cap') return setFailed(compareRefusal(errorText(err)) ?? errorText(err))
+        const refusal = 'tap' in turn.body ? tapRefusal(errorText(err)) : compareRefusal(errorText(err))
+        if (limitOf(err) !== 'turn_cap') return setFailed(refusal ?? errorText(err))
         send.reset()
         setCapped(true)
         setWall(true)

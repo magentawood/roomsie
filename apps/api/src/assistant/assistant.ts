@@ -1,11 +1,11 @@
 import type { FastifyRequest } from 'fastify'
-import { assistantParts, budgetBandOf, formA, formASlots, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
+import { assistantParts, budgetBandOf, formA, formASlots, slotOf, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf, type Catalogue } from './catalogue'
 import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
-import { slotOf } from './handlers/extractor/form-update'
+import { withSlot } from './handlers/extractor/form-update'
 import { replyWriter } from './handlers/reply/reply'
 import { rupees } from './handlers/reply/texts'
 import { routeTurn } from './handlers/router/router'
@@ -99,6 +99,6 @@ export async function runTap(input: TurnInput & { tap: ChipTap }, deps: Assistan
   if (tap.slot === 'areas' && !tap.value.every((slug) => isAreaGroup(catalogue, slug))) return null
   const text = tapText(tap, (slug) => catalogue.bySlug.get(slug)!.name)
   // A tap answers its slot: its value replaces an earlier value, also a list of areas (T-09).
-  const form = formA.parse({ ...input.form, [tap.slot]: { source: 'stated', value: slotValueOf(tap) } })
+  const form = formA.parse(withSlot(input.form, tap.slot, slotValueOf(tap)))
   return { text, form, reply: await scriptedReply(input, form, [tap.slot], deps), ownValues: { religion: null, community: null } }
 }

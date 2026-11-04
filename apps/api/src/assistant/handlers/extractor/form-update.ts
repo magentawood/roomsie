@@ -1,16 +1,10 @@
 import { isDeepStrictEqual } from 'node:util'
-import { formA, slotPath, type Budget, type ExtractorOutput, type FormA, type FormASlot, type SlotState } from '@roomsie/contract'
+import { formA, slotOf, slotPath, type Budget, type ExtractorOutput, type FormA, type FormASlot } from '@roomsie/contract'
 
 /** The values of one turn, as the slots of Form A. */
 export type SlotValues = Partial<Record<FormASlot, unknown>>
 
-export function slotOf(form: FormA, slot: FormASlot): SlotState {
-  const [group, key] = slotPath(slot)
-  const record = form as unknown as Record<string, Record<string, SlotState>>
-  return (key ? record[group]![key] : record[group]) as SlotState
-}
-
-function withSlot(form: FormA, slot: FormASlot, value: unknown): FormA {
+export function withSlot(form: FormA, slot: FormASlot, value: unknown): FormA {
   const [group, key] = slotPath(slot)
   const stated = { source: 'stated', value }
   const record = form as unknown as Record<string, Record<string, unknown>>

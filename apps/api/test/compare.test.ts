@@ -103,7 +103,9 @@ describe('the comparison of selected cards (T-49)', () => {
   it('refuses a card that the person cannot see, a card of the other kind, one card, five cards and a guest, before any model call', async () => {
     const requests = fakeVendors({})
     const status = async (compare: object, who: Who = 'seeker') => (await t.call(who, 'POST', `/v1/goals/${goalId}/turns`, { text: 'compare', compare })).statusCode
-    expect(await status({ kind: 'place', ids: [ids.owner, ids.draft] })).toBe(400)
+    // The web reads this text (compareRefusal).
+    const hidden = await ask('compare', { kind: 'place', ids: [ids.owner, ids.draft] })
+    expect([hidden.statusCode, hidden.json()]).toEqual([400, { error: 'not valid: compare' }])
     expect(await status({ kind: 'place', ids: [ids.owner, people[0]] })).toBe(400)
     expect(await status({ kind: 'place', ids: [ids.owner] })).toBe(400)
     // Five cards that the person can see: only the count refuses them.

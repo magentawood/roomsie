@@ -15800,8 +15800,25 @@
                             "type": "string",
                             "enum": [
                               "intent",
+                              "roomType",
+                              "whosMoving",
                               "areas",
-                              "budget"
+                              "budget",
+                              "lifestyle.food",
+                              "lifestyle.smoking",
+                              "lifestyle.drinks",
+                              "lifestyle.guests",
+                              "lifestyle.your_days",
+                              "lifestyle.sleep",
+                              "lifestyle.tidiness",
+                              "lifestyle.pets",
+                              "mustHaves.veg_kitchen",
+                              "mustHaves.non_smokers",
+                              "mustHaves.no_alcohol",
+                              "mustHaves.women_only",
+                              "mustHaves.men_only",
+                              "mustHaves.tidy_flatmates",
+                              "mustHaves.couple_friendly"
                             ]
                           },
                           "comparison": {
@@ -17826,8 +17843,25 @@
                             "type": "string",
                             "enum": [
                               "intent",
+                              "roomType",
+                              "whosMoving",
                               "areas",
-                              "budget"
+                              "budget",
+                              "lifestyle.food",
+                              "lifestyle.smoking",
+                              "lifestyle.drinks",
+                              "lifestyle.guests",
+                              "lifestyle.your_days",
+                              "lifestyle.sleep",
+                              "lifestyle.tidiness",
+                              "lifestyle.pets",
+                              "mustHaves.veg_kitchen",
+                              "mustHaves.non_smokers",
+                              "mustHaves.no_alcohol",
+                              "mustHaves.women_only",
+                              "mustHaves.men_only",
+                              "mustHaves.tidy_flatmates",
+                              "mustHaves.couple_friendly"
                             ]
                           },
                           "comparison": {
@@ -18624,6 +18658,408 @@
                                   "under_25k",
                                   "under_35k",
                                   "above_35k"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "roomType"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "private",
+                                  "shared"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "whosMoving"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "student",
+                                  "first_job",
+                                  "working",
+                                  "couple",
+                                  "family",
+                                  "friends"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.food"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "veg",
+                                  "non_veg",
+                                  "eggetarian",
+                                  "jain"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.smoking"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "non_smoker",
+                                  "smoker",
+                                  "smoke_outside"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.drinks"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "none_at_home",
+                                  "fine_at_home"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.guests"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "weekends_only",
+                                  "guests_welcome",
+                                  "guests_rarely"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.your_days"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "out_most_days",
+                                  "home_most_days",
+                                  "night_shifts",
+                                  "student"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.sleep"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "night_owl",
+                                  "early_bird"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.tidiness"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "very_tidy",
+                                  "tidy_enough",
+                                  "relaxed_about_mess"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "lifestyle.pets"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "no_pets",
+                                  "fine_with_pets"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.veg_kitchen"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.non_smokers"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.no_alcohol"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.women_only"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.men_only"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.tidy_flatmates"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.couple_friendly"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
                                 ]
                               }
                             },
@@ -20150,8 +20586,25 @@
                                 "type": "string",
                                 "enum": [
                                   "intent",
+                                  "roomType",
+                                  "whosMoving",
                                   "areas",
-                                  "budget"
+                                  "budget",
+                                  "lifestyle.food",
+                                  "lifestyle.smoking",
+                                  "lifestyle.drinks",
+                                  "lifestyle.guests",
+                                  "lifestyle.your_days",
+                                  "lifestyle.sleep",
+                                  "lifestyle.tidiness",
+                                  "lifestyle.pets",
+                                  "mustHaves.veg_kitchen",
+                                  "mustHaves.non_smokers",
+                                  "mustHaves.no_alcohol",
+                                  "mustHaves.women_only",
+                                  "mustHaves.men_only",
+                                  "mustHaves.tidy_flatmates",
+                                  "mustHaves.couple_friendly"
                                 ]
                               },
                               "comparison": {
@@ -20486,8 +20939,25 @@
                                 "type": "string",
                                 "enum": [
                                   "intent",
+                                  "roomType",
+                                  "whosMoving",
                                   "areas",
-                                  "budget"
+                                  "budget",
+                                  "lifestyle.food",
+                                  "lifestyle.smoking",
+                                  "lifestyle.drinks",
+                                  "lifestyle.guests",
+                                  "lifestyle.your_days",
+                                  "lifestyle.sleep",
+                                  "lifestyle.tidiness",
+                                  "lifestyle.pets",
+                                  "mustHaves.veg_kitchen",
+                                  "mustHaves.non_smokers",
+                                  "mustHaves.no_alcohol",
+                                  "mustHaves.women_only",
+                                  "mustHaves.men_only",
+                                  "mustHaves.tidy_flatmates",
+                                  "mustHaves.couple_friendly"
                                 ]
                               },
                               "comparison": {

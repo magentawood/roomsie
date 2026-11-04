@@ -23,6 +23,17 @@ export const lifestyleAnswers = {
   pets: ['no_pets', 'fine_with_pets'],
 } as const
 export type LifestyleAxis = keyof typeof lifestyleAnswers
+/** The labels of the lifestyle answers, for each screen and reply that names one (T-59). */
+export const lifestyleAnswerLabels = {
+  food: { veg: 'Veg', non_veg: 'Non-veg', eggetarian: 'Eggetarian', jain: 'Jain' },
+  smoking: { non_smoker: 'Non-smoker', smoker: 'Smoker', smoke_outside: 'Smoke outside' },
+  drinks: { none_at_home: 'None at home', fine_at_home: 'Fine at home' },
+  guests: { weekends_only: 'Weekends only', guests_welcome: 'Guests welcome', guests_rarely: 'Guests rarely' },
+  your_days: { out_most_days: 'Out most days', home_most_days: 'Home most days', night_shifts: 'Night shifts', student: 'Student' },
+  sleep: { night_owl: 'Night owl', early_bird: 'Early bird' },
+  tidiness: { very_tidy: 'Very tidy', tidy_enough: 'Tidy enough', relaxed_about_mess: 'Relaxed about mess' },
+  pets: { no_pets: 'No pets', fine_with_pets: 'Fine with pets' },
+} satisfies { [A in LifestyleAxis]: Record<(typeof lifestyleAnswers)[A][number], string> }
 export const lifestyleAxes = Object.keys(lifestyleAnswers) as LifestyleAxis[]
 export type WhosMoving = (typeof whosMovingAnswers)[number]
 export const mustHaveKeys = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates', 'couple_friendly'] as const

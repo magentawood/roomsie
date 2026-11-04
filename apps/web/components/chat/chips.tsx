@@ -1,23 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import { budgetBands, intentLabels, type ChipSlot, type ChipTap, type FormA } from '@roomsie/contract'
+import { budgetBands, chipLabels, chipTap, intentLabels, slotPath, type ChipSlot, type ChipTap, type FormA, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import { placeTypes, toggled } from '../../lib/chat'
+import { profileLabels } from '../../lib/profile-form'
 import { useAreas } from '../../lib/queries'
 import { Button } from '../ui/button'
 import { CheckChip, TapChip } from '../ui/choice'
 
-const groupLabels: Record<ChipSlot, string> = { intent: 'Place type', areas: 'Areas', budget: 'Budget' }
+function groupLabel(slot: ChipSlot) {
+  const [group, key] = slotPath(slot)
+  if (group === 'lifestyle') return profileLabels.axes[key as LifestyleAxis]
+  if (group === 'mustHaves') return profileLabels.mustHaves[key as MustHaveKey]
+  return { intent: 'Place type', areas: 'Areas', budget: 'Budget', roomType: 'Room type', whosMoving: 'Who is moving' }[group]!
+}
 
 export function Chips({ slot, form, onTap }: { slot: ChipSlot; form: FormA; onTap: (tap: ChipTap) => void }) {
   return (
-    <div role="group" aria-label={groupLabels[slot]} className="flex flex-col items-start gap-3">
+    <div role="group" aria-label={groupLabel(slot)} className="flex flex-col items-start gap-3">
       {slot === 'areas' ? <AreaChips onDone={(value) => onTap({ slot, value })} /> : (
         <div className="flex flex-wrap gap-2">
           {slot === 'intent'
             ? placeTypes(form).map((intent) =>
               <TapChip key={intent} label={intentLabels[intent]} onTap={() => onTap({ slot, value: intent })} />)
-            : budgetBands.map((band) => <TapChip key={band.id} label={band.label} onTap={() => onTap({ slot, value: band.id })} />)}
+            : slot === 'budget'
+              ? budgetBands.map((band) => <TapChip key={band.id} label={band.label} onTap={() => onTap({ slot, value: band.id })} />)
+              : Object.entries(chipLabels(slot)).map(([value, label]) => <TapChip key={value} label={label} onTap={() => onTap(chipTap.parse({ slot, value }))} />)}
         </div>
       )}
     </div>

@@ -213,7 +213,7 @@ export const lifestyleAxes = pgTable('lifestyle_axes', {
   key: text('key').primaryKey(),
   /** What the assistant asks. Closed question, so the UI can offer chips. */
   question: text('question').notNull(),
-  /** The allowed answers, in display order. Chips are derived from this. */
+  /** The allowed answers, in display order. The chips of the chat come from the contract (T-59). */
   allowedValues: text('allowed_values').array().notNull(),
   sortOrder: integer('sort_order').notNull(),
   /** Retire an axis without deleting anyone's answers. */
