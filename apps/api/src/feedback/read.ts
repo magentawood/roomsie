@@ -1,5 +1,5 @@
-import { eq } from 'drizzle-orm'
-import type { GoalFeedbackBody } from '@roomsie/contract'
+import { count, eq, gte } from 'drizzle-orm'
+import type { FeedbackRating, GoalFeedbackBody } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { feedback } from '../db/schema'
 
@@ -16,4 +16,12 @@ export const hasGoalFeedback = async (db: Db, goalId: string) =>
 export async function saveGoalFeedback(db: Db, goalId: string, { rating, text }: GoalFeedbackBody) {
   const [saved] = await db.insert(feedback).values({ goalId, rating, text }).onConflictDoNothing({ target: feedback.goalId }).returning({ id: feedback.id })
   return Boolean(saved)
+}
+
+/** The feedback since a time: all of it, and each face (T-62). */
+export async function feedbackSince(db: Db, since: Date) {
+  const rows = await db.select({ rating: feedback.rating, n: count() }).from(feedback).where(gte(feedback.createdAt, since)).groupBy(feedback.rating)
+  const faces: Record<FeedbackRating, number> = { satisfied: 0, good: 0, neutral: 0, bad: 0, unsatisfied: 0 }
+  for (const { rating, n } of rows) if (rating) faces[rating] = n
+  return { total: rows.reduce((sum, r) => sum + r.n, 0), faces }
 }

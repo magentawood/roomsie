@@ -13,4 +13,6 @@ export type GoalFeedbackBody = z.infer<typeof goalFeedbackBody>
 /** The newest feedback for the moderators. It names no sender. */
 export const feedbackResponse = z.object({
   feedback: z.array(z.object({ id: z.uuid(), text: z.string().nullable(), rating: feedbackRating.nullable().default(null), createdAt: z.iso.datetime() })),
+  /** The count of each face of the last 7 days (T-62). */
+  facesThisWeek: z.record(feedbackRating, z.int().min(0)).default({ satisfied: 0, good: 0, neutral: 0, bad: 0, unsatisfied: 0 }),
 })

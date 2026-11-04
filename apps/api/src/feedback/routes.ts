@@ -4,6 +4,7 @@ import { desc } from 'drizzle-orm'
 import { errorResponse, feedbackBody, feedbackResponse, noContent } from '@roomsie/contract'
 import { requireModerator, requireUser, type AuthOptions } from '../auth'
 import { feedback } from '../db/schema'
+import { feedbackSince } from './read'
 
 /** Feedback from a signed-in person, which the moderators read (T-23a). The feedback of a closed goal goes through the goal routes (T-50). */
 export function feedbackRoutes(v1: FastifyInstance, options: AuthOptions) {
@@ -18,6 +19,7 @@ export function feedbackRoutes(v1: FastifyInstance, options: AuthOptions) {
   app.get('/admin/feedback', { preHandler: requireModerator(options), schema: { response: { 200: feedbackResponse, 404: errorResponse } } }, async () => {
     const rows = await db.select({ id: feedback.id, text: feedback.text, rating: feedback.rating, createdAt: feedback.createdAt })
       .from(feedback).orderBy(desc(feedback.createdAt)).limit(100)
-    return { feedback: rows.map((f) => ({ ...f, createdAt: f.createdAt.toISOString() })) }
+    const { faces } = await feedbackSince(db, new Date(Date.now() - 7 * 86_400_000))
+    return { feedback: rows.map((f) => ({ ...f, createdAt: f.createdAt.toISOString() })), facesThisWeek: faces }
   })
 }

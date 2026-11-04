@@ -16,3 +16,14 @@ export const reportQueueItem = z.discriminatedUnion('kind', [
 ])
 export type ReportQueueItem = z.infer<typeof reportQueueItem>
 export const reportQueueResponse = z.object({ items: z.array(reportQueueItem) })
+
+const count = z.int().min(0)
+/** The scorecards of the admin home: only the subjects that the person can open (T-62). A late item is past the time of PD18 or PD8. */
+export const adminHomeCard = z.discriminatedUnion('subject', [
+  z.object({ subject: z.literal('moderation'), openReports: count, lateSafety: count, lateOther: count, oldestReportAt: z.iso.datetime().nullable(), feedbackThisWeek: count }),
+  z.object({ subject: z.literal('id_checks'), waiting: count, oldestAt: z.iso.datetime().nullable(), late: count, verifiedThisWeek: count }),
+  z.object({ subject: z.literal('site_content'), invites: count, inviteOnly: z.boolean(), quotes: count, detailsSet: count }),
+])
+export type AdminHomeCard = z.infer<typeof adminHomeCard>
+export const adminHomeResponse = z.object({ cards: z.array(adminHomeCard) })
+

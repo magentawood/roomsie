@@ -1,4 +1,4 @@
-import { desc, eq, sql } from 'drizzle-orm'
+import { count, desc, eq, sql } from 'drizzle-orm'
 import type { Db } from '../db/client'
 import { inviteGate, invites } from '../db/schema'
 
@@ -18,3 +18,5 @@ export async function refusal(db: Db, verifiedEmail: string | null) {
   const invited = verifiedEmail && (await db.select({ id: invites.id }).from(invites).where(eq(invites.email, verifiedEmail.toLowerCase()))).length > 0
   return invited ? null : { opensAt: gate.opensAt }
 }
+
+export const inviteCount = async (db: Db) => (await db.select({ n: count() }).from(invites))[0]!.n

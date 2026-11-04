@@ -111,6 +111,11 @@ export function optionalUser(options: AuthOptions) {
   }
 }
 
+/** Each user who is neither a moderator nor an ID reviewer gets 404 from the admin home (T-62). */
+export const requireAdmin = (options: AuthOptions) => [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
+  if (!req.user!.moderator && !req.user!.reviewer) return reply.code(404).send({ error: 'not found' })
+}]
+
 /** Each user who is not a moderator gets 404, so the admin routes do not show (T-19). */
 export const requireModerator = (options: AuthOptions) => [requireUser(options), async (req: FastifyRequest, reply: FastifyReply) => {
   if (!req.user!.moderator) return reply.code(404).send({ error: 'not found' })
