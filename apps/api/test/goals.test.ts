@@ -789,4 +789,18 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
     // A skipped pop-up sent no feedback, so the next close asks again.
     expect((await asVisitor(goal, 'POST', `/v1/goals/${goal.id}/close`, { where: 'roomsie' })).json()).toEqual({ askFeedback: true })
   })
+
+  it('closes the goal of a signed-in person, and not the goal of a different person (api.md)', async () => {
+    const goal = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
+    expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(404)
+    expect((await t.call('ravi', 'POST', `/v1/goals/${goal.id}/reopen`)).statusCode).toBe(404)
+    expect((await t.call('asha', 'POST', `/v1/goals/${goal.id}/close`, { where: 'dropped' })).statusCode).toBe(200)
+  })
+
+  it('lists the 50 newest goals of a person', async () => {
+    const made: string[] = []
+    for (let i = 0; i < 51; i++) made.push(newGoalResponse.parse((await t.call('ravi', 'POST', '/v1/goals')).json()).id)
+    const listed = goalsResponse.parse((await t.call('ravi', 'GET', '/v1/goals')).json()).goals.map(({ id }) => id)
+    expect(listed).toEqual(made.slice(1).reverse())
+  })
 })

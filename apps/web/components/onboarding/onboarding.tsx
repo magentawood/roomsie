@@ -10,6 +10,7 @@ import { chatApi, errorText } from '../../lib/api'
 import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
 import { chatStorage, readStored, writeStored } from '../../lib/chat'
+import { newGoalParam } from '../../lib/goals'
 import { answered, progressOf, startOf, stepBeside, withoutAnswer, type Answers, type Step } from '../../lib/onboarding'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
@@ -72,8 +73,8 @@ export function Onboarding() {
   const [step, setStep] = useState<Step>('purpose')
   const [answers, setAnswers] = useState<Answers>({})
   const [signInError, setSignInError] = useState<string | null>(null)
-  // A person with a chat on this browser goes on with it, unless they asked for a new goal (T-50). Local storage exists only in the browser.
-  const newGoal = useSearchParams().has('new')
+  // A person with a chat on this browser goes on with it. Local storage exists only in the browser.
+  const newGoal = useSearchParams().has(newGoalParam)
   useEffect(() => {
     const stored = readStored(chatStorage.goal) !== null && !newGoal
     setHasChat(stored)

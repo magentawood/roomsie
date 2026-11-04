@@ -27,7 +27,7 @@ const lifestyleIcons: Record<LifestyleAxis, Icon> = {
 export function PersonDetail({ person }: { person: PersonResponse }) {
   const areaLabels = useAreaLabels()
   const saved = useSaved('people', person.id)
-  const { share, status, dialog: shareDialog } = useShare(person.fullName, 'people', person.id)
+  const { share, status, dialog: shareDialog } = useShare(person.fullName, { kind: 'people', id: person.id })
   const [sheet, setSheet] = useState<'say_hi' | 'report' | 'block' | null>(null)
   const name = firstName(person.fullName)
   const target = { profileId: person.id, firstName: name }

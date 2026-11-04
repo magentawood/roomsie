@@ -24,7 +24,7 @@
 
 - **The address names the goal.** `/chat?goal=<id>` opens that goal. Local storage keeps the last goal that the API gave, so `/chat` opens it again, and a link to a goal of a different person changes nothing ([the chat screen](chat-screen.md)).
 - **Only the owner** closes, reopens or sends feedback: the token of the person, or the visitor key of the session.
-- **A closed goal refuses a typed turn and a tap** with 409, before any model call. A second close or reopen changes nothing and logs nothing.
+- **A closed goal refuses a typed turn, a tap and a waitlist join** with 409, before any model call. A second close or reopen changes nothing and logs nothing.
 - **The events** `goal_closed` (with the answer) and `goal_reopened` count the found places ([analytics events](analytics-events.md)). The goal row keeps only its status.
 - **One feedback for each closed goal**, from its owner. This lets a visitor send it with no new spam limit, because the chat limits already limit the goals of a visitor ([PD9](../decisions/pd-09-pre-login-limits.md)).
 

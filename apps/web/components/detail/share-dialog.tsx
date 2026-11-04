@@ -4,10 +4,10 @@ import { useRef, useState } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { Copy01, Share07 } from '@untitledui/icons'
 import { uuidv7 } from 'uuidv7'
-import { message, type SavedKind } from '@roomsie/contract'
+import { message } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { cardUrl, shareText } from '../../lib/share'
+import { cardUrl, shareText, type Card } from '../../lib/share'
 import { useConversations } from '../../lib/queries'
 import { Avatar } from '../messages/parts'
 import { Button } from '../ui/button'
@@ -17,11 +17,11 @@ import { ModalFrame, ModalHead } from '../ui/modal'
  * The Share modal of flow 02: the card goes as a message to each ticked conversation, or the link goes anywhere (T-50).
  * `onDone` gets the line to show after the modal closes, or null.
  */
-export function ShareDialog({ title, kind, id: cardId, onDone }: { title: string; kind: SavedKind; id: string; onDone: (line: string | null) => void }) {
+export function ShareDialog({ title, card, onDone }: { title: string; card: Card; onDone: (line: string | null) => void }) {
   const user = useUser()
   const conversations = (useConversations().data?.conversations ?? []).filter((c) => c.canSend)
   const [ticked, setTicked] = useState<string[]>([])
-  const url = cardUrl(kind, cardId)
+  const url = cardUrl(card)
   // One id for each conversation, so a retry after a failure stores each message once (ADR-0015).
   const ids = useRef<Record<string, string>>({})
   const send = useMutation({
@@ -41,7 +41,7 @@ export function ShareDialog({ title, kind, id: cardId, onDone }: { title: string
   return (
     <ModalFrame labelledBy="share-title" onClose={() => onDone(null)} place="sheet">
       <div className="flex flex-col gap-5 p-5 sm:p-6">
-        <ModalHead icon={Share07} iconTone="neutral" titleId="share-title" title={kind === 'people' ? 'Share the profile' : 'Share the listing'} onClose={() => onDone(null)}>
+        <ModalHead icon={Share07} iconTone="neutral" titleId="share-title" title={card.kind === 'people' ? 'Share the profile' : 'Share the listing'} onClose={() => onDone(null)}>
           {conversations.length
             ? 'Select and share with people you want, or copy the link to share externally. You can only share with people you have an accepted request with.'
             : 'Copy the link to share externally. You can share in Roomsie with people you have an accepted request with.'}

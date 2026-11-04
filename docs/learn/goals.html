@@ -80,7 +80,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>The address names the goal.</strong> <code>/chat?goal=&lt;id&gt;</code> opens that goal. Local storage keeps the last goal that the API gave, so <code>/chat</code> opens it again, and a link to a goal of a different person changes nothing (<a href="chat-screen.html">the chat screen</a>).</li>
 <li><strong>Only the owner</strong> closes, reopens or sends feedback: the token of the person, or the visitor key of the session.</li>
-<li><strong>A closed goal refuses a typed turn and a tap</strong> with 409, before any model call. A second close or reopen changes nothing and logs nothing.</li>
+<li><strong>A closed goal refuses a typed turn, a tap and a waitlist join</strong> with 409, before any model call. A second close or reopen changes nothing and logs nothing.</li>
 <li><strong>The events</strong> <code>goal_closed</code> (with the answer) and <code>goal_reopened</code> count the found places (<a href="analytics-events.html">analytics events</a>). The goal row keeps only its status.</li>
 <li><strong>One feedback for each closed goal</strong>, from its owner. This lets a visitor send it with no new spam limit, because the chat limits already limit the goals of a visitor (<a href="../decisions/pd-09-pre-login-limits.md">PD9</a>).</li>
 </ul>

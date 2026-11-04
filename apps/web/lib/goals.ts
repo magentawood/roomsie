@@ -11,4 +11,5 @@ export function useCurrentGoalId() {
 }
 
 /** The onboarding of a new goal. Plain `/start` opens the last goal of the browser (T-48). */
-export const newGoalHref = '/start?new'
+export const newGoalParam = 'new'
+export const newGoalHref = `/start?${newGoalParam}`

@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
-import { listAreas } from '../areas'
+import { catalogueOf, type Catalogue } from '../assistant/catalogue'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, type Owner } from '../observations/read'
@@ -58,19 +58,16 @@ export async function goalOf(db: Db, id: string, asker: Asker) {
   return row && { ...row, form: formA.parse(row.form) }
 }
 
-/** The title that the designs give a goal, from its Form A (T-50). One builder, so the header and the list agree. */
-async function titlerOf(db: Db) {
-  const names = new Map((await listAreas(db)).map(({ slug, name }) => [slug, name]))
-  return (form: FormA) => goalTitle(form, (slug) => names.get(slug) ?? slug)
-}
-export const titleOf = async (db: Db, form: FormA) => (await titlerOf(db))(form)
+const areaNameIn = ({ bySlug }: Catalogue) => (slug: string) => bySlug.get(slug)?.name ?? slug
+/** One builder, so the header and the list agree (T-50). */
+export const titleOf = async (db: Db, form: FormA) => goalTitle(form, areaNameIn(await catalogueOf(db)))
 
 /** The 50 newest goals of the asker: a list that grows with each new goal has a limit (T-50). */
 export async function goalsOf(db: Db, asker: Asker) {
   const rows = await db.select({ id: goals.id, form: goals.form, status: goals.status, createdAt: goals.createdAt })
     .from(goals).where(ownedBy(asker)).orderBy(desc(goals.createdAt)).limit(50)
-  const title = await titlerOf(db)
-  return rows.map(({ id, form, status, createdAt }) => ({ id, status, title: title(formA.parse(form)), createdAt: createdAt.toISOString() }))
+  const areaName = areaNameIn(await catalogueOf(db))
+  return rows.map(({ id, form, status, createdAt }) => ({ id, status, title: goalTitle(formA.parse(form), areaName), createdAt: createdAt.toISOString() }))
 }
 
 /** A close or a reopen by the owner (T-50). Null: no goal of the asker. */

@@ -5,7 +5,7 @@ const place = 'https://roomsie.in/places/019a4b2c-0000-7000-8000-000000000001'
 
 describe('a shared card in a thread (T-50)', () => {
   it('writes the title and the roomsie.in link of the card', () => {
-    expect(shareText('Private room in 3BHK', cardUrl('places', '019a4b2c-0000-7000-8000-000000000001'))).toBe(`Private room in 3BHK: ${place}`)
+    expect(shareText('Private room in 3BHK', cardUrl({ kind: 'places', id: '019a4b2c-0000-7000-8000-000000000001' }))).toBe(`Private room in 3BHK: ${place}`)
   })
 
   it('makes only a link to a place or a person of roomsie.in tappable', () => {

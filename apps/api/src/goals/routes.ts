@@ -48,8 +48,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     }
     const goal = await createGoal(options.db, asker, start)
     const form = start?.form ?? formA.parse({})
-    const turnsLeft = typedTurnsLeft(await capStateOf(options.db, asker, options.limits))
-    return reply.code(201).send({ ...goal, form, visitorKey, typedTurnsLeft: turnsLeft, outsidePlaces: [], status: 'open', title: await titleOf(options.db, form) })
+    return reply.code(201).send({
+      ...goal, form, visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [], status: 'open', title: await titleOf(options.db, form),
+    })
   })
 
   app.get('/goals/:id', { preHandler: optionalUser(options), schema: { headers, params, response: { 200: goalResponse, 404: errorResponse } } }, async (req, reply) => {
@@ -57,8 +58,9 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
     const { id, form, outsidePlaces, status } = goal
-    const turnsLeft = typedTurnsLeft(await capStateOf(options.db, asker, options.limits))
-    return { id, form, turns: await turnsOf(options.db, id), typedTurnsLeft: turnsLeft, outsidePlaces, status, title: await titleOf(options.db, form) }
+    return {
+      id, form, turns: await turnsOf(options.db, id), typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces, status, title: await titleOf(options.db, form),
+    }
   })
 
   app.get('/goals', { preHandler: optionalUser(options), schema: { headers, response: { 200: goalsResponse } } }, async (req) =>

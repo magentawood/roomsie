@@ -29,8 +29,10 @@ const outsidePlaces = z.array(waitlistPlace).default([])
 export const goalStatuses = ['open', 'closed'] as const
 export const goalStatus = z.enum(goalStatuses)
 export type GoalStatus = z.infer<typeof goalStatus>
-/** The title that the API builds with `goalTitle` (T-50). */
-const title = z.string().default('New goal')
+/** The title of a goal with no area yet (T-50). */
+export const newGoalTitle = 'New goal'
+/** The title that the API builds with `goalTitle`. */
+const title = z.string().default(newGoalTitle)
 export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array(chatTurn), typedTurnsLeft, outsidePlaces, status: goalStatus.default('open'), title })
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
@@ -223,7 +225,7 @@ const titleLeads = {
 /** The title of a goal, from its place type and its first area, as the designs name a goal. */
 export function goalTitle(form: FormA, areaName: (slug: string) => string) {
   const area = Array.isArray(form.areas.value) ? form.areas.value[0] : undefined
-  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${areaName(area)}` : 'New goal'
+  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${areaName(area)}` : newGoalTitle
 }
 
 export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), title: z.string(), status: goalStatus, createdAt: z.iso.datetime() })) })

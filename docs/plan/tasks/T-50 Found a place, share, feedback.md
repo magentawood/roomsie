@@ -74,7 +74,9 @@ Close a search when the user finds a place, share a card, and send feedback.
   - **The link in a thread (the user):** only a link to a place or a person on roomsie.in is tappable, so no outside link can mislead.
   - **The login gate ([PD6b](../../decisions/pd-06b-login-gate-and-search.md)):** a shared link opens the card behind the sign-in, as today.
   - **The copy:** the text of the design, with its typos fixed.
-  - **The deploy window:** the new response fields have defaults, and the old API gives a clear error to a new request.
+  - **The deploy window:** the new response fields have defaults, and the old API gives a clear error to a new request. The text of a missing route is in the shared error text of the web, for each route (the user, review).
+  - **The list (the user, review):** it shows the 50 newest goals.
+  - **The admin nav (the user, review):** its name is "Admin pages", because Feedback is not only of the landing page.
 - **Out of scope:**
   - "Is this the same move?" and a merge of two goals
   - a hide of the own profile card when a goal closes: the profile has its own hide

@@ -39,7 +39,7 @@ export function CloseButton({ onClose }: { onClose: () => void }) {
 
 const tones = { error: 'text-fg-error', success: 'text-fg-success', neutral: 'text-fg-quaternary' }
 
-/** A success icon is for an offer, as "Verify your ID". `art`: a picture in place of the icon (T-50). `titleId` names the dialog. */
+/** A success icon is for an offer, as "Verify your ID". `titleId` names the dialog. */
 export function ModalHead({ icon: ModalIcon, art, iconTone = 'error', titleId, title, children, onClose }: {
   iconTone?: keyof typeof tones; titleId: string; title: string; children: ReactNode; onClose: () => void
 } & ({ icon: Icon; art?: never } | { art: string; icon?: never })) {
