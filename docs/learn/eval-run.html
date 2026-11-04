@@ -35,20 +35,24 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="running-the-eval">Running the eval</h1>
-<p><strong>In one line:</strong> <code>pnpm eval</code> scores the extractor and the router of the API on the 50 eval sentences, for each model.</p>
+<p><strong>In one line:</strong> <code>pnpm eval</code> scores the extractor, the router and the composer of the API on the eval sentences, for each model.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
-<li><strong>A run</strong> sends each sentence three times through the extractor and the router of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.</li>
-<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts.</li>
+<li><strong>A run</strong> sends each sentence three times through the turn of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.</li>
+<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The router and the extractor run in parallel, then the reply writer and the composer. The runner gives one model as the primary and as the fallback. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts.</li>
+<li><strong>The judge (T-61).</strong> After the composer, the router reads its text and gives the language. The judge always uses DeepSeek, also in the run of Gemini. Code gives the script from the letters.</li>
 <li><strong>The scores,</strong> for each model and each language:</li>
 <li><strong>Turns with no answer</strong> of the extractor or of the router: each attempt failed. Such a turn counts apart, not as wrong values.</li>
 <li><strong>Labelled slots right:</strong> the slots with a label that get that value.</li>
 <li><strong>Made-up values:</strong> a value in a slot that the label leaves empty.</li>
 <li><strong>Vague slots marked unclear,</strong> and <strong>vague slots with a value.</strong> A value there is a no-go of <a href="../decisions/pd-11-launch.md">PD11</a>, check 6.</li>
 <li><strong>Unclear in a slot with no label:</strong> an extra question, not a wrong value.</li>
-<li><strong>The router:</strong> the language and the main script of the register, and the false alarms. A false alarm is a search that the router puts in a different band, above or below its threshold.</li>
-<li><strong>The calls:</strong> the output that is not valid, the failed attempts, and the median and the 95th percentile of the time of the extractor and of the router. The times include the failed attempts.</li>
-<li><strong>The threshold sweep.</strong> The run file keeps each answer of the extractor and of the router with its token probabilities. The runner replays the answers through the extractor at each threshold from 0.5 to 0.95, with no new call.</li>
+<li><strong>The router:</strong> the language and the main script of the register, and the false alarms. A false alarm is a search that the router puts in a different band, above or below its threshold. Also the share of the other bands that the router gets right, and of <code>danger</code> and <code>community</code> that it keeps (T-61).</li>
+<li><strong>The composer (T-61):</strong> the language and the script of each text, against the reply language that the composer got. Also the texts in English for a different reply language, and the texts that fail the output check, with the reason. The composer runs with no deadline. Thus, the report gives the share of the calls that answer in time at each deadline from 1500 to 4000 ms.</li>
+<li><strong>The names (T-61):</strong> for each search with a friend, the texts with the name, and if the check stops each one. The report also lists each new capital word at the start of a sentence, for a person to read. A new word is not in the plan or the message.</li>
+<li><strong>The calls:</strong> the output that is not valid and the failed attempts. Also the median and the 95th percentile of the time of each handler. The times include the failed attempts.</li>
+<li><strong>The threshold sweep.</strong> The run file keeps each answer of the extractor and of the router with its token probabilities. The runner replays the answers through the extractor and the router at each threshold from 0.5 to 0.95, with no new call.</li>
+<li><strong>The rules (T-61).</strong> The report gives the router threshold and the deadline that the rules of <a href="../plan/tasks/T-61%20Composer%20eval.md">the spec of T-61</a> select.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
@@ -82,6 +86,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>Start the Postgres of the tests. The runner makes a database with the area seed, and drops it at the end.</li>
 <li>In <code>apps/api</code>, run <code>corepack pnpm eval</code>. A run takes approximately three minutes and costs less than ₹50.</li>
 <li>After a change of a parser or of the copy check, run <code>corepack pnpm eval --replay eval/runs/&lt;file&gt;.json</code>. It scores the answers of that run again, with no model call. A change of a prompt needs a new run. A replay refuses a run file of another version.</li>
+<li>To score two runs together, give <code>--replay</code> two times. The repeats of the second file come after the repeats of the first file.</li>
 </ol>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -93,10 +98,12 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Gemini gives no token probabilities,</strong> so code cannot make its unsure values <code>unclear</code>. Its score of the vague slots is the risk of the fallback (<a href="../decisions/pd-07-models.md">PD7</a>).</li>
 <li><strong>An answer can change between the repeats.</strong> The report names each sentence where it changes, so a change of one sentence can be noise.</li>
 <li><strong>A replay uses the text of the current set.</strong> When a sentence changes, its old answer no longer fits it.</li>
+<li><strong>A run file of T-27 has version 1.</strong> It has no composer, so the runner of T-61 refuses it.</li>
 <li><strong>A prompt must not hold a sentence of the set.</strong> A rule for one sentence raises the score and helps no user.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-27: the runner, the scores, the sweep and the replay.</li>
+<li>T-61: the composer, the judge, the router on the other bands, the two rules, and the replay of two runs.</li>
 </ul>
 </main>
