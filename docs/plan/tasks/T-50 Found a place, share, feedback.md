@@ -32,10 +32,10 @@ Close a search when the user finds a place, share a card, and send feedback.
 - No task waits on this task.
 
 ## Done when
-- [ ] The chat header shows the goal title and “I found a place”, and the sidebar and the phone switcher list the goals of the person
-- [ ] "I found a place" closes the goal, as in its popover, and logs an event
-- [ ] Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate
-- [ ] The feedback popover saves the feedback of the user
+- [x] The chat header shows the goal title and “I found a place”, and the sidebar and the phone switcher list the goals of the person · [#212](https://github.com/magentawood/roomsie/pull/212)
+- [x] "I found a place" closes the goal, as in its popover, and logs an event · [#212](https://github.com/magentawood/roomsie/pull/212)
+- [x] Share gives a link to a card, as in the Share modal. The link opens the card behind the login gate · [#212](https://github.com/magentawood/roomsie/pull/212)
+- [x] The feedback popover saves the feedback of the user · [#212](https://github.com/magentawood/roomsie/pull/212)
 
 ^done
 
@@ -83,3 +83,13 @@ Close a search when the user finds a place, share a card, and send feedback.
   - an analytics event of a share
   - a message type that shows a card in a thread
   - a rename of a goal by the person
+
+## Log
+
+- **2026-11-04 · [#212](https://github.com/magentawood/roomsie/pull/212)**
+  - **Change:** the chat has a header with the goal title and "I Found a Place", and the sidebar and the phone switcher list the goals. The pop-up closes the goal with one of three answers and an event, the feedback pop-up saves a face and words, and a closed goal is read-only with Reopen. Share opens the modal of the design: it sends the card to the ticked conversations, or shares its roomsie.in link, and the thread makes such a link tappable. "New Goal" now starts a new goal.
+  - **Why:** [PD14](../../decisions/pd-14-v0-is-the-figma-designs.md), [PD6b](../../decisions/pd-06b-login-gate-and-search.md), and the decisions of the spec.
+  - **Ticked:** all four items.
+  - **Not done:** none.
+  - **Learn:** [Goals](../../learn/goals.md), [The chat screen](../../learn/chat-screen.md), [The onboarding](../../learn/onboarding.md), [Analytics events](../../learn/analytics-events.md), [The place detail](../../learn/place-detail.md), [Messages](../../learn/messages.md), [The landing page](../../learn/landing-page.md), [The visitor chat claim](../../learn/visitor-chat-claim.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
