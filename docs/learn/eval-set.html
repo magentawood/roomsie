@@ -67,8 +67,9 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The mix.</strong> 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because the benchmark of PD7 found the largest decrease from English in Marathi. Each sentence has its script and its level of code-mix.</li>
-<li><strong>The check.</strong> Each label must be a valid Form A and each area a slug of the seed, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "next month end" and the Mumbai areas.</li>
+<li><strong>The mix.</strong> 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).</li>
+<li><strong>The level of code-mix</strong> is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and numbers do not count. <strong>The script</strong> is the script of the letters: digits belong to no script.</li>
+<li><strong>The check.</strong> Each label must be a valid Form A and each area a slug of the seed, the script must agree with the letters, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -78,6 +79,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>The areas, the budget and the move date have no <code>unclear</code> value.</strong> A sentence that is vague about them leaves them empty.</li>
 <li><strong>A name of two areas,</strong> as "Andheri" alone, makes the assistant ask which one, so the labelled sentences use names with one area.</li>
+<li><strong>The parsers do not read each sentence yet.</strong> "पुढच्या महिन्याच्या शेवटी" (m02) and "पुढच्या आठवड्यापासून" (m05) give no date today. The labels are correct, so T-27 finds the gap.</li>
 <li><strong>The set is small.</strong> The full eval of PD7 has 200 to 300 sentences; these 50 are its start.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

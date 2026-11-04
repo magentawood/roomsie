@@ -17,8 +17,9 @@
 | The check of the labels | `apps/api/test/eval-set.test.ts` |
 | The runner that scores a model | T-27 |
 
-- **The mix.** 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because the benchmark of PD7 found the largest decrease from English in Marathi. Each sentence has its script and its level of code-mix.
-- **The check.** Each label must be a valid Form A and each area a slug of the seed, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "next month end" and the Mumbai areas.
+- **The mix.** 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).
+- **The level of code-mix** is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and numbers do not count. **The script** is the script of the letters: digits belong to no script.
+- **The check.** Each label must be a valid Form A and each area a slug of the seed, the script must agree with the letters, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas.
 
 ## The choice we made
 
@@ -28,6 +29,7 @@
 
 - **The areas, the budget and the move date have no `unclear` value.** A sentence that is vague about them leaves them empty.
 - **A name of two areas,** as "Andheri" alone, makes the assistant ask which one, so the labelled sentences use names with one area.
+- **The parsers do not read each sentence yet.** "पुढच्या महिन्याच्या शेवटी" (m02) and "पुढच्या आठवड्यापासून" (m05) give no date today. The labels are correct, so T-27 finds the gap.
 - **The set is small.** The full eval of PD7 has 200 to 300 sentences; these 50 are its start.
 
 ## Tickets
