@@ -36,6 +36,7 @@ export type ObserverOutput = z.output<typeof observerOutput>
 
 /** The notes of the owner, for "What do you know about me?" (PD7a). Only the owner gets them. */
 export const notesResponse = z.object({
-  notes: z.array(observation.pick({ value: true, evidence: true }).extend({ id: z.uuid(), label: z.string() })),
+  // Not strict, as each response: a newer API can add a field (api.md).
+  notes: z.array(z.object({ id: z.uuid(), label: z.string(), value: z.string(), evidence: z.string() })),
 })
 export type NotesResponse = z.infer<typeof notesResponse>

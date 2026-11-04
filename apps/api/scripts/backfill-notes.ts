@@ -8,7 +8,7 @@ import { createDb } from '../src/db/client'
 import { modelSettings, spendSettings } from '../src/models/settings'
 import { spendOf } from '../src/models/spend'
 import { backfillNotes } from '../src/observations/backfill'
-import { todayInIst } from '../src/server'
+import { todayInIst } from '../src/today'
 import { scriptRequest } from './script-request'
 
 const apply = process.argv.includes('--apply')

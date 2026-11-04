@@ -20,8 +20,9 @@ afterAll(() => testDb.drop())
 afterEach(() => { vi.unstubAllGlobals() })
 
 const goalId = '0198f2c4-7a10-7c4e-9a3b-5d2e8f6a1b20'
+let request = fakeRequest()
 const observeAll = (text: string, settings: Record<string, string> = {}) =>
-  observer({ goalId, text, last: null }, { req: fakeRequest().req, db: testDb.db, models: modelSettings.parse(keys)!, settings: assistantSettings.parse(settings) })
+  observer({ goalId, text, last: null }, { req: (request = fakeRequest()).req, db: testDb.db, models: modelSettings.parse(keys)!, settings: assistantSettings.parse(settings) })
 const observe = async (text: string, settings?: Record<string, string>) => (await observeAll(text, settings)).notes
 const partner = { key: 'guest_frequency', kind: 'concern', value: 'Partner stays over most nights', evidence: 'my partner basically lives with me' }
 
@@ -59,12 +60,14 @@ describe('the observer', () => {
   it('gives a note of Gemini the confidence of the setting', async () => {
     fakeVendors({ observer: { deepseek: [down()], gemini: [answer(JSON.stringify({ notes: [partner] }))] } })
     expect(await observe('my partner basically lives with me', { OBSERVER_UNSCORED_CONFIDENCE: '0.4' })).toMatchObject([{ confidence: 0.4 }])
+    expect(request.req.log.error).not.toHaveBeenCalled()
   })
 
   it('gives the confidence of the setting when the tokens of DeepSeek do not hold the topic', async () => {
     const tokens = [...JSON.stringify({ notes: [] })].map((token) => ({ token, logprob: 0 }))
     fakeVendors({ observer: { deepseek: [answer(JSON.stringify({ notes: [partner] }), undefined, tokens)] } })
     expect(await observe('my partner basically lives with me')).toMatchObject([{ confidence: 0.5 }])
+    expect(request.req.log.error).toHaveBeenCalledTimes(1)
   })
 
   it('keeps one note for each topic: the first', async () => {

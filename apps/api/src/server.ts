@@ -12,6 +12,7 @@ import { areasResponse, healthResponse, meResponse, noContent } from '@roomsie/c
 import { reportError, withoutQueryValues } from '@roomsie/config/report'
 import { deleteAccount } from './account'
 import { afterReplyOf, type AfterReply } from './after-reply'
+import { todayInIst } from './today'
 import { alertsOf, type Alerts } from './alerts/alerts'
 import type { AnalyticsDb } from './analytics/client'
 import { analyticsOf, type Analytics } from './analytics/track'
@@ -54,8 +55,6 @@ declare module 'fastify' {
   }
 }
 
-/** The date of today in Mumbai, as an ISO date. */
-export const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
 type RequestBody = { required?: boolean; content?: Record<string, { schema?: { nullable?: boolean } }> }
 

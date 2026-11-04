@@ -8,6 +8,7 @@ import { assistantSettings } from '../src/assistant/settings'
 import { seedCatalogues } from '../src/db/seed-axes'
 import { modelSettings, spendSettings } from '../src/models/settings'
 import { spendOf } from '../src/models/spend'
+import { todayInIst } from '../src/today'
 import { createTestDb } from '../test/db'
 import { scriptRequest } from './script-request'
 import searchFile from '../eval/sentences.json'
@@ -18,10 +19,10 @@ if (!models) throw new Error('Set DEEPSEEK_API_KEY and GEMINI_API_KEY.')
 const testDb = await createTestDb()
 await seedCatalogues(testDb.db)
 const { log } = Fastify({ logger: { level: 'warn' } })
-const spend = spendOf({ db: testDb.db, settings: spendSettings.parse({}), today: () => new Date().toISOString().slice(0, 10), log })
+const spend = spendOf({ db: testDb.db, settings: spendSettings.parse({}), today: todayInIst, log })
 const calls: { model: string; ms: number; outcome: string }[] = []
 const analytics = { track: (_: unknown, event: { name: string; model?: string; ms?: number; outcome?: string }) => { if (event.name === 'model_called') calls.push({ model: event.model!, ms: event.ms!, outcome: event.outcome! }) } }
-const deps = { req: scriptRequest({ analytics: { track: analytics.track, flush: async () => {}, close: async () => {} }, spend }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
+const deps = { req: scriptRequest({ analytics, spend }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
 
 type Sentence = { id: string; text: string; expected?: string[] }
 async function run(sentences: Sentence[]) {

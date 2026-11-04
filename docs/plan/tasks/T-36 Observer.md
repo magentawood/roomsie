@@ -69,6 +69,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - The observations route: the list, and the delete for a user and for a visitor. A delete of a note of a different owner fails.
   - The web chat: no screen test, because the web has no screen tests. A click-through in the app checks the notes cards, the confirm step and the delete. (the user, in review)
   - The one-off script: it writes each note one time, oldest turn first. Without `--apply`, it writes nothing.
+  - The script file itself has no test. It only calls the tested function, first to count, then to write. (the user, in review)
   - The eval file: a test checks its shape and its topics, as the test of M-03 does.
 - **Decisions:**
   - The observer runs only when the router gives the kind `context`, after the reply goes out. It adds no wait to the reply. If it fails, the person sees nothing, and the error goes to the error report. (why: PD7a, this task)

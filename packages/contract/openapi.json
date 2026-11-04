@@ -21548,15 +21548,6 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "value": {
-                            "type": "string",
-                            "minLength": 1,
-                            "maxLength": 200
-                          },
-                          "evidence": {
-                            "type": "string",
-                            "maxLength": 2000
-                          },
                           "id": {
                             "type": "string",
                             "format": "uuid",
@@ -21564,13 +21555,19 @@
                           },
                           "label": {
                             "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          },
+                          "evidence": {
+                            "type": "string"
                           }
                         },
                         "required": [
-                          "value",
-                          "evidence",
                           "id",
-                          "label"
+                          "label",
+                          "value",
+                          "evidence"
                         ],
                         "additionalProperties": false
                       }
