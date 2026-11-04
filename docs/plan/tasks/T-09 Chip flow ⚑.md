@@ -2,7 +2,7 @@
 id: T-09
 title: "Chip flow for intent, area, budget"
 owner: "P2 Chat"
-sequence: "13 of 15"
+sequence: "13 of 17"
 hours: 6
 start: 2026-10-09
 end: 2026-10-10
@@ -18,7 +18,7 @@ tags:
 
 # T-09 · Chip flow for intent, area, budget
 
-**Owner:** [[P2 Chat]], task 13 of 15  
+**Owner:** [[P2 Chat]], task 13 of 17  
 **When:** Fri 9 Oct → Sat 10 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#26](https://github.com/magentawood/roomsie/issues/26)

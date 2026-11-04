@@ -404,7 +404,8 @@
     "It says that chat text goes to DeepSeek, which stores it in China",
     "The team emails DeepSeek to opt out of training before launch",
     "For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)",
-    "The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them"
+    "The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them",
+    "It says that the team keeps the traces of the assistant for 30 days, with religion and community masked (PD20)"
    ],
    "read": [
     "docs/extensibility.md",
@@ -1388,6 +1389,28 @@
    "issue": 52
   },
   {
+   "id": "D-07",
+   "title": "Admin panel designs",
+   "plain": "The screens of the new admin panel, in Figma.",
+   "role": "D",
+   "hours": null,
+   "start": "2026-11-04",
+   "end": "2026-11-05",
+   "deps": [],
+   "done": [
+    "The drafts page of the Product file has the sections of the admin panel, below section 35",
+    "Each screen is at 1440 px, and the home, the reports, the ID checks and the Gemini switch are also at 390 px",
+    "The designs use the roomsie design system and the patterns of the designs"
+   ],
+   "read": [
+    "docs/specs/admin-panel.md",
+    "docs/decisions/pd-14-v0-is-the-figma-designs.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
    "id": "A-01",
    "title": "Bug fix day",
    "plain": "One full day. Nobody builds new things. Everyone only repairs.",
@@ -2076,6 +2099,132 @@
    "cp": "CP3",
    "critical": false,
    "issue": 216
+  },
+  {
+   "id": "T-62",
+   "title": "Admin home and the six pages",
+   "plain": "The admin opens on scorecards, and the pages of today get the new layout.",
+   "role": "P4",
+   "hours": 4,
+   "start": "2026-11-05",
+   "end": "2026-11-05",
+   "deps": [
+    "D-07"
+   ],
+   "done": [
+    "/admin opens on a home of scorecards, grouped by subject, with live numbers",
+    "The home shows only the cards that the person can open",
+    "Reports, ID checks, invites, quotes, site details and feedback use the new layout",
+    "A person with no admin role gets the not-found page for each admin address"
+   ],
+   "read": [
+    "docs/specs/admin-panel.md",
+    "docs/decisions/pd-18-moderation.md",
+    "docs/decisions/pd-08-verification.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-63",
+   "title": "People and listings in the admin",
+   "plain": "Find a person or a listing, and act on it.",
+   "role": "P4",
+   "hours": 3,
+   "start": "2026-11-06",
+   "end": "2026-11-07",
+   "deps": [
+    "T-62"
+   ],
+   "done": [
+    "A moderator finds a person by name or email, and a listing by its area or its lister",
+    "The detail shows the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity",
+    "A moderator can hide, unhide or suspend a person, and remove a listing",
+    "No admin screen shows gender, religion or community"
+   ],
+   "read": [
+    "docs/specs/admin-panel.md",
+    "docs/decisions/pd-18-moderation.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-64",
+   "title": "Traces of the model calls",
+   "plain": "Follow one turn of the assistant through its model calls.",
+   "role": "P2",
+   "hours": 4,
+   "start": "2026-11-06",
+   "end": "2026-11-07",
+   "deps": [
+    "T-62"
+   ],
+   "done": [
+    "Each model call saves its prompt and its raw answer as a trace",
+    "Religion and community words in a trace show as [hidden]",
+    "A trace goes 30 days after its call, and at once when its account is deleted",
+    "The AI pipeline shows one turn as a timeline of its model calls, with a session code and no name",
+    "Each open of a trace goes in an audit log",
+    "PD20 records the traces, and PD19 gives their period"
+   ],
+   "read": [
+    "docs/specs/admin-panel.md",
+    "docs/decisions/pd-19-retention.md",
+    "docs/decisions/pd-03c-exclusionary-preferences.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-65",
+   "title": "AI numbers and the Gemini switch",
+   "plain": "The health and the spend of the models, and one switch for an outage.",
+   "role": "P2",
+   "hours": 3,
+   "start": "2026-11-06",
+   "end": "2026-11-07",
+   "deps": [
+    "T-62"
+   ],
+   "done": [
+    "The AI pipeline shows the calls, failures, fallbacks, times, the spend against the daily amount, and the mix of router bands",
+    "The model settings, the daily amount and the limits show read-only",
+    "The switch “Use Gemini for all calls” acts on the next call with no deploy, and each flip goes in a log"
+   ],
+   "read": [
+    "docs/specs/admin-panel.md",
+    "docs/decisions/pd-07-models.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-66",
+   "title": "Product numbers in the admin",
+   "plain": "The funnel of the launch in one place.",
+   "role": "P3",
+   "hours": 2,
+   "start": "2026-11-06",
+   "end": "2026-11-07",
+   "deps": [
+    "T-62"
+   ],
+   "done": [
+    "The product numbers show the funnel for today, 7 days and 30 days, each against the period before",
+    "The numbers come only from the analytics events, and agree with the events of a test database"
+   ],
+   "read": [
+    "docs/specs/admin-panel.md",
+    "docs/decisions/0012-analytics-event-store.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
   },
   {
    "id": "T-51",

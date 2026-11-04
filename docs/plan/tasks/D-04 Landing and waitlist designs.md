@@ -2,7 +2,7 @@
 id: D-04
 title: "Design landing, wall and waitlist"
 owner: "Design"
-sequence: "4 of 6"
+sequence: "4 of 7"
 start: 2026-09-28
 end: 2026-09-29
 checkpoint: CP2
@@ -16,7 +16,7 @@ tags:
 
 # D-04 · Design landing, wall and waitlist
 
-**Owner:** [[Design]], task 4 of 6  
+**Owner:** [[Design]], task 4 of 7  
 **When:** Mon 28 Sep → Tue 29 Sep  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#25](https://github.com/magentawood/roomsie/issues/25)

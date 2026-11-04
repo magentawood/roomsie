@@ -2,7 +2,7 @@
 id: D-02
 title: "Design the chat screens"
 owner: "Design"
-sequence: "2 of 6"
+sequence: "2 of 7"
 start: 2026-09-24
 end: 2026-09-25
 checkpoint: CP0
@@ -17,7 +17,7 @@ tags:
 
 # D-02 · Design the chat screens
 
-**Owner:** [[Design]], task 2 of 6  
+**Owner:** [[Design]], task 2 of 7  
 **When:** Thu 24 Sep → Fri 25 Sep  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#7](https://github.com/magentawood/roomsie/issues/7)

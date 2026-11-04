@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** D-07, T-62, T-63, T-64, T-65, T-66.
 
 ---
 
@@ -24,16 +24,16 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-226 of the 263 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+238 of the 279 build hours need no designs. The other 41 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
-| **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval | 72 | -38 | _name_ |
-| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 120 | -86 | _name_ |
-| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
+| **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval, Model traces, AI numbers and switch | 79 | -45 | _name_ |
+| **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Product numbers, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 122 | -88 | _name_ |
+| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user, Admin home, Admin people and listings | 29 | 5 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
 
 Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at two hours a day. Sunday 11 October is for bug fixes. **Monday 12 October is launch.** Wednesday 14 October is the fallback date.
@@ -87,8 +87,10 @@ Finish line: Wed 28 Oct. 29 hours.
 | 13 | T-09 ⚑ · Chip flow for intent, area, budget | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
 | 14 | T-59 · Chips for the other closed questions | 5 | Wed 4 Nov → Thu 5 Nov | T-09 |
 | 15 | T-61 · Eval the composer and the router bands | 3 | Thu 5 Nov → Fri 6 Nov | T-27 |
+| 16 | T-64 · Traces of the model calls | 4 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| 17 | T-65 · AI numbers and the Gemini switch | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
 
-Finish line: Fri 6 Nov. 72 hours.
+Finish line: Sat 7 Nov. 79 hours.
 
 ### P3 · Data and trust — the data and the matching, then the screens that show them and the advisor
 
@@ -106,16 +108,17 @@ Finish line: Fri 6 Nov. 72 hours.
 | 10 | T-43 · Listing detail screens | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | 11 | T-58 · Hidden community filter | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
 | 12 | T-44 · Messages API | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
-| 13 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
-| 14 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
-| 15 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
-| 16 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
-| 17 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
-| 18 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
-| 19 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
-| 20 | T-60 · Profile pop-up after the first sign-in | 3 | Wed 25 Nov | T-48 |
+| 13 | T-66 · Product numbers in the admin | 2 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| 14 | T-45 · Messages screens | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
+| 15 | T-55 · Message alerts: email and push | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
+| 16 | T-46 · ID verification | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
+| 17 | T-47 · Saved | 4 | Mon 16 Nov → Tue 17 Nov | T-41, T-05, T-06 |
+| 18 | T-48 · Onboarding questions | 5 | Wed 18 Nov → Fri 20 Nov | T-05, T-08, F-11 |
+| 19 | T-49 · Compare selected cards | 4 | Sat 21 Nov → Sun 22 Nov | T-13, T-15 |
+| 20 | T-50 · Found a place, share and feedback | 4 | Mon 23 Nov → Tue 24 Nov | T-15, T-24 |
+| 21 | T-60 · Profile pop-up after the first sign-in | 3 | Wed 25 Nov | T-48 |
 
-Finish line: Wed 25 Nov. 120 hours.
+Finish line: Wed 25 Nov. 122 hours.
 
 ### P4 · Content and moderation — public pages and safety, then the observer
 
@@ -129,8 +132,10 @@ Finish line: Wed 25 Nov. 120 hours.
 | 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, T-56 |
 | 7 | T-22b · Waitlist screen outside Mumbai | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
 | 8 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
+| 9 | T-62 · Admin home and the six pages | 4 | Thu 5 Nov | D-07 |
+| 10 | T-63 · People and listings in the admin | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
 
-Finish line: Wed 28 Oct. 22 hours.
+Finish line: Sat 7 Nov. 29 hours.
 
 ### P5 · Accounts and people — cI, events and connections, then the chat screen and its chips
 
@@ -155,8 +160,9 @@ Finish line: Sat 10 Oct. 20 hours.
 | 4 | D-04 · Design landing, wall and waitlist | Mon 28 Sep → Tue 29 Sep | D-01 |
 | 5 | D-05 · Design QA on the live build | Mon 5 Oct → Sat 10 Oct | D-02, D-03 |
 | 6 | D-06 · Launch visuals | Fri 9 Oct → Sat 10 Oct | — |
+| 7 | D-07 · Admin panel designs | Wed 4 Nov → Thu 5 Nov | — |
 
-Finish line: Sat 10 Oct.
+Finish line: Thu 5 Nov.
 
 ### M1 · Content
 
@@ -240,6 +246,8 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P2 Chat | 13 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Fri 9 Oct | Sat 10 Oct | CP3 | T-10, T-08, D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | P2 Chat | 14 | T-59 | Chips for the other closed questions | 5 | Wed 4 Nov | Thu 5 Nov | CP3 | T-09 | [#198](https://github.com/magentawood/roomsie/issues/198) |
 | P2 Chat | 15 | T-61 | Eval the composer and the router bands | 3 | Thu 5 Nov | Fri 6 Nov | CP3 | T-27 | [#216](https://github.com/magentawood/roomsie/issues/216) |
+| P2 Chat | 16 | T-64 | Traces of the model calls | 4 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | no issue at this time |
+| P2 Chat | 17 | T-65 | AI numbers and the Gemini switch | 3 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | no issue at this time |
 | P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
@@ -252,14 +260,15 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 10 | T-43 | Listing detail screens | 5 | Mon 2 Nov | Wed 4 Nov | CP3 | T-41, D-03 | [#119](https://github.com/magentawood/roomsie/issues/119) |
 | P3 Data and trust | 11 | T-58 | Hidden community filter | 8 | Tue 3 Nov | Fri 6 Nov | CP3 | T-34, T-14, T-16b | [#194](https://github.com/magentawood/roomsie/issues/194) |
 | P3 Data and trust | 12 | T-44 | Messages API | 8 | Thu 5 Nov | Sun 8 Nov | CP3 | T-05, T-06, T-18a, F-13, T-20 | [#120](https://github.com/magentawood/roomsie/issues/120) |
-| P3 Data and trust | 13 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
-| P3 Data and trust | 14 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
-| P3 Data and trust | 15 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
-| P3 Data and trust | 16 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
-| P3 Data and trust | 17 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
-| P3 Data and trust | 18 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
-| P3 Data and trust | 19 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
-| P3 Data and trust | 20 | T-60 | Profile pop-up after the first sign-in | 3 | Wed 25 Nov | Wed 25 Nov | CP3 | T-48 | [#208](https://github.com/magentawood/roomsie/issues/208) |
+| P3 Data and trust | 13 | T-66 | Product numbers in the admin | 2 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | no issue at this time |
+| P3 Data and trust | 14 | T-45 | Messages screens | 6 | Mon 9 Nov | Wed 11 Nov | CP3 | T-44 | [#121](https://github.com/magentawood/roomsie/issues/121) |
+| P3 Data and trust | 15 | T-55 | Message alerts: email and push | 6 | Thu 12 Nov | Sat 14 Nov | CP3 | T-44, T-45 | [#161](https://github.com/magentawood/roomsie/issues/161) |
+| P3 Data and trust | 16 | T-46 | ID verification | 12 | Thu 12 Nov | Sun 15 Nov | CP3 | T-05, T-06, F-13 | [#122](https://github.com/magentawood/roomsie/issues/122) |
+| P3 Data and trust | 17 | T-47 | Saved | 4 | Mon 16 Nov | Tue 17 Nov | CP3 | T-41, T-05, T-06 | [#123](https://github.com/magentawood/roomsie/issues/123) |
+| P3 Data and trust | 18 | T-48 | Onboarding questions | 5 | Wed 18 Nov | Fri 20 Nov | CP3 | T-05, T-08, F-11 | [#124](https://github.com/magentawood/roomsie/issues/124) |
+| P3 Data and trust | 19 | T-49 | Compare selected cards | 4 | Sat 21 Nov | Sun 22 Nov | CP3 | T-13, T-15 | [#125](https://github.com/magentawood/roomsie/issues/125) |
+| P3 Data and trust | 20 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
+| P3 Data and trust | 21 | T-60 | Profile pop-up after the first sign-in | 3 | Wed 25 Nov | Wed 25 Nov | CP3 | T-48 | [#208](https://github.com/magentawood/roomsie/issues/208) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
 | P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
@@ -268,6 +277,8 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, T-56 | [#47](https://github.com/magentawood/roomsie/issues/47) |
 | P4 Content and moderation | 7 | T-22b | Waitlist screen outside Mumbai | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
 | P4 Content and moderation | 8 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
+| P4 Content and moderation | 9 | T-62 | Admin home and the six pages | 4 | Thu 5 Nov | Thu 5 Nov | CP3 | D-07 | no issue at this time |
+| P4 Content and moderation | 10 | T-63 | People and listings in the admin | 3 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | no issue at this time |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
@@ -280,6 +291,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | Design | 4 | D-04 | Design landing, wall and waitlist |  | Mon 28 Sep | Tue 29 Sep | CP2 | D-01 | [#25](https://github.com/magentawood/roomsie/issues/25) |
 | Design | 5 | D-05 | Design QA on the live build |  | Mon 5 Oct | Sat 10 Oct | CP3 | D-02, D-03 | [#42](https://github.com/magentawood/roomsie/issues/42) |
 | Design | 6 | D-06 | Launch visuals |  | Fri 9 Oct | Sat 10 Oct | CP3 | — | [#52](https://github.com/magentawood/roomsie/issues/52) |
+| Design | 7 | D-07 | Admin panel designs |  | Wed 4 Nov | Thu 5 Nov | CP3 | — | no issue at this time |
 | M1 Content | 1 | M-04 | Interviews for articles 1 to 10 |  | Thu 24 Sep | Mon 28 Sep | CP1 | — | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | M1 Content | 2 | M-05 | Drafts of articles 1 to 10 |  | Tue 29 Sep | Mon 5 Oct | CP3 | M-04 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | M1 Content | 3 | M-07 | Draft launch posts |  | Wed 30 Sep | Sat 3 Oct | CP3 | — | [#35](https://github.com/magentawood/roomsie/issues/35) |
@@ -358,6 +370,8 @@ gantt
     T-09 Chip flow for intent area budget :crit, t09, 2026-10-09, 2d
     T-59 Chips for the other closed questions :t59, 2026-11-04, 2d
     T-61 Eval the composer and the router bands :t61, 2026-11-05, 2d
+    T-64 Traces of the model calls :t64, 2026-11-06, 2d
+    T-65 AI numbers and the Gemini switch :t65, 2026-11-06, 2d
     section P3 Data and trust
     T-06 Database schema v1 :crit, t06, 2026-09-24, 6d
     T-14 Match query API :crit, t14, 2026-09-29, 5d
@@ -371,6 +385,7 @@ gantt
     T-43 Listing detail screens :t43, 2026-11-02, 3d
     T-58 Hidden community filter :t58, 2026-11-03, 4d
     T-44 Messages API :t44, 2026-11-05, 4d
+    T-66 Product numbers in the admin :t66, 2026-11-06, 2d
     T-45 Messages screens :t45, 2026-11-09, 3d
     T-55 Message alerts - email and push :t55, 2026-11-12, 3d
     T-46 ID verification :t46, 2026-11-12, 4d
@@ -388,6 +403,8 @@ gantt
     T-22a Mumbai areas and waitlist API :t22a, 2026-10-08, 3d
     T-22b Waitlist screen outside Mumbai :t22b, 2026-10-08, 3d
     T-53 Delete the Firebase user at account deletion :t53, 2026-10-27, 2d
+    T-62 Admin home and the six pages :t62, 2026-11-05, 1d
+    T-63 People and listings in the admin :t63, 2026-11-06, 2d
     section P5 Accounts and people
     M-03 Write the eval sentences :m03, 2026-09-24, 4d
     T-03 CI - typecheck lint build secret scan :t03, 2026-09-27, 3d
@@ -402,6 +419,7 @@ gantt
     D-04 Design landing wall and waitlist :d04, 2026-09-28, 2d
     D-05 Design QA on the live build :d05, 2026-10-05, 6d
     D-06 Launch visuals :d06, 2026-10-09, 2d
+    D-07 Admin panel designs :d07, 2026-11-04, 2d
     section M1 Content
     M-04 Interviews for articles 1 to 10 :m04, 2026-09-24, 5d
     M-05 Drafts of articles 1 to 10 :m05, 2026-09-29, 7d
@@ -619,6 +637,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - The team emails DeepSeek to opt out of training before launch
 - For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)
 - The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
+- It says that the team keeps the traces of the assistant for 30 days, with religion and community masked (PD20)
 - Read first: `docs/extensibility.md`, `docs/decisions/pd-19-retention.md`, `docs/decisions/pd-07-models.md`
 
 **T-05 · Google sign-in and token checks in the API** — done when:
@@ -722,9 +741,15 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-57 | Sub-area pickers | P3 | 8 | Fri 30 Oct → Tue 3 Nov | T-56 |
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-58 | Hidden community filter | P3 | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
+| D-07 | Admin panel designs | D |  | Wed 4 Nov → Thu 5 Nov | — |
 | T-59 | Chips for the other closed questions | P2 | 5 | Wed 4 Nov → Thu 5 Nov | T-09 |
+| T-62 | Admin home and the six pages | P4 | 4 | Thu 5 Nov | D-07 |
 | T-61 | Eval the composer and the router bands | P2 | 3 | Thu 5 Nov → Fri 6 Nov | T-27 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
+| T-63 | People and listings in the admin | P4 | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| T-64 | Traces of the model calls | P2 | 4 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| T-65 | AI numbers and the Gemini switch | P2 | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| T-66 | Product numbers in the admin | P3 | 2 | Fri 6 Nov → Sat 7 Nov | T-62 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
 | T-46 | ID verification | P3 | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
@@ -1032,11 +1057,24 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - PD3c, PD15 and docs/scope-policy.md record the filter and its sources
 - Read first: `docs/decisions/pd-03c-exclusionary-preferences.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/scope-policy.md`, `docs/decisions/pd-14-v0-is-the-figma-designs.md`
 
+**D-07 · Admin panel designs** — done when:
+- The drafts page of the Product file has the sections of the admin panel, below section 35
+- Each screen is at 1440 px, and the home, the reports, the ID checks and the Gemini switch are also at 390 px
+- The designs use the roomsie design system and the patterns of the designs
+- Read first: `docs/specs/admin-panel.md`, `docs/decisions/pd-14-v0-is-the-figma-designs.md`
+
 **T-59 · Chips for the other closed questions** — done when:
 - Room type, who is moving, the eight lifestyle questions and the must-have weights show their answers as chips under the question, as the chips of T-09
 - The chips come from the slot definitions and the catalogue, not from a model. A tap never calls a model
 - The chips have a design on the drafts page, and the user approves it before the build
 - Read first: `docs/ai-agent-design.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/interface-shape.md`
+
+**T-62 · Admin home and the six pages** — done when:
+- /admin opens on a home of scorecards, grouped by subject, with live numbers
+- The home shows only the cards that the person can open
+- Reports, ID checks, invites, quotes, site details and feedback use the new layout
+- A person with no admin role gets the not-found page for each admin address
+- Read first: `docs/specs/admin-panel.md`, `docs/decisions/pd-18-moderation.md`, `docs/decisions/pd-08-verification.md`
 
 **T-61 · Eval the composer and the router bands** — done when:
 - The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags
@@ -1055,6 +1093,33 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - People in an accepted conversation can share a phone number; cards, listings and requests stay masked (PD17)
 - After an account deletion (T-20), the other person keeps the thread and sees Deleted user. A deleted profile or listing no longer deletes its connection requests
 - Read first: `docs/decisions/pd-14-v0-is-the-figma-designs.md`, `docs/extensibility.md`, `docs/decisions/pd-17-connect-and-contact.md`
+
+**T-63 · People and listings in the admin** — done when:
+- A moderator finds a person by name or email, and a listing by its area or its lister
+- The detail shows the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity
+- A moderator can hide, unhide or suspend a person, and remove a listing
+- No admin screen shows gender, religion or community
+- Read first: `docs/specs/admin-panel.md`, `docs/decisions/pd-18-moderation.md`
+
+**T-64 · Traces of the model calls** — done when:
+- Each model call saves its prompt and its raw answer as a trace
+- Religion and community words in a trace show as [hidden]
+- A trace goes 30 days after its call, and at once when its account is deleted
+- The AI pipeline shows one turn as a timeline of its model calls, with a session code and no name
+- Each open of a trace goes in an audit log
+- PD20 records the traces, and PD19 gives their period
+- Read first: `docs/specs/admin-panel.md`, `docs/decisions/pd-19-retention.md`, `docs/decisions/pd-03c-exclusionary-preferences.md`
+
+**T-65 · AI numbers and the Gemini switch** — done when:
+- The AI pipeline shows the calls, failures, fallbacks, times, the spend against the daily amount, and the mix of router bands
+- The model settings, the daily amount and the limits show read-only
+- The switch “Use Gemini for all calls” acts on the next call with no deploy, and each flip goes in a log
+- Read first: `docs/specs/admin-panel.md`, `docs/decisions/pd-07-models.md`
+
+**T-66 · Product numbers in the admin** — done when:
+- The product numbers show the funnel for today, 7 days and 30 days, each against the period before
+- The numbers come only from the analytics events, and agree with the events of a test database
+- Read first: `docs/specs/admin-panel.md`, `docs/decisions/0012-analytics-event-store.md`
 
 **T-45 · Messages screens** — done when:
 - The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone

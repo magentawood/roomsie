@@ -2,7 +2,7 @@
 id: T-34
 title: "Router: sort each typed message and flag what we should not answer"
 owner: "P2 Chat"
-sequence: "5 of 15"
+sequence: "5 of 17"
 hours: 6
 start: 2026-09-27
 end: 2026-09-29
@@ -18,7 +18,7 @@ tags:
 
 # T-34 · Router: sort each typed message and flag what we should not answer
 
-**Owner:** [[P2 Chat]], task 5 of 15  
+**Owner:** [[P2 Chat]], task 5 of 17  
 **When:** Sun 27 Sep → Tue 29 Sep · 6 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#63](https://github.com/magentawood/roomsie/issues/63)

@@ -2,7 +2,7 @@
 id: T-56
 title: "Sub-areas API"
 owner: "P3 Data and trust"
-sequence: "7 of 20"
+sequence: "7 of 21"
 hours: 6
 start: 2026-10-28
 end: 2026-10-29
@@ -17,7 +17,7 @@ tags:
 
 # T-56 · Sub-areas API
 
-**Owner:** [[P3 Data and trust]], task 7 of 20  
+**Owner:** [[P3 Data and trust]], task 7 of 21  
 **When:** Wed 28 Oct → Thu 29 Oct · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#163](https://github.com/magentawood/roomsie/issues/163)

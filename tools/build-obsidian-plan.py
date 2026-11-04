@@ -39,7 +39,7 @@ SHORT = {
  "T-19":"Report and block","T-20":"Account deletion","T-18b":"Person and connect screens",
  "T-15":"Results panel","T-16a":"Profile API","T-16b":"Profile screens","T-18a":"Message request API",
  "D-01":"Styling decision","D-02":"Chat screen designs","D-03":"Results and profile designs",
- "D-04":"Landing and waitlist designs","D-05":"Design QA","D-06":"Launch visuals",
+ "D-04":"Landing and waitlist designs","D-05":"Design QA","D-06":"Launch visuals","D-07":"Admin designs",
  "M-04":"Article interviews","M-03":"Eval sentences","M-05":"Article drafts","M-07":"Launch posts",
  "M-01":"Outreach","M-02":"100 sign-ups","M-06":"Beta invites","M-09":"Broker calls",
  "F-01":"Kickoff","F-02":"Domain","F-03":"Billing and caps","F-04":"Accounts in Mumbai",
@@ -52,7 +52,7 @@ SHORT = {
  "T-41":"Listings API","T-42":"Listing flow screens","T-43":"Listing detail screens",
  "T-44":"Messages API","T-45":"Messages screens","T-46":"ID verification","T-47":"Saved",
  "T-48":"Onboarding questions","T-49":"Compare cards","T-50":"Found a place, share, feedback",
- "T-51":"Migrations in the deploy","T-52":"Web CSP","T-53":"Delete the Firebase user","T-54":"Photos domain","T-55":"Message alerts","T-56":"Sub-areas API","T-57":"Sub-area pickers","T-58":"Community filter","T-59":"More chips","T-60":"Profile pop-up","T-61":"Composer eval",
+ "T-51":"Migrations in the deploy","T-52":"Web CSP","T-53":"Delete the Firebase user","T-54":"Photos domain","T-55":"Message alerts","T-56":"Sub-areas API","T-57":"Sub-area pickers","T-58":"Community filter","T-59":"More chips","T-60":"Profile pop-up","T-61":"Composer eval","T-62":"Admin home","T-63":"Admin people and listings","T-64":"Model traces","T-65":"AI numbers and switch","T-66":"Product numbers",
 }
 CAP = 34  # hours each engineer has, Thu 24 Sep to Sat 10 Oct at two hours a day
 def issue_md(t):

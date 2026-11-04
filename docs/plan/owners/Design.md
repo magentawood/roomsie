@@ -17,3 +17,4 @@ This note is part of [[roomsie launch]].
 4. [[D-04 Landing and waitlist designs]] — Mon 28 Sep → Tue 29 Sep
 5. [[D-05 Design QA]] — Mon 5 Oct → Sat 10 Oct
 6. [[D-06 Launch visuals]] — Fri 9 Oct → Sat 10 Oct
+7. [[D-07 Admin designs]] — Wed 4 Nov → Thu 5 Nov

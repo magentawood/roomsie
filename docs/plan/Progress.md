@@ -14,23 +14,23 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**273 of 332 done · 82%**
+**273 of 355 done · 77%**
 
-`████████████████████░░░░`
+`██████████████████░░░░░░`
 
 This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
-| [[P2 Chat]] | 12 / 15 | 59 / 71 | 83% |
-| [[P3 Data and trust]] | 20 / 20 | 90 / 90 | 100% |
-| [[P4 Content and moderation]] | 7 / 8 | 33 / 35 | 94% |
+| [[P2 Chat]] | 12 / 17 | 59 / 80 | 74% |
+| [[P3 Data and trust]] | 20 / 21 | 90 / 92 | 98% |
+| [[P4 Content and moderation]] | 7 / 10 | 33 / 43 | 77% |
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
-| [[Design]] | 4 / 6 | 8 / 11 | 73% |
+| [[Design]] | 4 / 7 | 8 / 14 | 57% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 2 | 0 / 8 | 0% |
-| [[Founder]] | 7 / 13 | 21 / 40 | 52% |
+| [[Founder]] | 7 / 13 | 21 / 41 | 51% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -72,6 +72,11 @@ Take tasks from this section. No task here waits on a design or on an open produ
 
 | Task | Owner | Hours | Waits on | Issue |
 |---|---|---|---|---|
+| [[T-62 Admin home]] | P4 | 4 | D-07 | no issue at this time |
+| [[T-63 Admin people and listings]] | P4 | 3 | D-07 | no issue at this time |
+| [[T-64 Model traces]] | P2 | 4 | D-07 | no issue at this time |
+| [[T-65 AI numbers and switch]] | P2 | 3 | D-07 | no issue at this time |
+| [[T-66 Product numbers]] | P3 | 2 | D-07 | no issue at this time |
 
 ### Graph
 
@@ -148,6 +153,12 @@ flowchart LR
   T61["T-61<br/>Composer eval"]:::ready
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::done
+  T62["T-62<br/>Admin home"]:::design
+  T63["T-63<br/>Admin people and listings"]:::design
+  T64["T-64<br/>Model traces"]:::design
+  T65["T-65<br/>AI numbers and switch"]:::design
+  T66["T-66<br/>Product numbers"]:::design
+  D07(["D-07<br/>Admin designs"]):::dtask
   F03 --> F04
   F13 --> F07
   M04 --> M05
@@ -261,6 +272,11 @@ flowchart LR
   T04 --> T51
   T06 --> T51
   T05 --> T52
+  D07 -.-> T62
+  T62 --> T63
+  T62 --> T64
+  T62 --> T65
+  T62 --> T66
   classDef done fill:#2ea44f,color:#fff,stroke:#2ea44f
   classDef doing fill:#e3b341,color:#000,stroke:#e3b341
   classDef ready fill:#3b82f6,color:#fff,stroke:#3b82f6
@@ -308,7 +324,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 59/71
+## P2 Chat — 59/80
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -355,8 +371,14 @@ flowchart LR
 > [!todo]- ⬜ [[T-61 Composer eval]] · 0/6
 > ![[T-61 Composer eval#^done]]
 
+> [!todo]- ⬜ [[T-64 Model traces]] · 0/6
+> ![[T-64 Model traces#^done]]
 
-## P3 Data and trust — 90/90
+> [!todo]- ⬜ [[T-65 AI numbers and switch]] · 0/3
+> ![[T-65 AI numbers and switch#^done]]
+
+
+## P3 Data and trust — 90/92
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -394,6 +416,9 @@ flowchart LR
 > [!todo]- ✅ [[T-44 Messages API]] · 6/6
 > ![[T-44 Messages API#^done]]
 
+> [!todo]- ⬜ [[T-66 Product numbers]] · 0/2
+> ![[T-66 Product numbers#^done]]
+
 > [!todo]- ✅ [[T-45 Messages screens]] · 5/5
 > ![[T-45 Messages screens#^done]]
 
@@ -419,7 +444,7 @@ flowchart LR
 > ![[T-60 Profile pop-up#^done]]
 
 
-## P4 Content and moderation — 33/35
+## P4 Content and moderation — 33/43
 
 > [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
@@ -445,6 +470,12 @@ flowchart LR
 > [!todo]- ✅ [[T-53 Delete the Firebase user]] · 4/4
 > ![[T-53 Delete the Firebase user#^done]]
 
+> [!todo]- ⬜ [[T-62 Admin home]] · 0/4
+> ![[T-62 Admin home#^done]]
+
+> [!todo]- ⬜ [[T-63 Admin people and listings]] · 0/4
+> ![[T-63 Admin people and listings#^done]]
+
 
 ## P5 Accounts and people — 30/31
 
@@ -467,7 +498,7 @@ flowchart LR
 > ![[T-16b Profile screens ⚑#^done]]
 
 
-## Design — 8/11
+## Design — 8/14
 
 > [!todo]- ✅ [[D-01 Styling decision]] · 1/1
 > ![[D-01 Styling decision#^done]]
@@ -486,6 +517,9 @@ flowchart LR
 
 > [!todo]- ⬜ [[D-06 Launch visuals]] · 0/1
 > ![[D-06 Launch visuals#^done]]
+
+> [!todo]- ⬜ [[D-07 Admin designs]] · 0/3
+> ![[D-07 Admin designs#^done]]
 
 
 ## M1 Content — 0/6
@@ -509,7 +543,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 21/40
+## Founder — 21/41
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -523,7 +557,7 @@ flowchart LR
 > [!todo]- ✅ [[F-06 Seed areas picked]] · 2/2
 > ![[F-06 Seed areas picked#^done]]
 
-> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/7
+> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/8
 > ![[F-07 Privacy and terms draft#^done]]
 
 > [!todo]- 🟡 [[F-09 ADR exceptions]] · 1/2

@@ -2,7 +2,7 @@
 id: T-55
 title: "Message alerts: email and push"
 owner: "P3 Data and trust"
-sequence: "14 of 20"
+sequence: "15 of 21"
 hours: 6
 start: 2026-11-12
 end: 2026-11-14
@@ -17,7 +17,7 @@ tags:
 
 # T-55 · Message alerts: email and push
 
-**Owner:** [[P3 Data and trust]], task 14 of 20  
+**Owner:** [[P3 Data and trust]], task 15 of 21  
 **When:** Thu 12 Nov → Sat 14 Nov · 6 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#161](https://github.com/magentawood/roomsie/issues/161)
