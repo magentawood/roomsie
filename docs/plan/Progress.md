@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**265 of 339 done · 78%**
+**267 of 339 done · 79%**
 
 `███████████████████░░░░░`
 
@@ -30,7 +30,7 @@ This note is part of [[roomsie launch]].
 | [[Design]] | 4 / 6 | 8 / 11 | 73% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 4 | 0 / 13 | 0% |
-| [[Founder]] | 6 / 14 | 19 / 42 | 45% |
+| [[Founder]] | 7 / 14 | 21 / 42 | 50% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -48,12 +48,11 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**12 free tasks are open · 30 build hours.**
+**11 free tasks are open · 30 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| 0 | [[F-06 Seed areas picked]] | F |  | ⬜ can start | 3 | [#9](https://github.com/magentawood/roomsie/issues/9) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
@@ -83,7 +82,6 @@ Blue can start. Yellow is in progress. Green is done. White waits on a different
 flowchart LR
   F03["F-03<br/>Billing and caps"]:::done
   F04["F-04<br/>Accounts in Mumbai"]:::done
-  F06["F-06<br/>Seed areas picked"]:::ready
   F07["F-07<br/>Privacy and terms draft"]:::ready
   F11["F-11 ⚑<br/>Intake and profile calls"]:::done
   F12["F-12 ⚑<br/>Matching calls"]:::done
@@ -518,7 +516,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 19/42
+## Founder — 21/42
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -532,7 +530,7 @@ flowchart LR
 > [!todo]- ⬜ [[F-05 Seeding consent text ⚑]] · 0/2
 > ![[F-05 Seeding consent text ⚑#^done]]
 
-> [!todo]- ⬜ [[F-06 Seed areas picked]] · 0/2
+> [!todo]- ✅ [[F-06 Seed areas picked]] · 2/2
 > ![[F-06 Seed areas picked#^done]]
 
 > [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/7
