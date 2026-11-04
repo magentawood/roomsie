@@ -91,6 +91,7 @@ Records what chips cannot capture, only when it can quote the user. It discards 
   - A person runs the one-off script by hand, one time. First it shows the number of turns and the estimated cost. It writes only with `--apply`. It reads only the typed turns with the kind `context`, oldest first. It skips a turn that already has a note.
   - The eval runs the observer on the 50 sentences and on about 24 new personal sentences in English, Hinglish and Marathi. A report in `docs/research/` records the rejection rate and the fraction of notes on the correct topic.
   - F-11: the founder confirmed each default of this list on 2026-11-04.
+  - Night shifts and student days are answers of Form A, so they are not notes. (n3rxv, in review)
 - **Out of scope:**
   - A notes screen on the profile, and an edit button on a note. (why: PD7a)
   - Notes from a chip tap.
