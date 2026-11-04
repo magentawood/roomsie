@@ -79,8 +79,8 @@ function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
     const failure = checkFailures.find((reason) => one[reason] > 0)
     const name = byId.get(turn.id)!.names.some((n) => c.text!.toLowerCase().includes(n))
     if (one.languageRight && one.scriptRight && !failure && !name) continue
-    const judge = c.judge ? `${c.judge.language}, ${c.judge.script} letters` : 'no judge'
-    const key = `${turn.id} · ${c.language} · the router hears ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: ${quoted(c.text)}`
+    const judge = c.judge ? `the router hears ${c.judge.language}, ${c.judge.script} letters` : 'no answer of the judge'
+    const key = `${turn.id} · ${c.language} · ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: ${quoted(c.text)}`
     lines.set(key, (lines.get(key) ?? 0) + 1)
   }
   return [...lines].map(([line, n]) => `${line} (${n})`).toSorted()
@@ -89,7 +89,7 @@ function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
 function composerReport(sentences: EvalSentence[], turns: TurnResult[]) {
   const composers = turns.flatMap((t) => (t.composer ? [t.composer] : []))
   const scores = composerScoresOf(sentences, turns)
-  const time = callStats(composers.map((c: ComposerResult) => ({ ms: c.ms, outcome: c.text === null ? 'failed' : 'ok' })))
+  const time = callStats(composers.map((c: ComposerResult) => ({ ms: Math.round(c.ms), outcome: c.text === null ? 'failed' : 'ok' })))
   const names = namesOf(sentences, turns)
   const capitals = startCapitalsOf(turns)
   const deadline = selectDeadline(composers)
@@ -146,9 +146,9 @@ function modelReport(sentences: EvalSentence[], { model, live, routerLive, sweep
     ...composerReport(sentences, turns),
     '### The misses', '',
     ...missesOf(sentences, turns).map((miss) => `- ${miss}`), '',
-    `**Answers that change between the repeats:** ${flipsOf(turns).join(', ') || 'none'}.`, '',
+    `**Answers that change between the repeats:** ${flipsOf(sentences, turns).join(', ') || 'none'}.`, '',
   ].join('\n')
 }
 
 export const reportOf = (title: string, sentences: EvalSentence[], models: ModelScores[]) =>
-  [`# ${title}`, '', `${sentences.length} sentences of the eval set (M-03).`, '', ...models.map((m) => modelReport(sentences, m))].join('\n')
+  [`# ${title}`, '', `${sentences.length} sentences of the eval set (M-03 and T-61).`, '', ...models.map((m) => modelReport(sentences, m))].join('\n')

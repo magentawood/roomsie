@@ -89,7 +89,7 @@ describe('the scores of an eval run (T-27)', () => {
   })
 
   it('names each sentence whose answer changes between the repeats, and not a repeat with no answer', () => {
-    expect(flipsOf([...turns, { ...turns[0]!, repeat: 2 }, { ...turns[1]!, repeat: 2, values: { intent: 'pg' } }, { ...turns[2]!, repeat: 2, extractorAnswered: false, values: {} }]))
+    expect(flipsOf(sentences, [...turns, { ...turns[0]!, repeat: 2 }, { ...turns[1]!, repeat: 2, values: { intent: 'pg' } }, { ...turns[2]!, repeat: 2, extractorAnswered: false, values: {} }]))
       .toEqual(['h01'])
   })
 })
@@ -117,6 +117,13 @@ describe('the scores of the router on the other bands (T-61)', () => {
   it('lists each band and flag that the router misses, and no slot of a sentence that is not a search', () => {
     expect(missesOf(others, [at('e16', 'core', { routerBand: 'general' }), at('e20', 'sensitive'), at('h24', 'core', { community: true })]))
       .toEqual(['e16 · band: label "general", got "core" (1)', 'e20 · danger: label true, got false (1)'])
+  })
+
+  it('names a sentence of the other bands whose band changes between the repeats, and not one whose values change', () => {
+    const again = (turn: TurnResult, more: Partial<TurnResult>) => ({ ...turn, repeat: 2, ...more })
+    const e16 = at('e16', 'general')
+    const e20 = at('e20', 'sensitive')
+    expect(flipsOf(others, [e16, again(e16, { values: { intent: 'room' } }), e20, again(e20, { label: { ...e20.label, band: 'core' } })])).toEqual(['e20'])
   })
 
   const row = (threshold: number, dangerRight: number, alarmsAbove: number, bandRight: number) =>

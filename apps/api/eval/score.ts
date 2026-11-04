@@ -102,10 +102,14 @@ export function callStats(calls: Pick<CallResult, 'ms' | 'outcome'>[]) {
   return { attempts: calls.length, invalid: calls.filter((c) => c.outcome === 'invalid').length, failed: calls.filter((c) => c.outcome === 'failed').length, medianMs: at(0.5), p95Ms: at(0.95) }
 }
 
-/** The sentences whose slots, register or band change between the repeats. A turn with no answer is not a change. */
-export function flipsOf(turns: TurnResult[]) {
+/** The sentences whose slots, register or band change between the repeats. Only the slots of a search count. A turn with no answer is not a change. */
+export function flipsOf(sentences: EvalSentence[], turns: TurnResult[]) {
+  const byId = sentencesById(sentences)
   const answers = new Map<string, Set<string>>()
-  for (const { id, values, label } of turns.filter((t) => t.extractorAnswered)) answers.set(id, (answers.get(id) ?? new Set()).add(JSON.stringify([values, label.register, label.band])))
+  for (const { id, values, label } of turns.filter((t) => t.extractorAnswered)) {
+    const answer = JSON.stringify([isSearch(byId.get(id)!) ? values : null, label.register, label.band])
+    answers.set(id, (answers.get(id) ?? new Set()).add(answer))
+  }
   return [...answers].filter(([, seen]) => seen.size > 1).map(([id]) => id)
 }
 

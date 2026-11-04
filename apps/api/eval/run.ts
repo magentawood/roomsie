@@ -102,10 +102,10 @@ async function liveTurn(models: Models, judge: Models, db: Db, id: string, repea
       const input = composerInput.parse(JSON.parse(call.messages[0]!.content))
       const start = performance.now()
       const answer = await models.json(call).catch((err: unknown) => {
-        composer = { input, text: null, ms: performance.now() - start }
+        composer = { input, text: null, ms: Math.round(performance.now() - start) }
         throw err
       })
-      composer = { input, text: (answer as { text: string }).text, ms: performance.now() - start }
+      composer = { input, text: (answer as { text: string }).text, ms: Math.round(performance.now() - start) }
       return answer
     },
   }
