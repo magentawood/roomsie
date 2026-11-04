@@ -24,14 +24,14 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-223 of the 260 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
+226 of the 263 build hours need no designs. The other 37 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
-| **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips | 69 | -35 | _name_ |
+| **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval | 72 | -38 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 120 | -86 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user | 22 | 12 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
@@ -86,8 +86,9 @@ Finish line: Wed 28 Oct. 29 hours.
 | 12 | T-10 ⚑ · Chat screen and split view | 8 | Wed 7 Oct → Fri 9 Oct | D-02, T-08 |
 | 13 | T-09 ⚑ · Chip flow for intent, area, budget | 6 | Fri 9 Oct → Sat 10 Oct | T-10, T-08, D-02 |
 | 14 | T-59 · Chips for the other closed questions | 5 | Wed 4 Nov → Thu 5 Nov | T-09 |
+| 15 | T-61 · Eval the composer and the router bands | 3 | Thu 5 Nov → Fri 6 Nov | T-27 |
 
-Finish line: Thu 5 Nov. 69 hours.
+Finish line: Fri 6 Nov. 72 hours.
 
 ### P3 · Data and trust — the data and the matching, then the screens that show them and the advisor
 
@@ -241,6 +242,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02, T-08 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | P2 Chat | 13 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Fri 9 Oct | Sat 10 Oct | CP3 | T-10, T-08, D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | P2 Chat | 14 | T-59 | Chips for the other closed questions | 5 | Wed 4 Nov | Thu 5 Nov | CP3 | T-09 | [#198](https://github.com/magentawood/roomsie/issues/198) |
+| P2 Chat | 15 | T-61 | Eval the composer and the router bands | 3 | Thu 5 Nov | Fri 6 Nov | CP3 | T-27 | [#216](https://github.com/magentawood/roomsie/issues/216) |
 | P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
@@ -361,6 +363,7 @@ gantt
     T-10 Chat screen and split view :crit, t10, 2026-10-07, 3d
     T-09 Chip flow for intent area budget :crit, t09, 2026-10-09, 2d
     T-59 Chips for the other closed questions :t59, 2026-11-04, 2d
+    T-61 Eval the composer and the router bands :t61, 2026-11-05, 2d
     section P3 Data and trust
     T-06 Database schema v1 :crit, t06, 2026-09-24, 6d
     T-14 Match query API :crit, t14, 2026-09-29, 5d
@@ -739,6 +742,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-43 | Listing detail screens | P3 | 5 | Mon 2 Nov → Wed 4 Nov | T-41, D-03 |
 | T-58 | Hidden community filter | P3 | 8 | Tue 3 Nov → Fri 6 Nov | T-34, T-14, T-16b |
 | T-59 | Chips for the other closed questions | P2 | 5 | Wed 4 Nov → Thu 5 Nov | T-09 |
+| T-61 | Eval the composer and the router bands | P2 | 3 | Thu 5 Nov → Fri 6 Nov | T-27 |
 | T-44 | Messages API | P3 | 8 | Thu 5 Nov → Sun 8 Nov | T-05, T-06, T-18a, F-13, T-20 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
@@ -1052,6 +1056,15 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The chips come from the slot definitions and the catalogue, not from a model. A tap never calls a model
 - The chips have a design on the drafts page, and the user approves it before the build
 - Read first: `docs/ai-agent-design.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/interface-shape.md`
+
+**T-61 · Eval the composer and the router bands** — done when:
+- The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags
+- ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands
+- The runner scores the language and the script of each reply of the composer
+- The runner scores the output check of the composer, with the three limits of the name check
+- COMPOSER_DEADLINE_MS gets its value from the measured times of the composer
+- Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- Read first: `docs/model-selection.md`, `docs/learn/composer.md`, `docs/learn/eval-set.md`
 
 **T-44 · Messages API** — done when:
 - Who can message whom follows PD17

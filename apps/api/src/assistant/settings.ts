@@ -6,11 +6,11 @@ const orderItem = z.enum([...formASlots, 'lifestyle'])
 
 /** The open product calls of the assistant are settings, not code (PC-39 of F-14). */
 export const assistantSettings = z.object({
-  /** Below this token probability, a value is `unclear` (PD7). T-27 tunes it. */
+  /** Below this token probability, a value is `unclear` (PD7). T-27 keeps 0.8: docs/research/eval-2026-11.md. */
   ASSISTANT_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
-  /** Below this token probability, the band of the router is not sure, and the turn is core (T-34). T-27 tunes it. */
+  /** Below this token probability, the band of the router is not sure, and the turn is core (T-34). T-61 tunes it. */
   ROUTER_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
-  /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). T-27 tunes it. */
+  /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). T-61 tunes it. */
   COMPOSER_DEADLINE_MS: z.coerce.number().int().positive().default(2500),
   /** The order of the questions. `lifestyle` is the eight lifestyle questions in seed order. */
   ASSISTANT_QUESTION_ORDER: z.string().default('intent,areas,budget,moveDate,lifestyle')

@@ -2,7 +2,7 @@
 id: T-27
 title: "Run the eval set and tune the prompt"
 owner: "P2 Chat"
-sequence: "10 of 14"
+sequence: "10 of 15"
 hours: 3
 start: 2026-10-05
 end: 2026-10-06
@@ -17,7 +17,7 @@ tags:
 
 # T-27 · Run the eval set and tune the prompt
 
-**Owner:** [[P2 Chat]], task 10 of 14  
+**Owner:** [[P2 Chat]], task 10 of 15  
 **When:** Mon 5 Oct → Tue 6 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#48](https://github.com/magentawood/roomsie/issues/48)
@@ -28,15 +28,65 @@ Test the assistant on real sentences. Fix what it gets wrong.
 - [[T-12 Extraction ⚑]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-61 Composer eval]]
 
 ## Done when
-- [ ] The 50 test sentences go through extraction
-- [ ] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear
-- [ ] The team tunes the prompt and saves the results in docs/research/
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] The 50 test sentences go through extraction · [#218](https://github.com/magentawood/roomsie/pull/218)
+- [x] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear · [#218](https://github.com/magentawood/roomsie/pull/218)
+- [x] The team tunes the prompt and saves the results in docs/research/ · [#218](https://github.com/magentawood/roomsie/pull/218)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#218](https://github.com/magentawood/roomsie/pull/218)
 
 ^done
 
 ## Read first
 - [model-selection.md](../../model-selection.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by n3rxv
+
+- **Modules:**
+  - **The eval runner (new):** a script of the API package that a person starts. It never runs in CI. It sends each sentence of the eval set through the extractor and the router of the API, with a local database that has the area seed, and writes a run file and a report. The interfaces of the extractor, the router and the model module do not change.
+  - **The router prompt (changes):** the register gives the main language and the main script of the message.
+  - **The extractor prompt, the date parsers and the default of the extractor threshold (can change):** only by the tuning rule below.
+  - **The copy check of the extractor, and the area seed (change):** a Marathi ending on the last copied word counts, and the seed has the joined spelling of Vile Parle (implement).
+  - **The plan (changes):** a new task, T-61, gets the composer items and the other bands of the router.
+- **Seams for the tests:**
+  - The scores of the runner: a unit test gives fixed outputs and labels, and checks each score.
+  - The router prompt and the date parsers: the tests that exist. Each new parser rule gets a case.
+  - The copy check and the seed: API tests of a turn, as the tests of the Marathi area names.
+- **Decisions:**
+  - **The scope (the user, 2026-11-04):** the extractor and the router. The register match of the composer, the limits of its name check, its deadline, and a set of the other bands go to T-61.
+  - **The keys (the user):** the runner runs on a computer of the team, with the keys of the models in a local env file that git ignores. The keys never go into the chat or the repo.
+  - **The models (the user):** DeepSeek and Gemini get a score each. The runner gives one model as the primary and as the fallback, so each score is of one model.
+  - **The tuning (the user):** a change of a prompt, of the default of the extractor threshold, or of a date parser stays only when the total score goes up, no language goes down, and the change is a general rule, not a rule for one sentence.
+  - **The register (the user):** the language is the language of the words that are not English. Marathi with "room" is `marathi`, Hinglish is `hindi`, and `mixed` is only Hindi with Marathi. The script is the script of most of the letters, so Devanagari with "1BHK" is `devanagari`. The set keeps its labels, and the runner gets the expected register from them.
+  - **The router threshold (the user):** it stays 0.8. The set has only search sentences, so the report counts the false alarms: a search that the router puts in a different band, above and below the threshold.
+  - **The repeats:** each sentence runs three times for each model. The report gives the mean, and the sentences whose answer changes.
+  - **The scores:** the labelled slots that are correct; the made-up values, which are values in a slot that the label leaves empty; the share of the `unclear` labels that come out `unclear`; the output that is not valid; the language and the main script of the router; the false alarms; and the time of each call, as the median and the 95th percentile. Each score is given for each model and each language.
+  - **The threshold sweep:** the run file keeps each answer of a model with its token probabilities. The runner replays the answers through the extractor at thresholds from 0.5 to 0.95, with no new model call.
+  - **The results:** the reports of the first run and of the last run go into `docs/research/`. The run files stay in a local folder that git ignores.
+  - **The copy check (the user, implement):** a name or an amount that the model copies without its Marathi ending, as "ठाणे वेस्ट" from "ठाणे वेस्टमध्ये", counts as said. The check uses the endings of the area catalogue (PC-09).
+  - **The spelling of Vile Parle (the user, implement):** the seed also has the joined spelling, "Vileparle" and "विलेपार्ले", for Vile Parle East and West.
+  - **Two vague sentences (the user, implement):** h15 and m11 said "I drink sometimes", and the two answers of the drinks question cover that. They now leave the drinks question open, and the Marathi speaker reads the new m11.
+  - **The student rule (the user, review):** the extractor prompt keeps "one word can fill two slots", with "student". It is the only answer of two questions, and only e03 tests it.
+  - **The router shape (the user, review):** the JSON shape of the router offers only the scripts `latin` and `devanagari`. On Gemini, the Marathi script went down by 2 turns, the size of the noise between runs.
+  - **The run file (the user, review):** it has a version, so a replay refuses a file of another version.
+  - **The token schema (the user, review):** the runner has its own schema of a token probability, typed by the `Token` type of the model module. The model module keeps its interface.
+  - **The live check:** after the deploy, a Marathi message of a visitor gets a reply in Marathi.
+- **Out of scope:**
+  - the composer: its register match, its name check and its deadline (T-61)
+  - sentences of the other bands, and a tune of the router threshold (T-61)
+  - a third vendor, such as Qwen
+  - a run in CI
+  - the full eval of 200 to 300 sentences of PD7
+
+## Log
+
+- **2026-11-04 · [#218](https://github.com/magentawood/roomsie/pull/218)**
+  - **Change:** `pnpm eval` scores the extractor and the router on the 50 eval sentences, three repeats for each of DeepSeek and Gemini, with a threshold sweep by replay. The fixes: a copied word with a Marathi ending counts, two Marathi date forms, the joined spelling of Vile Parle, the router gives the main language and script, and the extractor leaves out the keys that a message does not name. DeepSeek now passes check 6 of PD11. T-61 gets the composer items.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD11](../../decisions/pd-11-launch.md), and the decisions of the spec.
+  - **Ticked:** all four items.
+  - **Not done:** none.
+  - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md), [The assistant turn](../../learn/assistant-turn.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

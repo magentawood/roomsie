@@ -77,5 +77,11 @@ export function catalogueOf(db: Db) {
   return loaded.get(db)!
 }
 
-/** The words of the person must be in the turn: the model copies them, it does not write them (PD7). */
-export const saidIn = (text: string, words: string) => plainText(words).length > 0 && ` ${plainText(text)} `.includes(` ${plainText(words)} `)
+/**
+ * The words of the person must be in the turn: the model copies them, it does not write them (PD7).
+ * A Marathi ending on the last word counts, as "ठाणे वेस्ट" in "ठाणे वेस्टमध्ये" (T-27).
+ */
+export function saidIn(text: string, words: string) {
+  const plain = plainText(words)
+  return plain.length > 0 && [plain, ...withEndings(plain)].some((form) => ` ${plainText(text)} `.includes(` ${form} `))
+}

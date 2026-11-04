@@ -57,6 +57,10 @@ describe('the move date parser', () => {
     ['डिसेंबरमध्ये', '2026-12-01'],
     ['जानेवारीत', '2027-01-01'],
     ['१५ डिसेंबरला', '2026-12-15'],
+    ['पुढच्या महिन्याच्या शेवटी', '2026-12-31'],
+    ['pudhchya mahinyachya shevti', '2026-12-31'],
+    ['पुढच्या आठवड्यापासून', '2026-11-09'],
+    ['pudhchya athavdyapasun', '2026-11-09'],
   ])('reads %s', (words, date) => {
     expect(parseMoveDate(words, today)).toBe(date)
   })

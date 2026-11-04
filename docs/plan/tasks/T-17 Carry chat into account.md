@@ -2,7 +2,7 @@
 id: T-17
 title: "Carry anonymous chat into the account on sign-in"
 owner: "P2 Chat"
-sequence: "11 of 14"
+sequence: "11 of 15"
 hours: 2
 start: 2026-10-06
 end: 2026-10-07
@@ -17,7 +17,7 @@ tags:
 
 # T-17 · Carry anonymous chat into the account on sign-in
 
-**Owner:** [[P2 Chat]], task 11 of 14  
+**Owner:** [[P2 Chat]], task 11 of 15  
 **When:** Tue 6 Oct → Wed 7 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#32](https://github.com/magentawood/roomsie/issues/32)

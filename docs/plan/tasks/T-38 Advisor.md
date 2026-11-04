@@ -2,7 +2,7 @@
 id: T-38
 title: "Advisor: articles first, then web search after sign-in"
 owner: "P2 Chat"
-sequence: "9 of 14"
+sequence: "9 of 15"
 hours: 7
 start: 2026-10-04
 end: 2026-10-05
@@ -17,7 +17,7 @@ tags:
 
 # T-38 · Advisor: articles first, then web search after sign-in
 
-**Owner:** [[P2 Chat]], task 9 of 14  
+**Owner:** [[P2 Chat]], task 9 of 15  
 **When:** Sun 4 Oct → Mon 5 Oct · 7 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#67](https://github.com/magentawood/roomsie/issues/67)

@@ -2,7 +2,7 @@
 id: T-35
 title: "Form B contract and table"
 owner: "P2 Chat"
-sequence: "3 of 14"
+sequence: "3 of 15"
 hours: 3
 start: 2026-09-25
 end: 2026-09-26
@@ -17,7 +17,7 @@ tags:
 
 # T-35 · Form B contract and table
 
-**Owner:** [[P2 Chat]], task 3 of 14  
+**Owner:** [[P2 Chat]], task 3 of 15  
 **When:** Fri 25 Sep → Sat 26 Sep · 3 hours  
 **Checkpoint:** [[CP1 Foundation]]  
 **Issue:** [#64](https://github.com/magentawood/roomsie/issues/64)

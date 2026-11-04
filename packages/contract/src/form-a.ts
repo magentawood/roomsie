@@ -80,6 +80,11 @@ export function slotOf(form: FormA, slot: FormASlot): SlotState {
   const record = form as unknown as Record<string, Record<string, SlotState>>
   return (key ? record[group]![key] : record[group]) as SlotState
 }
+/** The slots with a value, by slot, as `lifestyle.food`. The hidden slots are not in the list. */
+export const filledSlots = (form: FormA) => Object.fromEntries(formASlots.flatMap((slot) => {
+  const { source, value } = slotOf(form, slot)
+  return source === 'empty' ? [] : [[slot, value]]
+}))
 
 /** The closed questions, with chips (T-09, T-59). The hidden slots and the move date have none (PD15). */
 export const chipSlots = formASlots.filter((slot): slot is Exclude<FormASlot, 'moveDate'> => slot !== 'moveDate')

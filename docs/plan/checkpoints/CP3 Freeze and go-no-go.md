@@ -62,6 +62,7 @@ This note is part of [[roomsie launch]].
 - [[T-43 Listing detail screens]] — P3 Data and trust
 - [[T-59 More chips]] — P2 Chat
 - [[T-58 Community filter]] — P3 Data and trust
+- [[T-61 Composer eval]] — P2 Chat
 - [[T-44 Messages API]] — P3 Data and trust
 - [[T-45 Messages screens]] — P3 Data and trust
 - [[T-55 Message alerts]] — P3 Data and trust

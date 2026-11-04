@@ -2,7 +2,7 @@
 id: T-21
 title: "Five-turn cap, rate limits, spend ceiling"
 owner: "P2 Chat"
-sequence: "8 of 14"
+sequence: "8 of 15"
 hours: 5
 start: 2026-10-02
 end: 2026-10-04
@@ -17,7 +17,7 @@ tags:
 
 # T-21 · Five-turn cap, rate limits, spend ceiling
 
-**Owner:** [[P2 Chat]], task 8 of 14  
+**Owner:** [[P2 Chat]], task 8 of 15  
 **When:** Fri 2 Oct → Sun 4 Oct · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#41](https://github.com/magentawood/roomsie/issues/41)

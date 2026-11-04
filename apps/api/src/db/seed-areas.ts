@@ -30,8 +30,8 @@ const AREAS: AreaSeed[] = [
     { slug: 'santacruz-east', name: 'Santacruz East', aliases: ['Santa Cruz East', 'Santacruz E', 'Santacruz (E)', 'Vakola', 'Prabhat Colony', 'Santacruz', 'Santa Cruz'], areas: [
       { slug: 'kalina', name: 'Kalina', aliases: ['Vidyanagari', 'Kolivery Village', 'CST Road', 'Kalina Campus'] },
     ] },
-    { slug: 'vile-parle-west', name: 'Vile Parle West', aliases: ['Vile Parle W', 'Vile Parle (W)', 'Parle West', 'Irla', 'Gulmohar Road', 'Vile Parle', 'Parle'] },
-    { slug: 'vile-parle-east', name: 'Vile Parle East', aliases: ['Vile Parle E', 'Vile Parle (E)', 'Parle East', 'Parla', 'Vile Parle', 'Parle'] },
+    { slug: 'vile-parle-west', name: 'Vile Parle West', aliases: ['Vile Parle W', 'Vile Parle (W)', 'Parle West', 'Irla', 'Gulmohar Road', 'Vile Parle', 'Parle', 'Vileparle West', 'Vileparle'] },
+    { slug: 'vile-parle-east', name: 'Vile Parle East', aliases: ['Vile Parle E', 'Vile Parle (E)', 'Parle East', 'Parla', 'Vile Parle', 'Parle', 'Vileparle East', 'Vileparle'] },
     { slug: 'juhu', name: 'Juhu', aliases: ['Juhu Scheme', 'JVPD', 'Juhu Tara Road', 'Juhu Koliwada'] },
   ] },
   { slug: 'powai-vikhroli', name: 'Powai–Vikhroli', areas: [
@@ -156,7 +156,7 @@ const DEVANAGARI: Record<string, string[]> = {
   Oshiwara: ['ओशिवरा'], Marol: ['मरोल', 'मरोळ'], Saki: ['साकी'], Naka: ['नाका'], Sakinaka: ['साकीनाका'], Amboli: ['अंबोली'], Chakala: ['चकाला'],
   Sahar: ['सहार'], Airport: ['एयरपोर्ट'], Yari: ['यारी'], Gokuldham: ['गोकुलधाम'], Dindoshi: ['दिंडोशी'], Aarey: ['आरे'], Film: ['फिल्म'], City: ['सिटी'],
   Bandra: ['बांद्रा', 'वांद्रे'], Khar: ['खार'], Santacruz: ['सांताक्रूज', 'सांताक्रुझ'], Santa: ['सांता'], Cruz: ['क्रूज', 'क्रुझ'], Kalina: ['कलिना', 'कालिना'],
-  Vile: ['विले'], Parle: ['पार्ले'], Juhu: ['जुहू'], Pali: ['पाली'], Carter: ['कार्टर'], Bandstand: ['बैंडस्टैंड'], Kherwadi: ['खेरवाडी'], Vakola: ['वाकोला'],
+  Vile: ['विले'], Parle: ['पार्ले'], Vileparle: ['विलेपार्ले'], Juhu: ['जुहू'], Pali: ['पाली'], Carter: ['कार्टर'], Bandstand: ['बैंडस्टैंड'], Kherwadi: ['खेरवाडी'], Vakola: ['वाकोला'],
   Powai: ['पवई'], Hiranandani: ['हीरानंदानी', 'हिरानंदानी'], Chandivali: ['चांदिवली'], Vikhroli: ['विक्रोली', 'विक्रोळी'], Kanjurmarg: ['कांजुरमार्ग', 'कांजूरमार्ग'],
   Bhandup: ['भांडुप'], Mulund: ['मुलुंड'], Worli: ['वर्ली', 'वरळी'], Parel: ['परेल', 'परळ'], Prabhadevi: ['प्रभादेवी'], Mahalaxmi: ['महालक्ष्मी'],
   Mahalakshmi: ['महालक्ष्मी'], Lalbaug: ['लालबाग'], Sewri: ['सेवरी', 'शिवडी'], Dadar: ['दादर'], Mahim: ['माहिम', 'माहीम'], Matunga: ['माटुंगा'],

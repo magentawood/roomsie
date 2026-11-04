@@ -18,7 +18,8 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:generate:analytics": "drizzle-kit generate --config drizzle-analytics.config.ts",
-    "openapi": "tsx scripts/openapi.ts"
+    "openapi": "tsx scripts/openapi.ts",
+    "eval": "tsx --env-file=.env.eval eval/run.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",

@@ -186,6 +186,18 @@ describe('a typed turn', () => {
     expect((await sent(await visitorGoal(), 'माटुंग्याला रूम हवी')).form.areas.value).toEqual(['matunga'])
   })
 
+  it('reads an area and an amount that the model copies without their Marathi ending (T-27)', async () => {
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'ठाणे वेस्ट', slug: 'thane-west' }], budget: '12 हजार' })] })
+    expect((await sent(await visitorGoal(), 'ठाणे वेस्टमध्ये रूम हवी, 12 हजारपर्यंत')).form)
+      .toMatchObject({ areas: { value: ['thane-west'] }, budget: { value: { min: null, max: 12_000 } } })
+  })
+
+  it('reads Vile Parle in its joined spelling, in each script (T-27)', async () => {
+    fakeVendors({ deepseek: [scored({ areas: [{ words: 'विलेपार्ले पूर्व', slug: 'vile-parle-east' }] }), scored({ areas: [{ words: 'vileparle west', slug: 'vile-parle-west' }] })] })
+    expect((await sent(await visitorGoal(), 'विलेपार्ले पूर्वमध्ये पीजी पाहिजे')).form.areas.value).toEqual(['vile-parle-east'])
+    expect((await sent(await visitorGoal(), 'pg in vileparle west')).form.areas.value).toEqual(['vile-parle-west'])
+  })
+
   it('keeps budget words that the tokens of DeepSeek do not match, as Devanagari in byte tokens', async () => {
     fakeVendors({ deepseek: [answer(JSON.stringify({ budget: 'पंधरा ते वीस हजार' }), undefined, [{ token: '{"budget":"\\u092a', logprob: -2 }, { token: '..."}', logprob: -2 }])] })
     expect((await sent(await visitorGoal(), 'बजट पंधरा ते वीस हजार')).form.budget.value).toEqual({ min: 15_000, max: 20_000 })
