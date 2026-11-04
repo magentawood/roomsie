@@ -4,7 +4,6 @@ import { formA, slotOf, slotPath, type Budget, type ExtractorOutput, type FormA,
 /** The values of one turn, as the slots of Form A. */
 export type SlotValues = Partial<Record<FormASlot, unknown>>
 
-/** The form with this slot stated, also a slot inside the lifestyle or the must-haves. */
 export function withSlot(form: FormA, slot: FormASlot, value: unknown): FormA {
   const [group, key] = slotPath(slot)
   const stated = { source: 'stated', value }

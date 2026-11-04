@@ -1,4 +1,4 @@
-import { slotPath, type Budget, type FormASlot, type LifestyleAxis, type WhosMoving } from '@roomsie/contract'
+import { lifestyleAnswerLabels, slotPath, type Budget, type FormASlot, type LifestyleAxis, type WhosMoving } from '@roomsie/contract'
 import type { Catalogue } from '../../catalogue'
 
 /** The English templates of the plan of a reply. The composer writes their words in the language of the person (T-13). */
@@ -44,7 +44,7 @@ export function valueText(slot: FormASlot, value: unknown, catalogue: Catalogue)
     case 'budget': return budgetText(value as Budget)
     case 'moveDate': return `from ${dateText(value as string)}`
     case 'whosMoving': return whosMovingText[value as keyof typeof whosMovingText] ?? humanize(value as string)
-    case 'lifestyle': return `${humanize(key!)}: ${humanize(value as string)}`
+    case 'lifestyle': return `${humanize(key!)}: ${(lifestyleAnswerLabels[key as LifestyleAxis] as Record<string, string>)[value as string]?.toLowerCase() ?? humanize(value as string)}`
     case 'mustHaves': return `${catalogue.mustHaveLabels.get(key!) ?? key} (${value === 'dealbreaker' ? 'a must' : 'preferred'})`
     default: return humanize(value as string)
   }

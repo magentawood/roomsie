@@ -16,7 +16,6 @@ export const formASlots = [
 ] as const
 export type FormASlot = (typeof formASlots)[number]
 export const slotPath = (slot: FormASlot) => slot.split('.') as [string, string | undefined]
-/** The state of a slot, also of one inside the lifestyle or the must-haves of Form A. */
 export function slotOf(form: FormA, slot: FormASlot): SlotState {
   const [group, key] = slotPath(slot)
   const record = form as unknown as Record<string, Record<string, SlotState>>
@@ -24,8 +23,10 @@ export function slotOf(form: FormA, slot: FormASlot): SlotState {
 }
 
 // Vercel is live minutes before the API; the defaults read its old replies (api.md).
+/** A slot that this code does not know yet, from a newer API, shows no chips: a tab with an older bundle keeps working. */
+const chips = z.enum(chipSlots).nullable().default(null).catch(null)
 export const chatTurn = z.object({
-  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips: z.enum(chipSlots).nullable().default(null), comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
+  id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(), chips, comparison: comparison.nullable().default(null), createdAt: z.iso.datetime(),
 })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
@@ -43,16 +44,15 @@ export const goalResponse = z.object({ id: z.uuid(), form: formA, turns: z.array
 export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
-const answerTap = <S extends AnswerChipSlot>(slot: S, values: readonly [string, ...string[]]) => z.strictObject({ slot: z.literal(slot), value: z.enum(values) })
-const known = <V extends string>(values: readonly V[]) => values.filter((value) => value !== 'unclear') as [Exclude<V, 'unclear'>, ...Exclude<V, 'unclear'>[]]
+const answerTap = <S extends AnswerChipSlot, V extends z.ZodType<string>>(slot: S, value: V) => z.strictObject({ slot: z.literal(slot), value })
 export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
   z.strictObject({ slot: z.literal('budget'), value: budgetBandId }),
-  answerTap('roomType', known(roomTypes)),
-  answerTap('whosMoving', known(whosMovingAnswers)),
-  ...lifestyleAxes.map((axis) => answerTap(`lifestyle.${axis}`, lifestyleAnswers[axis])),
-  ...mustHaveKeys.map((key) => answerTap(`mustHaves.${key}`, mustHaveWeights)),
+  answerTap('roomType', z.enum(roomTypes).exclude(['unclear'])),
+  answerTap('whosMoving', z.enum(whosMovingAnswers).exclude(['unclear'])),
+  ...lifestyleAxes.map((axis) => answerTap(`lifestyle.${axis}`, z.enum(lifestyleAnswers[axis]))),
+  ...mustHaveKeys.map((key) => answerTap(`mustHaves.${key}`, z.enum(mustHaveWeights))),
 ])
 export type ChipTap = z.infer<typeof chipTap>
 /** The answers of the onboarding of flow 01 that start a goal, with the values of the chips. Each step can be skipped (T-48). */
@@ -158,8 +158,8 @@ export const assistantParts = z.strictObject({
   question: z.string().nullable().default(null),
   /** The conflicts that the reply asks about. They stay open until a turn settles them. */
   conflicts: z.array(slotConflict).default([]),
-  /** The chips that the question offers: only with the plain question of intent, areas or budget (T-09). */
-  chips: z.enum(chipSlots).nullable().default(null),
+  /** The chips that the question offers: with the plain question of a closed slot, and with the weight question (T-09, T-59). */
+  chips,
   comparison: comparison.nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>

@@ -77,13 +77,12 @@ export type ChipSlot = (typeof chipSlots)[number]
 /** The chips of one tap and one fixed list of answers. */
 export type AnswerChipSlot = Exclude<ChipSlot, 'intent' | 'areas' | 'budget'>
 /** The chip words of room type, who is moving and the weight of a must-have (the drafts, section 35). */
-export const roomTypeChipLabels = { private: 'A private room', shared: 'A shared room' } satisfies Record<Exclude<(typeof roomTypes)[number], 'unclear'>, string>
-export const whosMovingChipLabels = {
+const roomTypeChipLabels = { private: 'A private room', shared: 'A shared room' } satisfies Record<Exclude<(typeof roomTypes)[number], 'unclear'>, string>
+const whosMovingChipLabels = {
   student: 'Student', first_job: 'First job', working: 'Working', couple: 'Couple', family: 'Family', friends: 'Group of friends',
 } satisfies Record<Exclude<(typeof whosMovingAnswers)[number], 'unclear'>, string>
-export const weightChipLabels = { dealbreaker: "It's a must", prefer: 'Show them first' } satisfies Record<(typeof mustHaveWeights)[number], string>
+const weightChipLabels = { dealbreaker: "It's a must", prefer: 'Show them first' } satisfies Record<(typeof mustHaveWeights)[number], string>
 
-/** The answers of a chip slot, in the order of their chips. */
 export function chipAnswers(slot: AnswerChipSlot): { value: string; label: string }[] {
   const [group, key] = slot.split('.') as [string, string | undefined]
   const labels: Record<string, string> = group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels

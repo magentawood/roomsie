@@ -602,18 +602,23 @@ describe('a chip tap (T-09)', () => {
     const requests = fakeVendors({})
     const weighed = await tap(goal, { slot: 'mustHaves.veg_kitchen', value: 'dealbreaker' })
     expect(weighed.form.mustHaves.veg_kitchen).toEqual({ source: 'stated', value: 'dealbreaker' })
-    expect(weighed.turns[0].text).toBe("It's a must")
+    expect(weighed.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
+      { text: "It's a must", chips: null },
+      { text: `Got it: Veg kitchen (a must). ${intentQuestion}`, chips: 'intent' },
+    ])
     expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
   })
 
-  it('fills room type and who is moving from a tap (T-59)', async () => {
-    fakeVendors({})
+  it('fills room type and who is moving from a tap, and refuses a tap of a hidden slot (T-59)', async () => {
+    const requests = fakeVendors({})
     const goal = await visitorGoal()
     const room = await tap(goal, { slot: 'roomType', value: 'private' })
-    expect([room.form.roomType, room.turns[0].text]).toEqual([{ source: 'stated', value: 'private' }, 'A private room'])
+    expect([room.form.roomType, room.turns.map(({ text }) => text)]).toEqual([{ source: 'stated', value: 'private' }, ['A private room', `Got it: a private room. ${intentQuestion}`]])
     const moving = await tap(goal, { slot: 'whosMoving', value: 'friends' })
-    expect([moving.form.whosMoving, moving.turns[0].text]).toEqual([{ source: 'stated', value: 'friends' }, 'Group of friends'])
+    expect([moving.form.whosMoving, moving.turns.map(({ text }) => text)]).toEqual([{ source: 'stated', value: 'friends' }, ['Group of friends', `Got it: friends moving together. ${intentQuestion}`]])
+    expect([...requests, ...requests.router, ...requests.composer]).toEqual([])
     expect((await tapped(goal, { slot: 'lifestyle.food', value: 'smoker' })).statusCode).toBe(400)
+    expect((await tapped(goal, { slot: 'religionPreference', value: { values: ['jain'], weight: 'prefer' } })).statusCode).toBe(400)
   })
 
   it('gives no chips to a conflict question', async () => {
@@ -621,7 +626,7 @@ describe('a chip tap (T-09)', () => {
     const goal = await visitorGoal()
     await sent(goal, 'I eat veg')
     const conflict = await sent(goal, 'I eat non-veg')
-    expect([conflict.turns[1].text, conflict.turns[1].chips]).toEqual(['You said food: veg before, and now food: non veg. Which one should I keep?', null])
+    expect([conflict.turns[1].text, conflict.turns[1].chips]).toEqual(['You said food: veg before, and now food: non-veg. Which one should I keep?', null])
   })
 
   it('gives "Not sure, help me pick" the help line and the place-type chips again, as a typed answer that leaves intent unclear', async () => {

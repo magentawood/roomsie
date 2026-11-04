@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { chipAnswers, chipSlots, formA } from './form-a'
-import { chipTap, goalResponse, goalTitle, slotOf, tapText, turnResponse } from './goals'
+import { chipTap, goalResponse, goalTitle, tapText, turnResponse } from './goals'
 
 const olderTurn = { id: '01a19c99-5fa0-7d83-ab48-16626c750a4f', role: 'assistant', text: 'What is your monthly budget?', createdAt: '2026-11-02T14:00:00.000Z' }
 
@@ -36,13 +36,19 @@ describe('the title of a goal (T-50)', () => {
 describe('the chips of the closed questions (T-59)', () => {
   const textOf = (tap: object) => tapText(chipTap.parse(tap), (slug) => slug)
 
-  it('writes the label of the chip as the message of the person', () => {
-    expect(textOf({ slot: 'lifestyle.food', value: 'veg' })).toBe('Veg')
-    expect(textOf({ slot: 'lifestyle.tidiness', value: 'relaxed_about_mess' })).toBe('Relaxed about mess')
-    expect(textOf({ slot: 'mustHaves.veg_kitchen', value: 'dealbreaker' })).toBe("It's a must")
-    expect(textOf({ slot: 'mustHaves.veg_kitchen', value: 'prefer' })).toBe('Show them first')
-    expect(textOf({ slot: 'whosMoving', value: 'friends' })).toBe('Group of friends')
-    expect(textOf({ slot: 'roomType', value: 'private' })).toBe('A private room')
+  it.each([
+    ['lifestyle.food', 'non_veg', 'Non-veg'], ['lifestyle.smoking', 'smoke_outside', 'Smoke outside'], ['lifestyle.drinks', 'none_at_home', 'None at home'],
+    ['lifestyle.guests', 'weekends_only', 'Weekends only'], ['lifestyle.your_days', 'night_shifts', 'Night shifts'], ['lifestyle.sleep', 'early_bird', 'Early bird'],
+    ['lifestyle.tidiness', 'relaxed_about_mess', 'Relaxed about mess'], ['lifestyle.pets', 'fine_with_pets', 'Fine with pets'],
+    ['mustHaves.veg_kitchen', 'dealbreaker', "It's a must"], ['mustHaves.non_smokers', 'prefer', 'Show them first'], ['mustHaves.no_alcohol', 'dealbreaker', "It's a must"],
+    ['mustHaves.women_only', 'prefer', 'Show them first'], ['mustHaves.men_only', 'dealbreaker', "It's a must"], ['mustHaves.tidy_flatmates', 'prefer', 'Show them first'],
+    ['mustHaves.couple_friendly', 'dealbreaker', "It's a must"], ['whosMoving', 'friends', 'Group of friends'], ['roomType', 'private', 'A private room'],
+  ])('writes the label of a %s chip as the message of the person', (slot, value, label) => {
+    expect(textOf({ slot, value })).toBe(label)
+  })
+
+  it('reads a chip slot of a newer API as no chips, so an older tab keeps working', () => {
+    expect(goalResponse.parse({ id: olderTurn.id, form: formA.parse({}), turns: [{ ...olderTurn, chips: 'commute' }] }).turns[0]!.chips).toBeNull()
   })
 
   it('gives the answers of each question in their order, the must first for a weight', () => {
@@ -57,14 +63,6 @@ describe('the chips of the closed questions (T-59)', () => {
       { slot: 'lifestyle.food', value: 'smoker' }, { slot: 'lifestyle.food', value: 'unclear' }, { slot: 'whosMoving', value: 'unclear' },
       { slot: 'mustHaves.veg_kitchen', value: 'unclear' }, { slot: 'roomType', value: 'unclear' }, { slot: 'religionPreference', value: 'hindu' },
     ]) expect(chipTap.safeParse(tap).success).toBe(false)
-    expect(chipSlots).not.toContain('religionPreference')
-    expect(chipSlots).not.toContain('communityPreference')
-    expect(chipSlots).not.toContain('moveDate')
-  })
-
-  it('reads a slot inside the lifestyle or the must-haves', () => {
-    const form = formA.parse({ lifestyle: { food: { value: 'veg', source: 'stated' } } })
-    expect(slotOf(form, 'lifestyle.food')).toEqual({ value: 'veg', source: 'stated' })
-    expect(slotOf(form, 'mustHaves.veg_kitchen').source).toBe('empty')
+    for (const slot of ['religionPreference', 'communityPreference', 'moveDate']) expect(chipSlots).not.toContain(slot)
   })
 })

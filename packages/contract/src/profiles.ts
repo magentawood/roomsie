@@ -23,7 +23,7 @@ export const lifestyleAnswers = {
   pets: ['no_pets', 'fine_with_pets'],
 } as const
 export type LifestyleAxis = keyof typeof lifestyleAnswers
-/** The labels of the lifestyle answers: the profile form and the chips of the chat (T-59). */
+/** The labels of the lifestyle answers: the profile form, the food of a listing flatmate, and the chips of the chat (T-59). */
 export const lifestyleAnswerLabels = {
   food: { veg: 'Veg', non_veg: 'Non-veg', eggetarian: 'Eggetarian', jain: 'Jain' },
   smoking: { non_smoker: 'Non-smoker', smoker: 'Smoker', smoke_outside: 'Smoke outside' },
