@@ -15,11 +15,11 @@
 |---|---|
 | The sentences and their labels | `apps/api/eval/sentences.json` |
 | The check of the labels | `apps/api/test/eval-set.test.ts` |
-| The runner that scores a model | T-27 |
+| The runner that scores a model | `apps/api/eval/run.ts`: [Running the eval](eval-run.md) |
 
 - **The mix.** 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).
 - **The level of code-mix** is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and amounts do not count, as "25k" or "12,000"; a word with digits, as "1BHK", counts as a word, and a number in words counts as a word of its language. **The script** is the script of the letters: digits belong to no script.
-- **The language and the register.** The router calls Hindi or Marathi with English words `mixed`, so a sentence with code-mix has the register `mixed`. T-27 maps the languages of the set to the registers.
+- **The language and the register.** The router gives the language of the words that are not English, so Marathi with "room" is `marathi` and Hinglish is `hindi`. Its script is the script of most of the letters, so Devanagari with "1BHK" is `devanagari`. The set keeps the script of its letters, and the runner gets the register from the language and the letters (the spec of T-27).
 - **The check.** Each label must be a valid Form A and each area a slug of the seed, the script must agree with the letters, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas.
 
 ## The choice we made
@@ -28,11 +28,12 @@
 
 ## Gotchas
 
+- **A vague sentence leaves the question open.** "I drink sometimes" is not vague, because the two answers of the drinks question cover it. T-27 rewrote h15 and m11 so that they leave it open.
 - **The areas, the budget and the move date have no `unclear` value.** A sentence that is vague about them leaves them empty.
 - **A name of two areas,** as "Andheri" alone, makes the assistant ask which one, so the labelled sentences use names with one area.
-- **The parsers do not read each sentence yet.** "पुढच्या महिन्याच्या शेवटी" (m02) and "पुढच्या आठवड्यापासून" (m05) give no date today. The labels are correct, so T-27 finds the gap.
 - **The set is small.** The full eval of PD7 has 200 to 300 sentences; these 50 are its start.
 
 ## Tickets
 
 - M-03: the 50 sentences and their check.
+- T-27: the register rule, and the new h15 and m11.

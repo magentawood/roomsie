@@ -62,14 +62,14 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>The runner that scores a model</td>
-<td>T-27</td>
+<td><code>apps/api/eval/run.ts</code>: <a href="eval-run.html">Running the eval</a></td>
 </tr>
 </tbody>
 </table>
 <ul>
 <li><strong>The mix.</strong> 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).</li>
 <li><strong>The level of code-mix</strong> is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and amounts do not count, as "25k" or "12,000"; a word with digits, as "1BHK", counts as a word, and a number in words counts as a word of its language. <strong>The script</strong> is the script of the letters: digits belong to no script.</li>
-<li><strong>The language and the register.</strong> The router calls Hindi or Marathi with English words <code>mixed</code>, so a sentence with code-mix has the register <code>mixed</code>. T-27 maps the languages of the set to the registers.</li>
+<li><strong>The language and the register.</strong> The router gives the language of the words that are not English, so Marathi with "room" is <code>marathi</code> and Hinglish is <code>hindi</code>. Its script is the script of most of the letters, so Devanagari with "1BHK" is <code>devanagari</code>. The set keeps the script of its letters, and the runner gets the register from the language and the letters (the spec of T-27).</li>
 <li><strong>The check.</strong> Each label must be a valid Form A and each area a slug of the seed, the script must agree with the letters, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
@@ -78,13 +78,14 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
+<li><strong>A vague sentence leaves the question open.</strong> "I drink sometimes" is not vague, because the two answers of the drinks question cover it. T-27 rewrote h15 and m11 so that they leave it open.</li>
 <li><strong>The areas, the budget and the move date have no <code>unclear</code> value.</strong> A sentence that is vague about them leaves them empty.</li>
 <li><strong>A name of two areas,</strong> as "Andheri" alone, makes the assistant ask which one, so the labelled sentences use names with one area.</li>
-<li><strong>The parsers do not read each sentence yet.</strong> "पुढच्या महिन्याच्या शेवटी" (m02) and "पुढच्या आठवड्यापासून" (m05) give no date today. The labels are correct, so T-27 finds the gap.</li>
 <li><strong>The set is small.</strong> The full eval of PD7 has 200 to 300 sentences; these 50 are its start.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>M-03: the 50 sentences and their check.</li>
+<li>T-27: the register rule, and the new h15 and m11.</li>
 </ul>
 </main>
