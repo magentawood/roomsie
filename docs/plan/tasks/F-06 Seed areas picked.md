@@ -30,10 +30,37 @@ The area groups that marketing seeds first. Not a gate (PD2).
 - [[M-01 Seeding form ⚑]]
 
 ## Done when
-- [ ] The team chooses the areas to seed first with marketing
-- [ ] The team chooses them by where it can really reach people
+- [x] The team chooses the areas to seed first with marketing · [#217](https://github.com/magentawood/roomsie/pull/217)
+- [x] The team chooses them by where it can really reach people · [#217](https://github.com/magentawood/roomsie/pull/217)
 
 ^done
 
 ## Read first
 - [pd-11-launch.md](../../decisions/pd-11-launch.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by Pulkit.
+
+- **Modules:** [PD2](../../decisions/pd-02-launch-market.md) only. Its line "Areas to seed first" gets the two area groups, and its rationale gets the reason. The ledgers come from the records. No code, no config and no seed change, because no code reads this plan.
+- **Seams for the tests:** none. The docs checks of the hook (links, limits, ledgers and generated files) apply.
+- **Decisions:**
+  - Marketing seeds Navi Mumbai and South Mumbai first. (the founder)
+  - The reason: a teammate lives in each of the two area groups, so the team can reach people there. (why: the task picks by reach, not by demand)
+  - The teammates outside Mumbai recruit people who move to Mumbai, for each area group. These sign-ups count in the minimum of 150 profiles across Mumbai. (why: PD11)
+  - The plan is not a gate. Each area group stays live. (why: PD2)
+  - The record names no teammate, and tells no home and no studies of a person. (the founder)
+- **Out of scope:**
+  - The number of profiles or listings for each area group.
+  - The seeding form and the outreach. (M-01)
+  - The consent text. (F-05)
+
+## Log
+
+- **2026-11-04 · [#217](https://github.com/magentawood/roomsie/pull/217)**
+  - **Change:** [PD2](../../decisions/pd-02-launch-market.md) names the two area groups that marketing seeds first: Navi Mumbai and South Mumbai.
+  - **Why:** the team can reach people there, because a teammate lives in each group (PD2).
+  - **Ticked:** both items.
+  - **Not done:** none.
+  - **Learn:** none
+  - **Journal:** [2026-11](../../journal/2026-11.md)

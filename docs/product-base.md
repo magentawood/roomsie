@@ -14,7 +14,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 |---|---|---|---|
 | [PD0](decisions/pd-00-v0-scope.md) | v0 is flatmate matching only | Superseded by PD14 on 2026-10-24 | v0 is flatmate matching only, with no property listing objects: a person with a spare room is a person card. |
 | [PD1](decisions/pd-01-audience.md) | Open to all genders | Settled | roomsie is open to all genders and drops the women-only promise of femmeflats. |
-| [PD2](decisions/pd-02-launch-market.md) | Mumbai first | Settled. Changed on 2026-10-27. | Roomsie launches in all of Mumbai, in ten area groups and their sub-areas, and each visitor from outside Mumbai joins a waitlist. |
+| [PD2](decisions/pd-02-launch-market.md) | Mumbai first | Settled. Changed on 2026-11-04. | Roomsie launches in all of Mumbai, in ten area groups and their sub-areas, and each visitor from outside Mumbai joins a waitlist. |
 | [PD3](decisions/pd-03-listing-supply.md) | Where listing supply comes from at launch | Deferred | Deferred until the broker interviews: the working hypothesis is that brokers list free and pay only for a qualified introduction. |
 | [PD3a](decisions/pd-03a-flatmate-matching.md) | Matching: who sees what, the filters and the order | Settled | Each place type sees its own kind; must-haves filter both ways between people; gaps rank lower; a plain "Best match" label marks full fits. |
 | [PD3b](decisions/pd-03b-interview-vs-chips.md) | What the AI interview adds over the chip filters | Settled. Changed on 2026-11-01. | Both: the assistant interview runs with the chip filters, and the structured form, not the model, is the source of truth. |

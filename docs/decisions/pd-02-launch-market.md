@@ -1,6 +1,6 @@
 # PD2 — Mumbai first
 
-**Status:** Settled. Changed on 2026-10-27. · **Date:** 2026-09-19 · **Deciders:** Yash; n3rxv for the founders on 2026-10-27
+**Status:** Settled. Changed on 2026-11-04. · **Date:** 2026-09-19 · **Deciders:** Yash; n3rxv for the founders on 2026-10-27
 
 ## Context
 
@@ -17,7 +17,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
   - A pocket is a sub-area inside a sub-area, for example Versova in Andheri West.
   - A pick of an area includes the areas under it.
 - **Where Mumbai ends.** These places are live: the BMC area, Mira–Bhayandar, the Thane Municipal Corporation, and Navi Mumbai with the Panvel nodes and Ulwe. A search for a place outside them, for example Vasai–Virar, Kalyan–Dombivli or Bhiwandi, shows "Roomsie is only in Mumbai for now" and the waitlist form.
-- **Areas to seed first.** Marketing seeds some area groups first, so that the first searches there have full panels (F-06). These areas are a seeding plan, not a gate.
+- **Areas to seed first: Navi Mumbai and South Mumbai** (2026-11-04, F-06). Marketing seeds them first, so that the first searches there have full panels. The team outside Mumbai recruits people who move to Mumbai, for each area group. These areas are a seeding plan, not a gate.
 
 ## Rationale
 
@@ -27,6 +27,7 @@ roomsie must choose one launch market. The infrastructure region is `ap-south-1`
 - A person who rents in Mumbai searches across its areas. A closed area loses a real visitor, and a thin panel can still offer the suggested posts of [PD6c](pd-06c-interface-holes.md).
 - Renters and brokers name a sub-area, not a group. Rents differ between the sides of a station: Bandra West and Bandra East are two markets.
 - Dadar, Mahim, Matunga, Sion and Wadala are one central rental market, and no group of the designs has them.
+- The team seeds where it can reach people, not where the demand is highest. A teammate lives in each of the two seed groups, so the team knows people there (F-06).
 - Mira Road is one stop past Dahisar, and NoBroker and 99acres file it under Mumbai. Mumbra and Diva are in the Thane Municipal Corporation, so the whole corporation is live.
 
 ## Alternatives rejected
