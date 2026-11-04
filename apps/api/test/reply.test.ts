@@ -1,6 +1,6 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { newGoalResponse, turnResponse, visitorKeyHeader } from '@roomsie/contract'
-import { passesCheck } from '../src/assistant/handlers/composer/check'
+import { checkFailure } from '../src/assistant/handlers/composer/check'
 import { fixedLines } from '../src/assistant/lines'
 import lines from '../src/assistant/lines.json'
 import { seedCatalogues } from '../src/db/seed-axes'
@@ -137,42 +137,42 @@ describe('the composer', () => {
 
 describe('the output check of the composer', () => {
   const draft = 'Got it: Powai, up to ₹20,000. When do you want to move in?'
-  const check = (text: string, message = 'Powai mein bees hazaar tak') => passesCheck(text, { draft, message, turns: [], formB: [] })
+  const check = (text: string, message = 'Powai mein bees hazaar tak') => checkFailure(text, { draft, message, turns: [], formB: [] })
 
   it('passes the words of the draft in a different language', () => {
-    expect(check('Powai, 20k tak, noted. Kab shift karna hai?')).toBe(true)
-    expect(check('पवई, ₹२०,००० तक। आप कब शिफ़्ट होना चाहते हैं?')).toBe(true)
-    expect(check('Powai, 20 se 25k. Kab shift karna hai?', '20 se 25 hazaar')).toBe(true)
+    expect(check('Powai, 20k tak, noted. Kab shift karna hai?')).toBeNull()
+    expect(check('पवई, ₹२०,००० तक। आप कब शिफ़्ट होना चाहते हैं?')).toBeNull()
+    expect(check('Powai, 20 se 25k. Kab shift karna hai?', '20 se 25 hazaar')).toBeNull()
   })
 
-  it('rejects a long text, contact details and links', () => {
-    expect(check(`Powai. ${'Bahut badhiya. '.repeat(40)}`)).toBe(false)
-    expect(check('Powai, 20k. Call 98765 43210 for a room.')).toBe(false)
-    expect(check('Powai, 20k. Mail rooms@example.com.')).toBe(false)
-    expect(check('Powai, 20k. See https://example.com.')).toBe(false)
-    expect(check('Powai, 20k. See nobroker.in for more.')).toBe(false)
+  it('rejects a long text, contact details and links, with the reason', () => {
+    expect(check(`Powai. ${'Bahut badhiya. '.repeat(40)}`)).toBe('too_long')
+    expect(check('Powai, 20k. Call 98765 43210 for a room?')).toBe('contact')
+    expect(check('Powai, 20k. Mail rooms@example.com?')).toBe('contact')
+    expect(check('Powai, 20k. See https://example.com?')).toBe('contact')
+    expect(check('Powai, 20k. See nobroker.in for more?')).toBe('contact')
   })
 
   it('rejects a text that drops the question of the plan', () => {
-    expect(check('Powai, 20k tak, noted.')).toBe(false)
+    expect(check('Powai, 20k tak, noted.')).toBe('no_question')
   })
 
   it('passes the pronoun I, which is no name', () => {
-    expect(check("Powai, up to ₹20,000. I'll ask one thing: when should I plan your move?", "I need Powai, I'm fine with 20k")).toBe(true)
+    expect(check("Powai, up to ₹20,000. I'll ask one thing: when should I plan your move?", "I need Powai, I'm fine with 20k")).toBeNull()
   })
 
   it('rejects a number that is not in the plan or the message', () => {
-    expect(check('Powai, 25k tak. Kab shift karna hai?')).toBe(false)
-    expect(check('Powai, tees hazaar tak. Kab shift karna hai?')).toBe(false)
-    expect(check('Powai, bees hazaar tak. Kab shift karna hai?')).toBe(true)
+    expect(check('Powai, 25k tak. Kab shift karna hai?')).toBe('new_number')
+    expect(check('Powai, tees hazaar tak. Kab shift karna hai?')).toBe('new_number')
+    expect(check('Powai, bees hazaar tak. Kab shift karna hai?')).toBeNull()
     // "k" after a digit is "ke" here, not thousands.
-    expect(check('Powai, 20k tak, 2 log k liye. Kab shift karna hai?', 'Powai 2 log 20k')).toBe(true)
-    expect(check('Powai, 20k tak, do log k liye. Kab shift karna hai?', 'Powai do log 20k')).toBe(true)
+    expect(check('Powai, 20k tak, 2 log k liye. Kab shift karna hai?', 'Powai 2 log 20k')).toBeNull()
+    expect(check('Powai, 20k tak, do log k liye. Kab shift karna hai?', 'Powai do log 20k')).toBeNull()
   })
 
-  it('rejects a name that is not in the plan, also a name from the message', () => {
-    expect(check('Powai, 20k tak. Rahul ka flat bhi wahin hai. Kab shift karna hai?', 'Rahul says Powai, bees hazaar')).toBe(false)
-    expect(check('Powai, 20k tak, and Bandra too. Kab shift karna hai?')).toBe(false)
+  it('rejects a name from the words of the person, also at the start of a sentence, and a capital word that is not in the plan', () => {
+    expect(check('Powai, 20k tak. Rahul ka flat bhi wahin hai. Kab shift karna hai?', 'Rahul says Powai, bees hazaar')).toBe('their_name')
+    expect(check('Powai, 20k tak, and Bandra too. Kab shift karna hai?')).toBe('new_capital')
   })
 })
 

@@ -18,24 +18,26 @@ function capitalsInside(text: string) {
   return text.split(/(?<=[.!?।])\s+/).flatMap((sentence) => wordsIn(sentence).slice(1).filter(isCapital))
 }
 
+export type CheckFailure = 'too_long' | 'no_question' | 'contact' | 'new_number' | 'their_name' | 'new_capital'
+
 /**
- * The output check of the composer (T-13). A plan with a question needs a question in the text.
+ * The output check of the composer (T-13). Null: the text passes. A plan with a question needs a question in the text.
  * A name from the words of the person fails too, also at the start of a sentence.
  */
-export function passesCheck(text: string, { draft, message, turns, formB }: Pick<ComposerInput, 'draft' | 'message' | 'turns' | 'formB'>) {
+export function checkFailure(text: string, { draft, message, turns, formB }: Pick<ComposerInput, 'draft' | 'message' | 'turns' | 'formB'>): CheckFailure | null {
   // A reply in Hinglish, Hindi or Marathi runs longer than the English plan.
-  if (text.length > Math.max(300, draft.length * 2)) return false
-  if (draft.includes('?') && !text.includes('?')) return false
-  if (maskContacts(text) !== text || email.test(text) || link.test(text)) return false
+  if (text.length > Math.max(300, draft.length * 2)) return 'too_long'
+  if (draft.includes('?') && !text.includes('?')) return 'no_question'
+  if (maskContacts(text) !== text || email.test(text) || link.test(text)) return 'contact'
 
   // "₹20,000" in the draft lets "20k" and "20 hazaar" through, and "₹1,50,000" lets "1.5 lakh" through.
   const planNumbers = new Set(numbersIn(`${draft} ${message}`).flatMap((n) => [n, n / 1000, n / 100_000]))
-  if (numbersIn(text).some((n) => !planNumbers.has(n))) return false
+  if (numbersIn(text).some((n) => !planNumbers.has(n))) return 'new_number'
 
   const planWords = new Set([...wordsIn(draft).map((w) => w.toLowerCase()), ...alwaysCapital])
   const inPlan = (word: string) => planWords.has(word.toLowerCase()) || isPronounI(word)
   const said = [message, ...turns.filter(({ role }) => role === 'user').map(({ text: t }) => t), ...formB.map(({ value }) => value)]
   const theirNames = new Set(said.flatMap(wordsIn).filter((w) => isCapital(w) && !inPlan(w)).map((w) => w.toLowerCase()))
-  if (wordsIn(text).some((w) => theirNames.has(w.toLowerCase()))) return false
-  return capitalsInside(text).every(inPlan)
+  if (wordsIn(text).some((w) => theirNames.has(w.toLowerCase()))) return 'their_name'
+  return capitalsInside(text).every(inPlan) ? null : 'new_capital'
 }
