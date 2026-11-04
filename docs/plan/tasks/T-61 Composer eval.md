@@ -8,6 +8,7 @@ start: 2026-11-05
 end: 2026-11-06
 checkpoint: CP3
 critical: false
+issue: https://github.com/magentawood/roomsie/issues/216
 tags:
   - task
   - p2
@@ -19,7 +20,7 @@ tags:
 **Owner:** [[P2 Chat]], task 15 of 15  
 **When:** Thu 5 Nov → Fri 6 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
-**Issue:** no issue at this time
+**Issue:** [#216](https://github.com/magentawood/roomsie/issues/216)
 
 Score the replies of the assistant, and the messages that are not a search.
 

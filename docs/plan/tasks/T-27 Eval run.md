@@ -31,10 +31,10 @@ Test the assistant on real sentences. Fix what it gets wrong.
 - [[T-61 Composer eval]]
 
 ## Done when
-- [x] The 50 test sentences go through extraction · [#216](https://github.com/magentawood/roomsie/pull/216)
-- [x] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear · [#216](https://github.com/magentawood/roomsie/pull/216)
-- [x] The team tunes the prompt and saves the results in docs/research/ · [#216](https://github.com/magentawood/roomsie/pull/216)
-- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#216](https://github.com/magentawood/roomsie/pull/216)
+- [x] The 50 test sentences go through extraction · [#217](https://github.com/magentawood/roomsie/pull/217)
+- [x] The results record the fraction of correct slots and how frequently vague sentences get the mark unclear · [#217](https://github.com/magentawood/roomsie/pull/217)
+- [x] The team tunes the prompt and saves the results in docs/research/ · [#217](https://github.com/magentawood/roomsie/pull/217)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#217](https://github.com/magentawood/roomsie/pull/217)
 
 ^done
 
@@ -83,7 +83,7 @@ Test the assistant on real sentences. Fix what it gets wrong.
 
 ## Log
 
-- **2026-11-04 · [#216](https://github.com/magentawood/roomsie/pull/216)**
+- **2026-11-04 · [#217](https://github.com/magentawood/roomsie/pull/217)**
   - **Change:** `pnpm eval` scores the extractor and the router on the 50 eval sentences, three repeats for each of DeepSeek and Gemini, with a threshold sweep by replay. The fixes: a copied word with a Marathi ending counts, two Marathi date forms, the joined spelling of Vile Parle, the router gives the main language and script, and the extractor leaves out the keys that a message does not name. DeepSeek now passes check 6 of PD11. T-61 gets the composer items.
   - **Why:** [PD7](../../decisions/pd-07-models.md), [PD11](../../decisions/pd-11-launch.md), and the decisions of the spec.
   - **Ticked:** all four items.

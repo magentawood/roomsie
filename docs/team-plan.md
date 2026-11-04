@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-61.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
 
 ---
 
@@ -242,7 +242,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P2 Chat | 12 | T-10 ⚑ | Chat screen and split view | 8 | Wed 7 Oct | Fri 9 Oct | CP3 | D-02, T-08 | [#12](https://github.com/magentawood/roomsie/issues/12) |
 | P2 Chat | 13 | T-09 ⚑ | Chip flow for intent, area, budget | 6 | Fri 9 Oct | Sat 10 Oct | CP3 | T-10, T-08, D-02 | [#26](https://github.com/magentawood/roomsie/issues/26) |
 | P2 Chat | 14 | T-59 | Chips for the other closed questions | 5 | Wed 4 Nov | Thu 5 Nov | CP3 | T-09 | [#198](https://github.com/magentawood/roomsie/issues/198) |
-| P2 Chat | 15 | T-61 | Eval the composer and the router bands | 3 | Thu 5 Nov | Fri 6 Nov | CP3 | T-27 | no issue at this time |
+| P2 Chat | 15 | T-61 | Eval the composer and the router bands | 3 | Thu 5 Nov | Fri 6 Nov | CP3 | T-27 | [#216](https://github.com/magentawood/roomsie/issues/216) |
 | P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
