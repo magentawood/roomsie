@@ -19,7 +19,7 @@
 
 - **The mix.** 15 English, 18 Hinglish and 17 Marathi. Marathi has a heavy weight because, in the benchmark of PD7, Marathi had one of the largest decreases from English (9.63%).
 - **The level of code-mix** is the share of the words from the other language: none, light (under a quarter), medium (a quarter to a half) or heavy (more than half). Place names and amounts do not count, as "25k" or "12,000"; a word with digits, as "1BHK", counts as a word, and a number in words counts as a word of its language. **The script** is the script of the letters: digits belong to no script.
-- **The language and the register.** The router gives the language of the words that are not English, so Marathi with "room" is `marathi` and Hinglish is `hindi`. Its script is the script of most of the letters, so Devanagari with "1BHK" is `devanagari`. The set keeps the script of its letters, and the runner gets the register from the language and the letters (the spec of T-27).
+- **The language and the register.** The set keeps the script of its letters. The runner gets the expected register from the language of a sentence and its letters, by the rule of the router ([The composer](composer.md)).
 - **The check.** Each label must be a valid Form A and each area a slug of the seed, the script must agree with the letters, and the set must keep its counts and the forms that people type: "20k", "bees hazaar", "12,000", "next month end" and the Mumbai areas.
 
 ## The choice we made

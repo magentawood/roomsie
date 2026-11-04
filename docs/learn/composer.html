@@ -56,24 +56,29 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td><code>hi-Latn</code>: Hinglish</td>
-<td>Hindi or a mix, in Latin script or in two scripts</td>
+<td><code>hindi</code> or <code>mixed</code>, in the script <code>latin</code> or <code>mixed</code></td>
 </tr>
 <tr>
 <td><code>hi</code>: Hindi</td>
-<td>Hindi or a mix, in Devanagari only</td>
+<td><code>hindi</code> or <code>mixed</code>, in the script <code>devanagari</code></td>
 </tr>
 <tr>
 <td><code>mr-Latn</code>: Marathi in Latin script</td>
-<td>Marathi, in Latin script or in two scripts</td>
+<td><code>marathi</code>, in the script <code>latin</code> or <code>mixed</code></td>
 </tr>
 <tr>
 <td><code>mr</code>: Marathi</td>
-<td>Marathi, in Devanagari only</td>
+<td><code>marathi</code>, in the script <code>devanagari</code></td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>The <strong>fixed lines</strong> are the lines with no model: "send it again", the last line, and the line of each band. The hand-off line of a legal, tax or safety question is one of them. Each line has a text in each reply language.</li>
+<li>
+<p><strong>The register of the router</strong> is the language of the words that are not English, and the script of most of the letters (T-27). Marathi with "room" or "1BHK" is <code>marathi</code>, Hinglish is <code>hindi</code>, and <code>mixed</code> is Hindi with Marathi. Devanagari with "1BHK" or "PG" is <code>devanagari</code>.</p>
+</li>
+<li>
+<p>The <strong>fixed lines</strong> are the lines with no model: "send it again", the last line, and the line of each band. The hand-off line of a legal, tax or safety question is one of them. Each line has a text in each reply language.</p>
+</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>runTurn() ── router + extractor ──▶ replyWriter(): the plan, with the fixed lines in the reply language

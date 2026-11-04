@@ -35,17 +35,18 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="running-the-eval">Running the eval</h1>
-<p><strong>In one line:</strong> <code>pnpm eval</code> sends the 50 eval sentences through the extractor and the router of the API, three times for each model, and writes a report of the scores, so each change of a prompt or a parser has a measurement.</p>
+<p><strong>In one line:</strong> <code>pnpm eval</code> scores the extractor and the router of the API on the 50 eval sentences, for each model.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
-<li><strong>A run</strong> calls the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback, so each score is of one model. Each sentence runs three times, because the answers of a model change.</li>
+<li><strong>A run</strong> sends each sentence three times through the extractor and the router of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.</li>
+<li><strong>The calls</strong> go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>). The runner gives one model as the primary and as the fallback, so each score is of one model. A sentence runs three times because the answers of a model change. Each count is the sum of the three repeats.</li>
 <li><strong>The scores,</strong> for each model and each language:</li>
 <li><strong>Labelled slots right:</strong> the slots with a label that get that value.</li>
 <li><strong>Made-up values:</strong> a value in a slot that the label leaves empty.</li>
 <li><strong>Vague slots marked unclear,</strong> and <strong>vague slots with a value.</strong> A value there is a no-go of <a href="../decisions/pd-11-launch.md">PD11</a>, check 6.</li>
 <li><strong>Unclear in a slot with no label:</strong> an extra question, not a wrong value.</li>
 <li><strong>The router:</strong> the language and the main script of the register, and the false alarms. A false alarm is a search that the router puts in a different band, above or below its threshold.</li>
-<li><strong>The calls:</strong> the output that is not valid, the failed attempts, and the median and the 95th percentile of the time.</li>
+<li><strong>The calls:</strong> the output that is not valid, the failed attempts, and the median and the 95th percentile of the time of the extractor and of the router.</li>
 <li><strong>The threshold sweep.</strong> The run file keeps each answer of the extractor model with its token probabilities. The runner replays the answers through the extractor at each threshold from 0.5 to 0.95, with no new call.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
@@ -83,11 +84,11 @@ details.callout[open] summary{color:var(--fg)}
 </ol>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
-<li>The scope, the models, the repeats, the tuning rule and the register: the spec of T-27. The method: <a href="../model-selection.md">model-selection.md</a>.</li>
+<li>The scope, the models, the repeats, the tuning rule and the register: <a href="../plan/tasks/T-27%20Eval%20run.md">the spec of T-27</a>. The method: <a href="../model-selection.md">model-selection.md</a>.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>A model copies a name without its Marathi ending,</strong> as "ठाणे वेस्ट" from "ठाणे वेस्टमध्ये". The copy check of the extractor accepts the endings of the area catalogue (PC-09).</li>
+<li><strong>A model copies a name without its Marathi ending.</strong> The copy check of the extractor accepts it (<a href="assistant-turn.html">The assistant turn</a>).</li>
 <li><strong>Gemini gives no token probabilities,</strong> so code cannot make its unsure values <code>unclear</code>. Its score of the vague slots is the risk of the fallback (<a href="../decisions/pd-07-models.md">PD7</a>).</li>
 <li><strong>An answer can change between the repeats.</strong> The report names each sentence where it changes, so a change of one sentence can be noise.</li>
 <li><strong>A replay uses the text of the current set.</strong> When a sentence changes, its old answer no longer fits it.</li>

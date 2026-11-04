@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { callStats, flipsOf, mainScript, scoresOf, type TurnResult } from '../eval/score'
+import { callStats, flipsOf, goNoGo, mainScript, missesOf, noCounts, scoresOf, type TurnResult } from '../eval/score'
+import { rangesOf } from '../eval/report'
 import type { EvalSentence } from '../eval/set'
 
 const sentence = (id: string, language: EvalSentence['language'], text: string, expected: EvalSentence['expected']): EvalSentence =>
@@ -27,8 +28,29 @@ describe('the scores of an eval run (T-27)', () => {
       turns: 3, labelled: 5, right: 5, unclearLabels: 2, unclearRight: 0, vagueFilled: 1, madeUp: 1, extraUnclear: 1,
       languageRight: 2, scriptRight: 3, alarmsAbove: 1, alarmsBelow: 1, falseFlags: 1,
     })
+    expect(scores.english).toMatchObject({ turns: 1, labelled: 3, right: 3, madeUp: 1, languageRight: 1 })
     expect(scores.hinglish).toMatchObject({ turns: 1, right: 2, languageRight: 0, extraUnclear: 1, alarmsBelow: 1 })
     expect(scores.marathi).toMatchObject({ turns: 1, labelled: 0, vagueFilled: 1, alarmsAbove: 1, falseFlags: 1 })
+  })
+
+  it('gives no-go under 7 in 10 labelled slots right, or with one vague slot that has a value (PD11, check 6)', () => {
+    expect(goNoGo({ ...noCounts, labelled: 10, right: 7 })).toBe('go')
+    expect(goNoGo({ ...noCounts, labelled: 10, right: 6 })).toBe('no-go')
+    expect(goNoGo({ ...noCounts, labelled: 10, right: 10, vagueFilled: 1 })).toBe('no-go')
+  })
+
+  it('lists each wrong slot, and the slots that are unclear with no label in one line for each sentence and number of repeats', () => {
+    expect(missesOf(sentences, turns)).toEqual([
+      'e01 · moveDate: label nothing, got "2026-12-01" (1)',
+      'h01 · `unclear` with no label (1): roomType',
+      'm10 · intent: label "unclear", got "whole_flat" (1)',
+      'm10 · lifestyle.pets: label "unclear", got nothing (1)',
+    ])
+  })
+
+  it('joins the thresholds in a row with the same scores into one line of the sweep', () => {
+    expect(rangesOf([{ threshold: 0.5, cells: 'a' }, { threshold: 0.6, cells: 'a' }, { threshold: 0.7, cells: 'b' }, { threshold: 0.8, cells: 'a' }]))
+      .toEqual([{ from: 0.5, to: 0.6, cells: 'a' }, { from: 0.7, to: 0.7, cells: 'b' }, { from: 0.8, to: 0.8, cells: 'a' }])
   })
 
   it('takes the script of most of the letters', () => {
@@ -37,7 +59,7 @@ describe('the scores of an eval run (T-27)', () => {
   })
 
   it('gives the median and the 95th percentile of the times, with no failed call', () => {
-    const calls = [100, 400, 200, 300].map((ms) => ({ id: 'e01', role: 'router', ms, outcome: 'ok' as const }))
+    const calls = [100, 400, 200, 300].map((ms) => ({ id: 'e01', role: 'router' as const, ms, outcome: 'ok' as const }))
     expect(callStats([...calls, { id: 'e01', role: 'router', ms: 10_000, outcome: 'failed' }, { id: 'e01', role: 'router', ms: 50, outcome: 'invalid' }]))
       .toEqual({ attempts: 6, invalid: 1, failed: 1, medianMs: 200, p95Ms: 400 })
   })

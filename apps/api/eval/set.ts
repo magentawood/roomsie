@@ -1,10 +1,13 @@
 import { z } from 'zod'
 import file from './sentences.json'
 
+export const languages = ['english', 'hinglish', 'marathi'] as const
+export type EvalLanguage = (typeof languages)[number]
+
 const sentence = z.strictObject({
   id: z.string(),
   text: z.string().min(1),
-  language: z.enum(['english', 'hinglish', 'marathi']),
+  language: z.enum(languages),
   script: z.enum(['latin', 'devanagari', 'mixed']),
   mix: z.enum(['none', 'light', 'medium', 'heavy']),
   vague: z.boolean(),

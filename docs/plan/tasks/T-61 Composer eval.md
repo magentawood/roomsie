@@ -30,8 +30,10 @@ Score the replies of the assistant, and the messages that are not a search.
 - No task waits on this task.
 
 ## Done when
-- [ ] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags, and ROUTER_MIN_PROBABILITY gets its value from them
-- [ ] The replies of the composer to the eval sentences are scored for the language and the script of the person, and for the output check, with the three limits of the name check
+- [ ] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags
+- [ ] ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands
+- [ ] The runner scores the language and the script of each reply of the composer
+- [ ] The runner scores the output check of the composer, with the three limits of the name check
 - [ ] COMPOSER_DEADLINE_MS gets its value from the measured times of the composer
 - [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 

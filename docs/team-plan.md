@@ -1058,8 +1058,10 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - Read first: `docs/ai-agent-design.md`, `docs/decisions/pd-15-form-a-contract.md`, `docs/interface-shape.md`
 
 **T-61 · Eval the composer and the router bands** — done when:
-- The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags, and ROUTER_MIN_PROBABILITY gets its value from them
-- The replies of the composer to the eval sentences are scored for the language and the script of the person, and for the output check, with the three limits of the name check
+- The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags
+- ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands
+- The runner scores the language and the script of each reply of the composer
+- The runner scores the output check of the composer, with the three limits of the name check
 - COMPOSER_DEADLINE_MS gets its value from the measured times of the composer
 - Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
 - Read first: `docs/model-selection.md`, `docs/learn/composer.md`, `docs/learn/eval-set.md`

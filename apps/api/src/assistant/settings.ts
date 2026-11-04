@@ -6,7 +6,7 @@ const orderItem = z.enum([...formASlots, 'lifestyle'])
 
 /** The open product calls of the assistant are settings, not code (PC-39 of F-14). */
 export const assistantSettings = z.object({
-  /** Below this token probability, a value is `unclear` (PD7). In the eval of T-27, 0.5 to 0.95 gave the same scores. */
+  /** Below this token probability, a value is `unclear` (PD7). In the eval of T-27, a threshold from 0.5 to 0.9 changed no score. */
   ASSISTANT_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
   /** Below this token probability, the band of the router is not sure, and the turn is core (T-34). T-61 tunes it. */
   ROUTER_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),

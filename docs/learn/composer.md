@@ -11,10 +11,12 @@
 | Reply language | When |
 |---|---|
 | `en`: English | English, `other`, or no register |
-| `hi-Latn`: Hinglish | Hindi or a mix, in Latin script or in two scripts |
-| `hi`: Hindi | Hindi or a mix, in Devanagari only |
-| `mr-Latn`: Marathi in Latin script | Marathi, in Latin script or in two scripts |
-| `mr`: Marathi | Marathi, in Devanagari only |
+| `hi-Latn`: Hinglish | `hindi` or `mixed`, in the script `latin` or `mixed` |
+| `hi`: Hindi | `hindi` or `mixed`, in the script `devanagari` |
+| `mr-Latn`: Marathi in Latin script | `marathi`, in the script `latin` or `mixed` |
+| `mr`: Marathi | `marathi`, in the script `devanagari` |
+
+- **The register of the router** is the language of the words that are not English, and the script of most of the letters (T-27). Marathi with "room" or "1BHK" is `marathi`, Hinglish is `hindi`, and `mixed` is Hindi with Marathi. Devanagari with "1BHK" or "PG" is `devanagari`.
 
 - The **fixed lines** are the lines with no model: "send it again", the last line, and the line of each band. The hand-off line of a legal, tax or safety question is one of them. Each line has a text in each reply language.
 

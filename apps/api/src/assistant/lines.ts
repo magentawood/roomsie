@@ -21,7 +21,7 @@ export const cheapestLine = (option: number, amount: string, language: ReplyLang
 export const backToIt = (question: string, language: ReplyLanguage) =>
   lines.backToIt[language].replace('{question}', `${question[0]!.toLowerCase()}${question.slice(1)}`)
 
-/** The language of a reply from the register of the router. Only a message in Devanagari alone gets Devanagari. */
+/** The language of a reply from the register of the router. A message with mostly Devanagari letters gets Devanagari (T-27). */
 export function languageOf(register: TurnLabel['register']): ReplyLanguage {
   if (!register || register.language === 'english' || register.language === 'other') return 'en'
   const devanagari = register.script === 'devanagari'

@@ -20,10 +20,9 @@ type Recorded = { value: unknown; tokens: Token[] | null; model: string }
 type RunTurn = { id: string; repeat: number; extractor: Recorded | null; label: TurnLabel }
 type ModelRun = { model: string; turns: RunTurn[]; calls: CallResult[] }
 
-// The spec of T-27: three repeats, and the sweep of the extractor threshold.
 const repeats = 3
 const settings = assistantSettings.parse(process.env)
-const thresholds = [...new Set([0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, settings.minProbability])].toSorted()
+const thresholds = [...new Set([0.5, 0.6, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, settings.minProbability])].toSorted((a, b) => a - b)
 const parallel = 8
 const env = modelSettings.in.parse(process.env)
 const today = () => evalSet.today
@@ -39,7 +38,7 @@ const requestOf = (id: string, calls: CallResult[]) => ({
   user: null,
 }) as unknown as FastifyRequest
 
-const emptyTurn = (id: string) => ({ goalId: randomUUID(), text: textOf.get(id)!, last: null, lastRegister: null, form: formA.parse({}) })
+const emptyTurn = (id: string) => ({ goalId: randomUUID(), text: textOf.get(id)!, last: null, lastRegister: null, ...noExtraction(formA.parse({}), false) })
 
 async function inPool<T, R>(items: T[], run: (item: T) => Promise<R>) {
   const results: R[] = []
@@ -66,7 +65,7 @@ async function liveTurn(models: Models, db: Db, id: string, repeat: number, call
     },
   }
   const turn = emptyTurn(id)
-  const [label] = await Promise.all([routeTurn(turn, { req, models: recording, settings }), extractor({ ...turn, ...noExtraction(turn.form, false) }, { req, db, models: recording, settings, today })])
+  const [label] = await Promise.all([routeTurn(turn, { req, models: recording, settings }), extractor(turn, { req, db, models: recording, settings, today })])
   return { id, repeat, extractor: answer, label }
 }
 
@@ -104,8 +103,7 @@ async function replayed({ id, extractor: recorded }: RunTurn, db: Db, minProbabi
       return { ...recorded, value }
     },
   }
-  const turn = emptyTurn(id)
-  const { form } = await extractor({ ...turn, ...noExtraction(turn.form, false) }, { req: requestOf(id, []), db, models, settings: { ...settings, minProbability }, today })
+  const { form } = await extractor(emptyTurn(id), { req: requestOf(id, []), db, models, settings: { ...settings, minProbability }, today })
   return valuesOf(form)
 }
 
@@ -127,9 +125,8 @@ try {
   const stamp = new Date().toISOString().slice(0, 16).replace(':', '')
   const folder = new URL('runs/', import.meta.url)
   await mkdir(folder, { recursive: true })
-  if (!replay) await writeFile(new URL(`${stamp}.json`, folder), JSON.stringify({ setVersion: evalSet.version, runs }))
-  const scores = []
-  for (const run of runs) scores.push(await scoresOfRun(run, db))
+  if (!replay) await writeFile(new URL(`${stamp}.json`, folder), JSON.stringify({ runs }))
+  const scores = await Promise.all(runs.map((run) => scoresOfRun(run, db)))
   const report = new URL(`${stamp}.md`, folder)
   await writeFile(report, reportOf(`Eval run ${stamp}${replay ? `, a replay of ${replay}` : ''}`, evalSet.sentences, scores))
   console.log(`The report: ${report.pathname}`)

@@ -1,17 +1,18 @@
 # Running the eval
 
-**In one line:** `pnpm eval` sends the 50 eval sentences through the extractor and the router of the API, three times for each model, and writes a report of the scores, so each change of a prompt or a parser has a measurement.
+**In one line:** `pnpm eval` scores the extractor and the router of the API on the 50 eval sentences, for each model.
 
 ## What it is
 
-- **A run** calls the real models through the real handlers, as a live turn does: the router and the extractor in parallel ([PD7a](../decisions/pd-07a-agent-architecture.md)). The runner gives one model as the primary and as the fallback, so each score is of one model. Each sentence runs three times, because the answers of a model change.
+- **A run** sends each sentence three times through the extractor and the router of the API, and writes a report of the scores. Then each change of a prompt or a parser has a measurement.
+- **The calls** go to the real models through the real handlers, as a live turn does: the router and the extractor in parallel ([PD7a](../decisions/pd-07a-agent-architecture.md)). The runner gives one model as the primary and as the fallback, so each score is of one model. A sentence runs three times because the answers of a model change. Each count is the sum of the three repeats.
 - **The scores,** for each model and each language:
   - **Labelled slots right:** the slots with a label that get that value.
   - **Made-up values:** a value in a slot that the label leaves empty.
   - **Vague slots marked unclear,** and **vague slots with a value.** A value there is a no-go of [PD11](../decisions/pd-11-launch.md), check 6.
   - **Unclear in a slot with no label:** an extra question, not a wrong value.
   - **The router:** the language and the main script of the register, and the false alarms. A false alarm is a search that the router puts in a different band, above or below its threshold.
-  - **The calls:** the output that is not valid, the failed attempts, and the median and the 95th percentile of the time.
+  - **The calls:** the output that is not valid, the failed attempts, and the median and the 95th percentile of the time of the extractor and of the router.
 - **The threshold sweep.** The run file keeps each answer of the extractor model with its token probabilities. The runner replays the answers through the extractor at each threshold from 0.5 to 0.95, with no new call.
 
 ## How it fits our project
@@ -30,11 +31,11 @@
 
 ## The choice we made
 
-- The scope, the models, the repeats, the tuning rule and the register: the spec of T-27. The method: [model-selection.md](../model-selection.md).
+- The scope, the models, the repeats, the tuning rule and the register: [the spec of T-27](../plan/tasks/T-27%20Eval%20run.md). The method: [model-selection.md](../model-selection.md).
 
 ## Gotchas
 
-- **A model copies a name without its Marathi ending,** as "ठाणे वेस्ट" from "ठाणे वेस्टमध्ये". The copy check of the extractor accepts the endings of the area catalogue (PC-09).
+- **A model copies a name without its Marathi ending.** The copy check of the extractor accepts it ([The assistant turn](assistant-turn.md)).
 - **Gemini gives no token probabilities,** so code cannot make its unsure values `unclear`. Its score of the vague slots is the risk of the fallback ([PD7](../decisions/pd-07-models.md)).
 - **An answer can change between the repeats.** The report names each sentence where it changes, so a change of one sentence can be noise.
 - **A replay uses the text of the current set.** When a sentence changes, its old answer no longer fits it.
