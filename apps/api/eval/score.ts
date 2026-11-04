@@ -74,7 +74,7 @@ export function scoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
 export const goNoGo = (c: Counts) => (c.right >= 0.7 * c.labelled && c.vagueFilled === 0 ? 'go' : 'no-go')
 
 /** The times include the failed attempts, which mostly end at the timeout. Nearest-rank percentiles. */
-export function callStats(calls: CallResult[]) {
+export function callStats(calls: Pick<CallResult, 'ms' | 'outcome'>[]) {
   const ms = calls.map((c) => c.ms).toSorted((a, b) => a - b)
   const at = (share: number) => ms[Math.ceil(share * ms.length) - 1] ?? null
   return { attempts: calls.length, invalid: calls.filter((c) => c.outcome === 'invalid').length, failed: calls.filter((c) => c.outcome === 'failed').length, medianMs: at(0.5), p95Ms: at(0.95) }

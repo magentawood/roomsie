@@ -7,8 +7,8 @@ import { contextTurnsOf, lastReplyOf, turnTimeOf } from '../goals/store'
 import { rupeesOf } from '../models/spend'
 import { activeTopics, noteTurnOf, saveObservation, turnsWithNotes, type Owner } from './read'
 
-/** A high guess: about four characters for each token, no cache hit, and a long answer. */
-const guessUsage = (chars: number) => ({ tokensIn: Math.ceil(chars / 4), cachedTokensIn: 0, tokensOut: 150 })
+/** A high guess: two characters for each token, as Devanagari can take, no cache hit, and a long answer. */
+const guessUsage = (chars: number) => ({ tokensIn: Math.ceil(chars / 2), cachedTokensIn: 0, tokensOut: 150 })
 
 async function hasNewerNote(db: Db, owner: Owner, key: string, at: Date) {
   const turn = await noteTurnOf(db, owner, key)
@@ -29,7 +29,11 @@ export async function backfillNotes(db: Db, deps: Omit<ObserverDeps, 'db'>, { ap
     return plan ? [{ ...turn, visible: plan.visible }] : []
   })
   const prompt = observerPrompt(await activeTopics(db)).length
-  const estimatedRupees = turns.reduce((sum, { text }) => sum + rupeesOf('deepseek', guessUsage(prompt + text.length)), 0)
+  let estimatedRupees = 0
+  for (const turn of turns) {
+    const question = (await lastReplyOf(db, turn.goalId, turn.createdAt))?.question ?? ''
+    estimatedRupees += rupeesOf('deepseek', guessUsage(prompt + turn.text.length + question.length))
+  }
   if (!apply) return { turns: turns.length, estimatedRupees, saved: 0 }
 
   let saved = 0

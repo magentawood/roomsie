@@ -81,8 +81,8 @@ describe('the scores of an eval run (T-27)', () => {
   })
 
   it('gives the median and the 95th percentile of the times, with the failed attempts', () => {
-    const calls = [100, 400, 200, 300].map((ms) => ({ id: 'e01', role: 'router' as const, ms, outcome: 'ok' as const }))
-    expect(callStats([...calls, { id: 'e01', role: 'router', ms: 10_000, outcome: 'failed' }, { id: 'e01', role: 'router', ms: 50, outcome: 'invalid' }]))
+    const calls = [100, 400, 200, 300].map((ms) => ({ ms, outcome: 'ok' as const }))
+    expect(callStats([...calls, { ms: 10_000, outcome: 'failed' }, { ms: 50, outcome: 'invalid' }]))
       .toEqual({ attempts: 6, invalid: 1, failed: 1, medianMs: 200, p95Ms: 10_000 })
   })
 

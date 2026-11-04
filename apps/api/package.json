@@ -21,7 +21,7 @@
     "openapi": "tsx scripts/openapi.ts",
     "eval": "tsx --env-file=.env.eval eval/run.ts",
     "backfill:notes": "tsx --env-file-if-exists=.env scripts/backfill-notes.ts",
-    "eval:observer": "tsx --env-file-if-exists=.env scripts/eval-observer.ts"
+    "eval:observer": "tsx --env-file=.env.eval scripts/eval-observer.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",

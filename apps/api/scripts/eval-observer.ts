@@ -1,17 +1,14 @@
-/**
- * The eval of the observer (T-36): the live models on the 50 sentences of M-03 and the personal sentences.
- * It uses a disposable local database for the topics, and prints the results as JSON for docs/research/.
- */
+/** The eval of the observer (T-36): the live models on the sentences of M-03 and the personal sentences, as JSON for docs/research/. */
 import Fastify from 'fastify'
+import type { AnalyticsEvent } from '@roomsie/contract'
 import { observer } from '../src/assistant/handlers/observer/observer'
 import { assistantSettings } from '../src/assistant/settings'
 import { seedCatalogues } from '../src/db/seed-axes'
-import { modelSettings, spendSettings } from '../src/models/settings'
-import { spendOf } from '../src/models/spend'
-import { todayInIst } from '../src/today'
+import { modelSettings } from '../src/models/settings'
 import { createTestDb } from '../test/db'
+import { callStats } from '../eval/score'
+import { evalSet } from '../eval/set'
 import { scriptRequest } from './script-request'
-import searchFile from '../eval/sentences.json'
 import personalFile from '../eval/observer-sentences.json'
 
 const models = modelSettings.parse(process.env)
@@ -19,10 +16,10 @@ if (!models) throw new Error('Set DEEPSEEK_API_KEY and GEMINI_API_KEY.')
 const testDb = await createTestDb()
 await seedCatalogues(testDb.db)
 const { log } = Fastify({ logger: { level: 'warn' } })
-const spend = spendOf({ db: testDb.db, settings: spendSettings.parse({}), today: todayInIst, log })
-const calls: { model: string; ms: number; outcome: string }[] = []
-const analytics = { track: (_: unknown, event: { name: string; model?: string; ms?: number; outcome?: string }) => { if (event.name === 'model_called') calls.push({ model: event.model!, ms: event.ms!, outcome: event.outcome! }) } }
-const deps = { req: scriptRequest({ analytics, spend }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
+const calls: Extract<AnalyticsEvent, { name: 'model_called' }>[] = []
+const analytics = { track: (_: unknown, event: AnalyticsEvent) => { if (event.name === 'model_called') calls.push(event) } }
+// The spend goes into the disposable database, so the eval records none.
+const deps = { req: scriptRequest({ analytics, spend: { record: () => {} } }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
 
 type Sentence = { id: string; text: string; expected?: string[] }
 async function run(sentences: Sentence[]) {
@@ -43,9 +40,7 @@ async function run(sentences: Sentence[]) {
   return { summary, rows }
 }
 
-const search = await run(searchFile.sentences.map(({ id, text }) => ({ id, text })))
+const search = await run(evalSet.sentences.map(({ id, text }) => ({ id, text })))
 const personal = await run(personalFile.sentences)
-const ms = calls.map((c) => c.ms).sort((a, b) => a - b)
-console.log(JSON.stringify({ search, personal, calls: { count: calls.length, fallback: calls.filter((c) => c.model.startsWith('gemini')).length, medianMs: ms[Math.floor(ms.length / 2)], p90Ms: ms[Math.floor(ms.length * 0.9)] } }, null, 1))
-await spend.settled()
+console.log(JSON.stringify({ search, personal, calls: { ...callStats(calls), fallback: calls.filter((c) => c.fallback).length } }, null, 1))
 await testDb.drop()
