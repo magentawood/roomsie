@@ -81,7 +81,7 @@ The router labels each typed turn. The extractor starts at the same time, and th
 | Adversarial | Scripted response, logged | **None** after the router |
 | Safety signal | Scripted response, logged. The extractor keeps the filters of the message (T-34). | Small |
 
-- One turn can be more than one type. **Run the Extractor and the Observer in parallel** on the same input.
+- One turn can be more than one type. **The Extractor and the Observer both read it.** The Observer runs after the reply, only on a turn with the kind `context`, so it adds no wait (T-36).
 - **Keep the router rules-based where possible.** A chip tap needs no classification. Only free text needs the classifier.
 
 Why: [PD7a](decisions/pd-07a-agent-architecture.md)
@@ -129,7 +129,7 @@ flowchart TD
 
     K -->|Free text, at the same time| EX[["**Extractor**<br/>small, constrained to enums"]]
     R -->|slot answer: keep its answer| EX
-    R -->|revealing| OB[["**Observer**<br/>small, must quote the user"]]
+    R -->|context, after the reply| OB[["**Observer**<br/>small, must quote the user"]]
     R -->|consulting| AD[["**Advisor**<br/>small + retrieval"]]
     R -->|off topic| RED[Scripted redirect]
     R -->|safety signal| SAF[Scripted response<br/>logged]
@@ -179,7 +179,7 @@ Why: [PD7a](decisions/pd-07a-agent-architecture.md)
 flowchart LR
     A[Chip tap] --> A1["**zero**<br/>no model"]
     B[Typed slot answer] --> B1["**low**<br/>router + extractor"]
-    C[Something revealing] --> C1["**low**<br/>router + extractor + observer<br/>last two in parallel"]
+    C[Something revealing] --> C1["**low**<br/>router + extractor in parallel,<br/>observer after the reply"]
     D[Consulting question] --> D1["**medium**<br/>router + advisor + retrieval<br/>+ composer"]
     E[Off topic] --> E1["**low**<br/>router + extractor in parallel,<br/>then a script"]
 

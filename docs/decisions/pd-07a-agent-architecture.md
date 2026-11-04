@@ -1,6 +1,6 @@
 # PD7a — Agent architecture: a router with small handlers
 
-**Status:** Settled. Changed on 2026-11-02. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-11-04. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -25,7 +25,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
 
 - The router runs on DeepSeek Flash behind its own adapter. When Jev access
   arrives, Jev gets a trial on the eval set.
-- The extractor and the observer run in parallel.
+- The extractor runs in parallel with the router. The observer runs after the
+  reply, only on a turn that the router labels `context` (2026-11-04, T-36).
 - **The reply writer** (composer) is the only expensive call. It reads Form A,
   Form B and the last two turns, **never the full transcript**.
 - **Two forms.** Form A holds typed filter slots and drives the SQL. Form B is
@@ -60,7 +61,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
 - **Most turns never get to an expensive model.** Classification is the cost
   lever and the on-rails lever at the same time. The router knows a chip tap
   from the client.
-- **The extractor and the observer run in parallel,** because one turn can be
+- **The extractor and the observer both read one turn,** because one turn can be
   more than one type. Example: "I need Powai under 20k, my last place fell
   apart because of my flatmate's boyfriend" fills slots *and* reveals
   something.
@@ -82,7 +83,7 @@ multi-agent, and not one large model. **All of it ships at launch.**
   incorrect one. The corpus is almost empty at launch.
 - **The chat does not wander.** The router catches off-topic turns before an
   expensive call.
-- **We store all typed messages,** so the observer can learn from all of them.
+- **We store all typed messages,** so the observer can read all of them.
 
 ## Consequences
 
@@ -99,6 +100,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
   output check stops a text with a contact detail, a link, or a number or a
   name that is not in the plan. When the composer is late, fails or does not
   pass, the scripted reply goes out.
+- The observer adds no wait, and costs a call only on a turn with context
+  (2026-11-04, T-36). A failure gives no note, and goes to the error report.
 - Six handlers is a design. Twelve is a maintenance problem for five
   part-time engineers.
 - Measure cost for each interview and each handler from day one. The cost for
@@ -116,14 +119,14 @@ multi-agent, and not one large model. **All of it ships at launch.**
   launch. When Jev access arrives, try Jev on the eval set.
 
 Superseded: the 2026-09-23 launch plan cut the router, Form B and the
-advisor. On 2026-09-26 they came back, and the advisor got web search after
-sign-in.
+advisor. They came back on 2026-09-26.
 
 ## Alternatives rejected
 
 - **Multi-agent** and **one large model.** The two cost more.
 - **A vector store.** The corpus is dozens of documents, not millions.
 - **A list of Form B notes on the profile, with an edit and a delete for each note.** The product team selected the chat.
+- **The observer on each typed turn.** It costs a call on "30k" (T-36).
 
 ## Revisit when
 

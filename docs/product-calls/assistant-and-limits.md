@@ -1,6 +1,6 @@
 # Product calls: assistant and limits
 
-**Task:** F-14 · **Status:** open · **Updated:** 2026-11-02
+**Task:** F-14 · **Status:** open · **Updated:** 2026-11-04
 
 The product team (founder and product) settles these calls. Engineers do not.
 
@@ -60,13 +60,12 @@ The product team (founder and product) settles these calls. Engineers do not.
 
 ## Round 2
 
-### PC-17 · Vulnerable disclosures: storage and resources
+### PC-17 · Vulnerable disclosures: resources
 
-❓ A user tells the assistant about violence, divorce, job loss or distress. What does the assistant say, and which resources does it show? Must the observer refuse to store it?
+❓ A user tells the assistant about violence, divorce, job loss or distress. What does the assistant say, and which resources does it show?
 
-- **Today:** only `docs/assistant-risks.md` has rules, and it is not a record. It says: acknowledge briefly, do not ask more, do not keep a matching attribute (`docs/assistant-risks.md:48-50`). The observer stores each quoted personal detail, with no exclusion (`docs/decisions/pd-07a-agent-architecture.md:31-34`). No resource list exists.
-- **Options:** a) The observer stores no observation for a disclosure. b) It stores a hidden observation. The match does not use it. c) It stores a usual observation.
-- **Blocks:** T-36, T-34 sensitive band (soft: the default is option a).
+- **Today:** only `docs/assistant-risks.md` has rules, and it is not a record. It says: acknowledge briefly, do not ask more, do not keep a matching attribute (`docs/assistant-risks.md:48-50`). The danger line of T-34 names 112 and Tele-MANAS 14416. The founder decided the storage part on 2026-11-04: no note ([PD10](../decisions/pd-10-scope-bands.md)).
+- **Blocks:** T-34 sensitive band (soft: the line of T-34 stays until an answer).
 - **Record:** [PD10](../decisions/pd-10-scope-bands.md)
 
-➡️ **Recommended:** a, and a short list of national helplines, for example 112 (emergency) and Tele-MANAS 14416 (mental health). Make sure that each number is correct before launch. assistant-risks.md section 4.4 forbids a matching attribute. The typed turn stays in `chat_turns` and goes with account deletion.
+➡️ **Recommended:** a short list of national helplines, for example 112 (emergency) and Tele-MANAS 14416 (mental health). Make sure that each number is correct before launch.

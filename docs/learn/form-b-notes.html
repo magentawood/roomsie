@@ -39,7 +39,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li><strong>Form A</strong> holds the filter answers, for example the budget and the areas (<a href="form-a-and-intent.html">Form A and intent</a>). <strong>Form B</strong> holds the other things that a person tells the assistant.</li>
-<li><strong>A note</strong> (an observation) has seven fields. The observer, an AI step in T-36, writes the notes (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
+<li><strong>A note</strong> (an observation) has seven fields. The observer, a small AI step, writes the notes (<a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>).</li>
 </ul>
 <table>
 <thead>
@@ -91,32 +91,53 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The owner</strong> of a note is a user or a visitor session, never both. A visitor can chat before sign-in.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
-<pre><code>a typed message ──► the observer (T-36) ──► saveObservation ──► observations table
-                                                 │
-                         rejects a topic that is not in observation_topics
+<pre><code>a typed message ──► router: kind &quot;context&quot;? ──► the reply goes out
+                                 │ yes
+                                 ▼  (after the reply)
+                    the observer ──► quote check ──► saveObservation ──► observations table
+                                         │                  │
+                       drops a quote that the       rejects a topic that is not
+                       message does not hold        in observation_topics
 </code></pre>
 <ul>
-<li>The contract is <code>observation</code> in <code>packages/contract</code>.</li>
+<li><strong>When it runs.</strong> Only on a typed turn that the router labels <code>context</code>, after the reply goes out. A note never changes the reply that it comes from. Thus, the observer adds no wait.</li>
+<li><strong>The quote check.</strong> The quote must be in the message: the same words, in the same order, as whole words. Only the capitals, the white space and the Unicode form can differ. The note keeps the words as the message has them.</li>
+<li><strong>The confidence.</strong> It is the token probability of the topic and the kind, from DeepSeek. Gemini gives no probabilities, so its notes get <code>OBSERVER_UNSCORED_CONFIDENCE</code> (0.5). At 0.5, the matching does not use the note.</li>
+<li><strong>No note:</strong> a sensitive turn, a turn that only asks a question, and an off-topic or adversarial turn. A turn that states a community or religion preference also gives no note. The observer never notes religion, community, caste, health or sexuality, and never repeats a chip answer.</li>
+<li><strong>"What do you know about me?"</strong> The router flags it, and a scripted line answers. The web gets the current notes from <code>GET /v1/notes</code>, so the chat keeps no copy. A delete is <code>DELETE /v1/notes/:id</code>, a direct database action. To correct a note, the person types the correction, and the new note replaces the old one.</li>
+<li><strong>The hint.</strong> The first reply after the first note of an owner tells the person that they can ask. It comes one time for each owner.</li>
+<li><strong>The one-off backfill.</strong> <code>pnpm backfill:notes</code> counts the old typed turns with context and the cost. <code>--apply</code> writes their notes, oldest first. A note never replaces a note from a newer turn.</li>
+<li>
+<p><strong>The eval.</strong> <code>pnpm eval:observer</code> runs the live models on the eval sentences. The result is in <a href="../research/observer-eval.md">observer-eval.md</a>.</p>
+</li>
+<li>
+<p>The contract is <code>observation</code> in <code>packages/contract</code>.</p>
+</li>
 <li>The tables are <code>observations</code> and <code>observation_topics</code>. The observations module of the API owns them. Other modules call its functions: save, list, delete one note, delete the notes of a user, and move the notes of a session.</li>
 <li>At sign-in, T-17 calls <code>moveObservations</code>. The notes of the visitor session then belong to the account.</li>
 <li>Account deletion calls <code>deleteObservationsOf</code>.</li>
-<li>To add a topic, add a row to the topic list in the seed. You do not need a migration.</li>
+<li>To add a topic, add a row to the topic list in the seed. You do not need a migration. The prompt of the observer lists the active topics.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li><code>turn</code> holds the id of the message. When that message goes, the note goes too: <a href="https://github.com/magentawood/roomsie/pull/185">#185</a>.</li>
 <li>The topics are a catalogue in the database, the same as the Form A catalogues: <a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>, <a href="https://github.com/magentawood/roomsie/pull/185">#185</a>.</li>
 <li>An owner has one note for each topic. A newer note replaces the older note. At sign-in, the newer note on a topic stays: <a href="https://github.com/magentawood/roomsie/pull/185">#185</a>.</li>
+<li>The observer runs after the reply, only on a turn with context: <a href="../decisions/pd-07a-agent-architecture.md">PD7a</a>, T-36.</li>
+<li>A sensitive turn gives no note: <a href="../decisions/pd-10-scope-bands.md">PD10</a>, T-36.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>A topic that is not in the catalogue fails.</strong> <code>saveObservation</code> gives <code>false</code>. A retired topic (<code>active = false</code>) also fails. Add the topic to the seed first.</li>
 <li><strong>The contract does not trim the quote.</strong> The quote must stay word for word, so that T-36 can find it in the message. The contract trims only <code>value</code>.</li>
 <li><strong>"Newer" uses <code>updated_at</code>.</strong> A replaced note gets a new <code>updated_at</code>. The move compares these times, not the ids.</li>
+<li><strong>A failed observer loses the note, with no message to the person.</strong> The error goes to the error report. The backfill can read the turn again.</li>
+<li><strong>The confidence is 1.0 on almost all notes</strong> in the eval. Thus, the floor of the matching rarely drops a note of DeepSeek.</li>
 <li><strong>The tombstone keeps the users row.</strong> Thus, its cascade does not delete the notes, and account deletion deletes them itself.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-35: <a href="https://github.com/magentawood/roomsie/pull/185">#185</a>, 2026-11-02. The contract, the two tables, the six starter topics, the observations module and the move at sign-in.</li>
+<li>T-36: 2026-11-04. The observer, the quote check, four new topics, the notes question, the delete, the backfill and the eval.</li>
 </ul>
 </main>
