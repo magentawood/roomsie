@@ -95,9 +95,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
+- [Traces of the model calls](learn/traces.md)
 - [Moderation: reports, blocks and the admin screen](learn/moderation.md)
 - [Running the eval](learn/eval-run.md)
 - [The admin home](learn/admin-home.md)
 - [The composer](learn/composer.md)
-- [The eval sentences](learn/eval-set.md)
 <!-- learn-newest:end -->

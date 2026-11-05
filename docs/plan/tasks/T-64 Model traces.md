@@ -28,7 +28,7 @@ Follow one turn of the assistant through its model calls.
 - [[T-62 Admin home]]
 
 ## Unblocks
-- No task waits on this task.
+- [[T-67 Visitor data delete]]
 
 ## Done when
 - [ ] Each model call saves its prompt and its raw answer as a trace

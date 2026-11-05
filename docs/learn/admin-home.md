@@ -27,7 +27,7 @@ GET /v1/admin/home ──▶ the roles of the person
 - The API sends only the cards of the roles of the person. A person with both roles gets each card.
 - The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.
 - The feedback list also gives the count of each face of the last 7 days.
-- T-64 and T-66 add the turns of the AI pipeline and the card of Product numbers, each with its pages.
+- T-66 adds the card of Product numbers, with its pages. The tab Turns of the AI pipeline came with T-64 ([Traces of the model calls](traces.md)).
 - The AI pipeline reads the raw events of today, not a rollup: an exception to `database.md` that the spec of T-65 records. The page slows down at about 250,000 events a day.
 
 ## The choice we made

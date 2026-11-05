@@ -217,8 +217,14 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 <tr>
 <td><a href="decisions/pd-19-retention.md">PD19</a></td>
 <td>Retention: how long roomsie keeps each kind of data</td>
-<td>Settled. The privacy drafter (F-07) confirms it. Changed on 2026-10-28.</td>
+<td>Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64).</td>
 <td>Visitor data goes after 30 days, raw events after 12 months by whole month, the ID photo and the selfie right after the review, and account data at deletion.</td>
+</tr>
+<tr>
+<td><a href="decisions/pd-20-model-traces.md">PD20</a></td>
+<td>Traces of the model calls</td>
+<td>Settled. The privacy drafter (F-07) confirms the privacy text.</td>
+<td>The API keeps the prompt and the raw answer of each model call of a goal for 30 days, with the religion and community words masked before the save, under a session code, and each open in an audit log.</td>
 </tr>
 </tbody>
 </table>
