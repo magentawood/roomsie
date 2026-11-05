@@ -7,6 +7,7 @@ import { modelSwitchState, type AiOverviewResponse, type ModelSwitchBody } from 
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { dateAndTime } from '../../lib/ist'
+import { percent, rupees } from '../../lib/numbers'
 import { useAiOverview, useSwitchLog } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
@@ -17,8 +18,6 @@ import { Toggle } from '../ui/toggle'
 
 type Numbers = NonNullable<AiOverviewResponse['numbers']>
 const card = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
-export const percent = (share: number) => `${(share * 100).toLocaleString('en-IN', { maximumFractionDigits: 1 })}%`
-export const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: amount < 10 ? 2 : 0 })}`
 const seconds = (ms: number | null) => (ms === null ? '—' : `${(ms / 1000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} s`)
 const bandLabels: Record<keyof Numbers['bands'], string> = {
   core: 'Core: the search', general: 'General questions', consequential: 'Consequential: law, tax',
@@ -139,7 +138,7 @@ export function AiOverview() {
         </Metric>
         {numbers && <CallMetrics numbers={numbers} />}
       </div>
-      {numbers ? <RolesAndBands numbers={numbers} /> : <p className="text-sm text-tertiary">No analytics database: the numbers of the calls do not show.</p>}
+      {numbers ? <RolesAndBands numbers={numbers} /> : <p className="text-sm text-tertiary">No numbers of the calls: the analytics database is not set, or it did not answer.</p>}
     </>
   )
 }

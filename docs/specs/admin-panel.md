@@ -54,7 +54,7 @@ Today the admin is six narrow pages with a row of buttons. Nobody on the team ca
 | A new traces module | new: save, mask, read, log the views, delete after 30 days | its route test |
 | The models module | yes: the Gemini switch and its log | the route test of the AI pipeline |
 | The analytics module | yes: the reads of the funnel | the analytics test |
-| The schema | yes: the traces, the trace views and the switch | the route tests |
+| The schema | yes: the traces, the trace views and the switch | the schema test |
 
 **Model test:** the route test of the admin, which signs in a moderator and a person with no role, and checks each route for both.
 

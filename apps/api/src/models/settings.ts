@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { unsetIfEmpty } from '../env-values'
+import type { TelegramSettings } from '../team-alert'
 import { modelsOf, vendorOf } from './models'
 
 const vendorModel = z.string().refine((name) => vendorOf(name) !== undefined, 'a model name starts with deepseek- or gemini-')
@@ -25,6 +26,6 @@ export const spendSettings = z.object({
   TELEGRAM_CHAT_ID: unsetIfEmpty,
 }).transform((s) => ({
   dailyRupees: s.DAILY_SPEND_RUPEES,
-  telegram: s.TELEGRAM_BOT_TOKEN && s.TELEGRAM_CHAT_ID ? { token: s.TELEGRAM_BOT_TOKEN, chatId: s.TELEGRAM_CHAT_ID } : null,
+  telegram: (s.TELEGRAM_BOT_TOKEN && s.TELEGRAM_CHAT_ID ? { token: s.TELEGRAM_BOT_TOKEN, chatId: s.TELEGRAM_CHAT_ID } : null) satisfies TelegramSettings,
 }))
 export type SpendSettings = z.output<typeof spendSettings>

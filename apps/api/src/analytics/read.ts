@@ -1,11 +1,12 @@
 import { and, eq, gte, sql } from 'drizzle-orm'
+import type { ModelRole } from '@roomsie/contract'
 import type { AnalyticsDb } from './client'
 import { events } from './schema'
 
 // A literal key, not a parameter, so the same field in the select and in the group by is one expression.
 const field = (name: 'role' | 'model' | 'outcome' | 'fallback' | 'ms' | 'tokensIn' | 'cachedTokensIn' | 'tokensOut' | 'band') => sql`${events.fields}->>${sql.raw(`'${name}'`)}`
 // The live check of the keys is no call of the assistant.
-const calledSince = (since: Date) => and(eq(events.name, 'model_called'), gte(events.createdAt, since), sql`${field('role')} <> 'check'`)
+const calledSince = (since: Date) => and(eq(events.name, 'model_called'), gte(events.createdAt, since), sql`${field('role')} <> ${'check' satisfies ModelRole}`)
 
 /** The model calls since a time, by role and for all (the null role, always a row), with the slowest 5% (T-65). */
 export const callStats = (db: AnalyticsDb, since: Date) => db.select({

@@ -74,6 +74,9 @@ The health and the spend of the models, and one switch for an outage.
   - **The designs:** drafts section 39 of the Product file ([D-07](D-07%20Admin%20designs.md)), with no status pill.
   - **Rollups (the user, review):** the AI pipeline reads the raw events of today, not a rollup table: an exception to the rollup rule of `database.md`. A rollup cannot give the last 15 minutes, and today is a small part of one partition. T-66 reads rollups. Revisit at about 250,000 events a day.
   - **Copy (review):** the web names the main and the fallback model only from the settings, and the switch keeps its name "Use Gemini for all calls".
+  - **The live check (review):** the calls of `POST /v1/admin/model-check` are not in the numbers, but their spend counts in the spend of today, because they cost money.
+  - **The evals (review):** the eval runners set the switch off, because they ask each model on purpose.
+  - **A failed analytics read (review):** a read that fails or takes over 5 s gives no numbers, as with no analytics database, and the switch still works.
 - **Out of scope:**
   - the turns and the traces (T-64)
   - a change of any setting from the screen but the switch ([the spec](../../specs/admin-panel.md))

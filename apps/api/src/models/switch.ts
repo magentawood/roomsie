@@ -6,14 +6,14 @@ import { emailsOf } from '../users'
 const flips = (db: Db | Tx, limit: number) => db.select({ geminiOnly: modelSwitch.geminiOnly, savedBy: modelSwitch.savedBy, at: modelSwitch.createdAt })
   .from(modelSwitch).orderBy(desc(modelSwitch.createdAt)).limit(limit)
 
-/** Each model call reads it (T-65). */
-export const geminiOnly = async (db: Db) => (await flips(db, 1))[0]?.geminiOnly ?? false
+export const geminiOnly = async (db: Db | Tx) => (await flips(db, 1))[0]?.geminiOnly ?? false
 
 /** A flip to the state of now adds no row. The lock stops two flips at the same time. True: the state changed. */
 export const flipSwitch = (db: Db, userId: string, on: boolean) => db.transaction(async (tx) => {
   await tx.execute(sql`select pg_advisory_xact_lock(hashtext('model_switch'))`)
-  if (((await flips(tx, 1))[0]?.geminiOnly ?? false) === on) return false
-  await tx.insert(modelSwitch).values({ geminiOnly: on, savedBy: userId })
+  if ((await geminiOnly(tx)) === on) return false
+  // The time after the lock, not of the start of the transaction, so the order of the rows is the order of the lock.
+  await tx.insert(modelSwitch).values({ geminiOnly: on, savedBy: userId, createdAt: sql`clock_timestamp()` })
   return true
 })
 

@@ -7,11 +7,11 @@ import { noSiteDetails, type AdminHomeCard } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { india } from '../../lib/ist'
+import { percent, rupees } from '../../lib/numbers'
 import { useAdminHome } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
 import { Bar } from '../ui/bar'
-import { percent, rupees } from './ai-pipeline'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
@@ -73,7 +73,7 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
       )
     case 'ai_pipeline':
       return (
-        <Card icon={CpuChip01} title="AI pipeline" href="/admin/ai" footer={card.failedShare === null ? 'No analytics database' : undefined}>
+        <Card icon={CpuChip01} title="AI pipeline" href="/admin/ai" footer={card.failedShare === null ? 'No numbers of the calls now' : undefined}>
           <Metric value={rupees(card.spendToday)} label={`Spend today, of ${rupees(card.dailyAmount)}`}
             badges={<Badge tone={card.geminiOnly ? 'warning' : 'gray'} dot={false}>{card.geminiOnly ? 'Gemini switch on' : 'Gemini switch off'}</Badge>} />
           <Bar value={card.spendToday} max={card.dailyAmount} label="Spend today" />

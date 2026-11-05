@@ -18,7 +18,7 @@ All the values are first guesses in config, until two to three months of data ([
 | The values | `limitSettings` in `apps/api/src/goals/settings.ts`, and `spendSettings` in `apps/api/src/models/settings.ts` |
 | The counts and the hashes | `apps/api/src/goals/limits.ts` |
 | The refusals: `turn_cap`, `too_many_chats`, `too_fast` | the goals routes, with `limitRefusal` of `packages/contract` |
-| The spend of each day and the alerts | `apps/api/src/models/spend.ts`, and the table `model_spend` |
+| The spend of each day and the alerts | `apps/api/src/models/spend.ts`, the table `model_spend`, and the Telegram send of `apps/api/src/team-alert.ts` |
 | The wall, the button and the two messages | `apps/web/components/chat/chat-screen.tsx` |
 | The refusal of a new chat, next to "Sign up with Google" | `apps/web/components/onboarding/onboarding.tsx` |
 

@@ -1,4 +1,4 @@
-/** A bar of a part of a whole. A `progress` element, because the CSP allows no `style` width. */
+/** A `progress` element: the CSP allows no `style` width. */
 export function Bar({ value, max, label, className = 'w-full' }: { value: number; max: number; label: string; className?: string }) {
   return (
     <progress value={value} max={Math.max(max, 1)} aria-label={label}

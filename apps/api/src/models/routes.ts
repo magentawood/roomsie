@@ -3,6 +3,7 @@ import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { aiOverviewResponse, errorResponse, modelCheckResponse, modelSwitchBody, modelSwitchLogResponse, modelSwitchState, noContent } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import { requireModerator, type AuthOptions } from '../auth'
+import { emailsOf } from '../users'
 import { aiOverview, type AiSources } from './overview'
 import { flipSwitch, switchLog, switchState } from './switch'
 
@@ -15,14 +16,13 @@ export function modelRoutes(v1: FastifyInstance, options: AuthOptions & AiSource
 
   /** A flip acts on the next model call, and the team hears of it in Telegram. */
   app.put('/admin/ai/switch', { preHandler, schema: { body: modelSwitchBody, response: { 200: modelSwitchState, 404: errorResponse } } }, async (req) => {
-    const flipped = await flipSwitch(options.db, req.user!.id, req.body.geminiOnly)
-    const state = await switchState(options.db)
-    if (!flipped) return state
+    if (!await flipSwitch(options.db, req.user!.id, req.body.geminiOnly)) return switchState(options.db)
+    const by = (await emailsOf(options.db, [req.user!.id])).get(req.user!.id) ?? 'a moderator'
     const models = options.models?.settings
-    const to = state.geminiOnly ? `the fallback model${models ? `, ${models.fallback}` : ''}` : `the main model${models ? `, ${models.primary}` : ''}`
-    await v1.teamAlert(`roomsie: ${state.by ?? 'a moderator'} switched all model calls to ${to}.`)
+    const to = req.body.geminiOnly ? `the fallback model${models ? `, ${models.fallback}` : ''}` : `the main model${models ? `, ${models.primary}` : ''}`
+    await v1.teamAlert(`roomsie: ${by} switched all model calls to ${to}.`)
       .catch((err: unknown) => reportError(err, { where: 'models.switch', log: req.log }))
-    return state
+    return switchState(options.db)
   })
 
   app.get('/admin/ai/switch-log', { preHandler, schema: { response: { 200: modelSwitchLogResponse, 404: errorResponse } } }, async () => ({ flips: await switchLog(options.db) }))
@@ -33,8 +33,9 @@ export function modelRoutes(v1: FastifyInstance, options: AuthOptions & AiSource
   })
 
   app.post('/admin/alert-check', { preHandler, schema: { response: { 204: noContent, 404: errorResponse, 502: errorResponse, 503: errorResponse } } }, async (_req, reply) => {
+    if (!options.spend.telegram) return reply.code(503).send({ error: 'the Telegram settings are not set' })
     try {
-      if (!await v1.spend.sendTestAlert()) return reply.code(503).send({ error: 'the Telegram settings are not set' })
+      await v1.teamAlert('roomsie: the spend alert works.')
     } catch (err) {
       // The status of Telegram tells a wrong token (401) from a wrong chat (400).
       return reply.code(502).send({ error: err instanceof Error ? err.message : 'Telegram failed' })

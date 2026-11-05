@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { listingResponse } from './listings'
-import { share } from './models'
+import { callShare } from './models'
 import { cardResponse } from './profiles'
 import { reportReasons } from './reports'
 
@@ -25,7 +25,7 @@ const count = z.int().min(0)
 export const adminHomeCard = z.discriminatedUnion('subject', [
   z.object({ subject: z.literal('moderation'), openReports: count, lateSafety: count, lateOther: count, oldestReportAt: z.iso.datetime().nullable(), feedbackThisWeek: count }),
   z.object({ subject: z.literal('id_checks'), waiting: count, oldestCheckAt: z.iso.datetime().nullable(), late: count, verifiedThisWeek: count }),
-  z.object({ subject: z.literal('ai_pipeline'), spendToday: z.number().min(0), dailyAmount: z.number().positive(), failedShare: share.nullable(), fallbackShare: share.nullable(), geminiOnly: z.boolean() }),
+  z.object({ subject: z.literal('ai_pipeline'), spendToday: z.number().min(0), dailyAmount: z.number().positive(), failedShare: callShare.nullable(), fallbackShare: callShare.nullable(), geminiOnly: z.boolean() }),
   z.object({ subject: z.literal('site_content'), invites: count, inviteOnly: z.boolean(), quotes: count, detailsSet: count }),
 ])
 export type AdminHomeCard = z.infer<typeof adminHomeCard>

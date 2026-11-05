@@ -1,4 +1,4 @@
-import { modelRoles, scopeBands, type AdminHomeCard, type AiOverviewResponse, type ModelRole, type ScopeBand } from '@roomsie/contract'
+import { isModelRole, scopeBands, type AdminHomeCard, type AiOverviewResponse, type ModelRole, type ScopeBand } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import type { FastifyBaseLogger } from 'fastify'
 import type { AnalyticsDb } from '../analytics/client'
@@ -17,9 +17,8 @@ export type AiSources = {
 }
 export type CardSources = Pick<AiSources, 'db' | 'analyticsDb' | 'spend' | 'today'>
 
-const isRole = (role: string | null): role is ModelRole => modelRoles.some((r) => r === role)
-/** The analytics database is a second project: a slow or failed read gives no numbers, and the page and the switch still show. */
-async function bestEffort<T>(read: () => Promise<T>, log: FastifyBaseLogger): Promise<T | null> {
+/** A slow or failed analytics read gives no numbers; the page and the switch still show. */
+export async function bestEffort<T>(read: () => Promise<T>, log: FastifyBaseLogger): Promise<T | null> {
   const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the analytics read took over 5 s')), 5_000).unref())
   return Promise.race([Promise.resolve().then(read), timeout]).catch((err: unknown) => {
     reportError(err, { where: 'models.overview', log })
@@ -38,7 +37,7 @@ async function callNumbers(analyticsDb: AnalyticsDb, now: Date, startOfDay: Date
   return {
     today: { calls: all.calls, failedShare: all.failedShare, fallbackShare: all.fallbackShare, p95Ms: all.p95Ms },
     lastQuarterHour: { calls, failedShare, fallbackShare },
-    roles: counts.flatMap(({ role, ...row }) => (isRole(role) ? [{ ...row, role, rupees: rupeesOfRole(role) }] : [])),
+    roles: counts.flatMap(({ role, ...row }) => (isModelRole(role) ? [{ ...row, role, rupees: rupeesOfRole(role) }] : [])),
     bands: Object.fromEntries(scopeBands.map((band) => [band, bands.find((b) => b.band === band)?.turns ?? 0])) as Record<ScopeBand, number>,
   }
 }

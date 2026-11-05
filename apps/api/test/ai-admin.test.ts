@@ -3,12 +3,12 @@ import { eq } from 'drizzle-orm'
 import type { FastifyBaseLogger, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { adminHomeResponse, aiOverviewResponse, modelSwitchLogResponse, modelSwitchState } from '@roomsie/contract'
-import type { AnalyticsDb } from '../src/analytics/client'
+import { createAnalyticsDb } from '../src/analytics/client'
 import { events } from '../src/analytics/schema'
 import { assistantSettings } from '../src/assistant/settings'
 import { modelSpend, modelSwitch } from '../src/db/schema'
 import { limitSettings } from '../src/goals/settings'
-import { aiCard, aiOverview } from '../src/models/overview'
+import { aiCard, aiOverview, bestEffort } from '../src/models/overview'
 import { modelSettings, spendSettings } from '../src/models/settings'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
@@ -33,6 +33,7 @@ const called = (role: string, model: string, outcome: string, ms: number, age: n
 })
 const routed = (band: string) => ({ name: 'turn_routed', eventVersion: 1, actor: null, createdAt: minutesAgo(30), fields: { band } })
 const overview = async () => aiOverviewResponse.parse((await t.call('moderator', 'GET', '/v1/admin/ai')).json())
+const homeCard = async () => adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
 
 describe('the AI pipeline of the admin', () => {
   it('gives the calls of today and of the last 15 minutes, the spend, the bands and the settings', async () => {
@@ -62,17 +63,27 @@ describe('the AI pipeline of the admin', () => {
     for (const [method, url] of [['GET', '/v1/admin/ai'], ['GET', '/v1/admin/ai/switch-log'], ['PUT', '/v1/admin/ai/switch']] as const) {
       expect((await t.call('member', method, url, method === 'PUT' ? { geminiOnly: true } : undefined)).statusCode).toBe(404)
     }
-    const card = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
-    expect(card).toEqual({ subject: 'ai_pipeline', spendToday: 84.5, dailyAmount: 500, failedShare: 2 / 6, fallbackShare: 1 / 6, geminiOnly: false })
+    expect(await homeCard()).toEqual({ subject: 'ai_pipeline', spendToday: 84.5, dailyAmount: 500, failedShare: 2 / 6, fallbackShare: 1 / 6, geminiOnly: false })
   })
 
-  it('gives no numbers, and still the switch, when the analytics database fails', async () => {
-    const broken = { select: () => { throw new Error('the analytics database is down') } } as unknown as AnalyticsDb
-    const sources = { db: t.db, analyticsDb: broken, spend: spendSettings.parse({}), assistant: assistantSettings.parse({}), limits: limitSettings.parse({}), today: () => '2026-11-02' }
+  it('gives no numbers, and still the switch, when the analytics database refuses the connection', async () => {
+    const down = createAnalyticsDb('postgres://x@127.0.0.1:1/none')
+    const sources = { db: t.db, analyticsDb: down, spend: spendSettings.parse({}), assistant: assistantSettings.parse({}), limits: limitSettings.parse({}), today: () => '2026-11-02' }
     const log = { error: vi.fn() } as unknown as FastifyBaseLogger
     expect(await aiOverview(sources, log)).toMatchObject({ numbers: null, switch: { geminiOnly: false } })
     expect(await aiCard(sources, log)).toMatchObject({ failedShare: null, fallbackShare: null })
     expect(log.error).toHaveBeenCalledTimes(2)
+    await down.$client.end()
+  })
+
+  it('gives no numbers when the analytics read takes over 5 seconds', async () => {
+    vi.useFakeTimers()
+    const log = { error: vi.fn() } as unknown as FastifyBaseLogger
+    const read = bestEffort(() => new Promise<never>(() => {}), log)
+    await vi.advanceTimersByTimeAsync(5_000)
+    expect(await read).toBeNull()
+    expect(log.error).toHaveBeenCalledTimes(1)
+    vi.useRealTimers()
   })
 
   it('flips the switch for the next model call, logs the person and tells the team in Telegram', async () => {
@@ -86,16 +97,13 @@ describe('the AI pipeline of the admin', () => {
     const models = modelSettings.parse(keys)!
     await models.json({ req: live, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: z.object({ intent: z.string() }), session: null })
     expect(telegram.map((r) => r.url)).toEqual([gemini])
-    const on = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
-    expect(on).toMatchObject({ geminiOnly: true })
+    expect(await homeCard()).toMatchObject({ geminiOnly: true })
 
     // A flip to the state of now adds no row and sends no message.
     await t.call('moderator', 'PUT', '/v1/admin/ai/switch', { geminiOnly: true })
     expect(telegram.telegram).toHaveLength(1)
     await t.call('moderator', 'PUT', '/v1/admin/ai/switch', { geminiOnly: false })
     expect(await t.app.geminiOnly()).toBe(false)
-    const card = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
-    expect(card).toMatchObject({ geminiOnly: false })
     const log = modelSwitchLogResponse.parse((await t.call('moderator', 'GET', '/v1/admin/ai/switch-log')).json())
     expect(log.flips.map((f) => [f.geminiOnly, f.by])).toEqual([[false, 'moderator@example.com'], [true, 'moderator@example.com']])
     await t.db.delete(modelSwitch).where(eq(modelSwitch.savedBy, t.ids.moderator))

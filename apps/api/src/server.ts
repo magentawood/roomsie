@@ -83,9 +83,8 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())
   const aiSources = { spend: options.spend ?? spendSettings.parse({}), assistant: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today }
-  const teamAlert = teamAlertOf(aiSources.spend.telegram, app.log)
-  app.decorate('teamAlert', teamAlert)
-  const spend = spendOf({ db: options.db, settings: aiSources.spend, today, log: app.log, alert: teamAlert })
+  app.decorate('teamAlert', teamAlertOf(aiSources.spend.telegram, app.log))
+  const spend = spendOf({ db: options.db, settings: aiSources.spend, today, log: app.log })
   app.decorate('spend', spend)
   app.decorate('geminiOnly', () => geminiOnly(options.db))
   app.addHook('onClose', () => spend.settled())
