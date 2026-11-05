@@ -37,6 +37,7 @@ Add a rule only in one of these two conditions:
 | [`styling.md`](styling.md) | Tailwind v4, theme tokens and the Untitled UI pipeline |
 | [testing.md](testing.md) | The CI gate, tests and assistant evals |
 | [_candidates.md](_candidates.md) | The log of mistakes that no rule covers |
+| [_candidates-1.md](_candidates-1.md) | The log of mistakes that no rule covers, part 1: the rows to 2026-11-03 |
 | [_candidates-archive.md](_candidates-archive.md) | The candidates that became rules |
 
 ## Rules for all code

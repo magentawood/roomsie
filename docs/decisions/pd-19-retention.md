@@ -1,6 +1,6 @@
 # PD19 — Retention: how long roomsie keeps each kind of data
 
-**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64, T-66). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64, T-66, T-67). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -13,7 +13,8 @@
 
 | Data | Kept for |
 |---|---|
-| The session, goals and chat turns of a visitor | 30 days after the last visit, unless the visitor signs in and the goals move to the account |
+| The session, goals and chat turns of a visitor, with their Form B notes, traces and feedback | 30 days after the last visit, unless the visitor signs in and the goals move to the account. Each day at 04:30 IST, a job deletes each session that nobody claimed (T-67). Thus, a visitor chat stays at most 31 days after the last visit. A claimed session stays until the account deletion. |
+| The waitlist entry of a visitor: the email and the place | Until the chat goes and the team invites the email, whichever comes later. The job of the visitors keeps the entry with no chat, and deletes it after the team sets its invite time (T-67). The entry of an account goes with its chat. |
 | Raw analytics events | 12 months, deleted by whole month. Each day at 04:00 IST, a job drops each month that ended 12 months ago or earlier. Thus, an event stays at most 13 months and one day (T-39). |
 | The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
 | The ID photo and the selfie of a verification | Deleted right after the review. A rule of the bucket deletes each file after 7 days, also with no review ([ADR 0020](0020-id-checks-in-s3-with-rekognition.md)). |
