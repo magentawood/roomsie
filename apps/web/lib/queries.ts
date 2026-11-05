@@ -2,9 +2,9 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminHomeView, adminInvitesResponse, adminListingResponse, adminListingsResponse, adminPeopleResponse, adminPersonResponse, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
+  adminHomeView, adminInvitesResponse, adminListingView, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
-  type FormA, type SavedKind,
+  type AdminListingsQuery, type AdminPeopleQuery, type FormA, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError, chatApi } from './api'
 import { areaTree } from './areas'
@@ -68,26 +68,26 @@ export function useAdminHome() {
   return useQuery({ queryKey: queryKeys.adminHome, queryFn: () => api(user, '/v1/admin/home', adminHomeView) })
 }
 
-const searchOf = (q: string, filter: string | null) => new URLSearchParams({ ...(q && { q }), ...(filter && { filter }) }).toString()
+const searchOf = ({ q, filter }: AdminPeopleQuery | AdminListingsQuery) => new URLSearchParams({ ...(q && { q }), ...(filter && { filter }) }).toString()
 
-export function useAdminPeople(q: string, filter: string | null) {
+export function useAdminPeople(query: AdminPeopleQuery) {
   const user = useUser()
-  return useQuery({ queryKey: [...queryKeys.adminPeople, q, filter], queryFn: () => api(user, `/v1/admin/people?${searchOf(q, filter)}`, adminPeopleResponse) })
+  return useQuery({ queryKey: [...queryKeys.adminPeople, query], queryFn: () => api(user, `/v1/admin/people?${searchOf(query)}`, adminPeopleResponse) })
 }
 
 export function useAdminPerson(userId: string) {
   const user = useUser()
-  return useQuery({ queryKey: [...queryKeys.adminPeople, 'one', userId], queryFn: () => api(user, `/v1/admin/people/${userId}`, adminPersonResponse) })
+  return useQuery({ queryKey: [...queryKeys.adminPeople, 'one', userId], queryFn: () => api(user, `/v1/admin/people/${userId}`, adminPersonView) })
 }
 
-export function useAdminListings(q: string, filter: string | null) {
+export function useAdminListings(query: AdminListingsQuery) {
   const user = useUser()
-  return useQuery({ queryKey: [...queryKeys.adminListings, q, filter], queryFn: () => api(user, `/v1/admin/listings?${searchOf(q, filter)}`, adminListingsResponse) })
+  return useQuery({ queryKey: [...queryKeys.adminListings, query], queryFn: () => api(user, `/v1/admin/listings?${searchOf(query)}`, adminListingsResponse) })
 }
 
 export function useAdminListing(id: string) {
   const user = useUser()
-  return useQuery({ queryKey: [...queryKeys.adminListings, 'one', id], queryFn: () => api(user, `/v1/admin/listings/${id}`, adminListingResponse) })
+  return useQuery({ queryKey: [...queryKeys.adminListings, 'one', id], queryFn: () => api(user, `/v1/admin/listings/${id}`, adminListingView) })
 }
 
 export function useAiOverview() {

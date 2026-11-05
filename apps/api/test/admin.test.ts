@@ -73,6 +73,12 @@ describe('the admin routes', () => {
     expect([await logged({ subjectUserId: t.ids.seeker }), await logged({ listingId })]).toEqual([['unhide'], ['unhide']])
   })
 
+  it('dismiss of a card that was not hidden adds no row of the log', async () => {
+    await report('seeker', { profileId: cards.lister }, 'fake')
+    expect((await review('users', t.ids.lister, 'dismiss')).statusCode).toBe(204)
+    expect(await logged({ subjectUserId: t.ids.lister })).toEqual([])
+  })
+
   it('hide closes the reports and hides a card that was visible', async () => {
     await report('seeker', { profileId: cards.other }, 'discriminatory_text')
     expect(await cardSeen(cards.other, 'seeker')).toBe(200)
@@ -80,6 +86,7 @@ describe('the admin routes', () => {
     expect(await cardSeen(cards.other, 'seeker')).toBe(404)
     expect(profileResponse.parse((await t.call('other', 'GET', '/v1/me/profile')).json()).hiddenForReview).toBe(true)
     expect(await statusesOf(t.ids.other)).toEqual(['actioned'])
+    expect(await logged({ subjectUserId: t.ids.other })).toEqual(['hide'])
   })
 
   it('suspend signs the person out, hides the card and the listings, ends the open requests, and closes all the reports', async () => {

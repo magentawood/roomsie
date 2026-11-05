@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt, gte, inArray, isNotNull, lt, lte, min, or } from 'drizzle-orm'
+import { and, count, desc, eq, gt, gte, inArray, isNotNull, lt, lte, max, min, or } from 'drizzle-orm'
 import { checkExpiryDays, type VerificationResponse } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { verifications } from '../db/schema'
@@ -59,6 +59,5 @@ export async function idCheckCounts(db: Db, { lateBefore, since }: { lateBefore:
 
 /** The people with an approved ID check, the newest review first (T-63). */
 export const verifiedUserIds = async (db: Db, limit: number) =>
-  (await db.selectDistinctOn([verifications.userId], { userId: verifications.userId, at: verifications.reviewedAt }).from(verifications)
-    .where(eq(verifications.state, 'verified')).orderBy(verifications.userId, desc(verifications.reviewedAt)))
-    .sort((a, b) => (b.at?.getTime() ?? 0) - (a.at?.getTime() ?? 0)).slice(0, limit).map((r) => r.userId)
+  (await db.select({ userId: verifications.userId }).from(verifications).where(eq(verifications.state, 'verified'))
+    .groupBy(verifications.userId).orderBy(desc(max(verifications.reviewedAt))).limit(limit)).map((r) => r.userId)

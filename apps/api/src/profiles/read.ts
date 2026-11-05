@@ -43,9 +43,9 @@ export const visibleCards = (db: Db, viewerUserId: string, profileIds: string[])
 export const profilesByIds = (db: Db, profileIds: string[]) => db.select().from(profiles).where(inArray(profiles.id, profileIds))
 
 /** A person has one profile at most. */
-export const profilesOfUsers = (db: Db, userIds: string[]) => db.select().from(profiles).where(inArray(profiles.userId, userIds))
+export const profilesOfUsers = (db: Db | Tx, userIds: string[]) => db.select().from(profiles).where(inArray(profiles.userId, userIds))
 
-export const profileOf = async (db: Db, userId: string): Promise<Profile | undefined> => (await profilesOfUsers(db, [userId]))[0]
+export const profileOf = async (db: Db | Tx, userId: string): Promise<Profile | undefined> => (await profilesOfUsers(db, [userId]))[0]
 
 /** The user of a profile that is not the viewer's own, in each state of the card. A caller can add `.for('update')`. */
 export const ownerOfProfile = (db: Db | Tx, profileId: string, viewerUserId: string) =>

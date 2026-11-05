@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'node:crypto'
-import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, lt, ne, or, sql, type SQL } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, lt, max, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
 import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
 import { catalogueOf, type Catalogue } from '../assistant/catalogue'
@@ -227,8 +227,8 @@ export function claimSession(db: Db, key: string, userId: string) {
 
 /** The time of the last typed turn of each person, for the last activity in the admin (T-63). */
 export async function lastTypedTurns(db: Db, userIds: string[]) {
-  const rows = await db.select({ userId: goals.userId, at: sql<Date>`max(${chatTurns.createdAt})`.mapWith((v: string | Date) => new Date(v)) })
+  const rows = await db.select({ userId: goals.userId, at: max(chatTurns.createdAt) })
     .from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
     .where(and(inArray(goals.userId, userIds), eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'))).groupBy(goals.userId)
-  return new Map(rows.map((r) => [r.userId!, r.at]))
+  return new Map(rows.flatMap((r) => (r.userId && r.at ? [[r.userId, r.at] as const] : [])))
 }

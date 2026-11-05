@@ -9281,6 +9281,15 @@
                       ],
                       "additionalProperties": false
                     },
+                    "visibility": {
+                      "nullable": true,
+                      "type": "string",
+                      "enum": [
+                        "draft",
+                        "live",
+                        "hidden"
+                      ]
+                    },
                     "reports": {
                       "type": "array",
                       "items": {
@@ -9336,6 +9345,11 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
                           "action": {
                             "type": "string",
                             "enum": [
@@ -9356,6 +9370,7 @@
                           }
                         },
                         "required": [
+                          "id",
                           "action",
                           "by",
                           "at"
@@ -9376,6 +9391,7 @@
                     "suspended",
                     "verified",
                     "card",
+                    "visibility",
                     "reports",
                     "log"
                   ],
@@ -10343,6 +10359,11 @@
                       "items": {
                         "type": "object",
                         "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
                           "action": {
                             "type": "string",
                             "enum": [
@@ -10363,6 +10384,7 @@
                           }
                         },
                         "required": [
+                          "id",
                           "action",
                           "by",
                           "at"

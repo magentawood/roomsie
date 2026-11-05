@@ -3,6 +3,11 @@ import type { ReportReason } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { reports } from '../db/schema'
 
+/** A person or a listing that reports are about. */
+export type Subject = { userId: string } | { listingId: string }
+/** The reports of a person, not of a listing, or of a listing. */
+const about = (subject: Subject) => ('listingId' in subject ? eq(reports.listingId, subject.listingId) : and(eq(reports.subjectUserId, subject.userId), isNull(reports.listingId)))
+
 /** The moderator's queue: the open reports, oldest first (T-19). */
 export const openReports = (db: Db) => db.select().from(reports).where(eq(reports.status, 'open')).orderBy(asc(reports.createdAt))
 
@@ -10,9 +15,8 @@ export const openReports = (db: Db) => db.select().from(reports).where(eq(report
  * Closes the open reports of a queue item: a listing, or a person with no listing. Gives the reported user of each.
  * The reports of a listing that its owner deleted have no listing, so they go with the person.
  */
-export function closeReports(tx: Tx, item: { listingId: string } | { userId: string }, status: 'dismissed' | 'actioned') {
-  const ofItem = 'listingId' in item ? eq(reports.listingId, item.listingId) : and(eq(reports.subjectUserId, item.userId), isNull(reports.listingId))
-  return tx.update(reports).set({ status }).where(and(ofItem, eq(reports.status, 'open'))).returning({ subjectUserId: reports.subjectUserId })
+export function closeReports(tx: Tx, item: Subject, status: 'dismissed' | 'actioned') {
+  return tx.update(reports).set({ status }).where(and(about(item), eq(reports.status, 'open'))).returning({ subjectUserId: reports.subjectUserId })
 }
 
 /** At a suspension: each open report about the person is actioned. */
@@ -36,11 +40,8 @@ export async function reportCounts(db: Db, { safetyReasons, safetyLateBefore, la
   return row!
 }
 
-type Subject = { userId: string } | { listingId: string }
-/** The reports of a person, not of a listing, or of a listing (T-63). */
-const about = (subject: Subject) => ('listingId' in subject ? eq(reports.listingId, subject.listingId) : and(eq(reports.subjectUserId, subject.userId), isNull(reports.listingId)))
-
-export const reportsAbout = (db: Db, subject: Subject) => db.select().from(reports).where(about(subject)).orderBy(desc(reports.createdAt))
+/** The newest reports of a person or a listing. */
+export const reportsAbout = (db: Db, subject: Subject, limit = 100) => db.select().from(reports).where(about(subject)).orderBy(desc(reports.createdAt)).limit(limit)
 
 /** The count of the open reports of each person or listing. */
 export async function openReportCounts(db: Db, by: 'userId' | 'listingId', ids: string[]) {

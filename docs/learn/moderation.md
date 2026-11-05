@@ -35,8 +35,8 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 - **A hidden card** leaves the results, the person detail and Saved. It cannot get a request, and its owner cannot send a new one. The owner sees "Hidden for review" on the profile page. "Hide my card" does not bring it back. A hidden listing works in the same way ([Place detail](place-detail.md)).
 - **A block** hides the two people in the results, the person detail, Saved and the listings. An open message request between them becomes declined, so its sender sees "Not available" ([Message requests](message-requests.md)). Each saved comparison of the other person shows "Not available" for that person too ([Comparing cards](compare-cards.md)). There is no unblock in v0.
 - **The queue** has one item for each reported person or listing, with all its open reports. Safety reports come first, then the oldest.
-- **People and listings** finds each account by the name of its card or its sign-in email, and each listing by its area or by the name or the email of its lister. The lists give the 50 newest that match. A person shows the card as users see it, the email, the reports and the log, and never gender, religion or community. An action closes the open reports as the queue does: an unhide as dismissed, the other actions as actioned.
-- **The log** gets a row from each action of People and listings and from each review of the queue. A dismiss in the queue clears the hide, so the log shows it as an unhide.
+- **People and listings** finds each account by the name of its card or its sign-in email, and each listing by its area or by the name or the email of its lister. A list is a search or a filter, not both, and gives the 50 newest that match. A person shows the card as users see it, the email, the reports and the log, and never gender, religion or community. An action closes the open reports as the queue does: an unhide as dismissed, the other actions as actioned.
+- **The log** gets a row from each action of People and listings and from each review of the queue that changes something. A dismiss of a hidden item is an unhide, and the suspend of a person also covers the hide of the card.
 - **Suspend** sets `tokens_valid_after` to now, so each token of the person stops. It also hides the card and the listings, and closes each open report about the person. The open requests that the person sent are withdrawn. The open requests to the person are declined, so their senders see "Not available".
 
 ## The choice we made
@@ -51,7 +51,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 - **A non-moderator gets 404 from the admin routes**, and a guest gets 401. On the web, both see "not found" at each admin address. Thus, the screen does not show that it exists.
 - **The end of a suspension is not in v0.** A developer changes the status in the database.
 - **A report of a deleted listing** goes to the item of its owner, because the listing is gone.
-- **The log keeps a row after the moderator deletes the account.** The row then shows "a deleted account". The rows of a person or a listing go when the account or the listing goes.
+- **The log stays after an account deletion**, as the reports do, because the `users` row stays as a tombstone. A row of a deleted moderator shows "a deleted account". The rows of a listing go when its owner deletes the listing.
 - **A removed listing keeps its rows and photos** until its owner deletes it in Edit. A moderator cannot delete a listing or an account.
 
 ## Tickets

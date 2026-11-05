@@ -1,8 +1,6 @@
 import { directoryTabs, SubjectPage } from '../../../components/admin/admin-page'
-import { ListingsList } from '../../../components/admin/directory'
-
-const intro = 'Find a person or a listing, and act on it. Gender, religion and community never show here.'
+import { directoryIntro, ListingsList } from '../../../components/admin/directory'
 
 export default function AdminListingsPage() {
-  return <SubjectPage role="moderator" title="People and listings" tabs={directoryTabs} intro={intro}><ListingsList /></SubjectPage>
+  return <SubjectPage role="moderator" title="People and listings" tabs={directoryTabs} intro={directoryIntro}><ListingsList /></SubjectPage>
 }

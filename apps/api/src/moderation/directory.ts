@@ -1,8 +1,8 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import {
-  adminListingResponse, adminListingsResponse, adminPeopleResponse, adminPersonResponse, errorResponse, listingActionBody, listingFilters, noContent, peopleFilters,
-  personActionBody, type AdminListingRow, type AdminPersonRow,
+  adminListingResponse, adminListingsQuery, adminListingsResponse, adminPeopleQuery, adminPeopleResponse, adminPersonResponse, errorResponse, listingActionBody, noContent,
+  personActionBody, reportReasons, type AdminListingRow, type AdminPersonRow,
 } from '@roomsie/contract'
 import { z } from 'zod'
 import { listAreas } from '../areas'
@@ -13,19 +13,19 @@ import { listingsByIds, listingView, newestListings, partsOf, rowTitle, setListi
 import { lastSentMessages } from '../messages/read'
 import { idParams } from '../params'
 import { answersOf, cardView, hiddenCardOwners, ownersNamed, profileOf, profilesOfUsers, setCardHiddenForReview } from '../profiles/read'
-import { closeReports, openReportCounts, reportedIds, reportsAbout } from '../reports/read'
+import { closeReports, openReportCounts, reportedIds, reportsAbout, type Subject } from '../reports/read'
 import { firstPhotoUrl, type Storage } from '../storage'
-import { accountsOf, newestAccounts } from '../users'
+import { accountsOf, emailsOf, newestAccounts } from '../users'
 import { verifiedIds, verifiedUserIds } from '../verification/read'
-import { logAction, logOf, type Subject } from './log'
-import { suspend } from './routes'
+import { logAction, logOf } from './log'
+import { suspend } from './suspend'
 
 const limit = 50
 const unique = (ids: string[]) => [...new Set(ids)]
-const newest = (times: (Date | null | undefined)[]) => times.reduce<Date | null>((a, b) => (b && (!a || b > a) ? b : a), null)
+const latest = (times: (Date | null | undefined)[]) => times.reduce<Date | null>((a, b) => (b && (!a || b > a) ? b : a), null)
 
 const reportsOf = async (db: Db, subject: Subject) =>
-  (await reportsAbout(db, subject)).map((r) => ({ id: r.id, reason: r.reason, detail: r.detail, status: r.status, createdAt: r.createdAt.toISOString() }))
+  (await reportsAbout(db, subject)).map((r) => ({ id: r.id, reason: z.enum(reportReasons).parse(r.reason), detail: r.detail, status: r.status, createdAt: r.createdAt.toISOString() }))
 
 /** The rows of these people, in this order, without the deleted accounts. Never gender, religion or community. */
 async function peopleRows(db: Db, storage: Storage, ids: string[]): Promise<AdminPersonRow[]> {
@@ -41,7 +41,7 @@ async function peopleRows(db: Db, storage: Storage, ids: string[]): Promise<Admi
     const card = cardOf.get(id)
     return [{
       userId: id, name: card?.fullName ?? null, email: account.email, photoUrl: card ? firstPhotoUrl(storage, card.photoKeys) : null,
-      joinedAt: account.joinedAt.toISOString(), lastActiveAt: newest([account.lastSignInAt, turns.get(id), sent.get(id)])?.toISOString() ?? null,
+      joinedAt: account.joinedAt.toISOString(), lastActiveAt: latest([account.lastSignInAt, turns.get(id), sent.get(id)])?.toISOString() ?? null,
       openReports: reports.get(id) ?? 0, hidden: card?.hiddenAt != null, suspended: account.status === 'suspended', verified: verified.has(id),
     }]
   })
@@ -50,8 +50,8 @@ async function peopleRows(db: Db, storage: Storage, ids: string[]): Promise<Admi
 async function listingRows(db: Db, rows: Listing[]): Promise<AdminListingRow[]> {
   const ids = rows.map((l) => l.id)
   const owners = unique(rows.map((l) => l.ownerUserId))
-  const [areas, cards, accounts, reports, parts] = await Promise.all([
-    listAreas(db), profilesOfUsers(db, owners), accountsOf(db, owners), openReportCounts(db, 'listingId', ids), partsOf(db, ids),
+  const [areas, cards, emails, reports, parts] = await Promise.all([
+    listAreas(db), profilesOfUsers(db, owners), emailsOf(db, owners), openReportCounts(db, 'listingId', ids), partsOf(db, ids),
   ])
   const areaName = new Map(areas.map((a) => [a.slug, a.name]))
   const now = new Date()
@@ -61,19 +61,19 @@ async function listingRows(db: Db, rows: Listing[]): Promise<AdminListingRow[]> 
     return {
       id: l.id, title: rowTitle(l), area: l.areaSlug ? (areaName.get(l.areaSlug) ?? l.areaSlug) : null,
       lister: cards.find((c) => c.userId === l.ownerUserId && !c.managedByParent)?.fullName ?? null,
-      listerEmail: accounts.find((a) => a.id === l.ownerUserId)?.email ?? null, rent: rents.length ? Math.min(...rents) : null,
+      listerEmail: emails.get(l.ownerUserId) ?? null, rent: rents.length ? Math.min(...rents) : null,
       postedAt: l.createdAt.toISOString(), openReports: reports.get(l.id) ?? 0,
       live: l.status === 'live' && !expired && !l.hiddenAt && !l.removedAt, hidden: l.hiddenAt !== null, removed: l.removedAt !== null, expired,
     }
   })
 }
 
-/** The accounts whose card name or sign-in email has the text, the names first. */
-const accountsMatching = async (db: Db, text: string) =>
-  unique([...(await ownersNamed(db, text, limit)).map((r) => r.userId), ...(await newestAccounts(db, limit, { email: text })).map((r) => r.id)]).slice(0, limit)
+/** The newest accounts whose card name or sign-in email has the text. */
+async function accountsMatching(db: Db, text: string) {
+  const ids = unique([...(await ownersNamed(db, text, limit)).map((r) => r.userId), ...(await newestAccounts(db, limit, { email: text })).map((r) => r.id)])
+  return (await accountsOf(db, ids)).filter((a) => a.status !== 'deleted').sort((a, b) => b.joinedAt.getTime() - a.joinedAt.getTime()).slice(0, limit).map((a) => a.id)
+}
 
-const peopleQuery = z.object({ q: z.string().trim().max(100).optional(), filter: z.enum(peopleFilters).optional() })
-const listingsQuery = z.object({ q: z.string().trim().max(100).optional(), filter: z.enum(listingFilters).optional() })
 
 /** The people and the listings of the admin, and the actions of a moderator on them (T-63). */
 export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
@@ -81,16 +81,14 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireModerator(options)
 
-  app.get('/admin/people', { preHandler, schema: { querystring: peopleQuery, response: { 200: adminPeopleResponse, 404: errorResponse } } }, async (req) => {
+  app.get('/admin/people', { preHandler, schema: { querystring: adminPeopleQuery, response: { 200: adminPeopleResponse, 404: errorResponse } } }, async (req) => {
     const { q, filter } = req.query
     const ids = q ? await accountsMatching(db, q)
       : filter === 'reported' ? await reportedIds(db, 'userId', limit)
         : filter === 'hidden' ? (await hiddenCardOwners(db, limit)).map((r) => r.userId)
           : filter === 'verified' ? await verifiedUserIds(db, limit)
             : (await newestAccounts(db, limit, { suspended: filter === 'suspended' })).map((r) => r.id)
-    const rows = await peopleRows(db, storage, ids)
-    const flag = { reported: (p: AdminPersonRow) => p.openReports > 0, hidden: (p: AdminPersonRow) => p.hidden, suspended: (p: AdminPersonRow) => p.suspended, verified: (p: AdminPersonRow) => p.verified }
-    return { people: filter ? rows.filter(flag[filter]) : rows }
+    return { people: await peopleRows(db, storage, ids) }
   })
 
   app.get('/admin/people/:id', { preHandler, schema: { params: idParams, response: { 200: adminPersonResponse, 404: errorResponse } } }, async (req, reply) => {
@@ -99,14 +97,15 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
     if (!row) return reply.code(404).send({ error: 'not found' })
     const card = await profileOf(db, userId)
     const [answers, reports, log] = await Promise.all([card ? answersOf(db, card.id) : null, reportsOf(db, { userId }), logOf(db, { userId })])
-    return { ...row, card: card && answers ? cardView(card, answers, storage) : null, reports, log }
+    return { ...row, card: card && answers ? cardView(card, answers, storage) : null, visibility: card?.visibility ?? null, reports, log }
   })
 
   app.post('/admin/people/:id/actions', { preHandler, schema: { params: idParams, body: personActionBody, response: { 204: noContent, 404: errorResponse } } }, async (req, reply) => {
     const userId = req.params.id
     const { action } = req.body
     const done = await db.transaction(async (tx: Tx) => {
-      if (!(await accountsOf(tx, [userId])).some((a) => a.status !== 'deleted')) return false
+      // The lock keeps a deletion of the account from running between the check and the action.
+      if (!(await accountsOf(tx, [userId]).for('update')).some((a) => a.status !== 'deleted')) return false
       if (action === 'suspend') await suspend(tx, userId)
       else if (!(await setCardHiddenForReview(tx, userId, action === 'hide' ? new Date() : null).returning()).length) return false
       await closeReports(tx, { userId }, action === 'unhide' ? 'dismissed' : 'actioned')
@@ -116,7 +115,7 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
     return done ? reply.code(204).send(null) : reply.code(404).send({ error: 'not found' })
   })
 
-  app.get('/admin/listings', { preHandler, schema: { querystring: listingsQuery, response: { 200: adminListingsResponse, 404: errorResponse } } }, async (req) => {
+  app.get('/admin/listings', { preHandler, schema: { querystring: adminListingsQuery, response: { 200: adminListingsResponse, 404: errorResponse } } }, async (req) => {
     const { q, filter } = req.query
     let rows: Listing[]
     if (q) {
@@ -128,9 +127,7 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
       const byId = new Map((await listingsByIds(db, ids)).map((l) => [l.id, l]))
       rows = ids.flatMap((id) => byId.get(id) ?? [])
     } else rows = await newestListings(db, limit, { hidden: filter === 'hidden', removed: filter === 'removed' })
-    const listings = await listingRows(db, rows)
-    const flag = { reported: (l: AdminListingRow) => l.openReports > 0, hidden: (l: AdminListingRow) => l.hidden, removed: (l: AdminListingRow) => l.removed }
-    return { listings: filter ? listings.filter(flag[filter]) : listings }
+    return { listings: await listingRows(db, rows) }
   })
 
   app.get('/admin/listings/:id', { preHandler, schema: { params: idParams, response: { 200: adminListingResponse, 404: errorResponse } } }, async (req, reply) => {
@@ -145,7 +142,8 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
     const listingId = req.params.id
     const { action } = req.body
     const done = await db.transaction(async (tx: Tx) => {
-      if (!(await listingsByIds(tx, [listingId])).length) return false
+      // The lock keeps a delete of the listing from running between the check and the action.
+      if (!(await listingsByIds(tx, [listingId]).for('update')).length) return false
       if (action === 'remove') await setListingRemoved(tx, listingId, new Date())
       else await setListingHiddenForReview(tx, listingId, action === 'hide' ? new Date() : null)
       await closeReports(tx, { listingId }, action === 'unhide' ? 'dismissed' : 'actioned')

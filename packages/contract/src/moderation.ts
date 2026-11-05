@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { listingResponse } from './listings'
 import { callShare } from './models'
-import { cardResponse } from './profiles'
+import { cardResponse, visibilities } from './profiles'
 import { reportReasons } from './reports'
 
 /** Dismiss brings the card or the listing back, hide keeps it hidden, and suspend also suspends the account (T-19). */
@@ -42,9 +42,19 @@ export const personActions = ['hide', 'unhide', 'suspend'] as const
 export const listingActions = ['hide', 'unhide', 'remove'] as const
 export const personActionBody = z.strictObject({ action: z.enum(personActions) })
 export const listingActionBody = z.strictObject({ action: z.enum(listingActions) })
+export const moderationActions = ['hide', 'unhide', 'suspend', 'remove'] as const
 export const peopleFilters = ['reported', 'hidden', 'suspended', 'verified'] as const
 export const listingFilters = ['reported', 'hidden', 'removed'] as const
-const logEntry = z.object({ action: z.enum([...personActions, 'remove']), by: z.string().nullable(), at: z.iso.datetime() })
+// A list is a search or a filter, so each gives the 50 newest that match.
+const oneOf = (query: { q?: string; filter?: string }) => !(query.q && query.filter)
+const search = z.string().trim().max(100).optional()
+export const adminPeopleQuery = z.object({ q: search, filter: z.enum(peopleFilters).optional() }).refine(oneOf, 'a search or a filter, not both')
+export const adminListingsQuery = z.object({ q: search, filter: z.enum(listingFilters).optional() }).refine(oneOf, 'a search or a filter, not both')
+export type AdminPeopleQuery = z.input<typeof adminPeopleQuery>
+export type AdminListingsQuery = z.input<typeof adminListingsQuery>
+const logEntry = z.object({ id: z.uuid(), action: z.enum(moderationActions), by: z.string().nullable(), at: z.iso.datetime() })
+/** Drops a row of an action that the web does not know, so a tab with an older bundle shows the other rows. */
+const logView = z.array(z.looseObject({ action: z.string() })).transform((rows) => rows.filter((row) => (moderationActions as readonly string[]).includes(row.action))).pipe(z.array(logEntry))
 const subjectReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), status: z.enum(['open', 'dismissed', 'actioned']), createdAt: z.iso.datetime() })
 
 /** A person of the admin: never gender, religion or community (the spec of the admin panel). `name` is null with no card. */
@@ -53,7 +63,7 @@ export const adminPersonRow = z.object({
   joinedAt: z.iso.datetime(), lastActiveAt: z.iso.datetime().nullable(), openReports: count, hidden: z.boolean(), suspended: z.boolean(), verified: z.boolean(),
 })
 export const adminPeopleResponse = z.object({ people: z.array(adminPersonRow) })
-export const adminPersonResponse = adminPersonRow.extend({ card: cardResponse.nullable(), reports: z.array(subjectReport), log: z.array(logEntry) })
+export const adminPersonResponse = adminPersonRow.extend({ card: cardResponse.nullable(), visibility: z.enum(visibilities).nullable(), reports: z.array(subjectReport), log: z.array(logEntry) })
 
 export const adminListingRow = z.object({
   id: z.uuid(), title: z.string(), area: z.string().nullable(), lister: z.string().nullable(), listerEmail: z.string().nullable(), rent: z.int().nullable(),
@@ -61,6 +71,8 @@ export const adminListingRow = z.object({
 })
 export const adminListingsResponse = z.object({ listings: z.array(adminListingRow) })
 export const adminListingResponse = adminListingRow.extend({ listerUserId: z.uuid(), listing: listingResponse, reports: z.array(subjectReport), log: z.array(logEntry) })
+export const adminPersonView = adminPersonResponse.extend({ log: logView })
+export const adminListingView = adminListingResponse.extend({ log: logView })
 export type AdminPersonRow = z.infer<typeof adminPersonRow>
 export type AdminListingRow = z.infer<typeof adminListingRow>
 export type AdminLogEntry = z.infer<typeof logEntry>

@@ -64,10 +64,9 @@ export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: 
   return <RoleGate {...props} />
 }
 
-/** The width and the padding of the body of an admin page. */
 export const pageBody = 'mx-auto flex w-full max-w-320 flex-col gap-5 px-4 py-5 md:px-8 md:py-6 lg:px-20'
 
-/** The header of a subject or of one item: the title, the intro and the tabs (drafts sections 37 and 38). A phone gets a link back to the admin; an item gets its own link back at each width. */
+/** The title, the intro, the tabs and the link back (drafts sections 37 and 38). The link to the admin shows only on a phone. */
 export function SubjectHeader({ title, intro, tabs, back }: { title: string; intro?: string; tabs?: Tab[]; back?: Tab }) {
   const path = usePathname()
   const link = back ?? { label: 'Admin', href: '/admin' }

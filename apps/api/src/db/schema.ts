@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, feedbackRatings, foodAnswers, furnishings, genders, goalStatuses, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, moderationActions, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
   type WaitlistPlace,
 } from '@roomsie/contract'
 
@@ -605,7 +605,7 @@ export const blocks = pgTable('blocks', {
   blockedIdx: index('blocks_blocked_idx').on(t.blockedUserId),
 })).enableRLS()
 
-export const moderationActionEnum = pgEnum('moderation_action', ['hide', 'unhide', 'suspend', 'remove'])
+export const moderationActionEnum = pgEnum('moderation_action', moderationActions)
 /** The log of the actions of the moderators on people and listings (T-63). The moderation module owns it. */
 export const moderationLog = pgTable('moderation_log', {
   id: id(),

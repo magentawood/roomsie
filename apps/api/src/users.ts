@@ -45,7 +45,7 @@ export async function emailsOf(db: Db, userIds: string[]) {
   return new Map(rows.map((r) => [r.id, r.email]))
 }
 
-/** The accounts for the admin (T-63): the status, the times, and the email. A deleted account is a tombstone, not an account. */
+/** The accounts for the admin (T-63): the status, the times, and the email. */
 export const accountsOf = (db: Db | Tx, userIds: string[]) => db.select({ id: users.id, email: users.email, status: users.status, joinedAt: users.createdAt, lastSignInAt: users.lastSignInAt })
   .from(users).where(inArray(users.id, userIds))
 
