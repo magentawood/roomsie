@@ -646,7 +646,7 @@ export const waitlist = pgTable('waitlist', {
   email: text('email').notNull(),
   /** The column keeps the name `area` from before T-22a. */
   place: text('area').$type<WaitlistPlace>().notNull(),
-  /** The chat that named the place. Cascade: an account deletion removes the entry (DPDP). Null: the visitor chat went (PD19). */
+  /** An account deletion removes the entry (DPDP). Null: the visitor chat went (PD19). */
   goalId: uuid('goal_id').references(() => goals.id, { onDelete: 'cascade' }),
   createdAt: createdAt(),
   invitedAt: timestamp('invited_at', { withTimezone: true }),

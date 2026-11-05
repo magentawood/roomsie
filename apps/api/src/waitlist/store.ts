@@ -6,7 +6,7 @@ import { waitlist } from '../db/schema'
 /** The number of emails that one chat can add (T-22a). */
 const entriesPerGoal = 3
 
-/** Saves one entry of a chat. The same email and place again change nothing. False: the chat has no entries left. */
+/** Saves one entry of a chat. False: the chat has no entries left. */
 export function joinWaitlist(db: Db, { email, place, goalId }: { email: string; place: WaitlistPlace; goalId: string }) {
   return db.transaction(async (tx) => {
     // Two joins of one chat at the same time must not both pass the count.

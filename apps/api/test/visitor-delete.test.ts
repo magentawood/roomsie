@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { and, eq, sql } from 'drizzle-orm'
+import type { WaitlistPlace } from '@roomsie/contract'
 import { sessionDays } from '../src/goals/store'
 import { anonymousSessions, chatTurns, feedback, goals, observations, observationTopics, tracePrompts, traces, users, waitlist } from '../src/db/schema'
 import { createTestDb, type TestDb } from './db'
@@ -12,6 +13,7 @@ beforeAll(async () => {
 })
 afterAll(() => t.drop())
 
+const place: WaitlistPlace = 'bhiwandi'
 const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000)
 const deleteOldVisitors = () => t.db.execute(sql`select jobs.delete_old_visitors()`)
 const userNamed = async (name: string) => (await t.db.insert(users).values({ authProviderId: `uid-${name}` }).returning({ id: users.id }))[0]!.id
@@ -31,11 +33,12 @@ async function visitorChat(name: string, daysSinceVisit: number) {
     startedAt: daysAgo(daysSinceVisit), ms: 900, tokensIn: 100, cachedTokensIn: 0, tokensOut: 10, promptHash: 'prompt', messages: { version: 1, list: [] }, answer: '{}',
   })
   await t.db.insert(feedback).values({ goalId, rating: 'good', text: 'Nice chat' })
-  await t.db.insert(waitlist).values({ email: `${name}@example.com`, place: 'bhiwandi', goalId })
+  await t.db.insert(waitlist).values({ email: `${name}@example.com`, place, goalId })
   return { sessionId, goalId }
 }
 
-const countsOf = async ({ sessionId, goalId }: { sessionId: string; goalId: string }) => ({
+type VisitorChat = Awaited<ReturnType<typeof visitorChat>>
+const countsOf = async ({ sessionId, goalId }: VisitorChat) => ({
   sessions: await t.db.$count(anonymousSessions, eq(anonymousSessions.id, sessionId)),
   goals: await t.db.$count(goals, eq(goals.id, goalId)),
   turns: await t.db.$count(chatTurns, eq(chatTurns.goalId, goalId)),
@@ -43,7 +46,7 @@ const countsOf = async ({ sessionId, goalId }: { sessionId: string; goalId: stri
   traces: await t.db.$count(traces, eq(traces.goalId, goalId)),
   feedback: await t.db.$count(feedback, eq(feedback.goalId, goalId)),
 })
-const entryOf = async (email: string) => (await t.db.select({ goalId: waitlist.goalId }).from(waitlist).where(and(eq(waitlist.email, email), eq(waitlist.place, 'bhiwandi'))))[0]
+const entryOf = async (email: string) => (await t.db.select({ goalId: waitlist.goalId }).from(waitlist).where(and(eq(waitlist.email, email), eq(waitlist.place, place))))[0]
 
 describe('the job of the old visitor chats (T-67)', () => {
   it('deletes a visitor chat 30 days after the last visit, with its goal, turns, notes, traces and feedback', async () => {
@@ -69,7 +72,7 @@ describe('the job of the old visitor chats (T-67)', () => {
     expect(await entryOf('waiting@example.com')).toEqual({ goalId: null })
     // An entry of a signed-in person keeps its chat, also after its invite.
     const [own] = await t.db.insert(goals).values({ userId: await userNamed('member') }).returning({ id: goals.id })
-    await t.db.insert(waitlist).values({ email: 'member@example.com', place: 'bhiwandi', goalId: own!.id, invitedAt: daysAgo(1) })
+    await t.db.insert(waitlist).values({ email: 'member@example.com', place, goalId: own!.id, invitedAt: daysAgo(1) })
     await t.db.update(waitlist).set({ invitedAt: new Date() }).where(eq(waitlist.email, 'waiting@example.com'))
     await deleteOldVisitors()
     expect(await entryOf('waiting@example.com')).toBeUndefined()

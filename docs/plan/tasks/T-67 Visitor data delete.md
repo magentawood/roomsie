@@ -31,9 +31,9 @@ The session, the goals and the chat of a visitor go 30 days after the last visit
 - No task waits on this task.
 
 ## Done when
-- [ ] A nightly job deletes each visitor session 30 days after its last visit, with its goals, chat turns and notes
-- [ ] A session that a person claimed at sign-in stays
-- [ ] PD19 and the learn pages say how the delete runs
+- [x] A nightly job deletes each visitor session 30 days after its last visit, with its goals, chat turns and notes · [#234](https://github.com/magentawood/roomsie/pull/234)
+- [x] A session that a person claimed at sign-in stays · [#234](https://github.com/magentawood/roomsie/pull/234)
+- [x] PD19 and the learn pages say how the delete runs · [#234](https://github.com/magentawood/roomsie/pull/234)
 
 ^done
 
@@ -58,8 +58,19 @@ The session, the goals and the chat of a visitor go 30 days after the last visit
   - **A claimed session stays.** The account deletion deletes it, as now.
   - **The waitlist (the user):** before the delete, the job keeps each waitlist entry of an old visitor chat, with no chat. An entry with no chat stays until the team invites its email: the job deletes it after its invite time is set. The limit of three emails for each chat does not change.
   - **The feedback (the user):** the feedback of a visitor goal goes with the goal.
+  - **In the review (the user):** the test reads a waitlist entry by its key, the email and the place; the learn page of the visitor chat gives the steps to schedule the job again after a restore.
 - **Out of scope:**
   - a tool or a page that sends the waitlist invites or sets the invite time
   - a delete of a claimed session before the account deletion
   - the backups: a deleted chat stays in the dumps for their period (PD13)
   - the analytics events: they have no link to a visitor session
+
+## Log
+
+- **2026-11-06 · [#234](https://github.com/magentawood/roomsie/pull/234)**
+  - **Change:** a nightly pg_cron job deletes each visitor session that nobody claimed, 30 days after its last visit, with its goals, chat turns, notes, traces and feedback. A waitlist entry of an old visitor chat stays with no chat until the team sets its invite time.
+  - **Why:** [PD19](../../decisions/pd-19-retention.md) promised the delete, and no code did it.
+  - **Ticked:** the three items.
+  - **Not done:** none.
+  - **Learn:** [The visitor chat at sign-in](../../learn/visitor-chat-claim.md), [Goals](../../learn/goals.md), [Form B notes](../../learn/form-b-notes.md), [Areas](../../learn/areas.md), [Backups](../../learn/backups.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

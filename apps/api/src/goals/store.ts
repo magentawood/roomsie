@@ -8,7 +8,7 @@ import { anonymousSessions, chatTurns, goals } from '../db/schema'
 import { moveObservations, observationsOf, type Owner } from '../observations/read'
 import { saveOwnValues } from '../profiles/own-values'
 
-/** PD19: `jobs.delete_old_visitors` deletes the chat of a visitor at its first nightly run 30 days after the last visit. */
+/** The days from the last visit to the expiry of a visitor chat. Then `jobs.delete_old_visitors` deletes it (PD19). */
 export const sessionDays = 30
 export const hashOf = (value: string) => createHash('sha256').update(value).digest('hex')
 const expiry = () => new Date(Date.now() + sessionDays * 86_400_000)
