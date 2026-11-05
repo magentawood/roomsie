@@ -1,4 +1,4 @@
-import { and, count, desc, eq, ilike, inArray, ne, sql, type SQLWrapper } from 'drizzle-orm'
+import { and, desc, eq, ilike, inArray, ne, sql, type SQLWrapper } from 'drizzle-orm'
 import type { Db, Tx } from './db/client'
 import { users } from './db/schema'
 import { containing } from './text/like'

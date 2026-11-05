@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, gt, ilike, inArray, isNotNull, isNull, ne, or, sql } from 'drizzle-orm'
+import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, ne, or, sql } from 'drizzle-orm'
 import { listingTitle, sharingTypes, type ListingResponse } from '@roomsie/contract'
 import { noBlockBetween } from '../blocks/read'
 import type { Db, Tx } from '../db/client'
