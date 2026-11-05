@@ -1,5 +1,5 @@
 {
-  "id": "79ce2b35-1477-44ff-b065-c543f19e300e",
+  "id": "911daf30-73c4-4eb5-b25e-b10eea02eeb6",
   "prevId": "be53a6fc-ccfa-4a11-8db5-5d555d0db2b3",
   "version": "7",
   "dialect": "postgresql",
@@ -2223,23 +2223,7 @@
           "default": "now()"
         }
       },
-      "indexes": {
-        "model_switch_created_at_idx": {
-          "name": "model_switch_created_at_idx",
-          "columns": [
-            {
-              "expression": "created_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
+      "indexes": {},
       "foreignKeys": {
         "model_switch_user_id_users_id_fk": {
           "name": "model_switch_user_id_users_id_fk",

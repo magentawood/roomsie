@@ -11402,7 +11402,9 @@
             }
           }
         }
-      },
+      }
+    },
+    "/v1/admin/ai/switch-log": {
       "get": {
         "responses": {
           "200": {

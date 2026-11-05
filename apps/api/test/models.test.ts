@@ -77,12 +77,17 @@ describe('the models module', () => {
     expect(await ask(req)).toEqual({ intent: 'room' })
     expect(requests.map((r) => r.url)).toEqual([gemini, gemini])
     expect(events.map((e) => 'fallback' in e && e.fallback)).toEqual([true, true])
-    fakeVendors({ gemini: [new Response('down', { status: 500 })] })
+    const down = fakeVendors({ gemini: [new Response('down', { status: 500 })] })
     await expect(ask(fakeRequest({ geminiOnly: true }).req)).rejects.toBeInstanceOf(ModelUnavailable)
+    expect(down.map((r) => r.url)).toEqual([gemini])
   })
 
-  it('gives its models and its time limit for the settings view', () => {
-    expect(models.settings).toEqual({ primary: 'deepseek-flash', fallback: 'gemini-3.5-flash-lite', timeoutMs: 10_000 })
+  it('asks DeepSeek, and reports it, when the switch cannot be read', async () => {
+    const requests = fakeVendors({ deepseek: [answer('{"intent":"room"}')] })
+    const { req } = fakeRequest({ geminiOnly: new Error('the database is down') })
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([deepseek])
+    expect(req.log.error).toHaveBeenCalledTimes(1)
   })
 
   it('throws, and reports it one time, when Gemini also fails', async () => {

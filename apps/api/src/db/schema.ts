@@ -730,16 +730,6 @@ export const articlePassages = pgTable('article_passages', {
 })).enableRLS()
 
 /** The model spend of each day in IST, and the highest alert that went: 70 or 100 (PD9, T-21). The models module owns it. */
-/** The Gemini switch of the admin (T-65): each flip is a row, and the newest row is the state. No row is off. The models module owns it. */
-export const modelSwitch = pgTable('model_switch', {
-  id: id(),
-  geminiOnly: boolean('gemini_only').notNull(),
-  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
-  createdAt: createdAt(),
-}, (t) => ({
-  createdAtIdx: index('model_switch_created_at_idx').on(t.createdAt),
-})).enableRLS()
-
 export const modelSpend = pgTable('model_spend', {
   id: id(),
   day: date('day').notNull(),
@@ -749,3 +739,11 @@ export const modelSpend = pgTable('model_spend', {
 }, (t) => ({
   dayIdx: uniqueIndex('model_spend_day_idx').on(t.day),
 })).enableRLS()
+
+/** The Gemini switch of the admin (T-65): each flip is a row, and the newest row is the state. No row is off. The models module owns it. */
+export const modelSwitch = pgTable('model_switch', {
+  id: id(),
+  geminiOnly: boolean('gemini_only').notNull(),
+  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: createdAt(),
+}).enableRLS()

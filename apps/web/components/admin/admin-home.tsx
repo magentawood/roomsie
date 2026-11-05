@@ -10,13 +10,12 @@ import { india } from '../../lib/ist'
 import { useAdminHome } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
+import { Bar, percent, rupees } from './ai-pipeline'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
 const siteDetailCount = Object.keys(noSiteDetails).length
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
-const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: amount < 10 ? 2 : 0 })}`
-const percent = (share: number) => `${(share * 100).toLocaleString('en-IN', { maximumFractionDigits: 1 })}%`
 
 function greeting(now: Date) {
   const hour = Number(hourOf.format(now))
@@ -73,13 +72,12 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
       )
     case 'ai_pipeline':
       return (
-        <Card icon={CpuChip01} title="AI pipeline" href="/admin/ai">
+        <Card icon={CpuChip01} title="AI pipeline" href="/admin/ai" footer={card.failedShare === null ? 'No analytics database' : undefined}>
           <Metric value={rupees(card.spendToday)} label={`Spend today, of ${rupees(card.dailyAmount)}`}
-            badges={card.geminiOnly && <Badge tone="warning" dot={false}>Gemini switch on</Badge>} />
-          <progress value={card.spendToday} max={card.dailyAmount} aria-label="Spend today"
-            className="h-2 w-full appearance-none overflow-hidden rounded-full bg-secondary [&::-moz-progress-bar]:bg-brand-solid [&::-webkit-progress-bar]:bg-secondary [&::-webkit-progress-value]:bg-brand-solid" />
+            badges={<Badge tone={card.geminiOnly ? 'warning' : 'gray'} dot={false}>{card.geminiOnly ? 'Gemini switch on' : 'Gemini switch off'}</Badge>} />
+          <Bar value={card.spendToday} max={card.dailyAmount} label="Spend today" />
           {card.failedShare !== null && <Metric value={percent(card.failedShare)} label="Calls failed today" />}
-          {card.geminiShare !== null && <Metric value={percent(card.geminiShare)} label="Sent to Gemini today" />}
+          {card.geminiShare !== null && <Metric value={percent(card.geminiShare)} label="Sent to the fallback today" />}
         </Card>
       )
     case 'site_content':

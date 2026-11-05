@@ -72,6 +72,8 @@ The health and the spend of the models, and one switch for an outage.
   - **The pages:** `/admin/ai` has the tabs Overview and Settings and log. T-64 adds Turns. The overview and the switch have the layout of the designs at 390 px.
   - **The card:** "AI pipeline" for a moderator, before Site content: the spend against the daily amount, the failure rate and the share sent to Gemini of today, and the state of the switch.
   - **The designs:** drafts section 39 of the Product file ([D-07](D-07%20Admin%20designs.md)), with no status pill.
+  - **Rollups (the user, review):** the AI pipeline reads the raw events of today, not a rollup table: an exception to the rollup rule of `database.md`. A rollup cannot give the last 15 minutes, and today is a small part of one partition. T-66 reads rollups. Revisit at about 250,000 events a day.
+  - **Copy (review):** the web names the main and the fallback model only from the settings, and the switch keeps its name "Use Gemini for all calls".
 - **Out of scope:**
   - the turns and the traces (T-64)
   - a change of any setting from the screen but the switch ([the spec](../../specs/admin-panel.md))

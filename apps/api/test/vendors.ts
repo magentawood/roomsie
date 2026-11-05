@@ -78,11 +78,11 @@ export const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai w
 export const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
 
 /** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
-export function fakeRequest({ geminiOnly = false } = {}) {
+export function fakeRequest({ geminiOnly = false as boolean | Error } = {}) {
   const events: AnalyticsEvent[] = []
   const log = { info: vi.fn(), error: vi.fn() }
   const req = {
-    server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(analyticsEvent.parse(event)) }, spend: { record: () => {} }, modelSwitch: { geminiOnly: async () => geminiOnly } },
+    server: { analytics: { track: (_req: unknown, event: AnalyticsEvent) => events.push(analyticsEvent.parse(event)) }, spend: { record: () => {} }, geminiOnly: async () => { if (geminiOnly instanceof Error) throw geminiOnly; return geminiOnly } },
     log, user: null,
   } as unknown as FastifyRequest
   return { req, events }

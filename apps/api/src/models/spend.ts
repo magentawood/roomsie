@@ -62,7 +62,7 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
     },
     settled: async () => { await Promise.all(pending) },
     /** A message to the team in Telegram, as the alerts: a log line with no Telegram settings (T-65). */
-    notifyTeam: (text: string) => alert(text),
+    notifyTeam: alert,
     /** False: no Telegram settings (T-29). */
     sendTestAlert: async () => { if (settings.telegram) await alert('roomsie: the spend alert works.'); return !!settings.telegram },
   }

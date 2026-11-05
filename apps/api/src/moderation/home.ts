@@ -33,7 +33,7 @@ async function siteContentCard(db: Db): Promise<AdminHomeCard> {
 }
 
 /** The scorecards of the subjects that the person can open (T-62), in the order of the designs. */
-export async function homeCards(sources: AiSources & { moderation: Moderation }, { moderator, reviewer }: { moderator: boolean; reviewer: boolean }) {
+export async function homeCards(sources: Pick<AiSources, 'db' | 'analyticsDb' | 'spend' | 'today'> & { moderation: Moderation }, { moderator, reviewer }: { moderator: boolean; reviewer: boolean }) {
   const { db, moderation } = sources
   const now = new Date()
   return Promise.all([

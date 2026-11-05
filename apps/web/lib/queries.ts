@@ -73,7 +73,7 @@ export function useAiOverview() {
 
 export function useSwitchLog() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.switchLog, queryFn: () => api(user, '/v1/admin/ai/switch', modelSwitchLogResponse) })
+  return useQuery({ queryKey: queryKeys.switchLog, queryFn: () => api(user, '/v1/admin/ai/switch-log', modelSwitchLogResponse) })
 }
 
 export function useReportQueue() {

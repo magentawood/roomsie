@@ -161,6 +161,7 @@ export type AssistantParts = z.infer<typeof assistantParts>
 const routerKinds = ['filters', 'context', 'question'] as const
 /** The scope bands of PD10. `general` and `consequential` are the bands 2a and 2b. */
 export const scopeBands = ['core', 'general', 'consequential', 'out_of_scope', 'adversarial', 'sensitive'] as const
+export type ScopeBand = (typeof scopeBands)[number]
 const register = z.strictObject({ language: z.enum(['english', 'hindi', 'marathi', 'mixed', 'other']), script: z.enum(['latin', 'devanagari', 'mixed']) })
 
 /** What the router reads: the typed turn and the last question of the assistant, as the extractor. Each handler has its own schema (assistant.md). */

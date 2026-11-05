@@ -1,3 +1,5 @@
+/** Midnight in Mumbai at the start of an ISO date. */
+export const startOfIstDay = (day: string) => new Date(`${day}T00:00:00+05:30`)
 export const hoursBefore = (now: Date, hours: number) => new Date(now.getTime() - hours * 3_600_000)
 /** The start of the last 7 days: the "this week" of the admin numbers (T-62). */
 export const weekBefore = (now: Date) => hoursBefore(now, 7 * 24)

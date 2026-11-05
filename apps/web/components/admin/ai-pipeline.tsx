@@ -6,8 +6,8 @@ import { CpuChip01 } from '@untitledui/icons'
 import { modelSwitchState, type AiOverviewResponse, type ModelSwitchBody } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
-import { india } from '../../lib/ist'
-import { queryKeys, useAiOverview, useSwitchLog } from '../../lib/queries'
+import { dateAndTime } from '../../lib/ist'
+import { useAiOverview, useSwitchLog } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
@@ -16,16 +16,15 @@ import { Toggle } from '../ui/toggle'
 
 type Numbers = NonNullable<AiOverviewResponse['numbers']>
 const card = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
-const percent = (share: number) => `${(share * 100).toLocaleString('en-IN', { maximumFractionDigits: 1 })}%`
-const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: amount < 10 ? 2 : 0 })}`
+export const percent = (share: number) => `${(share * 100).toLocaleString('en-IN', { maximumFractionDigits: 1 })}%`
+export const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: amount < 10 ? 2 : 0 })}`
 const seconds = (ms: number | null) => (ms === null ? '—' : `${(ms / 1000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} s`)
-const flippedAt = new Intl.DateTimeFormat('en-IN', { dateStyle: 'medium', timeStyle: 'short', ...india })
 const bandLabels: Record<keyof Numbers['bands'], string> = {
   core: 'Core: the search', general: 'General questions', consequential: 'Consequential: law, tax',
   out_of_scope: 'Out of scope', sensitive: 'Sensitive', adversarial: 'Adversarial',
 }
 
-function Bar({ value, max, label }: { value: number; max: number; label: string }) {
+export function Bar({ value, max, label }: { value: number; max: number; label: string }) {
   return (
     <progress value={value} max={Math.max(max, 1)} aria-label={label}
       className="h-2 w-full appearance-none overflow-hidden rounded-full bg-secondary [&::-moz-progress-bar]:bg-brand-solid [&::-webkit-progress-bar]:bg-secondary [&::-webkit-progress-value]:bg-brand-solid" />
@@ -43,8 +42,8 @@ function Metric({ label, value, note, children }: { label: string; value: string
   )
 }
 
-/** The switch of PD7: Gemini answers each call alone while it is on (T-65). Turning it on asks first. */
-function GeminiSwitch({ state }: { state: AiOverviewResponse['switch'] }) {
+/** The switch of PD7: the fallback model answers each call alone while it is on (T-65). Turning it on asks first. */
+function GeminiSwitch({ state, fallback }: { state: AiOverviewResponse['switch']; fallback: string | undefined }) {
   const user = useUser()
   const queryClient = useQueryClient()
   const [asking, setAsking] = useState(false)
@@ -52,14 +51,13 @@ function GeminiSwitch({ state }: { state: AiOverviewResponse['switch'] }) {
     mutationFn: (body: ModelSwitchBody) => api(user, '/v1/admin/ai/switch', modelSwitchState, { method: 'PUT', body }),
     onSuccess: () => {
       setAsking(false)
-      // The key of the overview is the start of the key of the log, so both load again.
-      return Promise.all([queryKeys.aiOverview, queryKeys.adminHome].map((queryKey) => queryClient.invalidateQueries({ queryKey })))
+      return queryClient.invalidateQueries({ queryKey: ['admin'] })
     },
   })
   return (
     <section className={`${card} bg-secondary`}>
       <Toggle title="Use Gemini for all calls" checked={state.geminiOnly} disabled={flip.isPending}
-        help="Flip it when DeepSeek is down or slow. It acts on the next call, with no deploy, and the team gets a Telegram message."
+        help="Flip it when the main model is down or slow. It acts on the next call, with no deploy, and the team gets a Telegram message."
         problem={flip.isError ? errorText(flip.error) : null}
         onChange={(on) => (on ? setAsking(true) : flip.mutate({ geminiOnly: false }))} />
       {state.since && (
@@ -72,10 +70,10 @@ function GeminiSwitch({ state }: { state: AiOverviewResponse['switch'] }) {
           actions={
             <>
               <Button variant="secondary" size="lg" className="flex-1" onClick={() => setAsking(false)}>Cancel</Button>
-              <Button variant="primary" size="lg" className="flex-1" disabled={flip.isPending} onClick={() => flip.mutate({ geminiOnly: true })}>Switch to Gemini</Button>
+              <Button variant="primary" size="lg" className="flex-1" disabled={flip.isPending} onClick={() => flip.mutate({ geminiOnly: true })}>Switch all calls</Button>
             </>
           }>
-          The next call of each role goes to Gemini Flash-Lite. Replies can be slower, and in English more often. Switch back when DeepSeek works again. The log keeps your name and the time.
+          {`The next call of each role goes to the fallback model${fallback ? `, ${fallback}` : ''}. Replies can be slower, and in English more often. Switch back when the main model works again. The log keeps your name and the time.`}
         </Modal>
       )}
     </section>
@@ -87,7 +85,7 @@ function CallMetrics({ numbers: { today, lastQuarterHour } }: { numbers: Numbers
     <>
       <Metric label="Model calls today" value={today.calls.toLocaleString('en-IN')} note={`${lastQuarterHour.calls.toLocaleString('en-IN')} in the last 15 minutes`} />
       <Metric label="Calls failed" value={percent(today.failedShare)} note={`${percent(lastQuarterHour.failedShare)} in the last 15 minutes`} />
-      <Metric label="Sent to Gemini" value={percent(today.geminiShare)} note={`${percent(lastQuarterHour.geminiShare)} in the last 15 minutes`} />
+      <Metric label="Sent to the fallback" value={percent(today.geminiShare)} note={`${percent(lastQuarterHour.geminiShare)} in the last 15 minutes`} />
       <Metric label="Slowest 5% of calls" value={seconds(today.p95Ms)} note="Each call has its own time limit" />
     </>
   )
@@ -100,7 +98,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
         <h2 className="text-lg font-semibold text-primary">By role, today</h2>
         <table className="w-full min-w-120 text-left text-sm">
           <thead className="text-xs font-medium text-tertiary">
-            <tr>{['Role', 'Calls', 'Failed', 'To Gemini', 'Slowest 5%', 'Spend'].map((h) => <th key={h} className="py-2 pr-3 font-medium">{h}</th>)}</tr>
+            <tr>{['Role', 'Calls', 'Failed', 'To the fallback', 'Slowest 5%', 'Spend'].map((h) => <th key={h} className="py-2 pr-3 font-medium">{h}</th>)}</tr>
           </thead>
           <tbody className="text-secondary">
             {numbers.roles.map((r) => (
@@ -142,7 +140,7 @@ export function AiOverview() {
   const { spend, numbers } = ai.data
   return (
     <>
-      <GeminiSwitch state={ai.data.switch} />
+      <GeminiSwitch state={ai.data.switch} fallback={ai.data.settings.models?.fallback} />
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5">
         <Metric label="Spend today" value={rupees(spend.today)} note={`of ${rupees(spend.dailyAmount)} a day`}>
           <Bar value={spend.today} max={spend.dailyAmount} label="Spend today" />
@@ -178,7 +176,7 @@ export function AiSettingsAndLog() {
         <p className="text-sm text-tertiary">Read-only. A change of these is a deploy, and a change of a prompt runs the eval set first.</p>
         <div className="flex flex-col">
           <Setting name="Main model" value={settings.models?.primary ?? 'Not set'} />
-          <Setting name="Fallback" value={settings.models ? `${settings.models.fallback}, after a failed call` : 'Not set'} />
+          <Setting name="Fallback" value={settings.models ? `${settings.models.fallback}, after a failed call, and for each call while the switch is on` : 'Not set'} />
           <Setting name="Time limit of a call" value={settings.models ? seconds(settings.models.timeoutMs) : 'Not set'} />
           <Setting name="Daily spend amount" value={`${rupees(spend.dailyAmount)} · alerts at ${settings.spendAlertPercents.map((p) => `${p}%`).join(' and ')}`} />
           <Setting name="Router confidence" value={String(settings.routerMinProbability)} />
@@ -194,10 +192,10 @@ export function AiSettingsAndLog() {
             {log.data.flips.map((flip) => (
               <li key={flip.at} className="flex flex-col gap-0.5 border-t border-secondary py-2.5 first:border-t-0">
                 <span className="flex items-center gap-2 text-sm font-semibold text-primary">
-                  {flip.geminiOnly ? 'Switched to Gemini' : 'Switched back to DeepSeek'}
-                  {flip.geminiOnly && <Badge tone="warning" dot={false}>Gemini</Badge>}
+                  {flip.geminiOnly ? 'Switched to the fallback model' : 'Switched back to the main model'}
+                  {flip.geminiOnly && <Badge tone="warning" dot={false}>Fallback</Badge>}
                 </span>
-                <span className="text-sm text-tertiary">{`${flip.by ?? 'A deleted account'} · ${flippedAt.format(new Date(flip.at))}`}</span>
+                <span className="text-sm text-tertiary">{`${flip.by ?? 'A deleted account'} · ${dateAndTime(flip.at)}`}</span>
               </li>
             ))}
           </ul>

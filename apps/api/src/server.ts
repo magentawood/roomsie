@@ -30,7 +30,7 @@ import { messageRoutes } from './messages/routes'
 import type { Models } from './models/models'
 import { spendSettings, type SpendSettings } from './models/settings'
 import { spendOf, type Spend } from './models/spend'
-import { modelSwitchOf, type ModelSwitch } from './models/switch'
+import { geminiOnly } from './models/switch'
 import { limitSettings, type LimitSettings } from './goals/settings'
 import { modelRoutes } from './models/routes'
 import { moderationRoutes } from './moderation/routes'
@@ -53,7 +53,8 @@ declare module 'fastify' {
     alerts: Alerts
     analytics: Analytics
     spend: Spend
-    modelSwitch: ModelSwitch
+    /** The Gemini switch of the admin (T-65). */
+    geminiOnly: () => Promise<boolean>
   }
 }
 
@@ -80,10 +81,10 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   const analytics = analyticsOf(options.analyticsDb, app.log)
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())
-  const spend = spendOf({ db: options.db, settings: options.spend ?? spendSettings.parse({}), today, log: app.log })
-  app.decorate('spend', spend)
-  app.decorate('modelSwitch', modelSwitchOf(options.db))
   const aiSources = { spend: options.spend ?? spendSettings.parse({}), assistant: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today }
+  const spend = spendOf({ db: options.db, settings: aiSources.spend, today, log: app.log })
+  app.decorate('spend', spend)
+  app.decorate('geminiOnly', () => geminiOnly(options.db))
   app.addHook('onClose', () => spend.settled())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -148,7 +149,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       articleRoutes(v1, options)
       modelRoutes(v1, { ...options, ...aiSources })
       resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
-      goalRoutes(v1, { ...options, settings: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today })
+      goalRoutes(v1, { ...options, settings: aiSources.assistant, limits: aiSources.limits, today })
     },
     { prefix: '/v1' },
   )

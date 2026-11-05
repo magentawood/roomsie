@@ -114,8 +114,11 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   async function run<T>(call: ModelCall, mode: Mode, read: Read<T>) {
     const deadline = call.deadlineMs === undefined ? undefined : AbortSignal.timeout(call.deadlineMs)
     const late = () => deadline?.aborted
-    // The Gemini switch of the admin: while it is on, Gemini answers each call alone (T-65).
-    const geminiOnly = await call.req.server.modelSwitch.geminiOnly()
+    // A failed read of the switch is off: the call must not fail for the switch of the admin (T-65).
+    const geminiOnly = await call.req.server.geminiOnly().catch((err: unknown) => {
+      reportError(err, { where: 'models.switch', log: call.req.log })
+      return false
+    })
     const model = geminiOnly ? fallback : primary
     const first = await attempt(call, model, mode, read, deadline)
     // Gemini answers, but a person must fix the key or the balance of DeepSeek.

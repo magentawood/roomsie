@@ -32,7 +32,7 @@ Why: [ADR 0002](decisions/0002-api-boundary.md), [ADR 0014](decisions/0014-error
 | Teach the observer a new thing | At any time | Run the backfill again on the stored turns | **We store all free-text turns** |
 | Change the web search provider | At any time | In `adapters/llm` | The advisor asks the wrapper for a search, not a vendor directly |
 | Change the Supabase organisation to a paid plan | When we start to pay | A plan change in Supabase. No code changes | The connection details of each database are only in environment settings |
-| Move analytics to a larger store, for example ClickHouse | At scale | Change the sink in `track()`. Export and import the rows | Events go through one `track()`. Each event has an `event_version` from `packages/contract`. Product code does not read or join the events table |
+| Move analytics to a larger store, for example ClickHouse | At scale | Change the sink in `track()`. Export and import the rows | Events go through one `track()`. Each event has an `event_version` from `packages/contract`. Product code does not read or join the events table. Only the AI pipeline of the admin reads the events of today (T-65) |
 | Change the auth provider | If necessary | Link `users.auth_provider_id` again | The Firebase UID is only in that column |
 | Change error tracking to GlitchTip | v1 | In `reportError` | Only one function reports errors |
 | Change the email or the push provider | If necessary | The email module or the Firebase Admin module of the API | Only the alerts module sends alerts, through these two modules ([ADR 0019](decisions/0019-alerts-by-ses-and-fcm.md)) |
