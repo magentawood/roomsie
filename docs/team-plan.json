@@ -2180,6 +2180,30 @@
    "issue": 223
   },
   {
+   "id": "T-67",
+   "title": "Delete the visitor data after 30 days",
+   "plain": "The session, the goals and the chat of a visitor go 30 days after the last visit, as PD19 says.",
+   "role": "P1",
+   "hours": 2,
+   "start": "2026-11-07",
+   "end": "2026-11-07",
+   "deps": [
+    "T-64"
+   ],
+   "done": [
+    "A nightly job deletes each visitor session 30 days after its last visit, with its goals, chat turns and notes",
+    "A session that a person claimed at sign-in stays",
+    "PD19 and the learn pages say how the delete runs"
+   ],
+   "read": [
+    "docs/decisions/pd-19-retention.md",
+    "docs/decisions/pd-20-model-traces.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
    "id": "T-65",
    "title": "AI numbers and the Gemini switch",
    "plain": "The health and the spend of the models, and one switch for an outage.",

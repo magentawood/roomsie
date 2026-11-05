@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-67.
 
 ---
 
@@ -24,13 +24,13 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-238 of the 279 build hours need no designs. The other 41 hours are screens, and these cannot start without designs.
+240 of the 281 build hours need no designs. The other 41 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
-| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP | 29 | 5 | _name_ |
+| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP, Visitor data delete | 31 | 3 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval, Model traces, AI numbers and switch | 79 | -45 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Product numbers, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 122 | -88 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user, Admin home, Admin people and listings | 29 | 5 | _name_ |
@@ -65,8 +65,9 @@ Do the tasks from top to bottom. Finish and merge one task before you start the 
 | 9 | T-29 · Abuse test: 100 fake sessions | 1 | Sat 10 Oct | T-21 |
 | 10 | T-51 ⚑ · Apply migrations and the seed in the deploy | 3 | Mon 26 Oct → Tue 27 Oct | T-04, T-06 |
 | 11 | T-52 · Content-Security-Policy for the web | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
+| 12 | T-67 · Delete the visitor data after 30 days | 2 | Sat 7 Nov | T-64 |
 
-Finish line: Wed 28 Oct. 29 hours.
+Finish line: Sat 7 Nov. 31 hours.
 
 ### P2 · Chat — what the assistant understands and says, and the router in front of it
 
@@ -231,6 +232,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P1 Platform | 9 | T-29 | Abuse test: 100 fake sessions | 1 | Sat 10 Oct | Sat 10 Oct | CP3 | T-21 | [#51](https://github.com/magentawood/roomsie/issues/51) |
 | P1 Platform | 10 | T-51 ⚑ | Apply migrations and the seed in the deploy | 3 | Mon 26 Oct | Tue 27 Oct | CP3 | T-04, T-06 | [#134](https://github.com/magentawood/roomsie/issues/134) |
 | P1 Platform | 11 | T-52 | Content-Security-Policy for the web | 3 | Tue 27 Oct | Wed 28 Oct | CP3 | T-05 | [#135](https://github.com/magentawood/roomsie/issues/135) |
+| P1 Platform | 12 | T-67 | Delete the visitor data after 30 days | 2 | Sat 7 Nov | Sat 7 Nov | CP3 | T-64 | no issue at this time |
 | P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | F-11 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08, F-04 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
@@ -354,6 +356,7 @@ gantt
     T-29 Abuse test - 100 fake sessions :t29, 2026-10-10, 1d
     T-51 Apply migrations and the seed in the deploy :crit, t51, 2026-10-26, 2d
     T-52 Content-Security-Policy for the web :t52, 2026-10-27, 2d
+    T-67 Delete the visitor data after 30 days :t67, 2026-11-07, 1d
     section P2 Chat
     T-08 Form A contract - slots and enums :crit, t08, 2026-09-24, 1d
     T-11 Model wrapper - DeepSeek with Gemini fallback :crit, t11, 2026-09-24, 2d
@@ -750,6 +753,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-64 | Traces of the model calls | P2 | 4 | Fri 6 Nov → Sat 7 Nov | T-62 |
 | T-65 | AI numbers and the Gemini switch | P2 | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
 | T-66 | Product numbers in the admin | P3 | 2 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| T-67 | Delete the visitor data after 30 days | P1 | 2 | Sat 7 Nov | T-64 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
 | T-46 | ID verification | P3 | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
@@ -1120,6 +1124,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - The product numbers show the funnel for today, 7 days and 30 days, each against the period before
 - The numbers come only from the analytics events, and agree with the events of a test database
 - Read first: `docs/specs/admin-panel.md`, `docs/decisions/0012-analytics-event-store.md`
+
+**T-67 · Delete the visitor data after 30 days** — done when:
+- A nightly job deletes each visitor session 30 days after its last visit, with its goals, chat turns and notes
+- A session that a person claimed at sign-in stays
+- PD19 and the learn pages say how the delete runs
+- Read first: `docs/decisions/pd-19-retention.md`, `docs/decisions/pd-20-model-traces.md`
 
 **T-45 · Messages screens** — done when:
 - The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone

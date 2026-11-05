@@ -23,7 +23,7 @@ const completion = z.object({
   })),
 })
 
-const parseJson = (text: string): unknown => {
+export const parseJsonOrUndefined = (text: string): unknown => {
   try {
     return JSON.parse(text)
   } catch {
@@ -62,34 +62,36 @@ export function nullIfUnavailable(err: unknown): null {
 }
 
 type Outcome<T> = { outcome: 'ok'; value: T } | { outcome: 'invalid' | 'failed' }
-/** `refused` is the status of a 4xx other than 429: a bad key or an empty balance. */
-type Answer<T> = Outcome<T> & { usage: ModelUsage; refused?: number }
+/** `refused`: the status of a 4xx other than 429, a bad key or an empty balance. `content`: the text of the answer, null with no answer (T-64). */
+type Answer<T> = Outcome<T> & { usage: ModelUsage; refused?: number; content: string | null }
 const noUsage: ModelUsage = { tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 }
 
 type Read<T> = (content: string, tokens: Token[] | null, model: string) => T | undefined
 
 async function readAnswer<T>(res: Response | null, read: Read<T>, model: string): Promise<Answer<T>> {
-  if (!res?.ok) return { outcome: 'failed', usage: noUsage, ...(res && res.status !== 429 && res.status < 500 && { refused: res.status }) }
+  if (!res?.ok) return { outcome: 'failed', usage: noUsage, content: null, ...(res && res.status !== 429 && res.status < 500 && { refused: res.status }) }
   let json: unknown
   try {
     json = await res.json()
   } catch (err) {
     // A timeout or a lost connection can also come while the body arrives. Then the vendor is slow, not wrong.
-    if (!(err instanceof SyntaxError)) return { outcome: 'failed', usage: noUsage }
+    if (!(err instanceof SyntaxError)) return { outcome: 'failed', usage: noUsage, content: null }
   }
   const body = completion.safeParse(json)
   const usage = body.success ? body.data.usage : noUsage
   const choice = body.success ? body.data.choices[0]! : undefined
-  const value = choice ? read(choice.message.content ?? '', choice.logprobs?.content ?? null, model) : undefined
-  return value === undefined ? { outcome: 'invalid', usage } : { outcome: 'ok', value, usage }
+  const content = choice?.message.content ?? null
+  const value = choice ? read(content ?? '', choice.logprobs?.content ?? null, model) : undefined
+  return value === undefined ? { outcome: 'invalid', usage, content } : { outcome: 'ok', value, usage, content }
 }
 
 /** The only code that calls a model (PD7, ADR-0014). */
 export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<Vendor, string>; primary: string; fallback: string; timeoutMs: number }) {
   type Mode = { json: boolean; logprobs?: boolean }
-  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>, deadline?: AbortSignal) {
+  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>, deadline?: AbortSignal, attemptNumber = 1) {
     // The settings let only a model name of a known vendor through.
     const vendor = vendorOf(model)!
+    const startedAt = new Date()
     const started = performance.now()
     const res = await fetch(urls[vendor], {
       method: 'POST',
@@ -107,6 +109,12 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     const record = { role: call.role, model, ...answer.usage, ms, fallback: model === fallback, outcome: answer.outcome, session: call.session }
     call.req.server.analytics.track(call.req, { name: 'model_called', ...record })
     call.req.server.spend.record(vendor, answer.usage)
+    // A call of a goal keeps a trace of each attempt (PD20, T-64). The check of the keys has no goal.
+    if (call.session) {
+      call.req.server.traces.save({ ...call, session: call.session }, {
+        attempt: attemptNumber, model, fallback: record.fallback, outcome: answer.outcome, startedAt, ms, usage: answer.usage, answer: answer.content,
+      })
+    }
     call.req.log.info(record, 'model call')
     return { ...answer, ms }
   }
@@ -123,8 +131,8 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     const first = await attempt(call, model, mode, read, deadline)
     // Gemini answers, but a person must fix the key or the balance of DeepSeek.
     if (first.refused && !geminiOnly) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
-    const second = first.outcome === 'invalid' && !late() ? await attempt(call, model, mode, read, deadline) : first
-    const last = second.outcome === 'ok' || late() || geminiOnly ? second : await attempt(call, fallback, mode, read, deadline)
+    const second = first.outcome === 'invalid' && !late() ? await attempt(call, model, mode, read, deadline, 2) : first
+    const last = second.outcome === 'ok' || late() || geminiOnly ? second : await attempt(call, fallback, mode, read, deadline, second === first ? 2 : 3)
     if (last.outcome === 'ok') return last.value
     const err = new ModelUnavailable(`No model answered the ${call.role}: the last attempt was ${last.outcome}`)
     // A caller with a deadline has its own fallback, so this is no error report.
@@ -134,7 +142,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   }
 
   const parseWith = <S extends z.ZodType>(schema: S) => (content: string): z.infer<S> | undefined => {
-    const parsed = schema.safeParse(parseJson(content))
+    const parsed = schema.safeParse(parseJsonOrUndefined(content))
     return parsed.success ? parsed.data : undefined
   }
 

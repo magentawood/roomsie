@@ -17,8 +17,8 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, feedbackRatings, foodAnswers, furnishings, genders, goalStatuses, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, moderationActions, observationKinds, placeTypes, rejectReasons, religions, reportReasons, reportStatuses, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
-  type WaitlistPlace,
+  listingKinds, listingStatuses, meals, minStays, modelOutcomes, modelRoles, moderationActions, observationKinds, placeTypes, rejectReasons, religions, reportReasons, reportStatuses, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  type TraceMessage, type WaitlistPlace,
 } from '@roomsie/contract'
 
 /** ADR 0015: app-minted UUIDv7, no database default. */
@@ -677,6 +677,59 @@ export const siteDetails = pgTable('site_details', {
   savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
 }).enableRLS()
+
+/* ── traces ─────────────────────────────────────────────────────────────── */
+
+/** Each different system prompt of the traces, one time, by the SHA-256 of its text (T-64). The traces module owns it. */
+export const tracePrompts = pgTable('trace_prompts', {
+  id: id(),
+  hash: text('hash').notNull().unique(),
+  text: text('text').notNull(),
+  createdAt: createdAt(),
+}).enableRLS()
+
+/** One masked attempt of a model call of a goal (PD20, T-64). The traces module owns it. */
+export const traces = pgTable('traces', {
+  id: id(),
+  /** The model calls of one typed message, also the call of the observer after the reply. */
+  turnKey: uuid('turn_key').notNull(),
+  goalId: uuid('goal_id').notNull().references(() => goals.id, { onDelete: 'cascade' }),
+  sessionCode: text('session_code').notNull(),
+  turnNumber: integer('turn_number').notNull(),
+  role: text('role', { enum: modelRoles }).notNull(),
+  /** 1 is the first attempt of the call, then 2 and 3, as the model module tries again. */
+  attempt: integer('attempt').notNull(),
+  model: text('model').notNull(),
+  fallback: boolean('fallback').notNull(),
+  outcome: text('outcome', { enum: modelOutcomes }).notNull(),
+  startedAt: timestamp('started_at', { withTimezone: true }).notNull(),
+  ms: integer('ms').notNull(),
+  tokensIn: integer('tokens_in').notNull(),
+  cachedTokensIn: integer('cached_tokens_in').notNull(),
+  tokensOut: integer('tokens_out').notNull(),
+  promptHash: text('prompt_hash').notNull().references(() => tracePrompts.hash),
+  messages: jsonb('messages').$type<{ version: 1; list: TraceMessage[] }>().notNull(),
+  /** The raw answer of the vendor, masked. Null when the vendor gave no answer. */
+  answer: text('answer'),
+  createdAt: createdAt(),
+}, (t) => ({
+  turnIdx: index('traces_turn_idx').on(t.turnKey),
+  startedIdx: index('traces_started_idx').on(t.startedAt),
+  goalIdx: index('traces_goal_idx').on(t.goalId),
+})).enableRLS()
+
+/** The audit log of the opens of a turn (T-64). A row outlives its traces: it keeps the session code, not the trace. */
+export const traceViews = pgTable('trace_views', {
+  id: id(),
+  moderatorUserId: uuid('moderator_user_id').references(() => users.id, { onDelete: 'set null' }),
+  turnKey: uuid('turn_key').notNull(),
+  sessionCode: text('session_code').notNull(),
+  turnNumber: integer('turn_number').notNull(),
+  createdAt: createdAt(),
+}, (t) => ({
+  turnIdx: index('trace_views_turn_idx').on(t.turnKey, t.createdAt),
+  createdIdx: index('trace_views_created_idx').on(t.createdAt),
+})).enableRLS()
 
 /** Landing-page feedback of a person (T-23a), or pop-up feedback of a closed goal (T-50). The feedback module owns it. */
 export const feedback = pgTable('feedback', {

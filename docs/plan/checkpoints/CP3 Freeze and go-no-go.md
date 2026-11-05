@@ -69,6 +69,7 @@ This note is part of [[roomsie launch]].
 - [[T-64 Model traces]] — P2 Chat
 - [[T-65 AI numbers and switch]] — P2 Chat
 - [[T-66 Product numbers]] — P3 Data and trust
+- [[T-67 Visitor data delete]] — P1 Platform
 - [[T-44 Messages API]] — P3 Data and trust
 - [[T-45 Messages screens]] — P3 Data and trust
 - [[T-55 Message alerts]] — P3 Data and trust

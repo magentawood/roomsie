@@ -17,7 +17,7 @@ const listingItem = z.object({ kind: z.literal('listing'), listing: listingRespo
 export const reportQueueItem = z.discriminatedUnion('kind', [personItem, listingItem])
 export type ReportQueueItem = z.infer<typeof reportQueueItem>
 export const reportQueueResponse = z.object({ items: z.array(reportQueueItem) })
-const knownReports = knownRows(queuedReport, 'reason', reportReasons)
+const knownReports = knownRows(queuedReport, { reason: reportReasons })
 /** The queue for the web: it drops a report of a reason that its bundle does not know, and an item with no report left. */
 export const reportQueueView = z.object({
   items: z.array(z.discriminatedUnion('kind', [personItem.extend({ reports: knownReports }), listingItem.extend({ reports: knownReports })]))
@@ -38,7 +38,7 @@ export const adminHomeCard = z.discriminatedUnion('subject', [
 export type AdminHomeCard = z.infer<typeof adminHomeCard>
 export const adminHomeResponse = z.object({ cards: z.array(adminHomeCard) })
 /** Drops a card of an unknown subject, so a tab with an older bundle shows the other cards. */
-export const adminHomeView = z.object({ cards: knownRows(adminHomeCard, 'subject', adminHomeCard.options.map((card) => card.shape.subject.value)) })
+export const adminHomeView = z.object({ cards: knownRows(adminHomeCard, { subject: adminHomeCard.options.map((card) => card.shape.subject.value) }) })
 
 /** The actions of a moderator on a person and on a listing (T-63). Each goes in the moderation log. */
 export const personActions = ['hide', 'unhide', 'suspend'] as const
@@ -73,7 +73,7 @@ export const adminListingRow = z.object({
 })
 export const adminListingsResponse = z.object({ listings: z.array(adminListingRow) })
 export const adminListingResponse = adminListingRow.extend({ listerUserId: z.uuid(), listing: listingResponse, reports: z.array(subjectReport), log: z.array(logEntry) })
-const knownLists = { reports: knownRows(subjectReport, 'reason', reportReasons), log: knownRows(logEntry, 'action', moderationActions) }
+const knownLists = { reports: knownRows(subjectReport, { reason: reportReasons }), log: knownRows(logEntry, { action: moderationActions }) }
 export const adminPersonView = adminPersonResponse.extend(knownLists)
 export const adminListingView = adminListingResponse.extend(knownLists)
 export type AdminPersonRow = z.infer<typeof adminPersonRow>

@@ -15,7 +15,7 @@ type Tab = { label: string; href: string }
 
 export const moderationTabs: Tab[] = [{ label: 'Reports', href: '/admin/reports' }, { label: 'Feedback', href: '/admin/feedback' }]
 export const directoryTabs: Tab[] = [{ label: 'People', href: '/admin/people' }, { label: 'Listings', href: '/admin/listings' }]
-export const aiTabs: Tab[] = [{ label: 'Overview', href: '/admin/ai' }, { label: 'Settings and log', href: '/admin/ai/log' }]
+export const aiTabs: Tab[] = [{ label: 'Overview', href: '/admin/ai' }, { label: 'Turns', href: '/admin/ai/turns' }, { label: 'Settings and log', href: '/admin/ai/log' }]
 export const siteContentTabs: Tab[] = [
   { label: 'Invites', href: '/admin/invites' }, { label: 'Quotes', href: '/admin/quotes' }, { label: 'Site details', href: '/admin/site' },
 ]
@@ -65,6 +65,8 @@ export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: 
 }
 
 export const pageBody = 'mx-auto flex w-full max-w-320 flex-col gap-5 px-4 py-5 md:px-8 md:py-6 lg:px-20'
+
+export const cardClass = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
 
 /** The title, the intro, the tabs and the link back (drafts sections 37 and 38). The link to the admin shows only on a phone. */
 export function SubjectHeader({ title, intro, tabs, back }: { title: string; intro?: string; tabs?: Tab[]; back?: Tab }) {

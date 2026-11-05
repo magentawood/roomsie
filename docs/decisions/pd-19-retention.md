@@ -1,6 +1,6 @@
 # PD19 — Retention: how long roomsie keeps each kind of data
 
-**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-10-28. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -21,6 +21,8 @@
 | The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
 | The saved places and people of an account | Until the user unsaves them or deletes the account. The deletion of a listing or of an account deletes its saves (T-47). |
 | The email of the sign-in and the push tokens of the browsers | Until the user deletes the account. A deletion clears the email and deletes the tokens (T-55). |
+| The traces of the model calls: the prompts and the raw answers, masked | 30 days after the call, and at once with the account ([PD20](pd-20-model-traces.md)). A nightly job deletes the older traces. |
+| The log of the opens of a trace: the session code, the number of the turn, the moderator and the time | No end: it holds no text of a person ([PD20](pd-20-model-traces.md)). After the moderator deletes the account, a row shows "a deleted account". |
 | Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".

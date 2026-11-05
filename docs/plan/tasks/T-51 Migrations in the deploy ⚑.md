@@ -2,7 +2,7 @@
 id: T-51
 title: "Apply migrations and the seed in the deploy"
 owner: "P1 Platform"
-sequence: "10 of 11"
+sequence: "10 of 12"
 hours: 3
 start: 2026-10-26
 end: 2026-10-27
@@ -18,7 +18,7 @@ tags:
 
 # T-51 · Apply migrations and the seed in the deploy
 
-**Owner:** [[P1 Platform]], task 10 of 11  
+**Owner:** [[P1 Platform]], task 10 of 12  
 **When:** Mon 26 Oct → Tue 27 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#134](https://github.com/magentawood/roomsie/issues/134)

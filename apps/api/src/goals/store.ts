@@ -181,11 +181,14 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
   })
 }
 
-/** At account deletion. The cascades remove the chat turns, the waitlist entries and the feedback of the goals, and the goals of a claimed visitor session. */
+/** At account deletion. The cascades remove the chat turns, the waitlist entries, the feedback and the traces of the goals, and the goals of a claimed visitor session. */
 export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(goals).where(eq(goals.userId, userId))
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
 }
+
+/** The turns of the person in a goal: the number of the next turn is this plus one (T-64). */
+export const userTurnCount = (db: Db, goalId: string) => db.$count(chatTurns, and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user')))
 
 /** Leaves only a name for this person in the comparisons that others keep (PD19, T-49). */
 export async function forgetInComparisons(tx: Tx, profileId: string, fullName: 'Deleted user' | 'Not available', ofUserId?: string) {
@@ -210,7 +213,7 @@ export async function ownValuesOf(db: Db | Tx, asker: Asker): Promise<OwnValues>
   return { religion: religion?.value ?? null, community: community?.value ?? null }
 }
 
-/** At sign-in (T-17). The turns, the waitlist entries and the feedback follow their goal, and the claimed session stays (T-35). */
+/** At sign-in (T-17). The turns, the waitlist entries, the feedback and the traces follow their goal, and the claimed session stays (T-35). */
 export function claimSession(db: Db, key: string, userId: string) {
   return db.transaction(async (tx) => {
     // The row lock makes a second claim at the same time wait, then find no session to claim.

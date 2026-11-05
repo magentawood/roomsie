@@ -21,13 +21,13 @@ GET /v1/admin/home ──▶ the roles of the person
 | Moderation | open reports, late safety reports, other late reports, the oldest report, feedback of the last 7 days | `/admin/reports`, `/admin/feedback` |
 | ID checks | checks that wait, late checks, the oldest check, checks verified in the last 7 days | `/admin/id-checks` |
 | People and listings | the people with a card and the new ones of today, the live listings, the cards and listings hidden for review, the suspended accounts | `/admin/people`, `/admin/listings` ([Moderation](moderation.md)) |
-| AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/log` ([The model wrapper](models.md)) |
+| AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/turns`, `/admin/ai/turns/[key]`, `/admin/ai/log` ([The model wrapper](models.md), [Traces of the model calls](traces.md)) |
 | Site content | invites and the invite gate, quotes, site details that are set | `/admin/invites`, `/admin/quotes`, `/admin/site` |
 
 - The API sends only the cards of the roles of the person. A person with both roles gets each card.
 - The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.
 - The feedback list also gives the count of each face of the last 7 days.
-- T-64 and T-66 add the turns of the AI pipeline and the card of Product numbers, each with its pages.
+- T-66 adds the card of Product numbers, with its pages. The tab Turns of the AI pipeline came with T-64 ([Traces of the model calls](traces.md)).
 - The AI pipeline reads the raw events of today, not a rollup: an exception to `database.md` that the spec of T-65 records. The page slows down at about 250,000 events a day.
 
 ## The choice we made

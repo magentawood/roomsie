@@ -15,7 +15,7 @@ import { rupees } from '../../lib/numbers'
 import { useAdminListing, useAdminListings, useAdminPeople, useAdminPerson, useAreaLabels } from '../../lib/queries'
 import { ago, reasonLabels } from '../../lib/reports'
 import { PlaceCard } from '../listings/place-card'
-import { pageBody, SubjectHeader } from './admin-page'
+import { cardClass, pageBody, SubjectHeader } from './admin-page'
 import { PersonCard } from '../people/person-card'
 import { Avatar } from '../ui/avatar'
 import { Badge } from '../ui/badge'
@@ -29,22 +29,30 @@ type ListingFilter = (typeof listingFilters)[number]
 
 export const directoryIntro = 'Find a person or a listing, and act on it. Gender, religion and community never show here.'
 
-const box = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
 const peopleFilterLabels: Record<PeopleFilter, string> = { reported: 'Reported', hidden: 'Hidden', suspended: 'Suspended', verified: 'Verified' }
 const listingFilterLabels: Record<ListingFilter, string> = { reported: 'Reported', hidden: 'Hidden', removed: 'Removed' }
 const actionLabels: Record<AdminLogEntry['action'], string> = { hide: 'Hidden', unhide: 'Unhidden', suspend: 'Suspended', remove: 'Removed' }
 const cardStates: Record<(typeof visibilities)[number], string> = { live: 'Shows to others', hidden: 'Hidden by the person', draft: 'Not finished' }
 
-/** A search or a filter: each clears the other. */
-function Search<F extends string>({ label, placeholder, labels, onSearch }: { label: string; placeholder: string; labels: Record<F, string>; onSearch: (query: { q?: string; filter?: F }) => void }) {
+/** A search or a filter: each clears the other. With `allLabel`, a first chip of that label stands for no filter. */
+export function Search<F extends string>({ label, placeholder, labels, allLabel, onSearch }: {
+  label: string; placeholder: string; labels: Record<F, string>; allLabel?: string; onSearch: (query: { q?: string; filter?: F }) => void
+}) {
+  const none = allLabel ? 'all' : null
+  const chips = (allLabel ? { all: allLabel, ...labels } : labels) as Record<F | 'all', string>
   const [text, setText] = useState('')
-  const [filter, setFilter] = useState<F | null>(null)
-  const submit = (e: FormEvent) => { e.preventDefault(); setFilter(null); onSearch({ q: text.trim() }) }
+  const [filter, setFilter] = useState<F | 'all' | null>(none)
+  const submit = (e: FormEvent) => { e.preventDefault(); setFilter(none); onSearch({ q: text.trim() }) }
   return (
     <form onSubmit={submit} className="flex flex-col gap-3 md:flex-row md:items-end">
       <input type="search" aria-label={label} className={`${inputClass} md:w-90`} value={text} placeholder={placeholder} maxLength={adminSearchMax} onChange={(e) => setText(e.target.value)} />
       <Button type="submit" variant="primary" size="md">Search</Button>
-      <ChoiceChips label="Show only" labelHidden labels={labels} value={filter} onChange={(f) => { setFilter(f); setText(''); onSearch(f ? { filter: f } : {}) }} />
+      <ChoiceChips label="Show only" labelHidden labels={chips} value={filter} onChange={(f) => {
+        const picked = f ?? none
+        setFilter(picked)
+        setText('')
+        onSearch(picked && picked !== 'all' ? { filter: picked } : {})
+      }} />
     </form>
   )
 }
@@ -175,7 +183,7 @@ function Facts({ facts }: { facts: [string, ReactNode][] }) {
 function Reports({ reports, kind }: { reports: AdminSubjectReport[]; kind: 'person' | 'listing' }) {
   const labels = reasonLabels(kind)
   return (
-    <section aria-label="Reports" className={box}>
+    <section aria-label="Reports" className={cardClass}>
       <h2 className="text-lg font-semibold text-primary">{`Reports · ${reports.length}`}</h2>
       {reports.length ? reports.map((r) => (
         <div key={r.id} className="flex flex-col gap-0.5 rounded-lg bg-secondary px-3 py-2.5 text-sm">
@@ -189,7 +197,7 @@ function Reports({ reports, kind }: { reports: AdminSubjectReport[]; kind: 'pers
 
 function Log({ log }: { log: AdminLogEntry[] }) {
   return (
-    <section aria-label="Moderation log" className={box}>
+    <section aria-label="Moderation log" className={cardClass}>
       <h2 className="text-lg font-semibold text-primary">Moderation log</h2>
       {log.length ? log.map((l) => (
         <p key={l.id} className="text-sm text-secondary">
@@ -249,7 +257,7 @@ export function PersonView({ userId }: { userId: string }) {
       <PersonStates row={p} />
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="flex flex-col gap-5 lg:flex-1">
-          <section aria-label="Account" className={box}>
+          <section aria-label="Account" className={cardClass}>
             <h2 className="text-lg font-semibold text-primary">Account</h2>
             <Facts facts={[
               ['Sign-in email', p.email ?? '—'],
@@ -294,7 +302,7 @@ export function ListingView({ id }: { id: string }) {
       <ListingStates row={l} />
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="flex flex-col gap-5 lg:flex-1">
-          <section aria-label="Listing" className={box}>
+          <section aria-label="Listing" className={cardClass}>
             <h2 className="text-lg font-semibold text-primary">Listing</h2>
             <Facts facts={[
               ['Lister', <Link key="lister" href={`/admin/people/${l.listerUserId}`} className="font-semibold hover:underline">{`${l.lister ?? 'No card'} · ${l.listerEmail ?? '—'}`}</Link>],

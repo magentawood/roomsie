@@ -1,13 +1,15 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { eq } from 'drizzle-orm'
-import type { FastifyRequest } from 'fastify'
+import type { FastifyBaseLogger, FastifyRequest } from 'fastify'
 import { z } from 'zod'
 import { modelCheckResponse } from '@roomsie/contract'
 import { ModelUnavailable } from '../src/models/models'
 import { modelSettings } from '../src/models/settings'
 import { events as eventRows } from '../src/analytics/schema'
+import { goals, tracePrompts, traces, users } from '../src/db/schema'
+import { tracesOf } from '../src/traces/store'
 import { testApp, type TestApp } from './app'
-import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
+import { createTestAnalyticsDb, createTestDb, type TestAnalyticsDb, type TestDb } from './db'
 import { answer, deepseek, fakeRequest, fakeVendors, gemini, keys } from './vendors'
 
 const timeout = () => new DOMException('The operation timed out.', 'TimeoutError')
@@ -185,5 +187,56 @@ describe('the alert check route (T-29)', () => {
     const bare = await testApp(['moderator'], undefined, { MODERATOR_UIDS: 'uid-moderator' })
     expect((await bare.call('moderator', 'POST', '/v1/admin/alert-check')).statusCode).toBe(503)
     await bare.close()
+  })
+})
+
+describe('the traces of the model calls (T-64)', () => {
+  let testDb: TestDb
+  const goalId = '0198f2c4-7a10-7c4e-9a3b-5d2e8f6a1b21'
+  beforeAll(async () => {
+    testDb = await createTestDb()
+    const userId = '0198f2c4-7a10-7c4e-9a3b-5d2e8f6a1b22'
+    await testDb.db.insert(users).values({ id: userId, authProviderId: 'trace-user' })
+    await testDb.db.insert(goals).values({ id: goalId, userId })
+  })
+  afterAll(() => testDb.drop())
+  const traced = () => {
+    const log = { info: vi.fn(), error: vi.fn() }
+    const saver = tracesOf({ db: testDb.db, log: log as unknown as FastifyBaseLogger })
+    return { ...fakeRequest({ traces: saver }), saver, log }
+  }
+  const ofGoal = (call: { session: string | null; content?: string }) => (req: FastifyRequest) =>
+    models.json({ req, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: call.content ?? 'room chahiye powai mein, only jain flatmates' }], schema: intent, session: call.session })
+
+  it('saves one trace for each attempt, masked, with its system prompt one time', async () => {
+    fakeVendors({ deepseek: [answer('{"intent":"villa"}'), timeout()], gemini: [answer('{"intent":"room","ownReligion":"jain"}')] })
+    const { req, saver } = traced()
+    expect(await ofGoal({ session: goalId })(req)).toEqual({ intent: 'room' })
+    await saver.settled()
+    const rows = await testDb.db.select().from(traces).where(eq(traces.goalId, goalId)).orderBy(traces.startedAt, traces.attempt)
+    expect(rows.map((r) => [r.attempt, r.model, r.outcome, r.fallback, r.answer])).toEqual([
+      [1, 'deepseek-flash', 'invalid', false, '{"intent":"villa"}'], [2, 'deepseek-flash', 'failed', false, null], [3, 'gemini-3.5-flash-lite', 'ok', true, '{"intent":"room","ownReligion":"set"}'],
+    ])
+    expect(rows.map((r) => r.messages.list[0]!.content)).toEqual(Array(3).fill('room chahiye powai mein, only [hidden] flatmates'))
+    expect(new Set(rows.map((r) => [r.turnKey, r.sessionCode, r.turnNumber].join()))).toHaveLength(1)
+    expect(new Set(rows.map((r) => r.promptHash)).size).toBe(1)
+    expect((await testDb.db.select({ text: tracePrompts.text }).from(tracePrompts).where(eq(tracePrompts.hash, rows[0]!.promptHash))).map((p) => p.text)).toEqual(['Fill the intent slot.'])
+  })
+
+  it('gives the answer and reports the error when the save fails', async () => {
+    fakeVendors({ deepseek: [answer('{"intent":"room"}')] })
+    const { req, saver, log } = traced()
+    expect(await ofGoal({ session: '0198f2c4-7a10-7c4e-9a3b-5d2e8f6a1b29' })(req)).toEqual({ intent: 'room' })
+    await saver.settled()
+    expect(log.error).toHaveBeenCalledTimes(1)
+  })
+
+  it('saves no trace for a call with no goal', async () => {
+    fakeVendors({ deepseek: [answer('{"intent":"room"}')] })
+    const { req, saver } = traced()
+    const before = await testDb.db.$count(traces)
+    expect(await ofGoal({ session: null })(req)).toEqual({ intent: 'room' })
+    await saver.settled()
+    expect(await testDb.db.$count(traces)).toBe(before)
   })
 })
