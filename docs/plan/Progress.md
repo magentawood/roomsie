@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**280 of 355 done · 79%**
+**283 of 355 done · 80%**
 
 `███████████████████░░░░░`
 
@@ -23,7 +23,7 @@ This note is part of [[roomsie launch]].
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
-| [[P2 Chat]] | 12 / 17 | 59 / 80 | 74% |
+| [[P2 Chat]] | 13 / 17 | 62 / 80 | 78% |
 | [[P3 Data and trust]] | 20 / 21 | 90 / 92 | 98% |
 | [[P4 Content and moderation]] | 8 / 10 | 37 / 43 | 86% |
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**14 free tasks are open · 34 build hours.**
+**13 free tasks are open · 31 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -61,7 +61,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-61 Composer eval]] | P2 | 3 | ⬜ can start | 0 | [#216](https://github.com/magentawood/roomsie/issues/216) |
 | 0 | [[T-63 Admin people and listings]] | P4 | 3 | ⬜ can start | 0 | [#222](https://github.com/magentawood/roomsie/issues/222) |
 | 0 | [[T-64 Model traces]] | P2 | 4 | ⬜ can start | 0 | [#223](https://github.com/magentawood/roomsie/issues/223) |
-| 0 | [[T-65 AI numbers and switch]] | P2 | 3 | ⬜ can start | 0 | [#224](https://github.com/magentawood/roomsie/issues/224) |
 | 0 | [[T-66 Product numbers]] | P3 | 2 | ⬜ can start | 0 | [#225](https://github.com/magentawood/roomsie/issues/225) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
@@ -153,7 +152,7 @@ flowchart LR
   T62["T-62<br/>Admin home"]:::done
   T63["T-63<br/>Admin people and listings"]:::ready
   T64["T-64<br/>Model traces"]:::ready
-  T65["T-65<br/>AI numbers and switch"]:::ready
+  T65["T-65<br/>AI numbers and switch"]:::done
   T66["T-66<br/>Product numbers"]:::ready
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::done
@@ -322,7 +321,7 @@ flowchart LR
 > ![[T-52 Web CSP#^done]]
 
 
-## P2 Chat — 59/80
+## P2 Chat — 62/80
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -372,7 +371,7 @@ flowchart LR
 > [!todo]- ⬜ [[T-64 Model traces]] · 0/6
 > ![[T-64 Model traces#^done]]
 
-> [!todo]- ⬜ [[T-65 AI numbers and switch]] · 0/3
+> [!todo]- ✅ [[T-65 AI numbers and switch]] · 3/3
 > ![[T-65 AI numbers and switch#^done]]
 
 

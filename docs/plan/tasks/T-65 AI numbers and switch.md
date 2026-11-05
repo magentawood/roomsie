@@ -31,9 +31,9 @@ The health and the spend of the models, and one switch for an outage.
 - No task waits on this task.
 
 ## Done when
-- [ ] The AI pipeline shows the calls, failures, fallbacks, times, the spend against the daily amount, and the mix of router bands
-- [ ] The model settings, the daily amount and the limits show read-only
-- [ ] The switch “Use Gemini for all calls” acts on the next call with no deploy, and each flip goes in a log
+- [x] The AI pipeline shows the calls, failures, fallbacks, times, the spend against the daily amount, and the mix of router bands · [#228](https://github.com/magentawood/roomsie/pull/228)
+- [x] The model settings, the daily amount and the limits show read-only · [#228](https://github.com/magentawood/roomsie/pull/228)
+- [x] The switch “Use Gemini for all calls” acts on the next call with no deploy, and each flip goes in a log · [#228](https://github.com/magentawood/roomsie/pull/228)
 
 ^done
 
@@ -82,3 +82,13 @@ The health and the spend of the models, and one switch for an outage.
   - a change of any setting from the screen but the switch ([the spec](../../specs/admin-panel.md))
   - a turn id in the events
   - a status pill with thresholds
+
+## Log
+
+- **2026-11-05 · [#228](https://github.com/magentawood/roomsie/pull/228)**
+  - **Change:** the switch "Use Gemini for all calls" on `/admin/ai`: each model call reads it, each flip goes in a log and to the team in Telegram. The page shows the calls of today and of the last 15 minutes, the spend against the daily amount, the calls of each role, the router bands and the settings. The admin home gets the card of the AI pipeline.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md), and [PD7](../../decisions/pd-07-models.md) for the fallback.
+  - **Ticked:** the three items.
+  - **Not done:** none.
+  - **Learn:** [The model wrapper](../../learn/models.md), [Analytics events](../../learn/analytics-events.md), [The admin home](../../learn/admin-home.md), [The limits of the chat](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
