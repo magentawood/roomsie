@@ -44,3 +44,44 @@ Follow one turn of the assistant through its model calls.
 - [admin-panel.md](../../specs/admin-panel.md)
 - [pd-19-retention.md](../../decisions/pd-19-retention.md)
 - [pd-03c-exclusionary-preferences.md](../../decisions/pd-03c-exclusionary-preferences.md)
+
+## Spec
+
+**Approved:** 2026-11-05, by n3rxv
+
+- **Modules:**
+  - **The schema:** three new tables: the traces, the system prompts of the traces, and the views of the traces. A trace belongs to its goal, so the delete of a goal deletes its traces. A nightly job deletes each trace older than 30 days.
+  - **A new traces module of the API:** the mask, the save of a trace, the turns and the turn of the admin, the log of the views, and the delete. The routes are for moderators.
+  - **The model wrapper (its interface does not change):** each attempt of a call with a goal saves a trace through the traces module. A failed save never fails the call.
+  - **The contract:** the words of the mask, the turns, the turn, the views and the filters.
+  - **The web:** the tab Turns of the AI pipeline, the page of one turn, and the trace views and the period on the tab Settings and log.
+  - **The decision records:** PD20 is new. PD19 gets a row for the traces.
+  - **The plan:** a new task for the delete of the visitor data after 30 days, right after T-64.
+- **Seams for the tests:**
+  - The unit test of the mask: each word of each list, in each script, and the slots of the extractor.
+  - The test of the model wrapper: a call saves one trace for each attempt, masked, with its system prompt one time. A failed save does not fail the call. A call with no goal saves no trace.
+  - The route test of the traces: the turns with each filter and the search, the turn with its timeline, no name or email in a reply, a row of the view log for each open, 404 for a person with no role, the delete of the traces with the account, and the job function that deletes the traces older than 30 days.
+  - A browser check on local dev at 1440 px: the turns, a turn, and the settings and log.
+- **Decisions:**
+  - **The mask (the user):** the API masks the words before it saves a trace, so the database never holds them. The mask covers the words of religion, and the community names that are not names of a language: Marwari, Bihari, Uttar Pradesh, Kannadiga, Malayali and North-East. The names that are also languages, such as Marathi, Gujarati and Tamil, stay (the user). A slot of religion or community in the answer of the extractor shows "set" ([PD3c](../../decisions/pd-03c-exclusionary-preferences.md)).
+  - **The words of the mask:** in English, in the spellings of Hinglish, and in Hindi and Marathi in Devanagari. They are in the contract, with tests. The PR lists each word for the review of the user.
+  - **The delete (the user):** a nightly pg_cron job of the main database deletes each trace older than 30 days, as the job of the events does. Locally and in the tests, the job is not scheduled, and a test calls its function.
+  - **The visitor data (the user):** nothing deletes the session, the goals and the turns of a visitor after 30 days, though [PD19](../../decisions/pd-19-retention.md) says so. A new task after T-64 adds this delete to the nightly job.
+  - **A trace for each attempt:** a retry and a call to the fallback show in the timeline. A trace keeps the role, the model, the outcome, the time, the tokens, the messages and the raw answer.
+  - **The system prompt:** the database keeps each different system prompt one time, with a short hash as its name. A trace points to it.
+  - **The turn:** the model calls of one typed message are one turn. The call of the observer after the reply is in the same turn. A turn shows a session code, "s-" and four characters from the goal, and its number in the session. It shows no name, no email and no link to a card ([the spec](../../specs/admin-panel.md)).
+  - **The roles:** the router, the extractor, the composer, the observer and the advisor. The check of the keys and the calls of the scripts save no trace.
+  - **The account deletion:** the traces of the goals of an account go with the goals, at once.
+  - **The tab Turns:** the 50 newest turns, a search by session code, and the filters All, Failed, To Gemini and Slower than 8 s. A row gives the band, the language, the calls, the time and the result (drafts section 39).
+  - **The page of a turn:** the session code and the turn, a timeline of its calls, and the prompt and the raw answer of each call (drafts section 39).
+  - **The view log:** each open of the page of a turn adds a row with the moderator and the time. The page tells the last open and the day that the trace goes. The tab Settings and log gives the 100 newest views and "Traces kept: 30 days".
+  - **The access:** moderators only. Other people get "not found".
+  - **A long text:** each text of a trace stops at 20,000 characters, with "[cut]".
+  - **The records:** PD20 records the traces. PD19 gets the row "Traces of the model calls: 30 days after the call, and at once with the account". The privacy text stays in F-07.
+- **Out of scope:**
+  - the delete of the visitor data after 30 days (the new task)
+  - the privacy text of the traces (F-07)
+  - a trace of the eval and of the backfill scripts
+  - a mask of caste words: the lists have no caste ([PD3c](../../decisions/pd-03c-exclusionary-preferences.md))
+  - an export or a download of a trace
+  - the turns of a person by name or email
