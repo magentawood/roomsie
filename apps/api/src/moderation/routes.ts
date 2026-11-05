@@ -67,14 +67,16 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiS
       const reviewed = await db.transaction(async (tx) => {
         const closed = await closeReports(tx, subject, action === 'dismiss' ? 'dismissed' : 'actioned')
         if (!closed.length) return false
-        const wasHidden = kind === 'listings' ? (await listingsByIds(tx, [id]))[0]?.hiddenAt != null : (await profileOf(tx, id))?.hiddenAt != null
+        const [listing] = kind === 'listings' ? await listingsByIds(tx, [id]) : []
+        const wasHidden = listing ? listing.hiddenAt != null : (await profileOf(tx, id))?.hiddenAt != null
         const hiddenAt = action === 'dismiss' ? null : new Date()
         if (kind === 'listings') await setListingHiddenForReview(tx, id, hiddenAt)
         else await setCardHiddenForReview(tx, id, hiddenAt)
-        // The suspend of a person covers the hide of the card.
         const by = req.user!.id
-        const owner = closed[0]!.subjectUserId
-        const target = { userId: owner, ...(kind === 'listings' && { listingId: id }) }
+        // A report of a listing keeps its listing, so the listing is there.
+        const owner = kind === 'listings' ? listing!.ownerUserId : id
+        const target = { userId: owner, listingId: listing?.id }
+        // The suspend of a person covers the hide of the card, so it has no hide row.
         if (action === 'dismiss') {
           if (wasHidden) await logAction(tx, by, 'unhide', target)
         } else if (action === 'hide' || kind === 'listings') await logAction(tx, by, 'hide', target)

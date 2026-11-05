@@ -112,6 +112,9 @@ describe('the admin routes', () => {
     expect(await statusesOf(t.ids.lister)).toEqual(['actioned', 'actioned'])
     expect(await queue()).toEqual([])
     expect([await logged({ listingId }), await logged({ subjectUserId: t.ids.lister })]).toEqual([['hide'], ['suspend']])
+    // The row of the listing is also on its owner.
+    const ofLister = await t.db.select({ action: moderationLog.action, listingId: moderationLog.listingId }).from(moderationLog).where(eq(moderationLog.subjectUserId, t.ids.lister))
+    expect(ofLister).toContainEqual({ action: 'hide', listingId })
     await t.db.update(users).set({ status: 'active', tokensValidAfter: new Date(0) }).where(eq(users.id, t.ids.lister))
     await t.db.update(listings).set({ hiddenAt: null })
   })

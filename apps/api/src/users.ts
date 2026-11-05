@@ -49,10 +49,10 @@ export async function emailsOf(db: Db, userIds: string[]) {
 export const accountsOf = (db: Db | Tx, userIds: string[]) => db.select({ id: users.id, email: users.email, status: users.status, joinedAt: users.createdAt, lastSignInAt: users.lastSignInAt })
   .from(users).where(inArray(users.id, userIds))
 
-/** The newest accounts: all of them, the suspended ones, or the ones with an email that has the text. */
+/** The newest accounts: all of them, or the ones with an email that has the text. The suspended ones come by the newest suspend, the time of `tokens_valid_after`. */
 export const newestAccounts = (db: Db, limit: number, { suspended = false, email }: { suspended?: boolean; email?: string } = {}) =>
   db.select({ id: users.id }).from(users)
     .where(and(suspended ? eq(users.status, 'suspended') : ne(users.status, 'deleted'), email ? ilike(users.email, containing(email)) : undefined))
-    .orderBy(desc(users.createdAt)).limit(limit)
+    .orderBy(desc(suspended ? users.tokensValidAfter : users.createdAt)).limit(limit)
 
 export const suspendedCount = (db: Db) => db.$count(users, eq(users.status, 'suspended'))

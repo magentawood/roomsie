@@ -187,14 +187,13 @@ function Reports({ reports, kind }: { reports: AdminSubjectReport[]; kind: 'pers
   )
 }
 
-/** On a person, a row of a listing says so: the row stays after the owner deletes the listing. */
-function Log({ log, ofPerson = false }: { log: AdminLogEntry[]; ofPerson?: boolean }) {
+function Log({ log }: { log: AdminLogEntry[] }) {
   return (
     <section aria-label="Moderation log" className={box}>
       <h2 className="text-lg font-semibold text-primary">Moderation log</h2>
       {log.length ? log.map((l) => (
         <p key={l.id} className="text-sm text-secondary">
-          {`${ofPerson && l.listingId ? `Listing ${actionLabels[l.action].toLowerCase()}` : actionLabels[l.action]} by ${l.by ?? 'a deleted account'} · ${dateAndTime(l.at)}`}
+          {`${l.listingId ? `Listing ${actionLabels[l.action].toLowerCase()}` : actionLabels[l.action]} by ${l.by ?? 'a deleted account'} · ${dateAndTime(l.at)}`}
         </p>
       )) : <p className="text-sm text-tertiary">No action yet.</p>}
     </section>
@@ -265,7 +264,7 @@ export function PersonView({ userId }: { userId: string }) {
             {act.isError && <p role="alert" className="text-sm text-error-primary">{errorText(act.error)}</p>}
           </section>
           <Reports reports={p.reports} kind="person" />
-          <Log log={p.log} ofPerson />
+          <Log log={p.log} />
         </div>
         <aside className="flex flex-col gap-3 lg:w-90">
           <p className="text-sm font-semibold text-tertiary">The card as users see it</p>

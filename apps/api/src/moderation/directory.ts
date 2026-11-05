@@ -125,7 +125,7 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
       const ids = await reportedIds(db, 'listingId', limit)
       const byId = new Map((await listingsByIds(db, ids)).map((l) => [l.id, l]))
       rows = ids.flatMap((id) => byId.get(id) ?? [])
-    } else rows = await newestListings(db, limit, { hidden: filter === 'hidden', removed: filter === 'removed' })
+    } else rows = await newestListings(db, limit, { filter })
     return { listings: await listingRows(db, rows) }
   })
 

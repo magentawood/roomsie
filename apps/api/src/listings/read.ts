@@ -113,12 +113,15 @@ export const deleteListingsOf = (tx: Tx, userId: string) => tx.delete(listings).
 /** A take-down by a moderator (T-63): the listing hides from everyone but its owner, and cannot go live again. */
 export const setListingRemoved = (tx: Tx, listingId: string, at: Date) => tx.update(listings).set({ removedAt: at }).where(eq(listings.id, listingId))
 
-/** The newest listings for the admin: all of them, or those in some areas or of some owners. The hidden ones come by the newest hide, the removed ones by the newest remove. */
-export const newestListings = (db: Db, limit: number, { hidden = false, removed = false, match }: { hidden?: boolean; removed?: boolean; match?: { areaSlugs: string[]; ownerIds: string[] } } = {}) =>
-  db.select().from(listings).where(and(
-    hidden ? isNotNull(listings.hiddenAt) : undefined, removed ? isNotNull(listings.removedAt) : undefined,
+/** The newest listings for the admin: all of them, or those in some areas or of some owners. */
+export function newestListings(db: Db, limit: number, { filter, match }: { filter?: 'hidden' | 'removed'; match?: { areaSlugs: string[]; ownerIds: string[] } } = {}) {
+  // A filter gives the newest hide or remove first.
+  const time = filter === 'hidden' ? listings.hiddenAt : filter === 'removed' ? listings.removedAt : listings.createdAt
+  return db.select().from(listings).where(and(
+    filter ? isNotNull(time) : undefined,
     match ? or(inArray(listings.areaSlug, match.areaSlugs), inArray(listings.ownerUserId, match.ownerIds)) : undefined,
-  )).orderBy(desc(hidden ? listings.hiddenAt : removed ? listings.removedAt : listings.createdAt)).limit(limit)
+  )).orderBy(desc(time)).limit(limit)
+}
 
 /** The live listings that people see, and the hidden ones, for the admin home. */
 export async function listingCounts(db: Db) {

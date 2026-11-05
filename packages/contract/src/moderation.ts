@@ -12,12 +12,17 @@ export type ReviewAction = z.infer<typeof reviewBody>['action']
 /** `safety`: the reason is a safety reason of the settings (PD18). */
 const queuedReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), safety: z.boolean(), detail: z.string().nullable(), createdAt: z.iso.datetime() })
 /** The open reports of one person or one listing. The card is null after the person deleted it. */
-export const reportQueueItem = z.discriminatedUnion('kind', [
-  z.object({ kind: z.literal('person'), userId: z.uuid(), card: cardResponse.nullable(), hiddenForReview: z.boolean(), reports: z.array(queuedReport) }),
-  z.object({ kind: z.literal('listing'), listing: listingResponse, reports: z.array(queuedReport) }),
-])
+const personItem = z.object({ kind: z.literal('person'), userId: z.uuid(), card: cardResponse.nullable(), hiddenForReview: z.boolean(), reports: z.array(queuedReport) })
+const listingItem = z.object({ kind: z.literal('listing'), listing: listingResponse, reports: z.array(queuedReport) })
+export const reportQueueItem = z.discriminatedUnion('kind', [personItem, listingItem])
 export type ReportQueueItem = z.infer<typeof reportQueueItem>
 export const reportQueueResponse = z.object({ items: z.array(reportQueueItem) })
+const knownReports = knownRows(queuedReport, 'reason', reportReasons)
+/** The queue for the web: it drops a report of a reason that its bundle does not know, and an item with no report left. */
+export const reportQueueView = z.object({
+  items: z.array(z.discriminatedUnion('kind', [personItem.extend({ reports: knownReports }), listingItem.extend({ reports: knownReports })]))
+    .transform((items) => items.filter((item) => item.reports.length)),
+})
 
 export type AdminRole = 'moderator' | 'reviewer'
 
@@ -51,7 +56,6 @@ export const adminPeopleQuery = z.object({ q: search, filter: z.enum(peopleFilte
 export const adminListingsQuery = z.object({ q: search, filter: z.enum(listingFilters).optional() }).refine(oneOf, 'a search or a filter, not both')
 export type AdminPeopleQuery = z.input<typeof adminPeopleQuery>
 export type AdminListingsQuery = z.input<typeof adminListingsQuery>
-/** `listingId` is set for an action on a listing, also after its owner deleted it. */
 const logEntry = z.object({ id: z.uuid(), action: z.enum(moderationActions), listingId: z.uuid().nullable(), by: z.string().nullable(), at: z.iso.datetime() })
 const subjectReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), status: z.enum(reportStatuses), createdAt: z.iso.datetime() })
 

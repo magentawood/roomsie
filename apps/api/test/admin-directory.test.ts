@@ -116,8 +116,10 @@ describe('the listings of the admin', () => {
   })
 
   it('keeps the log of a listing on its owner after the owner deletes it', async () => {
-    expect((await t.call('neha', 'DELETE', `/v1/listings/${listingId}`)).statusCode).toBe(204)
-    expect((await person(t.ids.neha)).log.map((l) => [l.action, l.listingId, l.by])).toEqual([['remove', listingId, 'moderator@example.com']])
+    const gone = await t.liveListing()
+    expect((await act('listings', gone, 'remove')).statusCode).toBe(204)
+    expect((await t.call('neha', 'DELETE', `/v1/listings/${gone}`)).statusCode).toBe(204)
+    expect((await person(t.ids.neha)).log.map((l) => [l.action, l.listingId, l.by])).toContainEqual(['remove', gone, 'moderator@example.com'])
   })
 })
 
@@ -147,5 +149,26 @@ describe('the card of people and listings on the home', () => {
     const card = adminHomeResponse.parse((await h.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'people_listings')
     // The suspend hides the card of Aman too.
     expect(card).toEqual({ subject: 'people_listings', people: 2, newToday: 1, liveListings: 1, hidden: 2, suspended: 1 })
+  })
+})
+
+describe('the order of the filters', () => {
+  // Its own app, so each list has only the rows of this test.
+  let o: TestApp<'lister' | 'moderator' | 'karan' | 'aman'>
+  beforeAll(async () => { o = await testApp(['lister', 'moderator', 'karan', 'aman']) })
+  afterAll(() => o.close())
+  const ids = async (url: string) => {
+    const body = (await o.call('moderator', 'GET', url)).json()
+    return url.includes('people') ? adminPeopleResponse.parse(body).people.map((p) => p.userId) : adminListingsResponse.parse(body).listings.map((l) => l.id)
+  }
+
+  it('gives the newest hide, remove and suspend first', async () => {
+    const [first, second] = [await o.liveListing(), await o.liveListing()]
+    for (const id of [second, first]) expect((await o.call('moderator', 'POST', `/v1/admin/listings/${id}/actions`, { action: 'hide' })).statusCode).toBe(204)
+    expect(await ids('/v1/admin/listings?filter=hidden')).toEqual([first, second])
+    for (const id of [first, second]) expect((await o.call('moderator', 'POST', `/v1/admin/listings/${id}/actions`, { action: 'remove' })).statusCode).toBe(204)
+    expect(await ids('/v1/admin/listings?filter=removed')).toEqual([second, first])
+    for (const who of ['aman', 'karan'] as const) expect((await o.call('moderator', 'POST', `/v1/admin/people/${o.ids[who]}/actions`, { action: 'suspend' })).statusCode).toBe(204)
+    expect(await ids('/v1/admin/people?filter=suspended')).toEqual([o.ids.karan, o.ids.aman])
   })
 })

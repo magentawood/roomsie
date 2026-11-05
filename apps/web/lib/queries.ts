@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminHomeView, adminInvitesResponse, adminListingView, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
+  adminHomeView, adminInvitesResponse, adminListingView, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type AdminListingsQuery, type AdminPeopleQuery, type FormA, type SavedKind,
 } from '@roomsie/contract'
@@ -102,7 +102,7 @@ export function useSwitchLog() {
 
 export function useReportQueue() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueResponse) })
+  return useQuery({ queryKey: queryKeys.reportQueue, queryFn: () => api(user, '/v1/admin/reports', reportQueueView) })
 }
 
 export function useAdminQuotes() {
