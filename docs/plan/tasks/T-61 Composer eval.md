@@ -81,6 +81,7 @@ Score the replies of the assistant, and the messages that are not a search.
   - **The runs (the user):** the first run is on the evening of 2026-11-04. The second run is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.
   - **The sentences (the user):** Claude writes and labels them in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge (as M-03).
   - **The scores of the new sentences (the user):** the 22 sentences of the other bands or with `community` count only in the scores of the router. The 6 with a friend count in all the scores. A false alarm is a sentence of the core band, also with `community`, that the router puts in a different band.
+  - **No answer of the router (the user, 2026-11-05):** a turn with no answer of the router counts apart in the scores of the bands and the flags, as for the extractor (T-27). In the second run, DeepSeek gave no answer on 13 turns.
   - **Hindi in Devanagari (the user, review round 1):** each band also gets a sentence in Hindi in Devanagari, as [the testing standards](../../standards/testing.md) ask. Thus, the first run runs again on 2026-11-04.
   - **The setup (the user, as T-27):** DeepSeek and Gemini get a score each, with one model as the primary and as the fallback. Each sentence runs three times. The composer gets no turns and no Form B notes.
   - **The composer in the runner (the user):** it runs with no deadline, so the timeout of the model module is its only limit.

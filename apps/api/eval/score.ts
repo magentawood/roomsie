@@ -47,6 +47,8 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
   const [sure, vague] = [Object.entries(labels).filter(([, v]) => v !== 'unclear'), Object.keys(labels).filter((slot) => labels[slot] === 'unclear')]
   const extra = search ? Object.entries(values).filter(([slot]) => !(slot in labels)) : []
   const otherBand = sentence.band !== 'core'
+  // A turn with no answer of the router counts apart, as for the extractor: live, the fallback answers it.
+  const routed = label.routerBand !== null
   return {
     turns: 1,
     searches: Number(search),
@@ -66,12 +68,12 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
     alarmsBelow: Number(!otherBand && label.band === 'core' && label.routerBand !== null && label.routerBand !== 'core'),
     // The set has no question about the notes of the person, so each `notes` flag is false.
     falseFlags: Number(label.danger && !sentence.danger) + Number(label.community && !sentence.community) + Number(label.notes),
-    otherBands: Number(otherBand),
-    bandRight: Number(otherBand && label.band === sentence.band),
-    dangers: Number(sentence.danger),
-    dangerRight: Number(sentence.danger && label.danger),
-    communities: Number(sentence.community),
-    communityRight: Number(sentence.community && label.community),
+    otherBands: Number(routed && otherBand),
+    bandRight: Number(routed && otherBand && label.band === sentence.band),
+    dangers: Number(routed && sentence.danger),
+    dangerRight: Number(routed && sentence.danger && label.danger),
+    communities: Number(routed && sentence.community),
+    communityRight: Number(routed && sentence.community && label.community),
   }
 }
 
@@ -129,7 +131,8 @@ export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const extras = new Map<string, Map<string, number>>()
   for (const { id, extractorAnswered, values, label } of turns) {
     const sentence = byId.get(id)!
-    for (const key of ['band', 'danger', 'community'] as const) if (label[key] !== sentence[key]) counted(misses, `${id} · ${key}: label ${shown(sentence[key])}, got ${shown(label[key])}`)
+    if (label.routerBand === null) counted(misses, `${id} · no answer of the router`)
+    else for (const key of ['band', 'danger', 'community'] as const) if (label[key] !== sentence[key]) counted(misses, `${id} · ${key}: label ${shown(sentence[key])}, got ${shown(label[key])}`)
     if (!isSearch(sentence)) continue
     if (!extractorAnswered) {
       counted(misses, `${id} · no answer of the extractor`)
