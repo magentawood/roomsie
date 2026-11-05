@@ -51,6 +51,7 @@ These rules apply to all code.
 - A package imports only the packages that it declares [tool]. Why: a hoisted import works on a laptop and fails in CI. ([ADR-0010](../decisions/0010-monorepo-tooling.md))
 - Apps share code only through `packages/`. An app never imports from a different app. Why: each app builds and deploys independently. ([ADR-0003](../decisions/0003-api-as-separate-service.md), [ADR-0010](../decisions/0010-monorepo-tooling.md))
 - Error reports, model calls, emails and pushes each go through one internal module. Application code never imports those SDKs. Why: a vendor change then touches one module. ([ADR-0014](../decisions/0014-error-tracking.md), [PD7](../decisions/pd-07-models.md), [ADR-0019](../decisions/0019-alerts-by-ses-and-fcm.md))
+- An inner name never hides an outer name that the function still uses [tool: `@typescript-eslint/no-shadow`, when the shared config turns it on]. Why: the inner value is read where the outer one was meant. (Rule candidate of [#196](https://github.com/magentawood/roomsie/pull/196), the second time in [#229](https://github.com/magentawood/roomsie/pull/229))
 
 ### Comments and docs
 

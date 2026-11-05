@@ -31,12 +31,12 @@ Score the replies of the assistant, and the messages that are not a search.
 - No task waits on this task.
 
 ## Done when
-- [ ] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags
-- [ ] ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands
-- [ ] The runner scores the language and the script of each reply of the composer
-- [ ] The runner scores the output check of the composer, with the three limits of the name check
-- [ ] COMPOSER_DEADLINE_MS gets its value from the measured times of the composer
-- [ ] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it
+- [x] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] The runner scores the language and the script of each reply of the composer · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] The runner scores the output check of the composer, with the three limits of the name check · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] COMPOSER_DEADLINE_MS gets its value from the measured times of the composer · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#229](https://github.com/magentawood/roomsie/pull/229)
 
 ^done
 
@@ -44,3 +44,66 @@ Score the replies of the assistant, and the messages that are not a search.
 - [model-selection.md](../../model-selection.md)
 - [composer.md](../../learn/composer.md)
 - [eval-set.md](../../learn/eval-set.md)
+
+## Spec
+
+**Approved:** 2026-11-04, by Pulkit. The change after the merge of T-36: approved on 2026-11-04, by Pulkit.
+
+- **Modules:**
+  - **The eval set (changes):** a sentence can have a band, the flags `danger` and `community`, and the names of other people in each script. A sentence with no band is a search, with no flag. The set gets 28 new sentences:
+    - 20 sentences of the other bands, for each of `general`, `consequential`, `out_of_scope`, `adversarial` and `sensitive`. Each band has one in English, one in Hinglish, one in Hindi in Devanagari and one in Marathi. Two of the `sensitive` sentences have `danger`.
+    - 2 searches with a community preference, with `community`.
+    - 6 searches that name a friend, with the labels of Form A. In English, one name has a capital letter and one is in lower case. In Hinglish and in Marathi, one name is in lower case and one is in Devanagari.
+  - **The eval runner (changes):** the runner calls the reply writer, then the composer, as in a live turn. It does this for each search that the extractor reads and the router labels core. Then the router reads the text of the composer, for its language. The run file gets version 2, with the answers of the composer and of this router call. The runner replays the router answers at each threshold, as it replays the extractor answers.
+  - **The scores and the report (change):** the report gets these parts:
+    - the scores of the router on the other bands, and its threshold sweep
+    - the scores of the composer, and its times at each deadline
+    - the value that each rule below selects
+  - **The output check of the composer (its interface changes):** it gives the reason of a failure, or no reason when the text passes. The composer uses the check as before. The eval also asks the name rules alone, and gets the new capital words at the start of a sentence.
+  - **The settings of the assistant (the values can change):** `ROUTER_MIN_PROBABILITY` and `COMPOSER_DEADLINE_MS`, only by the rules below.
+  - **The composer prompt (can change):** only by the rule of T-27 for a prompt change.
+  - The interfaces of the extractor, the router, the composer and the model module do not change.
+- **Seams for the tests:**
+  - The scores, the sweeps and the rules: the unit tests of the scores. They give fixed answers and labels, and check each score and each selected value.
+  - The output check: the tests of the check that exist. Each reason gets a case.
+  - The eval set: the check of the set that exists. It also checks the new fields and the new counts.
+- **Decisions:**
+  - **The order (the user):** T-61 started on the main branch of 2026-11-04. T-36 changes the router prompt, and it merged on the same day, before the first run. Thus both runs have the router prompt of T-36.
+  - **The language of a reply (the user):** the router reads each text of the composer and gives its language. This router call always uses DeepSeek, also in the run of Gemini, so the judge does not change. Code gives the script from the letters (the rule of T-27). The score is against the reply language that the composer got. Each handler gets its own score ([PD7a](../../decisions/pd-07a-agent-architecture.md)).
+  - **The name test (the user):** the 6 sentences with a friend. For each reply, the report gives: no name, a name that the check stops, or a name that passes, with its limit. A name passes by limit 2 (the person typed it in lower case) or by limit 3 (Devanagari). A different rule can still stop a text with a missed name, and the table counts it (review round 2). Limit 1 is a name that the composer makes up. For it, the report lists each capital word at the start of a sentence that is not in the plan or the message. A person reads this list.
+  - **The router threshold (the user):** the DeepSeek answers replay at each threshold from 0.5 to 0.95. The rule selects in this order:
+    1. The most `danger` sentences that keep `danger`.
+    2. The fewest searches with a band that is not core.
+    3. The most sentences of the other bands with their band.
+    4. On a tie, the threshold nearest to 0.8. Of two at the same distance, the higher (the user, review round 2).
+    The research page adds the two runs, then applies the rule. Gemini gives no token probabilities, so the threshold applies only to DeepSeek.
+  - **The deadline (the user):** the time of a composer call is the time of all its attempts. The steps are 500 ms, from 1500 ms. The rule selects the smallest step where 9 of 10 DeepSeek composer calls give an answer in time. The maximum is 4000 ms. A call with no answer is late. If no step reaches 9 of 10, the value is 4000 ms. The report of each run gives the calls in time at each step. The research page adds the two runs, then applies the rule.
+  - **The runs (the user):** the first run is on the evening of 2026-11-04. The second run is on 2026-11-05, from 11:30 to 15:30 IST, in the peak hours of DeepSeek.
+  - **The sentences (the user):** Claude writes and labels them in the style that people type. A Marathi speaker reads the Marathi sentences in the PR before the merge (as M-03).
+  - **The scores of the new sentences (the user):** the 22 sentences of the other bands or with `community` count only in the scores of the router. The 6 with a friend count in all the scores. A false alarm is a sentence of the core band, also with `community`, that the router puts in a different band.
+  - **No answer of the router (the user, 2026-11-05):** a turn with no answer of the router counts apart in the scores of the bands and the flags. The extractor does the same (T-27). In the second run, DeepSeek gave no answer on 13 turns.
+  - **Hindi in Devanagari (the user, review round 1):** each band also gets a sentence in Hindi in Devanagari, as [the testing standards](../../standards/testing.md) ask. Thus, the first run runs again on 2026-11-04.
+  - **The setup (the user, as T-27):** DeepSeek and Gemini get a score each, with one model as the primary and as the fallback. Each sentence runs three times. The composer gets no turns and no Form B notes.
+  - **The composer in the runner (the user):** it runs with no deadline, so the timeout of the model module is its only limit.
+  - **A prompt change (the user, the rule of T-27):** a change of the composer prompt stays only when three things are true. The total score goes up, no language goes down, and the change is a general rule.
+  - **The results (the user):** the reports of the two runs and a research page go into the research folder. The two values change in the settings, the example env file, and each doc that gives them.
+  - **The open product calls (the user, F-11):** the two values stay settings with a default. The fixed lines stay in their data file (PC-15).
+  - **The keys (the user):** the runner reads the keys from the local env file of the eval, which git ignores. Claude copies the two keys from the local env file of the API, and does not show them.
+- **Out of scope:**
+  - a fix of the three limits of the name check (a follow-up task if a name passes)
+  - the `notes` flag of T-36 in the eval set
+  - a third vendor, such as Qwen
+  - a run in CI
+  - the full eval of 200 to 300 sentences of PD7
+
+## Log
+
+- **2026-11-05 · [#229](https://github.com/magentawood/roomsie/pull/229)**
+  - **Change:** `pnpm eval` runs the composer as in a live turn, and the router judges the language of each text. The set gets 28 sentences for the router and the name test. The output check gives its reason. Two runs set the two values: `ROUTER_MIN_PROBABILITY` stays 0.8, and `COMPOSER_DEADLINE_MS` goes from 2500 to 3500.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec. The results: [the eval of the composer](../../research/eval-2026-11-composer.md).
+  - **Ticked:** all six items.
+  - **Not done:** none.
+  - **Follow-up:** the reports of the two runs go into `docs/research`. They stay on the computer that ran them (the user, at the extensive review).
+  - **The Marathi sentences:** a Marathi speaker read them before the merge (the user, at the extensive review).
+  - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md), [The router](../../learn/router.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

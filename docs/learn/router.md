@@ -29,7 +29,7 @@
 | The line of each band | `apps/api/src/assistant/handlers/reply/`, and the texts in `apps/api/src/assistant/lines.json` |
 | The answer, the label and the `turn_routed` event | `packages/contract/src/goals.ts`, `events.ts` |
 
-- **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. `routerBand` keeps the band that the router gave. A sure band keeps `danger`, `community`, `notes` and the question kind only when each passes the threshold too.
+- **A sure band only.** DeepSeek gives the probability of each token. A band below `ROUTER_MIN_PROBABILITY` (0.8) makes the turn core, and the label keeps no kinds and no flags. In the eval of T-61, each threshold from 0.5 to 0.95 gave the same scores, so the value stays 0.8 ([the eval of the composer](../research/eval-2026-11-composer.md)). Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. `routerBand` keeps the band that the router gave. A sure band keeps `danger`, `community`, `notes` and the question kind only when each passes the threshold too.
 - **The label stays with the message.** It goes on the typed turn of the person, so account deletion removes it. The `turn_routed` event has only the band.
 - **The adapter.** The router calls one classifier. A different model, such as Jev, is a different classifier, and the turn does not change ([extensibility.md](../extensibility.md)).
 
@@ -47,4 +47,5 @@
 ## Tickets
 
 - T-34: the router, the bands and the label.
+- T-61: [#229](https://github.com/magentawood/roomsie/pull/229), 2026-11-05. The eval of the other bands and the value of the threshold.
 - T-58: the hidden community filter. T-36, T-38 and T-13: the observer, the advisor and the reply writer that use the label.

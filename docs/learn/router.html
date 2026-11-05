@@ -115,7 +115,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>A sure band only.</strong> DeepSeek gives the probability of each token. A band below <code>ROUTER_MIN_PROBABILITY</code> (0.8) makes the turn core, and the label keeps no kinds and no flags. Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. <code>routerBand</code> keeps the band that the router gave. A sure band keeps <code>danger</code>, <code>community</code>, <code>notes</code> and the question kind only when each passes the threshold too.</li>
+<li><strong>A sure band only.</strong> DeepSeek gives the probability of each token. A band below <code>ROUTER_MIN_PROBABILITY</code> (0.8) makes the turn core, and the label keeps no kinds and no flags. In the eval of T-61, each threshold from 0.5 to 0.95 gave the same scores, so the value stays 0.8 (<a href="../research/eval-2026-11-composer.md">the eval of the composer</a>). Gemini gives no probabilities, so its band passes. When no model answers, the turn is core too. <code>routerBand</code> keeps the band that the router gave. A sure band keeps <code>danger</code>, <code>community</code>, <code>notes</code> and the question kind only when each passes the threshold too.</li>
 <li><strong>The label stays with the message.</strong> It goes on the typed turn of the person, so account deletion removes it. The <code>turn_routed</code> event has only the band.</li>
 <li><strong>The adapter.</strong> The router calls one classifier. A different model, such as Jev, is a different classifier, and the turn does not change (<a href="../extensibility.md">extensibility.md</a>).</li>
 </ul>
@@ -133,6 +133,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-34: the router, the bands and the label.</li>
+<li>T-61: <a href="https://github.com/magentawood/roomsie/pull/229">#229</a>, 2026-11-05. The eval of the other bands and the value of the threshold.</li>
 <li>T-58: the hidden community filter. T-36, T-38 and T-13: the observer, the advisor and the reply writer that use the label.</li>
 </ul>
 </main>
