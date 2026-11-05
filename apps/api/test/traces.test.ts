@@ -1,15 +1,15 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
-import { adminTurnResponse, adminTurnsResponse, newGoalResponse, traceViewsResponse } from '@roomsie/contract'
+import { adminTurnResponse, adminTurnsResponse, newGoalResponse, traceDays, traceViewsResponse } from '@roomsie/contract'
 import { tracePrompts, traces } from '../src/db/schema'
 import { goneOnOf } from '../src/traces/store'
 import { testApp, type TestApp } from './app'
 import { down, fakeVendors, keys, room, routed } from './vendors'
 
-let t: TestApp<'moderator' | 'member' | 'asha'>
+let t: TestApp<'moderator' | 'member' | 'asha' | 'ravi'>
 let goalId: string
 beforeAll(async () => {
-  t = await testApp(['moderator', 'member', 'asha'], undefined, keys)
+  t = await testApp(['moderator', 'member', 'asha', 'ravi'], undefined, keys)
   await t.liveCard('asha', 'Asha Rao')
   goalId = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json()).id
   // Two typed turns for each test. The composer fails at DeepSeek and at Gemini, so the scripted reply goes out.
@@ -20,9 +20,9 @@ beforeAll(async () => {
 afterAll(() => t.close())
 afterEach(() => { vi.unstubAllGlobals() })
 
-const typed = async (text: string, vendors: Parameters<typeof fakeVendors>[0]) => {
+const typed = async (text: string, vendors: Parameters<typeof fakeVendors>[0], who: 'asha' | 'ravi' = 'asha', goal = goalId) => {
   fakeVendors(vendors)
-  expect((await t.call('asha', 'POST', `/v1/goals/${goalId}/turns`, { text })).statusCode).toBe(200)
+  expect((await t.call(who, 'POST', `/v1/goals/${goal}/turns`, { text })).statusCode).toBe(200)
 }
 const turns = async (query = '') => adminTurnsResponse.parse((await t.call('moderator', 'GET', `/v1/admin/ai/turns${query}`)).json())
 const open = async (key: string) => t.call('moderator', 'GET', `/v1/admin/ai/turns/${key}`)
@@ -46,6 +46,15 @@ describe('the traces of the AI pipeline (T-64)', () => {
     expect((await turns('?filter=failed')).turns).toHaveLength(2)
     expect((await turns('?filter=fallback')).turns).toHaveLength(2)
     expect((await turns('?filter=slow')).turns).toEqual([])
+    expect((await t.call('moderator', 'GET', '/v1/admin/ai/turns')).body).not.toMatch(/asha/i)
+  })
+
+  it('finds a turn slower than 8 s', async () => {
+    // A turn of this test: a copy of a call that took 9 s.
+    const [call] = await t.db.select().from(traces).where(eq(traces.goalId, goalId)).orderBy(traces.startedAt, traces.attempt).limit(1)
+    await t.db.insert(traces).values({ ...call!, id: '0199e4b0-0000-7000-8000-000000000003', turnKey: '0199e4b0-0000-7000-8000-000000000004', ms: 9000 })
+    expect((await turns('?filter=slow')).turns.map((r) => [r.key, r.ms])).toEqual([['0199e4b0-0000-7000-8000-000000000004', 9000]])
+    await t.db.delete(traces).where(eq(traces.turnKey, '0199e4b0-0000-7000-8000-000000000004'))
   })
 
   it('opens a turn with each call, masked, with no name or email, and logs each open', async () => {
@@ -82,7 +91,7 @@ describe('the traces of the AI pipeline (T-64)', () => {
   it('deletes the traces older than 30 days with the nightly job, and each prompt that no trace uses', async () => {
     const [kept] = await t.db.select().from(traces).where(eq(traces.goalId, goalId)).orderBy(traces.startedAt, traces.attempt).limit(1)
     await t.db.insert(tracePrompts).values({ hash: 'unused', text: 'An old prompt.' })
-    await t.db.insert(traces).values({ ...kept!, id: '0199e4b0-0000-7000-8000-000000000002', startedAt: new Date(Date.now() - 31 * 86_400_000) })
+    await t.db.insert(traces).values({ ...kept!, id: '0199e4b0-0000-7000-8000-000000000002', startedAt: new Date(Date.now() - (traceDays + 1) * 86_400_000) })
     const before = await t.db.$count(traces)
     await t.db.execute(sql`select jobs.delete_old_traces()`)
     expect(await t.db.$count(traces)).toBe(before - 1)
@@ -90,7 +99,11 @@ describe('the traces of the AI pipeline (T-64)', () => {
   })
 
   it('deletes the traces of an account at once with the account', async () => {
-    expect((await t.call('asha', 'DELETE', '/v1/me')).statusCode).toBe(204)
-    expect(await t.db.$count(traces, eq(traces.goalId, goalId))).toBe(0)
+    // An account of this test, so the other tests keep theirs.
+    const ravisGoal = newGoalResponse.parse((await t.call('ravi', 'POST', '/v1/goals')).json()).id
+    await typed('room in bandra', { deepseek: [room()], ...routed({}) }, 'ravi', ravisGoal)
+    expect(await t.db.$count(traces, eq(traces.goalId, ravisGoal))).toBeGreaterThan(0)
+    expect((await t.call('ravi', 'DELETE', '/v1/me')).statusCode).toBe(204)
+    expect(await t.db.$count(traces, eq(traces.goalId, ravisGoal))).toBe(0)
   })
 })

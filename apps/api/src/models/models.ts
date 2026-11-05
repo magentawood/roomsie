@@ -88,7 +88,7 @@ async function readAnswer<T>(res: Response | null, read: Read<T>, model: string)
 /** The only code that calls a model (PD7, ADR-0014). */
 export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<Vendor, string>; primary: string; fallback: string; timeoutMs: number }) {
   type Mode = { json: boolean; logprobs?: boolean }
-  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>, deadline?: AbortSignal, number = 1) {
+  async function attempt<T>(call: ModelCall, model: string, { json, logprobs }: Mode, read: Read<T>, deadline?: AbortSignal, attemptNumber = 1) {
     // The settings let only a model name of a known vendor through.
     const vendor = vendorOf(model)!
     const startedAt = new Date()
@@ -112,7 +112,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     // A call of a goal keeps a trace of each attempt (PD20, T-64). The check of the keys has no goal.
     if (call.session) {
       call.req.server.traces.save({ ...call, session: call.session }, {
-        attempt: number, model, fallback: record.fallback, outcome: answer.outcome, startedAt, ms, usage: answer.usage, answer: answer.content,
+        attempt: attemptNumber, model, fallback: record.fallback, outcome: answer.outcome, startedAt, ms, usage: answer.usage, answer: answer.content,
       })
     }
     call.req.log.info(record, 'model call')

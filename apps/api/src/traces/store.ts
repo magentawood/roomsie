@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto'
 import type { FastifyBaseLogger, FastifyRequest } from 'fastify'
 import { and, asc, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
 import { modelOutcomes, modelRoles, routerAnswer, slowTurnMs, traceDays, type AdminTurnRow, type ModelUsage, type TraceFilter } from '@roomsie/contract'
-import { uuidv7 } from 'uuidv7'
 import { z } from 'zod'
 import { afterReplyOf } from '../after-reply'
 import type { Db } from '../db/client'
@@ -13,7 +12,6 @@ import { rupeesOf } from '../models/spend'
 import { emailsOf } from '../users'
 import { forTrace } from './mask'
 
-/** What an attempt of a model call gives to its trace. */
 export type Attempt = { attempt: number; model: string; fallback: boolean; outcome: (typeof modelOutcomes)[number]; startedAt: Date; ms: number; usage: ModelUsage; answer: string | null }
 
 /** "s-" and four characters from the goal: never a name, and no link to a card (T-64). */
@@ -38,12 +36,16 @@ export function tracesOf({ db, log }: { db: Db; log: FastifyBaseLogger }) {
       queue.later(async () => {
         const { key, number } = await turn
         const hash = hashOf(call.system)
-        await db.insert(tracePrompts).values({ hash, text: call.system }).onConflictDoNothing()
-        await db.insert(traces).values({
-          id: uuidv7(), turnKey: key, goalId: call.session, sessionCode: sessionCodeOf(call.session), turnNumber: number, role: call.role,
-          attempt: attempt.attempt, model: attempt.model, fallback: attempt.fallback, outcome: attempt.outcome, startedAt: attempt.startedAt, ms: attempt.ms, ...attempt.usage,
-          promptHash: hash, messages: { version: 1, list: call.messages.map(({ role, content }) => ({ role, content: forTrace(content) })) },
-          answer: attempt.answer === null ? null : forTrace(attempt.answer),
+        // The nightly job takes this lock alone, so it cannot delete the prompt between the two inserts (database.md).
+        await db.transaction(async (tx) => {
+          await tx.execute(sql`select pg_advisory_xact_lock_shared(hashtext('traces'))`)
+          await tx.insert(tracePrompts).values({ hash, text: call.system }).onConflictDoNothing()
+          await tx.insert(traces).values({
+            turnKey: key, goalId: call.session, sessionCode: sessionCodeOf(call.session), turnNumber: number, role: call.role,
+            attempt: attempt.attempt, model: attempt.model, fallback: attempt.fallback, outcome: attempt.outcome, startedAt: attempt.startedAt, ms: attempt.ms, ...attempt.usage,
+            promptHash: hash, messages: { version: 1, list: call.messages.map(({ role, content }) => ({ role, content: forTrace(content) })) },
+            answer: attempt.answer === null ? null : forTrace(attempt.answer),
+          })
         })
       })
     },
@@ -72,12 +74,21 @@ const filterSql: Record<TraceFilter, SQL> = { failed: sql`failed_roles is not nu
 
 type TurnStats = { turn_key: string; code: string; num: number; at: string | Date; calls: number; span: number; failed_roles: string[] | null; fallback_roles: string[] | null }
 
+// One stored answer that does not parse gives no band, and the list still shows.
+const parseJson = (text: string | null): unknown => {
+  try {
+    return JSON.parse(text ?? 'null')
+  } catch {
+    return null
+  }
+}
+
 /** The band and the register of a turn, from the answer of its router: the mask keeps them. */
 async function labelsOf(db: Db, keys: string[]) {
   const rows = keys.length ? await db.select({ key: traces.turnKey, answer: traces.answer }).from(traces)
     .where(and(inArray(traces.turnKey, keys), eq(traces.role, 'router'), eq(traces.outcome, 'ok'))) : []
   return new Map(rows.flatMap(({ key, answer }) => {
-    const parsed = routerAnswer.safeParse(JSON.parse(answer ?? 'null'))
+    const parsed = routerAnswer.safeParse(parseJson(answer))
     return parsed.success ? [[key, parsed.data] as const] : []
   }))
 }
@@ -111,13 +122,9 @@ export async function turnsOf(db: Db, { q, filter }: { q?: string; filter?: Trac
   return { turns: await rowsOf(db, [...listed]), counts: counted[0]! }
 }
 
-const istOffsetMs = 5.5 * 3_600_000
 /** The day in IST that the nightly job deletes a trace of this time: its first run at 04:15 IST after the days of PD20. */
-export function goneOnOf(startedAt: Date) {
-  const due = new Date(startedAt.getTime() + traceDays * 86_400_000 + istOffsetMs)
-  const afterRun = due.getUTCHours() * 60 + due.getUTCMinutes() >= 4 * 60 + 15
-  return new Date(due.getTime() + (afterRun ? 86_400_000 : 0)).toISOString().slice(0, 10)
-}
+export const goneOnOf = (startedAt: Date) =>
+  new Date(startedAt.getTime() + (traceDays + 1) * 86_400_000 - (4 * 60 + 15) * 60_000).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
 /** One turn with each of its calls, or null. The last open of the turn is the one before this read. */
 export async function turnOf(db: Db, key: string) {
@@ -126,13 +133,12 @@ export async function turnOf(db: Db, key: string) {
   if (!attempts.length) return null
   const [stats] = await db.execute<TurnStats>(sql`with t as (${turnStats}) select * from t where turn_key = ${key}`)
   const [row] = await rowsOf(db, [stats!])
-  const [last] = await db.select({ by: traceViews.moderatorUserId, at: traceViews.createdAt }).from(traceViews).where(eq(traceViews.turnKey, key)).orderBy(desc(traceViews.createdAt)).limit(1)
-  const emails = last?.by ? await emailsOf(db, [last.by]) : new Map<string, string | null>()
+  const [lastView = null] = await viewsOf(db, { turnKey: key, limit: 1 })
   return {
     ...row!,
     rupees: attempts.reduce((sum, { trace: t }) => sum + rupeesOf(vendorOf(t.model)!, t), 0),
     goneOn: goneOnOf(attempts[0]!.trace.startedAt),
-    lastView: last ? { by: (last.by && emails.get(last.by)) ?? null, at: last.at.toISOString() } : null,
+    lastView,
     attempts: attempts.map(({ trace: t, prompt }) => ({
       id: t.id, role: storedRole.parse(t.role), attempt: t.attempt, model: t.model, fallback: t.fallback, outcome: storedOutcome.parse(t.outcome), startedAt: t.startedAt.toISOString(), ms: t.ms,
       tokensIn: t.tokensIn, cachedTokensIn: t.cachedTokensIn, tokensOut: t.tokensOut,
@@ -143,11 +149,10 @@ export async function turnOf(db: Db, key: string) {
 
 // clock_timestamp(): the log gives the last open, so two opens keep their order (database.md).
 export const logView = (db: Db, moderatorUserId: string, turn: Pick<AdminTurnRow, 'key' | 'sessionCode' | 'turn'>) =>
-  db.insert(traceViews).values({ id: uuidv7(), moderatorUserId, turnKey: turn.key, sessionCode: turn.sessionCode, turnNumber: turn.turn, createdAt: sql`clock_timestamp()` })
+  db.insert(traceViews).values({ moderatorUserId, turnKey: turn.key, sessionCode: turn.sessionCode, turnNumber: turn.turn, createdAt: sql`clock_timestamp()` })
 
-const viewLimit = 100
-export async function viewsOf(db: Db) {
-  const rows = await db.select().from(traceViews).orderBy(desc(traceViews.createdAt)).limit(viewLimit)
+export async function viewsOf(db: Db, { turnKey, limit = 100 }: { turnKey?: string; limit?: number } = {}) {
+  const rows = await db.select().from(traceViews).where(turnKey ? eq(traceViews.turnKey, turnKey) : undefined).orderBy(desc(traceViews.createdAt)).limit(limit)
   const emails = await emailsOf(db, rows.flatMap((r) => (r.moderatorUserId ? [r.moderatorUserId] : [])))
   return rows.map((r) => ({ sessionCode: r.sessionCode, turn: r.turnNumber, by: (r.moderatorUserId && emails.get(r.moderatorUserId)) ?? null, at: r.createdAt.toISOString() }))
 }

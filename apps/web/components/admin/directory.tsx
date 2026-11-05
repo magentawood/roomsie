@@ -34,12 +34,12 @@ const listingFilterLabels: Record<ListingFilter, string> = { reported: 'Reported
 const actionLabels: Record<AdminLogEntry['action'], string> = { hide: 'Hidden', unhide: 'Unhidden', suspend: 'Suspended', remove: 'Removed' }
 const cardStates: Record<(typeof visibilities)[number], string> = { live: 'Shows to others', hidden: 'Hidden by the person', draft: 'Not finished' }
 
-/** A search or a filter: each clears the other. With `all`, a first chip of that label stands for no filter. */
-export function Search<F extends string>({ label, placeholder, labels, all, onSearch }: {
-  label: string; placeholder: string; labels: Record<F, string>; all?: string; onSearch: (query: { q?: string; filter?: F }) => void
+/** A search or a filter: each clears the other. With `allLabel`, a first chip of that label stands for no filter. */
+export function Search<F extends string>({ label, placeholder, labels, allLabel, onSearch }: {
+  label: string; placeholder: string; labels: Record<F, string>; allLabel?: string; onSearch: (query: { q?: string; filter?: F }) => void
 }) {
-  const none = all ? 'all' : null
-  const chips = (all ? { all, ...labels } : labels) as Record<F | 'all', string>
+  const none = allLabel ? 'all' : null
+  const chips = (allLabel ? { all: allLabel, ...labels } : labels) as Record<F | 'all', string>
   const [text, setText] = useState('')
   const [filter, setFilter] = useState<F | 'all' | null>(none)
   const submit = (e: FormEvent) => { e.preventDefault(); setFilter(none); onSearch({ q: text.trim() }) }

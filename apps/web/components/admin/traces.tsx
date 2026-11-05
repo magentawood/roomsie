@@ -25,9 +25,6 @@ const results: Record<AdminTurnRow['result'], { tone: Tone; label: (role: string
   failed: { tone: 'error', label: (role) => `${capital(role)} failed` },
   fallback: { tone: 'warning', label: (role) => `${capital(role)} to Gemini` },
 }
-const Result = ({ row }: { row: Pick<AdminTurnRow, 'result' | 'resultRole'> }) => (
-  <Badge tone={results[row.result].tone} dot={false}>{results[row.result].label(row.resultRole ?? '')}</Badge>
-)
 
 /** The tab Turns of the AI pipeline (T-64, drafts section 39). */
 export function TurnsList() {
@@ -40,7 +37,7 @@ export function TurnsList() {
   }
   return (
     <>
-      <Search label="Search turns" placeholder="Search by session code" labels={labels} all="All" onSearch={setQuery} />
+      <Search label="Search turns" placeholder="Search by session code" labels={labels} allLabel="All" onSearch={setQuery} />
       <p className="rounded-lg bg-secondary px-3 py-2.5 text-sm text-tertiary">{`Each open of a turn goes in the audit log, and a trace goes ${traceDays} days after its call.`}</p>
       {turns.isError && <p role="alert" className="text-sm text-error-primary">{errorText(turns.error)}</p>}
       {turns.isPending && <p className="text-sm text-tertiary">Loading…</p>}
@@ -59,7 +56,7 @@ export function TurnsList() {
                   <td className="px-4 py-3">{languageOf(t)}</td>
                   <td className="px-4 py-3">{t.calls}</td>
                   <td className="px-4 py-3">{seconds(t.ms)}</td>
-                  <td className="px-4 py-3"><Result row={t} /></td>
+                  <td className="px-4 py-3"><Badge tone={results[t.result].tone} dot={false}>{results[t.result].label(t.resultRole ?? '')}</Badge></td>
                   <td className="px-4 py-3 text-right"><Link href={`/admin/ai/turns/${t.key}`} className="font-semibold text-primary hover:underline">Open</Link></td>
                 </tr>
               ))}

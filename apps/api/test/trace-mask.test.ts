@@ -15,12 +15,13 @@ describe('the mask of a trace (T-64)', () => {
   it('hides the endings of a word: "s", "ism" and "ic" in Latin letters, and each ending in Devanagari', () => {
     expect(forTrace('Jains and Muslims, Islamic or HINDU, Sikhism, Christianity, Judaism')).toBe('[hidden] and [hidden], [hidden] or [hidden], [hidden], [hidden], [hidden]')
     expect(forTrace('फक्त मुस्लिमांसाठी आणि जैनांना')).toBe('फक्त [hidden] आणि [hidden]')
+    expect(forTrace('सिखों ईसाइयों यहूदियों पारसियों बिहारियों मारवाड़ियों मलयालियों')).toBe(Array(7).fill('[hidden]').join(' '))
   })
 
   it('keeps the names of a language and a word that only starts like a mask word', () => {
     for (const text of [
       'Marathi family only', 'Gujarati or Tamil flatmates', 'फक्त मराठी फ्लॅटमेट', 'cooking sikhna hai', 'cooking sikho', 'parso shift karna hai', 'up to 20k',
-      'मुझे खाना बनाना सिखाना है', 'बौद्धिक काम करतो',
+      'मुझे खाना बनाना सिखाना है', 'बौद्धिक काम करतो', 'ज्यूस पिना है', 'यूपीएससी की तैयारी',
     ]) expect(forTrace(text)).toBe(text)
   })
 

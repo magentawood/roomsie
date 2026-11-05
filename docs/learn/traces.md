@@ -30,7 +30,8 @@ each night at 04:15 IST ──▶ the job deletes each trace older than 30 days
 
 - A save goes after the attempt, in a queue. A failed save goes to the error report, and the call goes on.
 - A call with no goal saves no trace: the check of the keys. The scripts (the eval and the backfill) give their calls a goal, but they give the model module `noTraces`, so they save no trace.
-- The number of a turn is the number of the typed message in its chat.
+- The number of a turn is the number of the message of the person in its chat. A tap of a chip counts too, though it has no model call.
+- The time of a turn is from its first call to the end of its last call before the reply. The observer after the reply is not in it: the person does not wait for it.
 - The result of a turn is "failed" when a role has no answer in any attempt, and "to the fallback" when a role went to the fallback.
 
 ## The choice we made

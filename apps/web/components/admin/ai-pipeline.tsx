@@ -18,7 +18,6 @@ import { Modal } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
 
 type Numbers = NonNullable<AiOverviewResponse['numbers']>
-const orNone = (ms: number | null) => (ms === null ? '—' : seconds(ms))
 const bandLabels: Record<keyof Numbers['bands'], string> = {
   core: 'Core: the search', general: 'General questions', consequential: 'Consequential: law, tax',
   out_of_scope: 'Out of scope', sensitive: 'Sensitive', adversarial: 'Adversarial',
@@ -79,7 +78,7 @@ function CallMetrics({ numbers: { today, lastQuarterHour } }: { numbers: Numbers
       <Metric label="Model calls today" value={today.calls.toLocaleString('en-IN')} note={`${lastQuarterHour.calls.toLocaleString('en-IN')} in the last 15 minutes`} />
       <Metric label="Calls failed" value={percent(today.failedShare)} note={`${percent(lastQuarterHour.failedShare)} in the last 15 minutes`} />
       <Metric label="Sent to the fallback" value={percent(today.fallbackShare)} note={`${percent(lastQuarterHour.fallbackShare)} in the last 15 minutes`} />
-      <Metric label="Slowest 5% of calls" value={orNone(today.p95Ms)} note="Each call has its own time limit" />
+      <Metric label="Slowest 5% of calls" value={seconds(today.p95Ms)} note="Each call has its own time limit" />
     </>
   )
 }
@@ -101,7 +100,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
                 <td className="py-2.5 pr-3">{r.calls.toLocaleString('en-IN')}</td>
                 <td className="py-2.5 pr-3">{percent(r.failedShare)}</td>
                 <td className="py-2.5 pr-3">{percent(r.fallbackShare)}</td>
-                <td className="py-2.5 pr-3">{orNone(r.p95Ms)}</td>
+                <td className="py-2.5 pr-3">{seconds(r.p95Ms)}</td>
                 <td className="py-2.5 pr-3">{rupees(r.rupees)}</td>
               </tr>
             ))}
@@ -195,7 +194,7 @@ export function AiSettingsAndLog() {
           <Setting name="Visitor messages" value={`${limits.turnCap} before the sign-in wall, ${limits.turnBackstop} at most`} />
           <Setting name="Visitor chats" value={`${limits.sessionsPerDevice} a device, ${limits.sessionsPerIp} a network, ${limits.sessionsPerIpRange} a network range`} />
           <Setting name="Typed messages" value={`${limits.typedTurnsPerMinute} a minute`} />
-          <Setting name="Traces kept" value={`${traceDays} days after the call · religion and community words masked`} />
+          <Setting name="Traces kept" value={`${traceDays} days · religion and community masked`} />
         </div>
       </section>
       <div className="flex flex-col gap-4 lg:w-136">

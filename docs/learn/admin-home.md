@@ -21,7 +21,7 @@ GET /v1/admin/home ──▶ the roles of the person
 | Moderation | open reports, late safety reports, other late reports, the oldest report, feedback of the last 7 days | `/admin/reports`, `/admin/feedback` |
 | ID checks | checks that wait, late checks, the oldest check, checks verified in the last 7 days | `/admin/id-checks` |
 | People and listings | the people with a card and the new ones of today, the live listings, the cards and listings hidden for review, the suspended accounts | `/admin/people`, `/admin/listings` ([Moderation](moderation.md)) |
-| AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/log` ([The model wrapper](models.md)) |
+| AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/turns`, `/admin/ai/turns/[key]`, `/admin/ai/log` ([The model wrapper](models.md), [Traces of the model calls](traces.md)) |
 | Site content | invites and the invite gate, quotes, site details that are set | `/admin/invites`, `/admin/quotes`, `/admin/site` |
 
 - The API sends only the cards of the roles of the person. A person with both roles gets each card.

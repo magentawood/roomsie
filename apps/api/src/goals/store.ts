@@ -181,7 +181,7 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
   })
 }
 
-/** At account deletion. The cascades remove the chat turns, the waitlist entries and the feedback of the goals, and the goals of a claimed visitor session. */
+/** At account deletion. The cascades remove the chat turns, the waitlist entries, the feedback and the traces of the goals, and the goals of a claimed visitor session. */
 export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(goals).where(eq(goals.userId, userId))
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
