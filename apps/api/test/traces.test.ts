@@ -32,7 +32,7 @@ describe('the traces of the AI pipeline (T-64)', () => {
     expect(listed.map((r) => [r.turn, r.band, r.language, r.script, r.result, r.resultRole])).toEqual([
       [2, 'core', 'english', 'latin', 'failed', 'composer'], [1, 'core', 'english', 'latin', 'failed', 'composer'],
     ])
-    expect(listed[1]).toMatchObject({ calls: 4, sessionCode: listed[0]!.sessionCode })
+    expect(listed[1]).toMatchObject({ calls: 3, sessionCode: listed[0]!.sessionCode })
     expect(listed[0]!.sessionCode).toMatch(/^s-[0-9a-f]{4}$/)
     expect(counts).toEqual({ failed: 2, fallback: 2, slow: 0 })
   })
@@ -52,12 +52,13 @@ describe('the traces of the AI pipeline (T-64)', () => {
     expect(first.body).not.toMatch(/asha/i)
     const turn = adminTurnResponse.parse(first.json())
     // The system prompts are code, so they keep their words: the mask is for the words of the person and of the models.
-    expect(JSON.stringify(turn.calls.map((c) => [c.messages, c.answer]))).not.toMatch(/jain/i)
-    expect(turn.calls.map((c) => [c.role, c.attempt, c.fallback, c.outcome]).sort()).toEqual([
+    expect(JSON.stringify(turn.attempts.map((c) => [c.messages, c.answer]))).not.toMatch(/jain/i)
+    expect(turn.calls).toBe(3)
+    expect(turn.attempts.map((c) => [c.role, c.attempt, c.fallback, c.outcome]).sort()).toEqual([
       ['composer', 1, false, 'failed'], ['composer', 2, true, 'failed'], ['extractor', 1, false, 'ok'], ['router', 1, false, 'ok'],
     ])
-    expect(turn.calls.find((c) => c.role === 'extractor')!.messages[0]!.content).toContain('only [hidden] flatmates')
-    expect(turn.calls.find((c) => c.role === 'router')!.systemPrompt.name).toMatch(/^router · [0-9a-f]{8}$/)
+    expect(turn.attempts.find((c) => c.role === 'extractor')!.messages[0]!.content).toContain('only [hidden] flatmates')
+    expect(turn.attempts.find((c) => c.role === 'router')!.systemPrompt.name).toMatch(/^router · [0-9a-f]{8}$/)
     expect(turn.lastView).toBeNull()
     const again = adminTurnResponse.parse((await open(key)).json())
     expect(again.lastView).toMatchObject({ by: 'moderator@example.com' })

@@ -11,7 +11,7 @@ import { Badge, type Tone } from '../ui/badge'
 import { pageBody, SubjectHeader } from './admin-page'
 import { Search } from './directory'
 
-type Call = AdminTurnResponse['calls'][number]
+type Call = AdminTurnResponse['attempts'][number]
 const card = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
 const seconds = (ms: number) => `${(ms / 1000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} s`
 const capital = (word: string) => `${word[0]!.toUpperCase()}${word.slice(1)}`
@@ -137,9 +137,9 @@ export function TurnView({ turnKey }: { turnKey: string }) {
     )
   }
   const t = turn.data
-  const start = Math.min(...t.calls.map((c) => Date.parse(c.startedAt)))
-  const span = Math.max(...t.calls.map((c) => Date.parse(c.startedAt) + c.ms)) - start || 1
-  const call = t.calls[selected] ?? t.calls[0]!
+  const start = Math.min(...t.attempts.map((c) => Date.parse(c.startedAt)))
+  const span = Math.max(...t.attempts.map((c) => Date.parse(c.startedAt) + c.ms)) - start || 1
+  const call = t.attempts[selected] ?? t.attempts[0]!
   return (
     <>
       <SubjectHeader title={`Session ${t.sessionCode} · turn ${t.turn}`} back={toTurns}
@@ -152,14 +152,14 @@ export function TurnView({ turnKey }: { turnKey: string }) {
         <section aria-label="Timeline" className={card}>
           <h2 className="text-lg font-semibold text-primary">Timeline</h2>
           <ol className="flex flex-col">
-            {t.calls.map((c, i) => (
+            {t.attempts.map((c, i) => (
               <li key={c.id}>
                 <button type="button" onClick={() => setSelected(i)} aria-pressed={c === call}
-                  className={`grid w-full grid-cols-1 items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm md:grid-cols-[14rem_1fr_4rem_auto] md:gap-4 ${c === call ? 'bg-secondary' : 'hover:bg-primary_hover'}`}>
+                  className={`grid w-full grid-cols-1 items-center gap-2 rounded-lg px-2 py-2.5 text-left text-sm md:grid-cols-[14rem_1fr_4rem_6rem] md:gap-4 ${c === call ? 'bg-secondary' : 'hover:bg-primary_hover'}`}>
                   <span className="flex flex-col"><span className="font-semibold text-primary">{stepName(c)}</span><span className="text-tertiary">{c.model}</span></span>
                   <Waterfall call={c} start={start} span={span} />
                   <span className="text-tertiary">{seconds(c.ms)}</span>
-                  <Badge tone={outcomes[c.outcome].tone} dot={false}>{outcomes[c.outcome].label}</Badge>
+                  <span className="justify-self-start"><Badge tone={outcomes[c.outcome].tone} dot={false}>{outcomes[c.outcome].label}</Badge></span>
                 </button>
               </li>
             ))}

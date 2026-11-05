@@ -49,6 +49,7 @@ export const turnResults = ['ok', 'failed', 'fallback'] as const
 export const adminTurnRow = z.object({
   key: z.uuid(), sessionCode: z.string(), turn: z.int().min(1), at: z.iso.datetime(),
   band: z.enum(scopeBands).nullable(), language: z.string().nullable(), script: z.string().nullable(),
+  /** The calls of the turn, one for each role. A retry is an attempt of the same call. */
   calls: z.int().min(0), ms: z.int().min(0), result: z.enum(turnResults),
   /** The first role that failed or that the fallback answered. Null when the result is OK. */
   resultRole: z.string().nullable(),
@@ -63,7 +64,7 @@ export const adminTurnsResponse = z.object({
 export const adminTurnsView = adminTurnsResponse.extend({ turns: knownRows(adminTurnRow, 'result', turnResults) })
 
 /** One attempt of a model call, masked. `answer` is null when the vendor gave no answer. */
-const traceCall = z.object({
+const traceAttempt = z.object({
   /** 1 is the first attempt of the call, 2 the retry, 3 the fallback after the retry. */
   id: z.uuid(), role: z.enum(tracedRoles), attempt: z.int().min(1), model: z.string(), fallback: z.boolean(), outcome: z.enum(['ok', 'invalid', 'failed']),
   startedAt: z.iso.datetime(), ms: z.int().min(0), tokensIn: z.int().min(0), cachedTokensIn: z.int().min(0), tokensOut: z.int().min(0),
@@ -71,15 +72,16 @@ const traceCall = z.object({
   messages: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })),
   answer: z.string().nullable(),
 })
-export type TraceMessage = z.infer<typeof traceCall>['messages'][number]
+export type TraceMessage = z.infer<typeof traceAttempt>['messages'][number]
 export const adminTurnResponse = adminTurnRow.extend({
   rupees: z.number().min(0),
   /** The day that the traces of the turn go: 30 days after its first call (PD20). */
   goneOn: z.iso.date(),
   lastView: z.object({ by: z.string().nullable(), at: z.iso.datetime() }).nullable(),
-  calls: z.array(traceCall),
+  /** Each attempt of each call of the turn, in the order of their start. */
+  attempts: z.array(traceAttempt),
 })
-export const adminTurnView = adminTurnResponse.extend({ calls: knownRows(traceCall, 'role', tracedRoles) })
+export const adminTurnView = adminTurnResponse.extend({ attempts: knownRows(traceAttempt, 'role', tracedRoles) })
 export type AdminTurnResponse = z.infer<typeof adminTurnResponse>
 
 export const traceViewsResponse = z.object({ views: z.array(z.object({ sessionCode: z.string(), turn: z.int().min(1), by: z.string().nullable(), at: z.iso.datetime() })) })

@@ -46,8 +46,8 @@ each night at 04:15 IST ──▶ the job deletes each trace older than 30 days
 - **A word in Devanagari masks each ending that joins it**, so a word that only starts like a mask word is masked too, as "सिखाना". A word in Latin letters masks only a short ending, so "sikhna" stays.
 - **The system prompts are code**, so they keep their words, also the religion list of the extractor.
 - **pg_cron runs only on Supabase.** Local work and the tests have no pg_cron, so the migration skips the schedule, and a test calls the function. See the runs with `select * from cron.job_run_details order by start_time desc`.
-- **An open is a read.** The page of a turn reads one time, so a refresh of the browser adds a row of the audit log, and a focus does not.
+- **An open is a read.** Each open of the page of a turn reads it with no copy in the cache, so each open and each refresh adds a row of the audit log. A focus of the tab does not.
 
 ## Tickets
 
-- T-64: [#231](https://github.com/magentawood/roomsie/pull/231), 2026-11-06. The traces, the mask, the nightly delete, the tab Turns and the page of a turn.
+- T-64: [#231](https://github.com/magentawood/roomsie/pull/231), 2026-11-05. The traces, the mask, the nightly delete, the tab Turns and the page of a turn.

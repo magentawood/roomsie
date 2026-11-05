@@ -107,10 +107,10 @@ export function useTurns(query: AdminTurnsQuery) {
   return useQuery({ queryKey: [...queryKeys.turns, query], queryFn: () => api(user, `/v1/admin/ai/turns?${searchOf(query)}`, adminTurnsView) })
 }
 
-/** Each read is an open of the audit log (T-64), so it reads one time and never again in the background. */
+/** Each read is an open in the audit log (T-64): each open of the page reads, with no copy in the cache, and a focus does not read again. */
 export function useTurn(key: string) {
   const user = useUser()
-  return useQuery({ queryKey: [...queryKeys.turns, 'one', key], queryFn: () => api(user, `/v1/admin/ai/turns/${key}`, adminTurnView), staleTime: Infinity, refetchOnWindowFocus: false })
+  return useQuery({ queryKey: [...queryKeys.turns, 'one', key], queryFn: () => api(user, `/v1/admin/ai/turns/${key}`, adminTurnView), gcTime: 0, refetchOnWindowFocus: false })
 }
 
 export function useTraceViews() {

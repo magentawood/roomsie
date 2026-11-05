@@ -55,10 +55,10 @@ const turnLimit = 50
 const roleOrder = modelRoles as readonly string[]
 const firstRole = (roles: string[] | null) => roles?.toSorted((a, b) => roleOrder.indexOf(a) - roleOrder.indexOf(b))[0] ?? null
 
-// One row for each turn. The time of a turn is from its first call to the end of its last call before the reply.
+// One row for each turn. Its calls are its roles: a retry is an attempt of the same call. Its time is from its first call to the end of its last call before the reply.
 // A failed role is a role of the turn with no answer in any of its attempts.
 const turnStats = sql`
-  select t.turn_key, min(t.session_code) as code, min(t.turn_number) as num, min(t.started_at) as at, count(*)::int as calls,
+  select t.turn_key, min(t.session_code) as code, min(t.turn_number) as num, min(t.started_at) as at, count(distinct t.role)::int as calls,
     coalesce(round(extract(epoch from max(t.started_at + t.ms * interval '1 millisecond') filter (where t.role <> 'observer')
       - min(t.started_at) filter (where t.role <> 'observer')) * 1000), 0)::int as span,
     (select array_agg(f.role) from (select role from traces r where r.turn_key = t.turn_key group by role having not bool_or(r.outcome = 'ok')) f) as failed_roles,
@@ -120,19 +120,19 @@ export function goneOnOf(startedAt: Date) {
 
 /** One turn with each of its calls, or null. The last open of the turn is the one before this read. */
 export async function turnOf(db: Db, key: string) {
-  const calls = await db.select({ trace: traces, prompt: { role: tracePrompts.role, hash: tracePrompts.hash, text: tracePrompts.text } })
+  const attempts = await db.select({ trace: traces, prompt: { role: tracePrompts.role, hash: tracePrompts.hash, text: tracePrompts.text } })
     .from(traces).innerJoin(tracePrompts, eq(tracePrompts.hash, traces.promptHash)).where(eq(traces.turnKey, key)).orderBy(asc(traces.startedAt), asc(traces.attempt))
-  if (!calls.length) return null
+  if (!attempts.length) return null
   const [stats] = await db.execute<TurnStats>(sql`with t as (${turnStats}) select * from t where turn_key = ${key}`)
   const [row] = await rowsOf(db, [stats!])
   const [last] = await db.select({ by: traceViews.moderatorUserId, at: traceViews.createdAt }).from(traceViews).where(eq(traceViews.turnKey, key)).orderBy(desc(traceViews.createdAt)).limit(1)
   const emails = last?.by ? await emailsOf(db, [last.by]) : new Map<string, string | null>()
   return {
     ...row!,
-    rupees: calls.reduce((sum, { trace: t }) => sum + rupeesOf(vendorOf(t.model)!, t), 0),
-    goneOn: goneOnOf(calls[0]!.trace.startedAt),
+    rupees: attempts.reduce((sum, { trace: t }) => sum + rupeesOf(vendorOf(t.model)!, t), 0),
+    goneOn: goneOnOf(attempts[0]!.trace.startedAt),
     lastView: last ? { by: (last.by && emails.get(last.by)) ?? null, at: last.at.toISOString() } : null,
-    calls: calls.map(({ trace: t, prompt }) => ({
+    attempts: attempts.map(({ trace: t, prompt }) => ({
       id: t.id, role: t.role, attempt: t.attempt, model: t.model, fallback: t.fallback, outcome: t.outcome, startedAt: t.startedAt.toISOString(), ms: t.ms,
       tokensIn: t.tokensIn, cachedTokensIn: t.cachedTokensIn, tokensOut: t.tokensOut,
       systemPrompt: { name: `${prompt.role} · ${prompt.hash.slice(0, 8)}`, text: prompt.text }, messages: t.messages, answer: t.answer,
