@@ -17,7 +17,7 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
                  └─ Zod parse with the schema of packages/contract
 ```
 
-- **One function:** product code writes an event only with `app.analytics.track(req, event)`, and reads no event, so no product code depends on the analytics database ([extensibility.md](../extensibility.md)). Only the admin reads events: the calls and the bands of today, for the AI pipeline (T-65, [The model wrapper](models.md)).
+- **One function:** product code writes an event only with `app.analytics.track(req, event)`, and reads no event, so no product code depends on the analytics database ([extensibility.md](../extensibility.md)). Only the admin reads events: the calls and the bands of today, for the AI pipeline (T-65, [The model wrapper](models.md)), and the funnel ([Product numbers](product-numbers.md)).
 - **The schemas:** each event is a Zod schema in `packages/contract` with `eventVersion`. A change of its fields gives a new version. No schema has a text field.
 - **The actor:** `track()` takes the analytics id of the signed-in person of `req`. A guest has no actor. Account deletion clears the analytics id in the users row. After that, no row links the events to the person, and the deletion makes no call to the analytics database.
 - **Signed in:** the users row keeps the `auth_time` of the latest sign-in. A token with a later `auth_time` fires "signed in" one time. A token refresh keeps its `auth_time`, so it fires nothing.

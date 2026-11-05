@@ -1,6 +1,6 @@
 # PD19 — Retention: how long roomsie keeps each kind of data
 
-**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64, T-66). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -23,6 +23,7 @@
 | The email of the sign-in and the push tokens of the browsers | Until the user deletes the account. A deletion clears the email and deletes the tokens (T-55). |
 | The traces of the model calls: the prompts and the raw answers, masked | 30 days after the call, and at once with the account ([PD20](pd-20-model-traces.md)). A nightly job deletes the older traces. |
 | The log of the opens of a trace: the session code, the number of the turn, the moderator and the time | No end: it holds no text of a person ([PD20](pd-20-model-traces.md)). After the moderator deletes the account, a row shows "a deleted account". |
+| The counts of the analytics events of each day (T-66) | No end: they hold counts and no person. A job counts the last three days again each night. |
 | Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".

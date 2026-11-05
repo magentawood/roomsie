@@ -1,4 +1,4 @@
-import { index, integer, jsonb, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core'
+import { date, index, integer, jsonb, pgTable, primaryKey, text, timestamp, uuid } from 'drizzle-orm/pg-core'
 import { uuidv7 } from 'uuidv7'
 
 /**
@@ -18,3 +18,15 @@ export const events = pgTable('events', {
   pk: primaryKey({ columns: [t.id, t.createdAt] }),
   createdAtIdx: index('events_created_at_idx').using('brin', t.createdAt),
 })).enableRLS()
+
+/** The counts of each day in IST (T-66). Its key is its columns: the job writes it, and SQL mints no UUIDv7 (ADR-0015). */
+export const eventDays = pgTable('event_days', {
+  day: date('day').notNull(),
+  name: text('name').notNull(),
+  field: text('field').notNull(),
+  value: text('value').notNull(),
+  count: integer('count').notNull(),
+}, (t) => ({
+  pk: primaryKey({ columns: [t.day, t.name, t.field, t.value] }),
+})).enableRLS()
+

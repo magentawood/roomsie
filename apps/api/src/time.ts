@@ -4,5 +4,8 @@ export const hoursBefore = (now: Date, hours: number) => new Date(now.getTime() 
 /** The start of the last 7 days: the "this week" of the admin numbers (T-62). */
 export const weekBefore = (now: Date) => hoursBefore(now, 7 * 24)
 
+/** The date of a time in Mumbai, as an ISO date. */
+export const istDateOf = (time: Date) => time.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 /** The date of today in Mumbai, as an ISO date. */
-export const todayInIst = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+export const todayInIst = () => istDateOf(new Date())
+export const daysBefore = (day: string, days: number) => new Date(Date.parse(`${day}T00:00:00Z`) - days * 86_400_000).toISOString().slice(0, 10)

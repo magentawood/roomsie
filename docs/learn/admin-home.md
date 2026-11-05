@@ -12,7 +12,7 @@
 
 ```
 GET /v1/admin/home ──▶ the roles of the person
-                        ├── moderator ──▶ Moderation, People and listings, AI pipeline, Site content
+                        ├── moderator ──▶ Moderation, People and listings, AI pipeline, Product numbers, Site content
                         └── ID reviewer ──▶ ID checks
 ```
 
@@ -22,13 +22,13 @@ GET /v1/admin/home ──▶ the roles of the person
 | ID checks | checks that wait, late checks, the oldest check, checks verified in the last 7 days | `/admin/id-checks` |
 | People and listings | the people with a card and the new ones of today, the live listings, the cards and listings hidden for review, the suspended accounts | `/admin/people`, `/admin/listings` ([Moderation](moderation.md)) |
 | AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/turns`, `/admin/ai/turns/[key]`, `/admin/ai/log` ([The model wrapper](models.md), [Traces of the model calls](traces.md)) |
+| Product numbers | the chats started, the new accounts and the connect requests of today, against yesterday until the same time | `/admin/numbers`, `/admin/numbers/week`, `/admin/numbers/month` ([Product numbers](product-numbers.md)) |
 | Site content | invites and the invite gate, quotes, site details that are set | `/admin/invites`, `/admin/quotes`, `/admin/site` |
 
 - The API sends only the cards of the roles of the person. A person with both roles gets each card.
 - The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.
 - The feedback list also gives the count of each face of the last 7 days.
-- T-66 adds the card of Product numbers, with its pages. The tab Turns of the AI pipeline came with T-64 ([Traces of the model calls](traces.md)).
-- The AI pipeline reads the raw events of today, not a rollup: an exception to `database.md` that the spec of T-65 records. The page slows down at about 250,000 events a day.
+- The AI pipeline and the numbers of today read the raw events of today, not a rollup: the exception of `database.md`. The AI pipeline slows down at about 250,000 events a day.
 
 ## The choice we made
 
@@ -46,3 +46,4 @@ GET /v1/admin/home ──▶ the roles of the person
 
 - T-62: [#227](https://github.com/magentawood/roomsie/pull/227), 2026-11-04. The home of scorecards, and the six pages of today in subjects with tabs.
 - T-63: [#230](https://github.com/magentawood/roomsie/pull/230), 2026-11-05. The card of People and listings.
+- T-66: [#232](https://github.com/magentawood/roomsie/pull/232), 2026-11-05. The card of Product numbers.

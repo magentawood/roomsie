@@ -16,6 +16,7 @@ type Tab = { label: string; href: string }
 export const moderationTabs: Tab[] = [{ label: 'Reports', href: '/admin/reports' }, { label: 'Feedback', href: '/admin/feedback' }]
 export const directoryTabs: Tab[] = [{ label: 'People', href: '/admin/people' }, { label: 'Listings', href: '/admin/listings' }]
 export const aiTabs: Tab[] = [{ label: 'Overview', href: '/admin/ai' }, { label: 'Turns', href: '/admin/ai/turns' }, { label: 'Settings and log', href: '/admin/ai/log' }]
+export const numberTabs: Tab[] = [{ label: 'Today', href: '/admin/numbers' }, { label: '7 days', href: '/admin/numbers/week' }, { label: '30 days', href: '/admin/numbers/month' }]
 export const siteContentTabs: Tab[] = [
   { label: 'Invites', href: '/admin/invites' }, { label: 'Quotes', href: '/admin/quotes' }, { label: 'Site details', href: '/admin/site' },
 ]

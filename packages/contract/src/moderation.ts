@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { listingResponse } from './listings'
 import { callShare } from './models'
+import { numberPair } from './numbers'
 import { cardResponse, visibilities } from './profiles'
 import { reportReasons, reportStatuses } from './reports'
 import { knownRows } from './shared'
@@ -32,6 +33,7 @@ export const adminHomeCard = z.discriminatedUnion('subject', [
   z.object({ subject: z.literal('moderation'), openReports: count, lateSafety: count, lateOther: count, oldestReportAt: z.iso.datetime().nullable(), feedbackThisWeek: count }),
   z.object({ subject: z.literal('id_checks'), waiting: count, oldestCheckAt: z.iso.datetime().nullable(), late: count, verifiedThisWeek: count }),
   z.object({ subject: z.literal('people_listings'), people: count, newToday: count, liveListings: count, hidden: count, suspended: count }),
+  z.object({ subject: z.literal('product_numbers'), today: z.object({ chats: numberPair, newAccounts: numberPair, requests: numberPair }).nullable() }),
   z.object({ subject: z.literal('ai_pipeline'), spendToday: z.number().min(0), dailyAmount: z.number().positive(), failedShare: callShare.nullable(), fallbackShare: callShare.nullable(), geminiOnly: z.boolean() }),
   z.object({ subject: z.literal('site_content'), invites: count, inviteOnly: z.boolean(), quotes: count, detailsSet: count }),
 ])

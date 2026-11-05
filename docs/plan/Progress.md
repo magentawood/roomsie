@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**299 of 358 done · 84%**
+**301 of 358 done · 84%**
 
 `████████████████████░░░░`
 
@@ -24,7 +24,7 @@ This note is part of [[roomsie launch]].
 |---|---|---|---|
 | [[P1 Platform]] | 10 / 12 | 32 / 38 | 84% |
 | [[P2 Chat]] | 15 / 17 | 74 / 80 | 92% |
-| [[P3 Data and trust]] | 20 / 21 | 90 / 92 | 98% |
+| [[P3 Data and trust]] | 21 / 21 | 92 / 92 | 100% |
 | [[P4 Content and moderation]] | 9 / 10 | 41 / 43 | 95% |
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
 | [[Design]] | 5 / 7 | 11 / 14 | 79% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**11 free tasks are open · 23 build hours.**
+**10 free tasks are open · 21 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -58,7 +58,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
-| 0 | [[T-66 Product numbers]] | P3 | 2 | ⬜ can start | 0 | [#225](https://github.com/magentawood/roomsie/issues/225) |
 | 0 | [[T-67 Visitor data delete]] | P1 | 2 | ⬜ can start | 0 | no issue at this time |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
@@ -152,7 +151,7 @@ flowchart LR
   T64["T-64<br/>Model traces"]:::done
   T67["T-67<br/>Visitor data delete"]:::ready
   T65["T-65<br/>AI numbers and switch"]:::done
-  T66["T-66<br/>Product numbers"]:::ready
+  T66["T-66<br/>Product numbers"]:::done
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
   T52["T-52<br/>Web CSP"]:::done
   F03 --> F04
@@ -378,7 +377,7 @@ flowchart LR
 > ![[T-65 AI numbers and switch#^done]]
 
 
-## P3 Data and trust — 90/92
+## P3 Data and trust — 92/92
 
 > [!todo]- ✅ [[T-06 Database schema ⚑]] · 7/7
 > ![[T-06 Database schema ⚑#^done]]
@@ -416,7 +415,7 @@ flowchart LR
 > [!todo]- ✅ [[T-44 Messages API]] · 6/6
 > ![[T-44 Messages API#^done]]
 
-> [!todo]- ⬜ [[T-66 Product numbers]] · 0/2
+> [!todo]- ✅ [[T-66 Product numbers]] · 2/2
 > ![[T-66 Product numbers#^done]]
 
 > [!todo]- ✅ [[T-45 Messages screens]] · 5/5

@@ -31,11 +31,55 @@ The funnel of the launch in one place.
 - No task waits on this task.
 
 ## Done when
-- [ ] The product numbers show the funnel for today, 7 days and 30 days, each against the period before
-- [ ] The numbers come only from the analytics events, and agree with the events of a test database
+- [x] The product numbers show the funnel for today, 7 days and 30 days, each against the period before · [#232](https://github.com/magentawood/roomsie/pull/232)
+- [x] The numbers come only from the analytics events, and agree with the events of a test database · [#232](https://github.com/magentawood/roomsie/pull/232)
 
 ^done
 
 ## Read first
 - [admin-panel.md](../../specs/admin-panel.md)
 - [0012-analytics-event-store.md](../../decisions/0012-analytics-event-store.md)
+
+## Spec
+
+**Approved:** 2026-11-05, by n3rxv
+
+- **Modules:**
+  - **The analytics database:** a new rollup table: the count of each event of each day in IST, also for each value of the fields that the page splits. A nightly pg_cron job counts the last three days again. The migration counts each day that the events have.
+  - **The analytics module of the API:** the reads of the rollup for whole days, and of the raw events of today and of yesterday until the same time.
+  - **A new numbers module of the API:** the funnel and the side cards of a period, and the card of the home. The route is for moderators.
+  - **The contract:** the period, the funnel, the side cards and the card.
+  - **The web:** `/admin/numbers` with the tabs Today, 7 days and 30 days, and the card of Product numbers on the home.
+  - **The rules:** the rule of the rollups in `database.md` names the exception of today.
+- **Seams for the tests:**
+  - The route test of the numbers: each period against a test analytics database with known events, the rollup that the job function builds, the comparison of today with yesterday until the same time, the side cards, the card of the home, no numbers when the analytics database fails, and 404 for a person with no role.
+  - A browser check on local dev at 1440 px: the three tabs and the card of the home.
+- **Decisions:**
+  - **Today (the user):** the numbers of today come from the raw events of today, an exception to the rollup rule of `database.md`, as for the AI pipeline (T-65). The rule names the exception. 7 days and 30 days read only the rollup.
+  - **The comparison of today (the user):** today until now, against yesterday until the same time, also from the raw events.
+  - **7 days and 30 days:** the whole days that end yesterday, against the same number of days before them.
+  - **Events, not people:** the funnel counts events. A visitor has no analytics id, so the events cannot give people. The steps: chats started, results shown, the sign-in wall, signed in with the new accounts, connect requests, requests accepted, and goals closed with the goals found on roomsie.
+  - **A step:** its count, its change against the period before, and its share of the step before it. A step that is larger than the step before shows "1.4 for each chat", not a percent.
+  - **The side cards:** where people found their place (the answers of a close), the limits that stopped people, the reports of each reason, and the answers that changed, by slot (drafts section 40).
+  - **The rollup:** the day, the event, the field, the value and the count, with no person. The nightly job runs at 00:30 IST and counts the last three days again, so a missed night mends itself. Locally and in the tests, pg_cron is not there, so the schedule is skipped, and a test calls the function.
+  - **The pages:** `/admin/numbers` (Today), `/admin/numbers/week` and `/admin/numbers/month`. The card of the home: the chats started, the new accounts and the connect requests of today, against yesterday until the same time.
+  - **No analytics database:** a missing analytics database, a failure or a read over 5 s gives no numbers, and the page tells so (as T-65).
+  - **The access:** moderators only. Other people get "not found".
+  - **The badges (the user, in the review):** with fewer than 20 in the period before, a change shows as a count, not a percent. The badge of the sign-in wall is gray (drafts sections 36 and 40).
+  - **The digit formatter (the user, in the review):** the page and the listing flow share `inIndianDigits` in `lib/numbers.ts`.
+  - **The records (the user, in the review):** PD19 keeps the daily counts with no end, because they hold no person. A note of ADR-0015 says that a rollup has no `id` and no `created_at`.
+- **Out of scope:**
+  - people or retention (D7, D30): the events of a visitor have no analytics id
+  - a chart over time
+  - an export of the numbers
+  - the numbers of the AI pipeline (T-65)
+
+## Log
+
+- **2026-11-05 · [#232](https://github.com/magentawood/roomsie/pull/232)**
+  - **Change:** the analytics database gets the rollup `event_days` and a nightly job that counts the last three days again. The admin gets the product numbers: the funnel and four side cards for today, 7 days and 30 days, each against the period before, and the card of the home.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md) and [ADR-0012](../../decisions/0012-analytics-event-store.md).
+  - **Ticked:** the two items.
+  - **Not done:** none.
+  - **Learn:** [Product numbers](../../learn/product-numbers.md), [The admin home](../../learn/admin-home.md), [Analytics events](../../learn/analytics-events.md), [Backups](../../learn/backups.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
