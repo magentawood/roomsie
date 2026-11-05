@@ -8,10 +8,10 @@ const orderItem = z.enum([...formASlots, 'lifestyle'])
 export const assistantSettings = z.object({
   /** Below this token probability, a value is `unclear` (PD7). T-27 keeps 0.8: docs/research/eval-2026-11.md. */
   ASSISTANT_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
-  /** Below this token probability, the band of the router is not sure, and the turn is core (T-34). T-61 tunes it. */
+  /** Below this token probability, the band of the router is not sure, and the turn is core (T-34). T-61 keeps 0.8: docs/research/eval-2026-11-composer.md. */
   ROUTER_MIN_PROBABILITY: z.coerce.number().min(0).max(1).default(0.8),
-  /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). T-61 tunes it. */
-  COMPOSER_DEADLINE_MS: z.coerce.number().int().positive().default(2500),
+  /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). T-61 sets 3500: docs/research/eval-2026-11-composer.md. */
+  COMPOSER_DEADLINE_MS: z.coerce.number().int().positive().default(3500),
   /** The confidence of a note with no token probabilities: of Gemini, or of DeepSeek whose tokens do not hold the topic (T-36). At the floor of PD3a, the matching does not use it. */
   OBSERVER_UNSCORED_CONFIDENCE: z.coerce.number().min(0).max(1).default(0.5),
   /** The notes of a sensitive turn: none, hidden notes that the matching does not use, or usual notes (PC-17). */
