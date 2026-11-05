@@ -31,12 +31,12 @@ Follow one turn of the assistant through its model calls.
 - [[T-67 Visitor data delete]]
 
 ## Done when
-- [ ] Each model call saves its prompt and its raw answer as a trace
-- [ ] Religion and community words in a trace show as [hidden]
-- [ ] A trace goes 30 days after its call, and at once when its account is deleted
-- [ ] The AI pipeline shows one turn as a timeline of its model calls, with a session code and no name
-- [ ] Each open of a trace goes in an audit log
-- [ ] PD20 records the traces, and PD19 gives their period
+- [x] Each model call saves its prompt and its raw answer as a trace · [#231](https://github.com/magentawood/roomsie/pull/231)
+- [x] Religion and community words in a trace show as [hidden] · [#231](https://github.com/magentawood/roomsie/pull/231)
+- [x] A trace goes 30 days after its call, and at once when its account is deleted · [#231](https://github.com/magentawood/roomsie/pull/231)
+- [x] The AI pipeline shows one turn as a timeline of its model calls, with a session code and no name · [#231](https://github.com/magentawood/roomsie/pull/231)
+- [x] Each open of a trace goes in an audit log · [#231](https://github.com/magentawood/roomsie/pull/231)
+- [x] PD20 records the traces, and PD19 gives their period · [#231](https://github.com/magentawood/roomsie/pull/231)
 
 ^done
 
@@ -85,3 +85,13 @@ Follow one turn of the assistant through its model calls.
   - a mask of caste words: the lists have no caste ([PD3c](../../decisions/pd-03c-exclusionary-preferences.md))
   - an export or a download of a trace
   - the turns of a person by name or email
+
+## Log
+
+- **2026-11-05 · [#231](https://github.com/magentawood/roomsie/pull/231)**
+  - **Change:** each model call of a chat saves a trace of each attempt, masked before the save, under a session code. The AI pipeline gets the tab Turns and the page of a turn, with a timeline of its calls and the prompt and the raw answer of each. Each open goes in an audit log, and a nightly job deletes the traces after 30 days.
+  - **Why:** [PD20](../../decisions/pd-20-model-traces.md), the spec [Admin panel](../../specs/admin-panel.md), and [PD3c](../../decisions/pd-03c-exclusionary-preferences.md) for the mask.
+  - **Ticked:** the six items.
+  - **Not done:** none. The delete of the visitor data after 30 days is the new task [T-67](T-67%20Visitor%20data%20delete.md).
+  - **Learn:** [Traces of the model calls](../../learn/traces.md), [The model wrapper](../../learn/models.md), [The admin home](../../learn/admin-home.md), [The claim of a visitor chat](../../learn/visitor-chat-claim.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
