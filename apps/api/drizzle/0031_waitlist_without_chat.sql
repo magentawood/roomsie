@@ -1,0 +1,1 @@
+ALTER TABLE "waitlist" ALTER COLUMN "goal_id" DROP NOT NULL;

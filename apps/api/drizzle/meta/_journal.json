@@ -218,6 +218,20 @@
       "when": 1793887851627,
       "tag": "0030_delete_old_traces",
       "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1793902973459,
+      "tag": "0031_waitlist_without_chat",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1793902974182,
+      "tag": "0032_delete_old_visitors",
+      "breakpoints": true
     }
   ]
 }
