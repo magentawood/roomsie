@@ -18,10 +18,10 @@ export type AiSources = {
 export type CardSources = Pick<AiSources, 'db' | 'analyticsDb' | 'spend' | 'today'>
 
 /** A slow or failed analytics read gives no numbers; the page and the switch still show. */
-export async function bestEffort<T>(read: () => Promise<T>, log: FastifyBaseLogger): Promise<T | null> {
+export async function bestEffort<T>(read: () => Promise<T>, log: FastifyBaseLogger, where = 'models.overview'): Promise<T | null> {
   const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the analytics read took over 5 s')), 5_000).unref())
   return Promise.race([Promise.resolve().then(read), timeout]).catch((err: unknown) => {
-    reportError(err, { where: 'models.overview', log })
+    reportError(err, { where, log })
     return null
   })
 }

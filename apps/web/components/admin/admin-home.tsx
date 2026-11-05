@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, CpuChip01, File04, Flag01, ShieldTick, Users01 } from '@untitledui/icons'
+import { ArrowRight, BarChart01, CpuChip01, File04, Flag01, ShieldTick, Users01 } from '@untitledui/icons'
 import { noSiteDetails, type AdminHomeCard } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -12,6 +12,7 @@ import { useAdminHome } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
 import { Bar } from '../ui/bar'
+import { Change } from './product-numbers'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
@@ -86,6 +87,18 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
           <Bar value={card.spendToday} max={card.dailyAmount} label="Spend today" />
           {card.failedShare !== null && <Metric value={percent(card.failedShare)} label="Calls failed today" />}
           {card.fallbackShare !== null && <Metric value={percent(card.fallbackShare)} label="Sent to the fallback today" />}
+        </Card>
+      )
+    case 'product_numbers':
+      return (
+        <Card icon={BarChart01} title="Product numbers" href="/admin/numbers" footer={card.today ? 'Against yesterday until this time' : 'No numbers now'}>
+          {card.today && (
+            <>
+              <Metric value={card.today.chats.now} label="Chats started today" badges={<Change pair={card.today.chats} />} />
+              <Metric value={card.today.newAccounts.now} label="New accounts today" badges={<Change pair={card.today.newAccounts} />} />
+              <Metric value={card.today.requests.now} label="Connect requests today" badges={<Change pair={card.today.requests} />} />
+            </>
+          )}
         </Card>
       )
     case 'site_content':

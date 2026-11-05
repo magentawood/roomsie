@@ -8,6 +8,7 @@ import { cardCounts } from '../profiles/read'
 import { latestDetails, quoteCount } from '../site/read'
 import type { FastifyBaseLogger } from 'fastify'
 import { aiCard, type CardSources } from '../models/overview'
+import { productCard } from '../numbers/numbers'
 import { hoursBefore, startOfIstDay, weekBefore } from '../time'
 import { suspendedCount } from '../users'
 import { idCheckCounts } from '../verification/read'
@@ -48,6 +49,6 @@ export async function homeCards(sources: CardSources & { moderation: Moderation 
   return Promise.all([
     ...(moderator ? [moderationCard(db, moderation, now)] : []),
     ...(reviewer ? [idChecksCard(db, moderation, now)] : []),
-    ...(moderator ? [peopleCard(db, sources.today()), aiCard(sources, log), siteContentCard(db)] : []),
+    ...(moderator ? [peopleCard(db, sources.today()), aiCard(sources, log), productCard(sources.analyticsDb, now, log), siteContentCard(db)] : []),
   ])
 }

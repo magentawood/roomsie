@@ -2,9 +2,9 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminHomeView, adminInvitesResponse, adminListingView, adminTurnView, adminTurnsView, traceViewsResponse, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
+  adminHomeView, adminInvitesResponse, adminListingView, adminTurnView, adminTurnsView, traceViewsResponse, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, productNumbersView, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
-  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type FormA, type SavedKind,
+  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type FormA, type NumberPeriod, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError, chatApi } from './api'
 import { areaTree } from './areas'
@@ -28,6 +28,7 @@ export const queryKeys = {
   switchLog: ['admin', 'ai', 'switch'],
   turns: ['admin', 'ai', 'turns'],
   traceViews: ['admin', 'ai', 'trace-views'],
+  productNumbers: (period: NumberPeriod) => ['admin', 'numbers', period],
   reportQueue: ['admin', 'reports'],
   conversations: ['conversations'],
   messages: (conversationId: string) => ['messages', conversationId],
@@ -95,6 +96,11 @@ export function useAdminListing(id: string) {
 export function useAiOverview() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.aiOverview, queryFn: () => api(user, '/v1/admin/ai', aiOverviewView) })
+}
+
+export function useProductNumbers(period: NumberPeriod) {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.productNumbers(period), queryFn: () => api(user, `/v1/admin/numbers?period=${period}`, productNumbersView) })
 }
 
 export function useSwitchLog() {

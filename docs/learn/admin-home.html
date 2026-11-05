@@ -44,7 +44,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>GET /v1/admin/home ──▶ the roles of the person
-                        ├── moderator ──▶ Moderation, People and listings, AI pipeline, Site content
+                        ├── moderator ──▶ Moderation, People and listings, AI pipeline, Product numbers, Site content
                         └── ID reviewer ──▶ ID checks
 </code></pre>
 <table>
@@ -77,6 +77,11 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>/admin/ai</code>, <code>/admin/ai/turns</code>, <code>/admin/ai/turns/[key]</code>, <code>/admin/ai/log</code> (<a href="models.html">The model wrapper</a>, <a href="traces.html">Traces of the model calls</a>)</td>
 </tr>
 <tr>
+<td>Product numbers</td>
+<td>the chats started, the new accounts and the connect requests of today, against yesterday until the same time</td>
+<td><code>/admin/numbers</code>, <code>/admin/numbers/week</code>, <code>/admin/numbers/month</code> (<a href="product-numbers.html">Product numbers</a>)</td>
+</tr>
+<tr>
 <td>Site content</td>
 <td>invites and the invite gate, quotes, site details that are set</td>
 <td><code>/admin/invites</code>, <code>/admin/quotes</code>, <code>/admin/site</code></td>
@@ -87,8 +92,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>The API sends only the cards of the roles of the person. A person with both roles gets each card.</li>
 <li>The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.</li>
 <li>The feedback list also gives the count of each face of the last 7 days.</li>
-<li>T-66 adds the card of Product numbers, with its pages. The tab Turns of the AI pipeline came with T-64 (<a href="traces.html">Traces of the model calls</a>).</li>
-<li>The AI pipeline reads the raw events of today, not a rollup: an exception to <code>database.md</code> that the spec of T-65 records. The page slows down at about 250,000 events a day.</li>
+<li>The AI pipeline and the numbers of today read the raw events of today, not a rollup: the exception of <code>database.md</code>. The AI pipeline slows down at about 250,000 events a day.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -106,5 +110,6 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>T-62: <a href="https://github.com/magentawood/roomsie/pull/227">#227</a>, 2026-11-04. The home of scorecards, and the six pages of today in subjects with tabs.</li>
 <li>T-63: <a href="https://github.com/magentawood/roomsie/pull/230">#230</a>, 2026-11-05. The card of People and listings.</li>
+<li>T-66: <a href="https://github.com/magentawood/roomsie/pull/232">#232</a>, 2026-11-05. The card of Product numbers.</li>
 </ul>
 </main>

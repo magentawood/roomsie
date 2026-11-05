@@ -45,6 +45,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Place detail and listing reports](place-detail.md): a signed-in user opens the full detail of a place, and can report it; a safety report, or reports from two people, hide the listing at once.
 - [pnpm, Corepack and Turborepo](pnpm-and-corepack.md): pnpm installs the packages of the monorepo, Corepack gives each developer the same pnpm version, and Turborepo runs the tasks of all packages with one command.
 - [Postgres drivers](postgres-drivers.md): a driver is the library that connects the API to Postgres. We use postgres.js under Drizzle, with prepared statements off for the Supabase pooler.
+- [Product numbers](product-numbers.md): `/admin/numbers` shows the funnel of roomsie from the analytics events, for today, 7 days and 30 days, each against the period before.
 - [Profiles and cards](profiles.md): a signed-in user makes one profile with a name, an age of 18 or more and a gender; the card goes live by itself when it is complete, and other users read it through the API.
 - [The results panel](results-panel.md): the results panel shows the matches of Form A as cards beside the chat. It changes only when the form changes.
 - [The router](router.md): the router labels each typed message of the chat with its kinds and its scope band, so the turn does only the work that the message needs.

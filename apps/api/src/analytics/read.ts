@@ -1,7 +1,7 @@
-import { and, eq, gte, sql } from 'drizzle-orm'
+import { and, between, eq, gte, sql, sum } from 'drizzle-orm'
 import type { ModelRole } from '@roomsie/contract'
 import type { AnalyticsDb } from './client'
-import { events } from './schema'
+import { eventDays, events } from './schema'
 
 // A literal key, not a parameter, so the same field in the select and in the group by is one expression.
 const field = (name: 'role' | 'model' | 'outcome' | 'fallback' | 'ms' | 'tokensIn' | 'cachedTokensIn' | 'tokensOut' | 'band') => sql`${events.fields}->>${sql.raw(`'${name}'`)}`
@@ -29,3 +29,17 @@ export const tokenSums = (db: AnalyticsDb, since: Date) => db.select({
 /** The typed turns of each band of the router since a time. */
 export const bandCounts = (db: AnalyticsDb, since: Date) => db.select({ band: sql<string>`${field('band')}`, turns: sql<number>`count(*)`.mapWith(Number) })
   .from(events).where(and(eq(events.name, 'turn_routed'), gte(events.createdAt, since))).groupBy(field('band'))
+
+/** A count of the product numbers: all the events of a name (`split` ''), or the events of one value of a field (T-66). */
+export type EventCount = { event: string; split: string; value: string; total: number }
+
+/** The counts of a time range, from the raw events, with the function of the nightly job (migration 0004): today, and yesterday until the same time. */
+export const countsBetween = async (db: AnalyticsDb, since: Date, until: Date): Promise<EventCount[]> =>
+  [...await db.execute<{ event: string; split: string; split_value: string; total: number }>(sql`select event, split, split_value, total from jobs.count_events(${since.toISOString()}::timestamptz, ${until.toISOString()}::timestamptz)`)]
+    .map((r) => ({ event: r.event, split: r.split, value: r.split_value, total: Number(r.total) }))
+
+/** The counts of whole days in IST, from the rollup of the nightly job. */
+export const countsOfDays = (db: AnalyticsDb, first: string, last: string): Promise<EventCount[]> => db.select({
+  event: eventDays.name, split: eventDays.field, value: eventDays.value, total: sql<number>`${sum(eventDays.count)}`.mapWith(Number),
+}).from(eventDays).where(between(eventDays.day, first, last)).groupBy(eventDays.name, eventDays.field, eventDays.value)
+
