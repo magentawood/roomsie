@@ -172,7 +172,7 @@ export const failureOf = (call: ComposerResult) => (call.text === null ? null : 
  */
 export const nameIn = (text: string, names: string[]) => names.find((name) => text.toLowerCase().includes(name))
 /** The language of the router for each reply language: the reverse of `languageOf` in the lines of the assistant. */
-const judgeLanguages = { en: 'english', 'hi-Latn': 'hindi', hi: 'hindi', 'mr-Latn': 'marathi', mr: 'marathi' } as const satisfies Record<ReplyLanguage, string>
+const judgeLanguages = { en: 'english', 'hi-Latn': 'hindi', hi: 'hindi', 'mr-Latn': 'marathi', mr: 'marathi' } as const satisfies Record<ReplyLanguage, NonNullable<TurnLabel['register']>['language']>
 /** The language of the judge and the script of the letters, against the reply language that the composer got. */
 export const registerRight = (text: string, { judgeRegister, language }: ComposerResult) => ({
   languageRight: judgeRegister?.language === judgeLanguages[language],
@@ -243,7 +243,7 @@ export function namesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   })
 }
 
-/** The scores of the turns of each band that is not core: each band gets its own pass condition (testing.md). */
+/** The scores of the turns of each band that is not core: each band gets its own score (testing.md). */
 export function bandScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   return scopeBands.filter((band) => band !== 'core').map((band) => ({ band, scores: scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band)) }))

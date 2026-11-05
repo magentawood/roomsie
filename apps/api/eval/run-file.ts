@@ -15,6 +15,7 @@ export const runFile = z.strictObject({
   runs: z.array(z.strictObject({
     model: z.string(),
     turns: z.array(z.strictObject({
+      // `label` is for a person to read: the scores replay the label at each threshold.
       id: z.string(), repeat: z.int(), extractor: recordedAnswer.nullable(), router: recordedAnswer.nullable(), label: turnLabel,
       composer: recordedComposer.nullable(), judge: recordedAnswer.nullable(),
     })),

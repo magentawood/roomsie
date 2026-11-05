@@ -25,6 +25,7 @@
 | Part | Where |
 |---|---|
 | The runner | `apps/api/eval/run.ts` |
+| The run file (version 2) and the merge of two runs | `apps/api/eval/run-file.ts` (unit test in `test/eval-run-file.test.ts`) |
 | The scores and the report | `apps/api/eval/score.ts` (unit tests in `test/eval-score.test.ts`) and `apps/api/eval/report.ts` |
 | The run files and the reports | `apps/api/eval/runs/`, which git ignores. A stamp is the time in UTC |
 | The results of T-27 | [the eval of November 2026](../research/eval-2026-11.md) |

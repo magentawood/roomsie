@@ -24,7 +24,7 @@ export type EvalSentence = z.infer<typeof sentence>
 /** A search with no flag. Only the router scores the other sentences (the spec of T-61). */
 export const isPlainSearch = (s: Pick<EvalSentence, 'band' | 'community'>) => s.band === 'core' && !s.community
 
-/** The eval sentences of M-03, with the reference date of their move dates. */
+/** The eval sentences of M-03 and T-61, with the reference date of their move dates. */
 export const evalSet = z.strictObject({ version: z.literal(1), today: z.iso.date(), sentences: z.array(sentence) }).parse(file)
 
 const inGroup = (group: string, values: Record<string, unknown> = {}) => Object.fromEntries(Object.entries(values).map(([key, value]) => [`${group}.${key}`, value]))

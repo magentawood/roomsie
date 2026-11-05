@@ -71,14 +71,15 @@ function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
     const { languageRight, scriptRight } = registerRight(c.text, c)
     const failure = failureOf(c)
     const name = nameIn(c.text, sentence.names)
-    if (languageRight && scriptRight && !failure && !name) continue
+    // A text with no answer of the judge has no language to be wrong (testing.md).
+    if ((languageRight || !c.judgeRegister) && scriptRight && !failure && !name) continue
     const judge = c.judgeRegister ? `the router hears ${c.judgeRegister.language}, ${c.judgeRegister.script} letters` : 'no answer of the judge'
     counted(lines, `${sentence.id} · ${c.language} · ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: "${c.text.replaceAll('\n', ' ')}"`)
   }
   return [...lines].map(([line, n]) => `${line} (${n})`).toSorted()
 }
 
-function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: boolean) {
+function composerReport(sentences: EvalSentence[], turns: TurnResult[], isDeepSeek: boolean) {
   const composers = composersOfSearches(sentences, turns).map(({ composer }) => composer)
   const scores = composerScoresOf(sentences, turns)
   // The run file keeps the times with their decimals.
@@ -86,7 +87,7 @@ function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: b
   const names = namesOf(sentences, turns)
   const capitals = startCapitalsOf(composers)
   const readLines = repliesToRead(sentences, turns)
-  const rule = ruled
+  const rule = isDeepSeek
     ? `The rule of T-61 selects **${selectDeadline(composers) ?? '—'} ms**: the smallest step where 9 of 10 calls answer in time, at most ${deadlineSteps.at(-1)} ms.`
     : 'The rule of T-61 uses only the composer calls of DeepSeek.'
   return [
@@ -117,9 +118,9 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
   const turns = at(extractorLive).map((turn, i) => ({ ...turn, label: routerTurns[i]!.label }))
   const scores = scoresOf(sentences, turns)
   const sweepCounts = sweep.map(({ threshold, turns: thresholdTurns }) => ({ threshold, counts: scoresOf(sentences, thresholdTurns).all }))
-  const ruled = vendorOf(model) === 'deepseek'
-  const routerSelected = ruled ? selectThreshold(sweepCounts) : null
-  const routerRule = ruled
+  const isDeepSeek = vendorOf(model) === 'deepseek'
+  const routerSelected = isDeepSeek ? selectThreshold(sweepCounts) : null
+  const routerRule = isDeepSeek
     ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to ${tieCentre}. Of two at the same distance, the rule takes the higher.`
     : 'Gemini gives no token probabilities, so its rows do not change, and the rule of T-61 uses only the run of DeepSeek.'
   const byId = sentencesById(sentences)
@@ -145,7 +146,7 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
     `The recorded answers of the router again, at each threshold. ${routerRule}`, '',
     `| Threshold | ${routerSweepRows.map(([name]) => name).join(' | ')} |`, `|---|${routerSweepRows.map(() => '---|').join('')}`,
     ...sweepLines(sweepCounts.map(({ threshold, counts }) => ({ threshold, cells: routerSweepRows.map(([, cell]) => cell(counts, repeats)).join(' | ') })), { live: routerLive, selected: routerSelected }), '',
-    ...composerReport(sentences, turns, ruled),
+    ...composerReport(sentences, turns, isDeepSeek),
     '### The misses', '',
     ...missesOf(sentences, turns).map((miss) => `- ${miss}`), '',
     `**Answers that change between the repeats:** ${flipsOf(sentences, turns).join(', ') || 'none'}.`, '',
