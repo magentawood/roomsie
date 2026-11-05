@@ -17,6 +17,7 @@ import { reportOf, type ModelScores } from './report'
 import { mergedRuns, runFile, type ModelRun, type Recorded, type RunTurn } from './run-file'
 import type { CallResult, TurnResult } from './score'
 import { evalSet } from './set'
+import { noTraces } from '../scripts/script-request'
 
 const repeats = 3
 const settings = assistantSettings.parse(process.env)
@@ -35,6 +36,7 @@ const requestOf = (id: string, calls: CallResult[]) => ({
     spend: { record: () => {} },
     // The eval asks each model on purpose, so the switch of the admin is off.
     geminiOnly: async () => false,
+    traces: noTraces,
   },
   log: { info: () => {}, warn: () => {}, error: () => {} },
   user: null,

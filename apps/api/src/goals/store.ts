@@ -187,6 +187,9 @@ export async function deleteGoalsOf(tx: Tx, userId: string) {
   await tx.delete(anonymousSessions).where(eq(anonymousSessions.claimedByUserId, userId))
 }
 
+/** The turns of the person in a goal: the number of the next turn is this plus one (T-64). */
+export const userTurnCount = (db: Db, goalId: string) => db.$count(chatTurns, and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user')))
+
 /** Leaves only a name for this person in the comparisons that others keep (PD19, T-49). */
 export async function forgetInComparisons(tx: Tx, profileId: string, fullName: 'Deleted user' | 'Not available', ofUserId?: string) {
   const gone: PersonOption = { id: profileId, fullName, age: null, jobRole: null, whosMoving: 'unclear', budgetMin: null, budgetMax: null, moveDate: null, lifestyle: {}, verified: false }

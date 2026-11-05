@@ -47,6 +47,8 @@ import { noMailer, type Mailer } from './email'
 import type { Messaging } from './messages/settings'
 import type { IdStore } from './id-store'
 import type { Storage } from './storage'
+import { tracesOf, type Traces } from './traces/store'
+import { traceRoutes } from './traces/routes'
 import { verificationRoutes } from './verification/routes'
 
 declare module 'fastify' {
@@ -57,6 +59,7 @@ declare module 'fastify' {
     spend: Spend
     teamAlert: TeamAlert
     geminiOnly: () => Promise<boolean>
+    traces: Traces
   }
 }
 
@@ -89,6 +92,9 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.decorate('spend', spend)
   app.decorate('geminiOnly', () => geminiOnly(options.db))
   app.addHook('onClose', () => spend.settled())
+  const traces = tracesOf({ db: options.db, log: app.log })
+  app.decorate('traces', traces)
+  app.addHook('onClose', () => traces.settled())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
   app.decorateRequest('user', null)
@@ -152,6 +158,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       inviteRoutes(v1, options)
       articleRoutes(v1, options)
       modelRoutes(v1, { ...options, ...aiSources })
+      traceRoutes(v1, options)
       resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
       goalRoutes(v1, { ...options, settings: aiSources.assistant, limits: aiSources.limits, today })
     },

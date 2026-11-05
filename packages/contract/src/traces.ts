@@ -40,7 +40,9 @@ export type TraceFilter = (typeof traceFilters)[number]
 export const adminTurnsQuery = z.object({ q: z.string().trim().max(10).optional(), filter: z.enum(traceFilters).optional() })
 export type AdminTurnsQuery = z.input<typeof adminTurnsQuery>
 
-const tracedRoles = modelRoles.filter((role) => role !== 'check')
+/** The roles that save a trace: each but the check of the keys, which has no goal. */
+export const tracedRoles = ['router', 'extractor', 'observer', 'composer', 'advisor'] as const satisfies readonly Exclude<(typeof modelRoles)[number], 'check'>[]
+export type TracedRole = (typeof tracedRoles)[number]
 /** The result of a turn: OK, a role with no answer, or a role that the fallback answered. */
 export const turnResults = ['ok', 'failed', 'fallback'] as const
 /** One turn: the model calls of one typed message. A session code and a number, never a name or an email (T-64). */
@@ -62,12 +64,14 @@ export const adminTurnsView = adminTurnsResponse.extend({ turns: knownRows(admin
 
 /** One attempt of a model call, masked. `answer` is null when the vendor gave no answer. */
 const traceCall = z.object({
-  id: z.uuid(), role: z.enum(tracedRoles), model: z.string(), fallback: z.boolean(), outcome: z.enum(['ok', 'invalid', 'failed']),
+  /** 1 is the first attempt of the call, 2 the retry, 3 the fallback after the retry. */
+  id: z.uuid(), role: z.enum(tracedRoles), attempt: z.int().min(1), model: z.string(), fallback: z.boolean(), outcome: z.enum(['ok', 'invalid', 'failed']),
   startedAt: z.iso.datetime(), ms: z.int().min(0), tokensIn: z.int().min(0), cachedTokensIn: z.int().min(0), tokensOut: z.int().min(0),
   systemPrompt: z.object({ name: z.string(), text: z.string() }),
   messages: z.array(z.object({ role: z.enum(['user', 'assistant']), content: z.string() })),
   answer: z.string().nullable(),
 })
+export type TraceMessage = z.infer<typeof traceCall>['messages'][number]
 export const adminTurnResponse = adminTurnRow.extend({
   rupees: z.number().min(0),
   /** The day that the traces of the turn go: 30 days after its first call (PD20). */
