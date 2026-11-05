@@ -64,7 +64,7 @@ The composer ran with no deadline, so each time is the full time of the call. A 
 
 ## The names
 
-- The composer prompt says "Never write the name of a person". In 60 texts of DeepSeek and 72 texts of Gemini for the 6 sentences with a friend, no text has the name.
+- The composer prompt says "Never write the name of a person". In the texts of both models for the 6 sentences with a friend, no text has the name.
 - **Limit 1, a name that the composer makes up.** The report lists the capital words at the start of a sentence that are not in the plan or the message. The list has only words of Hinglish and Marathi, such as "Samajh", "Aap" and "Tumhi", and English words such as "Got". It has no name.
 
 ---
@@ -87,5 +87,5 @@ The composer ran with no deadline, so each time is the full time of the call. A 
 
 ## Sources
 
-- The reports in `apps/api/eval/runs/`: `2026-11-04T122152Z.md` (the first run), `2026-11-05T065439Z.md` (the second run) and `2026-11-05T065442Z.md` (the two runs together). Git ignores the folder, so the files are on the computer that ran them.
+- The reports of the two runs and of the two runs together are in `apps/api/eval/runs/` of the computer that ran them, which git ignores. A follow-up copies them into this folder, as the eval of T-27 did.
 - [Running the eval](../learn/eval-run.md), [the eval sentences](../learn/eval-set.md), [The composer](../learn/composer.md), [the eval of T-27](eval-2026-11.md).

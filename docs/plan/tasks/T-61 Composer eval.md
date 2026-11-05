@@ -103,5 +103,7 @@ Score the replies of the assistant, and the messages that are not a search.
   - **Why:** [PD7](../../decisions/pd-07-models.md), [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec. The results: [the eval of the composer](../../research/eval-2026-11-composer.md).
   - **Ticked:** all six items.
   - **Not done:** none.
+  - **Follow-up:** the reports of the two runs go into `docs/research`. They stay on the computer that ran them (the user, at the extensive review).
+  - **The Marathi sentences:** a Marathi speaker read them before the merge (the user, at the extensive review).
   - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md), [The router](../../learn/router.md)
   - **Journal:** [2026-11](../../journal/2026-11.md)
