@@ -42,6 +42,8 @@ details.callout[open] summary{color:var(--fg)}
 <li>A <strong>block</strong> hides two people from each other. The blocked person is not told.</li>
 <li>A <strong>moderator</strong> is a signed-in user whose Firebase uid is in the setting <code>MODERATOR_UIDS</code>. A moderator or an ID reviewer opens the admin home at <code>/admin</code>, and only a moderator opens the queue at <code>/admin/reports</code>.</li>
 <li>A <strong>suspension</strong> stops an account. The person is signed out everywhere, and cannot sign in again.</li>
+<li>A <strong>removed</strong> listing is taken down for good by a moderator. Only its owner sees it, with "Removed by a moderator", and it cannot go live again.</li>
+<li>The <strong>moderation log</strong> keeps each hide, unhide, suspend and remove, with the moderator and the time.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>report ──▶ safety reason, or open reports from 2 people? ──yes──▶ hidden at once
@@ -75,6 +77,14 @@ details.callout[open] summary{color:var(--fg)}
 <td>The admin screens</td>
 <td>The home at <code>/admin</code> (<a href="admin-home.html">The admin home</a>), and the queue at <code>/admin/reports</code>, in <code>apps/web/components/admin/report-queue.tsx</code></td>
 </tr>
+<tr>
+<td>People and listings</td>
+<td><code>GET /v1/admin/people</code>, <code>GET /v1/admin/listings</code>, the detail of each, and <code>POST /v1/admin/people/:id/actions</code> or <code>/v1/admin/listings/:id/actions</code>; the pages <code>/admin/people</code> and <code>/admin/listings</code>, in <code>apps/web/components/admin/directory.tsx</code></td>
+</tr>
+<tr>
+<td>The log</td>
+<td><code>apps/api/src/moderation/log.ts</code>, the table <code>moderation_log</code></td>
+</tr>
 </tbody>
 </table>
 <ul>
@@ -82,6 +92,8 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A hidden card</strong> leaves the results, the person detail and Saved. It cannot get a request, and its owner cannot send a new one. The owner sees "Hidden for review" on the profile page. "Hide my card" does not bring it back. A hidden listing works in the same way (<a href="place-detail.html">Place detail</a>).</li>
 <li><strong>A block</strong> hides the two people in the results, the person detail, Saved and the listings. An open message request between them becomes declined, so its sender sees "Not available" (<a href="message-requests.html">Message requests</a>). Each saved comparison of the other person shows "Not available" for that person too (<a href="compare-cards.html">Comparing cards</a>). There is no unblock in v0.</li>
 <li><strong>The queue</strong> has one item for each reported person or listing, with all its open reports. Safety reports come first, then the oldest.</li>
+<li><strong>People and listings</strong> finds each account by the name of its card or its sign-in email, and each listing by its area or by the name or the email of its lister. The lists give the 50 newest that match. A person shows the card as users see it, the email, the reports and the log, and never gender, religion or community. An action closes the open reports as the queue does: an unhide as dismissed, the other actions as actioned.</li>
+<li><strong>The log</strong> gets a row from each action of People and listings and from each review of the queue. A dismiss in the queue clears the hide, so the log shows it as an unhide.</li>
 <li><strong>Suspend</strong> sets <code>tokens_valid_after</code> to now, so each token of the person stops. It also hides the card and the listings, and closes each open report about the person. The open requests that the person sent are withdrawn. The open requests to the person are declined, so their senders see "Not available".</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
@@ -96,9 +108,12 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A non-moderator gets 404 from the admin routes</strong>, and a guest gets 401. On the web, both see "not found" at each admin address. Thus, the screen does not show that it exists.</li>
 <li><strong>The end of a suspension is not in v0.</strong> A developer changes the status in the database.</li>
 <li><strong>A report of a deleted listing</strong> goes to the item of its owner, because the listing is gone.</li>
+<li><strong>The log keeps a row after the moderator deletes the account.</strong> The row then shows "a deleted account". The rows of a person or a listing go when the account or the listing goes.</li>
+<li><strong>A removed listing keeps its rows and photos</strong> until its owner deletes it in Edit. A moderator cannot delete a listing or an account.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-19: <a href="https://github.com/magentawood/roomsie/pull/158">#158</a>, 2026-10-26. Person reports, blocks, the settings, the admin routes and the admin screen.</li>
+<li>T-63: <a href="https://github.com/magentawood/roomsie/pull/230">#230</a>, 2026-11-05. People and listings, the actions with the log, and the remove of a listing.</li>
 </ul>
 </main>

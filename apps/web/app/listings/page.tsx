@@ -52,9 +52,11 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
         <div className="flex min-w-0 flex-col gap-1 text-sm">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="font-semibold text-secondary">{listingTitle(listing)}</span>
-            {listing.hidden
-              ? <Badge tone="error">Hidden for review</Badge>
-              : <Badge tone={statusBadge[listing.status].tone}>{statusBadge[listing.status].label}</Badge>}
+            {listing.removed
+              ? <Badge tone="error">Removed by a moderator</Badge>
+              : listing.hidden
+                ? <Badge tone="error">Hidden for review</Badge>
+                : <Badge tone={statusBadge[listing.status].tone}>{statusBadge[listing.status].label}</Badge>}
           </div>
           {resume
             ? <span className="font-medium text-secondary">Step {resume} of {steps.length} · {stepCopy[steps[resume - 1]!].title}</span>
@@ -62,7 +64,8 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
           <span className="font-medium text-secondary">{rentLine(listing)}</span>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">{cardActions[listing.status].map(action)}</div>
+      <div className="flex flex-wrap gap-2">{cardActions[listing.status].filter((a) => !listing.removed || a === 'edit').map(action)}</div>
+      {listing.removed && <p className="text-sm text-tertiary md:basis-full">It shows to nobody, and it cannot go live again. You can still delete it in Edit.</p>}
       {missing && <div className="md:basis-full"><MissingNotice listing={listing} missing={missing} /></div>}
       {status.isError && !missing && <p role="alert" className="text-sm text-error-primary md:basis-full">{errorText(status.error)}</p>}
     </li>

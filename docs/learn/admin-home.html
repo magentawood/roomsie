@@ -44,7 +44,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>GET /v1/admin/home ──▶ the roles of the person
-                        ├── moderator ──▶ Moderation, AI pipeline, Site content
+                        ├── moderator ──▶ Moderation, People and listings, AI pipeline, Site content
                         └── ID reviewer ──▶ ID checks
 </code></pre>
 <table>
@@ -67,6 +67,11 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>/admin/id-checks</code></td>
 </tr>
 <tr>
+<td>People and listings</td>
+<td>the people with a card and the new ones of today, the live listings, the cards and listings hidden for review, the suspended accounts</td>
+<td><code>/admin/people</code>, <code>/admin/listings</code> (<a href="moderation.html">Moderation</a>)</td>
+</tr>
+<tr>
 <td>AI pipeline</td>
 <td>the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch</td>
 <td><code>/admin/ai</code>, <code>/admin/ai/log</code> (<a href="models.html">The model wrapper</a>)</td>
@@ -82,7 +87,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>The API sends only the cards of the roles of the person. A person with both roles gets each card.</li>
 <li>The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.</li>
 <li>The feedback list also gives the count of each face of the last 7 days.</li>
-<li>T-63, T-64 and T-66 add the cards of People and listings, the turns of the AI pipeline and Product numbers, each with its pages.</li>
+<li>T-64 and T-66 add the turns of the AI pipeline and the card of Product numbers, each with its pages.</li>
 <li>The AI pipeline reads the raw events of today, not a rollup: an exception to <code>database.md</code> that the spec of T-65 records. The page slows down at about 250,000 events a day.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
@@ -100,5 +105,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-62: <a href="https://github.com/magentawood/roomsie/pull/227">#227</a>, 2026-11-04. The home of scorecards, and the six pages of today in subjects with tabs.</li>
+<li>T-63: <a href="https://github.com/magentawood/roomsie/pull/230">#230</a>, 2026-11-05. The card of People and listings.</li>
 </ul>
 </main>

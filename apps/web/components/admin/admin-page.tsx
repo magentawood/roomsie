@@ -14,6 +14,7 @@ import { tabClass } from '../ui/tabs'
 type Tab = { label: string; href: string }
 
 export const moderationTabs: Tab[] = [{ label: 'Reports', href: '/admin/reports' }, { label: 'Feedback', href: '/admin/feedback' }]
+export const directoryTabs: Tab[] = [{ label: 'People', href: '/admin/people' }, { label: 'Listings', href: '/admin/listings' }]
 export const aiTabs: Tab[] = [{ label: 'Overview', href: '/admin/ai' }, { label: 'Settings and log', href: '/admin/ai/log' }]
 export const siteContentTabs: Tab[] = [
   { label: 'Invites', href: '/admin/invites' }, { label: 'Quotes', href: '/admin/quotes' }, { label: 'Site details', href: '/admin/site' },
@@ -63,31 +64,42 @@ export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: 
   return <RoleGate {...props} />
 }
 
+/** The width and the padding of the body of an admin page. */
+export const pageBody = 'mx-auto flex w-full max-w-320 flex-col gap-5 px-4 py-5 md:px-8 md:py-6 lg:px-20'
+
+/** The header of a subject or of one item: the title, the intro and the tabs (drafts sections 37 and 38). A phone gets a link back to the admin; an item gets its own link back at each width. */
+export function SubjectHeader({ title, intro, tabs, back }: { title: string; intro?: string; tabs?: Tab[]; back?: Tab }) {
+  const path = usePathname()
+  const link = back ?? { label: 'Admin', href: '/admin' }
+  return (
+    <div className="border-b border-secondary">
+      <div className={`mx-auto flex w-full max-w-320 flex-col gap-1 px-4 pt-5 md:px-8 md:pt-8 lg:px-20 ${tabs ? '' : 'pb-5 md:pb-6'}`}>
+        <Link href={link.href} className={`mb-1 inline-flex items-center gap-1 self-start text-sm font-semibold text-tertiary hover:text-primary ${back ? '' : 'md:hidden'}`}>
+          <ArrowLeft size={16} aria-hidden />{link.label}
+        </Link>
+        <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
+        {intro && <p className="text-sm text-tertiary md:text-md">{intro}</p>}
+        {tabs && (
+          <nav aria-label={title} className="mt-4 flex gap-5">
+            {tabs.map((tab) => (
+              <Link key={tab.href} href={tab.href} aria-current={path === tab.href ? 'page' : undefined}
+                className={tabClass(path === tab.href)}>
+                {tab.label}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
+    </div>
+  )
+}
+
 /** One subject of the admin: its header with tabs, then its page (drafts section 37). */
 export function SubjectPage({ role, title, intro, tabs, children }: { role: AdminRole; title: string; intro: string; tabs?: Tab[]; children: ReactNode }) {
-  const path = usePathname()
   return (
     <AdminFrame role={role} crumb={title}>
-      <div className="border-b border-secondary">
-        <div className={`mx-auto flex w-full max-w-320 flex-col gap-1 px-4 pt-5 md:px-8 md:pt-8 lg:px-20 ${tabs ? '' : 'pb-5 md:pb-6'}`}>
-          <Link href="/admin" className="mb-1 inline-flex items-center gap-1 self-start text-sm font-semibold text-tertiary md:hidden">
-            <ArrowLeft size={16} aria-hidden />Admin
-          </Link>
-          <h1 className="text-display-xs font-semibold text-primary">{title}</h1>
-          <p className="text-sm text-tertiary md:text-md">{intro}</p>
-          {tabs && (
-            <nav aria-label={title} className="mt-4 flex gap-5">
-              {tabs.map((tab) => (
-                <Link key={tab.href} href={tab.href} aria-current={path === tab.href ? 'page' : undefined}
-                  className={tabClass(path === tab.href)}>
-                  {tab.label}
-                </Link>
-              ))}
-            </nav>
-          )}
-        </div>
-      </div>
-      <main className="mx-auto flex w-full max-w-320 flex-col gap-5 px-4 py-5 md:px-8 md:py-6 lg:px-20">{children}</main>
+      <SubjectHeader title={title} intro={intro} tabs={tabs} />
+      <main className={pageBody}>{children}</main>
     </AdminFrame>
   )
 }

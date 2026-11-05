@@ -1,4 +1,3 @@
-import { desc, eq } from 'drizzle-orm'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import {
@@ -9,7 +8,6 @@ import { z } from 'zod'
 import { listAreas } from '../areas'
 import { requireModerator, type AuthOptions } from '../auth'
 import type { Db, Tx } from '../db/client'
-import { moderationLog } from '../db/schema'
 import { lastTypedTurns } from '../goals/store'
 import { listingsByIds, listingView, newestListings, partsOf, rowTitle, setListingHiddenForReview, setListingRemoved, type Listing } from '../listings/read'
 import { lastSentMessages } from '../messages/read'
@@ -17,21 +15,14 @@ import { idParams } from '../params'
 import { answersOf, cardView, hiddenCardOwners, ownersNamed, profileOf, profilesOfUsers, setCardHiddenForReview } from '../profiles/read'
 import { closeReports, openReportCounts, reportedIds, reportsAbout } from '../reports/read'
 import { firstPhotoUrl, type Storage } from '../storage'
-import { accountsOf, emailsOf, newestAccounts } from '../users'
+import { accountsOf, newestAccounts } from '../users'
 import { verifiedIds, verifiedUserIds } from '../verification/read'
+import { logAction, logOf, type Subject } from './log'
 import { suspend } from './routes'
 
 const limit = 50
-type Subject = { userId: string } | { listingId: string }
 const unique = (ids: string[]) => [...new Set(ids)]
 const newest = (times: (Date | null | undefined)[]) => times.reduce<Date | null>((a, b) => (b && (!a || b > a) ? b : a), null)
-
-async function logOf(db: Db, subject: Subject) {
-  const rows = await db.select({ action: moderationLog.action, moderator: moderationLog.moderatorUserId, at: moderationLog.createdAt }).from(moderationLog)
-    .where('userId' in subject ? eq(moderationLog.subjectUserId, subject.userId) : eq(moderationLog.listingId, subject.listingId)).orderBy(desc(moderationLog.createdAt))
-  const emails = await emailsOf(db, rows.flatMap((r) => (r.moderator ? [r.moderator] : [])))
-  return rows.map((r) => ({ action: r.action, by: (r.moderator && emails.get(r.moderator)) ?? null, at: r.at.toISOString() }))
-}
 
 const reportsOf = async (db: Db, subject: Subject) =>
   (await reportsAbout(db, subject)).map((r) => ({ id: r.id, reason: r.reason, detail: r.detail, status: r.status, createdAt: r.createdAt.toISOString() }))
@@ -119,7 +110,7 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
       if (action === 'suspend') await suspend(tx, userId)
       else if (!(await setCardHiddenForReview(tx, userId, action === 'hide' ? new Date() : null).returning()).length) return false
       await closeReports(tx, { userId }, action === 'unhide' ? 'dismissed' : 'actioned')
-      await tx.insert(moderationLog).values({ action, moderatorUserId: req.user!.id, subjectUserId: userId })
+      await logAction(tx, req.user!.id, action, { userId })
       return true
     })
     return done ? reply.code(204).send(null) : reply.code(404).send({ error: 'not found' })
@@ -158,7 +149,7 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
       if (action === 'remove') await setListingRemoved(tx, listingId, new Date())
       else await setListingHiddenForReview(tx, listingId, action === 'hide' ? new Date() : null)
       await closeReports(tx, { listingId }, action === 'unhide' ? 'dismissed' : 'actioned')
-      await tx.insert(moderationLog).values({ action, moderatorUserId: req.user!.id, listingId })
+      await logAction(tx, req.user!.id, action, { listingId })
       return true
     })
     return done ? reply.code(204).send(null) : reply.code(404).send({ error: 'not found' })

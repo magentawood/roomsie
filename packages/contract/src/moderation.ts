@@ -63,4 +63,6 @@ export const adminListingsResponse = z.object({ listings: z.array(adminListingRo
 export const adminListingResponse = adminListingRow.extend({ listerUserId: z.uuid(), listing: listingResponse, reports: z.array(subjectReport), log: z.array(logEntry) })
 export type AdminPersonRow = z.infer<typeof adminPersonRow>
 export type AdminListingRow = z.infer<typeof adminListingRow>
+export type AdminLogEntry = z.infer<typeof logEntry>
+export type AdminSubjectReport = z.infer<typeof subjectReport>
 

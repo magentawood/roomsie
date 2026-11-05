@@ -12,6 +12,7 @@ import type { Storage } from '../storage'
 import { suspendAccount } from '../users'
 import type { AiSources } from '../models/overview'
 import { homeCards } from './home'
+import { logAction } from './log'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
 export async function suspend(tx: Tx, userId: string) {
@@ -74,13 +75,20 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiS
     }, async (req, reply) => {
       const { id } = req.params
       const { action } = req.body
+      const subject = kind === 'listings' ? { listingId: id } : { userId: id }
       const reviewed = await db.transaction(async (tx) => {
-        const closed = await closeReports(tx, kind === 'listings' ? { listingId: id } : { userId: id }, action === 'dismiss' ? 'dismissed' : 'actioned')
+        const closed = await closeReports(tx, subject, action === 'dismiss' ? 'dismissed' : 'actioned')
         if (!closed.length) return false
         const hiddenAt = action === 'dismiss' ? null : new Date()
         if (kind === 'listings') await setListingHiddenForReview(tx, id, hiddenAt)
         else await setCardHiddenForReview(tx, id, hiddenAt)
-        if (action === 'suspend') await suspend(tx, closed[0]!.subjectUserId)
+        // A dismiss clears the hide of the item, so the log shows it as an unhide.
+        await logAction(tx, req.user!.id, action === 'dismiss' ? 'unhide' : 'hide', subject)
+        if (action === 'suspend') {
+          const owner = closed[0]!.subjectUserId
+          await suspend(tx, owner)
+          await logAction(tx, req.user!.id, 'suspend', { userId: owner })
+        }
         return true
       })
       if (!reviewed) return reply.code(404).send({ error: 'not found' })

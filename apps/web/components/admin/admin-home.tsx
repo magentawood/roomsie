@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, CpuChip01, File04, Flag01, ShieldTick } from '@untitledui/icons'
+import { ArrowRight, CpuChip01, File04, Flag01, ShieldTick, Users01 } from '@untitledui/icons'
 import { noSiteDetails, type AdminHomeCard } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -69,6 +69,13 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
         <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks" footer={card.oldestCheckAt ? `Oldest check: ${ago(card.oldestCheckAt)}` : 'No check waits'}>
           <Metric value={card.waiting} label="Waiting for review" badges={card.late > 0 && <Badge tone="error" dot={false}>{`${card.late} late`}</Badge>} />
           <Metric value={card.verifiedThisWeek} label="Verified this week" />
+        </Card>
+      )
+    case 'people_listings':
+      return (
+        <Card icon={Users01} title="People and listings" href="/admin/people" footer={`${card.hidden} hidden for review · ${card.suspended} suspended`}>
+          <Metric value={card.people} label="People with a card" badges={card.newToday > 0 && <Badge tone="success" dot={false}>{`${card.newToday} new today`}</Badge>} />
+          <Metric value={card.liveListings} label="Live listings" />
         </Card>
       )
     case 'ai_pipeline':

@@ -12,7 +12,7 @@
 
 ```
 GET /v1/admin/home ──▶ the roles of the person
-                        ├── moderator ──▶ Moderation, AI pipeline, Site content
+                        ├── moderator ──▶ Moderation, People and listings, AI pipeline, Site content
                         └── ID reviewer ──▶ ID checks
 ```
 
@@ -20,13 +20,14 @@ GET /v1/admin/home ──▶ the roles of the person
 |---|---|---|
 | Moderation | open reports, late safety reports, other late reports, the oldest report, feedback of the last 7 days | `/admin/reports`, `/admin/feedback` |
 | ID checks | checks that wait, late checks, the oldest check, checks verified in the last 7 days | `/admin/id-checks` |
+| People and listings | the people with a card and the new ones of today, the live listings, the cards and listings hidden for review, the suspended accounts | `/admin/people`, `/admin/listings` ([Moderation](moderation.md)) |
 | AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/log` ([The model wrapper](models.md)) |
 | Site content | invites and the invite gate, quotes, site details that are set | `/admin/invites`, `/admin/quotes`, `/admin/site` |
 
 - The API sends only the cards of the roles of the person. A person with both roles gets each card.
 - The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.
 - The feedback list also gives the count of each face of the last 7 days.
-- T-63, T-64 and T-66 add the cards of People and listings, the turns of the AI pipeline and Product numbers, each with its pages.
+- T-64 and T-66 add the turns of the AI pipeline and the card of Product numbers, each with its pages.
 - The AI pipeline reads the raw events of today, not a rollup: an exception to `database.md` that the spec of T-65 records. The page slows down at about 250,000 events a day.
 
 ## The choice we made
@@ -44,3 +45,4 @@ GET /v1/admin/home ──▶ the roles of the person
 ## Tickets
 
 - T-62: [#227](https://github.com/magentawood/roomsie/pull/227), 2026-11-04. The home of scorecards, and the six pages of today in subjects with tabs.
+- T-63: [#230](https://github.com/magentawood/roomsie/pull/230), 2026-11-05. The card of People and listings.
