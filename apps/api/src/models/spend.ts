@@ -4,6 +4,7 @@ import type { ModelUsage } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import type { Db } from '../db/client'
 import { modelSpend } from '../db/schema'
+import { teamAlertOf } from '../team-alert'
 import type { Vendor } from './models'
 import type { SpendSettings } from './settings'
 
@@ -13,6 +14,8 @@ const modelPrices: Record<Vendor, { in: number; cachedIn: number; out: number }>
   gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 },
 }
 const usdToInr = 88
+/** The alerts of the daily amount of PD9. */
+export const spendAlertPercents = [70, 100]
 /** The rupees of the usage of one call, at the high prices above. */
 export function rupeesOf(vendor: Vendor, usage: ModelUsage) {
   const price = modelPrices[vendor]
@@ -23,16 +26,7 @@ const inRupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maxi
 /** The model spend of each day (PD9, T-21). The chat never stops for it: the team gets a Telegram alert at 70% and at 100%. */
 export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendSettings; today: () => string; log: FastifyBaseLogger }) {
   const pending = new Set<Promise<void>>()
-
-  async function alert(text: string) {
-    if (!settings.telegram) return log.warn({ text }, 'spend alert')
-    const res = await fetch(`https://api.telegram.org/bot${settings.telegram.token}/sendMessage`, {
-      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ chat_id: settings.telegram.chatId, text }),
-      // The close of the server waits for the spend, so a slow Telegram must not hold it.
-      signal: AbortSignal.timeout(10_000),
-    })
-    if (!res.ok) throw new Error(`Telegram answered ${res.status}`)
-  }
+  const alert = teamAlertOf(settings.telegram, log)
 
   async function add(vendor: Vendor, usage: ModelUsage) {
     const rupees = rupeesOf(vendor, usage)
@@ -42,7 +36,7 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
       .onConflictDoUpdate({ target: modelSpend.day, set: { rupees: sql`${modelSpend.rupees} + excluded.rupees` } })
       .returning({ rupees: modelSpend.rupees })
     const total = Number(row!.rupees)
-    for (const percent of [70, 100]) {
+    for (const percent of spendAlertPercents) {
       if (total < (settings.dailyRupees * percent) / 100) break
       // Only one call of the day moves `alertedPercent` to this percent, so each alert goes one time, also from two machines.
       const [moved] = await db.update(modelSpend).set({ alertedPercent: percent }).where(and(eq(modelSpend.day, day), lt(modelSpend.alertedPercent, percent))).returning()
@@ -59,8 +53,10 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
       pending.add(done)
     },
     settled: async () => { await Promise.all(pending) },
-    /** False: no Telegram settings (T-29). */
-    sendTestAlert: async () => { if (settings.telegram) await alert('roomsie: the spend alert works.'); return !!settings.telegram },
   }
 }
 export type Spend = ReturnType<typeof spendOf>
+
+/** The model spend of a day, in rupees (T-65). */
+export const spentOn = async (db: Db, day: string) =>
+  Number((await db.select({ rupees: modelSpend.rupees }).from(modelSpend).where(eq(modelSpend.day, day)))[0]?.rupees ?? 0)

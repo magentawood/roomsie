@@ -45,6 +45,8 @@ const requestOf = (id: string, calls: CallResult[]) => ({
   server: {
     analytics: { track: (_req: unknown, event: AnalyticsEvent) => { if (event.name === 'model_called') calls.push({ id, role: event.role, ms: event.ms, outcome: event.outcome }) } },
     spend: { record: () => {} },
+    // The eval asks each model on purpose, so the switch of the admin is off.
+    geminiOnly: async () => false,
   },
   log: { info: () => {}, warn: () => {}, error: () => {} },
   user: null,

@@ -2,14 +2,16 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, File04, Flag01, ShieldTick } from '@untitledui/icons'
+import { ArrowRight, CpuChip01, File04, Flag01, ShieldTick } from '@untitledui/icons'
 import { noSiteDetails, type AdminHomeCard } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { india } from '../../lib/ist'
+import { percent, rupees } from '../../lib/numbers'
 import { useAdminHome } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
+import { Bar } from '../ui/bar'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
@@ -67,6 +69,16 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
         <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks" footer={card.oldestCheckAt ? `Oldest check: ${ago(card.oldestCheckAt)}` : 'No check waits'}>
           <Metric value={card.waiting} label="Waiting for review" badges={card.late > 0 && <Badge tone="error" dot={false}>{`${card.late} late`}</Badge>} />
           <Metric value={card.verifiedThisWeek} label="Verified this week" />
+        </Card>
+      )
+    case 'ai_pipeline':
+      return (
+        <Card icon={CpuChip01} title="AI pipeline" href="/admin/ai" footer={card.failedShare === null ? 'No numbers of the calls now' : undefined}>
+          <Metric value={rupees(card.spendToday)} label={`Spend today, of ${rupees(card.dailyAmount)}`}
+            badges={<Badge tone={card.geminiOnly ? 'warning' : 'gray'} dot={false}>{card.geminiOnly ? 'Gemini switch on' : 'Gemini switch off'}</Badge>} />
+          <Bar value={card.spendToday} max={card.dailyAmount} label="Spend today" />
+          {card.failedShare !== null && <Metric value={percent(card.failedShare)} label="Calls failed today" />}
+          {card.fallbackShare !== null && <Metric value={percent(card.fallbackShare)} label="Sent to the fallback today" />}
         </Card>
       )
     case 'site_content':

@@ -12,7 +12,7 @@
 
 ```
 GET /v1/admin/home ──▶ the roles of the person
-                        ├── moderator ──▶ Moderation, Site content
+                        ├── moderator ──▶ Moderation, AI pipeline, Site content
                         └── ID reviewer ──▶ ID checks
 ```
 
@@ -20,12 +20,14 @@ GET /v1/admin/home ──▶ the roles of the person
 |---|---|---|
 | Moderation | open reports, late safety reports, other late reports, the oldest report, feedback of the last 7 days | `/admin/reports`, `/admin/feedback` |
 | ID checks | checks that wait, late checks, the oldest check, checks verified in the last 7 days | `/admin/id-checks` |
+| AI pipeline | the spend of today against the daily amount, the failed calls and the calls of the fallback today, and the Gemini switch | `/admin/ai`, `/admin/ai/log` ([The model wrapper](models.md)) |
 | Site content | invites and the invite gate, quotes, site details that are set | `/admin/invites`, `/admin/quotes`, `/admin/site` |
 
-- The API sends only the cards of the roles of the person. A person with both roles gets the three cards.
+- The API sends only the cards of the roles of the person. A person with both roles gets each card.
 - The numbers count reports, not the items of the queue: the queue has one item for each person or listing, with all its open reports.
 - The feedback list also gives the count of each face of the last 7 days.
-- T-63 to T-66 add the cards of People and listings, AI pipeline and Product numbers, each with its pages.
+- T-63, T-64 and T-66 add the cards of People and listings, the turns of the AI pipeline and Product numbers, each with its pages.
+- The AI pipeline reads the raw events of today, not a rollup: an exception to `database.md` that the spec of T-65 records. The page slows down at about 250,000 events a day.
 
 ## The choice we made
 

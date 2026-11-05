@@ -739,3 +739,11 @@ export const modelSpend = pgTable('model_spend', {
 }, (t) => ({
   dayIdx: uniqueIndex('model_spend_day_idx').on(t.day),
 })).enableRLS()
+
+/** The Gemini switch of the admin (T-65): each flip is a row, and the newest row is the state. No row is off. The models module owns it. */
+export const modelSwitch = pgTable('model_switch', {
+  id: id(),
+  geminiOnly: boolean('gemini_only').notNull(),
+  savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
+  createdAt: createdAt(),
+}).enableRLS()

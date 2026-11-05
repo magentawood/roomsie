@@ -7557,6 +7557,50 @@
                               "subject": {
                                 "type": "string",
                                 "enum": [
+                                  "ai_pipeline"
+                                ]
+                              },
+                              "spendToday": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "dailyAmount": {
+                                "type": "number",
+                                "minimum": 0,
+                                "exclusiveMinimum": true
+                              },
+                              "failedShare": {
+                                "nullable": true,
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "fallbackShare": {
+                                "nullable": true,
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "geminiOnly": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "subject",
+                              "spendToday",
+                              "dailyAmount",
+                              "failedShare",
+                              "fallbackShare",
+                              "geminiOnly"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "subject": {
+                                "type": "string",
+                                "enum": [
                                   "site_content"
                                 ]
                               },
@@ -10933,6 +10977,467 @@
                     "coverImage",
                     "coverAlt",
                     "passages"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/ai": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "switch": {
+                      "type": "object",
+                      "properties": {
+                        "geminiOnly": {
+                          "type": "boolean"
+                        },
+                        "since": {
+                          "nullable": true,
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "by": {
+                          "nullable": true,
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "geminiOnly",
+                        "since",
+                        "by"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "spend": {
+                      "type": "object",
+                      "properties": {
+                        "today": {
+                          "type": "number",
+                          "minimum": 0
+                        },
+                        "dailyAmount": {
+                          "type": "number",
+                          "minimum": 0,
+                          "exclusiveMinimum": true
+                        }
+                      },
+                      "required": [
+                        "today",
+                        "dailyAmount"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "numbers": {
+                      "nullable": true,
+                      "type": "object",
+                      "properties": {
+                        "today": {
+                          "type": "object",
+                          "properties": {
+                            "calls": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "failedShare": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            "fallbackShare": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            "p95Ms": {
+                              "nullable": true,
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "calls",
+                            "failedShare",
+                            "fallbackShare",
+                            "p95Ms"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "lastQuarterHour": {
+                          "type": "object",
+                          "properties": {
+                            "calls": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "maximum": 9007199254740991
+                            },
+                            "failedShare": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            },
+                            "fallbackShare": {
+                              "type": "number",
+                              "minimum": 0,
+                              "maximum": 1
+                            }
+                          },
+                          "required": [
+                            "calls",
+                            "failedShare",
+                            "fallbackShare"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "roles": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "calls": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "failedShare": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "fallbackShare": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1
+                              },
+                              "p95Ms": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 9007199254740991
+                              },
+                              "rupees": {
+                                "type": "number",
+                                "minimum": 0
+                              },
+                              "role": {
+                                "type": "string",
+                                "enum": [
+                                  "router",
+                                  "extractor",
+                                  "observer",
+                                  "composer",
+                                  "advisor",
+                                  "check"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "calls",
+                              "failedShare",
+                              "fallbackShare",
+                              "p95Ms",
+                              "rupees",
+                              "role"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "bands": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "integer",
+                            "minimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          "required": [
+                            "core",
+                            "general",
+                            "consequential",
+                            "out_of_scope",
+                            "adversarial",
+                            "sensitive"
+                          ]
+                        }
+                      },
+                      "required": [
+                        "today",
+                        "lastQuarterHour",
+                        "roles",
+                        "bands"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "settings": {
+                      "type": "object",
+                      "properties": {
+                        "models": {
+                          "nullable": true,
+                          "type": "object",
+                          "properties": {
+                            "primary": {
+                              "type": "string"
+                            },
+                            "fallback": {
+                              "type": "string"
+                            },
+                            "timeoutMs": {
+                              "type": "integer",
+                              "minimum": 0,
+                              "exclusiveMinimum": true,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "primary",
+                            "fallback",
+                            "timeoutMs"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "spendAlertPercents": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "routerMinProbability": {
+                          "type": "number"
+                        },
+                        "limits": {
+                          "type": "object",
+                          "properties": {
+                            "turnCap": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "turnBackstop": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "sessionsPerDevice": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "sessionsPerIp": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "sessionsPerIpRange": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            "typedTurnsPerMinute": {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            }
+                          },
+                          "required": [
+                            "turnCap",
+                            "turnBackstop",
+                            "sessionsPerDevice",
+                            "sessionsPerIp",
+                            "sessionsPerIpRange",
+                            "typedTurnsPerMinute"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "models",
+                        "spendAlertPercents",
+                        "routerMinProbability",
+                        "limits"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "switch",
+                    "spend",
+                    "numbers",
+                    "settings"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/ai/switch": {
+      "put": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "geminiOnly": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "geminiOnly"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "geminiOnly": {
+                      "type": "boolean"
+                    },
+                    "since": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "date-time",
+                      "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                    },
+                    "by": {
+                      "nullable": true,
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "geminiOnly",
+                    "since",
+                    "by"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/admin/ai/switch-log": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "flips": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "geminiOnly": {
+                            "type": "boolean"
+                          },
+                          "at": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          },
+                          "by": {
+                            "nullable": true,
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "geminiOnly",
+                          "at",
+                          "by"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "flips"
                   ],
                   "additionalProperties": false
                 }

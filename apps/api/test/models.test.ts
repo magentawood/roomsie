@@ -71,6 +71,25 @@ describe('the models module', () => {
     expect(requests.map((r) => r.url)).toEqual([deepseek, deepseek])
   })
 
+  it('asks only Gemini while the switch is on: one more try on an invalid answer, and no second vendor', async () => {
+    const requests = fakeVendors({ gemini: [answer('not json'), answer('{"intent":"room"}')] })
+    const { req, events } = fakeRequest({ geminiOnly: true })
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([gemini, gemini])
+    expect(events.map((e) => 'fallback' in e && e.fallback)).toEqual([true, true])
+    const down = fakeVendors({ gemini: [new Response('down', { status: 500 })] })
+    await expect(ask(fakeRequest({ geminiOnly: true }).req)).rejects.toBeInstanceOf(ModelUnavailable)
+    expect(down.map((r) => r.url)).toEqual([gemini])
+  })
+
+  it('asks DeepSeek, and reports it, when the switch cannot be read', async () => {
+    const requests = fakeVendors({ deepseek: [answer('{"intent":"room"}')] })
+    const { req } = fakeRequest({ geminiOnly: new Error('the database is down') })
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([deepseek])
+    expect(req.log.error).toHaveBeenCalledTimes(1)
+  })
+
   it('throws, and reports it one time, when Gemini also fails', async () => {
     fakeVendors({ deepseek: [new Response('down', { status: 500 })], gemini: [new Response('bad key', { status: 401 })] })
     const { req } = fakeRequest()

@@ -49,7 +49,7 @@ details.callout[open] summary{color:var(--fg)}
                  └─ Zod parse with the schema of packages/contract
 </code></pre>
 <ul>
-<li><strong>One function:</strong> product code writes an event only with <code>app.analytics.track(req, event)</code>. The module has no read function, so no product code depends on the analytics database (<a href="../extensibility.md">extensibility.md</a>).</li>
+<li><strong>One function:</strong> product code writes an event only with <code>app.analytics.track(req, event)</code>, and reads no event, so no product code depends on the analytics database (<a href="../extensibility.md">extensibility.md</a>). Only the admin reads events: the calls and the bands of today, for the AI pipeline (T-65, <a href="models.html">The model wrapper</a>).</li>
 <li><strong>The schemas:</strong> each event is a Zod schema in <code>packages/contract</code> with <code>eventVersion</code>. A change of its fields gives a new version. No schema has a text field.</li>
 <li><strong>The actor:</strong> <code>track()</code> takes the analytics id of the signed-in person of <code>req</code>. A guest has no actor. Account deletion clears the analytics id in the users row. After that, no row links the events to the person, and the deletion makes no call to the analytics database.</li>
 <li><strong>Signed in:</strong> the users row keeps the <code>auth_time</code> of the latest sign-in. A token with a later <code>auth_time</code> fires "signed in" one time. A token refresh keeps its <code>auth_time</code>, so it fires nothing.</li>

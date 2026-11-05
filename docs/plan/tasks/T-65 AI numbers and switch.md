@@ -31,12 +31,64 @@ The health and the spend of the models, and one switch for an outage.
 - No task waits on this task.
 
 ## Done when
-- [ ] The AI pipeline shows the calls, failures, fallbacks, times, the spend against the daily amount, and the mix of router bands
-- [ ] The model settings, the daily amount and the limits show read-only
-- [ ] The switch “Use Gemini for all calls” acts on the next call with no deploy, and each flip goes in a log
+- [x] The AI pipeline shows the calls, failures, fallbacks, times, the spend against the daily amount, and the mix of router bands · [#228](https://github.com/magentawood/roomsie/pull/228)
+- [x] The model settings, the daily amount and the limits show read-only · [#228](https://github.com/magentawood/roomsie/pull/228)
+- [x] The switch “Use Gemini for all calls” acts on the next call with no deploy, and each flip goes in a log · [#228](https://github.com/magentawood/roomsie/pull/228)
 
 ^done
 
 ## Read first
 - [admin-panel.md](../../specs/admin-panel.md)
 - [pd-07-models.md](../../decisions/pd-07-models.md)
+
+## Spec
+
+**Approved:** 2026-11-05, by n3rxv
+
+- **Modules:**
+  - **The schema:** a new table of the switch and its log. Each flip adds a row with the state, the person and the time. The newest row is the state, and no row is off.
+  - **The model wrapper:** each call reads the state of the switch. When it is on, each attempt goes to the fallback model: one more try on an invalid answer, and no second vendor. The wrapper gives its model names and its time limit for the settings view. The interface changes.
+  - **The models module of the API:** a route gives the AI numbers and the settings, a route flips the switch, and a route gives its log. Moderators only. A flip sends a Telegram message with the bot of the spend alerts. The interface changes.
+  - **The analytics module:** the reads of `model_called` and `turn_routed` for today in IST and for the last 15 minutes. The interface changes.
+  - **The moderation module:** the admin home gets the card of the AI pipeline for a moderator. The interface changes.
+  - **The contract:** the response of the AI numbers, the body of a flip, the log, and the card of the AI pipeline.
+  - **The web:** `/admin/ai` with the tabs Overview and Settings and log, the switch with a confirm to turn it on, and the card on the home.
+- **Seams for the tests:**
+  - The test of the model wrapper: with the switch on, the first attempt goes to the fallback model, and a flip acts on the next call.
+  - The route test of the AI numbers: the numbers from events of a test analytics database, today and the last 15 minutes; the spend of today against the daily amount; a moderator only.
+  - The route test of the switch: a flip adds a row of the log with the person, sends one Telegram message, and a person who is not a moderator gets 404.
+  - The route test of the admin home: the card of the AI pipeline.
+  - A browser check on local dev at 390 px and 1440 px: the overview, the switch and its confirm, the settings and the log, and the card.
+- **Decisions:**
+  - **The read (the user):** each model call reads the newest row of the log of the switch.
+  - **The times (the user):** the slowest 5% of the calls, for each role and for all. The events have no turn id.
+  - **The status (the user):** no pill. The failure rate and the share sent to Gemini of the last 15 minutes show next to the numbers of today.
+  - **The alert (the user):** each flip sends a Telegram message to the team, with the person and the new state.
+  - **The switch:** one table is the state and the log. A moderator flips it. The web asks for a confirm to turn it on, and turns it off with one tap.
+  - **The numbers:** for today in IST, from the analytics events: the calls, the failure rate, the share sent to Gemini, the slowest 5%, and the spend of each role from its tokens, at the prices of the spend alerts. The mix of the router bands from `turn_routed`.
+  - **The spend:** the row of today of the model spend, against `DAILY_SPEND_RUPEES`.
+  - **The settings:** read-only: the main model, the fallback model, the time limit of a call, the daily amount and its alerts, the confidence floor of the router, and the limits of the chat. With no model keys, they show "Not set".
+  - **No analytics database:** the numbers show "No analytics database", and the switch works.
+  - **The pages:** `/admin/ai` has the tabs Overview and Settings and log. T-64 adds Turns. The overview and the switch have the layout of the designs at 390 px.
+  - **The card:** "AI pipeline" for a moderator, before Site content: the spend against the daily amount, the failure rate and the share sent to Gemini of today, and the state of the switch.
+  - **The designs:** drafts section 39 of the Product file ([D-07](D-07%20Admin%20designs.md)), with no status pill.
+  - **Rollups (the user, review):** the AI pipeline reads the raw events of today, not a rollup table: an exception to the rollup rule of `database.md`. A rollup cannot give the last 15 minutes, and today is a small part of one partition. T-66 reads rollups. Revisit at about 250,000 events a day.
+  - **Copy (review):** the web names the main and the fallback model only from the settings, and the switch keeps its name "Use Gemini for all calls".
+  - **The live check (review):** the calls of `POST /v1/admin/model-check` are not in the numbers, but their spend counts in the spend of today, because they cost money.
+  - **The evals (review):** the eval runners set the switch off, because they ask each model on purpose.
+  - **A failed analytics read (review):** a read that fails or takes over 5 s gives no numbers, as with no analytics database, and the switch still works.
+- **Out of scope:**
+  - the turns and the traces (T-64)
+  - a change of any setting from the screen but the switch ([the spec](../../specs/admin-panel.md))
+  - a turn id in the events
+  - a status pill with thresholds
+
+## Log
+
+- **2026-11-05 · [#228](https://github.com/magentawood/roomsie/pull/228)**
+  - **Change:** the switch "Use Gemini for all calls" on `/admin/ai`: each model call reads it, each flip goes in a log and to the team in Telegram. The page shows the calls of today and of the last 15 minutes, the spend against the daily amount, the calls of each role, the router bands and the settings. The admin home gets the card of the AI pipeline.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md), and [PD7](../../decisions/pd-07-models.md) for the fallback.
+  - **Ticked:** the three items.
+  - **Not done:** none.
+  - **Learn:** [The model wrapper](../../learn/models.md), [Analytics events](../../learn/analytics-events.md), [The admin home](../../learn/admin-home.md), [The limits of the chat](../../learn/chat-limits.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

@@ -37,3 +37,9 @@ export async function alertContactOf(db: Db, userId: string) {
 
 export const setEmailAlerts = (db: Db, userId: string, emailAlerts: boolean) =>
   db.update(users).set({ emailAlerts, updatedAt: new Date() }).where(eq(users.id, userId))
+
+/** The sign-in emails of some accounts, for the logs of the admin (T-65). */
+export async function emailsOf(db: Db, userIds: string[]) {
+  const rows = await db.select({ id: users.id, email: users.email }).from(users).where(inArray(users.id, userIds))
+  return new Map(rows.map((r) => [r.id, r.email]))
+}

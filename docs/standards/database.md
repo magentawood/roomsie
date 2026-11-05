@@ -25,6 +25,8 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 ## Queries
 
+- A check of the rows, then a write that depends on it, run in one transaction with a lock, for example `pg_advisory_xact_lock`. Why: two requests at the same time both pass the check. (Rule candidate of [#204](https://github.com/magentawood/roomsie/pull/204), the second time in [#228](https://github.com/magentawood/roomsie/pull/228))
+- A value of a contract enum that a row stores is parsed when the code reads it, not only typed. Why: a stored value that a later list removed then breaks the response check. (Rule candidate of [#204](https://github.com/magentawood/roomsie/pull/204), the second time in [#228](https://github.com/magentawood/roomsie/pull/228))
 - A module owns its tables. Other modules call its functions, and never read or write its tables. A function can give a SQL condition for the query of a different module, for example `noBlockBetween`. Account deletion and the moderator review also obey this rule. Why: a change to a table then stays in one module, and a filter stays in one query. ([ADR-0002](../decisions/0002-api-boundary.md), [extensibility.md](../extensibility.md))
 - Run complex queries in Postgres, as raw SQL with a typed result through Drizzle. Examples are the rank score, the seen-exclusion and the 90-day suppression. Why: they must not block the event loop, and they stay typed. ([ADR-0006](../decisions/0006-drizzle.md), [ADR-0004](../decisions/0004-api-stack-typescript-fastify.md))
 

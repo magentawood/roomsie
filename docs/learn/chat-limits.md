@@ -7,7 +7,7 @@
 - **The turn cap.** A visitor with no account gets five typed turns. Then "Sign in to keep chatting" comes, and the results stay on the screen. Chip taps do not count. The wall never comes before results show, except at the backstop of 15 typed turns ([PD9](../decisions/pd-09-pre-login-limits.md)).
 - **The rate limits.** They stop a script, not a person: new visitor chats in 24 hours for each device, each IP address and each IP range, and typed turns in a minute for each person.
 - **The daily spend.** Each model call adds its cost to the row of the day. At 70% and at 100% of the amount, one Telegram message goes to the team group. The chat never stops for money.
-- **The secrets of the alert:** `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, the bot and the group of the backup alerts (T-40). The deploy workflow gives them to the API. Unset, the alert is only a log line.
+- **The secrets of the alert:** `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID`, the bot and the group of the backup alerts (T-40). The deploy workflow gives them to the API. Unset, the alert is only a log line. The same bot tells the team of each flip of the Gemini switch ([The model wrapper](models.md)).
 
 All the values are first guesses in config, until two to three months of data ([pre-login-limits.md](../pre-login-limits.md)).
 
@@ -18,7 +18,7 @@ All the values are first guesses in config, until two to three months of data ([
 | The values | `limitSettings` in `apps/api/src/goals/settings.ts`, and `spendSettings` in `apps/api/src/models/settings.ts` |
 | The counts and the hashes | `apps/api/src/goals/limits.ts` |
 | The refusals: `turn_cap`, `too_many_chats`, `too_fast` | the goals routes, with `limitRefusal` of `packages/contract` |
-| The spend of each day and the alerts | `apps/api/src/models/spend.ts`, and the table `model_spend` |
+| The spend of each day and the alerts | `apps/api/src/models/spend.ts`, the table `model_spend`, and the Telegram send of `apps/api/src/team-alert.ts` |
 | The wall, the button and the two messages | `apps/web/components/chat/chat-screen.tsx` |
 | The refusal of a new chat, next to "Sign up with Google" | `apps/web/components/onboarding/onboarding.tsx` |
 

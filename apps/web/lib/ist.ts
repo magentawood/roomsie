@@ -1,6 +1,9 @@
 /** Each time that a person sees is in IST. */
 export const india = { timeZone: 'Asia/Kolkata' } as const
 
+/** "5 Nov 2026, 9:34 am". */
+export const dateAndTime = (iso: string) => new Date(iso).toLocaleString('en-IN', { ...india, dateStyle: 'medium', timeStyle: 'short' })
+
 /** "8 November", "28 Oct", or with the year "8 October 2026". */
 export const istDay = (iso: string, month: 'long' | 'short' = 'long', year?: 'numeric') =>
   new Date(iso).toLocaleDateString('en-IN', { ...india, day: 'numeric', month, year })

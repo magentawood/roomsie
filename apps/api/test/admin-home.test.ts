@@ -36,9 +36,9 @@ describe('the admin home', () => {
   })
 
   it('gives each person only the cards of their roles', async () => {
-    expect((await home('moderator')).map((c) => c.subject)).toEqual(['moderation', 'site_content'])
+    expect((await home('moderator')).map((c) => c.subject)).toEqual(['moderation', 'ai_pipeline', 'site_content'])
     expect((await home('reviewer')).map((c) => c.subject)).toEqual(['id_checks'])
-    expect((await home('both')).map((c) => c.subject)).toEqual(['moderation', 'id_checks', 'site_content'])
+    expect((await home('both')).map((c) => c.subject)).toEqual(['moderation', 'id_checks', 'ai_pipeline', 'site_content'])
   })
 
   it('counts the open reports, and the late ones of PD18', async () => {
@@ -77,6 +77,11 @@ describe('the admin home', () => {
     const site = (await home('moderator')).find((c) => c.subject === 'site_content')
     // The test database opens roomsie to everyone, so the gate is not invite-only.
     expect(site).toEqual({ subject: 'site_content', invites: 2, inviteOnly: false, quotes: 1, detailsSet: 2 })
+  })
+
+  it('gives the AI pipeline: the spend against the daily amount, and no shares with no analytics database', async () => {
+    const ai = (await home('moderator')).find((c) => c.subject === 'ai_pipeline')
+    expect(ai).toEqual({ subject: 'ai_pipeline', spendToday: 0, dailyAmount: 500, failedShare: null, fallbackShare: null, geminiOnly: false })
   })
 
   it('tells when the gate is invite-only, and not after its opening time', async () => {

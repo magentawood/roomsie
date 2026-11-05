@@ -114,11 +114,17 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   async function run<T>(call: ModelCall, mode: Mode, read: Read<T>) {
     const deadline = call.deadlineMs === undefined ? undefined : AbortSignal.timeout(call.deadlineMs)
     const late = () => deadline?.aborted
-    const first = await attempt(call, primary, mode, read, deadline)
+    // A failed read of the switch is off: the call must not fail for the switch of the admin (T-65).
+    const geminiOnly = await call.req.server.geminiOnly().catch((err: unknown) => {
+      reportError(err, { where: 'models.switch', log: call.req.log })
+      return false
+    })
+    const model = geminiOnly ? fallback : primary
+    const first = await attempt(call, model, mode, read, deadline)
     // Gemini answers, but a person must fix the key or the balance of DeepSeek.
-    if (first.refused) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
-    const second = first.outcome === 'invalid' && !late() ? await attempt(call, primary, mode, read, deadline) : first
-    const last = second.outcome === 'ok' || late() ? second : await attempt(call, fallback, mode, read, deadline)
+    if (first.refused && !geminiOnly) reportError(new Error(`${primary} answered ${first.refused}`), { where: `models.${call.role}`, log: call.req.log })
+    const second = first.outcome === 'invalid' && !late() ? await attempt(call, model, mode, read, deadline) : first
+    const last = second.outcome === 'ok' || late() || geminiOnly ? second : await attempt(call, fallback, mode, read, deadline)
     if (last.outcome === 'ok') return last.value
     const err = new ModelUnavailable(`No model answered the ${call.role}: the last attempt was ${last.outcome}`)
     // A caller with a deadline has its own fallback, so this is no error report.
@@ -133,6 +139,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   }
 
   return {
+    settings: { primary, fallback, timeoutMs },
     json: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true }, parseWith(call.schema)),
     /** A JSON call with the probability of each token of DeepSeek. `model` names the vendor. Gemini gives `tokens: null`. */
     scored: <S extends z.ZodType>(call: ModelCall & { schema: S }) => run(call, { json: true, logprobs: true }, (content, tokens, model) => {

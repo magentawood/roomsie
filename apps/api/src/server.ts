@@ -30,6 +30,8 @@ import { messageRoutes } from './messages/routes'
 import type { Models } from './models/models'
 import { spendSettings, type SpendSettings } from './models/settings'
 import { spendOf, type Spend } from './models/spend'
+import { teamAlertOf, type TeamAlert } from './team-alert'
+import { geminiOnly } from './models/switch'
 import { limitSettings, type LimitSettings } from './goals/settings'
 import { modelRoutes } from './models/routes'
 import { moderationRoutes } from './moderation/routes'
@@ -52,6 +54,8 @@ declare module 'fastify' {
     alerts: Alerts
     analytics: Analytics
     spend: Spend
+    teamAlert: TeamAlert
+    geminiOnly: () => Promise<boolean>
   }
 }
 
@@ -78,8 +82,11 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   const analytics = analyticsOf(options.analyticsDb, app.log)
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())
-  const spend = spendOf({ db: options.db, settings: options.spend ?? spendSettings.parse({}), today, log: app.log })
+  const aiSources = { spend: options.spend ?? spendSettings.parse({}), assistant: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today }
+  app.decorate('teamAlert', teamAlertOf(aiSources.spend.telegram, app.log))
+  const spend = spendOf({ db: options.db, settings: aiSources.spend, today, log: app.log })
   app.decorate('spend', spend)
+  app.decorate('geminiOnly', () => geminiOnly(options.db))
   app.addHook('onClose', () => spend.settled())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -134,7 +141,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       profileRoutes(v1, options)
       requestRoutes(v1, options)
       blockRoutes(v1, options)
-      moderationRoutes(v1, options)
+      moderationRoutes(v1, { ...options, ...aiSources })
       messageRoutes(v1, options)
       alertRoutes(v1, options)
       verificationRoutes(v1, options)
@@ -142,9 +149,9 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       feedbackRoutes(v1, options)
       inviteRoutes(v1, options)
       articleRoutes(v1, options)
-      modelRoutes(v1, options)
+      modelRoutes(v1, { ...options, ...aiSources })
       resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
-      goalRoutes(v1, { ...options, settings: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today })
+      goalRoutes(v1, { ...options, settings: aiSources.assistant, limits: aiSources.limits, today })
     },
     { prefix: '/v1' },
   )
