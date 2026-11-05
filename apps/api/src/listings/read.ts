@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, inArray, isNull, ne } from 'drizzle-orm'
+import { and, asc, count, desc, eq, gt, ilike, inArray, isNotNull, isNull, ne, or, sql } from 'drizzle-orm'
 import { listingTitle, sharingTypes, type ListingResponse } from '@roomsie/contract'
 import { noBlockBetween } from '../blocks/read'
 import type { Db, Tx } from '../db/client'
@@ -14,9 +14,10 @@ export type Flatmate = Pick<typeof listingFlatmates.$inferSelect, 'name' | 'age'
 /** `verified`: the owner has an approved ID check (T-46). */
 export type Parts = { rates: Rate[]; flatmates: Flatmate[]; lister: Pick<Profile, 'fullName' | 'photoKeys'> | null; verified: boolean }
 
-/** A listing that the viewer can see: live, not expired, not hidden by reports, and no block between the viewer and the owner. A guest has no blocks. */
+/** A listing that the viewer can see: live, not expired, not hidden by reports, not removed by a moderator, and no block between the viewer and the owner. A guest has no blocks. */
 export const visibleListing = (viewerUserId?: string) => and(
-  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt), viewerUserId ? noBlockBetween(viewerUserId, listings.ownerUserId) : undefined,
+  eq(listings.status, 'live'), gt(listings.expiresAt, new Date()), isNull(listings.hiddenAt), isNull(listings.removedAt),
+  viewerUserId ? noBlockBetween(viewerUserId, listings.ownerUserId) : undefined,
 )
 
 export async function partsOf(db: Db, ids: string[]) {
@@ -38,7 +39,7 @@ export async function partsOf(db: Db, ids: string[]) {
 
 export function listingView(listing: Listing, { rates, flatmates, lister, verified }: Parts, storage: Storage, isOwner: boolean): ListingResponse {
   // The serializer parses each reply with the contract schema, which drops ownerUserId and the row ids.
-  const { photoKeys, roomType, expiresAt, hiddenAt, createdAt, updatedAt, ...fields } = listing
+  const { photoKeys, roomType, expiresAt, hiddenAt, removedAt, createdAt, updatedAt, ...fields } = listing
   const hideAddress = !isOwner && !listing.shareAddress
   const sharingOrder = (r: Rate) => (r.sharing ? sharingTypes.indexOf(r.sharing) : -1)
   return {
@@ -53,6 +54,7 @@ export function listingView(listing: Listing, { rates, flatmates, lister, verifi
     lister: lister && { name: lister.fullName, photoUrl: firstPhotoUrl(storage, lister.photoKeys) },
     verified,
     hidden: hiddenAt !== null,
+    removed: removedAt !== null,
     expiresAt: expiresAt?.toISOString() ?? null,
     createdAt: createdAt.toISOString(),
     updatedAt: updatedAt.toISOString(),
@@ -64,7 +66,7 @@ export const visibleListings = (db: Db, viewerUserId: string, ids: string[], { n
   db.select().from(listings).where(and(inArray(listings.id, ids), visibleListing(viewerUserId), notOwn ? ne(listings.ownerUserId, viewerUserId) : undefined))
 
 /** The listings of these ids, in each state. */
-export const listingsByIds = (db: Db, ids: string[]) => db.select().from(listings).where(inArray(listings.id, ids))
+export const listingsByIds = (db: Db | Tx, ids: string[]) => db.select().from(listings).where(inArray(listings.id, ids))
 
 /**
  * The owner of a listing that the viewer can see and does not own. `activeOwner`: only when the owner's account is active.
@@ -107,3 +109,22 @@ export async function listingPhotoKeysOf(tx: Tx, userId: string) {
 }
 /** The cascades remove the rates and the flatmates. */
 export const deleteListingsOf = (tx: Tx, userId: string) => tx.delete(listings).where(eq(listings.ownerUserId, userId))
+
+/** A take-down by a moderator (T-63): the listing hides from everyone but its owner, and cannot go live again. */
+export const setListingRemoved = (tx: Tx, listingId: string, at: Date) => tx.update(listings).set({ removedAt: at }).where(eq(listings.id, listingId))
+
+/** The newest listings for the admin: all of them, the hidden ones, the removed ones, or those in some areas or of some owners. */
+export const newestListings = (db: Db, limit: number, { hidden = false, removed = false, areaSlugs, ownerIds }: { hidden?: boolean; removed?: boolean; areaSlugs?: string[]; ownerIds?: string[] } = {}) =>
+  db.select().from(listings).where(and(
+    hidden ? isNotNull(listings.hiddenAt) : undefined, removed ? isNotNull(listings.removedAt) : undefined,
+    areaSlugs || ownerIds ? or(areaSlugs?.length ? inArray(listings.areaSlug, areaSlugs) : undefined, ownerIds?.length ? inArray(listings.ownerUserId, ownerIds) : undefined, sql`false`) : undefined,
+  )).orderBy(desc(listings.createdAt)).limit(limit)
+
+/** The live listings that people see, and the hidden ones, for the admin home. */
+export async function listingCounts(db: Db) {
+  const [row] = await db.select({
+    live: sql<number>`count(*) filter (where ${visibleListing()})`.mapWith(Number),
+    hidden: sql<number>`count(*) filter (where ${and(isNotNull(listings.hiddenAt), isNull(listings.removedAt))})`.mapWith(Number),
+  }).from(listings)
+  return row!
+}

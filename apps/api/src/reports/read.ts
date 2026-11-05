@@ -1,4 +1,4 @@
-import { and, asc, count, eq, inArray, isNull, lt, min, not, sql } from 'drizzle-orm'
+import { and, asc, count, desc, eq, inArray, isNotNull, isNull, lt, min, not, sql } from 'drizzle-orm'
 import type { ReportReason } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { reports } from '../db/schema'
@@ -34,4 +34,27 @@ export async function reportCounts(db: Db, { safetyReasons, safetyLateBefore, la
     oldest: min(reports.createdAt),
   }).from(reports).where(eq(reports.status, 'open'))
   return row!
+}
+
+type Subject = { userId: string } | { listingId: string }
+/** The reports of a person, not of a listing, or of a listing (T-63). */
+const about = (subject: Subject) => ('listingId' in subject ? eq(reports.listingId, subject.listingId) : and(eq(reports.subjectUserId, subject.userId), isNull(reports.listingId)))
+
+export const reportsAbout = (db: Db, subject: Subject) => db.select().from(reports).where(about(subject)).orderBy(desc(reports.createdAt))
+
+/** The count of the open reports of each person or listing. */
+export async function openReportCounts(db: Db, by: 'userId' | 'listingId', ids: string[]) {
+  const column = by === 'userId' ? reports.subjectUserId : reports.listingId
+  const rows = await db.select({ id: column, open: count() }).from(reports)
+    .where(and(inArray(column, ids), eq(reports.status, 'open'), by === 'userId' ? isNull(reports.listingId) : undefined)).groupBy(column)
+  return new Map(rows.flatMap((r) => (r.id ? [[r.id, r.open] as const] : [])))
+}
+
+/** The people, or the listings, with an open report, the newest report first. */
+export async function reportedIds(db: Db, by: 'userId' | 'listingId', limit: number) {
+  const column = by === 'userId' ? reports.subjectUserId : reports.listingId
+  const rows = await db.select({ id: column }).from(reports)
+    .where(and(eq(reports.status, 'open'), by === 'userId' ? isNull(reports.listingId) : isNotNull(reports.listingId)))
+    .groupBy(column).orderBy(desc(sql`max(${reports.createdAt})`)).limit(limit)
+  return rows.flatMap((r) => (r.id ? [r.id] : []))
 }

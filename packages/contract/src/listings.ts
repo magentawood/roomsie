@@ -156,6 +156,8 @@ export const listingResponse = z.object({
   verified: z.boolean(),
   /** Reports hid the listing until the moderator acts (PD18). Only the owner sees a hidden listing. */
   hidden: z.boolean(),
+  /** A moderator took the listing down for good (T-63). Only the owner sees it, and it cannot go live again. */
+  removed: z.boolean().default(false),
   expiresAt: z.iso.datetime().nullable(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),

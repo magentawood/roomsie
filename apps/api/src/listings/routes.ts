@@ -129,6 +129,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const { status } = req.body
+    if (listing.removedAt && status === 'live') return reply.code(409).send({ error: 'a moderator removed this listing' })
     const parts = (await partsOf(db, [listing.id]))(listing.id)
     let expiresAt = listing.expiresAt
     if (status === 'live') {

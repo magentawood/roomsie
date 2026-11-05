@@ -224,3 +224,11 @@ export function claimSession(db: Db, key: string, userId: string) {
     await saveOwnValues(tx, userId, own)
   })
 }
+
+/** The time of the last typed turn of each person, for the last activity in the admin (T-63). */
+export async function lastTypedTurns(db: Db, userIds: string[]) {
+  const rows = await db.select({ userId: goals.userId, at: sql<Date>`max(${chatTurns.createdAt})`.mapWith((v: string | Date) => new Date(v)) })
+    .from(chatTurns).innerJoin(goals, eq(goals.id, chatTurns.goalId))
+    .where(and(inArray(goals.userId, userIds), eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'))).groupBy(goals.userId)
+  return new Map(rows.map((r) => [r.userId!, r.at]))
+}

@@ -366,6 +366,8 @@ export const listings = pgTable('listings', {
   expiresAt: timestamp('expires_at', { withTimezone: true }),
   /** Set when reports or a moderator hide the listing (PD18). Only the moderator clears it. */
   hiddenAt: timestamp('hidden_at', { withTimezone: true }),
+  /** A moderator took the listing down for good (T-63): only its owner sees it, and it cannot go live again. */
+  removedAt: timestamp('removed_at', { withTimezone: true }),
 
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -601,6 +603,21 @@ export const blocks = pgTable('blocks', {
   /** The match query subtracts blocks in BOTH directions — a block hides each
    *  person from the other, not just one way. */
   blockedIdx: index('blocks_blocked_idx').on(t.blockedUserId),
+})).enableRLS()
+
+export const moderationActionEnum = pgEnum('moderation_action', ['hide', 'unhide', 'suspend', 'remove'])
+/** The log of the actions of the moderators on people and listings (T-63). The moderation module owns it. */
+export const moderationLog = pgTable('moderation_log', {
+  id: id(),
+  action: moderationActionEnum('action').notNull(),
+  moderatorUserId: uuid('moderator_user_id').references(() => users.id, { onDelete: 'set null' }),
+  subjectUserId: uuid('subject_user_id').references(() => users.id, { onDelete: 'cascade' }),
+  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
+  createdAt: createdAt(),
+}, (t) => ({
+  subjectIdx: index('moderation_log_subject_idx').on(t.subjectUserId, t.createdAt),
+  listingIdx: index('moderation_log_listing_idx').on(t.listingId, t.createdAt),
+  oneSubjectCheck: check('moderation_log_one_subject_check', sql`num_nonnulls(${t.subjectUserId}, ${t.listingId}) = 1`),
 })).enableRLS()
 
 /* ── saved ──────────────────────────────────────────────────────────────── */

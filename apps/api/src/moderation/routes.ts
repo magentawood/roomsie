@@ -14,7 +14,7 @@ import type { AiSources } from '../models/overview'
 import { homeCards } from './home'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
-async function suspend(tx: Tx, userId: string) {
+export async function suspend(tx: Tx, userId: string) {
   const now = new Date()
   await suspendAccount(tx, userId, now)
   await setCardHiddenForReview(tx, userId, now)

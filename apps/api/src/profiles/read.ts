@@ -1,9 +1,10 @@
-import { and, eq, inArray, isNull, ne } from 'drizzle-orm'
+import { and, count, desc, eq, gte, ilike, inArray, isNotNull, isNull, ne, sql } from 'drizzle-orm'
 import { lifestyleAxes, liveCardFields, cardResponse, type CardResponse, type ProfileResponse } from '@roomsie/contract'
 import { noBlockBetween } from '../blocks/read'
 import type { Db, Tx } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { firstPhotoUrl, type Storage } from '../storage'
+import { containing } from '../text/like'
 import { activeAccount, statusesOf } from '../users'
 import { verifiedIds } from '../verification/read'
 
@@ -104,3 +105,21 @@ export const unpublishCardOf = (db: Db, userId: string) => db.update(profiles).s
 export const profilePhotoKeysOf = async (tx: Tx, userId: string) =>
   (await tx.select({ keys: profiles.photoKeys }).from(profiles).where(eq(profiles.userId, userId))).flatMap((r) => r.keys)
 export const deleteProfileOf = (tx: Tx, userId: string) => tx.delete(profiles).where(eq(profiles.userId, userId)).returning({ id: profiles.id })
+
+/** The owners of the cards whose name has the text, newest first (T-63). */
+export const ownersNamed = (db: Db, text: string, limit: number) =>
+  db.select({ userId: profiles.userId }).from(profiles).where(ilike(profiles.fullName, containing(text))).orderBy(desc(profiles.createdAt)).limit(limit)
+
+/** The owners of the hidden cards, the newest hide first. */
+export const hiddenCardOwners = (db: Db, limit: number) =>
+  db.select({ userId: profiles.userId }).from(profiles).where(isNotNull(profiles.hiddenAt)).orderBy(desc(profiles.hiddenAt)).limit(limit)
+
+/** The cards, the new ones since a time, and the hidden ones, for the admin home. */
+export async function cardCounts(db: Db, since: Date) {
+  const [row] = await db.select({
+    people: count(),
+    newToday: sql<number>`count(*) filter (where ${gte(profiles.createdAt, since)})`.mapWith(Number),
+    hidden: sql<number>`count(*) filter (where ${isNotNull(profiles.hiddenAt)})`.mapWith(Number),
+  }).from(profiles)
+  return row!
+}

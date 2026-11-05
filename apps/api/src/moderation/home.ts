@@ -3,10 +3,13 @@ import type { Db } from '../db/client'
 import { feedbackOfWeek } from '../feedback/read'
 import { currentGate, inviteCount } from '../invites/gate'
 import { reportCounts } from '../reports/read'
+import { listingCounts } from '../listings/read'
+import { cardCounts } from '../profiles/read'
 import { latestDetails, quoteCount } from '../site/read'
 import type { FastifyBaseLogger } from 'fastify'
 import { aiCard, type CardSources } from '../models/overview'
-import { hoursBefore, weekBefore } from '../time'
+import { hoursBefore, startOfIstDay, weekBefore } from '../time'
+import { suspendedCount } from '../users'
 import { idCheckCounts } from '../verification/read'
 import type { Moderation } from './settings'
 
@@ -28,6 +31,11 @@ async function idChecksCard(db: Db, settings: Moderation, now: Date): Promise<Ad
   return { subject: 'id_checks', waiting: checks.waiting, oldestCheckAt: checks.oldestCheckAt?.toISOString() ?? null, late: checks.late, verifiedThisWeek: checks.verified }
 }
 
+async function peopleCard(db: Db, today: string): Promise<AdminHomeCard> {
+  const [cards, listings, suspended] = await Promise.all([cardCounts(db, startOfIstDay(today)), listingCounts(db), suspendedCount(db)])
+  return { subject: 'people_listings', people: cards.people, newToday: cards.newToday, liveListings: listings.live, hidden: cards.hidden + listings.hidden, suspended }
+}
+
 async function siteContentCard(db: Db): Promise<AdminHomeCard> {
   const [invites, gate, quotes, details] = await Promise.all([inviteCount(db), currentGate(db), quoteCount(db), latestDetails(db)])
   return { subject: 'site_content', invites, inviteOnly: gate.closed, quotes, detailsSet: Object.values(details).filter((v) => v !== null).length }
@@ -40,6 +48,6 @@ export async function homeCards(sources: CardSources & { moderation: Moderation 
   return Promise.all([
     ...(moderator ? [moderationCard(db, moderation, now)] : []),
     ...(reviewer ? [idChecksCard(db, moderation, now)] : []),
-    ...(moderator ? [aiCard(sources, log), siteContentCard(db)] : []),
+    ...(moderator ? [peopleCard(db, sources.today()), aiCard(sources, log), siteContentCard(db)] : []),
   ])
 }

@@ -56,3 +56,9 @@ export async function idCheckCounts(db: Db, { lateBefore, since }: { lateBefore:
   ])
   return { ...open[0]!, late, verified }
 }
+
+/** The people with an approved ID check, the newest review first (T-63). */
+export const verifiedUserIds = async (db: Db, limit: number) =>
+  (await db.selectDistinctOn([verifications.userId], { userId: verifications.userId, at: verifications.reviewedAt }).from(verifications)
+    .where(eq(verifications.state, 'verified')).orderBy(verifications.userId, desc(verifications.reviewedAt)))
+    .sort((a, b) => (b.at?.getTime() ?? 0) - (a.at?.getTime() ?? 0)).slice(0, limit).map((r) => r.userId)
