@@ -69,6 +69,10 @@ Find a person or a listing, and act on it.
   - **The card:** "People and listings" for a moderator: the people with a card and the new ones of today, the live listings, and the hidden and suspended counts.
   - **The sizes:** laptop first. These pages fit the width of a phone ([the spec](../../specs/admin-panel.md)).
   - **The designs:** drafts section 38 of the Product file ([D-07](D-07%20Admin%20designs.md)).
+  - **The log of a deleted listing (the user, at the review):** a row of a listing also keeps its owner. It stays on the owner after the owner deletes the listing.
+  - **A new report reason (the user, at the review):** a tab with an older bundle drops a report with a reason that it does not know ([api.md](../../standards/api.md)).
+  - **The order of a filter (the user, at the review):** the newest event first: the newest report, hide, remove or review. A search and no filter give the newest accounts or listings.
+  - **The test of a suspend (the user, at the review):** the route test checks that a suspend from People and listings closes the open reports.
 - **Out of scope:**
   - the end of a suspension: a developer ends it ([PD18](../../decisions/pd-18-moderation.md))
   - an email to a person from the admin

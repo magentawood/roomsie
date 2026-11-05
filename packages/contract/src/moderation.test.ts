@@ -19,7 +19,7 @@ describe('the person of the admin, on the web', () => {
     userId: '0199e4b0-0000-7000-8000-000000000001', name: null, email: null, photoUrl: null, joinedAt: at, lastActiveAt: null, openReports: 0,
     hidden: false, suspended: false, verified: false, card: null, visibility: null,
   }
-  const row = (action: string) => ({ id: '0199e4b0-0000-7000-8000-000000000002', action, by: null, at })
+  const row = (action: string) => ({ id: '0199e4b0-0000-7000-8000-000000000002', action, listingId: null, by: null, at })
 
   it('drops a row of the log with an unknown action, and a report with an unknown reason', () => {
     const report = (reason: string) => ({ id: '0199e4b0-0000-7000-8000-000000000003', reason, detail: null, status: 'open', createdAt: at })

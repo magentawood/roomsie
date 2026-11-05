@@ -114,6 +114,11 @@ describe('the listings of the admin', () => {
     expect(removed.log.map((l) => l.action)).toEqual(['remove'])
     expect((await listingsOf('?filter=removed')).map((l) => l.id)).toEqual([listingId])
   })
+
+  it('keeps the log of a listing on its owner after the owner deletes it', async () => {
+    expect((await t.call('neha', 'DELETE', `/v1/listings/${listingId}`)).statusCode).toBe(204)
+    expect((await person(t.ids.neha)).log.map((l) => [l.action, l.listingId, l.by])).toEqual([['remove', listingId, 'moderator@example.com']])
+  })
 })
 
 describe('the admin directory', () => {

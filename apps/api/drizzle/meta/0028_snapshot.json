@@ -1,5 +1,5 @@
 {
-  "id": "426b7f5b-9db1-4adc-b2c5-a94e4b6e0e36",
+  "id": "5fb2b557-c727-46f3-b35c-4aa79fd85d1c",
   "prevId": "6b219809-bbf4-486f-a4d3-b14ac377601e",
   "version": "7",
   "dialect": "postgresql",
@@ -2278,7 +2278,7 @@
           "name": "subject_user_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "listing_id": {
           "name": "listing_id",
@@ -2364,30 +2364,12 @@
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
-        },
-        "moderation_log_listing_id_listings_id_fk": {
-          "name": "moderation_log_listing_id_listings_id_fk",
-          "tableFrom": "moderation_log",
-          "tableTo": "listings",
-          "columnsFrom": [
-            "listing_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "policies": {},
-      "checkConstraints": {
-        "moderation_log_one_subject_check": {
-          "name": "moderation_log_one_subject_check",
-          "value": "num_nonnulls(\"moderation_log\".\"subject_user_id\", \"moderation_log\".\"listing_id\") = 1"
-        }
-      },
+      "checkConstraints": {},
       "isRLSEnabled": true
     },
     "public.must_haves": {

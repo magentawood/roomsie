@@ -37,7 +37,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 - **The queue** has one item for each reported person or listing, with all its open reports. Safety reports come first, then the oldest.
 - **People and listings** finds each account by the name of its card or its sign-in email, and each listing by its area or by the name or the email of its lister. A list is a search or a filter, not both, and gives the 50 newest that match. A person shows the card as users see it, the email, the reports and the log, and never gender, religion or community. An action closes the open reports as the queue does: an unhide as dismissed, the other actions as actioned.
 - **The log** gets a row from each action of People and listings and from each review of the queue that changes something. A dismiss of a hidden item is an unhide, and the suspend of a person also covers the hide of the card. Each row takes its time with `clock_timestamp()`, so two rows of one transaction keep their order.
-- **The order of a list:** a search, no filter, and the filters Suspended, Hidden of listings and Removed give the newest accounts or listings. Reported gives the newest report first, Hidden of people the newest hide, and Verified the newest review.
+- **The order of a list:** a search, no filter and Suspended give the newest accounts or listings. A filter of an event gives the newest event first: Reported the newest report, Hidden the newest hide, Removed the newest remove, and Verified the newest review.
 - **Suspend** sets `tokens_valid_after` to now, so each token of the person stops. It also hides the card and the listings, and closes each open report about the person. The open requests that the person sent are withdrawn. The open requests to the person are declined, so their senders see "Not available".
 
 ## The choice we made
@@ -52,7 +52,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 - **A non-moderator gets 404 from the admin routes**, and a guest gets 401. On the web, both see "not found" at each admin address. Thus, the screen does not show that it exists.
 - **The end of a suspension is not in v0.** A developer changes the status in the database.
 - **A report of a deleted listing** goes to the item of its owner, because the listing is gone.
-- **The rows of the log about a person stay after an account deletion**, as the reports do, because the `users` row stays as a tombstone. A row of a deleted moderator shows "a deleted account". The rows of a listing go with the listing: when its owner deletes it, and at an account deletion.
+- **The log keeps each row.** A row of a listing also keeps its owner, and its listing id has no foreign key, so the row stays on the owner after a delete of the listing. A person shows the rows of the person and of the person's listings. The rows stay after an account deletion, as the reports do, because the `users` row stays as a tombstone. A row of a deleted moderator shows "a deleted account".
 - **A removed listing keeps its rows and photos** until its owner deletes it in Edit. A moderator cannot delete a listing or an account.
 
 ## Tickets

@@ -611,13 +611,14 @@ export const moderationLog = pgTable('moderation_log', {
   id: id(),
   action: moderationActionEnum('action').notNull(),
   moderatorUserId: uuid('moderator_user_id').references(() => users.id, { onDelete: 'set null' }),
-  subjectUserId: uuid('subject_user_id').references(() => users.id, { onDelete: 'cascade' }),
-  listingId: uuid('listing_id').references(() => listings.id, { onDelete: 'cascade' }),
+  /** The person, or the owner of the listing. */
+  subjectUserId: uuid('subject_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  /** Set for an action on a listing. No foreign key: the row keeps the id after the owner deletes the listing. */
+  listingId: uuid('listing_id'),
   createdAt: createdAt(),
 }, (t) => ({
   subjectIdx: index('moderation_log_subject_idx').on(t.subjectUserId, t.createdAt),
   listingIdx: index('moderation_log_listing_idx').on(t.listingId, t.createdAt),
-  oneSubjectCheck: check('moderation_log_one_subject_check', sql`num_nonnulls(${t.subjectUserId}, ${t.listingId}) = 1`),
 })).enableRLS()
 
 /* ── saved ──────────────────────────────────────────────────────────────── */

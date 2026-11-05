@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { incomingRequestsResponse, meResponse, outgoingRequestsResponse, profileResponse, reportQueueResponse } from '@roomsie/contract'
 import { connectionRequests, listings, moderationLog, profiles, reports, users } from '../src/db/schema'
@@ -30,7 +30,7 @@ const review = (kind: 'users' | 'listings', id: string, action: string, who: Who
   t.call(who, 'POST', `/v1/admin/${kind}/${id}/review`, { action })
 const logged = async (where: { subjectUserId: string } | { listingId: string }) =>
   (await t.db.select({ action: moderationLog.action }).from(moderationLog)
-    .where('listingId' in where ? eq(moderationLog.listingId, where.listingId) : eq(moderationLog.subjectUserId, where.subjectUserId)).orderBy(moderationLog.createdAt)).map((r) => r.action)
+    .where('listingId' in where ? eq(moderationLog.listingId, where.listingId) : and(eq(moderationLog.subjectUserId, where.subjectUserId), isNull(moderationLog.listingId))).orderBy(moderationLog.createdAt)).map((r) => r.action)
 const cardSeen = async (card: string, who: Who = 'other') => (await t.call(who, 'GET', `/v1/people/${card}`)).statusCode
 const statusesOf = async (subjectUserId: string) =>
   (await t.db.select({ status: reports.status }).from(reports).where(eq(reports.subjectUserId, subjectUserId))).map((r) => r.status)

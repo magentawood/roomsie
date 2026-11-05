@@ -73,11 +73,12 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiS
         else await setCardHiddenForReview(tx, id, hiddenAt)
         // The suspend of a person covers the hide of the card.
         const by = req.user!.id
+        const owner = closed[0]!.subjectUserId
+        const target = { userId: owner, ...(kind === 'listings' && { listingId: id }) }
         if (action === 'dismiss') {
-          if (wasHidden) await logAction(tx, by, 'unhide', subject)
-        } else if (action === 'hide' || kind === 'listings') await logAction(tx, by, 'hide', subject)
+          if (wasHidden) await logAction(tx, by, 'unhide', target)
+        } else if (action === 'hide' || kind === 'listings') await logAction(tx, by, 'hide', target)
         if (action === 'suspend') {
-          const owner = closed[0]!.subjectUserId
           await suspend(tx, owner)
           await logAction(tx, by, 'suspend', { userId: owner })
         }

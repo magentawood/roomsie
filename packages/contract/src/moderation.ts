@@ -51,7 +51,8 @@ export const adminPeopleQuery = z.object({ q: search, filter: z.enum(peopleFilte
 export const adminListingsQuery = z.object({ q: search, filter: z.enum(listingFilters).optional() }).refine(oneOf, 'a search or a filter, not both')
 export type AdminPeopleQuery = z.input<typeof adminPeopleQuery>
 export type AdminListingsQuery = z.input<typeof adminListingsQuery>
-const logEntry = z.object({ id: z.uuid(), action: z.enum(moderationActions), by: z.string().nullable(), at: z.iso.datetime() })
+/** `listingId` is set for an action on a listing, also after its owner deleted it. */
+const logEntry = z.object({ id: z.uuid(), action: z.enum(moderationActions), listingId: z.uuid().nullable(), by: z.string().nullable(), at: z.iso.datetime() })
 const subjectReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), status: z.enum(reportStatuses), createdAt: z.iso.datetime() })
 
 /** A person of the admin: never gender, religion or community (the spec of the admin panel). `name` is null with no card. */

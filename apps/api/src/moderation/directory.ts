@@ -142,11 +142,12 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
     const { action } = req.body
     const done = await db.transaction(async (tx: Tx) => {
       // The lock keeps a delete of the listing from running between the check and the action.
-      if (!(await listingsByIds(tx, [listingId]).for('update')).length) return false
+      const [listing] = await listingsByIds(tx, [listingId]).for('update')
+      if (!listing) return false
       if (action === 'remove') await setListingRemoved(tx, listingId, new Date())
       else await setListingHiddenForReview(tx, listingId, action === 'hide' ? new Date() : null)
       await closeReports(tx, { listingId }, action === 'unhide' ? 'dismissed' : 'actioned')
-      await logAction(tx, req.user!.id, action, { listingId })
+      await logAction(tx, req.user!.id, action, { userId: listing.ownerUserId, listingId })
       return true
     })
     return done ? reply.code(204).send(null) : reply.code(404).send({ error: 'not found' })

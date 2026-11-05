@@ -113,12 +113,12 @@ export const deleteListingsOf = (tx: Tx, userId: string) => tx.delete(listings).
 /** A take-down by a moderator (T-63): the listing hides from everyone but its owner, and cannot go live again. */
 export const setListingRemoved = (tx: Tx, listingId: string, at: Date) => tx.update(listings).set({ removedAt: at }).where(eq(listings.id, listingId))
 
-/** The newest listings for the admin: all of them, the hidden ones, the removed ones, or those in some areas or of some owners. */
+/** The newest listings for the admin: all of them, or those in some areas or of some owners. The hidden ones come by the newest hide, the removed ones by the newest remove. */
 export const newestListings = (db: Db, limit: number, { hidden = false, removed = false, match }: { hidden?: boolean; removed?: boolean; match?: { areaSlugs: string[]; ownerIds: string[] } } = {}) =>
   db.select().from(listings).where(and(
     hidden ? isNotNull(listings.hiddenAt) : undefined, removed ? isNotNull(listings.removedAt) : undefined,
     match ? or(inArray(listings.areaSlug, match.areaSlugs), inArray(listings.ownerUserId, match.ownerIds)) : undefined,
-  )).orderBy(desc(listings.createdAt)).limit(limit)
+  )).orderBy(desc(hidden ? listings.hiddenAt : removed ? listings.removedAt : listings.createdAt)).limit(limit)
 
 /** The live listings that people see, and the hidden ones, for the admin home. */
 export async function listingCounts(db: Db) {
