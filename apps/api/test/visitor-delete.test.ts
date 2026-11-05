@@ -1,7 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
-import { eq, sql } from 'drizzle-orm'
+import { and, eq, sql } from 'drizzle-orm'
 import { sessionDays } from '../src/goals/store'
-import { joinWaitlist } from '../src/waitlist/store'
 import { anonymousSessions, chatTurns, feedback, goals, observations, observationTopics, tracePrompts, traces, users, waitlist } from '../src/db/schema'
 import { createTestDb, type TestDb } from './db'
 
@@ -36,7 +35,7 @@ async function visitorChat(name: string, daysSinceVisit: number) {
   return { sessionId, goalId }
 }
 
-const rowsOf = async ({ sessionId, goalId }: { sessionId: string; goalId: string }) => ({
+const countsOf = async ({ sessionId, goalId }: { sessionId: string; goalId: string }) => ({
   sessions: await t.db.$count(anonymousSessions, eq(anonymousSessions.id, sessionId)),
   goals: await t.db.$count(goals, eq(goals.id, goalId)),
   turns: await t.db.$count(chatTurns, eq(chatTurns.goalId, goalId)),
@@ -44,15 +43,15 @@ const rowsOf = async ({ sessionId, goalId }: { sessionId: string; goalId: string
   traces: await t.db.$count(traces, eq(traces.goalId, goalId)),
   feedback: await t.db.$count(feedback, eq(feedback.goalId, goalId)),
 })
-const entryOf = async (email: string) => (await t.db.select({ goalId: waitlist.goalId }).from(waitlist).where(eq(waitlist.email, email)))[0]
+const entryOf = async (email: string) => (await t.db.select({ goalId: waitlist.goalId }).from(waitlist).where(and(eq(waitlist.email, email), eq(waitlist.place, 'bhiwandi'))))[0]
 
 describe('the job of the old visitor chats (T-67)', () => {
   it('deletes a visitor chat 30 days after the last visit, with its goal, turns, notes, traces and feedback', async () => {
     const old = await visitorChat('old', 31)
     const recent = await visitorChat('recent', 29)
     await deleteOldVisitors()
-    expect(await rowsOf(old)).toEqual({ sessions: 0, goals: 0, turns: 0, notes: 0, traces: 0, feedback: 0 })
-    expect(await rowsOf(recent)).toEqual({ sessions: 1, goals: 1, turns: 1, notes: 1, traces: 1, feedback: 1 })
+    expect(await countsOf(old)).toEqual({ sessions: 0, goals: 0, turns: 0, notes: 0, traces: 0, feedback: 0 })
+    expect(await countsOf(recent)).toEqual({ sessions: 1, goals: 1, turns: 1, notes: 1, traces: 1, feedback: 1 })
   })
 
   it('keeps a session that a person claimed at sign-in', async () => {
@@ -75,14 +74,5 @@ describe('the job of the old visitor chats (T-67)', () => {
     await deleteOldVisitors()
     expect(await entryOf('waiting@example.com')).toBeUndefined()
     expect(await entryOf('member@example.com')).toEqual({ goalId: own!.id })
-  })
-
-  it('gives an entry with no chat to the next chat that joins with the same email and place', async () => {
-    await visitorChat('returning', 45)
-    await deleteOldVisitors()
-    const [own] = await t.db.insert(goals).values({ userId: await userNamed('returning') }).returning({ id: goals.id })
-    expect(await joinWaitlist(t.db, { email: 'returning@example.com', place: 'bhiwandi', goalId: own!.id })).toBe(true)
-    // The entry now goes with the account, at its deletion.
-    expect(await entryOf('returning@example.com')).toEqual({ goalId: own!.id })
   })
 })

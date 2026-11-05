@@ -83,7 +83,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A closed goal refuses a typed turn, a tap and a waitlist join</strong> with 409, before any model call. A second close or reopen changes nothing and logs nothing.</li>
 <li><strong>The events</strong> <code>goal_closed</code> (with the answer) and <code>goal_reopened</code> count the found places (<a href="analytics-events.html">analytics events</a>). The goal row keeps only its status.</li>
 <li><strong>One feedback for each closed goal</strong>, from its owner. This lets a visitor send it with no new spam limit, because the chat limits already limit the goals of a visitor (<a href="../decisions/pd-09-pre-login-limits.md">PD9</a>).</li>
-<li><strong>A visitor goal goes</strong> with its session: a nightly job deletes it 30 days after the last visit, with its feedback. Its waitlist entries stay with no chat. A goal that moved to an account at sign-in stays (<a href="visitor-chat-claim.html">the visitor chat at sign-in</a>).</li>
+<li><strong>A visitor goal goes</strong> with its session: a nightly job deletes it at its first run 30 days after the last visit, with its feedback. Its waitlist entries stay with no chat. A goal that moved to an account at sign-in stays (<a href="visitor-chat-claim.html">the visitor chat at sign-in</a>).</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -98,6 +98,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-50: the list, the title, the close, the reopen and the feedback.</li>
-<li>T-67: <a href="https://github.com/magentawood/roomsie/pull/234">#234</a>, 2026-11-05. The nightly delete of the old visitor goals.</li>
+<li>T-67: <a href="https://github.com/magentawood/roomsie/pull/234">#234</a>, 2026-11-06. The nightly delete of the old visitor goals.</li>
 </ul>
 </main>

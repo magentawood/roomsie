@@ -44,7 +44,7 @@ a typed message ──► router: kind "context"? ──► the reply goes out
 - The tables are `observations` and `observation_topics`. The observations module of the API owns them. Other modules call its functions: save, list (`observationsOf`, and `notesOf` with the labels), delete one note, delete the notes of a user, and move the notes of a session. The observer and the backfill also use `activeTopics`, and the backfill `oldestObservationAt` and `turnsWithNotes`.
 - At sign-in, T-17 calls `moveObservations`. The notes of the visitor session then belong to the account.
 - Account deletion calls `deleteObservationsOf`.
-- The notes of a visitor session that nobody claimed go with it, 30 days after the last visit: the nightly job `jobs.delete_old_visitors()` deletes the session ([the visitor chat at sign-in](visitor-chat-claim.md)).
+- The notes of a visitor session that nobody claimed go with it, at the first nightly run 30 days after the last visit: the nightly job `jobs.delete_old_visitors()` deletes the session ([the visitor chat at sign-in](visitor-chat-claim.md)).
 - To add a topic, add a row to the topic list in the seed. You do not need a migration. The prompt of the observer lists the active topics.
 
 ## The choice we made

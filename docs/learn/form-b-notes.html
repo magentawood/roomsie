@@ -116,7 +116,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>The tables are <code>observations</code> and <code>observation_topics</code>. The observations module of the API owns them. Other modules call its functions: save, list (<code>observationsOf</code>, and <code>notesOf</code> with the labels), delete one note, delete the notes of a user, and move the notes of a session. The observer and the backfill also use <code>activeTopics</code>, and the backfill <code>oldestObservationAt</code> and <code>turnsWithNotes</code>.</li>
 <li>At sign-in, T-17 calls <code>moveObservations</code>. The notes of the visitor session then belong to the account.</li>
 <li>Account deletion calls <code>deleteObservationsOf</code>.</li>
-<li>The notes of a visitor session that nobody claimed go with it, 30 days after the last visit: the nightly job <code>jobs.delete_old_visitors()</code> deletes the session (<a href="visitor-chat-claim.html">the visitor chat at sign-in</a>).</li>
+<li>The notes of a visitor session that nobody claimed go with it, at the first nightly run 30 days after the last visit: the nightly job <code>jobs.delete_old_visitors()</code> deletes the session (<a href="visitor-chat-claim.html">the visitor chat at sign-in</a>).</li>
 <li>To add a topic, add a row to the topic list in the seed. You do not need a migration. The prompt of the observer lists the active topics.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
