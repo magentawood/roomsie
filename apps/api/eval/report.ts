@@ -2,7 +2,7 @@ import { checkFailures } from '../src/assistant/handlers/composer/check'
 import { vendorOf } from '../src/models/models'
 import {
   bandScoresOf, callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groupOf, groups, inTimeAt, missesOf, nameIn, namesOf, registerRight,
-  scoresOf, selectDeadline, selectThreshold, sentencesById, startCapitalsOf, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
+  scoresOf, selectDeadline, selectThreshold, sentencesById, startCapitalsOf, tieCentre, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
 } from './score'
 import { isSearch, type EvalSentence } from './set'
 
@@ -57,7 +57,6 @@ export const rangesOf = (lines: { threshold: number; cells: string }[]) => lines
   return ranges
 }, [])
 
-/** One line for each range of thresholds with the same cells, with the marks of the live and of the selected threshold. */
 function sweepLines(lines: { threshold: number; cells: string }[], marks: { live: number; selected?: number | null }) {
   const has = (value: number | null | undefined, from: number, to: number) => value != null && from <= value && value <= to
   return rangesOf(lines).map(({ from, to, cells }) =>
@@ -120,11 +119,11 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
   const routerTurns = at(routerLive)
   const turns = at(extractorLive).map((turn, i) => ({ ...turn, label: routerTurns[i]!.label }))
   const scores = scoresOf(sentences, turns)
-  const routerRows = sweep.map(({ threshold, turns: at }) => ({ threshold, counts: scoresOf(sentences, at).all }))
+  const routerRows = sweep.map(({ threshold, turns: thresholdTurns }) => ({ threshold, counts: scoresOf(sentences, thresholdTurns).all }))
   const ruled = vendorOf(model) === 'deepseek'
   const routerSelected = ruled ? selectThreshold(routerRows) : null
   const routerRule = ruled
-    ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to 0.8. Of two at the same distance, the rule takes the higher.`
+    ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to ${tieCentre}. Of two at the same distance, the rule takes the higher.`
     : 'Gemini gives no token probabilities, so its rows do not change, and the rule of T-61 uses only the run of DeepSeek.'
   const byId = sentencesById(sentences)
   const callsOf = (group: Group, role?: CallResult['role']) => callStats(calls.filter((c) => (group === 'all' || groupOf(byId.get(c.id)!) === group) && (!role || c.role === role)))
@@ -141,8 +140,8 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
     ...callRows, '',
     '### The threshold sweep', '', 'The recorded answers again, through the extractor at each threshold, with no new call.', '',
     `| Threshold | ${sweepRows.map(([name]) => name).join(' | ')} | PD11 |`, `|---|${sweepRows.map(() => '---|').join('')}---|`,
-    ...sweepLines(sweep.map(({ threshold, turns: at }) => {
-      const c = scoresOf(sentences, at).all
+    ...sweepLines(sweep.map(({ threshold, turns: thresholdTurns }) => {
+      const c = scoresOf(sentences, thresholdTurns).all
       return { threshold, cells: `${sweepRows.map(([, cell]) => cell(c, repeats)).join(' | ')} | ${goNoGo(c)}` }
     }), { live: extractorLive }), '',
     '### The threshold sweep of the router', '',

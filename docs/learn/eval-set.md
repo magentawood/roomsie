@@ -9,7 +9,7 @@
 - **An empty slot.** A slot that the label does not name must stay empty. The eval thus also finds a value that a model makes up.
 - **The vague sentences.** 10 sentences are vague on purpose. The slot that they are vague about has the label `unclear`, and a model that fills it fails ([PD7](../decisions/pd-07-models.md): a model that never abstains fails).
 - **The band and the flags (T-61).** A sentence with no band is a search. 20 sentences have a band that is not core. Each band of [PD10](../decisions/pd-10-scope-bands.md) has one in English, one in Hinglish, one in Hindi in Devanagari and one in Marathi. Two of the `sensitive` sentences have `danger`. Two searches state a community preference, with `community` ([PD3c](../decisions/pd-03c-exclusionary-preferences.md)). Only the router scores these 22 sentences, so they have no labels of Form A.
-- **The names (T-61).** 6 searches name a friend, with the name in lower case in each script. The runner looks for the name in each text of the composer, for the name check ([The composer](composer.md)).
+- **The names (T-61).** 6 searches name a friend: in English one name with a capital letter and one in lower case, and in Hinglish and in Marathi one name in lower case and one in Devanagari. The `names` field gives each name in lower case. The runner looks for the name in each text of the composer, for the name check ([The composer](composer.md)).
 
 ## How it fits our project
 

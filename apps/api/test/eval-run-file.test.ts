@@ -8,7 +8,7 @@ const run = (model: string, repeats: number[], ms: number): ModelRun => ({
 })
 
 describe('the run files of the eval (T-61)', () => {
-  it('scores two run files as one run for each model, with the repeats of the second file after the repeats of the first', () => {
+  it('merges two run files into one run for each model, with the repeats of the second file after the repeats of the first', () => {
     const merged = mergedRuns([[run('deepseek-flash', [1, 2, 3], 100), run('gemini-3.5-flash-lite', [1], 50)], [run('deepseek-flash', [1, 2], 200)]])
     expect(merged.map((m) => m.model)).toEqual(['deepseek-flash', 'gemini-3.5-flash-lite'])
     expect(merged[0]!.turns.map((t) => t.repeat)).toEqual([1, 2, 3, 4, 5])

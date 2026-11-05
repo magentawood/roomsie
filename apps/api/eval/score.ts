@@ -124,7 +124,7 @@ export function flipsOf(sentences: EvalSentence[], turns: TurnResult[]) {
 const shown = (value: unknown) => (value === undefined ? 'nothing' : JSON.stringify(value))
 export const counted = (counts: Map<string, number>, key: string) => counts.set(key, (counts.get(key) ?? 0) + 1)
 /**
- * Each wrong slot, as `m02 · moveDate: label "2026-12-31", got nothing (3)`, with the number of repeats that gave it.
+ * Each wrong slot, band and flag, and each turn with no answer of the extractor or the router, as `m02 · moveDate: label "2026-12-31", got nothing (3)`, with the number of repeats that gave it.
  * The slots that are `unclear` with no label make one line for each sentence and number: they are extra questions, not wrong values.
  */
 export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
@@ -152,8 +152,7 @@ export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   return [...[...misses].map(([miss, n]) => `${miss} (${n})`), ...extraLines].toSorted()
 }
 
-/** The value of the router threshold on 2026-11-04: the rule of T-61 takes the nearest on a tie. */
-const tieCentre = 0.8
+export const tieCentre = 0.8
 const fromTieCentre = (threshold: number) => Math.round(Math.abs(threshold - tieCentre) * 1000)
 /**
  * The router threshold by the rule of T-61: the most danger kept, then the fewest false alarms above the threshold,
@@ -195,12 +194,16 @@ export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[])
   const byId = sentencesById(sentences)
   const scores = Object.fromEntries(groups.map((group) => [group, zeroComposer()])) as Record<Group, ComposerCounts>
   for (const { id, composer } of turns) {
-    if (!composer || !isSearch(byId.get(id)!)) continue
+    const sentence = byId.get(id)!
+    if (!composer || !isSearch(sentence)) continue
     const { text, judgeRegister, language } = composer
     const failure = failureOf(composer)
-    const add = (group: ComposerCounts) => {
+    for (const group of [scores.all, scores[groupOf(sentence)]]) {
       group.calls += 1
-      if (text === null) return void (group.noAnswer += 1)
+      if (text === null) {
+        group.noAnswer += 1
+        continue
+      }
       const { languageRight, scriptRight } = registerRight(text, composer)
       group.judged += Number(judgeRegister !== null)
       group.languageRight += Number(languageRight)
@@ -211,8 +214,6 @@ export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[])
         group[failure] += 1
       }
     }
-    add(scores.all)
-    add(scores[groupOf(byId.get(id)!)])
   }
   return scores
 }
@@ -252,7 +253,6 @@ export function bandScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
   return scopeBands.filter((band) => band !== 'core').map((band) => ({ band, scores: scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band)) }))
 }
 
-/** The composer calls of the searches: the calls that the composer scores and the deadline use. */
 export function composersOfSearches(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   return turns.flatMap(({ id, composer }) => (composer && isSearch(byId.get(id)!) ? [composer] : []))

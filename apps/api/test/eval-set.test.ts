@@ -13,7 +13,7 @@ const statedForm = ({ lifestyle = {}, mustHaves = {}, ...top }: EvalSentence['ex
 const scriptOf = (text: string) => (isDevanagari(text) ? (/[A-Za-z]/.test(text) ? 'mixed' : 'devanagari') : 'latin')
 
 describe('the eval sentences (M-03)', () => {
-  it('has 56 searches with one id each: 17 English, 20 Hinglish and 19 Marathi, Marathi in both scripts, some Hinglish in Devanagari, and 10 vague on purpose', () => {
+  it('has 56 searches with no flag, with one id each: 17 English, 20 Hinglish and 19 Marathi, Marathi in both scripts, some Hinglish in Devanagari, and 10 vague on purpose', () => {
     const searches = sentences.filter(isSearch)
     const of = (language: string) => searches.filter((s) => s.language === language)
     expect(new Set(sentences.map((s) => s.id)).size).toBe(sentences.length)

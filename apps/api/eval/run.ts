@@ -147,7 +147,6 @@ async function replayed({ id, extractor: recorded }: RunTurn, db: Db, minProbabi
   return valuesOf(form)
 }
 
-/** The router on a recorded answer at one threshold (T-61). */
 const replayedLabel = ({ id, router: recorded }: RunTurn, routerMinProbability: number) =>
   routeTurn({ goalId: randomUUID(), text: textOf.get(id)!, last: null }, { req: requestOf(id, []), models: replaying(recorded), settings: { ...settings, routerMinProbability } })
 

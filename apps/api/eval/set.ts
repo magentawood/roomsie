@@ -18,7 +18,7 @@ const sentence = z.strictObject({
   danger: z.boolean().default(false),
   community: z.boolean().default(false),
   /** The name of a friend in the sentence, in lower case, in each script: the name test of the composer (T-61). */
-  names: z.array(z.string()).default([]),
+  names: z.array(z.string().refine((name) => name === name.toLowerCase(), 'a name of the set is in lower case')).default([]),
 })
 export type EvalSentence = z.infer<typeof sentence>
 /** A search with no flag. Only the router scores the other sentences (the spec of T-61). */

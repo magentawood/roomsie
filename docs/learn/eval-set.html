@@ -43,7 +43,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>An empty slot.</strong> A slot that the label does not name must stay empty. The eval thus also finds a value that a model makes up.</li>
 <li><strong>The vague sentences.</strong> 10 sentences are vague on purpose. The slot that they are vague about has the label <code>unclear</code>, and a model that fills it fails (<a href="../decisions/pd-07-models.md">PD7</a>: a model that never abstains fails).</li>
 <li><strong>The band and the flags (T-61).</strong> A sentence with no band is a search. 20 sentences have a band that is not core. Each band of <a href="../decisions/pd-10-scope-bands.md">PD10</a> has one in English, one in Hinglish, one in Hindi in Devanagari and one in Marathi. Two of the <code>sensitive</code> sentences have <code>danger</code>. Two searches state a community preference, with <code>community</code> (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>). Only the router scores these 22 sentences, so they have no labels of Form A.</li>
-<li><strong>The names (T-61).</strong> 6 searches name a friend, with the name in lower case in each script. The runner looks for the name in each text of the composer, for the name check (<a href="composer.html">The composer</a>).</li>
+<li><strong>The names (T-61).</strong> 6 searches name a friend: in English one name with a capital letter and one in lower case, and in Hinglish and in Marathi one name in lower case and one in Devanagari. The <code>names</code> field gives each name in lower case. The runner looks for the name in each text of the composer, for the name check (<a href="composer.html">The composer</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
