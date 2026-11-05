@@ -31,10 +31,10 @@ Find a person or a listing, and act on it.
 - No task waits on this task.
 
 ## Done when
-- [ ] A moderator finds a person by name or email, and a listing by its area or its lister
-- [ ] The detail shows the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity
-- [ ] A moderator can hide, unhide or suspend a person, and remove a listing
-- [ ] No admin screen shows gender, religion or community
+- [x] A moderator finds a person by name or email, and a listing by its area or its lister · [#230](https://github.com/magentawood/roomsie/pull/230)
+- [x] The detail shows the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity · [#230](https://github.com/magentawood/roomsie/pull/230)
+- [x] A moderator can hide, unhide or suspend a person, and remove a listing · [#230](https://github.com/magentawood/roomsie/pull/230)
+- [x] No admin screen shows gender, religion or community · [#230](https://github.com/magentawood/roomsie/pull/230)
 
 ^done
 
@@ -77,3 +77,13 @@ Find a person or a listing, and act on it.
   - the end of a suspension: a developer ends it ([PD18](../../decisions/pd-18-moderation.md))
   - an email to a person from the admin
   - a delete of a listing or an account by a moderator
+
+## Log
+
+- **2026-11-05 · [#230](https://github.com/magentawood/roomsie/pull/230)**
+  - **Change:** People and listings in the admin: a search or a filter of the accounts and the listings, the detail of a person and of a listing with the card as users see it, the reports and the moderation log, and the actions hide, unhide, suspend and remove. A removed listing shows only to its owner, with "Removed by a moderator", and cannot go live again. The report queue also writes the log. The admin home gets the card of People and listings.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md), and [PD18](../../decisions/pd-18-moderation.md) for the actions.
+  - **Ticked:** the four items.
+  - **Not done:** none.
+  - **Learn:** [Moderation](../../learn/moderation.md), [The admin home](../../learn/admin-home.md), [Place detail](../../learn/place-detail.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

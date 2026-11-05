@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**289 of 355 done · 81%**
+**293 of 355 done · 83%**
 
 `████████████████████░░░░`
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 10 / 11 | 32 / 35 | 91% |
 | [[P2 Chat]] | 14 / 17 | 68 / 80 | 85% |
 | [[P3 Data and trust]] | 20 / 21 | 90 / 92 | 98% |
-| [[P4 Content and moderation]] | 8 / 10 | 37 / 43 | 86% |
+| [[P4 Content and moderation]] | 9 / 10 | 41 / 43 | 95% |
 | [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
 | [[Design]] | 5 / 7 | 11 / 14 | 79% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -48,7 +48,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**12 free tasks are open · 28 build hours.**
+**11 free tasks are open · 25 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
@@ -58,7 +58,6 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
-| 0 | [[T-63 Admin people and listings]] | P4 | 3 | ⬜ can start | 0 | [#222](https://github.com/magentawood/roomsie/issues/222) |
 | 0 | [[T-64 Model traces]] | P2 | 4 | ⬜ can start | 0 | [#223](https://github.com/magentawood/roomsie/issues/223) |
 | 0 | [[T-66 Product numbers]] | P3 | 2 | ⬜ can start | 0 | [#225](https://github.com/magentawood/roomsie/issues/225) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
@@ -149,7 +148,7 @@ flowchart LR
   T60["T-60<br/>Profile pop-up"]:::done
   T61["T-61<br/>Composer eval"]:::done
   T62["T-62<br/>Admin home"]:::done
-  T63["T-63<br/>Admin people and listings"]:::ready
+  T63["T-63<br/>Admin people and listings"]:::done
   T64["T-64<br/>Model traces"]:::ready
   T65["T-65<br/>AI numbers and switch"]:::done
   T66["T-66<br/>Product numbers"]:::ready
@@ -440,7 +439,7 @@ flowchart LR
 > ![[T-60 Profile pop-up#^done]]
 
 
-## P4 Content and moderation — 37/43
+## P4 Content and moderation — 41/43
 
 > [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
@@ -469,7 +468,7 @@ flowchart LR
 > [!todo]- ✅ [[T-62 Admin home]] · 4/4
 > ![[T-62 Admin home#^done]]
 
-> [!todo]- ⬜ [[T-63 Admin people and listings]] · 0/4
+> [!todo]- ✅ [[T-63 Admin people and listings]] · 4/4
 > ![[T-63 Admin people and listings#^done]]
 
 
