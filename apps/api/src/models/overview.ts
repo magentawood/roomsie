@@ -1,8 +1,7 @@
 import { isModelRole, scopeBands, type AdminHomeCard, type AiOverviewResponse, type ModelRole, type ScopeBand } from '@roomsie/contract'
-import { reportError } from '@roomsie/config/report'
 import type { FastifyBaseLogger } from 'fastify'
 import type { AnalyticsDb } from '../analytics/client'
-import { bandCounts, callStats, tokenSums } from '../analytics/read'
+import { bandCounts, bestEffort, callStats, tokenSums } from '../analytics/read'
 import type { AssistantSettings } from '../assistant/settings'
 import type { Db } from '../db/client'
 import type { LimitSettings } from '../goals/settings'
@@ -16,15 +15,6 @@ export type AiSources = {
   db: Db; analyticsDb?: AnalyticsDb; models?: Models; spend: SpendSettings; assistant: AssistantSettings; limits: LimitSettings; today: () => string
 }
 export type CardSources = Pick<AiSources, 'db' | 'analyticsDb' | 'spend' | 'today'>
-
-/** A slow or failed analytics read gives no numbers; the page and the switch still show. */
-export async function bestEffort<T>(read: () => Promise<T>, log: FastifyBaseLogger, where = 'models.overview'): Promise<T | null> {
-  const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the analytics read took over 5 s')), 5_000).unref())
-  return Promise.race([Promise.resolve().then(read), timeout]).catch((err: unknown) => {
-    reportError(err, { where, log })
-    return null
-  })
-}
 
 async function callNumbers(analyticsDb: AnalyticsDb, now: Date, startOfDay: Date) {
   const [counts, recent, tokens, bands] = await Promise.all([
@@ -46,7 +36,7 @@ async function callNumbers(analyticsDb: AnalyticsDb, now: Date, startOfDay: Date
 export async function aiOverview(sources: AiSources, log: FastifyBaseLogger): Promise<AiOverviewResponse> {
   const { db, analyticsDb, today } = sources
   const [state, spent, numbers] = await Promise.all([
-    switchState(db), spentOn(db, today()), analyticsDb ? bestEffort(() => callNumbers(analyticsDb, new Date(), startOfIstDay(today())), log) : null,
+    switchState(db), spentOn(db, today()), analyticsDb ? bestEffort(() => callNumbers(analyticsDb, new Date(), startOfIstDay(today())), log, 'models.overview') : null,
   ])
   return {
     switch: state,
@@ -60,7 +50,7 @@ export async function aiOverview(sources: AiSources, log: FastifyBaseLogger): Pr
 export async function aiCard(sources: CardSources, log: FastifyBaseLogger): Promise<AdminHomeCard> {
   const { db, analyticsDb, today } = sources
   const [state, spent, counts] = await Promise.all([
-    switchState(db), spentOn(db, today()), analyticsDb ? bestEffort(() => callStats(analyticsDb, startOfIstDay(today())), log) : null,
+    switchState(db), spentOn(db, today()), analyticsDb ? bestEffort(() => callStats(analyticsDb, startOfIstDay(today())), log, 'models.overview') : null,
   ])
   const all = counts?.find((r) => r.role === null)
   return {

@@ -21,8 +21,8 @@ GET /v1/admin/numbers?period=
 ```
 
 - One SQL function counts the events of a time range. The job and the numbers of today use it, so they count the same way.
-- Each night, the job counts the last three days again, so a missed night mends itself. The migration `0004_roll_up_events` counted each day that the events had.
-- The steps count events, not people: a guest has no analytics id. Thus a step can be larger than the step before it. Then the page shows "1.1 for each sign-in", not a percent.
+- Each night at 00:30 IST, the job counts the last three days again, so a missed night mends itself. The migration `0004_roll_up_events` counted each day that the events had.
+- Each step shows its share of the step before it. The steps count events, not people: a guest has no analytics id. Thus a step can be larger than the step before it. Then the page shows "1.1 for each sign-in", not a percent.
 - With fewer than 20 in the period before, a change shows as a count, because a percent of a small count jumps. The change of the sign-in wall is gray: more hits of the wall is not good or bad.
 - The card of the home shows the chats started, the new accounts and the connect requests of today ([The admin home](admin-home.md)).
 - No analytics database, a failed read or a read over 5 s gives no numbers, and the page tells so. The other cards of the home still show.
@@ -50,6 +50,7 @@ GET /v1/admin/numbers?period=
 - **A new split:** change `jobs.count_events` in a new migration, then count the old days again: `select jobs.roll_up_events('<first day>', '<yesterday>')`.
 - **The schedule:** `select * from cron.job` in the analytics project shows `roll-up-events`. After a restore, the dump has no schedule. Run the `cron.schedule` command of the migration `0004_roll_up_events` again.
 - **Nothing deletes the rollup.** It keeps counts, and no person, so it stays after the job of the events drops an old month ([PD19](../decisions/pd-19-retention.md)).
+- **From 00:00 to 00:30 IST, yesterday counts 0** on the 7 and 30 days, because the job has not counted it yet. After a missed night, the days stay 0 until the next run. The header of the funnel tells the time of the count.
 - **The tests use days three months ahead.** The events table has a partition only from this month on, and a fixed time keeps the edges of the days in IST the same in each run.
 
 ## Tickets

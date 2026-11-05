@@ -8,5 +8,4 @@ export const weekBefore = (now: Date) => hoursBefore(now, 7 * 24)
 export const istDateOf = (time: Date) => time.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 /** The date of today in Mumbai, as an ISO date. */
 export const todayInIst = () => istDateOf(new Date())
-/** The ISO date some days before an ISO date. */
 export const daysBefore = (day: string, days: number) => new Date(Date.parse(`${day}T00:00:00Z`) - days * 86_400_000).toISOString().slice(0, 10)

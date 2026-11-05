@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { sql } from 'drizzle-orm'
 import type { FastifyBaseLogger } from 'fastify'
-import { adminHomeResponse, productNumbersResponse, type AnalyticsEvent } from '@roomsie/contract'
+import { adminHomeResponse, productNumbersResponse, type AnalyticsEvent, type ProductNumbersResponse } from '@roomsie/contract'
 import { createAnalyticsDb } from '../src/analytics/client'
 import { events } from '../src/analytics/schema'
 import { productCard, productNumbers } from '../src/numbers/numbers'
@@ -20,16 +20,18 @@ afterAll(async () => {
   await analytics.drop()
 })
 
-// 15:00 IST on the 5th, three months ahead: inside the monthly tables of the events (migration 0000), and away from the events of the route test.
+// 15:00 IST on the 5th, some months ahead: inside the monthly tables of the events (migration 0000). Each test has its own
+// months, away from the other tests and from the events of the route test.
 const base = new Date()
-const now = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + 3, 5, 9, 30))
+const fifthOf = (months: number) => new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + months, 5, 9, 30))
+const now = fifthOf(3)
 const today = istDateOf(now)
-const at = (daysAgo: number, time: string) => new Date(`${daysBefore(today, daysAgo)}T${time}+05:30`)
+const daysAgo = (from: Date) => (days: number, time: string) => new Date(`${daysBefore(istDateOf(from), days)}T${time}+05:30`)
+const at = daysAgo(now)
 const event = (createdAt: Date, { name, ...fields }: AnalyticsEvent) => ({ name, eventVersion: 1, actor: null, createdAt, fields })
 const chat = (createdAt: Date) => event(createdAt, { name: 'interview_started' })
 const log = () => ({ error: vi.fn() }) as unknown as FastifyBaseLogger
-const numbersOf = async (period: 'today' | 'week' | 'month') => (await productNumbers(analytics.db, period, now, log())).numbers!
-const step = (numbers: Awaited<ReturnType<typeof numbersOf>>, name: string) => numbers.steps.find((s) => s.step === name)
+const step = (response: ProductNumbersResponse, name: string) => response.numbers!.steps.find((s) => s.step === name)
 
 describe('the product numbers', () => {
   it('counts today until now against yesterday until the same time, from the raw events', async () => {
@@ -50,12 +52,11 @@ describe('the product numbers', () => {
     const numbers = response.numbers!
     expect(numbers.steps.map((s) => s.step)).toEqual(['chats', 'results', 'wall', 'signedIn', 'requests', 'accepted', 'closed'])
     // The chat at 15:30 is after now, and the chat of yesterday at 16:00 is after the same time.
-    expect(step(numbers, 'chats')).toEqual({ step: 'chats', now: 2, before: 1 })
-    expect(step(numbers, 'signedIn')).toEqual({ step: 'signedIn', now: 2, before: 1 })
-    expect(step(numbers, 'requests')).toEqual({ step: 'requests', now: 2, before: 0 })
-    expect(step(numbers, 'closed')).toEqual({ step: 'closed', now: 3, before: 1 })
+    expect(step(response, 'chats')).toEqual({ step: 'chats', now: 2, before: 1 })
+    expect(step(response, 'signedIn')).toEqual({ step: 'signedIn', now: 2, before: 1 })
+    expect(step(response, 'requests')).toEqual({ step: 'requests', now: 2, before: 0 })
+    expect(step(response, 'closed')).toEqual({ step: 'closed', now: 3, before: 1 })
     expect(numbers.newAccounts).toEqual({ now: 1, before: 1 })
-    expect(numbers.foundOnRoomsie).toEqual({ now: 2, before: 0 })
     expect(numbers.where).toEqual([{ value: 'roomsie', count: 2 }, { value: 'elsewhere', count: 1 }])
     expect(numbers.limits).toEqual([{ value: 'ip', count: 1 }])
     expect(numbers.reports).toEqual([{ value: 'fake', count: 1 }])
@@ -66,28 +67,30 @@ describe('the product numbers', () => {
   })
 
   it('counts 7 and 30 whole days that end yesterday, from the rollup of the job, against the days before them', async () => {
-    // Each chat is a day back from today: 1 to 7 is the week, 8 to 14 the week before, 1 to 30 the month, 31 to 60 the month before.
+    const later = fifthOf(6)
+    const back = daysAgo(later)
+    const day = istDateOf(later)
+    // Each chat is a day back: 1 to 7 is the week, 8 to 14 the week before, 1 to 30 the month, 31 to 60 the month before.
     await analytics.db.insert(events).values([
-      chat(at(1, '23:59:00')), chat(at(7, '00:00:00')), chat(at(8, '23:59:00')), chat(at(14, '08:00:00')), chat(at(15, '08:00:00')),
-      chat(at(30, '08:00:00')), chat(at(31, '08:00:00')), chat(at(60, '08:00:00')), chat(at(61, '08:00:00')),
-      event(at(3, '08:00:00'), { name: 'goal_closed', where: 'elsewhere' }), event(at(4, '08:00:00'), { name: 'goal_closed', where: 'elsewhere' }),
-      event(at(5, '08:00:00'), { name: 'goal_closed', where: 'roomsie' }),
+      chat(back(0, '00:00:00')), chat(back(1, '23:59:00')), chat(back(7, '00:00:00')), chat(back(8, '23:59:00')), chat(back(14, '08:00:00')),
+      chat(back(15, '08:00:00')), chat(back(30, '08:00:00')), chat(back(31, '08:00:00')), chat(back(60, '08:00:00')), chat(back(61, '08:00:00')),
+      event(back(3, '08:00:00'), { name: 'goal_closed', where: 'elsewhere' }), event(back(4, '08:00:00'), { name: 'goal_closed', where: 'elsewhere' }),
+      event(back(5, '08:00:00'), { name: 'goal_closed', where: 'roomsie' }),
     ])
     // The days come only from the rollup: before the job, they have no count.
-    expect(step(await numbersOf('week'), 'chats')).toMatchObject({ now: 0, before: 0 })
-    const rollUp = () => analytics.db.execute(sql`select jobs.roll_up_events(${daysBefore(today, 61)}::date, ${daysBefore(today, 1)}::date)`)
+    expect(step(await productNumbers(analytics.db, 'week', later, log()), 'chats')).toMatchObject({ now: 0, before: 0 })
+    // The job also counts today here, and the week leaves today out.
+    const rollUp = () => analytics.db.execute(sql`select jobs.roll_up_events(${daysBefore(day, 61)}::date, ${day}::date)`)
     await rollUp()
     // A second run counts the same days again, and adds nothing.
     await rollUp()
-    expect(await productNumbers(analytics.db, 'week', now, log())).toMatchObject({ period: 'week', from: daysBefore(today, 7), to: daysBefore(today, 1) })
-    const week = await numbersOf('week')
-    // The days of the first test add their chats to the week: one of yesterday at 09:00 and one at 16:00, and one two days ago.
-    expect(step(week, 'chats')).toEqual({ step: 'chats', now: 5, before: 2 })
-    expect(week.where).toEqual([{ value: 'elsewhere', count: 2 }, { value: 'dropped', count: 1 }, { value: 'roomsie', count: 1 }])
-    expect(week.foundOnRoomsie).toEqual({ now: 1, before: 0 })
-    const month = await numbersOf('month')
-    expect(await productNumbers(analytics.db, 'month', now, log())).toMatchObject({ from: daysBefore(today, 30), to: daysBefore(today, 1) })
-    expect(step(month, 'chats')).toEqual({ step: 'chats', now: 9, before: 2 })
+    const week = await productNumbers(analytics.db, 'week', later, log())
+    expect(week).toMatchObject({ period: 'week', from: daysBefore(day, 7), to: daysBefore(day, 1) })
+    expect(step(week, 'chats')).toEqual({ step: 'chats', now: 2, before: 2 })
+    expect(week.numbers!.where).toEqual([{ value: 'elsewhere', count: 2 }, { value: 'roomsie', count: 1 }])
+    const month = await productNumbers(analytics.db, 'month', later, log())
+    expect(month).toMatchObject({ period: 'month', from: daysBefore(day, 30), to: daysBefore(day, 1) })
+    expect(step(month, 'chats')).toEqual({ step: 'chats', now: 6, before: 2 })
   })
 
   it('gives no numbers when the analytics database is not set or refuses the connection', async () => {
@@ -108,7 +111,7 @@ describe('the product numbers', () => {
     expect(productNumbersResponse.parse(res.json())).toMatchObject({ period: 'week', from: daysBefore(todayInIst(), 7), to: daysBefore(todayInIst(), 1) })
     const todayRes = productNumbersResponse.parse((await t.call('moderator', 'GET', '/v1/admin/numbers')).json())
     expect(todayRes.period).toBe('today')
-    expect(step(todayRes.numbers!, 'chats')).toMatchObject({ now: 1 })
+    expect(step(todayRes, 'chats')).toMatchObject({ now: 1 })
     const card = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'product_numbers')
     expect(card).toMatchObject({ today: { chats: { now: 1 } } })
     expect((await t.call('moderator', 'GET', '/v1/admin/numbers?period=year')).statusCode).toBe(400)

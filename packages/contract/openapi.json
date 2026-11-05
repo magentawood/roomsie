@@ -14081,26 +14081,6 @@
                           ],
                           "additionalProperties": false
                         },
-                        "foundOnRoomsie": {
-                          "type": "object",
-                          "properties": {
-                            "now": {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 9007199254740991
-                            },
-                            "before": {
-                              "type": "integer",
-                              "minimum": 0,
-                              "maximum": 9007199254740991
-                            }
-                          },
-                          "required": [
-                            "now",
-                            "before"
-                          ],
-                          "additionalProperties": false
-                        },
                         "where": {
                           "type": "array",
                           "items": {
@@ -14189,7 +14169,6 @@
                       "required": [
                         "steps",
                         "newAccounts",
-                        "foundOnRoomsie",
                         "where",
                         "limits",
                         "reports",

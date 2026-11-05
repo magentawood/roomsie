@@ -19,11 +19,7 @@ export const events = pgTable('events', {
   createdAtIdx: index('events_created_at_idx').using('brin', t.createdAt),
 })).enableRLS()
 
-/**
- * The count of each event of each day in IST, and of each value of the fields that the product numbers split (T-66).
- * `field` and `value` are '' for the count of all the events of a name. The job `jobs.roll_up_events` writes it, so its
- * key is the day, the event, the field and the value: SQL mints no UUIDv7 (ADR-0015). No person is in it.
- */
+/** The counts of each day in IST (T-66). Its key is its columns: the job writes it, and SQL mints no UUIDv7 (ADR-0015). */
 export const eventDays = pgTable('event_days', {
   day: date('day').notNull(),
   name: text('name').notNull(),

@@ -2,7 +2,7 @@
 
 import type { CloseAnswer, FunnelStep, NumberPeriod, ProductNumbersResponse, RateLimit, ReportReason } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
-import { india } from '../../lib/ist'
+import { istDay } from '../../lib/ist'
 import { percent } from '../../lib/numbers'
 import { profileLabels } from '../../lib/profile-form'
 import { useProductNumbers } from '../../lib/queries'
@@ -17,9 +17,10 @@ type Pair = Numbers['newAccounts']
 const stepLabels: Record<FunnelStep, string> = {
   chats: 'Chats started', results: 'Results shown', wall: 'Sign-in wall', signedIn: 'Signed in', requests: 'Connect requests', accepted: 'Requests accepted', closed: 'Goals closed',
 }
-/** The unit of a step, as the next step names it: "83% of chats", "1.4 for each chat". */
-const stepUnits: Partial<Record<FunnelStep, [one: string, many: string]>> = {
-  chats: ['chat', 'chats'], results: ['result', 'results'], signedIn: ['sign-in', 'sign-ins'], requests: ['request', 'requests'],
+/** The unit of a step, as the next step names it. */
+const stepUnits: Record<FunnelStep, [one: string, many: string]> = {
+  chats: ['chat', 'chats'], results: ['result', 'results'], wall: ['wall hit', 'wall hits'], signedIn: ['sign-in', 'sign-ins'],
+  requests: ['request', 'requests'], accepted: ['accept', 'accepts'], closed: ['close', 'closes'],
 }
 const whereLabels: Record<CloseAnswer, string> = { roomsie: 'On roomsie', elsewhere: 'Somewhere else', dropped: 'Stopped looking' }
 const limitLabels: Record<RateLimit, string> = {
@@ -32,7 +33,6 @@ const slotLabels: Record<string, string> = {
   ...Object.fromEntries(Object.entries(profileLabels.mustHaves).map(([key, label]) => [`mustHaves.${key}`, label])),
 }
 const titles: Record<NumberPeriod, string> = { today: 'The funnel, today', week: 'The funnel, last 7 days', month: 'The funnel, last 30 days' }
-const dayOf = new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', ...india })
 const count = (n: number) => n.toLocaleString('en-IN')
 
 /** The change against the period before. Under 20 before, the change is a count: a percent of a small count jumps. */
@@ -45,24 +45,23 @@ export function Change({ pair, neutral = false }: { pair: Pair; neutral?: boolea
 
 /** "83% of chats", or "1.4 for each chat" when a step is larger than the step before it. */
 function shareOf(now: number, before: number, [one, many]: [string, string]) {
-  if (before === 0) return undefined
+  if (before === 0) return null
   return now > before ? `${(now / before).toLocaleString('en-IN', { maximumFractionDigits: 1 })} for each ${one}` : `${percent(now / before)} of ${many}`
 }
 
 function Funnel({ period, from, to, numbers }: { period: NumberPeriod; from: string; to: string; numbers: Numbers }) {
   const largest = Math.max(...numbers.steps.map((s) => s.now))
+  const found = numbers.where.find((row) => row.value === 'roomsie')?.count ?? 0
+  const extras: Partial<Record<FunnelStep, string>> = { signedIn: `${count(numbers.newAccounts.now)} new accounts`, closed: `${count(found)} found on roomsie` }
   const noteOf = (step: Numbers['steps'][number], index: number) => {
-    if (step.step === 'signedIn') return `${count(numbers.newAccounts.now)} new accounts`
-    if (step.step === 'closed') return `${count(numbers.foundOnRoomsie.now)} found on roomsie`
     const before = numbers.steps[index - 1]
-    const unit = before && stepUnits[before.step]
-    return unit && shareOf(step.now, before.now, unit)
+    return [before && shareOf(step.now, before.now, stepUnits[before.step]), extras[step.step]].filter(Boolean).join(' · ')
   }
   return (
     <section aria-label={titles[period]} className={`${cardClass} gap-4`}>
       <header className="flex flex-wrap items-baseline justify-between gap-x-3">
         <h2 className="text-lg font-semibold text-primary">{titles[period]}</h2>
-        <p className="text-sm text-tertiary">{period === 'today' ? 'Until now, in IST' : `${dayOf.format(new Date(from))} to ${dayOf.format(new Date(to))}`}</p>
+        <p className="text-sm text-tertiary">{period === 'today' ? 'Until now, in IST' : `${istDay(from, 'short')} to ${istDay(to, 'short')}, counted each night at 00:30`}</p>
       </header>
       <ol className="flex flex-col gap-3">
         {numbers.steps.map((step, index) => {

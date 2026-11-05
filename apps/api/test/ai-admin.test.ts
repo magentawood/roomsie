@@ -8,7 +8,8 @@ import { events } from '../src/analytics/schema'
 import { assistantSettings } from '../src/assistant/settings'
 import { modelSpend, modelSwitch } from '../src/db/schema'
 import { limitSettings } from '../src/goals/settings'
-import { aiCard, aiOverview, bestEffort } from '../src/models/overview'
+import { bestEffort } from '../src/analytics/read'
+import { aiCard, aiOverview } from '../src/models/overview'
 import { modelSettings, spendSettings } from '../src/models/settings'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
@@ -79,7 +80,7 @@ describe('the AI pipeline of the admin', () => {
   it('gives no numbers when the analytics read takes over 5 seconds', async () => {
     vi.useFakeTimers()
     const log = { error: vi.fn() } as unknown as FastifyBaseLogger
-    const read = bestEffort(() => new Promise<never>(() => {}), log)
+    const read = bestEffort(() => new Promise<never>(() => {}), log, 'models.overview')
     await vi.advanceTimersByTimeAsync(5_000)
     expect(await read).toBeNull()
     expect(log.error).toHaveBeenCalledTimes(1)

@@ -16,11 +16,11 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 ## Ids and time
 
-- Each table has `id uuid primary key`: a UUIDv7 with no database default. The API mints it through Drizzle `$defaultFn`. Catalogues and answer tables are the exception. Why: a UUIDv7 is not enumerable, and it keeps index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md), [ADR-0017](../decisions/0017-schema-v1-shape.md))
+- Each table has `id uuid primary key`: a UUIDv7 with no database default. The API mints it through Drizzle `$defaultFn`. Catalogues, answer tables and the rollups of the analytics database are the exception. Why: a UUIDv7 is not enumerable, and it keeps index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md), [ADR-0017](../decisions/0017-schema-v1-shape.md))
 - A client mints ids only for `messages`, `swipes`, `reports` and `blocks`. The API mints all other ids. Why: only these rows come from a self-contained action that can occur offline. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - For a client-minted id, Zod checks that the id is a UUIDv7. It also checks that the timestamp in it is in the range ±5 minutes of the server clock. Why: a spoofed timestamp destroys index locality. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - Insert a client-minted row with `ON CONFLICT (id) DO NOTHING`. Why: a retried request is then safe. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
-- Each table has `created_at timestamptz not null default now()`. Why: the server clock is the only chronology that the application trusts. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
+- Each table has `created_at timestamptz not null default now()`. The rollups of the analytics database are the exception: a job writes their counts again. Why: the server clock is the only chronology that the application trusts. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 - A row whose order matters gets its time when it is written, with `clock_timestamp()`, not the default `now()`. Why: `now()` is the start of the transaction, so a row that waited for a lock, or the second row of one transaction, gets a time out of its order. (Rule candidate of [#228](https://github.com/magentawood/roomsie/pull/228), the second time in [#230](https://github.com/magentawood/roomsie/pull/230))
 - Order rows by `created_at`, never by id. The application never reads, shows or orders by the timestamp in a UUIDv7. A keyset page may break a tie of `created_at` with the id. Why: a client with a skewed clock would change the order of a chat thread. ([ADR-0015](../decisions/0015-primary-key-strategy.md))
 
@@ -36,7 +36,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 - Analytics events go to an isolated, append-only Postgres instance, never to the primary database. Why: write bursts must not make the primary database slow. ([ADR-0012](../decisions/0012-analytics-event-store.md), [PD13](../decisions/pd-13-databases-and-backups.md))
 - Partition the events table monthly, with a BRIN index on the timestamp. Why: the table grows by millions of rows each month. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - A scheduled job makes the partition for the next month. Why: without it, inserts fail at a month boundary. ([ADR-0012](../decisions/0012-analytics-event-store.md))
-- Dashboards query rollup tables that a background job builds. The exception: the numbers of today on the admin (the AI pipeline and the product numbers) read the raw events, because the job counts only whole days. Why: dashboards then do not scan the raw events. ([ADR-0012](../decisions/0012-analytics-event-store.md))
+- Dashboards query rollup tables that a background job builds. Why: dashboards then do not scan the raw events. The exception: the numbers of today on the admin (the AI pipeline and the product numbers) read the raw events, because the job counts only whole days. ([ADR-0012](../decisions/0012-analytics-event-store.md))
 - Delete raw events by whole month after the period of PD19, and design the deletion policy with the events schema. Why: the DPDP Act applies, and we cannot attach the policy subsequently. ([ADR-0012](../decisions/0012-analytics-event-store.md), [PD19](../decisions/pd-19-retention.md))
 
 ## Stored data

@@ -1,7 +1,18 @@
 import { and, between, eq, gte, sql, sum } from 'drizzle-orm'
-import type { ModelRole } from '@roomsie/contract'
+import type { FastifyBaseLogger } from 'fastify'
+import type { AnalyticsEvent, ModelRole } from '@roomsie/contract'
+import { reportError } from '@roomsie/config/report'
 import type { AnalyticsDb } from './client'
 import { eventDays, events } from './schema'
+
+/** A slow or failed analytics read gives no numbers; the page and the other cards still show. */
+export async function bestEffort<T>(read: () => Promise<T>, log: FastifyBaseLogger, where: string): Promise<T | null> {
+  const timeout = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('the analytics read took over 5 s')), 5_000).unref())
+  return Promise.race([Promise.resolve().then(read), timeout]).catch((err: unknown) => {
+    reportError(err, { where, log })
+    return null
+  })
+}
 
 // A literal key, not a parameter, so the same field in the select and in the group by is one expression.
 const field = (name: 'role' | 'model' | 'outcome' | 'fallback' | 'ms' | 'tokensIn' | 'cachedTokensIn' | 'tokensOut' | 'band') => sql`${events.fields}->>${sql.raw(`'${name}'`)}`
@@ -31,15 +42,14 @@ export const bandCounts = (db: AnalyticsDb, since: Date) => db.select({ band: sq
   .from(events).where(and(eq(events.name, 'turn_routed'), gte(events.createdAt, since))).groupBy(field('band'))
 
 /** A count of the product numbers: all the events of a name (`split` ''), or the events of one value of a field (T-66). */
-export type EventCount = { event: string; split: string; value: string; total: number }
+export type EventCount = { event: AnalyticsEvent['name']; split: string; value: string; total: number }
 
-/** The counts of a time range, from the raw events, with the function of the nightly job (migration 0004): today, and yesterday until the same time. */
-export const countsBetween = async (db: AnalyticsDb, since: Date, until: Date): Promise<EventCount[]> =>
-  [...await db.execute<{ event: string; split: string; split_value: string; total: number }>(sql`select event, split, split_value, total from jobs.count_events(${since.toISOString()}::timestamptz, ${until.toISOString()}::timestamptz)`)]
-    .map((r) => ({ event: r.event, split: r.split, value: r.split_value, total: Number(r.total) }))
+/** The counts of a time range, from the raw events. */
+export const countsBetween = async (db: AnalyticsDb, since: Date, until: Date) =>
+  [...await db.execute<EventCount>(sql`select * from jobs.count_events(${since.toISOString()}::timestamptz, ${until.toISOString()}::timestamptz)`)]
 
 /** The counts of whole days in IST, from the rollup of the nightly job. */
-export const countsOfDays = (db: AnalyticsDb, first: string, last: string): Promise<EventCount[]> => db.select({
-  event: eventDays.name, split: eventDays.field, value: eventDays.value, total: sql<number>`${sum(eventDays.count)}`.mapWith(Number),
+export const countsOfDays = (db: AnalyticsDb, first: string, last: string) => db.select({
+  event: sql<AnalyticsEvent['name']>`${eventDays.name}`, split: eventDays.field, value: eventDays.value, total: sum(eventDays.count).mapWith(Number),
 }).from(eventDays).where(between(eventDays.day, first, last)).groupBy(eventDays.name, eventDays.field, eventDays.value)
 
