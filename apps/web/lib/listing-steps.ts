@@ -2,6 +2,7 @@ import type { z } from 'zod'
 import {
   lifestyleAnswerLabels, listingEditBody, listingEdits, placeTypeLabels, roomTypeLabels, type GoLiveField, type ListingEdit, type ListingKind, type ListingResponse,
 } from '@roomsie/contract'
+import { inIndianDigits } from './numbers'
 
 /** The steps of flow 04 (Product file, and the drafts of T-42). */
 export type StepId = 'kind' | 'where' | 'nearby' | 'place' | 'rent' | 'rules' | 'people' | 'photos'
@@ -87,7 +88,6 @@ export const missingFieldLinks: Record<GoLiveField, { label: string; step: StepI
   flatmatesConsent: { label: 'The tick "My flatmates agreed to be shown"', step: 'people' },
 }
 
-const inIndianDigits = (n: number | bigint) => n.toLocaleString('en-IN')
 
 /** The line under a refused field. The limits come from the issue, so they follow the contract. */
 function checkLine(issue: z.core.$ZodIssue) {

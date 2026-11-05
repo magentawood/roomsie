@@ -136,6 +136,8 @@ To overwrite another row is structurally impossible:
 
 Superseded (2026-10-24): catalogues and answer tables do not use a UUIDv7 `id` ([ADR-0017](0017-schema-v1-shape.md)).
 
+Superseded (2026-11-05): the rollups of the analytics database have no `id` and no `created_at`. A job writes their counts again, and SQL mints no UUIDv7, so the key of a rollup is its columns (T-66, `event_days`).
+
 ## Revisit when
 
 A single table passes ~500M rows, and its index size becomes the limiting

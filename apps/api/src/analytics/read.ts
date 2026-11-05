@@ -1,6 +1,6 @@
 import { and, between, eq, gte, sql, sum } from 'drizzle-orm'
 import type { FastifyBaseLogger } from 'fastify'
-import type { AnalyticsEvent, ModelRole } from '@roomsie/contract'
+import type { ModelRole } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import type { AnalyticsDb } from './client'
 import { eventDays, events } from './schema'
@@ -41,8 +41,8 @@ export const tokenSums = (db: AnalyticsDb, since: Date) => db.select({
 export const bandCounts = (db: AnalyticsDb, since: Date) => db.select({ band: sql<string>`${field('band')}`, turns: sql<number>`count(*)`.mapWith(Number) })
   .from(events).where(and(eq(events.name, 'turn_routed'), gte(events.createdAt, since))).groupBy(field('band'))
 
-/** A count of the product numbers: all the events of a name (`split` ''), or the events of one value of a field (T-66). */
-export type EventCount = { event: AnalyticsEvent['name']; split: string; value: string; total: number }
+/** A count of the product numbers: all the events of a name (`field` ''), or the events of one value of a field (T-66). */
+export type EventCount = { name: string; field: string; value: string; count: number }
 
 /** The counts of a time range, from the raw events. */
 export const countsBetween = async (db: AnalyticsDb, since: Date, until: Date) =>
@@ -50,6 +50,6 @@ export const countsBetween = async (db: AnalyticsDb, since: Date, until: Date) =
 
 /** The counts of whole days in IST, from the rollup of the nightly job. */
 export const countsOfDays = (db: AnalyticsDb, first: string, last: string) => db.select({
-  event: sql<AnalyticsEvent['name']>`${eventDays.name}`, split: eventDays.field, value: eventDays.value, total: sum(eventDays.count).mapWith(Number),
+  name: eventDays.name, field: eventDays.field, value: eventDays.value, count: sum(eventDays.count).mapWith(Number),
 }).from(eventDays).where(between(eventDays.day, first, last)).groupBy(eventDays.name, eventDays.field, eventDays.value)
 

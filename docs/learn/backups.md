@@ -54,7 +54,7 @@ CAUTION: Delete the key file and the decrypted dump after the restore. The dump 
 - **The dump connects through the session pooler, not the direct address.** GitHub runners have no IPv6, and the direct address of a free Supabase project has only IPv6.
 - **The workflow runs `pg_dump` from the Postgres 17 image.** The `pg_dump` of the runner is older than the Postgres of Supabase, and an older `pg_dump` cannot dump a newer server.
 - **A restore needs `--clean --if-exists`.** The dump makes the `public` schema, and a new database has it already. Without the two options, the restore stops with "schema public already exists".
-- **The dump has no Supabase schemas, owners or grants.** Thus, it restores into each Postgres 17. The schedule of the analytics job is not in the dump. After a restore into Supabase, schedule it again ([analytics events](analytics-events.md)).
+- **The dump has no Supabase schemas, owners or grants.** Thus, it restores into each Postgres 17. The schedules of the analytics jobs are not in the dump. After a restore into Supabase, schedule them again ([analytics events](analytics-events.md), [product numbers](product-numbers.md)).
 - **Row Level Security does not hide rows from the dump.** The dump user owns the tables, and the tables do not force Row Level Security. If a migration adds `FORCE ROW LEVEL SECURITY`, the dump stops with an error.
 - **If you lose the private key, nobody can read the dumps.** Keep the key only in the Bitwarden note. Never put it in GitHub, Vercel, `.env`, a chat or the repo.
 - **A deleted account stays in the dumps for fourteen days,** until the workflow deletes its newest dump.

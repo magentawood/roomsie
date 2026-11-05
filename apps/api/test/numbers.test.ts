@@ -20,8 +20,7 @@ afterAll(async () => {
   await analytics.drop()
 })
 
-// 15:00 IST on the 5th, some months ahead: inside the monthly tables of the events (migration 0000). Each test has its own
-// months, away from the other tests and from the events of the route test.
+// 15:00 IST on the 5th, months ahead: inside the tables of the events. Each test gets its own months.
 const base = new Date()
 const fifthOf = (months: number) => new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + months, 5, 9, 30))
 const now = fifthOf(3)
@@ -39,6 +38,8 @@ describe('the product numbers', () => {
       chat(at(0, '00:00:00')), chat(at(0, '14:59:00')), chat(at(0, '15:30:00')),
       chat(at(1, '09:00:00')), chat(at(1, '16:00:00')), chat(at(2, '12:00:00')),
       event(at(0, '10:00:00'), { name: 'results_shown', count: 4 }),
+      event(at(0, '10:30:00'), { name: 'wall_hit' }), event(at(1, '10:30:00'), { name: 'wall_hit' }),
+      event(at(0, '12:30:00'), { name: 'connect_accepted', to: 'person' }),
       event(at(0, '10:00:00'), { name: 'signed_in', newAccount: true }), event(at(0, '11:00:00'), { name: 'signed_in', newAccount: false }),
       event(at(1, '10:00:00'), { name: 'signed_in', newAccount: true }),
       event(at(0, '12:00:00'), { name: 'connect_sent', to: 'person' }), event(at(0, '12:00:00'), { name: 'connect_sent', to: 'listing' }),
@@ -50,12 +51,11 @@ describe('the product numbers', () => {
     const response = await productNumbers(analytics.db, 'today', now, log())
     expect(response).toMatchObject({ period: 'today', from: today, to: today })
     const numbers = response.numbers!
-    expect(numbers.steps.map((s) => s.step)).toEqual(['chats', 'results', 'wall', 'signedIn', 'requests', 'accepted', 'closed'])
     // The chat at 15:30 is after now, and the chat of yesterday at 16:00 is after the same time.
-    expect(step(response, 'chats')).toEqual({ step: 'chats', now: 2, before: 1 })
-    expect(step(response, 'signedIn')).toEqual({ step: 'signedIn', now: 2, before: 1 })
-    expect(step(response, 'requests')).toEqual({ step: 'requests', now: 2, before: 0 })
-    expect(step(response, 'closed')).toEqual({ step: 'closed', now: 3, before: 1 })
+    expect(numbers.steps).toEqual([
+      { step: 'chats', now: 2, before: 1 }, { step: 'results', now: 1, before: 0 }, { step: 'wall', now: 1, before: 1 }, { step: 'signedIn', now: 2, before: 1 },
+      { step: 'requests', now: 2, before: 0 }, { step: 'accepted', now: 1, before: 0 }, { step: 'closed', now: 3, before: 1 },
+    ])
     expect(numbers.newAccounts).toEqual({ now: 1, before: 1 })
     expect(numbers.where).toEqual([{ value: 'roomsie', count: 2 }, { value: 'elsewhere', count: 1 }])
     expect(numbers.limits).toEqual([{ value: 'ip', count: 1 }])
