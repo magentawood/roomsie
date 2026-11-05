@@ -10,6 +10,7 @@ import { actionReportsAbout, closeReports, openReports } from '../reports/read'
 import { endOpenRequests } from '../requests/read'
 import type { Storage } from '../storage'
 import { suspendAccount } from '../users'
+import type { AiSources } from '../models/overview'
 import { homeCards } from './home'
 
 /** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
@@ -22,13 +23,13 @@ async function suspend(tx: Tx, userId: string) {
   await actionReportsAbout(tx, userId)
 }
 
-export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {
+export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiSources & { storage: Storage }) {
   const { db, storage, moderation } = options
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireModerator(options)
 
   app.get('/admin/home', { preHandler: requireRole(options, 'moderator', 'reviewer'), schema: { response: { 200: adminHomeResponse, 404: errorResponse } } }, async (req) => ({
-    cards: await homeCards(db, moderation, req.user!),
+    cards: await homeCards(options, req.user!),
   }))
 
   app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse, 404: errorResponse } } }, async () => {

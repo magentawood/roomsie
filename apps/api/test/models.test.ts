@@ -71,6 +71,20 @@ describe('the models module', () => {
     expect(requests.map((r) => r.url)).toEqual([deepseek, deepseek])
   })
 
+  it('asks only Gemini while the switch is on: one more try on an invalid answer, and no second vendor', async () => {
+    const requests = fakeVendors({ gemini: [answer('not json'), answer('{"intent":"room"}')] })
+    const { req, events } = fakeRequest({ geminiOnly: true })
+    expect(await ask(req)).toEqual({ intent: 'room' })
+    expect(requests.map((r) => r.url)).toEqual([gemini, gemini])
+    expect(events.map((e) => 'fallback' in e && e.fallback)).toEqual([true, true])
+    fakeVendors({ gemini: [new Response('down', { status: 500 })] })
+    await expect(ask(fakeRequest({ geminiOnly: true }).req)).rejects.toBeInstanceOf(ModelUnavailable)
+  })
+
+  it('gives its models and its time limit for the settings view', () => {
+    expect(models.settings).toEqual({ primary: 'deepseek-flash', fallback: 'gemini-3.5-flash-lite', timeoutMs: 10_000 })
+  })
+
   it('throws, and reports it one time, when Gemini also fails', async () => {
     fakeVendors({ deepseek: [new Response('down', { status: 500 })], gemini: [new Response('bad key', { status: 401 })] })
     const { req } = fakeRequest()

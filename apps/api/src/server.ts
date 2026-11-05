@@ -30,6 +30,7 @@ import { messageRoutes } from './messages/routes'
 import type { Models } from './models/models'
 import { spendSettings, type SpendSettings } from './models/settings'
 import { spendOf, type Spend } from './models/spend'
+import { modelSwitchOf, type ModelSwitch } from './models/switch'
 import { limitSettings, type LimitSettings } from './goals/settings'
 import { modelRoutes } from './models/routes'
 import { moderationRoutes } from './moderation/routes'
@@ -52,6 +53,7 @@ declare module 'fastify' {
     alerts: Alerts
     analytics: Analytics
     spend: Spend
+    modelSwitch: ModelSwitch
   }
 }
 
@@ -80,6 +82,8 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.addHook('onClose', () => analytics.close())
   const spend = spendOf({ db: options.db, settings: options.spend ?? spendSettings.parse({}), today, log: app.log })
   app.decorate('spend', spend)
+  app.decorate('modelSwitch', modelSwitchOf(options.db))
+  const aiSources = { spend: options.spend ?? spendSettings.parse({}), assistant: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today }
   app.addHook('onClose', () => spend.settled())
   app.setValidatorCompiler(validatorCompiler)
   app.setSerializerCompiler(serializerCompiler)
@@ -134,7 +138,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       profileRoutes(v1, options)
       requestRoutes(v1, options)
       blockRoutes(v1, options)
-      moderationRoutes(v1, options)
+      moderationRoutes(v1, { ...options, ...aiSources })
       messageRoutes(v1, options)
       alertRoutes(v1, options)
       verificationRoutes(v1, options)
@@ -142,7 +146,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       feedbackRoutes(v1, options)
       inviteRoutes(v1, options)
       articleRoutes(v1, options)
-      modelRoutes(v1, options)
+      modelRoutes(v1, { ...options, ...aiSources })
       resultRoutes(v1, { ...options, matching: options.matching ?? matchingSettings.parse({}) })
       goalRoutes(v1, { ...options, settings: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today })
     },

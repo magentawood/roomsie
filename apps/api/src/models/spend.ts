@@ -13,6 +13,8 @@ const modelPrices: Record<Vendor, { in: number; cachedIn: number; out: number }>
   gemini: { in: 0.3, cachedIn: 0.3, out: 2.5 },
 }
 const usdToInr = 88
+/** The alerts of the daily amount of PD9. */
+export const spendAlertPercents = [70, 100]
 /** The rupees of the usage of one call, at the high prices above. */
 export function rupeesOf(vendor: Vendor, usage: ModelUsage) {
   const price = modelPrices[vendor]
@@ -42,7 +44,7 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
       .onConflictDoUpdate({ target: modelSpend.day, set: { rupees: sql`${modelSpend.rupees} + excluded.rupees` } })
       .returning({ rupees: modelSpend.rupees })
     const total = Number(row!.rupees)
-    for (const percent of [70, 100]) {
+    for (const percent of spendAlertPercents) {
       if (total < (settings.dailyRupees * percent) / 100) break
       // Only one call of the day moves `alertedPercent` to this percent, so each alert goes one time, also from two machines.
       const [moved] = await db.update(modelSpend).set({ alertedPercent: percent }).where(and(eq(modelSpend.day, day), lt(modelSpend.alertedPercent, percent))).returning()
@@ -59,8 +61,15 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
       pending.add(done)
     },
     settled: async () => { await Promise.all(pending) },
+    /** A message to the team in Telegram, as the alerts: a log line with no Telegram settings (T-65). */
+    notifyTeam: (text: string) => alert(text),
     /** False: no Telegram settings (T-29). */
     sendTestAlert: async () => { if (settings.telegram) await alert('roomsie: the spend alert works.'); return !!settings.telegram },
   }
 }
 export type Spend = ReturnType<typeof spendOf>
+
+/** The model spend of a day, in rupees (T-65). */
+export const spentOn = async (db: Db, day: string) =>
+  Number((await db.select({ rupees: modelSpend.rupees }).from(modelSpend).where(eq(modelSpend.day, day)))[0]?.rupees ?? 0)
+
