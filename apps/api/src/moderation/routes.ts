@@ -71,7 +71,7 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiS
         const hiddenAt = action === 'dismiss' ? null : new Date()
         if (kind === 'listings') await setListingHiddenForReview(tx, id, hiddenAt)
         else await setCardHiddenForReview(tx, id, hiddenAt)
-        // A dismiss logs an unhide only of a hidden item. The suspend of a person covers the hide of the card.
+        // The suspend of a person covers the hide of the card.
         const by = req.user!.id
         if (action === 'dismiss') {
           if (wasHidden) await logAction(tx, by, 'unhide', subject)

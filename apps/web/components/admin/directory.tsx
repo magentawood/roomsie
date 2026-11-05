@@ -51,7 +51,7 @@ function Search<F extends string>({ label, placeholder, labels, onSearch }: { la
 
 const OpenReports = ({ count }: { count: number }) => (count > 0 ? <Badge tone="error" dot={false}>{`${count} open ${count === 1 ? 'report' : 'reports'}`}</Badge> : null)
 
-function PersonStates({ row }: { row: Pick<AdminPersonRow, 'openReports' | 'hidden' | 'suspended' | 'verified'> }) {
+function PersonStates({ row }: { row: AdminPersonRow }) {
   return (
     <span className="flex flex-wrap gap-1.5">
       {row.suspended && <Badge tone="error" dot={false}>Suspended</Badge>}

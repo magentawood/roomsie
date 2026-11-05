@@ -11,6 +11,10 @@ export const uploadUrlBody = z.strictObject({ contentType: photoType, size: z.in
 export type UploadUrlBody = z.infer<typeof uploadUrlBody>
 export const uploadUrlReply = (key: ReturnType<typeof photoKeyIn>) => z.object({ key, url: z.url(), expiresAt: z.iso.datetime() })
 
+/** A list for a client: it drops each row with a value of `field` that the bundle does not know, so a tab with an older bundle keeps working (api.md). */
+export const knownRows = <T extends z.ZodType<Record<string, unknown>>>(row: T, field: keyof z.infer<T> & string, values: readonly string[]) =>
+  z.preprocess((rows) => (Array.isArray(rows) ? rows.filter((r: Record<string, unknown>) => values.includes(String(r?.[field]))) : rows), z.array(row))
+
 /** The permanent slug of an area of PD2: `andheri-west`. */
 export const areaSlug = z.string().max(60).regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
 export const rupees = z.int().min(0).max(100_000_000)

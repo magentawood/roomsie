@@ -114,10 +114,10 @@ export const deleteListingsOf = (tx: Tx, userId: string) => tx.delete(listings).
 export const setListingRemoved = (tx: Tx, listingId: string, at: Date) => tx.update(listings).set({ removedAt: at }).where(eq(listings.id, listingId))
 
 /** The newest listings for the admin: all of them, the hidden ones, the removed ones, or those in some areas or of some owners. */
-export const newestListings = (db: Db, limit: number, { hidden = false, removed = false, areaSlugs, ownerIds }: { hidden?: boolean; removed?: boolean; areaSlugs?: string[]; ownerIds?: string[] } = {}) =>
+export const newestListings = (db: Db, limit: number, { hidden = false, removed = false, match }: { hidden?: boolean; removed?: boolean; match?: { areaSlugs: string[]; ownerIds: string[] } } = {}) =>
   db.select().from(listings).where(and(
     hidden ? isNotNull(listings.hiddenAt) : undefined, removed ? isNotNull(listings.removedAt) : undefined,
-    areaSlugs && ownerIds ? or(inArray(listings.areaSlug, areaSlugs), inArray(listings.ownerUserId, ownerIds)) : undefined,
+    match ? or(inArray(listings.areaSlug, match.areaSlugs), inArray(listings.ownerUserId, match.ownerIds)) : undefined,
   )).orderBy(desc(listings.createdAt)).limit(limit)
 
 /** The live listings that people see, and the hidden ones, for the admin home. */

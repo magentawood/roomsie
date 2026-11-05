@@ -1,5 +1,5 @@
 import { and, asc, count, desc, eq, inArray, isNotNull, isNull, lt, min, not, sql } from 'drizzle-orm'
-import type { ReportReason } from '@roomsie/contract'
+import type { ReportReason, ReportStatus } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { reports } from '../db/schema'
 
@@ -15,7 +15,7 @@ export const openReports = (db: Db) => db.select().from(reports).where(eq(report
  * Closes the open reports of a queue item: a listing, or a person with no listing. Gives the reported user of each.
  * The reports of a listing that its owner deleted have no listing, so they go with the person.
  */
-export function closeReports(tx: Tx, item: Subject, status: 'dismissed' | 'actioned') {
+export function closeReports(tx: Tx, item: Subject, status: Exclude<ReportStatus, 'open'>) {
   return tx.update(reports).set({ status }).where(and(about(item), eq(reports.status, 'open'))).returning({ subjectUserId: reports.subjectUserId })
 }
 

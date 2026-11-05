@@ -17,16 +17,13 @@ describe('the person of the admin, on the web', () => {
   const at = '2026-11-05T10:00:00.000Z'
   const person = {
     userId: '0199e4b0-0000-7000-8000-000000000001', name: null, email: null, photoUrl: null, joinedAt: at, lastActiveAt: null, openReports: 0,
-    hidden: false, suspended: false, verified: false, card: null, visibility: null, reports: [],
+    hidden: false, suspended: false, verified: false, card: null, visibility: null,
   }
   const row = (action: string) => ({ id: '0199e4b0-0000-7000-8000-000000000002', action, by: null, at })
 
-  it('drops a row of the log with an unknown action', () => {
-    expect(adminPersonView.parse({ ...person, log: [row('unsuspend'), row('hide')] }).log.map((l) => l.action)).toEqual(['hide'])
-  })
-
-  it('drops a report with an unknown reason', () => {
+  it('drops a row of the log with an unknown action, and a report with an unknown reason', () => {
     const report = (reason: string) => ({ id: '0199e4b0-0000-7000-8000-000000000003', reason, detail: null, status: 'open', createdAt: at })
-    expect(adminPersonView.parse({ ...person, log: [], reports: [report('scam'), report('fake')] }).reports.map((r) => r.reason)).toEqual(['fake'])
+    const parsed = adminPersonView.parse({ ...person, log: [row('unsuspend'), row('hide')], reports: [report('scam'), report('fake')] })
+    expect([parsed.log.map((l) => l.action), parsed.reports.map((r) => r.reason)]).toEqual([['hide'], ['fake']])
   })
 })

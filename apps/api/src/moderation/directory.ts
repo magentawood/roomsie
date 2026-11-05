@@ -120,7 +120,7 @@ export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { st
     if (q) {
       const text = q.toLowerCase()
       const areaSlugs = (await listAreas(db)).filter((a) => [a.slug, a.name, ...a.aliases].some((name) => name.toLowerCase().includes(text))).map((a) => a.slug)
-      rows = await newestListings(db, limit, { areaSlugs, ownerIds: await accountsMatching(db, q) })
+      rows = await newestListings(db, limit, { match: { areaSlugs, ownerIds: await accountsMatching(db, q) } })
     } else if (filter === 'reported') {
       const ids = await reportedIds(db, 'listingId', limit)
       const byId = new Map((await listingsByIds(db, ids)).map((l) => [l.id, l]))

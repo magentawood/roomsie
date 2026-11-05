@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { adminHomeResponse, adminListingResponse, adminListingsResponse, adminPeopleResponse, adminPersonResponse, listingResponse } from '@roomsie/contract'
-import { chatTurns, goals, reports, users } from '../src/db/schema'
+import { chatTurns, goals, profiles, reports, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 // The first person owns the listings of the test app, and has no card.
@@ -123,9 +123,24 @@ describe('the admin directory', () => {
       expect((await t.call('member', method, url, method === 'POST' ? { action: 'hide' } : undefined)).statusCode).toBe(404)
     }
   })
+})
 
-  it('gives the card of people and listings on the home', async () => {
-    const card = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'people_listings')
-    expect(card).toEqual({ subject: 'people_listings', people: 2, newToday: 2, liveListings: 1, hidden: 1, suspended: 1 })
+describe('the card of people and listings on the home', () => {
+  // Its own app, so the counts come only from the rows of this test.
+  let h: TestApp<'lister' | 'moderator' | 'karan' | 'aman'>
+  beforeAll(async () => { h = await testApp(['lister', 'moderator', 'karan', 'aman']) })
+  afterAll(() => h.close())
+
+  it('counts the people with a card, the new ones of today, the live listings, and the hidden and the suspended', async () => {
+    const karan = await h.liveCard('karan', 'Karan Shah')
+    await h.liveCard('aman', 'Aman Gupta')
+    await h.liveListing()
+    // The test app's today is 2026-11-02, so this card is not new today.
+    await h.db.update(profiles).set({ createdAt: new Date('2026-11-01T10:00:00+05:30') }).where(eq(profiles.id, karan))
+    expect((await h.call('moderator', 'POST', `/v1/admin/people/${h.ids.karan}/actions`, { action: 'hide' })).statusCode).toBe(204)
+    expect((await h.call('moderator', 'POST', `/v1/admin/people/${h.ids.aman}/actions`, { action: 'suspend' })).statusCode).toBe(204)
+    const card = adminHomeResponse.parse((await h.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'people_listings')
+    // The suspend hides the card of Aman too.
+    expect(card).toEqual({ subject: 'people_listings', people: 2, newToday: 1, liveListings: 1, hidden: 2, suspended: 1 })
   })
 })

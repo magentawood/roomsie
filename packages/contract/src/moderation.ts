@@ -3,6 +3,7 @@ import { listingResponse } from './listings'
 import { callShare } from './models'
 import { cardResponse, visibilities } from './profiles'
 import { reportReasons, reportStatuses } from './reports'
+import { knownRows } from './shared'
 
 /** Dismiss brings the card or the listing back, hide keeps it hidden, and suspend also suspends the account (T-19). */
 export const reviewBody = z.strictObject({ action: z.enum(['dismiss', 'hide', 'suspend']) })
@@ -31,11 +32,8 @@ export const adminHomeCard = z.discriminatedUnion('subject', [
 ])
 export type AdminHomeCard = z.infer<typeof adminHomeCard>
 export const adminHomeResponse = z.object({ cards: z.array(adminHomeCard) })
-const subjects: string[] = adminHomeCard.options.map((card) => card.shape.subject.value)
 /** Drops a card of an unknown subject, so a tab with an older bundle shows the other cards. */
-export const adminHomeView = z.object({
-  cards: z.array(z.looseObject({ subject: z.string() })).transform((cards) => cards.filter((card) => subjects.includes(card.subject))).pipe(z.array(adminHomeCard)),
-})
+export const adminHomeView = z.object({ cards: knownRows(adminHomeCard, 'subject', adminHomeCard.options.map((card) => card.shape.subject.value)) })
 
 /** The actions of a moderator on a person and on a listing (T-63). Each goes in the moderation log. */
 export const personActions = ['hide', 'unhide', 'suspend'] as const
@@ -55,9 +53,6 @@ export type AdminPeopleQuery = z.input<typeof adminPeopleQuery>
 export type AdminListingsQuery = z.input<typeof adminListingsQuery>
 const logEntry = z.object({ id: z.uuid(), action: z.enum(moderationActions), by: z.string().nullable(), at: z.iso.datetime() })
 const subjectReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), status: z.enum(reportStatuses), createdAt: z.iso.datetime() })
-/** Drops a row whose field has a value that the web does not know, so a tab with an older bundle shows the other rows. */
-const knownRows = <T extends z.ZodType>(row: T, field: string, values: readonly string[]) =>
-  z.preprocess((rows) => (Array.isArray(rows) ? rows.filter((r: Record<string, unknown>) => values.includes(String(r?.[field]))) : rows), z.array(row))
 
 /** A person of the admin: never gender, religion or community (the spec of the admin panel). `name` is null with no card. */
 export const adminPersonRow = z.object({
@@ -73,9 +68,9 @@ export const adminListingRow = z.object({
 })
 export const adminListingsResponse = z.object({ listings: z.array(adminListingRow) })
 export const adminListingResponse = adminListingRow.extend({ listerUserId: z.uuid(), listing: listingResponse, reports: z.array(subjectReport), log: z.array(logEntry) })
-const views = { reports: knownRows(subjectReport, 'reason', reportReasons), log: knownRows(logEntry, 'action', moderationActions) }
-export const adminPersonView = adminPersonResponse.extend(views)
-export const adminListingView = adminListingResponse.extend(views)
+const knownLists = { reports: knownRows(subjectReport, 'reason', reportReasons), log: knownRows(logEntry, 'action', moderationActions) }
+export const adminPersonView = adminPersonResponse.extend(knownLists)
+export const adminListingView = adminListingResponse.extend(knownLists)
 export type AdminPersonRow = z.infer<typeof adminPersonRow>
 export type AdminListingRow = z.infer<typeof adminListingRow>
 export type AdminLogEntry = z.infer<typeof logEntry>

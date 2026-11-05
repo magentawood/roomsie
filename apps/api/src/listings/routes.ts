@@ -142,7 +142,11 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     // The check of removed_at above has no lock, so the write checks it again.
     const [saved] = await db.update(listings).set({ status, expiresAt, updatedAt: new Date() })
       .where(and(listingOfOwner(listing.id, req.user!.id), status === 'live' ? isNull(listings.removedAt) : undefined)).returning()
-    if (!saved) return reply.code(404).send({ error: 'not found' })
+    if (!saved) {
+      // A remove can land between the check and the write.
+      const now = await ownedListing(db, listing.id, req.user!.id)
+      return now?.removedAt ? reply.code(409).send({ error: 'a moderator removed this listing' }) : reply.code(404).send({ error: 'not found' })
+    }
     return listingView(saved, parts, storage, true)
   })
 

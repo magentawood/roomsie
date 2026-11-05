@@ -5,6 +5,7 @@ import { clientId, optionalText } from './shared'
 export const reportReasons = ['fake', 'broker_or_spam', 'harassment', 'discriminatory_text', 'under_18', 'contact_details', 'other'] as const
 export type ReportReason = (typeof reportReasons)[number]
 export const reportStatuses = ['open', 'actioned', 'dismissed'] as const
+export type ReportStatus = (typeof reportStatuses)[number]
 /** "Other" needs a detail (PD18). */
 export const needsDetail = (reason: ReportReason) => reason === 'other'
 export const reportDetailLimit = 500
