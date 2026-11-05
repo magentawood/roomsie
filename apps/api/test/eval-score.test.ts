@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mean, rangesOf } from '../eval/report'
-import { bandScoresOf, callStats, composerScoresOf, composersOfSearches, failureOf, flipsOf, groupOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
+import { bandScoresOf, callStats, composerScoresOf, composersOfPlainSearches, failureOf, flipsOf, groupOf, goNoGo, inTimeAt, mainScript, missesOf, namesOf, scoresOf, selectDeadline, selectThreshold, startCapitalsOf, zeroComposer, zeroCounts, type ComposerResult, type Counts, type TurnResult } from '../eval/score'
 import type { EvalSentence } from '../eval/set'
 
 const sentence = (id: string, language: EvalSentence['language'], text: string, expected: EvalSentence['expected'], more: Partial<EvalSentence> = {}): EvalSentence =>
@@ -169,14 +169,14 @@ describe('the scores of the composer (T-61)', () => {
   const turn = (id: string, composer: ComposerResult, repeat = 1): TurnResult => ({ ...turns[0]!, id, repeat, composer })
 
   it('scores the language of the judge and the script of the letters against the reply language that the composer got, and the reason of each failed check', () => {
-    const scores = composerScoresOf([...sentences, named], [
+    const scores = composerScoresOf(composersOfPlainSearches([...sentences, named], [
       turn('h01', reply('hi-Latn', 'Powai mein flat, noted. Aap kab shift karna chahte ho?', { language: 'hindi', script: 'latin' })),
       // Marathi in Latin letters, and a judge that hears Hindi.
       turn('m10', reply('mr', 'Powai madhe flat. Tumhi kadhi shift karnar?', { language: 'hindi', script: 'latin' })),
       // English for a Hinglish reply, with a number that is not in the plan.
       turn('h25', reply('hi-Latn', 'A flat in Powai for 30k. When do you move?', { language: 'english', script: 'latin' })),
       turn('e01', reply('en', null, null, 10_000)),
-    ])
+    ]))
     expect(scores.all).toEqual({ ...zeroComposer(), calls: 4, noAnswer: 1, judged: 3, languageRight: 1, scriptRight: 2, english: 1, failed: 1, new_number: 1 })
     expect(scores.marathi).toMatchObject({ calls: 1, languageRight: 0, scriptRight: 0 })
     expect(scores.english).toMatchObject({ calls: 1, noAnswer: 1 })
@@ -185,8 +185,8 @@ describe('the scores of the composer (T-61)', () => {
   it('scores only the composer calls of a search: a sentence of the other bands can reach the composer when its band is not sure', () => {
     const general = sentence('e16', 'english', 'how much deposit do owners usually ask for in Mumbai?', {}, { band: 'general' })
     const both = [turn('h25', reply('hi-Latn', 'Powai mein flat. Kab shift karna hai?', null)), turn('e16', reply('en', 'Noted. What is your budget?', null))]
-    expect(composerScoresOf([named, general], both).all.calls).toBe(1)
-    expect(composersOfSearches([named, general], both).map(({ composer }) => composer.text)).toEqual(['Powai mein flat. Kab shift karna hai?'])
+    expect(composerScoresOf(composersOfPlainSearches([named, general], both)).all.calls).toBe(1)
+    expect(composersOfPlainSearches([named, general], both).map(({ composer }) => composer.text)).toEqual(['Powai mein flat. Kab shift karna hai?'])
   })
 
   it('counts each reply with the name of the friend: stopped by the name rules, or through by lower case or Devanagari', () => {

@@ -1,7 +1,7 @@
 import { checkFailures } from '../src/assistant/handlers/composer/check'
 import { vendorOf } from '../src/models/models'
 import {
-  bandScoresOf, callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groupOf, groups, inTimeAt, missesOf, nameIn, namesOf, registerRight,
+  bandScoresOf, callStats, composerScoresOf, composersOfPlainSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groupOf, groups, inTimeAt, missesOf, nameIn, namesOf, registerRight,
   scoresOf, selectDeadline, selectThreshold, sentencesById, startCapitalsOf, tieCentre, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
 } from './score'
 import { isPlainSearch, type EvalSentence } from './set'
@@ -64,9 +64,9 @@ function sweepLines(lines: { threshold: number; cells: string }[], marks: { live
 }
 
 /** The texts for a person to read: a wrong language or script, a failed check, or the name of the friend. */
-function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
+function repliesToRead(searches: ReturnType<typeof composersOfPlainSearches>) {
   const lines = new Map<string, number>()
-  for (const { sentence, composer: c } of composersOfSearches(sentences, turns)) {
+  for (const { sentence, composer: c } of searches) {
     if (!c.text) continue
     const { languageRight, scriptRight } = registerRight(c.text, c)
     const failure = failureOf(c)
@@ -80,13 +80,14 @@ function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
 }
 
 function composerReport(sentences: EvalSentence[], turns: TurnResult[], isDeepSeek: boolean) {
-  const composers = composersOfSearches(sentences, turns).map(({ composer }) => composer)
-  const scores = composerScoresOf(sentences, turns)
+  const searches = composersOfPlainSearches(sentences, turns)
+  const composers = searches.map(({ composer }) => composer)
+  const scores = composerScoresOf(searches)
   // The run file keeps the times with their decimals.
   const time = callStats(composers.map((c) => ({ ms: Math.round(c.ms), outcome: c.text === null ? 'failed' : 'ok' })))
   const names = namesOf(sentences, turns)
   const capitals = startCapitalsOf(composers)
-  const readLines = repliesToRead(sentences, turns)
+  const readLines = repliesToRead(searches)
   const rule = isDeepSeek
     ? `The rule of T-61 selects **${selectDeadline(composers) ?? '—'} ms**: the smallest step where 9 of 10 calls answer in time, at most ${deadlineSteps.at(-1)} ms.`
     : 'The rule of T-61 uses only the composer calls of DeepSeek.'
@@ -124,17 +125,15 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
     ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to ${tieCentre}. Of two at the same distance, the rule takes the higher.`
     : 'Gemini gives no token probabilities, so its rows do not change, and the rule of T-61 uses only the run of DeepSeek.'
   const byId = sentencesById(sentences)
-  // The sentences of the other bands and with community count only for the router (the spec of T-61).
-  const counts = (c: CallResult) => c.role === 'router' || isPlainSearch(byId.get(c.id)!)
-  const callsOf = (group: Group, role?: CallResult['role']) =>
-    callStats(calls.filter((c) => counts(c) && (group === 'all' || groupOf(byId.get(c.id)!) === group) && (!role || c.role === role)))
+  const callsOf = (group: Group, role?: CallResult['role']) => callStats(calls.filter((c) =>
+    (c.role === 'router' || isPlainSearch(byId.get(c.id)!)) && (group === 'all' || groupOf(byId.get(c.id)!) === group) && (!role || c.role === role)))
   const callRows = [
     `| Output not valid / failed, of the attempts | ${groups.map((g) => { const c = callsOf(g); return `${c.invalid} / ${c.failed} of ${c.attempts}` }).join(' | ')} |`,
     ...([['Extractor', 'extractor'], ['Router', 'router'], ['Composer', 'composer']] as const).map(([name, role]) => `| ${name} time of one attempt, median / 95th percentile | ${groups.map((g) => { const c = callsOf(g, role); return `${c.medianMs ?? '—'} / ${c.p95Ms ?? '—'} ms` }).join(' | ')} |`),
   ]
   return [
     `## ${model}`, '',
-    `At the threshold ${extractorLive} of the extractor and ${routerLive} of the router, ${repeats} repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of all the attempts. Check 6 of PD11: **${goNoGo(scores.all)}**.`, '',
+    `At the threshold ${extractorLive} of the extractor and ${routerLive} of the router, ${repeats} repeats of each sentence. A share is of all the repeats, a count of turns is the mean of one repeat, and a count of attempts is of the router on each sentence, and of the extractor and the composer on the searches with no flag. Check 6 of PD11: **${goNoGo(scores.all)}**.`, '',
     ...header,
     ...rows.map(([name, cell]) => `| ${name} | ${groups.map((g) => cell(scores[g], repeats)).join(' | ')} |`),
     ...bandScoresOf(sentences, turns).map(({ band, scores: of }) => `| · ${band} right | ${groups.map((g) => share(of[g].bandRight, of[g].otherBands)).join(' | ')} |`),

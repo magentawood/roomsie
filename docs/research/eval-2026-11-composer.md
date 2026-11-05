@@ -39,7 +39,7 @@
 | Extractor time of one attempt, median and 95th percentile | 2.5 s, 7.5 s | 2.6 s, 7.3 s | 1.3 s, 1.7 s | 1.4 s, 1.8 s |
 
 - Each band has its own row in the report, also in Hindi in Devanagari. Each band is right in each language, on both models.
-- The extractor times of these two reports also count the attempts of the sentences of the other bands. Since the review of #229, a report counts the extractor and composer attempts only of the searches, as the spec of T-61 asks.
+- The extractor times of these two reports also count the attempts of the 22 sentences of the other bands or with `community`. Since the review of #229, a report counts the extractor and composer attempts only of the searches with no flag, as the spec of T-61 asks.
 - **The failure of DeepSeek.** All 13 turns with no answer of the router are Marathi sentences at the end of the run, m17 to m25. The failed attempts took from 0.1 s to 10 s, so they were errors of the vendor and timeouts. In the run of Gemini that came next, the judge failed too, so only 36 Gemini texts have a judged language in the second run.
 
 ---

@@ -21,7 +21,7 @@ const sentence = z.strictObject({
   names: z.array(z.string().refine((name) => name === name.toLowerCase(), 'a name of the set is in lower case')).default([]),
 })
 export type EvalSentence = z.infer<typeof sentence>
-/** A search with no flag. Only the router scores the other sentences (the spec of T-61). */
+/** Only the router scores the other sentences (the spec of T-61). */
 export const isPlainSearch = (s: Pick<EvalSentence, 'band' | 'community'>) => s.band === 'core' && !s.community
 
 /** The eval sentences of M-03 and T-61, with the reference date of their move dates. */

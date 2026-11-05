@@ -171,12 +171,15 @@ export const failureOf = (call: ComposerResult) => (call.text === null ? null : 
  * A part of a word matches, because Marathi and Hindi join an ending to a name, as "प्रियासोबत".
  */
 export const nameIn = (text: string, names: string[]) => names.find((name) => text.toLowerCase().includes(name))
-/** The language of the router for each reply language: the reverse of `languageOf` in the lines of the assistant. */
-const judgeLanguages = { en: 'english', 'hi-Latn': 'hindi', hi: 'hindi', 'mr-Latn': 'marathi', mr: 'marathi' } as const satisfies Record<ReplyLanguage, NonNullable<TurnLabel['register']>['language']>
+/** The register of the router for each reply language: the reverse of `languageOf` in the lines of the assistant. */
+const judgeRegisters = {
+  en: { language: 'english', script: 'latin' }, 'hi-Latn': { language: 'hindi', script: 'latin' }, hi: { language: 'hindi', script: 'devanagari' },
+  'mr-Latn': { language: 'marathi', script: 'latin' }, mr: { language: 'marathi', script: 'devanagari' },
+} as const satisfies Record<ReplyLanguage, NonNullable<TurnLabel['register']>>
 /** The language of the judge and the script of the letters, against the reply language that the composer got. */
 export const registerRight = (text: string, { judgeRegister, language }: ComposerResult) => ({
-  languageRight: judgeRegister?.language === judgeLanguages[language],
-  scriptRight: mainScript(text) === (language === 'hi' || language === 'mr' ? 'devanagari' : 'latin'),
+  languageRight: judgeRegister?.language === judgeRegisters[language].language,
+  scriptRight: mainScript(text) === judgeRegisters[language].script,
 })
 
 export const zeroComposer = () => ({
@@ -185,13 +188,10 @@ export const zeroComposer = () => ({
 })
 export type ComposerCounts = ReturnType<typeof zeroComposer>
 
-/**
- * The scores of the composer against the reply language that it got: each handler gets its own score (PD7a).
- * Only a search counts: a sentence of the other bands reaches the composer only when its band is not sure (the spec of T-61).
- */
-export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
+/** The scores of the composer against the reply language that it got: each handler gets its own score (PD7a). */
+export function composerScoresOf(searches: ReturnType<typeof composersOfPlainSearches>) {
   const scores = Object.fromEntries(groups.map((group) => [group, zeroComposer()])) as Record<Group, ComposerCounts>
-  for (const { sentence, composer } of composersOfSearches(sentences, turns)) {
+  for (const { sentence, composer } of searches) {
     const { text, judgeRegister, language } = composer
     const failure = failureOf(composer)
     for (const group of [scores.all, scores[groupOf(sentence)]]) {
@@ -243,14 +243,14 @@ export function namesOf(sentences: EvalSentence[], turns: TurnResult[]) {
   })
 }
 
-/** The scores of the turns of each band that is not core: each band gets its own score (testing.md). */
+/** The scores of the turns of each band that is not core: each band gets its own score (the spec of T-61). */
 export function bandScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   return scopeBands.filter((band) => band !== 'core').map((band) => ({ band, scores: scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band)) }))
 }
 
-/** Each composer call of a search, with its sentence: only these count in the scores of the composer and its deadline. */
-export function composersOfSearches(sentences: EvalSentence[], turns: TurnResult[]) {
+/** Each composer call of a search, with its sentence. A sentence of the other bands reaches the composer only when its band is not sure (T-61). */
+export function composersOfPlainSearches(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   return turns.flatMap(({ id, composer }) => {
     const sentence = byId.get(id)!
