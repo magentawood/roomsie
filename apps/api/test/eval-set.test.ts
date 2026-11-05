@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { formA, formASlots, scopeBands, slotOf } from '@roomsie/contract'
 import { isDevanagari } from '../src/assistant/words'
 import { areaSlugs } from '../src/db/seed-areas'
-import { evalSet, isSearch, type EvalSentence } from '../eval/set'
+import { evalSet, isPlainSearch, type EvalSentence } from '../eval/set'
 
 const { sentences } = evalSet
 
@@ -14,7 +14,7 @@ const scriptOf = (text: string) => (isDevanagari(text) ? (/[A-Za-z]/.test(text) 
 
 describe('the eval sentences (M-03)', () => {
   it('has 56 searches with no flag, with one id each: 17 English, 20 Hinglish and 19 Marathi, Marathi in both scripts, some Hinglish in Devanagari, and 10 vague on purpose', () => {
-    const searches = sentences.filter(isSearch)
+    const searches = sentences.filter(isPlainSearch)
     const of = (language: string) => searches.filter((s) => s.language === language)
     expect(new Set(sentences.map((s) => s.id)).size).toBe(sentences.length)
     expect([of('english').length, of('hinglish').length, of('marathi').length]).toEqual([17, 20, 19])
@@ -36,7 +36,7 @@ describe('the eval sentences (M-03)', () => {
   })
 
   it('labels no slot of Form A for a sentence that only the router scores (T-61)', () => {
-    for (const { id, expected } of sentences.filter((s) => !isSearch(s))) expect(expected, id).toEqual({})
+    for (const { id, expected } of sentences.filter((s) => !isPlainSearch(s))) expect(expected, id).toEqual({})
   })
 
   it('has six searches that name a friend: a capital and a lower-case name in English, a lower-case and a Devanagari name in Hinglish and Marathi (T-61)', () => {
@@ -48,7 +48,7 @@ describe('the eval sentences (M-03)', () => {
       return isDevanagari(asTyped) ? 'devanagari' : /^\p{Lu}/u.test(asTyped) ? 'capital' : 'lower'
     }
     const named = sentences.filter((s) => s.names.length > 0)
-    expect(named.every(isSearch)).toBe(true)
+    expect(named.every(isPlainSearch)).toBe(true)
     const forms = (language: string) => named.filter((s) => s.language === language).map(typed).toSorted()
     expect([forms('english'), forms('hinglish'), forms('marathi')]).toEqual([['capital', 'lower'], ['devanagari', 'lower'], ['devanagari', 'lower']])
   })

@@ -4,7 +4,7 @@ import {
   bandScoresOf, callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groupOf, groups, inTimeAt, missesOf, nameIn, namesOf, registerRight,
   scoresOf, selectDeadline, selectThreshold, sentencesById, startCapitalsOf, tieCentre, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
 } from './score'
-import { isSearch, type EvalSentence } from './set'
+import type { EvalSentence } from './set'
 
 /** The scores of one model at each threshold of the sweep. `extractorLive` and `routerLive` are the thresholds of the settings. */
 export type ModelScores = { model: string; extractorLive: number; routerLive: number; sweep: { threshold: number; turns: TurnResult[] }[]; calls: CallResult[]; repeats: number }
@@ -65,24 +65,21 @@ function sweepLines(lines: { threshold: number; cells: string }[], marks: { live
 
 /** The texts for a person to read: a wrong language or script, a failed check, or the name of the friend. */
 function repliesToRead(sentences: EvalSentence[], turns: TurnResult[]) {
-  const byId = sentencesById(sentences)
   const lines = new Map<string, number>()
-  for (const turn of turns) {
-    const c = turn.composer
-    const sentence = byId.get(turn.id)!
-    if (!c?.text || !isSearch(sentence)) continue
+  for (const { sentence, composer: c } of composersOfSearches(sentences, turns)) {
+    if (!c.text) continue
     const { languageRight, scriptRight } = registerRight(c.text, c)
     const failure = failureOf(c)
     const name = nameIn(c.text, sentence.names)
     if (languageRight && scriptRight && !failure && !name) continue
     const judge = c.judgeRegister ? `the router hears ${c.judgeRegister.language}, ${c.judgeRegister.script} letters` : 'no answer of the judge'
-    counted(lines, `${turn.id} · ${c.language} · ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: "${c.text.replaceAll('\n', ' ')}"`)
+    counted(lines, `${sentence.id} · ${c.language} · ${judge}${failure ? ` · check: ${failure}` : ''}${name ? ' · the name' : ''}: "${c.text.replaceAll('\n', ' ')}"`)
   }
   return [...lines].map(([line, n]) => `${line} (${n})`).toSorted()
 }
 
 function composerReport(sentences: EvalSentence[], turns: TurnResult[], ruled: boolean) {
-  const composers = composersOfSearches(sentences, turns)
+  const composers = composersOfSearches(sentences, turns).map(({ composer }) => composer)
   const scores = composerScoresOf(sentences, turns)
   // The run file keeps the times with their decimals.
   const time = callStats(composers.map((c) => ({ ms: Math.round(c.ms), outcome: c.text === null ? 'failed' : 'ok' })))
@@ -119,9 +116,9 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
   const routerTurns = at(routerLive)
   const turns = at(extractorLive).map((turn, i) => ({ ...turn, label: routerTurns[i]!.label }))
   const scores = scoresOf(sentences, turns)
-  const routerRows = sweep.map(({ threshold, turns: thresholdTurns }) => ({ threshold, counts: scoresOf(sentences, thresholdTurns).all }))
+  const sweepCounts = sweep.map(({ threshold, turns: thresholdTurns }) => ({ threshold, counts: scoresOf(sentences, thresholdTurns).all }))
   const ruled = vendorOf(model) === 'deepseek'
-  const routerSelected = ruled ? selectThreshold(routerRows) : null
+  const routerSelected = ruled ? selectThreshold(sweepCounts) : null
   const routerRule = ruled
     ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to ${tieCentre}. Of two at the same distance, the rule takes the higher.`
     : 'Gemini gives no token probabilities, so its rows do not change, and the rule of T-61 uses only the run of DeepSeek.'
@@ -140,14 +137,11 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
     ...callRows, '',
     '### The threshold sweep', '', 'The recorded answers again, through the extractor at each threshold, with no new call.', '',
     `| Threshold | ${sweepRows.map(([name]) => name).join(' | ')} | PD11 |`, `|---|${sweepRows.map(() => '---|').join('')}---|`,
-    ...sweepLines(sweep.map(({ threshold, turns: thresholdTurns }) => {
-      const c = scoresOf(sentences, thresholdTurns).all
-      return { threshold, cells: `${sweepRows.map(([, cell]) => cell(c, repeats)).join(' | ')} | ${goNoGo(c)}` }
-    }), { live: extractorLive }), '',
+    ...sweepLines(sweepCounts.map(({ threshold, counts: c }) => ({ threshold, cells: `${sweepRows.map(([, cell]) => cell(c, repeats)).join(' | ')} | ${goNoGo(c)}` })), { live: extractorLive }), '',
     '### The threshold sweep of the router', '',
     `The recorded answers of the router again, at each threshold. ${routerRule}`, '',
     `| Threshold | ${routerSweepRows.map(([name]) => name).join(' | ')} |`, `|---|${routerSweepRows.map(() => '---|').join('')}`,
-    ...sweepLines(routerRows.map(({ threshold, counts }) => ({ threshold, cells: routerSweepRows.map(([, cell]) => cell(counts, repeats)).join(' | ') })), { live: routerLive, selected: routerSelected }), '',
+    ...sweepLines(sweepCounts.map(({ threshold, counts }) => ({ threshold, cells: routerSweepRows.map(([, cell]) => cell(counts, repeats)).join(' | ') })), { live: routerLive, selected: routerSelected }), '',
     ...composerReport(sentences, turns, ruled),
     '### The misses', '',
     ...missesOf(sentences, turns).map((miss) => `- ${miss}`), '',

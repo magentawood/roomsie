@@ -186,7 +186,7 @@ describe('the scores of the composer (T-61)', () => {
     const general = sentence('e16', 'english', 'how much deposit do owners usually ask for in Mumbai?', {}, { band: 'general' })
     const both = [turn('h25', reply('hi-Latn', 'Powai mein flat. Kab shift karna hai?', null)), turn('e16', reply('en', 'Noted. What is your budget?', null))]
     expect(composerScoresOf([named, general], both).all.calls).toBe(1)
-    expect(composersOfSearches([named, general], both).map((c) => c.text)).toEqual(['Powai mein flat. Kab shift karna hai?'])
+    expect(composersOfSearches([named, general], both).map(({ composer }) => composer.text)).toEqual(['Powai mein flat. Kab shift karna hai?'])
   })
 
   it('counts each reply with the name of the friend: stopped by the name rules, or through by lower case or Devanagari', () => {

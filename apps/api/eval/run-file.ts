@@ -28,13 +28,10 @@ export type RunTurn = ModelRun['turns'][number]
 export function mergedRuns(files: ModelRun[][]) {
   const merged = new Map<string, ModelRun>()
   for (const run of files.flat()) {
-    const seen = merged.get(run.model)
-    if (!seen) merged.set(run.model, { ...run, turns: [...run.turns], calls: [...run.calls] })
-    else {
-      const offset = Math.max(...seen.turns.map((t) => t.repeat))
-      seen.turns.push(...run.turns.map((t) => ({ ...t, repeat: t.repeat + offset })))
-      seen.calls.push(...run.calls)
-    }
+    const seen = merged.get(run.model) ?? merged.set(run.model, { ...run, turns: [], calls: [] }).get(run.model)!
+    const offset = Math.max(0, ...seen.turns.map((t) => t.repeat))
+    seen.turns.push(...run.turns.map((t) => ({ ...t, repeat: t.repeat + offset })))
+    seen.calls.push(...run.calls)
   }
   return [...merged.values()]
 }

@@ -61,7 +61,6 @@ function onlyModel(model: string) {
   return models
 }
 
-/** The model module with each scored answer kept by its role, for the run file. */
 const recorder = (models: Models, answers: Partial<Record<ModelRole, Recorded>>): Models => ({
   ...models,
   scored: async (call) => {

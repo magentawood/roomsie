@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { modelRoles, scopeBands, type AnalyticsEvent, type ComposerInput, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
 import { checkFailure, checkFailures, nameFailure, newStartCapitals, type CheckContext, type CheckFailure } from '../src/assistant/handlers/composer/check'
 import { isDevanagari } from '../src/assistant/words'
-import { isSearch, labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
+import { isPlainSearch, labelledSlots, languages, type EvalLanguage, type EvalSentence } from './set'
 
 /** The composer call of a turn: its input, its text (null: no answer), the time of all its attempts, and the register of the text by the judge. */
 export type ComposerResult = Pick<ComposerInput, 'language' | 'draft' | 'message'> & { text: string | null; ms: number; judgeRegister: TurnLabel['register'] }
@@ -42,7 +42,7 @@ export type Counts = typeof zeroCounts
  * Only a search gets the scores of the extractor. A false alarm is a sentence of the core band in a different band (the spec of T-61).
  */
 function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: TurnResult): Counts {
-  const search = isSearch(sentence)
+  const search = isPlainSearch(sentence)
   const labels = search && extractorAnswered ? labelledSlots(sentence.expected) : {}
   const [sure, vague] = [Object.entries(labels).filter(([, v]) => v !== 'unclear'), Object.keys(labels).filter((slot) => labels[slot] === 'unclear')]
   const extra = search ? Object.entries(values).filter(([slot]) => !(slot in labels)) : []
@@ -113,7 +113,7 @@ export function flipsOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   const answers = new Map<string, Set<string>>()
   for (const { id, extractorAnswered, values, label } of turns) {
-    const search = isSearch(byId.get(id)!)
+    const search = isPlainSearch(byId.get(id)!)
     if ((search && !extractorAnswered) || label.routerBand === null) continue
     const answer = JSON.stringify([search ? values : null, label.register, label.band])
     answers.set(id, (answers.get(id) ?? new Set()).add(answer))
@@ -135,7 +135,7 @@ export function missesOf(sentences: EvalSentence[], turns: TurnResult[]) {
     const sentence = byId.get(id)!
     if (label.routerBand === null) counted(misses, `${id} · no answer of the router`)
     else for (const key of ['band', 'danger', 'community'] as const) if (label[key] !== sentence[key]) counted(misses, `${id} · ${key}: label ${shown(sentence[key])}, got ${shown(label[key])}`)
-    if (!isSearch(sentence)) continue
+    if (!isPlainSearch(sentence)) continue
     if (!extractorAnswered) {
       counted(misses, `${id} · no answer of the extractor`)
       continue
@@ -171,13 +171,12 @@ export const failureOf = (call: ComposerResult) => (call.text === null ? null : 
  * A part of a word matches, because Marathi and Hindi join an ending to a name, as "प्रियासोबत".
  */
 export const nameIn = (text: string, names: string[]) => names.find((name) => text.toLowerCase().includes(name))
-/** The language of the router for each reply language: the reverse of `languageOf` in the lines of the assistant. Also the reply languages in Devanagari. */
+/** The language of the router for each reply language: the reverse of `languageOf` in the lines of the assistant. */
 const judgeLanguages = { en: 'english', 'hi-Latn': 'hindi', hi: 'hindi', 'mr-Latn': 'marathi', mr: 'marathi' } as const satisfies Record<ReplyLanguage, string>
-const devanagariLanguages: ReplyLanguage[] = ['hi', 'mr']
 /** The language of the judge and the script of the letters, against the reply language that the composer got. */
 export const registerRight = (text: string, { judgeRegister, language }: ComposerResult) => ({
   languageRight: judgeRegister?.language === judgeLanguages[language],
-  scriptRight: mainScript(text) === (devanagariLanguages.includes(language) ? 'devanagari' : 'latin'),
+  scriptRight: mainScript(text) === (language === 'hi' || language === 'mr' ? 'devanagari' : 'latin'),
 })
 
 export const zeroComposer = () => ({
@@ -191,11 +190,8 @@ export type ComposerCounts = ReturnType<typeof zeroComposer>
  * Only a search counts: a sentence of the other bands reaches the composer only when its band is not sure (the spec of T-61).
  */
 export function composerScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
-  const byId = sentencesById(sentences)
   const scores = Object.fromEntries(groups.map((group) => [group, zeroComposer()])) as Record<Group, ComposerCounts>
-  for (const { id, composer } of turns) {
-    const sentence = byId.get(id)!
-    if (!composer || !isSearch(sentence)) continue
+  for (const { sentence, composer } of composersOfSearches(sentences, turns)) {
     const { text, judgeRegister, language } = composer
     const failure = failureOf(composer)
     for (const group of [scores.all, scores[groupOf(sentence)]]) {
@@ -253,9 +249,13 @@ export function bandScoresOf(sentences: EvalSentence[], turns: TurnResult[]) {
   return scopeBands.filter((band) => band !== 'core').map((band) => ({ band, scores: scoresOf(sentences, turns.filter((t) => byId.get(t.id)!.band === band)) }))
 }
 
+/** Each composer call of a search, with its sentence: only these count in the scores of the composer and its deadline. */
 export function composersOfSearches(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
-  return turns.flatMap(({ id, composer }) => (composer && isSearch(byId.get(id)!) ? [composer] : []))
+  return turns.flatMap(({ id, composer }) => {
+    const sentence = byId.get(id)!
+    return composer && isPlainSearch(sentence) ? [{ sentence, composer }] : []
+  })
 }
 
 /** For a person to read: a name that the composer makes up passes at the start of a sentence (the first limit of the name check). */

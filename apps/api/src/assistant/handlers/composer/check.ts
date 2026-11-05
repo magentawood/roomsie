@@ -26,7 +26,6 @@ export function newStartCapitals(text: string, { draft, message }: Pick<Composer
 
 export const checkFailures = ['too_long', 'no_question', 'contact', 'new_number', 'their_name', 'new_capital'] as const
 export type CheckFailure = (typeof checkFailures)[number]
-/** What the check reads besides the text: the plan, and the words of the person. */
 export type CheckContext = Pick<ComposerInput, 'draft' | 'message' | 'turns' | 'formB'>
 
 /**
