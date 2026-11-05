@@ -2,7 +2,7 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, File04, Flag01, ShieldTick } from '@untitledui/icons'
+import { ArrowRight, CpuChip01, File04, Flag01, ShieldTick } from '@untitledui/icons'
 import { noSiteDetails, type AdminHomeCard } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -15,6 +15,8 @@ const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
 const siteDetailCount = Object.keys(noSiteDetails).length
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`
+const rupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: amount < 10 ? 2 : 0 })}`
+const percent = (share: number) => `${(share * 100).toLocaleString('en-IN', { maximumFractionDigits: 1 })}%`
 
 function greeting(now: Date) {
   const hour = Number(hourOf.format(now))
@@ -67,6 +69,17 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
         <Card icon={ShieldTick} title="ID checks" href="/admin/id-checks" footer={card.oldestCheckAt ? `Oldest check: ${ago(card.oldestCheckAt)}` : 'No check waits'}>
           <Metric value={card.waiting} label="Waiting for review" badges={card.late > 0 && <Badge tone="error" dot={false}>{`${card.late} late`}</Badge>} />
           <Metric value={card.verifiedThisWeek} label="Verified this week" />
+        </Card>
+      )
+    case 'ai_pipeline':
+      return (
+        <Card icon={CpuChip01} title="AI pipeline" href="/admin/ai">
+          <Metric value={rupees(card.spendToday)} label={`Spend today, of ${rupees(card.dailyAmount)}`}
+            badges={card.geminiOnly && <Badge tone="warning" dot={false}>Gemini switch on</Badge>} />
+          <progress value={card.spendToday} max={card.dailyAmount} aria-label="Spend today"
+            className="h-2 w-full appearance-none overflow-hidden rounded-full bg-secondary [&::-moz-progress-bar]:bg-brand-solid [&::-webkit-progress-bar]:bg-secondary [&::-webkit-progress-value]:bg-brand-solid" />
+          {card.failedShare !== null && <Metric value={percent(card.failedShare)} label="Calls failed today" />}
+          {card.geminiShare !== null && <Metric value={percent(card.geminiShare)} label="Sent to Gemini today" />}
         </Card>
       )
     case 'site_content':

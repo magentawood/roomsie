@@ -36,5 +36,6 @@ export const aiOverviewResponse = z.object({
 })
 export type AiOverviewResponse = z.infer<typeof aiOverviewResponse>
 export const modelSwitchBody = z.strictObject({ geminiOnly: z.boolean() })
+export type ModelSwitchBody = z.infer<typeof modelSwitchBody>
 export const modelSwitchLogResponse = z.object({ flips: z.array(z.object({ geminiOnly: z.boolean(), at: z.iso.datetime(), by: z.string().nullable() })) })
 
