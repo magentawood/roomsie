@@ -100,10 +100,11 @@ export async function testApp<U extends string>(users: readonly [U, ...U[]], sto
   // Each user signs in with a verified email, as Google gives it (T-55).
   for (const user of users) tokens[user] = await idToken(`uid-${user}`, { claims: { email: `${user}@example.com`, email_verified: true } })
   const app = buildServer({ webOrigin: 'http://localhost:3000', db: testDb.db, firebaseProjectId: projectId, firebaseKeys, storage, moderation: testModeration(settings), messaging: fakes.messaging, mailer: fakes.mailer, idStore: idFakes.idStore, analyticsDb, models: modelSettings.parse(settings), assistant: assistantSettings.parse(settings), limits: limitSettings.parse({ ...noLimits, ...settings }), spend: spendSettings.parse(settings), today: () => '2026-11-02' })
-  // The alerts and the observer run after the reply, so a call also waits for them.
+  // The alerts, the observer and the traces run after the reply, so a call also waits for them. The observer saves traces too.
   const call = async (who: U | null, method: Method, url: string, payload?: object, token?: string) => {
     const res = await app.inject({ method, url, payload, headers: who ? { authorization: `Bearer ${token ?? tokens[who]}` } : {} })
     await Promise.all([app.alerts.settled(), app.observerQueue.settled()])
+    await app.traces.settled()
     return res
   }
   const ids = {} as Record<U, string>
