@@ -2,7 +2,7 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminHomeView, adminInvitesResponse, aiOverviewResponse, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
+  adminHomeView, adminInvitesResponse, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueResponse, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
   type FormA, type SavedKind,
 } from '@roomsie/contract'
@@ -68,7 +68,7 @@ export function useAdminHome() {
 
 export function useAiOverview() {
   const user = useUser()
-  return useQuery({ queryKey: queryKeys.aiOverview, queryFn: () => api(user, '/v1/admin/ai', aiOverviewResponse) })
+  return useQuery({ queryKey: queryKeys.aiOverview, queryFn: () => api(user, '/v1/admin/ai', aiOverviewView) })
 }
 
 export function useSwitchLog() {

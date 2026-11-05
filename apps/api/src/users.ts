@@ -43,4 +43,3 @@ export async function emailsOf(db: Db, userIds: string[]) {
   const rows = await db.select({ id: users.id, email: users.email }).from(users).where(inArray(users.id, userIds))
   return new Map(rows.map((r) => [r.id, r.email]))
 }
-

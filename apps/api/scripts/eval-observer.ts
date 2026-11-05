@@ -19,7 +19,7 @@ const { log } = Fastify({ logger: { level: 'warn' } })
 const calls: Extract<AnalyticsEvent, { name: 'model_called' }>[] = []
 const analytics = { track: (_: unknown, event: AnalyticsEvent) => { if (event.name === 'model_called') calls.push(event) } }
 // The eval records no spend: it is not real traffic.
-const deps = { req: scriptRequest({ analytics, spend: { record: () => {} } }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
+const deps = { req: scriptRequest({ analytics, spend: { record: () => {} }, geminiOnly: async () => false }, log), db: testDb.db, models, settings: assistantSettings.parse(process.env) }
 
 type Sentence = { id: string; text: string; expected?: string[] }
 async function run(sentences: Sentence[]) {

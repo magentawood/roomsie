@@ -81,7 +81,7 @@ describe('the admin home', () => {
 
   it('gives the AI pipeline: the spend against the daily amount, and no shares with no analytics database', async () => {
     const ai = (await home('moderator')).find((c) => c.subject === 'ai_pipeline')
-    expect(ai).toEqual({ subject: 'ai_pipeline', spendToday: 0, dailyAmount: 500, failedShare: null, geminiShare: null, geminiOnly: false })
+    expect(ai).toEqual({ subject: 'ai_pipeline', spendToday: 0, dailyAmount: 500, failedShare: null, fallbackShare: null, geminiOnly: false })
   })
 
   it('tells when the gate is invite-only, and not after its opening time', async () => {

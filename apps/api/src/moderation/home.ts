@@ -4,7 +4,8 @@ import { feedbackOfWeek } from '../feedback/read'
 import { currentGate, inviteCount } from '../invites/gate'
 import { reportCounts } from '../reports/read'
 import { latestDetails, quoteCount } from '../site/read'
-import { aiCard, type AiSources } from '../models/overview'
+import type { FastifyBaseLogger } from 'fastify'
+import { aiCard, type CardSources } from '../models/overview'
 import { hoursBefore, weekBefore } from '../time'
 import { idCheckCounts } from '../verification/read'
 import type { Moderation } from './settings'
@@ -33,12 +34,12 @@ async function siteContentCard(db: Db): Promise<AdminHomeCard> {
 }
 
 /** The scorecards of the subjects that the person can open (T-62), in the order of the designs. */
-export async function homeCards(sources: Pick<AiSources, 'db' | 'analyticsDb' | 'spend' | 'today'> & { moderation: Moderation }, { moderator, reviewer }: { moderator: boolean; reviewer: boolean }) {
+export async function homeCards(sources: CardSources & { moderation: Moderation }, { moderator, reviewer }: { moderator: boolean; reviewer: boolean }, log: FastifyBaseLogger) {
   const { db, moderation } = sources
   const now = new Date()
   return Promise.all([
     ...(moderator ? [moderationCard(db, moderation, now)] : []),
     ...(reviewer ? [idChecksCard(db, moderation, now)] : []),
-    ...(moderator ? [aiCard(sources), siteContentCard(db)] : []),
+    ...(moderator ? [aiCard(sources, log), siteContentCard(db)] : []),
   ])
 }

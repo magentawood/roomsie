@@ -52,9 +52,9 @@ Today the admin is six narrow pages with a row of buttons. Nobody on the team ca
 | The moderation module of the API | yes: search, detail and actions for people and listings | the route test of the admin |
 | The model wrapper | yes: it saves a trace for each call and reads the switch | the test of the model wrapper |
 | A new traces module | new: save, mask, read, log the views, delete after 30 days | its route test |
-| A new admin settings module | new: the Gemini switch and its log | its route test |
+| The models module | yes: the Gemini switch and its log | the route test of the AI pipeline |
 | The analytics module | yes: the reads of the funnel | the analytics test |
-| The schema | yes: the traces, the trace views and the settings | the schema test |
+| The schema | yes: the traces, the trace views and the switch | the route tests |
 
 **Model test:** the route test of the admin, which signs in a moderator and a person with no role, and checks each route for both.
 

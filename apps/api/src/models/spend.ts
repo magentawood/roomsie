@@ -4,6 +4,7 @@ import type { ModelUsage } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
 import type { Db } from '../db/client'
 import { modelSpend } from '../db/schema'
+import type { TeamAlert } from '../team-alert'
 import type { Vendor } from './models'
 import type { SpendSettings } from './settings'
 
@@ -23,18 +24,8 @@ export function rupeesOf(vendor: Vendor, usage: ModelUsage) {
 const inRupees = (amount: number) => `₹${amount.toLocaleString('en-IN', { maximumFractionDigits: 2 })}`
 
 /** The model spend of each day (PD9, T-21). The chat never stops for it: the team gets a Telegram alert at 70% and at 100%. */
-export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendSettings; today: () => string; log: FastifyBaseLogger }) {
+export function spendOf({ db, settings, today, log, alert }: { db: Db; settings: SpendSettings; today: () => string; log: FastifyBaseLogger; alert: TeamAlert }) {
   const pending = new Set<Promise<void>>()
-
-  async function alert(text: string) {
-    if (!settings.telegram) return log.warn({ text }, 'spend alert')
-    const res = await fetch(`https://api.telegram.org/bot${settings.telegram.token}/sendMessage`, {
-      method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ chat_id: settings.telegram.chatId, text }),
-      // The close of the server waits for the spend, so a slow Telegram must not hold it.
-      signal: AbortSignal.timeout(10_000),
-    })
-    if (!res.ok) throw new Error(`Telegram answered ${res.status}`)
-  }
 
   async function add(vendor: Vendor, usage: ModelUsage) {
     const rupees = rupeesOf(vendor, usage)
@@ -62,7 +53,6 @@ export function spendOf({ db, settings, today, log }: { db: Db; settings: SpendS
     },
     settled: async () => { await Promise.all(pending) },
     /** A message to the team in Telegram, as the alerts: a log line with no Telegram settings (T-65). */
-    notifyTeam: alert,
     /** False: no Telegram settings (T-29). */
     sendTestAlert: async () => { if (settings.telegram) await alert('roomsie: the spend alert works.'); return !!settings.telegram },
   }
@@ -72,4 +62,3 @@ export type Spend = ReturnType<typeof spendOf>
 /** The model spend of a day, in rupees (T-65). */
 export const spentOn = async (db: Db, day: string) =>
   Number((await db.select({ rupees: modelSpend.rupees }).from(modelSpend).where(eq(modelSpend.day, day)))[0]?.rupees ?? 0)
-

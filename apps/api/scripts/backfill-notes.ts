@@ -6,7 +6,9 @@ import { assistantSettings } from '../src/assistant/settings'
 import { createDb } from '../src/db/client'
 import { modelSettings, spendSettings } from '../src/models/settings'
 import { spendOf } from '../src/models/spend'
+import { geminiOnly } from '../src/models/switch'
 import { backfillNotes } from '../src/observations/backfill'
+import { teamAlertOf } from '../src/team-alert'
 import { todayInIst } from '../src/time'
 import { scriptRequest } from './script-request'
 
@@ -17,7 +19,10 @@ if (!models) throw new Error('Set DEEPSEEK_API_KEY and GEMINI_API_KEY.')
 const db = createDb(z.url().parse(process.env.DATABASE_URL))
 const { log } = Fastify({ logger: { level: 'warn' } })
 // The backfill writes no analytics event: its traffic would count as people (the rule of _index.md). The spend still counts.
-const server = { analytics: { track: () => {} }, spend: spendOf({ db, settings: spendSettings.parse(process.env), today: todayInIst, log }) }
+const spend = spendSettings.parse(process.env)
+const server = {
+  analytics: { track: () => {} }, spend: spendOf({ db, settings: spend, today: todayInIst, log, alert: teamAlertOf(spend.telegram, log) }), geminiOnly: () => geminiOnly(db),
+}
 const deps = { req: scriptRequest(server, log), models, settings: assistantSettings.parse(process.env) }
 
 // The count comes first, so the person sees the turns and the cost before a write.

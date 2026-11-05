@@ -1,5 +1,5 @@
 {
-  "id": "911daf30-73c4-4eb5-b25e-b10eea02eeb6",
+  "id": "6b219809-bbf4-486f-a4d3-b14ac377601e",
   "prevId": "be53a6fc-ccfa-4a11-8db5-5d555d0db2b3",
   "version": "7",
   "dialect": "postgresql",
@@ -2209,8 +2209,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "user_id": {
-          "name": "user_id",
+        "saved_by": {
+          "name": "saved_by",
           "type": "uuid",
           "primaryKey": false,
           "notNull": false
@@ -2225,12 +2225,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "model_switch_user_id_users_id_fk": {
-          "name": "model_switch_user_id_users_id_fk",
+        "model_switch_saved_by_users_id_fk": {
+          "name": "model_switch_saved_by_users_id_fk",
           "tableFrom": "model_switch",
           "tableTo": "users",
           "columnsFrom": [
-            "user_id"
+            "saved_by"
           ],
           "columnsTo": [
             "id"

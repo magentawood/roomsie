@@ -7575,7 +7575,7 @@
                                 "minimum": 0,
                                 "maximum": 1
                               },
-                              "geminiShare": {
+                              "fallbackShare": {
                                 "nullable": true,
                                 "type": "number",
                                 "minimum": 0,
@@ -7590,7 +7590,7 @@
                               "spendToday",
                               "dailyAmount",
                               "failedShare",
-                              "geminiShare",
+                              "fallbackShare",
                               "geminiOnly"
                             ],
                             "additionalProperties": false
@@ -11075,7 +11075,7 @@
                               "minimum": 0,
                               "maximum": 1
                             },
-                            "geminiShare": {
+                            "fallbackShare": {
                               "type": "number",
                               "minimum": 0,
                               "maximum": 1
@@ -11085,18 +11085,13 @@
                               "type": "integer",
                               "minimum": 0,
                               "maximum": 9007199254740991
-                            },
-                            "rupees": {
-                              "type": "number",
-                              "minimum": 0
                             }
                           },
                           "required": [
                             "calls",
                             "failedShare",
-                            "geminiShare",
-                            "p95Ms",
-                            "rupees"
+                            "fallbackShare",
+                            "p95Ms"
                           ],
                           "additionalProperties": false
                         },
@@ -11113,7 +11108,7 @@
                               "minimum": 0,
                               "maximum": 1
                             },
-                            "geminiShare": {
+                            "fallbackShare": {
                               "type": "number",
                               "minimum": 0,
                               "maximum": 1
@@ -11122,7 +11117,7 @@
                           "required": [
                             "calls",
                             "failedShare",
-                            "geminiShare"
+                            "fallbackShare"
                           ],
                           "additionalProperties": false
                         },
@@ -11141,7 +11136,7 @@
                                 "minimum": 0,
                                 "maximum": 1
                               },
-                              "geminiShare": {
+                              "fallbackShare": {
                                 "type": "number",
                                 "minimum": 0,
                                 "maximum": 1
@@ -11171,7 +11166,7 @@
                             "required": [
                               "calls",
                               "failedShare",
-                              "geminiShare",
+                              "fallbackShare",
                               "p95Ms",
                               "rupees",
                               "role"

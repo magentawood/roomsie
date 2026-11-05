@@ -1,11 +1,15 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import type { FastifyRequest } from 'fastify'
-import { z } from 'zod'
-import { aiOverviewResponse, modelSwitchLogResponse, modelSwitchState } from '@roomsie/contract'
-import { events } from '../src/analytics/schema'
 import { eq } from 'drizzle-orm'
+import type { FastifyBaseLogger, FastifyRequest } from 'fastify'
+import { z } from 'zod'
+import { adminHomeResponse, aiOverviewResponse, modelSwitchLogResponse, modelSwitchState } from '@roomsie/contract'
+import type { AnalyticsDb } from '../src/analytics/client'
+import { events } from '../src/analytics/schema'
+import { assistantSettings } from '../src/assistant/settings'
 import { modelSpend, modelSwitch } from '../src/db/schema'
-import { modelSettings } from '../src/models/settings'
+import { limitSettings } from '../src/goals/settings'
+import { aiCard, aiOverview } from '../src/models/overview'
+import { modelSettings, spendSettings } from '../src/models/settings'
 import { testApp, type TestApp } from './app'
 import { createTestAnalyticsDb, type TestAnalyticsDb } from './db'
 import { answer, fakeRequest, fakeVendors, gemini, keys } from './vendors'
@@ -38,22 +42,37 @@ describe('the AI pipeline of the admin', () => {
       called('composer', 'deepseek-flash', 'ok', 2000, 1), called('composer', 'deepseek-flash', 'invalid', 1500, 1),
       // Before the start of today in IST: the test app gives 2026-11-02 as today.
       called('router', 'deepseek-flash', 'failed', 60_000, 0, new Date('2026-11-01T23:00:00+05:30')),
+      // The live check of the keys is no call of the assistant.
+      called('check', 'gemini-3.5-flash-lite', 'ok', 500, 1),
       routed('core'), routed('core'), routed('sensitive'),
     ])
     await t.db.insert(modelSpend).values({ day: '2026-11-02', rupees: '84.5' })
     const ai = await overview()
     expect(ai.switch).toEqual({ geminiOnly: false, since: null, by: null })
     expect(ai.spend).toEqual({ today: 84.5, dailyAmount: 500 })
-    expect(ai.numbers!.today).toMatchObject({ calls: 6, failedShare: 2 / 6, geminiShare: 1 / 6, p95Ms: 10_000 })
+    expect(ai.numbers!.today).toEqual({ calls: 6, failedShare: 2 / 6, fallbackShare: 1 / 6, p95Ms: 10_000 })
+    expect(ai.numbers!.lastQuarterHour).toEqual({ calls: 2, failedShare: 0.5, fallbackShare: 0 })
+    expect(ai.numbers!.roles.map((r) => r.role).sort()).toEqual(['composer', 'extractor', 'router'])
     // 1,000 tokens in and 100 out at the prices of docs/model-selection.md: ₹0.03696 a DeepSeek call, ₹0.0484 a Gemini call.
-    expect(ai.numbers!.today.rupees).toBeCloseTo(5 * 0.03696 + 0.0484, 6)
-    expect(ai.numbers!.lastQuarterHour).toEqual({ calls: 2, failedShare: 0.5, geminiShare: 0 })
-    expect(ai.numbers!.roles.find((r) => r.role === 'extractor')).toMatchObject({ calls: 2, failedShare: 0.5, geminiShare: 0.5, p95Ms: 10_000 })
+    const extractor = ai.numbers!.roles.find((r) => r.role === 'extractor')!
+    expect(extractor).toMatchObject({ calls: 2, failedShare: 0.5, fallbackShare: 0.5, p95Ms: 10_000 })
+    expect(extractor.rupees).toBeCloseTo(0.03696 + 0.0484, 6)
     expect(ai.numbers!.bands).toEqual({ core: 2, general: 0, consequential: 0, out_of_scope: 0, adversarial: 0, sensitive: 1 })
     expect(ai.settings).toMatchObject({ models: { primary: 'deepseek-flash', fallback: 'gemini-3.5-flash-lite', timeoutMs: 10_000 }, spendAlertPercents: [70, 100], routerMinProbability: 0.8 })
     for (const [method, url] of [['GET', '/v1/admin/ai'], ['GET', '/v1/admin/ai/switch-log'], ['PUT', '/v1/admin/ai/switch']] as const) {
       expect((await t.call('member', method, url, method === 'PUT' ? { geminiOnly: true } : undefined)).statusCode).toBe(404)
     }
+    const card = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
+    expect(card).toEqual({ subject: 'ai_pipeline', spendToday: 84.5, dailyAmount: 500, failedShare: 2 / 6, fallbackShare: 1 / 6, geminiOnly: false })
+  })
+
+  it('gives no numbers, and still the switch, when the analytics database fails', async () => {
+    const broken = { select: () => { throw new Error('the analytics database is down') } } as unknown as AnalyticsDb
+    const sources = { db: t.db, analyticsDb: broken, spend: spendSettings.parse({}), assistant: assistantSettings.parse({}), limits: limitSettings.parse({}), today: () => '2026-11-02' }
+    const log = { error: vi.fn() } as unknown as FastifyBaseLogger
+    expect(await aiOverview(sources, log)).toMatchObject({ numbers: null, switch: { geminiOnly: false } })
+    expect(await aiCard(sources, log)).toMatchObject({ failedShare: null, fallbackShare: null })
+    expect(log.error).toHaveBeenCalledTimes(2)
   })
 
   it('flips the switch for the next model call, logs the person and tells the team in Telegram', async () => {
@@ -67,14 +86,18 @@ describe('the AI pipeline of the admin', () => {
     const models = modelSettings.parse(keys)!
     await models.json({ req: live, role: 'extractor', system: 'Fill the intent slot.', messages: [{ role: 'user', content: 'room' }], schema: z.object({ intent: z.string() }), session: null })
     expect(telegram.map((r) => r.url)).toEqual([gemini])
+    const on = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
+    expect(on).toMatchObject({ geminiOnly: true })
 
     // A flip to the state of now adds no row and sends no message.
     await t.call('moderator', 'PUT', '/v1/admin/ai/switch', { geminiOnly: true })
     expect(telegram.telegram).toHaveLength(1)
     await t.call('moderator', 'PUT', '/v1/admin/ai/switch', { geminiOnly: false })
     expect(await t.app.geminiOnly()).toBe(false)
+    const card = adminHomeResponse.parse((await t.call('moderator', 'GET', '/v1/admin/home')).json()).cards.find((c) => c.subject === 'ai_pipeline')
+    expect(card).toMatchObject({ geminiOnly: false })
     const log = modelSwitchLogResponse.parse((await t.call('moderator', 'GET', '/v1/admin/ai/switch-log')).json())
     expect(log.flips.map((f) => [f.geminiOnly, f.by])).toEqual([[false, 'moderator@example.com'], [true, 'moderator@example.com']])
-    await t.db.delete(modelSwitch).where(eq(modelSwitch.userId, t.ids.moderator))
+    await t.db.delete(modelSwitch).where(eq(modelSwitch.savedBy, t.ids.moderator))
   })
 })

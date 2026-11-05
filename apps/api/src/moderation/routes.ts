@@ -29,7 +29,7 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiS
   const preHandler = requireModerator(options)
 
   app.get('/admin/home', { preHandler: requireRole(options, 'moderator', 'reviewer'), schema: { response: { 200: adminHomeResponse, 404: errorResponse } } }, async (req) => ({
-    cards: await homeCards(options, req.user!),
+    cards: await homeCards(options, req.user!, req.log),
   }))
 
   app.get('/admin/reports', { preHandler, schema: { response: { 200: reportQueueResponse, 404: errorResponse } } }, async () => {

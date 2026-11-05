@@ -35,7 +35,7 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="the-model-wrapper">The model wrapper</h1>
-<p><strong>In one line:</strong> each call of the API to a language model goes through one module, which asks DeepSeek first, asks Gemini when DeepSeek fails, and records the tokens of each attempt.</p>
+<p><strong>In one line:</strong> each call of the API to a language model goes through one module, which asks DeepSeek first, asks Gemini when DeepSeek fails or while the Gemini switch is on, and records the tokens of each attempt.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>A <strong>model</strong> is a language model of a vendor. The API sends it a system prompt and the messages of the chat, and it answers with text.</li>
@@ -57,6 +57,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The record:</strong> each attempt writes the analytics event <code>model_called</code> with the role, the model, the tokens in, the cached tokens, the tokens out, the time, the fallback, the outcome and the session. The sum of the tokens of one session gives the cost of one interview (<a href="../decisions/pd-05-team-and-budget.md">PD5</a>). The event has no text.</li>
 <li><strong>The settings:</strong> <code>DEEPSEEK_API_KEY</code> and <code>GEMINI_API_KEY</code>. Without both, the API calls no model. <code>MODEL_PRIMARY</code>, <code>MODEL_FALLBACK</code> and <code>MODEL_TIMEOUT_MS</code> have defaults. A model name that starts with <code>deepseek-</code> goes to DeepSeek, and a name that starts with <code>gemini-</code> goes to Gemini. With a name of a different vendor, the API does not start.</li>
 <li><strong>The Gemini switch:</strong> on <code>/admin/ai</code>, a moderator turns on "Use Gemini for all calls" when DeepSeek is down or slow. Each call reads the switch, so a flip acts on the next call with no deploy. While it is on, each call goes to the fallback model: one more try on an invalid answer, and no second vendor. A failed read of the switch counts as off. Each flip goes in a log and to the team in Telegram (T-65, <a href="../decisions/pd-07-models.md">PD7</a>).</li>
+<li><strong>The numbers of <code>/admin/ai</code>:</strong> the calls of today in IST and of the last 15 minutes, from the events <code>model_called</code> and <code>turn_routed</code>. Each attempt is one call, so a DeepSeek failure that Gemini saves is two calls, one failed. The live check of the keys does not count. A slow or failed read of the analytics database gives no numbers, and the switch still shows.</li>
 <li><strong>The live check:</strong> a moderator sends <code>POST /v1/admin/model-check</code>. The API asks each model one short question, with no fallback, and shows which model answered, the tokens and the time.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>

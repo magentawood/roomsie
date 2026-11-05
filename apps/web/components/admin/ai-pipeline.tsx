@@ -10,6 +10,7 @@ import { dateAndTime } from '../../lib/ist'
 import { useAiOverview, useSwitchLog } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
+import { Bar } from '../ui/bar'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
@@ -24,13 +25,6 @@ const bandLabels: Record<keyof Numbers['bands'], string> = {
   out_of_scope: 'Out of scope', sensitive: 'Sensitive', adversarial: 'Adversarial',
 }
 
-export function Bar({ value, max, label }: { value: number; max: number; label: string }) {
-  return (
-    <progress value={value} max={Math.max(max, 1)} aria-label={label}
-      className="h-2 w-full appearance-none overflow-hidden rounded-full bg-secondary [&::-moz-progress-bar]:bg-brand-solid [&::-webkit-progress-bar]:bg-secondary [&::-webkit-progress-value]:bg-brand-solid" />
-  )
-}
-
 function Metric({ label, value, note, children }: { label: string; value: string; note?: string; children?: ReactNode }) {
   return (
     <section aria-label={label} className={card}>
@@ -42,7 +36,7 @@ function Metric({ label, value, note, children }: { label: string; value: string
   )
 }
 
-/** The switch of PD7: the fallback model answers each call alone while it is on (T-65). Turning it on asks first. */
+/** The switch of PD7: the fallback model answers each call alone while it is on (T-65). */
 function GeminiSwitch({ state, fallback }: { state: AiOverviewResponse['switch']; fallback: string | undefined }) {
   const user = useUser()
   const queryClient = useQueryClient()
@@ -85,13 +79,14 @@ function CallMetrics({ numbers: { today, lastQuarterHour } }: { numbers: Numbers
     <>
       <Metric label="Model calls today" value={today.calls.toLocaleString('en-IN')} note={`${lastQuarterHour.calls.toLocaleString('en-IN')} in the last 15 minutes`} />
       <Metric label="Calls failed" value={percent(today.failedShare)} note={`${percent(lastQuarterHour.failedShare)} in the last 15 minutes`} />
-      <Metric label="Sent to the fallback" value={percent(today.geminiShare)} note={`${percent(lastQuarterHour.geminiShare)} in the last 15 minutes`} />
+      <Metric label="Sent to the fallback" value={percent(today.fallbackShare)} note={`${percent(lastQuarterHour.fallbackShare)} in the last 15 minutes`} />
       <Metric label="Slowest 5% of calls" value={seconds(today.p95Ms)} note="Each call has its own time limit" />
     </>
   )
 }
 
 function RolesAndBands({ numbers }: { numbers: Numbers }) {
+  const total = Object.values(numbers.bands).reduce((a, b) => a + b, 0)
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
       <section aria-label="By role, today" className={`${card} overflow-x-auto lg:flex-1`}>
@@ -106,7 +101,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
                 <td className="py-2.5 pr-3 font-semibold text-primary capitalize">{r.role}</td>
                 <td className="py-2.5 pr-3">{r.calls.toLocaleString('en-IN')}</td>
                 <td className="py-2.5 pr-3">{percent(r.failedShare)}</td>
-                <td className="py-2.5 pr-3">{percent(r.geminiShare)}</td>
+                <td className="py-2.5 pr-3">{percent(r.fallbackShare)}</td>
                 <td className="py-2.5 pr-3">{seconds(r.p95Ms)}</td>
                 <td className="py-2.5 pr-3">{rupees(r.rupees)}</td>
               </tr>
@@ -117,16 +112,13 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
       </section>
       <section aria-label="Router bands, today" className={`${card} lg:w-116`}>
         <h2 className="text-lg font-semibold text-primary">Router bands, today</h2>
-        {(Object.keys(bandLabels) as (keyof Numbers['bands'])[]).map((band) => {
-          const total = Object.values(numbers.bands).reduce((a, b) => a + b, 0)
-          return (
-            <p key={band} className="grid grid-cols-[10rem_1fr_3rem] items-center gap-3 text-sm text-secondary">
-              <span>{bandLabels[band]}</span>
-              <Bar value={numbers.bands[band]} max={total} label={bandLabels[band]} />
-              <span className="text-right font-medium text-tertiary">{numbers.bands[band]}</span>
-            </p>
-          )
-        })}
+        {(Object.keys(bandLabels) as (keyof Numbers['bands'])[]).map((band) => (
+          <p key={band} className="grid grid-cols-[10rem_1fr_3rem] items-center gap-3 text-sm text-secondary">
+            <span>{bandLabels[band]}</span>
+            <Bar value={numbers.bands[band]} max={total} label={bandLabels[band]} />
+            <span className="text-right font-medium text-tertiary">{numbers.bands[band]}</span>
+          </p>
+        ))}
       </section>
     </div>
   )

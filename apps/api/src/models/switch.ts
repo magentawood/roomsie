@@ -1,24 +1,27 @@
-import { desc } from 'drizzle-orm'
-import type { Db } from '../db/client'
+import { desc, sql } from 'drizzle-orm'
+import type { Db, Tx } from '../db/client'
 import { modelSwitch } from '../db/schema'
 import { emailsOf } from '../users'
 
-const flips = (db: Db, limit?: number) => {
-  const query = db.select({ geminiOnly: modelSwitch.geminiOnly, userId: modelSwitch.userId, at: modelSwitch.createdAt })
-    .from(modelSwitch).orderBy(desc(modelSwitch.createdAt), desc(modelSwitch.id))
-  return limit ? query.limit(limit) : query
-}
+const flips = (db: Db | Tx, limit: number) => db.select({ geminiOnly: modelSwitch.geminiOnly, savedBy: modelSwitch.savedBy, at: modelSwitch.createdAt })
+  .from(modelSwitch).orderBy(desc(modelSwitch.createdAt)).limit(limit)
 
-/** The Gemini switch of the admin (T-65): the newest flip is the state, and no flip is off. Each model call reads it. */
+/** Each model call reads it (T-65). */
 export const geminiOnly = async (db: Db) => (await flips(db, 1))[0]?.geminiOnly ?? false
 
-export const flipSwitch = (db: Db, userId: string, on: boolean) => db.insert(modelSwitch).values({ geminiOnly: on, userId })
+/** A flip to the state of now adds no row. The lock stops two flips at the same time. True: the state changed. */
+export const flipSwitch = (db: Db, userId: string, on: boolean) => db.transaction(async (tx) => {
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext('model_switch'))`)
+  if (((await flips(tx, 1))[0]?.geminiOnly ?? false) === on) return false
+  await tx.insert(modelSwitch).values({ geminiOnly: on, savedBy: userId })
+  return true
+})
 
-/** The flips, newest first, with the sign-in email of each person. */
-export async function switchLog(db: Db, limit?: number) {
+/** The newest flips, with the sign-in email of each person. */
+export async function switchLog(db: Db, limit = 100) {
   const rows = await flips(db, limit)
-  const emails = await emailsOf(db, rows.flatMap((r) => (r.userId ? [r.userId] : [])))
-  return rows.map((r) => ({ geminiOnly: r.geminiOnly, at: r.at.toISOString(), by: (r.userId && emails.get(r.userId)) ?? null }))
+  const emails = await emailsOf(db, rows.flatMap((r) => (r.savedBy ? [r.savedBy] : [])))
+  return rows.map((r) => ({ geminiOnly: r.geminiOnly, at: r.at.toISOString(), by: (r.savedBy && emails.get(r.savedBy)) ?? null }))
 }
 
 export async function switchState(db: Db) {

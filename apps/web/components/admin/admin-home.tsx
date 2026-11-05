@@ -10,7 +10,8 @@ import { india } from '../../lib/ist'
 import { useAdminHome } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
-import { Bar, percent, rupees } from './ai-pipeline'
+import { Bar } from '../ui/bar'
+import { percent, rupees } from './ai-pipeline'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
@@ -77,7 +78,7 @@ function SubjectCard({ card }: { card: AdminHomeCard }) {
             badges={<Badge tone={card.geminiOnly ? 'warning' : 'gray'} dot={false}>{card.geminiOnly ? 'Gemini switch on' : 'Gemini switch off'}</Badge>} />
           <Bar value={card.spendToday} max={card.dailyAmount} label="Spend today" />
           {card.failedShare !== null && <Metric value={percent(card.failedShare)} label="Calls failed today" />}
-          {card.geminiShare !== null && <Metric value={percent(card.geminiShare)} label="Sent to the fallback today" />}
+          {card.fallbackShare !== null && <Metric value={percent(card.fallbackShare)} label="Sent to the fallback today" />}
         </Card>
       )
     case 'site_content':

@@ -11,16 +11,16 @@ export function modelRoutes(v1: FastifyInstance, options: AuthOptions & AiSource
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireModerator(options)
 
-  app.get('/admin/ai', { preHandler, schema: { response: { 200: aiOverviewResponse, 404: errorResponse } } }, () => aiOverview(options))
+  app.get('/admin/ai', { preHandler, schema: { response: { 200: aiOverviewResponse, 404: errorResponse } } }, (req) => aiOverview(options, req.log))
 
-  /** A flip acts on the next model call, and the team hears of it in Telegram. A flip to the state of now changes nothing. */
+  /** A flip acts on the next model call, and the team hears of it in Telegram. */
   app.put('/admin/ai/switch', { preHandler, schema: { body: modelSwitchBody, response: { 200: modelSwitchState, 404: errorResponse } } }, async (req) => {
-    if ((await switchState(options.db)).geminiOnly === req.body.geminiOnly) return switchState(options.db)
-    await flipSwitch(options.db, req.user!.id, req.body.geminiOnly)
+    const flipped = await flipSwitch(options.db, req.user!.id, req.body.geminiOnly)
     const state = await switchState(options.db)
+    if (!flipped) return state
     const models = options.models?.settings
     const to = state.geminiOnly ? `the fallback model${models ? `, ${models.fallback}` : ''}` : `the main model${models ? `, ${models.primary}` : ''}`
-    await v1.spend.notifyTeam(`roomsie: ${state.by ?? 'a moderator'} switched all model calls to ${to}.`)
+    await v1.teamAlert(`roomsie: ${state.by ?? 'a moderator'} switched all model calls to ${to}.`)
       .catch((err: unknown) => reportError(err, { where: 'models.switch', log: req.log }))
     return state
   })

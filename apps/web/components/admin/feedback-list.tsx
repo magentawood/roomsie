@@ -6,8 +6,8 @@ import { errorText } from '../../lib/api'
 import { dateAndTime } from '../../lib/ist'
 import { useAdminFeedback } from '../../lib/queries'
 import { faces } from '../../lib/feedback'
+import { Bar } from '../ui/bar'
 import { EmptyState } from '../ui/empty-state'
-
 
 function FacesThisWeek({ counts }: { counts: Record<FeedbackRating, number> }) {
   const total = feedbackRatings.reduce((sum, r) => sum + counts[r], 0)
@@ -20,8 +20,7 @@ function FacesThisWeek({ counts }: { counts: Record<FeedbackRating, number> }) {
           <p key={rating} className="flex items-center gap-2.5 text-sm text-tertiary">
             <face.icon size={20} aria-hidden className="shrink-0 text-fg-quaternary" />
             <span className="w-24 shrink-0 text-secondary">{face.label}</span>
-            <progress value={counts[rating]} max={Math.max(total, 1)} aria-label={face.label}
-              className="h-2 flex-1 appearance-none overflow-hidden rounded-full bg-secondary [&::-moz-progress-bar]:bg-brand-solid [&::-webkit-progress-bar]:bg-secondary [&::-webkit-progress-value]:bg-brand-solid" />
+            <Bar value={counts[rating]} max={total} label={face.label} className="flex-1" />
             <span className="w-6 text-right font-medium">{counts[rating]}</span>
           </p>
         )

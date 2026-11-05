@@ -30,6 +30,7 @@ import { messageRoutes } from './messages/routes'
 import type { Models } from './models/models'
 import { spendSettings, type SpendSettings } from './models/settings'
 import { spendOf, type Spend } from './models/spend'
+import { teamAlertOf, type TeamAlert } from './team-alert'
 import { geminiOnly } from './models/switch'
 import { limitSettings, type LimitSettings } from './goals/settings'
 import { modelRoutes } from './models/routes'
@@ -53,7 +54,7 @@ declare module 'fastify' {
     alerts: Alerts
     analytics: Analytics
     spend: Spend
-    /** The Gemini switch of the admin (T-65). */
+    teamAlert: TeamAlert
     geminiOnly: () => Promise<boolean>
   }
 }
@@ -82,7 +83,9 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
   app.decorate('analytics', analytics)
   app.addHook('onClose', () => analytics.close())
   const aiSources = { spend: options.spend ?? spendSettings.parse({}), assistant: options.assistant ?? assistantSettings.parse({}), limits: options.limits ?? limitSettings.parse({}), today }
-  const spend = spendOf({ db: options.db, settings: aiSources.spend, today, log: app.log })
+  const teamAlert = teamAlertOf(aiSources.spend.telegram, app.log)
+  app.decorate('teamAlert', teamAlert)
+  const spend = spendOf({ db: options.db, settings: aiSources.spend, today, log: app.log, alert: teamAlert })
   app.decorate('spend', spend)
   app.decorate('geminiOnly', () => geminiOnly(options.db))
   app.addHook('onClose', () => spend.settled())

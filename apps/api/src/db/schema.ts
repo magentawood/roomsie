@@ -744,6 +744,6 @@ export const modelSpend = pgTable('model_spend', {
 export const modelSwitch = pgTable('model_switch', {
   id: id(),
   geminiOnly: boolean('gemini_only').notNull(),
-  userId: uuid('user_id').references(() => users.id, { onDelete: 'set null' }),
+  savedBy: uuid('saved_by').references(() => users.id, { onDelete: 'set null' }),
   createdAt: createdAt(),
 }).enableRLS()
