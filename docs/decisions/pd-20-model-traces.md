@@ -15,7 +15,7 @@
 - **What:** each attempt of a call: the messages, the raw answer, the role, the model, the outcome, the time and the tokens. Each different system prompt is kept one time.
 - **The mask:** the API replaces each word of religion, and each community name that is not the name of a language, with "[hidden]" before the save. A slot of religion or community shows "set". The names of a language, such as Marathi, stay. The system prompts are code, so they keep their words.
 - **No name:** a turn shows a session code from its goal, never a name, an email or a link to a card.
-- **Who:** the moderators, on the AI pipeline. Each open of a turn goes in an audit log with the moderator and the time.
+- **Who:** the moderators, on the AI pipeline. Each open of a turn goes in an audit log with the moderator and the time. The log has no end: it holds no text of a person.
 - **How long:** 30 days after the call. A nightly job deletes the older traces. An account deletion deletes the traces of its goals at once (PD19).
 
 ## Rationale

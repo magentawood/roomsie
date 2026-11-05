@@ -62,8 +62,7 @@ export function nullIfUnavailable(err: unknown): null {
 }
 
 type Outcome<T> = { outcome: 'ok'; value: T } | { outcome: 'invalid' | 'failed' }
-/** `refused` is the status of a 4xx other than 429: a bad key or an empty balance. */
-/** `content`: the text of the answer, for its trace (T-64). Null when the vendor gave no answer. */
+/** `refused`: the status of a 4xx other than 429, a bad key or an empty balance. `content`: the text of the answer, null with no answer (T-64). */
 type Answer<T> = Outcome<T> & { usage: ModelUsage; refused?: number; content: string | null }
 const noUsage: ModelUsage = { tokensIn: 0, cachedTokensIn: 0, tokensOut: 0 }
 
@@ -111,8 +110,8 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
     call.req.server.analytics.track(call.req, { name: 'model_called', ...record })
     call.req.server.spend.record(vendor, answer.usage)
     // A call of a goal keeps a trace of each attempt (PD20, T-64). The check of the keys has no goal.
-    if (call.session && call.role !== 'check') {
-      call.req.server.traces.save({ ...call, role: call.role, session: call.session }, {
+    if (call.session) {
+      call.req.server.traces.save({ ...call, session: call.session }, {
         attempt: number, model, fallback: record.fallback, outcome: answer.outcome, startedAt, ms, usage: answer.usage, answer: answer.content,
       })
     }

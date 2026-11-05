@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { formASlots } from './form-a'
 import { closeAnswer, rateLimits, scopeBands } from './goals'
-import { modelRoles, modelUsage } from './models'
+import { modelOutcomes, modelRoles, modelUsage } from './models'
 import { reportReasons } from './reports'
 
 /** A change of the fields of an event gives it a new version. No event has text (T-24, ADR-0012). */
@@ -19,7 +19,7 @@ export const analyticsEvent = z.discriminatedUnion('name', [
   /** One attempt of one model call: its tokens and time give the cost of an interview (PD5, T-11). */
   z.strictObject({
     name: z.literal('model_called'), eventVersion: version1, role: z.enum(modelRoles), model: z.string().max(100),
-    ...modelUsage.shape, ms: z.int().min(0), fallback: z.boolean(), outcome: z.enum(['ok', 'invalid', 'failed']), session: z.uuid().nullable(),
+    ...modelUsage.shape, ms: z.int().min(0), fallback: z.boolean(), outcome: z.enum(modelOutcomes), session: z.uuid().nullable(),
   }),
   /** A typed value that contradicts an earlier value. The assistant asks which to keep (PD3b). Many on one slot show a bad question. */
   z.strictObject({ name: z.literal('slot_conflict'), eventVersion: version1, slot: z.enum(formASlots) }),

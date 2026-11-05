@@ -41,6 +41,7 @@ These rules apply to Drizzle, the schema, migrations, ids and stored data. The r
 
 ## Stored data
 
+- Each shape that a jsonb column keeps has a `version`. Why: a later shape must tell its rows from the older ones, so a read can parse each. (Rule candidate of [#197](https://github.com/magentawood/roomsie/pull/197), the second time in [#231](https://github.com/magentawood/roomsie/pull/231))
 - Mask phone numbers and WhatsApp links in each public free-text field that a user writes, and in each request note, before the save. Use `maskContacts`. The messages of an accepted chat are not masked in v0. Why: a number in a card, a listing or a request can leak. ([PD17](../decisions/pd-17-connect-and-contact.md))
 - Delete a photo in R2 before its database row. If R2 fails, change nothing. Why: a deleted listing must not leave faces in storage. ([PD19](../decisions/pd-19-retention.md))
 - Store each typed message. Why: the observer and its backfill read the messages, and a user keeps the chat after sign-up. ([PD7a](../decisions/pd-07a-agent-architecture.md), [PD6b](../decisions/pd-06b-login-gate-and-search.md))

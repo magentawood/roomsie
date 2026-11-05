@@ -66,6 +66,9 @@ export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: 
 
 export const pageBody = 'mx-auto flex w-full max-w-320 flex-col gap-5 px-4 py-5 md:px-8 md:py-6 lg:px-20'
 
+/** A card of an admin page. */
+export const cardClass = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
+
 /** The title, the intro, the tabs and the link back (drafts sections 37 and 38). The link to the admin shows only on a phone. */
 export function SubjectHeader({ title, intro, tabs, back }: { title: string; intro?: string; tabs?: Tab[]; back?: Tab }) {
   const path = usePathname()

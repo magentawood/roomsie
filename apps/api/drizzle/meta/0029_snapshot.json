@@ -1,5 +1,5 @@
 {
-  "id": "ef013fed-a24d-45b3-b01f-d68ef459b37f",
+  "id": "25a72be3-5273-42e6-ad22-b992d8f77e12",
   "prevId": "5fb2b557-c727-46f3-b35c-4aa79fd85d1c",
   "version": "7",
   "dialect": "postgresql",
@@ -3666,14 +3666,14 @@
       "name": "trace_prompts",
       "schema": "",
       "columns": {
-        "hash": {
-          "name": "hash",
-          "type": "text",
+        "id": {
+          "name": "id",
+          "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
-        "role": {
-          "name": "role",
+        "hash": {
+          "name": "hash",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -3695,7 +3695,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "trace_prompts_hash_unique": {
+          "name": "trace_prompts_hash_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "hash"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": true
@@ -3942,21 +3950,6 @@
           "columns": [
             {
               "expression": "started_at",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "traces_session_idx": {
-          "name": "traces_session_idx",
-          "columns": [
-            {
-              "expression": "session_code",
               "isExpression": false,
               "asc": true,
               "nulls": "last"

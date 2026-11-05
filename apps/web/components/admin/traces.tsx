@@ -2,20 +2,18 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { slowTurnMs, type AdminTurnResponse, type AdminTurnRow, type AdminTurnsQuery, type TraceFilter } from '@roomsie/contract'
+import { slowTurnMs, traceDays, type AdminTurnResponse, type AdminTurnRow, type AdminTurnsQuery, type ScopeBand, type TraceFilter } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { dateAndTime, istDay } from '../../lib/ist'
-import { rupees } from '../../lib/numbers'
+import { rupees, seconds } from '../../lib/numbers'
 import { useTurn, useTurns } from '../../lib/queries'
 import { Badge, type Tone } from '../ui/badge'
-import { pageBody, SubjectHeader } from './admin-page'
+import { cardClass, pageBody, SubjectHeader } from './admin-page'
 import { Search } from './directory'
 
 type Call = AdminTurnResponse['attempts'][number]
-const card = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
-const seconds = (ms: number) => `${(ms / 1000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} s`
 const capital = (word: string) => `${word[0]!.toUpperCase()}${word.slice(1)}`
-const bandLabels: Record<string, string> = { core: 'Core', general: 'General', consequential: 'Consequential', out_of_scope: 'Out of scope', adversarial: 'Adversarial', sensitive: 'Sensitive' }
+const bandLabels: Record<ScopeBand, string> = { core: 'Core', general: 'General', consequential: 'Consequential', out_of_scope: 'Out of scope', adversarial: 'Adversarial', sensitive: 'Sensitive' }
 /** Hindi in Latin letters is Hinglish, as the router hears it. */
 function languageOf({ language, script }: Pick<AdminTurnRow, 'language' | 'script'>) {
   if (!language) return '—'
@@ -25,13 +23,11 @@ function languageOf({ language, script }: Pick<AdminTurnRow, 'language' | 'scrip
 const results: Record<AdminTurnRow['result'], { tone: Tone; label: (role: string) => string }> = {
   ok: { tone: 'success', label: () => 'OK' },
   failed: { tone: 'error', label: (role) => `${capital(role)} failed` },
-  fallback: { tone: 'warning', label: (role) => `${capital(role)} to the fallback` },
+  fallback: { tone: 'warning', label: (role) => `${capital(role)} to Gemini` },
 }
 const Result = ({ row }: { row: Pick<AdminTurnRow, 'result' | 'resultRole'> }) => (
   <Badge tone={results[row.result].tone} dot={false}>{results[row.result].label(row.resultRole ?? '')}</Badge>
 )
-
-export const tracesIntro = 'Each typed turn and its model calls. A trace shows a session code, never a name. Religion and community words show as [hidden].'
 
 /** The tab Turns of the AI pipeline (T-64, drafts section 39). */
 export function TurnsList() {
@@ -39,13 +35,13 @@ export function TurnsList() {
   const turns = useTurns(query)
   const counts = turns.data?.counts
   const labels: Record<TraceFilter, string> = {
-    failed: `Failed${counts ? ` · ${counts.failed}` : ''}`, fallback: `To the fallback${counts ? ` · ${counts.fallback}` : ''}`,
+    failed: `Failed${counts ? ` · ${counts.failed}` : ''}`, fallback: `To Gemini${counts ? ` · ${counts.fallback}` : ''}`,
     slow: `Slower than ${seconds(slowTurnMs)}${counts ? ` · ${counts.slow}` : ''}`,
   }
   return (
     <>
-      <Search label="Search turns" placeholder="Search by session code" labels={labels} onSearch={setQuery} />
-      <p className="rounded-lg bg-secondary px-3 py-2.5 text-sm text-tertiary">Each open of a turn goes in the audit log, and a trace goes 30 days after its call.</p>
+      <Search label="Search turns" placeholder="Search by session code" labels={labels} all="All" onSearch={setQuery} />
+      <p className="rounded-lg bg-secondary px-3 py-2.5 text-sm text-tertiary">{`Each open of a turn goes in the audit log, and a trace goes ${traceDays} days after its call.`}</p>
       {turns.isError && <p role="alert" className="text-sm text-error-primary">{errorText(turns.error)}</p>}
       {turns.isPending && <p className="text-sm text-tertiary">Loading…</p>}
       {turns.data && (
@@ -89,7 +85,6 @@ function Waterfall({ call, start, span }: { call: Call; start: number; span: num
   )
 }
 
-/** The answer as indented JSON, or as it came. */
 function pretty(answer: string) {
   try {
     return JSON.stringify(JSON.parse(answer), null, 2)
@@ -101,7 +96,7 @@ function pretty(answer: string) {
 function CallDetail({ call }: { call: Call }) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-      <section aria-label="The prompt" className={`${card} min-w-0 lg:flex-1`}>
+      <section aria-label="The prompt" className={`${cardClass} min-w-0 lg:flex-1`}>
         <h2 className="text-lg font-semibold text-primary">{`${stepName(call)} · the prompt`}</h2>
         <details className="text-sm text-tertiary">
           <summary className="cursor-pointer">{`System prompt: ${call.systemPrompt.name} (${call.tokensIn.toLocaleString('en-IN')} tokens in, ${call.cachedTokensIn.toLocaleString('en-IN')} from the cache)`}</summary>
@@ -111,7 +106,7 @@ function CallDetail({ call }: { call: Call }) {
           {call.messages.map((m, i) => <p key={i} className="break-words whitespace-pre-wrap text-secondary"><span className="font-semibold">{`${m.role}: `}</span>{m.content}</p>)}
         </div>
       </section>
-      <section aria-label="The raw answer" className={`${card} min-w-0 lg:flex-1`}>
+      <section aria-label="The raw answer" className={`${cardClass} min-w-0 lg:flex-1`}>
         <h2 className="text-lg font-semibold text-primary">The raw answer</h2>
         <p className="text-sm text-tertiary">{`${call.model} · ${call.tokensOut.toLocaleString('en-IN')} tokens out · ${seconds(call.ms)} · ${outcomes[call.outcome].label}`}</p>
         {call.answer === null
@@ -149,7 +144,7 @@ export function TurnView({ turnKey }: { turnKey: string }) {
           <Badge tone="gray" dot={false}>Audit log</Badge>
           {`${t.lastView ? `${t.lastView.by ?? 'A deleted account'} opened this turn on ${dateAndTime(t.lastView.at)}.` : 'Nobody opened this turn before you.'} Your open is in the log. The traces go on ${istDay(t.goneOn, 'long')}.`}
         </p>
-        <section aria-label="Timeline" className={card}>
+        <section aria-label="Timeline" className={cardClass}>
           <h2 className="text-lg font-semibold text-primary">Timeline</h2>
           <ol className="flex flex-col">
             {t.attempts.map((c, i) => (

@@ -217,7 +217,7 @@ describe('the traces of the model calls (T-64)', () => {
     expect(rows.map((r) => [r.attempt, r.model, r.outcome, r.fallback, r.answer])).toEqual([
       [1, 'deepseek-flash', 'invalid', false, '{"intent":"villa"}'], [2, 'deepseek-flash', 'failed', false, null], [3, 'gemini-3.5-flash-lite', 'ok', true, '{"intent":"room","ownReligion":"set"}'],
     ])
-    expect(rows.map((r) => r.messages[0]!.content)).toEqual(Array(3).fill('room chahiye powai mein, only [hidden] flatmates'))
+    expect(rows.map((r) => r.messages.list[0]!.content)).toEqual(Array(3).fill('room chahiye powai mein, only [hidden] flatmates'))
     expect(new Set(rows.map((r) => [r.turnKey, r.sessionCode, r.turnNumber].join()))).toHaveLength(1)
     expect((await testDb.db.select().from(tracePrompts)).map((p) => p.text)).toEqual(['Fill the intent slot.'])
   })

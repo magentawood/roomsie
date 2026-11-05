@@ -5,6 +5,7 @@ import { composerPrompt } from '../src/assistant/handlers/composer/prompt'
 import { observerIntro } from '../src/assistant/handlers/observer/prompt'
 import { routerPrompt } from '../src/assistant/handlers/router/prompt'
 import type { Traces } from '../src/traces/store'
+import { noTraces } from '../scripts/script-request'
 
 export const deepseek = 'https://api.deepseek.com/chat/completions'
 export const gemini = 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
@@ -79,7 +80,7 @@ export const roomAck = 'Got it: a room in a shared flat. Which areas of Mumbai w
 export const intentQuestion = 'What are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?'
 
 /** A request with a fake analytics, so a test reads the events that the module records. Each event must pass the strict schema, as in track(). */
-export function fakeRequest({ geminiOnly = false as boolean | Error, traces = { save: () => {} } as Pick<Traces, 'save'> } = {}) {
+export function fakeRequest({ geminiOnly = false as boolean | Error, traces = noTraces as Pick<Traces, 'save'> } = {}) {
   const events: AnalyticsEvent[] = []
   const log = { info: vi.fn(), error: vi.fn() }
   const req = {

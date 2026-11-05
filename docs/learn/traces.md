@@ -24,12 +24,12 @@ each night at 04:15 IST ──▶ the job deletes each trace older than 30 days
 | The mask | `apps/api/src/traces/mask.ts`, with the words in `traceMaskWords` of the contract |
 | The save and the reads | `apps/api/src/traces/store.ts`. The model module saves through `req.server.traces` |
 | The routes | `GET /v1/admin/ai/turns`, `GET /v1/admin/ai/turns/:key` and `GET /v1/admin/ai/trace-views`, for moderators |
-| The tables | `traces`, `trace_prompts` (each system prompt one time) and `trace_views` (the audit log) |
+| The tables | `traces` (its messages are a versioned jsonb), `trace_prompts` (each system prompt one time) and `trace_views` (the audit log) |
 | The job | `jobs.delete_old_traces()`, scheduled with pg_cron by migration `0030` |
 | The pages | the tab Turns of `/admin/ai`, `/admin/ai/turns/[key]`, and the trace views on Settings and log |
 
 - A save goes after the attempt, in a queue. A failed save goes to the error report, and the call goes on.
-- A call with no goal saves no trace: the check of the keys, and the calls of the scripts (the eval and the backfill).
+- A call with no goal saves no trace: the check of the keys. The scripts (the eval and the backfill) give their calls a goal, but they give the model module `noTraces`, so they save no trace.
 - The number of a turn is the number of the typed message in its chat.
 - The result of a turn is "failed" when a role has no answer in any attempt, and "to the fallback" when a role went to the fallback.
 
@@ -43,7 +43,7 @@ each night at 04:15 IST ──▶ the job deletes each trace older than 30 days
 
 - **The mask is a word list.** A spelling that the list does not name stays readable. Add it to `traceMaskWords`, and the test of the mask checks it in each script.
 - **The names of a language stay.** "Marathi only" stays readable in a trace ([PD20](../decisions/pd-20-model-traces.md)).
-- **A word in Devanagari masks each ending that joins it**, so a word that only starts like a mask word is masked too, as "सिखाना". A word in Latin letters masks only a short ending, so "sikhna" stays.
+- **A word in Devanagari masks each ending that joins it**, so a word that only starts like a mask word is masked too. `traceMaskKeep` names the known ones, as "सिखाना" (to teach). A word in Latin letters masks only a short ending, so "sikhna" and "sikho" stay. "UP" alone stays, because "up to 20k" is common.
 - **The system prompts are code**, so they keep their words, also the religion list of the extractor.
 - **pg_cron runs only on Supabase.** Local work and the tests have no pg_cron, so the migration skips the schedule, and a test calls the function. See the runs with `select * from cron.job_run_details order by start_time desc`.
 - **An open is a read.** Each open of the page of a turn reads it with no copy in the cache, so each open and each refresh adds a row of the audit log. A focus of the tab does not.

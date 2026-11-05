@@ -6,6 +6,8 @@ import { knownRows } from './shared'
 export const modelRoles = ['router', 'extractor', 'observer', 'composer', 'advisor', 'check'] as const
 export type ModelRole = (typeof modelRoles)[number]
 export const isModelRole = (role: string | null): role is ModelRole => modelRoles.some((r) => r === role)
+/** The outcome of one attempt of a model call (T-11). */
+export const modelOutcomes = ['ok', 'invalid', 'failed'] as const
 
 /** What a vendor bills for one attempt. Cached tokens are the start of the prompt that the vendor saw before. The event `model_called` has these fields, so a change of them gives it a new version. */
 export const modelUsage = z.object({ tokensIn: z.int().min(0), cachedTokensIn: z.int().min(0), tokensOut: z.int().min(0) })

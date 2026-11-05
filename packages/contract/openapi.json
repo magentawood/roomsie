@@ -13660,7 +13660,8 @@
                               "extractor",
                               "observer",
                               "composer",
-                              "advisor"
+                              "advisor",
+                              "check"
                             ]
                           },
                           "attempt": {

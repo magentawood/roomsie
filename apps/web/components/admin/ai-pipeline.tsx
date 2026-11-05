@@ -3,11 +3,12 @@
 import { useState, type ReactNode } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { CpuChip01 } from '@untitledui/icons'
-import { modelSwitchState, type AiOverviewResponse, type ModelSwitchBody } from '@roomsie/contract'
+import { modelSwitchState, traceDays, type AiOverviewResponse, type ModelSwitchBody } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { dateAndTime } from '../../lib/ist'
-import { percent, rupees } from '../../lib/numbers'
+import { percent, rupees, seconds } from '../../lib/numbers'
+import { cardClass } from './admin-page'
 import { useAiOverview, useSwitchLog, useTraceViews } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
@@ -17,8 +18,7 @@ import { Modal } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
 
 type Numbers = NonNullable<AiOverviewResponse['numbers']>
-const card = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
-const seconds = (ms: number | null) => (ms === null ? '—' : `${(ms / 1000).toLocaleString('en-IN', { maximumFractionDigits: 1 })} s`)
+const orNone = (ms: number | null) => (ms === null ? '—' : seconds(ms))
 const bandLabels: Record<keyof Numbers['bands'], string> = {
   core: 'Core: the search', general: 'General questions', consequential: 'Consequential: law, tax',
   out_of_scope: 'Out of scope', sensitive: 'Sensitive', adversarial: 'Adversarial',
@@ -26,7 +26,7 @@ const bandLabels: Record<keyof Numbers['bands'], string> = {
 
 function Metric({ label, value, note, children }: { label: string; value: string; note?: string; children?: ReactNode }) {
   return (
-    <section aria-label={label} className={card}>
+    <section aria-label={label} className={cardClass}>
       <p className="text-sm font-medium text-tertiary">{label}</p>
       <p className="text-display-xs font-semibold text-primary">{value}</p>
       {note && <p className="text-sm text-tertiary">{note}</p>}
@@ -48,7 +48,7 @@ function GeminiSwitch({ state, fallback }: { state: AiOverviewResponse['switch']
     },
   })
   return (
-    <section className={`${card} bg-secondary`}>
+    <section className={`${cardClass} bg-secondary`}>
       <Toggle title="Use Gemini for all calls" checked={state.geminiOnly} disabled={flip.isPending}
         help="Flip it when the main model is down or slow. It acts on the next call, with no deploy, and the team gets a Telegram message."
         problem={flip.isError ? errorText(flip.error) : null}
@@ -79,7 +79,7 @@ function CallMetrics({ numbers: { today, lastQuarterHour } }: { numbers: Numbers
       <Metric label="Model calls today" value={today.calls.toLocaleString('en-IN')} note={`${lastQuarterHour.calls.toLocaleString('en-IN')} in the last 15 minutes`} />
       <Metric label="Calls failed" value={percent(today.failedShare)} note={`${percent(lastQuarterHour.failedShare)} in the last 15 minutes`} />
       <Metric label="Sent to the fallback" value={percent(today.fallbackShare)} note={`${percent(lastQuarterHour.fallbackShare)} in the last 15 minutes`} />
-      <Metric label="Slowest 5% of calls" value={seconds(today.p95Ms)} note="Each call has its own time limit" />
+      <Metric label="Slowest 5% of calls" value={orNone(today.p95Ms)} note="Each call has its own time limit" />
     </>
   )
 }
@@ -88,7 +88,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
   const total = Object.values(numbers.bands).reduce((a, b) => a + b, 0)
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-      <section aria-label="By role, today" className={`${card} overflow-x-auto lg:flex-1`}>
+      <section aria-label="By role, today" className={`${cardClass} overflow-x-auto lg:flex-1`}>
         <h2 className="text-lg font-semibold text-primary">By role, today</h2>
         <table className="w-full min-w-120 text-left text-sm">
           <thead className="text-xs font-medium text-tertiary">
@@ -101,7 +101,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
                 <td className="py-2.5 pr-3">{r.calls.toLocaleString('en-IN')}</td>
                 <td className="py-2.5 pr-3">{percent(r.failedShare)}</td>
                 <td className="py-2.5 pr-3">{percent(r.fallbackShare)}</td>
-                <td className="py-2.5 pr-3">{seconds(r.p95Ms)}</td>
+                <td className="py-2.5 pr-3">{orNone(r.p95Ms)}</td>
                 <td className="py-2.5 pr-3">{rupees(r.rupees)}</td>
               </tr>
             ))}
@@ -109,7 +109,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
         </table>
         {!numbers.roles.length && <p className="text-sm text-tertiary">No model call today.</p>}
       </section>
-      <section aria-label="Router bands, today" className={`${card} lg:w-116`}>
+      <section aria-label="Router bands, today" className={`${cardClass} lg:w-116`}>
         <h2 className="text-lg font-semibold text-primary">Router bands, today</h2>
         {(Object.keys(bandLabels) as (keyof Numbers['bands'])[]).map((band) => (
           <p key={band} className="grid grid-cols-[10rem_1fr_3rem] items-center gap-3 text-sm text-secondary">
@@ -156,7 +156,7 @@ function Setting({ name, value }: { name: string; value: string }) {
 function TraceViews() {
   const views = useTraceViews()
   return (
-    <section aria-label="Trace views" className={card}>
+    <section aria-label="Trace views" className={cardClass}>
       <h2 className="text-lg font-semibold text-primary">Trace views</h2>
       {views.isError && <p role="alert" className="text-sm text-error-primary">{errorText(views.error)}</p>}
       {views.data && (views.data.views.length ? (
@@ -183,7 +183,7 @@ export function AiSettingsAndLog() {
   const { limits } = settings
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
-      <section aria-label="Settings of the server" className={`${card} lg:flex-1`}>
+      <section aria-label="Settings of the server" className={`${cardClass} lg:flex-1`}>
         <h2 className="text-lg font-semibold text-primary">Settings of the server</h2>
         <p className="text-sm text-tertiary">Read-only. A change of these is a deploy, and a change of a prompt runs the eval set first.</p>
         <div className="flex flex-col">
@@ -195,11 +195,11 @@ export function AiSettingsAndLog() {
           <Setting name="Visitor messages" value={`${limits.turnCap} before the sign-in wall, ${limits.turnBackstop} at most`} />
           <Setting name="Visitor chats" value={`${limits.sessionsPerDevice} a device, ${limits.sessionsPerIp} a network, ${limits.sessionsPerIpRange} a network range`} />
           <Setting name="Typed messages" value={`${limits.typedTurnsPerMinute} a minute`} />
-          <Setting name="Traces kept" value="30 days after the call · religion and community words masked" />
+          <Setting name="Traces kept" value={`${traceDays} days after the call · religion and community words masked`} />
         </div>
       </section>
       <div className="flex flex-col gap-4 lg:w-136">
-        <section aria-label="Gemini switch log" className={card}>
+        <section aria-label="Gemini switch log" className={cardClass}>
           <h2 className="text-lg font-semibold text-primary">Gemini switch log</h2>
           {log.data.flips.length ? (
             <ul className="flex flex-col">

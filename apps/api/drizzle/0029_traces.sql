@@ -1,8 +1,9 @@
 CREATE TABLE "trace_prompts" (
-	"hash" text PRIMARY KEY NOT NULL,
-	"role" text NOT NULL,
+	"id" uuid PRIMARY KEY NOT NULL,
+	"hash" text NOT NULL,
 	"text" text NOT NULL,
-	"created_at" timestamp with time zone DEFAULT now() NOT NULL
+	"created_at" timestamp with time zone DEFAULT now() NOT NULL,
+	CONSTRAINT "trace_prompts_hash_unique" UNIQUE("hash")
 );
 --> statement-breakpoint
 ALTER TABLE "trace_prompts" ENABLE ROW LEVEL SECURITY;--> statement-breakpoint
@@ -46,5 +47,4 @@ CREATE INDEX "trace_views_turn_idx" ON "trace_views" USING btree ("turn_key","cr
 CREATE INDEX "trace_views_created_idx" ON "trace_views" USING btree ("created_at");--> statement-breakpoint
 CREATE INDEX "traces_turn_idx" ON "traces" USING btree ("turn_key");--> statement-breakpoint
 CREATE INDEX "traces_started_idx" ON "traces" USING btree ("started_at");--> statement-breakpoint
-CREATE INDEX "traces_session_idx" ON "traces" USING btree ("session_code");--> statement-breakpoint
 CREATE INDEX "traces_goal_idx" ON "traces" USING btree ("goal_id");

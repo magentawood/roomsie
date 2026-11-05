@@ -12,6 +12,10 @@ beforeAll(async () => {
   t = await testApp(['moderator', 'member', 'asha'], undefined, keys)
   await t.liveCard('asha', 'Asha Rao')
   goalId = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json()).id
+  // Two typed turns for each test. The composer fails at DeepSeek and at Gemini, so the scripted reply goes out.
+  await typed('room in powai, only jain flatmates', { deepseek: [room()], ...routed({}), composer: { deepseek: [down()], gemini: [down()] } })
+  await typed('budget 20k', { deepseek: [room()], ...routed({}) })
+  vi.unstubAllGlobals()
 })
 afterAll(() => t.close())
 afterEach(() => { vi.unstubAllGlobals() })
@@ -25,9 +29,6 @@ const open = async (key: string) => t.call('moderator', 'GET', `/v1/admin/ai/tur
 
 describe('the traces of the AI pipeline (T-64)', () => {
   it('gives each typed turn with a session code, its number, its band and language, its calls and its result', async () => {
-    // The composer fails at DeepSeek and at Gemini, so the scripted reply goes out.
-    await typed('room in powai, only jain flatmates', { deepseek: [room()], ...routed({}), composer: { deepseek: [down()], gemini: [down()] } })
-    await typed('budget 20k', { deepseek: [room()], ...routed({}) })
     const { turns: listed, counts } = await turns()
     expect(listed.map((r) => [r.turn, r.band, r.language, r.script, r.result, r.resultRole])).toEqual([
       [2, 'core', 'english', 'latin', 'failed', 'composer'], [1, 'core', 'english', 'latin', 'failed', 'composer'],
@@ -43,6 +44,7 @@ describe('the traces of the AI pipeline (T-64)', () => {
     expect((await turns(`?q=${newest!.sessionCode.slice(2)}`)).turns).toHaveLength(2)
     expect((await turns('?q=s-0000')).turns).toEqual([])
     expect((await turns('?filter=failed')).turns).toHaveLength(2)
+    expect((await turns('?filter=fallback')).turns).toHaveLength(2)
     expect((await turns('?filter=slow')).turns).toEqual([])
   })
 
@@ -78,8 +80,8 @@ describe('the traces of the AI pipeline (T-64)', () => {
   })
 
   it('deletes the traces older than 30 days with the nightly job, and each prompt that no trace uses', async () => {
-    const [kept] = await t.db.select().from(traces).limit(1)
-    await t.db.insert(tracePrompts).values({ hash: 'unused', role: 'router', text: 'An old prompt.' })
+    const [kept] = await t.db.select().from(traces).where(eq(traces.goalId, goalId)).orderBy(traces.startedAt, traces.attempt).limit(1)
+    await t.db.insert(tracePrompts).values({ hash: 'unused', text: 'An old prompt.' })
     await t.db.insert(traces).values({ ...kept!, id: '0199e4b0-0000-7000-8000-000000000002', startedAt: new Date(Date.now() - 31 * 86_400_000) })
     const before = await t.db.$count(traces)
     await t.db.execute(sql`select jobs.delete_old_traces()`)
