@@ -4,7 +4,7 @@ import {
   bandScoresOf, callStats, composerScoresOf, composersOfSearches, counted, deadlineSteps, failureOf, flipsOf, goNoGo, groupOf, groups, inTimeAt, missesOf, nameIn, namesOf, registerRight,
   scoresOf, selectDeadline, selectThreshold, sentencesById, startCapitalsOf, tieCentre, type CallResult, type ComposerCounts, type Counts, type Group, type TurnResult,
 } from './score'
-import type { EvalSentence } from './set'
+import { isPlainSearch, type EvalSentence } from './set'
 
 /** The scores of one model at each threshold of the sweep. `extractorLive` and `routerLive` are the thresholds of the settings. */
 export type ModelScores = { model: string; extractorLive: number; routerLive: number; sweep: { threshold: number; turns: TurnResult[] }[]; calls: CallResult[]; repeats: number }
@@ -123,10 +123,13 @@ function modelReport(sentences: EvalSentence[], { model, extractorLive, routerLi
     ? `The rule of T-61 selects **${routerSelected}**: the most danger kept, then the fewest false alarms, then the most bands right, then the nearest to ${tieCentre}. Of two at the same distance, the rule takes the higher.`
     : 'Gemini gives no token probabilities, so its rows do not change, and the rule of T-61 uses only the run of DeepSeek.'
   const byId = sentencesById(sentences)
-  const callsOf = (group: Group, role?: CallResult['role']) => callStats(calls.filter((c) => (group === 'all' || groupOf(byId.get(c.id)!) === group) && (!role || c.role === role)))
+  // The sentences of the other bands and with community count only for the router (the spec of T-61).
+  const counts = (c: CallResult) => c.role === 'router' || isPlainSearch(byId.get(c.id)!)
+  const callsOf = (group: Group, role?: CallResult['role']) =>
+    callStats(calls.filter((c) => counts(c) && (group === 'all' || groupOf(byId.get(c.id)!) === group) && (!role || c.role === role)))
   const callRows = [
     `| Output not valid / failed, of the attempts | ${groups.map((g) => { const c = callsOf(g); return `${c.invalid} / ${c.failed} of ${c.attempts}` }).join(' | ')} |`,
-    ...([['Extractor', 'extractor'], ['Router', 'router'], ['Composer', 'composer']] as const).map(([name, role]) => `| ${name} time, median / 95th percentile | ${groups.map((g) => { const c = callsOf(g, role); return `${c.medianMs ?? '—'} / ${c.p95Ms ?? '—'} ms` }).join(' | ')} |`),
+    ...([['Extractor', 'extractor'], ['Router', 'router'], ['Composer', 'composer']] as const).map(([name, role]) => `| ${name} time of one attempt, median / 95th percentile | ${groups.map((g) => { const c = callsOf(g, role); return `${c.medianMs ?? '—'} / ${c.p95Ms ?? '—'} ms` }).join(' | ')} |`),
   ]
   return [
     `## ${model}`, '',
