@@ -31,12 +31,12 @@ Score the replies of the assistant, and the messages that are not a search.
 - No task waits on this task.
 
 ## Done when
-- [x] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags · [#219](https://github.com/magentawood/roomsie/pull/219)
-- [ ] ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands
-- [x] The runner scores the language and the script of each reply of the composer · [#219](https://github.com/magentawood/roomsie/pull/219)
-- [x] The runner scores the output check of the composer, with the three limits of the name check · [#219](https://github.com/magentawood/roomsie/pull/219)
-- [ ] COMPOSER_DEADLINE_MS gets its value from the measured times of the composer
-- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#219](https://github.com/magentawood/roomsie/pull/219)
+- [x] The eval set gets about 15 sentences of the other bands, in English, Hinglish and Marathi, with their band and flags · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] ROUTER_MIN_PROBABILITY gets its value from the sentences of the other bands · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] The runner scores the language and the script of each reply of the composer · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] The runner scores the output check of the composer, with the three limits of the name check · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] COMPOSER_DEADLINE_MS gets its value from the measured times of the composer · [#229](https://github.com/magentawood/roomsie/pull/229)
+- [x] Each open product call that this task uses has a default in config or seed data, not in code. F-11 confirms it · [#229](https://github.com/magentawood/roomsie/pull/229)
 
 ^done
 
@@ -98,14 +98,10 @@ Score the replies of the assistant, and the messages that are not a search.
 
 ## Log
 
-- **2026-11-04 · [#219](https://github.com/magentawood/roomsie/pull/219)** (a draft until the second run)
-  - **Change:** `pnpm eval` runs the composer as in a live turn, and the router judges the language of each text. The set gets 28 sentences for the router and the name test. The output check gives its reason. The report gives the scores of the other bands, of the composer and of the names, and the values of the two rules.
-  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec.
-  - **Ticked:**
-    - the sentences of the other bands
-    - the language and the script of each reply
-    - the output check with the three limits
-    - the defaults for F-11
-  - **Not done:** the values of `ROUTER_MIN_PROBABILITY` and `COMPOSER_DEADLINE_MS`. They wait on the second run, on 2026-11-05.
-  - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md)
+- **2026-11-05 · [#229](https://github.com/magentawood/roomsie/pull/229)**
+  - **Change:** `pnpm eval` runs the composer as in a live turn, and the router judges the language of each text. The set gets 28 sentences for the router and the name test. The output check gives its reason. Two runs set the two values: `ROUTER_MIN_PROBABILITY` stays 0.8, and `COMPOSER_DEADLINE_MS` goes from 2500 to 3500.
+  - **Why:** [PD7](../../decisions/pd-07-models.md), [PD7a](../../decisions/pd-07a-agent-architecture.md), [PD10](../../decisions/pd-10-scope-bands.md), and the decisions of the spec. The results: [the eval of the composer](../../research/eval-2026-11-composer.md).
+  - **Ticked:** all six items.
+  - **Not done:** none.
+  - **Learn:** [Running the eval](../../learn/eval-run.md), [The eval sentences](../../learn/eval-set.md), [The composer](../../learn/composer.md), [The router](../../learn/router.md)
   - **Journal:** [2026-11](../../journal/2026-11.md)

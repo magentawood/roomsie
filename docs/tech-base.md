@@ -95,9 +95,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
-- [Form B notes](learn/form-b-notes.md)
-- [The admin home](learn/admin-home.md)
+- [Running the eval](learn/eval-run.md)
+- [The composer](learn/composer.md)
 - [The eval sentences](learn/eval-set.md)
-- [Areas, sub-areas and pockets](learn/areas.md)
-- [Profiles and cards](learn/profiles.md)
+- [The router](learn/router.md)
+- [Form B notes](learn/form-b-notes.md)
 <!-- learn-newest:end -->

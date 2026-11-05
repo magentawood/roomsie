@@ -52,4 +52,4 @@
 ## Tickets
 
 - T-27: the runner, the scores, the sweep and the replay.
-- T-61: the composer, the judge, the router on the other bands, the two rules, and the replay of two runs.
+- T-61: [#229](https://github.com/magentawood/roomsie/pull/229), 2026-11-05. The composer, the judge, the router on the other bands, the two rules, and the replay of two runs.

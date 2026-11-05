@@ -38,7 +38,7 @@ runTurn() ── router + extractor ──▶ replyWriter(): the plan, with the 
 
 - **What the composer reads.** The plan, the filled slots of Form A, the Form B notes of the person, the last two turns and the new message. It never reads the full chat, a listing, a profile or a result ([assistant.md](../standards/assistant.md)).
 - **Which turns.** Only a core typed turn that the extractor could read. A tap, a comparison of selected cards (T-49), and an off-topic, adversarial or sensitive turn, keep the scripted reply. A turn that states a hidden religion or community preference keeps it too ([PD3c](../decisions/pd-03c-exclusionary-preferences.md)). It also stays out of the last two turns of a later call.
-- **The deadline.** `COMPOSER_DEADLINE_MS` (2500) is the time for all the attempts of the call together. After it, no retry and no fallback start, and the API logs a line, not an error report. The event `model_called` has the time of each attempt, so T-61 can tune the value.
+- **The deadline.** `COMPOSER_DEADLINE_MS` (3500) is the time for all the attempts of the call together. After it, no retry and no fallback start, and the API logs a line, not an error report. T-61 measured the value: at 2500 ms, only 71% of the DeepSeek calls answered in time ([the eval of the composer](../research/eval-2026-11-composer.md)).
 - **The output check.** A text fails when it is longer than two times the plan (at least 300 characters), or has a phone number, an email address or a link. When the plan asks a question, the text must have a question mark. It also fails when it has a number that is not in the plan or the message, also an amount in words with its unit, such as "tees hazaar". "₹20,000" lets "20k" through. An amount in English words and a number word with no unit pass, because many number words are also common words, such as "do". A capital word inside a sentence must be in the plan, or be "roomsie", "Mumbai", "PG", "BHK", "OK" or the pronoun "I". A capital word from the words of the person fails, also at the start of a sentence, unless the plan has it. This check stops "Rahul says …". The check gives the reason of a failure, and the API logs the reason (T-61).
 - **The language of a tap.** A tap has no text, so it uses the register of the last typed turn. A typed turn with no router label does the same.
 
@@ -58,4 +58,4 @@ runTurn() ── router + extractor ──▶ replyWriter(): the plan, with the 
 ## Tickets
 
 - T-13: the composer, the fixed lines in five languages, and the hand-off line.
-- T-61: the eval of the register and the value of the deadline. T-38: the general picture of a 2b question from the articles.
+- T-61: [#229](https://github.com/magentawood/roomsie/pull/229), 2026-11-05. The eval of the register, the name test and the value of the deadline. T-38: the general picture of a 2b question from the articles.

@@ -43,4 +43,4 @@
 - M-03: the 50 sentences and their check.
 - T-27: the register rule, and the new h15 and m11.
 - T-36: [#215](https://github.com/magentawood/roomsie/pull/215), 2026-11-04. The personal sentences of the observer, their check and the runner.
-- T-61: the 20 sentences of the other bands, the 2 with a community preference, and the 6 with a friend.
+- T-61: [#229](https://github.com/magentawood/roomsie/pull/229), 2026-11-05. The 20 sentences of the other bands, the 2 with a community preference, and the 6 with a friend.
