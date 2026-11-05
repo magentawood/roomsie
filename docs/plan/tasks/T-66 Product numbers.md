@@ -39,3 +39,34 @@ The funnel of the launch in one place.
 ## Read first
 - [admin-panel.md](../../specs/admin-panel.md)
 - [0012-analytics-event-store.md](../../decisions/0012-analytics-event-store.md)
+
+## Spec
+
+**Approved:** 2026-11-05, by n3rxv
+
+- **Modules:**
+  - **The analytics database:** a new rollup table: the count of each event of each day in IST, also for each value of the fields that the page splits. A nightly pg_cron job counts the last three days again. The migration counts each day that the events have.
+  - **The analytics module of the API:** the reads of the rollup for whole days, and of the raw events of today and of yesterday until the same time.
+  - **A new numbers module of the API:** the funnel and the side cards of a period, and the card of the home. The route is for moderators.
+  - **The contract:** the period, the funnel, the side cards and the card.
+  - **The web:** `/admin/numbers` with the tabs Today, 7 days and 30 days, and the card of Product numbers on the home.
+  - **The rules:** the rule of the rollups in `database.md` names the exception of today.
+- **Seams for the tests:**
+  - The route test of the numbers: each period against a test analytics database with known events, the rollup that the job function builds, the comparison of today with yesterday until the same time, the side cards, the card of the home, no numbers when the analytics database fails, and 404 for a person with no role.
+  - A browser check on local dev at 1440 px: the three tabs and the card of the home.
+- **Decisions:**
+  - **Today (the user):** the numbers of today come from the raw events of today, an exception to the rollup rule of `database.md`, as for the AI pipeline (T-65). The rule names the exception. 7 days and 30 days read only the rollup.
+  - **The comparison of today (the user):** today until now, against yesterday until the same time, also from the raw events.
+  - **7 days and 30 days:** the whole days that end yesterday, against the same number of days before them.
+  - **Events, not people:** the funnel counts events. A visitor has no analytics id, so the events cannot give people. The steps: chats started, results shown, the sign-in wall, signed in with the new accounts, connect requests, requests accepted, and goals closed with the goals found on roomsie.
+  - **A step:** its count, its change against the period before, and its share of the step before it. A step that is larger than the step before shows "1.4 for each chat", not a percent.
+  - **The side cards:** where people found their place (the answers of a close), the limits that stopped people, the reports of each reason, and the answers that changed, by slot (drafts section 40).
+  - **The rollup:** the day, the event, the field, the value and the count, with no person. The nightly job runs at 00:30 IST and counts the last three days again, so a missed night mends itself. Locally and in the tests, pg_cron is not there, so the schedule is skipped, and a test calls the function.
+  - **The pages:** `/admin/numbers` (Today), `/admin/numbers/week` and `/admin/numbers/month`. The card of the home: the chats started, the new accounts and the connect requests of today, against yesterday until the same time.
+  - **No analytics database:** a missing analytics database, a failure or a read over 5 s gives no numbers, and the page tells so (as T-65).
+  - **The access:** moderators only. Other people get "not found".
+- **Out of scope:**
+  - people or retention (D7, D30): the events of a visitor have no analytics id
+  - a chart over time
+  - an export of the numbers
+  - the numbers of the AI pipeline (T-65)
