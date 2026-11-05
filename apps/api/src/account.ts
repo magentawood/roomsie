@@ -28,7 +28,8 @@ export const tombstoneKey = (identity: string) => `deleted:${createHash('sha256'
  * The `users` row stays as a tombstone: `status = 'deleted'`, a new
  * `tokens_valid_after`, and the hash of the identity. Thus an old token gets a 401,
  * and the other person in a thread can still show "Deleted user". Reports,
- * blocks and the moderation log keep their ids for moderation.
+ * blocks and the moderation log about the person keep their ids for moderation.
+ * The log rows of the listings go with the listings.
  *
  * Order: hide, then lock the users row, then the photos, then the rows, then the Firebase user. A profile
  * photo change locks the same row (T-16a), so no photo is added after the read. The R2

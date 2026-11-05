@@ -74,7 +74,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li>The listing reply has two flags: <code>mine</code> (the listing belongs to the user who asks) and <code>hidden</code>. Only the owner gets a hidden listing; other users get 404.</li>
+<li>The listing reply has three flags: <code>mine</code> (the listing belongs to the user who asks), <code>hidden</code> and <code>removed</code>. Only the owner gets a hidden or a removed listing; other users get 404.</li>
 <li>The visible rule is one rule for the detail, Saved and each other read. A hidden listing thus leaves Saved too.</li>
 <li>A part of the page with no data does not show.</li>
 <li>The cards of Saved open the detail.</li>
@@ -94,6 +94,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Two reports at the same time.</strong> The route locks the listing row, so each report counts the other one.</li>
 <li><strong>A delete keeps the report.</strong> When the owner deletes a reported listing, the report stays for the moderator, with no listing.</li>
 <li><strong>A status change does not undo a hide.</strong> The owner can pause and go live again, and the listing stays hidden.</li>
+<li><strong>A removed listing cannot go live again.</strong> A moderator removed it for good (<a href="moderation.html">Moderation</a>), so the route gives 409.</li>
 <li><strong>A 404 gets no retry.</strong> The page shows "This place is no longer listed." at once.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

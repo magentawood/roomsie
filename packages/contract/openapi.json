@@ -9320,8 +9320,8 @@
                             "type": "string",
                             "enum": [
                               "open",
-                              "dismissed",
-                              "actioned"
+                              "actioned",
+                              "dismissed"
                             ]
                           },
                           "createdAt": {
@@ -10334,8 +10334,8 @@
                             "type": "string",
                             "enum": [
                               "open",
-                              "dismissed",
-                              "actioned"
+                              "actioned",
+                              "dismissed"
                             ]
                           },
                           "createdAt": {

@@ -117,7 +117,7 @@ export const setListingRemoved = (tx: Tx, listingId: string, at: Date) => tx.upd
 export const newestListings = (db: Db, limit: number, { hidden = false, removed = false, areaSlugs, ownerIds }: { hidden?: boolean; removed?: boolean; areaSlugs?: string[]; ownerIds?: string[] } = {}) =>
   db.select().from(listings).where(and(
     hidden ? isNotNull(listings.hiddenAt) : undefined, removed ? isNotNull(listings.removedAt) : undefined,
-    areaSlugs || ownerIds ? or(areaSlugs?.length ? inArray(listings.areaSlug, areaSlugs) : undefined, ownerIds?.length ? inArray(listings.ownerUserId, ownerIds) : undefined, sql`false`) : undefined,
+    areaSlugs && ownerIds ? or(inArray(listings.areaSlug, areaSlugs), inArray(listings.ownerUserId, ownerIds)) : undefined,
   )).orderBy(desc(listings.createdAt)).limit(limit)
 
 /** The live listings that people see, and the hidden ones, for the admin home. */

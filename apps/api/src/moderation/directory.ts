@@ -71,9 +71,8 @@ async function listingRows(db: Db, rows: Listing[]): Promise<AdminListingRow[]> 
 /** The newest accounts whose card name or sign-in email has the text. */
 async function accountsMatching(db: Db, text: string) {
   const ids = unique([...(await ownersNamed(db, text, limit)).map((r) => r.userId), ...(await newestAccounts(db, limit, { email: text })).map((r) => r.id)])
-  return (await accountsOf(db, ids)).filter((a) => a.status !== 'deleted').sort((a, b) => b.joinedAt.getTime() - a.joinedAt.getTime()).slice(0, limit).map((a) => a.id)
+  return (await accountsOf(db, ids)).sort((a, b) => b.joinedAt.getTime() - a.joinedAt.getTime()).slice(0, limit).map((a) => a.id)
 }
-
 
 /** The people and the listings of the admin, and the actions of a moderator on them (T-63). */
 export function directoryRoutes(v1: FastifyInstance, options: AuthOptions & { storage: Storage }) {

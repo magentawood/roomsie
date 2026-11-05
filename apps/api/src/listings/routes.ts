@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, desc, eq, or } from 'drizzle-orm'
+import { and, desc, eq, isNull, or } from 'drizzle-orm'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
   listingStatusBody, myListingsResponse, noContent, uploadUrlBody, uploadUrlResponse,
@@ -139,8 +139,9 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     } else if (!allowedFrom[status].includes(listing.status)) {
       return reply.code(409).send({ error: `a ${listing.status} listing cannot become ${status}` })
     }
+    // The check of removed_at above has no lock, so the write checks it again.
     const [saved] = await db.update(listings).set({ status, expiresAt, updatedAt: new Date() })
-      .where(listingOfOwner(listing.id, req.user!.id)).returning()
+      .where(and(listingOfOwner(listing.id, req.user!.id), status === 'live' ? isNull(listings.removedAt) : undefined)).returning()
     if (!saved) return reply.code(404).send({ error: 'not found' })
     return listingView(saved, parts, storage, true)
   })

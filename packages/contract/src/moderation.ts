@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { listingResponse } from './listings'
 import { callShare } from './models'
 import { cardResponse, visibilities } from './profiles'
-import { reportReasons } from './reports'
+import { reportReasons, reportStatuses } from './reports'
 
 /** Dismiss brings the card or the listing back, hide keeps it hidden, and suspend also suspends the account (T-19). */
 export const reviewBody = z.strictObject({ action: z.enum(['dismiss', 'hide', 'suspend']) })
@@ -47,15 +47,17 @@ export const peopleFilters = ['reported', 'hidden', 'suspended', 'verified'] as 
 export const listingFilters = ['reported', 'hidden', 'removed'] as const
 // A list is a search or a filter, so each gives the 50 newest that match.
 const oneOf = (query: { q?: string; filter?: string }) => !(query.q && query.filter)
-const search = z.string().trim().max(100).optional()
+export const adminSearchMax = 100
+const search = z.string().trim().max(adminSearchMax).optional()
 export const adminPeopleQuery = z.object({ q: search, filter: z.enum(peopleFilters).optional() }).refine(oneOf, 'a search or a filter, not both')
 export const adminListingsQuery = z.object({ q: search, filter: z.enum(listingFilters).optional() }).refine(oneOf, 'a search or a filter, not both')
 export type AdminPeopleQuery = z.input<typeof adminPeopleQuery>
 export type AdminListingsQuery = z.input<typeof adminListingsQuery>
 const logEntry = z.object({ id: z.uuid(), action: z.enum(moderationActions), by: z.string().nullable(), at: z.iso.datetime() })
-/** Drops a row of an action that the web does not know, so a tab with an older bundle shows the other rows. */
-const logView = z.array(z.looseObject({ action: z.string() })).transform((rows) => rows.filter((row) => (moderationActions as readonly string[]).includes(row.action))).pipe(z.array(logEntry))
-const subjectReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), status: z.enum(['open', 'dismissed', 'actioned']), createdAt: z.iso.datetime() })
+const subjectReport = z.object({ id: z.uuid(), reason: z.enum(reportReasons), detail: z.string().nullable(), status: z.enum(reportStatuses), createdAt: z.iso.datetime() })
+/** Drops a row whose field has a value that the web does not know, so a tab with an older bundle shows the other rows. */
+const knownRows = <T extends z.ZodType>(row: T, field: string, values: readonly string[]) =>
+  z.preprocess((rows) => (Array.isArray(rows) ? rows.filter((r: Record<string, unknown>) => values.includes(String(r?.[field]))) : rows), z.array(row))
 
 /** A person of the admin: never gender, religion or community (the spec of the admin panel). `name` is null with no card. */
 export const adminPersonRow = z.object({
@@ -71,8 +73,9 @@ export const adminListingRow = z.object({
 })
 export const adminListingsResponse = z.object({ listings: z.array(adminListingRow) })
 export const adminListingResponse = adminListingRow.extend({ listerUserId: z.uuid(), listing: listingResponse, reports: z.array(subjectReport), log: z.array(logEntry) })
-export const adminPersonView = adminPersonResponse.extend({ log: logView })
-export const adminListingView = adminListingResponse.extend({ log: logView })
+const views = { reports: knownRows(subjectReport, 'reason', reportReasons), log: knownRows(logEntry, 'action', moderationActions) }
+export const adminPersonView = adminPersonResponse.extend(views)
+export const adminListingView = adminListingResponse.extend(views)
 export type AdminPersonRow = z.infer<typeof adminPersonRow>
 export type AdminListingRow = z.infer<typeof adminListingRow>
 export type AdminLogEntry = z.infer<typeof logEntry>

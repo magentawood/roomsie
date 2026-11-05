@@ -65,8 +65,10 @@ describe('the people of the admin', () => {
     expect((await person(t.ids.karan)).log.map((l) => [l.action, l.by])).toEqual([['unhide', 'moderator@example.com'], ['hide', 'moderator@example.com']])
   })
 
-  it('suspends a person', async () => {
+  it('suspends a person, and closes the open reports about the person', async () => {
+    await report('member', { profileId: cards.aman }, 'fake')
     expect((await act('people', t.ids.aman, 'suspend')).statusCode).toBe(204)
+    expect(await statusesOf(t.ids.aman)).toEqual(['actioned'])
     const [aman] = await t.db.select({ status: users.status }).from(users).where(eq(users.id, t.ids.aman))
     expect(aman!.status).toBe('suspended')
     expect((await people('?filter=suspended')).map((p) => p.userId)).toEqual([t.ids.aman])

@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, feedbackRatings, foodAnswers, furnishings, genders, goalStatuses, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, moderationActions, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, moderationActions, observationKinds, placeTypes, rejectReasons, religions, reportReasons, reportStatuses, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
   type WaitlistPlace,
 } from '@roomsie/contract'
 
@@ -42,7 +42,7 @@ export const religionEnum = pgEnum('religion', religions)
 export const communityEnum = pgEnum('community', communities)
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn', 'expired'])
-export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
+export const reportStatusEnum = pgEnum('report_status', reportStatuses)
 export const visibilityEnum = pgEnum('visibility', visibilities)
 export const goalStatusEnum = pgEnum('goal_status', goalStatuses)
 export const feedbackRatingEnum = pgEnum('feedback_rating', feedbackRatings)

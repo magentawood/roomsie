@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Home02, SlashCircle01, Trash01 } from '@untitledui/icons'
 import {
-  noContent, type AdminListingRow, type AdminListingsQuery, type AdminLogEntry, type AdminPeopleQuery, type AdminPersonRow, type AdminSubjectReport, type listingActions, type listingFilters,
+  adminSearchMax, noContent, type AdminListingRow, type AdminListingsQuery, type AdminLogEntry, type AdminPeopleQuery, type AdminPersonRow, type AdminSubjectReport, type listingActions, type listingFilters,
   type peopleFilters, type personActions, type visibilities,
 } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
@@ -42,7 +42,7 @@ function Search<F extends string>({ label, placeholder, labels, onSearch }: { la
   const submit = (e: FormEvent) => { e.preventDefault(); setFilter(null); onSearch({ q: text.trim() }) }
   return (
     <form onSubmit={submit} className="flex flex-col gap-3 md:flex-row md:items-end">
-      <input type="search" aria-label={label} className={`${inputClass} md:w-90`} value={text} placeholder={placeholder} maxLength={100} onChange={(e) => setText(e.target.value)} />
+      <input type="search" aria-label={label} className={`${inputClass} md:w-90`} value={text} placeholder={placeholder} maxLength={adminSearchMax} onChange={(e) => setText(e.target.value)} />
       <Button type="submit" variant="primary" size="md">Search</Button>
       <ChoiceChips label="Show only" labelHidden labels={labels} value={filter} onChange={(f) => { setFilter(f); setText(''); onSearch(f ? { filter: f } : {}) }} />
     </form>
@@ -51,10 +51,9 @@ function Search<F extends string>({ label, placeholder, labels, onSearch }: { la
 
 const OpenReports = ({ count }: { count: number }) => (count > 0 ? <Badge tone="error" dot={false}>{`${count} open ${count === 1 ? 'report' : 'reports'}`}</Badge> : null)
 
-function States({ row }: { row: Pick<AdminPersonRow, 'openReports' | 'hidden' | 'suspended' | 'verified'> & { name?: string | null } }) {
+function PersonStates({ row }: { row: Pick<AdminPersonRow, 'openReports' | 'hidden' | 'suspended' | 'verified'> }) {
   return (
     <span className="flex flex-wrap gap-1.5">
-      {row.name === null && <Badge tone="gray" dot={false}>No card</Badge>}
       {row.suspended && <Badge tone="error" dot={false}>Suspended</Badge>}
       {row.hidden && <Badge tone="warning" dot={false}>Hidden</Badge>}
       <OpenReports count={row.openReports} />
@@ -113,7 +112,7 @@ export function PeopleList() {
                 </td>
                 <td className={`px-4 py-3 text-tertiary ${wide}`}>{istDay(p.joinedAt, 'short')}</td>
                 <td className={`px-4 py-3 text-tertiary ${wide}`}>{p.lastActiveAt ? ago(p.lastActiveAt) : '—'}</td>
-                <td className="px-4 py-3"><States row={p} /></td>
+                <td className="px-4 py-3"><PersonStates row={p} /></td>
                 <td className="px-4 py-3 text-right"><Link href={`/admin/people/${p.userId}`} className="font-semibold text-primary hover:underline">Open</Link></td>
               </tr>
             ))}
@@ -224,7 +223,7 @@ function Confirm({ title, text, action, pending, onConfirm, onClose }: { title: 
 }
 
 /** The page of one person or listing: its name as the header, then its parts (drafts section 38). */
-function Item({ title, intro, back, children }: { title: string; intro?: string; back: { label: string; href: string }; children: ReactNode }) {
+function DetailPage({ title, intro, back, children }: { title: string; intro?: string; back: { label: string; href: string }; children: ReactNode }) {
   return (
     <>
       <SubjectHeader title={title} intro={intro} back={back} />
@@ -240,13 +239,12 @@ export function PersonView({ userId }: { userId: string }) {
   const person = useAdminPerson(userId)
   const act = useAction<(typeof personActions)[number]>(`/v1/admin/people/${userId}`)
   const [asking, setAsking] = useState(false)
-  if (person.isError) return <Item title="Person" back={toPeople}><p role="alert" className="text-sm text-error-primary">{errorText(person.error)}</p></Item>
-  if (person.isPending) return <Item title="Person" back={toPeople}><p className="text-sm text-tertiary">Loading…</p></Item>
+  if (person.isError) return <DetailPage title="Person" back={toPeople}><p role="alert" className="text-sm text-error-primary">{errorText(person.error)}</p></DetailPage>
+  if (person.isPending) return <DetailPage title="Person" back={toPeople}><p className="text-sm text-tertiary">Loading…</p></DetailPage>
   const p = person.data
-  const name = p.name ?? 'This person'
   return (
-    <Item title={p.name ?? 'No card'} back={toPeople} intro={`Joined ${istDay(p.joinedAt, 'short')} · last active ${p.lastActiveAt ? ago(p.lastActiveAt) : 'never'}`}>
-      <States row={p} />
+    <DetailPage title={p.name ?? 'No card'} back={toPeople} intro={`Joined ${istDay(p.joinedAt, 'short')} · last active ${p.lastActiveAt ? ago(p.lastActiveAt) : 'never'}`}>
+      <PersonStates row={p} />
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="flex flex-col gap-5 lg:flex-1">
           <section aria-label="Account" className={box}>
@@ -273,10 +271,10 @@ export function PersonView({ userId }: { userId: string }) {
         </aside>
       </div>
       {asking && (
-        <Confirm title={`Suspend ${name}?`} action="Suspend" pending={act.isPending} onClose={() => setAsking(false)} onConfirm={() => act.mutate('suspend', { onSuccess: () => setAsking(false) })}
+        <Confirm title={`Suspend ${p.name ?? 'this person'}?`} action="Suspend" pending={act.isPending} onClose={() => setAsking(false)} onConfirm={() => act.mutate('suspend', { onSuccess: () => setAsking(false) })}
           text="The person is signed out everywhere. The card and the listings are hidden, and the open requests are withdrawn. Only a developer can undo this." />
       )}
-    </Item>
+    </DetailPage>
   )
 }
 
@@ -286,11 +284,11 @@ export function ListingView({ id }: { id: string }) {
   const areaLabels = useAreaLabels()
   const act = useAction<(typeof listingActions)[number]>(`/v1/admin/listings/${id}`)
   const [asking, setAsking] = useState(false)
-  if (listing.isError) return <Item title="Listing" back={toListings}><p role="alert" className="text-sm text-error-primary">{errorText(listing.error)}</p></Item>
-  if (listing.isPending) return <Item title="Listing" back={toListings}><p className="text-sm text-tertiary">Loading…</p></Item>
+  if (listing.isError) return <DetailPage title="Listing" back={toListings}><p role="alert" className="text-sm text-error-primary">{errorText(listing.error)}</p></DetailPage>
+  if (listing.isPending) return <DetailPage title="Listing" back={toListings}><p className="text-sm text-tertiary">Loading…</p></DetailPage>
   const l = listing.data
   return (
-    <Item title={l.title} back={toListings} intro={`${l.area ?? 'No area'} · listed by ${l.lister ?? 'a person with no card'} · posted ${istDay(l.postedAt, 'short')}`}>
+    <DetailPage title={l.title} back={toListings} intro={`${l.area ?? 'No area'} · listed by ${l.lister ?? 'a person with no card'} · posted ${istDay(l.postedAt, 'short')}`}>
       <ListingStates row={l} />
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
         <div className="flex flex-col gap-5 lg:flex-1">
@@ -320,6 +318,6 @@ export function ListingView({ id }: { id: string }) {
         <Confirm title="Remove this listing?" action="Remove listing" pending={act.isPending} onClose={() => setAsking(false)} onConfirm={() => act.mutate('remove', { onSuccess: () => setAsking(false) })}
           text="It shows to nobody, and its owner cannot make it live again. The owner sees that a moderator removed it." />
       )}
-    </Item>
+    </DetailPage>
   )
 }
