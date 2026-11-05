@@ -36,7 +36,7 @@ const actionLabels: Record<AdminLogEntry['action'], string> = { hide: 'Hidden', 
 const cardStates: Record<(typeof visibilities)[number], string> = { live: 'Shows to others', hidden: 'Hidden by the person', draft: 'Not finished' }
 
 /** A search or a filter: each clears the other. */
-function Search<F extends string>({ label, placeholder, labels, onSearch }: { label: string; placeholder: string; labels: Record<F, string>; onSearch: (query: { q?: string; filter?: F }) => void }) {
+export function Search<F extends string>({ label, placeholder, labels, onSearch }: { label: string; placeholder: string; labels: Record<F, string>; onSearch: (query: { q?: string; filter?: F }) => void }) {
   const [text, setText] = useState('')
   const [filter, setFilter] = useState<F | null>(null)
   const submit = (e: FormEvent) => { e.preventDefault(); setFilter(null); onSearch({ q: text.trim() }) }

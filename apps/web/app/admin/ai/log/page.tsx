@@ -3,7 +3,7 @@ import { AiSettingsAndLog } from '../../../../components/admin/ai-pipeline'
 
 export default function AiLogPage() {
   return (
-    <SubjectPage role="moderator" title="AI pipeline" tabs={aiTabs} intro="The settings of the server, and each flip of the Gemini switch.">
+    <SubjectPage role="moderator" title="AI pipeline" tabs={aiTabs} intro="The settings of the server, each flip of the Gemini switch, and each open of a trace.">
       <AiSettingsAndLog />
     </SubjectPage>
   )

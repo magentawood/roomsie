@@ -2,9 +2,9 @@ import { createContext, useContext } from 'react'
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
-  adminHomeView, adminInvitesResponse, adminListingView, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
+  adminHomeView, adminInvitesResponse, adminListingView, adminTurnView, adminTurnsView, traceViewsResponse, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
-  type AdminListingsQuery, type AdminPeopleQuery, type FormA, type SavedKind,
+  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type FormA, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError, chatApi } from './api'
 import { areaTree } from './areas'
@@ -26,6 +26,8 @@ export const queryKeys = {
   adminListings: ['admin', 'listings'],
   aiOverview: ['admin', 'ai'],
   switchLog: ['admin', 'ai', 'switch'],
+  turns: ['admin', 'ai', 'turns'],
+  traceViews: ['admin', 'ai', 'trace-views'],
   reportQueue: ['admin', 'reports'],
   conversations: ['conversations'],
   messages: (conversationId: string) => ['messages', conversationId],
@@ -68,7 +70,7 @@ export function useAdminHome() {
   return useQuery({ queryKey: queryKeys.adminHome, queryFn: () => api(user, '/v1/admin/home', adminHomeView) })
 }
 
-const searchOf = ({ q, filter }: AdminPeopleQuery | AdminListingsQuery) => new URLSearchParams({ ...(q && { q }), ...(filter && { filter }) }).toString()
+const searchOf = ({ q, filter }: AdminPeopleQuery | AdminListingsQuery | AdminTurnsQuery) => new URLSearchParams({ ...(q && { q }), ...(filter && { filter }) }).toString()
 
 export function useAdminPeople(query: AdminPeopleQuery) {
   const user = useUser()
@@ -98,6 +100,22 @@ export function useAiOverview() {
 export function useSwitchLog() {
   const user = useUser()
   return useQuery({ queryKey: queryKeys.switchLog, queryFn: () => api(user, '/v1/admin/ai/switch-log', modelSwitchLogResponse) })
+}
+
+export function useTurns(query: AdminTurnsQuery) {
+  const user = useUser()
+  return useQuery({ queryKey: [...queryKeys.turns, query], queryFn: () => api(user, `/v1/admin/ai/turns?${searchOf(query)}`, adminTurnsView) })
+}
+
+/** Each read is an open of the audit log (T-64), so it reads one time and never again in the background. */
+export function useTurn(key: string) {
+  const user = useUser()
+  return useQuery({ queryKey: [...queryKeys.turns, 'one', key], queryFn: () => api(user, `/v1/admin/ai/turns/${key}`, adminTurnView), staleTime: Infinity, refetchOnWindowFocus: false })
+}
+
+export function useTraceViews() {
+  const user = useUser()
+  return useQuery({ queryKey: queryKeys.traceViews, queryFn: () => api(user, '/v1/admin/ai/trace-views', traceViewsResponse) })
 }
 
 export function useReportQueue() {

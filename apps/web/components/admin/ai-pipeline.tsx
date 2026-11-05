@@ -8,7 +8,7 @@ import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { dateAndTime } from '../../lib/ist'
 import { percent, rupees } from '../../lib/numbers'
-import { useAiOverview, useSwitchLog } from '../../lib/queries'
+import { useAiOverview, useSwitchLog, useTraceViews } from '../../lib/queries'
 import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
 import { Bar } from '../ui/bar'
@@ -152,7 +152,28 @@ function Setting({ name, value }: { name: string; value: string }) {
   )
 }
 
-/** The settings of the server, read-only, and the log of the switch (T-65). */
+/** The opens of a turn, newest first: the audit log of the traces (T-64). */
+function TraceViews() {
+  const views = useTraceViews()
+  return (
+    <section aria-label="Trace views" className={card}>
+      <h2 className="text-lg font-semibold text-primary">Trace views</h2>
+      {views.isError && <p role="alert" className="text-sm text-error-primary">{errorText(views.error)}</p>}
+      {views.data && (views.data.views.length ? (
+        <ul className="flex flex-col">
+          {views.data.views.map((v, i) => (
+            <li key={i} className="flex flex-col gap-0.5 border-t border-secondary py-2.5 first:border-t-0">
+              <span className="text-sm font-semibold text-primary">{`${v.sessionCode} · turn ${v.turn}`}</span>
+              <span className="text-sm text-tertiary">{`${v.by ?? 'A deleted account'} · ${dateAndTime(v.at)}`}</span>
+            </li>
+          ))}
+        </ul>
+      ) : <p className="text-sm text-tertiary">Nobody opened a turn yet.</p>)}
+    </section>
+  )
+}
+
+/** The settings of the server, read-only, the log of the switch (T-65), and the log of the trace views (T-64). */
 export function AiSettingsAndLog() {
   const ai = useAiOverview()
   const log = useSwitchLog()
@@ -174,24 +195,28 @@ export function AiSettingsAndLog() {
           <Setting name="Visitor messages" value={`${limits.turnCap} before the sign-in wall, ${limits.turnBackstop} at most`} />
           <Setting name="Visitor chats" value={`${limits.sessionsPerDevice} a device, ${limits.sessionsPerIp} a network, ${limits.sessionsPerIpRange} a network range`} />
           <Setting name="Typed messages" value={`${limits.typedTurnsPerMinute} a minute`} />
+          <Setting name="Traces kept" value="30 days after the call · religion and community words masked" />
         </div>
       </section>
-      <section aria-label="Gemini switch log" className={`${card} lg:w-136`}>
-        <h2 className="text-lg font-semibold text-primary">Gemini switch log</h2>
-        {log.data.flips.length ? (
-          <ul className="flex flex-col">
-            {log.data.flips.map((flip) => (
-              <li key={flip.at} className="flex flex-col gap-0.5 border-t border-secondary py-2.5 first:border-t-0">
-                <span className="flex items-center gap-2 text-sm font-semibold text-primary">
-                  {flip.geminiOnly ? 'Switched to the fallback model' : 'Switched back to the main model'}
-                  {flip.geminiOnly && <Badge tone="warning" dot={false}>Fallback</Badge>}
-                </span>
-                <span className="text-sm text-tertiary">{`${flip.by ?? 'A deleted account'} · ${dateAndTime(flip.at)}`}</span>
-              </li>
-            ))}
-          </ul>
-        ) : <p className="text-sm text-tertiary">Nobody flipped the switch yet.</p>}
-      </section>
+      <div className="flex flex-col gap-4 lg:w-136">
+        <section aria-label="Gemini switch log" className={card}>
+          <h2 className="text-lg font-semibold text-primary">Gemini switch log</h2>
+          {log.data.flips.length ? (
+            <ul className="flex flex-col">
+              {log.data.flips.map((flip) => (
+                <li key={flip.at} className="flex flex-col gap-0.5 border-t border-secondary py-2.5 first:border-t-0">
+                  <span className="flex items-center gap-2 text-sm font-semibold text-primary">
+                    {flip.geminiOnly ? 'Switched to the fallback model' : 'Switched back to the main model'}
+                    {flip.geminiOnly && <Badge tone="warning" dot={false}>Fallback</Badge>}
+                  </span>
+                  <span className="text-sm text-tertiary">{`${flip.by ?? 'A deleted account'} · ${dateAndTime(flip.at)}`}</span>
+                </li>
+              ))}
+            </ul>
+          ) : <p className="text-sm text-tertiary">Nobody flipped the switch yet.</p>}
+        </section>
+        <TraceViews />
+      </div>
     </div>
   )
 }
