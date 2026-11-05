@@ -6,7 +6,7 @@
 
 - **A visitor session** holds the chats of a person with no account. The browser keeps its visitor key, and the database keeps only the hash of the key ([the assistant turn](assistant-turn.md)).
 - **The claim** is `POST /v1/goals/claim`. It needs the sign-in token and the visitor key, and it answers 204. One transaction moves these to the account:
-  - each goal of the session, with its chat turns, Form A, its outside places, its waitlist entries and its feedback;
+  - each goal of the session, with its chat turns, Form A, its outside places, its waitlist entries, its feedback and its traces ([Traces of the model calls](traces.md));
   - the Form B notes of the session ([Form B notes](form-b-notes.md));
   - the latest own religion and community of the goals, to the profile, as the newer statement ([the hidden filter](hidden-filter.md)). With no profile, the values stay on the goal, and a new profile reads them.
 - **The key ends.** The claim marks the session as claimed by the account, and ends it. The old key then opens no chat, and a new chat with it gets a new visitor session.

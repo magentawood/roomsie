@@ -213,7 +213,7 @@ export async function ownValuesOf(db: Db | Tx, asker: Asker): Promise<OwnValues>
   return { religion: religion?.value ?? null, community: community?.value ?? null }
 }
 
-/** At sign-in (T-17). The turns, the waitlist entries and the feedback follow their goal, and the claimed session stays (T-35). */
+/** At sign-in (T-17). The turns, the waitlist entries, the feedback and the traces follow their goal, and the claimed session stays (T-35). */
 export function claimSession(db: Db, key: string, userId: string) {
   return db.transaction(async (tx) => {
     // The row lock makes a second claim at the same time wait, then find no session to claim.

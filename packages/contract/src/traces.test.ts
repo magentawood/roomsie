@@ -14,8 +14,9 @@ describe('the traces of the AI pipeline, on the web (T-64)', () => {
     expect(turns.map((t) => [t.result, t.band])).toEqual([['ok', null]])
   })
 
-  it('drops an attempt with a role or an outcome that it does not know', () => {
-    const turn = adminTurnView.parse({ ...row, rupees: 0, goneOn: '2026-12-06', lastView: null, attempts: [attempt('router', 'ok'), attempt('planner', 'ok'), attempt('router', 'timeout')] })
+  it('drops an attempt with a role or an outcome that it does not know, and shows no band for a band that it does not know', () => {
+    const turn = adminTurnView.parse({ ...row, band: 'legal', rupees: 0, goneOn: '2026-12-06', lastView: null, attempts: [attempt('router', 'ok'), attempt('planner', 'ok'), attempt('router', 'timeout')] })
     expect(turn.attempts.map((a) => [a.role, a.outcome])).toEqual([['router', 'ok']])
+    expect(turn.band).toBeNull()
   })
 })

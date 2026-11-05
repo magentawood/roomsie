@@ -129,6 +129,15 @@ export function TurnView({ turnKey }: { turnKey: string }) {
     )
   }
   const t = turn.data
+  // A tab with an older bundle drops a call of a kind that it does not know.
+  if (!t.attempts.length) {
+    return (
+      <>
+        <SubjectHeader title={`Session ${t.sessionCode} · turn ${t.turn}`} back={toTurns} />
+        <main className={pageBody}><p className="text-sm text-tertiary">This page cannot show the calls of this turn. Reload the page.</p></main>
+      </>
+    )
+  }
   const start = Math.min(...t.attempts.map((c) => Date.parse(c.startedAt)))
   const span = Math.max(...t.attempts.map((c) => Date.parse(c.startedAt) + c.ms)) - start || 1
   const call = t.attempts[selected] ?? t.attempts[0]!

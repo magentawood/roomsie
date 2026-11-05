@@ -20,7 +20,7 @@ beforeAll(async () => {
 afterAll(() => t.close())
 afterEach(() => { vi.unstubAllGlobals() })
 
-const typed = async (text: string, vendors: Parameters<typeof fakeVendors>[0], who: 'asha' | 'ravi' = 'asha', goal = goalId) => {
+const typed = async (text: string, vendors: Parameters<typeof fakeVendors>[0], { who, goal }: { who: 'asha' | 'ravi'; goal: string } = { who: 'asha', goal: goalId }) => {
   fakeVendors(vendors)
   expect((await t.call(who, 'POST', `/v1/goals/${goal}/turns`, { text })).statusCode).toBe(200)
 }
@@ -50,7 +50,6 @@ describe('the traces of the AI pipeline (T-64)', () => {
   })
 
   it('finds a turn slower than 8 s', async () => {
-    // A turn of this test: a copy of a call that took 9 s.
     const [call] = await t.db.select().from(traces).where(eq(traces.goalId, goalId)).orderBy(traces.startedAt, traces.attempt).limit(1)
     await t.db.insert(traces).values({ ...call!, id: '0199e4b0-0000-7000-8000-000000000003', turnKey: '0199e4b0-0000-7000-8000-000000000004', ms: 9000 })
     expect((await turns('?filter=slow')).turns.map((r) => [r.key, r.ms])).toEqual([['0199e4b0-0000-7000-8000-000000000004', 9000]])
@@ -101,7 +100,7 @@ describe('the traces of the AI pipeline (T-64)', () => {
   it('deletes the traces of an account at once with the account', async () => {
     // An account of this test, so the other tests keep theirs.
     const ravisGoal = newGoalResponse.parse((await t.call('ravi', 'POST', '/v1/goals')).json()).id
-    await typed('room in bandra', { deepseek: [room()], ...routed({}) }, 'ravi', ravisGoal)
+    await typed('room in bandra', { deepseek: [room()], ...routed({}) }, { who: 'ravi', goal: ravisGoal })
     expect(await t.db.$count(traces, eq(traces.goalId, ravisGoal))).toBeGreaterThan(0)
     expect((await t.call('ravi', 'DELETE', '/v1/me')).statusCode).toBe(204)
     expect(await t.db.$count(traces, eq(traces.goalId, ravisGoal))).toBe(0)

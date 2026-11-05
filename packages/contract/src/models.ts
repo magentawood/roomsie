@@ -47,7 +47,7 @@ export const modelSwitchLogResponse = z.object({ flips: z.array(z.object({ gemin
 const numbers = aiOverviewResponse.shape.numbers.unwrap()
 export const aiOverviewView = aiOverviewResponse.extend({
   numbers: numbers.extend({
-    roles: knownRows(numbers.shape.roles.element, 'role', modelRoles),
+    roles: knownRows(numbers.shape.roles.element, { role: modelRoles }),
     bands: z.record(z.string(), z.int().min(0)).transform((bands) => Object.fromEntries(scopeBands.map((band) => [band, bands[band] ?? 0]))).pipe(numbers.shape.bands),
   }).nullable(),
 })

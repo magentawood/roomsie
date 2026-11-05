@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { scopeBands } from './goals'
 import { modelOutcomes, modelRoles } from './models'
+import { knownRows } from './shared'
 
 /** Religion, and the community names that are not names of a language (PD20). */
 export const traceMaskWords = {
@@ -24,6 +25,10 @@ export const traceMaskWords = {
     'north east', 'north-east', 'northeast', 'north eastern', 'north-eastern', 'northeastern', 'north easterner', 'north-easterner', 'northeasterner', 'पूर्वोत्तर', 'नॉर्थ ईस्ट', 'ईशान्य',
   ],
 } as const
+const devanagariWord = (word: string) => !/^[\x20-\x7e]+$/.test(word)
+/** Each word of the mask, and each word in Devanagari with its long ई or ी at the end short, as before an ending: "ईसाई" in "ईसाइयों". */
+export const traceMaskForms = [...new Set([...traceMaskWords.religion, ...traceMaskWords.community]
+  .flatMap((word) => (devanagariWord(word) ? [word, word.replace(/ी$/, 'ि').replace(/ई$/, 'इ')] : [word])))]
 /** Words that start like a mask word, but are not religion or community: to teach, intellectual, juice and UPSC. */
 export const traceMaskKeep = ['सिखा', 'बौद्धिक', 'ज्यूस', 'यूपीएससी'] as const
 /** The slots of Form A that show "set" in a trace, in place of their value (the spec of the admin panel). */
@@ -55,12 +60,9 @@ export const adminTurnsResponse = z.object({
   /** The turns of each filter, of all the traces that are kept. */
   counts: z.object({ failed: z.int().min(0), fallback: z.int().min(0), slow: z.int().min(0) }),
 })
-const isOne = (values: readonly string[], value: unknown) => values.includes(String(value))
-/** For a tab with an older bundle: a band that it does not know shows no band, and a turn with a result that it does not know goes. */
-const knownTurns = <T extends z.ZodType>(row: T) => z.preprocess((rows) => (Array.isArray(rows)
-  ? rows.filter((r: Record<string, unknown>) => isOne(turnResults, r?.result)).map((r: Record<string, unknown>) => ({ ...r, band: isOne(scopeBands, r.band) ? r.band : null }))
-  : rows), z.array(row))
-export const adminTurnsView = adminTurnsResponse.extend({ turns: knownTurns(adminTurnRow) })
+/** For a tab with an older bundle: a band that it does not know shows no band, and a row with a value that it does not know goes. */
+const knownBand = { band: adminTurnRow.shape.band.catch(null) }
+export const adminTurnsView = adminTurnsResponse.extend({ turns: knownRows(adminTurnRow.extend(knownBand), { result: turnResults }) })
 
 /** One attempt of a model call, masked. `answer` is null when the vendor gave no answer. */
 const traceAttempt = z.object({
@@ -79,9 +81,7 @@ export const adminTurnResponse = adminTurnRow.extend({
   /** Each attempt of each call of the turn, in the order of their start. */
   attempts: z.array(traceAttempt),
 })
-/** For a tab with an older bundle: an attempt with a role or an outcome that it does not know goes. */
-export const adminTurnView = z.preprocess((turn) => (turn && typeof turn === 'object' ? { ...turn, band: isOne(scopeBands, (turn as { band?: unknown }).band) ? (turn as { band?: unknown }).band : null } : turn),
-  adminTurnResponse.extend({ attempts: z.preprocess((rows) => (Array.isArray(rows) ? rows.filter((r: Record<string, unknown>) => isOne(modelRoles, r?.role) && isOne(modelOutcomes, r?.outcome)) : rows), z.array(traceAttempt)) }))
+export const adminTurnView = adminTurnResponse.extend({ ...knownBand, attempts: knownRows(traceAttempt, { role: modelRoles, outcome: modelOutcomes }) })
 export type AdminTurnResponse = z.infer<typeof adminTurnResponse>
 
 export const traceViewsResponse = z.object({ views: z.array(z.object({ sessionCode: z.string(), turn: z.int().min(1), by: z.string().nullable(), at: z.iso.datetime() })) })

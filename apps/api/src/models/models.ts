@@ -23,7 +23,7 @@ const completion = z.object({
   })),
 })
 
-const parseJson = (text: string): unknown => {
+export const parseJsonOrUndefined = (text: string): unknown => {
   try {
     return JSON.parse(text)
   } catch {
@@ -142,7 +142,7 @@ export function modelsOf({ keys, primary, fallback, timeoutMs }: { keys: Record<
   }
 
   const parseWith = <S extends z.ZodType>(schema: S) => (content: string): z.infer<S> | undefined => {
-    const parsed = schema.safeParse(parseJson(content))
+    const parsed = schema.safeParse(parseJsonOrUndefined(content))
     return parsed.success ? parsed.data : undefined
   }
 

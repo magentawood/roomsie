@@ -219,7 +219,8 @@ describe('the traces of the model calls (T-64)', () => {
     ])
     expect(rows.map((r) => r.messages.list[0]!.content)).toEqual(Array(3).fill('room chahiye powai mein, only [hidden] flatmates'))
     expect(new Set(rows.map((r) => [r.turnKey, r.sessionCode, r.turnNumber].join()))).toHaveLength(1)
-    expect(await testDb.db.$count(tracePrompts, eq(tracePrompts.hash, rows[0]!.promptHash))).toBe(1)
+    expect(new Set(rows.map((r) => r.promptHash)).size).toBe(1)
+    expect((await testDb.db.select({ text: tracePrompts.text }).from(tracePrompts).where(eq(tracePrompts.hash, rows[0]!.promptHash))).map((p) => p.text)).toEqual(['Fill the intent slot.'])
   })
 
   it('gives the answer and reports the error when the save fails', async () => {

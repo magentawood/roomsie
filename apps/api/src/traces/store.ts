@@ -7,7 +7,7 @@ import { afterReplyOf } from '../after-reply'
 import type { Db } from '../db/client'
 import { tracePrompts, traces, traceViews } from '../db/schema'
 import { hashOf, userTurnCount } from '../goals/store'
-import { vendorOf, type ModelCall } from '../models/models'
+import { parseJsonOrUndefined, vendorOf, type ModelCall } from '../models/models'
 import { rupeesOf } from '../models/spend'
 import { emailsOf } from '../users'
 import { forTrace } from './mask'
@@ -74,21 +74,13 @@ const filterSql: Record<TraceFilter, SQL> = { failed: sql`failed_roles is not nu
 
 type TurnStats = { turn_key: string; code: string; num: number; at: string | Date; calls: number; span: number; failed_roles: string[] | null; fallback_roles: string[] | null }
 
-// One stored answer that does not parse gives no band, and the list still shows.
-const parseJson = (text: string | null): unknown => {
-  try {
-    return JSON.parse(text ?? 'null')
-  } catch {
-    return null
-  }
-}
-
 /** The band and the register of a turn, from the answer of its router: the mask keeps them. */
 async function labelsOf(db: Db, keys: string[]) {
   const rows = keys.length ? await db.select({ key: traces.turnKey, answer: traces.answer }).from(traces)
     .where(and(inArray(traces.turnKey, keys), eq(traces.role, 'router'), eq(traces.outcome, 'ok'))) : []
   return new Map(rows.flatMap(({ key, answer }) => {
-    const parsed = routerAnswer.safeParse(parseJson(answer))
+    // A stored answer that does not parse gives no band, and the list still shows.
+    const parsed = routerAnswer.safeParse(parseJsonOrUndefined(answer ?? ''))
     return parsed.success ? [[key, parsed.data] as const] : []
   }))
 }
@@ -122,9 +114,11 @@ export async function turnsOf(db: Db, { q, filter }: { q?: string; filter?: Trac
   return { turns: await rowsOf(db, [...listed]), counts: counted[0]! }
 }
 
-/** The day in IST that the nightly job deletes a trace of this time: its first run at 04:15 IST after the days of PD20. */
+/** 04:15 IST, in minutes: the schedule of the nightly job in migration 0030. */
+const jobRunMinutes = 4 * 60 + 15
+/** The day in IST that the nightly job deletes a trace of this time: its first run after the days of PD20. */
 export const goneOnOf = (startedAt: Date) =>
-  new Date(startedAt.getTime() + (traceDays + 1) * 86_400_000 - (4 * 60 + 15) * 60_000).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
+  new Date(startedAt.getTime() + (traceDays + 1) * 86_400_000 - jobRunMinutes * 60_000).toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' })
 
 /** One turn with each of its calls, or null. The last open of the turn is the one before this read. */
 export async function turnOf(db: Db, key: string) {

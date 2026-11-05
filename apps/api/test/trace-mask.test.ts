@@ -1,12 +1,11 @@
 import { describe, expect, it } from 'vitest'
-import { traceMaskWords } from '@roomsie/contract'
+import { traceMaskForms } from '@roomsie/contract'
 import { forTrace } from '../src/traces/mask'
 
-const words = [...traceMaskWords.religion, ...traceMaskWords.community]
 
 describe('the mask of a trace (T-64)', () => {
-  it('hides each word of religion and of community, in each script, in a sentence', () => {
-    for (const word of words) {
+  it('hides each form of each word of religion and of community, in each script, in a sentence', () => {
+    for (const word of traceMaskForms) {
       const masked = forTrace(`room in Powai, only ${word} flatmates please`)
       expect(masked, word).toBe('room in Powai, only [hidden] flatmates please')
     }
