@@ -88,7 +88,6 @@ export const missingFieldLinks: Record<GoLiveField, { label: string; step: StepI
   flatmatesConsent: { label: 'The tick "My flatmates agreed to be shown"', step: 'people' },
 }
 
-
 /** The line under a refused field. The limits come from the issue, so they follow the contract. */
 function checkLine(issue: z.core.$ZodIssue) {
   const field = issue.path.at(-1)

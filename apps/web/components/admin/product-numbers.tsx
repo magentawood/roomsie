@@ -1,6 +1,6 @@
 'use client'
 
-import type { CloseAnswer, FormASlot, FunnelStep, NumberPeriod, ProductNumbersResponse, RateLimit, ReportReason } from '@roomsie/contract'
+import type { CloseAnswer, FunnelStep, NumberPeriod, ProductNumbersResponse, RateLimit, ReportReason } from '@roomsie/contract'
 import { errorText } from '../../lib/api'
 import { istDay } from '../../lib/ist'
 import { inIndianDigits, percent } from '../../lib/numbers'
@@ -13,7 +13,6 @@ import { cardClass, numberTabs, SubjectPage } from './admin-page'
 
 type Numbers = NonNullable<ProductNumbersResponse['numbers']>
 type Pair = Numbers['newAccounts']
-type Split = Numbers['where']
 
 const stepLabels: Record<FunnelStep, string> = {
   chats: 'Chats started', results: 'Results shown', wall: 'Sign-in wall', signedIn: 'Signed in', requests: 'Connect requests', accepted: 'Requests accepted', closed: 'Goals closed',
@@ -28,11 +27,11 @@ const limitLabels: Record<RateLimit, string> = {
   device: 'Too many chats from one device', too_fast: 'Sending too fast', ip: 'Too many chats from one network', ip_range: 'Too many from one network range',
 }
 const reportLabels: Record<ReportReason, string> = { ...reasonLabels('listing'), fake: 'Fake profile or listing' }
-const slotLabels = {
+const slotLabels: Record<string, string> = {
   intent: 'Room or flatmate', roomType: 'Room type', whosMoving: 'Who moves', areas: 'Area', budget: 'Budget', moveDate: 'Move date',
   ...Object.fromEntries(Object.entries(profileLabels.axes).map(([axis, label]) => [`lifestyle.${axis}`, label])),
   ...Object.fromEntries(Object.entries(profileLabels.mustHaves).map(([key, label]) => [`mustHaves.${key}`, label])),
-} as Record<FormASlot, string>
+}
 const intros: Record<NumberPeriod, string> = {
   today: 'Today until now, against yesterday until the same time.',
   week: 'The 7 whole days that end yesterday, against the 7 days before them.',
@@ -90,7 +89,7 @@ function Funnel({ period, from, to, numbers }: { period: NumberPeriod; from: str
   )
 }
 
-function SideCard({ title, rows, labels }: { title: string; rows: Split; labels: Record<string, string> }) {
+function SideCard({ title, rows, labels }: { title: string; rows: Numbers['where']; labels: Record<string, string> }) {
   return (
     <section aria-label={title} className={cardClass}>
       <h2 className="text-lg font-semibold text-primary">{title}</h2>

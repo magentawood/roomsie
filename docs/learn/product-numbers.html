@@ -127,7 +127,7 @@ GET /v1/admin/numbers?period=
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>A new split:</strong> change <code>jobs.count_events</code> in a new migration, the response in <code>packages/contract/src/numbers.ts</code>, <code>apps/api/src/numbers/numbers.ts</code> and the page. Then count the old days again: <code>select jobs.roll_up_events('&lt;first day&gt;', '&lt;yesterday&gt;')</code>.</li>
+<li><strong>A new split:</strong> change <code>jobs.count_events</code> in a new migration, the response in <code>packages/contract/src/numbers.ts</code>, the split in <code>apps/api/src/numbers/numbers.ts</code>, its side card in <code>apps/web/components/admin/product-numbers.tsx</code>, and the test of today in <code>apps/api/test/numbers.test.ts</code>, which keeps the two lists of splits the same. Then count the old days again: <code>select jobs.roll_up_events('&lt;first day&gt;', '&lt;yesterday&gt;')</code>.</li>
 <li><strong>The schedule:</strong> <code>select * from cron.job</code> in the analytics project shows <code>roll-up-events</code>. After a restore, the dump has no schedule. Run the <code>cron.schedule</code> command of the migration <code>0004_roll_up_events</code> again.</li>
 <li><strong>Nothing deletes the rollup.</strong> It keeps counts, and no person, so it stays after the job of the events drops an old month (<a href="../decisions/pd-19-retention.md">PD19</a>).</li>
 <li><strong>From 00:00 to 00:30 IST, yesterday counts 0</strong> on the 7 and 30 days, because the job has not counted it yet. After a missed night, the days stay 0 until the next run. The header of the funnel tells the time of the count.</li>

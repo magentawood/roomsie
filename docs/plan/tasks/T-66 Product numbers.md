@@ -31,8 +31,8 @@ The funnel of the launch in one place.
 - No task waits on this task.
 
 ## Done when
-- [ ] The product numbers show the funnel for today, 7 days and 30 days, each against the period before
-- [ ] The numbers come only from the analytics events, and agree with the events of a test database
+- [x] The product numbers show the funnel for today, 7 days and 30 days, each against the period before · [#232](https://github.com/magentawood/roomsie/pull/232)
+- [x] The numbers come only from the analytics events, and agree with the events of a test database · [#232](https://github.com/magentawood/roomsie/pull/232)
 
 ^done
 
@@ -65,8 +65,21 @@ The funnel of the launch in one place.
   - **The pages:** `/admin/numbers` (Today), `/admin/numbers/week` and `/admin/numbers/month`. The card of the home: the chats started, the new accounts and the connect requests of today, against yesterday until the same time.
   - **No analytics database:** a missing analytics database, a failure or a read over 5 s gives no numbers, and the page tells so (as T-65).
   - **The access:** moderators only. Other people get "not found".
+  - **The badges (the user, in the review):** with fewer than 20 in the period before, a change shows as a count, not a percent. The badge of the sign-in wall is gray (drafts sections 36 and 40).
+  - **The digit formatter (the user, in the review):** the page and the listing flow share `inIndianDigits` in `lib/numbers.ts`.
+  - **The records (the user, in the review):** PD19 keeps the daily counts with no end, because they hold no person. A note of ADR-0015 says that a rollup has no `id` and no `created_at`.
 - **Out of scope:**
   - people or retention (D7, D30): the events of a visitor have no analytics id
   - a chart over time
   - an export of the numbers
   - the numbers of the AI pipeline (T-65)
+
+## Log
+
+- **2026-11-05 · [#232](https://github.com/magentawood/roomsie/pull/232)**
+  - **Change:** the analytics database gets the rollup `event_days` and a nightly job that counts the last three days again. The admin gets the product numbers: the funnel and four side cards for today, 7 days and 30 days, each against the period before, and the card of the home.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md) and [ADR-0012](../../decisions/0012-analytics-event-store.md).
+  - **Ticked:** the two items.
+  - **Not done:** none.
+  - **Learn:** [Product numbers](../../learn/product-numbers.md), [The admin home](../../learn/admin-home.md), [Analytics events](../../learn/analytics-events.md), [Backups](../../learn/backups.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)
