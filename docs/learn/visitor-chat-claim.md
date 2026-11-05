@@ -32,7 +32,7 @@
 
 - **The claim is safe to repeat.** A second claim, a session that a different account claimed, and an expired key move nothing, and each gets 204.
 - **The session stays.** The nightly job of the old visitor chats skips a claimed session, so the notes and the counts of T-21 keep their rows. Account deletion removes it with the account.
-- **A session that nobody claims goes.** Each day at 04:30 IST, `jobs.delete_old_visitors()` deletes each visitor session 30 days after its last visit, with its goals and all that follows them. A waitlist entry of its goals stays with no chat, until the team sets its invite time ([PD19](../decisions/pd-19-retention.md)). To see the runs: `select * from cron.job_run_details order by start_time desc limit 5`.
+- **A session that nobody claims goes.** Each day at 04:30 IST, `jobs.delete_old_visitors()` deletes each visitor session 30 days after its last visit, with its goals and all that follows them. A waitlist entry of its goals stays with no chat, until the team sets its invite time ([PD19](../decisions/pd-19-retention.md)). To see its runs: `select d.* from cron.job_run_details d join cron.job j using (jobid) where j.jobname = 'delete-old-visitors' order by d.start_time desc limit 5`.
 - **Two goals of one move stay two goals.** The claim merges nothing with the goals that the account has.
 
 ## Tickets

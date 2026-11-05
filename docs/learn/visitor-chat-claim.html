@@ -82,7 +82,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>The claim is safe to repeat.</strong> A second claim, a session that a different account claimed, and an expired key move nothing, and each gets 204.</li>
 <li><strong>The session stays.</strong> The nightly job of the old visitor chats skips a claimed session, so the notes and the counts of T-21 keep their rows. Account deletion removes it with the account.</li>
-<li><strong>A session that nobody claims goes.</strong> Each day at 04:30 IST, <code>jobs.delete_old_visitors()</code> deletes each visitor session 30 days after its last visit, with its goals and all that follows them. A waitlist entry of its goals stays with no chat, until the team sets its invite time (<a href="../decisions/pd-19-retention.md">PD19</a>). To see the runs: <code>select * from cron.job_run_details order by start_time desc limit 5</code>.</li>
+<li><strong>A session that nobody claims goes.</strong> Each day at 04:30 IST, <code>jobs.delete_old_visitors()</code> deletes each visitor session 30 days after its last visit, with its goals and all that follows them. A waitlist entry of its goals stays with no chat, until the team sets its invite time (<a href="../decisions/pd-19-retention.md">PD19</a>). To see its runs: <code>select d.* from cron.job_run_details d join cron.job j using (jobid) where j.jobname = 'delete-old-visitors' order by d.start_time desc limit 5</code>.</li>
 <li><strong>Two goals of one move stay two goals.</strong> The claim merges nothing with the goals that the account has.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

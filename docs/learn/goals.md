@@ -27,7 +27,7 @@
 - **A closed goal refuses a typed turn, a tap and a waitlist join** with 409, before any model call. A second close or reopen changes nothing and logs nothing.
 - **The events** `goal_closed` (with the answer) and `goal_reopened` count the found places ([analytics events](analytics-events.md)). The goal row keeps only its status.
 - **One feedback for each closed goal**, from its owner. This lets a visitor send it with no new spam limit, because the chat limits already limit the goals of a visitor ([PD9](../decisions/pd-09-pre-login-limits.md)).
-- **A visitor goal goes** with its session, 30 days after the last visit, with its feedback. A goal that moved to an account at sign-in stays ([the visitor chat at sign-in](visitor-chat-claim.md)).
+- **A visitor goal goes** with its session: a nightly job deletes it 30 days after the last visit, with its feedback. Its waitlist entries stay with no chat. A goal that moved to an account at sign-in stays ([the visitor chat at sign-in](visitor-chat-claim.md)).
 
 ## The choice we made
 

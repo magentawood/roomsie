@@ -1,5 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { eq, sql } from 'drizzle-orm'
+import { sessionDays } from '../src/goals/store'
+import { joinWaitlist } from '../src/waitlist/store'
 import { anonymousSessions, chatTurns, feedback, goals, observations, observationTopics, tracePrompts, traces, users, waitlist } from '../src/db/schema'
 import { createTestDb, type TestDb } from './db'
 
@@ -15,10 +17,10 @@ const daysAgo = (days: number) => new Date(Date.now() - days * 86_400_000)
 const deleteOldVisitors = () => t.db.execute(sql`select jobs.delete_old_visitors()`)
 const userNamed = async (name: string) => (await t.db.insert(users).values({ authProviderId: `uid-${name}` }).returning({ id: users.id }))[0]!.id
 
-/** A visitor session as a visit leaves it: its expiry is 30 days after the last visit. Its goal has a typed turn, a note, a trace, feedback and a waitlist entry. */
-async function visitorChat(name: string, lastVisit: number) {
+/** A visitor session as a visit leaves it: its expiry is 30 days after the last visit. */
+async function visitorChat(name: string, daysSinceVisit: number) {
   const [session] = await t.db.insert(anonymousSessions)
-    .values({ keyHash: `key-${name}`, deviceHash: `device-${name}`, lastSeenAt: daysAgo(lastVisit), expiresAt: daysAgo(lastVisit - 30) })
+    .values({ keyHash: `key-${name}`, deviceHash: `device-${name}`, expiresAt: daysAgo(daysSinceVisit - sessionDays) })
     .returning({ id: anonymousSessions.id })
   const sessionId = session!.id
   const [goal] = await t.db.insert(goals).values({ anonymousSessionId: sessionId }).returning({ id: goals.id })
@@ -27,7 +29,7 @@ async function visitorChat(name: string, lastVisit: number) {
   await t.db.insert(observations).values({ anonymousSessionId: sessionId, key: 'diet', value: 'veg', kind: 'preference', evidence: 'A veg flat', turnId: turn!.id, confidence: 0.9 })
   await t.db.insert(traces).values({
     turnKey: turn!.id, goalId, sessionCode: name, turnNumber: 1, role: 'extractor', attempt: 1, model: 'deepseek-flash', fallback: false, outcome: 'ok',
-    startedAt: daysAgo(lastVisit), ms: 900, tokensIn: 100, cachedTokensIn: 0, tokensOut: 10, promptHash: 'prompt', messages: { version: 1, list: [] }, answer: '{}',
+    startedAt: daysAgo(daysSinceVisit), ms: 900, tokensIn: 100, cachedTokensIn: 0, tokensOut: 10, promptHash: 'prompt', messages: { version: 1, list: [] }, answer: '{}',
   })
   await t.db.insert(feedback).values({ goalId, rating: 'good', text: 'Nice chat' })
   await t.db.insert(waitlist).values({ email: `${name}@example.com`, place: 'bhiwandi', goalId })
@@ -56,7 +58,7 @@ describe('the job of the old visitor chats (T-67)', () => {
   it('keeps a session that a person claimed at sign-in', async () => {
     // A claim ends the session at once, and moves its goals to the account.
     const [claimed] = await t.db.insert(anonymousSessions)
-      .values({ keyHash: 'key-claimed', deviceHash: 'device-claimed', lastSeenAt: daysAgo(40), expiresAt: daysAgo(40), claimedByUserId: await userNamed('claimer') })
+      .values({ keyHash: 'key-claimed', deviceHash: 'device-claimed', expiresAt: daysAgo(40), claimedByUserId: await userNamed('claimer') })
       .returning({ id: anonymousSessions.id })
     await deleteOldVisitors()
     expect(await t.db.$count(anonymousSessions, eq(anonymousSessions.id, claimed!.id))).toBe(1)
@@ -73,5 +75,14 @@ describe('the job of the old visitor chats (T-67)', () => {
     await deleteOldVisitors()
     expect(await entryOf('waiting@example.com')).toBeUndefined()
     expect(await entryOf('member@example.com')).toEqual({ goalId: own!.id })
+  })
+
+  it('gives an entry with no chat to the next chat that joins with the same email and place', async () => {
+    await visitorChat('returning', 45)
+    await deleteOldVisitors()
+    const [own] = await t.db.insert(goals).values({ userId: await userNamed('returning') }).returning({ id: goals.id })
+    expect(await joinWaitlist(t.db, { email: 'returning@example.com', place: 'bhiwandi', goalId: own!.id })).toBe(true)
+    // The entry now goes with the account, at its deletion.
+    expect(await entryOf('returning@example.com')).toEqual({ goalId: own!.id })
   })
 })
