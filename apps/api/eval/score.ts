@@ -47,14 +47,13 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
   const [sure, vague] = [Object.entries(labels).filter(([, v]) => v !== 'unclear'), Object.keys(labels).filter((slot) => labels[slot] === 'unclear')]
   const extra = search ? Object.entries(values).filter(([slot]) => !(slot in labels)) : []
   const otherBand = sentence.band !== 'core'
-  // A turn with no answer of the router counts apart, as for the extractor: live, the fallback answers it.
+  // The router gives no band only when it gave no answer (T-34).
   const routed = label.routerBand !== null
   return {
     turns: 1,
     searches: Number(search),
     noAnswer: Number(search && !extractorAnswered),
-    // The router gives no band only when it gave no answer (T-34).
-    routerNoAnswer: Number(label.routerBand === null),
+    routerNoAnswer: Number(!routed),
     labelled: sure.length,
     right: sure.filter(([slot, value]) => same(values[slot], value)).length,
     unclearLabels: vague.length,
@@ -65,7 +64,7 @@ function countsOf(sentence: EvalSentence, { extractorAnswered, values, label }: 
     languageRight: Number(label.register?.language === routerLanguages[sentence.language]),
     scriptRight: Number(label.register?.script === mainScript(sentence.text)),
     alarmsAbove: Number(!otherBand && label.band !== 'core'),
-    alarmsBelow: Number(!otherBand && label.band === 'core' && label.routerBand !== null && label.routerBand !== 'core'),
+    alarmsBelow: Number(!otherBand && label.band === 'core' && routed && label.routerBand !== 'core'),
     // The set has no question about the notes of the person, so each `notes` flag is false.
     falseFlags: Number(label.danger && !sentence.danger) + Number(label.community && !sentence.community) + Number(label.notes),
     otherBands: Number(routed && otherBand),
@@ -106,13 +105,16 @@ export function callStats(calls: Pick<CallResult, 'ms' | 'outcome'>[]) {
   return { attempts: calls.length, invalid: calls.filter((c) => c.outcome === 'invalid').length, failed: calls.filter((c) => c.outcome === 'failed').length, medianMs: at(0.5), p95Ms: at(0.95) }
 }
 
-/** The sentences whose slots, register or band change between the repeats. A search with no answer of the extractor is not a change. */
+/**
+ * The sentences whose slots, register or band change between the repeats.
+ * A turn with no answer of the router, or a search with no answer of the extractor, is not a change.
+ */
 export function flipsOf(sentences: EvalSentence[], turns: TurnResult[]) {
   const byId = sentencesById(sentences)
   const answers = new Map<string, Set<string>>()
   for (const { id, extractorAnswered, values, label } of turns) {
     const search = isSearch(byId.get(id)!)
-    if (search && !extractorAnswered) continue
+    if ((search && !extractorAnswered) || label.routerBand === null) continue
     const answer = JSON.stringify([search ? values : null, label.register, label.band])
     answers.set(id, (answers.get(id) ?? new Set()).add(answer))
   }

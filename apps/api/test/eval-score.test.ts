@@ -114,11 +114,12 @@ describe('the scores of the router on the other bands (T-61)', () => {
       .toMatchObject({ otherBands: 2, bandRight: 1, dangerRight: 1, communityRight: 0, alarmsAbove: 0, alarmsBelow: 0, falseFlags: 1 })
   })
 
-  it('counts a turn with no answer of the router apart, not as a band or a flag that the router misses', () => {
-    const noAnswer = (id: string) => at(id, 'core', { routerBand: null, register: null })
-    expect(scoresOf(others, [noAnswer('e16'), noAnswer('e20'), noAnswer('h24')]).all)
+  it('counts a turn with no answer of the router apart, not as a band or a flag that the router misses, and not as a change', () => {
+    const noRouter = (id: string) => at(id, 'core', { routerBand: null, register: null })
+    expect(scoresOf(others, [noRouter('e16'), noRouter('e20'), noRouter('h24')]).all)
       .toEqual({ ...zeroCounts, turns: 3, routerNoAnswer: 3 })
-    expect(missesOf(others, [noAnswer('e20')])).toEqual(['e20 · no answer of the router (1)'])
+    expect(missesOf(others, [noRouter('e20')])).toEqual(['e20 · no answer of the router (1)'])
+    expect(flipsOf(others, [at('e20', 'sensitive'), { ...noRouter('e20'), repeat: 2 }])).toEqual([])
   })
 
   it('counts a sentence with a community preference in a band that is not core as a false alarm: it is a search of the core band', () => {
