@@ -33,6 +33,7 @@ export * from './results'
 export * from './saved'
 export * from './shared'
 export * from './site'
+export * from './traces'
 export * from './verification'
 export * from './waitlist'
 
