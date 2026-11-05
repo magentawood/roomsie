@@ -2,26 +2,15 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { adminHomeResponse, errorResponse, noContent, reportQueueResponse, reviewBody, type ReportQueueItem } from '@roomsie/contract'
 import { requireModerator, requireRole, type AuthOptions } from '../auth'
-import type { Tx } from '../db/client'
-import { hideListingsOf, listingsByIds, listingView, partsOf, setListingHiddenForReview } from '../listings/read'
+import { listingsByIds, listingView, partsOf, setListingHiddenForReview } from '../listings/read'
 import { idParams } from '../params'
-import { answersFor, cardView, profilesOfUsers, setCardHiddenForReview } from '../profiles/read'
-import { actionReportsAbout, closeReports, openReports } from '../reports/read'
-import { endOpenRequests } from '../requests/read'
+import { answersFor, cardView, profileOf, profilesOfUsers, setCardHiddenForReview } from '../profiles/read'
+import { closeReports, openReports } from '../reports/read'
 import type { Storage } from '../storage'
-import { suspendAccount } from '../users'
 import type { AiSources } from '../models/overview'
 import { homeCards } from './home'
-
-/** A suspended person is signed out everywhere, and leaves the product until a developer ends the suspension (T-19). */
-async function suspend(tx: Tx, userId: string) {
-  const now = new Date()
-  await suspendAccount(tx, userId, now)
-  await setCardHiddenForReview(tx, userId, now)
-  await hideListingsOf(tx, userId, now)
-  await endOpenRequests(tx, userId)
-  await actionReportsAbout(tx, userId)
-}
+import { logAction } from './log'
+import { suspend } from './suspend'
 
 export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiSources & { storage: Storage }) {
   const { db, storage, moderation } = options
@@ -74,13 +63,27 @@ export function moderationRoutes(v1: FastifyInstance, options: AuthOptions & AiS
     }, async (req, reply) => {
       const { id } = req.params
       const { action } = req.body
+      const subject = kind === 'listings' ? { listingId: id } : { userId: id }
       const reviewed = await db.transaction(async (tx) => {
-        const closed = await closeReports(tx, kind === 'listings' ? { listingId: id } : { userId: id }, action === 'dismiss' ? 'dismissed' : 'actioned')
+        const closed = await closeReports(tx, subject, action === 'dismiss' ? 'dismissed' : 'actioned')
         if (!closed.length) return false
+        const [listing] = kind === 'listings' ? await listingsByIds(tx, [id]) : []
+        const wasHidden = listing ? listing.hiddenAt != null : (await profileOf(tx, id))?.hiddenAt != null
         const hiddenAt = action === 'dismiss' ? null : new Date()
         if (kind === 'listings') await setListingHiddenForReview(tx, id, hiddenAt)
         else await setCardHiddenForReview(tx, id, hiddenAt)
-        if (action === 'suspend') await suspend(tx, closed[0]!.subjectUserId)
+        const by = req.user!.id
+        // A report of a listing keeps its listing, so the listing is there.
+        const owner = kind === 'listings' ? listing!.ownerUserId : id
+        const target = { userId: owner, listingId: listing?.id }
+        // The suspend of a person covers the hide of the card, so it has no hide row.
+        if (action === 'dismiss') {
+          if (wasHidden) await logAction(tx, by, 'unhide', target)
+        } else if (action === 'hide' || kind === 'listings') await logAction(tx, by, 'hide', target)
+        if (action === 'suspend') {
+          await suspend(tx, owner)
+          await logAction(tx, by, 'suspend', { userId: owner })
+        }
         return true
       })
       if (!reviewed) return reply.code(404).send({ error: 'not found' })

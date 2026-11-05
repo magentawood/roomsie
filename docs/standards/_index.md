@@ -55,6 +55,7 @@ These rules apply to all code.
 
 ### Comments and docs
 
+- A learn page states only what its code or its record says. Check each fact against its source. Why: a learn page that misstates its source teaches a false fact. (Rule candidates of [#214](https://github.com/magentawood/roomsie/pull/214) and [#230](https://github.com/magentawood/roomsie/pull/230))
 - A change updates each comment and learn page that names what it changes: for example the writers of a table, the parts of account deletion, or an error text. Why: a stale line tells the next reader something false. (Rule candidates of [#204](https://github.com/magentawood/roomsie/pull/204) and [#207](https://github.com/magentawood/roomsie/pull/207))
 
 ### Credentials

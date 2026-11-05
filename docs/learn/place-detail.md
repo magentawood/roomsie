@@ -18,7 +18,7 @@
 | The route | `POST /v1/reports` in `apps/api/src/reports/routes.ts` |
 | The hide rule | `isVisible` and `visibleListing` in `apps/api/src/listings/read.ts` |
 
-- The listing reply has two flags: `mine` (the listing belongs to the user who asks) and `hidden`. Only the owner gets a hidden listing; other users get 404.
+- The listing reply has three flags: `mine` (the listing belongs to the user who asks), `hidden` and `removed`. Only the owner gets a hidden or a removed listing; other users get 404.
 - The visible rule is one rule for the detail, Saved and each other read. A hidden listing thus leaves Saved too.
 - A part of the page with no data does not show.
 - The cards of Saved open the detail.
@@ -38,6 +38,7 @@
 - **Two reports at the same time.** The route locks the listing row, so each report counts the other one.
 - **A delete keeps the report.** When the owner deletes a reported listing, the report stays for the moderator, with no listing.
 - **A status change does not undo a hide.** The owner can pause and go live again, and the listing stays hidden.
+- **A removed listing cannot go live again.** A moderator removed it for good ([Moderation](moderation.md)), so the route gives 409.
 - **A 404 gets no retry.** The page shows "This place is no longer listed." at once.
 
 ## Tickets

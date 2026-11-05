@@ -1,8 +1,8 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest'
-import { eq } from 'drizzle-orm'
+import { and, eq, isNull } from 'drizzle-orm'
 import { uuidv7 } from 'uuidv7'
 import { incomingRequestsResponse, meResponse, outgoingRequestsResponse, profileResponse, reportQueueResponse } from '@roomsie/contract'
-import { connectionRequests, listings, profiles, reports, users } from '../src/db/schema'
+import { connectionRequests, listings, moderationLog, profiles, reports, users } from '../src/db/schema'
 import { testApp, type TestApp } from './app'
 
 type Who = 'lister' | 'seeker' | 'other' | 'moderator'
@@ -28,6 +28,9 @@ const report = async (who: Who, target: { listingId: string } | { profileId: str
 const queue = async () => reportQueueResponse.parse((await t.call('moderator', 'GET', '/v1/admin/reports')).json()).items
 const review = (kind: 'users' | 'listings', id: string, action: string, who: Who = 'moderator') =>
   t.call(who, 'POST', `/v1/admin/${kind}/${id}/review`, { action })
+const logged = async (where: { subjectUserId: string } | { listingId: string }) =>
+  (await t.db.select({ action: moderationLog.action }).from(moderationLog)
+    .where('listingId' in where ? eq(moderationLog.listingId, where.listingId) : and(eq(moderationLog.subjectUserId, where.subjectUserId), isNull(moderationLog.listingId))).orderBy(moderationLog.createdAt)).map((r) => r.action)
 const cardSeen = async (card: string, who: Who = 'other') => (await t.call(who, 'GET', `/v1/people/${card}`)).statusCode
 const statusesOf = async (subjectUserId: string) =>
   (await t.db.select({ status: reports.status }).from(reports).where(eq(reports.subjectUserId, subjectUserId))).map((r) => r.status)
@@ -67,6 +70,13 @@ describe('the admin routes', () => {
     expect((await t.call('other', 'GET', `/v1/listings/${listingId}`)).statusCode).toBe(200)
     expect(await statusesOf(t.ids.seeker)).toEqual(['dismissed'])
     expect(await queue()).toEqual([])
+    expect([await logged({ subjectUserId: t.ids.seeker }), await logged({ listingId })]).toEqual([['unhide'], ['unhide']])
+  })
+
+  it('dismiss of a card that was not hidden adds no row of the log', async () => {
+    await report('seeker', { profileId: cards.lister }, 'fake')
+    expect((await review('users', t.ids.lister, 'dismiss')).statusCode).toBe(204)
+    expect(await logged({ subjectUserId: t.ids.lister })).toEqual([])
   })
 
   it('hide closes the reports and hides a card that was visible', async () => {
@@ -76,6 +86,7 @@ describe('the admin routes', () => {
     expect(await cardSeen(cards.other, 'seeker')).toBe(404)
     expect(profileResponse.parse((await t.call('other', 'GET', '/v1/me/profile')).json()).hiddenForReview).toBe(true)
     expect(await statusesOf(t.ids.other)).toEqual(['actioned'])
+    expect(await logged({ subjectUserId: t.ids.other })).toEqual(['hide'])
   })
 
   it('suspend signs the person out, hides the card and the listings, ends the open requests, and closes all the reports', async () => {
@@ -100,6 +111,10 @@ describe('the admin routes', () => {
       .toMatchObject([{ toProfileId: cards.lister, state: 'not_available' }])
     expect(await statusesOf(t.ids.lister)).toEqual(['actioned', 'actioned'])
     expect(await queue()).toEqual([])
+    expect([await logged({ listingId }), await logged({ subjectUserId: t.ids.lister })]).toEqual([['hide'], ['suspend']])
+    // The row of the listing is also on its owner.
+    const ofLister = await t.db.select({ action: moderationLog.action, listingId: moderationLog.listingId }).from(moderationLog).where(eq(moderationLog.subjectUserId, t.ids.lister))
+    expect(ofLister).toContainEqual({ action: 'hide', listingId })
     await t.db.update(users).set({ status: 'active', tokensValidAfter: new Date(0) }).where(eq(users.id, t.ids.lister))
     await t.db.update(listings).set({ hiddenAt: null })
   })

@@ -1,6 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
-import { and, desc, eq, or } from 'drizzle-orm'
+import { and, desc, eq, isNull, or } from 'drizzle-orm'
 import {
   createListingBody, errorResponse, incompleteListingResponse, listingEditBody, listingEdits, listingResponse,
   listingStatusBody, myListingsResponse, noContent, uploadUrlBody, uploadUrlResponse,
@@ -129,6 +129,7 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     const listing = await ownedListing(db, req.params.id, req.user!.id)
     if (!listing) return reply.code(404).send({ error: 'not found' })
     const { status } = req.body
+    if (listing.removedAt && status === 'live') return reply.code(409).send({ error: 'a moderator removed this listing' })
     const parts = (await partsOf(db, [listing.id]))(listing.id)
     let expiresAt = listing.expiresAt
     if (status === 'live') {
@@ -138,9 +139,14 @@ export function listingRoutes(v1: FastifyInstance, options: AuthOptions & { stor
     } else if (!allowedFrom[status].includes(listing.status)) {
       return reply.code(409).send({ error: `a ${listing.status} listing cannot become ${status}` })
     }
+    // The check of removed_at above has no lock, so the write checks it again.
     const [saved] = await db.update(listings).set({ status, expiresAt, updatedAt: new Date() })
-      .where(listingOfOwner(listing.id, req.user!.id)).returning()
-    if (!saved) return reply.code(404).send({ error: 'not found' })
+      .where(and(listingOfOwner(listing.id, req.user!.id), status === 'live' ? isNull(listings.removedAt) : undefined)).returning()
+    if (!saved) {
+      // A remove can land between the check and the write.
+      const now = await ownedListing(db, listing.id, req.user!.id)
+      return now?.removedAt ? reply.code(409).send({ error: 'a moderator removed this listing' }) : reply.code(404).send({ error: 'not found' })
+    }
     return listingView(saved, parts, storage, true)
   })
 

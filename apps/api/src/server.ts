@@ -34,6 +34,7 @@ import { teamAlertOf, type TeamAlert } from './team-alert'
 import { geminiOnly } from './models/switch'
 import { limitSettings, type LimitSettings } from './goals/settings'
 import { modelRoutes } from './models/routes'
+import { directoryRoutes } from './moderation/directory'
 import { moderationRoutes } from './moderation/routes'
 import { profileRoutes } from './profiles/routes'
 import { reportRoutes } from './reports/routes'
@@ -142,6 +143,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       requestRoutes(v1, options)
       blockRoutes(v1, options)
       moderationRoutes(v1, { ...options, ...aiSources })
+      directoryRoutes(v1, options)
       messageRoutes(v1, options)
       alertRoutes(v1, options)
       verificationRoutes(v1, options)

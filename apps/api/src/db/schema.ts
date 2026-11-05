@@ -17,7 +17,7 @@ import {
 import { uuidv7 } from 'uuidv7'
 import {
   amenities, bathrooms, bedsFree, communities, curfews, documentTypes, electricityRules, feedbackRatings, foodAnswers, furnishings, genders, goalStatuses, guestsRules, insideItems, intents,
-  listingKinds, listingStatuses, meals, minStays, observationKinds, placeTypes, rejectReasons, religions, reportReasons, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
+  listingKinds, listingStatuses, meals, minStays, moderationActions, observationKinds, placeTypes, rejectReasons, religions, reportReasons, reportStatuses, roomTypes, sharingTypes, walkTimes, visibilities, welcomeGroups, whoCanMoveIn, whosMovingAnswers,
   type WaitlistPlace,
 } from '@roomsie/contract'
 
@@ -42,7 +42,7 @@ export const religionEnum = pgEnum('religion', religions)
 export const communityEnum = pgEnum('community', communities)
 export const accountStatusEnum = pgEnum('account_status', ['active', 'suspended', 'deleted'])
 export const connectionStatusEnum = pgEnum('connection_status', ['pending', 'accepted', 'declined', 'withdrawn', 'expired'])
-export const reportStatusEnum = pgEnum('report_status', ['open', 'actioned', 'dismissed'])
+export const reportStatusEnum = pgEnum('report_status', reportStatuses)
 export const visibilityEnum = pgEnum('visibility', visibilities)
 export const goalStatusEnum = pgEnum('goal_status', goalStatuses)
 export const feedbackRatingEnum = pgEnum('feedback_rating', feedbackRatings)
@@ -366,6 +366,8 @@ export const listings = pgTable('listings', {
   expiresAt: timestamp('expires_at', { withTimezone: true }),
   /** Set when reports or a moderator hide the listing (PD18). Only the moderator clears it. */
   hiddenAt: timestamp('hidden_at', { withTimezone: true }),
+  /** A moderator took the listing down for good (T-63): only its owner sees it, and it cannot go live again. */
+  removedAt: timestamp('removed_at', { withTimezone: true }),
 
   createdAt: createdAt(),
   updatedAt: updatedAt(),
@@ -601,6 +603,22 @@ export const blocks = pgTable('blocks', {
   /** The match query subtracts blocks in BOTH directions — a block hides each
    *  person from the other, not just one way. */
   blockedIdx: index('blocks_blocked_idx').on(t.blockedUserId),
+})).enableRLS()
+
+export const moderationActionEnum = pgEnum('moderation_action', moderationActions)
+/** The log of the actions of the moderators on people and listings (T-63). The moderation module owns it. */
+export const moderationLog = pgTable('moderation_log', {
+  id: id(),
+  action: moderationActionEnum('action').notNull(),
+  moderatorUserId: uuid('moderator_user_id').references(() => users.id, { onDelete: 'set null' }),
+  /** The person, or the owner of the listing. */
+  subjectUserId: uuid('subject_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  /** Set for an action on a listing. No foreign key: the row keeps the id after the owner deletes the listing. */
+  listingId: uuid('listing_id'),
+  createdAt: createdAt(),
+}, (t) => ({
+  subjectIdx: index('moderation_log_subject_idx').on(t.subjectUserId, t.createdAt),
+  listingIdx: index('moderation_log_listing_idx').on(t.listingId, t.createdAt),
 })).enableRLS()
 
 /* ── saved ──────────────────────────────────────────────────────────────── */

@@ -1,4 +1,4 @@
-import { and, count, desc, eq, gt, inArray, ne, or } from 'drizzle-orm'
+import { and, count, desc, eq, gt, inArray, max, ne, or } from 'drizzle-orm'
 import type { Conversation, Message } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { messages } from '../db/schema'
@@ -58,4 +58,10 @@ export async function listConversations(db: Db, storage: Storage, viewerUserId: 
       }
     })
     .sort((a, b) => (b.lastMessage?.createdAt ?? '').localeCompare(a.lastMessage?.createdAt ?? ''))
+}
+
+/** The time of the last message that each person sent, for the last activity in the admin (T-63). */
+export async function lastSentMessages(db: Db, userIds: string[]) {
+  const rows = await db.select({ userId: messages.senderUserId, at: max(messages.createdAt) }).from(messages).where(inArray(messages.senderUserId, userIds)).groupBy(messages.senderUserId)
+  return new Map(rows.flatMap((r) => (r.at ? [[r.userId, r.at] as const] : [])))
 }

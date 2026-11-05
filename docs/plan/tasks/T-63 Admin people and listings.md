@@ -31,13 +31,59 @@ Find a person or a listing, and act on it.
 - No task waits on this task.
 
 ## Done when
-- [ ] A moderator finds a person by name or email, and a listing by its area or its lister
-- [ ] The detail shows the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity
-- [ ] A moderator can hide, unhide or suspend a person, and remove a listing
-- [ ] No admin screen shows gender, religion or community
+- [x] A moderator finds a person by name or email, and a listing by its area or its lister · [#230](https://github.com/magentawood/roomsie/pull/230)
+- [x] The detail shows the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity · [#230](https://github.com/magentawood/roomsie/pull/230)
+- [x] A moderator can hide, unhide or suspend a person, and remove a listing · [#230](https://github.com/magentawood/roomsie/pull/230)
+- [x] No admin screen shows gender, religion or community · [#230](https://github.com/magentawood/roomsie/pull/230)
 
 ^done
 
 ## Read first
 - [admin-panel.md](../../specs/admin-panel.md)
 - [pd-18-moderation.md](../../decisions/pd-18-moderation.md)
+
+## Spec
+
+**Approved:** 2026-11-05, by n3rxv
+
+- **Modules:**
+  - **The schema:** listings get `removed_at`, the time of a take-down by a moderator. A new table of the moderation log: the moderator, the action, the person or the listing, and the time.
+  - **The moderation module of the API:** the search of people and listings, the detail of a person and of a listing, and the actions, for moderators. Each action adds a row of the log and closes the open reports of its person or listing. The admin home gets the card of People and listings. The interface changes.
+  - **The listings module:** a removed listing shows to nobody but its owner, and its owner cannot make it live again. The owner sees "Removed by a moderator". The interface changes.
+  - **The profiles, users, goals and messages modules:** the reads that the search and the detail need: the card, the email, and the times of the last chat turn and the last message.
+  - **The contract:** the search, the details, the actions, the log and the card.
+  - **The web:** `/admin/people` and `/admin/listings` with a search and filter chips, `/admin/people/[id]` and `/admin/listings/[id]`, the confirms of suspend and remove, the card on the home, and the notice of a removed listing in My listings.
+- **Seams for the tests:**
+  - The route test of the admin people and listings: the search by name, email, area and lister; the details; each action with its row of the log and the reports that it closes; a removed listing that nobody sees and that its owner cannot make live; 404 for a person with no role; no gender, religion or community in a reply.
+  - The route test of the admin home: the card of People and listings.
+  - A browser check on local dev at 1440 px and 390 px: the lists, a person, a listing, the suspend and the remove, and the notice of a removed listing.
+- **Decisions:**
+  - **Remove (the user):** a moderator takes a listing down for good. It shows to nobody but its owner, who sees "Removed by a moderator" and cannot make it live again. The rows and the photos stay until the owner deletes the listing.
+  - **The last activity (the user):** the newest of the last sign-in, the last typed chat turn and the last message sent.
+  - **The search (the user):** each account, by the name of its card or its sign-in email. An account with no card shows "No card". A listing by its area or by the name or the email of its lister.
+  - **The log (the user):** each hide, unhide, suspend and remove adds a row with the moderator and the time. The detail shows the rows of its person or listing.
+  - **The actions:** a person: hide the card, unhide the card, suspend with a confirm. A listing: hide, unhide, remove with a confirm. Suspend is the suspend of the report queue.
+  - **The open reports:** an action closes the open reports of its person or listing: hide, suspend and remove as actioned, unhide as dismissed, as the report queue does.
+  - **The lists:** the 50 newest that match, with the filters Reported, Hidden, Suspended and Verified for people, and Reported, Hidden and Removed for listings.
+  - **The detail:** the card as users see it, the sign-in email, the reports, the hidden and verified states, the date of joining and the last activity. Never gender, religion or community ([the spec](../../specs/admin-panel.md)).
+  - **The card:** "People and listings" for a moderator: the people with a card and the new ones of today, the live listings, and the hidden and suspended counts.
+  - **The sizes:** laptop first. These pages fit the width of a phone ([the spec](../../specs/admin-panel.md)).
+  - **The designs:** drafts section 38 of the Product file ([D-07](D-07%20Admin%20designs.md)).
+  - **The log of a deleted listing (the user, at the review):** a row of a listing also keeps its owner. It stays on the owner after the owner deletes the listing.
+  - **A new report reason (the user, at the review):** a tab with an older bundle drops a report with a reason that it does not know ([api.md](../../standards/api.md)).
+  - **The order of a filter (the user, at the review):** the newest event first: the newest report, hide, remove or review. A search and no filter give the newest accounts or listings.
+  - **The test of a suspend (the user, at the review):** the route test checks that a suspend from People and listings closes the open reports.
+- **Out of scope:**
+  - the end of a suspension: a developer ends it ([PD18](../../decisions/pd-18-moderation.md))
+  - an email to a person from the admin
+  - a delete of a listing or an account by a moderator
+
+## Log
+
+- **2026-11-05 · [#230](https://github.com/magentawood/roomsie/pull/230)**
+  - **Change:** People and listings in the admin: a search or a filter of the accounts and the listings, the detail of a person and of a listing with the card as users see it, the reports and the moderation log, and the actions hide, unhide, suspend and remove. A removed listing shows only to its owner, with "Removed by a moderator", and cannot go live again. The report queue also writes the log. The admin home gets the card of People and listings.
+  - **Why:** the spec [Admin panel](../../specs/admin-panel.md), and [PD18](../../decisions/pd-18-moderation.md) for the actions.
+  - **Ticked:** the four items.
+  - **Not done:** none.
+  - **Learn:** [Moderation](../../learn/moderation.md), [The admin home](../../learn/admin-home.md), [Place detail](../../learn/place-detail.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

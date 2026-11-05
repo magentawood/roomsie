@@ -36,9 +36,9 @@ describe('the admin home', () => {
   })
 
   it('gives each person only the cards of their roles', async () => {
-    expect((await home('moderator')).map((c) => c.subject)).toEqual(['moderation', 'ai_pipeline', 'site_content'])
+    expect((await home('moderator')).map((c) => c.subject)).toEqual(['moderation', 'people_listings', 'ai_pipeline', 'site_content'])
     expect((await home('reviewer')).map((c) => c.subject)).toEqual(['id_checks'])
-    expect((await home('both')).map((c) => c.subject)).toEqual(['moderation', 'id_checks', 'ai_pipeline', 'site_content'])
+    expect((await home('both')).map((c) => c.subject)).toEqual(['moderation', 'id_checks', 'people_listings', 'ai_pipeline', 'site_content'])
   })
 
   it('counts the open reports, and the late ones of PD18', async () => {

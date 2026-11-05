@@ -101,14 +101,15 @@ describe('the sub-areas (0011, 0012 and the seed)', () => {
       writeFileSync(join(folder, 'meta/_journal.json'), JSON.stringify({ ...journal, entries: journal.entries.filter((e) => e.idx <= 10) }))
       await migrate(db, { migrationsFolder: folder })
       await db.execute(sql`insert into areas (slug, name, is_launch_area, sort_order) values ('andheri-goregaon', 'Andheri–Goregaon', true, 1)`)
-      // SQL, not the schema of today: the users table of 0010 has fewer columns (T-55), and so has the profiles table (T-58).
+      // SQL, not the schema of today: the users table of 0010 has fewer columns (T-55), and so have the profiles (T-58) and the listings (T-63).
       const user = { id: uuidv7() }
       await db.execute(sql`insert into users (id, auth_provider_id) values (${user.id}, 'a')`)
       await db.execute(sql`insert into profiles (id, user_id, full_name, areas) values (${uuidv7()}, ${user.id}, 'A', array['andheri-goregaon'])`)
-      const [listing] = await db.insert(listings).values({ ownerUserId: user.id, kind: 'owner_flat', areaSlug: 'andheri-goregaon' }).returning()
+      const listing = { id: uuidv7() }
+      await db.execute(sql`insert into listings (id, owner_user_id, kind, area_slug) values (${listing.id}, ${user.id}, 'owner_flat', 'andheri-goregaon')`)
 
       await migrateAndSeed(db, migrationsFolder)
-      expect((await db.select({ areaSlug: listings.areaSlug }).from(listings).where(eq(listings.id, listing!.id)))[0]!.areaSlug).toBe('andheri-goregaon')
+      expect((await db.select({ areaSlug: listings.areaSlug }).from(listings).where(eq(listings.id, listing.id)))[0]!.areaSlug).toBe('andheri-goregaon')
       expect((await db.select({ areas: profiles.areas }).from(profiles))[0]!.areas).toEqual(['andheri-goregaon'])
       const parentOf = async (slug: string) => (await db.select({ parent: areas.parentSlug }).from(areas).where(eq(areas.slug, slug)))[0]!.parent
       expect(await parentOf('andheri-goregaon')).toBeNull()

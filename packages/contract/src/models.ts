@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { scopeBands } from './goals'
+import { knownRows } from './shared'
 
 /** The roles of PD7a that call a model, and the check of the live models (T-11). */
 export const modelRoles = ['router', 'extractor', 'observer', 'composer', 'advisor', 'check'] as const
@@ -44,7 +45,7 @@ export const modelSwitchLogResponse = z.object({ flips: z.array(z.object({ gemin
 const numbers = aiOverviewResponse.shape.numbers.unwrap()
 export const aiOverviewView = aiOverviewResponse.extend({
   numbers: numbers.extend({
-    roles: z.array(z.looseObject({ role: z.string() })).transform((roles) => roles.filter((r) => isModelRole(r.role))).pipe(numbers.shape.roles),
+    roles: knownRows(numbers.shape.roles.element, 'role', modelRoles),
     bands: z.record(z.string(), z.int().min(0)).transform((bands) => Object.fromEntries(scopeBands.map((band) => [band, bands[band] ?? 0]))).pipe(numbers.shape.bands),
   }).nullable(),
 })

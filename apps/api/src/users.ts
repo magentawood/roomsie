@@ -1,6 +1,7 @@
-import { eq, inArray, sql, type SQLWrapper } from 'drizzle-orm'
+import { and, desc, eq, ilike, inArray, ne, sql, type SQLWrapper } from 'drizzle-orm'
 import type { Db, Tx } from './db/client'
 import { users } from './db/schema'
+import { containing } from './text/like'
 
 /* The account module (this file, auth.ts and account.ts) owns `users`. Other modules call these functions. */
 
@@ -43,3 +44,15 @@ export async function emailsOf(db: Db, userIds: string[]) {
   const rows = await db.select({ id: users.id, email: users.email }).from(users).where(inArray(users.id, userIds))
   return new Map(rows.map((r) => [r.id, r.email]))
 }
+
+/** The accounts for the admin (T-63): the status, the times, and the email. */
+export const accountsOf = (db: Db | Tx, userIds: string[]) => db.select({ id: users.id, email: users.email, status: users.status, joinedAt: users.createdAt, lastSignInAt: users.lastSignInAt })
+  .from(users).where(inArray(users.id, userIds))
+
+/** The newest accounts: all of them, or the ones with an email that has the text. The suspended ones come by the newest suspend, the time of `tokens_valid_after`. */
+export const newestAccounts = (db: Db, limit: number, { suspended = false, email }: { suspended?: boolean; email?: string } = {}) =>
+  db.select({ id: users.id }).from(users)
+    .where(and(suspended ? eq(users.status, 'suspended') : ne(users.status, 'deleted'), email ? ilike(users.email, containing(email)) : undefined))
+    .orderBy(desc(suspended ? users.tokensValidAfter : users.createdAt)).limit(limit)
+
+export const suspendedCount = (db: Db) => db.$count(users, eq(users.status, 'suspended'))
