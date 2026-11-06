@@ -41,7 +41,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>A <strong>goal</strong> is one move: one chat, its Form A and its results (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A person or a visitor can have many goals.</li>
 <li>The <strong>title</strong> names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.</li>
 <li>The <strong>goal list</strong> is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.</li>
-<li><strong>A new goal</strong> starts at <code>/start?new</code>: "New Goal", the phone "+" and "Start a new goal" (<a href="onboarding.html">the onboarding</a>).</li>
+<li><strong>A new goal</strong> starts at <code>/start</code>: "New Goal", the phone "+", "Start a new goal", and each visit that does not name a goal (<a href="onboarding.html">the onboarding</a>).</li>
 <li><strong>"I found a place"</strong> opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.</li>
 <li>A <strong>closed goal</strong> is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".</li>
 <li>The <strong>feedback pop-up</strong> follows the close: one of five faces, and words if the person wants. Moderators read it on <code>/admin/feedback</code>, with the feedback of <a href="landing-page.html">the landing page</a>.</li>
@@ -78,7 +78,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>The address names the goal.</strong> <code>/chat?goal=&lt;id&gt;</code> opens that goal. Local storage keeps the last goal that the API gave, so <code>/chat</code> opens it again, and a link to a goal of a different person changes nothing (<a href="chat-screen.html">the chat screen</a>).</li>
+<li><strong>The address names the goal.</strong> <code>/chat?goal=&lt;id&gt;</code> opens that goal, and a link to a goal of a different person opens nothing. <code>/chat</code> with no goal starts a new goal (<a href="chat-screen.html">the chat screen</a>).</li>
 <li><strong>Only the owner</strong> closes, reopens or sends feedback: the token of the person, or the visitor key of the session.</li>
 <li><strong>A closed goal refuses a typed turn, a tap and a waitlist join</strong> with 409, before any model call. A second close or reopen changes nothing and logs nothing.</li>
 <li><strong>The events</strong> <code>goal_closed</code> (with the answer) and <code>goal_reopened</code> count the found places (<a href="analytics-events.html">analytics events</a>). The goal row keeps only its status.</li>

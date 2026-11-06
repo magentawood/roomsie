@@ -22,7 +22,7 @@
 | The shell | `apps/web/components/shell/app-shell.tsx` |
 
 - **Each message goes to the assistant** ([the assistant turn](assistant-turn.md)). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.
-- **A reload opens the same chat.** `/chat?goal=<id>` names the goal. Local storage keeps the id of the last goal and the visitor key, never a sign-in token, so `/chat` opens that goal. A sign-out removes both, so the next person on the browser cannot open the chat.
+- **A reload opens the same chat.** `/chat?goal=<id>` names the goal. Each other way into the chat starts a new goal, as a new chat of ChatGPT does, and the older goals stay in the list. Local storage keeps the visitor key, never a sign-in token, and a sign-out removes it.
 - **The shell gates the taps of a guest.** New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.
 - **A link from outside** to a page that needs an account still opens the full-page sign-in of `SignInGate`.
 - **`AppShell fixed`** makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.

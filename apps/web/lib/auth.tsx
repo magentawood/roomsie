@@ -6,7 +6,7 @@ import { FirebaseError } from 'firebase/app'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut as firebaseSignOut, type User } from 'firebase/auth'
 import { reportError } from '@roomsie/config/report'
 import { refusalOf } from './api'
-import { chatStorage, forgetChat, readStored } from './chat'
+import { forgetChat } from './chat'
 import { claimVisitorChat } from './claim'
 import { firebaseAuth } from './firebase'
 
@@ -25,8 +25,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!claimed) return
       // queries.ts imports this file, so its keys load at run time.
       const { queryKeys } = await import('./queries')
-      const goalId = readStored(chatStorage.goal)
-      const changed = [queryKeys.profile, ...(goalId ? [queryKeys.goal(goalId)] : [])]
+      // The goal of the chat on the screen now belongs to the account.
+      const changed = [queryKeys.profile, ['goal']]
       await Promise.all(changed.map((queryKey) => queryClient.invalidateQueries({ queryKey })))
     },
     // The invite gate (T-33) refuses the account, and the chat stays a visitor chat.

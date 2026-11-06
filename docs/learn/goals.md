@@ -7,7 +7,7 @@
 - A **goal** is one move: one chat, its Form A and its results ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A person or a visitor can have many goals.
 - The **title** names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.
 - The **goal list** is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.
-- **A new goal** starts at `/start?new`: "New Goal", the phone "+" and "Start a new goal" ([the onboarding](onboarding.md)).
+- **A new goal** starts at `/start`: "New Goal", the phone "+", "Start a new goal", and each visit that does not name a goal ([the onboarding](onboarding.md)).
 - **"I found a place"** opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.
 - A **closed goal** is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".
 - The **feedback pop-up** follows the close: one of five faces, and words if the person wants. Moderators read it on `/admin/feedback`, with the feedback of [the landing page](landing-page.md).
@@ -22,7 +22,7 @@
 | The header, the list and the switcher | `apps/web/components/goals/goal-list.tsx` |
 | The two pop-ups | `apps/web/components/chat/found-dialogs.tsx` |
 
-- **The address names the goal.** `/chat?goal=<id>` opens that goal. Local storage keeps the last goal that the API gave, so `/chat` opens it again, and a link to a goal of a different person changes nothing ([the chat screen](chat-screen.md)).
+- **The address names the goal.** `/chat?goal=<id>` opens that goal, and a link to a goal of a different person opens nothing. `/chat` with no goal starts a new goal ([the chat screen](chat-screen.md)).
 - **Only the owner** closes, reopens or sends feedback: the token of the person, or the visitor key of the session.
 - **A closed goal refuses a typed turn, a tap and a waitlist join** with 409, before any model call. A second close or reopen changes nothing and logs nothing.
 - **The events** `goal_closed` (with the answer) and `goal_reopened` count the found places ([analytics events](analytics-events.md)). The goal row keeps only its status.

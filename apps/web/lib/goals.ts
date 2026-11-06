@@ -1,15 +1,9 @@
-import { useEffect, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { chatStorage, readStored } from './chat'
 
-/** The goal of the chat: the one in the address, else the last one of this browser. Undefined until the browser reads it, null when it has none. */
-export function useCurrentGoalId() {
-  const fromAddress = useSearchParams().get('goal')
-  const [stored, setStored] = useState<string | null | undefined>()
-  useEffect(() => setStored(readStored(chatStorage.goal)), [])
-  return fromAddress ?? stored
-}
+/** The goal of the chat: the one in the address, else null. Each other way into the chat starts a new goal, as a new chat of ChatGPT. */
+export const useCurrentGoalId = () => useSearchParams().get('goal')
 
-/** The onboarding of a new goal. Plain `/start` opens the last goal of the browser (T-48). */
-export const newGoalParam = 'new'
-export const newGoalHref = `/start?${newGoalParam}`
+/** The onboarding of a new goal (T-48). */
+export const newGoalHref = '/start'
+/** The address of the chat of a goal: a reload or a sign-in stays in it. */
+export const goalHref = (id: string) => `/chat?goal=${id}`
