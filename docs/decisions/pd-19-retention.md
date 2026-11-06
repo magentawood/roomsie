@@ -19,7 +19,8 @@
 | The chats with the assistant, the Form B notes and the profile of an account | Until the user deletes the account |
 | The messages and request notes that a person sent | They stay with the other person after an account deletion, from "Deleted user" (T-44) |
 | The registration record: the sign-in email, the sign-up date and the deletion date | 180 days after the account deletion, in a locked record, as Rule 3(1)(h) of the IT Rules asks (T-69, [PD21](pd-21-legal-texts.md)) |
-| Reports, blocks and the moderation log | They stay after an account deletion, for moderation |
+| Reports, blocks and the moderation log | No end. They stay after an account deletion, for moderation. |
+| The tombstone of a deleted account: a hash of the Google account id, its dates, and if it was suspended | No end. It stops a suspended person from a new account (T-20). |
 | The ID photo and the selfie of a verification | Deleted right after the review. A rule of the bucket deletes each file after 7 days, also with no review ([ADR 0020](0020-id-checks-in-s3-with-rekognition.md)). |
 | The result of a verification, and the audit log of its views and reviews | Until the user deletes the account (T-46) |
 | The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
@@ -31,7 +32,6 @@
 | The text that the models got, at DeepSeek and Google | Under their terms: DeepSeek keeps it in China with no stated end, and Google keeps it 55 days to find abuse. Each week, the Grievance Officer asks both to delete the text of the accounts that were deleted that week ([PD21](pd-21-legal-texts.md)). |
 | Backups | See PD13 |
 
-- After a deletion, the other person in a conversation sees "Deleted user".
 
 ## Rationale
 
@@ -54,7 +54,7 @@
 
 ## Revisit when
 
-- The privacy drafter or a DPDP rule needs a different period.
+- A DPDP rule or a lawyer needs a different period.
 
 ## Sources
 

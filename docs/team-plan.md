@@ -668,6 +668,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 **T-23b · Privacy, terms and grievance pages** — done when:
 - /privacy, /terms and /grievance show the founder's text
 - Links to it are in the footer and on the sign-in screen
+- The delete dialog says that the messages to other people stay with them
 
 **T-34 · Router: sort each typed message and flag what we should not answer** — done when:
 - Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope

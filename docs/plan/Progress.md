@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**304 of 367 done · 83%**
+**304 of 368 done · 83%**
 
 `████████████████████░░░░`
 
@@ -25,7 +25,7 @@ This note is part of [[roomsie launch]].
 | [[P1 Platform]] | 11 / 13 | 35 / 41 | 85% |
 | [[P2 Chat]] | 15 / 18 | 74 / 83 | 89% |
 | [[P3 Data and trust]] | 21 / 21 | 92 / 92 | 100% |
-| [[P4 Content and moderation]] | 9 / 10 | 41 / 43 | 95% |
+| [[P4 Content and moderation]] | 9 / 10 | 41 / 44 | 93% |
 | [[P5 Accounts and people]] | 5 / 7 | 30 / 34 | 88% |
 | [[Design]] | 5 / 7 | 11 / 14 | 79% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
@@ -457,12 +457,12 @@ flowchart LR
 > ![[T-60 Profile pop-up#^done]]
 
 
-## P4 Content and moderation — 41/43
+## P4 Content and moderation — 41/44
 
 > [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
 
-> [!todo]- ⬜ [[T-23b Legal pages]] · 0/2
+> [!todo]- ⬜ [[T-23b Legal pages]] · 0/3
 > ![[T-23b Legal pages#^done]]
 
 > [!todo]- ✅ [[T-37 Articles and search]] · 4/4

@@ -46,7 +46,7 @@ quality. The eval set and the primary model settle quality.
 - DeepSeek stores data in China, and states no retention period.
 - It trains on API inputs, unless we opt out by email.
 
-The decision: user text goes to DeepSeek, in China. The team opts out by email.
+The decision: user text goes to DeepSeek. The team opts out by email.
 Gemini, the fallback, runs on a paid project ([PD21](pd-21-legal-texts.md)).
 
 **Languages (PC-09).** The screens are in English. The assistant reads and

@@ -36,5 +36,6 @@ The legal pages that each Indian site must have.
 ## Done when
 - [ ] /privacy, /terms and /grievance show the founder's text
 - [ ] Links to it are in the footer and on the sign-in screen
+- [ ] The delete dialog says that the messages to other people stay with them
 
 ^done
