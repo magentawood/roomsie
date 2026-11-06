@@ -516,6 +516,12 @@ describe('the start of a goal from the onboarding (T-48)', () => {
     expect(read.turns.map(({ text }) => text)).toEqual([goal.turns[0]!.text])
   })
 
+  it('takes the must-haves of a flatmate search as stated dealbreakers, and confirms them', async () => {
+    const goal = newGoalResponse.parse((await start({ intent: 'flatmates', whosMoving: 'working', mustHaves: ['veg_kitchen', 'women_only'] })).json())
+    expect(goal.form.mustHaves).toMatchObject({ veg_kitchen: { source: 'stated', value: 'dealbreaker' }, women_only: { source: 'stated', value: 'dealbreaker' } })
+    expect(goal.turns[0]!.text).toBe('Got it: flatmates to rent with, working, Veg kitchen (a must), Women only (a must). Which areas of Mumbai work for you?')
+  })
+
   it('asks the first question, with its chips, when each step was skipped', async () => {
     const goal = newGoalResponse.parse((await start({})).json())
     expect(goal.turns.map(({ text, chips }) => [text, chips])).toEqual([[intentQuestion, 'intent']])
@@ -527,6 +533,8 @@ describe('the start of a goal from the onboarding (T-48)', () => {
     expect((await start({ budget: 'under_5k' })).statusCode).toBe(400)
     // "Unclear" is an answer of the chat, not a step of the onboarding.
     expect((await start({ whosMoving: 'unclear' })).statusCode).toBe(400)
+    expect((await start({ mustHaves: ['veg_kitchen', 'veg_kitchen'] })).statusCode).toBe(400)
+    expect((await start({ mustHaves: ['pets'] })).statusCode).toBe(400)
   })
 })
 

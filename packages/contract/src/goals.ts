@@ -48,6 +48,8 @@ export const goalStart = z.strictObject({
   whosMoving: z.enum(whosMovingAnswers).exclude(['unclear']).optional(),
   area: areaSlug.optional(),
   budget: budgetBandId.optional(),
+  /** The must-haves of a flatmate search: each one is a dealbreaker. */
+  mustHaves: z.array(z.enum(mustHaveKeys)).max(mustHaveKeys.length).refine((keys) => new Set(keys).size === keys.length, 'Each must-have once').optional(),
 })
 export type GoalStart = z.infer<typeof goalStart>
 export const chipTurnParts = z.strictObject({ version: z.literal(1).default(1), tap: chipTap })

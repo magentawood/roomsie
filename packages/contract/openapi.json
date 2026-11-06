@@ -17580,6 +17580,22 @@
                       "under_35k",
                       "above_35k"
                     ]
+                  },
+                  "mustHaves": {
+                    "maxItems": 7,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "enum": [
+                        "veg_kitchen",
+                        "non_smokers",
+                        "no_alcohol",
+                        "women_only",
+                        "men_only",
+                        "tidy_flatmates",
+                        "couple_friendly"
+                      ]
+                    }
                   }
                 },
                 "additionalProperties": false

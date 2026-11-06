@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { answered, onboardingSteps, progressOf, startOf, stepBeside, withoutAnswer, type Answers } from './onboarding'
+import { answered, onboardingSteps, pickMustHaves, progressOf, startOf, stepBeside, withoutAnswer, withPurpose, type Answers } from './onboarding'
 
 const full: Answers = { purpose: 'look', whosMoving: 'student', intent: 'room', budget: 'under_25k', area: 'andheri-goregaon' }
 
@@ -9,11 +9,11 @@ describe('the steps of flow 01', () => {
     expect(onboardingSteps(full, true)).toEqual(['purpose', 'whosMoving', 'intent', 'budget', 'area'])
   })
 
-  it('asks a flatmate seeker no place type, fills its bar of three, and starts the flatmate search', () => {
-    const flatmate: Answers = { ...full, purpose: 'flatmate', intent: undefined }
-    expect(onboardingSteps(flatmate, false)).toEqual(['purpose', 'whosMoving', 'budget', 'area', 'signIn'])
-    expect((['whosMoving', 'area', 'signIn'] as const).map((step) => progressOf(step, flatmate))).toEqual([1, 3, 3])
-    expect(startOf(flatmate).intent).toBe('flatmates')
+  it('asks a flatmate seeker no place type but the must-haves, fills its bar of four, and starts the flatmate search', () => {
+    const flatmate: Answers = { purpose: 'flatmate', whosMoving: 'working', budget: 'under_25k', mustHaves: ['veg_kitchen'] }
+    expect(onboardingSteps(flatmate, false)).toEqual(['purpose', 'whosMoving', 'budget', 'area', 'mustHaves', 'signIn'])
+    expect((['whosMoving', 'mustHaves', 'signIn'] as const).map((step) => progressOf(step, flatmate))).toEqual([1, 4, 4])
+    expect(startOf(flatmate)).toEqual({ whosMoving: 'working', intent: 'flatmates', budget: 'under_25k', mustHaves: ['veg_kitchen'] })
   })
 
   it('takes a skipped purpose as a seeker, and sends a lister to the sign-in only', () => {
@@ -49,6 +49,17 @@ describe('Previous, Next and Skip', () => {
     expect(answered('whosMoving', { whosMoving: 'parent', childType: 'first_job' })).toBe(true)
   })
 
+  it('clears the answers when the purpose changes, and keeps them for the same purpose', () => {
+    expect(withPurpose('flatmate', full)).toEqual({ purpose: 'flatmate' })
+    expect(withPurpose('look', full)).toBe(full)
+  })
+
+  it('keeps one of "Women only" and "Men only", the new pick, and no list when none is picked', () => {
+    expect(pickMustHaves(['veg_kitchen', 'women_only', 'men_only'], ['veg_kitchen', 'women_only'])).toEqual(['veg_kitchen', 'men_only'])
+    expect(pickMustHaves(['women_only', 'tidy_flatmates'], ['women_only'])).toEqual(['women_only', 'tidy_flatmates'])
+    expect(pickMustHaves([], ['tidy_flatmates'])).toBeUndefined()
+  })
+
   it('clears the answer of a skipped step, and keeps the others', () => {
     expect(withoutAnswer('budget', full)).toEqual({ ...full, budget: undefined })
     expect(withoutAnswer('whosMoving', { whosMoving: 'parent', childType: 'working', area: 'thane' })).toEqual({ area: 'thane', whosMoving: undefined, childType: undefined })
@@ -62,6 +73,10 @@ describe('the start answers of the goal', () => {
 
   it('sends what a son or daughter does as who is moving (PD15)', () => {
     expect(JSON.stringify(startOf({ whosMoving: 'parent', childType: 'first_job' }))).toBe('{"whosMoving":"first_job"}')
+  })
+
+  it('sends the must-haves only on the flatmate path', () => {
+    expect(startOf({ purpose: 'look', mustHaves: ['veg_kitchen'] })).toEqual({ intent: undefined, whosMoving: undefined, budget: undefined, area: undefined })
   })
 
   it('sends no value for a skipped step, so the chat asks it', () => {

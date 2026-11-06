@@ -1,8 +1,8 @@
-import type { BudgetBand, childTypes, GoalStart, intents } from '@roomsie/contract'
+import type { BudgetBand, childTypes, GoalStart, intents, MustHaveKey } from '@roomsie/contract'
 import type { DescribesYou } from './profile-form'
 
 /** The steps of flow 01 (Product file). */
-export type Step = 'purpose' | 'whosMoving' | 'intent' | 'budget' | 'area' | 'signIn'
+export type Step = 'purpose' | 'whosMoving' | 'intent' | 'budget' | 'area' | 'mustHaves' | 'signIn'
 /** The picks of the steps. A skipped step has no answer. */
 export type Answers = {
   purpose?: 'look' | 'flatmate' | 'list'
@@ -12,11 +12,24 @@ export type Answers = {
   intent?: (typeof intents)[number]
   budget?: BudgetBand
   area?: GoalStart['area']
+  mustHaves?: MustHaveKey[]
 }
 
-const questions = ['whosMoving', 'intent', 'budget', 'area'] as const
-/** "I'm looking for a flatmate" is the flatmate search, so it skips "What kind of place?". */
-const questionsOf = (answers: Answers): readonly Step[] => (answers.purpose === 'flatmate' ? questions.filter((step) => step !== 'intent') : questions)
+const placeQuestions = ['whosMoving', 'intent', 'budget', 'area'] as const
+/** "I'm looking for a flatmate" is the flatmate search: no "What kind of place?", and the must-haves of a flatmate at the end. */
+const flatmateQuestions = ['whosMoving', 'budget', 'area', 'mustHaves'] as const
+const questionsOf = (answers: Answers): readonly Step[] => (answers.purpose === 'flatmate' ? flatmateQuestions : placeQuestions)
+
+/** The two paths ask different questions, so a different purpose clears the answers. */
+export const withPurpose = (purpose: Answers['purpose'], answers: Answers): Answers => (purpose === answers.purpose ? answers : { purpose })
+
+/** "Women only" and "Men only" rule out each other, so the new pick of the two stays. */
+const genders: readonly MustHaveKey[] = ['women_only', 'men_only']
+export function pickMustHaves(keys: MustHaveKey[], before: readonly MustHaveKey[] = []): MustHaveKey[] | undefined {
+  const added = keys.find((key) => !before.includes(key))
+  const picked = added && genders.includes(added) ? keys.filter((key) => key === added || !genders.includes(key)) : keys
+  return picked.length ? picked : undefined
+}
 
 /** A lister signs in, then lists. A skipped purpose is a seeker. A signed-in person has no sign-in step. */
 export function onboardingSteps(answers: Answers, signedIn: boolean): Step[] {
@@ -45,5 +58,7 @@ export const withoutAnswer = (step: Step, answers: Answers): Answers =>
   ({ ...answers, [step]: undefined, ...(step === 'whosMoving' && { childType: undefined }) })
 
 /** The answers of `POST /v1/goals`. JSON leaves out a skipped answer, and with none the chat asks the first question. */
-export const startOf = ({ purpose, whosMoving, childType, intent, budget, area }: Answers): GoalStart =>
-  ({ whosMoving: whosMoving === 'parent' ? childType : whosMoving, intent: purpose === 'flatmate' ? 'flatmates' : intent, budget, area })
+export const startOf = ({ purpose, whosMoving, childType, intent, budget, area, mustHaves }: Answers): GoalStart => ({
+  whosMoving: whosMoving === 'parent' ? childType : whosMoving, intent, budget, area,
+  ...(purpose === 'flatmate' && { intent: 'flatmates', mustHaves }),
+})
