@@ -285,7 +285,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P4 Content and moderation | 7 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
 | P4 Content and moderation | 8 | T-62 | Admin home and the six pages | 4 | Thu 5 Nov | Thu 5 Nov | CP3 | D-07 | [#221](https://github.com/magentawood/roomsie/issues/221) |
 | P4 Content and moderation | 9 | T-63 | People and listings in the admin | 3 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | [#222](https://github.com/magentawood/roomsie/issues/222) |
-| P4 Content and moderation | 10 | T-23b | Privacy, terms and grievance pages | 2 | Sat 7 Nov | Sun 8 Nov | CP2 | T-02, F-07, T-68, T-69 | [#40](https://github.com/magentawood/roomsie/issues/40) |
+| P4 Content and moderation | 10 | T-23b | Privacy, terms and grievance pages | 2 | Sat 7 Nov | Sun 8 Nov | CP3 | T-02, F-07, T-68, T-69 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
@@ -630,7 +630,6 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 | T-13 | Reply writer with scope rules | P2 | 4 | Tue 29 Sep → Wed 30 Sep | T-11 |
 | T-24 | Event logging table | P5 | 2 | Tue 29 Sep → Wed 30 Sep | — |
 | T-37 | Articles table and full-text search | P4 | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
-| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sat 7 Nov → Sun 8 Nov | T-02, F-07, T-68, T-69 |
 
 **T-06 · Database schema v1** — done when:
 - Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist
@@ -699,11 +698,6 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - The articles show on the public blog at roomsie.in/blog, with their SEO fields
 - Read first: `docs/content/corpus-plan.md`, `docs/extensibility.md`
 
-**T-23b · Privacy, terms and grievance pages** — done when:
-- /privacy, /terms and /grievance show the founder's text
-- Links to it are in the footer and on the sign-in screen
-- The delete dialog says that the messages to other people stay with them
-
 ### CP3 · Feature freeze and go/no-go — Sat 10 Oct
 
 Every screen and every assistant handler is merged, and is live behind the invite gate. The seeded people make their profiles. At 8 pm, the go/no-go meeting selects 12 October or 14 October.
@@ -766,6 +760,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-67 | Delete the visitor data after 30 days | P1 | 2 | Sat 7 Nov | T-64 |
 | T-68 | Visitor results give only the card | P2 | 2 | Sat 7 Nov | — |
 | T-69 | Keep the registration record 180 days after a deletion | P5 | 2 | Sat 7 Nov | — |
+| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sat 7 Nov → Sun 8 Nov | T-02, F-07, T-68, T-69 |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
 | T-46 | ID verification | P3 | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
@@ -1154,7 +1149,12 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - A nightly job deletes the record 180 days after the deletion
 - PD19 and the learn pages say so
 - A person with no profile can delete the account from Settings
-- Read first: `docs/decisions/pd-19-retention.md`
+- Read first: `docs/decisions/pd-19-retention.md`, `docs/learn/profiles.md`
+
+**T-23b · Privacy, terms and grievance pages** — done when:
+- /privacy, /terms and /grievance show the founder's text
+- Links to it are in the footer and on the sign-in screen
+- The delete dialog says that the messages to other people stay with them
 
 **T-45 · Messages screens** — done when:
 - The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone

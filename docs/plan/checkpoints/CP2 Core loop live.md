@@ -26,4 +26,3 @@ This note is part of [[roomsie launch]].
 - [[T-24 Event logging]] — P5 Accounts and people
 - [[T-05 Google sign-in ⚑]] — P1 Platform
 - [[T-37 Articles and search]] — P4 Content and moderation
-- [[T-23b Legal pages]] — P4 Content and moderation

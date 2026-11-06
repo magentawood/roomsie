@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**304 of 369 done · 82%**
+**311 of 369 done · 84%**
 
 `████████████████████░░░░`
 
@@ -30,7 +30,7 @@ This note is part of [[roomsie launch]].
 | [[Design]] | 5 / 7 | 11 / 14 | 79% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 2 | 0 / 8 | 0% |
-| [[Founder]] | 7 / 13 | 21 / 41 | 51% |
+| [[Founder]] | 7 / 13 | 28 / 41 | 68% |
 | [[Everyone]] | 0 / 2 | 0 / 5 | 0% |
 
 ---
@@ -53,7 +53,7 @@ Take tasks from this section. No task here waits on a design or on an open produ
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
-| 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 2 | [#17](https://github.com/magentawood/roomsie/issues/17) |
+| 0 | [[F-07 Privacy and terms draft]] | F |  | 🟡 in progress | 2 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
 | 0 | [[T-68 Visitor card fields]] | P2 | 2 | ⬜ can start | 1 | no issue at this time |
@@ -83,7 +83,7 @@ Blue can start. Yellow is in progress. Green is done. White waits on a different
 flowchart LR
   F03["F-03<br/>Billing and caps"]:::done
   F04["F-04<br/>Accounts in Mumbai"]:::done
-  F07["F-07<br/>Privacy and terms draft"]:::ready
+  F07["F-07<br/>Privacy and terms draft"]:::doing
   F11["F-11 ⚑<br/>Intake and profile calls"]:::done
   F12["F-12 ⚑<br/>Matching calls"]:::done
   F13["F-13 ⚑<br/>Connect and trust calls"]:::done
@@ -559,7 +559,7 @@ flowchart LR
 > ![[M-09 Broker calls#^done]]
 
 
-## Founder — 21/41
+## Founder — 28/41
 
 > [!todo]- ⬜ [[F-01 Kickoff]] · 0/3
 > ![[F-01 Kickoff#^done]]
@@ -573,7 +573,7 @@ flowchart LR
 > [!todo]- ✅ [[F-06 Seed areas picked]] · 2/2
 > ![[F-06 Seed areas picked#^done]]
 
-> [!todo]- ⬜ [[F-07 Privacy and terms draft]] · 0/8
+> [!todo]- 🟡 [[F-07 Privacy and terms draft]] · 7/8
 > ![[F-07 Privacy and terms draft#^done]]
 
 > [!todo]- 🟡 [[F-09 ADR exceptions]] · 1/2

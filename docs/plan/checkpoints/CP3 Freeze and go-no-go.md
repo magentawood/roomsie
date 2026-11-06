@@ -72,6 +72,7 @@ This note is part of [[roomsie launch]].
 - [[T-67 Visitor data delete]] — P1 Platform
 - [[T-68 Visitor card fields]] — P2 Chat
 - [[T-69 Registration record]] — P5 Accounts and people
+- [[T-23b Legal pages]] — P4 Content and moderation
 - [[T-44 Messages API]] — P3 Data and trust
 - [[T-45 Messages screens]] — P3 Data and trust
 - [[T-55 Message alerts]] — P3 Data and trust

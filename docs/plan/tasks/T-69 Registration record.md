@@ -21,7 +21,7 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** no issue at this time
 
-An account deletion keeps the sign-in email and two dates for 180 days, as the IT Rules ask.
+An account deletion keeps the sign-in email and two dates for 180 days, as the IT Rules ask, and an account with no profile gets its delete row.
 
 ## Needs first
 - Nothing. You can start this task at any time.
@@ -39,3 +39,4 @@ An account deletion keeps the sign-in email and two dates for 180 days, as the I
 
 ## Read first
 - [pd-19-retention.md](../../decisions/pd-19-retention.md)
+- [profiles.md](../../learn/profiles.md)

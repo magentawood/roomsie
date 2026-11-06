@@ -1,6 +1,6 @@
 # Rule candidates, part 1
 
-The rows of [the log](_candidates.md) to 2026-11-03. New rows go into [the log](_candidates.md). At the second time of a mistake, check both files.
+The rows of [the log](_candidates.md) to 2026-11-04. New rows go into [the log](_candidates.md). At the second time of a mistake, check both files.
 
 ## Log
 
@@ -19,3 +19,14 @@ The rows of [the log](_candidates.md) to 2026-11-03. New rows go into [the log](
 | 2026-11-03 | [#210](https://github.com/magentawood/roomsie/pull/210) | A modal put its close button last in the HTML, so `showModal()` focuses the name first. Its screen order and tab order differ. `ModalFrame` can set the element that gets the first focus. |
 | 2026-11-03 | [#211](https://github.com/magentawood/roomsie/pull/211) | An update wrote an untyped object into `chat_turns.parts`. A value that code writes into a jsonb column has the type of its contract schema. |
 | 2026-11-03 | [#212](https://github.com/magentawood/roomsie/pull/212) | The chat stored the goal of the address before the API accepted it, so a link to another person's goal cleared the own last goal. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | A value went into a `RegExp` with no escape. Escape each value before it goes into a pattern. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | Two handlers reported the same failure under different conditions. An error report for one failure has one condition in each handler. |
+| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | The JSON shape of the router prompt still offered the script `mixed`, but the new rule of the prompt gives the script of most of the letters. A prompt changes its shape when a rule removes a value. |
+| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | The runner sorted the thresholds with `.toSorted()` and no compare function, which sorts numbers as text. Sort numbers with `(a, b) => a - b`. |
+| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | A research doc showed a gap between two runs with the same prompts and named no cause. A doc that compares two runs names each change between them, or calls the gap noise. |
+| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | A run file had a stamp with no time zone and no seconds, so two runs in one minute wrote one file. A file stamp names its zone and is unique. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | `quoteIn` used a UTF-16 index of a joined string as an index of its list of code points, so an emoji before a quote shifted the slice or threw. A text helper uses one kind of index for one string, and its test has an emoji. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The work after the reply saved the notes on the owner of the request, so a visitor who signed in while the observer ran lost the note. Work after the reply reads the owner again when it writes. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The router got the flag `notes`, and no eval sentence asks for the notes, so the eval counts only false flags. A new flag of the router gets sentences that must set it, in each reply language. |
+| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The backfill checks for a newer note, then saves in a second step, so a live note of the same topic that comes between the two can be replaced by an older note. Put the condition of the newer turn in the save. |
+| 2026-11-04 | [#227](https://github.com/magentawood/roomsie/pull/227) | A test of a contract schema alone was in the API integration suite, with a name that told about the web. A test of a contract schema goes in `packages/contract`. |

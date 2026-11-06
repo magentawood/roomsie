@@ -1142,7 +1142,7 @@
     "The delete dialog says that the messages to other people stay with them"
    ],
    "read": [],
-   "cp": "CP2",
+   "cp": "CP3",
    "critical": false,
    "issue": 40
   },
@@ -2230,7 +2230,7 @@
   {
    "id": "T-69",
    "title": "Keep the registration record 180 days after a deletion",
-   "plain": "An account deletion keeps the sign-in email and two dates for 180 days, as the IT Rules ask.",
+   "plain": "An account deletion keeps the sign-in email and two dates for 180 days, as the IT Rules ask, and an account with no profile gets its delete row.",
    "role": "P5",
    "hours": 2,
    "start": "2026-11-07",
@@ -2243,7 +2243,8 @@
     "A person with no profile can delete the account from Settings"
    ],
    "read": [
-    "docs/decisions/pd-19-retention.md"
+    "docs/decisions/pd-19-retention.md",
+    "docs/learn/profiles.md"
    ],
    "cp": "CP3",
    "critical": false,

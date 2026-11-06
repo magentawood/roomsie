@@ -6,7 +6,7 @@ sequence: "10 of 10"
 hours: 2
 start: 2026-11-07
 end: 2026-11-08
-checkpoint: CP2
+checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/40
 tags:
@@ -19,7 +19,7 @@ tags:
 
 **Owner:** [[P4 Content and moderation]], task 10 of 10  
 **When:** Sat 7 Nov → Sun 8 Nov · 2 hours  
-**Checkpoint:** [[CP2 Core loop live]]  
+**Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#40](https://github.com/magentawood/roomsie/issues/40)
 
 The legal pages that each Indian site must have.

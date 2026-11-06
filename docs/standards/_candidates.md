@@ -1,6 +1,6 @@
 # Rule candidates
 
-Review writes each mistake that no rule covers in this log. The rows to 2026-11-03 are in [part 1](_candidates-1.md). At the second time that review finds the same mistake, move it into the correct standards file as a rule. [_index.md](_index.md) gives the process.
+Review writes each mistake that no rule covers in this log. The rows to 2026-11-04 are in [part 1](_candidates-1.md). At the second time that review finds the same mistake, move it into the correct standards file as a rule. [_index.md](_index.md) gives the process.
 
 ## Format
 
@@ -16,17 +16,6 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 
 | Date | PR | Mistake |
 |---|---|---|
-| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | A value went into a `RegExp` with no escape. Escape each value before it goes into a pattern. |
-| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | Two handlers reported the same failure under different conditions. An error report for one failure has one condition in each handler. |
-| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | The JSON shape of the router prompt still offered the script `mixed`, but the new rule of the prompt gives the script of most of the letters. A prompt changes its shape when a rule removes a value. |
-| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | The runner sorted the thresholds with `.toSorted()` and no compare function, which sorts numbers as text. Sort numbers with `(a, b) => a - b`. |
-| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | A research doc showed a gap between two runs with the same prompts and named no cause. A doc that compares two runs names each change between them, or calls the gap noise. |
-| 2026-11-04 | [#218](https://github.com/magentawood/roomsie/pull/218) | A run file had a stamp with no time zone and no seconds, so two runs in one minute wrote one file. A file stamp names its zone and is unique. |
-| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | `quoteIn` used a UTF-16 index of a joined string as an index of its list of code points, so an emoji before a quote shifted the slice or threw. A text helper uses one kind of index for one string, and its test has an emoji. |
-| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The work after the reply saved the notes on the owner of the request, so a visitor who signed in while the observer ran lost the note. Work after the reply reads the owner again when it writes. |
-| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The router got the flag `notes`, and no eval sentence asks for the notes, so the eval counts only false flags. A new flag of the router gets sentences that must set it, in each reply language. |
-| 2026-11-04 | [#215](https://github.com/magentawood/roomsie/pull/215) | The backfill checks for a newer note, then saves in a second step, so a live note of the same topic that comes between the two can be replaced by an older note. Put the condition of the newer turn in the save. |
-| 2026-11-04 | [#227](https://github.com/magentawood/roomsie/pull/227) | A test of a contract schema alone was in the API integration suite, with a name that told about the web. A test of a contract schema goes in `packages/contract`. |
 | 2026-11-05 | [#228](https://github.com/magentawood/roomsie/pull/228) | The analytics reads of the admin had no timeout and no catch, so a slow or failed analytics database failed the page and its switch. A read of a best-effort store gives no data on a failure, not an error of the page. |
 | 2026-11-05 | [#229](https://github.com/magentawood/roomsie/pull/229) | A research page gave counts that were the sum of the reports of two runs and of their combined report, so each text counted twice. A count in a research doc comes from one report. |
 | 2026-11-05 | [#231](https://github.com/magentawood/roomsie/pull/231) | The list of the turns parsed each stored answer with `JSON.parse` and no guard, so one row that did not parse failed the whole list. A read of stored text parses it safely, so one bad row does not fail the list. |
@@ -41,7 +30,8 @@ When a candidate becomes a rule, write the rule file in the Mistake cell, for ex
 | 2026-11-06 | [#234](https://github.com/magentawood/roomsie/pull/234) | A restore command in a learn page gave only the schedule, but a new project has pg_cron off. A restore command gives each step in order, for example the extension, then the schedule. |
 | 2026-11-06 | [#234](https://github.com/magentawood/roomsie/pull/234) | The dump uses `--no-acl`, so a restore drops the `REVOKE EXECUTE ... FROM PUBLIC` of each `jobs.*` function. The restore steps apply each revoke again. |
 | 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The privacy draft said that an ID check keeps its face match score, and the code deletes the score at the review. A legal text promises only what the code does, or what the done item of an open task builds. |
-| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The tombstone of a deleted account keeps a hash of the identity with no end, and PD19 had no row for it. Each row that outlives an account deletion has a row in PD19. |
 | 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The privacy draft said "Settings, then Delete account", but an account with no profile has no delete row. A path in a legal text works for each kind of account. |
-| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The terms copied rules of PD3d, PD9 and PD17, and the Sources of PD21 did not name them. When a legal text copies a rule or a number, its record is in the Sources of PD21. |
-| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The quotes and the invites hold personal data, and neither PD19 nor the privacy draft named them. Each table that holds personal data has a row in PD19 and in the privacy policy. |
+| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The texts copied rules and facts of PD3c, PD3d, PD4, PD8, PD9 and PD13, and the Sources of PD21 did not name them. When a legal text copies a rule or a number, its record is in the Sources of PD21. |
+| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | A legal text said one fact in two places, and the two drifted apart. A legal text states each fact once, and a second mention links to the first. |
+| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The privacy draft said that "other people" see the building of a listing, but a visitor sees only the area. A "who sees" line in a legal text names its audience: a visitor or a signed-in person. |
+| 2026-11-06 | [#235](https://github.com/magentawood/roomsie/pull/235) | The row of the tombstone said "its dates" and hid that the sign-up and deletion dates stay with no end. A retention row of data that outlives an account names each field that it keeps. |

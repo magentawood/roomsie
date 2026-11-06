@@ -59,7 +59,7 @@ roomsie is free at this time. Before we ask for money for anything, we tell you,
 
 ## Our responsibility
 
-- We give roomsie as it is. We do our best to keep it working and safe. We do not promise that it always works, or that a place or a person is what they say.
+- We give roomsie as it is. We do our best to keep it safe and in service. We do not promise that it always works, or that a place or a person is what they say.
 - Meet people in a safe place.
 - Do not pay a deposit before you see the place and the papers.
 - As far as the law allows, roomsie is not responsible for a loss from an agreement between users. The same is true for a loss from what a user posted, or from a fact that the assistant gave.

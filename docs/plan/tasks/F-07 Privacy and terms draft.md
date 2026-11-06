@@ -31,14 +31,14 @@ The text for the legal pages.
 - [[T-70 IT Rules notices]]
 
 ## Done when
-- [ ] It says what the system collects, why, for how long, how to delete it, and who to contact
-- [ ] There is a named grievance contact
-- [ ] It says that the system stores chat messages, that account deletion deletes the chats with the assistant, and that messages to other people stay with them
-- [ ] It says that chat text goes to DeepSeek, which stores it in China
+- [x] It says what the system collects, why, for how long, how to delete it, and who to contact · [#235](https://github.com/magentawood/roomsie/pull/235)
+- [x] There is a named grievance contact · [#235](https://github.com/magentawood/roomsie/pull/235)
+- [x] It says that the system stores chat messages, that account deletion deletes the chats with the assistant, and that messages to other people stay with them · [#235](https://github.com/magentawood/roomsie/pull/235)
+- [x] It says that chat text goes to DeepSeek, which stores it in China · [#235](https://github.com/magentawood/roomsie/pull/235)
 - [ ] The team emails DeepSeek to opt out of training before launch
-- [ ] For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)
-- [ ] The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them
-- [ ] It says that the team keeps the traces of the assistant for 30 days, with religion and community masked (PD20)
+- [x] For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12) · [#235](https://github.com/magentawood/roomsie/pull/235)
+- [x] The drafter confirms the decisions of PD19, PD7 and PD6b, or changes them · [#235](https://github.com/magentawood/roomsie/pull/235)
+- [x] It says that the team keeps the traces of the assistant for 30 days, with religion and community masked (PD20) · [#235](https://github.com/magentawood/roomsie/pull/235)
 
 ^done
 
@@ -64,10 +64,11 @@ The text for the legal pages.
   - **The messages (the user):** an account deletion deletes the chats with the assistant. The messages to other people stay with them, from "Deleted user", as T-44 built. The texts say so. The delete dialog gets the same line in T-23b.
   - **The visitor cards (the user):** a visitor gets only the fields of the results card. For a person: the first photo, the name, the age, the job, what they look for, the budget, the move date, the lifestyle and the bio. For a place: the first photo, the title, the area and the rent. The commute address, the other photos, the description and the flatmates need a sign-in. The new task T-68 makes the API do that before the launch, and the texts promise PD6b.
   - **The registration record (the user):** an account deletion keeps the sign-in email, the sign-up date and the deletion date for 180 days in a locked record, as Rule 3(1)(h) of the IT Rules asks. The new task T-69 builds it. PD19 changes.
-  - **The vendors (the user):** each week, the Grievance Officer asks DeepSeek by email and Google in a support case of the Gemini project to delete the text of the accounts that were deleted that week. The texts say that the vendors may not be able to find it.
+  - **The vendors (the user, changed in the review):** each week, the Grievance Officer asks DeepSeek by email and Google in a support case of the Gemini project to delete the text of the accounts that were deleted that week. The texts say that the vendors may not be able to find it.
   - **DeepSeek:** the texts say that the chat text goes to DeepSeek, which keeps it in China with no stated end, and can use it in a de-identified form unless we opt out. The user sends the opt-out email before the launch.
   - **Gemini:** the fallback runs on a project with billing on, so the paid terms apply: no training, and a log for abuse checks for 55 days. The user checks the project before the launch.
   - **The promises (the user, in the review):** we do not sell personal data, and we tell the users before we ask for money. No promise of no ads, because PD4 is open.
+  - **The delete for an account with no profile (the user, in the review):** T-69 adds the delete row to Settings, so that the path of the texts works for each account.
   - **The Gemini logging:** the check of the Gemini project also turns off the logging of its requests.
   - **The language:** plain English, effective from 8 November 2026. Other languages come later.
   - **The terms:** adults only (PD16); roomsie is not a broker or an agent and handles no rent, deposit or agreement; no phone numbers in public fields (PD17); no discriminatory text (PD3c); the moderation of PD18; free now (PD4); Indian law and the courts of Mumbai.
@@ -80,3 +81,13 @@ The text for the legal pages.
   - a company, the operator, the cap table and the founder documents
   - a review by a lawyer
   - other languages than English
+
+## Log
+
+- **2026-11-06 · [#235](https://github.com/magentawood/roomsie/pull/235)**
+  - **Change:** the privacy policy, the terms and the grievance page, in plain English, in `docs/legal/`. The record PD21, and changes to PD19, PD20, PD7 and PD6b. The new tasks T-68, T-69 and T-70, and T-23b waits on T-68 and T-69.
+  - **Why:** [PD21](../../decisions/pd-21-legal-texts.md). The IT Rules 2021 and the DPDP Act 2023 ask for these texts.
+  - **Ticked:** seven items.
+  - **Not done:** the email to DeepSeek to opt out of training. The user sends it before the launch, with the text of the learn page.
+  - **Learn:** [The legal texts](../../learn/legal-texts.md)
+  - **Journal:** [2026-11](../../journal/2026-11.md)

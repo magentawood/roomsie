@@ -16,9 +16,9 @@ roomsie is a service to find a flat, a room or a flatmate in Mumbai. In this pol
 **When you sign in**
 
 - **Your sign-in:** you sign in with Google. We keep your Google email address and a user id from our sign-in service. We use the email to send you alerts, and to know who you are when you ask us something.
-- **Your profile:** your name, age, gender and job (the role only, never the company). Also your commute address, the photos that you add (at most four), what you tell others about yourself, and what you look for. What you look for is the area, the budget, the move date, your lifestyle and your must-haves. Other people use your card to decide if they want to live with you. People who signed in see your commute address, to judge the travel.
+- **Your profile:** we keep your name, age, gender and job (the role only, never the company). We also keep your commute address, the photos that you add (at most four), what you tell others about yourself, and what you look for. What you look for is the area, the budget, the move date, your lifestyle and your must-haves. Other people use your card to decide if they want to live with you.
 - **Your religion and your community, if you give them:** in two optional fields of your profile, or when you state them in the chat. The newer statement replaces the older one. Only you see them, and they are never on your card. We use them only to match you with people who ask for it, as the next section says.
-- **Your listings:** the place, its rent and deposit, its address, its photos, and the flatmates that you add. Other people always see the area, the building and the landmark. They see the street address and the pincode only if you choose to share them. We use your listings to show your place to the people who search. You must have the consent of each flatmate before you add their name, age, photo or other details.
+- **Your listings:** the place, its rent and deposit, its address, its photos, and the flatmates that you add. Visitors see the area. People who signed in also see the building and the landmark, and the street address and the pincode only if you choose to share them. We use your listings to show your place to the people who search. You must have the consent of each flatmate before you add their name, age, photo or other details.
 - **Your chats with the assistant:** as for a visitor. The assistant also keeps short notes of what you told it about yourself, for example that you prefer a quiet flat. It uses them so that it does not ask again, and to order your results. Ask "What do you know about me?" in the chat to see your notes, and delete any of them there.
 - **Your messages:** the requests and the messages that you send to other people on roomsie. We use them to deliver your words to the other person.
 - **Your ID check, if you do it:** a photo of a government ID (never Aadhaar) and a selfie. We use them to show the "Verified" mark on your card. A machine compares the two faces, and a person of our team checks the result. We keep the type of the ID, the result, the reason of a rejection, the note of the reviewer, who reviewed it and when. We also keep a log of each view of the photos and each decision.
@@ -26,6 +26,8 @@ roomsie is a service to find a flat, a room or a flatmate in Mumbai. In this pol
 - **Feedback:** the face and the text that you send us. We use it to make roomsie better.
 - **Alerts:** a token of your browser if you turn on browser alerts. We use it to send you the alerts.
 - **The waitlist:** your email and the place, if you ask us to tell you when roomsie opens in a place outside Mumbai. We use it only for that.
+- **A quote:** if you agree, a sentence of yours with your name on our home page. We use it to show what users say.
+- **An invite:** before the launch, the email of a person whom we invited, so that they could sign in.
 
 **About how roomsie is used**
 
@@ -60,7 +62,7 @@ We use these services to run roomsie. Each one gets only what it needs.
 | Cloudflare | The photos, and our encrypted backups | Many countries |
 | Vercel | The web pages. Its functions run in Mumbai. | Mumbai, and a network in many countries |
 | Sentry | The error reports | Can be outside India |
-| GitHub | Our nightly backup job. The job copies our databases, encrypts the copy and stores it in Cloudflare. The plain copy exists only while the job runs. | Can be outside India |
+| GitHub | Our nightly backup job. It encrypts a copy of our databases. The plain copy exists only while the job runs. | Can be outside India |
 
 - **DeepSeek** keeps the text in China, and its terms give no end date. Its terms let it use the text, in a de-identified form, to improve its models. We ask DeepSeek to opt us out of that.
 - **Google Gemini** runs on our paid account. Google does not use the text to train its models. It keeps the text for 55 days to find abuse.
@@ -74,8 +76,8 @@ We use these services to run roomsie. Each one gets only what it needs.
 | The hashes of your network and your visitor key, after you sign in | Until you delete your account |
 | Your account: profile, photos, listings, chats with the assistant, notes, saves, feedback and alerts | Until you delete your account |
 | Your messages and request notes to other people | They stay with the other person after you delete your account. They show "Deleted user" as the sender. |
-| Your sign-in email | 180 days after you delete your account, in a locked record with the date you joined and the date you left, as the Indian IT Rules ask |
-| The record of a deleted account: its dates, if it was suspended, and a code made from your Google account id | The dates stay with no end. The code is a hash, not the id. It stops a suspended or reported person from making a new account. It goes when you join again with the same Google account. |
+| Your sign-in email | 180 days after you delete your account, in a locked record, as the Indian IT Rules ask |
+| The record of a deleted account: the date you joined, the date you left, if it was suspended, and a hash of your Google account id | The dates and the suspension stay with no end. The hash stops a suspended person, or a person with an open report, from a new account. When you join again with the same Google account, the hash goes. The blocks that other people made against your old account then apply to the new one. |
 | The photos of an ID check | Deleted right after the review, at most 7 days |
 | The result of an ID check, and the log of who saw it | Until you delete your account |
 | Reports, blocks and the moderation log | No end. They stay after you delete your account, so that the moderators can act on abuse. |
@@ -83,7 +85,7 @@ We use these services to run roomsie. Each one gets only what it needs.
 | The log of who opened the records of the assistant | No end. It holds a session code, never your words. |
 | Events | 12 months, deleted by whole month, so at most 13 months and one day. When you delete your account, they lose the link to you. |
 | Daily counts of the events | No end. They hold counts and no person. |
-| A quote of yours on our home page, if you agreed to it | Until a moderator removes it, or you ask us to remove it |
+| A quote of yours on our home page, if you agreed to it | Until a moderator removes it |
 | An invite to roomsie before the launch: the email | Until a moderator removes it |
 | Error reports | 30 days |
 | The waitlist | For an account, until you delete your account. For a visitor, until the chat goes and we tell you that roomsie opened in your place. |
@@ -95,7 +97,7 @@ We use these services to run roomsie. Each one gets only what it needs.
 
 roomsie sets no cookies. Your browser keeps these:
 
-- Your visitor key, until you sign in.
+- Your visitor key, until you sign in or clear your browser.
 - The id of your last chat and the waitlist places that you joined, until you sign out or clear your browser.
 - Your sign-in and your browser alerts, kept by Google's sign-in and alert services.
 - A few settings of the page, until you close the tab.

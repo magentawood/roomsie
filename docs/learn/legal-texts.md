@@ -16,14 +16,14 @@
 | The three texts | `docs/legal/privacy.md`, `terms.md` and `grievance.md` |
 | The pages on the site | `/privacy`, `/terms` and `/grievance` (T-23b) |
 
-- **One fact, one home.** A period, a vendor or a rule comes from its record. When a record changes, the privacy policy or the terms change in the same PR. The folder is outside the word budget of the docs, because a legal text cannot be split.
+- **One fact, one home.** A period, a vendor, a rule or the contact comes from its record, and the text changes with it in the same PR ([PD21](../decisions/pd-21-legal-texts.md)). The folder is outside the word budget of the docs, because a legal text cannot be split.
 - **The weekly vendor request.** Each week, the Grievance Officer counts the account deletions of the last 7 days, from the registration records of T-69. With one or more, they send this email to api-service@deepseek.com, and the same text to Google in a support case of the Gemini project:
 
   > Subject: Deletion request for end-user data, roomsie API account
   >
   > We are the developer of roomsie.in, which uses your API with the key of our account. In the last 7 days, N of our users deleted their accounts. Under our privacy policy and the Indian DPDP Act, please delete the inputs and outputs of our account that relate to these users, sent between <first date> and <last date>. Our requests carry no user identifier. If you cannot find the data of single users, please tell us so.
 
-- **The team actions before the launch:** the Gemini key must belong to a project with billing on, with the logging of its requests off. This email opts our API account out of training at DeepSeek:
+- **The team actions before the launch:** check the settings of the Gemini project that PD21 gives, in Google AI Studio. Send this email, which opts our API account out of training at DeepSeek (the addresses come from the DeepSeek privacy policy and Open Platform terms):
 
   > To: privacy@deepseek.com, cc api-service@deepseek.com. Subject: Opt-out of model training for our API account
   >
