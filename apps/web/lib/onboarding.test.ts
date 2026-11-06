@@ -9,6 +9,13 @@ describe('the steps of flow 01', () => {
     expect(onboardingSteps(full, true)).toEqual(['purpose', 'whosMoving', 'intent', 'budget', 'area'])
   })
 
+  it('asks a flatmate seeker no place type, fills its bar of three, and starts the flatmate search', () => {
+    const flatmate: Answers = { ...full, purpose: 'flatmate', intent: undefined }
+    expect(onboardingSteps(flatmate, false)).toEqual(['purpose', 'whosMoving', 'budget', 'area', 'signIn'])
+    expect((['whosMoving', 'area', 'signIn'] as const).map((step) => progressOf(step, flatmate))).toEqual([1, 3, 3])
+    expect(startOf(flatmate).intent).toBe('flatmates')
+  })
+
   it('takes a skipped purpose as a seeker, and sends a lister to the sign-in only', () => {
     expect(onboardingSteps({}, false)).toEqual(onboardingSteps(full, false))
     expect(onboardingSteps({ purpose: 'list' }, false)).toEqual(['purpose', 'signIn'])
