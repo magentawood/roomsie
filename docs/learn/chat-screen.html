@@ -80,9 +80,11 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
-<li><strong>A reload opens the same chat.</strong> <code>/chat?goal=&lt;id&gt;</code> names the goal. Each other way into the chat starts a new goal, as a new chat of ChatGPT does, and the older goals stay in the list. Local storage keeps the visitor key, never a sign-in token, and a sign-out removes it.</li>
-<li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
+<li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding or the first message starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
+<li><strong>The wait for a reply</strong> shows the mascot at its laptop and the steps of the search, as flow 02 draws it: "Reading what you said", "Looking through places (or people) around <areas>", "Picking the best ones for you". A step ticks after a short time, and the last one turns until the reply. The client does not know how far the API is.</li>
+<li><strong>A reload opens the same chat.</strong> <code>/chat?goal=&lt;id&gt;</code> names the goal. Each other way into the chat starts a new goal, as a new chat of ChatGPT does, and the older goals stay in the list. Session storage keeps the visitor key and the goal of the tab, never a sign-in token, so a guest starts fresh on the next visit. A sign-out removes them.</li>
+<li><strong>The phone bar</strong> of the designs is a glass bar: Chats, Messages, Listings and Profile, and a "+" whose menu has New goal and New listing. The plus turns into a cross while the menu is open. Chats goes back to the chat of this visit of the tab, else to a new goal. The open tab has a filled icon.</li>
+<li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Listings, Profile and the two items of the "+" menu open the wall. Chats is open to a guest. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
 <li><strong>A link from outside</strong> to a page that needs an account still opens the full-page sign-in of <code>SignInGate</code>.</li>
 <li><strong><code>AppShell fixed</code></strong> makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.</li>
 </ul>
@@ -108,5 +110,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>T-15: the results panel and the split view. <a href="results-panel.html">The results panel</a> tells how they work.</li>
 <li>T-48: the onboarding starts each goal, and New Goal and "+" open it (<a href="onboarding.html">the onboarding</a>).</li>
 <li>T-50: the goal header, the goal list and a closed goal (<a href="goals.html">goals</a>).</li>
+<li><a href="https://github.com/magentawood/roomsie/pull/243">#243</a>, 2026-11-07. The phone bar and its "+" menu of the designs, the wait with the mascot, the visitor key for the visit of the tab, a message that fits its bubble, and a pointer on each control.</li>
 </ul>
 </main>

@@ -18,6 +18,7 @@ import { Button, type Icon } from '../ui/button'
 import { BlockSheet } from './block-sheet'
 import { Connect } from './connect'
 import { SayHiSheet } from './say-hi-sheet'
+import { savedHref } from '../../lib/saved'
 
 const lifestyleIcons: Record<LifestyleAxis, Icon> = {
   food: ShoppingCart01, smoking: SlashCircle01, drinks: Droplets01, guests: Users01, your_days: Sun, sleep: Moon01, tidiness: Brush01, pets: Heart,
@@ -31,7 +32,7 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
   const [sheet, setSheet] = useState<'say_hi' | 'report' | 'block' | null>(null)
   const name = firstName(person.fullName)
   const target = { profileId: person.id, firstName: name }
-  const back = useBack()
+  const back = useBack(savedHref.people)
   const close = () => setSheet(null)
 
   const lookingForFacts = [

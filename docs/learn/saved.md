@@ -6,7 +6,7 @@
 
 - A **save** is one row that links a user to one listing or to one person card. A user saves an item one time: a second save changes nothing.
 - The **Save button** says "Save". After a save, it says "Saved", and a second press unsaves.
-- **Saved** is a page in the sidebar and in the phone bar. Its tabs are Places and People, and each shows the newest save first.
+- **Saved places** and **Saved people** are two tabs of Listings, after My listings, in the sidebar and in the phone bar. Each shows the newest save first. `/saved` opens Saved places, so an old link still works.
 
 ## How it fits our project
 
@@ -15,7 +15,7 @@
 | The table | `saves` in `apps/api/src/db/schema.ts`: `user_id`, and exactly one of `listing_id` and `profile_id` |
 | The routes | `apps/api/src/saved/routes.ts`: `PUT /v1/saved/places/:id` and `/v1/saved/people/:id`, `DELETE /v1/saved/:kind/:id`, and `GET /v1/saved/places` and `/v1/saved/people` |
 | The button | `apps/web/components/saved/save-button.tsx`: `<SaveButton kind="places" id={…} />` |
-| The page | `apps/web/app/saved/page.tsx`, with the place card of `apps/web/components/listings/place-card.tsx` |
+| The tabs | `apps/web/app/listings/page.tsx`, the lists in `apps/web/components/saved/saved-lists.tsx`, with the place card of `apps/web/components/listings/place-card.tsx` |
 
 - Only a live listing can be saved or listed. Only a live person card of an active account can be saved or listed, when it is not the user and no block exists in either direction. Each other item gets 404. The match query uses the same rule for people (`visiblePeople`).
 - The web keeps the two lists in the cache keys `['saved', 'places']` and `['saved', 'people']`. The button reads them to know if an item is saved.
@@ -36,3 +36,4 @@
 
 - T-47: [#150](https://github.com/magentawood/roomsie/pull/150), 2026-10-26. The table, the routes, the Save button, the place card, the Saved page, and the phone bar of the designer.
 - T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person cards of the People tab.
+- [#243](https://github.com/magentawood/roomsie/pull/243), 2026-11-07. Saved moved into the tabs of Listings, for the phone bar of the designs.

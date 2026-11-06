@@ -8,7 +8,7 @@ const user = { getIdToken: async () => 'token-1' } as User
 describe('the claim of the visitor chat at sign-in (T-17)', () => {
   beforeEach(() => {
     const store = new Map<string, string>()
-    vi.stubGlobal('localStorage', { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) })
+    vi.stubGlobal('sessionStorage', { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) })
   })
   afterEach(() => vi.unstubAllGlobals())
 

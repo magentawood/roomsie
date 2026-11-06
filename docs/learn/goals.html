@@ -41,7 +41,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>A <strong>goal</strong> is one move: one chat, its Form A and its results (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A person or a visitor can have many goals.</li>
 <li>The <strong>title</strong> names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.</li>
 <li>The <strong>goal list</strong> is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.</li>
-<li><strong>A new goal</strong> starts at <code>/start</code>: "New Goal", the phone "+", "Start a new goal", and each visit that does not name a goal (<a href="onboarding.html">the onboarding</a>).</li>
+<li><strong>A new goal</strong> starts at "What are we looking for?" of flow 02, at <code>/chat</code>: "New Goal", New goal of the phone "+", "Start a new goal", and Chats in a new visit. The first message or chip makes the goal, then the address names it. The landing page goes to <a href="onboarding.html">the onboarding</a> first.</li>
 <li><strong>"I found a place"</strong> opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.</li>
 <li>A <strong>closed goal</strong> is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".</li>
 <li>The <strong>feedback pop-up</strong> follows the close: one of five faces, and words if the person wants. Moderators read it on <code>/admin/feedback</code>, with the feedback of <a href="landing-page.html">the landing page</a>.</li>
@@ -99,5 +99,6 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>T-50: the list, the title, the close, the reopen and the feedback.</li>
 <li>T-67: <a href="https://github.com/magentawood/roomsie/pull/234">#234</a>, 2026-11-06. The nightly delete of the old visitor goals.</li>
+<li><a href="https://github.com/magentawood/roomsie/pull/243">#243</a>, 2026-11-07. A new goal opens the empty chat of the designs.</li>
 </ul>
 </main>

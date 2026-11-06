@@ -90,8 +90,8 @@ export function useShare(title: string, card: Card) {
   return { share: () => setOpen(true), status, dialog }
 }
 
-/** Back, or Saved when the detail opened in a new tab. */
-export function useBack() {
+/** Back, or the saved tab of the kind when the detail opened in a new tab. */
+export function useBack(saved: string) {
   const router = useRouter()
-  return () => (window.history.length > 1 ? router.back() : router.push('/saved'))
+  return () => (window.history.length > 1 ? router.back() : router.push(saved))
 }

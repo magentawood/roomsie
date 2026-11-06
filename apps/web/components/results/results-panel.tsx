@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { FaceSad, XClose } from '@untitledui/icons'
+import { FaceSad, ChevronSelectorVertical, XClose } from '@untitledui/icons'
 import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
 import { pickOf, type Picked, type Picks } from '../../lib/compare'
@@ -154,9 +154,13 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
                 {sample && <span><Badge tone="warning">Sample data</Badge></span>}
               </div>
               <div className="flex shrink-0 items-center gap-2">
-                <select aria-label="Sort" className="rounded-md border border-primary bg-primary px-3 py-2 text-sm font-medium text-secondary shadow-xs outline-focus-ring focus-visible:outline-2">
-                  <option>Best Matches</option>
-                </select>
+                {/* The small secondary button of the designs, with the chevrons of a select. */}
+                <span className="relative">
+                  <select aria-label="Sort" className="appearance-none rounded-lg border border-primary bg-primary py-1.5 pr-8 pl-3 text-sm font-semibold text-secondary shadow-xs outline-focus-ring focus-visible:outline-2">
+                    <option>Best Matches</option>
+                  </select>
+                  <ChevronSelectorVertical size={16} aria-hidden className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-fg-quaternary" />
+                </span>
                 <CloseButton onClose={onClose} />
               </div>
             </header>
