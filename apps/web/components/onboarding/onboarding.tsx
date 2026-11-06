@@ -36,8 +36,8 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
     case 'purpose':
       return (
         <div role="radiogroup" aria-label={screens.purpose.title} className="flex flex-col gap-4 text-left">
-          <ChoiceCard icon={Home03} title="I’m looking for a place" subtitle="A room, a flat or a PG" selected={answers.purpose === 'look'} onSelect={() => pick('purpose')('look')} />
           <ChoiceCard icon={Users01} title="I’m looking for a flatmate" subtitle="People to rent a flat with" selected={answers.purpose === 'flatmate'} onSelect={() => pick('purpose')('flatmate')} />
+          <ChoiceCard icon={Home03} title="I’m looking for a place" subtitle="A room, a flat or a PG" selected={answers.purpose === 'look'} onSelect={() => pick('purpose')('look')} />
           <ChoiceCard icon={Key01} title="I have a place to list" subtitle="A room in my flat, a whole flat, a PG, or a flat I broker" selected={answers.purpose === 'list'} onSelect={() => pick('purpose')('list')} />
         </div>
       )
