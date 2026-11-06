@@ -33,4 +33,4 @@ These are the times of the Information Technology (Intermediary Guidelines and D
 
 ## You can also report on roomsie
 
-When you are signed in, "Report" on the page of a person or a listing, or in a conversation, sends your report to our moderators. A report of harassment or of a person under 18 hides the card or the listing at once.
+When you are signed in, "Report" on the page of a person or a listing, or in a conversation, sends your report to our moderators. The [terms](terms.md) tell how a report works.

@@ -35,7 +35,7 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="the-legal-texts">The legal texts</h1>
-<p><strong>In one line:</strong> the legal texts are Markdown files in <code>docs/legal/</code>, and each change of the data or its vendors also changes the privacy policy.</p>
+<p><strong>In one line:</strong> the legal texts are Markdown files in <code>docs/legal/</code>, and each change of a record that they copy also changes them.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li><strong>The privacy policy</strong> tells each kind of data, why roomsie keeps it, for how long, who else gets it, and the rights of a person (the DPDP Act 2023).</li>
@@ -63,7 +63,7 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
-<li><strong>One fact, one home.</strong> A period or a vendor comes from its record. When a record changes, the text changes in the same PR. The folder is outside the word budget of the docs, because a legal text cannot be split.</li>
+<li><strong>One fact, one home.</strong> A period, a vendor or a rule comes from its record. When a record changes, the privacy policy or the terms change in the same PR. The folder is outside the word budget of the docs, because a legal text cannot be split.</li>
 <li><strong>The weekly vendor request.</strong> Each week, the Grievance Officer counts the account deletions of the last 7 days, from the registration records of T-69. With one or more, they send this email to api-service@deepseek.com, and the same text to Google in a support case of the Gemini project:</li>
 </ul>
 <blockquote>
@@ -71,8 +71,12 @@ details.callout[open] summary{color:var(--fg)}
 <p>We are the developer of roomsie.in, which uses your API with the key of our account. In the last 7 days, N of our users deleted their accounts. Under our privacy policy and the Indian DPDP Act, please delete the inputs and outputs of our account that relate to these users, sent between <first date> and <last date>. Our requests carry no user identifier. If you cannot find the data of single users, please tell us so.</p>
 </blockquote>
 <ul>
-<li><strong>The team actions before the launch:</strong> an email to privacy@deepseek.com opts our API account out of training. The Gemini key must belong to a project with billing on. The logging of the requests of that project must be off.</li>
+<li><strong>The team actions before the launch:</strong> the Gemini key must belong to a project with billing on, with the logging of its requests off. This email opts our API account out of training at DeepSeek:</li>
 </ul>
+<blockquote>
+<p>To: privacy@deepseek.com, cc api-service@deepseek.com. Subject: Opt-out of model training for our API account</p>
+<p>We are the developer of roomsie.in, a flat and flatmate service in India. We use the DeepSeek API with the account of roomsie.in@gmail.com. Under section 4.3 of your Terms of Use and your privacy policy, please opt our account out of the use of our inputs and outputs to train or improve your models, from today. Please confirm when the opt-out is active, and tell us if the API console has a setting for it.</p>
+</blockquote>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>The name, the Grievance Officer, the messages, the registration record and the vendor requests: <a href="../decisions/pd-21-legal-texts.md">PD21</a>.</li>
@@ -80,10 +84,8 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
-<li><strong>The texts promise what T-68 and T-69 build</strong> (<a href="../decisions/pd-21-legal-texts.md">PD21</a>).</li>
 <li><strong>The texts name no company.</strong> When roomsie becomes a company, the texts, PD21 and the sign-in screen change together.</li>
 <li><strong>The times of the IT Rules changed in February 2026.</strong> Check the rules again before a change of the grievance page.</li>
-<li><strong>No lawyer has read the texts yet</strong> (<a href="../decisions/pd-21-legal-texts.md">PD21</a>).</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>

@@ -33,7 +33,7 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 | **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP, Visitor data delete, IT Rules notices | 33 | 1 | _name_ |
 | **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval, Model traces, AI numbers and switch, Visitor card fields | 81 | -47 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Product numbers, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 122 | -88 | _name_ |
-| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user, Admin home, Admin people and listings | 29 | 5 | _name_ |
+| **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user, Admin home, Admin people and listings, Legal pages | 29 | 5 | _name_ |
 | **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens, Registration record | 22 | 12 | _name_ |
 
 Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at two hours a day. Sunday 11 October is for bug fixes. **Monday 12 October is launch.** Wednesday 14 October is the fallback date.
@@ -128,17 +128,17 @@ Finish line: Wed 25 Nov. 122 hours.
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
 | 1 | T-23a · Landing page from the Figma design | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
-| 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07, T-68, T-69 |
-| 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
-| 4 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
-| 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
-| 6 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, T-56 |
-| 7 | T-22b · Waitlist screen outside Mumbai | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
-| 8 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
-| 9 | T-62 · Admin home and the six pages | 4 | Thu 5 Nov | D-07 |
-| 10 | T-63 · People and listings in the admin | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| 2 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
+| 3 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
+| 4 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
+| 5 | T-22a · Mumbai areas and waitlist API | 2 | Thu 8 Oct → Sat 10 Oct | T-14, T-56 |
+| 6 | T-22b · Waitlist screen outside Mumbai | 1 | Thu 8 Oct → Sat 10 Oct | T-22a, D-04 |
+| 7 | T-53 · Delete the Firebase user at account deletion | 2 | Tue 27 Oct → Wed 28 Oct | T-20 |
+| 8 | T-62 · Admin home and the six pages | 4 | Thu 5 Nov | D-07 |
+| 9 | T-63 · People and listings in the admin | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| 10 | T-23b · Privacy, terms and grievance pages | 2 | Sat 7 Nov → Sun 8 Nov | T-02, F-07, T-68, T-69 |
 
-Finish line: Sat 7 Nov. 29 hours.
+Finish line: Sun 8 Nov. 29 hours.
 
 ### P5 · Accounts and people — cI, events and connections, then the chat screen and its chips
 
@@ -277,15 +277,15 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 20 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | P3 Data and trust | 21 | T-60 | Profile pop-up after the first sign-in | 3 | Wed 25 Nov | Wed 25 Nov | CP3 | T-48 | [#208](https://github.com/magentawood/roomsie/issues/208) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
-| P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07, T-68, T-69 | [#40](https://github.com/magentawood/roomsie/issues/40) |
-| P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
-| P4 Content and moderation | 4 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
-| P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
-| P4 Content and moderation | 6 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, T-56 | [#47](https://github.com/magentawood/roomsie/issues/47) |
-| P4 Content and moderation | 7 | T-22b | Waitlist screen outside Mumbai | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
-| P4 Content and moderation | 8 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
-| P4 Content and moderation | 9 | T-62 | Admin home and the six pages | 4 | Thu 5 Nov | Thu 5 Nov | CP3 | D-07 | [#221](https://github.com/magentawood/roomsie/issues/221) |
-| P4 Content and moderation | 10 | T-63 | People and listings in the admin | 3 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | [#222](https://github.com/magentawood/roomsie/issues/222) |
+| P4 Content and moderation | 2 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
+| P4 Content and moderation | 3 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
+| P4 Content and moderation | 4 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
+| P4 Content and moderation | 5 | T-22a | Mumbai areas and waitlist API | 2 | Thu 8 Oct | Sat 10 Oct | CP3 | T-14, T-56 | [#47](https://github.com/magentawood/roomsie/issues/47) |
+| P4 Content and moderation | 6 | T-22b | Waitlist screen outside Mumbai | 1 | Thu 8 Oct | Sat 10 Oct | CP3 | T-22a, D-04 | [#99](https://github.com/magentawood/roomsie/issues/99) |
+| P4 Content and moderation | 7 | T-53 | Delete the Firebase user at account deletion | 2 | Tue 27 Oct | Wed 28 Oct | CP3 | T-20 | [#143](https://github.com/magentawood/roomsie/issues/143) |
+| P4 Content and moderation | 8 | T-62 | Admin home and the six pages | 4 | Thu 5 Nov | Thu 5 Nov | CP3 | D-07 | [#221](https://github.com/magentawood/roomsie/issues/221) |
+| P4 Content and moderation | 9 | T-63 | People and listings in the admin | 3 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | [#222](https://github.com/magentawood/roomsie/issues/222) |
+| P4 Content and moderation | 10 | T-23b | Privacy, terms and grievance pages | 2 | Sat 7 Nov | Sun 8 Nov | CP2 | T-02, F-07, T-68, T-69 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P5 Accounts and people | 1 | M-03 | Write the eval sentences | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | — | [#21](https://github.com/magentawood/roomsie/issues/21) |
 | P5 Accounts and people | 2 | T-03 | CI: typecheck, lint, build, secret scan | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02 | [#24](https://github.com/magentawood/roomsie/issues/24) |
 | P5 Accounts and people | 3 | T-24 | Event logging table | 2 | Tue 29 Sep | Wed 30 Sep | CP2 | — | [#37](https://github.com/magentawood/roomsie/issues/37) |
@@ -407,7 +407,6 @@ gantt
     T-60 Profile pop-up after the first sign-in :t60, 2026-11-25, 1d
     section P4 Content and moderation
     T-23a Landing page from the Figma design :t23a, 2026-09-24, 4d
-    T-23b Privacy terms and grievance pages :t23b, 2026-09-27, 3d
     T-37 Articles table and full-text search :t37, 2026-09-29, 3d
     T-19 Report block suspend and the admin screen :t19, 2026-10-01, 5d
     T-20 Account deletion :t20, 2026-10-05, 4d
@@ -416,6 +415,7 @@ gantt
     T-53 Delete the Firebase user at account deletion :t53, 2026-10-27, 2d
     T-62 Admin home and the six pages :t62, 2026-11-05, 1d
     T-63 People and listings in the admin :t63, 2026-11-06, 2d
+    T-23b Privacy terms and grievance pages :t23b, 2026-11-07, 2d
     section P5 Accounts and people
     M-03 Write the eval sentences :m03, 2026-09-24, 4d
     T-03 CI - typecheck lint build secret scan :t03, 2026-09-27, 3d
@@ -625,12 +625,12 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 | F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | F-13 |
 | T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04, T-06 |
 | T-03 | CI: typecheck, lint, build, secret scan | P5 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
-| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07, T-68, T-69 |
 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | P2 | 6 | Sun 27 Sep → Tue 29 Sep | T-12, T-06 |
 | D-04 | Design landing, wall and waitlist | D |  | Mon 28 Sep → Tue 29 Sep | D-01 |
 | T-13 | Reply writer with scope rules | P2 | 4 | Tue 29 Sep → Wed 30 Sep | T-11 |
 | T-24 | Event logging table | P5 | 2 | Tue 29 Sep → Wed 30 Sep | — |
 | T-37 | Articles table and full-text search | P4 | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
+| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sat 7 Nov → Sun 8 Nov | T-02, F-07, T-68, T-69 |
 
 **T-06 · Database schema v1** — done when:
 - Committed migrations exist for users, profiles, anonymous sessions, goals, connection requests, reports, blocks and waitlist
@@ -665,11 +665,6 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - `main` accepts a merge only when CI passes
 - Read first: `docs/decisions/0013-ci-gate-and-testing.md`
 
-**T-23b · Privacy, terms and grievance pages** — done when:
-- /privacy, /terms and /grievance show the founder's text
-- Links to it are in the footer and on the sign-in screen
-- The delete dialog says that the messages to other people stay with them
-
 **T-34 · Router: sort each typed message and flag what we should not answer** — done when:
 - Each typed message gets one low-cost classification call through the model wrapper. The result is filter details, personal context, a question, or out of scope
 - It also tags the scope band from docs/scope-policy.md. Out-of-scope and adversarial messages get a scripted line with no model call after the router, and the system logs them
@@ -703,6 +698,11 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 - A search returns the passages that match best, with their article and heading
 - The articles show on the public blog at roomsie.in/blog, with their SEO fields
 - Read first: `docs/content/corpus-plan.md`, `docs/extensibility.md`
+
+**T-23b · Privacy, terms and grievance pages** — done when:
+- /privacy, /terms and /grievance show the founder's text
+- Links to it are in the footer and on the sign-in screen
+- The delete dialog says that the messages to other people stay with them
 
 ### CP3 · Feature freeze and go/no-go — Sat 10 Oct
 
@@ -1153,6 +1153,7 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - An account deletion keeps the sign-in email, the sign-up date and the deletion date in a locked record that no screen shows
 - A nightly job deletes the record 180 days after the deletion
 - PD19 and the learn pages say so
+- A person with no profile can delete the account from Settings
 - Read first: `docs/decisions/pd-19-retention.md`
 
 **T-45 · Messages screens** — done when:

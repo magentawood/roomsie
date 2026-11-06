@@ -1047,7 +1047,7 @@
   {
    "id": "T-20",
    "title": "Account deletion",
-   "plain": "Delete the account and data correctly: profile, photos and messages are really removed. Indian law requires this.",
+   "plain": "Delete the account and data correctly: the profile, the photos and the chats are really removed. Indian law requires this.",
    "role": "P4",
    "hours": 3,
    "start": "2026-10-05",
@@ -1128,8 +1128,8 @@
    "plain": "The legal pages that each Indian site must have.",
    "role": "P4",
    "hours": 2,
-   "start": "2026-09-27",
-   "end": "2026-09-29",
+   "start": "2026-11-07",
+   "end": "2026-11-08",
    "deps": [
     "T-02",
     "F-07",
@@ -2209,7 +2209,7 @@
   {
    "id": "T-68",
    "title": "Visitor results give only the card",
-   "plain": "A visitor gets only the fields of the results card; the details need a sign-in, as PD6b says.",
+   "plain": "A visitor gets only the fields of the results card, and the details need a sign-in, as PD6b says.",
    "role": "P2",
    "hours": 2,
    "start": "2026-11-07",
@@ -2239,7 +2239,8 @@
    "done": [
     "An account deletion keeps the sign-in email, the sign-up date and the deletion date in a locked record that no screen shows",
     "A nightly job deletes the record 180 days after the deletion",
-    "PD19 and the learn pages say so"
+    "PD19 and the learn pages say so",
+    "A person with no profile can delete the account from Settings"
    ],
    "read": [
     "docs/decisions/pd-19-retention.md"

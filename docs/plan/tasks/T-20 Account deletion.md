@@ -2,7 +2,7 @@
 id: T-20
 title: "Account deletion"
 owner: "P4 Content and moderation"
-sequence: "5 of 10"
+sequence: "4 of 10"
 hours: 3
 start: 2026-10-05
 end: 2026-10-08
@@ -17,12 +17,12 @@ tags:
 
 # T-20 · Account deletion
 
-**Owner:** [[P4 Content and moderation]], task 5 of 10  
+**Owner:** [[P4 Content and moderation]], task 4 of 10  
 **When:** Mon 5 Oct → Thu 8 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#46](https://github.com/magentawood/roomsie/issues/46)
 
-Delete the account and data correctly: profile, photos and messages are really removed. Indian law requires this.
+Delete the account and data correctly: the profile, the photos and the chats are really removed. Indian law requires this.
 
 ## Needs first
 - [[T-06 Database schema ⚑]]

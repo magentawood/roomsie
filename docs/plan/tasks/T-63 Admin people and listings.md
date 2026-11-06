@@ -2,7 +2,7 @@
 id: T-63
 title: "People and listings in the admin"
 owner: "P4 Content and moderation"
-sequence: "10 of 10"
+sequence: "9 of 10"
 hours: 3
 start: 2026-11-06
 end: 2026-11-07
@@ -17,7 +17,7 @@ tags:
 
 # T-63 · People and listings in the admin
 
-**Owner:** [[P4 Content and moderation]], task 10 of 10  
+**Owner:** [[P4 Content and moderation]], task 9 of 10  
 **When:** Fri 6 Nov → Sat 7 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#222](https://github.com/magentawood/roomsie/issues/222)

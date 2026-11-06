@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**304 of 368 done · 83%**
+**304 of 369 done · 82%**
 
 `████████████████████░░░░`
 
@@ -26,7 +26,7 @@ This note is part of [[roomsie launch]].
 | [[P2 Chat]] | 15 / 18 | 74 / 83 | 89% |
 | [[P3 Data and trust]] | 21 / 21 | 92 / 92 | 100% |
 | [[P4 Content and moderation]] | 9 / 10 | 41 / 44 | 93% |
-| [[P5 Accounts and people]] | 5 / 7 | 30 / 34 | 88% |
+| [[P5 Accounts and people]] | 5 / 7 | 30 / 35 | 86% |
 | [[Design]] | 5 / 7 | 11 / 14 | 79% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 2 | 0 / 8 | 0% |
@@ -462,9 +462,6 @@ flowchart LR
 > [!todo]- ✅ [[T-23a Landing page]] · 8/8
 > ![[T-23a Landing page#^done]]
 
-> [!todo]- ⬜ [[T-23b Legal pages]] · 0/3
-> ![[T-23b Legal pages#^done]]
-
 > [!todo]- ✅ [[T-37 Articles and search]] · 4/4
 > ![[T-37 Articles and search#^done]]
 
@@ -489,8 +486,11 @@ flowchart LR
 > [!todo]- ✅ [[T-63 Admin people and listings]] · 4/4
 > ![[T-63 Admin people and listings#^done]]
 
+> [!todo]- ⬜ [[T-23b Legal pages]] · 0/3
+> ![[T-23b Legal pages#^done]]
 
-## P5 Accounts and people — 30/34
+
+## P5 Accounts and people — 30/35
 
 > [!todo]- ✅ [[M-03 Eval sentences]] · 4/4
 > ![[M-03 Eval sentences#^done]]
@@ -510,7 +510,7 @@ flowchart LR
 > [!todo]- ✅ [[T-16b Profile screens ⚑]] · 4/4
 > ![[T-16b Profile screens ⚑#^done]]
 
-> [!todo]- ⬜ [[T-69 Registration record]] · 0/3
+> [!todo]- ⬜ [[T-69 Registration record]] · 0/4
 > ![[T-69 Registration record#^done]]
 
 

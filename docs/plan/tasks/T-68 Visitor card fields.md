@@ -21,7 +21,7 @@ tags:
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** no issue at this time
 
-A visitor gets only the fields of the results card; the details need a sign-in, as PD6b says.
+A visitor gets only the fields of the results card, and the details need a sign-in, as PD6b says.
 
 ## Needs first
 - Nothing. You can start this task at any time.

@@ -9,19 +9,19 @@ tags:
 
 _Public pages and safety, then the observer._
 
-**29 hours** of build work, at 1.71h a day, with 5 hours spare. The last task ends on Sat 7 Nov.
+**29 hours** of build work, at 1.71h a day, with 5 hours spare. The last task ends on Sun 8 Nov.
 
 This note is part of [[roomsie launch]].
 
 ## Sequence
 
 1. [[T-23a Landing page]] — Thu 24 Sep → Sun 27 Sep, 4h
-2. [[T-23b Legal pages]] — Sun 27 Sep → Tue 29 Sep, 2h
-3. [[T-37 Articles and search]] — Tue 29 Sep → Thu 1 Oct, 3h
-4. [[T-19 Report and block]] — Thu 1 Oct → Mon 5 Oct, 5h
-5. [[T-20 Account deletion]] — Mon 5 Oct → Thu 8 Oct, 3h
-6. [[T-22a Waitlist API]] — Thu 8 Oct → Sat 10 Oct, 2h
-7. [[T-22b Waitlist screen]] — Thu 8 Oct → Sat 10 Oct, 1h
-8. [[T-53 Delete the Firebase user]] — Tue 27 Oct → Wed 28 Oct, 2h
-9. [[T-62 Admin home]] — Thu 5 Nov, 4h
-10. [[T-63 Admin people and listings]] — Fri 6 Nov → Sat 7 Nov, 3h
+2. [[T-37 Articles and search]] — Tue 29 Sep → Thu 1 Oct, 3h
+3. [[T-19 Report and block]] — Thu 1 Oct → Mon 5 Oct, 5h
+4. [[T-20 Account deletion]] — Mon 5 Oct → Thu 8 Oct, 3h
+5. [[T-22a Waitlist API]] — Thu 8 Oct → Sat 10 Oct, 2h
+6. [[T-22b Waitlist screen]] — Thu 8 Oct → Sat 10 Oct, 1h
+7. [[T-53 Delete the Firebase user]] — Tue 27 Oct → Wed 28 Oct, 2h
+8. [[T-62 Admin home]] — Thu 5 Nov, 4h
+9. [[T-63 Admin people and listings]] — Fri 6 Nov → Sat 7 Nov, 3h
+10. [[T-23b Legal pages]] — Sat 7 Nov → Sun 8 Nov, 2h

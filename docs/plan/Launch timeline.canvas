@@ -786,15 +786,6 @@
    "height": 84
   },
   {
-   "id": "task-T-23b",
-   "type": "text",
-   "text": "**[[T-23b Legal pages|T-23b Legal pages]]**\n2h · Sun 27 Sep → Tue 29 Sep",
-   "x": 660,
-   "y": 1388,
-   "width": 652,
-   "height": 84
-  },
-  {
    "id": "task-T-37",
    "type": "text",
    "text": "**[[T-37 Articles and search|T-37 Articles and search]]**\n3h · Tue 29 Sep → Thu 1 Oct",
@@ -863,6 +854,15 @@
    "text": "**[[T-63 Admin people and listings|T-63 Admin people and listings]]**\n3h · Fri 6 Nov → Sat 7 Nov",
    "x": 9460,
    "y": 1292,
+   "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-T-23b",
+   "type": "text",
+   "text": "**[[T-23b Legal pages|T-23b Legal pages]]**\n2h · Sat 7 Nov → Sun 8 Nov",
+   "x": 9680,
+   "y": 1388,
    "width": 432,
    "height": 84
   },

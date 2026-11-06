@@ -33,6 +33,7 @@ An account deletion keeps the sign-in email and two dates for 180 days, as the I
 - [ ] An account deletion keeps the sign-in email, the sign-up date and the deletion date in a locked record that no screen shows
 - [ ] A nightly job deletes the record 180 days after the deletion
 - [ ] PD19 and the learn pages say so
+- [ ] A person with no profile can delete the account from Settings
 
 ^done
 

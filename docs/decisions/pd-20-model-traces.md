@@ -41,7 +41,7 @@
 
 ## Revisit when
 
-- The privacy drafter or a DPDP rule needs a different period or no text.
+- A DPDP rule or a lawyer needs a different period or no text.
 - A caste filter comes in: its words go into the mask (PD3c).
 
 ## Sources
