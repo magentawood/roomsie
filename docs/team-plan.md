@@ -4,7 +4,7 @@
 
 Every task below is also a GitHub issue. This file is the baseline. Each task note starts with a plain-words description.
 
-> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues.
+> **The GitHub issues still have the initial `vertical:V1`–`V5` labels and checkpoint milestones.** If the issues and this file do not agree, this file has priority until we relabel the issues. **No issue at this time:** T-68, T-69, T-70.
 
 ---
 
@@ -24,17 +24,17 @@ Every task below is also a GitHub issue. This file is the baseline. Each task no
 
 ## Five lanes
 
-240 of the 281 build hours need no designs. The other 41 hours are screens, and these cannot start without designs.
+246 of the 287 build hours need no designs. The other 41 hours are screens, and these cannot start without designs.
 
 **The work goes in waves, not in dates.** `docs/plan/Progress.md` shows the waves. Why: [PD12](decisions/pd-12-team-plan.md).
 
 | Lane | Question it answers | Owns | Hours | Spare | Person |
 |---|---|---|---|---|---|
-| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP, Visitor data delete | 31 | 3 | _name_ |
-| **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval, Model traces, AI numbers and switch | 79 | -45 | _name_ |
+| **P1 · Platform** | The ground everyone builds on, then profiles, the waitlist and backups | Scaffold monorepo, Google sign-in, Deploy to Mumbai, Error reporting, Uptime monitor, Invite-only gate, Analytics database, Nightly backups, Abuse test, Migrations in the deploy, Web CSP, Visitor data delete, IT Rules notices | 33 | 1 | _name_ |
+| **P2 · Chat** | What the assistant understands and says, and the router in front of it | Form A contract, Model wrapper, Form B contract, Extraction, Router, Reply writer, Observer, Turn cap and spend ceiling, Advisor, Eval run, Carry chat into account, Chat screen and split view, Chip flow, More chips, Composer eval, Model traces, AI numbers and switch, Visitor card fields | 81 | -47 | _name_ |
 | **P3 · Data and trust** | The data and the matching, then the screens that show them and the advisor | Database schema, Match query, Results panel, Person and connect screens, Listings API, Photos domain, Sub-areas API, Listing flow screens, Sub-area pickers, Listing detail screens, Community filter, Messages API, Product numbers, Messages screens, Message alerts, ID verification, Saved, Onboarding questions, Compare cards, Found a place, share, feedback, Profile pop-up | 122 | -88 | _name_ |
 | **P4 · Content and moderation** | Public pages and safety, then the observer | Landing page, Legal pages, Articles and search, Report and block, Account deletion, Waitlist API, Waitlist screen, Delete the Firebase user, Admin home, Admin people and listings | 29 | 5 | _name_ |
-| **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens | 20 | 14 | _name_ |
+| **P5 · Accounts and people** | CI, events and connections, then the chat screen and its chips | Eval sentences, CI checks, Event logging, Message request API, Profile API, Profile screens, Registration record | 22 | 12 | _name_ |
 
 Each engineer has 34 hours from Thursday 24 September to Saturday 10 October, at two hours a day. Sunday 11 October is for bug fixes. **Monday 12 October is launch.** Wednesday 14 October is the fallback date.
 
@@ -66,8 +66,9 @@ Do the tasks from top to bottom. Finish and merge one task before you start the 
 | 10 | T-51 ⚑ · Apply migrations and the seed in the deploy | 3 | Mon 26 Oct → Tue 27 Oct | T-04, T-06 |
 | 11 | T-52 · Content-Security-Policy for the web | 3 | Tue 27 Oct → Wed 28 Oct | T-05 |
 | 12 | T-67 · Delete the visitor data after 30 days | 2 | Sat 7 Nov | T-64 |
+| 13 | T-70 · IT Rules notices to users | 2 | Mon 16 Nov | F-07 |
 
-Finish line: Sat 7 Nov. 31 hours.
+Finish line: Mon 16 Nov. 33 hours.
 
 ### P2 · Chat — what the assistant understands and says, and the router in front of it
 
@@ -90,8 +91,9 @@ Finish line: Sat 7 Nov. 31 hours.
 | 15 | T-61 · Eval the composer and the router bands | 3 | Thu 5 Nov → Fri 6 Nov | T-27 |
 | 16 | T-64 · Traces of the model calls | 4 | Fri 6 Nov → Sat 7 Nov | T-62 |
 | 17 | T-65 · AI numbers and the Gemini switch | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
+| 18 | T-68 · Visitor results give only the card | 2 | Sat 7 Nov | — |
 
-Finish line: Sat 7 Nov. 79 hours.
+Finish line: Sat 7 Nov. 81 hours.
 
 ### P3 · Data and trust — the data and the matching, then the screens that show them and the advisor
 
@@ -126,7 +128,7 @@ Finish line: Wed 25 Nov. 122 hours.
 | # | Task | Hours | When | Waits on |
 |---|---|---|---|---|
 | 1 | T-23a · Landing page from the Figma design | 4 | Thu 24 Sep → Sun 27 Sep | D-04 |
-| 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
+| 2 | T-23b · Privacy, terms and grievance pages | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07, T-68, T-69 |
 | 3 | T-37 · Articles table and full-text search | 3 | Tue 29 Sep → Thu 1 Oct | T-06 |
 | 4 | T-19 · Report, block, suspend, and the admin screen | 5 | Thu 1 Oct → Mon 5 Oct | T-06, T-14 |
 | 5 | T-20 · Account deletion | 3 | Mon 5 Oct → Thu 8 Oct | T-06 |
@@ -148,8 +150,9 @@ Finish line: Sat 7 Nov. 29 hours.
 | 4 | T-18a ⚑ · Message request API | 4 | Wed 30 Sep → Sun 4 Oct | T-05, T-06, F-13 |
 | 5 | T-16a ⚑ · Profile and photo upload API | 5 | Sun 4 Oct → Sat 10 Oct | T-05, T-06, F-11 |
 | 6 | T-16b ⚑ · Profile create and edit screens | 3 | Sun 4 Oct → Sat 10 Oct | T-16a, D-03, T-20 |
+| 7 | T-69 · Keep the registration record 180 days after a deletion | 2 | Sat 7 Nov | — |
 
-Finish line: Sat 10 Oct. 20 hours.
+Finish line: Sat 7 Nov. 22 hours.
 
 ### D · Design
 
@@ -233,6 +236,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P1 Platform | 10 | T-51 ⚑ | Apply migrations and the seed in the deploy | 3 | Mon 26 Oct | Tue 27 Oct | CP3 | T-04, T-06 | [#134](https://github.com/magentawood/roomsie/issues/134) |
 | P1 Platform | 11 | T-52 | Content-Security-Policy for the web | 3 | Tue 27 Oct | Wed 28 Oct | CP3 | T-05 | [#135](https://github.com/magentawood/roomsie/issues/135) |
 | P1 Platform | 12 | T-67 | Delete the visitor data after 30 days | 2 | Sat 7 Nov | Sat 7 Nov | CP3 | T-64 | [#233](https://github.com/magentawood/roomsie/issues/233) |
+| P1 Platform | 13 | T-70 | IT Rules notices to users | 2 | Mon 16 Nov | Mon 16 Nov | CP5 | F-07 | no issue at this time |
 | P2 Chat | 1 | T-08 ⚑ | Form A contract: slots and enums | 2 | Thu 24 Sep | Thu 24 Sep | CP0 | F-11 | [#6](https://github.com/magentawood/roomsie/issues/6) |
 | P2 Chat | 2 | T-11 ⚑ | Model wrapper: DeepSeek with Gemini fallback | 4 | Thu 24 Sep | Fri 25 Sep | CP0 | T-08, F-04 | [#15](https://github.com/magentawood/roomsie/issues/15) |
 | P2 Chat | 3 | T-35 | Form B contract and table | 3 | Fri 25 Sep | Sat 26 Sep | CP1 | T-06, T-08 | [#64](https://github.com/magentawood/roomsie/issues/64) |
@@ -250,6 +254,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P2 Chat | 15 | T-61 | Eval the composer and the router bands | 3 | Thu 5 Nov | Fri 6 Nov | CP3 | T-27 | [#216](https://github.com/magentawood/roomsie/issues/216) |
 | P2 Chat | 16 | T-64 | Traces of the model calls | 4 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | [#223](https://github.com/magentawood/roomsie/issues/223) |
 | P2 Chat | 17 | T-65 | AI numbers and the Gemini switch | 3 | Fri 6 Nov | Sat 7 Nov | CP3 | T-62 | [#224](https://github.com/magentawood/roomsie/issues/224) |
+| P2 Chat | 18 | T-68 | Visitor results give only the card | 2 | Sat 7 Nov | Sat 7 Nov | CP3 | — | no issue at this time |
 | P3 Data and trust | 1 | T-06 ⚑ | Database schema v1 | 8 | Thu 24 Sep | Tue 29 Sep | CP2 | F-11 | [#11](https://github.com/magentawood/roomsie/issues/11) |
 | P3 Data and trust | 2 | T-14 ⚑ | Match query API | 6 | Tue 29 Sep | Sat 3 Oct | CP3 | T-06, T-08, F-12 | [#27](https://github.com/magentawood/roomsie/issues/27) |
 | P3 Data and trust | 3 | T-15 ⚑ | Results panel, built against the contract | 6 | Sat 3 Oct | Thu 8 Oct | CP3 | T-08, D-03, F-12 | [#16](https://github.com/magentawood/roomsie/issues/16) |
@@ -272,7 +277,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P3 Data and trust | 20 | T-50 | Found a place, share and feedback | 4 | Mon 23 Nov | Tue 24 Nov | CP3 | T-15, T-24 | [#126](https://github.com/magentawood/roomsie/issues/126) |
 | P3 Data and trust | 21 | T-60 | Profile pop-up after the first sign-in | 3 | Wed 25 Nov | Wed 25 Nov | CP3 | T-48 | [#208](https://github.com/magentawood/roomsie/issues/208) |
 | P4 Content and moderation | 1 | T-23a | Landing page from the Figma design | 4 | Thu 24 Sep | Sun 27 Sep | CP1 | D-04 | [#39](https://github.com/magentawood/roomsie/issues/39) |
-| P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07 | [#40](https://github.com/magentawood/roomsie/issues/40) |
+| P4 Content and moderation | 2 | T-23b | Privacy, terms and grievance pages | 2 | Sun 27 Sep | Tue 29 Sep | CP2 | T-02, F-07, T-68, T-69 | [#40](https://github.com/magentawood/roomsie/issues/40) |
 | P4 Content and moderation | 3 | T-37 | Articles table and full-text search | 3 | Tue 29 Sep | Thu 1 Oct | CP2 | T-06 | [#66](https://github.com/magentawood/roomsie/issues/66) |
 | P4 Content and moderation | 4 | T-19 | Report, block, suspend, and the admin screen | 5 | Thu 1 Oct | Mon 5 Oct | CP3 | T-06, T-14 | [#45](https://github.com/magentawood/roomsie/issues/45) |
 | P4 Content and moderation | 5 | T-20 | Account deletion | 3 | Mon 5 Oct | Thu 8 Oct | CP3 | T-06 | [#46](https://github.com/magentawood/roomsie/issues/46) |
@@ -287,6 +292,7 @@ This table has one row for each task. The rows are in groups by owner, in the or
 | P5 Accounts and people | 4 | T-18a ⚑ | Message request API | 4 | Wed 30 Sep | Sun 4 Oct | CP3 | T-05, T-06, F-13 | [#38](https://github.com/magentawood/roomsie/issues/38) |
 | P5 Accounts and people | 5 | T-16a ⚑ | Profile and photo upload API | 5 | Sun 4 Oct | Sat 10 Oct | CP3 | T-05, T-06, F-11 | [#36](https://github.com/magentawood/roomsie/issues/36) |
 | P5 Accounts and people | 6 | T-16b ⚑ | Profile create and edit screens | 3 | Sun 4 Oct | Sat 10 Oct | CP3 | T-16a, D-03, T-20 | [#98](https://github.com/magentawood/roomsie/issues/98) |
+| P5 Accounts and people | 7 | T-69 | Keep the registration record 180 days after a deletion | 2 | Sat 7 Nov | Sat 7 Nov | CP3 | — | no issue at this time |
 | Design | 1 | D-01 | Styling decision for launch |  | Thu 24 Sep | Thu 24 Sep | CP0 | — | [#1](https://github.com/magentawood/roomsie/issues/1) |
 | Design | 2 | D-02 ⚑ | Design the chat screens |  | Thu 24 Sep | Fri 25 Sep | CP0 | D-01 | [#7](https://github.com/magentawood/roomsie/issues/7) |
 | Design | 3 | D-03 | Design results, profile and connect screens |  | Fri 25 Sep | Sun 27 Sep | CP1 | D-01 | [#19](https://github.com/magentawood/roomsie/issues/19) |
@@ -357,6 +363,7 @@ gantt
     T-51 Apply migrations and the seed in the deploy :crit, t51, 2026-10-26, 2d
     T-52 Content-Security-Policy for the web :t52, 2026-10-27, 2d
     T-67 Delete the visitor data after 30 days :t67, 2026-11-07, 1d
+    T-70 IT Rules notices to users :t70, 2026-11-16, 1d
     section P2 Chat
     T-08 Form A contract - slots and enums :crit, t08, 2026-09-24, 1d
     T-11 Model wrapper - DeepSeek with Gemini fallback :crit, t11, 2026-09-24, 2d
@@ -375,6 +382,7 @@ gantt
     T-61 Eval the composer and the router bands :t61, 2026-11-05, 2d
     T-64 Traces of the model calls :t64, 2026-11-06, 2d
     T-65 AI numbers and the Gemini switch :t65, 2026-11-06, 2d
+    T-68 Visitor results give only the card :t68, 2026-11-07, 1d
     section P3 Data and trust
     T-06 Database schema v1 :crit, t06, 2026-09-24, 6d
     T-14 Match query API :crit, t14, 2026-09-29, 5d
@@ -415,6 +423,7 @@ gantt
     T-18a Message request API :crit, t18a, 2026-09-30, 5d
     T-16a Profile and photo upload API :crit, t16a, 2026-10-04, 7d
     T-16b Profile create and edit screens :crit, t16b, 2026-10-04, 7d
+    T-69 Keep the registration record 180 days after a deletion :t69, 2026-11-07, 1d
     section Design
     D-01 Styling decision for launch :d01, 2026-09-24, 1d
     D-02 Design the chat screens :crit, d02, 2026-09-24, 2d
@@ -616,7 +625,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 | F-07 | Draft privacy policy, terms, grievance contact | F |  | Fri 25 Sep → Wed 30 Sep | F-13 |
 | T-05 ⚑ | Google sign-in and token checks in the API | P1 | 6 | Sat 26 Sep → Thu 1 Oct | T-02, F-04, T-06 |
 | T-03 | CI: typecheck, lint, build, secret scan | P5 | 2 | Sun 27 Sep → Tue 29 Sep | T-02 |
-| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07 |
+| T-23b | Privacy, terms and grievance pages | P4 | 2 | Sun 27 Sep → Tue 29 Sep | T-02, F-07, T-68, T-69 |
 | T-34 ⚑ | Router: sort each typed message and flag what we should not answer | P2 | 6 | Sun 27 Sep → Tue 29 Sep | T-12, T-06 |
 | D-04 | Design landing, wall and waitlist | D |  | Mon 28 Sep → Tue 29 Sep | D-01 |
 | T-13 | Reply writer with scope rules | P2 | 4 | Tue 29 Sep → Wed 30 Sep | T-11 |
@@ -635,7 +644,7 @@ The app is deployed in Mumbai. The full loop works from end to end without a UI.
 **F-07 · Draft privacy policy, terms, grievance contact** — done when:
 - It says what the system collects, why, for how long, how to delete it, and who to contact
 - There is a named grievance contact
-- It says that the system stores chat messages, and that account deletion deletes them
+- It says that the system stores chat messages, that account deletion deletes the chats with the assistant, and that messages to other people stay with them
 - It says that chat text goes to DeepSeek, which stores it in China
 - The team emails DeepSeek to opt out of training before launch
 - For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)
@@ -754,6 +763,8 @@ Every screen and every assistant handler is merged, and is live behind the invit
 | T-65 | AI numbers and the Gemini switch | P2 | 3 | Fri 6 Nov → Sat 7 Nov | T-62 |
 | T-66 | Product numbers in the admin | P3 | 2 | Fri 6 Nov → Sat 7 Nov | T-62 |
 | T-67 | Delete the visitor data after 30 days | P1 | 2 | Sat 7 Nov | T-64 |
+| T-68 | Visitor results give only the card | P2 | 2 | Sat 7 Nov | — |
+| T-69 | Keep the registration record 180 days after a deletion | P5 | 2 | Sat 7 Nov | — |
 | T-45 | Messages screens | P3 | 6 | Mon 9 Nov → Wed 11 Nov | T-44 |
 | T-55 | Message alerts: email and push | P3 | 6 | Thu 12 Nov → Sat 14 Nov | T-44, T-45 |
 | T-46 | ID verification | P3 | 12 | Thu 12 Nov → Sun 15 Nov | T-05, T-06, F-13 |
@@ -1131,6 +1142,18 @@ Every screen and every assistant handler is merged, and is live behind the invit
 - PD19 and the learn pages say how the delete runs
 - Read first: `docs/decisions/pd-19-retention.md`, `docs/decisions/pd-20-model-traces.md`
 
+**T-68 · Visitor results give only the card** — done when:
+- A visitor gets only the fields that the results card shows: no commute address, other photos, listing description or flatmates
+- A signed-in person gets the full details, as now
+- PD6b and the learn pages say what a visitor gets
+- Read first: `docs/decisions/pd-06b-login-gate-and-search.md`
+
+**T-69 · Keep the registration record 180 days after a deletion** — done when:
+- An account deletion keeps the sign-in email, the sign-up date and the deletion date in a locked record that no screen shows
+- A nightly job deletes the record 180 days after the deletion
+- PD19 and the learn pages say so
+- Read first: `docs/decisions/pd-19-retention.md`
+
 **T-45 · Messages screens** — done when:
 - The inbox and the conversation follow sections 04 and 09 of the drafts page, on desktop and on a phone
 - The Messages item in the sidebar shows the unread count
@@ -1208,12 +1231,19 @@ Examine the numbers and the bug list. Then set the order of v1.
 | ID | Task | Role | Hours | When | Needs first |
 |---|---|---|---|---|---|
 | M-09 | Broker calls | M2 |  | Mon 12 Oct → Mon 19 Oct | — |
+| T-70 | IT Rules notices to users | P1 | 2 | Mon 16 Nov | F-07 |
 
 **M-09 · Broker calls** — done when:
 - The team makes 10 to 15 calls to Mumbai brokers
 - The notes are in docs/research/
 - If the seeding is late, the team drops this first
 - Read first: `docs/research/supply-and-broker-model.md`
+
+**T-70 · IT Rules notices to users** — done when:
+- The users get the reminder of the privacy policy and the terms once a year
+- The users get the notice on suspension and removal once every three months
+- The learn pages say how the notices go
+- Read first: `docs/legal/terms.md`
 
 ## Go or no-go: Saturday 10 October, 8 pm
 

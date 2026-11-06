@@ -1,6 +1,6 @@
 # PD19 — Retention: how long roomsie keeps each kind of data
 
-**Status:** Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64, T-66, T-67). · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Confirmed by F-07. Changed on 2026-11-06. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -16,15 +16,19 @@
 | The session, goals and chat turns of a visitor, with their Form B notes, traces and feedback | 30 days after the last visit, unless the visitor signs in and the goals move to the account. Each day at 04:30 IST, a job deletes each session that nobody claimed (T-67). Thus, a visitor chat stays at most 31 days after the last visit. A claimed session stays until the account deletion. |
 | The waitlist entry of a visitor: the email and the place | Until the chat goes and the team invites the email, whichever comes later. The job of the visitors keeps the entry with no chat, and deletes it after the team sets its invite time (T-67). The entry of an account goes with its chat. |
 | Raw analytics events | 12 months, deleted by whole month. Each day at 04:00 IST, a job drops each month that ended 12 months ago or earlier. Thus, an event stays at most 13 months and one day (T-39). |
-| The chats, Form B notes, profile and messages of an account | Until the user deletes the account |
+| The chats with the assistant, the Form B notes and the profile of an account | Until the user deletes the account |
+| The messages and request notes that a person sent | They stay with the other person after an account deletion, from "Deleted user" (T-44) |
+| The registration record: the sign-in email, the sign-up date and the deletion date | 180 days after the account deletion, in a locked record, as Rule 3(1)(h) of the IT Rules asks (T-69, [PD21](pd-21-legal-texts.md)) |
+| Reports, blocks and the moderation log | They stay after an account deletion, for moderation |
 | The ID photo and the selfie of a verification | Deleted right after the review. A rule of the bucket deletes each file after 7 days, also with no review ([ADR 0020](0020-id-checks-in-s3-with-rekognition.md)). |
 | The result of a verification, and the audit log of its views and reviews | Until the user deletes the account (T-46) |
 | The photos of a listing and of its flatmates | Until the lister removes the photo or deletes the listing. The API deletes the photos in R2 before it deletes the rows (T-41). A copy at Cloudflare and in the browser can stay 10 minutes more (T-54). |
 | The saved places and people of an account | Until the user unsaves them or deletes the account. The deletion of a listing or of an account deletes its saves (T-47). |
-| The email of the sign-in and the push tokens of the browsers | Until the user deletes the account. A deletion clears the email and deletes the tokens (T-55). |
+| The email of the sign-in and the push tokens of the browsers | Until the user deletes the account. A deletion clears the email and deletes the tokens (T-55). The registration record keeps the email for 180 days. |
 | The traces of the model calls: the prompts and the raw answers, masked | 30 days after the call, and at once with the account ([PD20](pd-20-model-traces.md)). A nightly job deletes the older traces. |
 | The log of the opens of a trace: the session code, the number of the turn, the moderator and the time | No end: it holds no text of a person ([PD20](pd-20-model-traces.md)). After the moderator deletes the account, a row shows "a deleted account". |
 | The counts of the analytics events of each day (T-66) | No end: they hold counts and no person. A job counts the last three days again each night. |
+| The text that the models got, at DeepSeek and Google | Under their terms: DeepSeek keeps it in China with no stated end, and Google keeps it 55 days to find abuse. Each week, the Grievance Officer asks both to delete the text of the accounts that were deleted that week ([PD21](pd-21-legal-texts.md)). |
 | Backups | See PD13 |
 
 - After a deletion, the other person in a conversation sees "Deleted user".

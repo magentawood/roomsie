@@ -1,6 +1,6 @@
 # PD7 — Models: DeepSeek for all roles, Gemini as fallback
 
-**Status:** Settled. Changed on 2026-11-02. · **Date:** 2026-09-20 · **Deciders:** Yash. PC-09: pulkitshringi
+**Status:** Settled. Changed on 2026-11-06. · **Date:** 2026-09-20 · **Deciders:** Yash. PC-09: pulkitshringi
 
 ## Context
 
@@ -46,8 +46,8 @@ quality. The eval set and the primary model settle quality.
 - DeepSeek stores data in China, and states no retention period.
 - It trains on API inputs, unless we opt out by email.
 
-The decision: user text goes to DeepSeek. The team opts out by email, and the
-privacy policy names the storage in China. F-07 confirms the text.
+The decision: user text goes to DeepSeek, in China. The team opts out by email.
+Gemini, the fallback, runs on a paid project ([PD21](pd-21-legal-texts.md)).
 
 **Languages (PC-09).** The screens are in English. The assistant reads and
 replies in English, Hindi, Marathi and Hinglish, in Latin or Devanagari script.

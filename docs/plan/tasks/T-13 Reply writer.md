@@ -2,7 +2,7 @@
 id: T-13
 title: "Reply writer with scope rules"
 owner: "P2 Chat"
-sequence: "6 of 17"
+sequence: "6 of 18"
 hours: 4
 start: 2026-09-29
 end: 2026-09-30
@@ -17,7 +17,7 @@ tags:
 
 # T-13 · Reply writer with scope rules
 
-**Owner:** [[P2 Chat]], task 6 of 17  
+**Owner:** [[P2 Chat]], task 6 of 18  
 **When:** Tue 29 Sep → Wed 30 Sep · 4 hours  
 **Checkpoint:** [[CP2 Core loop live]]  
 **Issue:** [#33](https://github.com/magentawood/roomsie/issues/33)

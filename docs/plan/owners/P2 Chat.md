@@ -9,7 +9,7 @@ tags:
 
 _What the assistant understands and says, and the router in front of it._
 
-**79 hours** of build work, at 4.65h a day. The last task ends on Sat 7 Nov.
+**81 hours** of build work, at 4.76h a day. The last task ends on Sat 7 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -32,3 +32,4 @@ This note is part of [[roomsie launch]].
 15. [[T-61 Composer eval]] — Thu 5 Nov → Fri 6 Nov, 3h
 16. [[T-64 Model traces]] — Fri 6 Nov → Sat 7 Nov, 4h
 17. [[T-65 AI numbers and switch]] — Fri 6 Nov → Sat 7 Nov, 3h
+18. [[T-68 Visitor card fields]] — Sat 7 Nov, 2h

@@ -9,7 +9,7 @@ tags:
 
 _The ground everyone builds on, then profiles, the waitlist and backups._
 
-**31 hours** of build work, at 1.82h a day, with 3 hours spare. The last task ends on Sat 7 Nov.
+**33 hours** of build work, at 1.94h a day, with 1 hours spare. The last task ends on Mon 16 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -27,3 +27,4 @@ This note is part of [[roomsie launch]].
 10. [[T-51 Migrations in the deploy ⚑]] — Mon 26 Oct → Tue 27 Oct, 3h
 11. [[T-52 Web CSP]] — Tue 27 Oct → Wed 28 Oct, 3h
 12. [[T-67 Visitor data delete]] — Sat 7 Nov, 2h
+13. [[T-70 IT Rules notices]] — Mon 16 Nov, 2h

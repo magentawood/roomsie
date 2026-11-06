@@ -400,7 +400,7 @@
    "done": [
     "It says what the system collects, why, for how long, how to delete it, and who to contact",
     "There is a named grievance contact",
-    "It says that the system stores chat messages, and that account deletion deletes them",
+    "It says that the system stores chat messages, that account deletion deletes the chats with the assistant, and that messages to other people stay with them",
     "It says that chat text goes to DeepSeek, which stores it in China",
     "The team emails DeepSeek to opt out of training before launch",
     "For each deleted account, a deletion request goes to DeepSeek and Google, and the policy says so. No API of DeepSeek deletes the text (T-12)",
@@ -1132,7 +1132,9 @@
    "end": "2026-09-29",
    "deps": [
     "T-02",
-    "F-07"
+    "F-07",
+    "T-68",
+    "T-69"
    ],
    "done": [
     "/privacy, /terms and /grievance show the founder's text",
@@ -2202,6 +2204,71 @@
    "cp": "CP3",
    "critical": false,
    "issue": 233
+  },
+  {
+   "id": "T-68",
+   "title": "Visitor results give only the card",
+   "plain": "A visitor gets only the fields of the results card; the details need a sign-in, as PD6b says.",
+   "role": "P2",
+   "hours": 2,
+   "start": "2026-11-07",
+   "end": "2026-11-07",
+   "deps": [],
+   "done": [
+    "A visitor gets only the fields that the results card shows: no commute address, other photos, listing description or flatmates",
+    "A signed-in person gets the full details, as now",
+    "PD6b and the learn pages say what a visitor gets"
+   ],
+   "read": [
+    "docs/decisions/pd-06b-login-gate-and-search.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-69",
+   "title": "Keep the registration record 180 days after a deletion",
+   "plain": "An account deletion keeps the sign-in email and two dates for 180 days, as the IT Rules ask.",
+   "role": "P5",
+   "hours": 2,
+   "start": "2026-11-07",
+   "end": "2026-11-07",
+   "deps": [],
+   "done": [
+    "An account deletion keeps the sign-in email, the sign-up date and the deletion date in a locked record that no screen shows",
+    "A nightly job deletes the record 180 days after the deletion",
+    "PD19 and the learn pages say so"
+   ],
+   "read": [
+    "docs/decisions/pd-19-retention.md"
+   ],
+   "cp": "CP3",
+   "critical": false,
+   "issue": null
+  },
+  {
+   "id": "T-70",
+   "title": "IT Rules notices to users",
+   "plain": "The yearly reminder of the policy and the notice on suspension each three months, as the IT Rules ask.",
+   "role": "P1",
+   "hours": 2,
+   "start": "2026-11-16",
+   "end": "2026-11-16",
+   "deps": [
+    "F-07"
+   ],
+   "done": [
+    "The users get the reminder of the privacy policy and the terms once a year",
+    "The users get the notice on suspension and removal once every three months",
+    "The learn pages say how the notices go"
+   ],
+   "read": [
+    "docs/legal/terms.md"
+   ],
+   "cp": "CP5",
+   "critical": false,
+   "issue": null
   },
   {
    "id": "T-65",

@@ -9,7 +9,7 @@ tags:
 
 _CI, events and connections, then the chat screen and its chips._
 
-**20 hours** of build work, at 1.18h a day, with 14 hours spare. The last task ends on Sat 10 Oct.
+**22 hours** of build work, at 1.29h a day, with 12 hours spare. The last task ends on Sat 7 Nov.
 
 This note is part of [[roomsie launch]].
 
@@ -21,3 +21,4 @@ This note is part of [[roomsie launch]].
 4. [[T-18a Message request API ⚑]] — Wed 30 Sep → Sun 4 Oct, 4h
 5. [[T-16a Profile API ⚑]] — Sun 4 Oct → Sat 10 Oct, 5h
 6. [[T-16b Profile screens ⚑]] — Sun 4 Oct → Sat 10 Oct, 3h
+7. [[T-69 Registration record]] — Sat 7 Nov, 2h

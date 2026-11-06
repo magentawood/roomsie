@@ -2,7 +2,7 @@
 id: T-08
 title: "Form A contract: slots and enums"
 owner: "P2 Chat"
-sequence: "1 of 17"
+sequence: "1 of 18"
 hours: 2
 start: 2026-09-24
 end: 2026-09-24
@@ -18,7 +18,7 @@ tags:
 
 # T-08 · Form A contract: slots and enums
 
-**Owner:** [[P2 Chat]], task 1 of 17  
+**Owner:** [[P2 Chat]], task 1 of 18  
 **When:** Thu 24 Sep · 2 hours  
 **Checkpoint:** [[CP0 Kickoff]]  
 **Issue:** [#6](https://github.com/magentawood/roomsie/issues/6)

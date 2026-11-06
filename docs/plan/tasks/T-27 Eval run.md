@@ -2,7 +2,7 @@
 id: T-27
 title: "Run the eval set and tune the prompt"
 owner: "P2 Chat"
-sequence: "10 of 17"
+sequence: "10 of 18"
 hours: 3
 start: 2026-10-05
 end: 2026-10-06
@@ -17,7 +17,7 @@ tags:
 
 # T-27 · Run the eval set and tune the prompt
 
-**Owner:** [[P2 Chat]], task 10 of 17  
+**Owner:** [[P2 Chat]], task 10 of 18  
 **When:** Mon 5 Oct → Tue 6 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#48](https://github.com/magentawood/roomsie/issues/48)

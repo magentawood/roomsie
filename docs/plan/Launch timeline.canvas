@@ -377,6 +377,15 @@
    "height": 84
   },
   {
+   "id": "task-T-70",
+   "type": "text",
+   "text": "**[[T-70 IT Rules notices|T-70 IT Rules notices]]**\n2h · Mon 16 Nov",
+   "x": 11660,
+   "y": 230,
+   "width": 212,
+   "height": 84
+  },
+  {
    "id": "lane-P2",
    "type": "group",
    "label": "P2 Chat",
@@ -543,6 +552,15 @@
    "x": 9460,
    "y": 712,
    "width": 432,
+   "height": 84
+  },
+  {
+   "id": "task-T-68",
+   "type": "text",
+   "text": "**[[T-68 Visitor card fields|T-68 Visitor card fields]]**\n2h · Sat 7 Nov",
+   "x": 9680,
+   "y": 616,
+   "width": 212,
    "height": 84
   },
   {
@@ -914,6 +932,15 @@
    "width": 1532,
    "height": 84,
    "color": "1"
+  },
+  {
+   "id": "task-T-69",
+   "type": "text",
+   "text": "**[[T-69 Registration record|T-69 Registration record]]**\n2h · Sat 7 Nov",
+   "x": 9680,
+   "y": 1678,
+   "width": 212,
+   "height": 84
   },
   {
    "id": "lane-D",
@@ -1683,6 +1710,20 @@
    "toSide": "left"
   },
   {
+   "id": "e-T-68-T-23b",
+   "fromNode": "task-T-68",
+   "fromSide": "right",
+   "toNode": "task-T-23b",
+   "toSide": "left"
+  },
+  {
+   "id": "e-T-69-T-23b",
+   "fromNode": "task-T-69",
+   "fromSide": "right",
+   "toNode": "task-T-23b",
+   "toSide": "left"
+  },
+  {
    "id": "e-T-14-T-22a",
    "fromNode": "task-T-14",
    "fromSide": "right",
@@ -2102,6 +2143,13 @@
    "fromNode": "task-T-64",
    "fromSide": "right",
    "toNode": "task-T-67",
+   "toSide": "left"
+  },
+  {
+   "id": "e-F-07-T-70",
+   "fromNode": "task-F-07",
+   "fromSide": "right",
+   "toNode": "task-T-70",
    "toSide": "left"
   },
   {

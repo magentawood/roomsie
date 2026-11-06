@@ -14,7 +14,7 @@ a box here, you also tick the same box in the task note.
 The counts and the ✅ 🟡 ⬜ marks are a snapshot. To update them, run
 `python3 tools/build-obsidian-plan.py`.
 
-**304 of 358 done · 85%**
+**304 of 367 done · 83%**
 
 `████████████████████░░░░`
 
@@ -22,11 +22,11 @@ This note is part of [[roomsie launch]].
 
 | Lane | Tasks complete | Items | Done |
 |---|---|---|---|
-| [[P1 Platform]] | 11 / 12 | 35 / 38 | 92% |
-| [[P2 Chat]] | 15 / 17 | 74 / 80 | 92% |
+| [[P1 Platform]] | 11 / 13 | 35 / 41 | 85% |
+| [[P2 Chat]] | 15 / 18 | 74 / 83 | 89% |
 | [[P3 Data and trust]] | 21 / 21 | 92 / 92 | 100% |
 | [[P4 Content and moderation]] | 9 / 10 | 41 / 43 | 95% |
-| [[P5 Accounts and people]] | 5 / 6 | 30 / 31 | 97% |
+| [[P5 Accounts and people]] | 5 / 7 | 30 / 34 | 88% |
 | [[Design]] | 5 / 7 | 11 / 14 | 79% |
 | [[M1 Content]] | 0 / 3 | 0 / 6 | 0% |
 | [[M2 Community]] | 0 / 2 | 0 / 8 | 0% |
@@ -48,18 +48,21 @@ Take tasks from this section. No task here waits on a design or on an open produ
 - **When the product team completes a product-call task,** the tasks in "Waits on product calls" that wait on it join the waves.
 - **When a design task is done,** the tasks in "Waits on the designs" that need it join the waves.
 
-**9 free tasks are open · 19 build hours.**
+**12 free tasks are open · 25 build hours.**
 
 | Wave | Task | Owner | Hours | State | Unblocks | Issue |
 |---|---|---|---|---|---|---|
 | 0 | [[T-18a Message request API ⚑]] | P5 | 4 | 🟡 in progress | 4 | [#38](https://github.com/magentawood/roomsie/issues/38) |
+| 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 2 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[M-04 Article interviews]] | M1 |  | ⬜ can start | 2 | [#13](https://github.com/magentawood/roomsie/issues/13) |
-| 0 | [[F-07 Privacy and terms draft]] | F |  | ⬜ can start | 1 | [#17](https://github.com/magentawood/roomsie/issues/17) |
 | 0 | [[T-13 Reply writer]] | P2 | 4 | 🟡 in progress | 1 | [#33](https://github.com/magentawood/roomsie/issues/33) |
+| 0 | [[T-68 Visitor card fields]] | P2 | 2 | ⬜ can start | 1 | no issue at this time |
+| 0 | [[T-69 Registration record]] | P5 | 2 | ⬜ can start | 1 | no issue at this time |
 | 0 | [[F-14 Assistant and limits calls]] | F |  | ⬜ can start | 0 | [#106](https://github.com/magentawood/roomsie/issues/106) |
 | 0 | [[T-40 Nightly backups]] | P1 | 2 | ⬜ can start | 0 | [#69](https://github.com/magentawood/roomsie/issues/69) |
 | 1 | [[M-05 Article drafts]] | M1 |  | ⬜ waits | 1 | [#31](https://github.com/magentawood/roomsie/issues/31) |
 | 1 | [[T-23b Legal pages]] | P4 | 2 | ⬜ waits | 0 | [#40](https://github.com/magentawood/roomsie/issues/40) |
+| 1 | [[T-70 IT Rules notices]] | P1 | 2 | ⬜ waits | 0 | no issue at this time |
 | 2 | [[T-38 Advisor]] | P2 | 7 | ⬜ waits | 0 | [#67](https://github.com/magentawood/roomsie/issues/67) |
 
 ### Waits on product calls
@@ -149,6 +152,9 @@ flowchart LR
   T63["T-63<br/>Admin people and listings"]:::done
   T64["T-64<br/>Model traces"]:::done
   T67["T-67<br/>Visitor data delete"]:::done
+  T68["T-68<br/>Visitor card fields"]:::ready
+  T69["T-69<br/>Registration record"]:::ready
+  T70["T-70<br/>IT Rules notices"]:::todo
   T65["T-65<br/>AI numbers and switch"]:::done
   T66["T-66<br/>Product numbers"]:::done
   T51["T-51 ⚑<br/>Migrations in the deploy"]:::done
@@ -207,6 +213,8 @@ flowchart LR
   T41 --> T54
   T02 --> T23b
   F07 --> T23b
+  T68 --> T23b
+  T69 --> T23b
   T14 --> T22a
   T56 --> T22a
   T22a --> T22b
@@ -267,6 +275,7 @@ flowchart LR
   T62 --> T63
   T62 --> T64
   T64 --> T67
+  F07 --> T70
   T62 --> T65
   T62 --> T66
   T04 --> T51
@@ -283,7 +292,7 @@ flowchart LR
 
 ---
 
-## P1 Platform — 35/38
+## P1 Platform — 35/41
 
 > [!todo]- ✅ [[T-02 Scaffold monorepo ⚑]] · 6/6
 > ![[T-02 Scaffold monorepo ⚑#^done]]
@@ -321,8 +330,11 @@ flowchart LR
 > [!todo]- ✅ [[T-67 Visitor data delete]] · 3/3
 > ![[T-67 Visitor data delete#^done]]
 
+> [!todo]- ⬜ [[T-70 IT Rules notices]] · 0/3
+> ![[T-70 IT Rules notices#^done]]
 
-## P2 Chat — 74/80
+
+## P2 Chat — 74/83
 
 > [!todo]- ✅ [[T-08 Form A contract ⚑]] · 4/4
 > ![[T-08 Form A contract ⚑#^done]]
@@ -374,6 +386,9 @@ flowchart LR
 
 > [!todo]- ✅ [[T-65 AI numbers and switch]] · 3/3
 > ![[T-65 AI numbers and switch#^done]]
+
+> [!todo]- ⬜ [[T-68 Visitor card fields]] · 0/3
+> ![[T-68 Visitor card fields#^done]]
 
 
 ## P3 Data and trust — 92/92
@@ -475,7 +490,7 @@ flowchart LR
 > ![[T-63 Admin people and listings#^done]]
 
 
-## P5 Accounts and people — 30/31
+## P5 Accounts and people — 30/34
 
 > [!todo]- ✅ [[M-03 Eval sentences]] · 4/4
 > ![[M-03 Eval sentences#^done]]
@@ -494,6 +509,9 @@ flowchart LR
 
 > [!todo]- ✅ [[T-16b Profile screens ⚑]] · 4/4
 > ![[T-16b Profile screens ⚑#^done]]
+
+> [!todo]- ⬜ [[T-69 Registration record]] · 0/3
+> ![[T-69 Registration record#^done]]
 
 
 ## Design — 11/14

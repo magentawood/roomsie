@@ -2,7 +2,7 @@
 id: T-61
 title: "Eval the composer and the router bands"
 owner: "P2 Chat"
-sequence: "15 of 17"
+sequence: "15 of 18"
 hours: 3
 start: 2026-11-05
 end: 2026-11-06
@@ -17,7 +17,7 @@ tags:
 
 # T-61 · Eval the composer and the router bands
 
-**Owner:** [[P2 Chat]], task 15 of 17  
+**Owner:** [[P2 Chat]], task 15 of 18  
 **When:** Thu 5 Nov → Fri 6 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#216](https://github.com/magentawood/roomsie/issues/216)

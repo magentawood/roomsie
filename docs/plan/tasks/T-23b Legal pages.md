@@ -27,6 +27,8 @@ The legal pages that each Indian site must have.
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 - [[F-07 Privacy and terms draft]]
+- [[T-68 Visitor card fields]]
+- [[T-69 Registration record]]
 
 ## Unblocks
 - No task waits on this task.

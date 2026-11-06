@@ -2,7 +2,7 @@
 id: T-65
 title: "AI numbers and the Gemini switch"
 owner: "P2 Chat"
-sequence: "17 of 17"
+sequence: "17 of 18"
 hours: 3
 start: 2026-11-06
 end: 2026-11-07
@@ -17,7 +17,7 @@ tags:
 
 # T-65 · AI numbers and the Gemini switch
 
-**Owner:** [[P2 Chat]], task 17 of 17  
+**Owner:** [[P2 Chat]], task 17 of 18  
 **When:** Fri 6 Nov → Sat 7 Nov · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#224](https://github.com/magentawood/roomsie/issues/224)
