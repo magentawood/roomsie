@@ -40,7 +40,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>A <strong>save</strong> is one row that links a user to one listing or to one person card. A user saves an item one time: a second save changes nothing.</li>
 <li>The <strong>Save button</strong> says "Save". After a save, it says "Saved", and a second press unsaves.</li>
-<li><strong>Saved</strong> is a page in the sidebar and in the phone bar. Its tabs are Places and People, and each shows the newest save first.</li>
+<li><strong>Saved places</strong> and <strong>Saved people</strong> are two tabs of Listings, after My listings, in the sidebar and in the phone bar. Each shows the newest save first. <code>/saved</code> opens Saved places, so an old link still works.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
@@ -64,8 +64,8 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>apps/web/components/saved/save-button.tsx</code>: <code>&lt;SaveButton kind="places" id={…} /&gt;</code></td>
 </tr>
 <tr>
-<td>The page</td>
-<td><code>apps/web/app/saved/page.tsx</code>, with the place card of <code>apps/web/components/listings/place-card.tsx</code></td>
+<td>The tabs</td>
+<td><code>apps/web/app/listings/page.tsx</code>, the lists in <code>apps/web/components/saved/saved-lists.tsx</code>, with the place card of <code>apps/web/components/listings/place-card.tsx</code></td>
 </tr>
 </tbody>
 </table>
@@ -89,5 +89,6 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>T-47: <a href="https://github.com/magentawood/roomsie/pull/150">#150</a>, 2026-10-26. The table, the routes, the Save button, the place card, the Saved page, and the phone bar of the designer.</li>
 <li>T-18b: <a href="https://github.com/magentawood/roomsie/pull/159">#159</a>, 2026-10-26. The person cards of the People tab.</li>
+<li><a href="https://github.com/magentawood/roomsie/pull/243">#243</a>, 2026-11-07. Saved moved into the tabs of Listings, for the phone bar of the designs.</li>
 </ul>
 </main>

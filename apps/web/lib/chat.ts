@@ -9,22 +9,26 @@ export function keyAction(press: { key: string; shiftKey: boolean; isComposing: 
   return canSend(text) ? 'send' : 'block'
 }
 
-/** The browser keeps the visitor key of the API and the waitlist joins, never a sign-in token (ADR-0007). */
-export const chatStorage = { visitorKey: 'roomsie.visitorKey', waitlist: 'roomsie.waitlist' } as const
+/**
+ * The browser keeps the visitor key of the API, the chat of the tab and the waitlist joins, never a sign-in token (ADR-0007).
+ * The key and the chat of the tab last for the visit of the tab, so a guest starts fresh on the next visit. The joins stay.
+ */
+export const chatStorage = { visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist' } as const
 type StoredKey = (typeof chatStorage)[keyof typeof chatStorage]
+const storeOf = (key: StoredKey) => (key === chatStorage.waitlist ? localStorage : sessionStorage)
 
 /** A private window or a blocked site storage throws: then the chat lives only until a reload. */
 export function readStored(key: StoredKey) {
   try {
-    return localStorage.getItem(key)
+    return storeOf(key).getItem(key)
   } catch {
     return null
   }
 }
 export function writeStored(key: StoredKey, value: string | null) {
   try {
-    if (value === null) localStorage.removeItem(key)
-    else localStorage.setItem(key, value)
+    if (value === null) storeOf(key).removeItem(key)
+    else storeOf(key).setItem(key, value)
   } catch {
     // The chat still works until a reload.
   }

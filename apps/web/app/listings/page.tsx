@@ -1,5 +1,6 @@
 'use client'
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckSquare, Edit05, Home02, Key01, Plus, RefreshCw01, SlashCircle01 } from '@untitledui/icons'
 import { listingResponse, listingTitle, myListingsResponse, type ListingResponse, type ListingStatusBody } from '@roomsie/contract'
@@ -8,11 +9,13 @@ import { useUser } from '../../lib/auth'
 import { queryKeys, useAreaLabels } from '../../lib/queries'
 import { cardActions, listingSteps, rentLine, resumeStep, stepCopy, type CardAction } from '../../lib/listing-steps'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
-import { listingSignIn, SignInGate } from '../../components/shell/sign-in-gate'
+import { SignInGate } from '../../components/shell/sign-in-gate'
 import { MissingNotice } from '../../components/listings/missing-notice'
 import { Badge, type Tone } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 import { EmptyState } from '../../components/ui/empty-state'
+import { Tabs } from '../../components/ui/tabs'
+import { SavedPeople, SavedPlaces } from '../../components/saved/saved-lists'
 
 const statusBadge: Record<ListingResponse['status'], { tone: Tone; label: string }> = {
   live: { tone: 'success', label: 'Live' },
@@ -77,9 +80,7 @@ function MyListings() {
   const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user, '/v1/listings/mine', myListingsResponse) })
   const areaLabels = useAreaLabels()
   return (
-    <>
-      <PageHeader title="My Listings" backHref="/" inPhoneBar />
-      <main className="flex flex-1 flex-col gap-3 px-5 py-5 md:px-6 md:py-8">
+    <div className="flex flex-1 flex-col gap-3">
         {mine.isError && <p role="alert" className="text-sm text-error-primary">{errorText(mine.error)}</p>}
         {mine.isPending && <p className="text-sm text-tertiary">Loading…</p>}
         {mine.data && mine.data.listings.length === 0 && (
@@ -95,16 +96,37 @@ function MyListings() {
             <div><Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button></div>
           </>
         )}
+    </div>
+  )
+}
+
+const tabs = { mine: 'My listings', places: 'Saved places', people: 'Saved people' }
+type Tab = keyof typeof tabs
+const tabOf = (value: string | null): Tab => (value === 'places' || value === 'people' ? value : 'mine')
+
+/** Listings of the phone bar: your listings, and the places and people you saved. The tab is in the address, so a link opens it. */
+function Listings() {
+  const tab = tabOf(useSearchParams().get('tab'))
+  const router = useRouter()
+  const pathname = usePathname()
+  return (
+    <>
+      <PageHeader title="Listings" backHref="/" inPhoneBar />
+      <main className="flex flex-1 flex-col gap-5 px-5 py-5 md:px-6 md:py-8">
+        <Tabs label="Listings" tabs={tabs} value={tab} onChange={(next) => router.replace(next === 'mine' ? pathname : `${pathname}?tab=${next}`)} />
+        <div role="tabpanel" className="flex flex-1 flex-col">
+          {tab === 'mine' ? <MyListings /> : tab === 'places' ? <SavedPlaces /> : <SavedPeople />}
+        </div>
       </main>
     </>
   )
 }
 
-export default function MyListingsPage() {
+export default function ListingsPage() {
   return (
-    <SignInGate {...listingSignIn}>
+    <SignInGate title="Sign in to see your listings" text="Your listings and the places and people you saved stay in your account.">
       <AppShell>
-        <MyListings />
+        <Listings />
       </AppShell>
     </SignInGate>
   )

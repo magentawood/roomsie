@@ -7,7 +7,7 @@
 - A **goal** is one move: one chat, its Form A and its results ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A person or a visitor can have many goals.
 - The **title** names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.
 - The **goal list** is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.
-- **A new goal** starts at `/start`: "New Goal", the phone "+", "Start a new goal", and each visit that does not name a goal ([the onboarding](onboarding.md)).
+- **A new goal** starts at "What are we looking for?" of flow 02, at `/chat`: "New Goal", New goal of the phone "+", "Start a new goal", and Chats in a new visit. The first message or chip makes the goal, then the address names it. The landing page goes to [the onboarding](onboarding.md) first.
 - **"I found a place"** opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.
 - A **closed goal** is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".
 - The **feedback pop-up** follows the close: one of five faces, and words if the person wants. Moderators read it on `/admin/feedback`, with the feedback of [the landing page](landing-page.md).
@@ -43,3 +43,4 @@
 
 - T-50: the list, the title, the close, the reopen and the feedback.
 - T-67: [#234](https://github.com/magentawood/roomsie/pull/234), 2026-11-06. The nightly delete of the old visitor goals.
+- [#243](https://github.com/magentawood/roomsie/pull/243), 2026-11-07. A new goal opens the empty chat of the designs.

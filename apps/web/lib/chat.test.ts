@@ -18,18 +18,25 @@ describe('the send rule of the chat input', () => {
 describe('the stored chat', () => {
   afterEach(() => { vi.unstubAllGlobals() })
 
-  it('keeps the visitor key and the waitlist, and forgets both at sign-out', () => {
+  const storage = () => {
     const store = new Map<string, string>()
-    vi.stubGlobal('localStorage', { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) })
+    return { store, getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) }
+  }
+
+  it('keeps the visitor key and the chat for the visit of the tab, the waitlist longer, and forgets all at sign-out', () => {
+    const [local, session] = [storage(), storage()]
+    vi.stubGlobal('localStorage', local)
+    vi.stubGlobal('sessionStorage', session)
     writeStored(chatStorage.waitlist, '{}')
     writeStored(chatStorage.visitorKey, 'key-1')
-    expect(readStored(chatStorage.visitorKey)).toBe('key-1')
+    writeStored(chatStorage.tabGoal, 'goal-1')
+    expect([readStored(chatStorage.visitorKey), [...session.store.keys()], [...local.store.keys()]]).toEqual(['key-1', [chatStorage.visitorKey, chatStorage.tabGoal], [chatStorage.waitlist]])
     forgetChat()
-    expect([readStored(chatStorage.waitlist), readStored(chatStorage.visitorKey)]).toEqual([null, null])
+    expect([readStored(chatStorage.waitlist), readStored(chatStorage.visitorKey), readStored(chatStorage.tabGoal)]).toEqual([null, null, null])
   })
 
   it('reads nothing, and does not throw, where the browser blocks the storage', () => {
-    vi.stubGlobal('localStorage', { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') }, removeItem: () => { throw new Error('blocked') } })
+    vi.stubGlobal('sessionStorage', { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') }, removeItem: () => { throw new Error('blocked') } })
     expect(readStored(chatStorage.visitorKey)).toBeNull()
     expect(() => writeStored(chatStorage.visitorKey, 'key-1')).not.toThrow()
   })

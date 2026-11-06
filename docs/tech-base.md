@@ -96,8 +96,8 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
 - [Goals: the list, the close and the feedback](learn/goals.md)
+- [Saved](learn/saved.md)
+- [The chat screen and the sign-in wall](learn/chat-screen.md)
 - [The legal texts](learn/legal-texts.md)
 - [The visitor chat at sign-in](learn/visitor-chat-claim.md)
-- [Moderation: reports, blocks and the admin screen](learn/moderation.md)
-- [Product numbers](learn/product-numbers.md)
 <!-- learn-newest:end -->

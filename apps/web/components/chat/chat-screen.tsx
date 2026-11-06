@@ -3,12 +3,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowRight } from '@untitledui/icons'
-import { capWall, formA, goalResponse, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
+import { capWall, formA, goalResponse, listingTitle, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chipsOf, keyAction, tapRefusal } from '../../lib/chat'
-import { newGoalHref, useCurrentGoalId } from '../../lib/goals'
+import { canSend, chatStorage, chipsOf, keyAction, readStored, tapRefusal, writeStored } from '../../lib/chat'
+import { goalHref, newGoalHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../../lib/compare'
@@ -100,12 +100,27 @@ function useChat() {
     retry: (count, err) => count < 2 && !(err instanceof ApiError && err.status === 404),
   })
   const gone = goal.error instanceof ApiError && goal.error.status === 404
-  useEffect(() => { if (gone) router.replace(newGoalHref) }, [gone, router])
+  useEffect(() => {
+    if (!gone) return
+    if (readStored(chatStorage.tabGoal) === goalId) writeStored(chatStorage.tabGoal, null)
+    router.replace(newGoalHref)
+  }, [gone, goalId, router])
+  // The Chats tab comes back to this chat for the rest of the visit of the tab.
+  const opened = goalId !== null && goal.isSuccess
+  useEffect(() => { if (opened) writeStored(chatStorage.tabGoal, goalId) }, [opened, goalId])
 
+  // "What are we looking for?" has no goal yet: the first message or chip makes it, then the address names it (flow 02).
+  const startGoal = async () => {
+    const { visitorKey, ...started } = await chatApi(user, '/v1/goals', newGoalResponse, { method: 'POST' })
+    if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
+    queryClient.setQueryData<GoalResponse>(queryKeys.goal(started.id), started)
+    router.replace(goalHref(started.id))
+    return started.id
+  }
   const send = useMutation({
     mutationFn: async ({ body }: Outgoing) => {
-      if (!goalId) throw new Error('The chat has no goal: the onboarding makes it (T-48)')
-      return { id: goalId, ...(await chatApi(user, `/v1/goals/${goalId}/turns`, turnResponse, { method: 'POST', body })) }
+      const id = goalId ?? await startGoal()
+      return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
     },
     onSuccess: ({ id, turns, ...rest }) => {
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ status: 'open', ...rest, id, turns: [...(old?.turns ?? []), ...turns] }))
@@ -124,10 +139,6 @@ const emptyForm = formA.parse({})
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { goalId, turns, form: chatForm, outsidePlaces, closed, goalName, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
-  const router = useRouter()
-  // A chat starts on the onboarding, which makes its goal (T-48).
-  const noGoal = goalId === null && !preview
-  useEffect(() => { if (noGoal) router.replace(newGoalHref) }, [noGoal, router])
   const [failed, setFailed] = useState<string | null>(null)
   const [foundOpen, setFoundOpen] = useState(false)
   const [wall, setWall] = useState(false)
@@ -187,7 +198,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     setView('split')
   }
 
-  if (loadingGoal || noGoal) return <main className="flex-1" aria-busy="true" />
+  if (loadingGoal) return <main className="flex-1" aria-busy="true" />
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
   return (
@@ -215,7 +226,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           {pending !== undefined && (
             <li className="flex flex-col gap-6">
               <UserText text={pending} />
-              {failed ? <p role="alert" className="text-md text-error-primary">{failed}</p> : <p className="text-md text-tertiary">Thinking…</p>}
+              {failed ? <p role="alert" className="text-md text-error-primary">{failed}</p> : <Thinking form={chatForm} areaName={(slug) => areaLabels[slug] ?? slug} />}
             </li>
           )}
           {shown && <li><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>}
@@ -265,8 +276,36 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   )
 }
 
+const stepTimes = [1200, 2600]
+/** The wait for a reply (flow 02): the mascot at its laptop, and the steps of the search. A step ticks after a short time, and the last one turns until the reply. */
+function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) => string }) {
+  const [done, setDone] = useState(0)
+  useEffect(() => {
+    const timers = stepTimes.map((ms, step) => setTimeout(() => setDone(step + 1), ms))
+    return () => timers.forEach(clearTimeout)
+  }, [])
+  const what = form.intent.value === 'flatmates' ? 'people' : 'places'
+  const areas = form.areas.value ?? []
+  const steps = ['Reading what you said', `Looking through ${what} ${areas.length ? `around ${areas.map(areaName).join(', ')}` : 'in Mumbai'}`, 'Picking the best ones for you']
+  return (
+    <div role="status" className="flex items-center gap-2.5">
+      <img src="/illustrations/laptop.png" alt="" width={88} height={88} className="size-16 shrink-0 lg:size-22" />
+      <ul className="flex min-w-0 flex-col gap-1.5 text-sm text-secondary">
+        {steps.slice(0, done + 1).map((step, i) => (
+          <li key={step} className="flex items-center gap-2">
+            {i < done
+              ? <CheckCircle size={16} aria-hidden className="shrink-0 text-fg-success" />
+              : <Loading02 size={16} aria-hidden className="shrink-0 text-fg-quaternary motion-safe:animate-spin" />}
+            <span className="truncate">{step}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function UserText({ text }: { text: string }) {
-  return <p className="ml-auto max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
+  return <p className="ml-auto w-fit max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
 }
 
 /** A closed goal is read-only: its chat and its results stay, and "Reopen" opens it again (T-50). */

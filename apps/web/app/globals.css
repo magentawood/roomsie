@@ -190,4 +190,8 @@
   body {
     @apply bg-primary text-primary antialiased;
   }
+  /* Tailwind 4 gives buttons the default cursor. Each control that acts on a click shows the pointer. */
+  button:not(:disabled), [role="button"]:not([aria-disabled="true"]), select:not(:disabled), summary {
+    cursor: pointer;
+  }
 }

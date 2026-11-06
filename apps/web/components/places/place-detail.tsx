@@ -19,6 +19,7 @@ import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
 import { Badge } from '../ui/badge'
 import { verifiedLabel } from '../../lib/verification'
+import { savedHref } from '../../lib/saved'
 
 /** The icon of each line, as the designs draw them. */
 const lineIcons: Record<FactLabel, Icon> = {
@@ -104,7 +105,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const [reporting, setReporting] = useState(false)
   const [messaging, setMessaging] = useState(false)
   const { share, status, dialog: shareDialog } = useShare(title, { kind: 'places', id: listing.id })
-  const routerBack = useBack()
+  const routerBack = useBack(savedHref.places)
   const back = panel?.onBack ?? routerBack
   const askInChat = panel && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={panel.onAskInChat}>Ask in chat</Button>
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
