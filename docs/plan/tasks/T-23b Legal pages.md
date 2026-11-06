@@ -2,11 +2,11 @@
 id: T-23b
 title: "Privacy, terms and grievance pages"
 owner: "P4 Content and moderation"
-sequence: "2 of 10"
+sequence: "10 of 10"
 hours: 2
-start: 2026-09-27
-end: 2026-09-29
-checkpoint: CP2
+start: 2026-11-07
+end: 2026-11-08
+checkpoint: CP3
 critical: false
 issue: https://github.com/magentawood/roomsie/issues/40
 tags:
@@ -17,9 +17,9 @@ tags:
 
 # T-23b · Privacy, terms and grievance pages
 
-**Owner:** [[P4 Content and moderation]], task 2 of 10  
-**When:** Sun 27 Sep → Tue 29 Sep · 2 hours  
-**Checkpoint:** [[CP2 Core loop live]]  
+**Owner:** [[P4 Content and moderation]], task 10 of 10  
+**When:** Sat 7 Nov → Sun 8 Nov · 2 hours  
+**Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#40](https://github.com/magentawood/roomsie/issues/40)
 
 The legal pages that each Indian site must have.
@@ -27,6 +27,8 @@ The legal pages that each Indian site must have.
 ## Needs first
 - [[T-02 Scaffold monorepo ⚑]]
 - [[F-07 Privacy and terms draft]]
+- [[T-68 Visitor card fields]]
+- [[T-69 Registration record]]
 
 ## Unblocks
 - No task waits on this task.
@@ -34,5 +36,6 @@ The legal pages that each Indian site must have.
 ## Done when
 - [ ] /privacy, /terms and /grievance show the founder's text
 - [ ] Links to it are in the footer and on the sign-in screen
+- [ ] The delete dialog says that the messages to other people stay with them
 
 ^done

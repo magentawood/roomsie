@@ -31,6 +31,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [ID checks and the Verified badge](id-checks.md): a person sends an ID photo and a live selfie, a named reviewer decides, and roomsie keeps only the result.
 - [The invite gate](invite-gate.md): until the launch on 8 November, only the invited emails and the moderators can sign in, and moderators change the list and the opening time on `/admin/invites`.
 - [The landing page](landing-page.md): `/` is the public page that explains Roomsie. The server renders it, and moderators edit its quotes, links and details on admin pages with no code change.
+- [The legal texts](legal-texts.md): the legal texts are Markdown files in `docs/legal/`, and each change of a record that they copy also changes them.
 - [Listings and photo uploads](listings.md): a lister saves a listing of one of four kinds one step at a time, uploads photos straight to R2 with a signed link, and publishes it for 30 days.
 - [Local development with Docker](local-dev-with-docker.md): a local Postgres 17 runs in Docker. `pnpm db:up` starts it, and `pnpm test` starts it if necessary and gives each test run a fresh database.
 - [The match query](match-query.md): the match query takes a Form A and gives the people or the places that fit, in the Best Matches order.

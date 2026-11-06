@@ -2,7 +2,7 @@
 id: T-53
 title: "Delete the Firebase user at account deletion"
 owner: "P4 Content and moderation"
-sequence: "8 of 10"
+sequence: "7 of 10"
 hours: 2
 start: 2026-10-27
 end: 2026-10-28
@@ -17,7 +17,7 @@ tags:
 
 # T-53 · Delete the Firebase user at account deletion
 
-**Owner:** [[P4 Content and moderation]], task 8 of 10  
+**Owner:** [[P4 Content and moderation]], task 7 of 10  
 **When:** Tue 27 Oct → Wed 28 Oct · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#143](https://github.com/magentawood/roomsie/issues/143)

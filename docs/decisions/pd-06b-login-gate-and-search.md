@@ -1,6 +1,6 @@
 # PD6b — Where the login gate sits, and search
 
-**Status:** Settled. Changed on 2026-10-25. · **Date:** 2026-09-20 · **Deciders:** Yash
+**Status:** Settled. Changed on 2026-11-06. · **Date:** 2026-09-20 · **Deciders:** Yash
 
 ## Context
 
@@ -19,6 +19,8 @@ A user must log in for **only two things**:
 | Scroll and filter the results | No |
 | Open the details of one listing or person | **Yes** |
 | Send a message to a person or a lister | **Yes** |
+
+- **What a visitor gets:** only the fields of the results card. A person card has the first photo, the name, the age, the job, what the person looks for, the budget, the move date, the lifestyle and the bio. A place card has the first photo, the title, the area and the rent. The API sends the details only after a sign-in (T-68, [PD21](pd-21-legal-texts.md)).
 
 Search engines index the **area pages and the filter pages**:
 

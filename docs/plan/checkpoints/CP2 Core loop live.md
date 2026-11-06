@@ -20,7 +20,6 @@ This note is part of [[roomsie launch]].
 - [[D-04 Landing and waitlist designs]] — Design
 - [[T-03 CI checks]] — P5 Accounts and people
 - [[T-06 Database schema ⚑]] — P3 Data and trust
-- [[T-23b Legal pages]] — P4 Content and moderation
 - [[T-34 Router ⚑]] — P2 Chat
 - [[F-07 Privacy and terms draft]] — Founder
 - [[T-13 Reply writer]] — P2 Chat

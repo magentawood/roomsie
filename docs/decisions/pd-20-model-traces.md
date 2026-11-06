@@ -1,6 +1,6 @@
 # PD20 — Traces of the model calls
 
-**Status:** Settled. The privacy drafter (F-07) confirms the privacy text. · **Date:** 2026-11-05 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Confirmed by F-07. · **Date:** 2026-11-05 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -41,7 +41,7 @@
 
 ## Revisit when
 
-- The privacy drafter or a DPDP rule needs a different period or no text.
+- A DPDP rule or a lawyer needs a different period or no text.
 - A caste filter comes in: its words go into the mask (PD3c).
 
 ## Sources

@@ -2,7 +2,7 @@
 id: T-36
 title: "Observer: Form B from free text, with the quote check"
 owner: "P2 Chat"
-sequence: "7 of 17"
+sequence: "7 of 18"
 hours: 8
 start: 2026-09-30
 end: 2026-10-02
@@ -17,7 +17,7 @@ tags:
 
 # T-36 · Observer: Form B from free text, with the quote check
 
-**Owner:** [[P2 Chat]], task 7 of 17  
+**Owner:** [[P2 Chat]], task 7 of 18  
 **When:** Wed 30 Sep → Fri 2 Oct · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#65](https://github.com/magentawood/roomsie/issues/65)

@@ -2,7 +2,7 @@
 id: T-67
 title: "Delete the visitor data after 30 days"
 owner: "P1 Platform"
-sequence: "12 of 12"
+sequence: "12 of 13"
 hours: 2
 start: 2026-11-07
 end: 2026-11-07
@@ -17,7 +17,7 @@ tags:
 
 # T-67 · Delete the visitor data after 30 days
 
-**Owner:** [[P1 Platform]], task 12 of 12  
+**Owner:** [[P1 Platform]], task 12 of 13  
 **When:** Sat 7 Nov · 2 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#233](https://github.com/magentawood/roomsie/issues/233)

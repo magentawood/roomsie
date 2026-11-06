@@ -2,7 +2,7 @@
 id: T-16b
 title: "Profile create and edit screens"
 owner: "P5 Accounts and people"
-sequence: "6 of 6"
+sequence: "6 of 7"
 hours: 3
 start: 2026-10-04
 end: 2026-10-10
@@ -18,7 +18,7 @@ tags:
 
 # T-16b · Profile create and edit screens
 
-**Owner:** [[P5 Accounts and people]], task 6 of 6  
+**Owner:** [[P5 Accounts and people]], task 6 of 7  
 **When:** Sun 4 Oct → Sat 10 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#98](https://github.com/magentawood/roomsie/issues/98)

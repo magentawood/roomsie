@@ -2,7 +2,7 @@
 id: T-52
 title: "Content-Security-Policy for the web"
 owner: "P1 Platform"
-sequence: "11 of 12"
+sequence: "11 of 13"
 hours: 3
 start: 2026-10-27
 end: 2026-10-28
@@ -17,7 +17,7 @@ tags:
 
 # T-52 · Content-Security-Policy for the web
 
-**Owner:** [[P1 Platform]], task 11 of 12  
+**Owner:** [[P1 Platform]], task 11 of 13  
 **When:** Tue 27 Oct → Wed 28 Oct · 3 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#135](https://github.com/magentawood/roomsie/issues/135)

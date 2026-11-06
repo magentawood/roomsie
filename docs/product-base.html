@@ -127,7 +127,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 <tr>
 <td><a href="decisions/pd-06b-login-gate-and-search.md">PD6b</a></td>
 <td>Where the login gate sits, and search</td>
-<td>Settled. Changed on 2026-10-25.</td>
+<td>Settled. Changed on 2026-11-06.</td>
 <td>A user must log in only to open one listing or person, or to send a message, and search engines index area and filter pages.</td>
 </tr>
 <tr>
@@ -139,7 +139,7 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 <tr>
 <td><a href="decisions/pd-07-models.md">PD7</a></td>
 <td>Models: DeepSeek for all roles, Gemini as fallback</td>
-<td>Settled. Changed on 2026-11-02.</td>
+<td>Settled. Changed on 2026-11-06.</td>
 <td>DeepSeek V4.1 Flash serves all roles, the Gemini Flash-Lite tier is the fallback on failure or invalid output, and we dropped Sarvam.</td>
 </tr>
 <tr>
@@ -217,14 +217,20 @@ The team is 5 engineers at 2 hours a day, 2 marketing people and 1 designer. roo
 <tr>
 <td><a href="decisions/pd-19-retention.md">PD19</a></td>
 <td>Retention: how long roomsie keeps each kind of data</td>
-<td>Settled. The privacy drafter (F-07) confirms it. Changed on 2026-11-05 (T-64, T-66, T-67).</td>
+<td>Settled. Confirmed by F-07. Changed on 2026-11-06.</td>
 <td>Visitor data goes after 30 days, raw events after 12 months by whole month, the ID photo and the selfie right after the review, and account data at deletion.</td>
 </tr>
 <tr>
 <td><a href="decisions/pd-20-model-traces.md">PD20</a></td>
 <td>Traces of the model calls</td>
-<td>Settled. The privacy drafter (F-07) confirms the privacy text.</td>
+<td>Settled. Confirmed by F-07.</td>
 <td>The API keeps the prompt and the raw answer of each model call of a goal for 30 days, with the religion and community words masked before the save, under a session code, and each open in an audit log.</td>
+</tr>
+<tr>
+<td><a href="decisions/pd-21-legal-texts.md">PD21</a></td>
+<td>The legal texts</td>
+<td>Settled.</td>
+<td>The texts name only "roomsie" and its Grievance Officer, and list each kind of data.</td>
 </tr>
 </tbody>
 </table>

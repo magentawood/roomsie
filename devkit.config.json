@@ -20,7 +20,8 @@
       "docs/journal/**",
       "docs/plan/**",
       "docs/team-plan.md",
-      "docs/learn/README.md"
+      "docs/learn/README.md",
+      "docs/legal/**"
     ],
     "overrides": {
       "docs/decisions/0005-managed-platform-split.md": 1333,

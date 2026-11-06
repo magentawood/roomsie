@@ -16,3 +16,4 @@ This note is part of [[roomsie launch]].
 ## Due by this checkpoint
 
 - [[M-09 Broker calls]] — M2 Community
+- [[T-70 IT Rules notices]] — P1 Platform

@@ -2,7 +2,7 @@
 id: T-18a
 title: "Message request API"
 owner: "P5 Accounts and people"
-sequence: "4 of 6"
+sequence: "4 of 7"
 hours: 4
 start: 2026-09-30
 end: 2026-10-04
@@ -18,7 +18,7 @@ tags:
 
 # T-18a · Message request API
 
-**Owner:** [[P5 Accounts and people]], task 4 of 6  
+**Owner:** [[P5 Accounts and people]], task 4 of 7  
 **When:** Wed 30 Sep → Sun 4 Oct · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#38](https://github.com/magentawood/roomsie/issues/38)

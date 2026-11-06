@@ -2,7 +2,7 @@
 id: T-62
 title: "Admin home and the six pages"
 owner: "P4 Content and moderation"
-sequence: "9 of 10"
+sequence: "8 of 10"
 hours: 4
 start: 2026-11-05
 end: 2026-11-05
@@ -17,7 +17,7 @@ tags:
 
 # T-62 · Admin home and the six pages
 
-**Owner:** [[P4 Content and moderation]], task 9 of 10  
+**Owner:** [[P4 Content and moderation]], task 8 of 10  
 **When:** Thu 5 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#221](https://github.com/magentawood/roomsie/issues/221)

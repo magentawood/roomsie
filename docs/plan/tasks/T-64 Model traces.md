@@ -2,7 +2,7 @@
 id: T-64
 title: "Traces of the model calls"
 owner: "P2 Chat"
-sequence: "16 of 17"
+sequence: "16 of 18"
 hours: 4
 start: 2026-11-06
 end: 2026-11-07
@@ -17,7 +17,7 @@ tags:
 
 # T-64 · Traces of the model calls
 
-**Owner:** [[P2 Chat]], task 16 of 17  
+**Owner:** [[P2 Chat]], task 16 of 18  
 **When:** Fri 6 Nov → Sat 7 Nov · 4 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#223](https://github.com/magentawood/roomsie/issues/223)

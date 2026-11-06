@@ -2,7 +2,7 @@
 id: T-10
 title: "Chat screen and split view"
 owner: "P2 Chat"
-sequence: "12 of 17"
+sequence: "12 of 18"
 hours: 8
 start: 2026-10-07
 end: 2026-10-09
@@ -18,7 +18,7 @@ tags:
 
 # T-10 · Chat screen and split view
 
-**Owner:** [[P2 Chat]], task 12 of 17  
+**Owner:** [[P2 Chat]], task 12 of 18  
 **When:** Wed 7 Oct → Fri 9 Oct · 8 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#12](https://github.com/magentawood/roomsie/issues/12)

@@ -2,7 +2,7 @@
 id: T-16a
 title: "Profile and photo upload API"
 owner: "P5 Accounts and people"
-sequence: "5 of 6"
+sequence: "5 of 7"
 hours: 5
 start: 2026-10-04
 end: 2026-10-10
@@ -18,7 +18,7 @@ tags:
 
 # T-16a · Profile and photo upload API
 
-**Owner:** [[P5 Accounts and people]], task 5 of 6  
+**Owner:** [[P5 Accounts and people]], task 5 of 7  
 **When:** Sun 4 Oct → Sat 10 Oct · 5 hours  
 **Checkpoint:** [[CP3 Freeze and go-no-go]]  
 **Issue:** [#36](https://github.com/magentawood/roomsie/issues/36)
