@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowLeft, ArrowRight, Home03, Key01, Lock01 } from '@untitledui/icons'
@@ -9,8 +9,8 @@ import { intentLabels, newGoalResponse, type GoalResponse } from '@roomsie/contr
 import { chatApi, errorText } from '../../lib/api'
 import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
-import { chatStorage, readStored, writeStored } from '../../lib/chat'
-import { newGoalParam } from '../../lib/goals'
+import { chatStorage, writeStored } from '../../lib/chat'
+import { goalHref } from '../../lib/goals'
 import { answered, progressOf, startOf, stepBeside, withoutAnswer, type Answers, type Step } from '../../lib/onboarding'
 import { profileLabels } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
@@ -69,24 +69,15 @@ export function Onboarding() {
   const { user, loading, signIn } = useAuth()
   const router = useRouter()
   const queryClient = useQueryClient()
-  const [hasChat, setHasChat] = useState<boolean>()
   const [step, setStep] = useState<Step>('purpose')
   const [answers, setAnswers] = useState<Answers>({})
   const [signInError, setSignInError] = useState<string | null>(null)
-  // A person with a chat on this browser goes on with it. Local storage exists only in the browser.
-  const newGoal = useSearchParams().has(newGoalParam)
-  useEffect(() => {
-    const stored = readStored(chatStorage.goal) !== null && !newGoal
-    setHasChat(stored)
-    if (stored) router.replace('/chat')
-  }, [router, newGoal])
   const start = useMutation({
     mutationFn: (asker: User | null) => chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', body: startOf(answers) }),
     onSuccess: ({ visitorKey, ...goal }) => {
       if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
-      writeStored(chatStorage.goal, goal.id)
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(goal.id), goal)
-      router.push('/chat')
+      router.push(goalHref(goal.id))
     },
   })
   const finish = (asker: User | null) => (answers.purpose === 'list' ? router.push('/listings/new') : start.mutate(asker))
@@ -106,7 +97,7 @@ export function Onboarding() {
   const bar = progressOf(step, answers)
   const { title, text, art, position } = screens[step]
 
-  if (loading || hasChat !== false) return <main className="min-h-dvh" aria-busy="true" />
+  if (loading) return <main className="min-h-dvh" aria-busy="true" />
   return (
     <div className="flex min-h-dvh flex-col bg-primary lg:flex-row">
       <div className="relative h-52 shrink-0 lg:sticky lg:top-0 lg:h-dvh lg:w-5/9 lg:[clip-path:polygon(0_0,94%_0,85%_30%,94%_59%,85%_100%,0_100%)]">

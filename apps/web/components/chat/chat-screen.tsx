@@ -7,7 +7,7 @@ import { ArrowRight } from '@untitledui/icons'
 import { capWall, formA, goalResponse, listingTitle, noContent, panelReady, tapText, turnResponse, type ChipTap, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chatStorage, chipsOf, keyAction, readStored, tapRefusal, writeStored } from '../../lib/chat'
+import { canSend, chipsOf, keyAction, tapRefusal } from '../../lib/chat'
 import { newGoalHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
@@ -85,7 +85,7 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
 /** `text` is what the chat shows until the API answers: the message, or the label of the chip. */
 type Outgoing = { body: TurnBody; text: string }
 
-/** The goal of the address, else the last goal of this browser, so a reload opens the same chat. */
+/** The goal of the address. */
 function useChat() {
   const { user, loading } = useAuth()
   const queryClient = useQueryClient()
@@ -99,15 +99,8 @@ function useChat() {
     staleTime: Infinity,
     retry: (count, err) => count < 2 && !(err instanceof ApiError && err.status === 404),
   })
-  // Only a goal that the API gave becomes the last goal, so a link to the goal of a different person changes nothing.
-  useEffect(() => { if (goal.data) writeStored(chatStorage.goal, goal.data.id) }, [goal.data])
   const gone = goal.error instanceof ApiError && goal.error.status === 404
-  useEffect(() => {
-    if (!gone) return
-    const last = readStored(chatStorage.goal)
-    if (last === goalId) writeStored(chatStorage.goal, null)
-    router.replace(last && last !== goalId ? '/chat' : '/start')
-  }, [gone, goalId, router])
+  useEffect(() => { if (gone) router.replace(newGoalHref) }, [gone, router])
 
   const send = useMutation({
     mutationFn: async ({ body }: Outgoing) => {
@@ -134,7 +127,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const router = useRouter()
   // A chat starts on the onboarding, which makes its goal (T-48).
   const noGoal = goalId === null && !preview
-  useEffect(() => { if (noGoal) router.replace('/start') }, [noGoal, router])
+  useEffect(() => { if (noGoal) router.replace(newGoalHref) }, [noGoal, router])
   const [failed, setFailed] = useState<string | null>(null)
   const [foundOpen, setFoundOpen] = useState(false)
   const [wall, setWall] = useState(false)

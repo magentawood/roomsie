@@ -98,7 +98,7 @@ We use these services to run roomsie. Each one gets only what it needs.
 roomsie sets no cookies. Your browser keeps these:
 
 - Your visitor key, until you sign in or clear your browser.
-- The id of your last chat and the waitlist places that you joined, until you sign out or clear your browser.
+- The waitlist places that you joined, until you sign out or clear your browser.
 - Your sign-in and your browser alerts, kept by Google's sign-in and alert services.
 - A few settings of the page, until you close the tab.
 

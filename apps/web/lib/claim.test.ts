@@ -9,18 +9,17 @@ describe('the claim of the visitor chat at sign-in (T-17)', () => {
   beforeEach(() => {
     const store = new Map<string, string>()
     vi.stubGlobal('localStorage', { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) })
-    writeStored(chatStorage.goal, 'goal-1')
   })
   afterEach(() => vi.unstubAllGlobals())
 
-  it('sends the token and the visitor key, then forgets the key and keeps the goal', async () => {
+  it('sends the token and the visitor key, then forgets the key', async () => {
     writeStored(chatStorage.visitorKey, 'key-1')
     const fetch = vi.fn(async () => new Response(null, { status: 204 }))
     vi.stubGlobal('fetch', fetch)
     expect(await claimVisitorChat(user)).toBe(true)
     const [url, init] = fetch.mock.calls[0] as unknown as [string, RequestInit]
     expect([url.endsWith('/v1/goals/claim'), init.method, init.headers]).toEqual([true, 'POST', { authorization: 'Bearer token-1', 'x-visitor-key': 'key-1' }])
-    expect([readStored(chatStorage.goal), readStored(chatStorage.visitorKey)]).toEqual(['goal-1', null])
+    expect(readStored(chatStorage.visitorKey)).toBeNull()
   })
 
   it('keeps the key when the claim fails, so the next load tries again', async () => {

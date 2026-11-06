@@ -81,7 +81,7 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
-<li><strong>A reload opens the same chat.</strong> <code>/chat?goal=&lt;id&gt;</code> names the goal. Local storage keeps the id of the last goal and the visitor key, never a sign-in token, so <code>/chat</code> opens that goal. A sign-out removes both, so the next person on the browser cannot open the chat.</li>
+<li><strong>A reload opens the same chat.</strong> <code>/chat?goal=&lt;id&gt;</code> names the goal. Each other way into the chat starts a new goal, as a new chat of ChatGPT does, and the older goals stay in the list. Local storage keeps the visitor key, never a sign-in token, and a sign-out removes it.</li>
 <li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Saved, My listings, Profile and the phone "+" open the wall. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
 <li><strong>A link from outside</strong> to a page that needs an account still opens the full-page sign-in of <code>SignInGate</code>.</li>
 <li><strong><code>AppShell fixed</code></strong> makes the page one screen high. The page scrolls inside, and it keeps the space of the phone bar itself, so the glow of the empty chat goes under the bar.</li>

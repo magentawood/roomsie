@@ -18,20 +18,20 @@ describe('the send rule of the chat input', () => {
 describe('the stored chat', () => {
   afterEach(() => { vi.unstubAllGlobals() })
 
-  it('keeps the goal and the visitor key, and forgets both at sign-out', () => {
+  it('keeps the visitor key and the waitlist, and forgets both at sign-out', () => {
     const store = new Map<string, string>()
     vi.stubGlobal('localStorage', { getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) })
-    writeStored(chatStorage.goal, 'goal-1')
+    writeStored(chatStorage.waitlist, '{}')
     writeStored(chatStorage.visitorKey, 'key-1')
-    expect(readStored(chatStorage.goal)).toBe('goal-1')
+    expect(readStored(chatStorage.visitorKey)).toBe('key-1')
     forgetChat()
-    expect([readStored(chatStorage.goal), readStored(chatStorage.visitorKey)]).toEqual([null, null])
+    expect([readStored(chatStorage.waitlist), readStored(chatStorage.visitorKey)]).toEqual([null, null])
   })
 
   it('reads nothing, and does not throw, where the browser blocks the storage', () => {
     vi.stubGlobal('localStorage', { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') }, removeItem: () => { throw new Error('blocked') } })
-    expect(readStored(chatStorage.goal)).toBeNull()
-    expect(() => writeStored(chatStorage.goal, 'goal-1')).not.toThrow()
+    expect(readStored(chatStorage.visitorKey)).toBeNull()
+    expect(() => writeStored(chatStorage.visitorKey, 'key-1')).not.toThrow()
   })
 })
 
