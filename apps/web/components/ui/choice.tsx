@@ -43,12 +43,12 @@ export function ChoiceChips<T extends string>({ label, labels, value, onChange, 
   )
 }
 
-export function MultiChips<T extends string>({ label, labels, only, value, onChange }: {
-  label: string; labels: Record<T, string>; only?: readonly T[]; value: readonly T[] | undefined; onChange: (value: T[]) => void
+export function MultiChips<T extends string>({ label, labels, only, value, onChange, labelHidden }: {
+  label: string; labels: Record<T, string>; only?: readonly T[]; value: readonly T[] | undefined; onChange: (value: T[]) => void; labelHidden?: boolean
 }) {
   const picked = value ?? []
   return (
-    <Group label={label}>
+    <Group label={label} labelHidden={labelHidden}>
       {options(labels, only).map((o) => {
         const selected = picked.includes(o.value)
         return <CheckChip key={o.value} label={o.label} checked={selected} onToggle={() => onChange(selected ? picked.filter((v) => v !== o.value) : [...picked, o.value])} />

@@ -11,12 +11,12 @@ import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
 import { chatStorage, writeStored } from '../../lib/chat'
 import { goalHref } from '../../lib/goals'
-import { answered, progressOf, startOf, stepBeside, withoutAnswer, type Answers, type Step } from '../../lib/onboarding'
-import { profileLabels } from '../../lib/profile-form'
+import { answered, pickMustHaves, progressOf, startOf, stepBeside, withoutAnswer, withPurpose, type Answers, type Step } from '../../lib/onboarding'
+import { profileLabels, type DescribesYou } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
 import { GoogleMark, LegalLine } from '../shell/google-sign-in'
 import { Button } from '../ui/button'
-import { ChoiceCard, ChoiceChips } from '../ui/choice'
+import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
 import { StepBar } from '../ui/step-bar'
 
 /** `position`: the crop of the art on a phone, then on a computer. */
@@ -26,22 +26,34 @@ const screens: Record<Step, { title: string; text?: string; art: string; positio
   intent: { title: 'What kind of place?', text: 'Pick one. You can add more later in the chat.', art: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
   budget: { title: 'Budget per month?', text: 'Your share of the rent.', art: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
   area: { title: 'Where do you want to live?', text: 'Pick one for now. Or skip and I’ll look across Mumbai.', art: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
+  mustHaves: { title: 'Must-haves in a flatmate?', text: 'Pick any. I’ll show only the flatmates who fit them.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
   signIn: { title: 'Sign in to continue', text: 'Unlimited chats and multiple goals, all synced up with your account.', art: 'sign-in', position: 'object-[50%_77%] lg:object-[87%_50%]' },
 }
+/** The flatmate path asks about the person, not who moves in. */
+const flatmateScreens: Partial<Record<Step, { title: string; text: string }>> = {
+  whosMoving: { title: 'What do you do?', text: 'So I find flatmates who fit with you.' },
+}
+const aboutYouLabels = { student: 'Student', first_job: 'Starting my first job', working: 'Working' } satisfies Partial<Record<DescribesYou, string>>
+type AboutYou = keyof typeof aboutYouLabels
+const flatmateMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates'] as const
+const screenOf = (step: Step, answers: Answers) => ({ ...screens[step], ...(answers.purpose === 'flatmate' && flatmateScreens[step]) })
 
 function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onChange: (answers: Answers) => void }) {
   const groups = areaTree(useAreas().data?.areas ?? []).groups
   const pick = <K extends keyof Answers>(key: K) => (value: Answers[K] | null) => onChange({ ...answers, [key]: value ?? undefined })
+  const pickPurpose = (purpose: Answers['purpose']) => () => onChange(withPurpose(purpose, answers))
   switch (step) {
     case 'purpose':
       return (
         <div role="radiogroup" aria-label={screens.purpose.title} className="flex flex-col gap-4 text-left">
-          <ChoiceCard icon={Users01} title="I’m looking for a flatmate" subtitle="People to rent a flat with" selected={answers.purpose === 'flatmate'} onSelect={() => pick('purpose')('flatmate')} />
-          <ChoiceCard icon={Home03} title="I’m looking for a place" subtitle="A room, a flat or a PG" selected={answers.purpose === 'look'} onSelect={() => pick('purpose')('look')} />
-          <ChoiceCard icon={Key01} title="I have a place to list" subtitle="A room in my flat, a whole flat, a PG, or a flat I broker" selected={answers.purpose === 'list'} onSelect={() => pick('purpose')('list')} />
+          <ChoiceCard icon={Users01} title="I’m looking for a flatmate" subtitle="People to rent a flat with" selected={answers.purpose === 'flatmate'} onSelect={pickPurpose('flatmate')} />
+          <ChoiceCard icon={Home03} title="I’m looking for a place" subtitle="A room, a flat or a PG" selected={answers.purpose === 'look'} onSelect={pickPurpose('look')} />
+          <ChoiceCard icon={Key01} title="I have a place to list" subtitle="A room in my flat, a whole flat, a PG, or a flat I broker" selected={answers.purpose === 'list'} onSelect={pickPurpose('list')} />
         </div>
       )
     case 'whosMoving':
+      // A new purpose clears the answers, so here the answer is one of the three.
+      if (answers.purpose === 'flatmate') return <ChoiceChips labelHidden label={screenOf(step, answers).title} labels={aboutYouLabels} value={answers.whosMoving as AboutYou | undefined} onChange={pick('whosMoving')} />
       return (
         <div className="flex flex-col gap-6">
           <ChoiceChips labelHidden label={screens.whosMoving.title} labels={profileLabels.describesYou} value={answers.whosMoving}
@@ -60,6 +72,8 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
       return <ChoiceChips labelHidden label={screens.budget.title} labels={profileLabels.budget} value={answers.budget} onChange={pick('budget')} />
     case 'area':
       return <ChoiceChips labelHidden label={screens.area.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.area} onChange={pick('area')} />
+    case 'mustHaves':
+      return <MultiChips labelHidden label={screens.mustHaves.title} labels={profileLabels.mustHaves} only={flatmateMustHaves} value={answers.mustHaves} onChange={(keys) => pick('mustHaves')(pickMustHaves(keys, answers.mustHaves))} />
     case 'signIn':
       return null
   }
@@ -96,7 +110,7 @@ export function Onboarding() {
   const busy = start.isPending || start.isSuccess
   const error = signInError ?? (start.isError ? errorText(start.error) : null)
   const bar = progressOf(step, answers)
-  const { title, text, art, position } = screens[step]
+  const { title, text, art, position } = screenOf(step, answers)
 
   if (loading) return <main className="min-h-dvh" aria-busy="true" />
   return (

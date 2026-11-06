@@ -104,11 +104,16 @@ const scriptedReply = ({ last, lastRegister }: Pick<TurnState, 'last' | 'lastReg
 
 /** The answers of the onboarding, before the goal exists (T-48). Null: an area that is not an area group. */
 export async function runStart(input: Omit<TurnInput, 'goalId' | 'notesHint'> & { start: GoalStart }, deps: AssistantDeps) {
-  const { area, budget, ...stated } = input.start
+  const { area, budget, mustHaves = [], ...stated } = input.start
   if (area && !isAreaGroup(await catalogueOf(deps.db), area)) return null
   const answers = { ...stated, ...(area && { areas: [area] }), ...(budget && { budget: slotValueOf({ slot: 'budget', value: budget }) }) }
-  const form = formA.parse({ ...input.form, ...Object.fromEntries(Object.entries(answers).map(([slot, value]) => [slot, { source: 'stated', value }])) })
-  return { form, reply: await scriptedReply(input, form, Object.keys(answers) as FormASlot[], deps) }
+  const stateOf = (value: unknown) => ({ source: 'stated', value })
+  const form = formA.parse({
+    ...input.form, ...Object.fromEntries(Object.entries(answers).map(([slot, value]) => [slot, stateOf(value)])),
+    mustHaves: { ...input.form.mustHaves, ...Object.fromEntries(mustHaves.map((key) => [key, stateOf('dealbreaker')])) },
+  })
+  const changed = [...Object.keys(answers), ...mustHaves.map((key) => `mustHaves.${key}`)] as FormASlot[]
+  return { form, reply: await scriptedReply(input, form, changed, deps) }
 }
 
 /** Null: an area that is not an area group. */
