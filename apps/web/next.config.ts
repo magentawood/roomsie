@@ -7,6 +7,15 @@ const config: NextConfig = {
   outputFileTracingIncludes: { '/blog/**': ['./assets/**', './public/blog/**'] },
   // The project has one agent file, CONTEXT.md. Next must not write its own.
   agentRules: false,
+  // Google's account chooser names the sign-in domain. With NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=roomsie.in, the sign-in pages
+  // of Firebase come through our own domain, so it says "to continue to roomsie.in".
+  async rewrites() {
+    const firebase = `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseapp.com`
+    return [
+      { source: '/__/auth/:path*', destination: `${firebase}/__/auth/:path*` },
+      { source: '/__/firebase/:path*', destination: `${firebase}/__/firebase/:path*` },
+    ]
+  },
 }
 
 // The events go through our own path, so an ad blocker does not drop them. No source maps: their upload needs a secret in the web (T-07).

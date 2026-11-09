@@ -44,6 +44,7 @@ browser ── Google popup ──▶ Firebase ──▶ ID token (in memory)
 - If the API cannot get the keys of Google, it gives 500, not 401. A 401 tells the user to sign in again, and that does not help.
 - `next build` runs without the Firebase settings, because Firebase starts only in the browser.
 - A new domain must be in the authorized domains of Firebase. If not, the popup gives `auth/unauthorized-domain`.
+- **Google's account chooser names the sign-in domain.** With `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=roomsie.in`, it says "to continue to roomsie.in", not the `firebaseapp.com` domain. The rewrites of `next.config.ts` send `/__/auth/*` and `/__/firebase/*` to Firebase, and the proxy leaves those paths out of the content policy. The OAuth client in Google Cloud needs `https://roomsie.in/__/auth/handler` as a redirect URI. To show the name "Roomsie" there, the brand of the Google Auth Platform must be verified, and that needs the privacy page (T-23b).
 - After its Firebase user is deleted, a Google sign-in makes a new Firebase user with a new uid. Thus the deletion tombstone keys on the Google account id in the token, not on the uid, and the rejoin checks still apply.
 - The new uid cannot find the old account. Thus the Firebase delete is the last step: if an earlier step fails, the person can still retry with the same sign-in. Google's `USER_NOT_FOUND` counts as deleted, so a retry is safe.
 
