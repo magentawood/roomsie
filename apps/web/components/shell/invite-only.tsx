@@ -23,7 +23,7 @@ export function InviteOnlyScreen({ refusal }: { refusal: InviteRefusal }) {
       <main className="flex flex-1 flex-col px-5">
         <EmptyState icon={Calendar} title={refusal.opensAt ? `Roomsie opens on ${istDay(refusal.opensAt)}` : 'Roomsie opens soon'}
           action={
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-6">
               <Button variant="primary" size="md" onClick={goHome}>Go home</Button>
               {refusal.account && <Button variant="tertiary" size="md" onClick={() => setDeleting(true)}>Delete my account</Button>}
             </div>

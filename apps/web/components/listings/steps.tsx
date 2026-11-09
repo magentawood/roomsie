@@ -24,7 +24,7 @@ const kindCards: { kind: ListingKind; icon: Icon; title: string; subtitle: strin
 /** Step 1. A listing that exists keeps its kind, so the other cards are off. */
 export function KindStep({ kind, onPick }: { kind: ListingKind | null; onPick?: (kind: ListingKind) => void }) {
   return (
-    <div role="radiogroup" aria-label="What are you listing?" className="grid gap-3 md:grid-cols-2">
+    <div role="radiogroup" aria-label="What are you listing?" className="grid gap-3 md:grid-flow-col md:grid-cols-2 md:grid-rows-2 md:gap-x-6">
       {kindCards.map((c) => (
         <ChoiceCard key={c.kind} icon={c.icon} title={c.title} subtitle={c.subtitle} selected={kind === c.kind} disabled={!onPick} onSelect={() => onPick?.(c.kind)} />
       ))}
@@ -74,15 +74,18 @@ export function NearbyStep({ values, set }: StepProps) {
   return (
     <>
       <TextInput label="Nearest Railway/Metro/Bus station" value={values.nearestStation} onChange={(nearestStation) => set({ nearestStation })} placeholder="eg. Andheri station, DN nagar metro" maxLength={textLimits.nearestStation} />
-      <div className="flex flex-col gap-1 border-t border-secondary pt-5">
+      <div className="flex flex-col gap-0.5 border-b border-secondary pb-5">
         <h3 className="text-md font-semibold text-primary">Close or far?</h3>
         <p className="text-sm text-tertiary">The most asked question on roomsie.</p>
       </div>
-      {walk('Railway/Metro station', 'walkStation')}
-      {walk('Bus stop', 'walkBus')}
-      {walk('Market or groceries', 'walkMarket')}
-      {walk('Gym', 'walkGym')}
-      {walk('Mall', 'walkMall')}
+      {/* The questions sit 24 apart, closer than the blocks of the step (32). */}
+      <div className="flex flex-col gap-6">
+        {walk('Railway/Metro station', 'walkStation')}
+        {walk('Bus stop', 'walkBus')}
+        {walk('Market or groceries', 'walkMarket')}
+        {walk('Gym', 'walkGym')}
+        {walk('Mall', 'walkMall')}
+      </div>
     </>
   )
 }
@@ -98,7 +101,7 @@ function BoolChips({ label, labels, value, onChange }: { label: string; labels: 
 export function PlaceStep({ kind, values, set, errors }: StepProps) {
   const flat = isFlat(kind)
   return (
-    <>
+    <div className="flex flex-col gap-6">
       {flat && <ChoiceChips label="Place type" labels={labels.placeType} value={values.placeType} onChange={(placeType) => set({ placeType })} />}
       {flat && <ChoiceChips label="Furnishing" labels={labels.furnishing} value={values.furnishing} onChange={(furnishing) => set({ furnishing })} />}
       {flat && <ChoiceChips label="The room" labels={labels.roomType} value={values.roomType} onChange={(roomType) => set({ roomType })} />}
@@ -116,7 +119,7 @@ export function PlaceStep({ kind, values, set, errors }: StepProps) {
       <BoolChips label="Balcony" labels={{ true: 'Yes', false: 'No' }} value={values.balcony} onChange={(balcony) => set({ balcony })} />
       <MultiChips label="What’s inside" labels={labels.insideItems} value={values.insideItems} onChange={(insideItems) => set({ insideItems })} />
       <MultiChips label="Building and society" labels={labels.amenities} value={values.amenities} onChange={(amenities) => set({ amenities })} />
-    </>
+    </div>
   )
 }
 
@@ -135,16 +138,16 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
   }
   const rateError = (rate: Rate | undefined, field: 'rent' | 'deposit') => (rate ? errors[`rates.${rates.indexOf(rate)}.${field}`] : undefined)
   return (
-    <>
+    <div className="flex flex-col gap-6">
       {kind === 'pg' ? (
         (values.sharing ?? []).length ? (
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:gap-6">
             {(values.sharing ?? []).map((sharing) => {
               const rate = rates.find((r) => r.sharing === sharing)
               return (
-                <div key={sharing} className="flex flex-col gap-4 rounded-xl border border-secondary p-4">
-                  <h3 className="text-sm font-semibold text-primary">For {labels.sharing[sharing]} sharing</h3>
-                  <div className="grid gap-4 md:grid-cols-2">
+                <div key={sharing} className="flex flex-col gap-4 rounded-xl border border-secondary p-4 md:gap-2.5 md:p-5.75">
+                  <h3 className="text-sm font-semibold text-primary md:p-1">For {labels.sharing[sharing]} sharing</h3>
+                  <div className="grid gap-4 md:grid-cols-2 md:gap-8">
                     <NumberInput label="Monthly rent (₹)" required error={rateError(rate, 'rent')} value={rate?.rent} onChange={(rent) => setRate(sharing, { rent })} placeholder="eg. 15000" />
                     <NumberInput label="Security Deposit (₹)" error={rateError(rate, 'deposit')} value={rate?.deposit} onChange={(deposit) => setRate(sharing, { deposit })} placeholder="eg. 30000" />
                   </div>
@@ -156,7 +159,7 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
           <p className="rounded-md border border-secondary bg-secondary p-4 text-sm text-tertiary">Pick the sharing types on step 4 first. Each one gets its own rent.</p>
         )
       ) : (
-        <div className="grid gap-5 md:grid-cols-2 md:gap-8">
+        <div className="grid gap-5 md:grid-cols-3 md:gap-8">
           <NumberInput label="Monthly rent (₹)" required error={rateError(flatRate, 'rent')} value={flatRate?.rent} onChange={(rent) => setRate(undefined, { rent })} placeholder="eg. 15000" />
           <NumberInput label="Security Deposit (₹)" error={rateError(flatRate, 'deposit')} value={flatRate?.deposit} onChange={(deposit) => setRate(undefined, { deposit })} placeholder="eg. 30000" />
           <NumberInput label="Maintenance per month (₹)" error={errors.maintenance} value={values.maintenance} onChange={(maintenance) => set({ maintenance })} placeholder="eg. 3000" />
@@ -167,18 +170,20 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
       <ChoiceChips label="Electricity" labels={labels.electricity} value={values.electricity} onChange={(electricity) => set({ electricity })} />
       <BoolChips label="Rent" labels={{ false: 'Fixed', true: 'Open to offers' }} value={values.rentNegotiable} onChange={(rentNegotiable) => set({ rentNegotiable })} />
       {isFlat(kind) && (
-        <Field label="Available from">
-          {(id) => <input id={id} type="date" className={inputClass} value={values.availableFrom ?? ''} onChange={(e) => set({ availableFrom: e.target.value || null })} />}
-        </Field>
+        <div className="md:w-88.5">
+          <Field label="Available from">
+            {(id) => <input id={id} type="date" className={inputClass} value={values.availableFrom ?? ''} onChange={(e) => set({ availableFrom: e.target.value || null })} />}
+          </Field>
+        </div>
       )}
       <ChoiceChips label="Minimum Stay" labels={labels.minStay} value={values.minStay} onChange={(minStay) => set({ minStay })} />
-    </>
+    </div>
   )
 }
 
 export function RulesStep({ kind, values, set }: StepProps) {
   return (
-    <>
+    <div className="flex flex-col gap-6">
       <BoolChips label="Kitchen" labels={{ true: 'Veg Only', false: 'Non veg allowed' }} value={values.vegOnlyKitchen} onChange={(vegOnlyKitchen) => set({ vegOnlyKitchen })} />
       <BoolChips label="Smoking" labels={{ false: 'No Smoking', true: 'Smoking is fine' }} value={values.smokingAllowed} onChange={(smokingAllowed) => set({ smokingAllowed })} />
       <BoolChips label="Alcohol" labels={{ false: 'No Alcohol at home', true: 'Fine at home' }} value={values.alcoholAllowed} onChange={(alcoholAllowed) => set({ alcoholAllowed })} />
@@ -186,7 +191,7 @@ export function RulesStep({ kind, values, set }: StepProps) {
       <ChoiceChips label="Who can move in" labels={labels.whoCanMoveIn} value={values.whoCanMoveIn} onChange={(whoCanMoveIn) => set({ whoCanMoveIn })} />
       <MultiChips label="Who is welcome" labels={labels.whoIsWelcome} only={kind === 'room_in_flat' ? roomWelcomeGroups : undefined}
         value={values.whoIsWelcome} onChange={(whoIsWelcome) => set({ whoIsWelcome })} />
-    </>
+    </div>
   )
 }
 
@@ -200,30 +205,33 @@ export function PeopleStep({ values, set, errors, listingId, previews, addPrevie
   return (
     <>
       {mates.map((mate, i) => (
-        <div key={i} className="flex flex-col gap-5 rounded-xl border border-secondary p-4 md:p-5">
-          {mate.photoKey ? (
-            <div className="w-24"><Thumb src={previews[mate.photoKey]} label={`Remove the photo of ${mate.name || 'this flatmate'}`} onRemove={() => update(i, { photoKey: null })} /></div>
-          ) : (
-            <PhotoPicker target={listingUpload(listingId)} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
-          )}
-          <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-            <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" maxLength={textLimits.flatmateName} />
-            <NumberInput label="Age" error={errors[`flatmates.${i}.age`]} value={mate.age} onChange={(age) => update(i, { age })} placeholder="eg. 24" />
-            <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" maxLength={textLimits.whatTheyDo} />
-            <Field label="Food">
-              {(id) => (
-                <Select id={id} value={mate.food ?? ''} onChange={(food) => update(i, { food: (food || null) as typeof mate.food })}>
-                  <option value="">Choose</option>
-                  {Object.entries(labels.food).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                </Select>
-              )}
-            </Field>
+        <div key={i} className="flex flex-col gap-5 rounded-xl border border-secondary p-4 md:gap-8 md:p-5.75">
+          {/* On a computer the photo (172 px) sits beside the fields, as in the designs. */}
+          <div className="flex flex-col gap-5 md:flex-row md:gap-8">
+            {mate.photoKey ? (
+              <div className="w-24 md:w-43 md:shrink-0"><Thumb src={previews[mate.photoKey]} label={`Remove the photo of ${mate.name || 'this flatmate'}`} onRemove={() => update(i, { photoKey: null })} /></div>
+            ) : (
+              <div className="md:grid md:w-43 md:shrink-0"><PhotoPicker target={listingUpload(listingId)} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} /></div>
+            )}
+            <div className="grid flex-1 gap-5 md:grid-cols-2 md:gap-8">
+              <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" maxLength={textLimits.flatmateName} />
+              <NumberInput label="Age" error={errors[`flatmates.${i}.age`]} value={mate.age} onChange={(age) => update(i, { age })} placeholder="eg. 24" />
+              <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" maxLength={textLimits.whatTheyDo} />
+              <Field label="Food">
+                {(id) => (
+                  <Select id={id} value={mate.food ?? ''} onChange={(food) => update(i, { food: (food || null) as typeof mate.food })}>
+                    <option value="">Choose</option>
+                    {Object.entries(labels.food).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                  </Select>
+                )}
+              </Field>
+            </div>
           </div>
-          <div><Button variant="link-error" iconLeading={Trash01} onClick={() => set({ flatmates: mates.filter((_, j) => j !== i) })}>Delete Roommate</Button></div>
+          <div className="md:self-end"><Button variant="secondary" size="sm" iconLeading={Trash01} onClick={() => set({ flatmates: mates.filter((_, j) => j !== i) })}>Delete Roommate</Button></div>
         </div>
       ))}
       {mates.length < maxFlatmates && (
-        <div><Button variant="secondary" size="sm" iconLeading={Plus} onClick={() => set({ flatmates: [...mates, { name: '', age: null, whatTheyDo: null, food: null, photoKey: null }] })}>Add a roommate</Button></div>
+        <div><Button variant="secondary" size="lg" iconLeading={Plus} onClick={() => set({ flatmates: [...mates, { name: '', age: null, whatTheyDo: null, food: null, photoKey: null }] })}>Add a roommate</Button></div>
       )}
       {mates.length > 0 && <Checkbox label="My flatmates agreed to be shown" required checked={values.flatmatesConsent ?? false} onChange={(flatmatesConsent) => set({ flatmatesConsent })} />}
     </>
@@ -234,11 +242,21 @@ export function PhotosStep({ values, set, listingId, previews, addPreview }: Ste
   const keys = values.photoKeys ?? []
   return (
     <>
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-        {keys.map((key, i) => <Thumb key={key} src={previews[key]} label={`Remove photo ${i + 1}`} onRemove={() => set({ photoKeys: keys.filter((k) => k !== key) })} />)}
+      {/* A computer shows one row: the upload box (291 px), a line, then the photos (126 px). A phone keeps the photos above the box. */}
+      <div className="flex flex-col-reverse gap-3 md:flex-row md:items-start md:gap-6">
+        {keys.length < maxPhotos && (
+          <div className="md:w-72.75 md:shrink-0">
+            <PhotoPicker target={listingUpload(listingId)} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />
+          </div>
+        )}
+        {keys.length > 0 && (
+          <div className="grid grid-cols-2 gap-3 md:flex md:gap-6 md:border-l md:border-secondary md:pl-6">
+            {keys.map((key, i) => <div key={key} className="md:size-31.5"><Thumb src={previews[key]} label={`Remove photo ${i + 1}`} onRemove={() => set({ photoKeys: keys.filter((k) => k !== key) })} /></div>)}
+          </div>
+        )}
       </div>
-      {keys.length < maxPhotos && <PhotoPicker target={listingUpload(listingId)} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
-      <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" maxLength={textLimits.description} />
+      <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" maxLength={textLimits.description}
+        className="h-33.5 px-2.75! py-2.75!" />
     </>
   )
 }

@@ -18,7 +18,7 @@ export function VerifyRow() {
   if (!verification.data) return null
   const row = verifyRow(verification.data)
   return (
-    <div className="flex items-start justify-between gap-4">
+    <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
       <span className="flex flex-col gap-0.5">
         <span className="flex flex-wrap items-center gap-2 text-md font-medium text-primary">
           Verify your ID{row.badge && <Badge tone={row.badge.tone} dot={false}>{row.badge.label}</Badge>}
@@ -40,8 +40,8 @@ export function VerifyAfterPublish({ onDone }: { onDone: () => void }) {
     <Modal icon={ShieldTick} iconTone="success" title="Verify your ID" onClose={onDone}
       actions={(
         <>
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onDone}>Not now</Button>
-          <Button variant="primary" size="lg" className="flex-1" onClick={() => setVerifying(true)}>Verify</Button>
+          <Button variant="secondary" size="md" className="flex-1" onClick={onDone}>Not now</Button>
+          <Button variant="primary" size="md" className="flex-1" onClick={() => setVerifying(true)}>Verify</Button>
         </>
       )}>
       {verifyOffer}

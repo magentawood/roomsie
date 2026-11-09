@@ -28,7 +28,7 @@ export function FeedbackCard({ className = '' }: { className?: string }) {
       {send.isError && <p role="alert" className="text-sm text-error-primary">{errorText(send.error)}</p>}
       {send.isSuccess && <p role="status" className="text-sm text-fg-success">Thanks. We read each message.</p>}
       <span>
-        <Button type={user ? 'submit' : 'button'} variant="primary" size="sm" disabled={send.isPending || loading} onClick={user ? undefined : () => setWall(true)}>
+        <Button type={user ? 'submit' : 'button'} variant="primary" size="xs" className="md:px-3 md:py-2 xl:px-3.5 xl:py-2.5" disabled={send.isPending || loading} onClick={user ? undefined : () => setWall(true)}>
           Share Feedback
         </Button>
       </span>

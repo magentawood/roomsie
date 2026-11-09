@@ -14,7 +14,7 @@ import { Modal } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
 import { Loading } from '../ui/loading'
 
-const card = 'flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5'
+const card = 'flex flex-col gap-4 rounded-xl border border-secondary p-4'
 
 function useInvitesMutation<T>(send: (body: T) => Promise<unknown>, done?: () => void) {
   const queryClient = useQueryClient()
@@ -58,8 +58,8 @@ function Gate({ gate }: { gate: AdminInvites }) {
         <Modal icon={LockUnlocked01} iconTone="neutral" title="Open roomsie to everyone?" onClose={() => setPendingOpen(null)}
           actions={
             <>
-              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setPendingOpen(null)}>Cancel</Button>
-              <Button variant="primary" size="lg" className="flex-1" disabled={save.isPending} onClick={() => save.mutate(pendingOpen)}>Open roomsie</Button>
+              <Button variant="secondary" size="md" className="flex-1" onClick={() => setPendingOpen(null)}>Cancel</Button>
+              <Button variant="primary" size="md" className="flex-1" disabled={save.isPending} onClick={() => save.mutate(pendingOpen)}>Open roomsie</Button>
             </>
           }>
           Anyone with a Google account can sign in at once. You can close roomsie again on this page.

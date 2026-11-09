@@ -31,8 +31,8 @@ export function BlockSheet({ target: { profileId, firstName: name }, onClose, on
     <Modal icon={SlashCircle01} title={`Block ${name}?`} onClose={onClose}
       actions={(
         <>
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" size="lg" className="flex-1" disabled={block.isPending} onClick={() => block.mutate()}>Block</Button>
+          <Button variant="secondary" size="md" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button variant="destructive" size="md" className="flex-1" disabled={block.isPending} onClick={() => block.mutate()}>Block</Button>
         </>
       )}>
       <p>You and {name} won’t see each other on roomsie anymore: not in results, profiles, listings or messages. {name} isn’t told.</p>

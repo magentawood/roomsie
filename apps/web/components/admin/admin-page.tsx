@@ -28,9 +28,9 @@ function TopBar({ me, crumb }: { me: MeResponse; crumb?: string }) {
   const user = useUser()
   return (
     <header className="flex h-14 items-center gap-3 border-b border-secondary bg-primary px-4 md:h-16 md:px-8">
-      <Link href="/admin" className="flex items-center gap-2.5 text-primary outline-focus-ring focus-visible:outline-2">
+      <Link href="/admin" className="flex items-center gap-3 text-primary outline-focus-ring focus-visible:outline-2">
         <Logo className="h-6.5 w-auto" />
-        <span className="text-sm font-semibold"><span className="hidden text-tertiary md:inline">/ </span>Admin</span>
+        <span className="text-sm font-semibold"><span className="hidden text-tertiary md:mr-3 md:inline">/</span>Admin</span>
       </Link>
       {crumb && <span className="hidden text-sm font-medium text-tertiary md:inline">/ {crumb}</span>}
       <span className="flex-1" />
@@ -66,9 +66,9 @@ export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: 
   return <RoleGate {...props} />
 }
 
-export const pageBody = 'mx-auto flex w-full max-w-320 flex-col gap-5 px-4 py-5 md:px-8 md:py-6 lg:px-20'
+export const pageBody = 'mx-auto flex w-full max-w-360 flex-col gap-4 px-4 py-5 md:px-8 md:py-6 lg:px-20'
 
-export const cardClass = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary p-5'
+export const cardClass = 'flex flex-col gap-3 rounded-xl border border-secondary bg-primary px-5 py-4'
 
 /** The title, the intro, the tabs and the link back (drafts sections 37 and 38). The link to the admin shows only on a phone. */
 export function SubjectHeader({ title, intro, tabs, back }: { title: string; intro?: string; tabs?: Tab[]; back?: Tab }) {
@@ -76,7 +76,7 @@ export function SubjectHeader({ title, intro, tabs, back }: { title: string; int
   const link = back ?? { label: 'Admin', href: '/admin' }
   return (
     <div className="border-b border-secondary">
-      <div className={`mx-auto flex w-full max-w-320 flex-col gap-1 px-4 pt-5 md:px-8 md:pt-8 lg:px-20 ${tabs ? '' : 'pb-5 md:pb-6'}`}>
+      <div className={`mx-auto flex w-full max-w-360 flex-col gap-1 px-4 pt-5 md:px-8 md:pt-8 lg:px-20 ${tabs ? '' : 'pb-5 md:pb-6'}`}>
         <Link href={link.href} className={`mb-1 inline-flex items-center gap-1 self-start text-sm font-semibold text-tertiary hover:text-primary ${back ? '' : 'md:hidden'}`}>
           <ArrowLeft size={16} aria-hidden />{link.label}
         </Link>
@@ -86,7 +86,7 @@ export function SubjectHeader({ title, intro, tabs, back }: { title: string; int
           <nav aria-label={title} className="mt-4 flex gap-5">
             {tabs.map((tab) => (
               <Link key={tab.href} href={tab.href} aria-current={path === tab.href ? 'page' : undefined}
-                className={tabClass(path === tab.href)}>
+                className={tabClass(path === tab.href, true)}>
                 {tab.label}
               </Link>
             ))}

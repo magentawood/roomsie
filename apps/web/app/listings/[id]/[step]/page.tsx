@@ -130,8 +130,8 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
         <Modal icon={Trash01} title="Delete this listing?" onClose={() => setConfirmDelete(false)}
           actions={(
             <>
-              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setConfirmDelete(false)}>Keep listing</Button>
-              <Button variant="destructive" size="lg" className="flex-1" disabled={remove.isPending}
+              <Button variant="secondary" size="md" className="flex-1" onClick={() => setConfirmDelete(false)}>Keep listing</Button>
+              <Button variant="destructive" size="md" className="flex-1" disabled={remove.isPending}
                 onClick={() => remove.mutateAsync().then(() => queryClient.invalidateQueries({ queryKey: queryKeys.myListings })).then(() => router.push('/listings'), (err: unknown) => setError(errorText(err)))}>
                 Delete listing
               </Button>

@@ -12,5 +12,5 @@ export function CardLink({ href, onOpen, decorative, className, children }: {
 }
 
 export function CardLabel({ children }: { children?: ReactNode }) {
-  return children ? <div className="absolute top-3 left-3">{children}</div> : null
+  return children ? <div className="absolute top-3 left-3 lg:top-1.75 lg:left-1.75">{children}</div> : null
 }

@@ -24,10 +24,10 @@ function Header({ other, listingId, name, about, menu }: { other: OtherPerson; l
   const profileId = profileOf(other)
   const view = profileId ? { href: `/people/${profileId}`, label: 'View profile' } : listingId ? { href: `/places/${listingId}`, label: 'View listing' } : null
   return (
-    <header className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
-      <Link href="/messages" aria-label="Back to messages" className="rounded-md p-1 text-fg-quaternary outline-focus-ring focus-visible:outline-2 lg:hidden"><ChevronLeft size={20} aria-hidden /></Link>
+    <header className="flex items-center gap-2 border-b border-secondary px-5 py-2 md:gap-3 md:px-6 md:py-4">
+      <Link href="/messages" aria-label="Back to messages" className="-m-1 rounded-md p-1 text-fg-quaternary outline-focus-ring focus-visible:outline-2 lg:hidden"><ChevronLeft size={20} aria-hidden /></Link>
       <Avatar photoUrl={other.photoUrl} name={other.deleted ? null : other.name} />
-      <div className="flex min-w-0 flex-1 flex-col text-sm">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-sm">
         <h1 className="truncate text-md font-semibold text-primary">{name}</h1>
         {about && <p className="truncate text-tertiary">{about}</p>}
       </div>
@@ -45,9 +45,9 @@ function MessageText({ text }: { text: string }) {
 
 function Bubble({ mine, name, at, children }: { mine: boolean; name: string; at: string; children: ReactNode }) {
   return (
-    <div className={`flex max-w-80 flex-col gap-1 sm:max-w-md ${mine ? 'self-end' : 'self-start'}`}>
+    <div className={`flex max-w-72.5 flex-col gap-1.5 sm:max-w-90 ${mine ? 'self-end' : 'self-start'}`}>
       <p className="flex justify-between gap-3 text-xs text-tertiary"><span className="font-medium text-secondary">{mine ? 'You' : name}</span>{clockTime(at)}</p>
-      <p className={`rounded-lg border border-secondary px-3.5 py-2.5 text-md wrap-anywhere whitespace-pre-line text-primary ${mine ? 'rounded-tr-none bg-primary' : 'rounded-tl-none bg-secondary'}`}>{children}</p>
+      <p className={`rounded-lg border border-secondary px-2.75 py-1.75 text-md wrap-anywhere whitespace-pre-line text-primary ${mine ? 'rounded-tr-none bg-primary' : 'rounded-tl-none bg-secondary'}`}>{children}</p>
     </div>
   )
 }
@@ -72,7 +72,8 @@ function Messages({ conversationId, name }: { conversationId: string; name: stri
   if (!messages.data) return <Loading mascot="chatting" />
   return (
     <>
-      <div ref={top} />
+      {/* No height, and no gap of the column: the notice and the first day line stay 16 px apart (drafts section 09). */}
+      <div ref={top} className="-mt-4" />
       {isFetchingNextPage && <p className="text-center text-xs text-tertiary">Loading earlier messages…</p>}
       {threadDays(messages.data.pages.flatMap((p) => p.messages)).map((day) => (
         <div key={day.label} className="flex flex-col gap-4">
@@ -100,10 +101,10 @@ function Composer({ conversationId, onSent }: { conversationId: string; onSent: 
   })
   const submit = () => { if (text.trim() && !send.isPending) send.mutate() }
   return (
-    <form className="flex flex-col gap-1 border-t border-secondary p-4 md:px-6" onSubmit={(e) => { e.preventDefault(); submit() }}>
-      <div className="flex items-end gap-2 rounded-lg border border-primary bg-primary p-2 shadow-xs focus-within:outline-2 focus-within:outline-focus-ring">
+    <form className="flex flex-col gap-1 px-5 pb-2 md:px-6 md:pb-6" onSubmit={(e) => { e.preventDefault(); submit() }}>
+      <div className="flex items-end gap-2 rounded-lg border border-primary bg-primary py-1.75 pr-1.75 pl-2.75 shadow-xs md:px-3.25 md:py-2.75 focus-within:outline-2 focus-within:outline-focus-ring">
         <textarea aria-label="Write a message" rows={1} maxLength={messageTextLimit} value={text} placeholder="Write a message…"
-          className="max-h-40 min-h-10 flex-1 resize-none bg-transparent px-1.5 py-2 text-md text-primary outline-none placeholder:text-placeholder"
+          className="max-h-40 min-h-10 flex-1 resize-none bg-transparent px-0 py-2 text-md text-primary outline-none placeholder:text-placeholder"
           onChange={(e) => { setText(e.target.value); id.current = null }}
           onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }} />
         <Button type="submit" variant="primary" size="md" iconLeading={Send01} label="Send" disabled={!text.trim() || send.isPending} />
@@ -150,7 +151,7 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
     <>
       <Header other={other} listingId={listingId} name={name} about={about} menu={menu} />
       <div ref={scroller} className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
-        <div className="flex flex-col gap-6 p-4 md:px-6">
+        <div className="mb-auto flex flex-col gap-4 px-5 py-4 md:p-6">
           <SafetyNotice />
           <Messages conversationId={conversation.id} name={name} />
         </div>
@@ -175,7 +176,7 @@ export function SentThread({ request }: { request: OutgoingRequest }) {
     <>
       <Header other={request.to} listingId={request.listingId} name={name} about={about} />
       <div className="flex min-h-0 flex-1 flex-col-reverse overflow-y-auto">
-        <div className="flex flex-col gap-6 p-4 md:px-6">
+        <div className="mb-auto flex flex-col gap-4 px-5 py-4 md:p-6">
           <SafetyNotice />
           <Bubble mine name={name} at={request.createdAt}>{request.note}</Bubble>
           <p className="text-center text-xs text-tertiary">

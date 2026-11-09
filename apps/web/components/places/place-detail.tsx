@@ -40,22 +40,22 @@ const ownerLines: Record<ListingResponse['status'], string> = {
 
 function Rows({ lines, total }: { lines: Line[]; total?: string }) {
   return (
-    <dl className="flex flex-col gap-2 rounded-xl border border-secondary bg-secondary p-4 text-sm">
+    <dl className="flex flex-col gap-3 rounded-xl border border-secondary bg-secondary p-4 text-sm lg:gap-2.5">
       {lines.map((l) => (
         <div key={l.label} className="flex justify-between gap-4"><dt className="text-secondary">{l.label}</dt><dd className="text-right text-tertiary">{l.value}</dd></div>
       ))}
-      {total && <div className="flex justify-between gap-4 border-t border-secondary pt-2 font-medium"><dt className="text-secondary">Total move in</dt><dd className="text-secondary">{total}</dd></div>}
+      {total && <div className="flex justify-between gap-4 border-t border-secondary pt-3 font-medium lg:pt-2.25"><dt className="text-secondary">Total move in</dt><dd className="text-secondary">{total}</dd></div>}
     </dl>
   )
 }
 
 function Person({ photoUrl, name, about }: { photoUrl: string | null; name: string; about?: string | null }) {
   return (
-    <div className="flex items-center gap-4 rounded-xl border border-secondary bg-secondary p-4">
+    <div className="flex items-center gap-3 rounded-xl border border-secondary bg-secondary px-4 py-3 lg:gap-4 lg:p-2.75">
       {photoUrl
-        ? <img src={photoUrl} alt="" className="size-14 rounded-full object-cover" />
-        : <span className="flex size-14 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary"><User01 size={24} aria-hidden /></span>}
-      <div className="flex flex-col text-sm"><span className="font-medium text-primary">{name}</span>{about && <span className="text-tertiary">{about}</span>}</div>
+        ? <img src={photoUrl} alt="" className="size-12 rounded-full object-cover lg:size-14" />
+        : <span className="flex size-12 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary lg:size-14"><User01 size={24} aria-hidden /></span>}
+      <div className="flex flex-col text-sm lg:gap-1"><span className="font-medium text-primary">{name}</span>{about && <span className="text-tertiary">{about}</span>}</div>
     </div>
   )
 }
@@ -66,10 +66,10 @@ function MessageLister({ listing, onMessage }: { listing: ListingResponse; onMes
   const conversations = useConversations()
   if (!outgoing.data || !conversations.data) return null
   const chat = listingChat(outgoing.data.requests, conversations.data.conversations, listing.id)
-  const message = <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} onClick={onMessage}>{`Message ${listerPhrase(listing.kind)}`}</Button>
+  const message = <Button variant="primary" size="md" className="w-full" iconLeading={MessageCircle01} onClick={onMessage}>{`Message ${listerPhrase(listing.kind)}`}</Button>
   switch (chat.state) {
-    case 'sent': return <Button variant="secondary" size="lg" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
-    case 'accepted': return <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} href={chat.conversationId && `/messages/${chat.conversationId}`} disabled={!chat.conversationId}>Open chat</Button>
+    case 'sent': return <Button variant="secondary" size="md" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
+    case 'accepted': return <Button variant="primary" size="md" className="w-full" iconLeading={MessageCircle01} href={chat.conversationId && `/messages/${chat.conversationId}`} disabled={!chat.conversationId}>Open chat</Button>
     case 'not_available': return <div className="flex flex-col gap-2">{message}<p className="text-center text-sm text-tertiary">Not available. You can send a new request.</p></div>
     default: return message
   }
@@ -77,12 +77,13 @@ function MessageLister({ listing, onMessage }: { listing: ListingResponse; onMes
 
 function OwnerBar({ listing }: { listing: ListingResponse }) {
   return (
-    <div className="flex items-start justify-between gap-3 rounded-xl border border-secondary bg-secondary p-4 text-sm">
-      <div>
+    // On a phone it is a strip under the bar, from edge to edge (drafts 393:21566); from lg a box in the column (396:22194).
+    <div className="-mx-5 -mt-4 -mb-2 flex items-center justify-between gap-3 border-b border-secondary bg-secondary px-5 py-3 text-sm md:-mx-6 md:-mt-8 lg:m-0 lg:rounded-xl lg:border lg:p-4">
+      <div className="flex flex-col gap-0.5">
         <p className="font-semibold text-primary">{listing.hidden ? 'Hidden for review' : 'Your listing'}</p>
         <p className="text-tertiary">{listing.hidden ? 'Reports hid it from others. We review it within 24 hours.' : ownerLines[listing.status]}</p>
       </div>
-      <Button variant="secondary" size="xs" iconLeading={Edit05} href={`/listings/${listing.id}/1`}>Edit</Button>
+      <Button variant="secondary" size="sm" iconLeading={Edit05} href={`/listings/${listing.id}/1`}>Edit</Button>
     </div>
   )
 }
@@ -119,15 +120,15 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const parts: [string, ReactNode][] = [
     ['Money to move in', (money || terms.length > 0) && <>{money && <Rows lines={money.lines} total={money.total} />}{terms.length > 0 && <Rows lines={terms} />}</>],
     ['Who lives here', listing.flatmates.length > 0 && (
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-2 lg:gap-4">
         {listing.flatmates.map((f) => <li key={`${f.name}-${f.age}`}><Person photoUrl={f.photoUrl} {...flatmateLines(f)} /></li>)}
       </ul>
     )],
     ['The place', (rates.length > 0 || place.length > 0) && <>{rates.length > 0 && <Rows lines={rates} />}{place.length > 0 && <Facts lines={withIcons(place)} />}</>],
-    ['House rules', rules.length > 0 && <Facts lines={withIcons(rules)} />],
+    ['House rules', rules.length > 0 && <Facts lines={withIcons(rules)} gap="gap-2 lg:gap-3" />],
     ['What’s inside', listing.insideItems.length > 0 && <Chips items={listing.insideItems.map((i) => labels.insideItems[i])} />],
     ['Building and society', listing.amenities.length > 0 && <Chips items={listing.amenities.map((a) => labels.amenities[a])} />],
-    ['What’s nearby', nearby.length > 0 && <Facts lines={withIcons(nearby)} />],
+    ['What’s nearby', nearby.length > 0 && <Facts lines={withIcons(nearby)} gap="gap-2 lg:gap-3" />],
     ['About this place', listing.description && <p className="text-sm whitespace-pre-line text-tertiary">{listing.description}</p>],
     ['Listed by', <Person photoUrl={listing.lister?.photoUrl ?? null} name={listing.lister?.name ?? listerLabel(listing.kind)} about={listing.lister && listerLabel(listing.kind)} />],
   ]
@@ -135,13 +136,13 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   return (
     <>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-secondary bg-primary px-5 py-3 lg:hidden">
-        <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
+        <Button variant="tertiary" size="sm" iconLeading={ArrowLeft} onClick={back} className="gap-1.5! px-0! py-1.5!">Back</Button>
         <div className="flex items-center gap-2">{askInChat}<PhoneMenu listing={listing} onReport={() => setReporting(true)} share={share} /></div>
       </div>
-      <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 md:px-6 md:py-8 ${listing.mine || panel ? '' : 'pb-40 lg:pb-8'}`}>
-        <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-4 lg:flex">
+      <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 pt-4 md:px-6 md:py-8 lg:max-w-192 lg:gap-5 lg:py-6 ${listing.mine || panel ? 'pb-6' : 'pb-40 lg:pb-6'}`}>
+        <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-3 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             {askInChat}
             {!listing.mine && <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setReporting(true)}>Report</Button>}
             <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
@@ -151,8 +152,8 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
         {status && <p role="status" className="text-sm text-tertiary">{status}</p>}
         {listing.mine && <OwnerBar listing={listing} />}
         <Photos photos={listing.photos} />
-        <header className="flex flex-col gap-1 border-b border-secondary pb-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+        <header className="flex flex-col gap-1 border-b border-secondary pb-4 lg:gap-1.5">
+          <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
             <h1 className="text-lg font-semibold text-primary">{title}</h1>
             {listing.verified && <Badge tone="success">{verifiedLabel(listing.kind)}</Badge>}
           </div>
@@ -164,7 +165,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
       </article>
       {/* In the panel, the bar sits at the bottom of the panel, so the chat input stays free (PD6a). */}
       {!listing.mine && (
-        <div className={`${panel ? 'sticky' : 'fixed inset-x-0'} bottom-0 z-30 flex flex-col gap-3 border-t border-secondary bg-primary p-4 lg:hidden`}>
+        <div className={`${panel ? 'sticky' : 'fixed inset-x-0'} bottom-0 z-30 flex flex-col gap-3 border-t border-secondary bg-primary px-5 py-4 lg:hidden`}>
           <MessageLister listing={listing} onMessage={() => setMessaging(true)} />
           <SaveButton kind="places" id={listing.id} className="w-full py-2.5" />
         </div>

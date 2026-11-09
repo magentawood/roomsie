@@ -21,7 +21,7 @@ import { Avatar } from '../ui/avatar'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
-import { inputClass } from '../ui/field'
+import { inputClassOf } from '../ui/field'
 import { Modal } from '../ui/modal'
 import { Loading } from '../ui/loading'
 
@@ -45,9 +45,9 @@ export function Search<F extends string>({ label, placeholder, labels, allLabel,
   const [filter, setFilter] = useState<F | 'all' | null>(none)
   const submit = (e: FormEvent) => { e.preventDefault(); setFilter(none); onSearch({ q: text.trim() }) }
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3 md:flex-row md:items-end">
-      <input type="search" aria-label={label} className={`${inputClass} md:w-90`} value={text} placeholder={placeholder} maxLength={adminSearchMax} onChange={(e) => setText(e.target.value)} />
-      <Button type="submit" variant="primary" size="md">Search</Button>
+    <form onSubmit={submit} className="flex flex-col gap-3 md:flex-row md:items-end md:gap-2">
+      <input type="search" aria-label={label} className={`${inputClassOf('xs')} md:w-90`} value={text} placeholder={placeholder} maxLength={adminSearchMax} onChange={(e) => setText(e.target.value)} />
+      <Button type="submit" variant="primary" size="sm">Search</Button>
       <ChoiceChips label="Show only" labelHidden labels={chips} value={filter} onChange={(f) => {
         const picked = f ?? none
         setFilter(picked)
@@ -91,7 +91,7 @@ function Table({ heads, children }: { heads: [string, boolean?][]; children: Rea
     <div className="overflow-x-auto rounded-xl border border-secondary">
       <table className="w-full text-left text-sm md:min-w-200">
         <thead className="bg-secondary text-xs font-medium text-tertiary">
-          <tr>{heads.map(([h, phone = true]) => <th key={h} className={`px-4 py-3 font-medium ${phone ? '' : wide}`}>{h}</th>)}</tr>
+          <tr>{heads.map(([h, phone = true]) => <th key={h} className={`px-4 py-3 font-medium first:pl-6 last:pr-6 ${phone ? '' : wide}`}>{h}</th>)}</tr>
         </thead>
         <tbody className="text-secondary">{children}</tbody>
       </table>
@@ -113,16 +113,16 @@ export function PeopleList() {
           <Table heads={[['Person'], ['Joined', false], ['Last active', false], ['State'], ['']]}>
             {people.data.people.map((p) => (
               <tr key={p.userId} className="border-t border-secondary">
-                <td className="px-4 py-3">
+                <td className="px-4 py-3.5 first:pl-6 last:pr-6">
                   <span className="flex items-center gap-3">
                     <Avatar src={p.photoUrl} size="md" />
                     <span className="flex flex-col"><span className="font-semibold text-primary">{p.name ?? 'No card'}</span><span className="text-tertiary">{p.email ?? '—'}</span></span>
                   </span>
                 </td>
-                <td className={`px-4 py-3 text-tertiary ${wide}`}>{istDay(p.joinedAt, 'short')}</td>
-                <td className={`px-4 py-3 text-tertiary ${wide}`}>{p.lastActiveAt ? ago(p.lastActiveAt) : '—'}</td>
-                <td className="px-4 py-3"><PersonStates row={p} /></td>
-                <td className="px-4 py-3 text-right"><Link href={`/admin/people/${p.userId}`} className="font-semibold text-primary hover:underline">Open</Link></td>
+                <td className={`px-4 py-3.5 first:pl-6 last:pr-6 text-tertiary ${wide}`}>{istDay(p.joinedAt, 'short')}</td>
+                <td className={`px-4 py-3.5 first:pl-6 last:pr-6 text-tertiary ${wide}`}>{p.lastActiveAt ? ago(p.lastActiveAt) : '—'}</td>
+                <td className="px-4 py-3.5 first:pl-6 last:pr-6"><PersonStates row={p} /></td>
+                <td className="px-4 py-3.5 first:pl-6 last:pr-6 text-right"><Link href={`/admin/people/${p.userId}`} className="font-semibold text-primary hover:underline">Open</Link></td>
               </tr>
             ))}
           </Table>
@@ -147,17 +147,17 @@ export function ListingsList() {
           <Table heads={[['Listing'], ['Lister', false], ['Rent', false], ['Posted', false], ['State'], ['']]}>
             {listings.data.listings.map((l) => (
               <tr key={l.id} className="border-t border-secondary">
-                <td className="px-4 py-3">
+                <td className="px-4 py-3.5 first:pl-6 last:pr-6">
                   <span className="flex items-center gap-3">
                     <span className="flex size-10 shrink-0 items-center justify-center rounded-md bg-secondary text-fg-quaternary"><Home02 size={18} aria-hidden /></span>
                     <span className="flex flex-col"><span className="font-semibold text-primary">{l.title}</span><span className="text-tertiary">{l.area ?? 'No area'}</span></span>
                   </span>
                 </td>
-                <td className={`px-4 py-3 ${wide}`}><span className="flex flex-col"><span>{l.lister ?? 'No card'}</span><span className="text-tertiary">{l.listerEmail ?? '—'}</span></span></td>
-                <td className={`px-4 py-3 text-tertiary ${wide}`}>{l.rent === null ? '—' : rupees(l.rent)}</td>
-                <td className={`px-4 py-3 text-tertiary ${wide}`}>{istDay(l.postedAt, 'short')}</td>
-                <td className="px-4 py-3"><ListingStates row={l} /></td>
-                <td className="px-4 py-3 text-right"><Link href={`/admin/listings/${l.id}`} className="font-semibold text-primary hover:underline">Open</Link></td>
+                <td className={`px-4 py-3.5 first:pl-6 last:pr-6 ${wide}`}><span className="flex flex-col"><span>{l.lister ?? 'No card'}</span><span className="text-tertiary">{l.listerEmail ?? '—'}</span></span></td>
+                <td className={`px-4 py-3.5 first:pl-6 last:pr-6 text-tertiary ${wide}`}>{l.rent === null ? '—' : rupees(l.rent)}</td>
+                <td className={`px-4 py-3.5 first:pl-6 last:pr-6 text-tertiary ${wide}`}>{istDay(l.postedAt, 'short')}</td>
+                <td className="px-4 py-3.5 first:pl-6 last:pr-6"><ListingStates row={l} /></td>
+                <td className="px-4 py-3.5 first:pl-6 last:pr-6 text-right"><Link href={`/admin/listings/${l.id}`} className="font-semibold text-primary hover:underline">Open</Link></td>
               </tr>
             ))}
           </Table>
@@ -224,8 +224,8 @@ function Confirm({ title, text, action, pending, onConfirm, onClose }: { title: 
     <Modal icon={SlashCircle01} title={title} onClose={onClose}
       actions={
         <>
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" size="lg" className="flex-1" disabled={pending} onClick={onConfirm}>{action}</Button>
+          <Button variant="secondary" size="md" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button variant="destructive" size="md" className="flex-1" disabled={pending} onClick={onConfirm}>{action}</Button>
         </>
       }>
       {text}
@@ -256,8 +256,8 @@ export function PersonView({ userId }: { userId: string }) {
   return (
     <DetailPage title={p.name ?? 'No card'} back={toPeople} intro={`Joined ${istDay(p.joinedAt, 'short')} · last active ${p.lastActiveAt ? ago(p.lastActiveAt) : 'never'}`}>
       <PersonStates row={p} />
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-        <div className="flex flex-col gap-5 lg:flex-1">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
+        <div className="flex flex-col gap-4 lg:flex-1">
           <section aria-label="Account" className={cardClass}>
             <h2 className="text-lg font-semibold text-primary">Account</h2>
             <Facts facts={[
@@ -301,8 +301,8 @@ export function ListingView({ id }: { id: string }) {
   return (
     <DetailPage title={l.title} back={toListings} intro={`${l.area ?? 'No area'} · listed by ${l.lister ?? 'a person with no card'} · posted ${istDay(l.postedAt, 'short')}`}>
       <ListingStates row={l} />
-      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-        <div className="flex flex-col gap-5 lg:flex-1">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
+        <div className="flex flex-col gap-4 lg:flex-1">
           <section aria-label="Listing" className={cardClass}>
             <h2 className="text-lg font-semibold text-primary">Listing</h2>
             <Facts facts={[

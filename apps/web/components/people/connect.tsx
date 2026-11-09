@@ -15,12 +15,12 @@ function Received({ profileId, requestId, note, line, save }: { profileId: strin
   return (
     <div className="flex flex-col gap-3">
       <p className="text-md font-semibold text-primary">{line}</p>
-      <p className="rounded-lg border border-secondary bg-secondary p-3 text-sm text-tertiary">{note}</p>
+      <p className="rounded-lg border border-secondary bg-secondary p-4 text-sm text-tertiary">{note}</p>
       {answer.isError && <p role="alert" className="text-sm text-error-primary">{errorText(answer.error)}</p>}
       <div className="flex gap-3">
         {save}
-        <Button variant="secondary" size="lg" className="flex-1" disabled={answer.isPending} onClick={() => answer.mutate('decline')}>Decline</Button>
-        <Button variant="primary" size="lg" className="flex-1" disabled={answer.isPending} onClick={() => answer.mutate('accept')}>Accept</Button>
+        <Button variant="secondary" size="md" className="flex-1" disabled={answer.isPending} onClick={() => answer.mutate('decline')}>Decline</Button>
+        <Button variant="primary" size="md" className="flex-1" disabled={answer.isPending} onClick={() => answer.mutate('accept')}>Accept</Button>
       </div>
     </div>
   )
@@ -28,15 +28,15 @@ function Received({ profileId, requestId, note, line, save }: { profileId: strin
 
 function OpenChat({ profileId, name }: { profileId: string; name: string }) {
   const chat = chatWith(useConversations().data?.conversations ?? [], profileId)
-  return <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} href={chat && `/messages/${chat}`} disabled={!chat}>{`Open chat with ${name}`}</Button>
+  return <Button variant="primary" size="md" className="w-full" iconLeading={MessageCircle01} href={chat && `/messages/${chat}`} disabled={!chat}>{`Open chat with ${name}`}</Button>
 }
 
 function ConnectButton({ person, name, onSayHi }: { person: PersonResponse; name: string; onSayHi: () => void }) {
   switch (person.connection.state) {
-    case 'sent': return <Button variant="secondary" size="lg" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
+    case 'sent': return <Button variant="secondary" size="md" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
     case 'accepted': return <OpenChat profileId={person.id} name={name} />
     default: return (
-      <Button variant="primary" size="lg" className="w-full" iconLeading={MessageCircle01} disabled={person.requestsLeftToday === 0} onClick={onSayHi}>
+      <Button variant="primary" size="md" className="w-full" iconLeading={MessageCircle01} disabled={person.requestsLeftToday === 0} onClick={onSayHi}>
         {`Say hi to ${name}`}
       </Button>
     )

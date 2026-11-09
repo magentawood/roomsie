@@ -12,8 +12,8 @@ export function LogOutRow() {
   const router = useRouter()
   const logOut = useMutation({ mutationFn: signOut, onSuccess: () => router.replace('/') })
   return (
-    <div className="flex items-start justify-between gap-4">
-      <span className="flex flex-col">
+    <div className="flex flex-col items-start gap-3 md:flex-row md:items-center md:justify-between md:gap-4">
+      <span className="flex flex-col gap-0.5">
         <span className="text-md font-medium text-primary">Log out</span>
         <span className="text-sm text-tertiary">Sign out of Roomsie on this device.</span>
         {logOut.isError && <span role="alert" className="text-sm text-error-primary">{errorText(logOut.error)}</span>}

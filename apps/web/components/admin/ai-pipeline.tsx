@@ -26,7 +26,7 @@ const bandLabels: Record<keyof Numbers['bands'], string> = {
 
 function Metric({ label, value, note, children }: { label: string; value: string; note?: string; children?: ReactNode }) {
   return (
-    <section aria-label={label} className={cardClass}>
+    <section aria-label={label} className={`${cardClass} gap-1.5`}>
       <p className="text-sm font-medium text-tertiary">{label}</p>
       <p className="text-display-xs font-semibold text-primary">{value}</p>
       {note && <p className="text-sm text-tertiary">{note}</p>}
@@ -62,8 +62,8 @@ function GeminiSwitch({ state, fallback }: { state: AiOverviewResponse['switch']
         <Modal icon={CpuChip01} iconTone="neutral" title="Use Gemini for all calls?" onClose={() => setAsking(false)}
           actions={
             <>
-              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setAsking(false)}>Cancel</Button>
-              <Button variant="primary" size="lg" className="flex-1" disabled={flip.isPending} onClick={() => flip.mutate({ geminiOnly: true })}>Switch all calls</Button>
+              <Button variant="secondary" size="md" className="flex-1" onClick={() => setAsking(false)}>Cancel</Button>
+              <Button variant="primary" size="md" className="flex-1" disabled={flip.isPending} onClick={() => flip.mutate({ geminiOnly: true })}>Switch all calls</Button>
             </>
           }>
           {`The next call of each role goes to the fallback model${fallback ? `, ${fallback}` : ''}. Replies can be slower, and in English more often. Switch back when the main model works again. The log keeps your name and the time.`}
@@ -145,8 +145,8 @@ export function AiOverview() {
 
 function Setting({ name, value }: { name: string; value: string }) {
   return (
-    <p className="flex flex-col gap-0.5 border-t border-secondary py-2.5 text-sm first-of-type:border-t-0 md:flex-row md:gap-3">
-      <span className="font-medium text-tertiary md:w-56 md:shrink-0">{name}</span>
+    <p className="flex flex-col gap-0.5 py-1 text-sm md:flex-row md:gap-3">
+      <span className="font-medium text-tertiary md:w-50 md:shrink-0">{name}</span>
       <span className="text-primary">{value}</span>
     </p>
   )
@@ -186,7 +186,7 @@ export function AiSettingsAndLog() {
       <section aria-label="Settings of the server" className={`${cardClass} lg:flex-1`}>
         <h2 className="text-lg font-semibold text-primary">Settings of the server</h2>
         <p className="text-sm text-tertiary">Read-only. A change of these is a deploy, and a change of a prompt runs the eval set first.</p>
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-3">
           <Setting name="Main model" value={settings.models?.primary ?? 'Not set'} />
           <Setting name="Fallback" value={settings.models ? `${settings.models.fallback}, after a failed call, and for each call while the switch is on` : 'Not set'} />
           <Setting name="Time limit of a call" value={settings.models ? seconds(settings.models.timeoutMs) : 'Not set'} />

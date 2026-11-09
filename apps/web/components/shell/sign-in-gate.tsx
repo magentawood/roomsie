@@ -18,13 +18,14 @@ export function SignInGate({ title, text, mascot, children }: { title: string; t
   if (user) return <>{children}</>
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">
-      <div className="flex w-full max-w-90 flex-col items-center gap-6 text-center">
+      <div className="flex w-full max-w-90 flex-col items-center gap-6 text-center lg:max-w-96.5">
         <Logo className="h-7 w-auto text-primary" />
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           <h1 className="text-lg font-semibold text-primary">{title}</h1>
           <p className="text-sm text-tertiary">{text}</p>
         </div>
-        <div className="flex w-full flex-col gap-3">
+        {/* The button is 32 under the text on a phone and 48 on a computer, as the sign-in of the designs. */}
+        <div className="mt-2 flex w-full flex-col gap-3 lg:mt-6">
           <GoogleSignIn size="lg" />
           <LegalLine />
         </div>

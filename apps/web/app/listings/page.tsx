@@ -48,13 +48,13 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
   }
   const photo = listing.photos[0]
   return (
-    <li className="flex flex-col gap-3 rounded-md border border-secondary bg-primary p-4 md:flex-row md:flex-wrap md:items-center md:gap-5 md:p-5">
+    <li className="flex flex-col gap-3 rounded-md border border-secondary bg-primary p-4 md:flex-row md:flex-wrap md:items-center md:gap-3 md:p-4.75">
       <div className="flex min-w-0 flex-1 items-start gap-3">
         {photo
           ? <img src={photo.url} alt="" className="size-16 shrink-0 rounded-sm border border-primary object-cover" />
           : <span className="flex size-16 shrink-0 items-center justify-center rounded-sm border border-primary bg-secondary text-fg-quaternary"><Home02 size={24} aria-hidden /></span>}
         <div className="flex min-w-0 flex-col gap-1 text-sm">
-          <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 md:mb-0.5">
             <span className="font-semibold text-secondary">{listingTitle(listing)}</span>
             {listing.removed
               ? <Badge tone="error">Removed by a moderator</Badge>
@@ -65,10 +65,11 @@ function ListingCard({ listing, areaName }: { listing: ListingResponse; areaName
           {resume
             ? <span className="font-medium text-secondary">Step {resume} of {steps.length} · {stepCopy[steps[resume - 1]!].title}</span>
             : address && <span className="font-medium text-secondary">{address}</span>}
-          <span className="font-medium text-secondary">{rentLine(listing)}</span>
+          {/* The rent line is 18 px high on a computer, so the card is 110 px as in the designs. */}
+          <span className="font-medium text-secondary md:leading-4.5">{rentLine(listing)}</span>
         </div>
       </div>
-      <div className="flex flex-wrap gap-2">{(listing.removed ? ['edit' as const] : cardActions[listing.status]).map(action)}</div>
+      <div className="flex flex-wrap gap-2 md:gap-3">{(listing.removed ? ['edit' as const] : cardActions[listing.status]).map(action)}</div>
       {listing.removed && <p className="text-sm text-tertiary md:basis-full">It shows to nobody, and it cannot go live again. You can still delete it in Edit.</p>}
       {missing && <div className="md:basis-full"><MissingNotice listing={listing} missing={missing} /></div>}
       {status.isError && !missing && <p role="alert" className="text-sm text-error-primary md:basis-full">{errorText(status.error)}</p>}
@@ -81,7 +82,7 @@ function MyListings() {
   const mine = useQuery({ queryKey: queryKeys.myListings, queryFn: () => api(user, '/v1/listings/mine', myListingsResponse) })
   const areaLabels = useAreaLabels()
   return (
-    <div className="flex flex-1 flex-col gap-3">
+    <div className="flex flex-1 flex-col gap-3 md:gap-6">
         {mine.isError && <p role="alert" className="text-sm text-error-primary">{errorText(mine.error)}</p>}
         {mine.isPending && <Loading mascot="home" />}
         {mine.data && mine.data.listings.length === 0 && (
@@ -91,10 +92,10 @@ function MyListings() {
         )}
         {mine.data && mine.data.listings.length > 0 && (
           <>
-            <ul className="flex flex-col gap-3">
+            <ul className="flex flex-col gap-3 md:gap-6">
               {mine.data.listings.map((l) => <ListingCard key={l.id} listing={l} areaName={l.areaSlug ? areaLabels[l.areaSlug] : undefined} />)}
             </ul>
-            <div><Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button></div>
+            <div><Button variant="primary" size="sm" iconLeading={Plus} href="/listings/new">New listing</Button></div>
           </>
         )}
     </div>
@@ -113,7 +114,7 @@ function Listings() {
   return (
     <>
       <PageHeader title="Listings" backHref="/" inPhoneBar />
-      <main className="flex flex-1 flex-col gap-5 px-5 py-5 md:px-6 md:py-8">
+      <main className="flex flex-1 flex-col gap-4 px-5 pt-4 pb-3 md:gap-6 md:px-6 md:py-8">
         <Tabs label="Listings" tabs={tabs} value={tab} onChange={(next) => router.replace(next === 'mine' ? pathname : `${pathname}?tab=${next}`)} />
         <div role="tabpanel" className="flex flex-1 flex-col">
           {tab === 'mine' ? <MyListings /> : tab === 'places' ? <SavedPlaces /> : <SavedPeople />}

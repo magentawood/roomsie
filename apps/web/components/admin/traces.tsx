@@ -46,19 +46,19 @@ export function TurnsList() {
         <div className="overflow-x-auto rounded-xl border border-secondary">
           <table className="w-full text-left text-sm md:min-w-200">
             <thead className="bg-secondary text-xs font-medium text-tertiary">
-              <tr>{['Time', 'Session', 'Band', 'Language', 'Calls', 'Time taken', 'Result', ''].map((h) => <th key={h} className="px-4 py-3 font-medium">{h}</th>)}</tr>
+              <tr>{['Time', 'Session', 'Band', 'Language', 'Calls', 'Time taken', 'Result', ''].map((h) => <th key={h} className="px-4 py-3 font-medium first:pl-6 last:pr-6">{h}</th>)}</tr>
             </thead>
             <tbody className="text-secondary">
               {turns.data.turns.map((t) => (
                 <tr key={t.key} className="border-t border-secondary">
-                  <td className="px-4 py-3 text-tertiary">{dateAndTime(t.at)}</td>
-                  <td className="px-4 py-3 font-semibold text-primary">{`${t.sessionCode} · turn ${t.turn}`}</td>
-                  <td className="px-4 py-3">{t.band ? bandLabels[t.band] : '—'}</td>
-                  <td className="px-4 py-3">{languageOf(t)}</td>
-                  <td className="px-4 py-3">{t.calls}</td>
-                  <td className="px-4 py-3">{seconds(t.ms)}</td>
-                  <td className="px-4 py-3"><Badge tone={results[t.result].tone} dot={false}>{results[t.result].label(t.resultRole ?? '')}</Badge></td>
-                  <td className="px-4 py-3 text-right"><Link href={`/admin/ai/turns/${t.key}`} className="font-semibold text-primary hover:underline">Open</Link></td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6 text-tertiary">{dateAndTime(t.at)}</td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6 font-semibold text-primary">{`${t.sessionCode} · turn ${t.turn}`}</td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6">{t.band ? bandLabels[t.band] : '—'}</td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6">{languageOf(t)}</td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6">{t.calls}</td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6">{seconds(t.ms)}</td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6"><Badge tone={results[t.result].tone} dot={false}>{results[t.result].label(t.resultRole ?? '')}</Badge></td>
+                  <td className="px-4 py-3.5 first:pl-6 last:pr-6 text-right"><Link href={`/admin/ai/turns/${t.key}`} className="font-semibold text-primary hover:underline">Open</Link></td>
                 </tr>
               ))}
             </tbody>

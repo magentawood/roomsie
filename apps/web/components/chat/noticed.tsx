@@ -6,11 +6,12 @@ import { Button } from '../ui/button'
 /** "Roomsie Noticed" of flow 02: what the code counted in the results, each note with a button that changes the search. */
 export function NoticedBox({ lines, onTap }: { lines: NoteLine[]; onTap: (tap: ChipTap) => void }) {
   return (
-    <section aria-label="Roomsie Noticed" className="flex flex-col gap-4 rounded-lg bg-noticed p-3">
+    // The text sits 12 in from the outside of the 1.5 px rainbow border, as in the designs.
+    <section aria-label="Roomsie Noticed" className="flex flex-col gap-4 rounded-lg bg-noticed p-[10.5px]">
       <h2 className="flex items-center gap-2 text-md font-semibold text-secondary"><Stars02 size={24} aria-hidden className="text-noticed" />Roomsie Noticed</h2>
       <ul className="flex flex-col divide-y divide-secondary">
         {lines.map((line) => (
-          <li key={line.text} className="flex flex-col items-start gap-3 py-4 first:pt-0 last:pb-0">
+          <li key={line.text} className="flex flex-col items-start gap-3 pt-4 pb-3.75 first:pt-0 last:pb-0">
             <p className="text-sm text-secondary">{line.text}</p>
             <Button variant="secondary" size="xs" onClick={() => onTap(line.tap)}>{line.button}</Button>
           </li>

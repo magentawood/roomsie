@@ -67,13 +67,13 @@ function MatchLabel({ result }: { result: MatchResult }) {
 function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   const areaLabels = useAreaLabels()
   return (
-    <ul className="grid gap-4 sm:grid-cols-2">
+    <ul className="grid gap-7 sm:grid-cols-2 sm:gap-4 lg:gap-x-4.5 lg:gap-y-6">
       {results.map((result) => {
         const card = pickOf(result)
         const picked = Boolean(picks?.picked.some((p) => p.id === card.id))
         const label = (
           <div className="flex flex-wrap items-center gap-2">
-            {picks && <CheckChip label={picked ? 'Selected' : 'Select'} ariaLabel={`Compare ${card.name}`} checked={picked} onToggle={() => picks.onPick(card)} />}
+            {picks && <CheckChip size="xs" label={picked ? 'Selected' : 'Select'} ariaLabel={`Compare ${card.name}`} checked={picked} onToggle={() => picks.onPick(card)} />}
             <MatchLabel result={result} />
           </div>
         )
@@ -92,8 +92,8 @@ function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?
 /** "No relevant results" and the suggested posts of flow 02 (PD6c). */
 function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col items-center gap-3 py-6 text-center">
+    <div className="flex flex-col gap-6 lg:gap-5">
+      <div className="flex flex-col items-center gap-3 py-6 text-center lg:gap-4 lg:py-4">
         <span className="flex size-12 items-center justify-center rounded-xl border border-primary text-fg-quaternary shadow-xs"><FaceSad size={24} aria-hidden /></span>
         <div className="flex max-w-88 flex-col gap-1">
           <h3 className="text-md font-semibold text-primary">No relevant results</h3>
@@ -101,7 +101,7 @@ function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; pic
         </div>
       </div>
       {suggested.length > 0 && (
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-4 lg:gap-5">
           <h3 className="border-b border-dashed border-secondary pb-4 text-md font-medium text-primary">Suggested posts</h3>
           <ResultGrid results={suggested} picks={picks} onOpen={onOpen} />
         </section>
@@ -147,28 +147,29 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
         )
         : (
           <>
-            <header className="flex items-start justify-between gap-3 border-b border-secondary px-5 py-4 lg:px-6">
+            {/* From lg the line under the header spans the content only, as in the designs. */}
+            <header className="flex items-center justify-between gap-10 border-b border-secondary px-5 py-3 lg:mx-6 lg:items-start lg:gap-3 lg:px-0 lg:pt-6 lg:pb-3">
               <div className="flex flex-col gap-1">
                 <h2 className="text-lg font-semibold text-primary">
                   {title} <span className="font-normal text-tertiary">· {countLine(found.total)}</span>
                 </h2>
                 {sample && <span><Badge tone="warning">Sample data</Badge></span>}
               </div>
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex shrink-0 items-center gap-2 lg:gap-4">
                 {/* The small secondary button of the designs, with the chevrons of a select. */}
                 <span className="relative">
-                  <select aria-label="Sort" className="appearance-none rounded-lg border border-primary bg-primary py-1.5 pr-8 pl-3 text-sm font-semibold text-secondary shadow-xs outline-focus-ring focus-visible:outline-2">
+                  <select aria-label="Sort" className="appearance-none rounded-lg border border-primary bg-primary py-1.25 pr-7.75 pl-2.75 text-sm font-semibold text-secondary shadow-xs outline-focus-ring focus-visible:outline-2">
                     <option>Best Matches</option>
                   </select>
-                  <ChevronSelectorVertical size={16} aria-hidden className="pointer-events-none absolute top-1/2 right-2.5 -translate-y-1/2 text-fg-quaternary" />
+                  <ChevronSelectorVertical size={16} aria-hidden className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-fg-quaternary" />
                 </span>
                 <CloseButton onClose={onClose} />
               </div>
             </header>
-            <div onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-5 lg:px-6">
+            <div onScroll={onScroll} className="min-h-0 flex-1 overflow-y-auto px-5 py-4 lg:px-6 lg:pt-5 lg:pb-6">
               {notice}
               {picked.length > 0 && (
-                <div className="mb-4 flex items-center justify-between gap-3 rounded-xl border border-secondary bg-secondary py-2 pr-2 pl-4">
+                <div className="mb-5 flex items-center justify-between gap-3 rounded-xl border border-secondary bg-secondary py-[5.5px] pr-[5.5px] pl-2.75 lg:mb-6">
                   <p className="text-md font-medium text-primary">{picked.length} Selected</p>
                   <Button variant="tertiary" size="sm" iconLeading={XClose} label="Clear the selection" onClick={onClear} />
                 </div>

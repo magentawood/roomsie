@@ -51,7 +51,7 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
   const decide = (action: ReviewAction) => { setConfirming(false); review.mutate(action) }
 
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5">
+    <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4">
       <div className="flex items-start gap-3">
         {subject.photo
           ? <img src={subject.photo} alt="" className={`size-16 shrink-0 object-cover ${item.kind === 'person' ? 'rounded-full' : 'rounded-md'}`} />
@@ -72,7 +72,7 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
       </div>
       <ul className="divide-y divide-secondary rounded-lg border border-secondary">
         {item.reports.map((r) => (
-          <li key={r.id} className="px-4 py-3 text-sm">
+          <li key={r.id} className="flex flex-col gap-0.5 px-4 py-3 text-sm">
             <p className="font-medium text-secondary">{labels[r.reason]} · {ago(r.createdAt)}</p>
             {r.detail && <p className="text-tertiary">{r.detail}</p>}
           </li>
@@ -81,7 +81,7 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
       {subject.text && <blockquote className="border-l-2 border-secondary pl-3 text-sm text-tertiary">{subject.text}</blockquote>}
       {review.isError && <p role="alert" className="text-sm text-error-primary">{errorText(review.error)}</p>}
       {/* On a phone, the three buttons fill the row. */}
-      <div className="flex gap-3 *:flex-1 md:*:flex-none">
+      <div className="flex gap-3 *:flex-1 md:gap-2 md:*:flex-none">
         <Button variant="secondary" size="sm" disabled={review.isPending} onClick={() => decide('dismiss')}>Dismiss</Button>
         <Button variant="secondary" size="sm" disabled={review.isPending} onClick={() => decide('hide')}>{subject.hidden ? 'Keep hidden' : 'Hide'}</Button>
         <Button variant="destructive" size="sm" disabled={review.isPending} onClick={() => setConfirming(true)}>Suspend</Button>
@@ -90,8 +90,8 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
         <Modal icon={SlashCircle01} title={`Suspend ${subject.owner ?? 'this person'}?`} onClose={() => setConfirming(false)}
           actions={(
             <>
-              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setConfirming(false)}>Cancel</Button>
-              <Button variant="destructive" size="lg" className="flex-1" onClick={() => decide('suspend')}>Suspend</Button>
+              <Button variant="secondary" size="md" className="flex-1" onClick={() => setConfirming(false)}>Cancel</Button>
+              <Button variant="destructive" size="md" className="flex-1" onClick={() => decide('suspend')}>Suspend</Button>
             </>
           )}>
           {subject.owner ? firstName(subject.owner) : 'The person'} is signed out everywhere. The card and the listings are hidden, and the open

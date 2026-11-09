@@ -121,7 +121,7 @@ export function AdminHome() {
   const late = home.data ? home.data.cards.reduce((sum, card) => sum + lateOf(card), 0) : 0
   return (
     <main className="flex-1 bg-secondary">
-      <div className="mx-auto flex w-full max-w-320 flex-col gap-6 px-4 py-6 md:gap-8 md:px-8 md:py-10 lg:px-20">
+      <div className="mx-auto flex w-full max-w-360 flex-col gap-6 px-4 py-6 md:gap-8 md:px-8 md:py-10 lg:px-20">
         <header className="flex flex-col gap-1">
           <h1 className="text-display-xs font-semibold text-primary md:text-display-sm">{`${greeting(now)}, ${user.displayName?.split(' ')[0] ?? 'there'}`}</h1>
           <p className="text-md text-tertiary">

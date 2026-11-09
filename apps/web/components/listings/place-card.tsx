@@ -20,13 +20,16 @@ export function PlaceCard({ listing, areaName, action, label, onOpen }: {
           : <span className="flex size-full items-center justify-center text-fg-quaternary"><Home02 size={32} aria-hidden /></span>}
       </CardLink>
       <CardLabel>{label}</CardLabel>
-      <div className="flex flex-1 flex-col gap-2 p-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{listingTitle(listing)}</CardLink></h3>
-          {listing.verified && <Badge tone="success">Verified</Badge>}
+      {/* 12 8 in (with the 1 px border), the title and the area 8 apart, then 12 to the price (the "Heading and subheading" of the designs). */}
+      <div className="flex flex-1 flex-col gap-3 px-1.75 py-3">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{listingTitle(listing)}</CardLink></h3>
+            {listing.verified && <Badge tone="success">Verified</Badge>}
+          </div>
+          {areaName && <p className="flex items-center gap-1.5 text-sm text-secondary"><MarkerPin01 size={16} aria-hidden className="shrink-0 text-fg-quaternary" />{areaName}</p>}
         </div>
-        {areaName && <p className="flex items-center gap-1.5 text-sm text-secondary"><MarkerPin01 size={16} aria-hidden className="shrink-0 text-fg-quaternary" />{areaName}</p>}
-        <div className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-secondary pt-2">
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-dashed border-secondary pt-3">
           <p className="text-lg font-semibold text-primary">
             {rent ? <><span className="underline">{rent}</span> <span className="text-sm font-normal text-tertiary">/mo</span></> : <span className="text-sm font-normal text-tertiary">Rent not set</span>}
           </p>

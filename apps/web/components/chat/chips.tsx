@@ -38,7 +38,7 @@ function AreaChips({ onDone }: { onDone: (slugs: string[]) => void }) {
   return (
     <>
       <div className="flex flex-wrap gap-2">
-        {groups.map((group) => <CheckChip key={group.slug} label={group.name} checked={picks.includes(group.slug)} onToggle={() => setPicks(toggled(picks, group.slug))} />)}
+        {groups.map((group) => <CheckChip key={group.slug} size="sm" label={group.name} checked={picks.includes(group.slug)} onToggle={() => setPicks(toggled(picks, group.slug))} />)}
       </div>
       <Button variant="primary" size="sm" disabled={!picks.length} onClick={() => onDone(picks)}>Done</Button>
     </>

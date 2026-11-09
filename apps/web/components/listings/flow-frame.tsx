@@ -11,17 +11,17 @@ export function FlowFrame({ step, total, title, helper, error, notice, previous,
   return (
     <>
       <PageHeader title="Post a listing" backHref="/listings" />
-      <main className="flex flex-1 flex-col gap-6 px-5 py-5 md:px-6 md:py-8">
-        <StepBar step={step} total={total} />
-        <div className="flex flex-col gap-1 border-b border-secondary pb-5">
+      <main className="flex flex-1 flex-col gap-6 px-5 pt-5 pb-6 md:gap-8 md:px-6 md:py-10">
+        <StepBar step={step} total={total} roomy />
+        <div className="flex flex-col gap-0.5 border-b border-secondary pb-5">
           <h2 className="text-md font-semibold text-primary">{title}</h2>
           <p className="text-sm text-tertiary">{helper}</p>
         </div>
         {notice}
         {error && <p role="alert" className="rounded-md border border-error bg-badge-error p-3 text-sm text-error-primary">{error}</p>}
-        <div className="flex flex-col gap-6">{children}</div>
+        <div className="flex flex-col gap-6 md:gap-8">{children}</div>
       </main>
-      <footer className="sticky bottom-0 z-30 flex items-center gap-3 border-t border-secondary bg-primary px-5 py-3 md:px-6 md:py-4">
+      <footer className="sticky bottom-0 z-30 flex items-center gap-3 border-t border-secondary bg-primary px-5 py-3 md:px-6 md:pt-5 md:pb-4">
         {/* An icon on a phone, so the three buttons fit at 390 px. */}
         <span className="md:hidden"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} label="Previous step" {...previous} /></span>
         <span className="hidden md:inline-flex"><Button variant="secondary" size="sm" iconLeading={ArrowLeft} {...previous}>Previous step</Button></span>
