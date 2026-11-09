@@ -68,6 +68,7 @@ function listingFilter(search: ListingSearch) {
     visibleListing(search.viewerUserId),
     search.viewerUserId && ne(listings.ownerUserId, search.viewerUserId),
     inArray(listings.kind, search.kinds),
+    search.ids && inArray(listings.id, search.ids),
     search.areas && inArray(listings.areaSlug, search.areas),
     roomType && sql`(${listings.kind} <> 'room_in_flat' or ${listings.roomType} is distinct from ${roomType === 'private' ? 'shared' : 'private'})`,
     rentFits(true),

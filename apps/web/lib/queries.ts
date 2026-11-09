@@ -3,8 +3,8 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query'
 import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
   adminHomeView, adminInvitesResponse, adminListingView, adminTurnView, adminTurnsView, traceViewsResponse, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, productNumbersView, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
-  savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse,
-  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type FormA, type NumberPeriod, type SavedKind,
+  savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse, fitResponse,
+  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type CompareKind, type FormA, type NumberPeriod, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError, chatApi } from './api'
 import { areaTree } from './areas'
@@ -47,6 +47,7 @@ export const queryKeys = {
   notes: ['notes'],
   waitlistJoins: (goalId: string) => ['waitlist', goalId],
   results: (formKey: string) => ['results', formKey],
+  fit: (formKey: string, id: string) => ['fit', formKey, id],
 } as const
 
 export function useMe() {
@@ -163,12 +164,14 @@ export function useListing(id: string | null) {
   })
 }
 
-export function usePerson(id: string) {
+/** `id`: null loads nothing, for a card in the results panel that is a place. */
+export function usePerson(id: string | null) {
   const user = useUser()
   return useQuery({
-    queryKey: queryKeys.person(id),
+    queryKey: queryKeys.person(id ?? ''),
     queryFn: () => api(user, `/v1/people/${id}`, personResponse),
     retry: retryOnServerErrors,
+    enabled: id !== null,
   })
 }
 
@@ -281,6 +284,18 @@ export function useResults(form: FormA | null) {
     enabled: form !== null && !loading,
     staleTime: Infinity,
     gcTime: Infinity,
+  })
+}
+
+/** The "Best match" label of one card for a form (PD3a). `form`: null loads nothing. An API from before the route gives an error, and the box does not show. */
+export function useFit(form: FormA | null, kind: CompareKind, id: string) {
+  const user = useUser()
+  return useQuery({
+    queryKey: queryKeys.fit(form ? formKey(form) : '', id),
+    queryFn: () => api(user, '/v1/results/fit', fitResponse, { method: 'POST', body: { form, kind, id } }),
+    enabled: form !== null,
+    staleTime: Infinity,
+    retry: retryOnServerErrors,
   })
 }
 

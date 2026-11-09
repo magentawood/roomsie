@@ -3,13 +3,16 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { LinkExternal01 } from '@untitledui/icons'
-import type { Comparison } from '@roomsie/contract'
+import type { CompareKind, Comparison } from '@roomsie/contract'
 import { toggled } from '../../lib/chat'
 import { fieldsOf, firstFields, tableOf } from '../../lib/compare'
 import { CheckChip } from '../ui/choice'
 
-/** The table of "Compare answer", which code builds from the database (T-49). The picker adds or removes rows with no new request. */
-export function ComparisonTable({ table }: { table: Comparison }) {
+/**
+ * The table of "Compare answer", which code builds from the database (T-49). The picker adds or removes rows with no new request.
+ * `onOpen`: an option opens in the results panel of the chat (2026-11-09). A click with a key held, or a chat with no panel, opens the page.
+ */
+export function ComparisonTable({ table, onOpen }: { table: Comparison; onOpen?: (card: { kind: CompareKind; id: string }) => void }) {
   const [shown, setShown] = useState<string[]>(firstFields[table.kind])
   const nameOf = (option: Comparison['options'][number]) => ('title' in option ? option.title : option.fullName)
   return (
@@ -21,10 +24,15 @@ export function ComparisonTable({ table }: { table: Comparison }) {
               <td />
               {table.options.map((option, i) => (
                 <th key={option.id} scope="col" className="px-3 py-3 text-left font-medium whitespace-nowrap lg:px-6">
-                  <Link href={`/${table.kind === 'place' ? 'places' : 'people'}/${option.id}`} target="_blank" title={nameOf(option)}
+                  <Link href={`/${table.kind === 'place' ? 'places' : 'people'}/${option.id}`} title={nameOf(option)}
+                    onClick={(e) => {
+                      if (!onOpen || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+                      e.preventDefault()
+                      onOpen({ kind: table.kind, id: option.id })
+                    }}
                     className="inline-flex items-center gap-1 rounded-sm text-primary underline outline-focus-ring focus-visible:outline-2">
                     Option {i + 1}<LinkExternal01 size={14} aria-hidden />
-                    <span className="sr-only">: {nameOf(option)}, opens in a new tab</span>
+                    <span className="sr-only">: {nameOf(option)}</span>
                   </Link>
                 </th>
               ))}

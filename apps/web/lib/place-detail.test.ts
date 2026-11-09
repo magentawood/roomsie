@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { addressLine, flatmateLines, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine } from './place-detail'
+import { addressLine, didntSay, flatmateLines, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine } from './place-detail'
 import { listing } from './test-listing'
 
 describe('the money to move in', () => {
@@ -11,18 +11,19 @@ describe('the money to move in', () => {
     })
   })
 
-  it('takes the lowest rent of a PG, with its sharing, and leaves out a deposit that is not set', () => {
+  it('takes the lowest rent of a PG, with its sharing, and says when the deposit is not set', () => {
     const pg = listing({ kind: 'pg', rates: [{ sharing: 'single', rent: 21000, deposit: 21000 }, { sharing: 'triple', rent: 11500, deposit: null }] })
-    expect(moveIn(pg)).toEqual({ lines: [{ label: 'First month’s rent, triple sharing', value: '₹11,500' }], total: '₹11,500' })
+    expect(moveIn(pg)).toEqual({ lines: [{ label: 'First month’s rent, triple sharing', value: '₹11,500' }, { label: 'Deposit', value: didntSay }], total: '₹11,500' })
   })
 
-  it('has nothing without a rent', () => {
-    expect(moveIn(listing({}))).toBeNull()
+  it('has no total without a rent, and a brokerage only for a broker flat', () => {
+    expect(moveIn(listing({}))).toEqual({ lines: [{ label: 'First month’s rent', value: didntSay }, { label: 'Deposit', value: didntSay }], total: null })
+    expect(moveIn(listing({ kind: 'broker_flat' })).lines.map((l) => l.label)).toEqual(['First month’s rent', 'Deposit', 'Brokerage'])
   })
 })
 
 describe('the lines of each part', () => {
-  it('gives the rent terms, and leaves out each one that is not set', () => {
+  it('gives each rent term, and "Didn’t say" for one that is not set', () => {
     expect(termLines(listing({ electricity: 'included', maintenanceIncluded: true, rentNegotiable: false, minStay: '6_months', availableFrom: '2026-10-25' }))).toEqual([
       { label: 'Electricity', value: 'Included in rent' },
       { label: 'Maintenance', value: 'Included in rent' },
@@ -31,10 +32,20 @@ describe('the lines of each part', () => {
       { label: 'Available from', value: '25 Oct 26' },
     ])
     expect(termLines(listing({ maintenanceIncluded: false, maintenance: 2500, rentNegotiable: true }))).toEqual([
+      { label: 'Electricity', value: didntSay },
       { label: 'Maintenance', value: '₹2,500/mo' },
       { label: 'Rent', value: 'Negotiable' },
+      { label: 'Minimum stay', value: didntSay },
+      { label: 'Available from', value: didntSay },
     ])
-    expect(termLines(listing({}))).toEqual([])
+    expect(termLines(listing({})).every((l) => l.value === didntSay)).toBe(true)
+    // A PG has no amount of maintenance and no date to move in.
+    expect(termLines(listing({ kind: 'pg', maintenanceIncluded: false }))).toEqual([
+      { label: 'Electricity', value: didntSay },
+      { label: 'Maintenance', value: 'Not included' },
+      { label: 'Rent', value: didntSay },
+      { label: 'Minimum stay', value: didntSay },
+    ])
   })
 
   it('gives the place of a room in a flat, with the room and its bathroom', () => {
@@ -50,8 +61,11 @@ describe('the lines of each part', () => {
     ])
     const flat = listing({ kind: 'owner_flat', placeType: '1bhk', floor: 2, furnishing: 'semi', carpetAreaSqft: 450, bathroom: 'attached', balcony: false })
     expect(placeLines(flat).map((l) => l.label)).toEqual(['Place type', 'Floor', 'Furnishing', 'Carpet area', 'Bathroom', 'Balcony'])
-    expect(placeLines(listing({ floor: 0 }))).toEqual([{ label: 'Floor', value: 'Ground' }])
-    expect(placeLines(listing({ floor: -1, balcony: false }))).toEqual([{ label: 'Floor', value: 'Basement 1' }, { label: 'Balcony', value: 'No' }])
+    expect(placeLines(listing({ floor: 0 }))).toContainEqual({ label: 'Floor', value: 'Ground' })
+    expect(placeLines(listing({ floor: -1, balcony: false }))).toEqual([
+      { label: 'Place type', value: didntSay }, { label: 'Floor', value: 'Basement 1' }, { label: 'Furnishing', value: didntSay },
+      { label: 'Carpet area', value: didntSay }, { label: 'Bathroom', value: didntSay }, { label: 'Balcony', value: 'No' },
+    ])
   })
 
   it('gives the place of a PG, and the rent and deposit of each sharing', () => {
@@ -61,12 +75,18 @@ describe('the lines of each part', () => {
       { label: 'Beds free right now', value: '5+' },
       { label: 'Bathroom', value: 'Attached bathroom' },
       { label: 'Meals', value: 'Veg, included' },
+      { label: 'Balcony', value: didntSay },
       { label: 'Curfew', value: 'No curfew' },
     ])
     expect(pgRateLines(pg)).toEqual([
       { label: 'Single sharing', value: '₹21,000/mo · deposit ₹21,000' },
       { label: 'Double sharing', value: '₹14,500/mo' },
     ])
+    expect(pgRateLines(listing({ kind: 'pg', sharing: ['single', 'triple'], rates: [{ sharing: 'single', rent: 21000, deposit: null }] }))).toEqual([
+      { label: 'Single sharing', value: '₹21,000/mo' },
+      { label: 'Triple sharing', value: didntSay },
+    ])
+    expect(pgRateLines(listing({ kind: 'pg' }))).toEqual([{ label: 'Sharing', value: didntSay }])
   })
 
   it('gives the house rules', () => {
@@ -80,17 +100,23 @@ describe('the lines of each part', () => {
     ])
     expect(ruleLines(listing({ vegOnlyKitchen: false, smokingAllowed: true, alcoholAllowed: true }))).toEqual([
       { label: 'Kitchen', value: 'Veg and non-veg' },
+      { label: 'Guests', value: didntSay },
       { label: 'Smoking', value: 'Smoking allowed' },
+      { label: 'Who can move in', value: didntSay },
       { label: 'Alcohol', value: 'Alcohol allowed' },
+      { label: 'Who’s welcome', value: didntSay },
     ])
   })
 
   it('gives what is nearby, with the name of the station', () => {
     expect(nearbyLines(listing({ nearestStation: 'Jogeshwari', walkStation: '5_min', walkBus: '10_min', walkMall: 'not_close' }))).toEqual([
       { label: 'Railway or metro station', value: 'Jogeshwari · 5 minute walk' },
+      { label: 'Gym', value: didntSay },
       { label: 'Bus stop', value: '10 minute walk' },
       { label: 'Mall', value: 'Not close' },
+      { label: 'Market or groceries', value: didntSay },
     ])
+    expect(nearbyLines(listing({ nearestStation: 'Jogeshwari' }))[0]).toEqual({ label: 'Railway or metro station', value: 'Jogeshwari' })
     const all = listing({ walkStation: '5_min', walkBus: '5_min', walkMarket: '5_min', walkGym: '5_min', walkMall: '5_min' })
     expect(nearbyLines(all).map((l) => l.label)).toEqual(['Railway or metro station', 'Gym', 'Bus stop', 'Mall', 'Market or groceries'])
   })

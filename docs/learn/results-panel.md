@@ -24,7 +24,7 @@
 - **The panel is a pure function of the form.** `formKey()` keeps the values and the weights of Form A, not the sources. Thus, a confirmed default gives the same key and no new results.
 - **The panel searches the form of the chat.** It shows when intent, area and budget have a value. It loads 20 results, then the next 20 when the person comes to the end of the grid ([The match query](match-query.md)).
 - **The order never moves under the person.** While the person scrolls, new results wait. They show 1.5 seconds after the last scroll. `panelUpdate()` holds this rule. The cache never searches again for one form, so the next page of the form on the screen adds cards only at the end.
-- **A card opens in place.** A place opens its detail in the panel, with "Ask in chat". A person opens on the person page. A guest gets the sign-in wall ([PD6b](../decisions/pd-06b-login-gate-and-search.md)).
+- **A card opens in place.** A place or a person opens its detail in the panel, with "Ask in chat" and the match box ([Place detail](place-detail.md)). On a phone the detail is a layer over the chat. An option of a comparison opens in the panel too. The X of the detail closes the detail and the panel. A guest gets the sign-in wall ([PD6b](../decisions/pd-06b-login-gate-and-search.md)).
 - **The preview.** To see each card kind and the empty panel with no listings, open `/chat?preview=results` or `/chat?preview=empty`. A "Sample data" badge shows on the panel.
 
 ## The choice we made

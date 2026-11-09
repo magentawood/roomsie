@@ -1,15 +1,11 @@
 'use client'
 
 import { useParams } from 'next/navigation'
-import { ArrowLeft, Home02 } from '@untitledui/icons'
-import { ApiError, errorText } from '../../../lib/api'
 import { useListing } from '../../../lib/queries'
 import { PlaceDetail } from '../../../components/places/place-detail'
 import { AppShell } from '../../../components/shell/app-shell'
 import { SignInGate } from '../../../components/shell/sign-in-gate'
-import { useBack } from '../../../components/detail/parts'
-import { Button } from '../../../components/ui/button'
-import { EmptyState } from '../../../components/ui/empty-state'
+import { Unavailable, useBack } from '../../../components/detail/parts'
 import { savedHref } from '../../../lib/saved'
 import { Loading } from '../../../components/ui/loading'
 
@@ -17,18 +13,7 @@ function Place() {
   const { id } = useParams<{ id: string }>()
   const back = useBack(savedHref.places)
   const listing = useListing(id)
-  if (listing.isError) {
-    if (!(listing.error instanceof ApiError && listing.error.status === 404)) return <p role="alert" className="p-6 text-sm text-error-primary">{errorText(listing.error)}</p>
-    return (
-      <main className="flex flex-1 flex-col px-5 py-5 md:px-6">
-        <span><Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} /></span>
-        <EmptyState icon={Home02} title="This place is no longer listed."
-          action={<div className="flex gap-3"><Button variant="secondary" size="md" href={savedHref.places}>See saved places</Button><Button variant="primary" size="md" href="/">Start looking</Button></div>}>
-          The lister filled, paused or removed it.
-        </EmptyState>
-      </main>
-    )
-  }
+  if (listing.isError) return <Unavailable kind="place" error={listing.error} onBack={back} />
   if (listing.isPending) return <Loading mascot="looking" />
   return <PlaceDetail listing={listing.data} />
 }

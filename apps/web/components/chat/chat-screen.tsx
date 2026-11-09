@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
-import { capWall, formA, goalResponse, intentsOf, listingTitle, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, intentsOf, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, sameMoveOf, tapRefusal, writeStored } from '../../lib/chat'
@@ -16,7 +16,7 @@ import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../
 import { formKey, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
-import { ResultsPanel, useHeldResults } from '../results/results-panel'
+import { ResultsPanel, useHeldResults, type OpenCard } from '../results/results-panel'
 import { LookInMumbai, WaitlistForm, WaitlistLine, WaitlistPanel } from './waitlist'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
@@ -66,7 +66,7 @@ function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in 
 }
 
 /** "What are we looking for?" of flow 02: the start of a goal, with the place-type chips under the input (T-09). */
-function EmptyChat({ onSend, children }: { onSend: (text: string) => void; children: React.ReactNode }) {
+function EmptyChat({ onSend, draft, children }: { onSend: (text: string) => void; draft: { text: string; version: number }; children: React.ReactNode }) {
   return (
     <main className="isolate flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-chat-glow px-5 pb-27 max-lg:typing:pb-4 lg:gap-13 lg:px-6 lg:pb-0">
       <div className="flex max-w-126 flex-col items-center gap-3 text-center lg:gap-2">
@@ -80,7 +80,7 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
         </p>
       </div>
       <div className="flex w-full max-w-210 flex-col gap-4">
-        <ChatInput grow="down" onSend={onSend} />
+        <ChatInput key={draft.version} grow="down" autoFocus={draft.version > 0} initialText={draft.text} onSend={onSend} />
         {children}
         <p className="text-center text-sm text-tertiary">
           Prefer quick questions? <Link href={onboardingAgainHref} className="font-medium text-secondary underline underline-offset-2 outline-focus-ring hover:text-primary focus-visible:outline-2">Answer them here</Link>
@@ -181,6 +181,15 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const waitlistOpen = panel === 'waitlist' && waitlist !== null && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
   const [draft, setDraft] = useState({ text: '', version: 0 })
+  // "Ask in chat" on the page of a card leaves its draft for the input, one time.
+  useEffect(() => {
+    const text = readStored(chatStorage.draft)
+    if (!text) return
+    writeStored(chatStorage.draft, null)
+    setDraft(({ version }) => ({ text, version: version + 1 }))
+  }, [])
+  // The card open in the results panel: a card of the results, or an option of a comparison (T-49).
+  const [card, setCard] = useState<OpenCard | null>(null)
   // A selection belongs to one list of results, so a new search starts a new one, and Option 1 is always the best match (T-49).
   const [picks, setPicks] = useState({ key: '', picked: [] as Picked[] })
   const resultsKey = shown ? formKey(shown.form) : ''
@@ -246,9 +255,13 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     setView('split')
     submit({ body: { text: chip.label, compare: chip.compare }, text: chip.label })
   }
-  const askInChat = (listing: ListingResponse) => {
-    setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
+  const askInChat = (text: string) => {
+    setDraft(({ version }) => ({ text, version: version + 1 }))
     setView('split')
+  }
+  const openCard = (next: OpenCard) => {
+    setCard(next)
+    setView((now) => (now === 'all' ? now : 'split'))
   }
 
   const currentKey = ready && !preview ? formKey(form) : null
@@ -269,7 +282,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const anchored = anchorId !== null && turns.some((t) => t.id === anchorId)
 
   if (loadingGoal) return <main className="flex flex-1 items-center justify-center" aria-busy="true"><Loading mascot="searching" /></main>
-  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
+  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText} draft={draft}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,33.125rem)_minmax(0,1fr)]' : ''}`}>
@@ -283,7 +296,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
               {turn.role === 'user' ? <UserText text={turn.text} /> : (
                 <div className="flex flex-col gap-5">
                   <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>
-                  {turn.comparison && <ComparisonTable table={turn.comparison} />}
+                  {turn.comparison && <ComparisonTable table={turn.comparison} onOpen={shown ? openCard : undefined} />}
                   {turn.notes && <NotesList />}
                 </div>
               )}
@@ -330,9 +343,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         </>}
       </div>
       {shown && (
-        <div className={`col-start-1 row-start-2 min-h-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-l lg:border-secondary ${view === 'all' ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
+        <div className={`col-start-1 row-start-2 min-h-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-l lg:border-secondary ${view === 'all' || card ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
-          <ResultsPanel title={title} found={shown.found} held={held} sample={Boolean(preview)}
+          <ResultsPanel title={title} form={shown.form} found={shown.found} held={held} sample={Boolean(preview)} card={card} onCard={setCard}
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
             more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat}
             picks={{ picked, onPick: (card) => setPicked(toggledPick(picked, card)), onClear: () => setPicked([]) }} />

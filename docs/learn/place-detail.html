@@ -39,6 +39,10 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>The <strong>place detail</strong> is the page <code>/places/&lt;id&gt;</code>. It shows the four kinds of the Product file: a room in a flat, an owner flat, a PG or hostel, and a broker flat.</li>
+<li>In the chat, a place and a person open in the results panel (<a href="results-panel.html">The results panel</a>). The top bar has "Ask in chat", and the X at the end closes the detail and the panel.</li>
+<li><strong>The match box</strong> sits under the title of a place and of a person (<a href="../decisions/pd-03a-flatmate-matching.md">PD3a</a>). Its sentence names the facts that both sides share:</li>
+<li>A person: the same food, smoking or drinks, ages within 3 years, budgets that overlap, and areas or commute that overlap.</li>
+<li>A place: a rent inside the budget, an area asked, the must-haves met, and a walk of 10 minutes or less to a station.</li>
 <li>A <strong>listing report</strong> gives one of the seven reasons of PD18, and a detail. "Other" needs the detail.</li>
 <li>A <strong>hidden listing</strong> has a hide time. Other users do not see it, and the owner sees "Hidden for review". Only the moderator clears the hide time, on the admin screen (<a href="moderation.html">Moderation</a>).</li>
 </ul>
@@ -64,6 +68,14 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>apps/web/components/places/report-sheet.tsx</code></td>
 </tr>
 <tr>
+<td>The match box</td>
+<td><code>apps/web/lib/match-box.ts</code>, a pure module with its tests, and <code>apps/web/components/detail/match-box.tsx</code></td>
+</tr>
+<tr>
+<td>The label of a card outside the results</td>
+<td><code>POST /v1/results/fit</code> and <code>fitOf()</code> in <code>apps/api/src/results/search.ts</code></td>
+</tr>
+<tr>
 <td>The route</td>
 <td><code>POST /v1/reports</code> in <code>apps/api/src/reports/routes.ts</code></td>
 </tr>
@@ -76,7 +88,9 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>The listing reply has three flags: <code>mine</code> (the listing belongs to the user who asks), <code>hidden</code> and <code>removed</code>. Only the owner gets a hidden or a removed listing; other users get 404.</li>
 <li>The visible rule is one rule for the detail, Saved and each other read. A hidden listing thus leaves Saved too.</li>
-<li>A part of the page with no data does not show.</li>
+<li>Each part shows each field of the kind of the place. A field with no answer reads "Didn't say". The person detail does the same.</li>
+<li>On a computer, the message button ends the column. On a phone it is in the bar at the bottom.</li>
+<li>"Ask in chat" on a page opens the chat of the tab, else the newest open goal, else a new goal. The chat input then has the draft "About <name>: ".</li>
 <li>The cards of Saved open the detail.</li>
 <li>Share opens the Share modal (T-50): it sends the card as a message to the ticked conversations, and "Copy link" ("Share link" on a phone) shares the link anywhere. The link opens the card behind the sign-in.</li>
 <li>A confirmation dialog has its two buttons side by side, also on a phone.</li>
@@ -85,7 +99,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>The scope, the page, the report and the hidden buttons: the spec of T-43 (<a href="https://github.com/magentawood/roomsie/issues/119">#119</a>).</li>
 <li>The reasons, the hide rule and the review times: <a href="../decisions/pd-18-moderation.md">PD18</a>.</li>
-<li>The match sentence and the "Verified" pill do not show: <a href="../decisions/pd-03a-flatmate-matching.md">PD3a</a>, <a href="../decisions/pd-08-verification.md">PD8</a>.</li>
+<li>The match box: <a href="../decisions/pd-03a-flatmate-matching.md">PD3a</a>. The "Verified" pill shows beside the title and in "Listed by" when the lister has an approved ID check (<a href="../decisions/pd-08-verification.md">PD8</a>). The listing reply gives it as <code>verified</code>.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
@@ -96,9 +110,14 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A status change does not undo a hide.</strong> The owner can pause and go live again, and the listing stays hidden.</li>
 <li><strong>A removed listing cannot go live again.</strong> A moderator removed it for good (<a href="moderation.html">Moderation</a>), so the route gives 409.</li>
 <li><strong>A 404 gets no retry.</strong> The page shows "This place is no longer listed." at once.</li>
+<li><strong>The box of a card outside the results asks the API for its label.</strong> In the chat, a card of the results has its label. Another card, and each page, calls <code>POST /v1/results/fit</code>. An API from before the route gives 404, so the box does not show.</li>
+<li><strong>The fit leaves out the hidden slots.</strong> Thus the label tells nothing of the religion or the community of a person (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>).</li>
+<li><strong>A label needs three preferences.</strong> With fewer, each card is "An average match", as the "Best match" rule says.</li>
+<li><strong>The box needs a side to compare.</strong> A page with no profile of the viewer, and the own card or listing, show no box.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-43: <a href="https://github.com/magentawood/roomsie/pull/154">#154</a>, 2026-10-26. The place detail, listing reports and the hide rule.</li>
+<li>The asks of the founders of 2026-11-09: the match box, each field, the person in the panel, the close X and the pill in "Listed by".</li>
 </ul>
 </main>

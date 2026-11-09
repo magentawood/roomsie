@@ -76,6 +76,7 @@ function peopleFilter(search: PeopleSearch) {
   const conditions = [
     ...visiblePeople(search.viewerUserId),
     eq(profiles.intent, 'flatmates'),
+    search.ids && inArray(profiles.id, search.ids),
     search.areas && sql`${profiles.areas} && ${textArray(search.areas)}`,
     // Two budgets overlap (PD3a).
     budget?.max != null && sql`coalesce(${profiles.budgetMin}, 0) <= ${budget.max}`,

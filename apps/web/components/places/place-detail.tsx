@@ -3,21 +3,23 @@
 import { useState, type ReactNode } from 'react'
 import {
   Activity, ArrowLeft, Bookmark, BookmarkCheck, Bus, Clock, Cube01, Droplets01, Edit05, Flag01, Heart, Home02, Key01,
-  LayersThree01, MessageChatCircle, MessageCircle01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
+  LayersThree01, MessageCircle01, Moon01, Ruler, Share07, ShoppingBag01, ShoppingCart01, SlashCircle01, Sun, Train, User01, Users01, UsersCheck,
 } from '@untitledui/icons'
 import { listingTitle, type ListingResponse } from '@roomsie/contract'
 import { labels } from '../../lib/listing-steps'
 import {
-  addressLine, flatmateLines, listerLabel, listerPhrase, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
+  addressLine, didntSay, flatmateLines, listerLabel, listerPhrase, moveIn, nearbyLines, pgRateLines, placeLines, ruleLines, termLines, whereLine, type FactLabel, type Line,
 } from '../../lib/place-detail'
 import { listingChat } from '../../lib/messages'
 import { useAreaLabels, useConversations, useOutgoingRequests } from '../../lib/queries'
-import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
+import { AskInChat, Chips, DetailMenu, Facts, NotSaid, Photos, Section, useBack, useShare, type DetailPanel } from '../detail/parts'
+import { MatchBox } from '../detail/match-box'
 import { SayHiSheet } from '../people/say-hi-sheet'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Button, type Icon } from '../ui/button'
 import { Badge } from '../ui/badge'
+import { CloseButton } from '../ui/modal'
 import { verifiedLabel } from '../../lib/verification'
 import { savedHref } from '../../lib/saved'
 
@@ -38,7 +40,7 @@ const ownerLines: Record<ListingResponse['status'], string> = {
   filled: 'It is filled. Others can’t see it.',
 }
 
-function Rows({ lines, total }: { lines: Line[]; total?: string }) {
+function Rows({ lines, total }: { lines: Line[]; total?: string | null }) {
   return (
     <dl className="flex flex-col gap-3 rounded-xl border border-secondary bg-secondary p-4 text-sm lg:gap-2.5">
       {lines.map((l) => (
@@ -49,13 +51,15 @@ function Rows({ lines, total }: { lines: Line[]; total?: string }) {
   )
 }
 
-function Person({ photoUrl, name, about }: { photoUrl: string | null; name: string; about?: string | null }) {
+/** `badge`: the Verified pill of the lister, at the end of the box. */
+function Person({ photoUrl, name, about, badge }: { photoUrl: string | null; name: string; about?: string | null; badge?: ReactNode }) {
   return (
     <div className="flex items-center gap-3 rounded-xl border border-secondary bg-secondary px-4 py-3 lg:gap-4 lg:p-2.75">
       {photoUrl
         ? <img src={photoUrl} alt="" className="size-12 rounded-full object-cover lg:size-14" />
         : <span className="flex size-12 items-center justify-center rounded-full border border-secondary bg-tertiary text-fg-quaternary lg:size-14"><User01 size={24} aria-hidden /></span>}
       <div className="flex flex-col text-sm lg:gap-1"><span className="font-medium text-primary">{name}</span>{about && <span className="text-tertiary">{about}</span>}</div>
+      {badge && <span className="ml-auto shrink-0">{badge}</span>}
     </div>
   )
 }
@@ -99,8 +103,11 @@ function PhoneMenu({ listing, onReport, share }: { listing: ListingResponse; onR
   )
 }
 
-/** The detail of a place: the four kinds of the Product file (T-43). `panel`: it is in the results panel, with "Ask in chat" (T-15). */
-export function PlaceDetail({ listing, panel }: { listing: ListingResponse; panel?: { onBack: () => void; onAskInChat: () => void } }) {
+/**
+ * The detail of a place: the four kinds of the Product file (T-43). Each part shows each field of the kind, with "Didn't say" for a gap (2026-11-09).
+ * `panel`: it is in the results panel of the chat (T-15).
+ */
+export function PlaceDetail({ listing, panel }: { listing: ListingResponse; panel?: DetailPanel }) {
   const areaLabels = useAreaLabels()
   const title = listingTitle(listing)
   const [reporting, setReporting] = useState(false)
@@ -108,7 +115,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const { share, status, dialog: shareDialog } = useShare(title, { kind: 'places', id: listing.id })
   const routerBack = useBack(savedHref.places)
   const back = panel?.onBack ?? routerBack
-  const askInChat = panel && <Button variant="secondary" size="xs" iconLeading={MessageChatCircle} onClick={panel.onAskInChat}>Ask in chat</Button>
+  const askInChat = !listing.mine && <AskInChat draft={`About ${title}: `} panel={panel} />
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
   const address = addressLine(listing)
   const money = moveIn(listing)
@@ -117,20 +124,22 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const place = placeLines(listing)
   const rules = ruleLines(listing)
   const nearby = nearbyLines(listing)
+  const verified = listing.verified && <Badge tone="success">{verifiedLabel(listing.kind)}</Badge>
   const parts: [string, ReactNode][] = [
-    ['Money to move in', (money || terms.length > 0) && <>{money && <Rows lines={money.lines} total={money.total} />}{terms.length > 0 && <Rows lines={terms} />}</>],
-    ['Who lives here', listing.flatmates.length > 0 && (
+    ['Money to move in', <><Rows lines={money.lines} total={money.total} /><Rows lines={terms} /></>],
+    // Only a room in a flat has flatmates (the listing flow, T-41).
+    ...(listing.kind === 'room_in_flat' ? [['Who lives here', listing.flatmates.length ? (
       <ul className="flex flex-col gap-2 lg:gap-4">
         {listing.flatmates.map((f) => <li key={`${f.name}-${f.age}`}><Person photoUrl={f.photoUrl} {...flatmateLines(f)} /></li>)}
       </ul>
-    )],
-    ['The place', (rates.length > 0 || place.length > 0) && <>{rates.length > 0 && <Rows lines={rates} />}{place.length > 0 && <Facts lines={withIcons(place)} />}</>],
-    ['House rules', rules.length > 0 && <Facts lines={withIcons(rules)} gap="gap-2 lg:gap-3" />],
-    ['What’s inside', listing.insideItems.length > 0 && <Chips items={listing.insideItems.map((i) => labels.insideItems[i])} />],
-    ['Building and society', listing.amenities.length > 0 && <Chips items={listing.amenities.map((a) => labels.amenities[a])} />],
-    ['What’s nearby', nearby.length > 0 && <Facts lines={withIcons(nearby)} gap="gap-2 lg:gap-3" />],
-    ['About this place', listing.description && <p className="text-sm whitespace-pre-line text-tertiary">{listing.description}</p>],
-    ['Listed by', <Person photoUrl={listing.lister?.photoUrl ?? null} name={listing.lister?.name ?? listerLabel(listing.kind)} about={listing.lister && listerLabel(listing.kind)} />],
+    ) : <NotSaid />] as [string, ReactNode]] : []),
+    ['The place', <>{listing.kind === 'pg' && <Rows lines={rates} />}<Facts lines={withIcons(place)} /></>],
+    ['House rules', <Facts lines={withIcons(rules)} gap="gap-2 lg:gap-3" />],
+    ['What’s inside', listing.insideItems.length ? <Chips items={listing.insideItems.map((i) => labels.insideItems[i])} /> : <NotSaid />],
+    ['Building and society', listing.amenities.length ? <Chips items={listing.amenities.map((a) => labels.amenities[a])} /> : <NotSaid />],
+    ['What’s nearby', <Facts lines={withIcons(nearby)} gap="gap-2 lg:gap-3" />],
+    ['About this place', <p className="text-sm whitespace-pre-line text-tertiary">{listing.description ?? didntSay}</p>],
+    ['Listed by', <Person photoUrl={listing.lister?.photoUrl ?? null} name={listing.lister?.name ?? listerLabel(listing.kind)} about={listing.lister && listerLabel(listing.kind)} badge={verified} />],
   ]
 
   return (
@@ -142,11 +151,12 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
       <article className={`mx-auto flex w-full max-w-180 flex-col gap-6 px-5 pt-4 md:px-6 md:py-8 lg:max-w-192 lg:gap-5 lg:py-6 ${listing.mine || panel ? 'pb-6' : 'pb-40 lg:pb-6'}`}>
         <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-3 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
             {askInChat}
             {!listing.mine && <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setReporting(true)}>Report</Button>}
             <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
             {!listing.mine && <SaveButton kind="places" id={listing.id} />}
+            {panel && <CloseButton onClose={panel.onClose} />}
           </div>
         </div>
         {status && <p role="status" className="text-sm text-tertiary">{status}</p>}
@@ -155,13 +165,15 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
         <header className="flex flex-col gap-1 border-b border-secondary pb-4 lg:gap-1.5">
           <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
             <h1 className="text-lg font-semibold text-primary">{title}</h1>
-            {listing.verified && <Badge tone="success">{verifiedLabel(listing.kind)}</Badge>}
+            {verified}
           </div>
           {where && <p className="text-md text-tertiary">{where}</p>}
           {address && <p className="text-sm text-tertiary">{address}</p>}
         </header>
+        {!listing.mine && <MatchBox target={{ kind: 'place', listing }} against={panel?.against} />}
+        {parts.map(([partTitle, body]) => <Section key={partTitle} title={partTitle}>{body}</Section>)}
+        {/* On a computer the message button ends the column, as in the designs. */}
         {!listing.mine && <div className="hidden lg:block"><MessageLister listing={listing} onMessage={() => setMessaging(true)} /></div>}
-        {parts.map(([partTitle, body]) => body && <Section key={partTitle} title={partTitle}>{body}</Section>)}
       </article>
       {/* In the panel, the bar sits at the bottom of the panel, so the chat input stays free (PD6a). */}
       {!listing.mine && (
