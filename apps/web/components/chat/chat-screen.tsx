@@ -31,6 +31,12 @@ import { NotesList } from './notes'
 import { SameMoveChips } from './same-move'
 import { GoalHeader } from '../goals/goal-list'
 
+/**
+ * When the input loses the focus, the space of the phone bar comes back 0.3 s later. A tap in the thread then lands on what the
+ * finger pressed: the padding does not move the thread between the press and the release.
+ */
+const afterTyping = 'transition-[padding] duration-0 delay-300 max-lg:typing:delay-0'
+
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
 function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in bandra for 3 friends...', onSend }: {
   grow: 'up' | 'down'; autoFocus?: boolean; initialText?: string; placeholder?: string; onSend: (text: string) => void
@@ -68,7 +74,7 @@ function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in 
 /** "What are we looking for?" of flow 02: the start of a goal, with the place-type chips under the input (T-09). */
 function EmptyChat({ onSend, draft, children }: { onSend: (text: string) => void; draft: { text: string; version: number }; children: React.ReactNode }) {
   return (
-    <main className="isolate flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-chat-glow px-5 pb-27 max-lg:typing:pb-4 lg:gap-13 lg:px-6 lg:pb-0">
+    <main className={`isolate flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-chat-glow px-5 pb-27 max-lg:typing:pb-4 ${afterTyping} lg:gap-13 lg:px-6 lg:pb-0`}>
       <div className="flex max-w-126 flex-col items-center gap-3 text-center lg:gap-2">
         <div className="relative">
           <img src="/illustrations/rings.svg" alt="" width={768} height={768} className="pointer-events-none absolute top-1/2 left-1/2 -z-10 max-w-none -translate-1/2" />
@@ -324,7 +330,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           )}
         </ol>
       </div>
-      <div className="col-start-1 row-start-3 px-5 pb-19.5 max-lg:typing:pb-3 lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:pb-5">
+      <div className={`col-start-1 row-start-3 px-5 pb-19.5 max-lg:typing:pb-3 ${afterTyping} lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:pb-5`}>
         {closed && goalId ? <ClosedBar goalId={goalId} /> : <>
         {picked.length > 0 && !atCap && (
           <div className="mb-3 flex flex-col gap-1.5 pt-2.5">
