@@ -30,7 +30,7 @@ function NewListing() {
       previous={{ href: '/listings' }}
       actions={(
         <>
-          <Button variant="tertiary" size="lg" disabled={blocked} onClick={() => create.mutate('draft')}>Save as Draft</Button>
+          <Button variant="secondary" size="lg" disabled={blocked} onClick={() => create.mutate('draft')}>Save as Draft</Button>
           <Button variant="primary" size="lg" iconTrailing={ArrowRight} disabled={blocked} onClick={() => create.mutate('next')}>Next</Button>
         </>
       )}>

@@ -34,7 +34,8 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
   ]))
   const [error, setError] = useState<string | null>(null)
   const [missing, setMissing] = useState<GoLiveField[]>([])
-  const [checked, setChecked] = useState(false)
+  // 'go': Next or Publish was refused, so the required fields show too.
+  const [checked, setChecked] = useState<false | 'save' | 'go'>(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [offerCheck, setOfferCheck] = useState(false)
   const verification = useVerification(last && listing.status === 'draft')
@@ -58,13 +59,16 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
 
   // The check before each save. Its lines show after the first refused save, then follow each change.
   const refused = stepErrors(listing.kind, stepBody(listing.kind, stepId, values))
-  const errors = checked ? refused : {}
+  // The address is required to go on (the founders, 2026-11-09). A draft saves without it.
+  const required: Record<string, string> = stepId === 'where' && !values.address?.trim() ? { address: 'Add the address. Only you see it, unless you share it.' } : {}
+  const errors = checked ? { ...refused, ...(checked === 'go' ? required : {}) } : {}
   const hasErrors = Object.keys(errors).length > 0
 
   const saveAndGo = async (target: 'next' | 'previous' | 'draft' | 'publish') => {
     setError(null)
-    if (Object.keys(refused).length) {
-      setChecked(true)
+    const going = target === 'next' || target === 'publish'
+    if (Object.keys(refused).length || (going && Object.keys(required).length)) {
+      setChecked(going ? 'go' : 'save')
       // The red lines show on the next render. Then the first refused field gets the focus, so it scrolls into view.
       requestAnimationFrame(() => document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus())
       return
@@ -116,7 +120,7 @@ function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas:
         previous={{ disabled: busy, onClick: () => saveAndGo('previous') }}
         actions={(
           <>
-            <Button variant="tertiary" size="lg" disabled={busy} onClick={() => saveAndGo('draft')}>Save as Draft</Button>
+            <Button variant="secondary" size="lg" disabled={busy} onClick={() => saveAndGo('draft')}>Save as Draft</Button>
             {/* A listing that has been live goes live again from its card, so its last step only saves. */}
             {last && listing.status === 'draft' && <Button variant="primary" size="lg" disabled={busy} onClick={() => saveAndGo('publish')}>Publish my listing</Button>}
             {last && listing.status !== 'draft' && <Button variant="primary" size="lg" disabled={busy} onClick={() => saveAndGo('draft')}>Save changes</Button>}

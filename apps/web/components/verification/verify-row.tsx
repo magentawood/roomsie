@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { ShieldTick } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
 import { useVerification } from '../../lib/queries'
-import { verifyOffer, verifyRow } from '../../lib/verification'
+import { verifyAfterPublish, verifyRow } from '../../lib/verification'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
@@ -44,7 +44,7 @@ export function VerifyAfterPublish({ onDone }: { onDone: () => void }) {
           <Button variant="primary" size="md" className="flex-1" onClick={() => setVerifying(true)}>Verify</Button>
         </>
       )}>
-      {verifyOffer}
+      <span className="flex flex-col gap-2">{verifyAfterPublish.map((line) => <span key={line}>{line}</span>)}</span>
     </Modal>
   )
 }

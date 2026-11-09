@@ -17,7 +17,7 @@ export function listingSteps(kind: ListingKind | null): StepId[] {
 
 export const stepCopy: Record<StepId, { title: string; helper: string }> = {
   kind: { title: 'What are you listing?', helper: 'Pick one.' },
-  where: { title: 'Where is it?', helper: 'Seekers see the area, the landmark and the building. The full address is optional.' },
+  where: { title: 'Where is it?', helper: 'Seekers see the area, the landmark and the building. Only you see the full address, unless you share it.' },
   nearby: { title: 'What’s nearby?', helper: 'The stuff people always ask in the comments. Add what’s close and how far.' },
   place: { title: 'What’s the place?', helper: 'Type, size, floor and bathrooms.' },
   rent: { title: 'Rent, deposit and dates', helper: 'Exact amounts. People filter on these, so be precise.' },

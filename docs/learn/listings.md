@@ -40,6 +40,7 @@ The screens (T-42):
 | `/listings/<id>/<step>` | One step. Step 1 of a listing that exists has "Delete listing" |
 
 - Each step saves only its own fields, with one `PATCH`, on "Next", "Previous step" and "Save as Draft" (`apps/web/lib/listing-steps.ts`).
+- **The address is required to go on.** "Next" and "Publish" on step 2 need it, and only the lister sees it unless they share it. "Save as Draft" saves a step without it. The API does not check it.
 - Before the save, `stepErrors` checks the values with the contract schema of the kind. A refused value gets a red line under its field, and nothing saves.
 - The browser shrinks each photo to 1600 px or less, as WebP, before the upload (`apps/web/lib/photo.ts`). Safari cannot make WebP, so there it is a JPEG. The new file has no EXIF data, so no GPS location.
 - The area pick lists the sub-areas and pockets from `GET /v1/areas`. A listing cannot have a whole group ([Areas](areas.md)).
