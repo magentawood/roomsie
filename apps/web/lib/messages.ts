@@ -54,10 +54,11 @@ export const profileOf = (other: OtherPerson) => (other.deleted ? null : other.p
 const dayOf = (at: Date) => at.toLocaleDateString('en-CA', india)
 const daysBefore = (now: Date, days: number) => dayOf(new Date(now.getTime() - days * 86_400_000))
 const shortDate = (at: Date) => at.toLocaleDateString('en-IN', { ...india, day: 'numeric', month: 'short', year: '2-digit' })
+/** "2:41 pm": one plain space, also where the browser puts a narrow space before am or pm. */
 export const clockTime = (iso: string) =>
-  new Date(iso).toLocaleTimeString('en-IN', { ...india, hour: 'numeric', minute: '2-digit' }).replace(/\s/g, '').toLowerCase()
+  new Date(iso).toLocaleTimeString('en-IN', { ...india, hour: 'numeric', minute: '2-digit' }).replace(/\s+/g, ' ').toLowerCase()
 
-/** The time in an inbox row, as the drafts: "2:41pm", "Yesterday", "Mon", then the date. */
+/** The time in an inbox row: "2:41 pm", "Yesterday", "Mon", then the date. */
 export function inboxTime(iso: string, now = new Date()) {
   const at = new Date(iso)
   const day = dayOf(at)

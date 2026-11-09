@@ -41,7 +41,7 @@ describe('the inbox', () => {
 
   it('gives the time of today, "Yesterday", the day of this week, or the date, in India time', () => {
     const now = new Date('2026-10-27T12:00:00.000Z')
-    expect(inboxTime('2026-10-27T09:11:00.000Z', now)).toBe('2:41pm')
+    expect(inboxTime('2026-10-27T09:11:00.000Z', now)).toBe('2:41 pm')
     expect(inboxTime('2026-10-26T09:00:00.000Z', now)).toBe('Yesterday')
     expect(inboxTime('2026-10-23T09:00:00.000Z', now)).toBe('Fri')
     expect(inboxTime('2026-10-01T09:00:00.000Z', now)).toBe('1 Oct 26')
