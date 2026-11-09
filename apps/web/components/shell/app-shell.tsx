@@ -126,10 +126,10 @@ function NewMenu({ linkTo }: { linkTo: LinkTo }) {
   )
 }
 
-/** The floating glass bar of the phone designs. Chats is the chat of this visit, open to a guest (PD6b). */
+/** The floating glass bar of the phone designs. Chats is the chat of this visit, open to a guest (PD6b). It goes away while the person types. */
 function MobileNav({ linkTo }: { linkTo: LinkTo }) {
   return (
-    <nav className="fixed inset-x-0 bottom-4 z-40 flex items-center justify-center gap-1.5 px-4 lg:hidden">
+    <nav className="fixed inset-x-0 bottom-4 z-40 flex items-center justify-center gap-1.5 px-4 typing:hidden lg:hidden">
       <div className={`flex items-center rounded-full p-1 ${glass}`}>
         <NavItem look="phone" icon={Home05} label="Chats" link={{ href: useChatsHref() }} match="/chat" />
         <MessagesItem look="phone" linkTo={linkTo} icon={MessageChatCircle} />

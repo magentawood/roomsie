@@ -140,7 +140,8 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
     <section aria-label="Results" className="flex min-h-0 flex-col bg-primary">
       {open
         ? (
-          <div className="min-h-0 flex-1 overflow-y-auto">
+          // On a phone the place covers the chat input and the phone bar, as the page of a place.
+          <div className="min-h-0 flex-1 overflow-y-auto bg-primary max-lg:fixed max-lg:inset-0 max-lg:z-50">
             <PlaceDetail listing={open} panel={{ onBack: closeDetail, onAskInChat: () => { onAskInChat(open); closeDetail() } }} />
           </div>
         )
