@@ -1,20 +1,22 @@
 'use client'
 
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
-import { useRouter } from 'next/navigation'
 import { FaceSad, ChevronSelectorVertical, XClose } from '@untitledui/icons'
-import type { FormA, ListingResponse, MatchResult } from '@roomsie/contract'
+import type { CompareKind, FormA, ListingResponse, MatchResult } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
 import { pickOf, type Picked, type Picks } from '../../lib/compare'
-import { useAreaLabels, type useResults } from '../../lib/queries'
+import { useAreaLabels, useListing, usePerson, type useResults } from '../../lib/queries'
 import { countLine, didntSayLine, formKey, panelUpdate, type Found, type PanelState } from '../../lib/results'
+import { Unavailable, type DetailPanel } from '../detail/parts'
 import { PlaceCard } from '../listings/place-card'
 import { PersonCard } from '../people/person-card'
+import { PersonDetail } from '../people/person-detail'
 import { PlaceDetail } from '../places/place-detail'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { CheckChip } from '../ui/choice'
+import { Loading } from '../ui/loading'
 import { CloseButton } from '../ui/modal'
 
 /** How long the panel waits after the last scroll or read before it applies a new form (PD6c). */
@@ -89,6 +91,20 @@ function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?
   )
 }
 
+/** A card open in the panel: a card of the results, or an option of a comparison in the chat (T-49). */
+export type OpenCard = { kind: CompareKind; id: string }
+
+/** A place of the results shows at once. Another place, and each person, loads its detail. */
+function OpenDetail({ card, listing, panel }: { card: OpenCard; listing?: ListingResponse; panel: DetailPanel }) {
+  const place = useListing(card.kind === 'place' && !listing ? card.id : null)
+  const person = usePerson(card.kind === 'person' ? card.id : null)
+  const query = card.kind === 'place' ? place : person
+  if (card.kind === 'place' && (listing ?? place.data)) return <PlaceDetail listing={(listing ?? place.data)!} panel={panel} />
+  if (card.kind === 'person' && person.data) return <PersonDetail person={person.data} panel={panel} />
+  if (query.isError) return <Unavailable kind={card.kind} error={query.error} onBack={panel.onBack} inPanel />
+  return <Loading mascot={card.kind === 'place' ? 'looking' : 'starry'} />
+}
+
 /** "No relevant results" and the suggested posts of flow 02 (PD6c). */
 function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; picks?: Omit<Picks, 'onClear'>; onOpen: (result: MatchResult) => void }) {
   return (
@@ -110,14 +126,15 @@ function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; pic
   )
 }
 
-/** The results panel of flow 02: a pure function of Form A (PD6c). */
-export function ResultsPanel({ title, found, held: { hold, release }, more, sample, notice, picks: { picked, onPick, onClear }, onClose, onAskInChat }: {
-  title: string; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode
-  picks: Picks; onClose: () => void; onAskInChat: (listing: ListingResponse) => void
+/**
+ * The results panel of flow 02: a pure function of Form A (PD6c). `form`: the form of the results. `card`: the card open in the panel,
+ * which the chat holds, so an option of a comparison opens here too.
+ */
+export function ResultsPanel({ title, form, found, held: { hold, release }, more, sample, notice, picks: { picked, onPick, onClear }, card, onCard, onClose, onAskInChat }: {
+  title: string; form: FormA; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode
+  picks: Picks; card: OpenCard | null; onCard: (card: OpenCard | null) => void; onClose: () => void; onAskInChat: (draft: string) => void
 }) {
   const { user, loading } = useAuth()
-  const router = useRouter()
-  const [open, setOpen] = useState<ListingResponse | null>(null)
   const [tapped, setTapped] = useState<MatchResult | null>(null)
   // A selection needs a sign-in, as the opening of a card (PD6b).
   const [wall, setWall] = useState(false)
@@ -128,21 +145,29 @@ export function ResultsPanel({ title, found, held: { hold, release }, more, samp
   useEffect(() => {
     if (!user || !tapped) return
     setTapped(null)
-    if (tapped.kind === 'person') return router.push(`/people/${tapped.card.id}`)
-    hold()
-    setOpen(tapped.listing)
-  }, [user, tapped, router, hold])
+    onCard({ kind: tapped.kind === 'person' ? 'person' : 'place', id: pickOf(tapped).id })
+  }, [user, tapped, onCard])
+  // The results wait while a card is open, so its label and the grid under it do not change.
+  useEffect(() => { if (card) hold() }, [card, hold])
 
   const onScroll = () => { hold(); release() }
-  const closeDetail = () => { setOpen(null); release() }
+  const closeDetail = () => { onCard(null); release() }
+  const result = card && [...found.results, ...found.suggested].find((r) => pickOf(r).id === card.id)
+  const panel: DetailPanel = {
+    onBack: closeDetail,
+    onClose: () => { closeDetail(); onClose() },
+    onAskInChat: (draft) => { onAskInChat(draft); closeDetail() },
+    against: { form, bestMatch: result?.bestMatch },
+  }
 
   return (
     <section aria-label="Results" className="flex min-h-0 flex-col bg-primary">
-      {open
+      {card
         ? (
-          // On a phone the place covers the chat input and the phone bar, as the page of a place.
-          <div className="min-h-0 flex-1 overflow-y-auto bg-primary max-lg:fixed max-lg:inset-0 max-lg:z-50">
-            <PlaceDetail listing={open} panel={{ onBack: closeDetail, onAskInChat: () => { onAskInChat(open); closeDetail() } }} />
+          // On a phone the card covers the chat input and the phone bar, as the page of a card.
+          // A new card starts at its top.
+          <div key={card.id} className="min-h-0 flex-1 overflow-y-auto bg-primary max-lg:fixed max-lg:inset-0 max-lg:z-50">
+            <OpenDetail card={card} listing={result?.kind === 'listing' ? result.listing : undefined} panel={panel} />
           </div>
         )
         : (

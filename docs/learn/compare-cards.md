@@ -7,7 +7,7 @@
 - **The selection.** Each card of the results panel has a "Select" tick. A person picks 2 to 4 cards of one kind: places or people. The panel shows "N Selected" with a clear button, and the chat shows the cards as chips above the input, with "Ask about the listings…". A selection needs a sign-in, as the opening of a card ([PD6b](../decisions/pd-06b-login-gate-and-search.md)).
 - **The trigger.** The turn sends `compare`: the kind and the ids, in the order of the results. When the router labels the message as a question, and not as filters, the reply is the comparison. A message with filters goes to the normal chat.
 - **The reply.** One line names Option 1, the best match of the results, and for places the option with the least cash to move in. A 2b question gets the hand-off line first ([PD10](../decisions/pd-10-scope-bands.md)). The open question and the conflicts of the last reply stay open.
-- **The table.** Places start with Rent, Move-in cash, Deposit and Station. People start with Age, Job, Budget, Move date, Food, Smoking and Verified. "Change the fields" adds or removes rows, with no new request. Each option links to its card.
+- **The table.** Places start with Rent, Move-in cash, Deposit and Station. People start with Age, Job, Budget, Move date, Food, Smoking and Verified. "Change the fields" adds or removes rows, with no new request. Each option opens its card in the results panel. A click with Ctrl or Cmd opens the page of the card.
 
 ## How it fits our project
 

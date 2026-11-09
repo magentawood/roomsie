@@ -24,7 +24,7 @@
 - An edit sends only the fields that change. `null` clears a field, and in `lifestyle` and `mustHaves` it clears one answer.
 - A value from the profile form is "stated". The chat can also give a "default" value ([Form A and intent](form-a-and-intent.md)).
 - The reply of the own profile has `visibility` and `missing`, so the profile screens can tell why a card is not live.
-- `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`). It also gives the connection with the viewer for the person detail at `/people/[id]` ([Message requests](message-requests.md)).
+- `GET /v1/people/:id` uses the rule that Saved and the match query use (`visiblePeople`). It also gives the connection with the viewer for the person detail, at `/people/[id]` and in the results panel ([Message requests](message-requests.md)).
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.
 - After a sign-in, the app shell opens the create dialog "You've logged in!" when the account has no profile. It asks the name, the age and the gender. Each way to close it hides it until the browser tab closes.
 - The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.

@@ -1,6 +1,6 @@
 # PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Settled · **Date:** 2026-10-25, amended 2026-11-02 (T-14) and 2026-11-09 (Roomsie Noticed) · **Deciders:** n3rxv, for the founders
+**Status:** Settled · **Date:** 2026-10-25, amended 2026-11-02 (T-14) and 2026-11-09 (Roomsie Noticed, the match box) · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -45,7 +45,7 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 - **A gap of the searcher does not hide a card (T-14).** The searcher did not answer what a dealbreaker of the candidate checks, for example the gender of a guest. Then the card shows below the full matches, with no label.
 - **A listing filters on "Who is welcome" (PD15) and on the searcher's must-haves.** Its house rules show on the card.
 - **A gap does not hide a card (PC-25).** A card with an unanswered dealbreaker shows below the full matches, with the label "Didn't say: …".
-- **Budget (PC-26).** The query compares the budget with the rent. A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
+- **Budget (PC-26).** A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
 - **Move date (PC-26).** It passes in a window of 30 days before or after. An empty move date passes.
 
 **Order and label (PC-23, PC-33, PC-28)**
@@ -57,7 +57,13 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
   4. Form B notes, as a tie-break. A card gets one point for each topic where the searcher and the person have a visible note of the same kind. A note counts above a confidence floor in config (T-14). Listings have no notes.
   5. The nearest move date.
   6. Newest.
-- A "Best match" label shows when the searcher stated three or more preferences and the card meets all of them. There is no score number and no sentence.
+- A "Best match" label shows when the searcher stated three or more preferences and the card meets all of them. There is no score number.
+
+**The match box of a detail (2026-11-09, the founders)**
+
+- Under the title, a box says "A great match" for a card with the "Best match" label, else "An average match".
+- One sentence gives the facts that both sides share ([the list](../learn/place-detail.md)). It has no number, and no model writes it.
+- The chat compares with the goal's form, a page with the viewer's profile. With no shared fact, no box shows.
 
 **Roomsie Noticed (2026-11-09)**
 
@@ -83,11 +89,11 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 - **Mutual for listings too.** "Smokes" does not mean "smokes indoors". Good matches disappear.
 - **Hide a card with a gap.** Seeded profiles disappear at launch.
 - **No budget leeway.** The filter hides a ₹15,500 room from an "Under ₹15k" seeker.
-- **A score number, or a sentence beside the label.** A number reads 70% for no preference met. The product team wants a plain label.
+- **A score number.** A number reads 70% for no preference met. The product team wants a plain label.
 - **Form B neither shown nor ranked.** The product team wants the context of the chat in the order.
 - **Hide the card until the searcher answers.** A guest sees almost no people with a gender or a "Non-smokers" dealbreaker.
 - **Form B by similar words, or by the number of notes of the candidate.** Word match is weak in Hinglish and Marathi. The number of notes ignores the searcher.
-- **Notes that a model writes.** A model can state a count that the data does not hold.
+- **Notes or a match sentence that a model writes.** A model can state what the data does not hold.
 - **"Near metro" as a sort, or a note with no button.** A must-have reuses the weights, the chips and "Didn't say".
 
 ## Consequences
@@ -102,4 +108,5 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 
 - The F-12 grill ([#104](https://github.com/magentawood/roomsie/issues/104)), and the Product file: results, cards and "No relevant results"
 - Roomsie Noticed, the list of place types and "Near a station": the user's picks of 2026-11-09, [#244](https://github.com/magentawood/roomsie/pull/244)
+- The match box: the founders, 2026-11-09
 - [PD15](pd-15-form-a-contract.md), [PD14](pd-14-v0-is-the-figma-designs.md), [PD11](pd-11-launch.md)

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { formA, type ChipSlot, type GoalResponse } from '@roomsie/contract'
-import { chatStorage, chipsOf, forgetChat, keyAction, placeTypes, readStored, sameMoveOf, tapRefusal, toggled, writeStored } from './chat'
+import { chatStorage, chipsOf, forgetChat, keyAction, lastOpenGoal, placeTypes, readStored, sameMoveOf, tapRefusal, toggled, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -41,6 +41,18 @@ describe('the stored chat', () => {
     vi.stubGlobal('sessionStorage', { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') }, removeItem: () => { throw new Error('blocked') } })
     expect(readStored(chatStorage.visitorKey)).toBeNull()
     expect(() => writeStored(chatStorage.visitorKey, 'key-1')).not.toThrow()
+  })
+})
+
+describe('the chat of "Ask in chat" on the page of a card', () => {
+  const goals = [{ id: 'closed', status: 'closed' as const }, { id: 'newest', status: 'open' as const }, { id: 'older', status: 'open' as const }]
+
+  it('is the chat of the tab, else the newest open goal, else a new goal', () => {
+    expect(lastOpenGoal('older', goals)).toBe('older')
+    expect(lastOpenGoal(null, goals)).toBe('newest')
+    // A closed goal takes no message.
+    expect(lastOpenGoal('closed', goals)).toBe('newest')
+    expect(lastOpenGoal(null, [])).toBeNull()
   })
 })
 

@@ -1,5 +1,6 @@
 import { mustHaveKeys, requestCapMessage, requestExpiryDays, type Budget, type CardResponse, type Connection, type LifestyleAxis } from '@roomsie/contract'
 import { rupees } from './listing-steps'
+import { didntSay } from './place-detail'
 import { profileLabels } from './profile-form'
 
 export const initials = (fullName: string) => fullName.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase()
@@ -29,6 +30,12 @@ export const lifestyleLines = (card: CardResponse) => (Object.keys(profileLabels
     const answer = card.lifestyle[axis]
     return answer ? [{ axis, label: axisLabel(axis), value: (profileLabels.answers[axis] as Record<string, string>)[answer]! }] : []
   })
+
+/** Each lifestyle question, and "Didn't say" for one with no answer: the detail shows them all (2026-11-09). */
+export const lifestyleFacts = (card: CardResponse) => (Object.keys(profileLabels.axes) as LifestyleAxis[]).map((axis) => {
+  const answer = card.lifestyle[axis]
+  return { axis, label: axisLabel(axis), value: answer ? (profileLabels.answers[axis] as Record<string, string>)[answer]! : didntSay }
+})
 
 /** "Veg • Non-smoker • Home most days +2", for the person card. */
 export function lifestyleSummary(card: CardResponse) {

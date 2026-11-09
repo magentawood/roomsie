@@ -25,6 +25,8 @@ export type BaseSearch = {
   preferences: MustHaveKey[]
   limit: number
   offset: number
+  /** Only these cards: the fit of one card (PD3a). */
+  ids?: string[]
 }
 
 /** 30 days before or after the move date. An empty date passes (PD3a). */

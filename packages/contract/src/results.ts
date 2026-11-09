@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { compareKinds } from './compare'
 import { formA } from './form-a'
 import { listingResponse } from './listings'
 import { cardResponse, mustHaveKeys } from './profiles'
@@ -22,6 +23,12 @@ export const resultsPageSize = 20
 
 /** A search: the panel is a function of the form only (PD6c). */
 export const resultsBody = z.strictObject({ form: formA, page: z.int().min(1).default(1) })
+
+/** One card against a form, whatever the place types of the form: the label of the match box of a detail (PD3a). */
+export const fitBody = z.strictObject({ form: formA, kind: z.enum(compareKinds), id: z.uuid() })
+export type FitBody = z.infer<typeof fitBody>
+/** False also when the card does not pass the filters of the form. */
+export const fitResponse = z.object({ bestMatch: z.boolean() })
 
 /** One filter that a suggested post relaxes: the next budget band, or a neighbouring area group (PD6c). */
 const relaxed = z.discriminatedUnion('kind', [

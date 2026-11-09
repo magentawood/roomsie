@@ -2,10 +2,41 @@
 
 import { useState, type ReactNode } from 'react'
 import { useRouter } from 'next/navigation'
-import { DotsVertical } from '@untitledui/icons'
-import type { Icon } from '../ui/button'
+import { ArrowLeft, DotsVertical, Home02, Plus, User01 } from '@untitledui/icons'
+import type { CompareKind } from '@roomsie/contract'
+import { ApiError, errorText } from '../../lib/api'
+import { chatStorage, lastOpenGoal, readStored, writeStored } from '../../lib/chat'
+import { goalHref, newGoalHref } from '../../lib/goals'
+import { didntSay } from '../../lib/place-detail'
+import { useGoals } from '../../lib/queries'
+import { savedHref } from '../../lib/saved'
+import { Button, type Icon } from '../ui/button'
+import { EmptyState } from '../ui/empty-state'
 import type { Card } from '../../lib/share'
+import type { Against } from './match-box'
 import { ShareDialog } from './share-dialog'
+
+/**
+ * A detail in the results panel of the chat (T-15). On a phone it is a layer over the chat. `onClose` closes the detail and the panel,
+ * as the X of the panel. `onAskInChat` puts the draft in the chat input. `against`: what the match box compares with.
+ */
+export type DetailPanel = { onBack: () => void; onClose: () => void; onAskInChat: (draft: string) => void; against: Against }
+
+/** "Ask in chat" of a detail. In the panel it fills the chat input. On a page it opens the last chat, and the input takes the draft. */
+export function AskInChat({ draft, panel }: { draft: string; panel?: DetailPanel }) {
+  const router = useRouter()
+  const goals = useGoals()
+  const ask = () => {
+    if (panel) return panel.onAskInChat(draft)
+    writeStored(chatStorage.draft, draft)
+    const id = lastOpenGoal(readStored(chatStorage.tabGoal), goals.data?.goals ?? [])
+    router.push(id ? goalHref(id) : newGoalHref)
+  }
+  return <Button variant="secondary" size="xs" iconTrailing={Plus} onClick={ask}>Ask in chat</Button>
+}
+
+/** A part of a detail with no answer. */
+export const NotSaid = () => <p className="text-sm text-tertiary">{didntSay}</p>
 
 export type Fact = { label: string; value: string; icon: Icon }
 
@@ -95,4 +126,32 @@ export function useShare(title: string, card: Card) {
 export function useBack(saved: string) {
   const router = useRouter()
   return () => (window.history.length > 1 ? router.back() : router.push(saved))
+}
+
+/**
+ * A card that does not load. A hidden card, a block, an unknown card and a bad id look the same, so a block does not show.
+ * `inPanel`: the chat has the main landmark.
+ */
+export function Unavailable({ kind, error, onBack, inPanel }: { kind: CompareKind; error: Error; onBack: () => void; inPanel?: boolean }) {
+  if (!(error instanceof ApiError && [400, 404].includes(error.status))) return <p role="alert" className="p-6 text-sm text-error-primary">{errorText(error)}</p>
+  const saved = kind === 'place' ? savedHref.places : savedHref.people
+  const Box = inPanel ? 'div' : 'main'
+  return (
+    <Box className="flex flex-1 flex-col px-5 py-5 md:px-6">
+      <span><Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={onBack} /></span>
+      {kind === 'place'
+        ? (
+          <EmptyState icon={Home02} title="This place is no longer listed."
+            action={<div className="flex gap-3"><Button variant="secondary" size="md" href={saved}>See saved places</Button><Button variant="primary" size="md" href="/">Start looking</Button></div>}>
+            The lister filled, paused or removed it.
+          </EmptyState>
+        )
+        : (
+          <EmptyState icon={User01} title="This card is not available"
+            action={<div className="flex gap-3"><Button variant="secondary" size="md" href={saved}>See saved people</Button><Button variant="primary" size="md" href="/">Start looking</Button></div>}>
+            The person hid the card, or it is no longer on roomsie.
+          </EmptyState>
+        )}
+    </Box>
+  )
 }

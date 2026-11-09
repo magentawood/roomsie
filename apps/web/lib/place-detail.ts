@@ -4,34 +4,40 @@ import { labels, rupees } from './listing-steps'
 export type Line<L extends string = string> = { label: L; value: string }
 type Flatmate = ListingResponse['flatmates'][number]
 
-const linesWithValues = <L extends string>(all: [L, string | null | undefined][]): Line<L>[] =>
-  all.filter((l): l is [L, string] => l[1] != null).map(([label, value]) => ({ label, value }))
+/** The value of a field that the lister or the person left empty. Each field of a kind shows, so a gap is plain (2026-11-09). */
+export const didntSay = 'Didn’t say'
+
+const linesOf = <L extends string>(all: [L, string | null | undefined][]): Line<L>[] => all.map(([label, value]) => ({ label, value: value ?? didntSay }))
 export const ifSet = <T>(v: T | null, text: (v: T) => string) => (v === null ? null : text(v))
 
-/** The lines of the money to move in (`moveInOf`). */
+/** The lines of the money to move in (`moveInOf`). Only a broker flat has a brokerage. With no rent there is no total. */
 export function moveIn(listing: ListingResponse) {
   const money = moveInOf(listing.rates, listing.brokerage)
-  if (!money) return null
-  const { rate, total } = money
-  const rentLabel = listing.kind === 'pg' && rate.sharing ? `First month’s rent, ${labels.sharing[rate.sharing].toLowerCase()} sharing` : 'First month’s rent'
+  const rate = money?.rate
+  const rentLabel = listing.kind === 'pg' && rate?.sharing ? `First month’s rent, ${labels.sharing[rate.sharing].toLowerCase()} sharing` : 'First month’s rent'
   return {
-    lines: linesWithValues([[rentLabel, rupees(rate.rent)], ['Deposit', ifSet(rate.deposit, rupees)], ['Brokerage', ifSet(listing.brokerage, rupees)]]),
-    total: rupees(total),
+    lines: linesOf([
+      [rentLabel, rate && rupees(rate.rent)], ['Deposit', rate && ifSet(rate.deposit, rupees)],
+      ...(listing.kind === 'broker_flat' ? [['Brokerage', ifSet(listing.brokerage, rupees)] as [string, string | null]] : []),
+    ]),
+    total: money ? rupees(money.total) : null,
   }
 }
 
 /** "1 Nov 26". */
 export const shortDate = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: '2-digit' })
 
+/** A PG has no amount of maintenance and no date to move in (the listing flow, T-41). */
 export function termLines(listing: ListingResponse) {
   const electricity = listing.electricity === 'included' ? 'Included in rent' : ifSet(listing.electricity, (e) => labels.electricity[e])
-  const maintenance = listing.maintenanceIncluded ? 'Included in rent' : ifSet(listing.maintenance, (m) => `${rupees(m)}/mo`)
-  return linesWithValues([
+  const maintenance = listing.maintenanceIncluded ? 'Included in rent'
+    : listing.maintenance !== null ? `${rupees(listing.maintenance)}/mo` : listing.maintenanceIncluded === false ? 'Not included' : null
+  return linesOf([
     ['Electricity', electricity],
     ['Maintenance', maintenance],
     ['Rent', ifSet(listing.rentNegotiable, (n) => (n ? 'Negotiable' : 'Fixed'))],
     ['Minimum stay', ifSet(listing.minStay, (m) => labels.minStay[m])],
-    ['Available from', ifSet(listing.availableFrom, shortDate)],
+    ...(listing.kind === 'pg' ? [] : [['Available from', ifSet(listing.availableFrom, shortDate)] as ['Available from', string | null]]),
   ])
 }
 
@@ -42,7 +48,7 @@ export function placeLines(listing: ListingResponse) {
   const bathroom = ifSet(listing.bathroom, (b) => labels.bathroom[b])
   const balcony = ifSet(listing.balcony, (b) => (b ? 'Yes' : 'No'))
   if (listing.kind === 'pg') {
-    return linesWithValues([
+    return linesOf([
       ['Beds free right now', ifSet(listing.bedsFree, (b) => labels.bedsFree[b])],
       ['Bathroom', bathroom],
       ['Meals', ifSet(listing.meals, (m) => labels.meals[m])],
@@ -55,23 +61,26 @@ export function placeLines(listing: ListingResponse) {
   const furnishing = ifSet(listing.furnishing, (f) => labels.furnishing[f])
   const area = ifSet(listing.carpetAreaSqft, (a) => `${a.toLocaleString('en-IN')} sq ft`)
   if (listing.kind === 'room_in_flat') {
-    return linesWithValues([
+    return linesOf([
       ['Place type', placeType], ['Floor', floorLine], ['The room', ifSet(listing.roomType, (r) => labels.roomType[r])], ['Carpet area', area],
       ['Bathroom for this room', bathroom], ['Balcony', balcony], ['Furnishing', furnishing],
     ])
   }
-  return linesWithValues([['Place type', placeType], ['Floor', floorLine], ['Furnishing', furnishing], ['Carpet area', area], ['Bathroom', bathroom], ['Balcony', balcony]])
+  return linesOf([['Place type', placeType], ['Floor', floorLine], ['Furnishing', furnishing], ['Carpet area', area], ['Bathroom', bathroom], ['Balcony', balcony]])
 }
 
-/** The rent and the deposit of each sharing of a PG. */
+/** The rent and the deposit of each sharing of a PG, and "Didn't say" for a sharing with no rent. */
 export function pgRateLines(listing: ListingResponse): Line[] {
-  return listing.rates.flatMap((r) => (r.sharing
+  const rates = listing.rates.flatMap((r) => (r.sharing
     ? [{ label: `${labels.sharing[r.sharing]} sharing`, value: `${rupees(r.rent)}/mo${r.deposit === null ? '' : ` · deposit ${rupees(r.deposit)}`}` }]
     : []))
+  const unpriced = listing.sharing.filter((sharing) => !listing.rates.some((r) => r.sharing === sharing)).map((sharing) => ({ label: `${labels.sharing[sharing]} sharing`, value: didntSay }))
+  const lines = [...rates, ...unpriced]
+  return lines.length ? lines : [{ label: 'Sharing', value: didntSay }]
 }
 
 export function ruleLines(listing: ListingResponse) {
-  return linesWithValues([
+  return linesOf([
     ['Kitchen', ifSet(listing.vegOnlyKitchen, (v) => (v ? 'Veg only' : 'Veg and non-veg'))],
     ['Guests', ifSet(listing.guests, (g) => labels.guestsRule[g])],
     ['Smoking', ifSet(listing.smokingAllowed, (s) => (s ? 'Smoking allowed' : 'No smoking'))],
@@ -85,8 +94,8 @@ export function ruleLines(listing: ListingResponse) {
 export function nearbyLines(listing: ListingResponse) {
   const walk = (w: ListingResponse['walkBus']) => ifSet(w, (t) => labels.walkTime[t])
   const station = walk(listing.walkStation)
-  return linesWithValues([
-    ['Railway or metro station', listing.nearestStation && station ? `${listing.nearestStation} · ${station}` : station],
+  return linesOf([
+    ['Railway or metro station', [listing.nearestStation, station].filter(Boolean).join(' · ') || null],
     ['Gym', walk(listing.walkGym)],
     ['Bus stop', walk(listing.walkBus)],
     ['Mall', walk(listing.walkMall)],

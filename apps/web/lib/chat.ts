@@ -14,7 +14,11 @@ export function keyAction(press: { key: string; shiftKey: boolean; isComposing: 
  * The key and the chat of the tab last for the visit of the tab, so a guest starts fresh on the next visit. The joins and the mark stay.
  */
 /** `resultsAt`: the reply that brought the results of the tab's goal, so a reload keeps the results card in its place. */
-export const chatStorage = { visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist', onboarded: 'roomsie.onboarded', resultsAt: 'roomsie.resultsAt' } as const
+export const chatStorage = {
+  visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist', onboarded: 'roomsie.onboarded', resultsAt: 'roomsie.resultsAt',
+  /** "Ask in chat" on the page of a card: the draft that the chat input takes, one time. */
+  draft: 'roomsie.chatDraft',
+} as const
 type StoredKey = (typeof chatStorage)[keyof typeof chatStorage]
 const lasting: readonly StoredKey[] = [chatStorage.waitlist, chatStorage.onboarded]
 const storeOf = (key: StoredKey) => (lasting.includes(key) ? localStorage : sessionStorage)
@@ -35,6 +39,12 @@ export function writeStored(key: StoredKey, value: string | null) {
     // The chat still works until a reload.
   }
 }
+/** "Ask in chat" on the page of a card: the chat of this tab, else the newest open goal. Null: a new goal. A closed goal takes no message. */
+export function lastOpenGoal(tabGoal: string | null, goals: readonly { id: string; status: 'open' | 'closed' }[]) {
+  const open = goals.filter((goal) => goal.status === 'open')
+  return open.some((goal) => goal.id === tabGoal) ? tabGoal : open[0]?.id ?? null
+}
+
 /** At sign-out, so the next person on this browser cannot open the chat. */
 export const forgetChat = () => Object.values(chatStorage).forEach((key) => writeStored(key, null))
 

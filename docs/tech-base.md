@@ -99,5 +99,6 @@ These are the newest learn pages. The full list is in [the Learn index](learn/RE
 - [Message requests](learn/message-requests.md)
 - [Messages and realtime](learn/messages.md)
 - [Moderation: reports, "Not interested", blocks and the admin screen](learn/moderation.md)
+- [Place detail and listing reports](learn/place-detail.md)
 - [Roomsie Noticed](learn/roomsie-noticed.md)
 <!-- learn-newest:end -->

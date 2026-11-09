@@ -6,15 +6,17 @@ import {
   ShoppingCart01, SlashCircle01, Sun, Users01, Wallet02,
 } from '@untitledui/icons'
 import type { LifestyleAxis, PersonResponse } from '@roomsie/contract'
-import { aboutLine, budgetLine, initials, lifestyleLines, lookingFor, mustHaveGroups } from '../../lib/person'
-import { shortDate } from '../../lib/place-detail'
+import { aboutLine, budgetLine, initials, lifestyleFacts, lookingFor, mustHaveGroups } from '../../lib/person'
+import { didntSay, shortDate } from '../../lib/place-detail'
 import { firstName } from '../../lib/profile-form'
 import { useAreaLabels } from '../../lib/queries'
-import { Chips, DetailMenu, Facts, Photos, Section, useBack, useShare } from '../detail/parts'
+import { AskInChat, Chips, DetailMenu, Facts, NotSaid, Photos, Section, useBack, useShare, type DetailPanel } from '../detail/parts'
+import { MatchBox } from '../detail/match-box'
 import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Badge } from '../ui/badge'
 import { Button, type Icon } from '../ui/button'
+import { CloseButton } from '../ui/modal'
 import { Connect } from './connect'
 import { SayHiSheet } from './say-hi-sheet'
 import { savedHref } from '../../lib/saved'
@@ -23,15 +25,19 @@ const lifestyleIcons: Record<LifestyleAxis, Icon> = {
   food: ShoppingCart01, smoking: SlashCircle01, drinks: Droplets01, guests: Users01, your_days: Sun, sleep: Moon01, tidiness: Brush01, pets: Heart,
 }
 
-/** The detail of a person: the flatmate detail of the Product file and section 16 of the drafts (T-18b). */
-export function PersonDetail({ person }: { person: PersonResponse }) {
+/**
+ * The detail of a person: the flatmate detail of the Product file and section 16 of the drafts (T-18b).
+ * Each part shows on each card, with "Didn't say" for a gap (2026-11-09). `panel`: it is in the results panel of the chat.
+ */
+export function PersonDetail({ person, panel }: { person: PersonResponse; panel?: DetailPanel }) {
   const areaLabels = useAreaLabels()
   const saved = useSaved('people', person.id)
   const { share, status, dialog: shareDialog } = useShare(person.fullName, { kind: 'people', id: person.id })
   const [sheet, setSheet] = useState<'say_hi' | 'report' | null>(null)
   const name = firstName(person.fullName)
   const target = { profileId: person.id, firstName: name }
-  const back = useBack(savedHref.people)
+  const routerBack = useBack(savedHref.people)
+  const back = panel?.onBack ?? routerBack
   const close = () => setSheet(null)
 
   const lookingForFacts = [
@@ -40,27 +46,31 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
     { label: 'Budget', value: budgetLine(person), icon: Wallet02 },
     { label: 'Moving', value: person.moveDate && shortDate(person.moveDate), icon: Calendar },
     { label: 'Commute to', value: person.commuteAddress, icon: Car01 },
-  ].flatMap((f) => (f.value ? [{ ...f, value: f.value }] : []))
-  const lifestyleFacts = lifestyleLines(person).map((l) => ({ label: l.label, value: l.value, icon: lifestyleIcons[l.axis] }))
+  ].map((f) => ({ ...f, value: f.value || didntSay }))
+  const likeFacts = lifestyleFacts(person).map((l) => ({ label: l.label, value: l.value, icon: lifestyleIcons[l.axis] }))
   const mustHaves = mustHaveGroups(person)
+  const askInChat = <AskInChat draft={`About ${name}: `} panel={panel} />
 
   return (
     <>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-secondary bg-primary px-5 py-3 lg:hidden">
         <Button variant="tertiary" size="sm" iconLeading={ArrowLeft} onClick={back} className="gap-1.5! px-0! py-1.5!">Profile</Button>
-        <DetailMenu id="person-menu" items={[
+        <div className="flex items-center gap-2">{askInChat}<DetailMenu id="person-menu" items={[
           { label: `Report ${name}`, icon: Flag01, onClick: () => setSheet('report') },
           { label: 'Share profile', icon: Share07, onClick: share },
           { label: saved.shown ? 'Saved' : 'Save', icon: saved.shown ? BookmarkCheck : Bookmark, onClick: saved.toggle },
-        ]} />
+        ]} /></div>
       </div>
-      <article className="mx-auto flex w-full max-w-180 flex-col gap-4 px-5 pt-4 pb-48 md:px-6 md:py-8 lg:gap-5 lg:py-6">
+      {/* In the panel, the bar sits at the bottom of the layer, as on a place, so the article needs no room for it. */}
+      <article className={`mx-auto flex w-full max-w-180 flex-col gap-4 px-5 pt-4 md:px-6 md:py-8 lg:gap-5 lg:py-6 ${panel ? 'pb-6' : 'pb-48'}`}>
         <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-3 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
-          <div className="flex gap-3">
+          <div className="flex items-center gap-3">
+            {askInChat}
             <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setSheet('report')}>Report</Button>
             <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
             <SaveButton kind="people" id={person.id} />
+            {panel && <CloseButton onClose={panel.onClose} />}
           </div>
         </div>
         {status && <p role="status" className="text-sm text-tertiary">{status}</p>}
@@ -75,20 +85,25 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
           </div>
           <p className="text-md text-tertiary">{aboutLine(person)}</p>
         </header>
+        <MatchBox target={{ kind: 'person', card: person }} against={panel?.against} />
         {person.bio && <p className="rounded-xl border border-secondary bg-secondary p-4 text-sm text-tertiary">“{person.bio}”</p>}
-        {lookingForFacts.length > 0 && <Section title={`What ${name} is looking for`}><Facts lines={lookingForFacts} /></Section>}
-        {lifestyleFacts.length > 0 && <Section title={`What ${name} is like`}><Facts lines={lifestyleFacts} gap="gap-3" /></Section>}
-        {(mustHaves.dealbreakers.length > 0 || mustHaves.prefers.length > 0) && (
-          <Section title={`What ${name} needs from flatmates`}>
-            <dl className="grid grid-cols-2 border-y border-secondary">
-              <div className="flex flex-col gap-2 border-r border-secondary p-4 lg:gap-3 lg:px-6"><dt className="text-sm font-medium text-secondary">Dealbreakers</dt><dd><Chips items={mustHaves.dealbreakers} className="border-badge-error bg-badge-error text-badge-error" /></dd></div>
-              <div className="flex flex-col gap-2 p-4 lg:gap-3 lg:px-6"><dt className="text-sm font-medium text-secondary">Prefers</dt><dd><Chips items={mustHaves.prefers} /></dd></div>
-            </dl>
-          </Section>
-        )}
+        <Section title={`What ${name} is looking for`}><Facts lines={lookingForFacts} /></Section>
+        <Section title={`What ${name} is like`}><Facts lines={likeFacts} gap="gap-3" /></Section>
+        <Section title={`What ${name} needs from flatmates`}>
+          <dl className="grid grid-cols-2 border-y border-secondary">
+            <div className="flex flex-col gap-2 border-r border-secondary p-4 lg:gap-3 lg:px-6">
+              <dt className="text-sm font-medium text-secondary">Dealbreakers</dt>
+              <dd>{mustHaves.dealbreakers.length ? <Chips items={mustHaves.dealbreakers} className="border-badge-error bg-badge-error text-badge-error" /> : <NotSaid />}</dd>
+            </div>
+            <div className="flex flex-col gap-2 p-4 lg:gap-3 lg:px-6">
+              <dt className="text-sm font-medium text-secondary">Prefers</dt>
+              <dd>{mustHaves.prefers.length ? <Chips items={mustHaves.prefers} /> : <NotSaid />}</dd>
+            </div>
+          </dl>
+        </Section>
         <div className="hidden lg:block"><Connect person={person} name={name} onSayHi={() => setSheet('say_hi')} /></div>
       </article>
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary px-5 py-4 lg:hidden">
+      <div className={`${panel ? 'sticky' : 'fixed inset-x-0'} bottom-0 z-30 border-t border-secondary bg-primary px-5 py-4 lg:hidden`}>
         <Connect person={person} name={name} onSayHi={() => setSheet('say_hi')} save={<SaveButton kind="people" id={person.id} className="px-3.5 py-2.5" />} />
       </div>
       {sheet === 'say_hi' && <SayHiSheet target={target} onClose={close} />}
