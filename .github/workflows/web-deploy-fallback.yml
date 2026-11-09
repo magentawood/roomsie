@@ -1,0 +1,47 @@
+name: web-deploy-fallback
+
+# The Vercel app of GitHub sometimes gets no push of main, and the site stays on the old build (2026-11-09: #249, #257).
+# After a push that changes the web, this waits for the production deploy of Vercel. With none after 10 minutes,
+# it deploys main with the Vercel CLI. A run by hand deploys at once.
+on:
+  push:
+    branches: [main]
+    paths: ['apps/web/**', 'packages/**', 'pnpm-lock.yaml', '.github/workflows/web-deploy-fallback.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: web-deploy-fallback
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  deployments: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      # The roomsie project of the roomsie team, as the Vercel comments of the pull requests name them. Not secrets.
+      VERCEL_ORG_ID: team_xFBMKA823XCtqOf6OAiUvXV5
+      VERCEL_PROJECT_ID: prj_zfUmOcnODXaMGdnwjt0PY6CoAKUu
+    steps:
+      - name: Wait for the production deploy of Vercel
+        id: vercel
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for i in $(seq 1 30); do
+            count=$(gh api "repos/${{ github.repository }}/deployments?sha=${{ github.sha }}&environment=Production" -q 'length')
+            if [ "$count" -gt 0 ]; then echo "Vercel deployed ${{ github.sha }}."; echo "missed=false" >> "$GITHUB_OUTPUT"; exit 0; fi
+            sleep 20
+          done
+          echo "No production deploy of ${{ github.sha }} after 10 minutes."
+          echo "missed=true" >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v4
+        if: github.event_name == 'workflow_dispatch' || steps.vercel.outputs.missed == 'true'
+      - name: Deploy main with the Vercel CLI
+        if: github.event_name == 'workflow_dispatch' || steps.vercel.outputs.missed == 'true'
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: npx --yes vercel@latest deploy --prod --yes --token "$VERCEL_TOKEN"

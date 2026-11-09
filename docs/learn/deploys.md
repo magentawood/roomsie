@@ -36,6 +36,7 @@ merge to main ─┬─▶ Vercel ──────────────▶ 
 ## The choice we made
 
 - The web deploys through the Git link of Vercel, not a GitHub workflow. The link gives a free preview of each pull request. T-03 makes `main` accept a merge only when CI passes.
+- **A missed push.** The Git link sometimes gets no push of `main`, and the site stays on the old build (twice on 2026-11-09). After each push that changes the web, the workflow `web-deploy-fallback` waits 10 minutes for the production deploy of that commit. With none, it deploys `main` with the Vercel CLI and the `VERCEL_TOKEN` secret. `gh workflow run web-deploy-fallback.yml -R magentawood/roomsie --ref main` deploys at once.
 - The API was first on Fly.io in `bom`. Fly accepts no new machines in India, so the same image moved to Lightsail ([ADR-0009](../decisions/0009-hosting-and-region.md)).
 - Lightsail has no secret store. Thus, the secrets are in the CI secret store ([ADR-0016](../decisions/0016-credentials-and-secrets.md)).
 - Previews do not call the production API. The team examines this again after the launch. A staging API needs a third Supabase project, and the free plan allows two.
