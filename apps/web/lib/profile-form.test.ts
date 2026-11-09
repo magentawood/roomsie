@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ProfileResponse } from '@roomsie/contract'
-import { bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou } from './profile-form'
+import { bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou, withMustHave } from './profile-form'
 
 const saved: ProfileResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', religion: null, community: null, jobRole: null, commuteAddress: null, bio: null,
@@ -52,5 +52,13 @@ describe('the body of an edit', () => {
 describe('the first name of a card', () => {
   it('is the first word, and the word after the mark of a demo card', () => {
     expect([firstName('Riya Shah'), firstName('Demo · Riya S.'), firstName('Asha')]).toEqual(['Riya', 'Riya', 'Asha'])
+  })
+})
+
+describe('the must-haves of the profile', () => {
+  it('keeps one of "Women only" and "Men only": a weight on one clears the other, and a clear leaves the other', () => {
+    expect(withMustHave({ women_only: 'prefer', veg_kitchen: 'dealbreaker' }, 'men_only', 'dealbreaker')).toEqual({ women_only: null, men_only: 'dealbreaker', veg_kitchen: 'dealbreaker' })
+    expect(withMustHave({ women_only: 'prefer' }, 'men_only', null)).toEqual({ women_only: 'prefer', men_only: null })
+    expect(withMustHave({}, 'veg_kitchen', 'prefer')).toEqual({ veg_kitchen: 'prefer' })
   })
 })

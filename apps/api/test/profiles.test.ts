@@ -101,6 +101,14 @@ describe('the own profile', () => {
     expect((await edit('lister', { mustHaves: { pool: 'prefer' } })).statusCode).toBe(400)
   })
 
+  it('keeps one of "Women only" and "Men only": a weight on one clears the other, and both at once is refused', async () => {
+    expect((await edit('lister', { mustHaves: { men_only: 'prefer' } })).statusCode).toBe(200)
+    const women = profileResponse.parse((await edit('lister', { mustHaves: { women_only: 'dealbreaker' } })).json())
+    expect([women.mustHaves.women_only, women.mustHaves.men_only]).toEqual(['dealbreaker', undefined])
+    expect((await edit('lister', { mustHaves: { women_only: 'prefer', men_only: 'prefer' } })).statusCode).toBe(400)
+    expect((await edit('lister', { mustHaves: { women_only: null } })).statusCode).toBe(200)
+  })
+
   it('masks a phone number in the name, the bio, the job role and the commute address (PD17)', async () => {
     const saved = profileResponse.parse((await edit('lister', { bio: 'Call me on 98200 12345', jobRole: 'Analyst 9820012345', commuteAddress: 'BKC, ping 9820012345' })).json())
     for (const field of [saved.bio, saved.jobRole, saved.commuteAddress]) expect(field).not.toContain('9820')
