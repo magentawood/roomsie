@@ -6,10 +6,10 @@
 
 - **The onboarding** is at `/start`. It has the steps of flow 01 of the Product file: "What brings you to Roomsie?", "Who's moving?", "What kind of place?", "Budget per month?" and "Where do you want to live?". Each step has Previous, Skip and Next. A bar of four parts shows the four questions after the purpose.
 - **"Sign in to continue"** comes after the questions, with "Sign up with Google" and "Guest login". A signed-in person does not see it.
-- **A flatmate seeker** picks "I'm looking for a flatmate". The steps are different: "What do you do?" (student, first job or working), the budget, the area, and "Must-haves in a flatmate?". Each must-have goes into Form A as a stated dealbreaker, so the chat opens with only the flatmates who fit. "Women only" and "Men only" rule out each other. The goal starts as a flatmate search.
+- **A flatmate seeker** picks "I'm looking for a flatmate". The steps are different: "What do you do?" (student, first job or working), "Who would you like to live with?" (female flatmates, male flatmates, or both are fine), the budget, the areas, and "Must-haves in a flatmate?". Female or male flatmates is the must-have "Women only" or "Men only". Each must-have goes into Form A as a stated dealbreaker, so the chat opens with only the flatmates who fit. The bar has five parts on this path. The goal starts as a flatmate search.
 - **A different purpose** clears the answers, because the two paths ask different questions.
 - **A lister** picks "I have a place to list". The next step is "Sign in to continue" with Google only, then the listing flow.
-- **The start request** is `POST /v1/goals` with the answers: `intent`, `whosMoving`, `area` and `budget`, with the values of the chips. The API writes them into Form A as stated answers, as a chip tap does, and saves one assistant turn, for example "Got it: a room in a shared flat, a student, Andheri–Goregaon, up to ₹25,000. When do you want to move in?". It calls no model.
+- **The start request** is `POST /v1/goals` with the answers: `intent`, `whosMoving`, the area groups and `budget`, with the values of the chips. "Where do you want to live?" takes one area group or more. One group goes as `area`, which an older API also takes during a deploy, and two or more go as `areas`. The API writes them into Form A as stated answers, as a chip tap does, and saves one assistant turn, for example "Got it: a room in a shared flat, a student, Andheri–Goregaon, up to ₹25,000. When do you want to move in?". It calls no model.
 - **The profile completion card** shows the percentage of the profile, "Update Profile" and a close button. It is in the sidebar on a computer, and above the chat on a phone.
 
 ## How it fits our project
@@ -38,7 +38,7 @@
 
 ## Gotchas
 
-- **An area must be an area group.** A sub-area or an unknown area gets 400 `not valid: area`, before a visitor session exists.
+- **An area must be an area group.** A sub-area or an unknown area gets 400 `not valid: area`, before a visitor session exists. A request with both `area` and `areas` gets 400 too.
 - **The minutes of a deploy.** Vercel goes live before the API. The old API ignores the start answers and makes an empty goal, so the chat opens on its empty screen, "What are we looking for?". The old API also gives no `completion`, so the card does not show.
 - **The art of each step** is a square image. A computer shows a tall part of it, and a phone a wide band. `x` and `y` in the screen code set the part that shows.
 - **The footer has no email.** The designs show one, but the code keeps emails out of the repo.

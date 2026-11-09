@@ -49,10 +49,12 @@ export const goalStart = z.strictObject({
   intent: z.enum(intents).optional(),
   whosMoving: z.enum(whosMovingAnswers).exclude(['unclear']).optional(),
   area: areaSlug.optional(),
+  /** Two area groups or more. One group comes as `area`, which an older API also takes. */
+  areas: z.array(areaSlug).min(2).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once').optional(),
   budget: budgetBandId.optional(),
   /** The must-haves of a flatmate search: each one is a dealbreaker. */
   mustHaves: z.array(z.enum(mustHaveKeys)).max(mustHaveKeys.length).refine((keys) => new Set(keys).size === keys.length, 'Each must-have once').optional(),
-})
+}).refine((start) => !(start.area && start.areas), 'One area as area, or more as areas')
 export type GoalStart = z.infer<typeof goalStart>
 export const chipTurnParts = z.strictObject({ version: z.literal(1).default(1), tap: chipTap })
 export type ChipTurnParts = z.output<typeof chipTurnParts>
