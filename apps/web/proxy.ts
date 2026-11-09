@@ -41,7 +41,8 @@ export function proxy(request: NextRequest) {
 export const config = {
   matcher: [{
     // Skips the files of public by extension, so /a.php still gets the policy. /monitoring takes the events of Sentry.
-    source: '/((?!_next/static|_next/image|monitoring$|.*\\.(?:ico|jpg|js|mp4|png|svg|webp)$).*)',
+    // The sign-in pages of Firebase (/__/) keep their own policy.
+    source: '/((?!_next/static|_next/image|__/|monitoring$|.*\\.(?:ico|jpg|js|mp4|png|svg|webp)$).*)',
     missing: [
       { type: 'header', key: 'next-router-prefetch' },
       { type: 'header', key: 'purpose', value: 'prefetch' },
