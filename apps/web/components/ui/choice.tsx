@@ -88,9 +88,9 @@ export function TapChip({ label, onTap }: { label: string; onTap: () => void }) 
 export function RemoveChip({ label, small, onRemove }: { label: string; small?: boolean; onRemove: () => void }) {
   return (
     <button type="button" aria-label={`Remove ${label}`} onClick={onRemove}
-      className={small ? 'inline-flex items-center gap-0.5 rounded-md border border-primary bg-primary py-px pr-0.5 pl-1.75 text-xs font-medium text-secondary outline-focus-ring hover:bg-primary_hover focus-visible:outline-2' : chip(false)}>
+      className={small ? 'inline-flex items-center gap-0.5 rounded-md border border-badge-blue bg-badge-blue py-px pr-0.5 pl-1.75 text-xs font-medium text-badge-blue outline-focus-ring focus-visible:outline-2' : chip(false)}>
       {label}
-      <span className={small ? 'p-0.5' : ''}><XClose size={small ? 12 : 14} aria-hidden className="text-fg-quaternary" /></span>
+      <span className={small ? 'p-0.5' : ''}><XClose size={small ? 12 : 14} aria-hidden className={small ? 'text-badge-blue' : 'text-fg-quaternary'} /></span>
     </button>
   )
 }

@@ -63,7 +63,9 @@ export function noteLines(notes: Notice[], form: FormA, areaName: AreaName): Not
       }]
       case 'share': return [{
         text: `A 2 BHK in ${picks[0] ?? 'Mumbai'} split two ways works out to about ${thousands(note.each)} each${note.maintenanceIncluded ? ', maintenance included' : ''}.`,
-        button: 'Show people to share with', tap: { slot: 'intent', value: 'flatmates' },
+        ...(people
+          ? { button: `Show 2 BHK flats in ${picks[0] ?? 'Mumbai'}`, tap: { slot: 'intent', value: 'whole_flat' } }
+          : { button: 'Show people to share with', tap: { slot: 'intent', value: 'flatmates' } }),
       }]
     }
   })

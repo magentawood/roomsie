@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { chatStorage, readStored } from './chat'
+import { useGoals } from './queries'
 
 /** The goal of the chat: the one in the address, else null. Each other way into the chat starts a new goal, as a new chat of ChatGPT. */
 export const useCurrentGoalId = () => useSearchParams().get('goal')
@@ -17,4 +18,12 @@ const noChange = () => () => {}
 export function useChatsHref() {
   const id = useSyncExternalStore(noChange, () => readStored(chatStorage.tabGoal), () => null)
   return id ? goalHref(id) : newGoalHref
+}
+
+/** The logo opens the last chat (the founders, 2026-11-09): the chat of this tab, else the newest goal, else a new goal. */
+export function useLastChatHref() {
+  const id = useSyncExternalStore(noChange, () => readStored(chatStorage.tabGoal), () => null)
+  const newest = useGoals().data?.goals[0]?.id
+  const last = id ?? newest
+  return last ? goalHref(last) : newGoalHref
 }

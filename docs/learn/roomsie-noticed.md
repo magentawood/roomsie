@@ -5,6 +5,7 @@
 ## What it is
 
 - **The box** of flow 02 comes under the results card of the newest search. It waits while a reply is on its way, and a closed goal has none.
+- **Each results card has a note** (the founders, 2026-11-09). With results and no other note, the box gives what places in the areas usually cost, or for people what a 2 BHK there costs each when two share it. The button of that note for people shows 2 BHK flats.
 - **With results**, a note can say:
   - "Heads up, only 6 of 24 have a veg kitchen, if that matters to you." The button makes the must-have a dealbreaker. The must-have that the lifestyle answers point to comes first.
   - "15 people looking around Bandra–Santacruz want to team up." The button switches the search to people to rent with.

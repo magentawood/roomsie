@@ -197,6 +197,17 @@
    A mascot of a wait bobs and tilts, and a new mascot of a step pops in. */
 @theme {
   --animate-mascot: mascot-bob 1.6s ease-in-out infinite;
+  /* A new item of the chat fades in, and the three dots of a reply on its way pulse (the founders, 2026-11-09). */
+  --animate-fade-in: fade-in 240ms ease-out both;
+  --animate-typing: typing 1s ease-in-out infinite;
+  @keyframes fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: none; }
+  }
+  @keyframes typing {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 1; }
+  }
   @keyframes mascot-bob {
     0%, 100% { transform: translateY(0) rotate(-3deg); }
     50% { transform: translateY(-5px) rotate(3deg); }

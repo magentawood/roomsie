@@ -12,7 +12,7 @@ import { Button, type Icon } from '../ui/button'
 import { CompletionCard } from '../profile/completion-card'
 import { CreateProfileGate } from '../profile/create-profile-dialog'
 import { GoalList } from '../goals/goal-list'
-import { newGoalHref, useChatsHref } from '../../lib/goals'
+import { newGoalHref, useChatsHref, useLastChatHref } from '../../lib/goals'
 import { Avatar } from '../ui/avatar'
 import { Logo } from './logo'
 import { GoogleSignIn } from './google-sign-in'
@@ -61,10 +61,11 @@ function MessagesItem({ look, linkTo, icon = MessageCircle01 }: { look: NavLook;
 
 function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
   const { user, loading } = useAuth()
+  const lastChat = useLastChatHref()
   return (
     <aside className="sticky top-0 hidden h-dvh w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-5 lg:flex">
       <div className="flex min-h-0 flex-1 flex-col gap-5 pb-6">
-        <Link href="/chat" className="px-1 text-primary"><Logo className="h-6.5 w-auto" /></Link>
+        <Link href={lastChat} className="px-1 text-primary"><Logo className="h-6.5 w-auto" /></Link>
         <div className="mt-3 flex gap-3">
           <Button variant="primary" size="sm" iconLeading={Plus} {...linkTo('/listings/new')}>New Listing</Button>
           <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo(newGoalHref)}>New Goal</Button>
