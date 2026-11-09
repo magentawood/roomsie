@@ -25,6 +25,7 @@ route handler → Drizzle (typed query) → driver (connection and protocol) →
 ## Gotchas
 
 - **Prepared statements must stay off.** In production the API connects through the Supabase pooler in transaction mode. Many requests share a small number of connections, so the next query can go to a different connection. A prepared statement is a query plan that one connection keeps, so it fails there. The client sets `prepare: false`. Do not remove it. Migrations use session mode ([Database migrations](migrations.md)).
+- **Idle connections close.** The pooler drops a client connection that sits idle, and a query on that dead socket waits for minutes: the admin panel hung on 2026-11-09 while other requests answered. `poolOptions` in `apps/api/src/db/client.ts` closes an idle connection after 20 seconds, renews each connection every 5 minutes, and gives up a connect after 10 seconds. Both databases use it.
 - Do not make a second client in other code. Import `createDb`, so the setting stays in one place.
 
 ## Tickets
