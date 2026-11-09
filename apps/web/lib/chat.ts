@@ -10,12 +10,13 @@ export function keyAction(press: { key: string; shiftKey: boolean; isComposing: 
 }
 
 /**
- * The browser keeps the visitor key of the API, the chat of the tab and the waitlist joins, never a sign-in token (ADR-0007).
- * The key and the chat of the tab last for the visit of the tab, so a guest starts fresh on the next visit. The joins stay.
+ * The browser keeps the visitor key of the API, the chat of the tab, the waitlist joins and the mark of a done onboarding, never a sign-in token (ADR-0007).
+ * The key and the chat of the tab last for the visit of the tab, so a guest starts fresh on the next visit. The joins and the mark stay.
  */
-export const chatStorage = { visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist' } as const
+export const chatStorage = { visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist', onboarded: 'roomsie.onboarded' } as const
 type StoredKey = (typeof chatStorage)[keyof typeof chatStorage]
-const storeOf = (key: StoredKey) => (key === chatStorage.waitlist ? localStorage : sessionStorage)
+const lasting: readonly StoredKey[] = [chatStorage.waitlist, chatStorage.onboarded]
+const storeOf = (key: StoredKey) => (lasting.includes(key) ? localStorage : sessionStorage)
 
 /** A private window or a blocked site storage throws: then the chat lives only until a reload. */
 export function readStored(key: StoredKey) {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowLeft, ArrowRight, Home03, Key01, Lock01, Users01 } from '@untitledui/icons'
@@ -9,11 +9,11 @@ import { intentLabels, newGoalResponse, type GoalResponse } from '@roomsie/contr
 import { chatApi, errorText } from '../../lib/api'
 import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
-import { chatStorage, writeStored } from '../../lib/chat'
-import { goalHref } from '../../lib/goals'
+import { chatStorage, readStored, writeStored } from '../../lib/chat'
+import { goalHref, newGoalHref } from '../../lib/goals'
 import { answered, progressOf, startOf, stepBeside, withoutAnswer, withPurpose, type Answers, type Step } from '../../lib/onboarding'
 import { profileLabels, type DescribesYou } from '../../lib/profile-form'
-import { queryKeys, useAreas } from '../../lib/queries'
+import { queryKeys, useAreas, useGoals } from '../../lib/queries'
 import { GoogleMark, LegalLine } from '../shell/google-sign-in'
 import { Button } from '../ui/button'
 import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
@@ -97,11 +97,25 @@ export function Onboarding() {
     mutationFn: (asker: User | null) => chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', body: startOf(answers) }),
     onSuccess: ({ visitorKey, ...goal }) => {
       if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
+      writeStored(chatStorage.onboarded, '1')
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(goal.id), goal)
       router.push(goalHref(goal.id))
     },
   })
-  const finish = (asker: User | null) => (answers.purpose === 'list' ? router.push('/listings/new') : start.mutate(asker))
+  const finish = (asker: User | null) => {
+    if (answers.purpose !== 'list') return start.mutate(asker)
+    writeStored(chatStorage.onboarded, '1')
+    router.push('/listings/new')
+  }
+  // "Start looking" and "Open Roomsie" ask the onboarding once: a person who did it in this browser, or an account with a goal,
+  // gets "What are we looking for?" in its place (flow 02). Only before the first answer, so a sign-in on the way does not leave.
+  // `?again` is the link of the empty chat that asks the questions again.
+  const goals = useGoals()
+  const again = useSearchParams().has('again')
+  const untouched = step === 'purpose' && answers.purpose === undefined && !again
+  const returning = readStored(chatStorage.onboarded) === '1' || (user !== null && (goals.data?.goals.length ?? 0) > 0)
+  const leaving = untouched && !loading && returning
+  useEffect(() => { if (leaving) router.replace(newGoalHref) }, [leaving, router])
   const previous = stepBeside(step, -1, answers, user !== null)
   const goOn = (next: Answers) => {
     const after = stepBeside(step, 1, next, user !== null)
@@ -118,7 +132,7 @@ export function Onboarding() {
   const bar = progressOf(step, answers)
   const { title, text, art, position } = screenOf(step, answers)
 
-  if (loading) return <main className="min-h-dvh" aria-busy="true" />
+  if (loading || leaving || (untouched && user && goals.isPending)) return <main className="min-h-dvh" aria-busy="true" />
   return (
     <div className="flex min-h-dvh flex-col bg-primary lg:flex-row">
       <div className="relative h-52 shrink-0 lg:sticky lg:top-0 lg:h-dvh lg:w-5/9 lg:[clip-path:polygon(0_0,94%_0,85%_30%,94%_59%,85%_100%,0_100%)]">

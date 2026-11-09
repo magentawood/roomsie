@@ -23,14 +23,16 @@ describe('the stored chat', () => {
     return { store, getItem: (k: string) => store.get(k) ?? null, setItem: (k: string, v: string) => store.set(k, v), removeItem: (k: string) => store.delete(k) }
   }
 
-  it('keeps the visitor key and the chat for the visit of the tab, the waitlist longer, and forgets all at sign-out', () => {
+  it('keeps the visitor key and the chat for the visit of the tab, the waitlist and the done onboarding longer, and forgets all at sign-out', () => {
     const [local, session] = [storage(), storage()]
     vi.stubGlobal('localStorage', local)
     vi.stubGlobal('sessionStorage', session)
     writeStored(chatStorage.waitlist, '{}')
     writeStored(chatStorage.visitorKey, 'key-1')
     writeStored(chatStorage.tabGoal, 'goal-1')
-    expect([readStored(chatStorage.visitorKey), [...session.store.keys()], [...local.store.keys()]]).toEqual(['key-1', [chatStorage.visitorKey, chatStorage.tabGoal], [chatStorage.waitlist]])
+    writeStored(chatStorage.onboarded, '1')
+    expect([readStored(chatStorage.visitorKey), [...session.store.keys()], [...local.store.keys()]])
+      .toEqual(['key-1', [chatStorage.visitorKey, chatStorage.tabGoal], [chatStorage.waitlist, chatStorage.onboarded]])
     forgetChat()
     expect([readStored(chatStorage.waitlist), readStored(chatStorage.visitorKey), readStored(chatStorage.tabGoal)]).toEqual([null, null, null])
   })

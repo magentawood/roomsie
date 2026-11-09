@@ -7,6 +7,8 @@ export const useCurrentGoalId = () => useSearchParams().get('goal')
 
 /** "What are we looking for?": the first message makes the goal (flow 02). */
 export const newGoalHref = '/chat'
+/** The onboarding questions again, for a person who did them before. */
+export const onboardingAgainHref = '/start?again'
 /** The address of the chat of a goal: a reload or a sign-in stays in it. */
 export const goalHref = (id: string) => `/chat?goal=${id}`
 
