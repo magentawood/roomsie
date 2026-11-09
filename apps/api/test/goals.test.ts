@@ -75,7 +75,7 @@ describe('a typed turn', () => {
     const before = await startedEvents()
     const { form, turns } = await sent(goal, 'Powai mein room chahiye, bees hazaar tak, 1st Dec se')
     expect(form).toMatchObject({
-      intent: { source: 'stated', value: 'room' },
+      intent: { source: 'stated', value: ['room'] },
       areas: { source: 'stated', value: ['powai'] },
       budget: { source: 'stated', value: { min: null, max: 20_000 } },
       moveDate: { source: 'stated', value: '2026-12-01' },
@@ -107,7 +107,7 @@ describe('a typed turn', () => {
     fakeVendors({ deepseek: [scored({ intent: 'pg', lifestyle: { food: 'eggetarian' } }, { eggetarian: 0.55 })] })
     const goal = await visitorGoal()
     const { form, turns } = await sent(goal, 'PG chahiye, mostly veg, kabhi kabhi eggs')
-    expect(form.intent).toEqual({ source: 'stated', value: 'pg' })
+    expect(form.intent).toEqual({ source: 'stated', value: ['pg'] })
     expect(form.lifestyle.food).toEqual({ source: 'stated', value: 'unclear' })
     expect(turns[1].text).toBe('Got it: a PG. Which areas of Mumbai work for you?')
   })
@@ -253,7 +253,7 @@ describe('a typed turn', () => {
     const both = await sent(goal, 'whole flat, 30k')
     expect(both.turns[1].text).toBe('You said a PG before, and now a whole flat. Which one should I keep? You said up to ₹20,000 before, and now up to ₹30,000. Which one should I keep?')
     const later = await sent(goal, 'doosra wala')
-    expect([later.form.intent.value, later.form.budget.value]).toEqual(['whole_flat', { min: null, max: 30_000 }])
+    expect([later.form.intent.value, later.form.budget.value]).toEqual([['whole_flat'], { min: null, max: 30_000 }])
 
     fakeVendors({ deepseek: [scored({ budget: '20k' }), scored({ budget: '25k' }), scored({})] })
     const other = await visitorGoal()
@@ -277,7 +277,7 @@ describe('a typed turn', () => {
     const other = await visitorGoal()
     await sent(other, 'PG')
     await sent(other, 'room')
-    expect((await sent(other, 'दुसरं')).form.intent.value).toBe('room')
+    expect((await sent(other, 'दुसरं')).form.intent.value).toEqual(['room'])
   })
 
   it('fills the other budget bound with no conflict', async () => {
@@ -352,7 +352,7 @@ describe('the router', () => {
     return { form, reply: turns[1].text }
   }
   const noIntent = { source: 'empty', value: null }
-  const roomIntent = { source: 'stated', value: 'room' }
+  const roomIntent = { source: 'stated', value: ['room'] }
 
   it('lets a core message fill Form A as before', async () => {
     fakeVendors({ deepseek: [room()] })
@@ -503,7 +503,7 @@ describe('the start of a goal from the onboarding (T-48)', () => {
     expect(res.statusCode).toBe(201)
     const goal = newGoalResponse.parse(res.json())
     expect(goal.form).toMatchObject({
-      intent: { source: 'stated', value: 'room' }, whosMoving: { source: 'stated', value: 'student' },
+      intent: { source: 'stated', value: ['room'] }, whosMoving: { source: 'stated', value: 'student' },
       areas: { source: 'stated', value: ['andheri-goregaon'] }, budget: { source: 'stated', value: { min: null, max: 25_000 } },
     })
     expect(goal.turns.map(({ role }) => role)).toEqual(['assistant'])
@@ -560,7 +560,7 @@ describe('a chip tap (T-09)', () => {
     const routedBefore = await routedEvents()
 
     const intent = await tap(goal, { slot: 'intent', value: 'room' })
-    expect(intent.form.intent).toEqual({ source: 'stated', value: 'room' })
+    expect(intent.form.intent).toEqual({ source: 'stated', value: ['room'] })
     expect(intent.turns.map(({ text, chips }) => ({ text, chips }))).toEqual([
       { text: 'A room in a shared flat', chips: null },
       { text: 'Got it: a room in a shared flat. Which areas of Mumbai work for you?', chips: 'areas' },
@@ -600,7 +600,7 @@ describe('a chip tap (T-09)', () => {
     const goal = await visitorGoal()
     // The questions before the lifestyle questions are answered.
     const form = formA.parse({
-      intent: { source: 'stated', value: 'room' }, areas: { source: 'stated', value: ['bandra-santacruz'] },
+      intent: { source: 'stated', value: ['room'] }, areas: { source: 'stated', value: ['bandra-santacruz'] },
       budget: { source: 'stated', value: { min: null, max: 25_000 } }, moveDate: { source: 'stated', value: '2026-12-01' },
     })
     await t.db.update(goals).set({ form }).where(eq(goals.id, goal.id))
@@ -660,7 +660,7 @@ describe('a chip tap (T-09)', () => {
       { text: 'Not sure, help me pick', chips: null },
       { text: helpLine, chips: 'intent' },
     ])
-    expect((await tap(goal, { slot: 'intent', value: 'pg' })).form.intent).toEqual({ source: 'stated', value: 'pg' })
+    expect((await tap(goal, { slot: 'intent', value: 'pg' })).form.intent).toEqual({ source: 'stated', value: ['pg'] })
 
     fakeVendors({ deepseek: [scored({ intent: 'unclear' })] })
     const typed = await sent(await visitorGoal(), 'kuch bhi chalega')
@@ -684,6 +684,18 @@ describe('a chip tap (T-09)', () => {
     expect((await tap(goal, { slot: 'areas', value: ['navi-mumbai'] })).form.areas.value).toEqual(['navi-mumbai'])
     await tap(goal, { slot: 'intent', value: 'room' })
     expect((await tap(goal, { slot: 'intent', value: 'unclear' })).form.intent).toEqual({ source: 'stated', value: 'unclear' })
+  })
+
+  it('adds a kind of place with "Show some PGs too", and people to rent with replace the places', async () => {
+    fakeVendors({})
+    const goal = await visitorGoal()
+    await tap(goal, { slot: 'intent', value: 'room' })
+    const both = await tap(goal, { slot: 'intent', value: 'pg', also: true })
+    expect([both.form.intent.value, both.turns.map(({ text }) => text)]).toEqual([['room', 'pg'], ['Show some PGs too', 'Got it: a room in a shared flat or a PG. Which areas of Mumbai work for you?']])
+    expect((await tap(goal, { slot: 'intent', value: 'pg', also: true })).form.intent.value).toEqual(['room', 'pg'])
+    expect((await tap(goal, { slot: 'intent', value: 'flatmates' })).form.intent.value).toEqual(['flatmates'])
+    expect((await tap(goal, { slot: 'intent', value: 'whole_flat', also: true })).form.intent.value).toEqual(['whole_flat'])
+    expect((await tapped(goal, { slot: 'intent', value: 'flatmates', also: true })).statusCode).toBe(400)
   })
 
   it('refuses a value that is not a chip', async () => {

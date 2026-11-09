@@ -38,11 +38,14 @@
   --color-blue-50: #eff6ff;
   --color-blue-200: #bfdbfe;
   --color-blue-500: #3b82f6;
+  --color-orange-50: #fff7ed;
   --color-blue-700: #1d4ed8;
   --color-orange-100: #ffedd5;
+  --color-orange-300: #fdba74;
   --color-rose-50: #f9ebea;
   --color-purple-25: #faf5ff;
   --color-purple-400: #c084fc;
+  --color-purple-500: #a855f7;
   --color-violet-100: #ede9fe;
   --color-pink-100: #fce7f3;
   --color-alpha-white-70: #ffffffb3;
@@ -162,6 +165,18 @@
 
 @utility bg-chat-glow {
   background-image: radial-gradient(100% 145.5% at 100% 100%, var(--background-color-primary) 0%, var(--color-orange-100) 25.5%, var(--color-rose-50) 51%, var(--color-purple-25) 76.4%, var(--color-yellow-25) 100%);
+}
+
+/* The box "Roomsie Noticed" of flow 02: a pale rainbow inside a rainbow border of 1.5 px, and its stars. */
+@utility bg-noticed {
+  border: 1.5px solid transparent;
+  background:
+    linear-gradient(135deg, var(--color-red-50), var(--color-purple-25) 33%, var(--color-orange-50) 66%, var(--color-blue-50)) padding-box,
+    linear-gradient(135deg, var(--color-purple-500), var(--color-yellow-200) 25%, var(--color-orange-300) 50%, var(--color-red-500) 75%, var(--color-blue-500)) border-box;
+}
+
+@utility text-noticed {
+  color: var(--color-purple-500);
 }
 
 /* The example searches of the landing page and the arrow of its white button. */

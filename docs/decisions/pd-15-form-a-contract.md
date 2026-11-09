@@ -13,7 +13,7 @@
 
 **In one line:** Intent is one of five place types, Form A adds room type, who is moving, lifestyle and must-haves, and no slot guesses.
 
-- **Intent.** "What brings you to Roomsie?" sends a lister to the listing flow. A lister is a listing, not a seeker. A seeker selects a place type. The values are `room` (a room in a shared flat), `pg`, `whole_flat`, `flatmates` (people to rent with) and `unclear` ("Not sure, help me pick").
+- **Intent.** "What brings you to Roomsie?" sends a lister to the listing flow. A lister is a listing, not a seeker. A seeker selects a place type. The values are `room` (a room in a shared flat), `pg`, `whole_flat`, `flatmates` (people to rent with) and `unclear` ("Not sure, help me pick"). Since 2026-11-09, Form A keeps a list: one or more kinds of place, or `flatmates` alone. The onboarding and the place-type chips pick one, and "Show some PGs too" adds one ([PD3a](pd-03a-flatmate-matching.md)). A form from before reads its one type as a list.
 - **Room type.** A slot that only the chat fills. The values are `private`, `shared` and `unclear`. `private` matches "Private room" and a PG with "Single". `shared` matches "Shared room" and a PG with "Double" or more.
 - **Lifestyle.** Eight questions, with the answers of the designs:
 
@@ -29,7 +29,7 @@
   | Pets | No pets, Fine with pets |
 
 - **No community question** ([PD3c](pd-03c-exclusionary-preferences.md)). Two hidden slots keep a stated religion or community preference (T-58). No chip, question, label, results header or "Got it" line shows them. "Only" removes the people who stated a different value. "Preferably" adds one point to the order, and never counts for "Best match" or "Didn't say". The values of a person come from the two optional profile fields or from the own chat.
-- **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly. A dealbreaker filters, and a preference ranks ([PD3a](pd-03a-flatmate-matching.md)).
+- **Must-haves.** Each has a weight, prefer or dealbreaker: Veg kitchen, Non-smokers, No alcohol at home, Women only, Men only, Tidy flatmates, Couple friendly, and Near a station (2026-11-09: only a listing answers it, so the profile form does not show it). A dealbreaker filters, and a preference ranks ([PD3a](pd-03a-flatmate-matching.md)).
 - **Sources.** Each slot of Form A has a value and a source: `stated`, `default` or `empty`. The system does not guess a value, so there is no `inferred` source. The words of the person stay only in Form B ([PD7a](pd-07a-agent-architecture.md)).
 - **Unclear.** A vague answer becomes `unclear`, never a guess. Then the assistant asks again. Each enum of Form A has `unclear`, also the eight lifestyle questions. The values of the hidden slots are the exception: the extractor drops an unclear value, and asks nothing (T-58). The profile form and the cards keep the answers of the designs.
 - **An unclear weight.** The weight of a must-have can also be `unclear`. An unclear weight does not filter and does not rank. The assistant asks at once, with two chips, for example "Hide them" and "Show veg first". The hidden slots are the exception: the assistant never asks about them, and an unclear weight acts as "preferably" (T-58).

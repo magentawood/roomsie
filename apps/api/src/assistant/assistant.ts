@@ -1,5 +1,5 @@
 import type { FastifyRequest } from 'fastify'
-import { assistantParts, budgetBandOf, filledSlots, formA, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
+import { assistantParts, budgetBandOf, filledSlots, formA, intentsOf, withIntent, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf, type Catalogue } from './catalogue'
@@ -90,7 +90,9 @@ async function composeReply(reply: AssistantReply, turn: TurnState & { language:
 /** A tap needs no router: each chip is an answer about the search. */
 const tapLabel: TurnLabel = { version: 1, kinds: ['filters'], band: 'core', register: null, danger: false, community: false, notes: false, routerBand: null }
 
-function slotValueOf(tap: ChipTap) {
+/** The value of the slot of a tap. A place type replaces the list, and "Show some PGs too" adds to it. */
+function slotValueOf(tap: ChipTap, form: FormA) {
+  if (tap.slot === 'intent') return tap.value === 'unclear' ? 'unclear' : tap.also ? withIntent(intentsOf(form), tap.value) : [tap.value]
   if (tap.slot !== 'budget') return tap.value
   const { min, max } = budgetBandOf(tap.value)
   return { min, max }
@@ -106,7 +108,7 @@ const scriptedReply = ({ last, lastRegister }: Pick<TurnState, 'last' | 'lastReg
 export async function runStart(input: Omit<TurnInput, 'goalId' | 'notesHint'> & { start: GoalStart }, deps: AssistantDeps) {
   const { area, budget, mustHaves = [], ...stated } = input.start
   if (area && !isAreaGroup(await catalogueOf(deps.db), area)) return null
-  const answers = { ...stated, ...(area && { areas: [area] }), ...(budget && { budget: slotValueOf({ slot: 'budget', value: budget }) }) }
+  const answers = { ...stated, ...(area && { areas: [area] }), ...(budget && { budget: slotValueOf({ slot: 'budget', value: budget }, input.form) }) }
   const stateOf = (value: unknown) => ({ source: 'stated', value })
   const form = formA.parse({
     ...input.form, ...Object.fromEntries(Object.entries(answers).map(([slot, value]) => [slot, stateOf(value)])),
@@ -123,7 +125,7 @@ export async function runTap(input: TurnInput & { tap: ChipTap }, deps: Assistan
   if (tap.slot === 'areas' && !tap.value.every((slug) => isAreaGroup(catalogue, slug))) return null
   const text = tapText(tap, (slug) => catalogue.bySlug.get(slug)!.name)
   // A tap answers its slot: its value replaces an earlier value, also a list of areas (T-09).
-  const form = formA.parse(withSlot(input.form, tap.slot, slotValueOf(tap)))
+  const form = formA.parse(withSlot(input.form, tap.slot, slotValueOf(tap, input.form)))
   const reply = withNotesHint(await scriptedReply(input, form, [tap.slot], deps), input.notesHint, languageOf(input.lastRegister))
   return { text, form, reply, ownValues: { religion: null, community: null } }
 }

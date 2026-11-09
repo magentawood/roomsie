@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { budgetBandId, budgetBandOf, chipLabels, chipSlots, formA, type FormA, formASlots, identityPreference, intentLabels, statedPreferences } from './form-a'
+import { budgetBandId, budgetBandOf, chipLabels, chipSlots, formA, type FormA, formASlots, identityPreference, intentLabels, intentsOf, type PlaceIntent, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { comparison, compareRequest } from './compare'
 import { observation } from './form-b'
@@ -33,7 +33,9 @@ export type GoalResponse = z.infer<typeof goalResponse>
 /** `visitorKey` comes only when the API made a new visitor session. The browser keeps it. */
 export const newGoalResponse = goalResponse.extend({ visitorKey: z.string().nullable() })
 export const chipTap = z.discriminatedUnion('slot', [
-  z.strictObject({ slot: z.literal('intent'), value: z.enum(intents) }),
+  /** `also`: "Show some PGs too" adds a kind of place, and a plain tap replaces the list. */
+  z.strictObject({ slot: z.literal('intent'), value: z.enum(intents), also: z.literal(true).optional() })
+    .refine((tap) => !tap.also || (tap.value !== 'flatmates' && tap.value !== 'unclear'), 'Only a kind of place adds'),
   z.strictObject({ slot: z.literal('areas'), value: z.array(areaSlug).min(1).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once') }),
   z.strictObject({ slot: z.literal('budget'), value: budgetBandId }),
   z.strictObject({ slot: z.literal('roomType'), value: z.enum(roomTypes).exclude(['unclear']) }),
@@ -55,9 +57,12 @@ export type GoalStart = z.infer<typeof goalStart>
 export const chipTurnParts = z.strictObject({ version: z.literal(1).default(1), tap: chipTap })
 export type ChipTurnParts = z.output<typeof chipTurnParts>
 
+/** The follow-up chips of flow 02 that add a place type. */
+export const alsoLabels = { room: 'Show some rooms too', pg: 'Show some PGs too', whole_flat: 'Show me some flats as well' } satisfies Record<Exclude<PlaceIntent, 'flatmates'>, string>
+
 export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
   switch (tap.slot) {
-    case 'intent': return intentLabels[tap.value]
+    case 'intent': return tap.also ? alsoLabels[tap.value as keyof typeof alsoLabels] : intentLabels[tap.value]
     case 'areas': return tap.value.map(areaName).join(', ')
     case 'budget': return budgetBandOf(tap.value).label
     default: return chipLabels(tap.slot)[tap.value]!
@@ -233,10 +238,12 @@ const titleLeads = {
   room: 'Room hunting in', pg: 'PG hunting in', whole_flat: 'Flat hunting in', flatmates: 'Teaming up to rent around', unclear: 'Looking in',
 } satisfies Record<(typeof intents)[number], string>
 
-/** The title of a goal, from its place type and its first area, as the designs name a goal. */
+/** The title of a goal, from its place type and its first area, as the designs name a goal. Several kinds of place are a place hunt. */
 export function goalTitle(form: FormA, areaName: (slug: string) => string) {
   const area = Array.isArray(form.areas.value) ? form.areas.value[0] : undefined
-  return area ? `${titleLeads[form.intent.value ?? 'unclear']} ${areaName(area)}` : newGoalTitle
+  const types = intentsOf(form)
+  const lead = types.length > 1 ? 'Place hunting in' : titleLeads[types[0] ?? 'unclear']
+  return area ? `${lead} ${areaName(area)}` : newGoalTitle
 }
 
 export const goalsResponse = z.object({ goals: z.array(z.object({ id: z.uuid(), title: z.string(), status: goalStatus, createdAt: z.iso.datetime() })) })

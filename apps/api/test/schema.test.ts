@@ -72,13 +72,13 @@ describe('Form B notes', () => {
 })
 
 describe('catalogues', () => {
-  it('seeds the eight lifestyle questions, the seven must-haves and the ten Form B topics, all active', async () => {
+  it('seeds the eight lifestyle questions, the eight must-haves and the ten Form B topics, all active', async () => {
     await seedCatalogues(testDb.db)
     await seedCatalogues(testDb.db)
     const axes = await testDb.db.select().from(lifestyleAxes)
     expect(axes.map((a) => a.key).sort()).toEqual(['drinks', 'food', 'guests', 'pets', 'sleep', 'smoking', 'tidiness', 'your_days'])
     const all = await testDb.db.select().from(mustHaves)
-    expect(all).toHaveLength(7)
+    expect(all).toHaveLength(8)
     expect(all.filter((m) => !m.active)).toEqual([])
     const topics = await testDb.db.select().from(observationTopics)
     expect(topics.map((t) => t.key).sort()).toEqual(['chores_bills', 'commute', 'cooking', 'guest_frequency', 'hobbies_routines', 'languages', 'move_reason', 'noise', 'past_flatmates', 'work_pattern'])

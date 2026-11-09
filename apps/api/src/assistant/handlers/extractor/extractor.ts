@@ -58,6 +58,8 @@ async function extract(turn: TurnState, { req, db, models, settings, today }: As
     if (value != null) values[slot] = passesGate(key, value) ? value : 'unclear'
   }
   for (const slot of ['intent', 'roomType', 'whosMoving'] as const) putValue(slot, slot, answer[slot])
+  // The model names one place type. The form keeps a list, so the same type again is no conflict (PD15).
+  if (typeof values.intent === 'string' && values.intent !== 'unclear') values.intent = [values.intent]
   for (const axis of lifestyleAxes) putValue(`lifestyle.${axis}`, axis, answer.lifestyle?.[axis])
   for (const key of mustHaveKeys) putValue(`mustHaves.${key}`, key, answer.mustHaves?.[key])
 

@@ -36,7 +36,8 @@ export const lifestyleAnswerLabels = {
 } satisfies { [A in LifestyleAxis]: Record<(typeof lifestyleAnswers)[A][number], string> }
 export const lifestyleAxes = Object.keys(lifestyleAnswers) as LifestyleAxis[]
 export type WhosMoving = (typeof whosMovingAnswers)[number]
-export const mustHaveKeys = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates', 'couple_friendly'] as const
+/** `near_station`: a 10-minute walk or less to a metro or train station. Only a listing answers it. */
+export const mustHaveKeys = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates', 'couple_friendly', 'near_station'] as const
 export const mustHaveWeights = ['prefer', 'dealbreaker'] as const
 export type MustHaveKey = (typeof mustHaveKeys)[number]
 export type MustHaveWeight = (typeof mustHaveWeights)[number]

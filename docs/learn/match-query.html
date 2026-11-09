@@ -77,12 +77,14 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 </tbody>
 </table>
+<p>A goal can hold several kinds of place, as rooms and PGs: the search gives each kind. <code>flatmates</code> goes alone.</p>
 <ul>
 <li><strong>The filters:</strong> the area and the areas under it, the budget, the move date (30 days before or after), the room type, the dealbreakers, "Who can move in" and "Who is welcome".</li>
 <li><strong>The budget:</strong> a rent up to 10% over the budget passes, and ranks below the rents in the budget. Two people pass when their budgets overlap.</li>
 <li><strong>Between people, each dealbreaker works both ways.</strong> A known answer that fails hides the card. A dealbreaker that the other person did not answer moves the card down.</li>
 <li><strong>The order:</strong> full matches, in budget, the most preferences met, the Form B points, the nearest move date, the newest.</li>
 <li><strong>An empty search</strong> also gives the suggested posts: the next budget band and two neighbours of the area group, with four cards each. The seed puts the neighbours on the <code>areas</code> table.</li>
+<li><strong>The first page</strong> also gives the notes of "Roomsie Noticed" (<a href="roomsie-noticed.html">Roomsie Noticed</a>).</li>
 <li><strong>Each page</strong> fires <code>results_shown</code> with its count.</li>
 <li><strong>The setting:</strong> <code>FORM_B_CONFIDENCE_FLOOR</code> (default 0.5). A Form B note counts only above it.</li>
 </ul>

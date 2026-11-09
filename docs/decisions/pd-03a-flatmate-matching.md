@@ -1,10 +1,10 @@
 # PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Settled · **Date:** 2026-10-25, amended 2026-11-02 (T-14) · **Deciders:** n3rxv, for the founders
+**Status:** Settled · **Date:** 2026-10-25, amended 2026-11-02 (T-14) and 2026-11-09 (Roomsie Noticed) · **Deciders:** n3rxv, for the founders
 
 ## Context
 
-- PD15 gives a seeker one of five place types, and puts the dealbreakers on seven must-haves. PD14 puts listings into v0.
+- PD15 gives a seeker one of five place types, and puts the dealbreakers on eight must-haves. PD14 puts listings into v0.
 - The designs show no score number. Results sort by "Best Matches".
 - Seeded profiles will have gaps, and the areas to seed first need full panels (PD2).
 
@@ -22,7 +22,7 @@
 | `flatmates` | other `flatmates` seekers |
 | `unclear` | nothing, until the assistant asks |
 
-A chip widens a search by one kind, for example "Show some PGs too".
+A chip widens a search by one kind, for example "Show some PGs too". Kinds of place add up, and `flatmates` goes alone, so a list of results has one kind of card (2026-11-09).
 
 **What each must-have checks (PC-47)**
 
@@ -35,6 +35,7 @@ A chip widens a search by one kind, for example "Show some PGs too".
 | Couple friendly | Does not apply | "Who is welcome" has Couples |
 | Women only | Gender is Female | Does not apply |
 | Men only | Gender is Male | Does not apply |
+| Near a station | Does not apply | The walk to a station is 5 or 10 minutes |
 
 A listing's "Who can move in" also filters the seekers: Women takes Female, Men takes Male, and Any takes each gender. Non-binary passes only Any (F-13, PC-30).
 
@@ -58,6 +59,13 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
   6. Newest.
 - A "Best match" label shows when the searcher stated three or more preferences and the card meets all of them. There is no score number and no sentence.
 
+**Roomsie Noticed (2026-11-09)**
+
+- The first page of results has at most three notes, as the designs draw them. The code counts each number, and a note shows only when the data backs it.
+- With results: a must-have that the search does not require, and half or fewer of three results or more have; the `flatmates` seekers in the areas of a search of places; the places a walk of ten minutes or less from a station.
+- With none: the rents of the areas when the cheapest is above the budget, a neighbouring area group with results, and a 2 BHK in the areas split two ways.
+- Each button is a chip tap. Under the box, chips compare the top three cards, add a kind of place, or relax the budget or the kind.
+
 ## Rationale
 
 - A strict mapping reads as most people in Mumbai mean it.
@@ -66,6 +74,7 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 - With one or two preferences, a score is noise. A label is true and simple.
 - A gap of the searcher is the same as a gap of the candidate. The searcher can answer later, and the card then moves up or goes.
 - Two notes of the same kind on one topic agree more often than not. The rule needs no model call in a search, and it is easy to explain.
+- A note from the counts of the query cannot state a number that is not true, and needs no model call. The designs claim "within 5 kms", and the data has no distances, so that claim is gone.
 
 ## Alternatives rejected
 
@@ -78,6 +87,8 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 - **Form B neither shown nor ranked.** The product team wants the context of the chat in the order.
 - **Hide the card until the searcher answers.** A guest sees almost no people with a gender or a "Non-smokers" dealbreaker.
 - **Form B by similar words, or by the number of notes of the candidate.** Word match is weak in Hinglish and Marathi. The number of notes ignores the searcher.
+- **Notes that a model writes.** A model can state a count that the data does not hold.
+- **"Near metro" as a sort, or a note with no button.** A must-have reuses the weights, the chips and "Didn't say".
 
 ## Consequences
 
@@ -90,4 +101,5 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 ## Sources
 
 - The F-12 grill ([#104](https://github.com/magentawood/roomsie/issues/104)), and the Product file: results, cards and "No relevant results"
+- Roomsie Noticed, the list of place types and "Near a station": the user's picks of 2026-11-09, [#244](https://github.com/magentawood/roomsie/pull/244)
 - [PD15](pd-15-form-a-contract.md), [PD14](pd-14-v0-is-the-figma-designs.md), [PD11](pd-11-launch.md)

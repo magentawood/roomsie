@@ -48,6 +48,9 @@ const sampleMatches: Found = {
     placeMatch(place(8, { kind: 'room_in_flat', placeType: '2bhk', roomType: 'shared', rates: [{ sharing: null, rent: 12000, deposit: 24000 }], smokingAllowed: false }), { didntSay: ['veg_kitchen'] }),
   ],
   suggested: [],
+  noticed: [
+    { kind: 'mustHave', key: 'veg_kitchen', count: 6, total: 24 }, { kind: 'teamUp', count: 15 }, { kind: 'mustHave', key: 'near_station', count: 12, total: 24 },
+  ],
 }
 
 /** No match in the budget: the suggested posts are the next band and a neighbouring area group (PD6c). */
@@ -57,6 +60,9 @@ const sampleEmpty: Found = {
   suggested: [
     placeMatch(place(9, { kind: 'room_in_flat', placeType: '2bhk', roomType: 'private', rates: [{ sharing: null, rent: 28000, deposit: 56000 }] })),
     placeMatch(place(10, { kind: 'room_in_flat', placeType: '3bhk', roomType: 'shared', areaSlug: 'andheri-goregaon', rates: [{ sharing: null, rent: 14000, deposit: 28000 }] })),
+  ],
+  noticed: [
+    { kind: 'rents', cheapest: 10000, low: 12500, high: 18000 }, { kind: 'nearbyArea', area: 'andheri-goregaon' }, { kind: 'share', each: 35500, maintenanceIncluded: true },
   ],
 }
 

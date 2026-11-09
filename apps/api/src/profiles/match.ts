@@ -7,7 +7,7 @@ import { formBPoints } from '../observations/read'
 import { moveGap, mustHaveSql, near, type BaseSearch } from '../ranking'
 import { visiblePeople } from './read'
 
-/** What a must-have checks on a person (PD3a). "Couple friendly" does not apply to a person. */
+/** What a must-have checks on a person (PD3a). "Couple friendly" and the walk to a station do not apply to a person. */
 const onPerson: Record<MustHaveKey, { axis: LifestyleAxis | 'gender'; values: readonly string[] } | null> = {
   veg_kitchen: { axis: 'food', values: ['veg'] },
   non_smokers: { axis: 'smoking', values: ['non_smoker'] },
@@ -16,6 +16,7 @@ const onPerson: Record<MustHaveKey, { axis: LifestyleAxis | 'gender'; values: re
   women_only: { axis: 'gender', values: ['female'] },
   men_only: { axis: 'gender', values: ['male'] },
   couple_friendly: null,
+  near_station: null,
 }
 const appliesToPeople = (key: MustHaveKey) => onPerson[key] !== null
 
@@ -65,8 +66,8 @@ export type PeopleSearch = BaseSearch & {
   communityPreference: FormA['communityPreference']['value']
 }
 
-/** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
-export async function matchingPeople(db: Db, search: PeopleSearch) {
+/** The conditions of a search of people, and the parts of its order. */
+function peopleFilter(search: PeopleSearch) {
   const mustHaves = mustHaveSql(meets, search.dealbreakers.filter(appliesToPeople), search.preferences.filter(appliesToPeople))
   const { budget, moveDate, searcher } = search
   const religion = identitySql(profiles.religion, search.religionPreference)
@@ -85,7 +86,13 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
     religion.filter,
     community.filter,
   ].filter((c): c is SQL => !!c)
+  return { conditions, mustHaves, religion, community }
+}
 
+/** The flatmates seekers who fit, in the Best Matches order of PD3a, and their number. */
+export async function matchingPeople(db: Db, search: PeopleSearch) {
+  const { conditions, mustHaves, religion, community } = peopleFilter(search)
+  const { moveDate, searcher } = search
   const [rows, total] = await Promise.all([
     db.select({
       id: profiles.id,
@@ -101,3 +108,16 @@ export async function matchingPeople(db: Db, search: PeopleSearch) {
   ])
   return { rows: rows.map((r) => ({ id: r.id, ...mustHaves.labels(r) })), total }
 }
+
+/** For each must-have that a person answers, how many people of the search meet it: the notes of Roomsie Noticed. */
+export async function peopleCounts(db: Db, search: PeopleSearch, keys: MustHaveKey[]): Promise<Partial<Record<MustHaveKey, number>>> {
+  const asked = keys.filter(appliesToPeople)
+  if (!asked.length) return {}
+  const [row] = await db.select(Object.fromEntries(asked.map((key) => [key, sql<number>`count(*) filter (where ${meets(key)})`.mapWith(Number)])))
+    .from(profiles).where(and(...peopleFilter(search).conditions))
+  return row ?? {}
+}
+
+/** The flatmates seekers in the areas, whatever their budget: the people a searcher of places could team up with. */
+export const teamUpCount = (db: Db, viewerUserId: string | undefined, areas: string[] | null) =>
+  db.$count(profiles, and(...visiblePeople(viewerUserId), eq(profiles.intent, 'flatmates'), areas ? sql`${profiles.areas} && ${textArray(areas)}` : undefined))

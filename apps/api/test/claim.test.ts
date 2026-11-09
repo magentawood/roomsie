@@ -43,7 +43,7 @@ describe('the claim of a visitor chat at sign-in (T-17)', () => {
 
     expect(await goalOwner(goal.id)).toEqual({ userId: t.ids.asha, sessionId: null })
     const read = goalResponse.parse((await t.call('asha', 'GET', `/v1/goals/${goal.id}`)).json())
-    expect([read.turns.length, read.form.intent.value, read.form.areas.value, read.outsidePlaces]).toEqual([4, 'room', ['powai'], ['vasai-virar']])
+    expect([read.turns.length, read.form.intent.value, read.form.areas.value, read.outsidePlaces]).toEqual([4, ['room'], ['powai'], ['vasai-virar']])
     expect(await t.db.select({ goalId: waitlist.goalId }).from(waitlist).where(eq(waitlist.goalId, goal.id))).toHaveLength(1)
     expect(await t.db.select({ userId: observations.userId, sessionId: observations.anonymousSessionId }).from(observations).where(eq(observations.turnId, turn!.id)))
       .toEqual([{ userId: t.ids.asha, sessionId: null }])

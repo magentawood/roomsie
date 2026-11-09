@@ -4,7 +4,7 @@
 
 ## What it is
 
-- A **profile** holds the fields of PD16 and the Form A fields of PD15: who is moving, the areas, the budget, the move date, the eight lifestyle answers and the seven must-haves. The room type is a Form A field that only the chat fills.
+- A **profile** holds the fields of PD16 and the Form A fields of PD15: who is moving, the areas, the budget, the move date, the eight lifestyle answers and the must-haves. "Near a station" is a must-have of a search only: a person cannot answer it. The room type is a Form A field that only the chat fills.
 - A **card** is what other users see of a profile. It has no gender: the designs do not show it, and the filters that use it run on the server.
 - A card is **live** when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on. If not, it is a draft, or hidden. A budget is complete when its lowest or its highest amount is set, so the band "Above ₹35k" counts.
 - Reports can hide a live card until a moderator reviews it. The owner then sees "Hidden for review" ([Moderation](moderation.md)).

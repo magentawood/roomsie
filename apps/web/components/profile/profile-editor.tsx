@@ -204,7 +204,8 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
 
       <Section title="What you need from other seekers" helper="Choose Prefer or Dealbreaker. I hide anything that breaks a dealbreaker.">
         <div className="grid gap-5 md:grid-cols-3">
-          {mustHaveKeys.map((key) => (
+          {/* Only a listing answers the walk to a station, so it is no must-have of other seekers. */}
+          {mustHaveKeys.filter((key) => key !== 'near_station').map((key) => (
             <ChoiceChips key={key} label={profileLabels.mustHaves[key]} labels={profileLabels.weights}
               value={draft.mustHaves[key] ?? null} onChange={(weight) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
           ))}
