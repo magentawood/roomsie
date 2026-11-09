@@ -80,5 +80,12 @@ export const profileLabels = {
   budget: Object.fromEntries(bands.map((band) => [band.id, band.label])) as Record<BudgetBand, string>,
 }
 
+const otherGender: Partial<Record<MustHaveKey, MustHaveKey>> = { women_only: 'men_only', men_only: 'women_only' }
+/** "Women only" and "Men only" rule each other out: a weight on one clears the other. */
+export const withMustHave = (mustHaves: ProfileForm['mustHaves'], key: MustHaveKey, weight: MustHaveWeight | null): ProfileForm['mustHaves'] => {
+  const other = weight && otherGender[key]
+  return { ...mustHaves, [key]: weight, ...(other && { [other]: null }) }
+}
+
 /** The first word of a name. The demo cards of the launch are "Demo · Riya S.", so their first name is the word after the mark. */
 export const firstName = (fullName: string) => fullName.replace(/^Demo · /, '').split(/\s+/)[0] ?? fullName

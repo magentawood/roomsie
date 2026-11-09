@@ -96,7 +96,7 @@ export const profileEditBody = z.strictObject({
   /** The "Hide my card" switch (PD16). */
   hidden: z.boolean(),
   lifestyle: lifestyleEdit,
-  mustHaves: z.partialRecord(z.enum(mustHaveKeys), weight.nullable()),
+  mustHaves: z.partialRecord(z.enum(mustHaveKeys), weight.nullable()).refine((m) => !(m.women_only && m.men_only), 'Women only or men only, not both'),
   ...ownValues.shape,
 }).partial()
 export type ProfileEditBody = z.infer<typeof profileEditBody>

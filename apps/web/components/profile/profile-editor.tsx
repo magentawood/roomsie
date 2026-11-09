@@ -11,7 +11,7 @@ import {
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import {
-  ages, bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, type ProfileForm,
+  ages, bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, withMustHave, type ProfileForm,
 } from '../../lib/profile-form'
 import { initials } from '../../lib/person'
 import { queryKeys, useAreas } from '../../lib/queries'
@@ -202,7 +202,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
           {/* Only a listing answers the walk to a station, so it is no must-have of other seekers. */}
           {mustHaveKeys.filter((key) => key !== 'near_station').map((key) => (
             <ChoiceChips key={key} label={profileLabels.mustHaves[key]} labels={profileLabels.weights}
-              value={draft.mustHaves[key] ?? null} onChange={(weight) => set({ mustHaves: { ...draft.mustHaves, [key]: weight } })} />
+              value={draft.mustHaves[key] ?? null} onChange={(weight) => set({ mustHaves: withMustHave(draft.mustHaves, key, weight) })} />
           ))}
         </div>
       </Section>

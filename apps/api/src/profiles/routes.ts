@@ -105,6 +105,9 @@ function crossFieldError(p: Profile, photoKeys: string[] | undefined): keyof Pro
 }
 
 /** A null answer clears it. Each saved answer is "stated", because it comes from the form. */
+/** "Women only" and "Men only" rule each other out: a weight on one clears the other. */
+const otherGender: Partial<Record<string, string>> = { women_only: 'men_only', men_only: 'women_only' }
+
 async function saveAnswers(tx: Tx, profileId: string, { lifestyle, mustHaves }: Pick<ProfileEditBody, 'lifestyle' | 'mustHaves'>) {
   for (const [axisKey, value] of Object.entries(lifestyle ?? {})) {
     const row = and(eq(profileLifestyle.profileId, profileId), eq(profileLifestyle.axisKey, axisKey))
@@ -115,7 +118,11 @@ async function saveAnswers(tx: Tx, profileId: string, { lifestyle, mustHaves }: 
   for (const [mustHaveKey, weight] of Object.entries(mustHaves ?? {})) {
     const row = and(eq(profileMustHaves.profileId, profileId), eq(profileMustHaves.mustHaveKey, mustHaveKey))
     if (weight === null) await tx.delete(profileMustHaves).where(row)
-    else await tx.insert(profileMustHaves).values({ profileId, mustHaveKey, weight, source: 'stated' })
-      .onConflictDoUpdate({ target: [profileMustHaves.profileId, profileMustHaves.mustHaveKey], set: { weight, source: 'stated', updatedAt: new Date() } })
+    else {
+      await tx.insert(profileMustHaves).values({ profileId, mustHaveKey, weight, source: 'stated' })
+        .onConflictDoUpdate({ target: [profileMustHaves.profileId, profileMustHaves.mustHaveKey], set: { weight, source: 'stated', updatedAt: new Date() } })
+      const other = otherGender[mustHaveKey]
+      if (other) await tx.delete(profileMustHaves).where(and(eq(profileMustHaves.profileId, profileId), eq(profileMustHaves.mustHaveKey, other)))
+    }
   }
 }
