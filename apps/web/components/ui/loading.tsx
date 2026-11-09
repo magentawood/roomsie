@@ -13,7 +13,7 @@ export type Mascot = keyof typeof mascots
 export function Loading({ mascot, page }: { mascot: Mascot; page?: boolean }) {
   return (
     <div role="status" className={`flex flex-col items-center justify-center gap-2 text-sm text-tertiary ${page ? 'min-h-dvh' : 'py-10'}`}>
-      <img src={mascots[mascot]} alt="" width={88} height={88} className="size-16 motion-safe:animate-mascot" />
+      <img src={mascots[mascot]} alt="" width={160} height={160} className="size-28 motion-safe:animate-mascot lg:size-32" />
       Loading…
     </div>
   )
