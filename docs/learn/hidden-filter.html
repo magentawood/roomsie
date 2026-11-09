@@ -41,7 +41,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Two lists:</strong> religion (Hindu, Muslim, Jain and more) and community, by region or language (Gujarati, Marathi, Tamil and more). There is no caste value (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>).</li>
 <li><strong>The preference of the searcher</strong> goes into two <strong>hidden slots</strong> of Form A: <code>religionPreference</code> and <code>communityPreference</code>. Each has the values and a weight.</li>
 <li><strong>"Only"</strong> (a dealbreaker) removes the people who stated a different value. <strong>"Preferably"</strong>, and an unclear weight, add one point to the order, never to "Best match" or "Didn't say", and remove nobody.</li>
-<li><strong>The own values of a person</strong> come only from what the person states: the two optional fields of the profile, or the own chat ("I'm Jain"). A person who stated nothing always stays in the results, with no label (PC-31).</li>
+<li><strong>The own values of a person</strong> come only from what the person states in the own chat ("I'm Jain"). The profile does not ask them. A saved value shows there with "Remove it", which clears both at once. A person who stated nothing always stays in the results, with no label (PC-31).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
@@ -69,7 +69,7 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>identitySql()</code> in <code>apps/api/src/profiles/match.ts</code></td>
 </tr>
 <tr>
-<td>The two optional fields</td>
+<td>"Remove it" on the profile</td>
 <td><code>apps/web/components/profile/profile-editor.tsx</code></td>
 </tr>
 </tbody>

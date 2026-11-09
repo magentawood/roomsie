@@ -7,7 +7,7 @@
 - **Two lists:** religion (Hindu, Muslim, Jain and more) and community, by region or language (Gujarati, Marathi, Tamil and more). There is no caste value ([PD3c](../decisions/pd-03c-exclusionary-preferences.md)).
 - **The preference of the searcher** goes into two **hidden slots** of Form A: `religionPreference` and `communityPreference`. Each has the values and a weight.
 - **"Only"** (a dealbreaker) removes the people who stated a different value. **"Preferably"**, and an unclear weight, add one point to the order, never to "Best match" or "Didn't say", and remove nobody.
-- **The own values of a person** come only from what the person states: the two optional fields of the profile, or the own chat ("I'm Jain"). A person who stated nothing always stays in the results, with no label (PC-31).
+- **The own values of a person** come only from what the person states in the own chat ("I'm Jain"). The profile does not ask them. A saved value shows there with "Remove it", which clears both at once. A person who stated nothing always stays in the results, with no label (PC-31).
 
 ## How it fits our project
 
@@ -17,7 +17,7 @@
 | The extractor: the preference and the own values of a turn | `apps/api/src/assistant/handlers/extractor/` |
 | The own values on the goal and on the profile | `apps/api/src/goals/store.ts`, `apps/api/src/profiles/own-values.ts` |
 | The filter and the point of the order | `identitySql()` in `apps/api/src/profiles/match.ts` |
-| The two optional fields | `apps/web/components/profile/profile-editor.tsx` |
+| "Remove it" on the profile | `apps/web/components/profile/profile-editor.tsx` |
 
 - **Hidden from everyone.** The reply never names the slots: they are not in the list of the slots that the assistant talks about. A card, a person page and the results never send the values of a person.
 - **The newer statement wins.** A statement in the chat replaces the field, and a change of the field replaces the chat. The chat never asks which one to keep, because the question would show the filter. Each typed turn keeps the hidden preference that it stated, as the log of PD3c.

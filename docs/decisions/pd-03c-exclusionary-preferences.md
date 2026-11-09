@@ -1,6 +1,6 @@
 # PD3c — Record stated exclusionary preferences
 
-**Status:** Settled. Changed on 2026-11-02 (T-58). · **Date:** 2026-09-20 · **Deciders:** Yash, then n3rxv for the filter (2026-11-02)
+**Status:** Settled. Changed on 2026-11-02 (T-58) and 2026-11-09. · **Date:** 2026-09-20 · **Deciders:** Yash, then n3rxv for the filter (2026-11-02)
 
 ## Context
 
@@ -25,7 +25,7 @@ These mitigations stay with the decision:
 | # | Mitigation | Rule |
 |---|---|---|
 | 1 | Never infer | Record only explicit statements. Never get a community preference from a name, a diet, an area or a festival. |
-| 2 | Never suggest | No chips, proposals or questions about these preferences. Record them only when the user raises them. The one exception: two optional profile fields about the own person, never required and never asked in the chat (T-58). |
+| 2 | Never suggest | No chips, proposals or questions about these preferences. Record them only when the user raises them. Since 2026-11-09 the profile does not ask them either: a value that the person stated shows on the profile only with "Remove it". |
 | 3 | Keep the ranking model clean | When learned ranking replaces the current heuristic score, remove these attributes and their proxies from the features. |
 | 4 | Filter server-side | The excluded party is never told, and never sees the filter. The exclusion removes query rows. It is not a badge that people can see. |
 | 5 | Decide the listing side independently | Tracked as PD3d. |
@@ -38,7 +38,7 @@ A stated community filter acts only on what candidates stated themselves. A cand
 
 - **Two lists:** religion, and community by region or language. The lists are in the contract. No caste: a caste filter needs a written legal opinion and its own decision record.
 - **The searcher:** the chat fills two hidden slots of Form A, and each typed turn keeps the preference that it stated (mitigation 6). "Only" removes the people who stated a different value. "Preferably" adds one point to the order, never to "Best match" or "Didn't say", and removes nobody. No chip, question, label or results header shows the filter, and listings never filter on it ([PD3d](pd-03d-listing-identity-restrictions.md)).
-- **The candidate:** the own values come only from what the person states: two optional profile fields, or the own chat. The newer statement wins. Only the person sees the values.
+- **The candidate:** the own values come only from what the person states in the own chat. The newer statement wins. Only the person sees the values, and the profile lets the person remove them. The two profile fields of T-58 asked too directly, so they went on 2026-11-09 (the user's pick).
 - **The purpose:** the hint of each field tells it, as the DPDP Act asks: "Optional. Never on your card. We use it only to match you with people who ask for it."
 
 ## Rationale
