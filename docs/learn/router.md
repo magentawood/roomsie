@@ -52,3 +52,4 @@
 - T-34: the router, the bands and the label.
 - T-61: [#229](https://github.com/magentawood/roomsie/pull/229), 2026-11-05. The eval of the other bands and the value of the threshold.
 - T-58: the hidden community filter. T-36, T-38 and T-13: the observer, the advisor and the reply writer that use the label.
+- [#269](https://github.com/magentawood/roomsie/pull/269), 2026-11-09. The advisor answers band 2a from model knowledge, and health questions go to the hand-off line.

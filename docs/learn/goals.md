@@ -61,3 +61,4 @@
 - T-50: the list, the title, the close, the reopen and the feedback.
 - T-67: [#234](https://github.com/magentawood/roomsie/pull/234), 2026-11-06. The nightly delete of the old visitor goals.
 - [#243](https://github.com/magentawood/roomsie/pull/243), 2026-11-07. A new goal opens the empty chat of the designs.
+- [#269](https://github.com/magentawood/roomsie/pull/269), 2026-11-09. "Same move?" on the first message of a new goal and on the answers of the onboarding.

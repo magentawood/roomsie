@@ -95,9 +95,9 @@ The team writes one page for each technical topic that a ticket teaches, for exa
 <!-- learn-newest:start -->
 These are the newest learn pages. The full list is in [the Learn index](learn/README.md).
 
+- [Goals: the list, the close and the feedback](learn/goals.md)
 - [Message requests](learn/message-requests.md)
 - [Messages and realtime](learn/messages.md)
 - [Moderation: reports, "Not interested", blocks and the admin screen](learn/moderation.md)
 - [Roomsie Noticed](learn/roomsie-noticed.md)
-- [The chat screen and the sign-in wall](learn/chat-screen.md)
 <!-- learn-newest:end -->
