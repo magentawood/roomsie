@@ -39,6 +39,14 @@ export function Select({ id, value, onChange, size = 'md', children }: { id: str
   )
 }
 
+/**
+ * A native date box. With no date, Chrome, Edge and Firefox show "dd/mm/yyyy" in the text colour, and Safari shows a grey date.
+ * The empty box takes the colour of a placeholder in each browser, as the empty `Select` does.
+ */
+export function DateInput({ id, value, onChange, size = 'md' }: { id: string; value: string | null | undefined; onChange: (value: string | null) => void; size?: FieldSize }) {
+  return <input id={id} type="date" className={`${inputClassOf(size)} ${value ? '' : 'text-placeholder!'}`} value={value ?? ''} onChange={(e) => onChange(e.target.value || null)} />
+}
+
 type TextProps = { label: string; value: string | null | undefined; onChange: (value: string | null) => void; placeholder?: string; required?: boolean; hint?: string; error?: string; maxLength?: number; size?: FieldSize }
 
 /** An empty text box saves null, so a cleared field clears the listing. */

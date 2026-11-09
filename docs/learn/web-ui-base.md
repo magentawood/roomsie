@@ -13,7 +13,7 @@
 | Part | Where | What it gives |
 |---|---|---|
 | Tokens | `apps/web/app/globals.css` | Colours, Figtree, text sizes, radii and shadows |
-| Components | `apps/web/components/ui/` | Button, text and number fields, chips, choice cards, toggle, checkbox, step bar, badge and modal |
+| Components | `apps/web/components/ui/` | Button, text, number and date fields, chips, choice cards, toggle, checkbox, step bar, badge and modal |
 | App shell | `apps/web/components/shell/` | The sidebar on a desktop, the floating navigation on a phone, the page header and the sign-in gate |
 | API helper | `apps/web/lib/api.ts` | `api(user, path, schema)` sends the ID token and parses the reply with the contract |
 | Sign-in | `apps/web/lib/auth.tsx` | `useAuth()` gives the user and `signIn` |
@@ -52,6 +52,7 @@ The spacing of each screen comes from the Figma screens of the designer, to the 
 - **A 204 reply has no body.** Give `api()` the schema `z.null()` for it.
 - **A spacing class with a border needs 1 px less padding.** For a 44 px text box, `py-2.25` + the 1 px border + a 24 px line + `py-2.25` + 1 px = 44.
 - **Figtree comes from `next/font`.** The build downloads it one time, and the site serves it from its own domain.
+- **A date box is `DateInput`, and a number box is `NumberInput`.** Each engine draws these controls differently, so the base rules and the shared components make them the same ([cross-browser](cross-browser.md)).
 
 ## Tickets
 

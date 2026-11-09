@@ -101,6 +101,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A new claim needs a new token.</strong> Firebase puts a claim in the next token, so the web refreshes the token one time when <code>mustRefreshIdToken</code> is true.</li>
 <li><strong>The setup is in two consoles.</strong> The API needs the secrets <code>SUPABASE_ANON_KEY</code> and <code>FIREBASE_SERVICE_ACCOUNT</code>. Supabase needs Firebase as a third-party auth provider, and Realtime set to private channels only. Without the secrets, <code>POST /v1/me/realtime</code> gives 503.</li>
 <li><strong>The channel keeps no old events.</strong> Each time the web joins the channel, it gets the messages data from the API one more time.</li>
+<li><strong>A blocked socket does not stop the page.</strong> Firefox and Safari throw from <code>new WebSocket</code> when the Content-Security-Policy blocks the Supabase host. <code>lib/live.tsx</code> catches the throw, reports it, and the screens poll (<a href="cross-browser.html">cross-browser</a>).</li>
 <li><strong>No SDK.</strong> The Firebase Admin module calls the REST API that the Admin SDK calls, with a token that <code>jose</code> signs, as <code>aws4fetch</code> does for R2.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

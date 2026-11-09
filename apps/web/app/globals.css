@@ -236,4 +236,12 @@
   button:not(:disabled), [role="button"]:not([aria-disabled="true"]), select:not(:disabled), summary {
     cursor: pointer;
   }
+  /* A number box has no arrows in the designs. Firefox and Safari show them at all times, Chrome and Edge on a hover. */
+  input[type="number"] {
+    appearance: textfield;
+  }
+  input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button {
+    appearance: none;
+    margin: 0;
+  }
 }

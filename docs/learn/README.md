@@ -20,6 +20,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Comparing cards](compare-cards.md): a person selects 2 to 4 places or people in the results and asks a question, and code builds a table of their database fields, with no model that reads a card.
 - [The composer](composer.md): code plans each reply, and the composer writes the words of that plan in the language of the person, inside a deadline.
 - [Content-Security-Policy](content-security-policy.md): each page of the web tells the browser which scripts, styles and hosts it can use, so a script that an attacker puts into a page does not run and cannot take the sign-in.
+- [Cross-browser support](cross-browser.md): roomsie looks and works the same in Chrome, Edge, Firefox and Safari, with standard code, a few normalising rules and no browser checks.
 - [Deploys](deploys.md): Vercel publishes the web from `main` and builds a preview for each pull request. A GitHub workflow deploys the API as a Docker image to AWS Lightsail in Mumbai.
 - [Error reporting](error-reporting.md): each error that a user gets, in the browser or in the API, goes to Sentry through one `reportError`, with the place in the code and the `users.id`, and with no message text, token, IP address or phone number.
 - [Running the eval](eval-run.md): `pnpm eval` scores the extractor, the router and the composer of the API on the eval sentences, for each model.
