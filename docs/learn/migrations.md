@@ -32,7 +32,7 @@ merge to main ─▶ build image ─▶ push image ─▶ migrate and seed ─�
 
 - **Expand, then contract.** For a few minutes, the old API runs on the new schema. To rename a column, first add the new column and change the code to use it. Drop the old column in a second PR.
 - **A test fails on the migration dates.** Drizzle applies a migration only when its date is after the last applied migration. A teammate's migration can merge before yours with a later date. Then the test in `apps/api/test/migrate.test.ts` fails. Delete your migration, rebase onto `main`, and generate it again.
-- **Two pooler modes.** The API uses the Supabase pooler in transaction mode ([Postgres drivers](postgres-drivers.md)). The migration uses session mode, from the `DATABASE_URL_SESSION` secret.
+- **One pooler mode.** The migration and, since 2026-11-09, the API use the Supabase pooler in session mode, from the `DATABASE_URL_SESSION` secrets ([Postgres drivers](postgres-drivers.md)).
 - **One transaction.** If one statement fails, all new migrations roll back, and the deploy stops. The old API keeps running. Read the error in the "Migrate and seed" step.
 - **Do not change a committed migration.** Drizzle does not apply a file again, so the live database and the file disagree. Write a new migration.
 - Lines such as `schema "drizzle" already exists, skipping` in the step log are Postgres notices. They are not errors.

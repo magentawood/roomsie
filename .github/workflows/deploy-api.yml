@@ -45,8 +45,9 @@ jobs:
       # jq passes each API_* variable to the container without the prefix.
       - name: Deploy
         env:
-          API_DATABASE_URL: ${{ secrets.DATABASE_URL }}
-          API_ANALYTICS_DATABASE_URL: ${{ secrets.ANALYTICS_DATABASE_URL }}
+          # The session pooler, as the migration: the transaction pooler hung the queries of postgres.js (ADR-0018, 2026-11-09).
+          API_DATABASE_URL: ${{ secrets.DATABASE_URL_SESSION }}
+          API_ANALYTICS_DATABASE_URL: ${{ secrets.ANALYTICS_DATABASE_URL_SESSION }}
           API_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           API_SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           # The public key that the web joins Realtime with, and the Firebase service account for the claims (T-44).

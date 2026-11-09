@@ -1,6 +1,6 @@
 # ADR 0018 — Migrations run in the deploy, before the new API
 
-**Status:** Accepted · **Date:** 2026-10-25 · **Deciders:** n3rxv
+**Status:** Accepted. Changed on 2026-11-09: the API uses the session pooler too. · **Date:** 2026-10-25 · **Deciders:** n3rxv
 
 ## Context
 
@@ -15,7 +15,7 @@
 
 - **Where:** a step of the deploy workflow runs the `migrate` entry of the new image in a one-off container. The step comes after the image push and before the Lightsail deploy.
 - **What:** all new migrations in one transaction, then the catalogue seed. The seed is an upsert, so a second run changes nothing.
-- **Connection:** the session pooler, from the `DATABASE_URL_SESSION` secret. The API keeps the transaction pooler.
+- **Connection:** the session pooler, from the `DATABASE_URL_SESSION` secret. Since 2026-11-09 the API uses the session pooler too, with at most 6 connections in each pool: the transaction pooler hung the queries of postgres.js with values. The `DATABASE_URL` secrets of the transaction pooler stay unused.
 - **Failure:** the transaction rolls back, and the job stops. Lightsail keeps the old API.
 - **Only from `main`:** the job runs only from `main`. A run by hand from a branch does nothing.
 - **Expand, then contract:** each migration works with the API version before it. To rename a column or a table, first add the new one, and use it. To drop a column or a table, first stop its use. In a second PR, drop the old column or table.
@@ -26,6 +26,7 @@
 - A failure stops the job before Lightsail changes. The old API stays up, and the failed step shows the error.
 - The workflow runs one deploy at a time. Thus, two migrations cannot run together.
 - A run from a branch would apply its unmerged migrations to the live database. A later merge could then skip or repeat them.
+- The transaction pooler did not always pass back the answer of a describe and a flush, which postgres.js sends before each query with values. A database session then waited for the client, and the requests of the API hung, first under load, then each one (2026-11-09).
 - Supabase advises a session connection for schema changes. GitHub runners have no IPv6, and the direct connection of the free plan needs IPv6.
 - The old API runs on the new schema until the new API starts. If the Lightsail step fails, the old API runs on the new schema until the next deploy. An additive migration keeps the old API correct.
 
