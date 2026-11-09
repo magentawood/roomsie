@@ -1,3 +1,4 @@
+import type { Viewport } from 'next'
 import type { ReactNode } from 'react'
 import { Figtree, Fredoka } from 'next/font/google'
 import { connection } from 'next/server'
@@ -11,6 +12,8 @@ const figtree = Figtree({ subsets: ['latin'], variable: '--font-figtree', displa
 const fredoka = Fredoka({ subsets: ['latin'], weight: '600', variable: '--font-fredoka', display: 'swap' })
 
 export const metadata = { title: 'Roomsie', metadataBase: new URL(siteUrl) }
+/** The keyboard of a phone makes the page shorter, so a chat input sits on the keyboard, as in a chat app. */
+export const viewport: Viewport = { width: 'device-width', initialScale: 1, interactiveWidget: 'resizes-content' }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // A static page cannot have the new nonce of each request, so each page renders on each request (T-52).

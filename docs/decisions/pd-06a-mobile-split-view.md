@@ -1,6 +1,6 @@
 # PD6a — Mobile pattern for the split view
 
-**Status:** Settled. Changed on 2026-10-27. · **Date:** 2026-09-20 · **Deciders:** Yash, then n3rxv for the founders (2026-10-27)
+**Status:** Settled. Changed on 2026-11-09. · **Date:** 2026-09-20 · **Deciders:** Yash, then n3rxv for the founders (2026-10-27)
 
 ## Context
 
@@ -22,8 +22,11 @@ On a phone, we use the pattern of flow 02 of the designs:
 | Start | Fills the screen | — |
 | Results are available | Still fills the screen | A card in the chat, with "Show all" |
 | The user selects "Show all" | The input stays at the bottom of the screen | Fill the space above the input |
+| The user opens a place | Hidden, with the phone bar | The place fills the screen. "Ask in chat" goes back to the input |
 
 **One rule for all sizes:** never change the size while the user types or reads. Only the input grows, to four lines at most, over the screen. The size changes on send, or when the user opens or closes the results.
+
+**The keyboard of a phone**, as in a chat app: when it opens, the phone bar goes away, and the input sits on the keyboard. The founders asked for this on 2026-11-09.
 
 The mechanics are the same as on desktop: one form, two views.
 

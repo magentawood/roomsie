@@ -67,7 +67,7 @@ function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in 
 /** "What are we looking for?" of flow 02: the start of a goal, with the place-type chips under the input (T-09). */
 function EmptyChat({ onSend, children }: { onSend: (text: string) => void; children: React.ReactNode }) {
   return (
-    <main className="isolate flex flex-1 flex-col items-center justify-center gap-10 overflow-hidden bg-chat-glow px-4 pb-24 lg:px-6 lg:pb-0">
+    <main className="isolate flex flex-1 flex-col items-center justify-center gap-10 overflow-hidden bg-chat-glow px-4 pb-24 max-lg:typing:pb-4 lg:px-6 lg:pb-0">
       <div className="flex max-w-126 flex-col items-center gap-2 text-center">
         <div className="relative">
           <img src="/illustrations/rings.svg" alt="" width={768} height={768} className="pointer-events-none absolute top-1/2 left-1/2 -z-10 max-w-none -translate-1/2" />
@@ -259,7 +259,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           )}
         </ol>
       </div>
-      <div className="col-start-1 row-start-3 px-5 pb-28 lg:px-6 lg:pb-6">
+      <div className="col-start-1 row-start-3 px-5 pb-28 max-lg:typing:pb-3 lg:px-6 lg:pb-6">
         {closed && goalId ? <ClosedBar goalId={goalId} /> : <>
         {picked.length > 0 && !atCap && (
           <div className="mb-2 flex flex-col gap-1.5">

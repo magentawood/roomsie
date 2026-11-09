@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* A text field has the focus, so the keyboard of a phone is open. */
+@custom-variant typing (body:has(:is(textarea, input:not([type=checkbox], [type=radio], [type=range], [type=file], [type=button], [type=submit])):focus) &);
+
 /*
  * Tokens of the Figma file "Roomsie design system (extended)" (ADR-0011, styling standard).
  * Light values only: dark mode is out of the launch scope. The v1 token pipeline replaces this block.
