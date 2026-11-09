@@ -72,7 +72,7 @@ export const profileLabels = {
   answers: lifestyleAnswerLabels,
   mustHaves: {
     veg_kitchen: 'Veg kitchen', non_smokers: 'Non-smokers', no_alcohol: 'No alcohol at home', women_only: 'Women only',
-    men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly',
+    men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly', near_station: 'Near a station',
   } satisfies Record<MustHaveKey, string>,
   weights: { prefer: 'Prefer', dealbreaker: 'Dealbreaker' },
   missing: { whosMoving: 'What best describes you', areas: 'The areas you look in', budget: 'Your budget' },

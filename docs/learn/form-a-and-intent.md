@@ -29,6 +29,7 @@ The designs ask two questions. The answers go to Form A:
 - Rahul selects "A room in a shared flat". His intent is `room`.
 - Rahul sees one card: the room of Priya. He sees who lives there in the listing.
 - If Rahul selects "Not sure, help me pick", his intent is `unclear`, and the assistant asks him in the chat.
+- Under his results, Rahul taps "Show some PGs too". His intent is now a list, `room` and `pg`, and he sees both ([Roomsie Noticed](roomsie-noticed.md)).
 
 **An example of the slots.** Rahul types "a veg kitchen would be nice, not sure it's a deal-breaker".
 

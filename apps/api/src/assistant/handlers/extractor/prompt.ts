@@ -48,7 +48,7 @@ The slots:
 - religionPreference and communityPreference: only when the person states a preference about the religion or the community of the flatmates. dealbreaker: "only", "strictly", "must". prefer: "preferably", "better if". A broad word gives each value that it covers: "South Indian" is tamil, telugu, kannadiga and malayali. "North Indian" is punjabi, uttar_pradesh, bihari and marwari. "Maharashtrian" is marathi. "Goan" is konkani.
 - ownReligion and ownCommunity: only when the person states their own religion or community, such as "I'm Jain" or "main Gujarati hoon". Not the religion of their family, and not a preference. Never infer them from a name, a diet, an area or a festival. "I eat Jain food" is food: jain, and no ownReligion.
 - A caste is never a value of these slots. Leave a caste out.
-- mustHaves: what the person wants of the place or the flatmates. dealbreaker = they must have it ("only", "must", "strictly", "no ... at all"). prefer = they would like it ("preferably", "better if"). unclear = they want it, but not how much.
+- mustHaves: what the person wants of the place or the flatmates. near_station = a 10-minute walk or less to a metro or train station. dealbreaker = they must have it ("only", "must", "strictly", "no ... at all"). prefer = they would like it ("preferably", "better if"). unclear = they want it, but not how much.
 
 Budget words: the amount and the words around it, such as "under 25k", "bees hazaar tak", "15-20k", "1.5 lakh", "35k se upar", "max 18000".
 Hindi and Marathi numbers: das 10, pandrah 15, bees or vees 20, pachees 25, tees 30, paintees 35, chalis 40, hazaar or hajar 1,000, lakh 1,00,000.

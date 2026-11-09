@@ -1,22 +1,20 @@
-import { resultsPageSize, type FormA, type MatchResult, type MustHaveKey, type ResultsResponse } from '@roomsie/contract'
+import { intentsOf, resultsPageSize, type FormA, type MatchResult, type MustHaveKey, type Notice, type ResultsResponse } from '@roomsie/contract'
 import { budgetPhrase } from './person'
 
-/** What a search found, in the pages that loaded. `total` counts the results of all pages. */
-export type Found = { results: MatchResult[]; total: number; suggested: MatchResult[] }
+/** What a search found, in the pages that loaded. `total` counts the results of all pages. `noticed`: the notes of the first page. */
+export type Found = { results: MatchResult[]; total: number; suggested: MatchResult[]; noticed: Notice[] }
 
 /** The pages of a search as one grid. Only a search that finds nothing has suggested posts, on its first page (T-14). */
 export const joinPages = ({ pages }: { pages: ResultsResponse[] }): Found => ({
   results: pages.flatMap((page) => page.results),
   total: pages.at(-1)!.total,
   suggested: pages[0]!.suggestions.flatMap((suggestion) => suggestion.results),
+  noticed: pages[0]!.noticed,
 })
 
 export const nextPage = ({ page, total }: Pick<ResultsResponse, 'page' | 'total'>) => (page * resultsPageSize < total ? page + 1 : undefined)
 
-type Slot = FormA['intent'] | FormA['areas'] | FormA['budget']
-const known = <S extends Slot>(slot: S) => (slot.value === 'unclear' ? null : slot.value as Exclude<S['value'], 'unclear' | null>)
-
-const nouns: Record<Exclude<FormA['intent']['value'], 'unclear' | null>, string> = { room: 'Rooms', pg: 'PGs', whole_flat: 'Flats', flatmates: 'People' }
+const nouns = { room: 'Rooms', pg: 'PGs', whole_flat: 'Flats', flatmates: 'People' } as const
 
 function areaPhrase(slugs: readonly string[], label: (slug: string) => string) {
   const [first, second, ...rest] = slugs.map(label)
@@ -26,10 +24,11 @@ function areaPhrase(slugs: readonly string[], label: (slug: string) => string) {
 
 /** The scope of the header: "Everything in Mumbai", then "Flats in Powai–Vikhroli", then "… under ₹20,000" (drafts section 14). */
 export function panelTitle(form: FormA, label: (slug: string) => string) {
-  const intent = known(form.intent)
-  const areas = known(form.areas)
-  const budget = known(form.budget)
-  const scope = `${intent ? nouns[intent] : 'Everything'} in ${areas ? areaPhrase(areas, label) : 'Mumbai'}`
+  const types = intentsOf(form).map((type) => nouns[type])
+  const areas = form.areas.value
+  const budget = form.budget.value
+  const what = types.length > 1 ? `${types.slice(0, -1).join(', ')} and ${types.at(-1)}` : types[0] ?? 'Everything'
+  const scope = `${what} in ${areas ? areaPhrase(areas, label) : 'Mumbai'}`
   return budget ? `${scope} ${budgetPhrase(budget)}` : scope
 }
 
@@ -46,11 +45,11 @@ export const formKey = (form: FormA) => JSON.stringify(form, (key, value: unknow
 const unanswered: Record<MatchResult['kind'], Record<MustHaveKey, string>> = {
   person: {
     veg_kitchen: 'food', non_smokers: 'smoking', no_alcohol: 'drinks', tidy_flatmates: 'tidiness',
-    women_only: 'gender', men_only: 'gender', couple_friendly: 'couples',
+    women_only: 'gender', men_only: 'gender', couple_friendly: 'couples', near_station: 'station',
   },
   listing: {
     veg_kitchen: 'kitchen', non_smokers: 'smoking', no_alcohol: 'alcohol', tidy_flatmates: 'tidiness',
-    women_only: 'who can move in', men_only: 'who can move in', couple_friendly: 'who’s welcome',
+    women_only: 'who can move in', men_only: 'who can move in', couple_friendly: 'who’s welcome', near_station: 'walk to a station',
   },
 }
 

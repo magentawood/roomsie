@@ -24,11 +24,14 @@ POST /v1/results ──► results module ──┬─► profiles module: match
 | `flatmates` | other flatmates seekers |
 | `unclear`, or no intent | nothing |
 
+A goal can hold several kinds of place, as rooms and PGs: the search gives each kind. `flatmates` goes alone.
+
 - **The filters:** the area and the areas under it, the budget, the move date (30 days before or after), the room type, the dealbreakers, "Who can move in" and "Who is welcome".
 - **The budget:** a rent up to 10% over the budget passes, and ranks below the rents in the budget. Two people pass when their budgets overlap.
 - **Between people, each dealbreaker works both ways.** A known answer that fails hides the card. A dealbreaker that the other person did not answer moves the card down.
 - **The order:** full matches, in budget, the most preferences met, the Form B points, the nearest move date, the newest.
 - **An empty search** also gives the suggested posts: the next budget band and two neighbours of the area group, with four cards each. The seed puts the neighbours on the `areas` table.
+- **The first page** also gives the notes of "Roomsie Noticed" ([Roomsie Noticed](roomsie-noticed.md)).
 - **Each page** fires `results_shown` with its count.
 - **The setting:** `FORM_B_CONFIDENCE_FLOOR` (default 0.5). A Form B note counts only above it.
 

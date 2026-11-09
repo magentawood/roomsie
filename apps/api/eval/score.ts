@@ -28,7 +28,9 @@ export function mainScript(text: string) {
 }
 
 const sorted = (value: unknown) => (Array.isArray(value) ? value.toSorted() : value)
-const same = (a: unknown, b: unknown) => isDeepStrictEqual(sorted(a), sorted(b))
+/** Form A keeps a list of place types, and a label or an older run has one type: a value equals a list of that value. */
+const asList = (value: unknown) => (typeof value === 'string' && value !== 'unclear' ? [value] : value)
+const same = (a: unknown, b: unknown) => isDeepStrictEqual(sorted(asList(a)), sorted(asList(b)))
 
 export const zeroCounts = {
   turns: 0, searches: 0, noAnswer: 0, routerNoAnswer: 0, labelled: 0, right: 0, unclearLabels: 0, unclearRight: 0, vagueFilled: 0, madeUp: 0, extraUnclear: 0,

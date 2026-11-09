@@ -14,7 +14,7 @@ const LIFESTYLE_AXES = (Object.keys(questions) as LifestyleAxis[])
 
 const mustHaveLabels: Record<(typeof mustHaveKeys)[number], string> = {
   veg_kitchen: 'Veg kitchen', non_smokers: 'Non-smokers', no_alcohol: 'No alcohol at home', women_only: 'Women only',
-  men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly',
+  men_only: 'Men only', tidy_flatmates: 'Tidy flatmates', couple_friendly: 'Couple friendly', near_station: 'Near a station',
 }
 const MUST_HAVES = mustHaveKeys.map((key, i) => ({ key, label: mustHaveLabels[key], sortOrder: i + 1, active: true }))
 

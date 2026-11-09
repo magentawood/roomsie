@@ -120,16 +120,16 @@ describe('the update rule', () => {
 
 describe('the pages of a search', () => {
   const place = (n: number): MatchResult => ({ kind: 'listing', listing: listing({ id: testId(n) }), bestMatch: false, didntSay: [] })
-  const page = (n: number, patch: Partial<ResultsResponse>): ResultsResponse => ({ results: [], total: 0, page: n, suggestions: [], ...patch })
+  const page = (n: number, patch: Partial<ResultsResponse>): ResultsResponse => ({ results: [], total: 0, page: n, suggestions: [], noticed: [], ...patch })
 
   it('puts the results of each page in one grid, with the newest total', () => {
     expect(joinPages({ pages: [page(1, { results: [place(1)], total: 21 }), page(2, { results: [place(2)], total: 22 })] }))
-      .toEqual({ results: [place(1), place(2)], total: 22, suggested: [] })
+      .toEqual({ results: [place(1), place(2)], total: 22, suggested: [], noticed: [] })
   })
 
   it('puts the suggested posts of each relaxed search in one list', () => {
     const suggestions = [{ relaxed: { kind: 'budget' as const, max: 35000 }, results: [place(3)] }, { relaxed: { kind: 'area' as const, area: 'andheri-goregaon' }, results: [place(4)] }]
-    expect(joinPages({ pages: [page(1, { suggestions })] })).toEqual({ results: [], total: 0, suggested: [place(3), place(4)] })
+    expect(joinPages({ pages: [page(1, { suggestions })] })).toEqual({ results: [], total: 0, suggested: [place(3), place(4)], noticed: [] })
   })
 
   it('asks for the next page until the pages hold the total', () => {

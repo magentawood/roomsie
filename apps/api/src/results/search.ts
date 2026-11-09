@@ -1,28 +1,33 @@
-import { budgetBands, mustHaveKeys, resultsPageSize, type FormA, type ListingKind, type MatchResult, type MustHaveKey } from '@roomsie/contract'
+import { budgetBands, intentsOf, mustHaveKeys, resultsPageSize, type FormA, type ListingKind, type MatchResult, type MustHaveKey, type Notice, type PlaceIntent } from '@roomsie/contract'
 import { areaParents, lineage, matchingAreas, neighboursOf } from '../areas'
 import type { Db } from '../db/client'
 import { inOrder } from '../in-order'
-import { matchingListings } from '../listings/match'
+import { matchingListings, type ListingSearch } from '../listings/match'
 import { listingsByIds, listingView, partsOf } from '../listings/read'
-import { matchingPeople, searcherMustHaves, type SearcherAnswers } from '../profiles/match'
+import { matchingPeople, searcherMustHaves, type PeopleSearch, type SearcherAnswers } from '../profiles/match'
 import { answersFor, cardView, profileOf, profilesByIds } from '../profiles/read'
 import type { BaseSearch } from '../ranking'
 import type { Storage } from '../storage'
+import { noticesOf } from './noticed'
 import type { Matching } from './settings'
 
 /** The place type of a seeker and the kinds of listing that it sees. A flatmates seeker sees people (PD3a). */
-const listingKindsOf: Record<'room' | 'pg' | 'whole_flat', ListingKind[]> = { room: ['room_in_flat'], pg: ['pg'], whole_flat: ['owner_flat', 'broker_flat'] }
+const listingKindsOf: Record<Exclude<PlaceIntent, 'flatmates'>, ListingKind[]> = { room: ['room_in_flat'], pg: ['pg'], whole_flat: ['owner_flat', 'broker_flat'] }
 const suggestedCards = 4
 
 type Deps = { db: Db; storage: Storage; matching: Matching }
 type Ranked = { id: string; didntSay: MustHaveKey[]; bestMatch: boolean }
-type Filters = Pick<BaseSearch, 'areas' | 'budget'>
+export type Filters = Pick<BaseSearch, 'areas' | 'budget'>
+/** The two searches of a form, for a page or for the counts of the notes. */
+export type Searches = { people: (filters: Filters) => PeopleSearch; listings: (filters: Filters) => ListingSearch }
 
-/** The search of a Form A: the page, and the suggested posts when it finds nothing (PD6c). */
+/** The search of a Form A: the page, the suggested posts when it finds nothing (PD6c), and the notes of the first page. */
 export async function searchResults(deps: Deps, form: FormA, viewerUserId: string | undefined, page: number) {
   const { db, matching } = deps
-  const intent = form.intent.value
-  if (!intent || intent === 'unclear') return { results: [], total: 0, suggestions: [] }
+  const types = intentsOf(form)
+  if (!types.length) return { results: [], total: 0, suggestions: [], noticed: [] as Notice[] }
+  // People to rent with go alone, and kinds of place add up (PD15).
+  const seeksPeople = types[0] === 'flatmates'
 
   const weightOf = (weight: 'prefer' | 'dealbreaker') => mustHaveKeys.filter((key) => form.mustHaves[key].value === weight)
   const answers: SearcherAnswers = Object.fromEntries(Object.entries(form.lifestyle).flatMap(([axis, slot]) => (slot.value && slot.value !== 'unclear' ? [[axis, slot.value]] : [])))
@@ -33,23 +38,29 @@ export async function searchResults(deps: Deps, form: FormA, viewerUserId: strin
   const parentOf = await areaParents(db)
   const picks = form.areas.value ?? []
 
-  const runSearch = async ({ areas, budget }: Filters, limit: number, offset: number): Promise<{ results: MatchResult[]; total: number }> => {
-    if (intent === 'flatmates') {
-      const { rows, total } = await matchingPeople(db, {
-        ...common, areas, budget, limit, offset, searcher: searcherMustHaves(answers), formBFloor: matching.formBFloor,
-        religionPreference: form.religionPreference.value, communityPreference: form.communityPreference.value,
-      })
+  const searches: Searches = {
+    people: ({ areas, budget }) => ({
+      ...common, areas, budget, limit: 0, offset: 0, searcher: searcherMustHaves(answers), formBFloor: matching.formBFloor,
+      religionPreference: form.religionPreference.value, communityPreference: form.communityPreference.value,
+    }),
+    listings: ({ areas, budget }) => ({
+      ...common, areas, budget, limit: 0, offset: 0, roomType, gender, whosMoving: form.whosMoving.value,
+      kinds: types.flatMap((type) => (type === 'flatmates' ? [] : listingKindsOf[type])),
+    }),
+  }
+  const runSearch = async (filters: Filters, limit: number, offset: number): Promise<{ results: MatchResult[]; total: number }> => {
+    if (seeksPeople) {
+      const { rows, total } = await matchingPeople(db, { ...searches.people(filters), limit, offset })
       return { results: await personResults(deps, rows), total }
     }
-    const { rows, total } = await matchingListings(db, {
-      ...common, areas, budget, limit, offset, roomType, gender, whosMoving: form.whosMoving.value, kinds: listingKindsOf[intent],
-    })
+    const { rows, total } = await matchingListings(db, { ...searches.listings(filters), limit, offset })
     return { results: await listingResults(deps, rows), total }
   }
 
   const filters: Filters = { areas: picks.length ? matchingAreas(parentOf, picks) : null, budget: form.budget.value }
   const { results, total } = await runSearch(filters, resultsPageSize, (page - 1) * resultsPageSize)
-  if (total > 0) return { results, total, suggestions: [] }
+  const notes = (suggestions: Suggestion[]) => (page === 1 ? noticesOf(db, { form, seeksPeople, viewerUserId, filters, searches, total, suggestions }) : Promise.resolve([]))
+  if (total > 0) return { results, total, suggestions: [], noticed: await notes([]) }
 
   // The next budget band, and the neighbouring area groups: one change at a time.
   const nextBand = nextBandOf(filters.budget?.max)
@@ -59,9 +70,11 @@ export async function searchResults(deps: Deps, form: FormA, viewerUserId: strin
     ...(nextBand ? [{ relaxed: { kind: 'budget' as const, ...nextBand }, filters: { ...filters, budget: { min: filters.budget!.min, ...nextBand } } }] : []),
     ...neighbours.map((area) => ({ relaxed: { kind: 'area' as const, area }, filters: { ...filters, areas: matchingAreas(parentOf, [area]) } })),
   ]
-  const suggestions = await Promise.all(relaxedSearches.map(async (r) => ({ relaxed: r.relaxed, results: (await runSearch(r.filters, suggestedCards, 0)).results })))
-  return { results, total, suggestions: suggestions.filter((s) => s.results.length) }
+  const suggestions = (await Promise.all(relaxedSearches.map(async (r) => ({ relaxed: r.relaxed, results: (await runSearch(r.filters, suggestedCards, 0)).results }))))
+    .filter((s) => s.results.length)
+  return { results, total, suggestions, noticed: await notes(suggestions) }
 }
+export type Suggestion = { relaxed: { kind: 'budget'; max: number | null } | { kind: 'area'; area: string }; results: MatchResult[] }
 
 /** The next budget band. No maximum: the band "above 35k". Undefined: no next band, above 35k or with no budget. */
 function nextBandOf(max: number | null | undefined): { max: number | null } | undefined {

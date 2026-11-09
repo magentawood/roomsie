@@ -30,11 +30,28 @@ const relaxed = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('area'), area: areaSlug }),
 ])
 
+/** One note of "Roomsie Noticed" under the results of flow 02. The code counts each number; a note shows only when the data backs it. */
+export const notice = z.discriminatedUnion('kind', [
+  /** Only some of the results have a must-have that the search does not require. `near_station` names the walk to a station. */
+  z.object({ kind: z.literal('mustHave'), key: z.enum(mustHaveKeys), count: z.int().min(1), total: z.int().min(2) }),
+  /** People who look for flatmates in the areas of a search of places. */
+  z.object({ kind: z.literal('teamUp'), count: z.int().min(1) }),
+  /** The rents of the kinds of place in the areas, when the budget finds nothing. `low` and `high`: the middle half, from four places. */
+  z.object({ kind: z.literal('rents'), cheapest: rupees, low: rupees.nullable(), high: rupees.nullable() }),
+  /** A neighbouring area group that has results at this budget. */
+  z.object({ kind: z.literal('nearbyArea'), area: areaSlug }),
+  /** The rent of a 2 BHK in the areas, split two ways: the middle one, with its maintenance. */
+  z.object({ kind: z.literal('share'), each: rupees, maintenanceIncluded: z.boolean() }),
+])
+export type Notice = z.infer<typeof notice>
+
 export const resultsResponse = z.object({
   results: z.array(matchResult),
   total: z.int().min(0),
   page: z.int().min(1),
   /** Only when a search finds nothing: a few cards of each relaxed search. */
   suggestions: z.array(z.object({ relaxed, results: z.array(matchResult) })),
+  /** Only on the first page. An older API sends none. */
+  noticed: z.array(notice).max(3).default([]),
 })
 export type ResultsResponse = z.infer<typeof resultsResponse>

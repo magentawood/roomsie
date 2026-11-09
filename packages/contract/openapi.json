@@ -14230,10 +14230,6 @@
                         ]
                       },
                       "intent": {
-                        "default": {
-                          "source": "empty",
-                          "value": null
-                        },
                         "oneOf": [
                           {
                             "type": "object",
@@ -14269,13 +14265,31 @@
                                 ]
                               },
                               "value": {
-                                "type": "string",
-                                "enum": [
-                                  "room",
-                                  "pg",
-                                  "whole_flat",
-                                  "flatmates",
-                                  "unclear"
+                                "anyOf": [
+                                  {
+                                    "type": "string",
+                                    "enum": [
+                                      "room",
+                                      "pg",
+                                      "whole_flat",
+                                      "flatmates",
+                                      "unclear"
+                                    ]
+                                  },
+                                  {
+                                    "minItems": 1,
+                                    "maxItems": 3,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "enum": [
+                                        "room",
+                                        "pg",
+                                        "whole_flat",
+                                        "flatmates"
+                                      ]
+                                    }
+                                  }
                                 ]
                               }
                             },
@@ -15441,6 +15455,62 @@
                                 "additionalProperties": false
                               }
                             ]
+                          },
+                          "near_station": {
+                            "default": {
+                              "source": "empty",
+                              "value": null
+                            },
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "empty"
+                                    ]
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "nullable": true,
+                                    "enum": [
+                                      null
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "source",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "enum": [
+                                      "stated",
+                                      "default"
+                                    ]
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "enum": [
+                                      "prefer",
+                                      "dealbreaker",
+                                      "unclear"
+                                    ]
+                                  }
+                                },
+                                "required": [
+                                  "source",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
                           }
                         },
                         "additionalProperties": false
@@ -15891,7 +15961,8 @@
                                     "women_only",
                                     "men_only",
                                     "tidy_flatmates",
-                                    "couple_friendly"
+                                    "couple_friendly",
+                                    "near_station"
                                   ]
                                 }
                               }
@@ -16534,7 +16605,8 @@
                                     "women_only",
                                     "men_only",
                                     "tidy_flatmates",
-                                    "couple_friendly"
+                                    "couple_friendly",
+                                    "near_station"
                                   ]
                                 }
                               }
@@ -16853,7 +16925,8 @@
                                           "women_only",
                                           "men_only",
                                           "tidy_flatmates",
-                                          "couple_friendly"
+                                          "couple_friendly",
+                                          "near_station"
                                         ]
                                       }
                                     }
@@ -17496,7 +17569,8 @@
                                           "women_only",
                                           "men_only",
                                           "tidy_flatmates",
-                                          "couple_friendly"
+                                          "couple_friendly",
+                                          "near_station"
                                         ]
                                       }
                                     }
@@ -17519,13 +17593,166 @@
                         ],
                         "additionalProperties": false
                       }
+                    },
+                    "noticed": {
+                      "default": [],
+                      "maxItems": 3,
+                      "type": "array",
+                      "items": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHave"
+                                ]
+                              },
+                              "key": {
+                                "type": "string",
+                                "enum": [
+                                  "veg_kitchen",
+                                  "non_smokers",
+                                  "no_alcohol",
+                                  "women_only",
+                                  "men_only",
+                                  "tidy_flatmates",
+                                  "couple_friendly",
+                                  "near_station"
+                                ]
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9007199254740991
+                              },
+                              "total": {
+                                "type": "integer",
+                                "minimum": 2,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "key",
+                              "count",
+                              "total"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "teamUp"
+                                ]
+                              },
+                              "count": {
+                                "type": "integer",
+                                "minimum": 1,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "count"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "rents"
+                                ]
+                              },
+                              "cheapest": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 100000000
+                              },
+                              "low": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 100000000
+                              },
+                              "high": {
+                                "nullable": true,
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 100000000
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "cheapest",
+                              "low",
+                              "high"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "nearbyArea"
+                                ]
+                              },
+                              "area": {
+                                "type": "string",
+                                "maxLength": 60,
+                                "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "area"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "share"
+                                ]
+                              },
+                              "each": {
+                                "type": "integer",
+                                "minimum": 0,
+                                "maximum": 100000000
+                              },
+                              "maintenanceIncluded": {
+                                "type": "boolean"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "each",
+                              "maintenanceIncluded"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
                     }
                   },
                   "required": [
                     "results",
                     "total",
                     "page",
-                    "suggestions"
+                    "suggestions",
+                    "noticed"
                   ],
                   "additionalProperties": false
                 }
@@ -17582,7 +17809,7 @@
                     ]
                   },
                   "mustHaves": {
-                    "maxItems": 7,
+                    "maxItems": 8,
                     "type": "array",
                     "items": {
                       "type": "string",
@@ -17593,7 +17820,8 @@
                         "women_only",
                         "men_only",
                         "tidy_flatmates",
-                        "couple_friendly"
+                        "couple_friendly",
+                        "near_station"
                       ]
                     }
                   }
@@ -17686,13 +17914,27 @@
                                   ]
                                 },
                                 "value": {
-                                  "type": "string",
-                                  "enum": [
-                                    "room",
-                                    "pg",
-                                    "whole_flat",
-                                    "flatmates",
-                                    "unclear"
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "unclear"
+                                      ]
+                                    },
+                                    {
+                                      "minItems": 1,
+                                      "maxItems": 3,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "room",
+                                          "pg",
+                                          "whole_flat",
+                                          "flatmates"
+                                        ]
+                                      }
+                                    }
                                   ]
                                 }
                               },
@@ -18866,6 +19108,62 @@
                                   "additionalProperties": false
                                 }
                               ]
+                            },
+                            "near_station": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
                             }
                           },
                           "required": [
@@ -18875,7 +19173,8 @@
                             "women_only",
                             "men_only",
                             "tidy_flatmates",
-                            "couple_friendly"
+                            "couple_friendly",
+                            "near_station"
                           ],
                           "additionalProperties": false
                         },
@@ -19118,7 +19417,8 @@
                               "mustHaves.women_only",
                               "mustHaves.men_only",
                               "mustHaves.tidy_flatmates",
-                              "mustHaves.couple_friendly"
+                              "mustHaves.couple_friendly",
+                              "mustHaves.near_station"
                             ]
                           },
                           "comparison": {
@@ -19734,13 +20034,27 @@
                                   ]
                                 },
                                 "value": {
-                                  "type": "string",
-                                  "enum": [
-                                    "room",
-                                    "pg",
-                                    "whole_flat",
-                                    "flatmates",
-                                    "unclear"
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "unclear"
+                                      ]
+                                    },
+                                    {
+                                      "minItems": 1,
+                                      "maxItems": 3,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "room",
+                                          "pg",
+                                          "whole_flat",
+                                          "flatmates"
+                                        ]
+                                      }
+                                    }
                                   ]
                                 }
                               },
@@ -20914,6 +21228,62 @@
                                   "additionalProperties": false
                                 }
                               ]
+                            },
+                            "near_station": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
                             }
                           },
                           "required": [
@@ -20923,7 +21293,8 @@
                             "women_only",
                             "men_only",
                             "tidy_flatmates",
-                            "couple_friendly"
+                            "couple_friendly",
+                            "near_station"
                           ],
                           "additionalProperties": false
                         },
@@ -21166,7 +21537,8 @@
                               "mustHaves.women_only",
                               "mustHaves.men_only",
                               "mustHaves.tidy_flatmates",
-                              "mustHaves.couple_friendly"
+                              "mustHaves.couple_friendly",
+                              "mustHaves.near_station"
                             ]
                           },
                           "comparison": {
@@ -21917,6 +22289,12 @@
                                   "flatmates",
                                   "unclear"
                                 ]
+                              },
+                              "also": {
+                                "type": "boolean",
+                                "enum": [
+                                  true
+                                ]
                               }
                             },
                             "required": [
@@ -22378,6 +22756,29 @@
                               "value"
                             ],
                             "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "slot": {
+                                "type": "string",
+                                "enum": [
+                                  "mustHaves.near_station"
+                                ]
+                              },
+                              "value": {
+                                "type": "string",
+                                "enum": [
+                                  "prefer",
+                                  "dealbreaker"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "slot",
+                              "value"
+                            ],
+                            "additionalProperties": false
                           }
                         ]
                       }
@@ -22480,13 +22881,27 @@
                                   ]
                                 },
                                 "value": {
-                                  "type": "string",
-                                  "enum": [
-                                    "room",
-                                    "pg",
-                                    "whole_flat",
-                                    "flatmates",
-                                    "unclear"
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "unclear"
+                                      ]
+                                    },
+                                    {
+                                      "minItems": 1,
+                                      "maxItems": 3,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "room",
+                                          "pg",
+                                          "whole_flat",
+                                          "flatmates"
+                                        ]
+                                      }
+                                    }
                                   ]
                                 }
                               },
@@ -23660,6 +24075,62 @@
                                   "additionalProperties": false
                                 }
                               ]
+                            },
+                            "near_station": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
                             }
                           },
                           "required": [
@@ -23669,7 +24140,8 @@
                             "women_only",
                             "men_only",
                             "tidy_flatmates",
-                            "couple_friendly"
+                            "couple_friendly",
+                            "near_station"
                           ],
                           "additionalProperties": false
                         },
@@ -23914,7 +24386,8 @@
                                   "mustHaves.women_only",
                                   "mustHaves.men_only",
                                   "mustHaves.tidy_flatmates",
-                                  "mustHaves.couple_friendly"
+                                  "mustHaves.couple_friendly",
+                                  "mustHaves.near_station"
                                 ]
                               },
                               "comparison": {
@@ -24272,7 +24745,8 @@
                                   "mustHaves.women_only",
                                   "mustHaves.men_only",
                                   "mustHaves.tidy_flatmates",
-                                  "mustHaves.couple_friendly"
+                                  "mustHaves.couple_friendly",
+                                  "mustHaves.near_station"
                                 ]
                               },
                               "comparison": {

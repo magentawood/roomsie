@@ -34,11 +34,12 @@ export const rupees = (n: number) => `₹${n.toLocaleString('en-IN')}`
 const budgetText = ({ min, max }: Budget) => (min != null && max != null ? `${rupees(min)} to ${rupees(max)}` : max != null ? `up to ${rupees(max)}` : `${rupees(min!)} or more`)
 const dateText = (iso: string) => new Date(`${iso}T00:00:00Z`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
 const humanize = (value: string) => value.replaceAll('_', ' ')
+const orList = (items: string[]) => (items.length > 1 ? `${items.slice(0, -1).join(', ')} or ${items.at(-1)}` : items[0]!)
 
 export function valueText(slot: FormASlot, value: unknown, catalogue: Catalogue): string {
   const [group, key] = slotPath(slot)
   switch (group) {
-    case 'intent': return intentText[value as string]!
+    case 'intent': return Array.isArray(value) ? orList(value.map((type: string) => intentText[type]!)) : intentText[value as string]!
     case 'roomType': return `a ${humanize(value as string)} room`
     case 'areas': return (value as string[]).map((slug) => catalogue.bySlug.get(slug)?.name ?? slug).join(', ')
     case 'budget': return budgetText(value as Budget)

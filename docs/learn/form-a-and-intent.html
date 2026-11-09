@@ -59,6 +59,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>Rahul selects "A room in a shared flat". His intent is <code>room</code>.</li>
 <li>Rahul sees one card: the room of Priya. He sees who lives there in the listing.</li>
 <li>If Rahul selects "Not sure, help me pick", his intent is <code>unclear</code>, and the assistant asks him in the chat.</li>
+<li>Under his results, Rahul taps "Show some PGs too". His intent is now a list, <code>room</code> and <code>pg</code>, and he sees both (<a href="roomsie-noticed.html">Roomsie Noticed</a>).</li>
 </ul>
 <p><strong>An example of the slots.</strong> Rahul types "a veg kitchen would be nice, not sure it's a deal-breaker".</p>
 <pre><code>mustHaves.veg_kitchen: { value: &quot;unclear&quot;, source: &quot;stated&quot; }   // the results do not change

@@ -33,7 +33,7 @@ const composed = (...replies: Parameters<typeof answer>[0][]) => ({ composer: { 
 /** The scripted reply of the message "room chahiye": its text, its chips and its form. */
 const expectScripted = ({ reply, form }: Awaited<ReturnType<typeof send>>) => {
   expect(reply).toMatchObject({ text: roomAck, chips: 'areas' })
-  expect(form.intent).toEqual({ source: 'stated', value: 'room' })
+  expect(form.intent).toEqual({ source: 'stated', value: ['room'] })
 }
 
 describe('the fixed lines', () => {
@@ -80,7 +80,7 @@ describe('the composer', () => {
       version: 1,
       language: 'hi-Latn',
       draft: 'Got it: Powai. Abhi ke liye itna kaafi hai. Ab results dekhiye.',
-      form: { intent: 'room', areas: ['powai'] },
+      form: { intent: ['room'], areas: ['powai'] },
       formB: [],
       turns: [{ role: 'user', text: 'room chahiye' }, { role: 'assistant', text: roomAck }],
       message: 'Powai mein',

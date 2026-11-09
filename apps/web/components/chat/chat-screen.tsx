@@ -4,7 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
-import { capWall, formA, goalResponse, listingTitle, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, intentsOf, listingTitle, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, tapRefusal, writeStored } from '../../lib/chat'
@@ -23,6 +23,8 @@ import { RemoveChip } from '../ui/choice'
 import { Chips } from './chips'
 import { ComparisonTable } from './comparison'
 import { FoundFlow } from './found-dialogs'
+import { FollowUps, NoticedBox } from './noticed'
+import { followUps, noteLines, type FollowUp } from '../../lib/noticed'
 import { NotesList } from './notes'
 import { GoalHeader } from '../goals/goal-list'
 
@@ -193,6 +195,18 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
   const chipSlot = send.isPending || closed ? null : chipsOf(turns, chatForm)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
+  // "Roomsie Noticed" and the chips under it follow the newest results, and wait while a reply is on its way (flow 02).
+  const areaName = (slug: string) => areaLabels[slug] ?? slug
+  const nextSteps = shown && !preview && !send.isPending && !closed
+    ? { lines: noteLines(shown.found.noticed, shown.form, areaName), chips: followUps(shown.found, shown.form, areaName) }
+    : null
+  // "Which one's the best deal?" compares the top cards, and a comparison needs an account (T-49).
+  const pickFollowUp = (chip: FollowUp) => {
+    if ('tap' in chip) return tap(chip.tap)
+    if (!signedIn) return setWall(true)
+    setView('split')
+    submit({ body: { text: chip.label, compare: chip.compare }, text: chip.label })
+  }
   const askInChat = (listing: ListingResponse) => {
     setDraft(({ version }) => ({ text: `About ${listingTitle(listing)}: `, version: version + 1 }))
     setView('split')
@@ -230,6 +244,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
             </li>
           )}
           {shown && <li><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>}
+          {nextSteps && nextSteps.lines.length > 0 && <li><NoticedBox lines={nextSteps.lines} onTap={tap} /></li>}
+          {nextSteps && nextSteps.chips.length > 0 && <li><FollowUps chips={nextSteps.chips} onPick={pickFollowUp} /></li>}
           {results.isError && !results.isFetchNextPageError && (
             <li role="alert" className="flex items-center gap-3 text-sm text-error-primary">
               The results did not load.
@@ -284,7 +300,7 @@ function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) =>
     const timers = stepTimes.map((ms, step) => setTimeout(() => setDone(step + 1), ms))
     return () => timers.forEach(clearTimeout)
   }, [])
-  const what = form.intent.value === 'flatmates' ? 'people' : 'places'
+  const what = intentsOf(form)[0] === 'flatmates' ? 'people' : 'places'
   const areas = form.areas.value ?? []
   const steps = ['Reading what you said', `Looking through ${what} ${areas.length ? `around ${areas.map(areaName).join(', ')}` : 'in Mumbai'}`, 'Picking the best ones for you']
   return (

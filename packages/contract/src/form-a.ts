@@ -17,6 +17,21 @@ const lifestyle = {
 } satisfies Record<LifestyleAxis, z.ZodType>
 const mustHaves = Object.fromEntries(mustHaveKeys.map((key) => [key, weight])) as Record<MustHaveKey, typeof weight>
 
+/** A place type of a goal: a kind of place, or people to rent a flat with (PD15). */
+export type PlaceIntent = Exclude<(typeof intents)[number], 'unclear'>
+/**
+ * The place types of a goal: one or more kinds of place, or people alone, so a list of results has one kind of card.
+ * "unclear" while the person is not sure. A form from before the list has one type, and it reads as a list of that type.
+ */
+const intentList = z.array(z.enum(intents).exclude(['unclear'])).min(1).max(3)
+  .refine((list) => new Set(list).size === list.length, 'Each place type once')
+  .refine((list) => list.length === 1 || !list.includes('flatmates'), 'People to rent with go alone')
+// A codec, not a transform, so the API can also write the form in a response.
+const intentValue = z.codec(z.union([z.enum(intents), intentList]), z.union([z.literal('unclear'), intentList]), {
+  decode: (value) => (typeof value === 'string' && value !== 'unclear' ? [value] : value),
+  encode: (value) => value,
+})
+
 const budget = z.strictObject({ min: rupees.nullable(), max: rupees.nullable() })
   .refine((b) => b.min != null || b.max != null, 'A budget has a minimum or a maximum')
   .refine((b) => b.min == null || b.max == null || b.min <= b.max, 'The minimum is above the maximum')
@@ -34,7 +49,7 @@ export type HiddenSlot = keyof z.infer<typeof statedPreferences>
 /** What the assistant knows of one move. It drives the match query (PD7a, PD15). */
 export const formA = z.strictObject({
   version: z.literal(1).default(1),
-  intent: slot(z.enum(intents)),
+  intent: slot(intentValue),
   roomType: slot(z.enum(roomTypes)),
   whosMoving: slot(z.enum(whosMovingAnswers)),
   areas: slot(areaPicks.min(1)),
@@ -65,6 +80,12 @@ export const budgetBandOf = (id: BudgetBand) => budgetBands.find((band) => band.
 export type SlotState = { source: 'empty' | 'stated' | 'default'; value: unknown }
 /** A slot that the assistant still asks about. */
 export const isOpenSlot = ({ source, value }: SlotState) => source === 'empty' || value === 'unclear'
+/** The place types of a form. None while the slot is empty or unclear. */
+export const intentsOf = (form: FormA): PlaceIntent[] => (Array.isArray(form.intent.value) ? form.intent.value : [])
+/** Adds a place type to a list: kinds of place add up, and people to rent with replace them or are replaced. */
+export const withIntent = (current: readonly PlaceIntent[], added: PlaceIntent): PlaceIntent[] =>
+  added === 'flatmates' || current.includes('flatmates') ? [added] : current.includes(added) ? [...current] : [...current, added]
+
 /** Results show when intent, areas and budget have values: the panel of the web, and the turn cap of PD9 (T-21). */
 export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
 
