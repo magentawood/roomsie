@@ -76,7 +76,7 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
-<li><strong>The rules of the audit of 2026-11-10:</strong></li>
+<li><strong>The rules of the audit of 2026-11-10</strong> (<a href="https://github.com/magentawood/roomsie/pull/272">#272</a>):</li>
 <li><strong>A number box has no arrows.</strong> Firefox and Safari show the arrows at all times, Chrome and Edge on a hover, and the designs show none. A base rule in <code>globals.css</code> removes them in each engine. The arrow keys still change the number.</li>
 <li><strong>An empty date box has the colour of a placeholder.</strong> Chrome, Edge and Firefox show "dd/mm/yyyy" in the text colour, so it reads as an answer. Safari shows a grey date. Use <code>DateInput</code> from <code>field.tsx</code> for each date. It colours the empty box, as <code>Select</code> does.</li>
 <li><strong>The code catches a throw from <code>new WebSocket</code>.</strong> Firefox and Safari throw at once when the Content-Security-Policy blocks the host. Chrome only logs an error. With no catch, the whole page showed "Something went wrong".</li>
@@ -99,6 +99,6 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
-<li>The cross-browser audit: PR-NUMBER, 2026-11-10.</li>
+<li>The cross-browser audit: <a href="https://github.com/magentawood/roomsie/pull/272">#272</a>, 2026-11-10.</li>
 </ul>
 </main>

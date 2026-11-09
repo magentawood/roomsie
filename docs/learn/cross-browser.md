@@ -19,7 +19,7 @@
 
 ## The choice we made
 
-- **The rules of the audit of 2026-11-10:**
+- **The rules of the audit of 2026-11-10** ([#272](https://github.com/magentawood/roomsie/pull/272)):
   - **A number box has no arrows.** Firefox and Safari show the arrows at all times, Chrome and Edge on a hover, and the designs show none. A base rule in `globals.css` removes them in each engine. The arrow keys still change the number.
   - **An empty date box has the colour of a placeholder.** Chrome, Edge and Firefox show "dd/mm/yyyy" in the text colour, so it reads as an answer. Safari shows a grey date. Use `DateInput` from `field.tsx` for each date. It colours the empty box, as `Select` does.
   - **The code catches a throw from `new WebSocket`.** Firefox and Safari throw at once when the Content-Security-Policy blocks the host. Chrome only logs an error. With no catch, the whole page showed "Something went wrong".
@@ -42,4 +42,4 @@
 
 ## Tickets
 
-- The cross-browser audit: PR-NUMBER, 2026-11-10.
+- The cross-browser audit: [#272](https://github.com/magentawood/roomsie/pull/272), 2026-11-10.
