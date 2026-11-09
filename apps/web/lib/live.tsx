@@ -36,7 +36,9 @@ function Channel({ onLive }: { onLive: (live: boolean) => void }) {
       const got = realtimeEvent.safeParse({ event, payload })
       if (!got.success) return
       if (got.data.event === 'message') cacheMessage(queryClient, got.data.payload)
-      else void queryClient.invalidateQueries({ queryKey: queryKeys.requests('incoming') })
+      else if (got.data.event === 'request') void queryClient.invalidateQueries({ queryKey: queryKeys.requests('incoming') })
+      // A "Not interested" took a chat or a request out of Messages (PD17).
+      else for (const queryKey of [queryKeys.conversations, ['requests'], ['person']]) void queryClient.invalidateQueries({ queryKey })
     }
     client.channel(channel, { config: { private: true } })
       .on('broadcast', { event: '*' }, onEvent)

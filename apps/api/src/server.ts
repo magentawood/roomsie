@@ -27,6 +27,7 @@ import { assistantSettings, type AssistantSettings } from './assistant/settings'
 import { inviteRoutes } from './invites/routes'
 import { listingRoutes } from './listings/routes'
 import { messageRoutes } from './messages/routes'
+import { notInterestedRoutes } from './not-interested/routes'
 import type { Models } from './models/models'
 import { spendSettings, type SpendSettings } from './models/settings'
 import { spendOf, type Spend } from './models/spend'
@@ -149,6 +150,7 @@ export function buildServer(options: { webOrigin: string; storage: Storage; mess
       profileRoutes(v1, options)
       requestRoutes(v1, options)
       blockRoutes(v1, options)
+      notInterestedRoutes(v1, options)
       moderationRoutes(v1, { ...options, ...aiSources })
       directoryRoutes(v1, options)
       messageRoutes(v1, options)

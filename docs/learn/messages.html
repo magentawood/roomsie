@@ -85,7 +85,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>Phone numbers.</strong> In v0, two people who connected can share a number in their chat. Cards, listings and request notes stay masked, and v1 masks the chat again with the subscription (<a href="../decisions/pd-17-connect-and-contact.md">PD17</a>).</li>
 <li><strong>The screens.</strong> <code>/messages</code> is the inbox, <code>/messages/requests</code> gives the requests to you, and <code>/messages/&lt;id&gt;</code> opens one thread. A conversation has the id of its accepted request, so one route opens a chat or a request that you sent. A desktop shows the inbox beside the thread. A phone shows one screen at a time. The Messages item counts the unread messages and the open requests to you.</li>
 <li><strong>The web and the channel.</strong> The web joins the channel one time for each visit, with <code>@supabase/realtime-js</code>. A live message goes into the cached data, and the web does not ask the API again. While the channel is down, a messages screen asks the API every 30 seconds and at each focus of the tab. The drafts are sections 04, 09 and 24 of the drafts page in Figma.</li>
-<li><strong>Who sees what.</strong> Only the two people of a conversation get it. A block hides it from both. Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".</li>
+<li><strong>Who sees what.</strong> Only the two people of a conversation get it. A block hides it from both. "Not interested" in the report modal also hides it from both. Then the API sends a <code>removed</code> event to each person, and an open Messages page gets the lists again. After it, the thread closes, and the Messages list shows "Removed from your messages". Nobody can send to a suspended or a deleted account. After a deletion, the other person keeps the thread and sees "Deleted user".</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
@@ -107,5 +107,6 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>T-44: <a href="https://github.com/magentawood/roomsie/pull/160">#160</a>, 2026-10-27. Conversations, messages, the private channels and Deleted user.</li>
 <li>T-45: <a href="https://github.com/magentawood/roomsie/pull/167">#167</a>, 2026-10-27. The inbox, the requests and the thread on the web, and the live channel.</li>
+<li>The founders, 2026-11-09: <a href="https://github.com/magentawood/roomsie/pull/267">#267</a>. "Not interested" in the report modal, and no Block in the web.</li>
 </ul>
 </main>

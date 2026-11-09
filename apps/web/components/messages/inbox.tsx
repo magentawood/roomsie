@@ -2,9 +2,10 @@
 
 import { useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { MessageCircle01, SearchLg } from '@untitledui/icons'
+import { useSearchParams } from 'next/navigation'
+import { CheckCircle, MessageCircle01, SearchLg } from '@untitledui/icons'
 import { errorText } from '../../lib/api'
-import { inboxItems, inboxTime, type InboxItem } from '../../lib/messages'
+import { inboxItems, inboxTime, removedParam, type InboxItem } from '../../lib/messages'
 import { useConversations, useIncomingRequests, useOutgoingRequests } from '../../lib/queries'
 import { AppShell, PageHeader } from '../shell/app-shell'
 import { SignInGate } from '../shell/sign-in-gate'
@@ -98,6 +99,7 @@ function Inbox({ selected }: { selected?: string }) {
 
 /** The messages screens: on a desktop the inbox stays beside the open thread; on a phone one screen shows at a time. */
 export function MessagesFrame({ selected, children }: { selected?: string; children?: ReactNode }) {
+  const removed = useSearchParams().has(removedParam) && !selected
   return (
     <SignInGate mascot="chatting" title="Sign in to see your messages" text="Your chats and the requests to you stay in your account.">
       <AppShell mobileNav={!selected}>
@@ -105,6 +107,11 @@ export function MessagesFrame({ selected, children }: { selected?: string; child
           <div className={selected ? 'hidden lg:block' : ''}><PageHeader title="Messages" backHref="/" inPhoneBar /></div>
           <div className="flex min-h-0 flex-1">
             <aside className={`${selected ? 'hidden lg:flex' : 'flex'} w-full shrink-0 flex-col overflow-y-auto border-secondary lg:w-90 lg:border-r`}>
+              {removed && (
+                <p role="status" className="flex items-center gap-2 border-b border-secondary px-5 py-3 text-sm font-medium text-secondary lg:px-4">
+                  <CheckCircle size={16} aria-hidden className="shrink-0 text-fg-success" />Removed from your messages
+                </p>
+              )}
               <Inbox selected={selected} />
             </aside>
             <section className={`${selected ? 'flex' : 'hidden lg:flex'} min-w-0 flex-1 flex-col`}>

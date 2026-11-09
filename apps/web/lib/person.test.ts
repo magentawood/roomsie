@@ -40,5 +40,8 @@ describe('the line under the connect button', () => {
     expect(connectLine({ state: 'sent' }, 0, 'Divya')).toBe('Waiting for Divya to accept. Requests close after 14 days.')
     expect(connectLine({ state: 'received', requestId: card.id, note: 'Hi' }, 3, 'Divya')).toBe('Divya sent you a request')
     expect(connectLine({ state: 'accepted' }, 3, 'Divya')).toBe('You’re connected. The chat opens here when Messages is ready.')
+    // PD17: after a "Not interested" of either person, Say hi stays off, also at the cap.
+    expect(connectLine({ state: 'closed' }, 3, 'Divya')).toBe('You and Divya can’t message each other.')
+    expect(connectLine({ state: 'closed' }, 0, 'Divya')).toBe('You and Divya can’t message each other.')
   })
 })
