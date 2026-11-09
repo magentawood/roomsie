@@ -313,7 +313,7 @@ function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) =>
   return (
     <div role="status" className="flex items-center gap-2.5">
       <span className="shrink-0 motion-safe:animate-mascot">
-        <img key={done} src={stepMascots[Math.min(done, stepMascots.length - 1)]} alt="" width={88} height={88} className="size-16 motion-safe:animate-mascot-in lg:size-22" />
+        <img key={done} src={stepMascots[Math.min(done, stepMascots.length - 1)]} alt="" width={160} height={160} className="size-24 motion-safe:animate-mascot-in lg:size-28" />
       </span>
       <ul className="flex min-w-0 flex-col gap-1.5 text-sm text-secondary">
         {steps.slice(0, done + 1).map((step, i) => (
