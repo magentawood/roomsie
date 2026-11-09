@@ -13,12 +13,13 @@ import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
 import { Button } from '../../components/ui/button'
 import { EmptyState } from '../../components/ui/empty-state'
+import { Loading } from '../../components/ui/loading'
 
 function Profile() {
   const profile = useProfile()
   const [creating, setCreating] = useState(true)
   if (profile.isError) return <p role="alert" className="p-6 text-sm text-error-primary">{errorText(profile.error)}</p>
-  if (profile.isPending) return <p className="p-6 text-sm text-tertiary">Loading…</p>
+  if (profile.isPending) return <Loading mascot="starry" />
   if (profile.data) return <ProfileEditor key={profile.data.id} profile={profile.data} />
   return (
     <main className="mx-auto flex w-full max-w-240 flex-col gap-8 px-5 py-5 md:px-6 md:py-8">
@@ -38,7 +39,7 @@ function Profile() {
 
 export default function ProfilePage() {
   return (
-    <SignInGate title="Sign in to see your profile" text="Your profile is the card that other people see.">
+    <SignInGate mascot="starry" title="Sign in to see your profile" text="Your profile is the card that other people see.">
       <AppShell>
         <PageHeader title="Profile and Settings" backHref="/" inPhoneBar />
         <Profile />

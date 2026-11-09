@@ -10,6 +10,7 @@ import { useMe } from '../../lib/queries'
 import { Logo } from '../shell/logo'
 import { Avatar } from '../ui/avatar'
 import { tabClass } from '../ui/tabs'
+import { Loading } from '../ui/loading'
 
 type Tab = { label: string; href: string }
 
@@ -47,7 +48,7 @@ function TopBar({ me, crumb }: { me: MeResponse; crumb?: string }) {
 
 function RoleGate({ role, crumb, children }: { role?: AdminRole; crumb?: string; children: ReactNode }) {
   const me = useMe()
-  if (me.isPending) return <p className="p-5 text-sm text-tertiary">Loading…</p>
+  if (me.isPending) return <Loading mascot="working" />
   if (!me.data || !(role ? me.data[role] : me.data.moderator || me.data.reviewer)) notFound()
   return (
     <div className="flex min-h-dvh flex-col">
@@ -60,7 +61,7 @@ function RoleGate({ role, crumb, children }: { role?: AdminRole; crumb?: string;
 /** Each person without the role sees "not found", so the pages do not show (T-19, T-62). */
 export function AdminFrame(props: { role?: AdminRole; crumb?: string; children: ReactNode }) {
   const { user, loading } = useAuth()
-  if (loading) return <div className="flex min-h-dvh items-center justify-center text-sm text-tertiary">Loading…</div>
+  if (loading) return <Loading mascot="working" page />
   if (!user) notFound()
   return <RoleGate {...props} />
 }

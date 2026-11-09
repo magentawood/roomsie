@@ -11,6 +11,7 @@ import { useBack } from '../../../components/detail/parts'
 import { Button } from '../../../components/ui/button'
 import { EmptyState } from '../../../components/ui/empty-state'
 import { savedHref } from '../../../lib/saved'
+import { Loading } from '../../../components/ui/loading'
 
 function Person() {
   const { id } = useParams<{ id: string }>()
@@ -29,13 +30,13 @@ function Person() {
       </main>
     )
   }
-  if (person.isPending) return <p className="p-6 text-sm text-tertiary">Loading…</p>
+  if (person.isPending) return <Loading mascot="starry" />
   return <PersonDetail person={person.data} />
 }
 
 export default function PersonPage() {
   return (
-    <SignInGate title="Sign in to open this card" text="Cards and Say hi are for signed-in people.">
+    <SignInGate mascot="starry" title="Sign in to open this card" text="Cards and Say hi are for signed-in people.">
       <AppShell mobileNav={false}>
         <Person />
       </AppShell>

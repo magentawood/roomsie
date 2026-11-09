@@ -12,6 +12,7 @@ import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { TextArea, TextInput } from '../ui/field'
 import { Checkbox } from '../ui/toggle'
+import { Loading } from '../ui/loading'
 
 function AddQuote() {
   const user = useUser()
@@ -51,7 +52,7 @@ export function QuotesEditor() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.adminQuotes }),
   })
   if (quotes.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(quotes.error)}</p>
-  if (quotes.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (quotes.isPending) return <Loading mascot="working" />
   const count = quotes.data.quotes.length
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-start">

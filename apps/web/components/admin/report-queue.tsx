@@ -14,6 +14,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { Modal } from '../ui/modal'
+import { Loading } from '../ui/loading'
 
 /** `owner` is the person that Suspend suspends. */
 function subjectOf(item: ReportQueueItem) {
@@ -105,7 +106,7 @@ function QueueItem({ item }: { item: ReportQueueItem }) {
 export function ReportQueue() {
   const queue = useReportQueue()
   if (queue.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(queue.error)}</p>
-  if (queue.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (queue.isPending) return <Loading mascot="working" />
   if (!queue.data.items.length) {
     return (
       <EmptyState icon={CheckCircle} title="No open reports">

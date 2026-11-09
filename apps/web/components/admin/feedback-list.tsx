@@ -8,6 +8,7 @@ import { useAdminFeedback } from '../../lib/queries'
 import { faces } from '../../lib/feedback'
 import { Bar } from '../ui/bar'
 import { EmptyState } from '../ui/empty-state'
+import { Loading } from '../ui/loading'
 
 function FacesThisWeek({ counts }: { counts: Record<FeedbackRating, number> }) {
   const total = feedbackRatings.reduce((sum, r) => sum + counts[r], 0)
@@ -34,7 +35,7 @@ function FacesThisWeek({ counts }: { counts: Record<FeedbackRating, number> }) {
 export function FeedbackList() {
   const feedback = useAdminFeedback()
   if (feedback.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(feedback.error)}</p>
-  if (feedback.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (feedback.isPending) return <Loading mascot="working" />
   if (feedback.data.feedback.length === 0) return <EmptyState icon={MessageChatSquare} title="No feedback yet.">Feedback from the landing page and from closed goals shows here.</EmptyState>
   return (
     <div className="flex flex-col-reverse gap-5 lg:flex-row lg:items-start">

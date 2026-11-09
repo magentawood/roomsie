@@ -16,6 +16,7 @@ import { Bar } from '../ui/bar'
 import { Button } from '../ui/button'
 import { Modal } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
+import { Loading } from '../ui/loading'
 
 type Numbers = NonNullable<AiOverviewResponse['numbers']>
 const bandLabels: Record<keyof Numbers['bands'], string> = {
@@ -126,7 +127,7 @@ function RolesAndBands({ numbers }: { numbers: Numbers }) {
 export function AiOverview() {
   const ai = useAiOverview()
   if (ai.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(ai.error)}</p>
-  if (ai.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (ai.isPending) return <Loading mascot="working" />
   const { spend, numbers } = ai.data
   return (
     <>
@@ -177,7 +178,7 @@ export function AiSettingsAndLog() {
   const ai = useAiOverview()
   const log = useSwitchLog()
   if (ai.isError || log.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(ai.error ?? log.error)}</p>
-  if (ai.isPending || log.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (ai.isPending || log.isPending) return <Loading mascot="working" />
   const { settings, spend } = ai.data
   const { limits } = settings
   return (

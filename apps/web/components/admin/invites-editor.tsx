@@ -12,6 +12,7 @@ import { Button } from '../ui/button'
 import { Field, inputClass, TextInput } from '../ui/field'
 import { Modal } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
+import { Loading } from '../ui/loading'
 
 const card = 'flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5'
 
@@ -88,7 +89,7 @@ export function InvitesEditor() {
   const invites = useAdminInvites()
   const remove = useInvitesMutation((id: string) => api(user, `/v1/admin/invites/${id}`, noContent, { method: 'DELETE' }))
   if (invites.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(invites.error)}</p>
-  if (invites.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (invites.isPending) return <Loading mascot="working" />
   return (
     <>
       <Gate gate={invites.data} />

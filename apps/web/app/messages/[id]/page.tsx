@@ -5,6 +5,7 @@ import { errorText } from '../../../lib/api'
 import { useConversations, useOutgoingRequests } from '../../../lib/queries'
 import { MessagesFrame } from '../../../components/messages/inbox'
 import { ChatThread, SentThread } from '../../../components/messages/thread'
+import { Loading } from '../../../components/ui/loading'
 
 /** A conversation has the id of its accepted request, so one route opens a chat or a request that the user sent. */
 function Thread({ id }: { id: string }) {
@@ -12,7 +13,7 @@ function Thread({ id }: { id: string }) {
   const outgoing = useOutgoingRequests(true)
   const failed = conversations.error ?? outgoing.error
   if (failed) return <p role="alert" className="p-6 text-sm text-error-primary">{errorText(failed)}</p>
-  if (!conversations.data || !outgoing.data) return <p className="p-6 text-sm text-tertiary">Loading…</p>
+  if (!conversations.data || !outgoing.data) return <Loading mascot="chatting" />
   const conversation = conversations.data.conversations.find((c) => c.id === id)
   if (conversation) return <ChatThread key={id} conversation={conversation} />
   const sent = outgoing.data.requests.find((r) => r.id === id && r.state !== 'accepted')

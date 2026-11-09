@@ -20,6 +20,7 @@ import { ResultsPanel, useHeldResults } from '../results/results-panel'
 import { LookInMumbai, WaitlistForm, WaitlistLine, WaitlistPanel } from './waitlist'
 import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
+import { Loading, mascots } from '../ui/loading'
 import { RemoveChip } from '../ui/choice'
 import { Chips } from './chips'
 import { ComparisonTable } from './comparison'
@@ -216,7 +217,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     setView('split')
   }
 
-  if (loadingGoal) return <main className="flex-1" aria-busy="true" />
+  if (loadingGoal) return <main className="flex flex-1 items-center justify-center" aria-busy="true"><Loading mascot="searching" /></main>
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
   return (
@@ -297,7 +298,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
 }
 
 const stepTimes = [1200, 2600]
-/** The wait for a reply (flow 02): the mascot at its laptop, and the steps of the search. A step ticks after a short time, and the last one turns until the reply. */
+/** The mascot of each step of the wait: it reads, it searches, it picks at its laptop. */
+const stepMascots = [mascots.chatting, mascots.searching, mascots.working]
+/** The wait for a reply (flow 02): a moving mascot for each step, and the steps of the search. A step ticks after a short time, and the last one turns until the reply. */
 function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) => string }) {
   const [done, setDone] = useState(0)
   useEffect(() => {
@@ -309,7 +312,9 @@ function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) =>
   const steps = ['Reading what you said', `Looking through ${what} ${areas.length ? `around ${areas.map(areaName).join(', ')}` : 'in Mumbai'}`, 'Picking the best ones for you']
   return (
     <div role="status" className="flex items-center gap-2.5">
-      <img src="/illustrations/laptop.png" alt="" width={88} height={88} className="size-16 shrink-0 lg:size-22" />
+      <span className="shrink-0 motion-safe:animate-mascot">
+        <img key={done} src={stepMascots[Math.min(done, stepMascots.length - 1)]} alt="" width={88} height={88} className="size-16 motion-safe:animate-mascot-in lg:size-22" />
+      </span>
       <ul className="flex min-w-0 flex-col gap-1.5 text-sm text-secondary">
         {steps.slice(0, done + 1).map((step, i) => (
           <li key={step} className="flex items-center gap-2">

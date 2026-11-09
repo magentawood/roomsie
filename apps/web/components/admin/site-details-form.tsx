@@ -9,6 +9,7 @@ import { queryKeys, useSite } from '../../lib/queries'
 import { socialNetworks } from '../../lib/site'
 import { Button } from '../ui/button'
 import { TextInput } from '../ui/field'
+import { Loading } from '../ui/loading'
 
 const fields: { key: keyof SiteDetails; label: string; placeholder: string }[] = [
   ...socialNetworks.map((n) => ({ key: n.key, label: `${n.name} link`, placeholder: n.example })),
@@ -46,6 +47,6 @@ function Form({ saved }: { saved: SiteDetails }) {
 export function SiteDetailsForm() {
   const site = useSite()
   if (site.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(site.error)}</p>
-  if (site.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (site.isPending) return <Loading mascot="working" />
   return <Form saved={site.data.details} />
 }

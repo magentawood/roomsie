@@ -11,6 +11,7 @@ import { firstName } from '../../lib/profile-form'
 import { queryKeys, useIncomingRequests, useListing, usePerson } from '../../lib/queries'
 import { Button } from '../ui/button'
 import { Avatar, RequestsIcon } from './parts'
+import { Loading } from '../ui/loading'
 
 /** Accepts or declines a request to the user, from the requests or from the card of its sender. */
 export function useAnswerRequest(requestId: string, fromProfileId: string, onAccepted?: () => void) {
@@ -77,7 +78,7 @@ export function Requests() {
       </header>
       <div className="p-4 md:px-6">
         {incoming.isError && <p role="alert" className="text-sm text-error-primary">{errorText(incoming.error)}</p>}
-        {incoming.isPending && <p className="text-sm text-tertiary">Loading…</p>}
+        {incoming.isPending && <Loading mascot="chatting" />}
         {incoming.data?.requests.length === 0 && <p className="text-sm text-tertiary">No requests right now.</p>}
         <ul className="flex flex-col gap-4">{incoming.data?.requests.map((r) => <RequestCard key={r.id} request={r} />)}</ul>
       </div>

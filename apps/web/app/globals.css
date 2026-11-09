@@ -188,8 +188,19 @@
   background-image: linear-gradient(to bottom, var(--color-violet-100), var(--color-pink-100), var(--color-orange-100));
 }
 
-/* The moving row of example searches holds its phrases two times, so -50% is one full loop. */
+/* The moving row of example searches holds its phrases two times, so -50% is one full loop.
+   A mascot of a wait bobs and tilts, and a new mascot of a step pops in. */
 @theme {
+  --animate-mascot: mascot-bob 1.6s ease-in-out infinite;
+  @keyframes mascot-bob {
+    0%, 100% { transform: translateY(0) rotate(-3deg); }
+    50% { transform: translateY(-5px) rotate(3deg); }
+  }
+  --animate-mascot-in: mascot-in 0.35s ease-out;
+  @keyframes mascot-in {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
   --animate-marquee: marquee 40s linear infinite;
   @keyframes marquee {
     to { transform: translateX(-50%); }
