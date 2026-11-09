@@ -42,7 +42,7 @@ function Bubble({ line }: { line: Line }) {
         <p className="flex items-center gap-2">
           <span className="flex-1 truncate text-sm font-medium text-secondary">{line.name}</span>
           <span className="flex items-center gap-0.5 text-xs text-tertiary">
-            Friday 2:20pm
+            Friday 2:20 pm
             {line.mine && <img src="/landing/icons/check-read.svg" alt="" width={16} height={16} />}
           </span>
         </p>
