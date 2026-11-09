@@ -19,7 +19,7 @@ import { PhotoPicker } from '../photos'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
-import { Field, TextArea, TextInput, inputClass } from '../ui/field'
+import { Field, Select, TextArea, TextInput, inputClass } from '../ui/field'
 import { Toggle } from '../ui/toggle'
 import { VerifyRow } from '../verification/verify-row'
 import { AlertSwitches } from './alert-switches'
@@ -38,10 +38,10 @@ function OptionalSelect<V extends string>({ label, placeholder, labels, value, o
   return (
     <Field label={label} hint={ownValueHint}>
       {(id) => (
-        <select id={id} className={inputClass} value={value ?? ''} onChange={(e) => onChange((e.target.value || null) as V | null)}>
+        <Select id={id} value={value ?? ''} onChange={(picked) => onChange((picked || null) as V | null)}>
           <option value="">{placeholder}</option>
           {(Object.entries(labels) as [V, string][]).map(([key, text]) => <option key={key} value={key}>{text}</option>)}
-        </select>
+        </Select>
       )}
     </Field>
   )
@@ -150,9 +150,9 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
           <TextInput label="Full Name" required value={draft.fullName} onChange={(fullName) => set({ fullName: fullName ?? '' })} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />
           <Field label="Age" required>
             {(id) => (
-              <select id={id} className={inputClass} value={draft.age} onChange={(e) => set({ age: Number(e.target.value) })}>
+              <Select id={id} value={String(draft.age)} onChange={(age) => set({ age: Number(age) })}>
                 {ages.map((a) => <option key={a} value={a}>{a}</option>)}
-              </select>
+              </Select>
             )}
           </Field>
           <TextInput label="Job Role" value={draft.jobRole} onChange={(jobRole) => set({ jobRole })} placeholder="eg. Product designer" maxLength={profileTextLimits.jobRole} />

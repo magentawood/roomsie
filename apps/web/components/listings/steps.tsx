@@ -8,7 +8,7 @@ import { isFlat, labels } from '../../lib/listing-steps'
 import { PhotoPicker, Thumb } from '../photos'
 import { Button, type Icon } from '../ui/button'
 import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
-import { Field, NumberInput, TextArea, TextInput, inputClass } from '../ui/field'
+import { Field, NumberInput, Select, TextArea, TextInput, inputClass } from '../ui/field'
 import { Checkbox, Toggle } from '../ui/toggle'
 
 /** `errors` has the line to show under each field that the check before the save refused, by field path. */
@@ -212,10 +212,10 @@ export function PeopleStep({ values, set, errors, listingId, previews, addPrevie
             <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" maxLength={textLimits.whatTheyDo} />
             <Field label="Food">
               {(id) => (
-                <select id={id} className={inputClass} value={mate.food ?? ''} onChange={(e) => update(i, { food: (e.target.value || null) as typeof mate.food })}>
+                <Select id={id} value={mate.food ?? ''} onChange={(food) => update(i, { food: (food || null) as typeof mate.food })}>
                   <option value="">Choose</option>
                   {Object.entries(labels.food).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                </select>
+                </Select>
               )}
             </Field>
           </div>

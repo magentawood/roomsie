@@ -11,7 +11,7 @@ import { queryKeys, useProfile } from '../../lib/queries'
 import { useTabFlag } from '../../lib/tab-flag'
 import { Logo, markViewBox } from '../shell/logo'
 import { Button } from '../ui/button'
-import { Field, NumberInput, TextInput, inputClass } from '../ui/field'
+import { Field, NumberInput, Select, TextInput, inputClass } from '../ui/field'
 import { CloseButton, ModalFrame } from '../ui/modal'
 
 /** In the gate, each close hides the dialog for this visit of the browser tab. */
@@ -55,10 +55,10 @@ export function CreateProfileDialog({ onClose }: { onClose: () => void }) {
         <Field label="Email" required>{(id) => <input id={id} className={`${inputClass} disabled:text-placeholder`} value={user.email ?? ''} disabled />}</Field>
         <Field label="Gender" required>
           {(id) => (
-            <select id={id} className={inputClass} value={gender ?? ''} onChange={(e) => setGender(genders.find((g) => g === e.target.value) ?? null)}>
+            <Select id={id} value={gender ?? ''} onChange={(picked) => setGender(genders.find((g) => g === picked) ?? null)}>
               <option value="">Select</option>
               {genders.map((g) => <option key={g} value={g}>{profileLabels.gender[g]}</option>)}
-            </select>
+            </Select>
           )}
         </Field>
         {create.isError && <p role="alert" className="text-sm text-error-primary">{errorText(create.error)}</p>}

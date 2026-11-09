@@ -1,4 +1,5 @@
 import { useId, type ReactNode } from 'react'
+import { ChevronDown } from '@untitledui/icons'
 
 export const inputClass =
   'w-full rounded-md border border-primary bg-primary px-3.5 py-2.5 text-md text-primary shadow-xs placeholder:text-placeholder aria-invalid:border-error outline-focus-ring focus:outline-2 focus:outline-offset-1'
@@ -14,6 +15,22 @@ export function Field({ label, required, hint, error, children }: { label: strin
       </label>
       {children(id)}
       {error ? <p className="text-sm text-error-primary">{error}</p> : hint && <p className="text-sm text-tertiary">{hint}</p>}
+    </div>
+  )
+}
+
+/**
+ * A native select in the look of a text box: the chevron of the designs inside its padding, and the empty choice `''` in the
+ * colour of a placeholder, so it does not read as an answer.
+ */
+export function Select({ id, value, onChange, children }: { id: string; value: string; onChange: (value: string) => void; children: ReactNode }) {
+  return (
+    <div className="relative">
+      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}
+        className={`${inputClass} appearance-none pr-11 [&_option]:text-primary ${value === '' ? 'text-placeholder!' : ''}`}>
+        {children}
+      </select>
+      <ChevronDown size={20} aria-hidden className="pointer-events-none absolute top-1/2 right-3.5 -translate-y-1/2 text-fg-quaternary" />
     </div>
   )
 }
