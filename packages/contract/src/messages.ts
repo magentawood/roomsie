@@ -31,10 +31,15 @@ export type ConversationsResponse = z.infer<typeof conversationsResponse>
 export const messagesQuery = z.object({ before: z.uuid().optional() })
 export const messagesResponse = z.object({ messages: z.array(message), hasMore: z.boolean() })
 
-/** An event on the private channel of a person: a new message, as that person sees it (T-44), or a new request to that person. The request event has only its id, so the web gets the list again. */
+/**
+ * An event on the private channel of a person: a new message, as that person sees it (T-44), or a new request to that person.
+ * The request event has only its id, so the web gets the list again. "removed": a "Not interested" took a chat or a request
+ * out of the Messages of the person (PD17), so the web gets the lists again.
+ */
 export const realtimeEvent = z.discriminatedUnion('event', [
   z.object({ event: z.literal('message'), payload: message }),
   z.object({ event: z.literal('request'), payload: z.object({ id: z.uuid() }) }),
+  z.object({ event: z.literal('removed'), payload: z.object({}) }),
 ])
 export type RealtimeEvent = z.infer<typeof realtimeEvent>
 

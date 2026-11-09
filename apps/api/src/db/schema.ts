@@ -605,6 +605,21 @@ export const blocks = pgTable('blocks', {
   blockedIdx: index('blocks_blocked_idx').on(t.blockedUserId),
 })).enableRLS()
 
+/**
+ * "Not interested" of the report modal (PD17): the chat and the requests between the two people leave the Messages of
+ * both, and neither can send a new request. One row for each person who picked it; a query checks both directions.
+ */
+export const notInterested = pgTable('not_interested', {
+  /** ADR-0015: the client makes the id, so a retried tap adds nothing. */
+  id: id(),
+  userId: uuid('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  otherUserId: uuid('other_user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: createdAt(),
+}, (t) => ({
+  pairIdx: uniqueIndex('not_interested_pair_idx').on(t.userId, t.otherUserId),
+  otherIdx: index('not_interested_other_idx').on(t.otherUserId),
+})).enableRLS()
+
 export const moderationActionEnum = pgEnum('moderation_action', moderationActions)
 /** The log of the actions of the moderators on people and listings (T-63). The moderation module owns it. */
 export const moderationLog = pgTable('moderation_log', {

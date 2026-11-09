@@ -22,6 +22,7 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 - A sender has 10 new requests in a day of India time.
 - Between two people, one request is open at a time, in either direction. After an accept, neither person can send a new request.
 - After a decline, Rahul can send a new request later. If this becomes abuse, Divya reports it.
+- After "Not interested" of either person, neither can send the other a request. The API gives 403: "You can’t send this person a request." The person detail shows "You and Divya can’t message each other." ([PD17](../decisions/pd-17-connect-and-contact.md)).
 
 ## The API
 
@@ -31,7 +32,8 @@ Rahul taps "Say hi" ──▶ a note (max 300 characters) ──▶ Divya's Requ
 | `GET /v1/requests/incoming` | Gives the open requests to you: the name and the photo of the sender, the note, and the time of the expiry. |
 | `GET /v1/requests/outgoing` | Gives your requests, the newest first, each with its state (open, accepted or not available), the note, and the person who gets it as a conversation shows them. |
 | `POST /v1/requests/:id/accept` and `/decline` | The recipient answers an open request. |
-| `GET /v1/people/:id` | Gives the card, the connection with you (none, sent, received with the note, accepted, or not available), and the new requests that you can still send today. |
+| `POST /v1/not-interested` | Takes the chat and the requests of two people out of their Messages, and closes an open request. No report. |
+| `GET /v1/people/:id` | Gives the card, the connection with you (none, sent, received with the note, accepted, not available, or closed after "Not interested"), and the new requests that you can still send today. |
 
 In the web, Divya answers at `/messages/requests`, and Accept opens the chat. Rahul sees his request in his inbox as a thread: "Request sent" with no composer, or "Not available". The inbox shows each person or listing one time: the chat, or else the newest request. A listing detail has a button for its lister, for example "Message the owner", with the same states.
 
@@ -50,6 +52,7 @@ The person detail at `/people/[id]` shows one connect state from this connection
 - **An expiry needs no job.** After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.
 - **A 404 hides a block.** A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.
 - **A block declines an open request.** Its sender sees "Not available", as after a decline ([Moderation](moderation.md)).
+- **"Not interested" declines an open request too.** The lists of the two people do not show a request between them, and the accept and the decline give 404.
 - **The note opens the chat.** At the accept, the note becomes the first message of the conversation ([Messages and realtime](messages.md)).
 
 ## Tickets

@@ -3,6 +3,7 @@ import { requestExpiryDays, type Connection } from '@roomsie/contract'
 import type { Db, Tx } from '../db/client'
 import { connectionRequests } from '../db/schema'
 import { noBlockBetween } from '../blocks/read'
+import { notInterestedBetween, noNotInterestedBetween } from '../not-interested/read'
 
 export type RequestRow = typeof connectionRequests.$inferSelect
 
@@ -29,8 +30,9 @@ export async function sentToday(db: Db | Tx, userId: string) {
   return today!.requests
 }
 
-/** The connection between the viewer and a person, from the newest request between them (T-18b). */
+/** The connection between the viewer and a person, from the newest request between them (T-18b). "Not interested" closes it (PD17). */
 export async function connectionWith(db: Db, viewerUserId: string, otherUserId: string): Promise<Connection> {
+  if (await notInterestedBetween(db, viewerUserId, otherUserId)) return { state: 'closed' }
   const [newest] = await db.select().from(connectionRequests)
     .where(betweenUsers(viewerUserId, otherUserId)).orderBy(desc(connectionRequests.createdAt)).limit(1)
   const mine = newest?.fromUserId === viewerUserId
@@ -48,7 +50,7 @@ export async function endOpenRequests(tx: Tx, userId: string) {
   await tx.update(connectionRequests).set({ status: 'declined', respondedAt: new Date() }).where(and(eq(connectionRequests.toUserId, userId), open))
 }
 
-/** At a block. The sender of an open request sees "not available", as after a decline, so the block does not show. */
+/** At a block or a "Not interested". The sender of an open request sees "not available", as after a decline, so the block does not show. */
 export const declineOpenBetween = (tx: Tx, a: string, b: string) => tx.update(connectionRequests).set({ status: 'declined', respondedAt: new Date() })
   .where(and(betweenUsers(a, b), eq(connectionRequests.status, 'pending')))
 
@@ -60,7 +62,7 @@ export async function markRead(db: Db, requestId: string, userId: string) {
 }
 
 /**
- * The accepted requests of the viewer with no block between the two people: the conversations of T-44.
+ * The accepted requests of the viewer with no block and no "Not interested" between the two people: the conversations of T-44.
  * Each gives the other person and the last read of the viewer.
  */
 export function acceptedRequestsOf(db: Db, viewerUserId: string, requestId?: string) {
@@ -75,6 +77,7 @@ export function acceptedRequestsOf(db: Db, viewerUserId: string, requestId?: str
     eq(connectionRequests.status, 'accepted'),
     or(eq(connectionRequests.fromUserId, viewerUserId), eq(connectionRequests.toUserId, viewerUserId)),
     noBlockBetween(viewerUserId, otherUserId),
+    noNotInterestedBetween(viewerUserId, otherUserId),
     requestId ? eq(connectionRequests.id, requestId) : undefined,
   ))
 }

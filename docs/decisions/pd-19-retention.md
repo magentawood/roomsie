@@ -1,6 +1,6 @@
 # PD19 — Retention: how long roomsie keeps each kind of data
 
-**Status:** Settled. Confirmed by F-07. Changed on 2026-11-06. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Confirmed by F-07. Changed on 2026-11-06 and 2026-11-09. · **Date:** 2026-10-25 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -19,7 +19,7 @@
 | The chats with the assistant, the Form B notes and the profile of an account | Until the user deletes the account |
 | The messages and request notes that a person sent | They stay with the other person after an account deletion, from "Deleted user" (T-44) |
 | The registration record: the sign-in email, the sign-up date and the deletion date | 180 days after the account deletion, in a locked record, as Rule 3(1)(h) of the IT Rules asks (T-69, [PD21](pd-21-legal-texts.md)) |
-| Reports, blocks and the moderation log | No end. They stay after an account deletion, for moderation. |
+| Reports, blocks, the "Not interested" choices ([PD17](pd-17-connect-and-contact.md)) and the moderation log | No end. They stay after an account deletion, for moderation. |
 | The tombstone of a deleted account: the sign-up and deletion dates, if it was suspended, and a hash of the Google account id | The dates and the suspension have no end. The hash stops a suspended person, or one with an open report, from a new account (T-20). It goes when the person joins again. |
 | A quote on the landing page, with its name | Until a moderator removes it (T-23a) |
 | An invite email of the invite gate | Until a moderator removes it (T-33) |

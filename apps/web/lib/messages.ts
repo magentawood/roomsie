@@ -45,6 +45,10 @@ export function listingChat(outgoing: readonly OutgoingRequest[], conversations:
   return { state: 'accepted' as const, conversationId: conversations.find((c) => c.listingId === listingId)?.id }
 }
 
+/** The Messages list after a "Not interested" in a thread: a line confirms it (PD17). */
+export const removedParam = 'removed'
+export const removedHref = `/messages?${removedParam}=1`
+
 export const chatWith = (conversations: readonly Conversation[], profileId: string) =>
   conversations.find((c) => c.other.profileId === profileId)?.id
 

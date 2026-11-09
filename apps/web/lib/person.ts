@@ -53,5 +53,6 @@ export function connectLine(connection: Connection, requestsLeftToday: number, n
     case 'sent': return `Waiting for ${name} to accept. Requests close after ${requestExpiryDays} days.`
     case 'received': return `${name} sent you a request`
     case 'accepted': return 'You’re connected. The chat opens here when Messages is ready.'
+    case 'closed': return `You and ${name} can’t message each other.`
   }
 }

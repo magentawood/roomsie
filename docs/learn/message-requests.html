@@ -52,6 +52,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>A sender has 10 new requests in a day of India time.</li>
 <li>Between two people, one request is open at a time, in either direction. After an accept, neither person can send a new request.</li>
 <li>After a decline, Rahul can send a new request later. If this becomes abuse, Divya reports it.</li>
+<li>After "Not interested" of either person, neither can send the other a request. The API gives 403: "You can’t send this person a request." The person detail shows "You and Divya can’t message each other." (<a href="../decisions/pd-17-connect-and-contact.md">PD17</a>).</li>
 </ul>
 <h2 id="the-api">The API</h2>
 <table>
@@ -79,8 +80,12 @@ details.callout[open] summary{color:var(--fg)}
 <td>The recipient answers an open request.</td>
 </tr>
 <tr>
+<td><code>POST /v1/not-interested</code></td>
+<td>Takes the chat and the requests of two people out of their Messages, and closes an open request. No report.</td>
+</tr>
+<tr>
 <td><code>GET /v1/people/:id</code></td>
-<td>Gives the card, the connection with you (none, sent, received with the note, accepted, or not available), and the new requests that you can still send today.</td>
+<td>Gives the card, the connection with you (none, sent, received with the note, accepted, not available, or closed after "Not interested"), and the new requests that you can still send today.</td>
 </tr>
 </tbody>
 </table>
@@ -99,6 +104,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>An expiry needs no job.</strong> After 14 days, the API stops showing a request as open. The row gets the status "expired" only when one of the two people sends a new request.</li>
 <li><strong>A 404 hides a block.</strong> A hidden card, a block and an unknown card all give 404. Thus, the sender cannot learn about a block.</li>
 <li><strong>A block declines an open request.</strong> Its sender sees "Not available", as after a decline (<a href="moderation.html">Moderation</a>).</li>
+<li><strong>"Not interested" declines an open request too.</strong> The lists of the two people do not show a request between them, and the accept and the decline give 404.</li>
 <li><strong>The note opens the chat.</strong> At the accept, the note becomes the first message of the conversation (<a href="messages.html">Messages and realtime</a>).</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

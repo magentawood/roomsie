@@ -45,7 +45,7 @@ of a selfie and an Aadhaar photo or PDF. The manual route must change.
 - **Gender (F-13, PC-30).** A profile has a required gender: Male, Female or
   Non-binary. The filters are in PD3a.
 - **The trust story replaces women-only.** No contact before an accept, no phone
-  numbers (PD17), report and block, a 4-hour safety response (PD18), and the
+  numbers (PD17), report and "Not interested" (PD17), a 4-hour safety response (PD18), and the
   DigiLocker badge.
 
 ## Rationale

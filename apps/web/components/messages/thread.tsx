@@ -4,17 +4,16 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeft, Flag01, Home02, Send01, SlashCircle01, User01 } from '@untitledui/icons'
+import { ChevronLeft, Flag01, Home02, Send01, User01 } from '@untitledui/icons'
 import { uuidv7 } from 'uuidv7'
 import { message, messageTextLimit, noContent, requestExpiryDays, type Conversation, type ConversationsResponse, type OtherPerson, type OutgoingRequest } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { cacheMessage } from '../../lib/live'
 import { cardLinks } from '../../lib/share'
-import { clockTime, profileOf, threadDays } from '../../lib/messages'
+import { clockTime, profileOf, removedHref, threadDays } from '../../lib/messages'
 import { queryKeys, useMessages } from '../../lib/queries'
 import { DetailMenu } from '../detail/parts'
-import { BlockSheet } from '../people/block-sheet'
 import { ReportSheet } from '../reports/report-sheet'
 import { Button } from '../ui/button'
 import { Avatar, SafetyNotice, useChatName } from './parts'
@@ -125,7 +124,7 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
   const queryClient = useQueryClient()
   const { other, listingId, unread } = conversation
   const { name, first, about } = useChatName(other, listingId)
-  const [sheet, setSheet] = useState<'report' | 'block' | null>(null)
+  const [reporting, setReporting] = useState(false)
   // The list grows upward, so a scroll of 0 shows the newest message.
   const scroller = useRef<HTMLDivElement>(null)
   const { mutate: markRead } = useMutation({
@@ -143,8 +142,7 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
     <DetailMenu id="thread-menu" items={[
       ...(person ? [{ label: 'View profile', icon: User01, onClick: () => router.push(`/people/${person.profileId}`) }] : []),
       ...(listingId ? [{ label: 'View listing', icon: Home02, onClick: () => router.push(`/places/${listingId}`) }] : []),
-      { label: person ? `Report ${first}` : 'Report this listing', icon: Flag01, onClick: () => setSheet('report') },
-      ...(person ? [{ label: `Block ${first}`, icon: SlashCircle01, onClick: () => setSheet('block'), danger: true }] : []),
+      { label: person ? `Report ${first}` : 'Report this listing', icon: Flag01, onClick: () => setReporting(true) },
     ]} />
   )
   return (
@@ -159,11 +157,8 @@ export function ChatThread({ conversation }: { conversation: Conversation }) {
       {conversation.canSend
         ? <Composer conversationId={conversation.id} onSent={() => scroller.current?.scrollTo({ top: 0 })} />
         : <Closed>{other.deleted ? 'This account is deleted, so you can’t reply.' : 'You can’t send messages in this chat.'}</Closed>}
-      {sheet === 'report' && <ReportSheet target={person ?? { listingId: listingId! }} onClose={() => setSheet(null)} />}
-      {sheet === 'block' && person && (
-        <BlockSheet target={person} onClose={() => setSheet(null)}
-          onBlocked={() => { void queryClient.invalidateQueries({ queryKey: queryKeys.conversations }); router.push('/messages') }} />
-      )}
+      {/* After "Not interested", the thread closes, and the Messages list confirms it (PD17). */}
+      {reporting && <ReportSheet target={person ?? { listingId: listingId! }} onClose={() => setReporting(false)} onRemoved={() => router.replace(removedHref)} />}
     </>
   )
 }

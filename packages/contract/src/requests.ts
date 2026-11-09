@@ -8,6 +8,8 @@ export const requestNoteLimit = 300
 export const requestDailyLimit = 10
 export const requestExpiryDays = 14
 export const requestCapMessage = `You can send ${requestDailyLimit} new requests a day. Try again tomorrow.`
+/** PD17: after a "Not interested" of either person, neither can send the other a request. */
+export const notInterestedMessage = 'You can’t send this person a request.'
 
 const note = requiredText(requestNoteLimit)
 export const sendRequestBody = z.union([z.strictObject({ toProfileId: z.uuid(), note }), z.strictObject({ listingId: z.uuid(), note })])
@@ -37,9 +39,12 @@ export const incomingRequest = z.object({
 export type IncomingRequest = z.infer<typeof incomingRequest>
 export const incomingRequestsResponse = z.object({ requests: z.array(incomingRequest) })
 
-/** The connection between the viewer and a person (T-18b). "received": the person sent the viewer an open request. */
+/**
+ * The connection between the viewer and a person (T-18b). "received": the person sent the viewer an open request.
+ * "closed": one of the two picked "Not interested", so neither can send a request (PD17).
+ */
 export const connection = z.discriminatedUnion('state', [
-  z.object({ state: z.enum(['none', 'sent', 'accepted', 'not_available']) }),
+  z.object({ state: z.enum(['none', 'sent', 'accepted', 'not_available', 'closed']) }),
   z.object({ state: z.literal('received'), requestId: z.uuid(), note: z.string() }),
 ])
 export type Connection = z.infer<typeof connection>

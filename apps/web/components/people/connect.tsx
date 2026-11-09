@@ -36,7 +36,8 @@ function ConnectButton({ person, name, onSayHi }: { person: PersonResponse; name
     case 'sent': return <Button variant="secondary" size="md" className="w-full" iconLeading={Clock} disabled>Request sent</Button>
     case 'accepted': return <OpenChat profileId={person.id} name={name} />
     default: return (
-      <Button variant="primary" size="md" className="w-full" iconLeading={MessageCircle01} disabled={person.requestsLeftToday === 0} onClick={onSayHi}>
+      // "closed": one of the two picked "Not interested" (PD17).
+      <Button variant="primary" size="md" className="w-full" iconLeading={MessageCircle01} disabled={person.requestsLeftToday === 0 || person.connection.state === 'closed'} onClick={onSayHi}>
         {`Say hi to ${name}`}
       </Button>
     )

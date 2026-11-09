@@ -15,7 +15,6 @@ import { ReportSheet } from '../reports/report-sheet'
 import { SaveButton, useSaved } from '../saved/save-button'
 import { Badge } from '../ui/badge'
 import { Button, type Icon } from '../ui/button'
-import { BlockSheet } from './block-sheet'
 import { Connect } from './connect'
 import { SayHiSheet } from './say-hi-sheet'
 import { savedHref } from '../../lib/saved'
@@ -29,7 +28,7 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
   const areaLabels = useAreaLabels()
   const saved = useSaved('people', person.id)
   const { share, status, dialog: shareDialog } = useShare(person.fullName, { kind: 'people', id: person.id })
-  const [sheet, setSheet] = useState<'say_hi' | 'report' | 'block' | null>(null)
+  const [sheet, setSheet] = useState<'say_hi' | 'report' | null>(null)
   const name = firstName(person.fullName)
   const target = { profileId: person.id, firstName: name }
   const back = useBack(savedHref.people)
@@ -51,7 +50,6 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
         <Button variant="tertiary" size="sm" iconLeading={ArrowLeft} onClick={back} className="gap-1.5! px-0! py-1.5!">Profile</Button>
         <DetailMenu id="person-menu" items={[
           { label: `Report ${name}`, icon: Flag01, onClick: () => setSheet('report') },
-          { label: `Block ${name}`, icon: SlashCircle01, onClick: () => setSheet('block'), danger: true },
           { label: 'Share profile', icon: Share07, onClick: share },
           { label: saved.shown ? 'Saved' : 'Save', icon: saved.shown ? BookmarkCheck : Bookmark, onClick: saved.toggle },
         ]} />
@@ -61,7 +59,6 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
           <div className="flex gap-3">
             <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setSheet('report')}>Report</Button>
-            <Button variant="secondary" size="xs" iconTrailing={SlashCircle01} onClick={() => setSheet('block')}>Block</Button>
             <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
             <SaveButton kind="people" id={person.id} />
           </div>
@@ -96,7 +93,6 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
       </div>
       {sheet === 'say_hi' && <SayHiSheet target={target} onClose={close} />}
       {sheet === 'report' && <ReportSheet target={target} onClose={close} />}
-      {sheet === 'block' && <BlockSheet target={target} onClose={close} onBlocked={back} />}
       {shareDialog}
     </>
   )

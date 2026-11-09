@@ -2,7 +2,7 @@ import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { and, desc, eq, lte, sql } from 'drizzle-orm'
 import {
-  errorResponse, incomingRequestsResponse, noContent, outgoingRequest, outgoingRequestsResponse, requestCapMessage, requestDailyLimit, sendRequestBody,
+  errorResponse, incomingRequestsResponse, noContent, notInterestedMessage, outgoingRequest, outgoingRequestsResponse, requestCapMessage, requestDailyLimit, sendRequestBody,
   type SendRequestBody,
 } from '@roomsie/contract'
 import { reportError } from '@roomsie/config/report'
@@ -16,6 +16,7 @@ import { firstPhotoUrl, type Storage } from '../storage'
 import { openConversation, sendLive } from '../messages/send'
 import type { Messaging } from '../messages/settings'
 import { maskContacts } from '../text/mask-contacts'
+import { noNotInterestedBetween, notInterestedBetween } from '../not-interested/read'
 import { lockAccount } from '../users'
 import { betweenUsers, expiryCutoff, expiryMs, isOpen, openRequest, sentToday, type RequestRow } from './read'
 
@@ -44,7 +45,8 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
   const { alerts, analytics } = v1
   const app = v1.withTypeProvider<ZodTypeProvider>()
   const preHandler = requireUser(options)
-  const answerable = (userId: string) => and(eq(connectionRequests.toUserId, userId), openRequest())
+  // PD17: after a "Not interested", the requests of the two people leave the Messages of both.
+  const answerable = (userId: string) => and(eq(connectionRequests.toUserId, userId), openRequest(), noNotInterestedBetween(userId, connectionRequests.fromUserId))
 
   app.post('/requests', {
     preHandler,
@@ -62,6 +64,8 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       // The lock makes two requests at the same time count each other.
       await lockAccount(tx, userId)
       if (await sentToday(tx, userId) >= requestDailyLimit) return 'limit' as const
+      // PD17: after a "Not interested" of either person, neither can send the other a request.
+      if (await notInterestedBetween(tx, userId, toUserId)) return 'closed' as const
       // An expired request frees the pair for a new one.
       await tx.update(connectionRequests).set({ status: 'expired' })
         .where(and(pair, eq(connectionRequests.status, 'pending'), lte(connectionRequests.createdAt, expiryCutoff())))
@@ -71,6 +75,7 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
       return row
     })
     if (made === 'limit') return reply.code(429).send({ error: requestCapMessage })
+    if (made === 'closed') return reply.code(403).send({ error: notInterestedMessage })
     if (!made) return reply.code(409).send({ error: 'a request between you is open or accepted' })
     // Realtime is best effort: the request is already saved.
     await messaging.realtime.send(toUserId, { event: 'request', payload: { id: made.id } }).catch((err: unknown) => reportError(err, { where: 'realtime', userId: req.user!.id, log: req.log }))
@@ -82,7 +87,8 @@ export function requestRoutes(v1: FastifyInstance, options: AuthOptions & { stor
 
   app.get('/requests/outgoing', { preHandler, schema: { response: { 200: outgoingRequestsResponse } } }, async (req) => {
     const rows = await db.select().from(connectionRequests)
-      .where(eq(connectionRequests.fromUserId, req.user!.id)).orderBy(desc(connectionRequests.createdAt))
+      .where(and(eq(connectionRequests.fromUserId, req.user!.id), noNotInterestedBetween(req.user!.id, connectionRequests.toUserId)))
+      .orderBy(desc(connectionRequests.createdAt))
     return { requests: await outgoingViews(db, storage, rows) }
   })
 

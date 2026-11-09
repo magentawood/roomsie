@@ -1,11 +1,12 @@
-# Moderation: reports, blocks and the admin screen
+# Moderation: reports, "Not interested", blocks and the admin screen
 
-**In one line:** a user reports or blocks a person; reports can hide a card or a listing at once, and a moderator reviews each report on the admin screen and dismisses it, keeps the hide, or suspends the account.
+**In one line:** a user reports a person or a listing, or picks "Not interested"; reports can hide a card or a listing at once, and a moderator reviews each report on the admin screen and dismisses it, keeps the hide, or suspends the account.
 
 ## What it is
 
 - A **report** tells the moderator about a person or a listing. It has one of the seven reasons of PD18, and a detail. "Other" needs the detail. The person who is reported is not told who reported.
-- A **block** hides two people from each other. The blocked person is not told.
+- **Not interested** is a choice of the report modal, under the reasons. It files no report. It ends the chat of two people for both ([Messages and realtime](messages.md)).
+- A **block** hides two people from each other. The blocked person is not told. Since 2026-11-09 the web has no Block, but each saved block stays in force.
 - A **moderator** is a signed-in user whose Firebase uid is in the setting `MODERATOR_UIDS`. A moderator or an ID reviewer opens the admin home at `/admin`, and only a moderator opens the queue at `/admin/reports`.
 - A **suspension** stops an account. The person is signed out everywhere, and cannot sign in again.
 - A **removed** listing is taken down for good by a moderator. Only its owner sees it, with "Removed by a moderator", and it cannot go live again.
@@ -25,7 +26,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 | Part | Where |
 |---|---|
 | The settings | `apps/api/src/moderation/settings.ts` |
-| Report and block | `POST /v1/reports` and `POST /v1/blocks` |
+| Report, "Not interested" and block | `POST /v1/reports`, `POST /v1/not-interested` and `POST /v1/blocks` (no web since 2026-11-09) |
 | The admin routes | `GET /v1/admin/home`, `GET /v1/admin/reports`, and `POST /v1/admin/users/:id/review` or `/v1/admin/listings/:id/review` |
 | The admin screens | The home at `/admin` ([The admin home](admin-home.md)), and the queue at `/admin/reports`, in `apps/web/components/admin/report-queue.tsx` |
 | People and listings | `GET /v1/admin/people`, `GET /v1/admin/listings`, the detail of each, and `POST /v1/admin/people/:id/actions` or `/v1/admin/listings/:id/actions`; the pages `/admin/people` and `/admin/listings`, in `apps/web/components/admin/directory.tsx` |
@@ -33,6 +34,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 
 - **A report of a person** uses the profile id. A user can report each profile but the own profile, also a card that is not live, so that the recipient of a request can report its sender.
 - **A hidden card** leaves the results, the person detail and Saved. It cannot get a request, and its owner cannot send a new one. The owner sees "Hidden for review" on the profile page. "Hide my card" does not bring it back. A hidden listing works in the same way ([Place detail](place-detail.md)).
+- **Not interested** uses a profile id, or a listing id for its lister. A listing needs a chat or an open request between the user and the lister, or else 404. The table `not_interested` keeps one row for each person who picked it. The chat and the realtime event: [Messages and realtime](messages.md). The requests: [Message requests](message-requests.md).
 - **A block** hides the two people in the results, the person detail, Saved and the listings. An open message request between them becomes declined, so its sender sees "Not available" ([Message requests](message-requests.md)). Each saved comparison of the other person shows "Not available" for that person too ([Comparing cards](compare-cards.md)). There is no unblock in v0.
 - **The queue** has one item for each reported person or listing, with all its open reports. Safety reports come first, then the oldest.
 - **People and listings** finds each account by the name of its card or its sign-in email, and each listing by its area or by the name or the email of its lister. A list is a search or a filter, not both, and gives the 50 newest that match. A person shows the card as users see it, the email, the reports and the log, and never gender, religion or community. An action closes the open reports as the queue does: an unhide as dismissed, the other actions as actioned.
@@ -43,6 +45,7 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 ## The choice we made
 
 - The reasons, the hide rule and the review times: [PD18](../decisions/pd-18-moderation.md).
+- "Not interested", and no Block in the web: [PD17](../decisions/pd-17-connect-and-contact.md).
 - The admin routes and screen, the settings and the moderator list: the spec of T-19 ([#45](https://github.com/magentawood/roomsie/issues/45)).
 
 ## Gotchas

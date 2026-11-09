@@ -232,6 +232,13 @@
       "when": 1793902974182,
       "tag": "0032_delete_old_visitors",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1794244046557,
+      "tag": "0033_not_interested",
+      "breakpoints": true
     }
   ]
 }
