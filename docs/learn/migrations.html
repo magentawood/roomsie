@@ -79,7 +79,7 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>Expand, then contract.</strong> For a few minutes, the old API runs on the new schema. To rename a column, first add the new column and change the code to use it. Drop the old column in a second PR.</li>
 <li><strong>A test fails on the migration dates.</strong> Drizzle applies a migration only when its date is after the last applied migration. A teammate's migration can merge before yours with a later date. Then the test in <code>apps/api/test/migrate.test.ts</code> fails. Delete your migration, rebase onto <code>main</code>, and generate it again.</li>
-<li><strong>Two pooler modes.</strong> The API uses the Supabase pooler in transaction mode (<a href="postgres-drivers.html">Postgres drivers</a>). The migration uses session mode, from the <code>DATABASE_URL_SESSION</code> secret.</li>
+<li><strong>One pooler mode.</strong> The migration and, since 2026-11-09, the API use the Supabase pooler in session mode, from the <code>DATABASE_URL_SESSION</code> secrets (<a href="postgres-drivers.html">Postgres drivers</a>).</li>
 <li><strong>One transaction.</strong> If one statement fails, all new migrations roll back, and the deploy stops. The old API keeps running. Read the error in the "Migrate and seed" step.</li>
 <li><strong>Do not change a committed migration.</strong> Drizzle does not apply a file again, so the live database and the file disagree. Write a new migration.</li>
 <li>Lines such as <code>schema "drizzle" already exists, skipping</code> in the step log are Postgres notices. They are not errors.</li>
