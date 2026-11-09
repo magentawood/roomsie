@@ -31,5 +31,7 @@ export const analyticsEvent = z.discriminatedUnion('name', [
   /** A goal that its owner closed, with the answer of "Where did you find it?" (T-50). */
   z.strictObject({ name: z.literal('goal_closed'), eventVersion: version1, where: closeAnswer }),
   z.strictObject({ name: z.literal('goal_reopened'), eventVersion: version1 }),
+  /** "Same move?": the question to a new goal that looks like an open goal, and the answer of the person. */
+  z.strictObject({ name: z.literal('same_move'), eventVersion: version1, step: z.enum(['asked', 'same', 'separate']) }),
 ])
 export type AnalyticsEvent = z.input<typeof analyticsEvent>

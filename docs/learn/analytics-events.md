@@ -37,6 +37,7 @@ a route ──▶ track(req, event) ──▶ memory ──▶ one insert each 5
 | `wall_hit` | T-21, at the turn cap | none |
 | `goal_closed` | T-50, a close of an open goal | `where`: roomsie, elsewhere or dropped |
 | `goal_reopened` | T-50, a reopen of a closed goal | none |
+| `same_move` | "Same move?" of a new goal ([goals](goals.md)), and each answer | `step`: asked, same or separate |
 
 ## The choice we made
 

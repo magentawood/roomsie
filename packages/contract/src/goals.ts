@@ -14,7 +14,10 @@ export const chatTurn = z.object({
   id: z.uuid(), role: z.enum(['user', 'assistant']), text: z.string(),
   chips: z.enum(chipSlots).nullable().default(null).catch(null), // A chip slot of a newer API reads as no chips.
   comparison: comparison.nullable().default(null),
-  notes: z.boolean().default(false), createdAt: z.iso.datetime(),
+  notes: z.boolean().default(false),
+  /** The question "Same move?": the title of the other goal, for the chip "Same move: continue in …". */
+  sameMove: z.object({ title: z.string() }).nullable().default(null).catch(null),
+  createdAt: z.iso.datetime(),
 })
 /** `typedTurnsLeft`: the typed turns of a visitor before the sign-in wall (PD9). Null: no count to show, for a signed-in person, or past the cap before results show. */
 const typedTurnsLeft = z.number().int().min(0).nullable().default(null)
@@ -71,9 +74,25 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
   }
 }
 export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
+
+/** The two answers of "Same move?" (Figma 67:6489). */
+export const sameMoveAnswer = z.enum(['same', 'separate'])
+export type SameMoveAnswer = z.infer<typeof sameMoveAnswer>
+/** The words of the two chips. The first names the other goal. */
+export const sameMoveLabels = { same: (title: string) => `Same move: continue in ${title}`, separate: "No, it's a separate move" } as const
+export const sameMoveBody = z.strictObject({ answer: sameMoveAnswer })
+/** The turn of the person that answers "Same move?". It is a chip, so it is not one of the typed turns of the cap (PD9). */
+export const sameMoveTurnParts = z.strictObject({ version: z.literal(1).default(1), sameMove: sameMoveAnswer })
+export type SameMoveTurnParts = z.output<typeof sameMoveTurnParts>
 export type TurnBody = z.infer<typeof turnBody>
 /** The typed turn of the person and the reply of the assistant. */
 export const turnResponse = z.object({ form: formA, turns: z.tuple([chatTurn, chatTurn]), typedTurnsLeft, outsidePlaces, title })
+/**
+ * The answer to "Same move?". `goalId`: the goal that has the new turns. After "Same move", it is the other goal, and the new goal is gone.
+ * The turns: the held message and the reply, or only the reply when the answers of the onboarding were held.
+ */
+export const sameMoveResponse = z.object({ goalId: z.uuid(), form: formA, turns: z.array(chatTurn).min(1).max(2), typedTurnsLeft, outsidePlaces, title })
+export type SameMoveResponse = z.infer<typeof sameMoveResponse>
 
 /** The limits of PD9 that refuse a turn or a new visitor chat (T-21). */
 export const limitRefusal = z.object({ error: z.string(), limit: z.enum(['turn_cap', 'too_many_chats', 'too_fast']) })
@@ -148,6 +167,24 @@ export const extractorOutput = z.strictObject({
 })
 export type ExtractorOutput = z.output<typeof extractorOutput>
 
+/**
+ * A first message, or the answers of the onboarding, that wait for the answer to "Same move?". Code applies the values to the goal
+ * that the person picks, with no model call, so the held message changes neither goal until then.
+ */
+export const heldMove = z.strictObject({
+  version: z.literal(1).default(1),
+  /** The other open goal that looks like the same move, and its title when the question came. */
+  goalId: z.uuid(),
+  title: z.string(),
+  /** The values of the held message by slot of Form A, after the gate and the parsers. */
+  values: z.partialRecord(z.enum(formASlots), z.unknown()),
+  ambiguous: z.array(ambiguousArea).default([]),
+  outsidePlaces: z.array(waitlistPlace).default([]),
+  /** True: the held message is the first typed turn of the goal. False: the answers of the onboarding, with no turn of the person. */
+  typed: z.boolean(),
+})
+export type HeldMove = z.output<typeof heldMove>
+
 /** What an assistant turn keeps: the slot that it asked about, its question, and its open conflicts (PD3b). */
 export const assistantParts = z.strictObject({
   version: z.literal(1).default(1),
@@ -163,6 +200,8 @@ export const assistantParts = z.strictObject({
   notes: z.boolean().default(false),
   /** The reply has the notes hint, which each owner gets one time (T-36). */
   notesHint: z.boolean().default(false),
+  /** The reply asks "Same move?", and holds the message until the answer. */
+  held: heldMove.nullable().default(null),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 
@@ -235,6 +274,12 @@ export type ComposerInput = z.output<typeof composerInput>
 export const composerAnswer = z.object({ version: z.literal(1).default(1), text: z.string().min(1) })
 /** What the composer gives: the words of the reply, after the output check. */
 export const composerOutput = composerAnswer.strict()
+
+/** What the advisor reads: a general question of band 2a and the language of the reply. Never Form A, Form B or the chat (PD7a, PD10). */
+export const advisorInput = z.strictObject({ version: z.literal(1).default(1), language: z.enum(replyLanguages), question: z.string().min(1) })
+export type AdvisorInput = z.output<typeof advisorInput>
+/** The answer of the advisor model. An empty text: no general answer, so the line "I've noted it" goes out. Not strict, as the extractor answer. */
+export const advisorAnswer = z.object({ version: z.literal(1).default(1), text: z.string() })
 
 const titleLeads = {
   room: 'Room hunting in', pg: 'PG hunting in', whole_flat: 'Flat hunting in', flatmates: 'Teaming up to rent around', unclear: 'Looking in',

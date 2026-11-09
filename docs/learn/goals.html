@@ -35,13 +35,14 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="goals-the-list-the-close-and-the-feedback">Goals: the list, the close and the feedback</h1>
-<p><strong>In one line:</strong> each search is one goal, with a title that code builds from Form A; the person closes it with "I found a place", reopens it when they want, and can send a face and a few words after the close.</p>
+<p><strong>In one line:</strong> each search is one goal, with a title from Form A, and "Same move?" stops a second goal for one move. The person closes a goal with "I found a place", can reopen it, and can send feedback after the close.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>A <strong>goal</strong> is one move: one chat, its Form A and its results (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A person or a visitor can have many goals.</li>
 <li>The <strong>title</strong> names the place type and the first area: "Room hunting in Bandra–Santacruz", "Teaming up to rent around Powai". With no area yet, it is "New goal". The API builds it and sends it with the goal, each turn and the list, so the header and the list agree, and it changes when the area changes.</li>
 <li>The <strong>goal list</strong> is in the sidebar on a computer. On a phone, the title above the chat opens it. It shows the 50 newest goals, and a closed goal has a "Closed" mark.</li>
 <li><strong>A new goal</strong> starts at "What are we looking for?" of flow 02, at <code>/chat</code>: "New Goal", New goal of the phone "+", "Start a new goal", and Chats in a new visit. The first message or chip makes the goal, then the address names it. The landing page goes to <a href="onboarding.html">the onboarding</a> first.</li>
+<li><strong>"Same move?"</strong> comes before the first search of a new goal that looks like an open goal of the same person. The assistant says "Quick check before I search: you already have a chat for a move going. Is this the same move? I won't change anything until you say." Two chips follow: "Same move: continue in <title of that goal>" and "No, it's a separate move" (Figma 67:6489).</li>
 <li><strong>"I found a place"</strong> opens the pop-up "Yay! Where did you find it?": On Roomsie, Somewhere else, or None, I dropped the plan. Each answer closes the goal.</li>
 <li>A <strong>closed goal</strong> is read-only. Its chat and its results stay, and in place of the input it shows "Reopen" and "Start a new goal".</li>
 <li>The <strong>feedback pop-up</strong> follows the close: one of five faces, and words if the person wants. Moderators read it on <code>/admin/feedback</code>, with the feedback of <a href="landing-page.html">the landing page</a>.</li>
@@ -75,6 +76,18 @@ details.callout[open] summary{color:var(--fg)}
 <td>The two pop-ups</td>
 <td><code>apps/web/components/chat/found-dialogs.tsx</code></td>
 </tr>
+<tr>
+<td>"Same move?": the match</td>
+<td><code>sameMoveOf()</code> in <code>apps/api/src/goals/same-move.ts</code></td>
+</tr>
+<tr>
+<td>"Same move?": the held message and the answer</td>
+<td><code>runTurn()</code> and <code>runHeld()</code> in <code>apps/api/src/assistant/assistant.ts</code>, <code>POST /v1/goals/:id/same-move</code>, <code>moveHeld()</code> in <code>apps/api/src/goals/store.ts</code></td>
+</tr>
+<tr>
+<td>The two chips</td>
+<td><code>apps/web/components/chat/same-move.tsx</code></td>
+</tr>
 </tbody>
 </table>
 <ul>
@@ -85,14 +98,27 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>One feedback for each closed goal</strong>, from its owner. This lets a visitor send it with no new spam limit, because the chat limits already limit the goals of a visitor (<a href="../decisions/pd-09-pre-login-limits.md">PD9</a>).</li>
 <li><strong>A visitor goal goes</strong> with its session and its feedback, through the nightly job. Its waitlist entries stay with no chat. A goal that moved to an account at sign-in stays (<a href="visitor-chat-claim.html">the visitor chat at sign-in</a>).</li>
 </ul>
+<h2 id="same-move">"Same move?"</h2>
+<ul>
+<li><strong>When it asks.</strong> The owner has another open goal of the same kind (places or people), with an area group in common, or with no area on either side. A sub-area counts as its group. The goal that changed last gets the chip. The check runs on the first typed message of a goal, and on the answers of <a href="onboarding.html">the onboarding</a>.</li>
+<li><strong>It does not ask</strong> for a message with no place type, or a message that the extractor did not read. It does not ask for a band that is not core, for danger, or for a religion or a community (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>).</li>
+<li><strong>The held message.</strong> The reply keeps the values of the message by slot, so neither goal changes until the answer. A typed message in that time gets "First, tap one of the two answers…" and changes nothing. A chip of Form A gets 409.</li>
+<li><strong>"No, it's a separate move"</strong> puts the values in the new goal. The reply asks the next question, and the search goes on.</li>
+<li><strong>"Same move"</strong> puts the values in the other goal, as the values of a typed turn. An earlier stated value stays, and the reply asks which to keep (<a href="../decisions/pd-03b-interview-vs-chips.md">PD3b</a>). The message moves to the other goal with the reply. The new goal goes with its chat, and the web opens the other goal.</li>
+<li><strong>An answer calls no model.</strong> It is a chip, so it is not one of the typed turns of the cap (<a href="../decisions/pd-09-pre-login-limits.md">PD9</a>). The event <code>same_move</code> gives the step: <code>asked</code>, <code>same</code> or <code>separate</code>.</li>
+</ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>The scope, the title, the read-only goal, Reopen, the feedback, the visitors and the limit: the spec of T-50.</li>
+<li>"Same move?": the ask of the founders of 2026-11-09 ("whenever there's a new goal we need to scan if that goal already existed"), and frame 67:6489 of the designer.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>The minutes of a deploy.</strong> The old API has no route for a close, a reopen or the feedback, and Fastify answers 404 "Route … not found". <code>errorText()</code> turns it into "This starts in a few minutes. Try again soon." The old API also has no list, so the list is empty for those minutes.</li>
 <li><strong>A reopen and a second close</strong> ask no feedback when the goal has its feedback: the close answers <code>askFeedback</code>. A goal whose pop-up was skipped gets the pop-up again.</li>
+<li><strong>A name of two areas</strong>, such as "Andheri", fills no area. Such a first message thus asks "Same move?" only when the other goal has no area either.</li>
+<li><strong>The other goal can close before the answer.</strong> Then "Same move" gets 409, and "No, it's a separate move" still works.</li>
+<li><strong>The minutes of a deploy.</strong> An old web shows "Same move?" with no chips, and a typed message gets the question again. A reload loads the new web.</li>
 <li><strong>The status "found" became "closed"</strong>, because a dropped plan is not a found place. No code wrote "found", so the migration was safe for the API before it.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>

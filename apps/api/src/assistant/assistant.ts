@@ -1,11 +1,15 @@
 import type { FastifyRequest } from 'fastify'
-import { assistantParts, budgetBandOf, filledSlots, formA, intentsOf, withIntent, statesHiddenPreference, tapText, type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot } from '@roomsie/contract'
+import {
+  assistantParts, budgetBandOf, filledSlots, formA, formASlots, intentsOf, slotOf, withIntent, statesHiddenPreference, tapText,
+  type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot, type HeldMove,
+} from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf, type Catalogue } from './catalogue'
+import { advisor } from './handlers/advisor/advisor'
 import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
-import { withSlot } from './handlers/extractor/form-update'
+import { applyValues, withSlot, type SlotValues } from './handlers/extractor/form-update'
 import { replyWriter } from './handlers/reply/reply'
 import { rupees } from './handlers/reply/texts'
 import { routeTurn } from './handlers/router/router'
@@ -63,8 +67,29 @@ function notesReply(hasNotes: boolean, { language, last }: { language: ReplyLang
 const withNotesHint = (reply: AssistantReply, notesHint: boolean, language: ReplyLanguage): AssistantReply =>
   (notesHint && !reply.parts.notesHint ? { ...reply, text: `${reply.text} ${lineOf('notesHint', language)}`, parts: { ...reply.parts, notesHint: true } } : reply)
 
-/** The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34). */
-export async function runTurn({ context, comparison, ...input }: TurnInput & { text: string; context: ComposerContext; comparison: Comparison | null }, deps: AssistantDeps) {
+/** The other open goal of the owner that looks like the same move as a form, with its title (Figma 67:6489). */
+export type SameMoveTarget = Pick<HeldMove, 'goalId' | 'title'>
+type SameMoveCheck = (form: FormA) => Promise<SameMoveTarget | null>
+
+/** The values that a turn put into Form A, by slot: what a held message keeps until "Same move?" has its answer. */
+const valuesOf = (form: FormA, changed: readonly FormASlot[]): SlotValues => Object.fromEntries(changed.map((slot) => [slot, slotOf(form, slot).value]))
+
+/** "Same move?" with its two chips. The reply holds the values, so the message changes neither goal until the answer. */
+export const heldReply = (held: Omit<HeldMove, 'version'>, language: ReplyLanguage): AssistantReply =>
+  ({ version: 1, text: lineOf('sameMove', language), parts: assistantParts.parse({ asked: null, held }) })
+
+/**
+ * Only a plain search waits for the answer. A disclosure gets its own reply (assistant-risks.md 4.4), and a religion or community
+ * never waits in a held message (PD3c).
+ */
+const holds = (label: TurnLabel, turn: Pick<TurnState, 'failed' | 'mentionsOwnValue' | 'changed'>, hidden: boolean) =>
+  label.band === 'core' && !label.danger && !label.notes && usesExtractor(label) && !turn.failed && !turn.mentionsOwnValue && !hidden && turn.changed.length > 0
+
+/**
+ * The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34).
+ * `sameMove`: on the first message of a new goal, the check for an open goal of the same move. A match holds the message.
+ */
+export async function runTurn({ context, comparison, sameMove, ...input }: TurnInput & { text: string; context: ComposerContext; comparison: Comparison | null; sameMove?: SameMoveCheck }, deps: AssistantDeps) {
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
@@ -72,13 +97,20 @@ export async function runTurn({ context, comparison, ...input }: TurnInput & { t
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   // A failed extractor cannot tell an own value, so the observer does not run (PD3c).
   const notePlan = notePlanOf(label, hidden || turn.mentionsOwnValue || turn.failed, deps.settings)
+  const target = sameMove && !input.last && !comparison && holds(label, turn, hidden) ? await sameMove(turn.form) : null
+  if (target) {
+    const held = { ...target, values: valuesOf(turn.form, turn.changed), ambiguous: turn.ambiguous, outsidePlaces: turn.outsidePlaces, typed: true }
+    return { form: input.form, reply: heldReply(held, turn.language), conflicts: [], label, ownValues: turn.ownValues, hiddenPreferences: {}, outsidePlaces: [], notePlan, held: true }
+  }
   const fixed = label.notes && label.band === 'core' ? notesReply(context.formB.length > 0, turn)
     : comparison && comparesOn(label) ? comparisonReply(comparison, turn) : null
-  const scripted = fixed ?? await replyWriter(turn, deps)
+  // A general question of band 2a gets a short answer before the open question (PD10). It is one more call, only on such a turn.
+  const advice = !fixed && label.band === 'general' ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text }, deps) : null
+  const scripted = fixed ?? await replyWriter(turn, deps, advice)
   const reply = !fixed && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
   return {
     form: turn.form, reply: withNotesHint(reply, input.notesHint && label.band !== 'sensitive' && !label.danger, turn.language), conflicts: turn.conflicts, label,
-    ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces, notePlan,
+    ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces, notePlan, held: false,
   }
 }
 
@@ -117,7 +149,22 @@ export async function runStart(input: Omit<TurnInput, 'goalId' | 'notesHint'> & 
     mustHaves: { ...input.form.mustHaves, ...Object.fromEntries(mustHaves.map((key) => [key, stateOf('dealbreaker')])) },
   })
   const changed = [...Object.keys(answers), ...mustHaves.map((key) => `mustHaves.${key}`)] as FormASlot[]
-  return { form, reply: await scriptedReply(input, form, changed, deps) }
+  return { form, values: valuesOf(form, changed), reply: await scriptedReply(input, form, changed, deps) }
+}
+
+/**
+ * The answer to "Same move?": the held values go into the goal that the person picked, as the values of a typed turn, with no model call.
+ * An earlier stated value stays, and the reply asks which to keep (PD3b). The reply then asks the next question of that goal.
+ */
+export async function runHeld(input: Pick<TurnState, 'last' | 'form' | 'lastRegister'> & { held: HeldMove }, deps: AssistantDeps) {
+  const { held, last, lastRegister } = input
+  const answering = (last?.conflicts ?? []).map(({ slot }) => slot)
+  // The database keeps the values in its own key order, so "Got it" lists them in the order of Form A.
+  const values: SlotValues = Object.fromEntries(formASlots.filter((slot) => slot in held.values).map((slot) => [slot, held.values[slot]]))
+  const applied = applyValues(input.form, values, answering)
+  const settled = answering.filter((slot) => held.values[slot] !== undefined && held.values[slot] !== 'unclear')
+  const turn = { ...noExtraction(applied.form, false), ...applied, settled, ambiguous: held.ambiguous, last, label: tapLabel, language: languageOf(lastRegister) }
+  return { form: applied.form, reply: await replyWriter(turn, deps) }
 }
 
 /** Null: an area that is not an area group. */

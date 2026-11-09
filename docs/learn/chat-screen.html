@@ -81,6 +81,7 @@ details.callout[open] summary{color:var(--fg)}
 </table>
 <ul>
 <li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding or the first message starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
+<li><strong>"Same move?"</strong> shows two xs Buttons under the question. "Same move" opens the other goal (<a href="goals.html">goals</a>).</li>
 <li><strong>A reply on its way</strong> shows three dots, as a chat app does, and no mascot.</li>
 <li><strong>The wait for new results</strong> shows the steps of the search, as flow 02 draws it: "Reading what you said", "Looking through places (or people) around <areas>", "Picking the best ones for you". It shows when a reply or a tap brings new results, and lasts at least 2 seconds. The mascot changes with the step (it reads, it searches with a magnifier, it picks at its laptop) and bobs while it waits.</li>
 <li><strong>The results card stays under the reply that brought it</strong>, with Roomsie Noticed and its chips. Session storage keeps that reply (<code>roomsie.resultsAt</code>) for a reload.</li>

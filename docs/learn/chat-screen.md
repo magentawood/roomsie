@@ -22,6 +22,7 @@
 | The shell | `apps/web/components/shell/app-shell.tsx` |
 
 - **Each message goes to the assistant** ([the assistant turn](assistant-turn.md)). The onboarding or the first message starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.
+- **"Same move?"** shows two xs Buttons under the question. "Same move" opens the other goal ([goals](goals.md)).
 - **A reply on its way** shows three dots, as a chat app does, and no mascot.
 - **The wait for new results** shows the steps of the search, as flow 02 draws it: "Reading what you said", "Looking through places (or people) around <areas>", "Picking the best ones for you". It shows when a reply or a tap brings new results, and lasts at least 2 seconds. The mascot changes with the step (it reads, it searches with a magnifier, it picks at its laptop) and bobs while it waits.
 - **The results card stays under the reply that brought it**, with Roomsie Noticed and its chips. Session storage keeps that reply (`roomsie.resultsAt`) for a reload.

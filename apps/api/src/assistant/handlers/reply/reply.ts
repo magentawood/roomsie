@@ -6,13 +6,16 @@ import { backToIt, lineOf } from '../../lines'
 import { questionFor, replyLines, valueText } from './texts'
 
 type PartsOf = Pick<AssistantParts, 'asked' | 'question'> & Partial<Pick<AssistantParts, 'conflicts' | 'chips'>>
-const parts = (of: PartsOf): AssistantParts => ({ version: 1, conflicts: [], chips: null, comparison: null, notes: false, notesHint: false, ...of })
+const parts = (of: PartsOf): AssistantParts => ({ version: 1, conflicts: [], chips: null, comparison: null, notes: false, notesHint: false, held: null, ...of })
 const chipSlotOf = (slot: FormASlot | undefined) => chipSlots.find((chip) => chip === slot) ?? null
 
-/** The line before the reply, by the band of the turn (PD10, T-34). A 2b question gets the hand-off until the articles of T-38. */
-function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage) {
+/**
+ * The line before the reply, by the band of the turn (PD10, T-34). A 2a question gets the answer of the advisor and the hedge,
+ * or "I've noted it" with no answer. A 2b question gets the hand-off until the articles of T-38.
+ */
+function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage, advice: string | null) {
   switch (band) {
-    case 'general': return `${lineOf('noted', language)} `
+    case 'general': return advice ? `${advice}\n\n${lineOf('adviceHedge', language)} ` : `${lineOf('noted', language)} `
     case 'consequential': return `${lineOf('handoff', language)} `
     case 'out_of_scope': return `${lineOf('outOfScope', language)} `
     case 'adversarial': return `${lineOf('adversarial', language)} `
@@ -26,14 +29,16 @@ function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage) {
  * and the open ones that the answer did not settle. Then each name of two areas, then an unclear must-have weight (PD15),
  * then the next empty or unclear slot.
  */
-export async function replyWriter(turn: Pick<TurnState, 'form' | 'changed' | 'conflicts' | 'settled' | 'ambiguous' | 'failed' | 'last'> & { label: TurnLabel; language: ReplyLanguage }, deps: AssistantDeps) {
+export async function replyWriter(
+  turn: Pick<TurnState, 'form' | 'changed' | 'conflicts' | 'settled' | 'ambiguous' | 'failed' | 'last'> & { label: TurnLabel; language: ReplyLanguage }, deps: AssistantDeps, advice: string | null = null,
+) {
   const { form, changed, conflicts, settled, ambiguous, failed, last, label, language } = turn
-  return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label, language }), deps))
+  return assistantReply.parse(await write(replyInput.parse({ form, changed, conflicts, settled, ambiguous, failed, last, label, language }), deps, advice))
 }
 
-const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps) => {
+const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps, advice: string | null) => {
   const catalogue = await catalogueOf(db)
-  const lead = leadOf(turn.label, turn.language)
+  const lead = leadOf(turn.label, turn.language, advice)
   const next = settings.questionOrder.find((slot) => isOpenSlot(slotOf(turn.form, slot)))
   // Only a core turn asks the person to send the message again: never after a disclosure (T-34). A first turn keeps the chips of the empty chat.
   if (turn.failed && turn.label.band === 'core') return { text: lineOf('failed', turn.language), parts: turn.last ?? parts({ asked: null, question: null, chips: chipSlotOf(next) }) }
@@ -41,7 +46,7 @@ const write = async (turn: z.output<typeof replyInput>, { db, settings }: Assist
   const ack = lead + (filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : '')
   /** The reply: the lead, what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */
   const reply = (before: string, question: string, of: Omit<PartsOf, 'question'>) => ({
-    text: before + (turn.label.band === 'out_of_scope' ? backToIt(question, turn.language) : question),
+    text: before + (turn.label.band === 'out_of_scope' || advice ? backToIt(question, turn.language) : question),
     parts: parts({ ...of, question }),
   })
 

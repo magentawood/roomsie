@@ -21,11 +21,11 @@
     "mr": "चांगला प्रश्न आहे. याचं उत्तर आत्ता माझ्याकडे नाही, पण हे नोंदवून ठेवलं आहे."
   },
   "handoff": {
-    "en": "That needs a real answer, not a guess from me. For an agreement, a dispute or tax, ask a lawyer or a CA. For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there.",
-    "hi-Latn": "Iska sahi jawaab chahiye, mera andaaza nahi. Agreement, jhagde ya tax ke liye kisi lawyer ya CA se poochiye. Stamp duty aur registration ke liye IGR Maharashtra ki site dekhiye. Kisi area ki safety ke liye, raat mein wahan jaakar dekhiye aur wahan rehne waalon se poochiye.",
-    "hi": "इसका सही जवाब चाहिए, मेरा अंदाज़ा नहीं। एग्रीमेंट, विवाद या टैक्स के लिए किसी वकील या CA से पूछिए। स्टैम्प ड्यूटी और रजिस्ट्रेशन के लिए IGR महाराष्ट्र की साइट देखिए। किसी इलाके की सुरक्षा के लिए, रात में वहाँ जाकर देखिए और वहाँ रहने वालों से पूछिए।",
-    "mr-Latn": "Yacha khara uttar hava, maajha andaaz nahi. Karar, vaad kinva karasathi vakilala kinva CA la vichara. Stamp duty ani nondanisathi IGR Maharashtra chi site bagha. Ekhadya bhagachya surakshitatesathi, ratri tithe jaun bagha ani tithe rahanarya lokanna vichara.",
-    "mr": "याचं खरं उत्तर हवं, माझा अंदाज नाही. करार, वाद किंवा करासाठी वकिलाला किंवा CA ला विचारा. स्टॅम्प ड्युटी आणि नोंदणीसाठी IGR महाराष्ट्रची साइट बघा. एखाद्या भागाच्या सुरक्षिततेसाठी, रात्री तिथे जाऊन बघा आणि तिथे राहणाऱ्या लोकांना विचारा."
+    "en": "That needs a real answer, not a guess from me. For an agreement, a dispute or tax, ask a lawyer or a CA. For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there. For a health question, ask a doctor.",
+    "hi-Latn": "Iska sahi jawaab chahiye, mera andaaza nahi. Agreement, jhagde ya tax ke liye kisi lawyer ya CA se poochiye. Stamp duty aur registration ke liye IGR Maharashtra ki site dekhiye. Kisi area ki safety ke liye, raat mein wahan jaakar dekhiye aur wahan rehne waalon se poochiye. Sehat ke sawaal ke liye doctor se poochiye.",
+    "hi": "इसका सही जवाब चाहिए, मेरा अंदाज़ा नहीं। एग्रीमेंट, विवाद या टैक्स के लिए किसी वकील या CA से पूछिए। स्टैम्प ड्यूटी और रजिस्ट्रेशन के लिए IGR महाराष्ट्र की साइट देखिए। किसी इलाके की सुरक्षा के लिए, रात में वहाँ जाकर देखिए और वहाँ रहने वालों से पूछिए। सेहत के सवाल के लिए डॉक्टर से पूछिए।",
+    "mr-Latn": "Yacha khara uttar hava, maajha andaaz nahi. Karar, vaad kinva karasathi vakilala kinva CA la vichara. Stamp duty ani nondanisathi IGR Maharashtra chi site bagha. Ekhadya bhagachya surakshitatesathi, ratri tithe jaun bagha ani tithe rahanarya lokanna vichara. Aarogyachya prashnasathi doctorla vichara.",
+    "mr": "याचं खरं उत्तर हवं, माझा अंदाज नाही. करार, वाद किंवा करासाठी वकिलाला किंवा CA ला विचारा. स्टॅम्प ड्युटी आणि नोंदणीसाठी IGR महाराष्ट्रची साइट बघा. एखाद्या भागाच्या सुरक्षिततेसाठी, रात्री तिथे जाऊन बघा आणि तिथे राहणाऱ्या लोकांना विचारा. आरोग्याच्या प्रश्नासाठी डॉक्टरला विचारा."
   },
   "outOfScope": {
     "en": "That one's outside what I can help with.",
@@ -96,5 +96,26 @@
     "hi": "आपकी बातों के छोटे नोट्स यहाँ रहते हैं। देखने या हटाने के लिए पूछिए: \"मेरे बारे में क्या पता है?\"",
     "mr-Latn": "Tumhi je sangta, tyache chhote notes ithe rahtat. Te baghnyasathi kinva kadhnyasathi vichara: \"majhyabaddal kay mahiti aahe?\"",
     "mr": "तुम्ही जे सांगता, त्याचे छोटे नोट्स इथे राहतात. ते बघण्यासाठी किंवा काढण्यासाठी विचारा: \"माझ्याबद्दल काय माहिती आहे?\""
+  },
+  "adviceHedge": {
+    "en": "That's general guidance: the details differ from flat to flat.",
+    "hi-Latn": "Yeh general guidance hai: har flat mein details alag hoti hain.",
+    "hi": "यह आम सलाह है: हर फ़्लैट में बातें अलग होती हैं।",
+    "mr-Latn": "Hi sadharan mahiti aahe: pratyek flat madhe tapshil vegla asto.",
+    "mr": "ही साधारण माहिती आहे: प्रत्येक फ्लॅटमध्ये तपशील वेगळा असतो."
+  },
+  "sameMove": {
+    "en": "Quick check before I search: you already have a chat for a move going. Is this the same move? I won't change anything until you say.",
+    "hi-Latn": "Search se pehle ek quick check: aapki ek chat pehle se ghar ki search ke liye chal rahi hai. Kya yeh wahi search hai? Aap bataenge tab tak kuch nahi badlega.",
+    "hi": "खोज से पहले एक छोटी-सी बात: आपकी एक चैट पहले से घर की खोज के लिए चल रही है। क्या यह वही खोज है? आप बताएँगे तब तक कुछ नहीं बदलेगा।",
+    "mr-Latn": "Shodhaadhi ek chhoti gosht: tumchi ek chat aadhich gharachya shodhasathi chalu aahe. Ha toch shodh aahe ka? Tumhi sangepparyant kahi badalnar nahi.",
+    "mr": "शोधाआधी एक छोटी गोष्ट: तुमची एक चॅट आधीच घराच्या शोधासाठी चालू आहे. हा तोच शोध आहे का? तुम्ही सांगेपर्यंत काही बदलणार नाही."
+  },
+  "sameMoveAgain": {
+    "en": "First, tap one of the two answers: is this the same move? Nothing changes until you say.",
+    "hi-Latn": "Pehle do jawaabon mein se ek chuniye: kya yeh wahi search hai? Aap bataenge tab tak kuch nahi badlega.",
+    "hi": "पहले दो जवाबों में से एक चुनिए: क्या यह वही खोज है? आप बताएँगे तब तक कुछ नहीं बदलेगा।",
+    "mr-Latn": "Aadhi donpaiki ek uttar nivda: ha toch shodh aahe ka? Tumhi sangepparyant kahi badalnar nahi.",
+    "mr": "आधी दोनपैकी एक उत्तर निवडा: हा तोच शोध आहे का? तुम्ही सांगेपर्यंत काही बदलणार नाही."
   }
 }

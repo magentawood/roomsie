@@ -30,9 +30,10 @@ Why: [PD10](decisions/pd-10-scope-bands.md)
 - **Answer them.**
 - Say clearly that the answer is general guidance, not a quote for one flat.
 - **Prefer the corpus when it has an entry,** and cite it.
-- If the corpus has no entry: signed-in users get an answer from a web search, and visitors get model knowledge, plainly hedged. (PD7a)
+- If the corpus has no entry: model knowledge, plainly hedged, for each person. T-38 adds the corpus, and a web search after a sign-in. (PD7a)
+- After the answer, the interview question comes again, with its chips.
 
-- In scope for 2a: what semi-furnished usually includes; the usual deposit in Mumbai; what to examine on a visit; the approximate distance between two areas; questions to ask a possible flatmate; how flatmates usually divide bills.
+- In scope for 2a: tips and the steps of the hunt; the documents; the usual deposit and brokerage; a rent agreement and police verification at a basic level; what semi-furnished includes; a visit and its safety; a budget for the move; the distance between two areas; questions for a flatmate; how flatmates divide bills.
 
 Why: [PD10](decisions/pd-10-scope-bands.md)
 
@@ -43,6 +44,7 @@ Scope: questions where an incorrect answer causes real harm:
 - A legal position, the meaning of a clause, or a dispute
 - Whether one agreement or notice is legally correct
 - Exact facts about stamp duty, registration or tax
+- A health question
 - **Whether an area is safe**
 - A factual claim about one listing or person
 
@@ -68,19 +70,11 @@ Why: [PD10](decisions/pd-10-scope-bands.md)
 
 Why: [PD10](decisions/pd-10-scope-bands.md)
 
-#### The real fix is to seed the corpus before launch
+#### The corpus before launch, and what you are accepting
 
-- Write thirty articles about the questions that people actually ask.
-- Effort: approximately one week of work for two marketing people.
-- They can write these articles at this time, before the product exists.
-- **Log all questions in band 2, and flag the questions that the assistant answered from model knowledge.**
-- That log is the content plan.
-
-Why: [PD10](decisions/pd-10-scope-bands.md)
-
-#### What you are accepting
-
-If the assistant answers 2a from model knowledge, it will sometimes give an incorrect answer.
+- Write about thirty articles before launch, about the questions that people actually ask.
+- **Log all questions in band 2, and flag the answers from model knowledge.** That log is the content plan.
+- An answer of 2a from model knowledge will sometimes be incorrect.
 
 Why: [PD10](decisions/pd-10-scope-bands.md)
 
@@ -134,7 +128,7 @@ Classification occurs one time, at low cost, before all expensive calls:
 | Band | Handler | Model cost |
 |---|---|---|
 | Core | Extractor, Observer, Composer | Small, plus the composer when a reply is necessary |
-| Adjacent, general | Advisor: corpus first, then web search (signed in) or model knowledge (visitors). PD7a | Small, plus retrieval |
+| Adjacent, general | Advisor: model knowledge. T-38 adds the corpus, and a web search after a sign-in. PD7a | Small, plus retrieval |
 | Adjacent, consequential | Advisor: corpus only | Small, plus retrieval |
 | Out of scope | Scripted redirect | **None** after the router |
 | Adversarial | Scripted response, logged | **None** after the router |
