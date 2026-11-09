@@ -19,7 +19,7 @@ import { PhotoPicker } from '../photos'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
-import { Field, TextArea, TextInput, inputClass } from '../ui/field'
+import { Field, Select, TextArea, TextInput, inputClass } from '../ui/field'
 import { Toggle } from '../ui/toggle'
 import { VerifyRow } from '../verification/verify-row'
 import { AlertSwitches } from './alert-switches'
@@ -29,23 +29,6 @@ import { LogOutRow } from './log-out-row'
 
 const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
 
-/** The hint tells the purpose, as the DPDP Act asks, and not the filter (drafts section 32, T-58). */
-const ownValueHint = 'Optional. Never on your card. We use it only to match you with people who ask for it.'
-
-function OptionalSelect<V extends string>({ label, placeholder, labels, value, onChange }: {
-  label: string; placeholder: string; labels: Record<V, string>; value: V | null; onChange: (value: V | null) => void
-}) {
-  return (
-    <Field label={label} hint={ownValueHint}>
-      {(id) => (
-        <select id={id} className={inputClass} value={value ?? ''} onChange={(e) => onChange((e.target.value || null) as V | null)}>
-          <option value="">{placeholder}</option>
-          {(Object.entries(labels) as [V, string][]).map(([key, text]) => <option key={key} value={key}>{text}</option>)}
-        </select>
-      )}
-    </Field>
-  )
-}
 
 export function Section({ title, helper, children }: { title: string; helper: string; children: ReactNode }) {
   return (
@@ -139,6 +122,14 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
     },
   })
   const changes = editBody(formOf(profile), draft)
+  // The removal saves at once, and keeps the other unsaved changes of the page.
+  const forget = useMutation({
+    mutationFn: () => api(user, '/v1/me/profile', profileResponse, { method: 'PATCH', body: { religion: null, community: null } satisfies ProfileEditBody }),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(queryKeys.profile, saved)
+      set({ religion: null, community: null })
+    },
+  })
 
   return (
     <div className="mx-auto flex w-full max-w-240 flex-col gap-8 px-5 py-5 md:px-6 md:py-8">
@@ -150,18 +141,22 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
           <TextInput label="Full Name" required value={draft.fullName} onChange={(fullName) => set({ fullName: fullName ?? '' })} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />
           <Field label="Age" required>
             {(id) => (
-              <select id={id} className={inputClass} value={draft.age} onChange={(e) => set({ age: Number(e.target.value) })}>
+              <Select id={id} value={String(draft.age)} onChange={(age) => set({ age: Number(age) })}>
                 {ages.map((a) => <option key={a} value={a}>{a}</option>)}
-              </select>
+              </Select>
             )}
           </Field>
           <TextInput label="Job Role" value={draft.jobRole} onChange={(jobRole) => set({ jobRole })} placeholder="eg. Product designer" maxLength={profileTextLimits.jobRole} />
         </div>
         <ChoiceChips label="Gender" required labels={profileLabels.gender} value={draft.gender} onChange={(gender) => gender && set({ gender })} />
-        <div className="grid gap-5 md:grid-cols-2">
-          <OptionalSelect label="Religion" placeholder="Select your religion" labels={profileLabels.religion} value={draft.religion} onChange={(religion) => set({ religion })} />
-          <OptionalSelect label="Community" placeholder="Select your community" labels={profileLabels.community} value={draft.community} onChange={(community) => set({ community })} />
-        </div>
+        {/* The profile never asks religion or community (PD3c). A value that the person stated shows here, with its removal. */}
+        {(profile.religion || profile.community) && (
+          <div className="flex flex-col items-start gap-2 rounded-xl border border-secondary bg-secondary p-4 text-sm text-tertiary">
+            <p><span className="font-medium text-secondary">You told us your religion or community.</span> It is never on your card. We use it only to match you with people who ask for it.</p>
+            <Button variant="link-error" disabled={forget.isPending} onClick={() => forget.mutate()}>Remove it</Button>
+            {forget.isError && <p role="alert" className="text-error-primary">{errorText(forget.error)}</p>}
+          </div>
+        )}
       </Section>
 
       <Section title="Photos" helper={profile.photos.length < maxProfilePhotos
