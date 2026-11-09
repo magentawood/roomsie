@@ -16,6 +16,7 @@ import { ChoiceChips } from '../ui/choice'
 import { EmptyState } from '../ui/empty-state'
 import { TextArea } from '../ui/field'
 import { ModalFrame, ModalHead } from '../ui/modal'
+import { Loading } from '../ui/loading'
 
 type Check = IdCheckQueueResponse['checks'][number]
 
@@ -105,7 +106,7 @@ function CheckItem({ check }: { check: Check }) {
 export function IdChecks() {
   const checks = useIdChecks()
   if (checks.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(checks.error)}</p>
-  if (!checks.data) return <p className="text-sm text-tertiary">Loading…</p>
+  if (!checks.data) return <Loading mascot="working" />
   if (!checks.data.checks.length) return <EmptyState icon={CheckCircle} title="No checks to review">New checks show here, oldest first.</EmptyState>
   return <ul className="flex flex-col gap-4">{checks.data.checks.map((c) => <CheckItem key={c.id} check={c} />)}</ul>
 }

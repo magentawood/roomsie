@@ -18,6 +18,7 @@ import { listingSignIn, SignInGate } from '../../../../components/shell/sign-in-
 import { Button } from '../../../../components/ui/button'
 import { Modal } from '../../../../components/ui/modal'
 import { VerifyAfterPublish } from '../../../../components/verification/verify-row'
+import { Loading } from '../../../../components/ui/loading'
 
 function Step({ listing, areas, stepNumber }: { listing: ListingResponse; areas: AreasResponse['areas']; stepNumber: number }) {
   const user = useUser()
@@ -149,7 +150,7 @@ function ListingStep() {
   const listing = useListing(params.id)
   const areas = useAreas()
   if (listing.isError) return <p className="p-6 text-sm text-error-primary">{errorText(listing.error)}</p>
-  if (!listing.data || !areas.data) return <p className="p-6 text-sm text-tertiary">Loading…</p>
+  if (!listing.data || !areas.data) return <Loading mascot="home" />
   const steps = listingSteps(listing.data.kind)
   if (!Number.isInteger(stepNumber) || stepNumber < 1 || stepNumber > steps.length) return <p className="p-6 text-sm text-tertiary">This step does not exist.</p>
   return <Step key={`${listing.data.id}-${stepNumber}`} listing={listing.data} areas={areas.data.areas} stepNumber={stepNumber} />

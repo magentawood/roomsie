@@ -18,6 +18,7 @@ import { BlockSheet } from '../people/block-sheet'
 import { ReportSheet } from '../reports/report-sheet'
 import { Button } from '../ui/button'
 import { Avatar, SafetyNotice, useChatName } from './parts'
+import { Loading } from '../ui/loading'
 
 function Header({ other, listingId, name, about, menu }: { other: OtherPerson; listingId: string | null; name: string; about: string | null; menu?: ReactNode }) {
   const profileId = profileOf(other)
@@ -68,7 +69,7 @@ function Messages({ conversationId, name }: { conversationId: string; name: stri
     return () => seen.disconnect()
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
   if (messages.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(messages.error)}</p>
-  if (!messages.data) return <p className="text-sm text-tertiary">Loading…</p>
+  if (!messages.data) return <Loading mascot="chatting" />
   return (
     <>
       <div ref={top} />

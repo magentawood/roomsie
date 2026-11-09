@@ -4,13 +4,17 @@ import type { ReactNode } from 'react'
 import { useAuth } from '../../lib/auth'
 import { GoogleSignIn, LegalLine } from './google-sign-in'
 import { Logo } from './logo'
+import { Loading, type Mascot } from '../ui/loading'
 
-export const listingSignIn = { title: 'Sign in to list your place', text: 'Your listings stay in your account, and only you can change them.' }
+export const listingSignIn = { title: 'Sign in to list your place', text: 'Your listings stay in your account, and only you can change them.', mascot: 'home' } as const
 
-/** A screen behind sign-in (PD6b). A signed-out user sees the Google sign-in of T-05 in the design of D-02, with the title and text of the screen. */
-export function SignInGate({ title, text, children }: { title: string; text: string; children: ReactNode }) {
+/**
+ * A screen behind sign-in (PD6b). A signed-out user sees the Google sign-in of T-05 in the design of D-02, with the title and text of the screen.
+ * While the sign-in loads, the screen shows the mascot of its page.
+ */
+export function SignInGate({ title, text, mascot, children }: { title: string; text: string; mascot: Mascot; children: ReactNode }) {
   const { user, loading } = useAuth()
-  if (loading) return <div className="flex min-h-dvh items-center justify-center text-sm text-tertiary">Loading…</div>
+  if (loading) return <Loading mascot={mascot} page />
   if (user) return <>{children}</>
   return (
     <main className="flex min-h-dvh items-center justify-center p-6">

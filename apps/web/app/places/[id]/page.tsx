@@ -11,6 +11,7 @@ import { useBack } from '../../../components/detail/parts'
 import { Button } from '../../../components/ui/button'
 import { EmptyState } from '../../../components/ui/empty-state'
 import { savedHref } from '../../../lib/saved'
+import { Loading } from '../../../components/ui/loading'
 
 function Place() {
   const { id } = useParams<{ id: string }>()
@@ -28,13 +29,13 @@ function Place() {
       </main>
     )
   }
-  if (listing.isPending) return <p className="p-6 text-sm text-tertiary">Loading…</p>
+  if (listing.isPending) return <Loading mascot="looking" />
   return <PlaceDetail listing={listing.data} />
 }
 
 export default function PlacePage() {
   return (
-    <SignInGate title="Sign in to see this place" text="The full detail of a place, and its lister, are for signed-in people.">
+    <SignInGate mascot="looking" title="Sign in to see this place" text="The full detail of a place, and its lister, are for signed-in people.">
       <AppShell mobileNav={false}>
         <Place />
       </AppShell>

@@ -10,6 +10,7 @@ import { useTurn, useTurns } from '../../lib/queries'
 import { Badge, type Tone } from '../ui/badge'
 import { cardClass, pageBody, SubjectHeader } from './admin-page'
 import { Search } from './directory'
+import { Loading } from '../ui/loading'
 
 type Call = AdminTurnResponse['attempts'][number]
 const capital = (word: string) => `${word[0]!.toUpperCase()}${word.slice(1)}`
@@ -40,7 +41,7 @@ export function TurnsList() {
       <Search label="Search turns" placeholder="Search by session code" labels={labels} allLabel="All" onSearch={setQuery} />
       <p className="rounded-lg bg-secondary px-3 py-2.5 text-sm text-tertiary">{`Each open of a turn goes in the audit log, and a trace goes ${traceDays} days after its call.`}</p>
       {turns.isError && <p role="alert" className="text-sm text-error-primary">{errorText(turns.error)}</p>}
-      {turns.isPending && <p className="text-sm text-tertiary">Loading…</p>}
+      {turns.isPending && <Loading mascot="working" />}
       {turns.data && (
         <div className="overflow-x-auto rounded-xl border border-secondary">
           <table className="w-full text-left text-sm md:min-w-200">
@@ -124,7 +125,7 @@ export function TurnView({ turnKey }: { turnKey: string }) {
     return (
       <>
         <SubjectHeader title="Turn" back={toTurns} />
-        <main className={pageBody}>{turn.isError ? <p role="alert" className="text-sm text-error-primary">{errorText(turn.error)}</p> : <p className="text-sm text-tertiary">Loading…</p>}</main>
+        <main className={pageBody}>{turn.isError ? <p role="alert" className="text-sm text-error-primary">{errorText(turn.error)}</p> : <Loading mascot="working" />}</main>
       </>
     )
   }

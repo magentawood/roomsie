@@ -13,6 +13,7 @@ import { ago } from '../../lib/reports'
 import { Badge } from '../ui/badge'
 import { Bar } from '../ui/bar'
 import { Change } from './product-numbers'
+import { Loading } from '../ui/loading'
 
 const hourOf = new Intl.DateTimeFormat('en-IN', { hour: 'numeric', hourCycle: 'h23', ...india })
 const dayOf = new Intl.DateTimeFormat('en-IN', { weekday: 'long', day: 'numeric', month: 'long', ...india })
@@ -129,7 +130,7 @@ export function AdminHome() {
           </p>
         </header>
         {home.isError && <p role="alert" className="text-sm text-error-primary">{errorText(home.error)}</p>}
-        {home.isPending && <p className="text-sm text-tertiary">Loading…</p>}
+        {home.isPending && <Loading mascot="working" />}
         {home.data && (
           <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-2 md:gap-6 lg:grid-cols-3">
             {home.data.cards.map((card) => <SubjectCard key={card.subject} card={card} />)}

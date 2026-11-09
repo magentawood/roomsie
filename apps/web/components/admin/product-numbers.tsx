@@ -10,6 +10,7 @@ import { reasonLabels } from '../../lib/reports'
 import { Badge } from '../ui/badge'
 import { Bar } from '../ui/bar'
 import { cardClass, numberTabs, SubjectPage } from './admin-page'
+import { Loading } from '../ui/loading'
 
 type Numbers = NonNullable<ProductNumbersResponse['numbers']>
 type Pair = Numbers['newAccounts']
@@ -111,7 +112,7 @@ function SideCard({ title, rows, labels }: { title: string; rows: Numbers['where
 function ProductNumbers({ period }: { period: NumberPeriod }) {
   const query = useProductNumbers(period)
   if (query.isError) return <p role="alert" className="text-sm text-error-primary">{errorText(query.error)}</p>
-  if (query.isPending) return <p className="text-sm text-tertiary">Loading…</p>
+  if (query.isPending) return <Loading mascot="working" />
   const { from, to, numbers: data } = query.data
   if (!data) return <p className="text-sm text-tertiary">No numbers: the analytics database is not set, or it did not answer.</p>
   return (

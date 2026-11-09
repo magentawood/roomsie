@@ -13,6 +13,7 @@ import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 import { inputClass } from '../ui/field'
 import { Avatar, RequestsIcon, useChatName } from './parts'
+import { Loading } from '../ui/loading'
 
 function Row({ href, selected, children }: { href: string; selected: boolean; children: ReactNode }) {
   return (
@@ -59,7 +60,7 @@ function Inbox({ selected }: { selected?: string }) {
   const [query, setQuery] = useState('')
   const failed = conversations.error ?? outgoing.error ?? incoming.error
   if (failed) return <p role="alert" className="p-4 text-sm text-error-primary">{errorText(failed)}</p>
-  if (!conversations.data || !outgoing.data || !incoming.data) return <p className="p-4 text-sm text-tertiary">Loading…</p>
+  if (!conversations.data || !outgoing.data || !incoming.data) return <Loading mascot="chatting" />
   const items = inboxItems(conversations.data.conversations, outgoing.data.requests)
   const requests = incoming.data.requests.length
   if (!items.length && !requests) {
@@ -95,7 +96,7 @@ function Inbox({ selected }: { selected?: string }) {
 /** The messages screens: on a desktop the inbox stays beside the open thread; on a phone one screen shows at a time. */
 export function MessagesFrame({ selected, children }: { selected?: string; children?: ReactNode }) {
   return (
-    <SignInGate title="Sign in to see your messages" text="Your chats and the requests to you stay in your account.">
+    <SignInGate mascot="chatting" title="Sign in to see your messages" text="Your chats and the requests to you stay in your account.">
       <AppShell mobileNav={!selected}>
         <div className={`flex flex-col ${selected ? 'h-dvh' : 'flex-1 lg:h-dvh'}`}>
           <div className={selected ? 'hidden lg:block' : ''}><PageHeader title="Messages" backHref="/" inPhoneBar /></div>

@@ -23,6 +23,7 @@ import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { inputClass } from '../ui/field'
 import { Modal } from '../ui/modal'
+import { Loading } from '../ui/loading'
 
 type PeopleFilter = (typeof peopleFilters)[number]
 type ListingFilter = (typeof listingFilters)[number]
@@ -106,7 +107,7 @@ export function PeopleList() {
     <>
       <Search label="Search people" placeholder="Search by name or email" labels={peopleFilterLabels} onSearch={setQuery} />
       {people.isError && <p role="alert" className="text-sm text-error-primary">{errorText(people.error)}</p>}
-      {people.isPending && <p className="text-sm text-tertiary">Loading…</p>}
+      {people.isPending && <Loading mascot="working" />}
       {people.data && (
         <>
           <Table heads={[['Person'], ['Joined', false], ['Last active', false], ['State'], ['']]}>
@@ -140,7 +141,7 @@ export function ListingsList() {
     <>
       <Search label="Search listings" placeholder="Search by area or lister" labels={listingFilterLabels} onSearch={setQuery} />
       {listings.isError && <p role="alert" className="text-sm text-error-primary">{errorText(listings.error)}</p>}
-      {listings.isPending && <p className="text-sm text-tertiary">Loading…</p>}
+      {listings.isPending && <Loading mascot="working" />}
       {listings.data && (
         <>
           <Table heads={[['Listing'], ['Lister', false], ['Rent', false], ['Posted', false], ['State'], ['']]}>
@@ -250,7 +251,7 @@ export function PersonView({ userId }: { userId: string }) {
   const act = useAction<(typeof personActions)[number]>(`/v1/admin/people/${userId}`)
   const [asking, setAsking] = useState(false)
   if (person.isError) return <DetailPage title="Person" back={toPeople}><p role="alert" className="text-sm text-error-primary">{errorText(person.error)}</p></DetailPage>
-  if (person.isPending) return <DetailPage title="Person" back={toPeople}><p className="text-sm text-tertiary">Loading…</p></DetailPage>
+  if (person.isPending) return <DetailPage title="Person" back={toPeople}><Loading mascot="working" /></DetailPage>
   const p = person.data
   return (
     <DetailPage title={p.name ?? 'No card'} back={toPeople} intro={`Joined ${istDay(p.joinedAt, 'short')} · last active ${p.lastActiveAt ? ago(p.lastActiveAt) : 'never'}`}>
@@ -295,7 +296,7 @@ export function ListingView({ id }: { id: string }) {
   const act = useAction<(typeof listingActions)[number]>(`/v1/admin/listings/${id}`)
   const [asking, setAsking] = useState(false)
   if (listing.isError) return <DetailPage title="Listing" back={toListings}><p role="alert" className="text-sm text-error-primary">{errorText(listing.error)}</p></DetailPage>
-  if (listing.isPending) return <DetailPage title="Listing" back={toListings}><p className="text-sm text-tertiary">Loading…</p></DetailPage>
+  if (listing.isPending) return <DetailPage title="Listing" back={toListings}><Loading mascot="working" /></DetailPage>
   const l = listing.data
   return (
     <DetailPage title={l.title} back={toListings} intro={`${l.area ?? 'No area'} · listed by ${l.lister ?? 'a person with no card'} · posted ${istDay(l.postedAt, 'short')}`}>

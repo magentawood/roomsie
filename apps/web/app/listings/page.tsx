@@ -16,6 +16,7 @@ import { Button } from '../../components/ui/button'
 import { EmptyState } from '../../components/ui/empty-state'
 import { Tabs } from '../../components/ui/tabs'
 import { SavedPeople, SavedPlaces } from '../../components/saved/saved-lists'
+import { Loading } from '../../components/ui/loading'
 
 const statusBadge: Record<ListingResponse['status'], { tone: Tone; label: string }> = {
   live: { tone: 'success', label: 'Live' },
@@ -82,7 +83,7 @@ function MyListings() {
   return (
     <div className="flex flex-1 flex-col gap-3">
         {mine.isError && <p role="alert" className="text-sm text-error-primary">{errorText(mine.error)}</p>}
-        {mine.isPending && <p className="text-sm text-tertiary">Loading…</p>}
+        {mine.isPending && <Loading mascot="home" />}
         {mine.data && mine.data.listings.length === 0 && (
           <EmptyState icon={Key01} title="No listings yet" action={<Button variant="primary" size="md" iconLeading={Plus} href="/listings/new">New listing</Button>}>
             List a room in your flat, a whole flat, or a PG or hostel. People who look in your area can then find it.
@@ -124,7 +125,7 @@ function Listings() {
 
 export default function ListingsPage() {
   return (
-    <SignInGate title="Sign in to see your listings" text="Your listings and the places and people you saved stay in your account.">
+    <SignInGate mascot="home" title="Sign in to see your listings" text="Your listings and the places and people you saved stay in your account.">
       <AppShell>
         <Listings />
       </AppShell>

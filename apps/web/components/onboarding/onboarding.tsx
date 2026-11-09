@@ -16,6 +16,7 @@ import { profileLabels, type DescribesYou } from '../../lib/profile-form'
 import { queryKeys, useAreas, useGoals } from '../../lib/queries'
 import { GoogleMark, LegalLine } from '../shell/google-sign-in'
 import { Button } from '../ui/button'
+import { Loading } from '../ui/loading'
 import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
 import { StepBar } from '../ui/step-bar'
 
@@ -132,7 +133,7 @@ export function Onboarding() {
   const bar = progressOf(step, answers)
   const { title, text, art, position } = screenOf(step, answers)
 
-  if (loading || leaving || (untouched && user && goals.isPending)) return <main className="min-h-dvh" aria-busy="true" />
+  if (loading || leaving || (untouched && user && goals.isPending)) return <main className="min-h-dvh" aria-busy="true"><Loading mascot="looking" page /></main>
   return (
     <div className="flex min-h-dvh flex-col bg-primary lg:flex-row">
       <div className="relative h-52 shrink-0 lg:sticky lg:top-0 lg:h-dvh lg:w-5/9 lg:[clip-path:polygon(0_0,94%_0,85%_30%,94%_59%,85%_100%,0_100%)]">
