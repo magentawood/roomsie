@@ -10,7 +10,7 @@ const figtree = Figtree({ subsets: ['latin'], variable: '--font-figtree', displa
 /** The rounded letters of the mascots' waits, in one weight. */
 const fredoka = Fredoka({ subsets: ['latin'], weight: '600', variable: '--font-fredoka', display: 'swap' })
 
-export const metadata = { title: 'roomsie', metadataBase: new URL(siteUrl) }
+export const metadata = { title: 'Roomsie', metadataBase: new URL(siteUrl) }
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
   // A static page cannot have the new nonce of each request, so each page renders on each request (T-52).
