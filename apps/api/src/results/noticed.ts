@@ -20,6 +20,7 @@ type Input = { form: FormA; seeksPeople: boolean; viewerUserId?: string; filters
 /**
  * The notes of "Roomsie Noticed" (flow 02), at most three. With results: a must-have that few of them have, people to team up with,
  * and the walk to a station. With none: the rents of the areas, a nearby area with results, and a 2 BHK split two ways.
+ * Each results card has a note (the founders, 2026-11-09): with no other note, the rents of the areas, or a 2 BHK split two ways.
  */
 export async function noticesOf(db: Db, input: Input): Promise<Notice[]> {
   return (input.total > 0 ? await withResults(db, input) : await withNone(db, input)).slice(0, 3)
@@ -48,7 +49,28 @@ async function withResults(db: Db, { form, seeksPeople, viewerUserId, filters, s
   if (teamUp > 0) notes.push({ kind: 'teamUp', count: teamUp })
   const near = counts.near_station ?? 0
   if (near >= 1 && near < total) notes.push({ kind: 'mustHave', key: 'near_station', count: near, total })
-  return notes
+  if (notes.length) return notes
+  const scope = { viewerUserId, areas: filters.areas }
+  const rents = seeksPeople ? [] : await rentsOf(db, { ...scope, kinds: searches.listings(filters).kinds })
+  if (rents.length) return [rentsNote(rents)]
+  const flats = intentsOf(form).includes('whole_flat') ? [] : await twoBhkCosts(db, scope)
+  return flats.length ? [shareNote(flats)] : []
+}
+
+/** The cheapest rent, and the middle half of the rents when there are four or more. */
+function rentsNote(rents: number[]): Notice {
+  const middle = rents.length >= 4
+  return {
+    kind: 'rents', cheapest: rents[0]!,
+    low: middle ? rents[Math.floor((rents.length - 1) / 4)]! : null, high: middle ? rents[Math.ceil(((rents.length - 1) * 3) / 4)]! : null,
+  }
+}
+
+/** The middle cost of a 2 BHK, rent and maintenance, split two ways. */
+function shareNote(flats: Awaited<ReturnType<typeof twoBhkCosts>>): Notice {
+  const costs = flats.map((flat) => flat.rent + (flat.maintenance ?? 0)).sort((a, b) => a - b)
+  const middle = costs[Math.floor((costs.length - 1) / 2)]!
+  return { kind: 'share', each: Math.round(middle / 2 / 500) * 500, maintenanceIncluded: flats.every((flat) => flat.maintenance !== null) }
 }
 
 async function withNone(db: Db, { form, seeksPeople, viewerUserId, filters, searches, suggestions }: Input) {
@@ -64,19 +86,9 @@ async function withNone(db: Db, { form, seeksPeople, viewerUserId, filters, sear
   ])
   const notes: Notice[] = []
   const max = filters.budget?.max
-  // The budget is the reason: the cheapest place is above it. The middle half needs four rents.
-  if (rents.length && max != null && rents[0]! > max) {
-    const middle = rents.length >= 4
-    notes.push({
-      kind: 'rents', cheapest: rents[0]!,
-      low: middle ? rents[Math.floor((rents.length - 1) / 4)]! : null, high: middle ? rents[Math.ceil(((rents.length - 1) * 3) / 4)]! : null,
-    })
-  }
+  // The budget is the reason: the cheapest place is above it.
+  if (rents.length && max != null && rents[0]! > max) notes.push(rentsNote(rents))
   notes.push(...nearbyNote)
-  if (flats.length) {
-    const costs = flats.map((flat) => flat.rent + (flat.maintenance ?? 0)).sort((a, b) => a - b)
-    const middle = costs[Math.floor((costs.length - 1) / 2)]!
-    notes.push({ kind: 'share', each: Math.round(middle / 2 / 500) * 500, maintenanceIncluded: flats.every((flat) => flat.maintenance !== null) })
-  }
+  if (flats.length) notes.push(shareNote(flats))
   return notes
 }

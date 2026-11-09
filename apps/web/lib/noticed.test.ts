@@ -48,6 +48,13 @@ describe('the notes of Roomsie Noticed (flow 02)', () => {
     })
   })
 
+  it('leads people to the 2 BHK flats of their area, so a 2 BHK split two ways has a button that does something', () => {
+    expect(noteLines([{ kind: 'share', each: 21500, maintenanceIncluded: false }], people, areaName)).toEqual([{
+      text: 'A 2 BHK in Bandra–Santacruz split two ways works out to about ₹21.5k each.',
+      button: 'Show 2 BHK flats in Bandra–Santacruz', tap: { slot: 'intent', value: 'whole_flat' },
+    }])
+  })
+
   it('words a must-have of people as people, and leaves out a note with no words', () => {
     expect(noteLines([{ kind: 'mustHave', key: 'veg_kitchen', count: 1, total: 3 }], people, areaName)[0]!.text).toBe('Heads up, only 1 of 3 eat veg, if that matters to you.')
     expect(noteLines([{ kind: 'mustHave', key: 'women_only', count: 1, total: 3 }], people, areaName)).toEqual([])

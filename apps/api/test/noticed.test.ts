@@ -102,6 +102,18 @@ describe('Roomsie Noticed and several place types', () => {
     ])
   })
 
+  it('notes the rents of the area when nothing else stands out, so each results card has a note', async () => {
+    const { total, noticed } = await search({ ...rooms, areas: stated(['dadar-west']) })
+    expect(total).toBe(1)
+    expect(noticed).toEqual([{ kind: 'rents', cheapest: 4500, low: null, high: null }])
+  })
+
+  it('notes a 2 BHK split two ways for people when nothing else stands out', async () => {
+    const { total, noticed } = await search({ ...rooms, intent: stated(['flatmates']), mustHaves: { veg_kitchen: stated('dealbreaker') } })
+    expect(total).toBe(1)
+    expect(noticed).toEqual([{ kind: 'share', each: 21500, maintenanceIncluded: true }])
+  })
+
   it('notes a must-have that few flatmates seekers have, with no notes of places', async () => {
     const { total, noticed } = await search({ ...rooms, intent: stated(['flatmates']) })
     expect(total).toBe(3)

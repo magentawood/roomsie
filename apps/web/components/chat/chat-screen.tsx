@@ -143,6 +143,18 @@ function useChat() {
 
 const emptyForm = formA.parse({})
 
+/** The results that a reply brought: their form key and the reply. `waited`: their 2 s wait is over. */
+type Delivered = { goalId: string; key: string; turnId: string | null; waited: boolean }
+/** After a reload, the results card stays under the reply that brought it. */
+function storedDelivery(goalId: string | null): Delivered | null {
+  try {
+    const stored = JSON.parse(readStored(chatStorage.resultsAt) ?? 'null') as Delivered | null
+    return stored && stored.goalId === goalId ? { ...stored, waited: true } : null
+  } catch {
+    return null
+  }
+}
+
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { goalId, turns, form: chatForm, outsidePlaces, closed, goalName, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
@@ -174,11 +186,30 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const picked = picks.key === resultsKey ? picks.picked : []
   const setPicked = (next: Picked[]) => setPicks({ key: resultsKey, picked: next })
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
+  // The results belong to the reply that brought them (the founders, 2026-11-09), and new ones show the wait for at least 2 s.
+  const [delivered, setDelivered] = useState<Delivered | null>(() => storedDelivery(goalId))
+  const thread = useRef<HTMLDivElement>(null)
+  const newestReply = turns.at(-1)?.role === 'assistant' ? turns.at(-1)!.id : null
+  useEffect(() => {
+    const box = thread.current
+    const item = newestReply ? box?.querySelector<HTMLElement>(`[data-turn="${newestReply}"]`) : null
+    // A long reply shows from its start, not from its end (the founders, 2026-11-09).
+    if (box && item && item.getBoundingClientRect().top < box.getBoundingClientRect().top) {
+      item.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    }
+  }, [newestReply])
   const submit = (turn: Outgoing) => {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
     send.mutate(turn, {
-      onSuccess: (sent) => { if (sent.typedTurnsLeft === 0) setWall(true) },
+      onSuccess: (sent) => {
+        if (sent.typedTurnsLeft === 0) setWall(true)
+        const key = formKey(sent.form)
+        if (!panelReady(sent.form) || key === formKey(chatForm)) return
+        const next = { goalId: sent.id, key, turnId: sent.turns.findLast((t) => t.role === 'assistant')?.id ?? null, waited: false }
+        setDelivered(next)
+        writeStored(chatStorage.resultsAt, JSON.stringify(next))
+      },
       onError: (err) => {
         const refusal = 'tap' in turn.body ? tapRefusal(errorText(err)) : compareRefusal(errorText(err))
         if (limitOf(err) !== 'turn_cap') return setFailed(refusal ?? errorText(err))
@@ -217,6 +248,23 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     setView('split')
   }
 
+  const currentKey = ready && !preview ? formKey(form) : null
+  const fresh = delivered && delivered.goalId === goalId && delivered.key === currentKey ? delivered : null
+  // The mascot shows while new results load, and for at least 2 s after a reply brought them. A plain reply shows no wait.
+  const waiting = currentKey !== null && !closed && (results.isPending || (fresh !== null && !fresh.waited))
+  const anchorId = fresh?.turnId ?? turns.findLast((t) => t.role === 'assistant')?.id ?? null
+  const blockKey = shown ? formKey(shown.form) : currentKey
+  const resultsBlock = waiting
+    ? [<li key={`wait-${currentKey}`} className="motion-safe:animate-fade-in">
+        <ResultsWait form={chatForm} areaName={areaName} onWaited={() => setDelivered((d) => d && d.key === currentKey ? { ...d, waited: true } : d)} />
+      </li>]
+    : shown ? [
+      <li key={`card-${blockKey}`} className="motion-safe:animate-fade-in"><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>,
+      nextSteps && nextSteps.lines.length > 0 && <li key={`noticed-${blockKey}`} className="motion-safe:animate-fade-in"><NoticedBox lines={nextSteps.lines} onTap={tap} /></li>,
+      nextSteps && nextSteps.chips.length > 0 && <li key={`next-${blockKey}`} className="motion-safe:animate-fade-in"><FollowUps chips={nextSteps.chips} onPick={pickFollowUp} /></li>,
+    ] : []
+  const anchored = anchorId !== null && turns.some((t) => t.id === anchorId)
+
   if (loadingGoal) return <main className="flex flex-1 items-center justify-center" aria-busy="true"><Loading mascot="searching" /></main>
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
@@ -225,10 +273,10 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       {/* On a phone, "Show all" has its own header (146:29502). */}
       {!preview && <GoalHeader title={goalName} closed={closed} phoneHidden={view === 'all'} onFound={() => setFoundOpen(true)} />}
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
-      <div className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
+      <div ref={thread} className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-5 px-5 py-4 lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:py-6" aria-live="polite">
-          {turns.map((turn) => (
-            <li key={turn.id} className={turn.role === 'user' ? 'my-3 first:mt-0 last:mb-0 lg:my-5 lg:first:mt-0 lg:last:mb-0' : undefined}>
+          {turns.map((turn) => [
+            <li key={turn.id} data-turn={turn.id} className={`motion-safe:animate-fade-in ${turn.role === 'user' ? 'my-3 first:mt-0 last:mb-0 lg:my-5 lg:first:mt-0 lg:last:mb-0' : ''}`}>
               {turn.role === 'user' ? <UserText text={turn.text} /> : (
                 <div className="flex flex-col gap-5">
                   <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>
@@ -236,22 +284,21 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
                   {turn.notes && <NotesList />}
                 </div>
               )}
-            </li>
-          ))}
+            </li>,
+            turn.id === anchorId && resultsBlock,
+          ])}
+          {!anchored && resultsBlock}
           {panel === 'waitlist' && waitlist && (
             // On a phone the form is in the thread (drafts section 18).
-            <li className="lg:hidden"><WaitlistForm key={waitlist.place} {...waitlist} footer={<LookInMumbai onPick={pickArea} />} /></li>
+            <li className="motion-safe:animate-fade-in lg:hidden"><WaitlistForm key={waitlist.place} {...waitlist} footer={<LookInMumbai onPick={pickArea} />} /></li>
           )}
-          {chips && <li>{chips}</li>}
+          {chips && <li className="motion-safe:animate-fade-in">{chips}</li>}
           {pending !== undefined && (
-            <li className="mt-3 flex flex-col gap-8 first:mt-0 lg:mt-5 lg:gap-10 lg:first:mt-0">
+            <li className="mt-3 flex flex-col gap-8 first:mt-0 motion-safe:animate-fade-in lg:mt-5 lg:gap-10 lg:first:mt-0">
               <UserText text={pending} />
-              {failed ? <p role="alert" className="text-md text-error-primary">{failed}</p> : <Thinking form={chatForm} areaName={(slug) => areaLabels[slug] ?? slug} />}
+              {failed ? <p role="alert" className="text-md text-error-primary">{failed}</p> : <Typing />}
             </li>
           )}
-          {shown && <li><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>}
-          {nextSteps && nextSteps.lines.length > 0 && <li><NoticedBox lines={nextSteps.lines} onTap={tap} /></li>}
-          {nextSteps && nextSteps.chips.length > 0 && <li><FollowUps chips={nextSteps.chips} onPick={pickFollowUp} /></li>}
           {results.isError && !results.isFetchNextPageError && (
             <li role="alert" className="flex items-center gap-3 text-sm text-error-primary">
               The results did not load.
@@ -298,7 +345,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   )
 }
 
-const stepTimes = [1200, 2600]
+const stepTimes = [700, 1400]
+/** The shortest wait for new results (the founders, 2026-11-09). */
+const minWaitMs = 2000
 /** The mascot of each step of the wait: it reads, it searches, it picks at its laptop. */
 const stepMascots = [mascots.chatting, mascots.searching, mascots.working]
 /** The wait for a reply (flow 02): a moving mascot for each step, and the steps of the search. A step ticks after a short time, and the last one turns until the reply. */
@@ -326,6 +375,26 @@ function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) =>
           </li>
         ))}
       </ul>
+    </div>
+  )
+}
+
+/** The wait for new results: the mascot and its steps, for at least `minWaitMs`. */
+function ResultsWait({ form, areaName, onWaited }: { form: FormA; areaName: (slug: string) => string; onWaited: () => void }) {
+  const done = useRef(onWaited)
+  useEffect(() => { done.current = onWaited })
+  useEffect(() => {
+    const timer = setTimeout(() => done.current(), minWaitMs)
+    return () => clearTimeout(timer)
+  }, [])
+  return <Thinking form={form} areaName={areaName} />
+}
+
+/** The wait for a plain reply: three dots, as a chat app has. */
+function Typing() {
+  return (
+    <div role="status" aria-label="Roomsie is typing" className="flex w-fit items-center gap-1 rounded-xl bg-secondary px-3 py-2.5">
+      {[0, 150, 300].map((delay) => <span key={delay} style={{ animationDelay: `${delay}ms` }} className="size-1.5 rounded-full bg-brand-solid opacity-30 motion-safe:animate-typing" />)}
     </div>
   )
 }
