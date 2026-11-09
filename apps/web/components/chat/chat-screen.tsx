@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
@@ -8,7 +9,7 @@ import { capWall, formA, goalResponse, intentsOf, listingTitle, newGoalResponse,
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, tapRefusal, writeStored } from '../../lib/chat'
-import { goalHref, newGoalHref, useCurrentGoalId } from '../../lib/goals'
+import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../../lib/compare'
@@ -79,6 +80,9 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
       <div className="flex w-full max-w-210 flex-col gap-4">
         <ChatInput grow="down" onSend={onSend} />
         {children}
+        <p className="text-sm text-tertiary">
+          Prefer quick questions? <Link href={onboardingAgainHref} className="font-medium text-secondary underline underline-offset-2 outline-focus-ring hover:text-primary focus-visible:outline-2">Answer them here</Link>
+        </p>
       </div>
     </main>
   )

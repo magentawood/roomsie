@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowLeft, ArrowRight, Home03, Key01, Lock01, Users01 } from '@untitledui/icons'
@@ -109,8 +109,10 @@ export function Onboarding() {
   }
   // "Start looking" and "Open Roomsie" ask the onboarding once: a person who did it in this browser, or an account with a goal,
   // gets "What are we looking for?" in its place (flow 02). Only before the first answer, so a sign-in on the way does not leave.
+  // `?again` is the link of the empty chat that asks the questions again.
   const goals = useGoals()
-  const untouched = step === 'purpose' && answers.purpose === undefined
+  const again = useSearchParams().has('again')
+  const untouched = step === 'purpose' && answers.purpose === undefined && !again
   const returning = readStored(chatStorage.onboarded) === '1' || (user !== null && (goals.data?.goals.length ?? 0) > 0)
   const leaving = untouched && !loading && returning
   useEffect(() => { if (leaving) router.replace(newGoalHref) }, [leaving, router])
