@@ -23,10 +23,12 @@ describe('the eval sentences (M-03)', () => {
     expect(of('hinglish').some((s) => s.script === 'devanagari')).toBe(true)
   })
 
-  it('has a sentence in English, in Hinglish, in Hindi in Devanagari and in Marathi for each band that is not core, and two sentences with danger, both sensitive (T-61)', () => {
+  it('has a sentence in English, in Hinglish, in Hindi in Devanagari and in Marathi for each band that is not core, two for the general band, and two sentences with danger, both sensitive (T-61)', () => {
     for (const band of scopeBands.filter((b) => b !== 'core')) {
+      // The general band has a second sentence in each language: the advice of the hunt that the advisor answers (2026-11-09).
+      const each = band === 'general' ? 2 : 1
       expect(sentences.filter((s) => s.band === band).map((s) => `${s.language} ${s.script}`).toSorted(), band)
-        .toEqual(['english latin', 'hinglish devanagari', 'hinglish latin', expect.stringMatching(/^marathi /)])
+        .toEqual(['english latin', 'hinglish devanagari', 'hinglish latin', 'marathi'].flatMap((form) => Array<unknown>(each).fill(form === 'marathi' ? expect.stringMatching(/^marathi /) : form)))
     }
     expect(sentences.filter((s) => s.danger).map((s) => s.band)).toEqual(['sensitive', 'sensitive'])
   })

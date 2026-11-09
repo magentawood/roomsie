@@ -384,8 +384,35 @@ describe('the router', () => {
     fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question', 'filters'], band: 'consequential' }) })
     const both = await turn('I want a room. Is the area safe at night?', { band: 'consequential' })
     expect(both.reply).toBe('That needs a real answer, not a guess from me. For an agreement, a dispute or tax, ask a lawyer or a CA. '
-      + `For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there. ${roomAck}`)
+      + `For stamp duty and registration, see the IGR Maharashtra site. For the safety of an area, visit it after dark and ask people who live there. For a health question, ask a doctor. ${roomAck}`)
     expect(both.form.intent).toEqual(roomIntent)
+  })
+
+  it('answers a general question with the advisor, then the hedge and the open question with its chips (PD10)', async () => {
+    const tips = '- Keep your ID, PAN and two pay slips ready.\n- See each flat in daylight, and check the water and the power.'
+    const requests = fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question'], band: 'general' }), advisor: { deepseek: [answer(JSON.stringify({ text: tips }))] } })
+    const goal = await visitorGoal()
+    const { form, turns } = await sent(goal, 'give me some tips for flat hunting')
+    expect(turns[1].text).toBe(`${tips}\n\nThat's general guidance: the details differ from flat to flat. Back to it: what are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?`)
+    expect(turns[1].chips).toBe('intent')
+    expect(form.intent).toEqual(noIntent)
+    expect(requests.advisor).toHaveLength(1)
+    expect(JSON.parse(sentMessageOf(requests.advisor[0]!))).toEqual({ version: 1, language: 'en', question: 'give me some tips for flat hunting' })
+    expect(requests.composer).toEqual([])
+
+    // The answer is in the language of the person. The question stays in English, as the chips.
+    const hinglish = fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question'], band: 'general', register: { language: 'hindi', script: 'latin' } }), advisor: { deepseek: [answer(JSON.stringify({ text: '- Deposit usually 2 se 3 mahine ka hota hai.' }))] } })
+    const reply = (await sent(await visitorGoal(), 'deposit kitna hota hai usually?')).turns[1].text
+    expect(reply).toBe('- Deposit usually 2 se 3 mahine ka hota hai.\n\nYeh general guidance hai: har flat mein details alag hoti hain. Wapas aapki search par: what are you looking for: a room in a shared flat, a PG, a whole flat, or flatmates to rent with?')
+    expect(JSON.parse(sentMessageOf(hinglish.advisor[0]!)).language).toBe('hi-Latn')
+  })
+
+  it('gives the line "I\'ve noted it" when the advisor gives no answer, an empty text or a contact', async () => {
+    const noted = `Good question. I can't answer that one yet, but I've noted it. ${intentQuestion}`
+    for (const advisor of [{ deepseek: [down()], gemini: [down()] }, { deepseek: [answer(JSON.stringify({ text: '' }))] }, { deepseek: [answer(JSON.stringify({ text: '- Call a broker on 98200 12345.' }))] }]) {
+      fakeVendors({ deepseek: [room()], ...routed({ kinds: ['question'], band: 'general' }), advisor })
+      expect((await sent(await visitorGoal(), 'any tips for the hunt?')).turns[1].text).toBe(noted)
+    }
   })
 
   it('writes nothing to Form A for a core message that is only a question', async () => {

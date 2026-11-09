@@ -1,7 +1,10 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, asc, desc, eq, gt, inArray, isNotNull, isNull, lt, max, ne, or, sql, type SQL } from 'drizzle-orm'
 import { z } from 'zod'
-import { assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace } from '@roomsie/contract'
+import {
+  assistantParts, type AssistantParts, chipTurnParts, type PersonOption, type ChipTurnParts, formA, type AssistantReply, type FormA, goalTitle, type GoalStatus, type OwnValues,
+  sameMoveTurnParts, type SameMoveTurnParts, statesHiddenPreference, turnLabel, type TurnResponse, userTurnParts, type UserTurnParts, type WaitlistPlace,
+} from '@roomsie/contract'
 import { catalogueOf, type Catalogue } from '../assistant/catalogue'
 import type { Db, Tx } from '../db/client'
 import { anonymousSessions, chatTurns, goals } from '../db/schema'
@@ -116,8 +119,8 @@ export async function setGoalStatus(db: Db, id: string, asker: Asker, status: Go
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
 /** The chips, the comparison and the notes flag of an assistant turn go out. The label of a typed turn never does. */
 const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
-  const { chips, comparison, notes } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false }
-  return { ...turn, chips, comparison, notes, createdAt: turn.createdAt.toISOString() }
+  const { chips, comparison, notes, held } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false, held: null }
+  return { ...turn, chips, comparison, notes, sameMove: held && { title: held.title }, createdAt: turn.createdAt.toISOString() }
 }
 
 export async function turnsOf(db: Db, goalId: string) {
@@ -154,7 +157,7 @@ export async function lastRegisterOf(db: Db, goalId: string) {
   return (row && withRegister.safeParse(row.parts).data?.register) ?? null
 }
 
-export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTurnParts })
+export type UserTurn = { text: string; ownValues: OwnValues } & ({ inputMethod: 'typed'; parts: UserTurnParts } | { inputMethod: 'chip'; parts: ChipTurnParts | SameMoveTurnParts })
 
 /**
  * Saves the two turns and the new form, if nobody changed the goal since `seen`. A second turn at the same time
@@ -174,11 +177,36 @@ export async function saveTurn(db: Db, goal: { id: string; seen: Date; asker: As
       await tx.update(anonymousSessions).set({ turnCount: sql`${anonymousSessions.turnCount} + 1` }).where(eq(anonymousSessions.id, goal.asker.sessionId))
     }
     // now() is the same for the whole transaction. clock_timestamp() of a later statement puts the reply after the turn.
-    const parts = userTurn.inputMethod === 'typed' ? userTurnParts.parse(userTurn.parts) : chipTurnParts.parse(userTurn.parts)
+    const parts = userTurn.inputMethod === 'typed' ? userTurnParts.parse(userTurn.parts) : z.union([chipTurnParts, sameMoveTurnParts]).parse(userTurn.parts)
     const [userRow] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'user', inputMethod: userTurn.inputMethod, text: userTurn.text, parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: goal.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
     return [toChatTurn(userRow!), toChatTurn(assistantTurn!)] satisfies TurnResponse['turns']
   })
+}
+
+/**
+ * "Same move": the held message and the reply go to the other goal, and the new goal goes with the rest of its chat, in one transaction.
+ * The message keeps its row, so its label and its Form B notes stay. Null: the other goal changed since `seen`, or it closed.
+ */
+export async function moveHeld(db: Db, from: { id: string; asker: Asker; heldTurnId: string | null }, to: { id: string; seen: Date }, changes: { form: FormA; outsidePlaces: WaitlistPlace[] }, reply: AssistantReply) {
+  return db.transaction(async (tx) => {
+    const [changed] = await tx.update(goals).set({ ...changes, updatedAt: new Date() })
+      .where(and(eq(goals.id, to.id), ownedBy(from.asker), eq(goals.status, 'open'), sql`date_trunc('milliseconds', ${goals.updatedAt}) = ${to.seen.toISOString()}::timestamptz`)).returning({ id: goals.id })
+    if (!changed) return null
+    const moved = from.heldTurnId
+      ? await tx.update(chatTurns).set({ goalId: to.id, createdAt: sql`clock_timestamp()` }).where(and(eq(chatTurns.id, from.heldTurnId), eq(chatTurns.goalId, from.id))).returning(turnFields)
+      : []
+    const [assistantTurn] = await tx.insert(chatTurns).values({ goalId: to.id, role: 'assistant', text: reply.text, parts: reply.parts, createdAt: sql`clock_timestamp()` }).returning(turnFields)
+    await tx.delete(goals).where(and(eq(goals.id, from.id), ownedBy(from.asker)))
+    return [...moved, assistantTurn!].map(toChatTurn)
+  })
+}
+
+/** The first typed turn of a goal: the message that "Same move?" holds. */
+export async function firstTypedTurnOf(db: Db, goalId: string) {
+  const [row] = await db.select({ id: chatTurns.id }).from(chatTurns)
+    .where(and(eq(chatTurns.goalId, goalId), eq(chatTurns.role, 'user'), eq(chatTurns.inputMethod, 'typed'))).orderBy(asc(chatTurns.createdAt)).limit(1)
+  return row?.id ?? null
 }
 
 /** At account deletion. The cascades remove the chat turns, the waitlist entries, the feedback and the traces of the goals, and the goals of a claimed visitor session. */

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { replyLanguages, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
 import file from './lines.json'
 
-const lineKeys = ['failed', 'done', 'noted', 'handoff', 'outOfScope', 'backToIt', 'adversarial', 'sensitive', 'danger', 'compareBest', 'compareCheapest', 'notesList', 'notesEmpty', 'notesHint'] as const
+const lineKeys = ['failed', 'done', 'noted', 'adviceHedge', 'handoff', 'outOfScope', 'backToIt', 'adversarial', 'sensitive', 'danger', 'compareBest', 'compareCheapest', 'notesList', 'notesEmpty', 'notesHint', 'sameMove', 'sameMoveAgain'] as const
 
 /** The fixed lines of the assistant in each reply language. A record on an enum needs each key. PC-15 of F-14 gives the final text. */
 export const fixedLines = z.record(z.enum(lineKeys), z.record(z.enum(replyLanguages), z.string().min(1)))

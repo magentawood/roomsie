@@ -19807,6 +19807,20 @@
                             "default": false,
                             "type": "boolean"
                           },
+                          "sameMove": {
+                            "default": null,
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title"
+                            ],
+                            "additionalProperties": false
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -19820,6 +19834,7 @@
                           "chips",
                           "comparison",
                           "notes",
+                          "sameMove",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -21927,6 +21942,20 @@
                             "default": false,
                             "type": "boolean"
                           },
+                          "sameMove": {
+                            "default": null,
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title"
+                            ],
+                            "additionalProperties": false
+                          },
                           "createdAt": {
                             "type": "string",
                             "format": "date-time",
@@ -21940,6 +21969,7 @@
                           "chips",
                           "comparison",
                           "notes",
+                          "sameMove",
                           "createdAt"
                         ],
                         "additionalProperties": false
@@ -24776,6 +24806,20 @@
                                 "default": false,
                                 "type": "boolean"
                               },
+                              "sameMove": {
+                                "default": null,
+                                "nullable": true,
+                                "type": "object",
+                                "properties": {
+                                  "title": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "title"
+                                ],
+                                "additionalProperties": false
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -24789,6 +24833,7 @@
                               "chips",
                               "comparison",
                               "notes",
+                              "sameMove",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -25135,6 +25180,20 @@
                                 "default": false,
                                 "type": "boolean"
                               },
+                              "sameMove": {
+                                "default": null,
+                                "nullable": true,
+                                "type": "object",
+                                "properties": {
+                                  "title": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "title"
+                                ],
+                                "additionalProperties": false
+                              },
                               "createdAt": {
                                 "type": "string",
                                 "format": "date-time",
@@ -25148,6 +25207,7 @@
                               "chips",
                               "comparison",
                               "notes",
+                              "sameMove",
                               "createdAt"
                             ],
                             "additionalProperties": false
@@ -25347,6 +25407,2068 @@
                   "required": [
                     "error",
                     "limit"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/goals/{id}/same-move": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "answer": {
+                    "type": "string",
+                    "enum": [
+                      "same",
+                      "separate"
+                    ]
+                  }
+                },
+                "required": [
+                  "answer"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+            },
+            "in": "path",
+            "name": "id",
+            "required": true
+          },
+          {
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "in": "header",
+            "name": "x-visitor-key",
+            "required": false
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "in": "header",
+            "name": "user-agent",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "goalId": {
+                      "type": "string",
+                      "format": "uuid",
+                      "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                    },
+                    "form": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "default": 1,
+                          "type": "number",
+                          "enum": [
+                            1
+                          ]
+                        },
+                        "intent": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "anyOf": [
+                                    {
+                                      "type": "string",
+                                      "enum": [
+                                        "unclear"
+                                      ]
+                                    },
+                                    {
+                                      "minItems": 1,
+                                      "maxItems": 3,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "room",
+                                          "pg",
+                                          "whole_flat",
+                                          "flatmates"
+                                        ]
+                                      }
+                                    }
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "roomType": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "enum": [
+                                    "private",
+                                    "shared",
+                                    "unclear"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "whosMoving": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "enum": [
+                                    "student",
+                                    "first_job",
+                                    "working",
+                                    "couple",
+                                    "family",
+                                    "friends",
+                                    "unclear"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "areas": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "minItems": 1,
+                                  "maxItems": 20,
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string",
+                                    "maxLength": 60,
+                                    "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                                  }
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "budget": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "min": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 100000000
+                                    },
+                                    "max": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": 0,
+                                      "maximum": 100000000
+                                    }
+                                  },
+                                  "required": [
+                                    "min",
+                                    "max"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "moveDate": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "format": "date",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "lifestyle": {
+                          "type": "object",
+                          "properties": {
+                            "food": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "veg",
+                                        "non_veg",
+                                        "eggetarian",
+                                        "jain",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "smoking": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "non_smoker",
+                                        "smoker",
+                                        "smoke_outside",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "drinks": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "none_at_home",
+                                        "fine_at_home",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "guests": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "weekends_only",
+                                        "guests_welcome",
+                                        "guests_rarely",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "your_days": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "out_most_days",
+                                        "home_most_days",
+                                        "night_shifts",
+                                        "student",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "sleep": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "night_owl",
+                                        "early_bird",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "tidiness": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "very_tidy",
+                                        "tidy_enough",
+                                        "relaxed_about_mess",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "pets": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "no_pets",
+                                        "fine_with_pets",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "food",
+                            "smoking",
+                            "drinks",
+                            "guests",
+                            "your_days",
+                            "sleep",
+                            "tidiness",
+                            "pets"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "mustHaves": {
+                          "type": "object",
+                          "properties": {
+                            "veg_kitchen": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "non_smokers": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "no_alcohol": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "women_only": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "men_only": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "tidy_flatmates": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "couple_friendly": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            },
+                            "near_station": {
+                              "default": {
+                                "source": "empty",
+                                "value": null
+                              },
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "empty"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "nullable": true,
+                                      "enum": [
+                                        null
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "source": {
+                                      "type": "string",
+                                      "enum": [
+                                        "stated",
+                                        "default"
+                                      ]
+                                    },
+                                    "value": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "source",
+                                    "value"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "veg_kitchen",
+                            "non_smokers",
+                            "no_alcohol",
+                            "women_only",
+                            "men_only",
+                            "tidy_flatmates",
+                            "couple_friendly",
+                            "near_station"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "religionPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 10,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "hindu",
+                                          "muslim",
+                                          "christian",
+                                          "sikh",
+                                          "jain",
+                                          "buddhist",
+                                          "parsi",
+                                          "jewish",
+                                          "none",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "communityPreference": {
+                          "default": {
+                            "source": "empty",
+                            "value": null
+                          },
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "empty"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "string",
+                                  "nullable": true,
+                                  "enum": [
+                                    null
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "enum": [
+                                    "stated",
+                                    "default"
+                                  ]
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "values": {
+                                      "minItems": 1,
+                                      "maxItems": 17,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string",
+                                        "enum": [
+                                          "gujarati",
+                                          "marathi",
+                                          "marwari",
+                                          "kutchi",
+                                          "sindhi",
+                                          "punjabi",
+                                          "bengali",
+                                          "bihari",
+                                          "uttar_pradesh",
+                                          "odia",
+                                          "tamil",
+                                          "telugu",
+                                          "kannadiga",
+                                          "malayali",
+                                          "konkani",
+                                          "north_east",
+                                          "other"
+                                        ]
+                                      }
+                                    },
+                                    "weight": {
+                                      "type": "string",
+                                      "enum": [
+                                        "prefer",
+                                        "dealbreaker",
+                                        "unclear"
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "values",
+                                    "weight"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "source",
+                                "value"
+                              ],
+                              "additionalProperties": false
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "version",
+                        "intent",
+                        "roomType",
+                        "whosMoving",
+                        "areas",
+                        "budget",
+                        "moveDate",
+                        "lifestyle",
+                        "mustHaves",
+                        "religionPreference",
+                        "communityPreference"
+                      ],
+                      "additionalProperties": false
+                    },
+                    "turns": {
+                      "minItems": 1,
+                      "maxItems": 2,
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "string",
+                            "format": "uuid",
+                            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                          },
+                          "role": {
+                            "type": "string",
+                            "enum": [
+                              "user",
+                              "assistant"
+                            ]
+                          },
+                          "text": {
+                            "type": "string"
+                          },
+                          "chips": {
+                            "default": null,
+                            "nullable": true,
+                            "type": "string",
+                            "enum": [
+                              "intent",
+                              "roomType",
+                              "whosMoving",
+                              "areas",
+                              "budget",
+                              "lifestyle.food",
+                              "lifestyle.smoking",
+                              "lifestyle.drinks",
+                              "lifestyle.guests",
+                              "lifestyle.your_days",
+                              "lifestyle.sleep",
+                              "lifestyle.tidiness",
+                              "lifestyle.pets",
+                              "mustHaves.veg_kitchen",
+                              "mustHaves.non_smokers",
+                              "mustHaves.no_alcohol",
+                              "mustHaves.women_only",
+                              "mustHaves.men_only",
+                              "mustHaves.tidy_flatmates",
+                              "mustHaves.couple_friendly",
+                              "mustHaves.near_station"
+                            ]
+                          },
+                          "comparison": {
+                            "default": null,
+                            "nullable": true,
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "place"
+                                    ]
+                                  },
+                                  "options": {
+                                    "minItems": 2,
+                                    "maxItems": 4,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        },
+                                        "maintenance": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "brokerage": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "nearestStation": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 120
+                                        },
+                                        "walkStation": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "5_min",
+                                            "10_min",
+                                            "15_min",
+                                            "30_min",
+                                            "not_close"
+                                          ]
+                                        },
+                                        "availableFrom": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        "minStay": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "3_months",
+                                            "6_months",
+                                            "12_months",
+                                            "flexible"
+                                          ]
+                                        },
+                                        "furnishing": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "enum": [
+                                            "fully",
+                                            "semi",
+                                            "unfurnished"
+                                          ]
+                                        },
+                                        "verified": {
+                                          "type": "boolean"
+                                        },
+                                        "title": {
+                                          "type": "string"
+                                        },
+                                        "rent": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "deposit": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveInCash": {
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "maintenance",
+                                        "brokerage",
+                                        "nearestStation",
+                                        "walkStation",
+                                        "availableFrom",
+                                        "minStay",
+                                        "furnishing",
+                                        "verified",
+                                        "title",
+                                        "rent",
+                                        "deposit",
+                                        "moveInCash"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "options"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "person"
+                                    ]
+                                  },
+                                  "options": {
+                                    "minItems": 2,
+                                    "maxItems": 4,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "id": {
+                                          "type": "string",
+                                          "format": "uuid",
+                                          "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+                                        },
+                                        "fullName": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "age": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 18,
+                                          "maximum": 99
+                                        },
+                                        "jobRole": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "whosMoving": {
+                                          "type": "string",
+                                          "enum": [
+                                            "student",
+                                            "first_job",
+                                            "working",
+                                            "couple",
+                                            "family",
+                                            "friends",
+                                            "unclear"
+                                          ]
+                                        },
+                                        "budgetMin": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "budgetMax": {
+                                          "nullable": true,
+                                          "type": "integer",
+                                          "minimum": 0,
+                                          "maximum": 100000000
+                                        },
+                                        "moveDate": {
+                                          "nullable": true,
+                                          "type": "string",
+                                          "format": "date",
+                                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
+                                        },
+                                        "lifestyle": {
+                                          "type": "object",
+                                          "properties": {
+                                            "food": {
+                                              "type": "string",
+                                              "enum": [
+                                                "veg",
+                                                "non_veg",
+                                                "eggetarian",
+                                                "jain"
+                                              ]
+                                            },
+                                            "smoking": {
+                                              "type": "string",
+                                              "enum": [
+                                                "non_smoker",
+                                                "smoker",
+                                                "smoke_outside"
+                                              ]
+                                            },
+                                            "drinks": {
+                                              "type": "string",
+                                              "enum": [
+                                                "none_at_home",
+                                                "fine_at_home"
+                                              ]
+                                            },
+                                            "guests": {
+                                              "type": "string",
+                                              "enum": [
+                                                "weekends_only",
+                                                "guests_welcome",
+                                                "guests_rarely"
+                                              ]
+                                            },
+                                            "your_days": {
+                                              "type": "string",
+                                              "enum": [
+                                                "out_most_days",
+                                                "home_most_days",
+                                                "night_shifts",
+                                                "student"
+                                              ]
+                                            },
+                                            "sleep": {
+                                              "type": "string",
+                                              "enum": [
+                                                "night_owl",
+                                                "early_bird"
+                                              ]
+                                            },
+                                            "tidiness": {
+                                              "type": "string",
+                                              "enum": [
+                                                "very_tidy",
+                                                "tidy_enough",
+                                                "relaxed_about_mess"
+                                              ]
+                                            },
+                                            "pets": {
+                                              "type": "string",
+                                              "enum": [
+                                                "no_pets",
+                                                "fine_with_pets"
+                                              ]
+                                            }
+                                          },
+                                          "additionalProperties": false
+                                        },
+                                        "verified": {
+                                          "type": "boolean"
+                                        }
+                                      },
+                                      "required": [
+                                        "id",
+                                        "fullName",
+                                        "age",
+                                        "jobRole",
+                                        "whosMoving",
+                                        "budgetMin",
+                                        "budgetMax",
+                                        "moveDate",
+                                        "lifestyle",
+                                        "verified"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  }
+                                },
+                                "required": [
+                                  "kind",
+                                  "options"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "notes": {
+                            "default": false,
+                            "type": "boolean"
+                          },
+                          "sameMove": {
+                            "default": null,
+                            "nullable": true,
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "title"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time",
+                            "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                          }
+                        },
+                        "required": [
+                          "id",
+                          "role",
+                          "text",
+                          "chips",
+                          "comparison",
+                          "notes",
+                          "sameMove",
+                          "createdAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    },
+                    "typedTurnsLeft": {
+                      "default": null,
+                      "nullable": true,
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "outsidePlaces": {
+                      "default": [],
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "vasai-virar",
+                          "kalyan-dombivli",
+                          "bhiwandi",
+                          "ulhasnagar",
+                          "ambernath",
+                          "badlapur",
+                          "karjat",
+                          "uran",
+                          "pune",
+                          "nashik",
+                          "nagpur",
+                          "delhi",
+                          "gurugram",
+                          "noida",
+                          "bengaluru",
+                          "hyderabad",
+                          "chennai",
+                          "kolkata",
+                          "ahmedabad",
+                          "surat",
+                          "jaipur",
+                          "indore",
+                          "goa",
+                          "lucknow",
+                          "kanpur",
+                          "patna",
+                          "bhopal",
+                          "visakhapatnam",
+                          "vadodara",
+                          "chandigarh",
+                          "kochi"
+                        ]
+                      }
+                    },
+                    "title": {
+                      "default": "New goal",
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "goalId",
+                    "form",
+                    "turns",
+                    "typedTurnsLeft",
+                    "outsidePlaces",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "error"
                   ],
                   "additionalProperties": false
                 }

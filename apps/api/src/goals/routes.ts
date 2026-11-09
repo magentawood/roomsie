@@ -2,10 +2,12 @@ import type { FastifyInstance, FastifyRequest } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import { z } from 'zod'
 import {
-  closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, notesResponse, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
-  type AnalyticsEvent, type ChipTap, type Comparison,
+  assistantParts, closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, notesResponse,
+  sameMoveBody, sameMoveLabels, sameMoveResponse, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
+  type AnalyticsEvent, type AssistantParts, type ChipTap, type Comparison, type FormA, type TurnLabel,
 } from '@roomsie/contract'
-import { runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
+import { heldReply, runHeld, runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
+import { languageOf, lineOf } from '../assistant/lines'
 import { observer } from '../assistant/handlers/observer/observer'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { comparisonOf } from '../compare/compare'
@@ -14,8 +16,10 @@ import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft
 import type { LimitSettings } from './settings'
 import { deleteObservation, notesOf, observationsOf, saveObservation } from '../observations/read'
 import { joinWaitlist } from '../waitlist/store'
+import { sameMoveOf } from './same-move'
 import {
-  claimSession, createGoal, createVisitorSession, goalOf, goalsOf, lastRegisterOf, lastReplyOf, notesHintDue, ownerOf, recentTurnsOf, saveOnGoalOwner, saveTurn, setGoalStatus, titleOf, turnsOf, visitorSessionOf, type Asker, type UserTurn,
+  claimSession, createGoal, createVisitorSession, firstTypedTurnOf, goalOf, goalsOf, lastRegisterOf, lastReplyOf, moveHeld, notesHintDue, ownerOf, recentTurnsOf, saveOnGoalOwner, saveTurn, setGoalStatus, titleOf, turnsOf,
+  visitorSessionOf, type Asker, type UserTurn,
 } from './store'
 
 /** The user agent only goes into the device hash, so any length passes. */
@@ -47,8 +51,12 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       asker.sessionId = session.id
       visitorKey = session.key
     }
-    const goal = await createGoal(options.db, asker, start)
-    const form = start?.form ?? formA.parse({})
+    // The answers of the onboarding wait for "Same move?" too, when an open goal looks like the same move.
+    const target = start && await sameMoveOf(options.db, asker, start.form)
+    const held = target && { form: formA.parse({}), reply: heldReply({ ...target, values: start.values, ambiguous: [], outsidePlaces: [], typed: false }, 'en') }
+    const goal = await createGoal(options.db, asker, held || start)
+    if (held) v1.analytics.track(req, { name: 'same_move', step: 'asked' })
+    const form = held ? held.form : start?.form ?? formA.parse({})
     return reply.code(201).send({
       ...goal, form, visitorKey, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces: [], status: 'open', title: await titleOf(options.db, form),
     })
@@ -120,14 +128,19 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     }
     const input = { goalId: goal.id, last, form: goal.form, lastRegister: await lastRegisterOf(options.db, goal.id), notesHint: await notesHintDue(options.db, asker) }
     const deps = { ...options, req }
-    const turn = 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, comparison }, req.body.text, asker, deps)
+    // While "Same move?" waits, a message changes nothing: the question comes again, with no model call.
+    if (last?.held && 'tap' in req.body) return reply.code(409).send({ error: 'Tap one of the two answers first.' })
+    const turn = last?.held && 'text' in req.body ? heldAgain(input, last, req.body.text)
+      : 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, comparison }, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
     // A place that a turn names again moves to the end, so the newest place is last (T-22b).
     const named = new Set(turn.outsidePlaces)
     const outsidePlaces = [...goal.outsidePlaces.filter((place) => !named.has(place)), ...named]
     const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form: turn.form, outsidePlaces }, turn.user, turn.reply)
     if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: send the message again' })
-    if (!last) v1.analytics.track(req, { name: 'interview_started' })
+    // A held first message starts the interview only after "No, it's a separate move".
+    if (!last && !turn.held) v1.analytics.track(req, { name: 'interview_started' })
+    if (!last && turn.held) v1.analytics.track(req, { name: 'same_move', step: 'asked' })
     for (const event of turn.events) v1.analytics.track(req, event)
     const after = await capStateOf(options.db, asker, options.limits)
     // The wall opens at the moment of the cap, so the event goes with the turn that reaches it (PD9).
@@ -144,6 +157,44 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       })
     }
     return { form: turn.form, turns, typedTurnsLeft: typedTurnsLeft(after), outsidePlaces, title }
+  })
+
+  // The answer to "Same move?" (Figma 67:6489). A chip: no limit and no model call (PD9).
+  app.post('/goals/:id/same-move', {
+    preHandler: optionalUser(options), schema: { headers, params, body: sameMoveBody, response: { 200: sameMoveResponse, 404: errorResponse, 409: errorResponse } },
+  }, async (req, reply) => {
+    const asker = await askerOf(req, req.headers[visitorKeyHeader])
+    const goal = await goalOf(options.db, req.params.id, asker)
+    if (!goal) return reply.code(404).send({ error: 'not found' })
+    if (goal.status === 'closed') return reply.code(409).send({ error: 'This goal is closed. Reopen it to keep chatting.' })
+    const held = (await lastReplyOf(options.db, goal.id))?.held
+    if (!held) return reply.code(409).send({ error: 'This question has its answer already.' })
+    const lastRegister = await lastRegisterOf(options.db, goal.id)
+    const deps = { ...options, req }
+    const placesOf = (earlier: typeof goal.outsidePlaces) => [...earlier.filter((place) => !held.outsidePlaces.includes(place)), ...held.outsidePlaces]
+    const answered = async (goalId: string, form: typeof goal.form, outsidePlaces: typeof goal.outsidePlaces, turns: z.infer<typeof sameMoveResponse>['turns']) => {
+      v1.analytics.track(req, { name: 'same_move', step: req.body.answer })
+      return { goalId, form, turns, typedTurnsLeft: typedTurnsLeft(await capStateOf(options.db, asker, options.limits)), outsidePlaces, title: await titleOf(options.db, form) }
+    }
+
+    if (req.body.answer === 'separate') {
+      const { form, reply: answer } = await runHeld({ held, form: goal.form, last: null, lastRegister }, deps)
+      const outsidePlaces = placesOf(goal.outsidePlaces)
+      const user = { text: sameMoveLabels.separate, inputMethod: 'chip', parts: { version: 1, sameMove: 'separate' }, ownValues: { religion: null, community: null } } satisfies UserTurn
+      const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form, outsidePlaces }, user, answer)
+      if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: try again' })
+      if (held.typed) v1.analytics.track(req, { name: 'interview_started' })
+      return answered(goal.id, form, outsidePlaces, turns)
+    }
+
+    const other = await goalOf(options.db, held.goalId, asker)
+    if (!other || other.status === 'closed') return reply.code(409).send({ error: "Your other chat is closed now. Tap \"No, it's a separate move\" to go on here." })
+    const { form, reply: answer } = await runHeld({ held, form: other.form, last: await lastReplyOf(options.db, other.id), lastRegister }, deps)
+    const outsidePlaces = placesOf(other.outsidePlaces)
+    const heldTurnId = held.typed ? await firstTypedTurnOf(options.db, goal.id) : null
+    const turns = await moveHeld(options.db, { id: goal.id, asker, heldTurnId }, { id: other.id, seen: other.updatedAt }, { form, outsidePlaces }, answer)
+    if (!turns) return reply.code(409).send({ error: 'the chat changed in a different tab: try again' })
+    return answered(other.id, form, outsidePlaces, turns)
   })
 
   // Safe to repeat: a second claim moves nothing (T-17).
@@ -183,11 +234,23 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 async function typedTurn(input: TurnInput & { comparison: Comparison | null }, text: string, asker: Asker, deps: AssistantDeps) {
   const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
-  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces, notePlan } = await runTurn({ ...input, text, context }, deps)
+  const sameMove = (form: FormA) => sameMoveOf(deps.db, asker, form, input.goalId)
+  const { form, reply, conflicts, label, ownValues, hiddenPreferences: preferences, outsidePlaces, notePlan, held } = await runTurn({ ...input, text, context, sameMove }, deps)
   // The log of PD3c: each hidden preference that this turn stated stays on the turn (T-58).
   const parts = { ...label, ...(Object.keys(preferences).length && { preferences }) }
   const events: AnalyticsEvent[] = [...conflicts.map(({ slot }) => ({ name: 'slot_conflict' as const, slot })), { name: 'turn_routed', band: label.band }]
-  return { form, reply, user: { text, inputMethod: 'typed', parts, ownValues } satisfies UserTurn, events, outsidePlaces, notePlan }
+  return { form, reply, user: { text, inputMethod: 'typed', parts, ownValues } satisfies UserTurn, events, outsidePlaces, notePlan, held }
+}
+
+/**
+ * A typed message while "Same move?" waits: the question again, and no change. No model reads the message, so its label has no band of
+ * the router. It keeps the register of the held message, so the next replies keep its language.
+ */
+function heldAgain(input: Pick<TurnInput, 'lastRegister' | 'form'>, last: AssistantParts, text: string) {
+  const parts: TurnLabel = { version: 1, kinds: [], band: 'core', register: input.lastRegister, danger: false, community: false, notes: false, routerBand: null }
+  const reply = { version: 1 as const, text: lineOf('sameMoveAgain', languageOf(input.lastRegister)), parts: assistantParts.parse({ ...last, question: null }) }
+  const user = { text, inputMethod: 'typed', parts, ownValues: { religion: null, community: null } } satisfies UserTurn
+  return { form: input.form, reply, user, events: [] as AnalyticsEvent[], outsidePlaces: [], notePlan: null, held: true }
 }
 
 /** A tap is not one of the typed turns of the turn cap, and has no label of the router (PD9, T-09). */
@@ -195,5 +258,5 @@ async function tapTurn(input: TurnInput, tap: ChipTap, deps: AssistantDeps) {
   const tapped = await runTap({ ...input, tap }, deps)
   if (!tapped) return null
   const user = { text: tapped.text, inputMethod: 'chip', parts: { version: 1, tap }, ownValues: tapped.ownValues } satisfies UserTurn
-  return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [], notePlan: null }
+  return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [], notePlan: null, held: false }
 }

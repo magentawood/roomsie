@@ -45,6 +45,9 @@ export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: F
   return slot && isOpenSlot(slotOf(form, slot)) ? slot : null
 }
 
+/** The question "Same move?" waits for one of its two chips while it is the newest turn (Figma 67:6489). */
+export const sameMoveOf = (turns: readonly GoalResponse['turns'][number][]) => turns.at(-1)?.sameMove ?? null
+
 /** For the minutes of a deploy, the old API refuses a chip of T-59 as a body that is not valid (api.md). */
 export const tapRefusal = (error: string) => (error === 'not valid: body' ? 'These buttons start in a few minutes. Type your answer for now.' : null)
 

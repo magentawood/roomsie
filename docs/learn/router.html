@@ -58,12 +58,12 @@ details.callout[open] summary{color:var(--fg)}
 </tr>
 <tr>
 <td>General (band 2a)</td>
-<td>"Good question. I can't answer that one yet, but I've noted it.", then the question</td>
+<td>A short answer of the advisor, then "That's general guidance: the details differ from flat to flat. Back to it: …" with the chips. With no answer: "Good question. I can't answer that one yet, but I've noted it.", then the question</td>
 <td>Only when the message also has filter details</td>
 </tr>
 <tr>
 <td>Consequential (band 2b)</td>
-<td>A hand-off line that names a lawyer or a CA, the IGR Maharashtra site, and a visit after dark, then the question</td>
+<td>A hand-off line that names a lawyer or a CA, the IGR Maharashtra site, a visit after dark and a doctor, then the question</td>
 <td>Only when the message also has filter details</td>
 </tr>
 <tr>
@@ -84,6 +84,8 @@ details.callout[open] summary{color:var(--fg)}
 </tbody>
 </table>
 <ul>
+<li><strong>The advisor</strong> answers a general question from model knowledge, for each person, until T-38 adds the articles and the web search (<a href="../decisions/pd-10-scope-bands.md">PD10</a>). It knows the tips and the steps of the hunt, the documents, and the usual deposit and brokerage. It also knows a rent agreement and the police verification at a basic level, a visit and a budget. It reads only the message and the language of the reply, never Form A, Form B or the chat.</li>
+<li><strong>The cost of an answer.</strong> The advisor is one more call after the router, only on a 2a turn. <code>ADVISOR_DEADLINE_MS</code> (7000, not measured yet) limits all its attempts. An answer over 900 characters, or with a phone number, an email or a link, does not go out. An empty answer means that the question is not general. In each of these cases, the line "I've noted it" goes out.</li>
 <li><code>notes</code> marks the question "what do you know about me?". A scripted line answers it, and the web shows the notes (<a href="form-b-notes.html">Form B notes</a>).</li>
 <li><code>community</code> marks a stated community or religion preference. The label is the log that <a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a> asks for. T-58 adds the filter.</li>
 </ul>
@@ -109,6 +111,10 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>apps/api/src/assistant/handlers/reply/</code>, and the texts in <code>apps/api/src/assistant/lines.json</code></td>
 </tr>
 <tr>
+<td>The advisor, its prompt and its check</td>
+<td><code>apps/api/src/assistant/handlers/advisor/</code></td>
+</tr>
+<tr>
 <td>The answer, the label and the <code>turn_routed</code> event</td>
 <td><code>packages/contract/src/goals.ts</code>, <code>events.ts</code></td>
 </tr>
@@ -127,7 +133,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="gotchas">Gotchas</h2>
 <ul>
 <li><strong>An off-topic message still costs two calls.</strong> The extractor starts before the label comes, and the turn drops its answer.</li>
-<li><strong>The fake vendors of the tests know a router call by its prompt.</strong> A test that gives the router no replies gets a sure core label. <code>requests.router</code> holds the calls of the router.</li>
+<li><strong>The fake vendors of the tests know a router call by its prompt.</strong> A test that gives the router no replies gets a sure core label. <code>requests.router</code> holds the calls of the router. An advisor call with no replies fails, so the line "I've noted it" goes out.</li>
 <li><strong>To read the flagged messages,</strong> query the typed turns: <code>select text from chat_turns where role = 'user' and parts-&gt;&gt;'band' = 'adversarial'</code>.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
@@ -135,5 +141,6 @@ details.callout[open] summary{color:var(--fg)}
 <li>T-34: the router, the bands and the label.</li>
 <li>T-61: <a href="https://github.com/magentawood/roomsie/pull/229">#229</a>, 2026-11-05. The eval of the other bands and the value of the threshold.</li>
 <li>T-58: the hidden community filter. T-36, T-38 and T-13: the observer, the advisor and the reply writer that use the label.</li>
+<li><a href="https://github.com/magentawood/roomsie/pull/269">#269</a>, 2026-11-09. The advisor answers band 2a from model knowledge, and health questions go to the hand-off line.</li>
 </ul>
 </main>

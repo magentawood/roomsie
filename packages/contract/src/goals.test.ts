@@ -10,7 +10,7 @@ describe('a reply of the API before a deploy', () => {
   })
 
   it('reads a goal and a turn with no chips and no count of free messages', () => {
-    expect(goalResponse.parse({ id: olderTurn.id, form: formA.parse({}), turns: [olderTurn] })).toMatchObject({ typedTurnsLeft: null, status: 'open', title: 'New goal', turns: [{ chips: null }] })
+    expect(goalResponse.parse({ id: olderTurn.id, form: formA.parse({}), turns: [olderTurn] })).toMatchObject({ typedTurnsLeft: null, status: 'open', title: 'New goal', turns: [{ chips: null, sameMove: null }] })
   })
 })
 

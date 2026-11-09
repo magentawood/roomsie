@@ -8,6 +8,8 @@ const alwaysCapital = new Set(['roomsie', 'mumbai', 'pg', 'bhk', 'ok'])
 const isPronounI = (word: string) => /^i(?:['’](?:m|ve|ll|d))?$/i.test(word)
 const email = /\S+@\S+\.\S+/
 const link = /https?:\/\/|www\.|\b[\w-]+\.(?:com|in|org|net|co|io|me|app)\b/i
+/** A phone number, an email address or a link: no generated text has one (PD17). The advisor uses it too. */
+export const hasContact = (text: string) => maskContacts(text) !== text || email.test(text) || link.test(text)
 
 const numbersIn = (text: string) => [...(plainWords(text).match(/\d[\d,]*(?:\.\d+)?/g) ?? []).map((n) => Number(n.replaceAll(',', ''))), ...wordAmountsIn(text)]
 const wordsIn = (text: string) => text.split(/\s+/).map((word) => word.replace(/^[^\p{L}]+|[^\p{L}]+$/gu, '')).filter(Boolean)
@@ -37,7 +39,7 @@ export function checkFailure(text: string, context: CheckContext): CheckFailure 
   // A reply in Hinglish, Hindi or Marathi runs longer than the English plan.
   if (text.length > Math.max(300, draft.length * 2)) return 'too_long'
   if (draft.includes('?') && !text.includes('?')) return 'no_question'
-  if (maskContacts(text) !== text || email.test(text) || link.test(text)) return 'contact'
+  if (hasContact(text)) return 'contact'
 
   // "₹20,000" in the draft lets "20k" and "20 hazaar" through, and "₹1,50,000" lets "1.5 lakh" through.
   const planNumbers = new Set(numbersIn(`${draft} ${message}`).flatMap((n) => [n, n / 1000, n / 100_000]))

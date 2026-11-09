@@ -8,7 +8,7 @@ import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
 import { capWall, formA, goalResponse, intentsOf, listingTitle, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type ListingResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
-import { canSend, chatStorage, chipsOf, keyAction, readStored, tapRefusal, writeStored } from '../../lib/chat'
+import { canSend, chatStorage, chipsOf, keyAction, readStored, sameMoveOf, tapRefusal, writeStored } from '../../lib/chat'
 import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
@@ -28,6 +28,7 @@ import { FoundFlow } from './found-dialogs'
 import { FollowUps, NoticedBox } from './noticed'
 import { followUps, noteLines, type FollowUp } from '../../lib/noticed'
 import { NotesList } from './notes'
+import { SameMoveChips } from './same-move'
 import { GoalHeader } from '../goals/goal-list'
 
 /** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
@@ -231,6 +232,8 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The chips go away while a reply is pending, and the reply brings the chips of its own question.
   const chipSlot = send.isPending || closed ? null : chipsOf(turns, chatForm)
   const chips = chipSlot && <Chips key={turns.at(-1)?.id} slot={chipSlot} form={chatForm} onTap={tap} />
+  // "Same move?" holds the first message until the person picks one of its two chips (Figma 67:6489).
+  const sameMove = send.isPending || closed ? null : sameMoveOf(turns)
   // "Roomsie Noticed" and the chips under it follow the newest results, and wait while a reply is on its way (flow 02).
   const areaName = (slug: string) => areaLabels[slug] ?? slug
   const nextSteps = shown && !preview && !send.isPending && !closed
@@ -293,6 +296,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
             <li className="motion-safe:animate-fade-in lg:hidden"><WaitlistForm key={waitlist.place} {...waitlist} footer={<LookInMumbai onPick={pickArea} />} /></li>
           )}
           {chips && <li className="motion-safe:animate-fade-in">{chips}</li>}
+          {sameMove && goalId && <li className="motion-safe:animate-fade-in"><SameMoveChips key={goalId} goalId={goalId} title={sameMove.title} /></li>}
           {pending !== undefined && (
             <li className="mt-3 flex flex-col gap-8 first:mt-0 motion-safe:animate-fade-in lg:mt-5 lg:gap-10 lg:first:mt-0">
               <UserText text={pending} />
