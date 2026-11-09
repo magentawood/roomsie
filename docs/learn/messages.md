@@ -53,3 +53,4 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 
 - T-44: [#160](https://github.com/magentawood/roomsie/pull/160), 2026-10-27. Conversations, messages, the private channels and Deleted user.
 - T-45: [#167](https://github.com/magentawood/roomsie/pull/167), 2026-10-27. The inbox, the requests and the thread on the web, and the live channel.
+- The founders, 2026-11-09: [#267](https://github.com/magentawood/roomsie/pull/267). "Not interested" in the report modal, and no Block in the web.

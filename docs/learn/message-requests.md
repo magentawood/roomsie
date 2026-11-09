@@ -62,3 +62,4 @@ The person detail at `/people/[id]` shows one connect state from this connection
 - T-18b: [#159](https://github.com/magentawood/roomsie/pull/159), 2026-10-26. The person detail and its connect states.
 - T-44: [#160](https://github.com/magentawood/roomsie/pull/160), 2026-10-27. The note opens the conversation, and a deletion keeps the requests.
 - T-45: [#167](https://github.com/magentawood/roomsie/pull/167), 2026-10-27. The requests screen, the sent requests in the inbox, the message button of a listing, and the live "request" event.
+- The founders, 2026-11-09: [#267](https://github.com/magentawood/roomsie/pull/267). "Not interested" in the report modal, and no Block in the web.

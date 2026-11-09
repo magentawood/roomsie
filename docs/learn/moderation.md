@@ -62,3 +62,4 @@ report ──▶ safety reason, or open reports from 2 people? ──yes──�
 
 - T-19: [#158](https://github.com/magentawood/roomsie/pull/158), 2026-10-26. Person reports, blocks, the settings, the admin routes and the admin screen.
 - T-63: [#230](https://github.com/magentawood/roomsie/pull/230), 2026-11-05. People and listings, the actions with the log, and the remove of a listing.
+- The founders, 2026-11-09: [#267](https://github.com/magentawood/roomsie/pull/267). "Not interested" in the report modal, and no Block in the web.
