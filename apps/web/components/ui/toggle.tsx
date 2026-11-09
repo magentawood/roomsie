@@ -1,3 +1,6 @@
+/** Off: a gray track with a thin line, so the switch shows on a white page too. */
+const offTrack = 'bg-quaternary shadow-[inset_0_0_0_1px_var(--border-color-primary)]'
+
 export function Toggle({ title, help, checked, onChange, disabled, problem }: {
   title: string; help: string; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean; problem?: string | null
 }) {
@@ -9,7 +12,7 @@ export function Toggle({ title, help, checked, onChange, disabled, problem }: {
         {problem && <span role="alert" className="text-sm text-error-primary">{problem}</span>}
       </span>
       <button type="button" role="switch" aria-checked={checked} disabled={disabled} onClick={() => onChange(!checked)}
-        className={`relative mt-1 h-5 w-9 shrink-0 rounded-full transition-colors outline-focus-ring focus-visible:outline-2 disabled:opacity-50 ${checked ? 'bg-brand-solid' : 'bg-tertiary'}`}>
+        className={`relative mt-1 h-5 w-9 shrink-0 rounded-full transition-colors outline-focus-ring focus-visible:outline-2 disabled:opacity-50 ${checked ? 'bg-brand-solid' : offTrack}`}>
         <span className={`absolute top-0.5 left-0.5 size-4 rounded-full bg-primary shadow-sm transition-transform ${checked ? 'translate-x-4' : ''}`} />
       </button>
     </label>

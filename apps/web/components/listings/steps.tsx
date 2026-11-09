@@ -11,9 +11,6 @@ import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
 import { Field, NumberInput, TextArea, TextInput, inputClass } from '../ui/field'
 import { Checkbox, Toggle } from '../ui/toggle'
 
-/** Free text is masked at save (PD17). The line under the field tells the lister. */
-const maskedHint = 'Phone numbers are hidden.'
-
 /** `errors` has the line to show under each field that the check before the save refused, by field path. */
 type StepProps = { kind: ListingKind; values: ListingEdit; set: (patch: ListingEdit) => void; errors: Record<string, string> }
 
@@ -46,18 +43,18 @@ export function WhereStep({ kind, values, set, errors, areas }: StepProps & { ar
   const pockets = subArea ? tree.under(subArea) : []
   return (
     <>
-      {kind === 'pg' && <TextInput label="PG/Hostel Name" required value={values.pgName} onChange={(pgName) => set({ pgName })} placeholder="Name of your PG/Hostel" hint={maskedHint} maxLength={textLimits.pgName} />}
+      {kind === 'pg' && <TextInput label="PG/Hostel Name" required value={values.pgName} onChange={(pgName) => set({ pgName })} placeholder="Name of your PG/Hostel" maxLength={textLimits.pgName} />}
       <ChoiceChips label="Area group" required labels={areaNames(tree.groups)} value={group} onChange={(picked) => { setGroup(picked); set({ areaSlug: null }) }} />
       {group && <ChoiceChips label="Sub-area" required labels={areaNames(tree.under(group))} value={subArea} onChange={(areaSlug) => set({ areaSlug })} />}
       {subArea && pockets.length > 0 && (
         <ChoiceChips label={`Which part of ${tree.label(subArea)}?`} hint={`Optional. Skip it to keep ${tree.label(subArea)}.`}
           labels={areaNames(pockets)} value={saved.pocket} onChange={(pocket) => set({ areaSlug: pocket ?? subArea })} />
       )}
-      <TextInput label="Address" value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint={`Only you see it, unless you share it below. ${maskedHint}`} maxLength={textLimits.address} />
+      <TextInput label="Address" value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint="Only you see it, unless you share it below." maxLength={textLimits.address} />
       <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-        <TextInput label="Building or society" value={values.building} onChange={(building) => set({ building })} placeholder="eg. Silver oak residency" hint={maskedHint} maxLength={textLimits.building} />
-        <TextInput label="Street" value={values.street} onChange={(street) => set({ street })} placeholder="eg. lokhandwala road" hint={maskedHint} maxLength={textLimits.street} />
-        <TextInput label="Nearest landmark" value={values.landmark} onChange={(landmark) => set({ landmark })} placeholder="eg. Opposite infinity mall, near lokhandwala" hint={maskedHint} maxLength={textLimits.landmark} />
+        <TextInput label="Building or society" value={values.building} onChange={(building) => set({ building })} placeholder="eg. Silver oak residency" maxLength={textLimits.building} />
+        <TextInput label="Street" value={values.street} onChange={(street) => set({ street })} placeholder="eg. lokhandwala road" maxLength={textLimits.street} />
+        <TextInput label="Nearest landmark" value={values.landmark} onChange={(landmark) => set({ landmark })} placeholder="eg. Opposite infinity mall, near lokhandwala" maxLength={textLimits.landmark} />
         <Field label="Pincode" error={errors.pincode}>
           {(id) => (
             <input id={id} className={inputClass} inputMode="numeric" maxLength={6} placeholder="eg. 411028" value={values.pincode ?? ''} aria-invalid={errors.pincode ? true : undefined}
@@ -76,7 +73,7 @@ export function NearbyStep({ values, set }: StepProps) {
   )
   return (
     <>
-      <TextInput label="Nearest Railway/Metro/Bus station" value={values.nearestStation} onChange={(nearestStation) => set({ nearestStation })} placeholder="eg. Andheri station, DN nagar metro" hint={maskedHint} maxLength={textLimits.nearestStation} />
+      <TextInput label="Nearest Railway/Metro/Bus station" value={values.nearestStation} onChange={(nearestStation) => set({ nearestStation })} placeholder="eg. Andheri station, DN nagar metro" maxLength={textLimits.nearestStation} />
       <div className="flex flex-col gap-1 border-t border-secondary pt-5">
         <h3 className="text-md font-semibold text-primary">Close or far?</h3>
         <p className="text-sm text-tertiary">The most asked question on roomsie.</p>
@@ -210,9 +207,9 @@ export function PeopleStep({ values, set, errors, listingId, previews, addPrevie
             <PhotoPicker target={listingUpload(listingId)} label="Add a photo" onUploaded={(key, url) => { addPreview(key, url); update(i, { photoKey: key }) }} />
           )}
           <div className="grid gap-5 md:grid-cols-2 md:gap-8">
-            <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" hint={maskedHint} maxLength={textLimits.flatmateName} />
+            <TextInput label="Name" required error={errors[`flatmates.${i}.name`]} value={mate.name} onChange={(name) => update(i, { name: name ?? '' })} placeholder="eg. Radhika" maxLength={textLimits.flatmateName} />
             <NumberInput label="Age" error={errors[`flatmates.${i}.age`]} value={mate.age} onChange={(age) => update(i, { age })} placeholder="eg. 24" />
-            <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" hint={maskedHint} maxLength={textLimits.whatTheyDo} />
+            <TextInput label="What they do" value={mate.whatTheyDo} onChange={(whatTheyDo) => update(i, { whatTheyDo })} placeholder="eg. Business analyst" maxLength={textLimits.whatTheyDo} />
             <Field label="Food">
               {(id) => (
                 <select id={id} className={inputClass} value={mate.food ?? ''} onChange={(e) => update(i, { food: (e.target.value || null) as typeof mate.food })}>
@@ -241,7 +238,7 @@ export function PhotosStep({ values, set, listingId, previews, addPreview }: Ste
         {keys.map((key, i) => <Thumb key={key} src={previews[key]} label={`Remove photo ${i + 1}`} onRemove={() => set({ photoKeys: keys.filter((k) => k !== key) })} />)}
       </div>
       {keys.length < maxPhotos && <PhotoPicker target={listingUpload(listingId)} label="Click to upload a photo" onUploaded={(key, url) => { addPreview(key, url); set({ photoKeys: [...keys, key] }) }} />}
-      <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" hint={maskedHint} maxLength={textLimits.description} />
+      <TextArea label="Anything else you want the renter to know" value={values.description} onChange={(description) => set({ description })} placeholder="Enter a description" maxLength={textLimits.description} />
     </>
   )
 }
