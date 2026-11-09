@@ -80,4 +80,5 @@ export const profileLabels = {
   budget: Object.fromEntries(bands.map((band) => [band.id, band.label])) as Record<BudgetBand, string>,
 }
 
-export const firstName = (fullName: string) => fullName.split(/\s+/)[0] ?? fullName
+/** The first word of a name. The demo cards of the launch are "Demo · Riya S.", so their first name is the word after the mark. */
+export const firstName = (fullName: string) => fullName.replace(/^Demo · /, '').split(/\s+/)[0] ?? fullName
