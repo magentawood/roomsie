@@ -81,7 +81,7 @@ function EmptyChat({ onSend, children }: { onSend: (text: string) => void; child
       <div className="flex w-full max-w-210 flex-col gap-4">
         <ChatInput grow="down" onSend={onSend} />
         {children}
-        <p className="text-sm text-tertiary">
+        <p className="text-center text-sm text-tertiary">
           Prefer quick questions? <Link href={onboardingAgainHref} className="font-medium text-secondary underline underline-offset-2 outline-focus-ring hover:text-primary focus-visible:outline-2">Answer them here</Link>
         </p>
       </div>
