@@ -522,6 +522,14 @@ describe('the start of a goal from the onboarding (T-48)', () => {
     expect(goal.turns[0]!.text).toBe('Got it: flatmates to rent with, working, Veg kitchen (a must), Women only (a must). Which areas of Mumbai work for you?')
   })
 
+  it('takes two area groups or more as areas, and refuses a sub-area, one area as a list, or both fields', async () => {
+    const goal = newGoalResponse.parse((await start({ intent: 'room', areas: ['bandra-santacruz', 'powai-vikhroli'] })).json())
+    expect(goal.form.areas).toEqual({ source: 'stated', value: ['bandra-santacruz', 'powai-vikhroli'] })
+    expect((await start({ areas: ['bandra-santacruz', 'bandra-west'] })).statusCode).toBe(400)
+    expect((await start({ areas: ['thane'] })).statusCode).toBe(400)
+    expect((await start({ area: 'thane', areas: ['bandra-santacruz', 'powai-vikhroli'] })).statusCode).toBe(400)
+  })
+
   it('asks the first question, with its chips, when each step was skipped', async () => {
     const goal = newGoalResponse.parse((await start({})).json())
     expect(goal.turns.map(({ text, chips }) => [text, chips])).toEqual([[intentQuestion, 'intent']])

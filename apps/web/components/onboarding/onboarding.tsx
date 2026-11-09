@@ -11,7 +11,7 @@ import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
 import { chatStorage, writeStored } from '../../lib/chat'
 import { goalHref } from '../../lib/goals'
-import { answered, pickMustHaves, progressOf, startOf, stepBeside, withoutAnswer, withPurpose, type Answers, type Step } from '../../lib/onboarding'
+import { answered, progressOf, startOf, stepBeside, withoutAnswer, withPurpose, type Answers, type Step } from '../../lib/onboarding'
 import { profileLabels, type DescribesYou } from '../../lib/profile-form'
 import { queryKeys, useAreas } from '../../lib/queries'
 import { GoogleMark, LegalLine } from '../shell/google-sign-in'
@@ -23,9 +23,10 @@ import { StepBar } from '../ui/step-bar'
 const screens: Record<Step, { title: string; text?: string; art: string; position: string }> = {
   purpose: { title: 'What brings you to Roomsie?', art: 'purpose', position: 'object-[50%_77%] lg:object-[33%_50%]' },
   whosMoving: { title: 'Who’s moving?', text: 'So I show you the right kind of places.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
+  livesWith: { title: 'Who would you like to live with?', text: 'So I show you the right flatmates.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
   intent: { title: 'What kind of place?', text: 'Pick one. You can add more later in the chat.', art: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
   budget: { title: 'Budget per month?', text: 'Your share of the rent.', art: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
-  area: { title: 'Where do you want to live?', text: 'Pick one for now. Or skip and I’ll look across Mumbai.', art: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
+  areas: { title: 'Where do you want to live?', text: 'Pick one or more. Or skip and I’ll look across Mumbai.', art: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
   mustHaves: { title: 'Must-haves in a flatmate?', text: 'Pick any. I’ll show only the flatmates who fit them.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
   signIn: { title: 'Sign in to continue', text: 'Unlimited chats and multiple goals, all synced up with your account.', art: 'sign-in', position: 'object-[50%_77%] lg:object-[87%_50%]' },
 }
@@ -35,7 +36,9 @@ const flatmateScreens: Partial<Record<Step, { title: string; text: string }>> = 
 }
 const aboutYouLabels = { student: 'Student', first_job: 'Starting my first job', working: 'Working' } satisfies Partial<Record<DescribesYou, string>>
 type AboutYou = keyof typeof aboutYouLabels
-const flatmateMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'women_only', 'men_only', 'tidy_flatmates'] as const
+// The gender of the flatmates has its own question.
+const flatmateMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'tidy_flatmates'] as const
+const livesWithLabels = { women: 'Female flatmates', men: 'Male flatmates', any: 'Both are fine' }
 const screenOf = (step: Step, answers: Answers) => ({ ...screens[step], ...(answers.purpose === 'flatmate' && flatmateScreens[step]) })
 
 function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onChange: (answers: Answers) => void }) {
@@ -66,14 +69,17 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
           )}
         </div>
       )
+    case 'livesWith':
+      return <ChoiceChips labelHidden label={screens.livesWith.title} labels={livesWithLabels} value={answers.livesWith} onChange={pick('livesWith')} />
     case 'intent':
       return <ChoiceChips labelHidden label={screens.intent.title} labels={intentLabels} value={answers.intent} onChange={pick('intent')} />
     case 'budget':
       return <ChoiceChips labelHidden label={screens.budget.title} labels={profileLabels.budget} value={answers.budget} onChange={pick('budget')} />
-    case 'area':
-      return <ChoiceChips labelHidden label={screens.area.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.area} onChange={pick('area')} />
+    case 'areas':
+      return <MultiChips labelHidden label={screens.areas.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.areas}
+        onChange={(slugs) => pick('areas')(slugs.length ? slugs : undefined)} />
     case 'mustHaves':
-      return <MultiChips labelHidden label={screens.mustHaves.title} labels={profileLabels.mustHaves} only={flatmateMustHaves} value={answers.mustHaves} onChange={(keys) => pick('mustHaves')(pickMustHaves(keys, answers.mustHaves))} />
+      return <MultiChips labelHidden label={screens.mustHaves.title} labels={profileLabels.mustHaves} only={flatmateMustHaves} value={answers.mustHaves} onChange={(keys) => pick('mustHaves')(keys.length ? keys : undefined)} />
     case 'signIn':
       return null
   }
@@ -120,7 +126,7 @@ export function Onboarding() {
         <p className="absolute bottom-8 left-8 hidden text-sm text-primary_on-dark lg:block">© Roomsie 2026</p>
       </div>
       <main className="flex flex-1 flex-col gap-8 p-6 lg:px-20 lg:py-10">
-        <div className="mx-auto h-1 w-full max-w-120">{bar !== null && <StepBar step={bar} total={4} countHidden />}</div>
+        <div className="mx-auto h-1 w-full max-w-120">{bar && <StepBar step={bar.step} total={bar.total} countHidden />}</div>
         <div className="mx-auto flex w-full max-w-120 flex-1 flex-col gap-16 lg:my-auto lg:flex-none">
           <div className="flex flex-1 flex-col justify-center gap-8 text-center lg:flex-none">
             <div className="flex flex-col gap-3">

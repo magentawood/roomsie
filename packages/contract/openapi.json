@@ -17798,6 +17798,16 @@
                     "maxLength": 60,
                     "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
                   },
+                  "areas": {
+                    "minItems": 2,
+                    "maxItems": 10,
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "maxLength": 60,
+                      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+                    }
+                  },
                   "budget": {
                     "type": "string",
                     "enum": [

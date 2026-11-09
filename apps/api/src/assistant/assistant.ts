@@ -106,9 +106,11 @@ const scriptedReply = ({ last, lastRegister }: Pick<TurnState, 'last' | 'lastReg
 
 /** The answers of the onboarding, before the goal exists (T-48). Null: an area that is not an area group. */
 export async function runStart(input: Omit<TurnInput, 'goalId' | 'notesHint'> & { start: GoalStart }, deps: AssistantDeps) {
-  const { area, budget, mustHaves = [], ...stated } = input.start
-  if (area && !isAreaGroup(await catalogueOf(deps.db), area)) return null
-  const answers = { ...stated, ...(area && { areas: [area] }), ...(budget && { budget: slotValueOf({ slot: 'budget', value: budget }, input.form) }) }
+  const { area, areas: groups, budget, mustHaves = [], ...stated } = input.start
+  const areas = groups ?? (area ? [area] : [])
+  const catalogue = await catalogueOf(deps.db)
+  if (!areas.every((slug) => isAreaGroup(catalogue, slug))) return null
+  const answers = { ...stated, ...(areas.length && { areas }), ...(budget && { budget: slotValueOf({ slot: 'budget', value: budget }, input.form) }) }
   const stateOf = (value: unknown) => ({ source: 'stated', value })
   const form = formA.parse({
     ...input.form, ...Object.fromEntries(Object.entries(answers).map(([slot, value]) => [slot, stateOf(value)])),
