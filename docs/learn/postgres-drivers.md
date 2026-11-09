@@ -25,7 +25,8 @@ route handler → Drizzle (typed query) → driver (connection and protocol) →
 ## Gotchas
 
 - **Prepared statements must stay off.** In production the API connects through the Supabase pooler in transaction mode. Many requests share a small number of connections, so the next query can go to a different connection. A prepared statement is a query plan that one connection keeps, so it fails there. The client sets `prepare: false`. Do not remove it. Migrations use session mode ([Database migrations](migrations.md)).
-- **Idle connections close.** The pooler drops a client connection that sits idle, and a query on that dead socket waits for minutes: the admin panel hung on 2026-11-09 while other requests answered. `poolOptions` in `apps/api/src/db/client.ts` closes an idle connection after 20 seconds, renews each connection every 5 minutes, and gives up a connect after 10 seconds. Both databases use it.
+- **One query at a time on a connection.** postgres.js pipelines: it sends up to 100 queries on a busy connection before the answers come. The pooler in transaction mode hands them to different database sessions, and a session waits for the rest of a query that never comes (`active`, `ClientRead` in `pg_stat_activity`). On 2026-11-09 this hung the admin panel, then each request under load. `poolOptions` in `apps/api/src/db/client.ts` sets `max_pipeline: 1`. It also closes an idle connection after 20 seconds, renews each connection every 5 minutes, and gives up a connect after 10 seconds. Both databases use it.
+- **A stuck session** shows in the Supabase SQL editor: `select pid, state, wait_event, now() - query_start from pg_stat_activity where application_name = 'Supavisor'`. `pg_terminate_backend(pid)` ends one, and a redeploy gives the API fresh connections.
 - Do not make a second client in other code. Import `createDb`, so the setting stays in one place.
 
 ## Tickets
