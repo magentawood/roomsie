@@ -25,7 +25,7 @@
 | The card | `apps/web/components/profile/completion-card.tsx` |
 | The images of the steps | `apps/web/public/onboarding/` |
 
-- **The landing page starts here.** "Start looking" and "Open Roomsie" open `/start`, which always starts a new goal, as a new chat of ChatGPT does. The new goal opens at `/chat?goal=<id>`, so a reload or a sign-in stays in it. New Goal, the phone "+" and "Start a new goal" open the empty chat of flow 02 in its place ([goals](goals.md)).
+- **The landing page starts here.** "Start looking" and "Open Roomsie" open `/start`, which always starts a new goal, as a new chat of ChatGPT does. The questions come once: a browser that finished them keeps a mark in local storage, and an account with a goal counts too, so `/start` sends that person to "What are we looking for?" of flow 02. It decides only before the first answer, so a sign-in on the way does not leave the questions. A sign-out removes the mark. The new goal opens at `/chat?goal=<id>`, so a reload or a sign-in stays in it. New Goal, the phone "+" and "Start a new goal" open the empty chat of flow 02 in its place ([goals](goals.md)).
 - **A skipped step** leaves its slot empty, and the chat asks it later. With no answer, the line asks the first question, with the place-type chips.
 - **"Looking for my son or daughter"** asks one more choice: Student, Starting their first job or Working. That answer is who is moving (PD15).
 - **The limits stay the same** ([the limits of the chat](chat-limits.md)). The start is a new chat, so the limits of new visitor chats apply. A refusal shows under the sign-in buttons, next to "Sign up with Google".
