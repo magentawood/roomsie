@@ -116,6 +116,7 @@ browser ─▶ PATCH {photoKeys: [..., key]} ─▶ API checks that the key is o
 </table>
 <ul>
 <li>Each step saves only its own fields, with one <code>PATCH</code>, on "Next", "Previous step" and "Save as Draft" (<code>apps/web/lib/listing-steps.ts</code>).</li>
+<li><strong>The address is required to go on.</strong> "Next" and "Publish" on step 2 need it, and only the lister sees it unless they share it. "Save as Draft" saves a step without it. The API does not check it.</li>
 <li>Before the save, <code>stepErrors</code> checks the values with the contract schema of the kind. A refused value gets a red line under its field, and nothing saves.</li>
 <li>The browser shrinks each photo to 1600 px or less, as WebP, before the upload (<code>apps/web/lib/photo.ts</code>). Safari cannot make WebP, so there it is a JPEG. The new file has no EXIF data, so no GPS location.</li>
 <li>The area pick lists the sub-areas and pockets from <code>GET /v1/areas</code>. A listing cannot have a whole group (<a href="areas.html">Areas</a>).</li>

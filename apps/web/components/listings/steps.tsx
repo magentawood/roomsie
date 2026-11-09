@@ -50,7 +50,7 @@ export function WhereStep({ kind, values, set, errors, areas }: StepProps & { ar
         <ChoiceChips label={`Which part of ${tree.label(subArea)}?`} hint={`Optional. Skip it to keep ${tree.label(subArea)}.`}
           labels={areaNames(pockets)} value={saved.pocket} onChange={(pocket) => set({ areaSlug: pocket ?? subArea })} />
       )}
-      <TextInput label="Address" value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint="Only you see it, unless you share it below." maxLength={textLimits.address} />
+      <TextInput label="Address" required error={errors.address} value={values.address} onChange={(address) => set({ address })} placeholder="Flat no, wing, building, street, pincode" hint="Only you see it, unless you share it below." maxLength={textLimits.address} />
       <div className="grid gap-5 md:grid-cols-2 md:gap-8">
         <TextInput label="Building or society" value={values.building} onChange={(building) => set({ building })} placeholder="eg. Silver oak residency" maxLength={textLimits.building} />
         <TextInput label="Street" value={values.street} onChange={(street) => set({ street })} placeholder="eg. lokhandwala road" maxLength={textLimits.street} />

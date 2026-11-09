@@ -19,7 +19,7 @@ the browser ──signed PUT──▶ private S3 bucket (Mumbai) ◀── Rekog
                          the badge on the cards ◀── the result ◀───────────────┘ the files go
 ```
 
-- **The person:** "Verify your ID" is in Profile and Settings, also with no profile. Step 1 is the ID type and its photo. Step 2 is the live selfie. The listing flow offers the same check after a publish, and the listing is already live.
+- **The person:** "Verify your ID" is in Profile and Settings, also with no profile. Step 1 is the ID type and its photo. Step 2 is the live selfie. The listing flow offers the same check after a publish, and the listing is already live. The offer says why: seekers trust verified owners and brokers more, and they message a listing with the Verified badge first. It also says that the listing stays live without the check.
 - **The states:** not verified, in review ("We check within 24 hours"), verified, rejected (with the reason and the note of the reviewer), and expired after 7 days with no review.
 - **The reviewer:** only the accounts in `REVIEWER_UIDS` open "ID checks" at `/admin/id-checks`. Each other person gets "not found". A rejection needs one of five reasons, and can have a note of at most 200 characters.
 - **The audit log:** each photo link that the API gives a reviewer is one row, and each approve and reject is one more row.

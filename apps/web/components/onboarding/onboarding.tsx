@@ -28,17 +28,19 @@ const screens: Record<Step, { title: string; text?: string; art: string; positio
   intent: { title: 'What kind of place?', text: 'Pick one. You can add more later in the chat.', art: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
   budget: { title: 'Budget per month?', text: 'Your share of the rent.', art: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
   areas: { title: 'Where do you want to live?', text: 'Pick one or more. Or skip and I’ll look across Mumbai.', art: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
-  mustHaves: { title: 'Must-haves in a flatmate?', text: 'Pick any. I’ll show only the flatmates who fit them.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
+  mustHaves: { title: 'Must-haves in a place?', text: 'Pick any. I’ll show only the places that have them.', art: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
   signIn: { title: 'Sign in to continue', text: 'Unlimited chats and multiple goals, all synced up with your account.', art: 'sign-in', position: 'object-[50%_77%] lg:object-[87%_50%]' },
 }
 /** The flatmate path asks about the person, not who moves in. */
-const flatmateScreens: Partial<Record<Step, { title: string; text: string }>> = {
+const flatmateScreens: Partial<Record<Step, { title: string; text: string; art?: string; position?: string }>> = {
   whosMoving: { title: 'What do you do?', text: 'So I find flatmates who fit with you.' },
+  mustHaves: { title: 'Must-haves in a flatmate?', text: 'Pick any. I’ll show only the flatmates who fit them.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
 }
 const aboutYouLabels = { student: 'Student', first_job: 'Starting my first job', working: 'Working' } satisfies Partial<Record<DescribesYou, string>>
 type AboutYou = keyof typeof aboutYouLabels
-// The gender of the flatmates has its own question.
+// The full lists of what each search checks (the matchers of the API). The gender of the flatmates has its own question.
 const flatmateMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'tidy_flatmates'] as const
+const placeMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'couple_friendly', 'near_station'] as const
 const livesWithLabels = { women: 'Female flatmates', men: 'Male flatmates', any: 'Both are fine' }
 const screenOf = (step: Step, answers: Answers) => ({ ...screens[step], ...(answers.purpose === 'flatmate' && flatmateScreens[step]) })
 
@@ -80,7 +82,7 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
       return <MultiChips labelHidden label={screens.areas.title} labels={Object.fromEntries(groups.map((group) => [group.slug, group.name]))} value={answers.areas}
         onChange={(slugs) => pick('areas')(slugs.length ? slugs : undefined)} />
     case 'mustHaves':
-      return <MultiChips labelHidden label={screens.mustHaves.title} labels={profileLabels.mustHaves} only={flatmateMustHaves} value={answers.mustHaves} onChange={(keys) => pick('mustHaves')(keys.length ? keys : undefined)} />
+      return <MultiChips labelHidden label={screens.mustHaves.title} labels={profileLabels.mustHaves} only={answers.purpose === 'flatmate' ? flatmateMustHaves : placeMustHaves} value={answers.mustHaves} onChange={(keys) => pick('mustHaves')(keys.length ? keys : undefined)} />
     case 'signIn':
       return null
   }

@@ -4,9 +4,9 @@ import { answered, onboardingSteps, progressOf, startOf, stepBeside, withoutAnsw
 const full: Answers = { purpose: 'look', whosMoving: 'student', intent: 'room', budget: 'under_25k', areas: ['andheri-goregaon'] }
 
 describe('the steps of flow 01', () => {
-  it('asks a seeker the four questions, then the sign-in, and a signed-in seeker only the questions', () => {
-    expect(onboardingSteps(full, false)).toEqual(['purpose', 'whosMoving', 'intent', 'budget', 'areas', 'signIn'])
-    expect(onboardingSteps(full, true)).toEqual(['purpose', 'whosMoving', 'intent', 'budget', 'areas'])
+  it('asks a seeker the five questions, then the sign-in, and a signed-in seeker only the questions', () => {
+    expect(onboardingSteps(full, false)).toEqual(['purpose', 'whosMoving', 'intent', 'budget', 'areas', 'mustHaves', 'signIn'])
+    expect(onboardingSteps(full, true)).toEqual(['purpose', 'whosMoving', 'intent', 'budget', 'areas', 'mustHaves'])
   })
 
   it('asks a flatmate seeker no place type but the gender of the flatmates and the must-haves, fills its bar of five, and starts the flatmate search', () => {
@@ -30,8 +30,8 @@ describe('the steps of flow 01', () => {
     expect(onboardingSteps({ purpose: 'list' }, true)).toEqual(['purpose'])
   })
 
-  it('fills the bar of the four questions, with no bar on the purpose or for a lister', () => {
-    expect((['purpose', 'whosMoving', 'areas', 'signIn'] as const).map((step) => progressOf(step, full))).toEqual([null, { step: 1, total: 4 }, { step: 4, total: 4 }, { step: 4, total: 4 }])
+  it('fills the bar of the five questions, with no bar on the purpose or for a lister', () => {
+    expect((['purpose', 'whosMoving', 'mustHaves', 'signIn'] as const).map((step) => progressOf(step, full))).toEqual([null, { step: 1, total: 5 }, { step: 5, total: 5 }, { step: 5, total: 5 }])
     expect(progressOf('signIn', { purpose: 'list' })).toBeNull()
   })
 })
@@ -44,9 +44,9 @@ describe('Previous, Next and Skip', () => {
     expect(stepBeside('signIn', -1, { purpose: 'list' }, false)).toBe('purpose')
   })
 
-  it('ends after the area for a signed-in person, and after the purpose for a signed-in lister', () => {
-    expect(stepBeside('areas', 1, full, false)).toBe('signIn')
-    expect(stepBeside('areas', 1, full, true)).toBeUndefined()
+  it('ends after the must-haves for a signed-in person, and after the purpose for a signed-in lister', () => {
+    expect(stepBeside('mustHaves', 1, full, false)).toBe('signIn')
+    expect(stepBeside('mustHaves', 1, full, true)).toBeUndefined()
     expect(stepBeside('purpose', 1, { purpose: 'list' }, true)).toBeUndefined()
   })
 
@@ -77,8 +77,9 @@ describe('the start answers of the goal', () => {
     expect(JSON.stringify(startOf({ whosMoving: 'parent', childType: 'first_job' }))).toBe('{"whosMoving":"first_job"}')
   })
 
-  it('sends the must-haves only on the flatmate path', () => {
-    expect(startOf({ purpose: 'look', mustHaves: ['veg_kitchen'] })).toEqual({ intent: undefined, whosMoving: undefined, budget: undefined })
+  it('sends the must-haves of a place seeker too, and none when none is picked', () => {
+    expect(startOf({ purpose: 'look', mustHaves: ['near_station'] })).toEqual({ intent: undefined, whosMoving: undefined, budget: undefined, mustHaves: ['near_station'] })
+    expect(startOf({ purpose: 'look', mustHaves: [] })).not.toHaveProperty('mustHaves')
   })
 
   it('sends one area group as `area`, which an older API takes, and two or more as `areas`', () => {

@@ -10,6 +10,12 @@ import { putPhoto, uploadBody } from './upload'
 /** The offer of a check: in Settings with no check, and after a publish. */
 export const verifyOffer = 'Optional. Send a passport, driving licence, voter ID or PAN card and a selfie. A Verified badge shows on your card after our check.'
 
+/** The "Verify your ID" modal after a publish: why seekers care, and that the listing is live either way. */
+export const verifyAfterPublish = [
+  'Your listing is live. Seekers trust verified owners and brokers more, and they message a listing with the Verified badge first.',
+  'The check takes a passport, driving licence, voter ID or PAN card and a selfie. Not now? Your listing stays live, and you can verify any time in Settings.',
+] as const
+
 /** The "Verify your ID" row of Settings in each state, as section 26 of the drafts. */
 export function verifyRow({ state, reason, note }: Pick<VerificationResponse, 'state' | 'reason' | 'note'>): { badge?: { tone: Tone; label: string }; text: string; note?: string; action?: string } {
   switch (state) {

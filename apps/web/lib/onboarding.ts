@@ -18,7 +18,8 @@ export type Answers = {
   mustHaves?: MustHaveKey[]
 }
 
-const placeQuestions = ['whosMoving', 'intent', 'budget', 'areas'] as const
+/** Both paths end with the must-haves: each one that a place, or a flatmate, can meet. */
+const placeQuestions = ['whosMoving', 'intent', 'budget', 'areas', 'mustHaves'] as const
 /** "I'm looking for a flatmate" is the flatmate search: no "What kind of place?", the gender of the flatmates, and their must-haves at the end. */
 const flatmateQuestions = ['whosMoving', 'livesWith', 'budget', 'areas', 'mustHaves'] as const
 const questionsOf = (answers: Answers): readonly Step[] => (answers.purpose === 'flatmate' ? flatmateQuestions : placeQuestions)
@@ -60,5 +61,6 @@ export const startOf = ({ purpose, whosMoving, childType, intent, budget, areas 
   whosMoving: whosMoving === 'parent' ? childType : whosMoving, intent, budget,
   // One group goes as `area`, which an older API also takes during a deploy.
   ...(areas.length === 1 ? { area: areas[0] } : areas.length > 1 && { areas }),
+  ...(mustHaves.length > 0 && { mustHaves }),
   ...(purpose === 'flatmate' && { intent: 'flatmates', mustHaves: [...(livesWith ? genderMustHave[livesWith] : []), ...mustHaves] }),
 })
