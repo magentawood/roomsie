@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-const passageClasses = 'flex flex-col gap-4 text-lg text-secondary [&_a]:font-semibold [&_a]:text-primary [&_a]:underline [&_h3]:font-semibold [&_h3]:text-primary [&_li]:ml-6 [&_ol]:flex [&_ol]:list-decimal [&_ol]:flex-col [&_ol]:gap-2 [&_strong]:font-semibold [&_strong]:text-primary [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2'
+const passageClasses = 'flex flex-col gap-4 text-lg text-secondary [&_a]:font-semibold [&_a]:text-primary [&_a]:underline [&_h3]:font-semibold [&_h3]:text-primary [&_li]:ml-3 [&_ol]:flex [&_ol]:list-decimal [&_ol]:flex-col [&_ol]:gap-2 [&_strong]:font-semibold [&_strong]:text-primary [&_ul]:flex [&_ul]:list-disc [&_ul]:flex-col [&_ul]:gap-2'
 
 export default async function ArticlePage({ params }: Props) {
   const [article, { details }] = await Promise.all([getArticle((await params).slug), getSite()])
@@ -42,7 +42,7 @@ export default async function ArticlePage({ params }: Props) {
     <>
       <LandingHeader />
       <main>
-        <Container className="pt-8 pb-16 md:pt-16 md:pb-24">
+        <Container className="pt-8 pb-16 max-md:px-4 md:pt-16 md:pb-24">
           <article className="mx-auto flex max-w-180 flex-col gap-6 md:gap-8">
             <Link href="/blog" className="flex w-fit items-center gap-1.5 rounded-sm text-sm font-semibold text-tertiary outline-focus-ring hover:text-tertiary_hover focus-visible:outline-2">
               <ArrowLeft size={20} aria-hidden />All articles

@@ -26,7 +26,7 @@ export function AreaPicker({ areas, value, onChange }: { areas: AreasResponse['a
 
   return (
     <fieldset className="flex flex-col gap-3">
-      <legend className="mb-1.5 text-sm font-medium text-secondary">Areas you are looking for</legend>
+      <legend className="mb-3 text-sm font-medium text-secondary">Areas you are looking for</legend>
       {value.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {value.map((slug) => <RemoveChip key={slug} label={pickLabel(tree, slug)} onRemove={() => toggle(slug)} />)}

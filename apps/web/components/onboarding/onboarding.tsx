@@ -49,7 +49,7 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
   switch (step) {
     case 'purpose':
       return (
-        <div role="radiogroup" aria-label={screens.purpose.title} className="flex flex-col gap-4 text-left">
+        <div role="radiogroup" aria-label={screens.purpose.title} className="flex flex-col gap-3 text-left">
           <ChoiceCard icon={Users01} title="I’m looking for a flatmate" subtitle="People to rent a flat with" selected={answers.purpose === 'flatmate'} onSelect={pickPurpose('flatmate')} />
           <ChoiceCard icon={Home03} title="I’m looking for a place" subtitle="A room, a flat or a PG" selected={answers.purpose === 'look'} onSelect={pickPurpose('look')} />
           <ChoiceCard icon={Key01} title="I have a place to list" subtitle="A room in my flat, a whole flat, a PG, or a flat I broker" selected={answers.purpose === 'list'} onSelect={pickPurpose('list')} />
@@ -140,19 +140,21 @@ export function Onboarding() {
         <img src={`/onboarding/${art}.webp`} alt="" className={`size-full object-cover ${position}`} />
         <p className="absolute bottom-8 left-8 hidden text-sm text-primary_on-dark lg:block">© Roomsie 2026</p>
       </div>
-      <main className="flex flex-1 flex-col gap-8 p-6 lg:px-20 lg:py-10">
-        <div className="mx-auto h-1 w-full max-w-120">{bar && <StepBar step={bar.step} total={bar.total} countHidden />}</div>
-        <div className="mx-auto flex w-full max-w-120 flex-1 flex-col gap-16 lg:my-auto lg:flex-none">
-          <div className="flex flex-1 flex-col justify-center gap-8 text-center lg:flex-none">
+      {/* The bar is 48 above the question on a phone (24 margin + 24 gap) and 72 on a computer. A step with no bar has no bar row. */}
+      <main className="flex flex-1 flex-col gap-6 p-6 lg:gap-18 lg:px-20 lg:py-12">
+        {bar && <div className="mx-auto mb-6 h-1 w-full max-w-120 lg:mb-0"><StepBar step={bar.step} total={bar.total} countHidden /></div>}
+        {/* On a phone the sign-in has no nav row, so 16 more keep its question 40 above the copyright. */}
+        <div className={`mx-auto flex w-full max-w-120 flex-1 flex-col gap-10 lg:my-auto lg:flex-none lg:gap-16 ${step === 'signIn' ? 'pb-4 lg:pb-0' : ''}`}>
+          <div className="flex flex-1 flex-col justify-center gap-8 text-center lg:flex-none lg:gap-12">
             <div className="flex flex-col gap-3">
               <h1 className="text-display-sm font-semibold text-primary lg:text-display-md">{title}</h1>
               {text && <p className="text-md text-tertiary">{text}</p>}
             </div>
             {step === 'signIn' ? (
-              <div className="flex flex-col items-center gap-4">
-                <Button variant="secondary" size="lg" iconLeading={GoogleMark} className="w-full" disabled={busy} onClick={google}>Sign up with Google</Button>
+              <div className="flex flex-col items-center gap-4 lg:mx-auto lg:w-96.5">
+                <Button variant="secondary" size="lg" iconLeading={GoogleMark} className="w-full gap-2!" disabled={busy} onClick={google}>Sign up with Google</Button>
                 {/* A listing needs an account, so a lister has no guest login. */}
-                {answers.purpose !== 'list' && <Button variant="tertiary" size="md" iconLeading={Lock01} disabled={busy} onClick={() => finish(null)}>Guest login</Button>}
+                {answers.purpose !== 'list' && <Button variant="tertiary" size="lg" iconLeading={Lock01} className="w-full" disabled={busy} onClick={() => finish(null)}>Guest login</Button>}
                 <LegalLine />
               </div>
             ) : <Answer step={step} answers={answers} onChange={setAnswers} />}

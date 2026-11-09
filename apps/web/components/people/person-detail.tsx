@@ -48,7 +48,7 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
   return (
     <>
       <div className="sticky top-0 z-30 flex items-center justify-between border-b border-secondary bg-primary px-5 py-3 lg:hidden">
-        <Button variant="tertiary" size="sm" iconLeading={ArrowLeft} onClick={back}>Profile</Button>
+        <Button variant="tertiary" size="sm" iconLeading={ArrowLeft} onClick={back} className="gap-1.5! px-0! py-1.5!">Profile</Button>
         <DetailMenu id="person-menu" items={[
           { label: `Report ${name}`, icon: Flag01, onClick: () => setSheet('report') },
           { label: `Block ${name}`, icon: SlashCircle01, onClick: () => setSheet('block'), danger: true },
@@ -56,10 +56,10 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
           { label: saved.shown ? 'Saved' : 'Save', icon: saved.shown ? BookmarkCheck : Bookmark, onClick: saved.toggle },
         ]} />
       </div>
-      <article className="mx-auto flex w-full max-w-180 flex-col gap-6 px-5 py-5 pb-48 md:px-6 md:py-8 lg:pb-8">
-        <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-4 lg:flex">
+      <article className="mx-auto flex w-full max-w-180 flex-col gap-4 px-5 pt-4 pb-48 md:px-6 md:py-8 lg:gap-5 lg:py-6">
+        <div className="hidden items-center justify-between gap-2 border-b border-secondary pb-3 lg:flex">
           <Button variant="secondary" size="xs" iconLeading={ArrowLeft} label="Back" onClick={back} />
-          <div className="flex gap-2">
+          <div className="flex gap-3">
             <Button variant="secondary" size="xs" iconTrailing={Flag01} onClick={() => setSheet('report')}>Report</Button>
             <Button variant="secondary" size="xs" iconTrailing={SlashCircle01} onClick={() => setSheet('block')}>Block</Button>
             <Button variant="secondary" size="xs" iconTrailing={Share07} onClick={share}>Share</Button>
@@ -70,8 +70,8 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
         {person.photos.length
           ? <Photos photos={person.photos} />
           : <span className="flex aspect-3/2 w-full items-center justify-center rounded-xl bg-secondary text-xl font-semibold text-tertiary">{initials(person.fullName)}</span>}
-        <header className="flex flex-col gap-1 border-b border-secondary pb-5">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+        <header className="flex flex-col gap-1.5 border-b border-secondary pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
             <h1 className="text-lg font-semibold text-primary">{person.fullName}</h1>
             {person.verified && <Badge tone="success">Verified</Badge>}
             {person.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
@@ -80,19 +80,19 @@ export function PersonDetail({ person }: { person: PersonResponse }) {
         </header>
         {person.bio && <p className="rounded-xl border border-secondary bg-secondary p-4 text-sm text-tertiary">“{person.bio}”</p>}
         {lookingForFacts.length > 0 && <Section title={`What ${name} is looking for`}><Facts lines={lookingForFacts} /></Section>}
-        {lifestyleFacts.length > 0 && <Section title={`What ${name} is like`}><Facts lines={lifestyleFacts} /></Section>}
+        {lifestyleFacts.length > 0 && <Section title={`What ${name} is like`}><Facts lines={lifestyleFacts} gap="gap-3" /></Section>}
         {(mustHaves.dealbreakers.length > 0 || mustHaves.prefers.length > 0) && (
           <Section title={`What ${name} needs from flatmates`}>
             <dl className="grid grid-cols-2 border-y border-secondary">
-              <div className="flex flex-col gap-2 border-r border-secondary p-4"><dt className="text-sm font-medium text-secondary">Dealbreakers</dt><dd><Chips items={mustHaves.dealbreakers} className="border-badge-error bg-badge-error text-badge-error" /></dd></div>
-              <div className="flex flex-col gap-2 p-4"><dt className="text-sm font-medium text-secondary">Prefers</dt><dd><Chips items={mustHaves.prefers} /></dd></div>
+              <div className="flex flex-col gap-2 border-r border-secondary p-4 lg:gap-3 lg:px-6"><dt className="text-sm font-medium text-secondary">Dealbreakers</dt><dd><Chips items={mustHaves.dealbreakers} className="border-badge-error bg-badge-error text-badge-error" /></dd></div>
+              <div className="flex flex-col gap-2 p-4 lg:gap-3 lg:px-6"><dt className="text-sm font-medium text-secondary">Prefers</dt><dd><Chips items={mustHaves.prefers} /></dd></div>
             </dl>
           </Section>
         )}
         <div className="hidden lg:block"><Connect person={person} name={name} onSayHi={() => setSheet('say_hi')} /></div>
       </article>
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary p-4 lg:hidden">
-        <Connect person={person} name={name} onSayHi={() => setSheet('say_hi')} save={<SaveButton kind="people" id={person.id} className="py-2.5" />} />
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-secondary bg-primary px-5 py-4 lg:hidden">
+        <Connect person={person} name={name} onSayHi={() => setSheet('say_hi')} save={<SaveButton kind="people" id={person.id} className="px-3.5 py-2.5" />} />
       </div>
       {sheet === 'say_hi' && <SayHiSheet target={target} onClose={close} />}
       {sheet === 'report' && <ReportSheet target={target} onClose={close} />}

@@ -13,14 +13,14 @@ export function PhotoPicker({ target, label, onUploaded }: { target: UploadTarge
     onSuccess: ({ key, preview }) => onUploaded(key, preview),
   })
   return (
-    <label className={`flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-dashed border-primary p-5 text-center hover:bg-primary_hover ${upload.isPending ? 'opacity-60' : ''}`}
+    <label className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-primary px-5.75 py-3.75 text-center hover:bg-primary_hover ${upload.isPending ? 'opacity-60' : ''}`}
       onDragOver={(e) => e.preventDefault()}
       onDrop={(e) => {
         e.preventDefault()
         const file = e.dataTransfer.files[0]
         if (file && file.type in photoTypes && !upload.isPending) upload.mutate(file)
       }}>
-      <span className="flex size-10 items-center justify-center rounded-md border border-primary text-fg-quaternary shadow-xs"><UploadCloud02 size={20} aria-hidden /></span>
+      <span className="mb-2 flex size-10 items-center justify-center rounded-md border border-primary text-fg-quaternary shadow-xs"><UploadCloud02 size={20} aria-hidden /></span>
       <span className="text-sm"><span className="font-semibold text-secondary">{upload.isPending ? 'Uploading…' : label}</span>{!upload.isPending && ' or drag and drop'}</span>
       <span className="text-xs text-tertiary">PNG, JPG or WebP</span>
       {upload.isError && <span className="text-xs text-error-primary">The upload failed. Try again.</span>}

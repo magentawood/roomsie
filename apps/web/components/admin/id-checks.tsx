@@ -35,8 +35,8 @@ function RejectDialog({ name, busy, onReject, onClose }: { name: string; busy: b
         <TextArea label={`Note to ${name} (optional)`} value={note} onChange={setNote} maxLength={reviewNoteLimit}
           hint={`At most ${reviewNoteLimit} characters. Be kind: say what to fix.`} placeholder="The photo on the ID is cut off at the top." />
         <div className="flex gap-3">
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" size="lg" className="flex-1" disabled={!reason || busy} onClick={() => onReject(reason!, note)}>Reject</Button>
+          <Button variant="secondary" size="md" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button variant="destructive" size="md" className="flex-1" disabled={!reason || busy} onClick={() => onReject(reason!, note)}>Reject</Button>
         </div>
       </div>
     </ModalFrame>
@@ -64,7 +64,7 @@ function CheckItem({ check }: { check: Check }) {
   const name = check.name ?? 'This person'
 
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5">
+    <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4">
       <div className="flex items-start gap-3">
         {check.photoUrl
           ? <img src={check.photoUrl} alt="" className="size-16 shrink-0 rounded-full object-cover" />

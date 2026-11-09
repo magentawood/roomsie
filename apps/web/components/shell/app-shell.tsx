@@ -19,8 +19,8 @@ import { GoogleSignIn } from './google-sign-in'
 import { SignInWall } from './sign-in-wall'
 
 const navLooks = {
-  sidebar: { item: 'gap-3 rounded-md px-3 py-2 text-sm', active: 'bg-secondary text-primary', link: 'text-secondary hover:bg-primary_hover', icon: 'text-fg-quaternary' },
-  phone: { item: 'w-16.5 flex-col rounded-full py-1.5 text-[11px] leading-4.5 whitespace-nowrap', active: 'bg-quaternary text-primary', link: 'text-primary', icon: '' },
+  sidebar: { item: 'h-9 gap-2 rounded-md px-2 text-sm', active: 'bg-secondary text-primary', link: 'text-secondary hover:bg-primary_hover', icon: 'text-fg-quaternary' },
+  phone: { item: 'w-16.5 flex-col rounded-full pt-1.5 pb-0.5 text-[11px] leading-4.5 whitespace-nowrap', active: 'bg-quaternary text-primary', link: 'text-primary', icon: '' },
 }
 type NavLook = keyof typeof navLooks
 
@@ -62,17 +62,17 @@ function MessagesItem({ look, linkTo, icon = MessageCircle01 }: { look: NavLook;
 function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
   const { user, loading } = useAuth()
   return (
-    <aside className="sticky top-0 hidden h-dvh w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-6 lg:flex">
-      <div className="flex min-h-0 flex-1 flex-col gap-6 pb-6">
-        <Link href="/chat" className="px-2 text-primary"><Logo className="h-6.5 w-auto" /></Link>
-        <div className="flex gap-2">
+    <aside className="sticky top-0 hidden h-dvh w-70 shrink-0 flex-col justify-between border-r border-secondary px-4 py-5 lg:flex">
+      <div className="flex min-h-0 flex-1 flex-col gap-5 pb-6">
+        <Link href="/chat" className="px-1 text-primary"><Logo className="h-6.5 w-auto" /></Link>
+        <div className="mt-3 flex gap-3">
           <Button variant="primary" size="sm" iconLeading={Plus} {...linkTo('/listings/new')}>New Listing</Button>
           <Button variant="secondary" size="sm" iconLeading={Plus} {...linkTo(newGoalHref)}>New Goal</Button>
         </div>
         <GoalList />
       </div>
-      <div className="flex flex-col gap-4">
-        <nav className="flex flex-col gap-1">
+      <div className="flex flex-col gap-3">
+        <nav className="flex flex-col">
           <MessagesItem look="sidebar" linkTo={linkTo} />
           <NavItem look="sidebar" icon={Key01} label="Listings" link={linkTo('/listings')} />
         </nav>
@@ -91,7 +91,7 @@ function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
   )
 }
 
-const glass = 'border border-secondary bg-primary/90 shadow-xs backdrop-blur-md'
+const glass = 'bg-primary/90 shadow-xs inset-ring inset-ring-(color:--border-color-secondary) backdrop-blur-md'
 
 /** "+" of the phone bar: a menu of a new goal and a new listing. The plus turns into a cross while the menu is open. */
 function NewMenu({ linkTo }: { linkTo: LinkTo }) {
@@ -129,7 +129,7 @@ function NewMenu({ linkTo }: { linkTo: LinkTo }) {
 /** The floating glass bar of the phone designs. Chats is the chat of this visit, open to a guest (PD6b). It goes away while the person types. */
 function MobileNav({ linkTo }: { linkTo: LinkTo }) {
   return (
-    <nav className="fixed inset-x-0 bottom-4 z-40 flex items-center justify-center gap-1.5 px-4 typing:hidden lg:hidden">
+    <nav className="fixed inset-x-0 bottom-2 z-40 flex items-center justify-center gap-1.5 px-4 typing:hidden lg:hidden">
       <div className={`flex items-center rounded-full p-1 ${glass}`}>
         <NavItem look="phone" icon={Home05} label="Chats" link={{ href: useChatsHref() }} match="/chat" />
         <MessagesItem look="phone" linkTo={linkTo} icon={MessageChatCircle} />
@@ -172,11 +172,11 @@ export function AppShell({ children, mobileNav = true, fixed }: { children: Reac
 /** `inPhoneBar`: the page is a tab of the phone bar, so phones show no back button. */
 export function PageHeader({ title, backHref, inPhoneBar }: { title: string; backHref: string; inPhoneBar?: boolean }) {
   return (
-    <header className="flex items-center gap-3 border-b border-secondary px-5 py-4 md:px-6">
+    <header className="flex items-center gap-3 border-b border-secondary px-5 py-3 md:px-6 md:pt-5 md:pb-4.25">
       <span className={inPhoneBar ? 'hidden lg:inline-flex' : 'inline-flex'}>
         <Button variant="secondary" size="xs" iconLeading={ChevronLeft} href={backHref} label="Back" />
       </span>
-      <h1 className="text-md font-medium text-primary">{title}</h1>
+      <h1 className="py-1 text-md font-medium text-primary">{title}</h1>
     </header>
   )
 }

@@ -46,11 +46,11 @@ function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in 
     setText('')
   }
   return (
-    <div className="relative h-16">
+    <div className="relative h-12 lg:h-16">
       <form onSubmit={(e) => { e.preventDefault(); send() }}
-        className={`absolute inset-x-0 z-10 flex items-end gap-2 rounded-xl border border-secondary bg-primary px-3.5 py-3 shadow-md focus-within:outline-2 focus-within:outline-focus-ring ${grow === 'up' ? 'bottom-0' : 'top-0'}`}>
+        className={`absolute inset-x-0 z-10 flex items-end gap-2 rounded-xl border border-secondary bg-primary py-1.75 pr-1.75 pl-2.75 shadow-md lg:px-3.25 lg:py-2.75 focus-within:outline-2 focus-within:outline-focus-ring ${grow === 'up' ? 'bottom-0' : 'top-0'}`}>
         <textarea ref={box} aria-label="Message" rows={1} autoFocus={autoFocus} value={text} placeholder={placeholder}
-          className="max-h-28 flex-1 resize-none bg-transparent py-2 text-md text-primary outline-none placeholder:text-placeholder"
+          className="max-h-28 flex-1 resize-none bg-transparent py-1 text-md text-primary outline-none placeholder:text-placeholder lg:py-2"
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
             const action = keyAction({ key: e.key, shiftKey: e.shiftKey, isComposing: e.nativeEvent.isComposing }, text)
@@ -58,7 +58,7 @@ function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in 
             e.preventDefault()
             if (action === 'send') send()
           }} />
-        <Button type="submit" variant="secondary" size="md" iconLeading={ArrowRight} label="Send" disabled={!canSend(text)} />
+        <Button type="submit" variant="secondary" size="md" iconLeading={ArrowRight} label="Send" disabled={!canSend(text)} className="max-lg:p-1.5" />
       </form>
     </div>
   )
@@ -67,8 +67,8 @@ function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in 
 /** "What are we looking for?" of flow 02: the start of a goal, with the place-type chips under the input (T-09). */
 function EmptyChat({ onSend, children }: { onSend: (text: string) => void; children: React.ReactNode }) {
   return (
-    <main className="isolate flex flex-1 flex-col items-center justify-center gap-10 overflow-hidden bg-chat-glow px-4 pb-24 max-lg:typing:pb-4 lg:px-6 lg:pb-0">
-      <div className="flex max-w-126 flex-col items-center gap-2 text-center">
+    <main className="isolate flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-chat-glow px-5 pb-27 max-lg:typing:pb-4 lg:gap-13 lg:px-6 lg:pb-0">
+      <div className="flex max-w-126 flex-col items-center gap-3 text-center lg:gap-2">
         <div className="relative">
           <img src="/illustrations/rings.svg" alt="" width={768} height={768} className="pointer-events-none absolute top-1/2 left-1/2 -z-10 max-w-none -translate-1/2" />
           <img src="/illustrations/binoculars.png" alt="" width={137} height={137} className="size-24 lg:size-34" />
@@ -221,15 +221,16 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
   return (
-    <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,32rem)_minmax(0,1fr)]' : ''}`}>
-      {!preview && <GoalHeader title={goalName} closed={closed} onFound={() => setFoundOpen(true)} />}
+    <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,33.125rem)_minmax(0,1fr)]' : ''}`}>
+      {/* On a phone, "Show all" has its own header (146:29502). */}
+      {!preview && <GoalHeader title={goalName} closed={closed} phoneHidden={view === 'all'} onFound={() => setFoundOpen(true)} />}
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
       <div className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
-        <ol className="mb-auto flex flex-col gap-6 px-5 py-6 lg:px-6" aria-live="polite">
+        <ol className="mb-auto flex flex-col gap-5 px-5 py-4 lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:py-6" aria-live="polite">
           {turns.map((turn) => (
-            <li key={turn.id}>
+            <li key={turn.id} className={turn.role === 'user' ? 'my-3 first:mt-0 last:mb-0 lg:my-5 lg:first:mt-0 lg:last:mb-0' : undefined}>
               {turn.role === 'user' ? <UserText text={turn.text} /> : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-5">
                   <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>
                   {turn.comparison && <ComparisonTable table={turn.comparison} />}
                   {turn.notes && <NotesList />}
@@ -243,7 +244,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           )}
           {chips && <li>{chips}</li>}
           {pending !== undefined && (
-            <li className="flex flex-col gap-6">
+            <li className="mt-3 flex flex-col gap-8 first:mt-0 lg:mt-5 lg:gap-10 lg:first:mt-0">
               <UserText text={pending} />
               {failed ? <p role="alert" className="text-md text-error-primary">{failed}</p> : <Thinking form={chatForm} areaName={(slug) => areaLabels[slug] ?? slug} />}
             </li>
@@ -259,12 +260,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           )}
         </ol>
       </div>
-      <div className="col-start-1 row-start-3 px-5 pb-28 max-lg:typing:pb-3 lg:px-6 lg:pb-6">
+      <div className="col-start-1 row-start-3 px-5 pb-19.5 max-lg:typing:pb-3 lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:pb-5">
         {closed && goalId ? <ClosedBar goalId={goalId} /> : <>
         {picked.length > 0 && !atCap && (
-          <div className="mb-2 flex flex-col gap-1.5">
-            <div role="group" aria-label="Selected to compare" className="flex flex-wrap gap-2">
-              {picked.map((card) => <RemoveChip key={card.id} label={card.name} onRemove={() => setPicked(toggledPick(picked, card))} />)}
+          <div className="mb-3 flex flex-col gap-1.5 pt-2.5">
+            <div role="group" aria-label="Selected to compare" className="flex flex-wrap gap-2.5 px-3">
+              {picked.map((card) => <RemoveChip key={card.id} small label={card.name} onRemove={() => setPicked(toggledPick(picked, card))} />)}
             </div>
             {picked.length === 1 && <p className="text-xs text-tertiary">Select one more card to compare.</p>}
           </div>
@@ -274,7 +275,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
           ? <Button variant="primary" size="lg" className="w-full" onClick={() => setWall(true)}>{capWall.title}</Button>
           : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText}
               placeholder={picked[0] && (picked[0].kind === 'place' ? 'Ask about the listings…' : 'Ask about these people…')} />}
-        {typedTurnsLeft !== null && <p className="mt-2 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
+        {typedTurnsLeft !== null && <p className="mt-1.5 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
         </>}
       </div>
       {shown && (
@@ -311,11 +312,11 @@ function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) =>
   const areas = form.areas.value ?? []
   const steps = ['Reading what you said', `Looking through ${what} ${areas.length ? `around ${areas.map(areaName).join(', ')}` : 'in Mumbai'}`, 'Picking the best ones for you']
   return (
-    <div role="status" className="flex items-center gap-2.5">
+    <div role="status" className="flex items-center gap-4 lg:gap-2.5">
       <span className="shrink-0 motion-safe:animate-mascot">
         <img key={done} src={stepMascots[Math.min(done, stepMascots.length - 1)]} alt="" width={160} height={160} className="size-24 motion-safe:animate-mascot-in lg:size-28" />
       </span>
-      <ul className="flex min-w-0 flex-col gap-1.5 text-sm text-secondary">
+      <ul className="flex min-w-0 flex-col gap-1 text-sm text-secondary lg:gap-1.5 lg:px-3 lg:py-2">
         {steps.slice(0, done + 1).map((step, i) => (
           <li key={step} className="flex items-center gap-2">
             {i < done
@@ -330,7 +331,7 @@ function Thinking({ form, areaName }: { form: FormA; areaName: (slug: string) =>
 }
 
 function UserText({ text }: { text: string }) {
-  return <p className="ml-auto w-fit max-w-4/5 rounded-xl border border-secondary bg-primary px-3 py-2 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
+  return <p className="ml-auto w-fit max-w-63.5 rounded-xl border border-secondary bg-primary px-2.75 py-1.75 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
 }
 
 /** A closed goal is read-only: its chat and its results stay, and "Reopen" opens it again (T-50). */

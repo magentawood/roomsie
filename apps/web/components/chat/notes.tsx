@@ -52,8 +52,8 @@ export function NotesList() {
         <Modal icon={Trash01} title="Delete this note?" onClose={() => setConfirming(null)}
           actions={(
             <>
-              <Button variant="secondary" size="lg" className="flex-1" onClick={() => setConfirming(null)}>Cancel</Button>
-              <Button variant="destructive" size="lg" className="flex-1" disabled={remove.isPending} onClick={() => remove.mutate(confirming.id)}>Delete</Button>
+              <Button variant="secondary" size="md" className="flex-1" onClick={() => setConfirming(null)}>Cancel</Button>
+              <Button variant="destructive" size="md" className="flex-1" disabled={remove.isPending} onClick={() => remove.mutate(confirming.id)}>Delete</Button>
             </>
           )}>
           <p>“{confirming.value}” leaves your notes. Your messages stay in the chat.</p>

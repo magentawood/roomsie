@@ -23,7 +23,7 @@ export default async function Blog() {
     <>
       <LandingHeader />
       <main>
-        <Container className="pt-12 pb-16 md:pt-24 md:pb-24">
+        <Container className="pt-12 pb-16 max-md:px-4 md:pt-24 md:pb-24">
           <div className="mx-auto flex max-w-192 flex-col gap-10 md:gap-16">
             <div className="flex flex-col gap-3 md:gap-4">
               <p className="text-md font-semibold text-secondary">Blog</p>

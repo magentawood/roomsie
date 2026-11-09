@@ -11,15 +11,16 @@ import { SignInGate } from '../shell/sign-in-gate'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
-import { inputClass } from '../ui/field'
+import { inputClassOf } from '../ui/field'
 import { Avatar, RequestsIcon, useChatName } from './parts'
 import { Loading } from '../ui/loading'
 
-function Row({ href, selected, children }: { href: string; selected: boolean; children: ReactNode }) {
+/** `pad`: a chat row is 14 px high and low, the Requests row 12 (drafts sections 04 and 09). */
+function Row({ href, selected, pad = 'py-3.5', children }: { href: string; selected: boolean; pad?: string; children: ReactNode }) {
   return (
     <li>
       <Link href={href} aria-current={selected ? 'page' : undefined}
-        className={`flex items-center gap-3 px-4 py-3 outline-focus-ring focus-visible:outline-2 ${selected ? 'bg-secondary' : 'hover:bg-primary_hover'}`}>
+        className={`flex items-center gap-3 px-5 lg:px-4 ${pad} outline-focus-ring focus-visible:outline-2 ${selected ? 'bg-secondary' : 'hover:bg-primary_hover'}`}>
         {children}
       </Link>
     </li>
@@ -38,7 +39,7 @@ function ItemRow({ item, selected, query }: { item: InboxItem; selected: boolean
   return (
     <Row href={`/messages/${item.id}`} selected={selected}>
       <Avatar photoUrl={other.photoUrl} name={other.deleted ? null : other.name} />
-      <span className="flex min-w-0 flex-1 flex-col text-sm">
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-sm">
         <span className="flex items-center gap-2">
           <span className="min-w-0 flex-1 truncate font-medium text-primary">{name}</span>
           {item.at && <span className="shrink-0 text-xs text-tertiary">{inboxTime(item.at)}</span>}
@@ -65,22 +66,24 @@ function Inbox({ selected }: { selected?: string }) {
   const requests = incoming.data.requests.length
   if (!items.length && !requests) {
     return (
-      <EmptyState icon={MessageCircle01} title="No messages yet" action={<Button variant="primary" size="md" href="/">Start looking</Button>}>
+      <EmptyState icon={MessageCircle01} title="No messages yet" className="pt-45 lg:pt-50" action={<Button variant="primary" size="md" href="/">Start looking</Button>}>
         Say hi to a person or a lister. When they accept, your chat with them shows here.
       </EmptyState>
     )
   }
   return (
     <div className="flex flex-col">
-      <div className="relative p-4">
-        <SearchLg size={20} aria-hidden className="pointer-events-none absolute top-1/2 left-7.5 -translate-y-1/2 text-fg-quaternary" />
-        <input type="search" aria-label="Search messages" className={`${inputClass} pl-10`} placeholder="Search messages" value={query} onChange={(e) => setQuery(e.target.value)} />
+      <div className="px-5 pt-3 pb-2 lg:px-4 lg:pt-4">
+        <div className="relative">
+          <SearchLg size={16} aria-hidden className="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-fg-quaternary" />
+          <input type="search" aria-label="Search messages" className={`${inputClassOf('xs')} pl-9`} placeholder="Search messages" value={query} onChange={(e) => setQuery(e.target.value)} />
+        </div>
       </div>
       <ul className="flex flex-col">
         {requests > 0 && (
-          <Row href="/messages/requests" selected={selected === 'requests'}>
+          <Row href="/messages/requests" selected={selected === 'requests'} pad="py-3">
             <RequestsIcon />
-            <span className="flex min-w-0 flex-1 flex-col text-sm">
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-sm">
               <span className="font-medium text-primary">Requests</span>
               <span className="text-tertiary">{requests === 1 ? '1 person wants to say hi' : `${requests} people want to say hi`}</span>
             </span>

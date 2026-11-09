@@ -18,7 +18,7 @@ export function DeleteAccountDialog({ onClose }: { onClose: () => void }) {
     // A deleted account has no valid token, so sign out.
     const leave = () => signOut().then(() => router.replace('/'))
     return (
-      <Modal icon={Trash01} title="Your account is deleted." onClose={leave} actions={<Button variant="secondary" size="lg" className="flex-1" onClick={leave}>OK</Button>}>
+      <Modal icon={Trash01} title="Your account is deleted." onClose={leave} actions={<Button variant="secondary" size="md" className="flex-1" onClick={leave}>OK</Button>}>
         Your profile, photos and listings are gone. OK signs you out.
       </Modal>
     )
@@ -27,8 +27,8 @@ export function DeleteAccountDialog({ onClose }: { onClose: () => void }) {
     <Modal icon={Trash01} title="Delete your account?" onClose={onClose}
       actions={(
         <>
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Keep account</Button>
-          <Button variant="destructive" size="lg" className="flex-1" disabled={remove.isPending} onClick={() => remove.mutate()}>Delete account</Button>
+          <Button variant="secondary" size="md" className="flex-1" onClick={onClose}>Keep account</Button>
+          <Button variant="destructive" size="md" className="flex-1" disabled={remove.isPending} onClick={() => remove.mutate()}>Delete account</Button>
         </>
       )}>
       <p>Your profile, photos, listings and chats are deleted. People you talked to see “Deleted user”. You are signed out. You can’t undo this.</p>

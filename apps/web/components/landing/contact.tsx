@@ -26,17 +26,17 @@ export function Contact({ details }: { details: SiteDetails }) {
   const links = socialNetworks.flatMap((s) => (details[s.key] ? [{ ...s, href: details[s.key]! }] : []))
   return (
     <section className="bg-primary-solid">
-      <Container className="flex flex-col gap-6 pt-14 pb-7 md:gap-16 md:pt-12 md:pb-6 xl:pt-24 xl:pb-0">
-        <div className="flex flex-col gap-2 text-primary_on-dark">
+      <Container className="flex flex-col gap-6 pt-14 pb-7 md:gap-16 md:pt-12 md:pb-19.5 xl:pt-24 xl:pb-2.25">
+        <div className="flex flex-col gap-2 text-primary_on-dark md:gap-0 xl:gap-3">
           <SectionHeading>Contact us or Give us your feedback</SectionHeading>
           <p className="text-md md:font-medium xl:text-xl xl:font-normal">We’re still new, help us with your valuable words</p>
         </div>
-        <div className="flex flex-col gap-6 md:grid md:grid-cols-2 xl:items-end xl:gap-11.75">
-          <FeedbackCard className={`${card} gap-4 shadow-glow xl:gap-4.5`} />
+        <div className="flex flex-col gap-6 md:grid md:grid-cols-[406fr_356fr] xl:grid-cols-[658fr_608fr] xl:gap-11.75">
+          <FeedbackCard className={`${card} gap-4 shadow-glow md:gap-4.5`} />
           {(links.length > 0 || details.contactEmail) && (
             <div className="flex flex-col gap-6 xl:gap-9.25">
               {links.length > 0 && (
-                <div className={`${card} gap-3.5 md:flex-1 md:shadow-glow xl:gap-4.5`}>
+                <div className={`${card} gap-3.5 md:flex-1 md:gap-4.5 md:shadow-glow`}>
                   <h3 className={cardTitle}>Follow us</h3>
                   <ul className="flex flex-wrap gap-4.5 p-2.5">
                     {links.map((link) => (
@@ -51,7 +51,7 @@ export function Contact({ details }: { details: SiteDetails }) {
                 </div>
               )}
               {details.contactEmail && (
-                <div className={`${card} gap-3 md:flex-1 md:shadow-glow xl:gap-4.5`}>
+                <div className={`${card} gap-3 md:flex-1 md:gap-4.5 md:shadow-glow`}>
                   <h3 className={cardTitle}>Contact us</h3>
                   <a href={`mailto:${details.contactEmail}`} className="flex w-fit items-center gap-2 rounded-md text-sm text-secondary outline-focus-ring hover:underline focus-visible:outline-2 md:text-xl md:text-tertiary">
                     {details.contactEmail}
@@ -62,7 +62,7 @@ export function Contact({ details }: { details: SiteDetails }) {
             </div>
           )}
         </div>
-        <Logo className="hidden h-auto w-full text-primary_on-dark md:block xl:mt-6.5" />
+        <Logo className="hidden h-auto w-full text-primary_on-dark md:mt-3 md:ml-[4.1%] md:block md:w-[93%] xl:mt-14.5" />
       </Container>
     </section>
   )
@@ -79,8 +79,8 @@ export function Footer({ orgNumber, showBlogLink }: { orgNumber: string | null; 
   const links = showBlogLink ? [{ href: '/blog', label: 'Blog' }, ...legal] : legal
   return (
     <footer className="bg-primary-solid text-primary_on-dark">
-      <Container className="flex flex-col items-center gap-9.5 pt-13 pb-7 text-center md:flex-row-reverse md:justify-between md:gap-6 md:py-6 md:text-left xl:px-24">
-        <Logo className="h-auto w-full max-w-85.5 md:hidden" />
+      <Container className="flex flex-col items-center gap-9.5 px-6 pt-13 pb-7 text-center md:flex-row-reverse md:justify-between md:gap-6 md:py-6 md:text-left xl:px-24 xl:py-7.5">
+        <Logo className="mt-1.5 mb-1 h-auto w-full max-w-79.5 md:hidden" />
         <nav aria-label="Footer">
           <ul className="flex flex-wrap justify-center gap-x-2 gap-y-1 text-sm font-medium">
             {links.map((link, i) => (

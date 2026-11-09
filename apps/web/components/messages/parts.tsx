@@ -32,7 +32,7 @@ export function RequestsIcon() {
 
 export function SafetyNotice() {
   return (
-    <div className="flex gap-3 rounded-xl border border-primary bg-primary p-4 shadow-xs">
+    <div className="flex flex-col gap-4 rounded-xl border border-primary bg-primary p-3.75 shadow-xs md:flex-row">
       <InfoCircle size={20} aria-hidden className="shrink-0 text-fg-quaternary" />
       <div className="flex flex-col gap-1 text-sm">
         <p className="font-semibold text-secondary">Stay safe on Roomsie</p>

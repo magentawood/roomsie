@@ -24,7 +24,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
           : <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials(card.fullName)}</span>}
       </CardLink>
       <CardLabel>{label}</CardLabel>
-      <div className="flex flex-1 flex-col gap-2 p-3">
+      <div className="flex flex-1 flex-col gap-2 px-1.75 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{card.fullName}</CardLink></h3>
           {card.verified && <Badge tone="success">Verified</Badge>}
@@ -35,7 +35,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
           {facts.map(([FactIcon, text]) => text && <li key={text} className="flex items-center gap-2"><FactIcon size={16} aria-hidden className="shrink-0 text-fg-quaternary" />{text}</li>)}
         </ul>
         {lifestyle && <p className="text-sm text-tertiary">{lifestyle}</p>}
-        {card.bio && <p className="line-clamp-3 rounded-md bg-secondary p-2 text-sm text-tertiary">“{card.bio}”</p>}
+        {card.bio && <p className="line-clamp-3 rounded-md bg-secondary p-2 text-sm text-tertiary lg:mt-1 lg:p-1">“{card.bio}”</p>}
         {action && <div className="mt-auto flex justify-end border-t border-dashed border-secondary pt-2">{action}</div>}
       </div>
     </article>

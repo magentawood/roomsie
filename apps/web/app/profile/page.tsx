@@ -22,15 +22,17 @@ function Profile() {
   if (profile.isPending) return <Loading mascot="starry" />
   if (profile.data) return <ProfileEditor key={profile.data.id} profile={profile.data} />
   return (
-    <main className="mx-auto flex w-full max-w-240 flex-col gap-8 px-5 py-5 md:px-6 md:py-8">
+    <main className="mx-auto flex w-full max-w-290 flex-col gap-8 px-5 pt-4 pb-5 md:px-6 md:pt-10 md:pb-4">
       <EmptyState icon={User01} title="Make your profile" action={<Button variant="primary" size="md" onClick={() => setCreating(true)}>Make my profile</Button>}>
         Your card lets people who look for a flatmate find you.
       </EmptyState>
       {/* A lister with no profile also gets requests (T-55). */}
       <Section title="Settings" helper="Verification, alerts and your account. They work without a profile.">
-        <VerifyRow />
-        <AlertSwitches />
-        <LogOutRow />
+        <div className="flex flex-col gap-6 md:gap-8">
+          <VerifyRow />
+          <AlertSwitches />
+          <LogOutRow />
+        </div>
       </Section>
       {creating && <CreateProfileDialog onClose={() => setCreating(false)} />}
     </main>

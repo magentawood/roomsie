@@ -39,8 +39,8 @@ export function ShareDialog({ title, card, onDone }: { title: string; card: Card
   const toggle = (id: string) => setTicked(ticked.includes(id) ? ticked.filter((t) => t !== id) : [...ticked, id])
 
   return (
-    <ModalFrame labelledBy="share-title" onClose={() => onDone(null)} place="sheet">
-      <div className="flex flex-col gap-5 p-5 sm:p-6">
+    <ModalFrame labelledBy="share-title" onClose={() => onDone(null)}>
+      <div className="flex flex-col gap-5 p-5 sm:p-6 lg:pb-8">
         <ModalHead icon={Share07} iconTone="neutral" titleId="share-title" title={card.kind === 'people' ? 'Share the profile' : 'Share the listing'} onClose={() => onDone(null)}>
           {conversations.length
             ? 'Select and share with people you want, or copy the link to share externally. You can only share with people you have an accepted request with.'
@@ -52,8 +52,10 @@ export function ShareDialog({ title, card, onDone }: { title: string; card: Card
               <li key={id}>
                 <label className="flex cursor-pointer items-center gap-3 text-sm font-medium text-secondary">
                   <input type="checkbox" checked={ticked.includes(id)} onChange={() => toggle(id)} className="size-4 shrink-0 accent-current" />
-                  <Avatar photoUrl={other.photoUrl} name={other.name} />
-                  <span className="truncate">{other.name}</span>
+                  <span className="flex min-w-0 items-center gap-2">
+                    <Avatar photoUrl={other.photoUrl} name={other.name} />
+                    <span className="truncate">{other.name}</span>
+                  </span>
                 </label>
               </li>
             ))}
@@ -61,11 +63,12 @@ export function ShareDialog({ title, card, onDone }: { title: string; card: Card
         )}
         {send.error && <p role="alert" className="text-sm text-error-primary">{errorText(send.error)}</p>}
       </div>
-      <div className="flex gap-3 border-t border-secondary p-5 sm:px-6">
-        <span className="flex flex-1 lg:hidden"><Button variant="secondary" size="lg" iconLeading={Share07} className="w-full" onClick={() => void shareLink()}>Share link</Button></span>
-        <span className="hidden flex-1 lg:flex"><Button variant="secondary" size="lg" iconLeading={Copy01} className="w-full" onClick={() => void copy()}>Copy link</Button></span>
+      <div className="flex gap-3 border-t border-secondary p-5 sm:px-6 lg:p-6">
+        <span className="flex flex-1 lg:hidden"><Button variant="secondary" size="md" iconLeading={Share07} className="w-full" onClick={() => void shareLink()}>Share link</Button></span>
+        <span className="hidden flex-1 lg:flex"><Button variant="secondary" size="md" iconLeading={Copy01} className="w-full" onClick={() => void copy()}>Copy link</Button></span>
         {conversations.length > 0 && (
-          <Button variant="primary" size="lg" className="flex-1" disabled={!ticked.length || send.isPending} onClick={() => send.mutate()}>Share</Button>
+          // In a span as the link button, so the two get the same width (170 each in the design).
+          <span className="flex flex-1"><Button variant="primary" size="md" className="w-full" disabled={!ticked.length || send.isPending} onClick={() => send.mutate()}>Share</Button></span>
         )}
       </div>
     </ModalFrame>

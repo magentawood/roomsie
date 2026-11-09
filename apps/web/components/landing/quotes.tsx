@@ -16,10 +16,10 @@ const placeClasses = [
 function QuoteCard({ quote, className }: { quote: Quote; className: string }) {
   return (
     <figure className={`relative flex w-78.5 flex-col gap-3.5 overflow-hidden rounded-xl border border-primary bg-primary px-5.5 pt-6.5 pb-5 shadow-tilt-sm md:absolute xl:gap-5 xl:overflow-visible xl:p-12 xl:shadow-tilt ${className}`}>
-      <span aria-hidden className="absolute top-0 left-1 font-quote text-quote text-primary xl:-top-6 xl:left-0 xl:text-quote-lg">“</span>
+      <span aria-hidden className="absolute -top-px left-0.5 font-quote text-quote text-primary xl:-top-10.25 xl:-left-px xl:text-quote-lg">“</span>
       <blockquote className="text-md font-medium text-primary xl:text-display-xs">{quote.text}</blockquote>
       <figcaption className="text-sm text-tertiary md:text-md md:font-medium xl:text-display-xs">-{quote.name}</figcaption>
-      <span aria-hidden className="absolute right-2.5 bottom-0 font-quote text-quote text-primary xl:right-9.75 xl:bottom-0 xl:text-quote-lg">”</span>
+      <span aria-hidden className="absolute right-6 -bottom-1.75 font-quote text-quote text-primary xl:right-9.75 xl:-bottom-3.75 xl:text-quote-lg">”</span>
     </figure>
   )
 }

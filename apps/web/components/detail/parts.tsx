@@ -9,12 +9,13 @@ import { ShareDialog } from './share-dialog'
 
 export type Fact = { label: string; value: string; icon: Icon }
 
-export function Facts({ lines }: { lines: Fact[] }) {
+/** `gap`: icon to text. The designs use 8, and 12 in some tables (house rules, nearby, lifestyle). */
+export function Facts({ lines, gap = 'gap-2' }: { lines: Fact[]; gap?: string }) {
   return (
     <dl className="grid grid-cols-2 border-t border-secondary">
       {lines.map((l) => (
-        <div key={l.label} className="flex gap-3 border-b border-secondary px-1 py-3 odd:border-r even:pl-4">
-          <l.icon size={20} aria-hidden className="mt-0.5 shrink-0 text-fg-quaternary" />
+        <div key={l.label} className={`flex border-b border-secondary px-4 py-4 odd:border-r lg:pr-6 lg:pb-3.75 ${gap}`}>
+          <l.icon size={16} aria-hidden className="shrink-0 text-fg-quaternary" />
           <div className="flex flex-col text-sm"><dt className="font-medium text-secondary">{l.label}</dt><dd className="text-tertiary">{l.value}</dd></div>
         </div>
       ))}
@@ -25,23 +26,23 @@ export function Facts({ lines }: { lines: Fact[] }) {
 export function Chips({ items, className = 'border-secondary bg-secondary text-secondary' }: { items: string[]; className?: string }) {
   return (
     <ul className="flex flex-wrap gap-2">
-      {items.map((item) => <li key={item} className={`rounded-full border px-2.5 py-0.5 text-xs font-medium ${className}`}>{item}</li>)}
+      {items.map((item) => <li key={item} className={`rounded-full border px-1.75 py-px text-xs font-medium ${className}`}>{item}</li>)}
     </ul>
   )
 }
 
 export function Section({ title, children }: { title: string; children: ReactNode }) {
-  return <section className="flex flex-col gap-3"><h2 className="text-md font-semibold text-primary">{title}</h2>{children}</section>
+  return <section className="flex flex-col gap-4"><h2 className="text-md font-semibold text-primary">{title}</h2>{children}</section>
 }
 
 export function Photos({ photos }: { photos: { key: string; url: string }[] }) {
   const [shown, setShown] = useState(0)
   if (!photos.length) return null
   return (
-    <div className="flex flex-col gap-2 md:flex-row">
+    <div className="flex flex-col gap-2 md:flex-row lg:gap-4">
       <img src={photos[shown]!.url} alt={`Photo ${shown + 1} of ${photos.length}`} className="aspect-3/2 w-full rounded-xl object-cover md:min-w-0 md:flex-1" />
       {photos.length > 1 && (
-        <ul className="flex gap-2 md:w-28 md:flex-col">
+        <ul className="flex gap-2 md:w-28 md:flex-col lg:w-27.25 lg:gap-4">
           {photos.map((p, i) => (
             <li key={p.key}>
               <button type="button" aria-label={`Show photo ${i + 1}`} aria-pressed={i === shown} onClick={() => setShown(i)}
@@ -61,13 +62,13 @@ type MenuItem = { label: string; icon: Icon; onClick: () => void; danger?: boole
 export function DetailMenu({ id, items }: { id: string; items: MenuItem[] }) {
   return (
     <>
-      <button type="button" popoverTarget={id} aria-label="More" className="rounded-md border border-primary p-1.5 text-fg-quaternary shadow-xs outline-focus-ring focus-visible:outline-2">
-        <DotsVertical size={20} aria-hidden />
+      <button type="button" popoverTarget={id} aria-label="More" className="rounded-md border border-primary p-1.75 text-fg-quaternary shadow-xs outline-focus-ring focus-visible:outline-2">
+        <DotsVertical size={16} aria-hidden />
       </button>
-      <div id={id} popover="auto" className="fixed inset-auto top-14 right-4 m-0 w-52 rounded-md border border-secondary bg-primary p-1 shadow-xl">
+      <div id={id} popover="auto" className="fixed inset-auto top-12.5 right-5 m-0 w-50 rounded-md border border-secondary bg-primary px-0 py-1 shadow-xl">
         {items.map((item) => (
           <button key={item.label} type="button" popoverTarget={id} popoverTargetAction="hide" onClick={item.onClick}
-            className={`flex w-full items-center gap-2 rounded-sm px-2.5 py-2 text-sm font-medium hover:bg-primary_hover ${item.danger ? 'text-error-primary' : 'text-secondary'}`}>
+            className={`flex w-full items-center gap-2 rounded-sm px-3.5 py-2.5 text-sm font-medium hover:bg-primary_hover ${item.danger ? 'text-error-primary' : 'text-secondary'}`}>
             <item.icon size={16} aria-hidden className={item.danger ? 'text-fg-error' : 'text-fg-quaternary'} />{item.label}
           </button>
         ))}

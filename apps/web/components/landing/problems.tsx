@@ -12,7 +12,7 @@ const chats: { lines: Line[]; className: string }[] = [
       { mine: true, name: 'Meena (Student)', text: 'Ok sir coming. Wohi waala chahiye mast laga wo mujhe' },
       { mine: false, name: 'Broker 😈', text: 'That one gone. I have another, 27k. Come see.' },
     ],
-    className: 'ml-3.5 rotate-5 md:mt-4.5 md:ml-0 md:-rotate-7',
+    className: 'mt-3 ml-3.5 rotate-5 md:mt-4.5 md:ml-0 md:-rotate-7 xl:mt-0',
   },
   {
     lines: [
@@ -22,7 +22,7 @@ const chats: { lines: Line[]; className: string }[] = [
       { mine: true, name: 'Meena (Student)', text: 'Bohot baar post kiya yaar, post doesnt get much traction...' },
       { mine: false, name: 'Chandu', text: 'Baar baar karoge to hi hoga...' },
     ],
-    className: '-mt-1 ml-3.5 -rotate-8 md:mt-7 md:-ml-7.75 md:rotate-11 xl:-ml-1',
+    className: '-mt-3 ml-5.25 -rotate-8 md:mt-7 md:-ml-7.75 md:rotate-11 xl:mt-0 xl:-ml-1',
   },
   {
     lines: [
@@ -31,7 +31,7 @@ const chats: { lines: Line[]; className: string }[] = [
       { mine: true, name: 'Meena (Student)', text: 'Honestly I just want a flatmate who isn’t messy and doesn’t mind me cooking non-veg' },
       { mine: false, name: 'Mahesh', text: 'Yeah no app tells you that lol. I’ll ask around' },
     ],
-    className: 'ml-3.5 rotate-7 md:mt-5 md:-ml-7.75 md:-rotate-8 xl:-ml-1',
+    className: '-mt-2.5 ml-4.25 rotate-7 md:mt-5 md:-ml-7.75 md:-rotate-8 xl:mt-0 xl:-ml-1',
   },
 ]
 
@@ -75,7 +75,7 @@ export function Problems() {
     <section className="overflow-x-clip">
       <Container className="flex flex-col gap-6 pt-8 pb-14 md:gap-16 md:py-12 xl:py-24">
         <SectionHeading className="text-primary xl:whitespace-nowrap">We tackle the problems you normally have...</SectionHeading>
-        <div className="relative flex flex-col items-start md:flex-row md:justify-center md:pb-7 xl:items-center xl:py-10">
+        <div className="relative flex flex-col items-start pb-3 md:flex-row md:justify-center md:pb-7 xl:h-142 xl:items-center xl:py-0">
           {chats.map((chat, i) => (
             <div key={i} className={`shrink-0 ${chat.className}`}><ChatCard lines={chat.lines} /></div>
           ))}

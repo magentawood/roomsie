@@ -43,27 +43,27 @@ export function ReportSheet({ target, onClose }: { target: { listingId: string }
       onClose()
     }
     return (
-      <Modal icon={Flag01} title="Thanks for the report" onClose={done} actions={<Button variant="secondary" size="lg" className="flex-1" onClick={done}>Done</Button>}>
+      <Modal icon={Flag01} title="Thanks for the report" onClose={done} actions={<Button variant="secondary" size="md" className="flex-1" onClick={done}>Done</Button>}>
         {reviewTimes}
       </Modal>
     )
   }
   const ready = reason !== null && (!needsDetail(reason) || detail !== null)
   return (
-    <Modal icon={Flag01} title={sheet.title} onClose={onClose}
+    <Modal title={sheet.title} place="wide" onClose={onClose}
       actions={(
         <>
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button variant="destructive" size="lg" className="flex-1" disabled={!ready || send.isPending}
+          <Button variant="secondary" size="md" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button variant="destructive" size="md" className="flex-1" disabled={!ready || send.isPending}
             onClick={() => send.mutate({ id: (id.current ??= uuidv7()), ...sheet.ids, reason: reason!, detail })}>
             Submit report
           </Button>
         </>
       )}>
-      <div className="flex flex-col gap-4">
-        <p>{sheet.intro}</p>
+      <div className="flex flex-col gap-4 pb-6">
+        <p className="mb-1">{sheet.intro}</p>
         <ChoiceChips label="Reason" labels={sheet.reasons} value={reason} onChange={setReason} required />
-        <TextArea label="Tell us more" value={detail} onChange={setDetail} maxLength={reportDetailLimit}
+        <TextArea label="Tell us more" value={detail} onChange={setDetail} maxLength={reportDetailLimit} size="sm" className="h-24.5 py-2.75! lg:h-13"
           hint={reason && needsDetail(reason) ? 'Required for Other.' : 'Optional.'} />
         <p>{reviewTimes}</p>
         {send.isError && <p role="alert" className="text-error-primary">{errorText(send.error)}</p>}

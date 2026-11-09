@@ -9,7 +9,7 @@ const tones: Record<Tone, { pill: string; dot: string }> = {
 
 export function Badge({ tone, dot = true, children }: { tone: Tone; dot?: boolean; children: string }) {
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${tones[tone].pill}`}>
+    <span className={`inline-flex items-center gap-1 rounded-full border py-px text-xs font-medium ${dot ? 'pr-1.75 pl-1.25' : 'px-1.75'} ${tones[tone].pill}`}>
       {dot && <span className={`size-1.5 rounded-full ${tones[tone].dot}`} aria-hidden />}
       {children}
     </span>

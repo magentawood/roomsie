@@ -37,10 +37,10 @@ function RequestCard({ request }: { request: IncomingRequest }) {
   const answer = useAnswerRequest(request.id, from.profileId, () => router.push(`/messages/${request.id}`))
   const card = person.data
   return (
-    <li className="flex flex-col gap-4 rounded-xl border border-secondary p-4 md:p-5">
+    <li className="flex flex-col gap-3 rounded-xl border border-secondary p-4 md:gap-4 md:p-5">
       <div className="flex items-start gap-3">
         <Avatar photoUrl={from.photoUrl} name={from.name} />
-        <div className="flex min-w-0 flex-1 flex-col text-sm">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 text-sm">
           <p className="font-semibold text-primary">{from.name}</p>
           {card && <p className="text-tertiary">{[lookingFor(card), aboutLine(card)].filter(Boolean).join(' · ')}</p>}
           {card && <p className="text-tertiary">{budgetLine(card)}</p>}
@@ -48,7 +48,7 @@ function RequestCard({ request }: { request: IncomingRequest }) {
         </div>
         <Button variant="secondary" size="sm" href={`/people/${from.profileId}`}>View profile</Button>
       </div>
-      <div className="flex flex-col gap-1 rounded-lg border border-secondary bg-secondary p-3 text-sm">
+      <div className="flex flex-col gap-1 rounded-lg border border-secondary bg-secondary p-2.75 text-sm md:px-3.25">
         <p className="text-xs text-tertiary">{`${first}’s note`}</p>
         <p className="whitespace-pre-line text-secondary">{request.note}</p>
       </div>
@@ -69,18 +69,18 @@ export function Requests() {
   const incoming = useIncomingRequests(true)
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-      <header className="flex items-center gap-3 border-b border-secondary px-4 py-3 md:px-6">
+      <header className="flex items-center gap-2 border-b border-secondary px-5 py-2 md:gap-3 md:px-6 md:py-4">
         <RequestsIcon />
-        <div className="flex flex-col text-sm">
+        <div className="flex flex-col gap-0.5 text-sm">
           <h1 className="text-md font-semibold text-primary">Requests</h1>
           <p className="text-tertiary">People who want to say hi. {`Each request closes after ${requestExpiryDays} days.`}</p>
         </div>
       </header>
-      <div className="p-4 md:px-6">
+      <div className="px-5 pt-6 pb-5 md:p-6">
         {incoming.isError && <p role="alert" className="text-sm text-error-primary">{errorText(incoming.error)}</p>}
         {incoming.isPending && <Loading mascot="chatting" />}
         {incoming.data?.requests.length === 0 && <p className="text-sm text-tertiary">No requests right now.</p>}
-        <ul className="flex flex-col gap-4">{incoming.data?.requests.map((r) => <RequestCard key={r.id} request={r} />)}</ul>
+        <ul className="flex flex-col gap-3 md:gap-4">{incoming.data?.requests.map((r) => <RequestCard key={r.id} request={r} />)}</ul>
       </div>
     </div>
   )

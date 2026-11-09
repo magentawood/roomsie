@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { MessageCircle01 } from '@untitledui/icons'
 import { outgoingRequest, requestNoteLimit, type ListingKind } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
@@ -34,16 +33,16 @@ export function SayHiSheet({ target, onClose }: { target: PersonTarget | Listing
   })
   const name = person ? target.firstName : 'The lister'
   return (
-    <Modal icon={MessageCircle01} title={person ? `Say hi to ${target.firstName}` : `Message ${listerPhrase(target.kind)}`} onClose={onClose}
+    <Modal title={person ? `Say hi to ${target.firstName}` : `Message ${listerPhrase(target.kind)}`} onClose={onClose}
       actions={(
         <>
-          <Button variant="secondary" size="lg" className="flex-1" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" size="lg" className="flex-1" disabled={!note || send.isPending} onClick={() => send.mutate()}>Send request</Button>
+          <Button variant="secondary" size="md" className="flex-1" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" size="md" className="flex-1" disabled={!note || send.isPending} onClick={() => send.mutate()}>Send request</Button>
         </>
       )}>
-      <div className="flex flex-col gap-4">
-        <p>Add a short note. {name} sees it with your card, and can accept.</p>
-        <TextArea label="Your note" value={note} onChange={setNote} maxLength={requestNoteLimit}
+      <div className="flex flex-col gap-4 pb-6">
+        <p className="mb-5">Add a short note. {name} sees it with your card, and can accept.</p>
+        <TextArea label="Your note" value={note} onChange={setNote} maxLength={requestNoteLimit} size="sm" className="h-28 py-2.75!"
           hint={`${note?.length ?? 0}/${requestNoteLimit}. Phone numbers can’t be shared on roomsie.`} />
         {send.isError && <p role="alert" className="text-error-primary">{errorText(send.error)}</p>}
       </div>

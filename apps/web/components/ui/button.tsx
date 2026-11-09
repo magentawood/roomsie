@@ -7,7 +7,8 @@ type Size = 'xs' | 'sm' | 'md' | 'lg'
 
 const variants: Record<Variant, string> = {
   primary: 'bg-brand-solid text-primary_on-brand shadow-xs-skeuomorphic hover:bg-brand-solid_hover',
-  secondary: 'border border-primary bg-primary text-secondary shadow-xs hover:bg-primary_hover hover:text-secondary_hover',
+  // Figma draws the stroke inside the box, so the line is an inset ring that adds no height.
+  secondary: 'bg-primary text-secondary shadow-xs inset-ring inset-ring-(color:--border-color-primary) hover:bg-primary_hover hover:text-secondary_hover',
   tertiary: 'text-tertiary hover:bg-primary_hover hover:text-tertiary_hover',
   'link-error': 'text-error-primary hover:underline',
   destructive: 'bg-error-solid text-primary_on-brand shadow-xs-skeuomorphic hover:bg-error-solid_hover',
@@ -40,11 +41,14 @@ export type ButtonProps = {
 export function Button({ children, variant = 'secondary', size = 'sm', iconLeading: Leading, iconTrailing: Trailing, label, href, pressed, disabled, onClick, type = 'button', className = '' }: ButtonProps) {
   const shape = variant === 'link-error' ? 'gap-1 text-sm' : children ? sizes[size] : iconOnlySizes[size]
   const classes = `inline-flex items-center justify-center font-semibold whitespace-nowrap transition-colors outline-focus-ring focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-50 ${variants[variant]} ${shape} ${className}`
+  // The designs give the label of a button 2 px of padding (not a text link), and an xs button 16 px icons.
+  const iconSize = size === 'xs' && children ? 16 : 20
+  const text = variant === 'link-error' ? children : children && <span className="px-0.5">{children}</span>
   const content = (
     <>
-      {Leading && <Leading size={20} aria-hidden className="shrink-0" />}
-      {children}
-      {Trailing && <Trailing size={20} aria-hidden className="shrink-0" />}
+      {Leading && <Leading size={iconSize} aria-hidden className="shrink-0" />}
+      {text}
+      {Trailing && <Trailing size={iconSize} aria-hidden className="shrink-0" />}
     </>
   )
   if (href && !disabled) return <Link href={href} aria-label={label} className={classes}>{content}</Link>

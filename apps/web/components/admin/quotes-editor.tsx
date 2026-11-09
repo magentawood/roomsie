@@ -55,7 +55,7 @@ export function QuotesEditor() {
   if (quotes.isPending) return <Loading mascot="working" />
   const count = quotes.data.quotes.length
   return (
-    <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-6">
       <div className="flex flex-col gap-3 lg:w-105 lg:shrink-0">
         <p className="text-sm font-medium text-secondary">
           {count >= landingQuoteCount
