@@ -50,7 +50,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [Product numbers](product-numbers.md): `/admin/numbers` shows the funnel of roomsie from the analytics events, for today, 7 days and 30 days, each against the period before.
 - [Profiles and cards](profiles.md): a signed-in user makes one profile with a name, an age of 18 or more and a gender; the card goes live by itself when it is complete, and other users read it through the API.
 - [The results panel](results-panel.md): the results panel shows the matches of Form A as cards beside the chat. It changes only when the form changes.
-- [Roomsie Noticed](roomsie-noticed.md): under the results of a search, a box "Roomsie Noticed" gives up to three notes that the code counted, each with a button that changes the search, and chips under it ask the next step.
+- [Roomsie Noticed](roomsie-noticed.md): under the results of a search, a box "Roomsie Noticed" gives up to five notes that the code counted, each with a button that changes the search, and chips under it ask the next step.
 - [The router](router.md): the router labels each typed message of the chat with its kinds and its scope band, so the turn does only the work that the message needs.
 - [Saved](saved.md): a signed-in user saves a place or a person with the Save button, and sees them again under Saved, in the tabs Places and People.
 - [Secret scanning](secret-scanning.md): gitleaks finds a password or a key in the code before the secret goes into the shared git history. Run `pnpm secrets` before each pull request.

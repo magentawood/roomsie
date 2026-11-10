@@ -1,4 +1,4 @@
-import { intentsOf, type FormA, type LifestyleAxis, type MustHaveKey, type Notice } from '@roomsie/contract'
+import { intentsOf, maxNotices, type FormA, type LifestyleAxis, type MustHaveKey, type Notice } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { listingCounts, rentsOf, twoBhkCosts } from '../listings/match'
 import { peopleCounts, teamUpCount } from '../profiles/match'
@@ -18,12 +18,12 @@ const hintedBy: Partial<Record<MustHaveKey, { axis: LifestyleAxis; values: reado
 type Input = { form: FormA; seeksPeople: boolean; viewerUserId?: string; filters: Filters; searches: Searches; total: number; suggestions: Suggestion[] }
 
 /**
- * The notes of "Roomsie Noticed" (flow 02), at most three. With results: a must-have that few of them have, people to team up with,
- * and the walk to a station. With none: the rents of the areas, a nearby area with results, and a 2 BHK split two ways.
- * Each results card has a note (the founders, 2026-11-09): with no other note, the rents of the areas, or a 2 BHK split two ways.
+ * The notes of "Roomsie Noticed" (flow 02): each note that the data backs, at most five. The number is free (the founders, 2026-11-10).
+ * With results: a must-have that few of them have, people to team up with, the walk to a station, a second must-have, the rents
+ * of the areas (of rooms, for people), and a 2 BHK split two ways. With none: the rents, a nearby area with results, and the 2 BHK.
  */
 export async function noticesOf(db: Db, input: Input): Promise<Notice[]> {
-  return (input.total > 0 ? await withResults(db, input) : await withNone(db, input)).slice(0, 3)
+  return (input.total > 0 ? await withResults(db, input) : await withNone(db, input)).slice(0, maxNotices)
 }
 
 async function withResults(db: Db, { form, seeksPeople, viewerUserId, filters, searches, total }: Input) {
@@ -43,18 +43,25 @@ async function withResults(db: Db, { form, seeksPeople, viewerUserId, filters, s
     seeksPeople ? 0 : teamUpCount(db, viewerUserId, filters.areas),
   ])
   const notes: Notice[] = []
-  // "Only 6 of 24": half or fewer of three results or more.
-  const few = ordered.find((key) => total >= 3 && (counts[key] ?? 0) >= 1 && counts[key]! * 2 <= total)
-  if (few) notes.push({ kind: 'mustHave', key: few, count: counts[few]!, total })
+  // "Only 6 of 24": half or fewer of three results or more. The first one leads, and a second one comes after the notes of the results.
+  const fews = ordered.filter((key) => total >= 3 && (counts[key] ?? 0) >= 1 && counts[key]! * 2 <= total)
+  const few = (key: MustHaveKey): Notice => ({ kind: 'mustHave', key, count: counts[key]!, total })
+  if (fews[0]) notes.push(few(fews[0]))
   if (teamUp > 0) notes.push({ kind: 'teamUp', count: teamUp })
   const near = counts.near_station ?? 0
   if (near >= 1 && near < total) notes.push({ kind: 'mustHave', key: 'near_station', count: near, total })
-  if (notes.length) return notes
+  if (fews[1]) notes.push(few(fews[1]))
+  // What places in the areas cost helps beside any results.
   const scope = { viewerUserId, areas: filters.areas }
-  const rents = seeksPeople ? [] : await rentsOf(db, { ...scope, kinds: searches.listings(filters).kinds })
-  if (rents.length) return [rentsNote(rents)]
-  const flats = intentsOf(form).includes('whole_flat') ? [] : await twoBhkCosts(db, scope)
-  return flats.length ? [shareNote(flats)] : []
+  const [rents, flats] = await Promise.all([
+    // People to rent with hear what a room in a shared flat of the areas costs.
+    rentsOf(db, { ...scope, kinds: seeksPeople ? ['room_in_flat'] : searches.listings(filters).kinds }),
+    // A search of whole flats needs no sum of a shared flat, and the people to team up already lead to people to share with.
+    intentsOf(form).includes('whole_flat') || teamUp > 0 ? [] : twoBhkCosts(db, scope),
+  ])
+  if (rents.length) notes.push(rentsNote(rents))
+  if (flats.length) notes.push(shareNote(flats))
+  return notes
 }
 
 /** The cheapest rent, and the middle half of the rents when there are four or more. */

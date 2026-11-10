@@ -37,6 +37,9 @@ const relaxed = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('area'), area: areaSlug }),
 ])
 
+/** The most notes in one "Roomsie Noticed" box, so that it stays about one screen high in the chat. */
+export const maxNotices = 5
+
 /** One note of "Roomsie Noticed" under the results of flow 02. The code counts each number; a note shows only when the data backs it. */
 export const notice = z.discriminatedUnion('kind', [
   /** Only some of the results have a must-have that the search does not require. `near_station` names the walk to a station. */
@@ -59,6 +62,6 @@ export const resultsResponse = z.object({
   /** Only when a search finds nothing: a few cards of each relaxed search. */
   suggestions: z.array(z.object({ relaxed, results: z.array(matchResult) })),
   /** Only on the first page. An older API sends none. */
-  noticed: z.array(notice).max(3).default([]),
+  noticed: z.array(notice).max(maxNotices).default([]),
 })
 export type ResultsResponse = z.infer<typeof resultsResponse>

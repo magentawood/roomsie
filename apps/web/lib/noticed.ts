@@ -14,6 +14,7 @@ const capital = (text: string) => text.charAt(0).toUpperCase() + text.slice(1)
 
 const many: Record<PlaceIntent, string> = { room: 'rooms in shared flats', pg: 'PGs', whole_flat: 'whole flats', flatmates: 'people' }
 const one: Record<PlaceIntent, string> = { room: 'Room', pg: 'PG', whole_flat: 'Flat', flatmates: 'People' }
+const each: Record<PlaceIntent, string> = { room: 'room in a shared flat', pg: 'PG', whole_flat: 'whole flat', flatmates: 'room in a shared flat' }
 const joined = (items: string[]) => (items.length > 1 ? `${items.slice(0, -1).join(', ')} and ${items.at(-1)}` : items[0] ?? '')
 
 /** What few of the results have, and the button that makes it a must: places, then people. */
@@ -53,9 +54,16 @@ export function noteLines(notes: Notice[], form: FormA, areaName: AreaName): Not
         button: 'Show people to team up with', tap: { slot: 'intent', value: 'flatmates' },
       }]
       case 'rents': {
+        // For people to rent with, the rents are of rooms in shared flats, and the button shows those rooms.
+        const kinds = people ? many.room : what
+        const usual = note.low !== null && note.high !== null ? `${capital(kinds)} in ${where} usually go for ${thousands(note.low)} to ${thousands(note.high)} a month. ` : ''
+        const cheapest = usual ? 'The cheapest one' : `The cheapest ${types.length === 1 ? each[types[0]!] : 'place'} in ${where}`
+        const text = `${usual}${cheapest} right now is ${thousands(note.cheapest)}.`
+        if (people) return [{ text, button: `Show ${many.room} in ${picks[0] ?? 'Mumbai'}`, tap: { slot: 'intent', value: 'room' } }]
         const band = budgetBands.find((b) => b.max !== null && b.max >= note.cheapest) ?? budgetBands.at(-1)!
-        const usual = note.low !== null && note.high !== null ? `${capital(what)} in ${where} usually go for ${thousands(note.low)} to ${thousands(note.high)} a month. ` : ''
-        return [{ text: `${usual}The cheapest one right now is ${thousands(note.cheapest)}.`, button: `Change my budget to ${band.label.toLowerCase()}`, tap: { slot: 'budget', value: band.id } }]
+        // Beside results, the band may be the budget of the search already: that button changes nothing.
+        if (band.max === max && band.min === (form.budget.value?.min ?? null)) return []
+        return [{ text, button: `Change my budget to ${band.label.toLowerCase()}`, tap: { slot: 'budget', value: band.id } }]
       }
       case 'nearbyArea': return [{
         text: `${max != null ? `Under ${thousands(max)}, ${what}` : capital(what)} do come up in ${areaName(note.area)}, next to ${picks[0] ?? 'your areas'}.`,
