@@ -5,6 +5,7 @@
 ## What it is
 
 - The **results panel** is the right half of `/chat` on a desktop. It has a header, the "Best Matches" sort and a grid of person and place cards ([interface-shape.md](../interface-shape.md)).
+- **The line between the chat and the panel** can be dragged on a computer, or moved with the arrow keys. A double click gives back the 530 px of the designs. The chat stays 360 px wide or more, and the panel 420 px. Local storage keeps the width (`roomsie.chatWidth`).
 - The **header** shows the count only, as "8 Results". The results card in the chat names the search, from "Everything in Mumbai" to "Rooms in Powai–Vikhroli under ₹25,000".
 - A **label** sits on the photo of a card. "Best match" means that the person stated three or more preferences, and the card meets all of them. "Didn't say: smoking" means that the card did not answer a dealbreaker ([PD3a](../decisions/pd-03a-flatmate-matching.md)).
 - With no match, the panel shows "No relevant results" and the **suggested posts** ([PD6c](../decisions/pd-06c-interface-holes.md)).

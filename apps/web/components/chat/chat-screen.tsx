@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -226,6 +226,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
   // The results belong to the reply that brought them (the founders, 2026-11-09), and new ones show the wait for at least 2 s.
   const [delivered, setDelivered] = useState<Delivered | null>(() => storedDelivery(goalId))
+  // The chat beside the results is 530 px wide (42:12983), and the person can drag the line between them (the founders, 2026-11-10).
+  const mainBox = useRef<HTMLElement>(null)
+  const [chatWidth, setChatWidth] = useState(() => Number(readStored(chatStorage.chatWidth)) || chatWidthDefault)
   const [oldCards, setOldCards] = useState<{ goalId: string | null; cards: OldCard[] }>(() => ({ goalId, cards: storedCards(goalId) }))
   // An older card opens its own results in the panel.
   const [viewed, setViewed] = useState<FormA | null>(null)
@@ -335,7 +338,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // The panel shows the results of an older card once they load; until then, the newest results.
   const viewing = viewed !== null && viewedResults.data !== undefined
   return (
-    <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,33.125rem)_minmax(0,1fr)]' : ''}`}>
+    <main ref={mainBox} style={{ '--chat-w': `${chatWidth}px` } as CSSProperties}
+      className={`relative grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,var(--chat-w))_minmax(0,1fr)]' : ''}`}>
+      {split && <SplitHandle width={chatWidth} box={mainBox} onWidth={setChatWidth} />}
       {/* On a phone, "Show all" has its own header (146:29502). */}
       {!preview && <GoalHeader title={goalName} closed={closed} phoneHidden={view === 'all'} onFound={() => setFoundOpen(true)} />}
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
@@ -412,6 +417,53 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       {wall && !signedIn && <SignInWall title={capWall.title} text={capWall.text} onClose={() => setWall(false)} />}
       {foundOpen && goalId && <FoundFlow goalId={goalId} title={goalName} onDone={() => setFoundOpen(false)} />}
     </main>
+  )
+}
+
+/** The chat of the designs beside the results, and the narrowest chat and results that still read well. */
+const chatWidthDefault = 530
+const chatWidthMin = 360
+const panelWidthMin = 420
+
+/**
+ * The line between the chat and the results: a drag, or the arrow keys, change the width of the chat, and a double click gives back
+ * the 530 px of the designs. The width stays for the next visit.
+ */
+function SplitHandle({ width, box, onWidth }: { width: number; box: RefObject<HTMLElement | null>; onWidth: (width: number) => void }) {
+  const fit = (next: number) => {
+    const room = box.current?.getBoundingClientRect().width ?? next + panelWidthMin
+    return Math.round(Math.min(Math.max(next, chatWidthMin), room - panelWidthMin))
+  }
+  const keep = (next: number) => { onWidth(next); writeStored(chatStorage.chatWidth, String(next)) }
+  return (
+    <div role="separator" aria-orientation="vertical" aria-label="Resize the chat" aria-valuenow={width} aria-valuemin={chatWidthMin} tabIndex={0}
+      style={{ left: width }}
+      className="group absolute inset-y-0 z-20 hidden w-3 -translate-x-1/2 cursor-col-resize touch-none outline-focus-ring focus-visible:outline-2 lg:block"
+      onPointerDown={(e) => {
+        const handle = e.currentTarget
+        handle.setPointerCapture(e.pointerId)
+        // No text gets selected while the line moves; the double click still comes.
+        document.body.style.userSelect = 'none'
+        const left = box.current?.getBoundingClientRect().left ?? 0
+        const move = (ev: PointerEvent) => onWidth(fit(ev.clientX - left))
+        const end = (ev: PointerEvent) => {
+          handle.removeEventListener('pointermove', move)
+          handle.removeEventListener('pointerup', end)
+          document.body.style.userSelect = ''
+          keep(fit(ev.clientX - left))
+        }
+        handle.addEventListener('pointermove', move)
+        handle.addEventListener('pointerup', end)
+      }}
+      onDoubleClick={() => keep(fit(chatWidthDefault))}
+      onKeyDown={(e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          e.preventDefault()
+          keep(fit(width + (e.key === 'ArrowLeft' ? -16 : 16)))
+        }
+      }}>
+      <span className="mx-auto block h-full w-px bg-transparent transition-colors group-hover:w-0.5 group-hover:bg-brand-solid group-focus-visible:bg-brand-solid group-active:w-0.5 group-active:bg-brand-solid" />
+    </div>
   )
 }
 
