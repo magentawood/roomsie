@@ -18,7 +18,7 @@
 | The routes | `apps/api/src/profiles/routes.ts`: `POST`, `PATCH` and `GET /v1/me/profile`, `POST /v1/me/profile/upload-urls` and `GET /v1/people/:id` |
 | The replies | `apps/api/src/profiles/read.ts`: the card, the own profile, and the fields that a card still needs |
 | The lister on a listing | `partsOf` and `listingView` in `apps/api/src/listings/read.ts` |
-| The screens | `apps/web/app/profile/page.tsx`, and `apps/web/components/profile/`: the page, the create dialog and the delete dialog |
+| The screens | `apps/web/app/profile/page.tsx`, and `apps/web/components/profile/`: the page, the photo with its ring and tick, Help, the create dialog and the delete dialog |
 | The pure parts of the screens | `apps/web/lib/profile-form.ts`: the budget bands, "What best describes you?", the edit body and the labels |
 
 - An edit sends only the fields that change. `null` clears a field, and in `lifestyle` and `mustHaves` it clears one answer.
@@ -28,11 +28,14 @@
 - A listing shows the name and the first photo of the profile of its lister. A card of a son or daughter is not the lister.
 - After a sign-in, the app shell opens the create dialog "You've logged in!" when the account has no profile. It asks the name, the age and the gender. Each way to close it hides it until the browser tab closes.
 - The page saves its fields with one Save button. A photo saves at once, so no uploaded photo waits for a Save.
+- The card at the top shows the first photo in a white ring. The photo of a verified person has the blue tick of the designs ([ID checks](id-checks.md)). The card of a son or daughter never shows the tick.
+- "Help" on that card opens a modal. It repeats the helper of each section, from `profileSections` in `lib/profile-form.ts`.
+- The banner of the card has a close. Local storage keeps the closed state for each profile, and a new state shows the banner again (`cardBannerState`).
 - "Delete my account" calls `DELETE /v1/me`, then signs out.
 
 ## The choice we made
 
-- The fields, adults only, the parent and the visibility rule: [PD16](../decisions/pd-16-profiles.md). The Form A fields: [PD15](../decisions/pd-15-form-a-contract.md). The gender: [PD8](../decisions/pd-08-verification.md).
+- The fields, adults only, the parent, the visibility rule, the close of the banner and Help: [PD16](../decisions/pd-16-profiles.md). The Form A fields: [PD15](../decisions/pd-15-form-a-contract.md). The gender: [PD8](../decisions/pd-08-verification.md).
 - The routes, the follow-up choice of a parent and the lister: the spec of T-16a ([#36](https://github.com/magentawood/roomsie/issues/36)).
 - The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b ([#98](https://github.com/magentawood/roomsie/issues/98)). The look of the create dialog of flow 01, and when it shows: the spec of T-60 ([#208](https://github.com/magentawood/roomsie/issues/208)).
 
@@ -42,6 +45,7 @@
 - **A photo change and the deletion of an account lock the same account row.** The deletion reads and deletes the photos while it holds the lock, so the deletion cannot miss a new photo.
 - **R2 fails, nothing changes.** A removed photo leaves R2 before its row. If R2 fails, the edit gives 502.
 - **One profile for each account.** A second create gives 409.
+- **"Fill using our chat" does not show.** The designs show it in the page header, with the pop-up "Overwrite profile changes?". It copies the answers of a goal into the profile ([ADR-0017](../decisions/0017-schema-v1-shape.md)). No route does this yet.
 
 ## Tickets
 

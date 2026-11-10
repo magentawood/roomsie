@@ -1,5 +1,5 @@
 import {
-  budgetBands as bands, type BudgetBand, childTypes, lifestyleAnswerLabels, maxAge, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
+  budgetBands as bands, type BudgetBand, childTypes, lifestyleAnswerLabels, maxAge, maxProfilePhotos, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
 } from '@roomsie/contract'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
@@ -89,3 +89,21 @@ export const withMustHave = (mustHaves: ProfileForm['mustHaves'], key: MustHaveK
 
 /** The first word of a name. The demo cards of the launch are "Demo · Riya S.", so their first name is the word after the mark. */
 export const firstName = (fullName: string) => fullName.replace(/^Demo · /, '').split(/\s+/)[0] ?? fullName
+
+/** The title and the helper of each section of the profile page. The Help modal repeats them, so the two texts stay the same. */
+export const profileSections = {
+  basics: { title: 'The Basics', helper: 'Role only, never the company.' },
+  photos: { title: 'Photos', helper: `Two or more gets you far more replies. Up to ${maxProfilePhotos}.` },
+  search: { title: 'Your search', helper: 'Shown on your card so people can rule themselves in or out.' },
+  lifestyle: { title: 'What you are', helper: 'Facts about how you live. Other people’s must-haves check these.' },
+  mustHaves: { title: 'What you need from other seekers', helper: 'Choose Prefer or Dealbreaker. I hide anything that breaks a dealbreaker.' },
+  thoughts: { title: 'Your thoughts', helper: 'Some info about you that you want others to see. This shows on your card.' },
+  settings: { title: 'Settings', helper: 'Verification, card visibility, alerts and your account.' },
+} as const
+
+/**
+ * The state that the banner of the card tells. A close of the banner keeps this value in the browser, and the banner shows
+ * again when the value changes: a new state, or a different list of missing fields.
+ */
+export const cardBannerState = (p: Pick<ProfileResponse, 'hiddenForReview' | 'visibility' | 'missing'>) =>
+  p.hiddenForReview ? 'review' : p.visibility === 'draft' ? `draft:${p.missing.join(',')}` : p.visibility

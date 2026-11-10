@@ -20,6 +20,8 @@
   --color-gray-800: #262626;
   --color-gray-900: #171717;
   --color-gray-950: #0a0a0a;
+  --color-alpha-black-10: #0000001a;
+  --color-alpha-black-16: #00000029;
   --color-alpha-black-50: #00000080;
   --color-alpha-black-60: #00000099;
   --color-alpha-black-90: #000000e5;
@@ -29,6 +31,7 @@
   --color-red-600: #dc2626;
   --color-red-700: #b91c1c;
   --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
   --color-green-200: #bbf7d0;
   --color-green-500: #22c55e;
   --color-green-600: #16a34a;
@@ -66,6 +69,8 @@
   --text-color-fg-quaternary_hover: var(--color-gray-500);
   --text-color-fg-error: var(--color-red-600);
   --text-color-fg-success: var(--color-green-600);
+  /* The blue tick of a verified person on the photo of Profile and Settings. */
+  --text-color-fg-verified: var(--color-blue-500);
   --text-color-badge-success: var(--color-green-700);
   --text-color-badge-error: var(--color-red-700);
   --text-color-badge-gray: var(--color-gray-700);
@@ -87,6 +92,8 @@
   --background-color-brand-solid: var(--color-alpha-black-90);
   --background-color-brand-solid_hover: var(--color-gray-950);
   --background-color-step-complete: var(--color-alpha-black-60);
+  /* The round icon of the "You're discoverable" banner. */
+  --background-color-featured-success: var(--color-green-100);
   --background-color-error-solid: var(--color-red-600);
   --background-color-error-solid_hover: var(--color-red-700);
   --background-color-badge-success: var(--color-green-50);
@@ -107,6 +114,9 @@
   --border-color-secondary: var(--color-gray-200);
   --border-color-brand: var(--color-alpha-black-50);
   --border-color-error: var(--color-red-500);
+  /* The ring of a profile photo: the outer line, and the line inside around the photo. */
+  --border-color-secondary_alt: var(--color-alpha-black-10);
+  --border-color-avatar: var(--color-alpha-black-16);
   --border-color-badge-success: var(--color-green-200);
   --border-color-badge-error: var(--color-red-200);
   --border-color-badge-gray: var(--color-gray-200);

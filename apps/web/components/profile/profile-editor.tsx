@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Eye, EyeOff, InfoCircle, Trash01 } from '@untitledui/icons'
 import {
@@ -11,21 +11,23 @@ import {
 import { api, errorText } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import {
-  ages, bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, withMustHave, type ProfileForm,
+  ages, bandOf, cardBannerState, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, profileSections, withMustHave, type ProfileForm,
 } from '../../lib/profile-form'
-import { initials } from '../../lib/person'
 import { queryKeys, useAreas } from '../../lib/queries'
 import { PhotoPicker } from '../photos'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { DateInput, Field, Select, TextArea, TextInput } from '../ui/field'
+import { CloseButton } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
 import { VerifyRow } from '../verification/verify-row'
 import { AlertSwitches } from './alert-switches'
 import { AreaPicker } from './area-picker'
 import { DeleteAccountDialog } from './delete-account-dialog'
 import { LogOutRow } from './log-out-row'
+import { ProfileHelp } from './profile-help'
+import { ProfilePhoto } from './profile-photo'
 
 const profileUpload = { path: '/v1/me/profile/upload-urls', reply: profileUploadUrlResponse }
 
@@ -42,44 +44,64 @@ export function Section({ title, helper, children }: { title: string; helper: st
   )
 }
 
+/** The closed banner of each profile, in this browser: the state that it told (`cardBannerState`). */
+const closedBannerKey = (profileId: string) => `roomsie:card-banner-closed:${profileId}`
+
 function CardBanner({ profile }: { profile: ProfileResponse }) {
+  const state = cardBannerState(profile)
+  // A save can change the state while the page is open, so each render compares the closed state with the state now.
+  const [closedState, setClosedState] = useState(() => typeof localStorage === 'undefined' ? null : localStorage.getItem(closedBannerKey(profile.id)))
+  // A new state forgets the close, so a return to the old state shows its banner again.
+  useEffect(() => {
+    if (closedState === null || closedState === state) return
+    localStorage.removeItem(closedBannerKey(profile.id))
+    setClosedState(null)
+  }, [closedState, state, profile.id])
+  const close = () => {
+    localStorage.setItem(closedBannerKey(profile.id), state)
+    setClosedState(state)
+  }
+  if (closedState === state) return null
   const [title, text, BannerIcon] = profile.hiddenForReview
     ? ['Hidden for review', 'Reports hid your card from others until a moderator reviews it.', EyeOff]
     : profile.visibility === 'live'
     ? profile.managedByParent
-      ? [`${firstName(profile.fullName)}’s card is discoverable`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]
-      : ['You’re discoverable', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
+      ? [`${firstName(profile.fullName)}’s card is discoverable 🎉`, 'People looking for someone like them can find the card and say hi. You get the messages.', Eye]
+      : ['You’re discoverable 🎉', 'People looking for someone like you can find you and say hi. Fuller profiles show up first.', Eye]
     : profile.visibility === 'hidden'
       ? ['Your card is hidden', 'People can’t find you in their results. Turn off “Hide my card” in the settings to show it again.', EyeOff]
       : ['Your card is not visible yet', 'Add these to show it:', InfoCircle]
+  // The designs draw the stroke inside the box: 15 px of padding and the 1 px border are their 16. The close is 8 from the corner.
   return (
-    <div role="status" className="flex items-start gap-4 rounded-xl border border-secondary p-4">
-      <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${profile.visibility === 'live' && !profile.hiddenForReview ? 'bg-badge-success text-badge-success' : 'bg-secondary text-fg-quaternary'}`}><BannerIcon size={20} aria-hidden /></span>
-      <div className="flex flex-col gap-1 text-sm">
-        <p className="font-semibold text-primary">{title}</p>
+    <div role="status" className="relative flex items-start gap-4 rounded-xl border border-primary p-3.75">
+      <span className={`flex size-10 shrink-0 items-center justify-center rounded-full ${profile.visibility === 'live' && !profile.hiddenForReview ? 'bg-featured-success text-fg-success' : 'bg-secondary text-fg-quaternary'}`}><BannerIcon size={20} aria-hidden /></span>
+      <div className="flex min-w-0 flex-1 flex-col gap-1 text-sm">
+        <p className="pr-8 font-semibold text-secondary">{title}</p>
         <p className="text-tertiary">{text}</p>
         {profile.visibility === 'draft' && !profile.hiddenForReview && <ul className="-mt-1 list-disc pl-5 text-tertiary">{profile.missing.map((m) => (
           <li key={m}>{m === 'whosMoving' && profile.managedByParent ? profileLabels.missingChildType : profileLabels.missing[m]}</li>
         ))}</ul>}
       </div>
+      <span className="absolute top-1.75 right-1.75"><CloseButton onClose={close} /></span>
     </div>
   )
 }
 
+/** The card of the designs: the photo with its ring and the blue tick of a verified person, the name, and Help. On a phone, Help is under them. */
 function Header({ profile }: { profile: ProfileResponse }) {
-  const photo = profile.photos[0]
   return (
-    <div className="flex items-center gap-3 rounded-xl bg-secondary p-3 md:gap-5">
-      {photo
-        ? <img src={photo.url} alt="" className="size-18 rounded-full object-cover md:size-24" />
-        : <span className="flex size-18 items-center justify-center rounded-full bg-tertiary text-lg font-semibold text-tertiary md:size-24">{initials(profile.fullName)}</span>}
-      <div className="flex min-w-0 flex-col gap-1.5 md:gap-2">
-        <p className="flex flex-wrap items-center gap-2 text-lg font-semibold text-primary">
-          <span className="truncate">{profile.fullName}</span>
-          {profile.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
-        </p>
-        <p className="text-md text-tertiary">{[profile.age && `${profile.age} years`, profile.jobRole].filter(Boolean).join(' • ')}</p>
+    <div className="flex flex-col gap-3 rounded-xl bg-secondary p-3 md:flex-row md:items-start md:gap-5">
+      <div className="flex min-w-0 flex-1 items-center gap-3 md:gap-5">
+        <ProfilePhoto url={profile.photos[0]?.url ?? null} fullName={profile.fullName} verified={profile.verified} />
+        <div className="flex min-w-0 flex-col gap-1.5 font-medium md:gap-2">
+          <p className="flex flex-wrap items-center gap-2 text-md text-primary md:text-xl">
+            <span className="truncate">{profile.fullName}</span>
+            {profile.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
+          </p>
+          <p className="text-sm text-secondary md:text-lg">{[profile.age && `${profile.age} years`, profile.jobRole].filter(Boolean).join(' • ')}</p>
+        </div>
       </div>
+      <div className="self-end md:self-start"><ProfileHelp /></div>
     </div>
   )
 }
@@ -141,7 +163,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         <CardBanner profile={profile} />
       </div>
 
-      <Section title="The Basics" helper="Role only, never the company.">
+      <Section {...profileSections.basics}>
         <div className="grid gap-6 md:grid-cols-3">
           <TextInput size="xs" label="Full Name" required value={draft.fullName} onChange={(fullName) => set({ fullName: fullName ?? '' })} placeholder="eg. Divya Sharma" maxLength={profileTextLimits.fullName} />
           <Field label="Age" required>
@@ -164,13 +186,13 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         )}
       </Section>
 
-      <Section title="Photos" helper={profile.photos.length < maxProfilePhotos
-        ? `Two or more gets you far more replies. Up to ${maxProfilePhotos}.`
+      <Section title={profileSections.photos.title} helper={profile.photos.length < maxProfilePhotos
+        ? profileSections.photos.helper
         : `${maxProfilePhotos} of ${maxProfilePhotos} photos. Delete one to add another.`}>
         <Photos profile={profile} save={(body) => save.mutate(body)} />
       </Section>
 
-      <Section title="Your search" helper="Shown on your card so people can rule themselves in or out.">
+      <Section {...profileSections.search}>
         <ChoiceChips label="What best describes you?" labels={profileLabels.describesYou} value={describesYou(draft)}
           onChange={(choice) => choice && set(pickDescribesYou(choice, draft))} />
         {draft.managedByParent && (
@@ -195,14 +217,14 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         </div>
       </Section>
 
-      <Section title="What you are" helper="Facts about how you live. Other people’s must-haves check these.">
+      <Section {...profileSections.lifestyle}>
         {(Object.keys(lifestyleAnswers) as LifestyleAxis[]).map((axis) => (
           <ChoiceChips key={axis} label={profileLabels.axes[axis]} labels={profileLabels.answers[axis] as Record<string, string>}
             value={draft.lifestyle[axis] ?? null} onChange={(answer) => set({ lifestyle: { ...draft.lifestyle, [axis]: answer } })} />
         ))}
       </Section>
 
-      <Section title="What you need from other seekers" helper="Choose Prefer or Dealbreaker. I hide anything that breaks a dealbreaker.">
+      <Section {...profileSections.mustHaves}>
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           {/* Only a listing answers the walk to a station, so it is no must-have of other seekers. */}
           {mustHaveKeys.filter((key) => key !== 'near_station').map((key) => (
@@ -212,11 +234,11 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
         </div>
       </Section>
 
-      <Section title="Your thoughts" helper="Some info about you that you want others to see. This shows on your card.">
+      <Section {...profileSections.thoughts}>
         <TextArea size="xs" label="What I want the others to know" value={draft.bio} onChange={(bio) => set({ bio })} placeholder="Say how you’d say it to a friend" maxLength={profileTextLimits.bio} />
       </Section>
 
-      <Section title="Settings" helper="Verification, card visibility, alerts and your account.">
+      <Section {...profileSections.settings}>
         {/* The rows are 24 apart on a phone and 32 on a computer. */}
         <div className="flex flex-col gap-6 md:gap-8">
           <VerifyRow />

@@ -25,7 +25,7 @@ the browser ──signed PUT──▶ private S3 bucket (Mumbai) ◀── Rekog
 - **The audit log:** each photo link that the API gives a reviewer is one row, and each approve and reject is one more row.
 - **What we keep:** the state, the method, the ID type, the reason and the note, the dates and the reviewer. The two files and the score go at the review ([PD19](../decisions/pd-19-retention.md)).
 - **The alerts:** "You're verified on roomsie" or "Your ID check needs a new photo", by email and push ([Alerts](alerts.md)). No alert says the reason.
-- **The badge:** "Verified" on a card. "Verified Owner", "Verified Lister" or "Verified Broker" on the detail of a place.
+- **The badge:** "Verified" on a card. "Verified Owner", "Verified Lister" or "Verified Broker" on the detail of a place. A blue tick on the photo of Profile and Settings.
 
 | Route | Who | What it does |
 |---|---|---|
