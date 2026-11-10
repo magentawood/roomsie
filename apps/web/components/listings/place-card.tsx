@@ -3,7 +3,7 @@ import { Home02, MarkerPin01 } from '@untitledui/icons'
 import { listingTitle, type ListingResponse } from '@roomsie/contract'
 import { rentAmount } from '../../lib/listing-steps'
 import { Badge } from '../ui/badge'
-import { CardLabel, CardLink } from '../ui/card-link'
+import { CardLabel, CardLink, overCard } from '../ui/card-link'
 
 /** The result card of the designs for a place. */
 export function PlaceCard({ listing, areaName, action, label, onOpen }: {
@@ -13,7 +13,7 @@ export function PlaceCard({ listing, areaName, action, label, onOpen }: {
   const photo = listing.photos[0]
   const rent = rentAmount(listing)
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
+    <article className="group/card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
       <CardLink href={href} onOpen={onOpen} decorative className="block aspect-3/2 bg-tertiary">
         {photo
           ? <img src={photo.url} alt="" className="size-full object-cover" />
@@ -24,7 +24,7 @@ export function PlaceCard({ listing, areaName, action, label, onOpen }: {
       <div className="flex flex-1 flex-col gap-3 px-1.75 py-3">
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{listingTitle(listing)}</CardLink></h3>
+            <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} stretched className="outline-focus-ring group-hover/card:underline focus-visible:outline-2">{listingTitle(listing)}</CardLink></h3>
             {listing.verified && <Badge tone="success">Verified</Badge>}
           </div>
           {areaName && <p className="flex items-center gap-1.5 text-sm text-secondary"><MarkerPin01 size={16} aria-hidden className="shrink-0 text-fg-quaternary" />{areaName}</p>}
@@ -33,7 +33,7 @@ export function PlaceCard({ listing, areaName, action, label, onOpen }: {
           <p className="text-lg font-semibold text-primary">
             {rent ? <><span className="underline">{rent}</span> <span className="text-sm font-normal text-tertiary">/mo</span></> : <span className="text-sm font-normal text-tertiary">Rent not set</span>}
           </p>
-          {action}
+          {action && <span className={overCard}>{action}</span>}
         </div>
       </div>
     </article>
