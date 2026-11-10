@@ -1,6 +1,6 @@
 # PD6c — The panel follows the form
 
-**Status:** Settled. All five holes closed. Changed on 2026-11-02. · **Date:** 2026-09-20 · **Deciders:** Yash. PC-39: pulkitshringi
+**Status:** Settled. All five holes closed. Changed on 2026-11-10. · **Date:** 2026-09-20 · **Deciders:** Yash. PC-39: pulkitshringi
 
 ## Context
 
@@ -78,8 +78,9 @@ search with no Mumbai area shows the waitlist screen. The alerts go by email.
   layer is.
 - **Filters and rank are different.** Filters need area and budget. A
   compatibility rank needs lifestyle answers, which take much more time. The
-  panel header shows what the panel knows. Example: "Everything in Mumbai" →
-  "Powai" → "Powai, under ₹20,000" → "Best match" labels appear.
+  results card in the chat shows what the panel knows. Example: "Everything in
+  Mumbai" → "Powai" → "Powai, under ₹20,000" → "Best match" labels appear. The
+  panel header shows the count only, as "24 Results" (the founders, 2026-11-10).
 - **Budget is in the first three turns.** Budget is the most frequent cause of
   wasted results.
 - **Chips for closed slots.** Intent, area and budget have a closed set of

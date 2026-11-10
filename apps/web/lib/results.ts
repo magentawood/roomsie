@@ -33,6 +33,8 @@ export function panelTitle(form: FormA, label: (slug: string) => string) {
 }
 
 export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
+/** The heading of the results panel: the count only, as the designs write it ("24 Results"). */
+export const resultsHeading = (n: number) => `${n} ${n === 1 ? 'Result' : 'Results'}`
 
 /**
  * The panel is a pure function of the form (PD6c): the values and the weights, never the sources.
