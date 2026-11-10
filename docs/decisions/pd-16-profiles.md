@@ -1,6 +1,6 @@
 # PD16 — Profiles: fields, adults only, profiles for a son or daughter, and visibility
 
-**Status:** Settled. Changed on 2026-10-25. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-25 and 2026-11-10. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -19,6 +19,8 @@
 - **A child under 18.** The parent searches and contacts listings only. The child gets no card.
 - **Visibility.** A card becomes visible when its required fields are complete: name, age, who is moving, areas and budget. Settings has a "Hide my card" switch.
 - **Photos.** A maximum of four, and a photo is optional. A card with no photo shows initials.
+- **The banner of the card.** The banner tells the state of the card, and it has a close. A close hides the banner of that state in this browser. A new state, or a change in the fields that the card still needs, shows the banner again.
+- **Help.** The card at the top of the page has "Help". It opens a modal that tells what each part of the profile does and who sees it. The modal uses the helpers of the page.
 
 ## Rationale
 
@@ -26,6 +28,8 @@
 - An adults-only product keeps minors away from strangers, and keeps the DPDP rules for children out of matching.
 - Parents in Mumbai often find the room of a son or daughter.
 - Automatic visibility gives the most cards on launch day. The "You're discoverable" banner and the "Hide my card" switch tell the user, and give control.
+- The banner tells a state. A new state is news, so it shows again. The same state after a close is not news, so it stays closed.
+- The designs link "Help" to no screen. The helpers of the page already tell what each part does, so the modal adds no new claim.
 
 ## Alternatives rejected
 
@@ -34,6 +38,9 @@
 - **No minimum age.** A minor could make a card and get messages from adults.
 - **An 18+ tick at sign-in.** The product team keeps the age field only.
 - **A "Publish" button.** It is not in the designs, and it gives fewer cards at launch.
+- **The closed banner in the database.** A hint needs no migration.
+- **A close for this tab only, as the completion card.** The same news comes back at each visit.
+- **"Help" as a link to a help page or to the chat.** No help page exists, and the designs show none.
 
 ## Consequences
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { ProfileResponse } from '@roomsie/contract'
-import { bandOf, describesYou, editBody, firstName, formOf, pickDescribesYou, withMustHave } from './profile-form'
+import { bandOf, cardBannerState, describesYou, editBody, firstName, formOf, pickDescribesYou, withMustHave } from './profile-form'
 
 const saved: ProfileResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', religion: null, community: null, jobRole: null, commuteAddress: null, bio: null,
@@ -60,5 +60,15 @@ describe('the must-haves of the profile', () => {
     expect(withMustHave({ women_only: 'prefer', veg_kitchen: 'dealbreaker' }, 'men_only', 'dealbreaker')).toEqual({ women_only: null, men_only: 'dealbreaker', veg_kitchen: 'dealbreaker' })
     expect(withMustHave({ women_only: 'prefer' }, 'men_only', null)).toEqual({ women_only: 'prefer', men_only: null })
     expect(withMustHave({}, 'veg_kitchen', 'prefer')).toEqual({ veg_kitchen: 'prefer' })
+  })
+})
+
+describe('the state that the banner of the card tells', () => {
+  it('changes with the visibility, the review and the list of missing fields, so a closed banner shows again after a change', () => {
+    expect(cardBannerState(saved)).toBe('live')
+    expect(cardBannerState({ ...saved, visibility: 'hidden' })).toBe('hidden')
+    expect(cardBannerState({ ...saved, hiddenForReview: true })).toBe('review')
+    expect(cardBannerState({ ...saved, visibility: 'draft', missing: ['whosMoving', 'areas'] })).toBe('draft:whosMoving,areas')
+    expect(cardBannerState({ ...saved, visibility: 'draft', missing: ['areas'] })).toBe('draft:areas')
   })
 })
