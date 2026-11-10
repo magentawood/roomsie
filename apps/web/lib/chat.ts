@@ -18,9 +18,11 @@ export const chatStorage = {
   visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist', onboarded: 'roomsie.onboarded', resultsAt: 'roomsie.resultsAt',
   /** "Ask in chat" on the page of a card: the draft that the chat input takes, one time. */
   draft: 'roomsie.chatDraft',
+  /** The older results cards of each goal, under the replies that brought them. */
+  cards: 'roomsie.cards',
 } as const
 type StoredKey = (typeof chatStorage)[keyof typeof chatStorage]
-const lasting: readonly StoredKey[] = [chatStorage.waitlist, chatStorage.onboarded]
+const lasting: readonly StoredKey[] = [chatStorage.waitlist, chatStorage.onboarded, chatStorage.cards]
 const storeOf = (key: StoredKey) => (lasting.includes(key) ? localStorage : sessionStorage)
 
 /** A private window or a blocked site storage throws: then the chat lives only until a reload. */

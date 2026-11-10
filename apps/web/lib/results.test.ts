@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA, panelReady, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
-import { countLine, didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, type PanelState } from './results'
+import { countLine, didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, resultsHeading, type PanelState } from './results'
 import { listing, testId } from './test-listing'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
@@ -37,6 +37,7 @@ describe('the panel header', () => {
   it('counts the results', () => {
     expect(countLine(1)).toBe('1 result')
     expect(countLine(24)).toBe('24 results')
+    expect([resultsHeading(1), resultsHeading(24)]).toEqual(['1 Result', '24 Results'])
   })
 })
 

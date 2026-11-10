@@ -5,7 +5,7 @@
 ## What it is
 
 - The **results panel** is the right half of `/chat` on a desktop. It has a header, the "Best Matches" sort and a grid of person and place cards ([interface-shape.md](../interface-shape.md)).
-- The **header** tells what the panel shows. It narrows from "Everything in Mumbai" to "Rooms in Powai–Vikhroli under ₹25,000 · 8 results".
+- The **header** shows the count only, as "8 Results". The results card in the chat names the search, from "Everything in Mumbai" to "Rooms in Powai–Vikhroli under ₹25,000".
 - A **label** sits on the photo of a card. "Best match" means that the person stated three or more preferences, and the card meets all of them. "Didn't say: smoking" means that the card did not answer a dealbreaker ([PD3a](../decisions/pd-03a-flatmate-matching.md)).
 - With no match, the panel shows "No relevant results" and the **suggested posts** ([PD6c](../decisions/pd-06c-interface-holes.md)).
 - New results come as a **results card** in the chat. On a desktop, the panel opens beside the chat on the next send, or when the person opens the card. On a phone, the chat fills the screen, and "Show all" on the card opens the panel above the input. The size never changes while the person reads ([PD6a](../decisions/pd-06a-mobile-split-view.md)).

@@ -162,6 +162,28 @@ function storedDelivery(goalId: string | null): Delivered | null {
   }
 }
 
+/**
+ * A results card that newer results followed: it stays under the reply that brought it, with its count (the founders,
+ * 2026-11-10). Local storage keeps the cards of each goal, the newest 20.
+ */
+type OldCard = { turnId: string | null; form: FormA; total: number }
+function storedCards(goalId: string | null): OldCard[] {
+  try {
+    const all = JSON.parse(readStored(chatStorage.cards) ?? '{}') as Record<string, OldCard[]>
+    return goalId ? (all[goalId] ?? []).map((card) => ({ ...card, form: formA.parse(card.form) })) : []
+  } catch {
+    return []
+  }
+}
+function storeCards(goalId: string, cards: OldCard[]) {
+  try {
+    const all = JSON.parse(readStored(chatStorage.cards) ?? '{}') as Record<string, OldCard[]>
+    writeStored(chatStorage.cards, JSON.stringify({ ...all, [goalId]: cards }))
+  } catch {
+    // A full or blocked storage keeps the cards until a reload.
+  }
+}
+
 /** The chat of a goal, and the results of its form beside it (flow 02). */
 export function ChatScreen({ preview }: { preview?: Preview }) {
   const { goalId, turns, form: chatForm, outsidePlaces, closed, goalName, typedTurnsLeft, signedIn, send, loadingGoal } = useChat()
@@ -204,6 +226,13 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
   // The results belong to the reply that brought them (the founders, 2026-11-09), and new ones show the wait for at least 2 s.
   const [delivered, setDelivered] = useState<Delivered | null>(() => storedDelivery(goalId))
+  const [oldCards, setOldCards] = useState<{ goalId: string | null; cards: OldCard[] }>(() => ({ goalId, cards: storedCards(goalId) }))
+  // An older card opens its own results in the panel.
+  const [viewed, setViewed] = useState<FormA | null>(null)
+  const viewedResults = useResults(viewed)
+  /** The reply under which the shown results sit: the one that brought them, else the newest reply. */
+  const shownAt = () => (delivered && delivered.goalId === goalId && shown && delivered.key === formKey(shown.form)
+    ? delivered.turnId : turns.findLast((t) => t.role === 'assistant')?.id ?? null)
   const thread = useRef<HTMLDivElement>(null)
   const newestReply = turns.at(-1)?.role === 'assistant' ? turns.at(-1)!.id : null
   useEffect(() => {
@@ -216,6 +245,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   }, [newestReply])
   const submit = (turn: Outgoing) => {
     setFailed(null)
+    setViewed(null)
     if (shown && view === 'unopened') setView('split')
     send.mutate(turn, {
       onSuccess: (sent) => {
@@ -223,6 +253,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         const key = formKey(sent.form)
         if (!panelReady(sent.form) || key === formKey(chatForm)) return
         const next = { goalId: sent.id, key, turnId: sent.turns.findLast((t) => t.role === 'assistant')?.id ?? null, waited: false }
+        // The card of the results before stays where it was, with its count.
+        if (shown && formKey(shown.form) !== key) {
+          const kept = [...(oldCards.goalId === sent.id ? oldCards.cards : []), { turnId: shownAt(), form: shown.form, total: shown.found.total }].slice(-20)
+          setOldCards({ goalId: sent.id, cards: kept })
+          storeCards(sent.id, kept)
+        }
         setDelivered(next)
         writeStored(chatStorage.resultsAt, JSON.stringify(next))
       },
@@ -281,15 +317,23 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         <ResultsWait form={chatForm} areaName={areaName} onWaited={() => setDelivered((d) => d && d.key === currentKey ? { ...d, waited: true } : d)} />
       </li>]
     : shown ? [
-      <li key={`card-${blockKey}`} className="motion-safe:animate-fade-in"><ResultsCard title={title} count={shown.found.total} onOpen={() => setView('all')} /></li>,
+      <li key={`card-${blockKey}`} className="motion-safe:animate-fade-in"><ResultsCard title={title} count={shown.found.total} onOpen={() => { setViewed(null); setView('all') }} /></li>,
       nextSteps && nextSteps.lines.length > 0 && <li key={`noticed-${blockKey}`} className="motion-safe:animate-fade-in"><NoticedBox lines={nextSteps.lines} onTap={tap} /></li>,
       nextSteps && nextSteps.chips.length > 0 && <li key={`next-${blockKey}`} className="motion-safe:animate-fade-in"><FollowUps chips={nextSteps.chips} onPick={pickFollowUp} /></li>,
     ] : []
   const anchored = anchorId !== null && turns.some((t) => t.id === anchorId)
+  const olderCards = oldCards.goalId === goalId ? oldCards.cards : []
+  const oldCardAt = (card: OldCard, i: number) => (
+    <li key={`old-${i}-${formKey(card.form)}`} className="motion-safe:animate-fade-in">
+      <ResultsCard title={panelTitle(card.form, areaName)} count={card.total} onOpen={() => { setViewed(card.form); setCard(null); setView('all') }} />
+    </li>
+  )
 
   if (loadingGoal) return <main className="flex flex-1 items-center justify-center" aria-busy="true"><Loading mascot="searching" /></main>
   if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText} draft={draft}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
+  // The panel shows the results of an older card once they load; until then, the newest results.
+  const viewing = viewed !== null && viewedResults.data !== undefined
   return (
     <main className={`grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,33.125rem)_minmax(0,1fr)]' : ''}`}>
       {/* On a phone, "Show all" has its own header (146:29502). */}
@@ -307,8 +351,10 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
                 </div>
               )}
             </li>,
+            ...olderCards.map((card, i) => card.turnId === turn.id && oldCardAt(card, i)),
             turn.id === anchorId && resultsBlock,
           ])}
+          {olderCards.map((card, i) => !turns.some((t) => t.id === card.turnId) && oldCardAt(card, i))}
           {!anchored && resultsBlock}
           {panel === 'waitlist' && waitlist && (
             // On a phone the form is in the thread (drafts section 18).
@@ -351,10 +397,11 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       {shown && (
         <div className={`col-start-1 row-start-2 min-h-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-l lg:border-secondary ${view === 'all' || card ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
-          <ResultsPanel title={title} form={shown.form} found={shown.found} held={held} sample={Boolean(preview)} card={card} onCard={setCard}
+          <ResultsPanel form={viewing ? viewed! : shown.form} found={viewing ? viewedResults.data! : shown.found} held={held} sample={Boolean(preview)} card={card} onCard={setCard}
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
-            more={results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined} onClose={() => setView('closed')} onAskInChat={askInChat}
-            picks={{ picked, onPick: (card) => setPicked(toggledPick(picked, card)), onClear: () => setPicked([]) }} />
+            more={viewing ? (viewedResults.hasNextPage ? viewedResults : undefined) : results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined}
+            onClose={() => { setViewed(null); setView('closed') }} onAskInChat={askInChat}
+            picks={viewing ? null : { picked, onPick: (card) => setPicked(toggledPick(picked, card)), onClear: () => setPicked([]) }} />
         </div>
       )}
       {panel === 'waitlist' && waitlist && (
