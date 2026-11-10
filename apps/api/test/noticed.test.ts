@@ -55,20 +55,22 @@ describe('Roomsie Noticed and several place types', () => {
   })
   afterAll(() => t.close())
 
-  it('notes a must-have that few rooms have, the people who could team up, and the rooms near a station, on the first page only', async () => {
+  it('notes a must-have that few rooms have, the people who could team up, the rooms near a station and the rents, on the first page only', async () => {
     const { total, noticed } = await search(rooms)
     expect(total).toBe(6)
     expect(noticed).toEqual([
       { kind: 'mustHave', key: 'veg_kitchen', count: 1, total: 6 },
       { kind: 'teamUp', count: 3 },
       { kind: 'mustHave', key: 'near_station', count: 2, total: 6 },
+      { kind: 'rents', cheapest: 12000, low: 14000, high: 20000 },
     ])
     expect((await search(rooms, 2)).noticed).toEqual([])
   })
 
   it('notes no must-have that the search already requires', async () => {
     const { noticed } = await search({ ...rooms, mustHaves: { near_station: stated('dealbreaker') } })
-    expect(noticed.map((note) => note.kind === 'mustHave' ? note.key : note.kind)).toEqual(['teamUp'])
+    // The people to team up already lead to people to share with, so no 2 BHK split.
+    expect(noticed.map((note) => note.kind === 'mustHave' ? note.key : note.kind)).toEqual(['teamUp', 'rents'])
   })
 
   it('takes "Near a station" as a must-have: a walk of ten minutes or less, and a room that did not say stays with "Didn\'t say"', async () => {
@@ -102,21 +104,26 @@ describe('Roomsie Noticed and several place types', () => {
     ])
   })
 
-  it('notes the rents of the area when nothing else stands out, so each results card has a note', async () => {
+  it('notes the rents of the area beside the results, so each results card has a note', async () => {
     const { total, noticed } = await search({ ...rooms, areas: stated(['dadar-west']) })
     expect(total).toBe(1)
     expect(noticed).toEqual([{ kind: 'rents', cheapest: 4500, low: null, high: null }])
   })
 
-  it('notes a 2 BHK split two ways for people when nothing else stands out', async () => {
+  it('notes the rents of rooms and a 2 BHK split two ways for people when nothing else stands out', async () => {
     const { total, noticed } = await search({ ...rooms, intent: stated(['flatmates']), mustHaves: { veg_kitchen: stated('dealbreaker') } })
     expect(total).toBe(1)
-    expect(noticed).toEqual([{ kind: 'share', each: 21500, maintenanceIncluded: true }])
+    expect(noticed).toEqual([{ kind: 'rents', cheapest: 12000, low: 14000, high: 20000 }, { kind: 'share', each: 21500, maintenanceIncluded: true }])
   })
 
-  it('notes a must-have that few flatmates seekers have, with no notes of places', async () => {
+  it('notes a must-have that few flatmates seekers have, then the rents of rooms and a 2 BHK split two ways', async () => {
     const { total, noticed } = await search({ ...rooms, intent: stated(['flatmates']) })
     expect(total).toBe(3)
-    expect(noticed).toEqual([{ kind: 'mustHave', key: 'veg_kitchen', count: 1, total: 3 }])
+    // The six rooms of Bandra cost 12k to 22k: the middle half is 14k to 20k.
+    expect(noticed).toEqual([
+      { kind: 'mustHave', key: 'veg_kitchen', count: 1, total: 3 },
+      { kind: 'rents', cheapest: 12000, low: 14000, high: 20000 },
+      { kind: 'share', each: 21500, maintenanceIncluded: true },
+    ])
   })
 })

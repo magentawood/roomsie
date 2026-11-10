@@ -17676,7 +17676,7 @@
                     },
                     "noticed": {
                       "default": [],
-                      "maxItems": 3,
+                      "maxItems": 5,
                       "type": "array",
                       "items": {
                         "oneOf": [

@@ -67,8 +67,8 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 
 **Roomsie Noticed (2026-11-09)**
 
-- The first page of results has at most three notes, as the designs draw them. The code counts each number, and a note shows only when the data backs it.
-- With results: a must-have that the search does not require, and half or fewer of three results or more have; the `flatmates` seekers in the areas of a search of places; the places a walk of ten minutes or less from a station.
+- The first page of results has the notes that the data backs, at most five (the founders, 2026-11-10: the number is free). The code counts each number, and a note shows only when the data backs it.
+- With results: a must-have that few results have (at most two notes); the `flatmates` seekers in the areas of a place search; the places near a station; the rents of the areas; a 2 BHK split two ways. The rules: [Roomsie Noticed](../learn/roomsie-noticed.md).
 - With none: the rents of the areas when the cheapest is above the budget, a neighbouring area group with results, and a 2 BHK in the areas split two ways.
 - Each button is a chip tap. Under the box, chips compare the top three cards, add a kind of place, or relax the budget or the kind.
 

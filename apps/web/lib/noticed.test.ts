@@ -44,8 +44,23 @@ describe('the notes of Roomsie Noticed (flow 02)', () => {
 
   it('gives only the cheapest rent with fewer than four places, and the top band above ₹35k', () => {
     expect(noteLines([{ kind: 'rents', cheapest: 40000, low: null, high: null }], rooms, areaName)[0]).toMatchObject({
-      text: 'The cheapest one right now is ₹40k.', tap: { slot: 'budget', value: 'above_35k' },
+      text: 'The cheapest room in a shared flat in Bandra–Santacruz and Powai–Vikhroli right now is ₹40k.', tap: { slot: 'budget', value: 'above_35k' },
     })
+  })
+
+  it('drops a rents note whose button gives the budget that the search has already', () => {
+    const underFifteen = formA.parse({ intent: stated(['room']), areas: stated(['bandra-santacruz']), budget: stated({ min: null, max: 15000 }) })
+    expect(noteLines([{ kind: 'rents', cheapest: 12000, low: null, high: null }], underFifteen, areaName)).toEqual([])
+    expect(noteLines([{ kind: 'rents', cheapest: 9000, low: null, high: null }], underFifteen, areaName)[0]!.button).toBe('Change my budget to under ₹10k')
+  })
+
+  it('gives people the rents of rooms in shared flats, with a button that shows those rooms', () => {
+    expect(noteLines([{ kind: 'rents', cheapest: 12000, low: 12500, high: 18000 }], people, areaName)).toEqual([{
+      text: 'Rooms in shared flats in Bandra–Santacruz and Powai–Vikhroli usually go for ₹12.5k to ₹18k a month. The cheapest one right now is ₹12k.',
+      button: 'Show rooms in shared flats in Bandra–Santacruz', tap: { slot: 'intent', value: 'room' },
+    }])
+    expect(noteLines([{ kind: 'rents', cheapest: 12000, low: null, high: null }], people, areaName)[0]!.text)
+      .toBe('The cheapest room in a shared flat in Bandra–Santacruz and Powai–Vikhroli right now is ₹12k.')
   })
 
   it('leads people to the 2 BHK flats of their area, so a 2 BHK split two ways has a button that does something', () => {

@@ -1,15 +1,17 @@
 # Roomsie Noticed
 
-**In one line:** under the results of a search, a box "Roomsie Noticed" gives up to three notes that the code counted, each with a button that changes the search, and chips under it ask the next step.
+**In one line:** under the results of a search, a box "Roomsie Noticed" gives up to five notes that the code counted, each with a button that changes the search, and chips under it ask the next step.
 
 ## What it is
 
 - **The box** of flow 02 comes under the results card of the newest search. It waits while a reply is on its way, and a closed goal has none.
-- **Each results card has a note** (the founders, 2026-11-09). With results and no other note, the box gives what places in the areas usually cost, or for people what a 2 BHK there costs each when two share it. The button of that note for people shows 2 BHK flats.
 - **With results**, a note can say:
   - "Heads up, only 6 of 24 have a veg kitchen, if that matters to you." The button makes the must-have a dealbreaker. The must-have that the lifestyle answers point to comes first.
   - "15 people looking around Bandra–Santacruz want to team up." The button switches the search to people to rent with.
   - "12 are a 10-min walk or less from a metro or station." The button makes "Near a station" a dealbreaker.
+  - A second must-have that few of the results have. "Few" is half or fewer, of three results or more, and the search must not require the must-have already.
+- **The number of notes is free** (the founders, 2026-11-10): the box gives each note that the data backs, at most five, so it stays about one screen high. After the notes above, it adds what places in the areas usually cost, then what a 2 BHK there costs each when two share it. For people, the rents are of rooms in shared flats, with a button that shows those rooms, and the button of the 2 BHK note shows 2 BHK flats. A search with people to team up gets no 2 BHK note: both buttons lead to people to share with.
+- **A rents note goes** when its button gives the budget that the search has already.
 - **With no results**, a note can say what the places in the areas usually cost and what the cheapest one costs, that a neighbouring area has places at this budget, and what a 2 BHK in the area costs each when two people share it.
 - **The chips under the box** are the next message of the person. With results: "Which one's the best deal?", which compares the top three cards (a guest gets the sign-in wall), and "Show some PGs too" or "Show me some flats as well". With none: the next budget band, and a different kind of place.
 - **"Show some PGs too" adds a kind of place.** Form A keeps a list of place types, so the search gives rooms and PGs together, the panel says "Rooms and PGs in …", and the title says "Place hunting in …". People to rent with go alone.
