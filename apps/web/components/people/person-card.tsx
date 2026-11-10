@@ -4,7 +4,7 @@ import type { CardResponse } from '@roomsie/contract'
 import { aboutLine, budgetLine, initials, lifestyleSummary, lookingFor } from '../../lib/person'
 import { shortDate } from '../../lib/place-detail'
 import { Badge } from '../ui/badge'
-import { CardLabel, CardLink } from '../ui/card-link'
+import { CardLabel, CardLink, overCard } from '../ui/card-link'
 
 /** The person card of sections 14 and 19 of the drafts. */
 export function PersonCard({ card, action, label, onOpen }: { card: CardResponse; action?: ReactNode; label?: ReactNode; onOpen?: () => void }) {
@@ -17,7 +17,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
   ] as const
   const lifestyle = lifestyleSummary(card)
   return (
-    <article className="relative flex h-full flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
+    <article className="group/card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl border border-secondary bg-primary">
       <CardLink href={href} onOpen={onOpen} decorative className="flex aspect-3/2 items-center justify-center bg-secondary">
         {photo
           ? <img src={photo.url} alt="" className="size-full object-cover" />
@@ -26,7 +26,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
       <CardLabel>{label}</CardLabel>
       <div className="flex flex-1 flex-col gap-2 px-1.75 py-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} className="outline-focus-ring hover:underline focus-visible:outline-2">{card.fullName}</CardLink></h3>
+          <h3 className="text-md font-medium text-primary"><CardLink href={href} onOpen={onOpen} stretched className="outline-focus-ring group-hover/card:underline focus-visible:outline-2">{card.fullName}</CardLink></h3>
           {card.verified && <Badge tone="success">Verified</Badge>}
           {card.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
         </div>
@@ -36,7 +36,7 @@ export function PersonCard({ card, action, label, onOpen }: { card: CardResponse
         </ul>
         {lifestyle && <p className="text-sm text-tertiary">{lifestyle}</p>}
         {card.bio && <p className="line-clamp-3 rounded-md bg-secondary p-2 text-sm text-tertiary lg:mt-1 lg:p-1">“{card.bio}”</p>}
-        {action && <div className="mt-auto flex justify-end border-t border-dashed border-secondary pt-2">{action}</div>}
+        {action && <div className="mt-auto flex justify-end border-t border-dashed border-secondary pt-2"><span className={overCard}>{action}</span></div>}
       </div>
     </article>
   )
