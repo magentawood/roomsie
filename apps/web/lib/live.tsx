@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useQueryClient, type QueryClient } from '@tanstack/react-query'
 import { RealtimeClient } from '@supabase/realtime-js'
+import { reportError } from '@roomsie/config/report'
 import { realtimeEvent, type ConversationsResponse, type Message } from '@roomsie/contract'
 import { useAuth, useUser } from './auth'
 import { addMessage, withMessage, type MessagePages } from './messages'
@@ -40,19 +41,28 @@ function Channel({ onLive }: { onLive: (live: boolean) => void }) {
       // A "Not interested" took a chat or a request out of Messages (PD17).
       else for (const queryKey of [queryKeys.conversations, ['requests'], ['person']]) void queryClient.invalidateQueries({ queryKey })
     }
-    client.channel(channel, { config: { private: true } })
-      .on('broadcast', { event: '*' }, onEvent)
-      .subscribe((status) => {
-        const live = status === 'SUBSCRIBED'
-        onLive(live)
-        // The events from before the join are lost, so the messages data loads one more time.
-        if (live) {
-          for (const queryKey of [queryKeys.conversations, ['messages'], ['requests']]) void queryClient.invalidateQueries({ queryKey })
-        }
-      })
+    const stop = () => void client.removeAllChannels().then(() => client.disconnect())
+    try {
+      client.channel(channel, { config: { private: true } })
+        .on('broadcast', { event: '*' }, onEvent)
+        .subscribe((status) => {
+          const live = status === 'SUBSCRIBED'
+          onLive(live)
+          // The events from before the join are lost, so the messages data loads one more time.
+          if (live) {
+            for (const queryKey of [queryKeys.conversations, ['messages'], ['requests']]) void queryClient.invalidateQueries({ queryKey })
+          }
+        })
+    } catch (err) {
+      // Firefox and Safari throw from `new WebSocket` when the CSP blocks the address (Chrome only fires an error event).
+      // The page stays up, and the messages screens poll, as with no channel.
+      reportError(err, { where: 'realtime' })
+      stop()
+      return
+    }
     return () => {
       onLive(false)
-      void client.removeAllChannels().then(() => client.disconnect())
+      stop()
     }
   }, [setup.data, user, queryClient, onLive])
 

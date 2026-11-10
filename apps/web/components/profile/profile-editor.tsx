@@ -19,7 +19,7 @@ import { PhotoPicker } from '../photos'
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
-import { Field, Select, TextArea, TextInput, inputClassOf } from '../ui/field'
+import { DateInput, Field, Select, TextArea, TextInput } from '../ui/field'
 import { Toggle } from '../ui/toggle'
 import { VerifyRow } from '../verification/verify-row'
 import { AlertSwitches } from './alert-switches'
@@ -189,7 +189,7 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
           }} />
         <div className="grid gap-6">
           <Field label="Moving Date">
-            {(id) => <input id={id} type="date" className={inputClassOf('xs')} value={draft.moveDate ?? ''} onChange={(e) => set({ moveDate: e.target.value || null })} />}
+            {(id) => <DateInput id={id} size="xs" value={draft.moveDate} onChange={(moveDate) => set({ moveDate })} />}
           </Field>
           <TextInput size="xs" label="Commute Address" value={draft.commuteAddress} onChange={(commuteAddress) => set({ commuteAddress })} placeholder="Eg: Building A, Chandni chowk, Andheri…" maxLength={profileTextLimits.commuteAddress} />
         </div>

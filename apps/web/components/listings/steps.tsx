@@ -8,7 +8,7 @@ import { isFlat, labels } from '../../lib/listing-steps'
 import { PhotoPicker, Thumb } from '../photos'
 import { Button, type Icon } from '../ui/button'
 import { ChoiceCard, ChoiceChips, MultiChips } from '../ui/choice'
-import { Field, NumberInput, Select, TextArea, TextInput, inputClass } from '../ui/field'
+import { DateInput, Field, NumberInput, Select, TextArea, TextInput, inputClass } from '../ui/field'
 import { Checkbox, Toggle } from '../ui/toggle'
 
 /** `errors` has the line to show under each field that the check before the save refused, by field path. */
@@ -172,7 +172,7 @@ export function RentStep({ kind, values, set, errors }: StepProps) {
       {isFlat(kind) && (
         <div className="md:w-88.5">
           <Field label="Available from">
-            {(id) => <input id={id} type="date" className={inputClass} value={values.availableFrom ?? ''} onChange={(e) => set({ availableFrom: e.target.value || null })} />}
+            {(id) => <DateInput id={id} value={values.availableFrom} onChange={(availableFrom) => set({ availableFrom })} />}
           </Field>
         </div>
       )}

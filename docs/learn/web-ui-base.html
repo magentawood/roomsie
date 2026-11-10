@@ -60,7 +60,7 @@ details.callout[open] summary{color:var(--fg)}
 <tr>
 <td>Components</td>
 <td><code>apps/web/components/ui/</code></td>
-<td>Button, text and number fields, chips, choice cards, toggle, checkbox, step bar, badge and modal</td>
+<td>Button, text, number and date fields, chips, choice cards, toggle, checkbox, step bar, badge and modal</td>
 </tr>
 <tr>
 <td>App shell</td>
@@ -136,6 +136,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A 204 reply has no body.</strong> Give <code>api()</code> the schema <code>z.null()</code> for it.</li>
 <li><strong>A spacing class with a border needs 1 px less padding.</strong> For a 44 px text box, <code>py-2.25</code> + the 1 px border + a 24 px line + <code>py-2.25</code> + 1 px = 44.</li>
 <li><strong>Figtree comes from <code>next/font</code>.</strong> The build downloads it one time, and the site serves it from its own domain.</li>
+<li><strong>A date box is <code>DateInput</code>, and a number box is <code>NumberInput</code>.</strong> Each engine draws these controls differently, so the base rules and the shared components make them the same (<a href="cross-browser.html">cross-browser</a>).</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>

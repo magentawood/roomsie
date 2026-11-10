@@ -47,6 +47,7 @@ Rahul sends a message ──▶ POST /v1/conversations/:id/messages
 - **A new claim needs a new token.** Firebase puts a claim in the next token, so the web refreshes the token one time when `mustRefreshIdToken` is true.
 - **The setup is in two consoles.** The API needs the secrets `SUPABASE_ANON_KEY` and `FIREBASE_SERVICE_ACCOUNT`. Supabase needs Firebase as a third-party auth provider, and Realtime set to private channels only. Without the secrets, `POST /v1/me/realtime` gives 503.
 - **The channel keeps no old events.** Each time the web joins the channel, it gets the messages data from the API one more time.
+- **A blocked socket does not stop the page.** Firefox and Safari throw from `new WebSocket` when the Content-Security-Policy blocks the Supabase host. `lib/live.tsx` catches the throw, reports it, and the screens poll ([cross-browser](cross-browser.md)).
 - **No SDK.** The Firebase Admin module calls the REST API that the Admin SDK calls, with a token that `jose` signs, as `aws4fetch` does for R2.
 
 ## Tickets
