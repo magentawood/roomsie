@@ -49,7 +49,7 @@ export function PersonDetail({ person, panel }: { person: PersonResponse; panel?
   ].map((f) => ({ ...f, value: f.value || didntSay }))
   const likeFacts = lifestyleFacts(person).map((l) => ({ label: l.label, value: l.value, icon: lifestyleIcons[l.axis] }))
   const mustHaves = mustHaveGroups(person)
-  const askInChat = <AskInChat draft={`About ${name}: `} panel={panel} />
+  const askInChat = <AskInChat card={{ kind: 'person', id: person.id, name: person.fullName }} panel={panel} />
 
   return (
     <>

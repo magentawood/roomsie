@@ -84,13 +84,12 @@ export function TapChip({ label, onTap }: { label: string; onTap: () => void }) 
   )
 }
 
-/** A picked value as a tag with ×, as the Tag "X close" of the designs. `small`: the 22 px badge of a picked card above the chat input. */
-export function RemoveChip({ label, small, onRemove }: { label: string; small?: boolean; onRemove: () => void }) {
+/** A picked value as a tag with ×, as the Tag "X close" of the designs. A picked card above the chat input is a `RemovableBadge`. */
+export function RemoveChip({ label, onRemove }: { label: string; onRemove: () => void }) {
   return (
-    <button type="button" aria-label={`Remove ${label}`} onClick={onRemove}
-      className={small ? 'inline-flex items-center gap-0.5 rounded-md border border-badge-blue bg-badge-blue py-px pr-0.5 pl-1.75 text-xs font-medium text-badge-blue outline-focus-ring focus-visible:outline-2' : chip(false)}>
+    <button type="button" aria-label={`Remove ${label}`} onClick={onRemove} className={chip(false)}>
       {label}
-      <span className={small ? 'p-0.5' : ''}><XClose size={small ? 12 : 14} aria-hidden className={small ? 'text-badge-blue' : 'text-fg-quaternary'} /></span>
+      <XClose size={14} aria-hidden className="text-fg-quaternary" />
     </button>
   )
 }

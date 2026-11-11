@@ -16,15 +16,17 @@ export function keyAction(press: { key: string; shiftKey: boolean; isComposing: 
 /** `resultsAt`: the reply that brought the results of the tab's goal, so a reload keeps the results card in its place. */
 export const chatStorage = {
   visitorKey: 'roomsie.visitorKey', tabGoal: 'roomsie.tabGoal', waitlist: 'roomsie.waitlist', onboarded: 'roomsie.onboarded', resultsAt: 'roomsie.resultsAt',
-  /** "Ask in chat" on the page of a card: the draft that the chat input takes, one time. */
-  draft: 'roomsie.chatDraft',
+  /** "Ask in chat" on the page of a card: the card that the chat adds as a chip, one time. */
+  asked: 'roomsie.askedCard',
   /** The older results cards of each goal, under the replies that brought them. */
   cards: 'roomsie.cards',
   /** The width of the chat beside the results, that the person dragged. */
   chatWidth: 'roomsie.chatWidth',
+  /** The X of the commute tip: it hides the tip for good on this browser, also after a sign-out. */
+  commuteTip: 'roomsie.commuteTipClosed',
 } as const
 type StoredKey = (typeof chatStorage)[keyof typeof chatStorage]
-const lasting: readonly StoredKey[] = [chatStorage.waitlist, chatStorage.onboarded, chatStorage.cards, chatStorage.chatWidth]
+const lasting: readonly StoredKey[] = [chatStorage.waitlist, chatStorage.onboarded, chatStorage.cards, chatStorage.chatWidth, chatStorage.commuteTip]
 const storeOf = (key: StoredKey) => (lasting.includes(key) ? localStorage : sessionStorage)
 
 /** A private window or a blocked site storage throws: then the chat lives only until a reload. */
@@ -49,8 +51,25 @@ export function lastOpenGoal(tabGoal: string | null, goals: readonly { id: strin
   return open.some((goal) => goal.id === tabGoal) ? tabGoal : open[0]?.id ?? null
 }
 
-/** At sign-out, so the next person on this browser cannot open the chat. */
-export const forgetChat = () => Object.values(chatStorage).forEach((key) => writeStored(key, null))
+/** At sign-out, so the next person on this browser cannot open the chat. The closed tip tells nothing about the person, so it stays. */
+export const forgetChat = () => Object.values(chatStorage).filter((key) => key !== chatStorage.commuteTip).forEach((key) => writeStored(key, null))
+
+/**
+ * The "Quick tip" of flow 02 (Figma 94:22712). roomsie plans no routes, so the tip promises only what the commute does:
+ * the match box of a person says "you both commute to …".
+ */
+export const commuteTip = { title: 'Quick Tip', text: 'Give us your commute details, and we show you who commutes your way.' } as const
+/** The commute field on `/profile`, where a tap on the tip goes. */
+export const commuteField = 'commute'
+export const commuteHref = `/profile#${commuteField}`
+
+/**
+ * The tip shows after results show, to a signed-in person whose profile has no commute address. The X hides it for good.
+ * It waits while cards are selected, so only the chips sit above the input. A closed goal is read-only, so it has no tip.
+ */
+export function commuteTipShows(state: { results: boolean; closed: boolean; dismissed: boolean; picking: boolean }, profile: { commuteAddress: string | null } | null | undefined) {
+  return state.results && !state.closed && !state.dismissed && !state.picking && Boolean(profile) && !profile!.commuteAddress
+}
 
 /** The chips under the newest question, while its slot is empty or unclear. A new goal starts with the place types (T-09). */
 export function chipsOf(turns: readonly GoalResponse['turns'][number][], form: FormA): ChipSlot | null {

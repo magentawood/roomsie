@@ -17,7 +17,7 @@ Each page tells what the topic is, how it fits roomsie, the choice we made, and 
 - [The limits of the chat](chat-limits.md): a visitor gets five typed messages before the sign-in wall, the API stops a device or a network that starts too many chats and a person who types too fast, and the team gets an alert when the model spend of the day gets near its amount.
 - [The chat screen and the sign-in wall](chat-screen.md): `/chat` is the chat of the goal that the onboarding started. A guest types with no sign-in, and a tap that needs an account opens the sign-in wall.
 - [CI checks](ci-checks.md): GitHub checks each pull request automatically, and `main` accepts a merge only when the checks pass and a teammate approves.
-- [Comparing cards](compare-cards.md): a person selects 2 to 4 places or people in the results and asks a question, and code builds a table of their database fields, with no model that reads a card.
+- [Comparing cards](compare-cards.md): a person selects 1 to 4 places or people in the results and asks a question. With 2 cards or more, code builds a table of their database fields, with no model that reads a card.
 - [The composer](composer.md): code plans each reply, and the composer writes the words of that plan in the language of the person, inside a deadline.
 - [Content-Security-Policy](content-security-policy.md): each page of the web tells the browser which scripts, styles and hosts it can use, so a script that an attacker puts into a page does not run and cannot take the sign-in.
 - [Cross-browser support](cross-browser.md): roomsie looks and works the same in Chrome, Edge, Firefox and Safari, with standard code, a few normalising rules and no browser checks.
