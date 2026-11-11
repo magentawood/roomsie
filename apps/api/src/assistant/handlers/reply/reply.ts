@@ -1,4 +1,4 @@
-import { assistantReply, chipSlots, isOpenSlot, mustHaveKeys, replyInput, slotOf, slotPath, type AssistantParts, type FormASlot, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
+import { assistantReply, chipSlots, intentsOf, isOpenSlot, mustHaveKeys, replyInput, slotOf, slotPath, type AssistantParts, type FormASlot, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
 import type { z } from 'zod'
 import type { AssistantDeps, TurnState } from '../../assistant'
 import { catalogueOf } from '../../catalogue'
@@ -40,7 +40,10 @@ export async function replyWriter(
 const write = async (turn: z.output<typeof replyInput>, { db, settings }: AssistantDeps, advice: string | null) => {
   const catalogue = await catalogueOf(db)
   const lead = leadOf(turn.label, turn.language, advice)
-  const next = settings.questionOrder.find((slot) => isOpenSlot(slotOf(turn.form, slot)))
+  // A flatmate search asks the gender of the person right after the place type, and only then (the founders, 2026-11-11).
+  const flatmates = intentsOf(turn.form).includes('flatmates')
+  const order = flatmates ? ['intent' as const, 'gender' as const, ...settings.questionOrder.filter((slot) => slot !== 'intent' && slot !== 'gender')] : settings.questionOrder.filter((slot) => slot !== 'gender')
+  const next = order.find((slot) => isOpenSlot(slotOf(turn.form, slot)))
   // Only a core turn asks the person to send the message again: never after a disclosure (T-34). A first turn keeps the chips of the empty chat.
   if (turn.failed && turn.label.band === 'core') return { text: lineOf('failed', turn.language), parts: turn.last ?? parts({ asked: null, question: null, chips: chipSlotOf(next) }) }
   // "A student" says "your days: student" too, so the reply names it once.

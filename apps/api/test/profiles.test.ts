@@ -164,8 +164,11 @@ describe('a card', () => {
     await edit('lister', { religion: null, community: null })
   })
 
-  it('shows a live card to others, with no gender, and refuses the own card, a hidden card, a block either way, a draft and a suspended account', async () => {
+  it('shows a live card to others of its gender, with no gender, and refuses the own card, a hidden card, a block either way, a draft and a suspended account', async () => {
     const lister = await own('lister')
+    // Flatmates match within one gender: a man never opens the card of a woman (the founders, 2026-11-11).
+    expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(404)
+    await edit('seeker', { gender: 'female' })
     const seen = cardResponse.parse((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).json())
     expect(seen).toMatchObject({ id: lister.id, fullName: 'Shruti Rao', lifestyle: { food: 'veg' } })
     expect(seen).not.toHaveProperty('gender')
@@ -186,6 +189,7 @@ describe('a card', () => {
     await t.db.update(users).set({ status: 'active' }).where(eq(users.id, t.ids.lister))
     expect((await t.call('seeker', 'GET', `/v1/people/${lister.id}`)).statusCode).toBe(200)
     expect((await t.call('seeker', 'GET', '/v1/people/0199e4b0-0000-7000-8000-000000000099')).statusCode).toBe(404)
+    await edit('seeker', { gender: 'male' })
   })
 })
 

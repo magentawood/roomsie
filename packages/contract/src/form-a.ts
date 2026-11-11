@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { areaPicks, communities, intents, lifestyleAnswerLabels, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis, type MustHaveKey } from './profiles'
+import { areaPicks, communities, genders, intents, lifestyleAnswerLabels, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, religions, roomTypes, whosMovingAnswers, type LifestyleAxis, type MustHaveKey } from './profiles'
 import { rupees } from './shared'
 
 /** No `inferred` source: the system never guesses a value (PD15). A slot that a stored form does not have reads as empty. */
@@ -52,6 +52,11 @@ export const formA = z.strictObject({
   intent: slot(intentValue),
   roomType: slot(z.enum(roomTypes)),
   whosMoving: slot(z.enum(whosMovingAnswers)),
+  /**
+   * The gender of the person who searches. Flatmates match within one gender: men with men, women with women, non-binary people
+   * with non-binary people (the founders, 2026-11-11). The gender of a profile wins over it.
+   */
+  gender: slot(z.enum(genders)),
   areas: slot(areaPicks.min(1)),
   budget: slot(budget),
   moveDate: slot(z.iso.date()),
@@ -86,12 +91,12 @@ export const intentsOf = (form: FormA): PlaceIntent[] => (Array.isArray(form.int
 export const withIntent = (current: readonly PlaceIntent[], added: PlaceIntent): PlaceIntent[] =>
   added === 'flatmates' || current.includes('flatmates') ? [added] : current.includes(added) ? [...current] : [...current, added]
 
-/** Results show when intent, areas and budget have values: the panel of the web, and the turn cap of PD9 (T-21). */
-export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget].every((slot) => !isOpenSlot(slot))
+/** Results show when intent, areas and budget have values, and for flatmates the gender of the person: the panel of the web, and the turn cap of PD9 (T-21). */
+export const panelReady = (form: FormA) => [form.intent, form.areas, form.budget, ...(intentsOf(form).includes('flatmates') ? [form.gender] : [])].every((slot) => !isOpenSlot(slot))
 
 /** Each slot of Form A that the assistant can fill or ask about. */
 export const formASlots = [
-  'intent', 'roomType', 'whosMoving', 'areas', 'budget', 'moveDate',
+  'intent', 'roomType', 'whosMoving', 'gender', 'areas', 'budget', 'moveDate',
   ...lifestyleAxes.map((axis) => `lifestyle.${axis}` as const), ...mustHaveKeys.map((key) => `mustHaves.${key}` as const),
 ] as const
 export type FormASlot = (typeof formASlots)[number]
@@ -118,11 +123,12 @@ const whosMovingChipLabels = {
   student: 'Student', first_job: 'First job', working: 'Working', couple: 'Couple', family: 'Family', friends: 'Group of friends',
 } satisfies Record<Exclude<(typeof whosMovingAnswers)[number], 'unclear'>, string>
 const weightChipLabels = { dealbreaker: "It's a must", prefer: 'Show them first' } satisfies Record<(typeof mustHaveWeights)[number], string>
+const genderChipLabels = { male: "I'm a man", female: "I'm a woman", non_binary: "I'm non-binary" } satisfies Record<(typeof genders)[number], string>
 
 /** The labels of the answers of a chip slot, by value, in the order of their chips. */
 export function chipLabels(slot: AnswerChipSlot): Record<string, string> {
   const [group, key] = slotPath(slot)
-  return group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels
+  return group === 'roomType' ? roomTypeChipLabels : group === 'whosMoving' ? whosMovingChipLabels : group === 'gender' ? genderChipLabels
     : group === 'lifestyle' ? lifestyleAnswerLabels[key as LifestyleAxis] : weightChipLabels
 }
 /** The place-type chips, as the designs name them (PD15). */

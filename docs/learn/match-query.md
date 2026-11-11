@@ -43,7 +43,7 @@ A goal can hold several kinds of place, as rooms and PGs: the search gives each 
 
 ## Gotchas
 
-- **A guest has no gender.** A card with "Women only", or a listing for men only, shows below the full matches for a guest. It does not go.
+- **A guest gives a gender with "I am a…".** A flatmate search with no gender shows no person, and a person sees only the people of one gender. A listing for men only shows below the full matches for a guest with no gender.
 - **A searcher with no "Who's moving" is a gap.** A listing that names a group of "Who is welcome" shows below the full matches. It does not go.
 - **"Couple friendly" on a room is a gap.** A room can welcome only students and working professionals. Thus, a room, or a listing with no household group, shows "Couple friendly" in "Didn't say".
 - **A guest has no Form B points** until a route knows the session of the guest (T-21, T-17).

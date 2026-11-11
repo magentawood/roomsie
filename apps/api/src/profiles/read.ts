@@ -25,16 +25,23 @@ export function completionOf(p: Profile, lifestyle: Answers['lifestyle']) {
 
 /**
  * The people that a viewer can see: a live card of an active account that reports did not hide, so suspended and deleted people never appear.
- * With a viewer: not the viewer, and no block in either direction, because a block hides each person from the other.
+ * With a viewer: not the viewer, no block in either direction, because a block hides each person from the other, and the gender of the viewer.
  */
 export function visiblePeople(viewerUserId?: string) {
   return [
     eq(profiles.visibility, 'live'),
     isNull(profiles.hiddenAt),
     activeAccount(profiles.userId),
-    ...(viewerUserId ? [ne(profiles.userId, viewerUserId), noBlockBetween(viewerUserId, profiles.userId)] : []),
+    ...(viewerUserId ? [ne(profiles.userId, viewerUserId), noBlockBetween(viewerUserId, profiles.userId), sameGenderAs(viewerUserId)] : []),
   ]
 }
+
+/**
+ * Flatmates match within one gender: a viewer with a profile sees only the people of the gender of that profile (the founders, 2026-11-11).
+ * A viewer with no profile, as a lister, sees each card.
+ */
+const sameGenderAs = (viewerUserId: string) => sql`(not exists (select 1 from ${profiles} v where v.user_id = ${viewerUserId})
+  or ${profiles.gender} = (select v.gender from ${profiles} v where v.user_id = ${viewerUserId}))`
 
 /** The cards of these profile ids that the viewer can see. */
 export const visibleCards = (db: Db, viewerUserId: string, profileIds: string[]) =>

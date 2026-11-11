@@ -11,17 +11,17 @@ describe('the steps of flow 01', () => {
 
   it('asks a flatmate seeker no place type but the gender of the flatmates and the must-haves, fills its bar of five, and starts the flatmate search', () => {
     const flatmate: Answers = { purpose: 'flatmate', whosMoving: 'working', budget: 'under_25k', mustHaves: ['veg_kitchen'] }
-    expect(onboardingSteps(flatmate, false)).toEqual(['purpose', 'whosMoving', 'livesWith', 'budget', 'areas', 'mustHaves', 'signIn'])
+    expect(onboardingSteps(flatmate, false)).toEqual(['purpose', 'whosMoving', 'gender', 'budget', 'areas', 'mustHaves', 'signIn'])
     expect((['whosMoving', 'mustHaves', 'signIn'] as const).map((step) => progressOf(step, flatmate)?.step)).toEqual([1, 5, 5])
     expect(progressOf('budget', flatmate)?.total).toBe(5)
     expect(startOf(flatmate)).toEqual({ whosMoving: 'working', intent: 'flatmates', budget: 'under_25k', mustHaves: ['veg_kitchen'] })
   })
 
-  it('makes "Female flatmates" and "Male flatmates" a must-have of the search, and "Both are fine" none', () => {
+  it('sends "I am a…" as the gender of a flatmate search, and its must-haves', () => {
     const flatmate: Answers = { purpose: 'flatmate', mustHaves: ['veg_kitchen'] }
-    expect(startOf({ ...flatmate, livesWith: 'women' }).mustHaves).toEqual(['women_only', 'veg_kitchen'])
-    expect(startOf({ ...flatmate, livesWith: 'men' }).mustHaves).toEqual(['men_only', 'veg_kitchen'])
-    expect(startOf({ purpose: 'flatmate', livesWith: 'any' }).mustHaves).toEqual([])
+    // "I am a…" goes as the gender of the search: flatmates match within one gender (the founders, 2026-11-11).
+    expect(startOf({ ...flatmate, gender: 'female' })).toMatchObject({ intent: 'flatmates', gender: 'female', mustHaves: ['veg_kitchen'] })
+    expect(startOf({ purpose: 'flatmate' })).not.toHaveProperty('gender')
   })
 
   it('takes a skipped purpose as a seeker, and sends a lister to the sign-in only', () => {

@@ -28,8 +28,8 @@ describe('Roomsie Noticed and several place types', () => {
   }
   const names = (results: MatchResult[]) => results.map((r) => Object.keys(ids).find((name) => ids[name] === (r.kind === 'listing' ? r.listing.id : r.card.id)))
 
-  /** Rooms in Bandra under 25k. */
-  const rooms = { intent: stated(['room']), areas: stated(['bandra']), budget: stated({ min: null, max: 25000 }) }
+  /** Rooms in Bandra under 25k, for a woman: flatmates and the people to team up with are of one gender (the founders, 2026-11-11). */
+  const rooms = { intent: stated(['room']), gender: stated('female'), areas: stated(['bandra']), budget: stated({ min: null, max: 25000 }) }
   const room = { roomType: 'private', vegOnlyKitchen: false, walkStation: '30_min', rates: [{ rent: 12000 }] }
 
   beforeAll(async () => {

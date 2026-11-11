@@ -1,8 +1,8 @@
-import type { BudgetBand, childTypes, GoalStart, intents, MustHaveKey } from '@roomsie/contract'
+import type { BudgetBand, childTypes, Gender, GoalStart, intents, MustHaveKey } from '@roomsie/contract'
 import type { DescribesYou } from './profile-form'
 
 /** The steps of flow 01 (Product file). */
-export type Step = 'purpose' | 'whosMoving' | 'livesWith' | 'intent' | 'budget' | 'areas' | 'mustHaves' | 'signIn'
+export type Step = 'purpose' | 'whosMoving' | 'gender' | 'intent' | 'budget' | 'areas' | 'mustHaves' | 'signIn'
 /** The picks of the steps. A skipped step has no answer. */
 export type Answers = {
   purpose?: 'look' | 'flatmate' | 'list'
@@ -13,15 +13,15 @@ export type Answers = {
   budget?: BudgetBand
   /** Area groups: one or more. */
   areas?: string[]
-  /** "Who would you like to live with?" of a flatmate seeker. */
-  livesWith?: 'women' | 'men' | 'any'
+  /** "I am a…" of a flatmate seeker: flatmates match within one gender (the founders, 2026-11-11). */
+  gender?: Gender
   mustHaves?: MustHaveKey[]
 }
 
 /** Both paths end with the must-haves: each one that a place, or a flatmate, can meet. */
 const placeQuestions = ['whosMoving', 'intent', 'budget', 'areas', 'mustHaves'] as const
-/** "I'm looking for a flatmate" is the flatmate search: no "What kind of place?", the gender of the flatmates, and their must-haves at the end. */
-const flatmateQuestions = ['whosMoving', 'livesWith', 'budget', 'areas', 'mustHaves'] as const
+/** "I'm looking for a flatmate" is the flatmate search: no "What kind of place?", the gender of the person, and the must-haves at the end. */
+const flatmateQuestions = ['whosMoving', 'gender', 'budget', 'areas', 'mustHaves'] as const
 const questionsOf = (answers: Answers): readonly Step[] => (answers.purpose === 'flatmate' ? flatmateQuestions : placeQuestions)
 
 /** The two paths ask different questions, so a different purpose clears the answers. */
@@ -46,9 +46,6 @@ export function progressOf(step: Step, answers: Answers) {
   return { step: step === 'signIn' ? asked.length : asked.indexOf(step) + 1, total: asked.length }
 }
 
-/** A flatmate of one gender is a must-have of the search; "Both are fine" adds none. */
-const genderMustHave = { women: ['women_only'], men: ['men_only'], any: [] } satisfies Record<NonNullable<Answers['livesWith']>, MustHaveKey[]>
-
 /** Next needs an answer, and "Looking for my son or daughter" also needs what they do. */
 export const answered = (step: Step, answers: Answers) =>
   step !== 'signIn' && answers[step] !== undefined && (step !== 'whosMoving' || answers.whosMoving !== 'parent' || answers.childType !== undefined)
@@ -57,10 +54,10 @@ export const withoutAnswer = (step: Step, answers: Answers): Answers =>
   ({ ...answers, [step]: undefined, ...(step === 'whosMoving' && { childType: undefined }) })
 
 /** The answers of `POST /v1/goals`. JSON leaves out a skipped answer, and with none the chat asks the first question. */
-export const startOf = ({ purpose, whosMoving, childType, intent, budget, areas = [], livesWith, mustHaves = [] }: Answers): GoalStart => ({
+export const startOf = ({ purpose, whosMoving, childType, intent, budget, areas = [], gender, mustHaves = [] }: Answers): GoalStart => ({
   whosMoving: whosMoving === 'parent' ? childType : whosMoving, intent, budget,
   // One group goes as `area`, which an older API also takes during a deploy.
   ...(areas.length === 1 ? { area: areas[0] } : areas.length > 1 && { areas }),
   ...(mustHaves.length > 0 && { mustHaves }),
-  ...(purpose === 'flatmate' && { intent: 'flatmates', mustHaves: [...(livesWith ? genderMustHave[livesWith] : []), ...mustHaves] }),
+  ...(purpose === 'flatmate' && { intent: 'flatmates', ...(gender && { gender }) }),
 })

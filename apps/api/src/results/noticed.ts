@@ -40,7 +40,7 @@ async function withResults(db: Db, { form, seeksPeople, viewerUserId, filters, s
   const asked: MustHaveKey[] = station ? [...ordered, 'near_station'] : ordered
   const [counts, teamUp] = await Promise.all([
     seeksPeople ? peopleCounts(db, searches.people(filters), asked) : listingCounts(db, searches.listings(filters), asked),
-    seeksPeople ? 0 : teamUpCount(db, viewerUserId, filters.areas),
+    seeksPeople ? 0 : teamUpCount(db, viewerUserId, filters.areas, searches.people(filters).gender),
   ])
   const notes: Notice[] = []
   // "Only 6 of 24": half or fewer of three results or more. The first one leads, and a second one comes after the notes of the results.

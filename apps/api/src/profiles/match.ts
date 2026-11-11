@@ -1,5 +1,5 @@
 import { and, desc, eq, inArray, sql, type SQL } from 'drizzle-orm'
-import { mustHaveKeys, type FormA, type HiddenSlot, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
+import { mustHaveKeys, type FormA, type Gender, type HiddenSlot, type LifestyleAxis, type MustHaveKey } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import { profileLifestyle, profileMustHaves, profiles } from '../db/schema'
 import { textArray } from '../db/sql'
@@ -64,6 +64,8 @@ export type PeopleSearch = BaseSearch & {
   formBFloor: number
   religionPreference: FormA['religionPreference']['value']
   communityPreference: FormA['communityPreference']['value']
+  /** The gender of the searcher: of the profile, else of the chat. Null: not known yet, so no person shows (the founders, 2026-11-11). */
+  gender: Gender | null
 }
 
 /** The conditions of a search of people, and the parts of its order. */
@@ -76,6 +78,8 @@ function peopleFilter(search: PeopleSearch) {
   const conditions = [
     ...visiblePeople(search.viewerUserId),
     eq(profiles.intent, 'flatmates'),
+    // Flatmates match within one gender: men with men, women with women, non-binary people with non-binary people.
+    search.gender ? eq(profiles.gender, search.gender) : sql`false`,
     search.ids && inArray(profiles.id, search.ids),
     search.areas && sql`${profiles.areas} && ${textArray(search.areas)}`,
     // Two budgets overlap (PD3a).
@@ -121,5 +125,5 @@ export async function peopleCounts(db: Db, search: PeopleSearch, keys: MustHaveK
 }
 
 /** The flatmates seekers in the areas, whatever their budget: the people a searcher of places could team up with. */
-export const teamUpCount = (db: Db, viewerUserId: string | undefined, areas: string[] | null) =>
-  db.$count(profiles, and(...visiblePeople(viewerUserId), eq(profiles.intent, 'flatmates'), areas ? sql`${profiles.areas} && ${textArray(areas)}` : undefined))
+export const teamUpCount = (db: Db, viewerUserId: string | undefined, areas: string[] | null, gender: Gender | null) =>
+  gender ? db.$count(profiles, and(...visiblePeople(viewerUserId), eq(profiles.intent, 'flatmates'), eq(profiles.gender, gender), areas ? sql`${profiles.areas} && ${textArray(areas)}` : undefined)) : Promise.resolve(0)

@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import type { User } from 'firebase/auth'
 import { ArrowLeft, ArrowRight, Home03, Key01, Lock01, Users01 } from '@untitledui/icons'
-import { intentLabels, newGoalResponse, type GoalResponse } from '@roomsie/contract'
-import { chatApi, errorText } from '../../lib/api'
+import { intentLabels, newGoalResponse, type GoalResponse, type GoalStart } from '@roomsie/contract'
+import { ApiError, chatApi, errorText } from '../../lib/api'
 import { areaTree } from '../../lib/areas'
 import { useAuth } from '../../lib/auth'
 import { chatStorage, readStored, writeStored } from '../../lib/chat'
@@ -24,7 +24,7 @@ import { StepBar } from '../ui/step-bar'
 const screens: Record<Step, { title: string; text?: string; art: string; position: string }> = {
   purpose: { title: 'What brings you to Roomsie?', art: 'purpose', position: 'object-[50%_77%] lg:object-[33%_50%]' },
   whosMoving: { title: 'Who’s moving?', text: 'So I show you the right kind of places.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
-  livesWith: { title: 'Who would you like to live with?', text: 'So I show you the right flatmates.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
+  gender: { title: 'I am a…', text: 'Flatmates are matched within the same group.', art: 'whos-moving', position: 'object-[50%_77%] lg:object-[68%_50%]' },
   intent: { title: 'What kind of place?', text: 'Pick one. You can add more later in the chat.', art: 'place-type', position: 'object-[50%_66%] lg:object-[68%_50%]' },
   budget: { title: 'Budget per month?', text: 'Your share of the rent.', art: 'budget', position: 'object-[50%_80%] lg:object-[50%_50%]' },
   areas: { title: 'Where do you want to live?', text: 'Pick one or more. Or skip and I’ll look across Mumbai.', art: 'area', position: 'object-[50%_90%] lg:object-[87%_50%]' },
@@ -41,7 +41,7 @@ type AboutYou = keyof typeof aboutYouLabels
 // The full lists of what each search checks (the matchers of the API). The gender of the flatmates has its own question.
 const flatmateMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'tidy_flatmates'] as const
 const placeMustHaves = ['veg_kitchen', 'non_smokers', 'no_alcohol', 'couple_friendly', 'near_station'] as const
-const livesWithLabels = { women: 'Female flatmates', men: 'Male flatmates', any: 'Both are fine' }
+const genderLabels = { male: 'Man', female: 'Woman', non_binary: 'Non-binary' }
 const screenOf = (step: Step, answers: Answers) => ({ ...screens[step], ...(answers.purpose === 'flatmate' && flatmateScreens[step]) })
 
 function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onChange: (answers: Answers) => void }) {
@@ -72,8 +72,8 @@ function Answer({ step, answers, onChange }: { step: Step; answers: Answers; onC
           )}
         </div>
       )
-    case 'livesWith':
-      return <ChoiceChips labelHidden label={screens.livesWith.title} labels={livesWithLabels} value={answers.livesWith} onChange={pick('livesWith')} />
+    case 'gender':
+      return <ChoiceChips labelHidden label={screens.gender.title} labels={genderLabels} value={answers.gender} onChange={pick('gender')} />
     case 'intent':
       return <ChoiceChips labelHidden label={screens.intent.title} labels={intentLabels} value={answers.intent} onChange={pick('intent')} />
     case 'budget':
@@ -97,7 +97,15 @@ export function Onboarding() {
   const [answers, setAnswers] = useState<Answers>({})
   const [signInError, setSignInError] = useState<string | null>(null)
   const start = useMutation({
-    mutationFn: (asker: User | null) => chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', body: startOf(answers) }),
+    mutationFn: (asker: User | null) => {
+      const body = startOf(answers)
+      const post = (sent: GoalStart) => chatApi(asker, '/v1/goals', newGoalResponse, { method: 'POST', body: sent })
+      // For the minutes of a deploy, the old API refuses the gender: the start goes again without it, and the chat asks it.
+      return post(body).catch((err: unknown) => {
+        if (!body.gender || !(err instanceof ApiError) || (err.body as { error?: string } | null)?.error !== 'not valid: body') throw err
+        return post({ ...body, gender: undefined })
+      })
+    },
     onSuccess: ({ visitorKey, ...goal }) => {
       if (visitorKey) writeStored(chatStorage.visitorKey, visitorKey)
       writeStored(chatStorage.onboarded, '1')
