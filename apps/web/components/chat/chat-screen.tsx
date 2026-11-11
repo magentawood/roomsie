@@ -273,14 +273,33 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
     ? delivered.turnId : turns.findLast((t) => t.role === 'assistant')?.id ?? null)
   const thread = useRef<HTMLDivElement>(null)
   const newestReply = turns.at(-1)?.role === 'assistant' ? turns.at(-1)!.id : null
+  const sending = pending !== undefined
   useEffect(() => {
     const box = thread.current
-    const item = newestReply ? box?.querySelector<HTMLElement>(`[data-turn="${newestReply}"]`) : null
-    // A long reply shows from its start, not from its end (the founders, 2026-11-09).
-    if (box && item && item.getBoundingClientRect().top < box.getBoundingClientRect().top) {
-      item.scrollIntoView({ block: 'start', behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })
+    const item = newestReply && !sending ? box?.querySelector<HTMLElement>(`[data-turn="${newestReply}"]`) : null
+    const list = box?.firstElementChild
+    if (!box || !item || !list) return
+    // A long reply shows from its start, not from its end (the founders, 2026-11-09). Its map, its results and its chips load
+    // under it after, and the list keeps to its bottom as it grows, so the start of the reply stays in view until the person
+    // scrolls or sends (the founders, 2026-11-11).
+    const toStart = (behavior: ScrollBehavior) => {
+      if (item.getBoundingClientRect().top < box.getBoundingClientRect().top - 1) item.scrollIntoView({ block: 'start', behavior })
     }
-  }, [newestReply])
+    toStart(matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
+    let first = true
+    const keep = new ResizeObserver(() => {
+      if (!first) toStart('auto')
+      first = false
+    })
+    keep.observe(list)
+    const release = () => keep.disconnect()
+    const events = ['wheel', 'touchmove', 'keydown'] as const
+    for (const name of events) box.addEventListener(name, release, { passive: true })
+    return () => {
+      keep.disconnect()
+      for (const name of events) box.removeEventListener(name, release)
+    }
+  }, [newestReply, sending])
   const submit = (turn: Outgoing) => {
     setFailed(null)
     if (shown && view === 'unopened') setView('split')
@@ -404,7 +423,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       <div ref={thread} className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-5 px-5 py-4 lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:py-6" aria-live="polite">
           {turns.map((turn) => [
-            <li key={turn.id} data-turn={turn.id} className={`motion-safe:animate-fade-in ${turn.role === 'user' ? 'my-3 first:mt-0 last:mb-0 lg:my-5 lg:first:mt-0 lg:last:mb-0' : ''}`}>
+            <li key={turn.id} data-turn={turn.id} className={`scroll-mt-4 motion-safe:animate-fade-in lg:scroll-mt-6 ${turn.role === 'user' ? 'my-3 first:mt-0 last:mb-0 lg:my-5 lg:first:mt-0 lg:last:mb-0' : ''}`}>
               {turn.role === 'user' ? <UserText text={turn.text} /> : (
                 <div className="flex flex-col gap-5">
                   <ReplyText text={turn.text} />
