@@ -40,13 +40,14 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>A <strong>goal</strong> is one move, with its own chat and its own Form A (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). A <strong>turn</strong> is one message: the person types it, and the assistant replies.</li>
 <li>A <strong>visitor</strong> chats with no sign-in (<a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>). The first goal of a visitor makes a <strong>visitor session</strong>, and the API gives the browser a <strong>visitor key</strong> one time.</li>
-<li>A <strong>handler</strong> is one step of a turn. The <strong>extractor</strong> changes the text into Form A slots. The <strong>reply writer</strong> plans the reply, and the <strong>composer</strong> writes its words: see <a href="composer.html">The composer</a>. The <strong>router</strong> labels each message at the same time as the extractor: see <a href="router.html">The router</a>. The <strong>observer</strong> writes Form B notes after the reply: see <a href="form-b-notes.html">Form B notes</a>. The <strong>advisor</strong> answers a general question: see <a href="router.html">The router</a>.</li>
+<li>A <strong>handler</strong> is one step of a turn. The <strong>extractor</strong> changes the text into Form A slots. The <strong>reply writer</strong> plans the reply, and the <strong>composer</strong> writes its words: see <a href="composer.html">The composer</a>. The <strong>router</strong> labels each message at the same time as the extractor: see <a href="router.html">The router</a>. The <strong>observer</strong> writes Form B notes after the reply: see <a href="form-b-notes.html">Form B notes</a>. The <strong>advisor</strong> answers a general question: see <a href="router.html">The router</a>. The <strong>locator</strong> finds a place that the map lacks: see <a href="trips-and-maps.html">Trips and maps</a>.</li>
 <li>The <strong>token probability</strong> is the probability that the model gave to each piece of its answer. The extractor uses it as a <strong>gate</strong>: a value that the model was not sure of becomes <code>unclear</code> (<a href="../decisions/pd-07-models.md">PD7</a>).</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <pre><code>the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
                                                   ├─ router ────▶ models.scored(): the label    } at the
                                                   ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini   } same time
+                                                  ├─ locator: the area of a place not on the map  }
                                                   │     ├─ the gate on the token probabilities
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts

@@ -10,6 +10,7 @@ import { asksDistance, looksLikeQuestion, placesIn, tripBetween, type Spot } fro
 import { advisor } from './handlers/advisor/advisor'
 import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
+import { locate } from './handlers/locator/locator'
 import { applyValues, withSlot, type SlotValues } from './handlers/extractor/form-update'
 import { replyWriter } from './handlers/reply/reply'
 import { rupees } from './handlers/reply/texts'
@@ -68,16 +69,22 @@ function cardsReply({ comparison }: SelectedCards, advice: string | null, { lang
 /**
  * The trips that a question about a distance asks for (the founders, 2026-11-11): from each card with a point to the place that the
  * question names, or between the two places that it names. Code measures them (`geo`), the advisor says them, and the chat maps them.
+ * `located`: the places of the question as the locator found them. They count when they are more than the places of the map.
  */
-export function tripsOf(question: string, cards: SelectedCards | null): Trip[] {
+export function tripsOf(question: string, cards: SelectedCards | null, located: Spot[] = []): Trip[] {
   if (!asksDistance(question)) return []
-  const places = placesIn(question)
+  const known = placesIn(question)
+  const places = located.length > known.length ? located : known
   const to = places.at(-1)
   if (to && cards?.spots.some(Boolean)) {
     return cards.spots.flatMap((from, i) => (from ? [tripBetween(from, to, cards.spots.length > 1 ? i + 1 : null)] : [])).slice(0, maxTrips)
   }
   return places.length >= 2 ? [tripBetween(places[0]!, places[1]!)] : []
 }
+
+/** A question about a distance that names fewer places than a trip needs: one place with cards, two with none. The locator finds the rest. */
+export const lacksPlace = (question: string, cards: SelectedCards | null) =>
+  asksDistance(question) && placesIn(question).length < (cards?.spots.some(Boolean) ? 1 : 2)
 
 /** What the advisor reads of the trips: with more cards, only the closest one keeps its route, so the answer stays short. */
 export function tripFactsFor(trips: Trip[]) {
@@ -129,6 +136,11 @@ export async function runTurn({ context, cards, shown = null, sameMove, ...given
 }, deps: AssistantDeps) {
   const input = { ...given, text: withoutCardLabel(given.text) }
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
+  // A place that the map lacks, as "MGM college": the locator starts with the router, so the reply seldom waits for it (the founders, 2026-11-11).
+  const locating = lacksPlace(input.text, cards ?? shown) ? locate(input.goalId, input.text, deps).catch((err: unknown) => {
+    deps.req.log.error({ err }, 'the locator failed')
+    return null
+  }) : null
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
   const notes = label.notes && label.band === 'core'
@@ -154,7 +166,7 @@ export async function runTurn({ context, cards, shown = null, sameMove, ...given
   const seen = !notes && !asked && shown && comparesOn(label) && label.band !== 'consequential' ? shown : null
   const facts = asked ? { cards: asked.facts, cardsAre: 'selected' as const } : seen ? { cards: seen.facts, cardsAre: 'shown' as const } : {}
   // A question about a distance gets the trips that code measured, and a map (the founders, 2026-11-11). Never in a 2b turn.
-  const trips = notes || !aboutTheSearch(label) || label.band === 'consequential' || label.band === 'sensitive' ? [] : tripsOf(input.text, asked ?? seen)
+  const trips = notes || !aboutTheSearch(label) || label.band === 'consequential' || label.band === 'sensitive' ? [] : tripsOf(input.text, asked ?? seen, (await locating) ?? [])
   // A question of the search gets an answer too, also when the router cannot label it (the founders, 2026-11-11).
   const asks = label.kinds.includes('question') || (!label.kinds.length && looksLikeQuestion(input.text))
   const coreQuestion = label.band === 'core' && asks && aboutTheSearch(label) && !label.danger
@@ -168,7 +180,8 @@ export async function runTurn({ context, cards, shown = null, sameMove, ...given
   const scripted = fixed ?? await replyWriter(turn, deps, advice)
   // An answer is in the language of the person already, so the composer writes only a plain reply.
   const plain = !fixed && !advice && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
-  const reply = trips.length ? { ...plain, parts: { ...plain.parts, trips } } : plain
+  // Each reply has its own trips: a reply that copies the parts of the last one must not show its map again.
+  const reply = { ...plain, parts: { ...plain.parts, trips } }
   return {
     form: turn.form, reply: withNotesHint(reply, input.notesHint && label.band !== 'sensitive' && !label.danger, turn.language), conflicts: turn.conflicts, label,
     ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces, notePlan, held: false,

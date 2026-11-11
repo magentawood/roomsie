@@ -42,3 +42,16 @@ export const tripFacts = z.strictObject({
 export type TripFacts = z.infer<typeof tripFacts>
 export const factsOfTrip = ({ option, from, to, straightKm, road, train }: Trip): TripFacts =>
   ({ option, from: from.name, to: to.name, howFar: howFarOf(straightKm), straightKm, road, train: train && { route: routeOf(train.legs), minutes: train.minutes } })
+
+/**
+ * The locator (the founders, 2026-11-11): a question about a distance names a place that the map of roomsie does not have, as
+ * "MGM college", so a model names each place of the question and picks the area that holds it. Code then measures from that area.
+ */
+export const locatorInput = z.strictObject({ version: z.literal(1), question: z.string().min(1) })
+export type LocatorInput = z.infer<typeof locatorInput>
+/** Each place in the order of the question. `area`: the slug of an area of roomsie, null outside the region or when not known. Not strict, as the advisor answer. */
+export const locatorAnswer = z.object({
+  version: z.literal(1).default(1),
+  places: z.array(z.object({ name: z.string().trim().min(1).max(60), area: z.string().nullable() })).max(3),
+})
+export type LocatorAnswer = z.infer<typeof locatorAnswer>

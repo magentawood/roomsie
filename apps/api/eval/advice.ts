@@ -2,18 +2,20 @@ import { mkdir, writeFile } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import type { FastifyRequest } from 'fastify'
 import { type AdvisorInput, type CardFacts, type ReplyLanguage, type TurnLabel } from '@roomsie/contract'
-import { tripFactsFor, tripsOf, type SelectedCards } from '../src/assistant/assistant'
+import { lacksPlace, tripFactsFor, tripsOf, type SelectedCards } from '../src/assistant/assistant'
 import { advisor } from '../src/assistant/handlers/advisor/advisor'
+import { locate } from '../src/assistant/handlers/locator/locator'
 import { routeTurn } from '../src/assistant/handlers/router/router'
 import { assistantSettings } from '../src/assistant/settings'
 import { listingSpot } from '../src/geo/geo'
+import geo from '../src/geo/mumbai.json'
 import { modelSettings } from '../src/models/settings'
 import { noTraces } from '../scripts/script-request'
 
 /**
  * The eval of the answers (the founders, 2026-11-11): real questions about cards, distances and the hunt, sent to the advisor with
  * the facts and the trips that the chat gives it, then checked by rules. `pnpm eval:advice -- --model gemini-3.5-flash-lite`.
- * The router part checks the band of each message. The report goes to eval/runs/ and the console.
+ * The router part checks the band of each message, and the locator part the area of places that the map lacks. The report goes to eval/runs/ and the console.
  */
 const { values } = parseArgs({ options: { model: { type: 'string' }, repeats: { type: 'string', default: '1' } }, allowPositionals: true })
 const model = values.model ?? process.env.MODEL_PRIMARY ?? 'deepseek-flash'
@@ -24,6 +26,7 @@ const req = { server: { analytics: { track: () => {} }, spend: { record: () => {
 
 const powaiFlat = { place: '2 BHK, full flat', area: 'Powai–Vikhroli', nearestStation: 'Kanjurmarg', walkToStation: 'about 15 minutes on foot', rent: 45000, deposit: 135000, maintenance: 3000, brokerage: null, moveInCash: 183000, availableFrom: '2026-12-01', furnishing: 'Semi furnished', verified: true }
 const andheriRoom = { place: 'Private room in 3 BHK', area: 'Andheri–Goregaon', nearestStation: 'Andheri', walkToStation: 'about 10 minutes on foot', rent: 19000, deposit: 38000, maintenance: null, brokerage: null, moveInCash: 57000, availableFrom: '2026-11-17', furnishing: 'Fully furnished', verified: false }
+const goregaonFlat = { place: '1 BHK, full flat', area: 'Goregaon West', nearestStation: 'Ram Mandir', walkToStation: 'more than 30 minutes on foot', rent: 25000, deposit: 75000, maintenance: 2000, brokerage: null, moveInCash: 100000, availableFrom: '2026-12-10', furnishing: 'Semi furnished', verified: false }
 const person = { age: 26, job: 'Business analyst', whosMoving: 'Working', budget: 'under ₹25,000', moveDate: '2026-12-01', areas: ['Powai'], lifestyle: ['Veg', 'Non-smoker', 'Guests rarely', 'Early bird'], verified: true }
 const one = (facts: CardFacts, station: string | null, area: string): SelectedCards => ({ comparison: null, facts: [facts], spots: [station || area ? listingSpot('This place', station, area) : null] })
 const two: SelectedCards = { comparison: null, facts: [{ ...powaiFlat, option: 1 }, { ...andheriRoom, option: 2 }], spots: [listingSpot('Option 1', 'Kanjurmarg', 'powai'), listingSpot('Option 2', 'Andheri', 'andheri-west')] }
@@ -41,6 +44,7 @@ const devanagari = has('Devanagari script', /[ऀ-ॿ]/)
 const latin = lacks('Latin script', /[ऀ-ॿ]/)
 const short: Check = { name: 'at most 70 words', ok: (text) => text.split(/\s+/).filter(Boolean).length <= 80 }
 const thisPlace = lacks('one card is "this place"', /Option 1/)
+const noKm = lacks('no distance with no trip', /\d+(?:\.\d+)?\s*(?:km|kilomet)/i)
 const noContact = lacks('no link, phone or email', /https?:|www\.|@\w+\.|\b\d{10}\b/)
 
 type Case = { id: string; language: ReplyLanguage; question: string; cards?: SelectedCards; cardsAre?: 'selected' | 'shown'; checks: Check[] }
@@ -59,8 +63,17 @@ const cases: Case[] = [
   { id: 'deposit', language: 'en', question: 'what is the usual deposit in Mumbai?', checks: [answered, has('months', /month/i), short] },
   { id: 'gym', language: 'en', question: 'is there a gym near Powai?', checks: [answered, short, noContact] },
   { id: 'hinglish-deposit', language: 'hi-Latn', question: 'deposit kitna hota hai mumbai mein?', checks: [answered, latin, short] },
+  { id: 'mgm-goregaon', language: 'en', question: 'how far is it from MGM college?', cards: one(goregaonFlat, 'Ram Mandir', 'goregaon-west'), checks: [answered, thisPlace, has('says far', /\bfar\b/i), kmIn(25, 45), lacks('keeps the card in Goregaon', /this place is in (Kamothe|Navi Mumbai)/i), short] },
+  { id: 'unknown-school', language: 'en', question: 'how far is it from bombay scottish school?', cards: one(goregaonFlat, 'Ram Mandir', 'goregaon-west'), checks: [answered, thisPlace, kmIn(8, 18), has('names Mahim', /Mahim/i), short] },
+  { id: 'outside-city', language: 'en', question: 'how far is this flat from Symbiosis Pune?', cards: one(goregaonFlat, 'Ram Mandir', 'goregaon-west'), checks: [answered, thisPlace, noKm, has('names Pune', /Pune/i), short] },
   { id: 'search-request', language: 'en', question: 'show me cheaper ones', checks: [empty] },
   { id: 'poem', language: 'en', question: 'write me a poem about the rain', checks: [empty] },
+]
+
+/** The area that the locator must give a place that the map lacks (the founders, 2026-11-11). */
+const located: [string, string][] = [
+  ['how far is it from bombay scottish school?', 'mahim'], ['commute to thakur polytechnic', 'thakur-village'],
+  ['distance to podar international school santacruz', 'santacruz-west'], ['how far is don bosco high school matunga?', 'matunga'],
 ]
 
 /** The band that the router must give each message, as the chat routes it (PD10). */
@@ -74,7 +87,8 @@ const repeats = Number(values.repeats)
 const rows: { id: string; text: string; ms: number; failed: string[] }[] = []
 for (const c of cases) {
   for (let r = 0; r < repeats; r++) {
-    const trips = tripsOf(c.question, c.cards ?? null)
+    const found = lacksPlace(c.question, c.cards ?? null) ? await locate('eval', c.question, { req, models, settings }) : null
+    const trips = tripsOf(c.question, c.cards ?? null, found ?? [])
     const input: AdvisorInput = {
       version: 1, language: c.language, question: c.question,
       ...(c.cards && { cards: c.cards.facts, cardsAre: c.cardsAre ?? 'selected' }), ...(trips.length && { trips: tripFactsFor(trips) }),
@@ -90,20 +104,30 @@ for (const [text, want] of bands) {
   labels.push({ text, want, got: label.band })
 }
 
+const areas: { text: string; want: string; got: string }[] = []
+for (const [text, want] of located) {
+  const spots = await locate('eval', text, { req, models, settings })
+  const at = spots?.[0] && Object.entries(geo.areas).find(([, a]) => a.lat === spots[0]!.lat && a.lng === spots[0]!.lng)?.[0]
+  areas.push({ text, want, got: at ?? spots?.[0]?.name ?? '(none)' })
+}
+
 const passed = rows.filter((r) => !r.failed.length).length
 const routed = labels.filter((l) => l.want === l.got).length
+const placed = areas.filter((a) => a.want === a.got).length
 const lines = [
   `# Advice eval: ${model}, ${new Date().toISOString().slice(0, 16)} UTC`, '',
-  `Answers: ${passed} of ${rows.length} pass every check. Router: ${routed} of ${labels.length} bands right. Median time ${rows.map((r) => r.ms).sort((a, b) => a - b)[Math.floor(rows.length / 2)]} ms.`, '',
+  `Answers: ${passed} of ${rows.length} pass every check. Router: ${routed} of ${labels.length} bands right. Locator: ${placed} of ${areas.length} areas right. Median time ${rows.map((r) => r.ms).sort((a, b) => a - b)[Math.floor(rows.length / 2)]} ms.`, '',
   '| Case | Result | Failed checks | ms |', '|---|---|---|---|',
   ...rows.map((r) => `| ${r.id} | ${r.failed.length ? 'fail' : 'pass'} | ${r.failed.join('; ')} | ${r.ms} |`), '',
   '| Message | Want | Got |', '|---|---|---|',
   ...labels.map((l) => `| ${l.text} | ${l.want} | ${l.got} |`), '',
+  '| Place question | Want | Got |', '|---|---|---|',
+  ...areas.map((a) => `| ${a.text} | ${a.want} | ${a.got} |`), '',
   '## Answers', '',
   ...rows.flatMap((r) => [`### ${r.id}`, '', r.text || '(no answer)', '']),
 ]
 await mkdir('eval/runs', { recursive: true })
 const file = `eval/runs/advice-${model}-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}.md`
 await writeFile(file, lines.join('\n'))
-console.log(lines.slice(0, 6 + rows.length + 3 + labels.length).join('\n'))
+console.log(lines.slice(0, 6 + rows.length + 3 + labels.length + 3 + areas.length).join('\n'))
 console.log(`\nThe full report: apps/api/${file}`)

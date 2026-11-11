@@ -13050,6 +13050,7 @@
                                   "observer",
                                   "composer",
                                   "advisor",
+                                  "locator",
                                   "check"
                                 ]
                               }
@@ -13829,6 +13830,7 @@
                               "observer",
                               "composer",
                               "advisor",
+                              "locator",
                               "check"
                             ]
                           },

@@ -6,7 +6,7 @@
 
 - A **goal** is one move, with its own chat and its own Form A ([ADR-0017](../decisions/0017-schema-v1-shape.md)). A **turn** is one message: the person types it, and the assistant replies.
 - A **visitor** chats with no sign-in ([PD6b](../decisions/pd-06b-login-gate-and-search.md)). The first goal of a visitor makes a **visitor session**, and the API gives the browser a **visitor key** one time.
-- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** plans the reply, and the **composer** writes its words: see [The composer](composer.md). The **router** labels each message at the same time as the extractor: see [The router](router.md). The **observer** writes Form B notes after the reply: see [Form B notes](form-b-notes.md). The **advisor** answers a general question: see [The router](router.md).
+- A **handler** is one step of a turn. The **extractor** changes the text into Form A slots. The **reply writer** plans the reply, and the **composer** writes its words: see [The composer](composer.md). The **router** labels each message at the same time as the extractor: see [The router](router.md). The **observer** writes Form B notes after the reply: see [Form B notes](form-b-notes.md). The **advisor** answers a general question: see [The router](router.md). The **locator** finds a place that the map lacks: see [Trips and maps](trips-and-maps.md).
 - The **token probability** is the probability that the model gave to each piece of its answer. The extractor uses it as a **gate**: a value that the model was not sure of becomes `unclear` ([PD7](../decisions/pd-07-models.md)).
 
 ## How it fits our project
@@ -15,6 +15,7 @@
 the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
                                                   ├─ router ────▶ models.scored(): the label    } at the
                                                   ├─ extractor ──▶ models.scored() ──▶ DeepSeek, or Gemini   } same time
+                                                  ├─ locator: the area of a place not on the map  }
                                                   │     ├─ the gate on the token probabilities
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts

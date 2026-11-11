@@ -83,13 +83,67 @@ Chandivali
 Navi Mumbai
 """
 
-# Places that Wikidata has with no point. Each one takes the point of the station next to it.
+# Places that Wikidata has with no point, or under a name that its search could mix up. Each one takes the point of the station
+# next to it. A place that a chat names and this list lacks goes to the locator, which picks its area (the founders, 2026-11-11).
 NEAR_STATION = {
-    'Ramnarain Ruia College|Ruia College|Ruia': 'Matunga Road', 'R. A. Podar College of Commerce and Economics|Podar College|Podar': 'Matunga Road',
+    'Ramnarain Ruia College|Ruia College|Ruia': 'Matunga Road', 'R. A. Podar College of Commerce and Economics|Podar College': 'Matunga Road',
     'SNDT Women\'s University|SNDT': 'Churchgate', 'D. Y. Patil University|DY Patil Nerul|DY Patil': 'Nerul',
     'Thadomal Shahani Engineering College|Thadomal': 'Bandra', 'KEM Hospital|Seth G.S. Medical College|GS Medical': 'Prabhadevi',
     'NESCO|Bombay Exhibition Centre': 'Ram Mandir', 'Film City|Dadasaheb Phalke Chitranagari': 'Goregaon',
     'Andheri MIDC|MIDC Andheri': 'Chakala', 'Mindspace Malad': 'Malad', 'Mindspace Airoli': 'Airoli', 'Inorbit Mall Malad': 'Malad',
+    # Colleges of engineering, management, design and medicine.
+    'MGM College of Engineering and Technology|MGM College|MGM|MGM Kamothe|MGMCET': 'Khandeshwar',
+    'MGM Institute of Health Sciences|MGM Medical College|MGM Hospital Kamothe': 'Khandeshwar', 'MGM Hospital Vashi|MGM Vashi': 'Vashi',
+    "Vivekanand Education Society's Institute of Technology|VESIT|VES College|VES Chembur": 'Chembur',
+    'Shah and Anchor Kutchhi Engineering College|Shah and Anchor': 'Chembur', 'Don Bosco Institute of Technology|DBIT': 'Kurla',
+    'Atharva College of Engineering|Atharva College': 'Malad', 'Vidyalankar Institute of Technology|Vidyalankar': 'Bhakti Park',
+    'Xavier Institute of Engineering|XIE': 'Mahim Junction', 'Dwarkadas J. Sanghvi College of Engineering|DJ Sanghvi|DJSCE': 'Vile Parle',
+    'Mukesh Patel School of Technology Management and Engineering|MPSTME': 'Vile Parle', 'St. Francis Institute of Technology|SFIT': 'Borivali',
+    'Rajiv Gandhi Institute of Technology|RGIT': 'D.N. Nagar', 'Terna Engineering College|Terna': 'Nerul', 'Ramrao Adik Institute of Technology|RAIT': 'Nerul',
+    'Bharati Vidyapeeth College of Engineering|Bharati Vidyapeeth Kharghar': 'Kharghar', 'Lokmanya Tilak College of Engineering|LTCE': 'Kopar Khairane',
+    'Pillai College of Engineering|Pillai College': 'Khandeshwar', 'Datta Meghe College of Engineering|DMCE': 'Airoli',
+    'Saraswati College of Engineering': 'Kharghar', 'Fr. C. Rodrigues Institute of Technology|FCRIT|Agnel Vashi': 'Vashi',
+    'Jamnalal Bajaj Institute of Management Studies|JBIMS': 'Churchgate', 'S. P. Jain Institute of Management and Research|SPJIMR|SP Jain': 'Andheri',
+    'Welingkar Institute of Management|Welingkar': "King's Circle", 'National Institute of Fashion Technology Mumbai|NIFT Mumbai|NIFT': 'Kharghar',
+    'Sir J. J. School of Art|JJ School of Art|JJ College of Architecture': 'Chhatrapati Shivaji Maharaj Terminus', 'Rachana Sansad': 'Prabhadevi',
+    'Whistling Woods International|Whistling Woods': 'Goregaon', 'Xavier Institute of Communications|XIC': 'Chhatrapati Shivaji Maharaj Terminus',
+    'Amity University Mumbai|Amity Panvel': 'Panvel', 'ITM Kharghar|ITM': 'Kharghar',
+    'Bhabha Atomic Research Centre|BARC': 'Govandi', 'Tata Institute of Fundamental Research|TIFR': 'Cuffe Parade',
+    # Colleges of arts, science, commerce and law.
+    'Kirti M. Doongursee College|Kirti College': 'Dadar', 'Sathaye College': 'Vile Parle', "Bhavan's College|Bhavans College|Bhavans": 'Andheri',
+    'Chetana College': 'Bandra', "St. Andrew's College": 'Bandra', 'R. D. National College|National College Bandra': 'Khar Road', 'MMK College': 'Bandra',
+    'Dalmia College': 'Malad', 'Patkar-Varde College|Patkar College': 'Goregaon', 'Nagindas Khandwala College|Khandwala College': 'Malad',
+    'V. G. Vaze College|Vaze College': 'Mulund', 'Mulund College of Commerce': 'Mulund', 'Ramniranjan Jhunjhunwala College|RJ College': 'Ghatkopar',
+    'Guru Nanak Khalsa College|Khalsa College': "King's Circle", 'Lala Lajpat Rai College|LLR College': 'Mahalaxmi',
+    'Siddharth College': 'Chhatrapati Shivaji Maharaj Terminus', 'Government Law College|GLC Mumbai': 'Churchgate', 'Sydenham College': 'Churchgate',
+    'K. C. Law College|KC Law College': 'Churchgate', 'Nirmala Niketan College': 'Churchgate', 'Hinduja College': 'Charni Road',
+    'Model College Dombivli|Model College': 'Dombivli', 'Pendharkar College': 'Dombivli', 'B. N. Bandodkar College|Bandodkar College': 'Thane',
+    'Joshi Bedekar College|Bedekar College': 'Thane',
+    # Hospitals.
+    'Nair Hospital|B. Y. L. Nair Hospital|Topiwala National Medical College': 'Mumbai Central', 'Cooper Hospital|HBT Medical College': 'Vile Parle',
+    'Bombay Hospital': 'Marine Lines', 'Saifee Hospital': 'Charni Road', 'Wockhardt Hospital Mumbai Central|Wockhardt Hospital': 'Mumbai Central',
+    'Fortis Hospital Mulund|Fortis Mulund': 'Mulund', 'Jupiter Hospital Thane|Jupiter Hospital': 'Thane', 'Bhabha Hospital Bandra|Bhabha Hospital': 'Bandra',
+    'Holy Family Hospital': 'Bandra', 'SevenHills Hospital|Seven Hills Hospital': 'Marol Naka', 'Global Hospital Parel|Global Hospital': 'Prabhadevi',
+    'Sir H. N. Reliance Foundation Hospital|HN Reliance Hospital|Reliance Hospital': 'Charni Road', 'Masina Hospital': 'Byculla',
+    'Rajawadi Hospital': 'Ghatkopar', 'Apollo Hospital Navi Mumbai|Apollo Belapur': 'CBD Belapur', 'Terna Hospital': 'Nerul', 'Wadia Hospital': 'Prabhadevi',
+    # Offices, malls and places that people commute to.
+    'Kamala Mills|Kamala Mills Compound': 'Lower Parel', 'Phoenix Palladium|High Street Phoenix|Palladium Mall': 'Lower Parel', 'Atria Mall': 'Worli',
+    'Reliance Corporate Park|RCP Ghansoli': 'Ghansoli', 'Millennium Business Park|Mahape': 'Ghansoli', 'Wagle Estate': 'Thane', 'Airoli Knowledge Park': 'Airoli',
+    'Infinity IT Park': 'Dindoshi', 'Nirlon Knowledge Park|NKP': 'Goregaon East', 'Equinox Business Park': 'Kurla', 'Godrej One|Godrej Vikhroli': 'Vikhroli',
+    'Bombay Stock Exchange|BSE|Dalal Street': 'Hutatma Chowk', 'Mantralaya': 'Vidhan Bhavan', 'World Trade Centre Mumbai|WTC Mumbai': 'Cuffe Parade',
+    'Ballard Estate': 'Chhatrapati Shivaji Maharaj Terminus', 'Jio World Centre|Jio World Drive|Jio Convention Centre': 'Bandra-Kurla Complex',
+    'Seawoods Grand Central|Nexus Seawoods': 'Seawoods–Darave', 'Inorbit Mall Vashi|Inorbit Vashi': 'Vashi', "Growel's 101 Mall|Growels Mall": 'Akurli',
+    'Korum Mall': 'Thane', 'Marine Drive': 'Marine Lines', 'Haji Ali': 'Mahalaxmi', 'Shivaji Park': 'Dadar', 'Wankhede Stadium': 'Churchgate',
+    'DY Patil Stadium': 'Nerul', 'Carter Road': 'Khar Road', 'Linking Road': 'Khar Road', 'Hill Road': 'Bandra',
+}
+
+# Places far from a station. Each one takes the point of its area.
+NEAR_AREA = {
+    'A. P. Shah Institute of Technology|AP Shah|APSIT': 'kasarvadavali', 'Thakur College of Science and Commerce|Thakur College of Commerce': 'thakur-village',
+    'Thakur Institute of Management Studies|TIMSR': 'thakur-village', 'Indian Institute of Management Mumbai|IIM Mumbai|NITIE': 'powai',
+    'Kamla Raheja Vidyanidhi Institute for Architecture|KRVIA': 'juhu', 'Hiranandani Hospital|L. H. Hiranandani Hospital': 'hiranandani-gardens',
+    'Viviana Mall': 'thane-west', 'Upvan Lake': 'pokhran-road', 'Gateway of India': 'colaba', 'Juhu Beach': 'juhu', 'Bandstand|Bandra Bandstand': 'bandra-west',
+    'Navi Mumbai International Airport|NMIA|Navi Mumbai Airport': 'ulwe',
 }
 
 
@@ -239,6 +293,12 @@ def main():
         if seed['slug'] in areas:
             areas[seed['slug']].update(name=seed['name'], aliases=seed['aliases'], group=seed['parent'] is None)
     print(len(areas), 'areas', file=sys.stderr)
+    for line, slug in NEAR_AREA.items():
+        names = line.split('|')
+        if slug in areas:
+            destinations.append({'name': names[0], 'aliases': names[1:], 'lat': areas[slug]['lat'], 'lng': areas[slug]['lng'], 'source': f'area {slug}'})
+        else:
+            print('no area:', slug, file=sys.stderr)
     data = {'source': 'Wikidata (CC0), built by tools/build-geo.py', 'stations': stations, 'lines': lines, 'places': destinations, 'areas': areas}
     OUT.parent.mkdir(parents=True, exist_ok=True)
     OUT.write_text(json.dumps(data, ensure_ascii=False, separators=(',', ':')) + '\n')
