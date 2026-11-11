@@ -137,6 +137,22 @@ describe('the composer', () => {
     expect(unsure.reply.text).toMatch(/^- Most societies allow a two-wheeler\./)
   })
 
+  it('asks a flatmate seeker the gender right after the place type, and reads a typed answer or a chip (the founders, 2026-11-11)', async () => {
+    fakeVendors({})
+    const goal = await visitorGoal()
+    const asked = await send(goal, { tap: { slot: 'intent', value: 'flatmates' } })
+    expect(asked.reply.text).toBe('Got it: flatmates to rent with. Are you a man, a woman or non-binary? I match flatmates within the same group.')
+    expect(asked.reply.chips).toBe('gender')
+    fakeVendors({ deepseek: [scored({})] })
+    const typed = await send(goal, { text: 'main ladka hoon' })
+    expect(typed.form.gender).toEqual({ source: 'stated', value: 'male' })
+    expect(typed.reply.text).toMatch(/^Got it: a man\. Which areas of Mumbai work for you\?$/)
+    fakeVendors({})
+    const other = await visitorGoal()
+    await send(other, { tap: { slot: 'intent', value: 'flatmates' } })
+    expect((await send(other, { tap: { slot: 'gender', value: 'non_binary' } })).form.gender).toEqual({ source: 'stated', value: 'non_binary' })
+  })
+
   it('sends the scripted reply when the composer misses its deadline, with no second attempt', async () => {
     const requests = fakeVendors({ deepseek: [room()], composer: { deepseek: [hang] } })
     const started = performance.now()

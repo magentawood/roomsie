@@ -44,3 +44,16 @@ export function quoteIn(text: string, quote: string) {
   }
   return null
 }
+
+/**
+ * The gender in an answer to "Are you a man, a woman or non-binary?", in English, Hinglish, Marathi or Devanagari. Null: none, or
+ * words of two genders. Only the answer to that question reads it, so "I want female flatmates" elsewhere sets nothing.
+ */
+export function genderIn(text: string): 'male' | 'female' | 'non_binary' | null {
+  const words = ` ${text.toLowerCase().replace(/[^\p{L}\p{M}\p{N}-]+/gu, ' ')} `
+  const has = (list: string[]) => list.some((w) => words.includes(` ${w} `))
+  if (has(['non-binary', 'nonbinary', 'non', 'nb', 'enby', 'neither']) || /non[ -]?binary|नॉन[ -]?बाइनरी/.test(text.toLowerCase())) return 'non_binary'
+  const male = has(['man', 'male', 'guy', 'boy', 'm', 'mard', 'ladka', 'purush', 'mulga', 'पुरुष', 'लड़का', 'लडका', 'मुलगा'])
+  const female = has(['woman', 'female', 'girl', 'lady', 'f', 'aurat', 'ladki', 'mahila', 'stree', 'mulgi', 'महिला', 'लड़की', 'लडकी', 'स्त्री', 'मुलगी'])
+  return male === female ? null : male ? 'male' : 'female'
+}

@@ -1,6 +1,6 @@
 # PD3a — Matching: who sees what, the filters and the order
 
-**Status:** Settled · **Date:** 2026-10-25, amended 2026-11-02 (T-14) and 2026-11-09 (Roomsie Noticed, the match box) · **Deciders:** n3rxv, for the founders
+**Status:** Settled · **Date:** 2026-10-25, amended 2026-11-02 (T-14), 2026-11-09 (Roomsie Noticed, the match box) and 2026-11-11 (one gender) · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -33,16 +33,16 @@ A chip widens a search by one kind, for example "Show some PGs too". Kinds of pl
 | No alcohol at home | Drinks is "None at home" | "No Alcohol at home" |
 | Tidy flatmates | Tidiness is Very tidy or Tidy enough | Does not apply |
 | Couple friendly | Does not apply | "Who is welcome" has Couples |
-| Women only | Gender is Female | Does not apply |
-| Men only | Gender is Male | Does not apply |
+| Women only, Men only | Gender, but a flatmate search keeps one gender already, so no form asks them | Does not apply |
 | Near a station | Does not apply | The walk to a station is 5 or 10 minutes |
 
 A listing's "Who can move in" also filters the seekers: Women takes Female, Men takes Male, and Any takes each gender. Non-binary passes only Any (F-13, PC-30).
 
 **Filters**
 
+- **Flatmates of one gender (the founders, 2026-11-11).** A flatmate search shows only the people of the searcher's gender: men, women, or non-binary people. The gender of the profile wins over "I am a…" of the chat. With neither, no person shows, and the chat asks it. A card of a person opens only for a viewer of its gender. Rooms for Any still show to each gender.
 - **Between people, the dealbreakers are mutual (PC-24).**
-- **A gap of the searcher does not hide a card (T-14).** The searcher did not answer what a dealbreaker of the candidate checks, for example the gender of a guest. Then the card shows below the full matches, with no label.
+- **A gap of the searcher does not hide a card (T-14).** The searcher did not answer what a dealbreaker of the candidate checks, for example the tidiness of a guest. Then the card shows below the full matches, with no label.
 - **A listing filters on "Who is welcome" (PD15) and on the searcher's must-haves.** Its house rules show on the card.
 - **A gap does not hide a card (PC-25).** A card with an unanswered dealbreaker shows below the full matches, with the label "Didn't say: …".
 - **Budget (PC-26).** A listing passes if one of its rents fits. For a PG and a "private" seeker, only the Single rent counts. A rent up to 10% over the budget passes, and ranks below the rents in the budget. The budgets of two `flatmates` seekers must overlap. Maintenance and deposit do not filter.
@@ -68,9 +68,7 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 **Roomsie Noticed (2026-11-09)**
 
 - The first page of results has the notes that the data backs, at most five (the founders, 2026-11-10: the number is free). The code counts each number, and a note shows only when the data backs it.
-- With results: a must-have that few results have (at most two notes); the `flatmates` seekers in the areas of a place search; the places near a station; the rents of the areas; a 2 BHK split two ways. The rules: [Roomsie Noticed](../learn/roomsie-noticed.md).
-- With none: the rents of the areas when the cheapest is above the budget, a neighbouring area group with results, and a 2 BHK in the areas split two ways.
-- Each button is a chip tap. Under the box, chips compare the top three cards, add a kind of place, or relax the budget or the kind.
+- With results and with none, the notes, their order and their buttons: [Roomsie Noticed](../learn/roomsie-noticed.md). Each button is a chip tap.
 
 ## Rationale
 
@@ -80,7 +78,7 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 - With one or two preferences, a score is noise. A label is true and simple.
 - A gap of the searcher is the same as a gap of the candidate. The searcher can answer later, and the card then moves up or goes.
 - Two notes of the same kind on one topic agree more often than not. The rule needs no model call in a search, and it is easy to explain.
-- A note from the counts of the query cannot state a number that is not true, and needs no model call. The designs claim "within 5 kms", and the data has no distances, so that claim is gone.
+- A note from the counts of the query cannot state a number that is not true, and needs no model call.
 
 ## Alternatives rejected
 
@@ -91,7 +89,7 @@ A listing's "Who can move in" also filters the seekers: Women takes Female, Men 
 - **No budget leeway.** The filter hides a ₹15,500 room from an "Under ₹15k" seeker.
 - **A score number.** A number reads 70% for no preference met. The product team wants a plain label.
 - **Form B neither shown nor ranked.** The product team wants the context of the chat in the order.
-- **Hide the card until the searcher answers.** A guest sees almost no people with a gender or a "Non-smokers" dealbreaker.
+- **Hide the card until the searcher answers.** A guest sees almost no people with a "Non-smokers" dealbreaker.
 - **Form B by similar words, or by the number of notes of the candidate.** Word match is weak in Hinglish and Marathi. The number of notes ignores the searcher.
 - **Notes or a match sentence that a model writes.** A model can state what the data does not hold.
 - **"Near metro" as a sort, or a note with no button.** A must-have reuses the weights, the chips and "Didn't say".

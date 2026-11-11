@@ -543,10 +543,22 @@ describe('the start of a goal from the onboarding (T-48)', () => {
     expect(read.turns.map(({ text }) => text)).toEqual([goal.turns[0]!.text])
   })
 
-  it('takes the must-haves of a flatmate search as stated dealbreakers, and confirms them', async () => {
-    const goal = newGoalResponse.parse((await start({ intent: 'flatmates', whosMoving: 'working', mustHaves: ['veg_kitchen', 'women_only'] })).json())
-    expect(goal.form.mustHaves).toMatchObject({ veg_kitchen: { source: 'stated', value: 'dealbreaker' }, women_only: { source: 'stated', value: 'dealbreaker' } })
-    expect(goal.turns[0]!.text).toBe('Got it: flatmates to rent with, working, Veg kitchen (a must), Women only (a must). Which areas of Mumbai work for you?')
+  it('takes the gender and the must-haves of a flatmate search as stated, and asks the gender when it has none', async () => {
+    const goal = newGoalResponse.parse((await start({ intent: 'flatmates', whosMoving: 'working', gender: 'female', mustHaves: ['veg_kitchen'] })).json())
+    expect(goal.form.mustHaves).toMatchObject({ veg_kitchen: { source: 'stated', value: 'dealbreaker' } })
+    expect(goal.form.gender).toEqual({ source: 'stated', value: 'female' })
+    expect(goal.turns[0]!.text).toBe('Got it: flatmates to rent with, working, a woman, Veg kitchen (a must). Which areas of Mumbai work for you?')
+    // With no "I am a…", a flatmate search asks it right after the place type (the founders, 2026-11-11).
+    const asked = newGoalResponse.parse((await start({ intent: 'flatmates' })).json())
+    expect(asked.turns[0]!.text).toBe('Got it: flatmates to rent with. Are you a man, a woman or non-binary? I match flatmates within the same group.')
+    expect(asked.turns[0]!.chips).toBe('gender')
+  })
+
+  it('takes the gender of a profile for a flatmate search, so a person with a profile is never asked it', async () => {
+    expect((await t.call('ravi', 'POST', '/v1/me/profile', { fullName: 'Ravi Shah', age: 27, gender: 'male' })).statusCode).toBe(201)
+    const goal = newGoalResponse.parse((await t.call('ravi', 'POST', '/v1/goals', { intent: 'flatmates' })).json())
+    expect(goal.form.gender).toEqual({ source: 'default', value: 'male' })
+    expect(goal.turns[0]!.text).toBe('Got it: flatmates to rent with. Which areas of Mumbai work for you?')
   })
 
   it('takes two area groups or more as areas, and refuses a sub-area, one area as a list, or both fields', async () => {

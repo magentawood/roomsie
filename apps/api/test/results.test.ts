@@ -52,7 +52,8 @@ describe('people', () => {
     t = await testApp(['seeker', 'best', 'twin', 'lowNote', 'pocket', 'noDate', 'twoPrefs', 'picky', 'quiet', 'smoker', 'strict',
       'far', 'rich', 'late', 'roomie', 'blocked', 'suspended', 'hidden'])
     await seedCatalogues(t.db)
-    cards.seeker = await person(t, 'seeker', { lifestyle: allAnswers }, 'male')
+    // Flatmates match within one gender, so a woman searches the women of the test (the founders, 2026-11-11).
+    cards.seeker = await person(t, 'seeker', { lifestyle: allAnswers })
     // In this order: the newer card of two equal cards comes first.
     cards.best = await person(t, 'best', { lifestyle: allAnswers })
     cards.twin = await person(t, 'twin', { lifestyle: allAnswers })
@@ -63,7 +64,7 @@ describe('people', () => {
     cards.picky = await person(t, 'picky', { lifestyle: allAnswers, mustHaves: { tidy_flatmates: 'dealbreaker' } })
     cards.quiet = await person(t, 'quiet', { lifestyle: { food: 'veg' } })
     cards.smoker = await person(t, 'smoker', { lifestyle: { ...allAnswers, smoking: 'smoker' } })
-    cards.strict = await person(t, 'strict', { lifestyle: allAnswers, mustHaves: { women_only: 'dealbreaker' } })
+    cards.strict = await person(t, 'strict', { lifestyle: allAnswers, mustHaves: { men_only: 'dealbreaker' } })
     cards.far = await person(t, 'far', { lifestyle: allAnswers, areas: ['andheri-west'] })
     cards.rich = await person(t, 'rich', { lifestyle: allAnswers, budgetMin: 25000, budgetMax: 30000 })
     cards.late = await person(t, 'late', { lifestyle: allAnswers, moveDate: '2027-02-01' })
@@ -92,16 +93,18 @@ describe('people', () => {
     expect(results.every((r) => r.kind === 'person')).toBe(true)
   })
 
-  it('gives a guest the people whose rule the guest did not answer, below the full matches, and no Form B points', async () => {
-    const { results } = await search(t, null, form)
+  it('gives a guest the people of the gender that the guest gave, a rule that the guest did not answer below, and no Form B points', async () => {
+    const { results } = await search(t, null, { ...form, gender: stated('female') })
     const names = results.map((r) => nameOf(idOf(r)))
     // With no Form B points, the newer of two equal cards comes first.
     expect(names.indexOf('lowNote')).toBeLessThan(names.indexOf('twin'))
     expect(names.indexOf('twin')).toBeLessThan(names.indexOf('best'))
-    expect(names).toContain('strict')
-    expect(names.indexOf('strict')).toBeGreaterThan(names.indexOf('twoPrefs'))
+    expect(names.indexOf('picky')).toBeGreaterThan(names.indexOf('twoPrefs'))
     // A guest has no blocks, and is not the seeker.
     expect(names).toEqual(expect.arrayContaining(['blocked', 'seeker']))
+    // A guest who gave no gender sees nobody yet, and a man sees no woman.
+    expect((await search(t, null, form)).results).toEqual([])
+    expect((await search(t, null, { ...form, gender: stated('male') })).results).toEqual([])
   })
 
   it('takes all of Mumbai for an empty area, and leaves out the people of a different place type', async () => {
@@ -124,34 +127,31 @@ describe('people', () => {
 })
 
 describe('the mapping of PD3a between people', () => {
-  type Who = 'seeker' | 'veg' | 'jain' | 'nb' | 'wantsVeg' | 'wantsNonSmoker' | 'wantsDry' | 'wantsTidy' | 'wantsMen' | 'early' | 'tooEarly'
+  type Who = 'seeker' | 'veg' | 'jain' | 'wantsVeg' | 'wantsNonSmoker' | 'wantsDry' | 'wantsTidy' | 'early' | 'tooEarly'
   let t: TestApp<Who>
   const cards = {} as Record<Who, string>
   const base = { intent: stated('flatmates'), areas: stated(['bandra']) }
 
   beforeAll(async () => {
-    t = await testApp(['seeker', 'veg', 'jain', 'nb', 'wantsVeg', 'wantsNonSmoker', 'wantsDry', 'wantsTidy', 'wantsMen', 'early', 'tooEarly'])
+    t = await testApp(['seeker', 'veg', 'jain', 'wantsVeg', 'wantsNonSmoker', 'wantsDry', 'wantsTidy', 'early', 'tooEarly'])
     await seedCatalogues(t.db)
     await person(t, 'seeker', {}, 'male')
     cards.veg = await person(t, 'veg', { lifestyle: { food: 'veg', tidiness: 'tidy_enough', drinks: 'none_at_home' } }, 'male')
-    cards.jain = await person(t, 'jain', { lifestyle: { food: 'jain', tidiness: 'relaxed_about_mess', drinks: 'fine_at_home' } }, 'female')
-    cards.nb = await person(t, 'nb', { lifestyle: { food: 'veg', tidiness: 'very_tidy', drinks: 'none_at_home' }, gender: 'non_binary' } as ProfileEditBody)
-    cards.wantsVeg = await person(t, 'wantsVeg', { mustHaves: { veg_kitchen: 'dealbreaker' } })
-    cards.wantsNonSmoker = await person(t, 'wantsNonSmoker', { mustHaves: { non_smokers: 'dealbreaker' } })
-    cards.wantsDry = await person(t, 'wantsDry', { mustHaves: { no_alcohol: 'dealbreaker' } })
-    cards.wantsTidy = await person(t, 'wantsTidy', { mustHaves: { tidy_flatmates: 'dealbreaker' } })
-    cards.wantsMen = await person(t, 'wantsMen', { mustHaves: { men_only: 'dealbreaker' } })
-    cards.early = await person(t, 'early', { moveDate: '2026-11-05' })
-    cards.tooEarly = await person(t, 'tooEarly', { moveDate: '2026-10-25' })
+    // Each one is a man, as the searcher: flatmates match within one gender.
+    cards.jain = await person(t, 'jain', { lifestyle: { food: 'jain', tidiness: 'relaxed_about_mess', drinks: 'fine_at_home' } }, 'male')
+    cards.wantsVeg = await person(t, 'wantsVeg', { mustHaves: { veg_kitchen: 'dealbreaker' } }, 'male')
+    cards.wantsNonSmoker = await person(t, 'wantsNonSmoker', { mustHaves: { non_smokers: 'dealbreaker' } }, 'male')
+    cards.wantsDry = await person(t, 'wantsDry', { mustHaves: { no_alcohol: 'dealbreaker' } }, 'male')
+    cards.wantsTidy = await person(t, 'wantsTidy', { mustHaves: { tidy_flatmates: 'dealbreaker' } }, 'male')
+    cards.early = await person(t, 'early', { moveDate: '2026-11-05' }, 'male')
+    cards.tooEarly = await person(t, 'tooEarly', { moveDate: '2026-10-25' }, 'male')
   })
   afterAll(() => t.close())
 
   it.each([
-    ['veg_kitchen', ['veg', 'nb'], ['jain']],
-    ['tidy_flatmates', ['veg', 'nb'], ['jain']],
-    ['no_alcohol', ['veg', 'nb'], ['jain']],
-    ['men_only', ['veg'], ['jain', 'nb']],
-    ['women_only', ['jain'], ['veg', 'nb']],
+    ['veg_kitchen', ['veg'], ['jain']],
+    ['tidy_flatmates', ['veg'], ['jain']],
+    ['no_alcohol', ['veg'], ['jain']],
   ] as const)('a %s dealbreaker shows %j and hides %j', async (key, shown, hidden) => {
     const { results } = await search(t, 'seeker', { ...base, mustHaves: { [key]: stated('dealbreaker') } })
     const ids = results.map(idOf)
@@ -170,11 +170,6 @@ describe('the mapping of PD3a between people', () => {
     expect(await ids(fails)).not.toContain(cards[who])
   })
 
-  it('applies a Men only dealbreaker back to the gender of the searcher', async () => {
-    expect((await search(t, 'seeker', base)).results.map(idOf)).toContain(cards.wantsMen)
-    expect((await search(t, 'jain', base)).results.map(idOf)).not.toContain(cards.wantsMen)
-  })
-
   it('takes a move date up to 30 days before the date of the searcher, and not more', async () => {
     const ids = (await search(t, 'seeker', { ...base, moveDate: stated('2026-12-01') })).results.map(idOf)
     expect(ids).toContain(cards.early)
@@ -188,6 +183,38 @@ describe('the mapping of PD3a between people', () => {
     expect(await labelOf('no_alcohol')).toBe(true)
     // "Couple friendly" does not apply to a person, so only two preferences count.
     expect(await labelOf('couple_friendly')).toBe(false)
+  })
+})
+
+describe('flatmates of one gender (the founders, 2026-11-11)', () => {
+  type Who = 'man' | 'otherMan' | 'woman' | 'otherWoman' | 'nb' | 'otherNb'
+  let t: TestApp<Who>
+  const cards = {} as Record<Who, string>
+  const base = { intent: stated('flatmates'), areas: stated(['bandra']) }
+
+  beforeAll(async () => {
+    t = await testApp(['man', 'otherMan', 'woman', 'otherWoman', 'nb', 'otherNb'])
+    await seedCatalogues(t.db)
+    cards.man = await person(t, 'man', {}, 'male')
+    cards.otherMan = await person(t, 'otherMan', {}, 'male')
+    cards.woman = await person(t, 'woman', {}, 'female')
+    cards.otherWoman = await person(t, 'otherWoman', {}, 'female')
+    cards.nb = await person(t, 'nb', { gender: 'non_binary' } as ProfileEditBody)
+    cards.otherNb = await person(t, 'otherNb', { gender: 'non_binary' } as ProfileEditBody)
+  })
+  afterAll(() => t.close())
+
+  it('shows a man only men, a woman only women, and a non-binary person only non-binary people', async () => {
+    const seen = async (who: Who) => (await search(t, who, base)).results.map(idOf).sort()
+    expect(await seen('man')).toEqual([cards.otherMan])
+    expect(await seen('woman')).toEqual([cards.otherWoman])
+    expect(await seen('nb')).toEqual([cards.otherNb])
+  })
+
+  it('takes the gender of the profile over the gender of the chat, and keeps a card of the other gender shut', async () => {
+    expect((await search(t, 'man', { ...base, gender: stated('female') })).results.map(idOf)).toEqual([cards.otherMan])
+    expect((await t.call('man', 'GET', `/v1/people/${cards.woman}`)).statusCode).toBe(404)
+    expect((await t.call('man', 'GET', `/v1/people/${cards.otherMan}`)).statusCode).toBe(200)
   })
 })
 
@@ -333,7 +360,7 @@ describe('the suggested posts and the event', () => {
   let t: TestApp<Who>
   let analytics: TestAnalyticsDb
   const cards = {} as Record<Who, string>
-  const form = { intent: stated('flatmates'), areas: stated(['bandra-santacruz']), budget: stated({ min: null, max: 15000 }) }
+  const form = { intent: stated('flatmates'), gender: stated('female'), areas: stated(['bandra-santacruz']), budget: stated({ min: null, max: 15000 }) }
 
   beforeAll(async () => {
     analytics = await createTestAnalyticsDb()
@@ -404,7 +431,7 @@ describe('the hidden religion and community filter (T-58)', () => {
     t = await testApp(['seeker', 'quiet', 'hindu', 'jain', 'gujarati'])
     await seedCatalogues(t.db)
     // In this order: the newer card of two equal cards comes first.
-    cards.seeker = await person(t, 'seeker', {}, 'male')
+    cards.seeker = await person(t, 'seeker', {})
     cards.quiet = await person(t, 'quiet', {})
     cards.hindu = await person(t, 'hindu', { religion: 'hindu' })
     cards.jain = await person(t, 'jain', { religion: 'jain', community: 'marwari' })

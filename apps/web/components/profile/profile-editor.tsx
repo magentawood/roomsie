@@ -232,7 +232,8 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
       <Section {...profileSections.mustHaves}>
         <div className="grid gap-6 md:grid-cols-3 md:gap-8">
           {/* Only a listing answers the walk to a station, so it is no must-have of other seekers. */}
-          {mustHaveKeys.filter((key) => key !== 'near_station').map((key) => (
+          {/* Flatmates match within one gender, so "Women only" and "Men only" ask nothing (the founders, 2026-11-11). */}
+          {mustHaveKeys.filter((key) => key !== 'near_station' && key !== 'women_only' && key !== 'men_only').map((key) => (
             <ChoiceChips key={key} label={profileLabels.mustHaves[key]} labels={profileLabels.weights}
               value={draft.mustHaves[key] ?? null} onChange={(weight) => set({ mustHaves: withMustHave(draft.mustHaves, key, weight) })} />
           ))}

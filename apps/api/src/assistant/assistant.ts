@@ -1,6 +1,6 @@
 import type { FastifyRequest } from 'fastify'
 import {
-  assistantParts, budgetBandOf, filledSlots, formA, formASlots, intentsOf, slotOf, withIntent, statesHiddenPreference, tapText,
+  assistantParts, budgetBandOf, filledSlots, formA, formASlots, intentsOf, isOpenSlot, slotOf, withIntent, statesHiddenPreference, tapText,
   factsOfTrip, maxTrips, type AssistantParts, type CardFacts, type Comparison, type AssistantReply, type Trip, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot, type HeldMove,
 } from '@roomsie/contract'
 import type { Db } from '../db/client'
@@ -15,6 +15,7 @@ import { replyWriter } from './handlers/reply/reply'
 import { rupees } from './handlers/reply/texts'
 import { routeTurn } from './handlers/router/router'
 import { cheapestLine, languageOf, lineOf } from './lines'
+import { genderIn } from './words'
 import type { AssistantSettings } from './settings'
 
 export type AssistantDeps = { req: FastifyRequest; db: Db; models?: Models; settings: AssistantSettings; today: () => string }
@@ -134,7 +135,13 @@ export async function runTurn({ context, cards, shown = null, sameMove, ...given
   // With cards selected, the input asks about them, so a message that the router cannot label is a question about them too.
   // Such a question never changes the search.
   const asked = !notes && cards && (comparesOn(label) || (label.band === 'core' && !label.kinds.length)) ? cards : null
-  const turn = { ...start, ...(usesExtractor(label) && !asked && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
+  const extractedTurn = { ...start, ...(usesExtractor(label) && !asked && extracted) }
+  // The answer to "Are you a man, a woman or non-binary?" is a word that code reads, so it needs no model (the founders, 2026-11-11).
+  const said = input.last?.asked?.slot === 'gender' && isOpenSlot(extractedTurn.form.gender) ? genderIn(input.text) : null
+  const withGender = said
+    ? { ...extractedTurn, form: { ...extractedTurn.form, gender: { source: 'stated' as const, value: said } }, changed: [...extractedTurn.changed, 'gender' as const] }
+    : extractedTurn
+  const turn = { ...withGender, outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   // A failed extractor cannot tell an own value, so the observer does not run (PD3c).
   const notePlan = notePlanOf(label, hidden || turn.mentionsOwnValue || turn.failed, deps.settings)

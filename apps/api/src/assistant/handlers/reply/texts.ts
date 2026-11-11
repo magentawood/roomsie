@@ -11,6 +11,7 @@ export const replyLines = {
   ack: (parts: string[]) => `Got it: ${parts.join(', ')}.`,
 }
 
+const genderText: Record<string, string> = { male: 'a man', female: 'a woman', non_binary: 'non-binary' }
 const whosMovingText: Record<Exclude<WhosMoving, 'unclear'>, string> = { student: 'a student', first_job: 'starting a first job', working: 'working', couple: 'a couple', family: 'a family', friends: 'friends moving together' }
 
 const questions: Partial<Record<FormASlot, string>> = {
@@ -20,6 +21,7 @@ const questions: Partial<Record<FormASlot, string>> = {
   areas: 'Which areas of Mumbai work for you?',
   budget: 'What is your monthly budget?',
   moveDate: 'When do you want to move in?',
+  gender: 'Are you a man, a woman or non-binary? I match flatmates within the same group.',
 }
 
 export function questionFor(slot: FormASlot, catalogue: Catalogue) {
@@ -45,6 +47,7 @@ export function valueText(slot: FormASlot, value: unknown, catalogue: Catalogue)
     case 'budget': return budgetText(value as Budget)
     case 'moveDate': return `from ${dateText(value as string)}`
     case 'whosMoving': return whosMovingText[value as keyof typeof whosMovingText] ?? humanize(value as string)
+    case 'gender': return genderText[value as string] ?? humanize(value as string)
     case 'lifestyle': return `${humanize(key!)}: ${(lifestyleAnswerLabels[key as LifestyleAxis] as Record<string, string>)[value as string]?.toLowerCase() ?? humanize(value as string)}`
     case 'mustHaves': return `${catalogue.mustHaveLabels.get(key!) ?? key} (${value === 'dealbreaker' ? 'a must' : 'preferred'})`
     default: return humanize(value as string)

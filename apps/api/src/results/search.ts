@@ -26,7 +26,10 @@ async function searchesOf({ db, matching }: Deps, form: FormA, viewerUserId: str
   const types = intentsOf(form)
   const weightOf = (weight: 'prefer' | 'dealbreaker') => mustHaveKeys.filter((key) => form.mustHaves[key].value === weight)
   const answers: SearcherAnswers = Object.fromEntries(Object.entries(form.lifestyle).flatMap(([axis, slot]) => (slot.value && slot.value !== 'unclear' ? [[axis, slot.value]] : [])))
-  const gender = viewerUserId ? (await profileOf(db, viewerUserId))?.gender ?? null : null
+  // The gender of the profile, else the "I am a…" of the chat (the founders, 2026-11-11).
+  const said = form.gender.source === 'empty' ? null : form.gender.value
+  const profileGender = viewerUserId ? (await profileOf(db, viewerUserId))?.gender : undefined
+  const gender = profileGender ?? said
   if (gender) answers.gender = gender
   const roomType = form.roomType.value === 'unclear' ? null : form.roomType.value
   const common = { viewerUserId, moveDate: form.moveDate.value, dealbreakers: weightOf('dealbreaker'), preferences: weightOf('prefer') }
@@ -36,7 +39,7 @@ async function searchesOf({ db, matching }: Deps, form: FormA, viewerUserId: str
   const searches: Searches = {
     people: ({ areas, budget }) => ({
       ...common, areas, budget, limit: 0, offset: 0, searcher: searcherMustHaves(answers), formBFloor: matching.formBFloor,
-      religionPreference: form.religionPreference.value, communityPreference: form.communityPreference.value,
+      religionPreference: form.religionPreference.value, communityPreference: form.communityPreference.value, gender,
     }),
     listings: ({ areas, budget }) => ({
       ...common, areas, budget, limit: 0, offset: 0, roomType, gender, whosMoving: form.whosMoving.value,

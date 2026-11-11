@@ -11,6 +11,8 @@ import { languageOf, lineOf } from '../assistant/lines'
 import { observer } from '../assistant/handlers/observer/observer'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
 import { cardsOf } from '../compare/compare'
+import type { Db } from '../db/client'
+import { profileOf } from '../profiles/read'
 import { hasGoalFeedback, saveGoalFeedback } from '../feedback/read'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
@@ -35,7 +37,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
 
   app.post('/goals', { preHandler: optionalUser(options), schema: { headers, body: goalStart.nullish(), response: { 201: newGoalResponse, 400: errorResponse, 429: limitRefusal } } }, async (req, reply) => {
     // The check of the answers comes before a visitor session exists (T-48).
-    const start = req.body ? await runStart({ last: null, form: formA.parse({}), lastRegister: null, start: req.body }, { ...options, req }) : undefined
+    const start = req.body ? await runStart({ last: null, form: await withProfileGender(options.db, req.user?.id, formA.parse({})), lastRegister: null, start: req.body }, { ...options, req }) : undefined
     if (start === null) return reply.code(400).send({ error: 'not valid: area' })
     const asker = await askerOf(req, req.headers[visitorKeyHeader])
     let visitorKey: string | null = null
@@ -128,7 +130,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       v1.analytics.track(req, { name: 'limit_hit', limit: 'too_fast' })
       return reply.code(429).send({ error: limitLines.too_fast, limit: 'too_fast' })
     }
-    const input = { goalId: goal.id, last, form: goal.form, lastRegister: await lastRegisterOf(options.db, goal.id), notesHint: await notesHintDue(options.db, asker) }
+    const input = { goalId: goal.id, last, form: await withProfileGender(options.db, req.user?.id, goal.form), lastRegister: await lastRegisterOf(options.db, goal.id), notesHint: await notesHintDue(options.db, asker) }
     const deps = { ...options, req }
     // While "Same move?" waits, a message changes nothing: the question comes again, with no model call.
     if (last?.held && 'tap' in req.body) return reply.code(409).send({ error: 'Tap one of the two answers first.' })
@@ -180,7 +182,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     }
 
     if (req.body.answer === 'separate') {
-      const { form, reply: answer } = await runHeld({ held, form: goal.form, last: null, lastRegister }, deps)
+      const { form, reply: answer } = await runHeld({ held, form: await withProfileGender(options.db, req.user?.id, goal.form), last: null, lastRegister }, deps)
       const outsidePlaces = placesOf(goal.outsidePlaces)
       const user = { text: sameMoveLabels.separate, inputMethod: 'chip', parts: { version: 1, sameMove: 'separate' }, ownValues: { religion: null, community: null } } satisfies UserTurn
       const turns = await saveTurn(options.db, { id: goal.id, seen: goal.updatedAt, asker }, { form, outsidePlaces }, user, answer)
@@ -261,4 +263,14 @@ async function tapTurn(input: TurnInput, tap: ChipTap, deps: AssistantDeps) {
   if (!tapped) return null
   const user = { text: tapped.text, inputMethod: 'chip', parts: { version: 1, tap }, ownValues: tapped.ownValues } satisfies UserTurn
   return { form: tapped.form, reply: tapped.reply, user, events: [], outsidePlaces: [], notePlan: null, held: false }
+}
+
+/**
+ * A person with a profile has a gender, so a flatmate search never asks it: the profile fills the gender of the chat as a default,
+ * and a stated gender stays (the founders, 2026-11-11).
+ */
+async function withProfileGender(db: Db, userId: string | undefined, form: FormA): Promise<FormA> {
+  if (!userId || form.gender.source !== 'empty') return form
+  const gender = (await profileOf(db, userId))?.gender
+  return gender ? { ...form, gender: { source: 'default', value: gender } } : form
 }

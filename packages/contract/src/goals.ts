@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { budgetBandId, budgetBandOf, chipLabels, chipSlots, formA, type FormA, formASlots, identityPreference, intentLabels, intentsOf, type PlaceIntent, statedPreferences } from './form-a'
-import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
+import { communities, genders, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { cardFacts, comparison, compareRequest, maxCompared } from './compare'
 import { maxTrips, tripFacts, trips } from './trips'
 import { observation } from './form-b'
@@ -46,6 +46,7 @@ export const chipTap = z.discriminatedUnion('slot', [
   z.strictObject({ slot: z.literal('budget'), value: budgetBandId }),
   z.strictObject({ slot: z.literal('roomType'), value: z.enum(roomTypes).exclude(['unclear']) }),
   z.strictObject({ slot: z.literal('whosMoving'), value: z.enum(whosMovingAnswers).exclude(['unclear']) }),
+  z.strictObject({ slot: z.literal('gender'), value: z.enum(genders) }),
   ...lifestyleAxes.map((axis) => z.strictObject({ slot: z.literal(`lifestyle.${axis}`), value: z.enum(lifestyleAnswers[axis]) })),
   ...mustHaveKeys.map((key) => z.strictObject({ slot: z.literal(`mustHaves.${key}`), value: z.enum(mustHaveWeights) })),
 ])
@@ -58,6 +59,8 @@ export const goalStart = z.strictObject({
   /** Two area groups or more. One group comes as `area`, which an older API also takes. */
   areas: z.array(areaSlug).min(2).max(10).refine((slugs) => new Set(slugs).size === slugs.length, 'Each area once').optional(),
   budget: budgetBandId.optional(),
+  /** "I am a…" of a flatmate search: flatmates match within one gender (the founders, 2026-11-11). */
+  gender: z.enum(genders).optional(),
   /** The must-haves of a flatmate search: each one is a dealbreaker. */
   mustHaves: z.array(z.enum(mustHaveKeys)).max(mustHaveKeys.length).refine((keys) => new Set(keys).size === keys.length, 'Each must-have once').optional(),
 }).refine((start) => !(start.area && start.areas), 'One area as area, or more as areas')
