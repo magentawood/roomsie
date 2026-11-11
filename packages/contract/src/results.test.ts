@@ -32,9 +32,15 @@ describe('a search', () => {
 
   it.each([
     ['page 0', { form: {}, page: 0 }],
-    ['a key that it does not have', { form: {}, sort: 'newest' }],
+    ['a key that it does not have', { form: {}, order: 'newest' }],
+    ['a sort that it does not have', { form: {}, sort: 'cheapest' }],
   ])('rejects %s', (_, input) => {
     expect(resultsBody.safeParse(input).success).toBe(false)
+  })
+
+  it('reads the sort of the results panel, Best Matches when it has none', () => {
+    expect(resultsBody.parse({ form: {} }).sort).toBe('best')
+    expect(resultsBody.parse({ form: {}, sort: 'rent_low' }).sort).toBe('rent_low')
   })
 
   it('reads the suggested posts of an empty search, with the reason of each', () => {
