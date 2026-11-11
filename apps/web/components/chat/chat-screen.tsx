@@ -13,7 +13,7 @@ import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '..
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { ReplyText } from './reply-text'
-import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, isFull, pickOf, questionOf, storedPick, toggledPick, type Picked } from '../../lib/compare'
+import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, isFull, pickOf, questionOf, shownOf, storedPick, toggledPick, type Picked } from '../../lib/compare'
 import { formKey, panelTitle, resultsStack, type Stack } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
@@ -147,7 +147,13 @@ function useChat() {
   const send = useMutation({
     mutationFn: async ({ body }: Outgoing) => {
       const id = goalId ?? await startGoal()
-      return { id, ...(await chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body })) }
+      const post = (sent: TurnBody) => chatApi(user, `/v1/goals/${id}/turns`, turnResponse, { method: 'POST', body: sent })
+      // For the minutes of a deploy, the old API refuses `shown`: the message goes again without it (api.md).
+      const turn = await post(body).catch((err: unknown) => {
+        if (!('shown' in body) || !(err instanceof ApiError) || (err.body as { error?: string } | null)?.error !== 'not valid: body') throw err
+        return post({ ...body, shown: undefined })
+      })
+      return { id, ...turn }
     },
     onSuccess: ({ id, turns, ...rest }) => {
       queryClient.setQueryData<GoalResponse>(queryKeys.goal(id), (old) => ({ status: 'open', ...rest, id, turns: [...(old?.turns ?? []), ...turns] }))
@@ -305,9 +311,11 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   // On a phone the chat comes back, so the answer shows.
   const sendText = (text: string) => {
     const compare = compareOf(picked, listed ? [...listed.results, ...listed.suggested].map((result) => pickOf(result).id) : [])
+    // With no selection, the card open in the panel or the first results go too, for "how far is this listing?".
+    const seen = compare || !signedIn ? null : shownOf(card, listed?.results ?? [])
     if (picked.length) setView('split')
     const asked = questionOf(text, picked)
-    submit({ body: { text: asked, ...(compare && { compare }) }, text: asked })
+    submit({ body: { text: asked, ...(compare && { compare }), ...(seen && { shown: seen }) }, text: asked })
   }
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
   // A pick in the waitlist screen is a send, so the panel opens with the results once the search is ready.

@@ -111,7 +111,7 @@ describe('the comparison of selected cards (T-49)', () => {
     // The advisor reads the facts that code took from the database, and the question with no name of a card.
     const sent = JSON.parse(sentMessageOf(requests.advisor[0]!)) as Record<string, unknown>
     expect(sent).toEqual({
-      version: 1, language: 'en', question: 'which one is closer to Mithibai college? And the commute options?',
+      version: 1, language: 'en', question: 'which one is closer to Mithibai college? And the commute options?', cardsAre: 'selected',
       cards: [{
         place: 'New listing', area: 'Bandra', nearestStation: 'Bandra', walkToStation: 'about 10 minutes on foot', rent: 20_000, deposit: 40_000,
         maintenance: 1000, brokerage: null, moveInCash: 60_000, availableFrom: '2026-12-01', furnishing: 'Semi furnished', verified: false,
@@ -152,6 +152,38 @@ describe('the comparison of selected cards (T-49)', () => {
     const reply = await answer('is it near a gym?', { kind: 'place', ids: [ids.broker] })
     expect(reply.text).toBe('I could not answer that just now. The card has its details: tap it to see them.')
     expect(reply.comparison).toBeNull()
+  })
+
+  it('reads the cards on the screen with no selection: "how far is this listing?" gets an answer from the first card', async () => {
+    const said = '- This place is in Bandra, about 3 km from Mithibai College.'
+    const requests = fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }), advisor: { deepseek: [modelAnswer(JSON.stringify({ text: said }))] } })
+    const res = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is this listing from mithibai college?', shown: { kind: 'place', ids: [ids.owner] } })
+    expect(res.statusCode).toBe(200)
+    const reply = turnResponse.parse(res.json()).turns[1]!
+    expect([reply.text, reply.comparison]).toEqual([said, null])
+    const sent = JSON.parse(sentMessageOf(requests.advisor[0]!)) as { cardsAre: string; cards: { area: string }[] }
+    expect([sent.cardsAre, sent.cards.map((c) => c.area)]).toEqual(['shown', ['Bandra']])
+  })
+
+  it('gives a general question with cards on the screen its hedge and the open question, and a 2b question no card facts', async () => {
+    const general = fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'general' }), advisor: { deepseek: [modelAnswer(JSON.stringify({ text: '- Keep your ID and two photos ready.' }))] } })
+    const res = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'what documents do owners ask for?', shown: { kind: 'place', ids: [ids.owner, ids.broker] } })
+    expect(turnResponse.parse(res.json()).turns[1]!.text).toMatch(/^- Keep your ID and two photos ready\.\n\nThat's general guidance/)
+    expect((JSON.parse(sentMessageOf(general.advisor[0]!)) as { cardsAre: string }).cardsAre).toBe('shown')
+    const legal = fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'consequential' }) })
+    const handed = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'is this owner genuine?', shown: { kind: 'place', ids: [ids.owner] } })
+    expect(turnResponse.parse(handed.json()).turns[1]!.text).toMatch(/^That needs a real answer/)
+    expect(legal.advisor).toEqual([])
+  })
+
+  it('takes a message with cards on the screen from a guest, or with a card that went, as a plain message', async () => {
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    const hidden = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is it?', shown: { kind: 'place', ids: [ids.draft] } })
+    expect(hidden.statusCode).toBe(200)
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    const visitor = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
+    const guest = await t.app.inject({ method: 'POST', url: `/v1/goals/${visitor.id}/turns`, payload: { text: 'how far is it?', shown: { kind: 'place', ids: [ids.owner] } }, headers: { [visitorKeyHeader]: visitor.visitorKey! } })
+    expect(guest.statusCode).toBe(200)
   })
 
   it('refuses a card that the person cannot see, a card of the other kind, no card, five cards and a guest, before any model call', async () => {

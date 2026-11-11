@@ -73,7 +73,11 @@ export function tapText(tap: ChipTap, areaName: (slug: string) => string) {
     default: return chipLabels(tap.slot)[tap.value]!
   }
 }
-export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
+/**
+ * `compare`: the cards that the person selected. `shown`: with no selection, the cards on the screen of the person: the card open
+ * in the results panel, or the first results. The API gives a question about them their facts (PD10).
+ */
+export const turnBody = z.union([z.strictObject({ text: requiredText(2000), compare: compareRequest.optional(), shown: compareRequest.optional() }), z.strictObject({ tap: chipTap })])
 
 /** The two answers of "Same move?" (Figma 67:6489). */
 export const sameMoveAnswer = z.enum(['same', 'separate'])
@@ -276,9 +280,10 @@ export const composerAnswer = z.object({ version: z.literal(1).default(1), text:
 export const composerOutput = composerAnswer.strict()
 
 /** What the advisor reads: a general question of band 2a and the language of the reply. Never Form A, Form B or the chat (PD7a, PD10). */
-/** `cards`: only with a question about the cards that the person selected, as their facts (PD10). */
+/** `cards`: with a question about the cards that the person selected, or about the cards on the screen (`cardsAre`), as their facts (PD10). */
 export const advisorInput = z.strictObject({
-  version: z.literal(1).default(1), language: z.enum(replyLanguages), question: z.string().min(1), cards: z.array(cardFacts).min(1).max(maxCompared).optional(),
+  version: z.literal(1).default(1), language: z.enum(replyLanguages), question: z.string().min(1),
+  cards: z.array(cardFacts).min(1).max(maxCompared).optional(), cardsAre: z.enum(['selected', 'shown']).optional(),
 })
 export type AdvisorInput = z.output<typeof advisorInput>
 /** The answer of the advisor model. An empty text: no general answer, so the line "I've noted it" goes out. Not strict, as the extractor answer. */

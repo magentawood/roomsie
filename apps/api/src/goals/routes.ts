@@ -118,6 +118,8 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
       cards = await cardsOf(options.db, req.user.id, req.body.compare)
       if (!cards) return reply.code(400).send({ error: 'not valid: compare' })
     }
+    // The cards on the screen help a question such as "how far is this listing?". A guest, or a card that went, only loses that help.
+    const shown = 'text' in req.body && !cards && req.body.shown && req.user ? await cardsOf(options.db, req.user.id, req.body.shown) : null
     const last = await lastReplyOf(options.db, goal.id)
     // A limit refuses a typed turn before any model call. A tap has no limit (PD9, T-21).
     const before = await capStateOf(options.db, asker, options.limits)
@@ -131,7 +133,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     // While "Same move?" waits, a message changes nothing: the question comes again, with no model call.
     if (last?.held && 'tap' in req.body) return reply.code(409).send({ error: 'Tap one of the two answers first.' })
     const turn = last?.held && 'text' in req.body ? heldAgain(input, last, req.body.text)
-      : 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, cards }, req.body.text, asker, deps)
+      : 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, cards, shown }, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
     // A place that a turn names again moves to the end, so the newest place is last (T-22b).
     const named = new Set(turn.outsidePlaces)
@@ -231,7 +233,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   })
 }
 
-async function typedTurn(input: TurnInput & { cards: SelectedCards | null }, text: string, asker: Asker, deps: AssistantDeps) {
+async function typedTurn(input: TurnInput & { cards: SelectedCards | null; shown: SelectedCards | null }, text: string, asker: Asker, deps: AssistantDeps) {
   const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
   const sameMove = (form: FormA) => sameMoveOf(deps.db, asker, form, input.goalId)
