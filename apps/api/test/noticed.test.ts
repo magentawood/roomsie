@@ -113,7 +113,8 @@ describe('Roomsie Noticed and several place types', () => {
   it('notes the rents of rooms and a 2 BHK split two ways for people when nothing else stands out', async () => {
     const { total, noticed } = await search({ ...rooms, intent: stated(['flatmates']), mustHaves: { veg_kitchen: stated('dealbreaker') } })
     expect(total).toBe(1)
-    expect(noticed).toEqual([{ kind: 'rents', cheapest: 12000, low: 14000, high: 20000 }, { kind: 'share', each: 21500, maintenanceIncluded: true }])
+    // The rents follow the rules of the search: a veg kitchen is a must, so only the veg room counts.
+    expect(noticed).toEqual([{ kind: 'rents', cheapest: 14000, low: null, high: null }, { kind: 'share', each: 21500, maintenanceIncluded: true }])
   })
 
   it('notes a must-have that few flatmates seekers have, then the rents of rooms and a 2 BHK split two ways', async () => {
@@ -125,5 +126,24 @@ describe('Roomsie Noticed and several place types', () => {
       { kind: 'rents', cheapest: 12000, low: 14000, high: 20000 },
       { kind: 'share', each: 21500, maintenanceIncluded: true },
     ])
+  })
+
+  it('sorts the rooms by Best Matches, by the rent from low or from high, or the newest first', async () => {
+    const rents = async (sort?: string) => {
+      const res = await t.call('seeker', 'POST', '/v1/results', { form: rooms, page: 1, ...(sort && { sort }) })
+      return resultsResponse.parse(res.json()).results.map((r) => (r.kind === 'listing' ? Math.min(...r.listing.rates.map((rate) => rate.rent)) : 0))
+    }
+    expect(await rents('rent_low')).toEqual([12000, 14000, 16000, 18000, 20000, 22000])
+    expect(await rents('rent_high')).toEqual([22000, 20000, 18000, 16000, 14000, 12000])
+    // The newest first: the rooms in the reverse order of the seed.
+    expect(await rents('newest')).toEqual([12000, 22000, 20000, 18000, 16000, 14000])
+    expect(await rents()).toHaveLength(6)
+  })
+
+  it('notes only the rents of places that the person could see: a room for women only is not the cheapest for a man', async () => {
+    await listing('womenOnly', 'room_in_flat', { ...room, whoCanMoveIn: 'women', rates: [{ rent: 5000 }] })
+    expect((await search({ ...rooms, budget: stated({ min: null, max: 4000 }) })).noticed[0]).toMatchObject({ kind: 'rents', cheapest: 5000 })
+    profileResponse.parse((await t.call('seeker', 'POST', '/v1/me/profile', { fullName: 'Card seeker', age: 25, gender: 'male' })).json())
+    expect((await search({ ...rooms, budget: stated({ min: null, max: 4000 }) })).noticed[0]).toMatchObject({ kind: 'rents', cheapest: 12000 })
   })
 })

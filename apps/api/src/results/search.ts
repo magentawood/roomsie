@@ -1,4 +1,4 @@
-import { budgetBands, intentsOf, listingKinds, mustHaveKeys, resultsPageSize, type CompareKind, type FormA, type ListingKind, type MatchResult, type MustHaveKey, type Notice, type PlaceIntent } from '@roomsie/contract'
+import { budgetBands, intentsOf, listingKinds, mustHaveKeys, resultsPageSize, type CompareKind, type FormA, type ListingKind, type MatchResult, type MustHaveKey, type Notice, type PlaceIntent, type ResultSort } from '@roomsie/contract'
 import { areaParents, lineage, matchingAreas, neighboursOf } from '../areas'
 import type { Db } from '../db/client'
 import { inOrder } from '../in-order'
@@ -48,23 +48,23 @@ async function searchesOf({ db, matching }: Deps, form: FormA, viewerUserId: str
 }
 
 /** The search of a Form A: the page, the suggested posts when it finds nothing (PD6c), and the notes of the first page. */
-export async function searchResults(deps: Deps, form: FormA, viewerUserId: string | undefined, page: number) {
+export async function searchResults(deps: Deps, form: FormA, viewerUserId: string | undefined, page: number, sort: ResultSort = 'best') {
   const { db } = deps
   const types = intentsOf(form)
   if (!types.length) return { results: [], total: 0, suggestions: [], noticed: [] as Notice[] }
   // People to rent with go alone, and kinds of place add up (PD15).
   const seeksPeople = types[0] === 'flatmates'
   const { searches, filters, parentOf, picks } = await searchesOf(deps, form, viewerUserId)
-  const runSearch = async (filters: Filters, limit: number, offset: number): Promise<{ results: MatchResult[]; total: number }> => {
+  const runSearch = async (filters: Filters, limit: number, offset: number, order: ResultSort = 'best'): Promise<{ results: MatchResult[]; total: number }> => {
     if (seeksPeople) {
-      const { rows, total } = await matchingPeople(db, { ...searches.people(filters), limit, offset })
+      const { rows, total } = await matchingPeople(db, { ...searches.people(filters), limit, offset, sort: order })
       return { results: await personResults(deps, rows), total }
     }
-    const { rows, total } = await matchingListings(db, { ...searches.listings(filters), limit, offset })
+    const { rows, total } = await matchingListings(db, { ...searches.listings(filters), limit, offset, sort: order })
     return { results: await listingResults(deps, rows), total }
   }
 
-  const { results, total } = await runSearch(filters, resultsPageSize, (page - 1) * resultsPageSize)
+  const { results, total } = await runSearch(filters, resultsPageSize, (page - 1) * resultsPageSize, sort)
   const notes = (suggestions: Suggestion[]) => (page === 1 ? noticesOf(db, { form, seeksPeople, viewerUserId, filters, searches, total, suggestions }) : Promise.resolve([]))
   if (total > 0) return { results, total, suggestions: [], noticed: await notes([]) }
 

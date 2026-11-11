@@ -11,8 +11,8 @@ export function resultRoutes(v1: FastifyInstance, options: AuthOptions & { stora
   const app = v1.withTypeProvider<ZodTypeProvider>()
 
   app.post('/results', { preHandler: optionalUser(options), schema: { body: resultsBody, response: { 200: resultsResponse } } }, async (req) => {
-    const { form, page } = req.body
-    const found = await searchResults(options, form, req.user?.id, page)
+    const { form, page, sort } = req.body
+    const found = await searchResults(options, form, req.user?.id, page, sort)
     v1.analytics.track(req, { name: 'results_shown', count: found.results.length })
     return { ...found, page }
   })

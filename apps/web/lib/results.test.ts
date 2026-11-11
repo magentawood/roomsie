@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA, panelReady, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
-import { didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, resultsHeading, resultsStack, stackCount, type PanelState } from './results'
+import { didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, resultsHeading, resultsStack, sortLabels, sortsFor, stackCount, type PanelState } from './results'
 import { listing, testId } from './test-listing'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
@@ -154,5 +154,12 @@ describe('the results card in the chat', () => {
   it('counts listings, or people for a search of people to rent with', () => {
     expect(resultsStack(form({ intent: stated('flatmates') }), []).people).toBe(true)
     expect([stackCount(1, false), stackCount(24, false), stackCount(1, true), stackCount(3, true)]).toEqual(['1 listing', '24 listings', '1 person', '3 people'])
+  })
+})
+
+describe('the sort of the results panel (the founders, 2026-11-11)', () => {
+  it('sorts places by best, the rent and the newest, and people by best and the newest', () => {
+    expect(sortsFor('listing').map((s) => sortLabels[s])).toEqual(['Best Matches', 'Lowest Rent', 'Highest Rent', 'Newest'])
+    expect(sortsFor('person').map((s) => sortLabels[s])).toEqual(['Best Matches', 'Newest'])
   })
 })

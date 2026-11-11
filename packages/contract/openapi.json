@@ -15782,6 +15782,16 @@
                     "type": "integer",
                     "minimum": 1,
                     "maximum": 9007199254740991
+                  },
+                  "sort": {
+                    "default": "best",
+                    "type": "string",
+                    "enum": [
+                      "best",
+                      "rent_low",
+                      "rent_high",
+                      "newest"
+                    ]
                   }
                 },
                 "required": [

@@ -1,3 +1,4 @@
+import type { ResultSort } from '@roomsie/contract'
 import { sql, type SQL } from 'drizzle-orm'
 import type { Budget, MustHaveKey } from '@roomsie/contract'
 
@@ -27,6 +28,8 @@ export type BaseSearch = {
   offset: number
   /** Only these cards: the fit of one card (PD3a). */
   ids?: string[]
+  /** The order of the results panel. No sort: Best Matches. */
+  sort?: ResultSort
 }
 
 /** 30 days before or after the move date. An empty date passes (PD3a). */
