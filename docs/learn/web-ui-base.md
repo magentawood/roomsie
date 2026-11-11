@@ -22,6 +22,7 @@
 - Each call goes through TanStack Query. `apps/web/lib/queries.ts` names the cache key of each piece of data. After a change, the page sets or refreshes that key ([web standard](../standards/web.md)).
 - The icons come from `@untitledui/icons`, the icon set of the design system.
 - **A wait** is `Loading` in `components/ui/loading.tsx`, with the mascot of its page (`mascots` in that file). The mascots come from the sticker sheets of the Product file (Additional assets), in `public/mascots` at 320 px. A person who asks for less motion sees them still. The line under a mascot uses Fredoka, a rounded font, only there.
+- **An avatar** is `Avatar` in `components/ui/avatar.tsx`. `online` adds the green dot of the designs. Only the account card of the sidebar uses it, because the person who reads the page is online.
 - The sidebar shows the items of screens that later tasks build. They show as inactive until then.
 
 ## Sizes from the designs

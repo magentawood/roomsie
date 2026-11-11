@@ -5,6 +5,7 @@ import { initials } from '../../lib/person'
 import { Badge } from '../ui/badge'
 import { cardBox, CardLabel, CardLink, overCard } from '../ui/card-link'
 import { DotLine, Facts, TagLine } from '../ui/card-lines'
+import { PhotoStrip } from '../ui/photo-strip'
 
 /**
  * The card of a person, as the frame "All types of cards and listings" (67:6750): the name and its pill, the job and the age,
@@ -12,16 +13,20 @@ import { DotLine, Facts, TagLine } from '../ui/card-lines'
  */
 export function PersonCard({ card, action, label, selected, onOpen }: { card: CardResponse; action?: ReactNode; label?: ReactNode; selected?: boolean; onOpen?: () => void }) {
   const href = `/people/${card.id}`
-  const photo = card.photos[0]
   const about = [card.jobRole, card.age && `${card.age} yrs`].filter((v): v is string => Boolean(v))
   const tags = personTags(card)
   return (
     <article className={cardBox(selected)}>
-      <CardLink href={href} onOpen={onOpen} decorative className="flex h-46 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary">
-        {photo
-          ? <img src={photo.url} alt="" className="size-full object-cover" />
-          : <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials(card.fullName)}</span>}
-      </CardLink>
+      {/* Above the link of the whole card, so a swipe moves the photos. A computer shows no dots on a person (State=Hover of 67:6750). */}
+      <div className={`h-46 shrink-0 overflow-hidden rounded-xl bg-secondary ${overCard}`}>
+        {card.photos.length
+          ? <PhotoStrip urls={card.photos.map((p) => p.url)} href={href} onOpen={onOpen} dots="phone" selected={selected} />
+          : (
+            <CardLink href={href} onOpen={onOpen} decorative className="flex size-full items-center justify-center">
+              <span className="flex size-20 items-center justify-center rounded-full bg-tertiary text-xl font-semibold text-tertiary">{initials(card.fullName)}</span>
+            </CardLink>
+          )}
+      </div>
       <CardLabel>{label}</CardLabel>
       <div className="flex flex-1 flex-col gap-3 px-2 py-3">
         <div className="flex flex-col gap-2">

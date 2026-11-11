@@ -80,7 +80,7 @@ function Sidebar({ linkTo, card }: { linkTo: LinkTo; card: ReactNode }) {
         {card}
         {user ? (
           <Link href="/profile" className="flex items-center gap-3 rounded-xl border border-secondary p-3 outline-focus-ring hover:bg-primary_hover focus-visible:outline-2">
-            <Avatar src={user.photoURL} size="md" />
+            <Avatar src={user.photoURL} size="md" online />
             <span className="flex min-w-0 flex-col text-sm">
               <span className="truncate font-semibold text-secondary">{user.displayName}</span>
               <span className="truncate text-tertiary">{user.email}</span>
