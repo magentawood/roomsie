@@ -21340,6 +21340,178 @@
                             "default": false,
                             "type": "boolean"
                           },
+                          "trips": {
+                            "default": [],
+                            "maxItems": 4,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "option": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 4
+                                },
+                                "from": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 80
+                                    },
+                                    "lat": {
+                                      "type": "number"
+                                    },
+                                    "lng": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "lat",
+                                    "lng"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 80
+                                    },
+                                    "lat": {
+                                      "type": "number"
+                                    },
+                                    "lng": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "lat",
+                                    "lng"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "straightKm": {
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "road": {
+                                  "type": "object",
+                                  "properties": {
+                                    "km": {
+                                      "type": "number",
+                                      "minimum": 0
+                                    },
+                                    "minutes": {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "type": "integer",
+                                            "minimum": -9007199254740991,
+                                            "maximum": 9007199254740991
+                                          },
+                                          {
+                                            "type": "integer",
+                                            "minimum": -9007199254740991,
+                                            "maximum": 9007199254740991
+                                          }
+                                        ]
+                                      },
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  },
+                                  "required": [
+                                    "km",
+                                    "minutes"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "train": {
+                                  "nullable": true,
+                                  "type": "object",
+                                  "properties": {
+                                    "legs": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "line": {
+                                            "type": "string"
+                                          },
+                                          "from": {
+                                            "type": "string"
+                                          },
+                                          "to": {
+                                            "type": "string"
+                                          },
+                                          "stops": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9007199254740991
+                                          }
+                                        },
+                                        "required": [
+                                          "line",
+                                          "from",
+                                          "to",
+                                          "stops"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "minutes": {
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "path": {
+                                      "minItems": 2,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "array",
+                                        "items": {
+                                          "anyOf": [
+                                            {
+                                              "type": "number"
+                                            },
+                                            {
+                                              "type": "number"
+                                            }
+                                          ]
+                                        },
+                                        "minItems": 2,
+                                        "maxItems": 2
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "legs",
+                                    "minutes",
+                                    "path"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "option",
+                                "from",
+                                "to",
+                                "straightKm",
+                                "road",
+                                "train"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
                           "sameMove": {
                             "default": null,
                             "nullable": true,
@@ -21367,6 +21539,7 @@
                           "chips",
                           "comparison",
                           "notes",
+                          "trips",
                           "sameMove",
                           "createdAt"
                         ],
@@ -23483,6 +23656,178 @@
                             "default": false,
                             "type": "boolean"
                           },
+                          "trips": {
+                            "default": [],
+                            "maxItems": 4,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "option": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 4
+                                },
+                                "from": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 80
+                                    },
+                                    "lat": {
+                                      "type": "number"
+                                    },
+                                    "lng": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "lat",
+                                    "lng"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 80
+                                    },
+                                    "lat": {
+                                      "type": "number"
+                                    },
+                                    "lng": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "lat",
+                                    "lng"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "straightKm": {
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "road": {
+                                  "type": "object",
+                                  "properties": {
+                                    "km": {
+                                      "type": "number",
+                                      "minimum": 0
+                                    },
+                                    "minutes": {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "type": "integer",
+                                            "minimum": -9007199254740991,
+                                            "maximum": 9007199254740991
+                                          },
+                                          {
+                                            "type": "integer",
+                                            "minimum": -9007199254740991,
+                                            "maximum": 9007199254740991
+                                          }
+                                        ]
+                                      },
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  },
+                                  "required": [
+                                    "km",
+                                    "minutes"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "train": {
+                                  "nullable": true,
+                                  "type": "object",
+                                  "properties": {
+                                    "legs": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "line": {
+                                            "type": "string"
+                                          },
+                                          "from": {
+                                            "type": "string"
+                                          },
+                                          "to": {
+                                            "type": "string"
+                                          },
+                                          "stops": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9007199254740991
+                                          }
+                                        },
+                                        "required": [
+                                          "line",
+                                          "from",
+                                          "to",
+                                          "stops"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "minutes": {
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "path": {
+                                      "minItems": 2,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "array",
+                                        "items": {
+                                          "anyOf": [
+                                            {
+                                              "type": "number"
+                                            },
+                                            {
+                                              "type": "number"
+                                            }
+                                          ]
+                                        },
+                                        "minItems": 2,
+                                        "maxItems": 2
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "legs",
+                                    "minutes",
+                                    "path"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "option",
+                                "from",
+                                "to",
+                                "straightKm",
+                                "road",
+                                "train"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
                           "sameMove": {
                             "default": null,
                             "nullable": true,
@@ -23510,6 +23855,7 @@
                           "chips",
                           "comparison",
                           "notes",
+                          "trips",
                           "sameMove",
                           "createdAt"
                         ],
@@ -26374,6 +26720,178 @@
                                 "default": false,
                                 "type": "boolean"
                               },
+                              "trips": {
+                                "default": [],
+                                "maxItems": 4,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "option": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 4
+                                    },
+                                    "from": {
+                                      "type": "object",
+                                      "properties": {
+                                        "name": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "lat": {
+                                          "type": "number"
+                                        },
+                                        "lng": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": [
+                                        "name",
+                                        "lat",
+                                        "lng"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "to": {
+                                      "type": "object",
+                                      "properties": {
+                                        "name": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "lat": {
+                                          "type": "number"
+                                        },
+                                        "lng": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": [
+                                        "name",
+                                        "lat",
+                                        "lng"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "straightKm": {
+                                      "type": "number",
+                                      "minimum": 0
+                                    },
+                                    "road": {
+                                      "type": "object",
+                                      "properties": {
+                                        "km": {
+                                          "type": "number",
+                                          "minimum": 0
+                                        },
+                                        "minutes": {
+                                          "type": "array",
+                                          "items": {
+                                            "anyOf": [
+                                              {
+                                                "type": "integer",
+                                                "minimum": -9007199254740991,
+                                                "maximum": 9007199254740991
+                                              },
+                                              {
+                                                "type": "integer",
+                                                "minimum": -9007199254740991,
+                                                "maximum": 9007199254740991
+                                              }
+                                            ]
+                                          },
+                                          "minItems": 2,
+                                          "maxItems": 2
+                                        }
+                                      },
+                                      "required": [
+                                        "km",
+                                        "minutes"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "train": {
+                                      "nullable": true,
+                                      "type": "object",
+                                      "properties": {
+                                        "legs": {
+                                          "minItems": 1,
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "line": {
+                                                "type": "string"
+                                              },
+                                              "from": {
+                                                "type": "string"
+                                              },
+                                              "to": {
+                                                "type": "string"
+                                              },
+                                              "stops": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 9007199254740991
+                                              }
+                                            },
+                                            "required": [
+                                              "line",
+                                              "from",
+                                              "to",
+                                              "stops"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "minutes": {
+                                          "type": "integer",
+                                          "minimum": -9007199254740991,
+                                          "maximum": 9007199254740991
+                                        },
+                                        "path": {
+                                          "minItems": 2,
+                                          "type": "array",
+                                          "items": {
+                                            "type": "array",
+                                            "items": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "number"
+                                                },
+                                                {
+                                                  "type": "number"
+                                                }
+                                              ]
+                                            },
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                          }
+                                        }
+                                      },
+                                      "required": [
+                                        "legs",
+                                        "minutes",
+                                        "path"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "option",
+                                    "from",
+                                    "to",
+                                    "straightKm",
+                                    "road",
+                                    "train"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
                               "sameMove": {
                                 "default": null,
                                 "nullable": true,
@@ -26401,6 +26919,7 @@
                               "chips",
                               "comparison",
                               "notes",
+                              "trips",
                               "sameMove",
                               "createdAt"
                             ],
@@ -26748,6 +27267,178 @@
                                 "default": false,
                                 "type": "boolean"
                               },
+                              "trips": {
+                                "default": [],
+                                "maxItems": 4,
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "option": {
+                                      "nullable": true,
+                                      "type": "integer",
+                                      "minimum": 1,
+                                      "maximum": 4
+                                    },
+                                    "from": {
+                                      "type": "object",
+                                      "properties": {
+                                        "name": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "lat": {
+                                          "type": "number"
+                                        },
+                                        "lng": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": [
+                                        "name",
+                                        "lat",
+                                        "lng"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "to": {
+                                      "type": "object",
+                                      "properties": {
+                                        "name": {
+                                          "type": "string",
+                                          "minLength": 1,
+                                          "maxLength": 80
+                                        },
+                                        "lat": {
+                                          "type": "number"
+                                        },
+                                        "lng": {
+                                          "type": "number"
+                                        }
+                                      },
+                                      "required": [
+                                        "name",
+                                        "lat",
+                                        "lng"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "straightKm": {
+                                      "type": "number",
+                                      "minimum": 0
+                                    },
+                                    "road": {
+                                      "type": "object",
+                                      "properties": {
+                                        "km": {
+                                          "type": "number",
+                                          "minimum": 0
+                                        },
+                                        "minutes": {
+                                          "type": "array",
+                                          "items": {
+                                            "anyOf": [
+                                              {
+                                                "type": "integer",
+                                                "minimum": -9007199254740991,
+                                                "maximum": 9007199254740991
+                                              },
+                                              {
+                                                "type": "integer",
+                                                "minimum": -9007199254740991,
+                                                "maximum": 9007199254740991
+                                              }
+                                            ]
+                                          },
+                                          "minItems": 2,
+                                          "maxItems": 2
+                                        }
+                                      },
+                                      "required": [
+                                        "km",
+                                        "minutes"
+                                      ],
+                                      "additionalProperties": false
+                                    },
+                                    "train": {
+                                      "nullable": true,
+                                      "type": "object",
+                                      "properties": {
+                                        "legs": {
+                                          "minItems": 1,
+                                          "type": "array",
+                                          "items": {
+                                            "type": "object",
+                                            "properties": {
+                                              "line": {
+                                                "type": "string"
+                                              },
+                                              "from": {
+                                                "type": "string"
+                                              },
+                                              "to": {
+                                                "type": "string"
+                                              },
+                                              "stops": {
+                                                "type": "integer",
+                                                "minimum": 1,
+                                                "maximum": 9007199254740991
+                                              }
+                                            },
+                                            "required": [
+                                              "line",
+                                              "from",
+                                              "to",
+                                              "stops"
+                                            ],
+                                            "additionalProperties": false
+                                          }
+                                        },
+                                        "minutes": {
+                                          "type": "integer",
+                                          "minimum": -9007199254740991,
+                                          "maximum": 9007199254740991
+                                        },
+                                        "path": {
+                                          "minItems": 2,
+                                          "type": "array",
+                                          "items": {
+                                            "type": "array",
+                                            "items": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "number"
+                                                },
+                                                {
+                                                  "type": "number"
+                                                }
+                                              ]
+                                            },
+                                            "minItems": 2,
+                                            "maxItems": 2
+                                          }
+                                        }
+                                      },
+                                      "required": [
+                                        "legs",
+                                        "minutes",
+                                        "path"
+                                      ],
+                                      "additionalProperties": false
+                                    }
+                                  },
+                                  "required": [
+                                    "option",
+                                    "from",
+                                    "to",
+                                    "straightKm",
+                                    "road",
+                                    "train"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
                               "sameMove": {
                                 "default": null,
                                 "nullable": true,
@@ -26775,6 +27466,7 @@
                               "chips",
                               "comparison",
                               "notes",
+                              "trips",
                               "sameMove",
                               "createdAt"
                             ],
@@ -28907,6 +29599,178 @@
                             "default": false,
                             "type": "boolean"
                           },
+                          "trips": {
+                            "default": [],
+                            "maxItems": 4,
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "option": {
+                                  "nullable": true,
+                                  "type": "integer",
+                                  "minimum": 1,
+                                  "maximum": 4
+                                },
+                                "from": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 80
+                                    },
+                                    "lat": {
+                                      "type": "number"
+                                    },
+                                    "lng": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "lat",
+                                    "lng"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "to": {
+                                  "type": "object",
+                                  "properties": {
+                                    "name": {
+                                      "type": "string",
+                                      "minLength": 1,
+                                      "maxLength": 80
+                                    },
+                                    "lat": {
+                                      "type": "number"
+                                    },
+                                    "lng": {
+                                      "type": "number"
+                                    }
+                                  },
+                                  "required": [
+                                    "name",
+                                    "lat",
+                                    "lng"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "straightKm": {
+                                  "type": "number",
+                                  "minimum": 0
+                                },
+                                "road": {
+                                  "type": "object",
+                                  "properties": {
+                                    "km": {
+                                      "type": "number",
+                                      "minimum": 0
+                                    },
+                                    "minutes": {
+                                      "type": "array",
+                                      "items": {
+                                        "anyOf": [
+                                          {
+                                            "type": "integer",
+                                            "minimum": -9007199254740991,
+                                            "maximum": 9007199254740991
+                                          },
+                                          {
+                                            "type": "integer",
+                                            "minimum": -9007199254740991,
+                                            "maximum": 9007199254740991
+                                          }
+                                        ]
+                                      },
+                                      "minItems": 2,
+                                      "maxItems": 2
+                                    }
+                                  },
+                                  "required": [
+                                    "km",
+                                    "minutes"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                "train": {
+                                  "nullable": true,
+                                  "type": "object",
+                                  "properties": {
+                                    "legs": {
+                                      "minItems": 1,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "line": {
+                                            "type": "string"
+                                          },
+                                          "from": {
+                                            "type": "string"
+                                          },
+                                          "to": {
+                                            "type": "string"
+                                          },
+                                          "stops": {
+                                            "type": "integer",
+                                            "minimum": 1,
+                                            "maximum": 9007199254740991
+                                          }
+                                        },
+                                        "required": [
+                                          "line",
+                                          "from",
+                                          "to",
+                                          "stops"
+                                        ],
+                                        "additionalProperties": false
+                                      }
+                                    },
+                                    "minutes": {
+                                      "type": "integer",
+                                      "minimum": -9007199254740991,
+                                      "maximum": 9007199254740991
+                                    },
+                                    "path": {
+                                      "minItems": 2,
+                                      "type": "array",
+                                      "items": {
+                                        "type": "array",
+                                        "items": {
+                                          "anyOf": [
+                                            {
+                                              "type": "number"
+                                            },
+                                            {
+                                              "type": "number"
+                                            }
+                                          ]
+                                        },
+                                        "minItems": 2,
+                                        "maxItems": 2
+                                      }
+                                    }
+                                  },
+                                  "required": [
+                                    "legs",
+                                    "minutes",
+                                    "path"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "required": [
+                                "option",
+                                "from",
+                                "to",
+                                "straightKm",
+                                "road",
+                                "train"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
                           "sameMove": {
                             "default": null,
                             "nullable": true,
@@ -28934,6 +29798,7 @@
                           "chips",
                           "comparison",
                           "notes",
+                          "trips",
                           "sameMove",
                           "createdAt"
                         ],

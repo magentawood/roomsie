@@ -6,12 +6,12 @@ import { backToIt, lineOf } from '../../lines'
 import { questionFor, replyLines, valueText } from './texts'
 
 type PartsOf = Pick<AssistantParts, 'asked' | 'question'> & Partial<Pick<AssistantParts, 'conflicts' | 'chips'>>
-const parts = (of: PartsOf): AssistantParts => ({ version: 1, conflicts: [], chips: null, comparison: null, notes: false, notesHint: false, held: null, ...of })
+const parts = (of: PartsOf): AssistantParts => ({ version: 1, conflicts: [], chips: null, comparison: null, notes: false, notesHint: false, held: null, trips: [], ...of })
 const chipSlotOf = (slot: FormASlot | undefined) => chipSlots.find((chip) => chip === slot) ?? null
 
 /**
  * The line before the reply, by the band of the turn (PD10, T-34). A 2a question gets the answer of the advisor and the hedge,
- * or "I've noted it" with no answer. A 2b question gets the hand-off until the articles of T-38.
+ * or "I've noted it" with no answer. A core question gets its answer with no hedge. A 2b question gets the hand-off until the articles of T-38.
  */
 function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage, advice: string | null) {
   switch (band) {
@@ -20,7 +20,8 @@ function leadOf({ band, danger }: TurnLabel, language: ReplyLanguage, advice: st
     case 'out_of_scope': return `${lineOf('outOfScope', language)} `
     case 'adversarial': return `${lineOf('adversarial', language)} `
     case 'sensitive': return `${lineOf('sensitive', language)} ${danger ? `${lineOf('danger', language)} ` : ''}`
-    case 'core': return ''
+    // A question of the search gets its answer first, then the question of the interview (the founders, 2026-11-11).
+    case 'core': return advice ? `${advice}\n\n` : ''
   }
 }
 

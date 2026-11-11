@@ -13,7 +13,7 @@ export const assistantSettings = z.object({
   /** The time for all the attempts of the composer. After it, the scripted reply goes out (T-13). Measured: docs/research/eval-2026-11-composer.md. */
   COMPOSER_DEADLINE_MS: z.coerce.number().int().positive().default(3500),
   /** The time for all the attempts of the advisor. After it, the line "I've noted it" goes out (PD10). Not measured yet: the eval of T-38 measures it. */
-  ADVISOR_DEADLINE_MS: z.coerce.number().int().positive().default(7000),
+  ADVISOR_DEADLINE_MS: z.coerce.number().int().positive().default(10_000),
   /** The confidence of a note with no token probabilities: of Gemini, or of DeepSeek whose tokens do not hold the topic (T-36). At the floor of PD3a, the matching does not use it. */
   OBSERVER_UNSCORED_CONFIDENCE: z.coerce.number().min(0).max(1).default(0.5),
   /** The notes of a sensitive turn: none, hidden notes that the matching does not use, or usual notes (PC-17). */

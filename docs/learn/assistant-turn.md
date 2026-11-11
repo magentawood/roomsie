@@ -20,7 +20,8 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
                                                   ├─ the first message, like an open goal: "Same move?" holds it (goals.md)
                                                   ├─ advisor, on a 2a question: a short answer before the question,
-                                                  │     and on a question about selected cards: an answer from their facts
+                                                  │     on a core question, on a question about cards (their facts),
+                                                  │     and on a distance (the trips of geo.ts, also for the map)
                                                   ├─ reply writer: the line of the band, "Got it: …" and one question
                                                   │     (selected cards: the answer, and the table of code, T-49)
                                                   │     (the notes question: the notes and a scripted line, T-36)

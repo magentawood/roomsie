@@ -9,6 +9,9 @@ const idBucket = 'https://roomsie-id-checks.s3.ap-south-1.amazonaws.com'
 const sentry = process.env.NEXT_PUBLIC_SENTRY_DSN ? new URL(process.env.NEXT_PUBLIC_SENTRY_DSN) : null
 const reportUrl = sentry && `${sentry.origin}/api${sentry.pathname}/security/?sentry_key=${sentry.username}`
 
+/** The tiles, the fonts and the icons of the map of a trip: OpenFreeMap, free and with no key, from OpenStreetMap data. */
+const mapTiles = 'https://tiles.openfreemap.org'
+
 /** The browser runs only the scripts with the nonce of this response, so an injected script cannot take the sign-in (ADR-0007). */
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
@@ -17,11 +20,12 @@ export function proxy(request: NextRequest) {
     // strict-dynamic lets our scripts load more, for example the Google script of Firebase sign-in. Next dev needs eval.
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ''}`,
     `style-src 'self' ${dev ? "'unsafe-inline'" : `'nonce-${nonce}'`}`,
-    `img-src 'self' blob: data: ${photos} ${idBucket} https://lh3.googleusercontent.com`,
+    `img-src 'self' blob: data: ${photos} ${idBucket} https://lh3.googleusercontent.com ${mapTiles}`,
     // Vercel lacks the R2 account and the Supabase project, so these two are wildcards (T-52).
-    `connect-src 'self' ${new URL(apiUrl).origin} https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.r2.cloudflarestorage.com ${idBucket} wss://*.supabase.co`,
+    `connect-src 'self' ${new URL(apiUrl).origin} https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://firebaseinstallations.googleapis.com https://fcmregistrations.googleapis.com https://*.r2.cloudflarestorage.com ${idBucket} wss://*.supabase.co ${mapTiles}`,
     `frame-src https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}`,
-    "worker-src 'self'",
+    // The map of a trip draws its tiles in a worker that MapLibre makes from a blob (the founders, 2026-11-11).
+    "worker-src 'self' blob:",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

@@ -1,11 +1,12 @@
 import type { FastifyRequest } from 'fastify'
 import {
   assistantParts, budgetBandOf, filledSlots, formA, formASlots, intentsOf, slotOf, withIntent, statesHiddenPreference, tapText,
-  type AssistantParts, type CardFacts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot, type HeldMove,
+  factsOfTrip, maxTrips, type AssistantParts, type CardFacts, type Comparison, type AssistantReply, type Trip, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot, type HeldMove,
 } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
 import { catalogueOf, type Catalogue } from './catalogue'
+import { asksDistance, looksLikeQuestion, placesIn, tripBetween, type Spot } from '../geo/geo'
 import { advisor } from './handlers/advisor/advisor'
 import { composer } from './handlers/composer/composer'
 import { extractor, noExtraction } from './handlers/extractor/extractor'
@@ -39,7 +40,7 @@ export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegist
 export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 
 /** The cards that the person selected for a question: their facts, and with two or more the table of the comparison (T-49). */
-export type SelectedCards = { comparison: Comparison | null; facts: CardFacts[] }
+export type SelectedCards = { comparison: Comparison | null; facts: CardFacts[]; spots: (Spot | null)[] }
 
 /** With cards selected, a question gets an answer about them, and a message with filters goes to the normal chat (T-49). */
 const comparesOn = (label: TurnLabel) => onlyQuestion(label) && aboutTheSearch(label) && label.band !== 'sensitive' && !label.danger
@@ -61,6 +62,26 @@ function cardsReply({ comparison }: SelectedCards, advice: string | null, { lang
   const lines = !comparison ? lineOf('cardNoAnswer', language)
     : cheapest ? `${lineOf('compareBest', language)} ${cheapestLine(cheapest.i + 1, rupees(cheapest.option.moveInCash), language)}` : lineOf('compareBest', language)
   return { version: 1, text: lead + (advice ?? lines), parts: assistantParts.parse({ ...(last ?? { asked: null }), comparison }) }
+}
+
+/**
+ * The trips that a question about a distance asks for (the founders, 2026-11-11): from each card with a point to the place that the
+ * question names, or between the two places that it names. Code measures them (`geo`), the advisor says them, and the chat maps them.
+ */
+export function tripsOf(question: string, cards: SelectedCards | null): Trip[] {
+  if (!asksDistance(question)) return []
+  const places = placesIn(question)
+  const to = places.at(-1)
+  if (to && cards?.spots.some(Boolean)) {
+    return cards.spots.flatMap((from, i) => (from ? [tripBetween(from, to, cards.spots.length > 1 ? i + 1 : null)] : [])).slice(0, maxTrips)
+  }
+  return places.length >= 2 ? [tripBetween(places[0]!, places[1]!)] : []
+}
+
+/** What the advisor reads of the trips: with more cards, only the closest one keeps its route, so the answer stays short. */
+export function tripFactsFor(trips: Trip[]) {
+  const closest = trips.reduce((best, t, i) => (t.straightKm < trips[best]!.straightKm ? i : best), 0)
+  return trips.map((t, i) => (i === closest ? factsOfTrip(t) : { ...factsOfTrip(t), train: null }))
 }
 
 /** Null: no observer (PD7a, PC-17). `religionOrCommunity`: the turn may state a preference or an own value (PD3c). */
@@ -125,15 +146,22 @@ export async function runTurn({ context, cards, shown = null, sameMove, ...given
   // With no selection, a question about the search reads the cards on the screen: "how far is this listing?" (the founders, 2026-11-11).
   const seen = !notes && !asked && shown && comparesOn(label) && label.band !== 'consequential' ? shown : null
   const facts = asked ? { cards: asked.facts, cardsAre: 'selected' as const } : seen ? { cards: seen.facts, cardsAre: 'shown' as const } : {}
+  // A question about a distance gets the trips that code measured, and a map (the founders, 2026-11-11). Never in a 2b turn.
+  const trips = notes || !aboutTheSearch(label) || label.band === 'consequential' || label.band === 'sensitive' ? [] : tripsOf(input.text, asked ?? seen)
+  // A question of the search gets an answer too, also when the router cannot label it (the founders, 2026-11-11).
+  const asks = label.kinds.includes('question') || (!label.kinds.length && looksLikeQuestion(input.text))
+  const coreQuestion = label.band === 'core' && asks && aboutTheSearch(label) && !label.danger
   // A general question of band 2a gets a short answer before the open question, and a question about cards an answer from their
   // facts (PD10). It is one more call, only on such a turn.
-  const advice = !notes && (asked || seen || label.band === 'general')
-    ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text, ...facts }, deps) : null
+  const advice = !notes && (asked || seen || label.band === 'general' || coreQuestion || trips.length)
+    ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text, ...facts, ...(trips.length && { trips: tripFactsFor(trips) }) }, deps) : null
   // A core question about the cards on the screen gets only the answer. A general one keeps its hedge and the open question.
   const fixed = notes ? notesReply(context.formB.length > 0, turn) : asked ? cardsReply(asked, advice, turn)
-    : seen && advice && label.band === 'core' ? cardsReply({ comparison: null, facts: seen.facts }, advice, turn) : null
+    : seen && advice && label.band === 'core' ? cardsReply({ comparison: null, facts: seen.facts, spots: seen.spots }, advice, turn) : null
   const scripted = fixed ?? await replyWriter(turn, deps, advice)
-  const reply = !fixed && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
+  // An answer is in the language of the person already, so the composer writes only a plain reply.
+  const plain = !fixed && !advice && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
+  const reply = trips.length ? { ...plain, parts: { ...plain.parts, trips } } : plain
   return {
     form: turn.form, reply: withNotesHint(reply, input.notesHint && label.band !== 'sensitive' && !label.danger, turn.language), conflicts: turn.conflicts, label,
     ownValues: turn.ownValues, hiddenPreferences: turn.hiddenPreferences, outsidePlaces: turn.outsidePlaces, notePlan, held: false,

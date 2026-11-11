@@ -3,6 +3,7 @@ import {
   type CardFacts, type CardResponse, type CompareRequest, type Comparison, type LifestyleAxis, type PersonOption,
 } from '@roomsie/contract'
 import { catalogueOf } from '../assistant/catalogue'
+import { listingSpot, type Spot } from '../geo/geo'
 import { rupees } from '../assistant/handlers/reply/texts'
 import type { Db } from '../db/client'
 import { inOrder } from '../in-order'
@@ -37,7 +38,7 @@ const movingWords = { student: 'A student', first_job: 'Starting a first job', w
  * The selected cards of a question (T-49): their facts for the advisor, and with two cards or more the table of the comparison.
  * In the order of the request. Null: a card that the viewer cannot see, or a listing of the viewer.
  */
-export async function cardsOf(db: Db, viewerUserId: string, { kind, ids }: CompareRequest): Promise<{ comparison: Comparison | null; facts: CardFacts[] } | null> {
+export async function cardsOf(db: Db, viewerUserId: string, { kind, ids }: CompareRequest): Promise<{ comparison: Comparison | null; facts: CardFacts[]; spots: (Spot | null)[] } | null> {
   const catalogue = await catalogueOf(db)
   const areaName = (slug: string | null) => (slug && catalogue.bySlug.get(slug)?.name) || null
   if (kind === 'person') {
@@ -52,7 +53,8 @@ export async function cardsOf(db: Db, viewerUserId: string, { kind, ids }: Compa
       lifestyle: (Object.entries(options[i]!.lifestyle) as [LifestyleAxis, string][]).map(([axis, answer]) => (lifestyleAnswerLabels[axis] as Record<string, string>)[answer] ?? answer),
       verified: options[i]!.verified,
     }))
-    return { comparison: options.length > 1 ? comparison.parse({ kind, options }) : null, facts }
+    // A trip starts at a place, never at a person.
+    return { comparison: options.length > 1 ? comparison.parse({ kind, options }) : null, facts, spots: facts.map(() => null) }
   }
   // The results never show the own listing of the viewer, so a question about cards does not either.
   const [rows, parts] = await Promise.all([visibleListings(db, viewerUserId, ids, { notOwn: true }), partsOf(db, ids)])
@@ -69,5 +71,7 @@ export async function cardsOf(db: Db, viewerUserId: string, { kind, ids }: Compa
       availableFrom: option.availableFrom, furnishing: listing.furnishing ? furnishingWords[listing.furnishing] : null, verified: option.verified,
     })
   })
-  return { comparison: options.length > 1 ? comparison.parse({ kind, options }) : null, facts }
+  // The point of a card: its station, else its area. Its name is the name that the advisor gives it.
+  const spots = ordered.map((listing, i) => listingSpot(ids.length > 1 ? `Option ${i + 1}` : 'This place', listing.nearestStation, listing.areaSlug))
+  return { comparison: options.length > 1 ? comparison.parse({ kind, options }) : null, facts, spots }
 }

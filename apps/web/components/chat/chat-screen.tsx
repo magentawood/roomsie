@@ -13,6 +13,7 @@ import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '..
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { ReplyText } from './reply-text'
+import { TripMap } from './trip-map'
 import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, isFull, pickOf, questionOf, shownOf, storedPick, toggledPick, type Picked } from '../../lib/compare'
 import { formKey, panelTitle, resultsStack, type Stack } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
@@ -405,6 +406,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
               {turn.role === 'user' ? <UserText text={turn.text} /> : (
                 <div className="flex flex-col gap-5">
                   <ReplyText text={turn.text} />
+                  {turn.trips.length > 0 && <TripMap trips={turn.trips} />}
                   {turn.comparison && <ComparisonTable table={turn.comparison} onOpen={shown ? openCard : undefined} />}
                   {turn.notes && <NotesList />}
                 </div>

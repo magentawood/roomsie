@@ -119,10 +119,10 @@ export async function setGoalStatus(db: Db, id: string, asker: Asker, status: Go
 }
 
 const turnFields = { id: chatTurns.id, role: chatTurns.role, text: chatTurns.text, parts: chatTurns.parts, createdAt: chatTurns.createdAt }
-/** The chips, the comparison and the notes flag of an assistant turn go out. The label of a typed turn never does. */
+/** The chips, the comparison, the notes flag and the trips of an assistant turn go out. The label of a typed turn never does. */
 const toChatTurn = ({ parts, ...turn }: { id: string; role: 'user' | 'assistant'; text: string; parts: unknown; createdAt: Date }) => {
-  const { chips, comparison, notes, held } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false, held: null }
-  return { ...turn, chips, comparison, notes, sameMove: held && { title: held.title }, createdAt: turn.createdAt.toISOString() }
+  const { chips, comparison, notes, held, trips } = turn.role === 'assistant' ? assistantParts.parse(parts) : { chips: null, comparison: null, notes: false, held: null, trips: [] }
+  return { ...turn, chips, comparison, notes, trips, sameMove: held && { title: held.title }, createdAt: turn.createdAt.toISOString() }
 }
 
 export async function turnsOf(db: Db, goalId: string) {
