@@ -32,7 +32,7 @@ export function tagLine(values: (string | null | undefined)[], count = 3, chars 
 }
 
 /** The type of a PG, as the PGs of Mumbai name it. */
-const pgTypes = { men: 'Boys', women: 'Girls', any: 'Anyone' } as const
+const pgTypes = { men: 'Boys', women: 'Girls', any: 'Boys and girls' } as const
 const moveInTags = { men: 'Men only', women: 'Women only', any: 'Any gender' } as const
 const yesNo = (value: boolean | null, yes: string, no: string) => (value === null ? null : value ? yes : no)
 

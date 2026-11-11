@@ -36,7 +36,7 @@ The spacing of each screen comes from the Figma screens of the designer, to the 
   | Button | xs 32, sm 36, md 40, lg 44. Each label has 2 px of padding at each side. An xs button with a label has 16 px icons |
   | Chip (`ChipSize`) | `md` 36 for the answers of a form, `sm` 32 for the chips of the chat, `xs` 24 for the Select tag of a card |
   | Text box (`FieldSize`) | `md` 44 for forms, `sm` 40 for pop-ups, `xs` 36 for the profile and the search boxes |
-  | Badge | 22 |
+  | Badge | `sm` 22 for the cards, `lg` 28 for the title of a detail. `verified` puts the check icon first |
   | Page header | 57 on a phone, 70 from `md` |
 
 - **A modal is a card in the middle, also on a phone**, 16 px from the sides, as the designer's phone modals. Its `place` gives the width: `middle` 400, `wide` 480, `wider` 580. Only the sign-in wall is a sheet at the bottom of a phone.

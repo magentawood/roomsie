@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { Calendar, Disc01, MarkerPin03, SearchSm, User02, User03, Users02, Wallet03 } from '@untitledui/icons'
 import type { Fact, FactIcon, Tags } from '../../lib/cards'
 import type { Icon } from './button'
@@ -46,7 +47,14 @@ export function DotLine({ items, className }: { items: string[]; className: stri
 export function TagLine({ tags: { shown, more } }: { tags: Tags }) {
   return (
     <p className="flex min-w-0 gap-1 text-xs font-medium text-tertiary">
-      <span className="truncate">{shown.join(' • ')}</span>
+      <span className="truncate">
+        {shown.map((tag, i) => (
+          <Fragment key={tag}>
+            {i > 0 && <><span className="sr-only">, </span><span aria-hidden className="mx-1 inline-block size-1 rounded-full bg-current align-middle text-fg-tertiary" /></>}
+            {tag}
+          </Fragment>
+        ))}
+      </span>
       {more > 0 && <span className="shrink-0"><span aria-hidden>+{more}</span><span className="sr-only">and {more} more</span></span>}
     </p>
   )

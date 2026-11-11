@@ -7,7 +7,16 @@
 - The **results panel** is the right half of `/chat` on a desktop. It has a header, the "Best Matches" sort and a grid of person and place cards ([interface-shape.md](../interface-shape.md)).
 - **A tap anywhere on a card opens it.** The name link covers the card (`CardLink stretched`). Select and Save sit above it and keep their own tap.
 - **The line between the chat and the panel** can be dragged on a computer, or moved with the arrow keys. A double click gives back the 530 px of the designs. The chat stays 360 px wide or more, and the panel 420 px. Local storage keeps the width (`roomsie.chatWidth`).
-- The **header** shows the count only, as "8 Results". The results card in the chat names the search, from "Everything in Mumbai" to "Rooms in Powai–Vikhroli under ₹25,000".
+- The **header** shows the count only, as "8 Results".
+- **The cards follow the frame "All types of cards and listings"** (Figma `67:6750`). Each line comes from a field of the listing or the person. A line with no value does not show:
+  - A room: the faces of up to three flatmates on the photo, "Accommodation: 1 person" for a private room, and the date.
+  - A PG: the type ("Boys", "Girls" or "Boys and girls"), who is welcome, the sharing types and the meals.
+  - A flat: the area only. The tags start with the furnishing and the bathroom.
+  - A person: the job and the age, what they look for, the budget, the date, the lifestyle tags and the bio.
+- **The tags line** shows the house rules, or the lifestyle answers of a person. It shows up to three, and "+3" counts the rest. A line longer than 44 characters shows fewer tags.
+- **The pill of a place card** names the lister. A verified lister gets the check icon: "Verified" on a room, "Owner" on a flat or a PG, "Broker" on a broker flat. A broker flat always shows the yellow "Broker" pill, so the brokerage is never a surprise ([ID checks](id-checks.md)).
+- **The Select tag** is a white pill on the photo. When the person selects the card, its box turns black, the tag says "Selected", and the card gets a shadow.
+- **The results card** in the chat shows the photos of the first three results as a tilted stack, and the count, as "24 listings" or "3 people". The name of the search, as "Rooms in Powai–Vikhroli under ₹25,000", is for a screen reader only. An older card keeps its photos in local storage.
 - A **label** sits on the photo of a card. "Best match" means that the person stated three or more preferences, and the card meets all of them. "Didn't say: smoking" means that the card did not answer a dealbreaker ([PD3a](../decisions/pd-03a-flatmate-matching.md)).
 - With no match, the panel shows "No relevant results" and the **suggested posts** ([PD6c](../decisions/pd-06c-interface-holes.md)).
 - New results come as a **results card** in the chat. On a desktop, the panel opens beside the chat on the next send, or when the person opens the card. On a phone, the chat fills the screen, and "Show all" on the card opens the panel above the input. The size never changes while the person reads ([PD6a](../decisions/pd-06a-mobile-split-view.md)).
@@ -16,7 +25,9 @@
 
 | Part | Where |
 |---|---|
-| The rules: the header, the form key, the labels and the update rule | `apps/web/lib/results.ts`, with unit tests |
+| The rules: the header, the form key, the labels, the photo stack and the update rule | `apps/web/lib/results.ts`, with unit tests |
+| The lines, the tags and the pill of each card | `apps/web/lib/cards.ts`, with unit tests |
+| The place card and the person card | `apps/web/components/listings/place-card.tsx`, `apps/web/components/people/person-card.tsx` |
 | The panel | `apps/web/components/results/results-panel.tsx` |
 | The results card in the chat | `apps/web/components/results/results-card.tsx` |
 | The split view | `apps/web/components/chat/chat-screen.tsx` |

@@ -41,7 +41,16 @@ details.callout[open] summary{color:var(--fg)}
 <li>The <strong>results panel</strong> is the right half of <code>/chat</code> on a desktop. It has a header, the "Best Matches" sort and a grid of person and place cards (<a href="../interface-shape.md">interface-shape.md</a>).</li>
 <li><strong>A tap anywhere on a card opens it.</strong> The name link covers the card (<code>CardLink stretched</code>). Select and Save sit above it and keep their own tap.</li>
 <li><strong>The line between the chat and the panel</strong> can be dragged on a computer, or moved with the arrow keys. A double click gives back the 530 px of the designs. The chat stays 360 px wide or more, and the panel 420 px. Local storage keeps the width (<code>roomsie.chatWidth</code>).</li>
-<li>The <strong>header</strong> shows the count only, as "8 Results". The results card in the chat names the search, from "Everything in Mumbai" to "Rooms in Powai–Vikhroli under ₹25,000".</li>
+<li>The <strong>header</strong> shows the count only, as "8 Results".</li>
+<li><strong>The cards follow the frame "All types of cards and listings"</strong> (Figma <code>67:6750</code>). Each line comes from a field of the listing or the person. A line with no value does not show:</li>
+<li>A room: the faces of up to three flatmates on the photo, "Accommodation: 1 person" for a private room, and the date.</li>
+<li>A PG: the type ("Boys", "Girls" or "Boys and girls"), who is welcome, the sharing types and the meals.</li>
+<li>A flat: the area only. The tags start with the furnishing and the bathroom.</li>
+<li>A person: the job and the age, what they look for, the budget, the date, the lifestyle tags and the bio.</li>
+<li><strong>The tags line</strong> shows the house rules, or the lifestyle answers of a person. It shows up to three, and "+3" counts the rest. A line longer than 44 characters shows fewer tags.</li>
+<li><strong>The pill of a place card</strong> names the lister. A verified lister gets the check icon: "Verified" on a room, "Owner" on a flat or a PG, "Broker" on a broker flat. A broker flat always shows the yellow "Broker" pill, so the brokerage is never a surprise (<a href="id-checks.html">ID checks</a>).</li>
+<li><strong>The Select tag</strong> is a white pill on the photo. When the person selects the card, its box turns black, the tag says "Selected", and the card gets a shadow.</li>
+<li><strong>The results card</strong> in the chat shows the photos of the first three results as a tilted stack, and the count, as "24 listings" or "3 people". The name of the search, as "Rooms in Powai–Vikhroli under ₹25,000", is for a screen reader only. An older card keeps its photos in local storage.</li>
 <li>A <strong>label</strong> sits on the photo of a card. "Best match" means that the person stated three or more preferences, and the card meets all of them. "Didn't say: smoking" means that the card did not answer a dealbreaker (<a href="../decisions/pd-03a-flatmate-matching.md">PD3a</a>).</li>
 <li>With no match, the panel shows "No relevant results" and the <strong>suggested posts</strong> (<a href="../decisions/pd-06c-interface-holes.md">PD6c</a>).</li>
 <li>New results come as a <strong>results card</strong> in the chat. On a desktop, the panel opens beside the chat on the next send, or when the person opens the card. On a phone, the chat fills the screen, and "Show all" on the card opens the panel above the input. The size never changes while the person reads (<a href="../decisions/pd-06a-mobile-split-view.md">PD6a</a>).</li>
@@ -56,8 +65,16 @@ details.callout[open] summary{color:var(--fg)}
 </thead>
 <tbody>
 <tr>
-<td>The rules: the header, the form key, the labels and the update rule</td>
+<td>The rules: the header, the form key, the labels, the photo stack and the update rule</td>
 <td><code>apps/web/lib/results.ts</code>, with unit tests</td>
+</tr>
+<tr>
+<td>The lines, the tags and the pill of each card</td>
+<td><code>apps/web/lib/cards.ts</code>, with unit tests</td>
+</tr>
+<tr>
+<td>The place card and the person card</td>
+<td><code>apps/web/components/listings/place-card.tsx</code>, <code>apps/web/components/people/person-card.tsx</code></td>
 </tr>
 <tr>
 <td>The panel</td>

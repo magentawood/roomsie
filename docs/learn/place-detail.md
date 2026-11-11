@@ -37,7 +37,7 @@
 
 - The scope, the page, the report and the hidden buttons: the spec of T-43 ([#119](https://github.com/magentawood/roomsie/issues/119)).
 - The reasons, the hide rule and the review times: [PD18](../decisions/pd-18-moderation.md).
-- The match box: [PD3a](../decisions/pd-03a-flatmate-matching.md). The "Verified" pill shows beside the title and in "Listed by" when the lister has an approved ID check ([PD8](../decisions/pd-08-verification.md)). The listing reply gives it as `verified`.
+- The match box: [PD3a](../decisions/pd-03a-flatmate-matching.md). The "Verified Owner" pill shows beside the title and in "Listed by" when the lister has an approved ID check ([PD8](../decisions/pd-08-verification.md)). A broker gets the yellow "Verified Broker". The listing reply gives it as `verified`.
 
 ## Gotchas
 

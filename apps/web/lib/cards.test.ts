@@ -53,6 +53,7 @@ describe('the lines of a place card', () => {
     expect(lines(placeFacts(pg, 'Andheri'))).toEqual([
       ['area', '', 'Andheri'], ['type', 'Type:', 'Boys • Working professionals welcome'], ['sharing', 'Sharing:', 'Single, Double, Triple'], ['meals', 'Meals:', 'Veg, included'],
     ])
+    expect(lines(placeFacts(listing({ kind: 'pg', whoCanMoveIn: 'any' }), undefined))).toEqual([['type', 'Type:', 'Boys and girls']])
     expect(lines(placeFacts(listing({ kind: 'pg' }), undefined))).toEqual([])
   })
 
