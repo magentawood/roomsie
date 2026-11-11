@@ -1,6 +1,6 @@
 # PD16 — Profiles: fields, adults only, profiles for a son or daughter, and visibility
 
-**Status:** Settled. Changed on 2026-10-25 and 2026-11-10. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
+**Status:** Settled. Changed on 2026-10-25, 2026-11-10 and 2026-11-11. · **Date:** 2026-10-24 · **Deciders:** n3rxv, for the founders
 
 ## Context
 
@@ -21,6 +21,7 @@
 - **Photos.** A maximum of four, and a photo is optional. A card with no photo shows initials.
 - **The banner of the card.** The banner tells the state of the card, and it has a close. A close hides the banner of that state in this browser. A new state, or a change in the fields that the card still needs, shows the banner again.
 - **Help.** The card at the top of the page has "Help". It opens a modal that tells what each part of the profile does and who sees it. The modal uses the helpers of the page.
+- **Fill using our chat.** The page header has "Fill using our chat" when the person has an open goal. It reads the open goal that the person used last, and takes only the answers that the person said, never a default. After the confirm "Overwrite profile changes?", the answers save at once, and the unsaved changes of the page go. A parent's card takes only the types of a son or daughter.
 
 ## Rationale
 
@@ -41,6 +42,8 @@
 - **The closed banner in the database.** A hint needs no migration.
 - **A close for this tab only, as the completion card.** The same news comes back at each visit.
 - **"Help" as a link to a help page or to the chat.** No help page exists, and the designs show none.
+- **"Fill using our chat" fills the page and waits for Save.** The confirm of the designs says the fields get rewritten, and a second step is easy to miss.
+- **A new API route that copies a goal.** The profile edit takes each field already, so the web reads the goal and sends the edit.
 
 ## Consequences
 

@@ -171,13 +171,15 @@ export function AppShell({ children, mobileNav = true, fixed }: { children: Reac
 }
 
 /** `inPhoneBar`: the page is a tab of the phone bar, so phones show no back button. */
-export function PageHeader({ title, backHref, inPhoneBar }: { title: string; backHref: string; inPhoneBar?: boolean }) {
+/** `action`: a button at the right of the header, as "Fill using our chat" of the profile (91:6678: the header grows to 73, 61 on a phone). */
+export function PageHeader({ title, backHref, inPhoneBar, action }: { title: string; backHref: string; inPhoneBar?: boolean; action?: ReactNode }) {
   return (
-    <header className="flex items-center gap-3 border-b border-secondary px-5 py-3 md:px-6 md:pt-5 md:pb-4.25">
+    <header className={`flex items-center gap-3 border-b border-secondary px-5 py-3 md:px-6 md:pt-5 ${action ? 'md:pb-4' : 'md:pb-4.25'}`}>
       <span className={inPhoneBar ? 'hidden lg:inline-flex' : 'inline-flex'}>
         <Button variant="secondary" size="xs" iconLeading={ChevronLeft} href={backHref} label="Back" />
       </span>
-      <h1 className="py-1 text-md font-medium text-primary">{title}</h1>
+      <h1 className="min-w-0 flex-1 py-1 text-md font-medium text-primary">{title}</h1>
+      {action}
     </header>
   )
 }

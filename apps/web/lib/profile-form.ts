@@ -1,5 +1,5 @@
 import {
-  budgetBands as bands, type BudgetBand, childTypes, lifestyleAnswerLabels, maxAge, maxProfilePhotos, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
+  budgetBands as bands, type BudgetBand, childTypes, lifestyleAnswerLabels, lifestyleAxes, mustHaveKeys, type FormA, type GoalsResponse, maxAge, maxProfilePhotos, minAge, type Community, type LifestyleAxis, type MustHaveKey, type MustHaveWeight, type ProfileEditBody, type ProfileResponse, type Religion, type WhosMoving,
 } from '@roomsie/contract'
 
 export const ages = Array.from({ length: maxAge - minAge + 1 }, (_, i) => i + minAge)
@@ -107,3 +107,55 @@ export const profileSections = {
  */
 export const cardBannerState = (p: Pick<ProfileResponse, 'hiddenForReview' | 'visibility' | 'missing'>) =>
   p.hiddenForReview ? 'review' : p.visibility === 'draft' ? `draft:${p.missing.join(',')}` : p.visibility
+
+/** "Fill using our chat" reads the open chat that the person used last. */
+export function newestOpenGoal(goals: GoalsResponse['goals']) {
+  const lastUsed = (goal: GoalsResponse['goals'][number]) => goal.updatedAt ?? goal.createdAt
+  return goals.filter((goal) => goal.status === 'open').sort((a, b) => lastUsed(b).localeCompare(lastUsed(a)))[0] ?? null
+}
+
+const said = <V>(slot: { source: string; value: V }) => (slot.source === 'stated' ? slot.value : null)
+
+/**
+ * "Fill using our chat" (ADR-0017): the answers that the person said in a chat, as a change of the profile. A default of the
+ * chat never counts, and an answer that the profile has already makes no change. A parent's card takes only the types of
+ * a son or daughter (PD15).
+ */
+export function chatFill(form: FormA, profile: ProfileResponse): ProfileEditBody {
+  const body: ProfileEditBody = {}
+  const intents = said(form.intent)
+  const intent = Array.isArray(intents) ? (intents.includes('flatmates') ? 'flatmates' : intents[0]!) : null
+  if (intent && intent !== profile.intent) body.intent = intent
+  const moving = said(form.whosMoving)
+  const fitsCard = !profile.managedByParent || (childTypes as readonly WhosMoving[]).includes(moving ?? 'unclear')
+  if (moving && moving !== 'unclear' && moving !== profile.whosMoving && fitsCard) body.whosMoving = moving
+  const areas = said(form.areas)
+  if (areas && areas.join() !== profile.areas.join()) body.areas = areas
+  const budget = said(form.budget)
+  if (budget && (budget.min !== profile.budgetMin || budget.max !== profile.budgetMax)) Object.assign(body, { budgetMin: budget.min, budgetMax: budget.max })
+  const moveDate = said(form.moveDate)
+  if (moveDate && moveDate !== profile.moveDate) body.moveDate = moveDate
+  const lifestyle = lifestyleAxes.flatMap((axis) => {
+    const answer = said(form.lifestyle[axis])
+    return answer && answer !== 'unclear' && answer !== profile.lifestyle[axis] ? [[axis, answer]] : []
+  })
+  if (lifestyle.length) body.lifestyle = Object.fromEntries(lifestyle)
+  const weights = Object.fromEntries(mustHaveKeys.flatMap((key) => {
+    const weight = said(form.mustHaves[key])
+    return weight && weight !== 'unclear' ? [[key, weight]] : []
+  })) as Partial<Record<MustHaveKey, MustHaveWeight>>
+  // "Women only" and "Men only" rule each other out: a chat that said both gives neither, and one clears the other on the card.
+  if (weights.women_only && weights.men_only) {
+    delete weights.women_only
+    delete weights.men_only
+  }
+  const mustHaves: Partial<Record<MustHaveKey, MustHaveWeight | null>> = {}
+  for (const [key, weight] of Object.entries(weights) as [MustHaveKey, MustHaveWeight][]) {
+    if (weight === profile.mustHaves[key]) continue
+    mustHaves[key] = weight
+    const other = otherGender[key]
+    if (other && profile.mustHaves[other]) mustHaves[other] = null
+  }
+  if (Object.keys(mustHaves).length) body.mustHaves = mustHaves
+  return body
+}

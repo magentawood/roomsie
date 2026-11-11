@@ -8,6 +8,7 @@ import { CreateProfileDialog } from '../../components/profile/create-profile-dia
 import { AlertSwitches } from '../../components/profile/alert-switches'
 import { LogOutRow } from '../../components/profile/log-out-row'
 import { VerifyRow } from '../../components/verification/verify-row'
+import { FillFromChat } from '../../components/profile/fill-from-chat'
 import { ProfileEditor, Section } from '../../components/profile/profile-editor'
 import { AppShell, PageHeader } from '../../components/shell/app-shell'
 import { SignInGate } from '../../components/shell/sign-in-gate'
@@ -15,12 +16,13 @@ import { Button } from '../../components/ui/button'
 import { EmptyState } from '../../components/ui/empty-state'
 import { Loading } from '../../components/ui/loading'
 
-function Profile() {
+/** `fills`: each fill from the chat shows the saved profile again (`FillFromChat`). */
+function Profile({ fills }: { fills: number }) {
   const profile = useProfile()
   const [creating, setCreating] = useState(true)
   if (profile.isError) return <p role="alert" className="p-6 text-sm text-error-primary">{errorText(profile.error)}</p>
   if (profile.isPending) return <Loading mascot="starry" />
-  if (profile.data) return <ProfileEditor key={profile.data.id} profile={profile.data} />
+  if (profile.data) return <ProfileEditor key={`${profile.data.id}:${fills}`} profile={profile.data} />
   return (
     <main className="mx-auto flex w-full max-w-290 flex-col gap-8 px-5 pt-4 pb-5 md:px-6 md:pt-10 md:pb-4">
       <EmptyState icon={User01} title="Make your profile" action={<Button variant="primary" size="md" onClick={() => setCreating(true)}>Make my profile</Button>}>
@@ -40,11 +42,12 @@ function Profile() {
 }
 
 export default function ProfilePage() {
+  const [fills, setFills] = useState(0)
   return (
     <SignInGate mascot="starry" title="Sign in to see your profile" text="Your profile is the card that other people see.">
       <AppShell>
-        <PageHeader title="Profile and Settings" backHref="/" inPhoneBar />
-        <Profile />
+        <PageHeader title="Profile and Settings" backHref="/" inPhoneBar action={<FillFromChat onFilled={() => setFills((n) => n + 1)} />} />
+        <Profile fills={fills} />
       </AppShell>
     </SignInGate>
   )

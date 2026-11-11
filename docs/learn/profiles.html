@@ -43,6 +43,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>A card is <strong>live</strong> when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on. If not, it is a draft, or hidden. A budget is complete when its lowest or its highest amount is set, so the band "Above ₹35k" counts.</li>
 <li>Reports can hide a live card until a moderator reviews it. The owner then sees "Hidden for review" (<a href="moderation.html">Moderation</a>).</li>
 <li>A <strong>parent</strong> can run the card of a son or daughter of 18 or more. The parent says what the son or daughter does, and the card shows "Managed by a parent".</li>
+<li><strong>"Fill using our chat"</strong> copies the answers of a chat into the profile (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). <code>chatFill()</code> in <code>apps/web/lib/profile-form.ts</code> turns the stated answers of the goal into a profile edit, and <code>FillFromChat</code> in <code>apps/web/components/profile/fill-from-chat.tsx</code> asks first. With nothing new, it says that the profile is up to date.</li>
 </ul>
 <h2 id="how-it-fits-our-project">How it fits our project</h2>
 <table>
@@ -94,7 +95,7 @@ details.callout[open] summary{color:var(--fg)}
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
-<li>The fields, adults only, the parent, the visibility rule, the close of the banner and Help: <a href="../decisions/pd-16-profiles.md">PD16</a>. The Form A fields: <a href="../decisions/pd-15-form-a-contract.md">PD15</a>. The gender: <a href="../decisions/pd-08-verification.md">PD8</a>.</li>
+<li>The fields, adults only, the parent, the visibility rule, the close of the banner, Help and "Fill using our chat": <a href="../decisions/pd-16-profiles.md">PD16</a>. The Form A fields: <a href="../decisions/pd-15-form-a-contract.md">PD15</a>. The gender: <a href="../decisions/pd-08-verification.md">PD8</a>.</li>
 <li>The routes, the follow-up choice of a parent and the lister: the spec of T-16a (<a href="https://github.com/magentawood/roomsie/issues/36">#36</a>).</li>
 <li>The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b (<a href="https://github.com/magentawood/roomsie/issues/98">#98</a>). The look of the create dialog of flow 01, and when it shows: the spec of T-60 (<a href="https://github.com/magentawood/roomsie/issues/208">#208</a>).</li>
 </ul>
@@ -104,7 +105,7 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>A photo change and the deletion of an account lock the same account row.</strong> The deletion reads and deletes the photos while it holds the lock, so the deletion cannot miss a new photo.</li>
 <li><strong>R2 fails, nothing changes.</strong> A removed photo leaves R2 before its row. If R2 fails, the edit gives 502.</li>
 <li><strong>One profile for each account.</strong> A second create gives 409.</li>
-<li><strong>"Fill using our chat" does not show.</strong> The designs show it in the page header, with the pop-up "Overwrite profile changes?". It copies the answers of a goal into the profile (<a href="../decisions/0017-schema-v1-shape.md">ADR-0017</a>). No route does this yet.</li>
+<li><strong>"Fill using our chat" needs <code>updatedAt</code> in the goal list.</strong> An older API sends none, and the button then reads the newest open goal.</li>
 </ul>
 <h2 id="tickets">Tickets</h2>
 <ul>
