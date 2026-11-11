@@ -37,14 +37,6 @@ export const lifestyleFacts = (card: CardResponse) => (Object.keys(profileLabels
   return { axis, label: axisLabel(axis), value: answer ? (profileLabels.answers[axis] as Record<string, string>)[answer]! : didntSay }
 })
 
-/** "Veg • Non-smoker • Home most days +2", for the person card. */
-export function lifestyleSummary(card: CardResponse) {
-  const values = lifestyleLines(card).map((l) => l.value)
-  if (!values.length) return null
-  const more = values.length - 3
-  return values.slice(0, 3).join(' • ') + (more > 0 ? ` +${more}` : '')
-}
-
 export const mustHaveGroups = (card: CardResponse) => ({
   dealbreakers: mustHaveKeys.filter((k) => card.mustHaves[k] === 'dealbreaker').map((k) => profileLabels.mustHaves[k]),
   prefers: mustHaveKeys.filter((k) => card.mustHaves[k] === 'prefer').map((k) => profileLabels.mustHaves[k]),

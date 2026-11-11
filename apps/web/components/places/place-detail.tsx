@@ -124,7 +124,8 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const place = placeLines(listing)
   const rules = ruleLines(listing)
   const nearby = nearbyLines(listing)
-  const verified = listing.verified && <Badge tone="success">{verifiedLabel(listing.kind)}</Badge>
+  // The pill of the designs: "Verified Owner" in green, "Verified Broker" in yellow, as the Broker pill of a card.
+  const verified = listing.verified && <Badge tone={listing.kind === 'broker_flat' ? 'warning' : 'success'} size="lg" verified>{verifiedLabel(listing.kind)}</Badge>
   const parts: [string, ReactNode][] = [
     ['Money to move in', <><Rows lines={money.lines} total={money.total} /><Rows lines={terms} /></>],
     // Only a room in a flat has flatmates (the listing flow, T-41).

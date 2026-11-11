@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import type { CardResponse } from '@roomsie/contract'
-import { budgetLine, connectLine, lifestyleFacts, lifestyleLines, lifestyleSummary, mustHaveGroups } from './person'
+import { budgetLine, connectLine, lifestyleFacts, lifestyleLines, mustHaveGroups } from './person'
 
 const card: CardResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 26, jobRole: 'Business analyst', commuteAddress: 'Goregaon', bio: null,
@@ -21,8 +21,6 @@ describe('the lines of a card', () => {
     expect(lifestyleLines(card).map((l) => [l.label, l.value])).toEqual([
       ['Food', 'Veg'], ['Smoking', 'Non-smoker'], ['Their days', 'Home most days'], ['Sleep', 'Night owl'], ['Pets', 'No pets'],
     ])
-    expect(lifestyleSummary(card)).toBe('Veg • Non-smoker • Home most days +2')
-    expect(lifestyleSummary({ ...card, lifestyle: {} })).toBeNull()
   })
 
   it('gives each lifestyle question on the detail, with "Didn’t say" for one with no answer', () => {

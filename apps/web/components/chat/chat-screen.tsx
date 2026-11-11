@@ -13,7 +13,7 @@ import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '..
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
 import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, isFull, pickOf, questionOf, storedPick, toggledPick, type Picked } from '../../lib/compare'
-import { formKey, panelTitle } from '../../lib/results'
+import { formKey, panelTitle, resultsStack, type Stack } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
 import { ResultsPanel, useHeldResults, type OpenCard } from '../results/results-panel'
@@ -178,7 +178,7 @@ function storedDelivery(goalId: string | null): Delivered | null {
  * A results card that newer results followed: it stays under the reply that brought it, with its count (the founders,
  * 2026-11-10). Local storage keeps the cards of each goal, the newest 20.
  */
-type OldCard = { turnId: string | null; form: FormA; total: number }
+type OldCard = { turnId: string | null; form: FormA; total: number; stack?: Stack }
 function storedCards(goalId: string | null): OldCard[] {
   try {
     const all = JSON.parse(readStored(chatStorage.cards) ?? '{}') as Record<string, OldCard[]>
@@ -284,7 +284,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         const next = { goalId: sent.id, key, turnId: sent.turns.findLast((t) => t.role === 'assistant')?.id ?? null, waited: false }
         // The card of the results before stays where it was, with its count.
         if (shown && formKey(shown.form) !== key) {
-          const kept = [...(oldCards.goalId === sent.id ? oldCards.cards : []), { turnId: shownAt(), form: shown.form, total: shown.found.total }].slice(-20)
+          const kept = [...(oldCards.goalId === sent.id ? oldCards.cards : []), { turnId: shownAt(), form: shown.form, total: shown.found.total, stack: resultsStack(shown.form, shown.found.results) }].slice(-20)
           setOldCards({ goalId: sent.id, cards: kept })
           storeCards(sent.id, kept)
         }
@@ -362,7 +362,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
         <ResultsWait form={chatForm} areaName={areaName} onWaited={() => setDelivered((d) => d && d.key === currentKey ? { ...d, waited: true } : d)} />
       </li>]
     : shown ? [
-      <li key={`card-${blockKey}`} className="motion-safe:animate-fade-in"><ResultsCard title={title} count={shown.found.total} onOpen={() => { setViewed(null); setView('all') }} /></li>,
+      <li key={`card-${blockKey}`} className="motion-safe:animate-fade-in"><ResultsCard title={title} count={shown.found.total} stack={resultsStack(shown.form, shown.found.results)} onOpen={() => { setViewed(null); setView('all') }} /></li>,
       nextSteps && nextSteps.lines.length > 0 && <li key={`noticed-${blockKey}`} className="motion-safe:animate-fade-in"><NoticedBox lines={nextSteps.lines} onTap={tap} /></li>,
       nextSteps && nextSteps.chips.length > 0 && <li key={`next-${blockKey}`} className="motion-safe:animate-fade-in"><FollowUps chips={nextSteps.chips} onPick={pickFollowUp} /></li>,
     ] : []
@@ -370,7 +370,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const olderCards = oldCards.goalId === goalId ? oldCards.cards : []
   const oldCardAt = (card: OldCard, i: number) => (
     <li key={`old-${i}-${formKey(card.form)}`} className="motion-safe:animate-fade-in">
-      <ResultsCard title={panelTitle(card.form, areaName)} count={card.total} onOpen={() => { setViewed(card.form); setCard(null); setView('all') }} />
+      <ResultsCard title={panelTitle(card.form, areaName)} count={card.total} stack={card.stack ?? resultsStack(card.form, [])} onOpen={() => { setViewed(card.form); setCard(null); setView('all') }} />
     </li>
   )
 

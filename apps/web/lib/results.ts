@@ -32,7 +32,17 @@ export function panelTitle(form: FormA, label: (slug: string) => string) {
   return budget ? `${scope} ${budgetPhrase(budget)}` : scope
 }
 
-export const countLine = (n: number) => `${n} ${n === 1 ? 'result' : 'results'}`
+/**
+ * The photo stack of the results card in the chat (42:12983): the photos of the first three results. Null: a result with no photo.
+ * `people`: the results are people to rent with, who go alone (PD15), so the card counts people, not listings.
+ */
+export type Stack = { photos: (string | null)[]; people: boolean }
+export const resultsStack = (form: FormA, results: readonly MatchResult[]): Stack => ({
+  photos: results.slice(0, 3).map((r) => (r.kind === 'person' ? r.card.photos[0]?.url : r.listing.photos[0]?.url) ?? null),
+  people: intentsOf(form)[0] === 'flatmates',
+})
+/** "24 listings" or "3 people", as the results card of the designs writes it. */
+export const stackCount = (n: number, people: boolean) => `${n} ${people ? (n === 1 ? 'person' : 'people') : n === 1 ? 'listing' : 'listings'}`
 /** The heading of the results panel: the count only, as the designs write it ("24 Results"). */
 export const resultsHeading = (n: number) => `${n} ${n === 1 ? 'Result' : 'Results'}`
 

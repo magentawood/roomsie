@@ -7,14 +7,19 @@ const options = <T extends string>(labels: Record<T, string>, only?: readonly T[
 
 /**
  * The sizes of the Tag chips of the designs, each with its stroke: `md` 36 px with a 20 px mark (the answers of a form),
- * `sm` 32 px (the chips of the chat), `xs` 24 px (the Select tag of a card).
+ * `sm` 32 px (the chips of the chat), `xs` 24 px (the Select tag of a card). The Select tag stays a white pill when it is
+ * checked: only its box turns black ("Selected" of 67:6750).
  */
 export type ChipSize = 'md' | 'sm' | 'xs'
 const chipSizes: Record<ChipSize, string> = { md: 'gap-1.5 p-1.75 text-sm', sm: 'gap-1.5 px-2.25 py-1.25 text-sm', xs: 'gap-1 py-0.5 pr-1.75 pl-1 text-xs' }
+const chipLook = (selected: boolean, size: ChipSize) =>
+  size === 'xs' ? 'rounded-sm border-primary bg-primary text-secondary hover:bg-primary_hover'
+    : `rounded-md ${selected ? 'border-brand bg-secondary text-primary' : 'border-primary bg-primary text-secondary hover:bg-primary_hover'}`
 const chip = (selected: boolean, size: ChipSize = 'md') =>
-  `inline-flex items-center rounded-md border font-medium outline-focus-ring focus-visible:outline-2 ${chipSizes[size]} ${selected ? 'border-brand bg-secondary text-primary' : 'border-primary bg-primary text-secondary hover:bg-primary_hover'}`
+  `inline-flex items-center border font-medium outline-focus-ring focus-visible:outline-2 ${chipSizes[size]} ${chipLook(selected, size)}`
+/** The box of a check: 4 px corners on the 16 px box of the Select tag, as the checkbox of the designs. */
 const mark = (selected: boolean, round: boolean, size: ChipSize = 'md') =>
-  `flex ${size === 'md' ? 'size-5' : 'size-4'} shrink-0 items-center justify-center border ${round ? 'rounded-full' : 'rounded-sm'} ${selected ? 'border-transparent bg-brand-solid' : 'border-primary bg-primary'}`
+  `flex ${size === 'md' ? 'size-5' : 'size-4'} shrink-0 items-center justify-center border ${round ? 'rounded-full' : size === 'xs' ? 'rounded' : 'rounded-sm'} ${selected ? 'border-transparent bg-brand-solid' : 'border-primary bg-primary'}`
 
 /** `labelHidden`: a heading above names the question, and the chips sit in the middle, as in the onboarding of flow 01. */
 function Group({ label, required, hint, labelHidden, children }: { label: string; required?: boolean; hint?: string; labelHidden?: boolean; children: React.ReactNode }) {
