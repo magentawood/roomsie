@@ -1,7 +1,7 @@
 import type { FastifyRequest } from 'fastify'
 import {
   assistantParts, budgetBandOf, filledSlots, formA, formASlots, intentsOf, slotOf, withIntent, statesHiddenPreference, tapText,
-  type AssistantParts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot, type HeldMove,
+  type AssistantParts, type CardFacts, type Comparison, type AssistantReply, type ChipTap, type ComposerInput, type ReplyLanguage, type ExtractorOutput, type FormA, type TurnLabel, type GoalStart, type FormASlot, type HeldMove,
 } from '@roomsie/contract'
 import type { Db } from '../db/client'
 import type { Models } from '../models/models'
@@ -38,16 +38,29 @@ export type TurnInput = Pick<TurnState, 'goalId' | 'last' | 'form' | 'lastRegist
 /** What only the composer reads: the last two turns and the Form B notes of the person (PD7a). */
 export type ComposerContext = Pick<ComposerInput, 'turns' | 'formB'>
 
-/** With cards selected, a question gets the comparison, and a message with filters goes to the normal chat (T-49). */
+/** The cards that the person selected for a question: their facts, and with two or more the table of the comparison (T-49). */
+export type SelectedCards = { comparison: Comparison | null; facts: CardFacts[] }
+
+/** With cards selected, a question gets an answer about them, and a message with filters goes to the normal chat (T-49). */
 const comparesOn = (label: TurnLabel) => onlyQuestion(label) && aboutTheSearch(label) && label.band !== 'sensitive' && !label.danger
 
-/** No model reads a card (scope-policy.md). The question and the conflicts of the last reply stay open. */
-function comparisonReply(table: Comparison, { language, label, last }: { language: ReplyLanguage; label: TurnLabel; last: AssistantParts | null }): AssistantReply {
+/**
+ * The chat keeps the name of a card in the message of a question about one card: "About “2 BHK, full flat”: …". The name is
+ * not the person's words, so the router, the extractor and the advisor read the message without it.
+ */
+export const withoutCardLabel = (text: string) => text.replace(/^About “[^”]+”: (?=\S)/, '')
+
+/**
+ * A question about selected cards (PD10): the answer of the advisor from the facts of the cards, which code took from the database.
+ * With no answer, the lines of the comparison, or for one card a line that sends the person to the card. Two cards or more
+ * also get the table. The question and the conflicts of the last reply stay open.
+ */
+function cardsReply({ comparison }: SelectedCards, advice: string | null, { language, label, last }: { language: ReplyLanguage; label: TurnLabel; last: AssistantParts | null }): AssistantReply {
   const lead = label.band === 'consequential' ? `${lineOf('handoff', language)} ` : ''
-  const best = lineOf('compareBest', language)
-  const cheapest = table.kind === 'place' && table.options.reduce((low, option, i) => (option.moveInCash < low.option.moveInCash ? { option, i } : low), { option: table.options[0]!, i: 0 })
-  const text = lead + (cheapest ? `${best} ${cheapestLine(cheapest.i + 1, rupees(cheapest.option.moveInCash), language)}` : best)
-  return { version: 1, text, parts: assistantParts.parse({ ...(last ?? { asked: null }), comparison: table }) }
+  const cheapest = comparison?.kind === 'place' && comparison.options.reduce((low, option, i) => (option.moveInCash < low.option.moveInCash ? { option, i } : low), { option: comparison.options[0]!, i: 0 })
+  const lines = !comparison ? lineOf('cardNoAnswer', language)
+    : cheapest ? `${lineOf('compareBest', language)} ${cheapestLine(cheapest.i + 1, rupees(cheapest.option.moveInCash), language)}` : lineOf('compareBest', language)
+  return { version: 1, text: lead + (advice ?? lines), parts: assistantParts.parse({ ...(last ?? { asked: null }), comparison }) }
 }
 
 /** Null: no observer (PD7a, PC-17). `religionOrCommunity`: the turn may state a preference or an own value (PD3c). */
@@ -89,23 +102,29 @@ const holds = (label: TurnLabel, turn: Pick<TurnState, 'failed' | 'mentionsOwnVa
  * The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34).
  * `sameMove`: on the first message of a new goal, the check for an open goal of the same move. A match holds the message.
  */
-export async function runTurn({ context, comparison, sameMove, ...input }: TurnInput & { text: string; context: ComposerContext; comparison: Comparison | null; sameMove?: SameMoveCheck }, deps: AssistantDeps) {
+export async function runTurn({ context, cards, sameMove, ...given }: TurnInput & { text: string; context: ComposerContext; cards: SelectedCards | null; sameMove?: SameMoveCheck }, deps: AssistantDeps) {
+  const input = { ...given, text: withoutCardLabel(given.text) }
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
   // A question can name an outside place too, though it fills no slot of Form A (T-22a).
-  const turn = { ...start, ...(usesExtractor(label) && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
+  const notes = label.notes && label.band === 'core'
+  // With cards selected, the input asks about them, so a message that the router cannot label is a question about them too.
+  // Such a question never changes the search.
+  const asked = !notes && cards && (comparesOn(label) || (label.band === 'core' && !label.kinds.length)) ? cards : null
+  const turn = { ...start, ...(usesExtractor(label) && !asked && extracted), outsidePlaces: aboutTheSearch(label) ? extracted.outsidePlaces : [], label, language: languageOf(label.register ?? input.lastRegister) }
   const hidden = statesHiddenPreference({ community: label.community, preferences: turn.hiddenPreferences })
   // A failed extractor cannot tell an own value, so the observer does not run (PD3c).
   const notePlan = notePlanOf(label, hidden || turn.mentionsOwnValue || turn.failed, deps.settings)
-  const target = sameMove && !input.last && !comparison && holds(label, turn, hidden) ? await sameMove(turn.form) : null
+  const target = sameMove && !input.last && !cards && holds(label, turn, hidden) ? await sameMove(turn.form) : null
   if (target) {
     const held = { ...target, values: valuesOf(turn.form, turn.changed), ambiguous: turn.ambiguous, outsidePlaces: turn.outsidePlaces, typed: true }
     return { form: input.form, reply: heldReply(held, turn.language), conflicts: [], label, ownValues: turn.ownValues, hiddenPreferences: {}, outsidePlaces: [], notePlan, held: true }
   }
-  const fixed = label.notes && label.band === 'core' ? notesReply(context.formB.length > 0, turn)
-    : comparison && comparesOn(label) ? comparisonReply(comparison, turn) : null
-  // A general question of band 2a gets a short answer before the open question (PD10). It is one more call, only on such a turn.
-  const advice = !fixed && label.band === 'general' ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text }, deps) : null
+  // A general question of band 2a gets a short answer before the open question, and a question about cards an answer from their
+  // facts (PD10). It is one more call, only on such a turn.
+  const advice = !notes && (asked || label.band === 'general')
+    ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text, ...(asked && { cards: asked.facts }) }, deps) : null
+  const fixed = notes ? notesReply(context.formB.length > 0, turn) : asked ? cardsReply(asked, advice, turn) : null
   const scripted = fixed ?? await replyWriter(turn, deps, advice)
   const reply = !fixed && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
   return {

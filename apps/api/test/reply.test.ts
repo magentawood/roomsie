@@ -120,6 +120,14 @@ describe('the composer', () => {
     expect(JSON.parse(message).turns).toEqual([{ role: 'assistant', text: roomAck }])
   }
 
+  it('names a student once, though the extractor also fills "your days: student"', async () => {
+    fakeVendors({ deepseek: [scored({ whosMoving: 'student', lifestyle: { your_days: 'student' } })] })
+    const { reply, form } = await send(await visitorGoal(), { text: 'I am a student at Mithibai' })
+    expect(form.lifestyle.your_days.value).toBe('student')
+    expect(reply.text).toMatch(/^Got it: a student\. /)
+    expect(reply.text).not.toContain('your days')
+  })
+
   it('sends the scripted reply when the composer misses its deadline, with no second attempt', async () => {
     const requests = fakeVendors({ deepseek: [room()], composer: { deepseek: [hang] } })
     const started = performance.now()

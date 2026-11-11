@@ -22,7 +22,8 @@ describe('the selection of cards (T-49)', () => {
   })
 
   it('asks for a comparison only with two cards or more, in the order of the results', () => {
-    expect(compareOf([place('a')], ['a'])).toBeNull()
+    expect(compareOf([], ['a'])).toBeNull()
+    expect(compareOf([place('a')], ['a'])).toEqual({ kind: 'place', ids: ['a'] })
     expect(compareOf([place('c'), place('a'), place('x')], ['a', 'b', 'c'])).toEqual({ kind: 'place', ids: ['a', 'c', 'x'] })
   })
 })

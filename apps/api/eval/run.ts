@@ -97,7 +97,7 @@ async function liveTurn(models: Models, judge: Models, db: Db, id: string, repea
   }
   const goalId = randomUUID()
   const { label } = await runTurn(
-    { goalId, text: textOf.get(id)!, last: null, form: formA.parse({}), lastRegister: null, notesHint: false, context: { turns: [], formB: [] }, comparison: null },
+    { goalId, text: textOf.get(id)!, last: null, form: formA.parse({}), lastRegister: null, notesHint: false, context: { turns: [], formB: [] }, cards: null },
     { req, db, models: recording, settings: { ...settings, composerDeadlineMs: noDeadline }, today },
   )
   const text = (composer as RunTurn['composer'])?.text

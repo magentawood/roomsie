@@ -12,6 +12,7 @@ import { canSend, chatStorage, chipsOf, keyAction, readStored, sameMoveOf, tapRe
 import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
+import { ReplyText } from './reply-text'
 import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, isFull, pickOf, questionOf, storedPick, toggledPick, type Picked } from '../../lib/compare'
 import { formKey, panelTitle, resultsStack, type Stack } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
@@ -395,7 +396,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
             <li key={turn.id} data-turn={turn.id} className={`motion-safe:animate-fade-in ${turn.role === 'user' ? 'my-3 first:mt-0 last:mb-0 lg:my-5 lg:first:mt-0 lg:last:mb-0' : ''}`}>
               {turn.role === 'user' ? <UserText text={turn.text} /> : (
                 <div className="flex flex-col gap-5">
-                  <p className="text-md whitespace-pre-wrap text-primary">{turn.text}</p>
+                  <ReplyText text={turn.text} />
                   {turn.comparison && <ComparisonTable table={turn.comparison} onOpen={shown ? openCard : undefined} />}
                   {turn.notes && <NotesList />}
                 </div>

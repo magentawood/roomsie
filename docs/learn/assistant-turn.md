@@ -19,9 +19,10 @@ the chat screen ── POST /v1/goals/:id/turns ──▶ runTurn()
                                                   │     ├─ the words check, the area names, the budget and date parsers
                                                   │     └─ applyValues(): the new form, the changes, the conflicts
                                                   ├─ the first message, like an open goal: "Same move?" holds it (goals.md)
-                                                  ├─ advisor, on a 2a question: a short answer before the question
+                                                  ├─ advisor, on a 2a question: a short answer before the question,
+                                                  │     and on a question about selected cards: an answer from their facts
                                                   ├─ reply writer: the line of the band, "Got it: …" and one question
-                                                  │     (a question with selected cards: the comparison of code, T-49)
+                                                  │     (selected cards: the answer, and the table of code, T-49)
                                                   │     (the notes question: the notes and a scripted line, T-36)
                                                   └─ composer, on a core turn: the words in the language of the person
                                   saveTurn(): the two turns and the form, then the events

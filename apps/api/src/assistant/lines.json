@@ -76,6 +76,13 @@
     "mr-Latn": "Option {option} madhe shift honyasathi sarvat kami cash lagel: {amount}.",
     "mr": "Option {option} मध्ये शिफ्ट होण्यासाठी सर्वात कमी रोख लागेल: {amount}."
   },
+  "cardNoAnswer": {
+    "en": "I could not answer that just now. The card has its details: tap it to see them.",
+    "hi-Latn": "Iska jawab abhi nahi mil saka. Card mein saari details hain: use tap karke dekhiye.",
+    "hi": "इसका जवाब अभी नहीं मिल सका। कार्ड में पूरी जानकारी है: उसे टैप करके देखिए।",
+    "mr-Latn": "Yache uttar aatta milale nahi. Card madhe sagli mahiti aahe: tyavar tap karun bagha.",
+    "mr": "याचे उत्तर आत्ता मिळाले नाही. कार्डमध्ये सगळी माहिती आहे: त्यावर टॅप करून बघा."
+  },
   "notesList": {
     "en": "Here's what I've noted from our chat. To fix a note, tell me what changed.",
     "hi-Latn": "Humari baat se yeh notes bane hain. Koi note theek karna ho, toh bataiye kya badla.",
