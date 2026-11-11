@@ -204,6 +204,46 @@ describe('the comparison of selected cards (T-49)', () => {
     expect(goal.turns.at(-1)!.trips).toEqual(reply.trips)
   })
 
+  it('measures the trip to a place of the list with no locator call, as MGM college in Kamothe', async () => {
+    const requests = fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    const res = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is it from MGM college?', compare: { kind: 'place', ids: [ids.owner] } })
+    const [trip] = turnResponse.parse(res.json()).turns[1]!.trips
+    expect(trip).toMatchObject({ from: { name: 'This place' }, to: { name: 'MGM College of Engineering and Technology' } })
+    // Bandra to Kamothe in Navi Mumbai is far: no model may call it 2 km.
+    expect(trip!.straightKm).toBeGreaterThan(20)
+    expect(requests.locator).toHaveLength(0)
+  })
+
+  it('asks the locator for a place that the map lacks, and measures the trip to the point of its area', async () => {
+    const requests = fakeVendors({
+      deepseek: [scored({})], ...routed({ kinds: ['question'] }),
+      locator: { deepseek: [modelAnswer(JSON.stringify({ places: [{ name: 'Bombay Scottish School', area: 'mahim' }] }))] },
+      advisor: { deepseek: [modelAnswer(JSON.stringify({ text: '- This place is not far.' }))] },
+    })
+    const res = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is it from bombay scottish?', compare: { kind: 'place', ids: [ids.owner] } })
+    const [trip] = turnResponse.parse(res.json()).turns[1]!.trips
+    expect(trip).toMatchObject({ from: { name: 'This place' }, to: { name: 'Bombay Scottish School, Mahim' } })
+    expect(JSON.parse(sentMessageOf(requests.locator[0]!))).toEqual({ version: 1, question: 'how far is it from bombay scottish?' })
+    const sent = JSON.parse(sentMessageOf(requests.advisor[0]!)) as { trips: { to: string }[] }
+    expect(sent.trips).toEqual([expect.objectContaining({ to: 'Bombay Scottish School, Mahim' })])
+  })
+
+  it('finds the place that the map lacks between two places with no card, and gives no trip when the locator fails or knows no area', async () => {
+    fakeVendors({
+      deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'general' }),
+      locator: { deepseek: [modelAnswer(JSON.stringify({ places: [{ name: 'Bombay Scottish School', area: 'mahim' }, { name: 'Andheri West', area: 'andheri-west' }] }))] },
+    })
+    const between = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'distance between bombay scottish and Andheri West?' })
+    expect(turnResponse.parse(between.json()).turns[1]!.trips.map((t) => [t.from.name, t.to.name])).toEqual([['Bombay Scottish School, Mahim', 'Andheri West']])
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }) })
+    const down = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is it from bombay scottish?', compare: { kind: 'place', ids: [ids.owner] } })
+    // No trip, and not the map of the last reply either.
+    expect(turnResponse.parse(down.json()).turns[1]!.trips).toEqual([])
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }), locator: { deepseek: [modelAnswer(JSON.stringify({ places: [{ name: 'Symbiosis', area: null }] }))] } })
+    const away = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is it from symbiosis pune?', compare: { kind: 'place', ids: [ids.owner] } })
+    expect(turnResponse.parse(away.json()).turns[1]!.trips).toEqual([])
+  })
+
   it('measures a trip between two places that a question names, with no card, and none for a 2b question', async () => {
     fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'general' }) })
     const between = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'distance between Andheri West and Powai?' })

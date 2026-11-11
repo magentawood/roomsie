@@ -126,12 +126,30 @@ export function placesIn(text: string): Spot[] {
   return kept.sort((a, b) => a.at - b.at).map((k) => k.spot)
 }
 
+/** The place of the map with exactly this name, as the locator writes it: "MGM College", but no place for "Podar International School". */
+export function placeNamed(name: string): Spot | null {
+  const wanted = plain(name)
+  const place = named.find((p) => p.names.includes(wanted))
+  return place ? { name: place.name, lat: place.lat, lng: place.lng } : null
+}
+
 /** The point of a listing: its station when the name is a known station, else its area. */
 export function listingSpot(name: string, nearestStation: string | null, areaSlug: string | null): Spot | null {
   const station = nearestStation && stations.find((s) => plain(s.name) === plain(nearestStation))
   if (station) return { name, lat: station.lat, lng: station.lng }
   const area = areaSlug ? (data.areas as Record<string, Spot | undefined>)[areaSlug] : undefined
   return area ? { name, lat: area.lat, lng: area.lng } : null
+}
+
+/**
+ * A place that the locator put in an area: the point of the area, under the name of the place, with the area in the name when the
+ * name lacks it ("MGM College, Kamothe"). Null: no such area.
+ */
+export function areaSpot(name: string, slug: string): Spot | null {
+  const area = (data.areas as Record<string, { name: string; lat: number; lng: number } | undefined>)[slug]
+  if (!area) return null
+  const label = plain(name).includes(plain(area.name)) ? name : `${name}, ${area.name}`
+  return { name: label.slice(0, 80), lat: area.lat, lng: area.lng }
 }
 
 /** A question about a distance, a commute or a route, in English, Hinglish, Marathi or Devanagari. */

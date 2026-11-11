@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { asksDistance, km, listingSpot, looksLikeQuestion, placesIn, tripBetween } from '../src/geo/geo'
+import { areaSpot, asksDistance, km, listingSpot, looksLikeQuestion, placeNamed, placesIn, tripBetween } from '../src/geo/geo'
 
 describe('the places and the trips of Mumbai (the founders, 2026-11-11)', () => {
   it('finds the places that a question names, the longer name first, in the order of the text', () => {
@@ -34,5 +34,28 @@ describe('the places and the trips of Mumbai (the founders, 2026-11-11)', () => 
     expect(km(atStation, placesIn('Bandra')[0]!)).toBeLessThan(1.5)
     expect(km(atArea, placesIn('Powai')[0]!)).toBeLessThan(1)
     expect(listingSpot('This place', null, null)).toBeNull()
+  })
+
+  it('knows the colleges, offices and hospitals of the list by their short names, as MGM, VESIT and Nair hospital', () => {
+    expect(placesIn('how far is it from MGM college?').map((p) => p.name)).toEqual(['MGM College of Engineering and Technology'])
+    expect(placesIn('commute to vesit').map((p) => p.name)).toEqual(["Vivekanand Education Society's Institute of Technology"])
+    expect(placesIn('distance from nair hospital').map((p) => p.name)).toEqual(['Nair Hospital'])
+    // MGM is in Kamothe, in Navi Mumbai: far from Bandra.
+    expect(km(placesIn('MGM college')[0]!, placesIn('Bandra')[0]!)).toBeGreaterThan(20)
+  })
+
+  it('takes a place of the map for a name of the locator only when the whole name is the place', () => {
+    expect(placeNamed('MGM College')?.name).toBe('MGM College of Engineering and Technology')
+    // "Podar" is the name of many schools, so it is no place on its own.
+    expect(placeNamed('Podar International School')).toBeNull()
+    expect(placesIn('distance to podar international school santacruz').map((p) => p.name)).toEqual(['Santacruz'])
+  })
+
+  it('puts a place of the locator at the point of its area, with the area in the name when the name lacks it', () => {
+    const school = areaSpot('Bombay Scottish School', 'mahim')!
+    expect(school.name).toBe('Bombay Scottish School, Mahim')
+    expect(km(school, placesIn('Mahim')[0]!)).toBeLessThan(1.5)
+    expect(areaSpot('Kamothe sector 7 market', 'kamothe')!.name).toBe('Kamothe sector 7 market')
+    expect(areaSpot('Somewhere', 'no-such-area')).toBeNull()
   })
 })

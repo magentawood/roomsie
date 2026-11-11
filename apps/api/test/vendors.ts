@@ -3,6 +3,7 @@ import type { FastifyRequest } from 'fastify'
 import { analyticsEvent, type AnalyticsEvent, type RouterAnswer } from '@roomsie/contract'
 import { advisorPrompt } from '../src/assistant/handlers/advisor/prompt'
 import { composerPrompt } from '../src/assistant/handlers/composer/prompt'
+import { locatorPrompt } from '../src/assistant/handlers/locator/prompt'
 import { observerIntro } from '../src/assistant/handlers/observer/prompt'
 import { routerPrompt } from '../src/assistant/handlers/router/prompt'
 import type { Traces } from '../src/traces/store'
@@ -30,10 +31,11 @@ export const coreLabel = { kinds: ['filters'], band: 'core', register: { languag
  * The calls of the composer get the replies of `composer`, or fail when the test gives none, so the scripted reply goes out.
  * The calls of the observer get the replies of `observer`, or no notes from DeepSeek when the test gives none.
  * The calls of the advisor get the replies of `advisor`, or fail when the test gives none, so the line "I've noted it" goes out.
- * `requests` has the other calls, `requests.router`, `requests.composer`, `requests.observer` and `requests.advisor` the calls of those handlers, and `requests.telegram` the alerts of the spend.
+ * The calls of the locator get the replies of `locator`, or fail when the test gives none, so a place that the map lacks gets no trip.
+ * `requests` has the other calls, `requests.router`, `requests.composer`, `requests.observer`, `requests.advisor` and `requests.locator` the calls of those handlers, and `requests.telegram` the alerts of the spend.
  */
-export function fakeVendors(replies: Replies & { router?: Replies; composer?: Replies; observer?: Replies; advisor?: Replies; telegram?: Response[] }) {
-  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], composer: [] as SentRequest[], observer: [] as SentRequest[], advisor: [] as SentRequest[], telegram: [] as SentRequest[] })
+export function fakeVendors(replies: Replies & { router?: Replies; composer?: Replies; observer?: Replies; advisor?: Replies; locator?: Replies; telegram?: Response[] }) {
+  const requests = Object.assign([] as SentRequest[], { router: [] as SentRequest[], composer: [] as SentRequest[], observer: [] as SentRequest[], advisor: [] as SentRequest[], locator: [] as SentRequest[], telegram: [] as SentRequest[] })
   vi.stubGlobal('fetch', async (url: string, init: RequestInit) => {
     if (url.startsWith('https://api.telegram.org/')) {
       requests.telegram.push({ url, body: JSON.parse(String(init.body)) as Record<string, unknown>, authorization: null })
@@ -41,11 +43,12 @@ export function fakeVendors(replies: Replies & { router?: Replies; composer?: Re
     }
     const body = JSON.parse(String(init.body)) as { messages: { content: string }[] }
     const system = body.messages[0]?.content
-    const handler = system === routerPrompt ? 'router' : system === composerPrompt ? 'composer' : system === advisorPrompt ? 'advisor' : system?.startsWith(observerIntro) ? 'observer' : null
+    const handler = system === routerPrompt ? 'router' : system === composerPrompt ? 'composer' : system === advisorPrompt ? 'advisor' : system === locatorPrompt ? 'locator'
+      : system?.startsWith(observerIntro) ? 'observer' : null
     ;(handler ? requests[handler] : requests).push({ url, body, authorization: new Headers(init.headers).get('authorization') })
     if (handler === 'router' && !replies.router) return scored(coreLabel)
     if (handler === 'observer' && !replies.observer) return scored({ notes: [] })
-    if ((handler === 'composer' || handler === 'advisor') && !replies[handler]) return down()
+    if ((handler === 'composer' || handler === 'advisor' || handler === 'locator') && !replies[handler]) return down()
     const lists = handler ? replies[handler] : replies
     const reply = (url === deepseek ? lists?.deepseek : lists?.gemini)?.shift()
     if (!reply) throw new Error(`no reply left for ${url}`)

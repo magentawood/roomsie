@@ -1,6 +1,6 @@
 # PD7a — Agent architecture: a router with small handlers
 
-**Status:** Settled. Changed on 2026-11-04. · **Date:** 2026-09-26 · **Deciders:** Yash
+**Status:** Settled. Changed 2026-11-04, 2026-11-11. · **Date:** 2026-09-26 · **Deciders:** Yash
 
 ## Context
 
@@ -23,8 +23,6 @@ multi-agent, and not one large model. **All of it ships at launch.**
 | Off topic | Scripted redirect | None after the router |
 | Adversarial or safety signal | Scripted response, logged | None after the router |
 
-- The router runs on DeepSeek Flash behind its own adapter. When Jev access
-  arrives, Jev gets a trial on the eval set.
 - The extractor runs in parallel with the router. The observer runs after the
   reply, only on a turn that the router labels `context` (2026-11-04, T-36).
 - **The reply writer** (composer) is the only expensive call. It reads Form A,
@@ -41,6 +39,8 @@ multi-agent, and not one large model. **All of it ships at launch.**
   - signed-in users get the DeepSeek `web_search` tool, with Gemini Google
     Search grounding as fallback
   - visitors get model knowledge, clearly hedged.
+- **The locator** (2026-11-11) picks the area of a place that the map lacks,
+  with the router. Code measures the trip.
 - Law, tax, area safety and claims about a person stay **articles-only or
   handed off**.
 - RAG is **only** for consulting questions. Listings come from SQL.

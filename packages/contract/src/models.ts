@@ -3,7 +3,7 @@ import { scopeBands } from './goals'
 import { knownRows } from './shared'
 
 /** The roles of PD7a that call a model, and the check of the live models (T-11). */
-export const modelRoles = ['router', 'extractor', 'observer', 'composer', 'advisor', 'check'] as const
+export const modelRoles = ['router', 'extractor', 'observer', 'composer', 'advisor', 'locator', 'check'] as const
 export type ModelRole = (typeof modelRoles)[number]
 export const isModelRole = (role: string | null): role is ModelRole => modelRoles.some((r) => r === role)
 /** The outcome of one attempt of a model call (T-11). */
