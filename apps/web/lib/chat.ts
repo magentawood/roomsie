@@ -88,3 +88,21 @@ export const tapRefusal = (error: string) => (error === 'not valid: body' ? 'The
 export const placeTypes = (form: FormA) => intents.filter((intent) => intent !== 'unclear' || form.intent.value !== 'unclear')
 
 export const toggled = <T>(list: readonly T[], item: T) => (list.includes(item) ? list.filter((x) => x !== item) : [...list, item])
+
+/** A block of a reply: lines of text, or the points of the advisor, each line with "- " at its start, as a list. */
+export type ReplyBlock = { kind: 'text'; text: string } | { kind: 'list'; items: string[] }
+
+export function replyBlocks(text: string): ReplyBlock[] {
+  const blocks: ReplyBlock[] = []
+  for (const line of text.split('\n')) {
+    const point = /^\s*[-•]\s+(\S.*)$/.exec(line)?.[1]
+    const last = blocks.at(-1)
+    if (point) {
+      if (last?.kind === 'list') last.items.push(point)
+      else blocks.push({ kind: 'list', items: [point] })
+    } else if (last?.kind === 'text') last.text += `\n${line}`
+    else blocks.push({ kind: 'text', text: line })
+  }
+  // A blank line between the points and the text only parts them.
+  return blocks.flatMap((block): ReplyBlock[] => (block.kind === 'list' ? [block] : block.text.trim() ? [{ kind: 'text', text: block.text.trim() }] : []))
+}

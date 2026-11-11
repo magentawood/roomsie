@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { formA, type ChipSlot, type GoalResponse } from '@roomsie/contract'
-import { chatStorage, chipsOf, commuteTipShows, forgetChat, keyAction, lastOpenGoal, placeTypes, readStored, sameMoveOf, tapRefusal, toggled, writeStored } from './chat'
+import { chatStorage, chipsOf, commuteTipShows, forgetChat, keyAction, lastOpenGoal, placeTypes, readStored, replyBlocks, sameMoveOf, tapRefusal, toggled, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -134,5 +134,16 @@ describe('"Same move?" (Figma 67:6489)', () => {
     expect(sameMoveOf([turn({ title: 'Room hunting in Powai' })])).toEqual({ title: 'Room hunting in Powai' })
     expect(sameMoveOf([turn({ title: 'Room hunting in Powai' }), turn()])).toBeNull()
     expect(sameMoveOf([])).toBeNull()
+  })
+})
+
+describe('the blocks of a reply', () => {
+  it('turns the points of the advisor into a list, and keeps the text around them', () => {
+    expect(replyBlocks('- Mithibai College is in Vile Parle.\n- Take the Western line.\n\nThat\'s general guidance. Which areas work?')).toEqual([
+      { kind: 'list', items: ['Mithibai College is in Vile Parle.', 'Take the Western line.'] },
+      { kind: 'text', text: 'That\'s general guidance. Which areas work?' },
+    ])
+    expect(replyBlocks('Got it: a room.\nWhich areas work?')).toEqual([{ kind: 'text', text: 'Got it: a room.\nWhich areas work?' }])
+    expect(replyBlocks('Budget - about ₹20k')).toEqual([{ kind: 'text', text: 'Budget - about ₹20k' }])
   })
 })

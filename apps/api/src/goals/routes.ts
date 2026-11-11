@@ -4,13 +4,13 @@ import { z } from 'zod'
 import {
   assistantParts, closeGoalBody, closeGoalResponse, errorResponse, formA, goalFeedbackBody, goalResponse, goalsResponse, goalStart, limitRefusal, newGoalResponse, noContent, notesResponse,
   sameMoveBody, sameMoveLabels, sameMoveResponse, turnBody, turnResponse, visitorKeyHeader, waitlistBody,
-  type AnalyticsEvent, type AssistantParts, type ChipTap, type Comparison, type FormA, type TurnLabel,
+  type AnalyticsEvent, type AssistantParts, type ChipTap, type FormA, type TurnLabel,
 } from '@roomsie/contract'
-import { heldReply, runHeld, runStart, runTap, runTurn, type AssistantDeps, type TurnInput } from '../assistant/assistant'
+import { heldReply, runHeld, runStart, runTap, runTurn, type AssistantDeps, type SelectedCards, type TurnInput } from '../assistant/assistant'
 import { languageOf, lineOf } from '../assistant/lines'
 import { observer } from '../assistant/handlers/observer/observer'
 import { optionalUser, requireUser, type AuthOptions } from '../auth'
-import { comparisonOf } from '../compare/compare'
+import { cardsOf } from '../compare/compare'
 import { hasGoalFeedback, saveGoalFeedback } from '../feedback/read'
 import { capStateOf, chatLimitOf, limitLines, networkOf, tooFast, typedTurnsLeft } from './limits'
 import type { LimitSettings } from './settings'
@@ -111,12 +111,12 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     const goal = await goalOf(options.db, req.params.id, asker)
     if (!goal) return reply.code(404).send({ error: 'not found' })
     if (goal.status === 'closed') return reply.code(409).send({ error: 'This goal is closed. Reopen it to keep chatting.' })
-    // A comparison needs a sign-in, as a card does (PD6b), and cards that the person can see. Both before any model call (T-49).
-    let comparison: Comparison | null = null
+    // A question about cards needs a sign-in, as a card does (PD6b), and cards that the person can see. Both before any model call (T-49).
+    let cards: SelectedCards | null = null
     if ('text' in req.body && req.body.compare) {
       if (!req.user) return reply.code(401).send({ error: 'sign in to compare' })
-      comparison = await comparisonOf(options.db, req.user.id, req.body.compare)
-      if (!comparison) return reply.code(400).send({ error: 'not valid: compare' })
+      cards = await cardsOf(options.db, req.user.id, req.body.compare)
+      if (!cards) return reply.code(400).send({ error: 'not valid: compare' })
     }
     const last = await lastReplyOf(options.db, goal.id)
     // A limit refuses a typed turn before any model call. A tap has no limit (PD9, T-21).
@@ -131,7 +131,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
     // While "Same move?" waits, a message changes nothing: the question comes again, with no model call.
     if (last?.held && 'tap' in req.body) return reply.code(409).send({ error: 'Tap one of the two answers first.' })
     const turn = last?.held && 'text' in req.body ? heldAgain(input, last, req.body.text)
-      : 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, comparison }, req.body.text, asker, deps)
+      : 'tap' in req.body ? await tapTurn(input, req.body.tap, deps) : await typedTurn({ ...input, cards }, req.body.text, asker, deps)
     if (!turn) return reply.code(400).send({ error: 'not valid: areas' })
     // A place that a turn names again moves to the end, so the newest place is last (T-22b).
     const named = new Set(turn.outsidePlaces)
@@ -231,7 +231,7 @@ export function goalRoutes(v1: FastifyInstance, options: AuthOptions & Omit<Assi
   })
 }
 
-async function typedTurn(input: TurnInput & { comparison: Comparison | null }, text: string, asker: Asker, deps: AssistantDeps) {
+async function typedTurn(input: TurnInput & { cards: SelectedCards | null }, text: string, asker: Asker, deps: AssistantDeps) {
   const [turns, notes] = await Promise.all([recentTurnsOf(deps.db, input.goalId), observationsOf(deps.db, ownerOf(asker))])
   const context = { turns, formB: notes.map(({ key, value }) => ({ key, value })) }
   const sameMove = (form: FormA) => sameMoveOf(deps.db, asker, form, input.goalId)

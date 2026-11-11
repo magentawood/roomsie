@@ -42,7 +42,9 @@ const write = async (turn: z.output<typeof replyInput>, { db, settings }: Assist
   const next = settings.questionOrder.find((slot) => isOpenSlot(slotOf(turn.form, slot)))
   // Only a core turn asks the person to send the message again: never after a disclosure (T-34). A first turn keeps the chips of the empty chat.
   if (turn.failed && turn.label.band === 'core') return { text: lineOf('failed', turn.language), parts: turn.last ?? parts({ asked: null, question: null, chips: chipSlotOf(next) }) }
-  const filled = turn.changed.filter((slot) => slotOf(turn.form, slot).value !== 'unclear')
+  // "A student" says "your days: student" too, so the reply names it once.
+  const studentTwice = slotOf(turn.form, 'whosMoving').value === 'student' && turn.changed.includes('whosMoving')
+  const filled = turn.changed.filter((slot) => slotOf(turn.form, slot).value !== 'unclear' && !(studentTwice && slot === 'lifestyle.your_days' && slotOf(turn.form, slot).value === 'student'))
   const ack = lead + (filled.length ? `${replyLines.ack(filled.map((slot) => valueText(slot, slotOf(turn.form, slot).value, catalogue)))} ` : '')
   /** The reply: the lead, what the turn filled, then the question. The turn keeps the question on its own for the next extractor. */
   const reply = (before: string, question: string, of: Omit<PartsOf, 'question'>) => ({

@@ -23905,7 +23905,7 @@
                             ]
                           },
                           "ids": {
-                            "minItems": 2,
+                            "minItems": 1,
                             "maxItems": 4,
                             "type": "array",
                             "items": {

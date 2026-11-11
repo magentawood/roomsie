@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { budgetBandId, budgetBandOf, chipLabels, chipSlots, formA, type FormA, formASlots, identityPreference, intentLabels, intentsOf, type PlaceIntent, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
-import { comparison, compareRequest } from './compare'
+import { cardFacts, comparison, compareRequest, maxCompared } from './compare'
 import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
 import { waitlistPlace } from './waitlist'
@@ -276,7 +276,10 @@ export const composerAnswer = z.object({ version: z.literal(1).default(1), text:
 export const composerOutput = composerAnswer.strict()
 
 /** What the advisor reads: a general question of band 2a and the language of the reply. Never Form A, Form B or the chat (PD7a, PD10). */
-export const advisorInput = z.strictObject({ version: z.literal(1).default(1), language: z.enum(replyLanguages), question: z.string().min(1) })
+/** `cards`: only with a question about the cards that the person selected, as their facts (PD10). */
+export const advisorInput = z.strictObject({
+  version: z.literal(1).default(1), language: z.enum(replyLanguages), question: z.string().min(1), cards: z.array(cardFacts).min(1).max(maxCompared).optional(),
+})
 export type AdvisorInput = z.output<typeof advisorInput>
 /** The answer of the advisor model. An empty text: no general answer, so the line "I've noted it" goes out. Not strict, as the extractor answer. */
 export const advisorAnswer = z.object({ version: z.literal(1).default(1), text: z.string() })

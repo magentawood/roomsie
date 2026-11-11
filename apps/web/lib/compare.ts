@@ -26,9 +26,9 @@ export const isFull = (picked: Picked[], card: Picked) =>
   picked.length >= maxCompared && picked[0]!.kind === card.kind && !picked.some((p) => p.id === card.id)
 
 /**
- * The words of a question about one card. The API reads them in the normal chat. The chat shows the name as a chip
- * in the bubble (`aboutOf`). A person goes by the first name only, as before, so the model gets no full name.
- * Two cards or more go as `compare`, and the text stays as the person typed it.
+ * The words of a question about one card: the name of the card, which the chat shows as a chip in the bubble (`aboutOf`),
+ * then the message. The API takes the name out before a model reads the message, and reads the card from `compare`.
+ * Two cards or more keep the text as the person typed it.
  */
 export function questionOf(text: string, picked: Picked[]) {
   if (picked.length !== 1) return text
@@ -59,9 +59,12 @@ export function storedPick(value: string | null): Picked | null {
   }
 }
 
-/** The cards in the order of the results, which the match query gives, so Option 1 is the best match. Null: fewer than two cards. */
+/**
+ * The selected cards of a question, in the order of the results, which the match query gives, so Option 1 is the best match.
+ * One card goes too: the API answers from its facts (PD10). Null: no card.
+ */
 export function compareOf(picked: Picked[], resultIds: string[]): CompareRequest | null {
-  if (picked.length < 2) return null
+  if (!picked.length) return null
   const rank = (id: string) => (resultIds.includes(id) ? resultIds.indexOf(id) : resultIds.length)
   return { kind: picked[0]!.kind, ids: picked.map((p) => p.id).toSorted((a, b) => rank(a) - rank(b)) }
 }
