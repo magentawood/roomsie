@@ -1,4 +1,4 @@
-import { intentsOf, resultsPageSize, type FormA, type MatchResult, type MustHaveKey, type Notice, type ResultsResponse } from '@roomsie/contract'
+import { intentsOf, resultsPageSize, type FormA, type MatchResult, type MustHaveKey, type Notice, type ResultSort, type ResultsResponse } from '@roomsie/contract'
 import { budgetPhrase } from './person'
 
 /** What a search found, in the pages that loaded. `total` counts the results of all pages. `noticed`: the notes of the first page. */
@@ -88,3 +88,7 @@ export function panelUpdate<T>(state: PanelState<T>, event: PanelEvent<T>): Pane
     case 'idle': return { shown: state.pending ?? state.shown, pending: null, busy: false }
   }
 }
+
+/** The orders of the sort of the results panel, by the kind of the cards. People have no rent, so they sort by best or newest. */
+export const sortLabels: Record<ResultSort, string> = { best: 'Best Matches', rent_low: 'Lowest Rent', rent_high: 'Highest Rent', newest: 'Newest' }
+export const sortsFor = (kind: 'listing' | 'person'): ResultSort[] => (kind === 'person' ? ['best', 'newest'] : ['best', 'rent_low', 'rent_high', 'newest'])

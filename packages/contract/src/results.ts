@@ -22,7 +22,11 @@ export type MatchResult = z.infer<typeof matchResult>
 export const resultsPageSize = 20
 
 /** A search: the panel is a function of the form only (PD6c). */
-export const resultsBody = z.strictObject({ form: formA, page: z.int().min(1).default(1) })
+/** The orders of the results panel (the founders, 2026-11-11). "best" is the Best Matches order of PD3a. People sort by best or newest. */
+export const resultSorts = ['best', 'rent_low', 'rent_high', 'newest'] as const
+export type ResultSort = (typeof resultSorts)[number]
+/** `sort`: the web sends it only when it is not "best", so the API of the minutes before a deploy never refuses a search. */
+export const resultsBody = z.strictObject({ form: formA, page: z.int().min(1).default(1), sort: z.enum(resultSorts).default('best') })
 
 /** One card against a form, whatever the place types of the form: the label of the match box of a detail (PD3a). */
 export const fitBody = z.strictObject({ form: formA, kind: z.enum(compareKinds), id: z.uuid() })

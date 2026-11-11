@@ -2,11 +2,11 @@
 
 import { useCallback, useEffect, useReducer, useRef, useState, type ReactNode } from 'react'
 import { FaceSad, ChevronSelectorVertical, XClose } from '@untitledui/icons'
-import type { CompareKind, FormA, ListingResponse, MatchResult } from '@roomsie/contract'
+import type { CompareKind, FormA, ListingResponse, MatchResult, ResultSort } from '@roomsie/contract'
 import { useAuth } from '../../lib/auth'
 import { pickOf, type Picked, type Picks } from '../../lib/compare'
 import { useAreaLabels, useListing, usePerson, type useResults } from '../../lib/queries'
-import { didntSayLine, formKey, panelUpdate, resultsHeading, type Found, type PanelState } from '../../lib/results'
+import { didntSayLine, formKey, panelUpdate, resultsHeading, sortLabels, sortsFor, type Found, type PanelState } from '../../lib/results'
 import { Unavailable, type DetailPanel } from '../detail/parts'
 import { PlaceCard } from '../listings/place-card'
 import { PersonCard } from '../people/person-card'
@@ -130,13 +130,17 @@ function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; pic
  * The results panel of flow 02: a pure function of Form A (PD6c). `form`: the form of the results. `card`: the card open in the panel,
  * which the chat holds, so an option of a comparison opens here too.
  */
-export function ResultsPanel({ form, found, held: { hold, release }, more, sample, notice, picks: pickProps, card, onCard, onClose, onAskInChat }: {
+export function ResultsPanel({ form, found, held: { hold, release }, more, sample, notice, picks: pickProps, card, onCard, onClose, onAskInChat, sort = 'best', onSort }: {
   form: FormA; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode
+  /** The order of the cards (the founders, 2026-11-11). The sample results of a preview have no sort. */
+  sort?: ResultSort; onSort?: (sort: ResultSort) => void
   /** The selection of the list on the screen: the newest results, or the results of an older card (T-49). */
   picks: Picks; card: OpenCard | null; onCard: (card: OpenCard | null) => void; onClose: () => void; onAskInChat: (card: Picked) => void
 }) {
   const { user, loading } = useAuth()
   const [tapped, setTapped] = useState<MatchResult | null>(null)
+  // People sort by best or newest, and places by the rent too.
+  const kindOf = found.results[0]?.kind ?? 'listing'
   // A selection needs a sign-in, as the opening of a card (PD6b).
   const [wall, setWall] = useState(false)
   const { picked, onPick, onClear } = pickProps
@@ -183,8 +187,9 @@ export function ResultsPanel({ form, found, held: { hold, release }, more, sampl
               <div className="flex shrink-0 items-center gap-2 lg:gap-4">
                 {/* The small secondary button of the designs, with the chevrons of a select. */}
                 <span className="relative">
-                  <select aria-label="Sort" className="appearance-none rounded-lg border border-primary bg-primary py-1.25 pr-7.75 pl-2.75 text-sm font-semibold text-secondary shadow-xs outline-focus-ring focus-visible:outline-2">
-                    <option>Best Matches</option>
+                  <select aria-label="Sort" value={sortsFor(kindOf).includes(sort) ? sort : 'best'} disabled={sample || !onSort} onChange={(e) => onSort?.(e.target.value as ResultSort)}
+                    className="appearance-none rounded-lg border border-primary bg-primary py-1.25 pr-7.75 pl-2.75 text-sm font-semibold text-secondary shadow-xs outline-focus-ring focus-visible:outline-2">
+                    {sortsFor(kindOf).map((value) => <option key={value} value={value}>{sortLabels[value]}</option>)}
                   </select>
                   <ChevronSelectorVertical size={16} aria-hidden className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-fg-quaternary" />
                 </span>

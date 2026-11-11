@@ -5,6 +5,7 @@
 ## What it is
 
 - The **results panel** is the right half of `/chat` on a desktop. It has a header, the "Best Matches" sort and a grid of person and place cards ([interface-shape.md](../interface-shape.md)).
+- **The sort** (the founders, 2026-11-11): places sort by Best Matches (PD3a), Lowest Rent, Highest Rent or Newest, and people by Best Matches or Newest. The API sorts, so each page follows the order. The web sends `sort` only when it is not Best Matches, so the API of the minutes before a deploy never refuses a search. A new order of the same search keeps its cards on the screen until the new order comes. The results never show the own listing of the person, or a listing for the other gender.
 - **A tap anywhere on a card opens it.** The name link covers the card (`CardLink stretched`). Select and Save sit above it and keep their own tap.
 - **The line between the chat and the panel** can be dragged on a computer, or moved with the arrow keys. A double click gives back the 530 px of the designs. The chat stays 360 px wide or more, and the panel 420 px. Local storage keeps the width (`roomsie.chatWidth`).
 - The **header** shows the count only, as "8 Results".

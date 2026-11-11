@@ -4,7 +4,7 @@ import {
   areasResponse, conversationsResponse, goalsResponse, incomingRequestsResponse, listingResponse, meResponse, messagesResponse, outgoingRequestsResponse, personResponse,
   adminHomeView, adminInvitesResponse, adminListingView, adminTurnView, adminTurnsView, traceViewsResponse, adminListingsResponse, adminPeopleResponse, adminPersonView, aiOverviewView, modelSwitchLogResponse, productNumbersView, adminQuotesResponse, alertSettings, feedbackResponse, idCheckQueueResponse, profileResponse, realtimeResponse, reportQueueView, resultsResponse,
   savedPeopleResponse, savedPlacesResponse, siteResponse, verificationResponse, fitResponse,
-  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type CompareKind, type FormA, type NumberPeriod, type SavedKind,
+  type AdminListingsQuery, type AdminPeopleQuery, type AdminTurnsQuery, type CompareKind, type FormA, type NumberPeriod, type ResultSort, type SavedKind,
 } from '@roomsie/contract'
 import { api, ApiError, chatApi } from './api'
 import { areaTree } from './areas'
@@ -46,7 +46,7 @@ export const queryKeys = {
   goals: ['goals'],
   notes: ['notes'],
   waitlistJoins: (goalId: string) => ['waitlist', goalId],
-  results: (formKey: string) => ['results', formKey],
+  results: (formKey: string, sort: ResultSort = 'best') => ['results', formKey, sort],
   fit: (formKey: string, id: string) => ['fit', formKey, id],
 } as const
 
@@ -273,11 +273,15 @@ export function useAlertSettings() {
  * The results of a form, a page at a time (T-14). `null`: no search yet. A guest searches too (PD6b).
  * The cache keeps each form and never searches it again, so the order of a form never moves under the person (PD6c). A sign-in clears the cache.
  */
-export function useResults(form: FormA | null) {
+export function useResults(form: FormA | null, sort: ResultSort = 'best') {
   const { user, loading } = useAuth()
+  const key = form ? formKey(form) : ''
   return useInfiniteQuery({
-    queryKey: queryKeys.results(form ? formKey(form) : ''),
-    queryFn: ({ pageParam }) => api(user, '/v1/results', resultsResponse, { method: 'POST', body: { form, page: pageParam } }),
+    queryKey: queryKeys.results(key, sort),
+    // The default order goes with no sort, so the API of the minutes before a deploy never refuses a search.
+    queryFn: ({ pageParam }) => api(user, '/v1/results', resultsResponse, { method: 'POST', body: { form, page: pageParam, ...(sort !== 'best' && { sort }) } }),
+    // A new order of the same search keeps its cards on the screen until the new order comes.
+    placeholderData: (previous, query) => (query?.queryKey[1] === key ? previous : undefined),
     initialPageParam: 1,
     getNextPageParam: nextPage,
     select: joinPages,

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
-import { capWall, formA, goalResponse, intentsOf, maxCompared, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, intentsOf, maxCompared, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type ResultSort, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, sameMoveOf, tapRefusal, writeStored } from '../../lib/chat'
@@ -215,7 +215,9 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const areaLabels = useAreaLabels()
   const form = preview ? sampleForm : chatForm
   const ready = panelReady(form)
-  const results = useResults(ready && !preview ? form : null)
+  // The order of the results panel: Best Matches, the rent from low or high, or the newest (the founders, 2026-11-11).
+  const [sort, setSort] = useState<ResultSort>('best')
+  const results = useResults(ready && !preview ? form : null, sort)
   const held = useHeldResults(form, preview ? samples[preview] : results.data)
   const shown = ready ? held.shown : null
   const title = shown ? panelTitle(shown.form, (slug) => areaLabels[slug] ?? slug) : ''
@@ -232,7 +234,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const [card, setCard] = useState<OpenCard | null>(null)
   // An older card opens its own results in the panel. The panel shows them once they load; until then, the newest results.
   const [viewed, setViewed] = useState<FormA | null>(null)
-  const viewedResults = useResults(viewed)
+  const viewedResults = useResults(viewed, sort)
   const viewing = viewed !== null && viewedResults.data !== undefined
   // A selection belongs to the list of results in the panel: the newest, or the list of an older card (T-49). Thus a new search
   // starts a new selection, and Option 1 of a comparison is the best match of that list. `refused`: a fifth card that did not go in.
@@ -451,7 +453,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       {shown && (
         <div className={`col-start-1 row-start-2 min-h-0 lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-l lg:border-secondary ${view === 'all' || card ? 'grid' : 'hidden'} ${split ? 'lg:grid' : 'lg:hidden'}`}>
           {/* The next page is of the newest form, so it loads only while that form is on the screen. */}
-          <ResultsPanel form={viewing ? viewed! : shown.form} found={viewing ? viewedResults.data! : shown.found} held={held} sample={Boolean(preview)} card={card} onCard={setCard}
+          <ResultsPanel form={viewing ? viewed! : shown.form} found={viewing ? viewedResults.data! : shown.found} held={held} sample={Boolean(preview)} card={card} onCard={setCard} sort={sort} onSort={setSort}
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
             more={viewing ? (viewedResults.hasNextPage ? viewedResults : undefined) : results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined}
             onClose={() => { setViewed(null); setView('closed') }} onAskInChat={askInChat}

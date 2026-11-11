@@ -51,13 +51,13 @@ async function withResults(db: Db, { form, seeksPeople, viewerUserId, filters, s
   const near = counts.near_station ?? 0
   if (near >= 1 && near < total) notes.push({ kind: 'mustHave', key: 'near_station', count: near, total })
   if (fews[1]) notes.push(few(fews[1]))
-  // What places in the areas cost helps beside any results.
-  const scope = { viewerUserId, areas: filters.areas }
+  // What places in the areas cost helps beside any results. The rents follow the rules of the search, with the budget open.
+  const openBudget = searches.listings(filters)
   const [rents, flats] = await Promise.all([
     // People to rent with hear what a room in a shared flat of the areas costs.
-    rentsOf(db, { ...scope, kinds: seeksPeople ? ['room_in_flat'] : searches.listings(filters).kinds }),
+    rentsOf(db, seeksPeople ? { ...openBudget, kinds: ['room_in_flat'] } : openBudget),
     // A search of whole flats needs no sum of a shared flat, and the people to team up already lead to people to share with.
-    intentsOf(form).includes('whole_flat') || teamUp > 0 ? [] : twoBhkCosts(db, scope),
+    intentsOf(form).includes('whole_flat') || teamUp > 0 ? [] : twoBhkCosts(db, openBudget),
   ])
   if (rents.length) notes.push(rentsNote(rents))
   if (flats.length) notes.push(shareNote(flats))
@@ -80,16 +80,16 @@ function shareNote(flats: Awaited<ReturnType<typeof twoBhkCosts>>): Notice {
   return { kind: 'share', each: Math.round(middle / 2 / 500) * 500, maintenanceIncluded: flats.every((flat) => flat.maintenance !== null) }
 }
 
-async function withNone(db: Db, { form, seeksPeople, viewerUserId, filters, searches, suggestions }: Input) {
+async function withNone(db: Db, { form, seeksPeople, filters, searches, suggestions }: Input) {
   const nearby = suggestions.find((s) => s.relaxed.kind === 'area')?.relaxed
   const nearbyNote: Notice[] = nearby?.kind === 'area' ? [{ kind: 'nearbyArea', area: nearby.area }] : []
   if (seeksPeople) return nearbyNote
 
-  const scope = { viewerUserId, areas: filters.areas }
+  const openBudget = searches.listings(filters)
   const [rents, flats] = await Promise.all([
-    rentsOf(db, { ...scope, kinds: searches.listings(filters).kinds }),
+    rentsOf(db, openBudget),
     // A search of whole flats needs no sum of a shared flat.
-    intentsOf(form).includes('whole_flat') ? [] : twoBhkCosts(db, scope),
+    intentsOf(form).includes('whole_flat') ? [] : twoBhkCosts(db, openBudget),
   ])
   const notes: Notice[] = []
   const max = filters.budget?.max

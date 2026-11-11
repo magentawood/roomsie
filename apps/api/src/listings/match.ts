@@ -81,7 +81,19 @@ function listingFilter(search: ListingSearch) {
   return { conditions, mustHaves, rentFits, openToAll, movingGap }
 }
 
-/** The listings that fit, in the Best Matches order of PD3a, and their number. */
+/** The lowest rent of a listing, of the room type of the searcher for a PG (PC-29): the order of a sort by rent. */
+const lowestRent = (roomType: ListingSearch['roomType']) => sql`(select min(${listingRates.rent}) from ${listingRates} where ${listingRates.listingId} = ${listings.id}
+  ${roomType ? sql`and (${listings.kind} <> 'pg' or ${listingRates.sharing} ${roomType === 'private' ? sql`= 'single'` : sql`<> 'single'`})` : sql``})`
+
+/** The order of the results: Best Matches (PD3a), the rent from low or from high, or the newest first (the founders, 2026-11-11). */
+function orderOf(sort: ListingSearch['sort']) {
+  if (sort === 'rent_low') return [sql`lowest_rent asc nulls last`, desc(listings.createdAt)]
+  if (sort === 'rent_high') return [sql`lowest_rent desc nulls last`, desc(listings.createdAt)]
+  if (sort === 'newest') return [desc(listings.createdAt)]
+  return [sql`is_full desc, in_budget desc, prefs_met desc, move_gap asc nulls last`, desc(listings.createdAt)]
+}
+
+/** The listings that fit, in the order of the sort (Best Matches by default, PD3a), and their number. */
 export async function matchingListings(db: Db, search: ListingSearch) {
   const { conditions, mustHaves, rentFits, openToAll, movingGap } = listingFilter(search)
   const { moveDate, gender } = search
@@ -94,8 +106,9 @@ export async function matchingListings(db: Db, search: ListingSearch) {
       inBudget: sql<boolean>`${rentFits(false)}`.as('in_budget'),
       prefsMet: sql<number>`${mustHaves.prefsMet}`.as('prefs_met'),
       moveGap: sql<number | null>`${moveGap(sql`${listings.availableFrom}`, moveDate)}`.as('move_gap'),
+      lowestRent: sql<number>`${lowestRent(search.roomType)}`.as('lowest_rent'),
     }).from(listings).where(and(...conditions))
-      .orderBy(sql`is_full desc, in_budget desc, prefs_met desc, move_gap asc nulls last`, desc(listings.createdAt))
+      .orderBy(...orderOf(search.sort))
       .limit(search.limit).offset(search.offset),
     db.$count(listings, and(...conditions)),
   ])
@@ -111,24 +124,24 @@ export async function listingCounts(db: Db, search: ListingSearch, keys: MustHav
   return row ?? {}
 }
 
-type Scope = { viewerUserId?: string; kinds: ListingKind[]; areas: string[] | null }
-const inScope = ({ viewerUserId, kinds, areas }: Scope) => and(
-  visibleListing(viewerUserId), viewerUserId ? ne(listings.ownerUserId, viewerUserId) : undefined, inArray(listings.kind, kinds), areas ? inArray(listings.areaSlug, areas) : undefined,
-)
-
-/** The lowest rent of each visible listing of the kinds in the areas, from low to high, whatever the budget. */
-export async function rentsOf(db: Db, scope: Scope) {
+/**
+ * The lowest rent of each listing that the search could show, from low to high, whatever the budget: the same rules as the results,
+ * as the gender, the own listings and the must-haves, so a note never names a place that the person cannot see (the founders, 2026-11-11).
+ */
+export async function rentsOf(db: Db, search: ListingSearch) {
+  const { conditions } = listingFilter({ ...search, budget: null })
   const rows = await db.select({ rent: sql<number>`min(${listingRates.rent})`.mapWith(Number) })
-    .from(listings).innerJoin(listingRates, eq(listingRates.listingId, listings.id)).where(inScope(scope)).groupBy(listings.id)
+    .from(listings).innerJoin(listingRates, eq(listingRates.listingId, listings.id)).where(and(...conditions)).groupBy(listings.id)
   return rows.map((r) => r.rent).sort((a, b) => a - b)
 }
 
-/** What each whole 2 BHK flat in the areas costs a month: the rent, and the maintenance when the rent leaves it out. Null maintenance: not known. */
-export async function twoBhkCosts(db: Db, scope: Omit<Scope, 'kinds'>) {
+/** What each whole 2 BHK flat that the search could show costs a month: the rent, and the maintenance when the rent leaves it out. Null maintenance: not known. */
+export async function twoBhkCosts(db: Db, search: ListingSearch) {
+  const { conditions } = listingFilter({ ...search, budget: null, kinds: ['owner_flat', 'broker_flat'], roomType: null })
   return db.select({
     rent: sql<number>`min(${listingRates.rent})`.mapWith(Number),
     maintenance: sql<number | null>`(case when ${listings.maintenanceIncluded} then 0 else ${listings.maintenance} end)`,
   }).from(listings).innerJoin(listingRates, eq(listingRates.listingId, listings.id))
-    .where(and(inScope({ ...scope, kinds: ['owner_flat', 'broker_flat'] }), eq(listings.placeType, '2bhk')))
+    .where(and(...conditions, eq(listings.placeType, '2bhk')))
     .groupBy(listings.id)
 }
