@@ -84,6 +84,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>Each call goes through TanStack Query. <code>apps/web/lib/queries.ts</code> names the cache key of each piece of data. After a change, the page sets or refreshes that key (<a href="../standards/web.md">web standard</a>).</li>
 <li>The icons come from <code>@untitledui/icons</code>, the icon set of the design system.</li>
 <li><strong>A wait</strong> is <code>Loading</code> in <code>components/ui/loading.tsx</code>, with the mascot of its page (<code>mascots</code> in that file). The mascots come from the sticker sheets of the Product file (Additional assets), in <code>public/mascots</code> at 320 px. A person who asks for less motion sees them still. The line under a mascot uses Fredoka, a rounded font, only there.</li>
+<li><strong>An avatar</strong> is <code>Avatar</code> in <code>components/ui/avatar.tsx</code>. <code>online</code> adds the green dot of the designs. Only the account card of the sidebar uses it, because the person who reads the page is online.</li>
 <li>The sidebar shows the items of screens that later tasks build. They show as inactive until then.</li>
 </ul>
 <h2 id="sizes-from-the-designs">Sizes from the designs</h2>

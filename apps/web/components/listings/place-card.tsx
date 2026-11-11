@@ -7,6 +7,7 @@ import { initials } from '../../lib/person'
 import { Badge } from '../ui/badge'
 import { cardBox, CardLabel, CardLink, overCard } from '../ui/card-link'
 import { Facts, TagLine } from '../ui/card-lines'
+import { PhotoStrip } from '../ui/photo-strip'
 
 /** The faces of the flatmates at the lower left of the photo: 40 px, 4 px over each other, with a white ring (67:6750). */
 function Faces({ listing }: { listing: ListingResponse }) {
@@ -31,18 +32,27 @@ export function PlaceCard({ listing, areaName, action, label, selected, onOpen }
   listing: ListingResponse; areaName?: string; action?: ReactNode; label?: ReactNode; selected?: boolean; onOpen?: () => void
 }) {
   const href = `/places/${listing.id}`
-  const photo = listing.photos[0]
+  const hasFaces = flatmateFaces(listing).length > 0
   const rent = rentAmount(listing)
   const badge = placeBadge(listing)
   const tags = placeTags(listing)
   return (
     <article className={cardBox(selected)}>
-      <CardLink href={href} onOpen={onOpen} decorative className="relative block h-46 shrink-0 overflow-hidden rounded-xl bg-tertiary">
-        {photo
-          ? <img src={photo.url} alt="" className="size-full object-cover" />
-          : <span className="flex size-full items-center justify-center text-fg-quaternary"><Home02 size={32} aria-hidden /></span>}
-        <Faces listing={listing} />
-      </CardLink>
+      {/* Above the link of the whole card, so a swipe moves the photos. */}
+      <div className={`h-46 shrink-0 overflow-hidden rounded-xl bg-tertiary ${overCard}`}>
+        {listing.photos.length
+          ? (
+            <PhotoStrip urls={listing.photos.map((p) => p.url)} href={href} onOpen={onOpen} dots="hover" faces={hasFaces} selected={selected}>
+              <Faces listing={listing} />
+            </PhotoStrip>
+          )
+          : (
+            <CardLink href={href} onOpen={onOpen} decorative className="relative flex size-full items-center justify-center text-fg-quaternary">
+              <Home02 size={32} aria-hidden />
+              <Faces listing={listing} />
+            </CardLink>
+          )}
+      </div>
       <CardLabel>{label}</CardLabel>
       {/* 12 8 in. The title, the lines and the tags 8 apart, then 12 to the line and 12 to the rent ("Content" of 67:6750). */}
       <div className="flex flex-1 flex-col gap-3 px-2 py-3">
