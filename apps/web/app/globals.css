@@ -43,6 +43,7 @@
   --color-yellow-25: #fefce8;
   --color-blue-50: #eff6ff;
   --color-blue-200: #bfdbfe;
+  --color-blue-400: #60a5fa;
   --color-blue-500: #3b82f6;
   --color-orange-50: #fff7ed;
   --color-blue-700: #1d4ed8;
@@ -77,6 +78,8 @@
   --text-color-badge-warning: var(--color-yellow-700);
   /* The "Best match" label of the results (drafts section 14). */
   --text-color-badge-blue: var(--color-blue-700);
+  /* The X of a removable blue badge (Badge close X, Color=Blue). */
+  --text-color-fg-badge-blue: var(--color-blue-400);
   --text-color-primary_on-brand: #ffffff;
   /* Text on the dark sections of the landing page. */
   --text-color-primary_on-dark: #ffffff;

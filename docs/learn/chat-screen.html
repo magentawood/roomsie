@@ -39,7 +39,7 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="what-it-is">What it is</h2>
 <ul>
 <li>The <strong>chat screen</strong> is at <code>/chat</code>. A goal with no answer shows "What are we looking for?" of flow 02. With no goal on the browser, <code>/chat</code> goes to <a href="onboarding.html">the onboarding</a>. The landing page of T-23a keeps <code>/</code>.</li>
-<li>The <strong>chat input</strong> is a text box with a Send button. Enter sends, and Shift+Enter makes a new line. A blank message never sends.</li>
+<li>The <strong>chat input</strong> is a text box with a Send button. Enter sends, and Shift+Enter makes a new line. A blank message never sends. Selected cards show as chips above it (<a href="compare-cards.html">Comparing cards</a>).</li>
 <li>The <strong>sign-in wall</strong> is "Sign in to continue", with "Sign in with Google" and the legal line. It is a modal on a desktop and a sheet at the bottom of a phone. The user can close it.</li>
 <li>The <strong>app shell</strong> is the sidebar on a desktop and the bar at the bottom of a phone. For a guest, the sidebar shows "Sign in with Google" in place of the account card.</li>
 <li>The <strong>goal header</strong> above the chat has the goal title and "I Found a Place". The sidebar lists the goals, and on a phone the title opens the list (<a href="goals.html">goals</a>).</li>
@@ -82,14 +82,14 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li><strong>Each message goes to the assistant</strong> (<a href="assistant-turn.html">the assistant turn</a>). The onboarding or the first message starts the goal. The thread shows the message at once, and the reply when it comes. TanStack Query holds the goal, and a mutation sends each turn.</li>
 <li><strong>"Same move?"</strong> shows two xs Buttons under the question. "Same move" opens the other goal (<a href="goals.html">goals</a>).</li>
-<li><strong>A reply on its way</strong> shows three dots, as a chat app does, and no mascot.</li>
-<li><strong>The wait for new results</strong> shows the steps of the search, as flow 02 draws it: "Reading what you said", "Looking through places (or people) around <areas>", "Picking the best ones for you". It shows when a reply or a tap brings new results, and lasts at least 2 seconds. The mascot changes with the step (it reads, it searches with a magnifier, it picks at its laptop) and bobs while it waits.</li>
+<li><strong>A reply on its way</strong> shows three dots, as a chat app does, and no mascot. Each other wait of the app is <code>Loading</code> (<a href="web-ui-base.html">The web UI base</a>).</li>
+<li><strong>The wait for new results</strong> shows the steps of the search, as flow 02 draws it: "Reading what you said", "Looking through places (or people) around <areas>", "Picking the best ones for you". It shows when a reply or a tap brings new results, and lasts at least 2 seconds. The mascot changes with the step and bobs while it waits.</li>
 <li><strong>Each results card stays under the reply that brought it.</strong> Newer results add a card and leave the older ones, which open their own results. Only the newest card has Roomsie Noticed and its chips. Local storage keeps the cards of each goal.</li>
+<li><strong>The commute tip</strong> ("Quick tip") shows after results, to a signed-in person with no commute address in the profile. A tap opens the field on <code>/profile</code>, and the X hides the tip for good on the browser. It sits above the input on a computer, and under the goal header on a phone (Figma 94:22712, 148:33237).</li>
 <li><strong>Each new item fades in.</strong> A long reply scrolls into view from its start, not from its end.</li>
 <li><strong>The logo of the sidebar opens the last chat:</strong> the chat of this tab, else the newest goal, else a new goal.</li>
-<li><strong>Each other wait</strong> is <code>Loading</code> in <code>components/ui/loading.tsx</code>, with the mascot of its page (<code>mascots</code> in that file). The mascots come from the sticker sheets of the Product file (Additional assets), in <code>public/mascots</code> at 320 px. A person who asks for less motion sees them still. The line under a mascot uses Fredoka, a rounded font, only there.</li>
 <li><strong>A reload opens the same chat.</strong> <code>/chat?goal=&lt;id&gt;</code> names the goal. Each other way into the chat starts a new goal, as a new chat of ChatGPT does, and the older goals stay in the list. Session storage keeps the visitor key and the goal of the tab, never a sign-in token, so a guest starts fresh on the next visit. A sign-out removes them.</li>
-<li><strong>The phone bar</strong> of the designs is a glass bar: Chats, Messages, Listings and Profile, and a "+" whose menu has New goal and New listing. The plus turns into a cross while the menu is open. Chats goes back to the chat of this visit of the tab, else to a new goal. The open tab has a filled icon. The bar goes away while a text field has the focus (the <code>typing</code> variant of <code>globals.css</code>).</li>
+<li><strong>The phone bar</strong> of the designs is a glass bar: Chats, Messages, Listings and Profile, and a "+" whose menu has New goal and New listing. Chats goes back to the chat of this visit of the tab, else to a new goal. The bar goes away while a text field has the focus (the <code>typing</code> variant of <code>globals.css</code>).</li>
 <li><strong>The keyboard of a phone makes the page shorter.</strong> The viewport of <code>app/layout.tsx</code> has <code>interactive-widget=resizes-content</code>, so Chrome on Android makes the page as high as the space above the keyboard. Thus the chat input and the composer of Messages sit on the keyboard.</li>
 <li><strong>A place from the results fills the phone screen</strong> (PD6a), over the chat input and the phone bar, as the page of a place does.</li>
 <li><strong>The shell gates the taps of a guest.</strong> New Listing, New Goal, Messages, Listings, Profile and the two items of the "+" menu open the wall. Chats is open to a guest. After the sign-in, the shell opens the page that the guest tapped. A tap while the sign-in state loads waits for it. For a signed-in user, each one is a plain link.</li>
@@ -101,6 +101,7 @@ details.callout[open] summary{color:var(--fg)}
 <li>The phone pattern of the designs: <a href="../decisions/pd-06a-mobile-split-view.md">PD6a</a>.</li>
 <li>Where the login gate sits, and why the chat is open to a guest: <a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>.</li>
 <li>The address, the send line and the guest taps: the spec of T-10 (<a href="https://github.com/magentawood/roomsie/pull/172">#172</a>).</li>
+<li>The words of the commute tip: roomsie plans no routes, so the tip promises only the line of the match box, "we show you who commutes your way" (2026-11-10).</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
@@ -115,10 +116,11 @@ details.callout[open] summary{color:var(--fg)}
 <ul>
 <li>T-10: <a href="https://github.com/magentawood/roomsie/pull/172">#172</a>, 2026-10-27. The chat screen, the input, the sign-in wall, the shell of a guest, and "Start looking" on the home stub.</li>
 <li>T-12: <a href="https://github.com/magentawood/roomsie/pull/189">#189</a>, 2026-11-02. Each message goes to the assistant, and a reload opens the same goal.</li>
-<li>T-15: the results panel and the split view. <a href="results-panel.html">The results panel</a> tells how they work.</li>
+<li>T-15: the results panel and the split view (<a href="results-panel.html">The results panel</a>).</li>
 <li>T-48: the onboarding starts each goal, and New Goal and "+" open it (<a href="onboarding.html">the onboarding</a>).</li>
 <li>T-50: the goal header, the goal list and a closed goal (<a href="goals.html">goals</a>).</li>
 <li>2026-11-09: the keyboard of a phone, and a place over the chat input.</li>
-<li><a href="https://github.com/magentawood/roomsie/pull/243">#243</a>, 2026-11-07. The phone bar and its "+" menu of the designs, the wait with the mascot, the visitor key for the visit of the tab, a message that fits its bubble, and a pointer on each control.</li>
+<li>2026-11-10: the commute tip, and the chips of "Ask in chat".</li>
+<li><a href="https://github.com/magentawood/roomsie/pull/243">#243</a>, 2026-11-07. The phone bar and its "+" menu, the wait with the mascot, and the visitor key of the tab.</li>
 </ul>
 </main>

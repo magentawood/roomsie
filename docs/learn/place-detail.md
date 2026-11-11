@@ -28,7 +28,7 @@
 - The visible rule is one rule for the detail, Saved and each other read. A hidden listing thus leaves Saved too.
 - Each part shows each field of the kind of the place. A field with no answer reads "Didn't say". The person detail does the same.
 - On a computer, the message button ends the column. On a phone it is in the bar at the bottom.
-- "Ask in chat" on a page opens the chat of the tab, else the newest open goal, else a new goal. The chat input then has the draft "About <name>: ".
+- "Ask in chat" on a page opens the chat of the tab, else the newest open goal, else a new goal. That chat adds the card as a chip above the input ([Comparing cards](compare-cards.md)).
 - The cards of Saved open the detail.
 - Share opens the Share modal (T-50): it sends the card as a message to the ticked conversations, and "Copy link" ("Share link" on a phone) shares the link anywhere. The link opens the card behind the sign-in.
 - A confirmation dialog has its two buttons side by side, also on a phone.

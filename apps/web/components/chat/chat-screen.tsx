@@ -1,18 +1,18 @@
 'use client'
 
-import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowRight, CheckCircle, Loading02 } from '@untitledui/icons'
-import { capWall, formA, goalResponse, intentsOf, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type TurnBody } from '@roomsie/contract'
+import { capWall, formA, goalResponse, intentsOf, maxCompared, newGoalResponse, noContent, panelReady, tapText, turnResponse, type ChipTap, type FormA, type GoalResponse, type TurnBody } from '@roomsie/contract'
 import { ApiError, chatApi, errorText, limitOf } from '../../lib/api'
 import { useAuth } from '../../lib/auth'
 import { canSend, chatStorage, chipsOf, keyAction, readStored, sameMoveOf, tapRefusal, writeStored } from '../../lib/chat'
 import { goalHref, newGoalHref, onboardingAgainHref, useCurrentGoalId } from '../../lib/goals'
 import { queryKeys, useAreaLabels, useResults } from '../../lib/queries'
 import { panelContent } from '../../lib/waitlist'
-import { compareOf, compareRefusal, pickOf, toggledPick, type Picked } from '../../lib/compare'
+import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, isFull, pickOf, questionOf, storedPick, toggledPick, type Picked } from '../../lib/compare'
 import { formKey, panelTitle } from '../../lib/results'
 import { sampleForm, samples, type Preview } from '../../lib/sample-results'
 import { ResultsCard } from '../results/results-card'
@@ -21,8 +21,9 @@ import { LookInMumbai, WaitlistForm, WaitlistLine, WaitlistPanel } from './waitl
 import { SignInWall } from '../shell/sign-in-wall'
 import { Button } from '../ui/button'
 import { Loading, mascots } from '../ui/loading'
-import { RemoveChip } from '../ui/choice'
+import { Badge, RemovableBadge } from '../ui/badge'
 import { Chips } from './chips'
+import { CommuteTip } from './quick-tip'
 import { ComparisonTable } from './comparison'
 import { FoundFlow } from './found-dialogs'
 import { FollowUps, NoticedBox } from './noticed'
@@ -37,42 +38,53 @@ import { GoalHeader } from '../goals/goal-list'
  */
 const afterTyping = 'transition-[padding] duration-0 delay-300 max-lg:typing:delay-0'
 
-/** It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a). */
-function ChatInput({ grow, autoFocus, initialText = '', placeholder = '3 bhk in bandra for 3 friends...', onSend }: {
-  grow: 'up' | 'down'; autoFocus?: boolean; initialText?: string; placeholder?: string; onSend: (text: string) => void
+/**
+ * It grows to four lines out of its box, over the screen, so the layout never changes while the person types (PD6a).
+ * `chips`: the picked cards, in a grey box with the input (Figma 63:4472). The box grows as one, and an unseen copy keeps its space
+ * at one line. The input keeps its place in the tree, so a chip that comes or goes keeps the focus. A new `focus` puts the focus in
+ * the input, as after "Ask in chat".
+ */
+function ChatInput({ grow, autoFocus, placeholder = '3 bhk in bandra for 3 friends...', chips, focus = 0, onSend }: {
+  grow: 'up' | 'down'; autoFocus?: boolean; placeholder?: string; chips?: ReactNode; focus?: number; onSend: (text: string) => void
 }) {
-  const [text, setText] = useState(initialText)
+  const [text, setText] = useState('')
   const box = useRef<HTMLTextAreaElement>(null)
   useLayoutEffect(() => {
     const el = box.current!
     el.style.height = 'auto'
     el.style.height = `${el.scrollHeight}px`
   }, [text])
+  useEffect(() => { if (focus) box.current?.focus() }, [focus])
   const send = () => {
     onSend(text.trim())
     setText('')
   }
+  const boxed = chips ? 'flex flex-col gap-3 rounded-xl border border-secondary bg-secondary pt-2.5 max-lg:shadow-sm' : ''
+  const form = (
+    <form onSubmit={(e) => { e.preventDefault(); send() }}
+      className={`flex items-end gap-2 rounded-xl border border-secondary bg-primary py-1.75 pr-1.75 pl-2.75 shadow-md lg:px-3.25 lg:py-2.75 focus-within:outline-2 focus-within:outline-focus-ring ${chips ? '-mx-px -mb-px' : ''}`}>
+      <textarea ref={box} aria-label="Message" rows={1} autoFocus={autoFocus} value={text} placeholder={placeholder}
+        className="max-h-28 flex-1 resize-none bg-transparent py-1 text-md text-primary outline-none placeholder:text-placeholder lg:py-2"
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          const action = keyAction({ key: e.key, shiftKey: e.shiftKey, isComposing: e.nativeEvent.isComposing }, text)
+          if (action === 'type') return
+          e.preventDefault()
+          if (action === 'send') send()
+        }} />
+      <Button type="submit" variant="secondary" size="md" iconLeading={ArrowRight} label="Send" disabled={!canSend(text)} className="max-lg:p-1.5" />
+    </form>
+  )
   return (
-    <div className="relative h-12 lg:h-16">
-      <form onSubmit={(e) => { e.preventDefault(); send() }}
-        className={`absolute inset-x-0 z-10 flex items-end gap-2 rounded-xl border border-secondary bg-primary py-1.75 pr-1.75 pl-2.75 shadow-md lg:px-3.25 lg:py-2.75 focus-within:outline-2 focus-within:outline-focus-ring ${grow === 'up' ? 'bottom-0' : 'top-0'}`}>
-        <textarea ref={box} aria-label="Message" rows={1} autoFocus={autoFocus} value={text} placeholder={placeholder}
-          className="max-h-28 flex-1 resize-none bg-transparent py-1 text-md text-primary outline-none placeholder:text-placeholder lg:py-2"
-          onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            const action = keyAction({ key: e.key, shiftKey: e.shiftKey, isComposing: e.nativeEvent.isComposing }, text)
-            if (action === 'type') return
-            e.preventDefault()
-            if (action === 'send') send()
-          }} />
-        <Button type="submit" variant="secondary" size="md" iconLeading={ArrowRight} label="Send" disabled={!canSend(text)} className="max-lg:p-1.5" />
-      </form>
+    <div className="relative">
+      <div aria-hidden inert className={`invisible ${boxed}`}>{chips}<div className={`h-12 lg:h-16 ${chips ? '-mb-px' : ''}`} /></div>
+      <div className={`absolute inset-x-0 z-10 ${grow === 'up' ? 'bottom-0' : 'top-0'} ${boxed}`}>{chips}{form}</div>
     </div>
   )
 }
 
 /** "What are we looking for?" of flow 02: the start of a goal, with the place-type chips under the input (T-09). */
-function EmptyChat({ onSend, draft, children }: { onSend: (text: string) => void; draft: { text: string; version: number }; children: React.ReactNode }) {
+function EmptyChat({ onSend, input, children }: { onSend: (text: string) => void; input: { chips: ReactNode; focus: number; placeholder?: string }; children: ReactNode }) {
   return (
     <main className={`isolate flex flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-chat-glow px-5 pb-27 max-lg:typing:pb-4 ${afterTyping} lg:gap-13 lg:px-6 lg:pb-0`}>
       <div className="flex max-w-126 flex-col items-center gap-3 text-center lg:gap-2">
@@ -86,7 +98,7 @@ function EmptyChat({ onSend, draft, children }: { onSend: (text: string) => void
         </p>
       </div>
       <div className="flex w-full max-w-210 flex-col gap-4">
-        <ChatInput key={draft.version} grow="down" autoFocus={draft.version > 0} initialText={draft.text} onSend={onSend} />
+        <ChatInput grow="down" {...input} onSend={onSend} />
         {children}
         <p className="text-center text-sm text-tertiary">
           Prefer quick questions? <Link href={onboardingAgainHref} className="font-medium text-secondary underline underline-offset-2 outline-focus-ring hover:text-primary focus-visible:outline-2">Answer them here</Link>
@@ -208,31 +220,44 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const waitlist = goalId && newestOutside && !closed ? { goalId, place: newestOutside } : null
   const waitlistOpen = panel === 'waitlist' && waitlist !== null && view !== 'closed'
   const [lineClosed, setLineClosed] = useState(false)
-  const [draft, setDraft] = useState({ text: '', version: 0 })
-  // "Ask in chat" on the page of a card leaves its draft for the input, one time.
-  useEffect(() => {
-    const text = readStored(chatStorage.draft)
-    if (!text) return
-    writeStored(chatStorage.draft, null)
-    setDraft(({ version }) => ({ text, version: version + 1 }))
-  }, [])
   // The card open in the results panel: a card of the results, or an option of a comparison (T-49).
   const [card, setCard] = useState<OpenCard | null>(null)
-  // A selection belongs to one list of results, so a new search starts a new one, and Option 1 is always the best match (T-49).
-  const [picks, setPicks] = useState({ key: '', picked: [] as Picked[] })
-  const resultsKey = shown ? formKey(shown.form) : ''
-  const picked = picks.key === resultsKey ? picks.picked : []
-  const setPicked = (next: Picked[]) => setPicks({ key: resultsKey, picked: next })
+  // An older card opens its own results in the panel. The panel shows them once they load; until then, the newest results.
+  const [viewed, setViewed] = useState<FormA | null>(null)
+  const viewedResults = useResults(viewed)
+  const viewing = viewed !== null && viewedResults.data !== undefined
+  // A selection belongs to the list of results in the panel: the newest, or the list of an older card (T-49). Thus a new search
+  // starts a new selection, and Option 1 of a comparison is the best match of that list. `refused`: a fifth card that did not go in.
+  const listed = viewing ? viewedResults.data! : shown?.found
+  const listKey = viewing ? formKey(viewed!) : shown ? formKey(shown.form) : ''
+  const [picks, setPicks] = useState<{ key: string; picked: Picked[]; refused?: string }>({ key: '', picked: [] })
+  const mine = picks.key === listKey ? picks : { picked: [] as Picked[], refused: undefined }
+  const picked = mine.picked
+  const pick = (next: Picked[], card?: Picked) => setPicks({ key: listKey, picked: next, refused: card && isFull(picked, card) ? card.name : undefined })
+  // "Ask in chat" puts the focus in the chat input, and the person types the question.
+  const [focus, setFocus] = useState(0)
+  // "Ask in chat" on the page of a card leaves the card for this chat, one time. It goes in once the list of the panel shows.
+  const listSettled = !loadingGoal && (!ready || Boolean(preview) || shown !== null || results.isError)
+  useEffect(() => {
+    const asked = listSettled ? storedPick(readStored(chatStorage.asked)) : null
+    if (!asked) return
+    writeStored(chatStorage.asked, null)
+    setPicks((now) => {
+      const current = now.key === listKey ? now.picked : []
+      return { key: listKey, picked: askedPick(current, asked), refused: isFull(current, asked) ? asked.name : undefined }
+    })
+    setFocus((n) => n + 1)
+  }, [listSettled, listKey])
   const atCap = !signedIn && (capped || typedTurnsLeft === 0)
+  // The commute tip: the X hides it for good on this browser.
+  const [tipClosed, setTipClosed] = useState(() => readStored(chatStorage.commuteTip) !== null)
+  const closeTip = () => { setTipClosed(true); writeStored(chatStorage.commuteTip, 'closed') }
   // The results belong to the reply that brought them (the founders, 2026-11-09), and new ones show the wait for at least 2 s.
   const [delivered, setDelivered] = useState<Delivered | null>(() => storedDelivery(goalId))
   // The chat beside the results is 530 px wide (42:12983), and the person can drag the line between them (the founders, 2026-11-10).
   const mainBox = useRef<HTMLElement>(null)
   const [chatWidth, setChatWidth] = useState(() => Number(readStored(chatStorage.chatWidth)) || chatWidthDefault)
   const [oldCards, setOldCards] = useState<{ goalId: string | null; cards: OldCard[] }>(() => ({ goalId, cards: storedCards(goalId) }))
-  // An older card opens its own results in the panel.
-  const [viewed, setViewed] = useState<FormA | null>(null)
-  const viewedResults = useResults(viewed)
   /** The reply under which the shown results sit: the one that brought them, else the newest reply. */
   const shownAt = () => (delivered && delivered.goalId === goalId && shown && delivered.key === formKey(shown.form)
     ? delivered.turnId : turns.findLast((t) => t.role === 'assistant')?.id ?? null)
@@ -248,12 +273,13 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   }, [newestReply])
   const submit = (turn: Outgoing) => {
     setFailed(null)
-    setViewed(null)
     if (shown && view === 'unopened') setView('split')
     send.mutate(turn, {
       onSuccess: (sent) => {
         if (sent.typedTurnsLeft === 0) setWall(true)
         const key = formKey(sent.form)
+        // New results replace the older list in the panel. A question about the cards keeps the list, and its selection.
+        if (key !== formKey(chatForm)) setViewed(null)
         if (!panelReady(sent.form) || key === formKey(chatForm)) return
         const next = { goalId: sent.id, key, turnId: sent.turns.findLast((t) => t.role === 'assistant')?.id ?? null, waited: false }
         // The card of the results before stays where it was, with its count.
@@ -274,11 +300,13 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       },
     })
   }
-  // With two cards or more selected, a question gets their comparison (T-49). On a phone the chat comes back, so the answer shows.
+  // One card picked: the message is a question about it. Two cards or more: it gets their comparison (T-49).
+  // On a phone the chat comes back, so the answer shows.
   const sendText = (text: string) => {
-    const compare = compareOf(picked, shown ? [...shown.found.results, ...shown.found.suggested].map((result) => pickOf(result).id) : [])
-    if (compare) setView('split')
-    submit({ body: { text, ...(compare && { compare }) }, text })
+    const compare = compareOf(picked, listed ? [...listed.results, ...listed.suggested].map((result) => pickOf(result).id) : [])
+    if (picked.length) setView('split')
+    const asked = questionOf(text, picked)
+    submit({ body: { text: asked, ...(compare && { compare }) }, text: asked })
   }
   const tap = (chip: ChipTap) => (atCap ? setWall(true) : submit({ body: { tap: chip }, text: tapText(chip, (slug) => areaLabels[slug] ?? slug) }))
   // A pick in the waitlist screen is a send, so the panel opens with the results once the search is ready.
@@ -297,13 +325,26 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const pickFollowUp = (chip: FollowUp) => {
     if ('tap' in chip) return tap(chip.tap)
     if (!signedIn) return setWall(true)
+    // The chip compares the newest results, so the panel shows them.
+    setViewed(null)
     setView('split')
     submit({ body: { text: chip.label, compare: chip.compare }, text: chip.label })
   }
-  const askInChat = (text: string) => {
-    setDraft(({ version }) => ({ text, version: version + 1 }))
+  // "Ask in chat" adds the card as a chip above the input and ticks it in the panel (Figma 63:3842). On a phone the chat comes back.
+  const askInChat = (asked: Picked) => {
+    pick(askedPick(picked, asked), asked)
     setView('split')
+    setFocus((n) => n + 1)
   }
+  const chipRow = picked.length > 0 && !atCap && (
+    <div className="flex flex-col gap-1.5 px-3">
+      <div role="group" aria-label="Selected cards" className="flex flex-wrap gap-2.5">
+        {picked.map((p) => <RemovableBadge key={p.id} tone="blue" label={p.name} onRemove={() => pick(toggledPick(picked, p))} />)}
+      </div>
+      {mine.refused && <p role="status" className="text-xs text-tertiary">You can ask about {maxCompared} cards at most. Remove one to add {mine.refused}.</p>}
+    </div>
+  )
+  const input = { chips: chipRow, focus, placeholder: askPlaceholder(picked) }
   const openCard = (next: OpenCard) => {
     setCard(next)
     setView((now) => (now === 'all' ? now : 'split'))
@@ -313,6 +354,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   const fresh = delivered && delivered.goalId === goalId && delivered.key === currentKey ? delivered : null
   // The mascot shows while new results load, and for at least 2 s after a reply brought them. A plain reply shows no wait.
   const waiting = currentKey !== null && !closed && (results.isPending || (fresh !== null && !fresh.waited))
+  const tipState = { results: shown !== null && !preview && !waiting, closed, dismissed: tipClosed, picking: picked.length > 0 }
   const anchorId = fresh?.turnId ?? turns.findLast((t) => t.role === 'assistant')?.id ?? null
   const blockKey = shown ? formKey(shown.form) : currentKey
   const resultsBlock = waiting
@@ -333,16 +375,19 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
   )
 
   if (loadingGoal) return <main className="flex flex-1 items-center justify-center" aria-busy="true"><Loading mascot="searching" /></main>
-  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText} draft={draft}>{chips}</EmptyChat>
+  if (!turns.length && pending === undefined && !ready) return <EmptyChat onSend={sendText} input={input}>{chips}</EmptyChat>
   const split = (shown !== null && (view === 'split' || view === 'all')) || waitlistOpen
-  // The panel shows the results of an older card once they load; until then, the newest results.
-  const viewing = viewed !== null && viewedResults.data !== undefined
   return (
     <main ref={mainBox} style={{ '--chat-w': `${chatWidth}px` } as CSSProperties}
       className={`relative grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_minmax(0,1fr)_auto] ${split ? 'lg:grid-cols-[minmax(0,var(--chat-w))_minmax(0,1fr)]' : ''}`}>
       {split && <SplitHandle width={chatWidth} box={mainBox} onWidth={setChatWidth} />}
-      {/* On a phone, "Show all" has its own header (146:29502). */}
-      {!preview && <GoalHeader title={goalName} closed={closed} phoneHidden={view === 'all'} onFound={() => setFoundOpen(true)} />}
+      {/* On a phone, "Show all" has its own header (146:29502). The commute tip of a phone sits under the goal header (148:33237). */}
+      {!preview && (
+        <div className="col-start-1 row-start-1 flex flex-col">
+          <GoalHeader title={goalName} closed={closed} phoneHidden={view === 'all'} onFound={() => setFoundOpen(true)} />
+          {signedIn && view !== 'all' && <CommuteTip look="phone" state={tipState} onClose={closeTip} />}
+        </div>
+      )}
       {/* The list grows upward, so a scroll of 0 shows the newest message. A short list stays at the top. */}
       <div ref={thread} className={`col-start-1 row-start-2 flex min-h-0 flex-col-reverse overflow-y-auto ${view === 'all' ? 'max-lg:hidden' : ''}`}>
         <ol className="mb-auto flex flex-col gap-5 px-5 py-4 lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:py-6" aria-live="polite">
@@ -383,19 +428,12 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
       </div>
       <div className={`col-start-1 row-start-3 px-5 pb-19.5 max-lg:typing:pb-3 ${afterTyping} lg:mx-auto lg:w-full lg:max-w-222 lg:px-6 lg:pb-5`}>
         {closed && goalId ? <ClosedBar goalId={goalId} /> : <>
-        {picked.length > 0 && !atCap && (
-          <div className="mb-3 flex flex-col gap-1.5 pt-2.5">
-            <div role="group" aria-label="Selected to compare" className="flex flex-wrap gap-2.5 px-3">
-              {picked.map((card) => <RemoveChip key={card.id} small label={card.name} onRemove={() => setPicked(toggledPick(picked, card))} />)}
-            </div>
-            {picked.length === 1 && <p className="text-xs text-tertiary">Select one more card to compare.</p>}
-          </div>
-        )}
-        {/* It comes after the first send, so it keeps the focus of the person. "Ask in chat" starts a new draft. */}
+        {/* On a computer the commute tip sits above the input (Alert 94:22712). */}
+        {signedIn && <CommuteTip look="computer" state={tipState} onClose={closeTip} />}
+        {/* It comes after the first send, so it keeps the focus of the person. */}
         {atCap
           ? <Button variant="primary" size="lg" className="w-full" onClick={() => setWall(true)}>{capWall.title}</Button>
-          : <ChatInput key={draft.version} grow="up" autoFocus={turns.length > 0 || pending !== undefined || draft.version > 0} initialText={draft.text} onSend={sendText}
-              placeholder={picked[0] && (picked[0].kind === 'place' ? 'Ask about the listings…' : 'Ask about these people…')} />}
+          : <ChatInput grow="up" autoFocus={turns.length > 0 || pending !== undefined} {...input} onSend={sendText} />}
         {typedTurnsLeft !== null && <p className="mt-1.5 text-xs text-tertiary">Free messages remaining: {typedTurnsLeft}</p>}
         </>}
       </div>
@@ -406,7 +444,7 @@ export function ChatScreen({ preview }: { preview?: Preview }) {
             notice={panel === 'results-with-line' && waitlist && !lineClosed ? <WaitlistLine {...waitlist} onClose={() => setLineClosed(true)} /> : undefined}
             more={viewing ? (viewedResults.hasNextPage ? viewedResults : undefined) : results.hasNextPage && formKey(shown.form) === formKey(form) ? results : undefined}
             onClose={() => { setViewed(null); setView('closed') }} onAskInChat={askInChat}
-            picks={viewing ? null : { picked, onPick: (card) => setPicked(toggledPick(picked, card)), onClear: () => setPicked([]) }} />
+            picks={{ picked, onPick: (p) => pick(toggledPick(picked, p), p), onClear: () => pick([]) }} />
         </div>
       )}
       {panel === 'waitlist' && waitlist && (
@@ -521,8 +559,15 @@ function Typing() {
   )
 }
 
+/** A question about one card shows the card as a chip over the message (`aboutOf`). */
 function UserText({ text }: { text: string }) {
-  return <p className="ml-auto w-fit max-w-63.5 rounded-xl border border-secondary bg-primary px-2.75 py-1.75 text-md whitespace-pre-wrap text-primary lg:max-w-100">{text}</p>
+  const about = aboutOf(text)
+  return (
+    <div className="ml-auto flex w-fit max-w-63.5 flex-col items-start gap-1.5 rounded-xl border border-secondary bg-primary px-2.75 py-1.75 lg:max-w-100">
+      {about && <Badge tone="blue" dot={false}>{about.name}</Badge>}
+      <p className="text-md whitespace-pre-wrap text-primary">{about?.text ?? text}</p>
+    </div>
+  )
 }
 
 /** A closed goal is read-only: its chat and its results stay, and "Reopen" opens it again (T-50). */

@@ -1,8 +1,8 @@
-import { lifestyleAxes, listingTitle, maxCompared, type CompareKind, type CompareRequest, type Comparison, type LifestyleAxis, type MatchResult } from '@roomsie/contract'
+import { compareKinds, lifestyleAxes, listingTitle, maxCompared, type CompareKind, type CompareRequest, type Comparison, type LifestyleAxis, type MatchResult } from '@roomsie/contract'
 import { labels, rupees } from './listing-steps'
 import { budgetLine } from './person'
 import { ifSet, shortDate } from './place-detail'
-import { profileLabels } from './profile-form'
+import { firstName, profileLabels } from './profile-form'
 
 /** A selected card, with the name of its chip above the input (T-49). */
 export type Picked = { kind: CompareKind; id: string; name: string }
@@ -11,10 +11,52 @@ export type Picks = { picked: Picked[]; onPick: (card: Picked) => void; onClear:
 export const pickOf = (result: MatchResult): Picked =>
   result.kind === 'person' ? { kind: 'person', id: result.card.id, name: result.card.fullName } : { kind: 'place', id: result.listing.id, name: listingTitle(result.listing) }
 
+/** The "Select" tick: a second tap clears the card. A card of the other kind starts a new selection. A fifth card does not go in (`isFull`). */
 export function toggledPick(picked: Picked[], card: Picked): Picked[] {
   if (picked.some((p) => p.id === card.id)) return picked.filter((p) => p.id !== card.id)
   if (picked[0] && picked[0].kind !== card.kind) return [card]
   return picked.length < maxCompared ? [...picked, card] : picked
+}
+
+/** "Ask in chat" adds its card as a chip and never removes it. The other rules are those of the tick. */
+export const askedPick = (picked: Picked[], card: Picked): Picked[] => (picked.some((p) => p.id === card.id) ? picked : toggledPick(picked, card))
+
+/** True when the card cannot go in: four cards of its kind are in, the most that a comparison takes. The chat then says why. */
+export const isFull = (picked: Picked[], card: Picked) =>
+  picked.length >= maxCompared && picked[0]!.kind === card.kind && !picked.some((p) => p.id === card.id)
+
+/**
+ * The words of a question about one card. The API reads them in the normal chat. The chat shows the name as a chip
+ * in the bubble (`aboutOf`). A person goes by the first name only, as before, so the model gets no full name.
+ * Two cards or more go as `compare`, and the text stays as the person typed it.
+ */
+export function questionOf(text: string, picked: Picked[]) {
+  if (picked.length !== 1) return text
+  const card = picked[0]!
+  return `About “${card.kind === 'person' ? firstName(card.name) : card.name}”: ${text}`
+}
+
+/** The words in the empty chat input while cards are picked ("Ask about the listings...", 63:4472). Undefined: the words of a new search. */
+export function askPlaceholder(picked: Picked[]) {
+  if (!picked.length) return undefined
+  if (picked[0]!.kind === 'place') return picked.length === 1 ? 'Ask about this listing…' : 'Ask about the listings…'
+  return picked.length === 1 ? 'Ask about this person…' : 'Ask about these people…'
+}
+
+/** The card and the message of a question about one card, or null for each other message. */
+export function aboutOf(text: string): { name: string; text: string } | null {
+  const match = /^About “([^”]+)”: ([\s\S]+)$/.exec(text)
+  return match ? { name: match[1]!, text: match[2]! } : null
+}
+
+/** "Ask in chat" on the page of a card leaves the card in the session storage of the tab. Null: nothing, or a value that is not a card. */
+export function storedPick(value: string | null): Picked | null {
+  try {
+    const card = JSON.parse(value ?? 'null') as Partial<Picked> | null
+    return card && compareKinds.includes(card.kind!) && typeof card.id === 'string' && typeof card.name === 'string' ? { kind: card.kind!, id: card.id, name: card.name } : null
+  } catch {
+    return null
+  }
 }
 
 /** The cards in the order of the results, which the match query gives, so Option 1 is the best match. Null: fewer than two cards. */

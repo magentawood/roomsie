@@ -9,6 +9,7 @@ import {
   type LifestyleAxis, type ProfileEditBody, type ProfileResponse,
 } from '@roomsie/contract'
 import { api, errorText } from '../../lib/api'
+import { commuteField } from '../../lib/chat'
 import { useUser } from '../../lib/auth'
 import {
   ages, bandOf, cardBannerState, describesYou, editBody, firstName, formOf, pickDescribesYou, profileLabels, profileSections, withMustHave, type ProfileForm,
@@ -19,6 +20,7 @@ import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import { ChoiceChips } from '../ui/choice'
 import { DateInput, Field, Select, TextArea, TextInput } from '../ui/field'
+import { HashTarget } from '../ui/hash-target'
 import { CloseButton } from '../ui/modal'
 import { Toggle } from '../ui/toggle'
 import { VerifyRow } from '../verification/verify-row'
@@ -213,7 +215,10 @@ export function ProfileEditor({ profile }: { profile: ProfileResponse }) {
           <Field label="Moving Date">
             {(id) => <DateInput id={id} size="xs" value={draft.moveDate} onChange={(moveDate) => set({ moveDate })} />}
           </Field>
-          <TextInput size="xs" label="Commute Address" value={draft.commuteAddress} onChange={(commuteAddress) => set({ commuteAddress })} placeholder="Eg: Building A, Chandni chowk, Andheri…" maxLength={profileTextLimits.commuteAddress} />
+          {/* The commute tip of the chat opens this field (`commuteHref`). */}
+          <HashTarget id={commuteField}>
+            <TextInput size="xs" label="Commute Address" value={draft.commuteAddress} onChange={(commuteAddress) => set({ commuteAddress })} placeholder="Eg: Building A, Chandni chowk, Andheri…" maxLength={profileTextLimits.commuteAddress} />
+          </HashTarget>
         </div>
       </Section>
 

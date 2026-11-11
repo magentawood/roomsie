@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Comparison } from '@roomsie/contract'
 import { toggled } from './chat'
-import { compareOf, compareRefusal, firstFields, fieldsOf, tableOf, toggledPick, type Picked } from './compare'
+import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, firstFields, fieldsOf, isFull, questionOf, storedPick, tableOf, toggledPick, type Picked } from './compare'
 
 const place = (id: string): Picked => ({ kind: 'place', id, name: `Place ${id}` })
 const person = (id: string): Picked => ({ kind: 'person', id, name: `Person ${id}` })
@@ -24,6 +24,55 @@ describe('the selection of cards (T-49)', () => {
   it('asks for a comparison only with two cards or more, in the order of the results', () => {
     expect(compareOf([place('a')], ['a'])).toBeNull()
     expect(compareOf([place('c'), place('a'), place('x')], ['a', 'b', 'c'])).toEqual({ kind: 'place', ids: ['a', 'c', 'x'] })
+  })
+})
+
+describe('"Ask in chat": the card as a chip above the input', () => {
+  it('adds the card, and a second "Ask in chat" keeps it', () => {
+    expect(askedPick([], place('a'))).toEqual([place('a')])
+    expect(askedPick([place('a'), place('b')], place('a'))).toEqual([place('a'), place('b')])
+  })
+
+  it('starts a new selection with a card of the other kind', () => {
+    expect(askedPick([place('a'), place('b')], person('p'))).toEqual([person('p')])
+  })
+
+  it('takes no fifth card of a kind, and says so', () => {
+    const four = ['a', 'b', 'c', 'd'].map(place)
+    expect(askedPick(four, place('e'))).toEqual(four)
+    expect(isFull(four, place('e'))).toBe(true)
+    expect(isFull(four, place('a'))).toBe(false)
+    expect(isFull(four, person('p'))).toBe(false)
+    expect(isFull(four.slice(1), place('e'))).toBe(false)
+  })
+
+  it('sends a question about one card with its name, and a comparison as the person typed it', () => {
+    const question = questionOf('is it furnished?', [place('a')])
+    expect(question).toBe('About “Place a”: is it furnished?')
+    expect(aboutOf(question)).toEqual({ name: 'Place a', text: 'is it furnished?' })
+    expect(questionOf('which is cheaper?', [place('a'), place('b')])).toBe('which is cheaper?')
+    expect(questionOf('is she vegetarian?', [{ kind: 'person', id: 'p', name: 'Asha Rao' }])).toBe('About “Asha”: is she vegetarian?')
+    expect(questionOf('2 bhk in Bandra', [])).toBe('2 bhk in Bandra')
+  })
+
+  it('asks about one card or about the cards in the empty input', () => {
+    expect(askPlaceholder([])).toBeUndefined()
+    expect(askPlaceholder([place('a')])).toBe('Ask about this listing…')
+    expect(askPlaceholder([place('a'), place('b')])).toBe('Ask about the listings…')
+    expect(askPlaceholder([person('p')])).toBe('Ask about this person…')
+    expect(askPlaceholder([person('p'), person('q')])).toBe('Ask about these people…')
+  })
+
+  it('shows a chip only for a question that the chat made, also over two lines', () => {
+    expect(aboutOf('About “Place a”: first line\nsecond line')).toEqual({ name: 'Place a', text: 'first line\nsecond line' })
+    expect(aboutOf('About Bandra: is it safe?')).toBeNull()
+    expect(aboutOf('2 bhk in Bandra')).toBeNull()
+  })
+
+  it('reads the card that a page left for the chat, and nothing else', () => {
+    expect(storedPick(JSON.stringify(place('a')))).toEqual(place('a'))
+    expect(storedPick(JSON.stringify({ kind: 'person', id: 'p', name: 'Person p', extra: 1 }))).toEqual(person('p'))
+    for (const value of [null, '', 'not json', '{"kind":"car","id":"a","name":"x"}', '{"kind":"place","id":1,"name":"x"}', '"About x: "']) expect(storedPick(value)).toBeNull()
   })
 })
 

@@ -126,23 +126,21 @@ function NoResults({ suggested, picks, onOpen }: { suggested: MatchResult[]; pic
   )
 }
 
-const noPicks: Picks = { picked: [], onPick: () => {}, onClear: () => {} }
-
 /**
  * The results panel of flow 02: a pure function of Form A (PD6c). `form`: the form of the results. `card`: the card open in the panel,
  * which the chat holds, so an option of a comparison opens here too.
  */
 export function ResultsPanel({ form, found, held: { hold, release }, more, sample, notice, picks: pickProps, card, onCard, onClose, onAskInChat }: {
   form: FormA; found: Found; held: Pick<ReturnType<typeof useHeldResults>, 'hold' | 'release'>; more?: More; sample?: boolean; notice?: ReactNode
-  /** null: the results of an older card of the chat, which have no selection. */
-  picks: Picks | null; card: OpenCard | null; onCard: (card: OpenCard | null) => void; onClose: () => void; onAskInChat: (draft: string) => void
+  /** The selection of the list on the screen: the newest results, or the results of an older card (T-49). */
+  picks: Picks; card: OpenCard | null; onCard: (card: OpenCard | null) => void; onClose: () => void; onAskInChat: (card: Picked) => void
 }) {
   const { user, loading } = useAuth()
   const [tapped, setTapped] = useState<MatchResult | null>(null)
   // A selection needs a sign-in, as the opening of a card (PD6b).
   const [wall, setWall] = useState(false)
-  const { picked, onPick, onClear } = pickProps ?? noPicks
-  const picks = sample || !pickProps ? undefined : { picked, onPick: (card: Picked) => (user ? onPick(card) : setWall(true)) }
+  const { picked, onPick, onClear } = pickProps
+  const picks = sample ? undefined : { picked, onPick: (card: Picked) => (user ? onPick(card) : setWall(true)) }
 
   // A guest signs in to open one card (PD6b), and the card opens after the sign-in. The results stay behind the wall.
   // The tap waits for the auth check, so a signed-in person never sees the wall, as in the app shell.
@@ -160,7 +158,7 @@ export function ResultsPanel({ form, found, held: { hold, release }, more, sampl
   const panel: DetailPanel = {
     onBack: closeDetail,
     onClose: () => { closeDetail(); onClose() },
-    onAskInChat: (draft) => { onAskInChat(draft); closeDetail() },
+    onAskInChat: (asked) => { onAskInChat(asked); closeDetail() },
     against: { form, bestMatch: result?.bestMatch },
   }
 

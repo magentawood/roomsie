@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { formA, type ChipSlot, type GoalResponse } from '@roomsie/contract'
-import { chatStorage, chipsOf, forgetChat, keyAction, lastOpenGoal, placeTypes, readStored, sameMoveOf, tapRefusal, toggled, writeStored } from './chat'
+import { chatStorage, chipsOf, commuteTipShows, forgetChat, keyAction, lastOpenGoal, placeTypes, readStored, sameMoveOf, tapRefusal, toggled, writeStored } from './chat'
 
 describe('the send rule of the chat input', () => {
   it.each([
@@ -37,6 +37,17 @@ describe('the stored chat', () => {
     expect([readStored(chatStorage.waitlist), readStored(chatStorage.visitorKey), readStored(chatStorage.tabGoal)]).toEqual([null, null, null])
   })
 
+  it('keeps the X of the commute tip for good on the browser, also after a sign-out', () => {
+    const [local, session] = [storage(), storage()]
+    vi.stubGlobal('localStorage', local)
+    vi.stubGlobal('sessionStorage', session)
+    writeStored(chatStorage.commuteTip, 'closed')
+    writeStored(chatStorage.asked, '{}')
+    expect([[...local.store.keys()], [...session.store.keys()]]).toEqual([[chatStorage.commuteTip], [chatStorage.asked]])
+    forgetChat()
+    expect([readStored(chatStorage.commuteTip), readStored(chatStorage.asked)]).toEqual(['closed', null])
+  })
+
   it('reads nothing, and does not throw, where the browser blocks the storage', () => {
     vi.stubGlobal('sessionStorage', { getItem: () => { throw new Error('blocked') }, setItem: () => { throw new Error('blocked') }, removeItem: () => { throw new Error('blocked') } })
     expect(readStored(chatStorage.visitorKey)).toBeNull()
@@ -53,6 +64,25 @@ describe('the chat of "Ask in chat" on the page of a card', () => {
     // A closed goal takes no message.
     expect(lastOpenGoal('closed', goals)).toBe('newest')
     expect(lastOpenGoal(null, [])).toBeNull()
+  })
+})
+
+describe('the commute tip (Figma 94:22712)', () => {
+  const shown = { results: true, closed: false, dismissed: false, picking: false }
+  const noCommute = { commuteAddress: null }
+
+  it('shows after results, to a person whose profile has no commute address', () => {
+    expect(commuteTipShows(shown, noCommute)).toBe(true)
+    expect(commuteTipShows(shown, { commuteAddress: 'Andheri East' })).toBe(false)
+  })
+
+  it('waits for the profile, and does not show with no profile, as the tap must land on the field', () => {
+    expect(commuteTipShows(shown, undefined)).toBe(false)
+    expect(commuteTipShows(shown, null)).toBe(false)
+  })
+
+  it('does not show before results, in a closed goal, after its X, or while cards are selected', () => {
+    for (const patch of [{ results: false }, { closed: true }, { dismissed: true }, { picking: true }]) expect(commuteTipShows({ ...shown, ...patch }, noCommute)).toBe(false)
   })
 })
 

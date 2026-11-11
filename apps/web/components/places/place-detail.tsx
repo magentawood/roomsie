@@ -115,7 +115,7 @@ export function PlaceDetail({ listing, panel }: { listing: ListingResponse; pane
   const { share, status, dialog: shareDialog } = useShare(title, { kind: 'places', id: listing.id })
   const routerBack = useBack(savedHref.places)
   const back = panel?.onBack ?? routerBack
-  const askInChat = !listing.mine && <AskInChat draft={`About ${title}: `} panel={panel} />
+  const askInChat = !listing.mine && <AskInChat card={{ kind: 'place', id: listing.id, name: title }} panel={panel} />
   const where = whereLine(listing, listing.areaSlug ? areaLabels[listing.areaSlug] : undefined)
   const address = addressLine(listing)
   const money = moveIn(listing)

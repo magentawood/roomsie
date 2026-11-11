@@ -6,6 +6,7 @@ import { ArrowLeft, DotsVertical, Home02, Plus, User01 } from '@untitledui/icons
 import type { CompareKind } from '@roomsie/contract'
 import { ApiError, errorText } from '../../lib/api'
 import { chatStorage, lastOpenGoal, readStored, writeStored } from '../../lib/chat'
+import type { Picked } from '../../lib/compare'
 import { goalHref, newGoalHref } from '../../lib/goals'
 import { didntSay } from '../../lib/place-detail'
 import { useGoals } from '../../lib/queries'
@@ -18,17 +19,20 @@ import { ShareDialog } from './share-dialog'
 
 /**
  * A detail in the results panel of the chat (T-15). On a phone it is a layer over the chat. `onClose` closes the detail and the panel,
- * as the X of the panel. `onAskInChat` puts the draft in the chat input. `against`: what the match box compares with.
+ * as the X of the panel. `onAskInChat` adds the card as a chip above the chat input. `against`: what the match box compares with.
  */
-export type DetailPanel = { onBack: () => void; onClose: () => void; onAskInChat: (draft: string) => void; against: Against }
+export type DetailPanel = { onBack: () => void; onClose: () => void; onAskInChat: (card: Picked) => void; against: Against }
 
-/** "Ask in chat" of a detail. In the panel it fills the chat input. On a page it opens the last chat, and the input takes the draft. */
-export function AskInChat({ draft, panel }: { draft: string; panel?: DetailPanel }) {
+/**
+ * "Ask in chat" of a detail: the card goes as a blue chip above the chat input (Figma 63:3842), and the person types the question.
+ * In the panel the chat adds it at once. On a page it opens the last chat, which adds it.
+ */
+export function AskInChat({ card, panel }: { card: Picked; panel?: DetailPanel }) {
   const router = useRouter()
   const goals = useGoals()
   const ask = () => {
-    if (panel) return panel.onAskInChat(draft)
-    writeStored(chatStorage.draft, draft)
+    if (panel) return panel.onAskInChat(card)
+    writeStored(chatStorage.asked, JSON.stringify(card))
     const id = lastOpenGoal(readStored(chatStorage.tabGoal), goals.data?.goals ?? [])
     router.push(id ? goalHref(id) : newGoalHref)
   }

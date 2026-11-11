@@ -35,11 +35,15 @@ details.callout[open] summary{color:var(--fg)}
 </style>
 <main>
 <h1 id="comparing-cards">Comparing cards</h1>
-<p><strong>In one line:</strong> a person selects 2 to 4 places or people in the results and asks a question, and code builds a table of their database fields, with no model that reads a card.</p>
+<p><strong>In one line:</strong> a person selects 1 to 4 places or people in the results and asks a question. With 2 cards or more, code builds a table of their database fields, with no model that reads a card.</p>
 <h2 id="what-it-is">What it is</h2>
 <ul>
-<li><strong>The selection.</strong> Each card of the results panel has a "Select" tick. A person picks 2 to 4 cards of one kind: places or people. The panel shows "N Selected" with a clear button, and the chat shows the cards as chips above the input, with "Ask about the listings…". A selection needs a sign-in, as the opening of a card (<a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>).</li>
-<li><strong>The trigger.</strong> The turn sends <code>compare</code>: the kind and the ids, in the order of the results. When the router labels the message as a question, and not as filters, the reply is the comparison. A message with filters goes to the normal chat.</li>
+<li><strong>The selection.</strong> Each card of the results panel has a "Select" tick. "Ask in chat" on a card selects it too. A person selects 1 to 4 cards of one kind: places or people. A card of the other kind starts a new selection. The panel shows "N Selected" with a clear button. A selection needs a sign-in, as a card does (<a href="../decisions/pd-06b-login-gate-and-search.md">PD6b</a>).</li>
+<li><strong>The chips.</strong> The chat shows each selected card as a blue chip, in a grey box with the input (Figma 63:4472). The X of a chip removes the card, and its tick goes off. The input says "Ask about this listing…" for one place, and "Ask about the listings…" for more.</li>
+<li><strong>"Ask in chat"</strong> never writes in the input. In the panel, it closes the detail, adds the card and puts the focus in the input. On the page of a card, it opens the last chat, and that chat adds the card. Session storage carries the card (<code>chatStorage.asked</code>).</li>
+<li><strong>One card.</strong> The message goes to the normal chat as "About “<name>”: <message>". A person goes by the first name only. The bubble of the person shows the name as a chip over the message, also after a reload (<code>aboutOf</code>).</li>
+<li><strong>Two to four cards.</strong> The turn sends <code>compare</code>: the kind and the ids, in the order of the results. When the router labels the message as a question, and not as filters, the reply is the comparison. A message with filters goes to the normal chat.</li>
+<li><strong>A fifth card</strong> does not go in. A line under the chips says "You can ask about 4 cards at most. Remove one to add <name>."</li>
 <li><strong>The reply.</strong> One line names Option 1, the best match of the results, and for places the option with the least cash to move in. A 2b question gets the hand-off line first (<a href="../decisions/pd-10-scope-bands.md">PD10</a>). The open question and the conflicts of the last reply stay open.</li>
 <li><strong>The table.</strong> Places start with Rent, Move-in cash, Deposit and Station. People start with Age, Job, Budget, Move date, Food, Smoking and Verified. "Change the fields" adds or removes rows, with no new request. Each option opens its card in the results panel. A click with Ctrl or Cmd opens the page of the card.</li>
 </ul>
@@ -73,8 +77,16 @@ details.callout[open] summary{color:var(--fg)}
 <td><code>forgetInComparisons()</code> in <code>apps/api/src/goals/store.ts</code>, called by the account deletion and the block</td>
 </tr>
 <tr>
-<td>The selection, the rows and the picker</td>
+<td>The selection, the words of one card, the rows and the picker</td>
 <td><code>apps/web/lib/compare.ts</code>, with unit tests</td>
+</tr>
+<tr>
+<td>The chips and the selection of each list</td>
+<td><code>apps/web/components/chat/chat-screen.tsx</code>, and <code>RemovableBadge</code> in <code>apps/web/components/ui/badge.tsx</code></td>
+</tr>
+<tr>
+<td>"Ask in chat"</td>
+<td><code>AskInChat</code> in <code>apps/web/components/detail/parts.tsx</code></td>
 </tr>
 <tr>
 <td>The table on the screen</td>
@@ -86,11 +98,14 @@ details.callout[open] summary{color:var(--fg)}
 <li><strong>The cards that a person can see.</strong> The API reads each card through the visibility rules of the results, and never the own listing of the person. A card that the person cannot see gets 400 <code>not valid: compare</code>, and a guest gets 401, both before any model call.</li>
 <li><strong>Only the fields of the table.</strong> The options are strict objects. A person gives only what the card shows to others: never the hidden religion or community (<a href="../decisions/pd-03c-exclusionary-preferences.md">PD3c</a>), and never the bio.</li>
 <li><strong>The values of that time.</strong> The assistant turn keeps the table, so a reload shows it again. When a person deletes the account, each saved comparison shows "Deleted user" in that column (<a href="../decisions/pd-19-retention.md">PD19</a>). After a block, each of the two people shows "Not available" in the saved comparisons of the other (<a href="moderation.html">Moderation</a>).</li>
-<li><strong>The selection belongs to one list of results.</strong> A new search starts a new selection, so Option 1 is always the best match.</li>
+<li><strong>The selection belongs to the list of results in the panel:</strong> the newest list, or the list of an older results card. Each list keeps its own selection. A new search starts a new selection, so Option 1 is the best match of the list.</li>
+<li><strong>A send keeps the selection,</strong> so the next question asks about the same cards. A reply with new results shows the newest list.</li>
 </ul>
 <h2 id="the-choice-we-made">The choice we made</h2>
 <ul>
 <li>Code builds the comparison, and no model reads a card, so a lister's text cannot change the answer: <a href="../decisions/pd-10-scope-bands.md">PD10</a> and <a href="../scope-policy.md">scope-policy.md</a>, and the spec of T-49.</li>
+<li>"Ask in chat" adds a chip, as the designs show (the founders, 2026-11-10). A question about one card keeps the words "About …" in the text, so the API needs no change. The chip in the bubble shows the person what the question was about.</li>
+<li>A fifth card does not go in, and the chat tells why. A tick that does nothing looks broken. To drop the oldest card changes the comparison with no notice.</li>
 </ul>
 <h2 id="gotchas">Gotchas</h2>
 <ul>
@@ -101,5 +116,6 @@ details.callout[open] summary{color:var(--fg)}
 <h2 id="tickets">Tickets</h2>
 <ul>
 <li>T-49: the selection, the comparison and the field picker.</li>
+<li>2026-11-10: the chips of "Ask in chat", a question about one card, and the selection of an older results card.</li>
 </ul>
 </main>
