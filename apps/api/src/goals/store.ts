@@ -102,10 +102,12 @@ export const titleOf = async (db: Db, form: FormA) => goalTitle(form, areaNameIn
 
 /** The 50 newest goals of the asker: a list that grows with each new goal has a limit (T-50). */
 export async function goalsOf(db: Db, asker: Asker) {
-  const rows = await db.select({ id: goals.id, form: goals.form, status: goals.status, createdAt: goals.createdAt })
+  const rows = await db.select({ id: goals.id, form: goals.form, status: goals.status, createdAt: goals.createdAt, updatedAt: goals.updatedAt })
     .from(goals).where(ownedBy(asker)).orderBy(desc(goals.createdAt)).limit(50)
   const areaName = areaNameIn(await catalogueOf(db))
-  return rows.map(({ id, form, status, createdAt }) => ({ id, status, title: goalTitle(formA.parse(form), areaName), createdAt: createdAt.toISOString() }))
+  return rows.map(({ id, form, status, createdAt, updatedAt }) => ({
+    id, status, title: goalTitle(formA.parse(form), areaName), createdAt: createdAt.toISOString(), updatedAt: updatedAt.toISOString(),
+  }))
 }
 
 /** A close or a reopen by the owner (T-50). Null: no goal of the asker. */

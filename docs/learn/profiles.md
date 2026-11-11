@@ -9,6 +9,7 @@
 - A card is **live** when the name, the age, who is moving, the areas and the budget are complete, unless "Hide my card" is on. If not, it is a draft, or hidden. A budget is complete when its lowest or its highest amount is set, so the band "Above ₹35k" counts.
 - Reports can hide a live card until a moderator reviews it. The owner then sees "Hidden for review" ([Moderation](moderation.md)).
 - A **parent** can run the card of a son or daughter of 18 or more. The parent says what the son or daughter does, and the card shows "Managed by a parent".
+- **"Fill using our chat"** copies the answers of a chat into the profile ([ADR-0017](../decisions/0017-schema-v1-shape.md)). `chatFill()` in `apps/web/lib/profile-form.ts` turns the stated answers of the goal into a profile edit, and `FillFromChat` in `apps/web/components/profile/fill-from-chat.tsx` asks first. With nothing new, it says that the profile is up to date.
 
 ## How it fits our project
 
@@ -35,7 +36,7 @@
 
 ## The choice we made
 
-- The fields, adults only, the parent, the visibility rule, the close of the banner and Help: [PD16](../decisions/pd-16-profiles.md). The Form A fields: [PD15](../decisions/pd-15-form-a-contract.md). The gender: [PD8](../decisions/pd-08-verification.md).
+- The fields, adults only, the parent, the visibility rule, the close of the banner, Help and "Fill using our chat": [PD16](../decisions/pd-16-profiles.md). The Form A fields: [PD15](../decisions/pd-15-form-a-contract.md). The gender: [PD8](../decisions/pd-08-verification.md).
 - The routes, the follow-up choice of a parent and the lister: the spec of T-16a ([#36](https://github.com/magentawood/roomsie/issues/36)).
 - The create dialog, the page, the photos that save at once, the budget bands and the delete: the spec of T-16b ([#98](https://github.com/magentawood/roomsie/issues/98)). The look of the create dialog of flow 01, and when it shows: the spec of T-60 ([#208](https://github.com/magentawood/roomsie/issues/208)).
 
@@ -45,7 +46,7 @@
 - **A photo change and the deletion of an account lock the same account row.** The deletion reads and deletes the photos while it holds the lock, so the deletion cannot miss a new photo.
 - **R2 fails, nothing changes.** A removed photo leaves R2 before its row. If R2 fails, the edit gives 502.
 - **One profile for each account.** A second create gives 409.
-- **"Fill using our chat" does not show.** The designs show it in the page header, with the pop-up "Overwrite profile changes?". It copies the answers of a goal into the profile ([ADR-0017](../decisions/0017-schema-v1-shape.md)). No route does this yet.
+- **"Fill using our chat" needs `updatedAt` in the goal list.** An older API sends none, and the button then reads the newest open goal.
 
 ## Tickets
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import type { ProfileResponse } from '@roomsie/contract'
-import { bandOf, cardBannerState, describesYou, editBody, firstName, formOf, pickDescribesYou, withMustHave } from './profile-form'
+import { formA, type ProfileResponse } from '@roomsie/contract'
+import { bandOf, cardBannerState, chatFill, describesYou, editBody, firstName, formOf, newestOpenGoal, pickDescribesYou, withMustHave } from './profile-form'
 
 const saved: ProfileResponse = {
   id: '0199e4b0-0000-7000-8000-000000000001', fullName: 'Divya Sharma', age: 24, gender: 'female', religion: null, community: null, jobRole: null, commuteAddress: null, bio: null,
@@ -70,5 +70,46 @@ describe('the state that the banner of the card tells', () => {
     expect(cardBannerState({ ...saved, hiddenForReview: true })).toBe('review')
     expect(cardBannerState({ ...saved, visibility: 'draft', missing: ['whosMoving', 'areas'] })).toBe('draft:whosMoving,areas')
     expect(cardBannerState({ ...saved, visibility: 'draft', missing: ['areas'] })).toBe('draft:areas')
+  })
+})
+
+describe('"Fill using our chat"', () => {
+  const stated = <V>(value: V) => ({ source: 'stated', value })
+  const fallback = <V>(value: V) => ({ source: 'default', value })
+
+  it('takes only what the person said and the profile does not have', () => {
+    const form = formA.parse({
+      intent: stated(['room', 'pg']), whosMoving: stated('student'), areas: stated(['bandra-santacruz']), budget: stated({ min: 12000, max: 18000 }),
+      moveDate: fallback('2026-12-01'), lifestyle: { food: stated('veg'), smoking: stated('non_smoker'), sleep: stated('unclear') },
+      mustHaves: { veg_kitchen: stated('dealbreaker'), non_smokers: stated('prefer'), tidy_flatmates: fallback('prefer') },
+    })
+    expect(chatFill(form, saved)).toEqual({
+      intent: 'room', whosMoving: 'student', budgetMin: 12000, budgetMax: 18000, lifestyle: { smoking: 'non_smoker' }, mustHaves: { non_smokers: 'prefer' },
+    })
+  })
+
+  it('takes people to rent with as the search of the card, and gives nothing when the chat has nothing new', () => {
+    expect(chatFill(formA.parse({ intent: stated(['flatmates']) }), saved)).toEqual({ intent: 'flatmates' })
+    expect(chatFill(formA.parse({ areas: stated(['bandra-santacruz']), lifestyle: { food: stated('veg') } }), saved)).toEqual({})
+  })
+
+  it('keeps "Women only" and "Men only" apart, and a parent\'s card takes only a type of a son or daughter', () => {
+    const withMen = { ...saved, mustHaves: { men_only: 'prefer' as const } }
+    expect(chatFill(formA.parse({ mustHaves: { women_only: stated('dealbreaker') } }), withMen).mustHaves).toEqual({ women_only: 'dealbreaker', men_only: null })
+    expect(chatFill(formA.parse({ mustHaves: { women_only: stated('prefer'), men_only: stated('prefer') } }), saved)).toEqual({})
+    const parent = { ...saved, managedByParent: true, whosMoving: 'student' as const }
+    expect(chatFill(formA.parse({ whosMoving: stated('couple') }), parent)).toEqual({})
+    expect(chatFill(formA.parse({ whosMoving: stated('working') }), parent)).toEqual({ whosMoving: 'working' })
+  })
+
+  it('reads the open chat that the person used last', () => {
+    const goal = (id: string, status: 'open' | 'closed', createdAt: string, updatedAt: string | null) => ({ id, title: id, status, createdAt, updatedAt })
+    expect(newestOpenGoal([
+      goal('new-but-idle', 'open', '2026-11-10T10:00:00.000Z', '2026-11-10T10:00:00.000Z'),
+      goal('old-but-used', 'open', '2026-11-01T10:00:00.000Z', '2026-11-10T12:00:00.000Z'),
+      goal('closed', 'closed', '2026-11-11T10:00:00.000Z', '2026-11-11T10:00:00.000Z'),
+    ])?.id).toBe('old-but-used')
+    expect(newestOpenGoal([goal('older api', 'open', '2026-11-01T10:00:00.000Z', null)])?.id).toBe('older api')
+    expect(newestOpenGoal([])).toBeNull()
   })
 })

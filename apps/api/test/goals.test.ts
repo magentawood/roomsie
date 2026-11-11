@@ -866,19 +866,23 @@ describe('the list, the close and the reopen of goals (T-50)', () => {
     return (await analytics.db.select().from(eventRows).where(eq(eventRows.name, name)).orderBy(eventRows.createdAt, eventRows.id)).map((e) => e.fields)
   }
 
-  it('lists the goals of a person and of a visitor, newest first, with their titles', async () => {
+  it('lists the goals of a person and of a visitor, newest first, with their titles and their last use', async () => {
     const older = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals', { intent: 'room', area: 'andheri-goregaon' })).json())
     const newer = newGoalResponse.parse((await t.call('asha', 'POST', '/v1/goals')).json())
     expect((await listOf('asha')).slice(0, 2)).toEqual([
-      { id: newer.id, title: 'New goal', status: 'open', createdAt: expect.any(String) },
-      { id: older.id, title: 'Room hunting in Andheri–Goregaon', status: 'open', createdAt: expect.any(String) },
+      { id: newer.id, title: 'New goal', status: 'open', createdAt: expect.any(String), updatedAt: expect.any(String) },
+      { id: older.id, title: 'Room hunting in Andheri–Goregaon', status: 'open', createdAt: expect.any(String), updatedAt: expect.any(String) },
     ])
     // The goal and each turn give the same title, so the header and the list agree.
     expect(goalResponse.parse((await t.call('asha', 'GET', `/v1/goals/${older.id}`)).json()).title).toBe('Room hunting in Andheri–Goregaon')
+    const lastUse = async () => (await listOf('asha')).find((goal) => goal.id === newer.id)!.updatedAt!
+    const before = await lastUse()
     const tapped = await t.call('asha', 'POST', `/v1/goals/${newer.id}/turns`, { tap: { slot: 'areas', value: ['bandra-santacruz'] } })
     expect(turnResponse.parse(tapped.json()).title).toBe('Looking in Bandra–Santacruz')
+    // A turn moves the last use of the goal, which "Fill using our chat" of the profile reads.
+    expect(await lastUse() > before).toBe(true)
     const visitor = await visitorGoal()
-    expect(await listOf(visitor)).toEqual([{ id: visitor.id, title: 'New goal', status: 'open', createdAt: expect.any(String) }])
+    expect(await listOf(visitor)).toEqual([{ id: visitor.id, title: 'New goal', status: 'open', createdAt: expect.any(String), updatedAt: expect.any(String) }])
     expect(goalsResponse.parse((await t.app.inject({ method: 'GET', url: '/v1/goals' })).json()).goals).toEqual([])
   })
 
