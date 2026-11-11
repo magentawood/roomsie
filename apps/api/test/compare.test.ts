@@ -112,6 +112,8 @@ describe('the comparison of selected cards (T-49)', () => {
     const sent = JSON.parse(sentMessageOf(requests.advisor[0]!)) as Record<string, unknown>
     expect(sent).toEqual({
       version: 1, language: 'en', question: 'which one is closer to Mithibai college? And the commute options?', cardsAre: 'selected',
+      // The question names a place, so code measures the trip from the card to it.
+      trips: [expect.objectContaining({ from: 'This place', to: 'Mithibai College' })],
       cards: [{
         place: 'New listing', area: 'Bandra', nearestStation: 'Bandra', walkToStation: 'about 10 minutes on foot', rent: 20_000, deposit: 40_000,
         maintenance: 1000, brokerage: null, moveInCash: 60_000, availableFrom: '2026-12-01', furnishing: 'Semi furnished', verified: false,
@@ -184,6 +186,31 @@ describe('the comparison of selected cards (T-49)', () => {
     const visitor = newGoalResponse.parse((await t.call(null, 'POST', '/v1/goals')).json())
     const guest = await t.app.inject({ method: 'POST', url: `/v1/goals/${visitor.id}/turns`, payload: { text: 'how far is it?', shown: { kind: 'place', ids: [ids.owner] } }, headers: { [visitorKeyHeader]: visitor.visitorKey! } })
     expect(guest.statusCode).toBe(200)
+  })
+
+  it('measures the trip of a distance question from the card to the place it names, for the advisor and the map', async () => {
+    const requests = fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }), advisor: { deepseek: [modelAnswer(JSON.stringify({ text: '- This place is not far.' }))] } })
+    const res = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'how far is it from Mithibai College?', compare: { kind: 'place', ids: [ids.owner] } })
+    const reply = turnResponse.parse(res.json()).turns[1]!
+    // The listing is at Bandra station, about 6 km from the college.
+    expect(reply.trips).toHaveLength(1)
+    expect(reply.trips[0]).toMatchObject({ option: null, from: { name: 'This place' }, to: { name: 'Mithibai College' } })
+    expect(reply.trips[0]!.straightKm).toBeGreaterThan(4)
+    expect(reply.trips[0]!.straightKm).toBeLessThan(8)
+    const sent = JSON.parse(sentMessageOf(requests.advisor[0]!)) as { trips: { from: string; to: string; howFar: string }[] }
+    expect(sent.trips).toEqual([expect.objectContaining({ from: 'This place', to: 'Mithibai College', howFar: 'not far' })])
+    // A reload shows the same map.
+    const goal = goalResponse.parse((await t.call('seeker', 'GET', `/v1/goals/${goalId}`)).json())
+    expect(goal.turns.at(-1)!.trips).toEqual(reply.trips)
+  })
+
+  it('measures a trip between two places that a question names, with no card, and none for a 2b question', async () => {
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'general' }) })
+    const between = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'distance between Andheri West and Powai?' })
+    expect(turnResponse.parse(between.json()).turns[1]!.trips.map((t) => [t.from.name, t.to.name])).toEqual([['Andheri West', 'Powai']])
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'], band: 'consequential' }) })
+    const legal = await t.call('seeker', 'POST', `/v1/goals/${goalId}/turns`, { text: 'is the road from Andheri West to Powai safe at night?' })
+    expect(turnResponse.parse(legal.json()).turns[1]!.trips).toEqual([])
   })
 
   it('refuses a card that the person cannot see, a card of the other kind, no card, five cards and a guest, before any model call', async () => {

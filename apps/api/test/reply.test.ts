@@ -128,6 +128,15 @@ describe('the composer', () => {
     expect(reply.text).not.toContain('your days')
   })
 
+  it('answers a question of the search, also with no label of the router, before the question of the interview', async () => {
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: ['question'] }), advisor: { deepseek: [answer(JSON.stringify({ text: '- Powai has several gyms near Hiranandani.' }))] } })
+    const { reply } = await send(await visitorGoal(), { text: 'is there a gym near Powai?' })
+    expect(reply.text).toMatch(/^- Powai has several gyms near Hiranandani\.\n\nBack to it: /)
+    fakeVendors({ deepseek: [scored({})], ...routed({ kinds: [] }), advisor: { deepseek: [answer(JSON.stringify({ text: '- Most societies allow a two-wheeler.' }))] } })
+    const unsure = await send(await visitorGoal(), { text: 'kya parking milegi?' })
+    expect(unsure.reply.text).toMatch(/^- Most societies allow a two-wheeler\./)
+  })
+
   it('sends the scripted reply when the composer misses its deadline, with no second attempt', async () => {
     const requests = fakeVendors({ deepseek: [room()], composer: { deepseek: [hang] } })
     const started = performance.now()

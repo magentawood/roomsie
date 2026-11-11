@@ -88,7 +88,7 @@ describe('the commute tip (Figma 94:22712)', () => {
 
 describe('the chips of the chat (T-09)', () => {
   const turn = (role: 'user' | 'assistant', chips: ChipSlot | null = null): GoalResponse['turns'][number] =>
-    ({ id: crypto.randomUUID(), role, text: 'text', chips, comparison: null, notes: false, sameMove: null, createdAt: new Date().toISOString() })
+    ({ id: crypto.randomUUID(), role, text: 'text', chips, comparison: null, notes: false, trips: [], sameMove: null, createdAt: new Date().toISOString() })
   const empty = formA.parse({})
 
   it('starts a new goal with the place types', () => {
@@ -128,7 +128,7 @@ describe('the chips of the chat (T-09)', () => {
 
 describe('"Same move?" (Figma 67:6489)', () => {
   const turn = (sameMove: { title: string } | null = null): GoalResponse['turns'][number] =>
-    ({ id: crypto.randomUUID(), role: 'assistant', text: 'text', chips: null, comparison: null, notes: false, sameMove, createdAt: new Date().toISOString() })
+    ({ id: crypto.randomUUID(), role: 'assistant', text: 'text', chips: null, comparison: null, notes: false, trips: [], sameMove, createdAt: new Date().toISOString() })
 
   it('shows its chips only under the newest turn', () => {
     expect(sameMoveOf([turn({ title: 'Room hunting in Powai' })])).toEqual({ title: 'Room hunting in Powai' })

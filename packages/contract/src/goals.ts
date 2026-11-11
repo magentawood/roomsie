@@ -2,6 +2,7 @@ import { z } from 'zod'
 import { budgetBandId, budgetBandOf, chipLabels, chipSlots, formA, type FormA, formASlots, identityPreference, intentLabels, intentsOf, type PlaceIntent, statedPreferences } from './form-a'
 import { communities, intents, lifestyleAnswers, lifestyleAxes, mustHaveKeys, mustHaveWeights, ownValues, religions, roomTypes, whosMovingAnswers, type LifestyleAxis } from './profiles'
 import { cardFacts, comparison, compareRequest, maxCompared } from './compare'
+import { maxTrips, tripFacts, trips } from './trips'
 import { observation } from './form-b'
 import { areaSlug, requiredText } from './shared'
 import { waitlistPlace } from './waitlist'
@@ -15,6 +16,8 @@ export const chatTurn = z.object({
   chips: z.enum(chipSlots).nullable().default(null).catch(null), // A chip slot of a newer API reads as no chips.
   comparison: comparison.nullable().default(null),
   notes: z.boolean().default(false),
+  /** The trips that the reply measured, for the map in the chat. A shape of a newer API reads as no trips. */
+  trips: trips.default([]).catch([]),
   /** The question "Same move?": the title of the other goal, for the chip "Same move: continue in …". */
   sameMove: z.object({ title: z.string() }).nullable().default(null).catch(null),
   createdAt: z.iso.datetime(),
@@ -206,6 +209,8 @@ export const assistantParts = z.strictObject({
   notesHint: z.boolean().default(false),
   /** The reply asks "Same move?", and holds the message until the answer. */
   held: heldMove.nullable().default(null),
+  /** The trips that the reply measured, for its map (the founders, 2026-11-11). */
+  trips: trips.default([]),
 })
 export type AssistantParts = z.infer<typeof assistantParts>
 
@@ -284,6 +289,7 @@ export const composerOutput = composerAnswer.strict()
 export const advisorInput = z.strictObject({
   version: z.literal(1).default(1), language: z.enum(replyLanguages), question: z.string().min(1),
   cards: z.array(cardFacts).min(1).max(maxCompared).optional(), cardsAre: z.enum(['selected', 'shown']).optional(),
+  trips: z.array(tripFacts).min(1).max(maxTrips).optional(),
 })
 export type AdvisorInput = z.output<typeof advisorInput>
 /** The answer of the advisor model. An empty text: no general answer, so the line "I've noted it" goes out. Not strict, as the extractor answer. */

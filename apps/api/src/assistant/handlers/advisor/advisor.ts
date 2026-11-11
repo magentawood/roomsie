@@ -21,11 +21,16 @@ const maxLength = 900
 export async function advisor(goalId: string, input: AdvisorInput, { req, models, settings }: Pick<AssistantDeps, 'req' | 'models' | 'settings'>) {
   if (!models) return null
   const data = advisorInput.parse(input)
-  const answer = await models.json({
-    req, role: 'advisor', session: goalId, schema: advisorAnswer, system: advisorPrompt,
-    messages: [{ role: 'user', content: JSON.stringify(data) }], deadlineMs: settings.advisorDeadlineMs,
-  }).catch(nullIfUnavailable)
-  const said = answer?.text.trim()
+  const ask = async () => {
+    const answer = await models.json({
+      req, role: 'advisor', session: goalId, schema: advisorAnswer, system: advisorPrompt,
+      messages: [{ role: 'user', content: JSON.stringify(data) }], deadlineMs: settings.advisorDeadlineMs,
+    }).catch(nullIfUnavailable)
+    return answer?.text.trim() ?? ''
+  }
+  // A word in the other script, as one Devanagari word in Latin Marathi, gets one more try (the eval of 2026-11-11).
+  const first = await ask()
+  const said = first && wrongScript(first, data.language) ? (await ask()) || first : first
   if (!said) return null
   const text = data.cards?.length === 1 ? asThisCard(said, 'age' in data.cards[0]! ? 'this person' : 'this place') : said
   const failure = text.length > maxLength ? 'too_long' : hasContact(text) ? 'contact' : null
@@ -33,3 +38,7 @@ export async function advisor(goalId: string, input: AdvisorInput, { req, models
   req.log.info({ role: 'advisor', failure }, 'the text of the advisor failed the check')
   return null
 }
+
+/** Hindi and Marathi in Devanagari need Devanagari; each other language has none. */
+export const wrongScript = (text: string, language: AdvisorInput['language']) =>
+  (language === 'hi' || language === 'mr') !== /[\u0900-\u097F]/.test(text)
