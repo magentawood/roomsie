@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { formA, panelReady, type FormA, type MatchResult, type ResultsResponse } from '@roomsie/contract'
-import { countLine, didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, resultsHeading, type PanelState } from './results'
+import { didntSayLine, formKey, joinPages, nextPage, panelTitle, panelUpdate, resultsHeading, resultsStack, stackCount, type PanelState } from './results'
 import { listing, testId } from './test-listing'
 
 const form = (patch: Record<string, unknown> = {}): FormA => formA.parse(patch)
@@ -35,8 +35,6 @@ describe('the panel header', () => {
   })
 
   it('counts the results', () => {
-    expect(countLine(1)).toBe('1 result')
-    expect(countLine(24)).toBe('24 results')
     expect([resultsHeading(1), resultsHeading(24)]).toEqual(['1 Result', '24 Results'])
   })
 })
@@ -138,5 +136,23 @@ describe('the pages of a search', () => {
     expect(nextPage({ page: 1, total: 20 })).toBeUndefined()
     expect(nextPage({ page: 2, total: 40 })).toBeUndefined()
     expect(nextPage({ page: 1, total: 0 })).toBeUndefined()
+  })
+})
+
+describe('the results card in the chat', () => {
+  const photo = (n: number) => [{ key: `listings/${testId(n)}/${testId(n)}.jpg` as const, url: `https://photos.example/${n}.jpg` }]
+  const place = (n: number, photos = photo(n)): MatchResult => ({ kind: 'listing', listing: listing({ id: testId(n), photos }), bestMatch: false, didntSay: [] })
+
+  it('stacks the first photo of the first three results, and keeps a gap for a result with no photo', () => {
+    const results = [place(1), place(2, []), place(3), place(4)]
+    expect(resultsStack(form({ intent: stated('room') }), results)).toEqual({
+      photos: ['https://photos.example/1.jpg', null, 'https://photos.example/3.jpg'], people: false,
+    })
+    expect(resultsStack(form({ intent: stated('room') }), [])).toEqual({ photos: [], people: false })
+  })
+
+  it('counts listings, or people for a search of people to rent with', () => {
+    expect(resultsStack(form({ intent: stated('flatmates') }), []).people).toBe(true)
+    expect([stackCount(1, false), stackCount(24, false), stackCount(1, true), stackCount(3, true)]).toEqual(['1 listing', '24 listings', '1 person', '3 people'])
   })
 })

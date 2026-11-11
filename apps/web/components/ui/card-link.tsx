@@ -18,6 +18,14 @@ export function CardLink({ href, onOpen, decorative, stretched, className, child
 /** A control on a card, as Select or Save: above the link of the whole card, so it keeps its own tap. */
 export const overCard = 'relative z-10'
 
+/**
+ * The box of a place or person card: no stroke, and the large shadow under the pointer or when the card is selected
+ * (State=Hover and State=Selected of 67:6750).
+ */
+export const cardBox = (selected?: boolean) =>
+  `group/card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-xl bg-primary transition-shadow hover:shadow-lg ${selected ? 'shadow-lg' : ''}`
+
+/** The Select tag and the match label on the photo: 10 px in on a phone, 8 px on a computer (the Tag of 67:6750). */
 export function CardLabel({ children }: { children?: ReactNode }) {
-  return children ? <div className="absolute top-3 left-3 z-10 lg:top-1.75 lg:left-1.75">{children}</div> : null
+  return children ? <div className="absolute top-2.5 left-2.5 z-10 lg:top-2 lg:left-2">{children}</div> : null
 }

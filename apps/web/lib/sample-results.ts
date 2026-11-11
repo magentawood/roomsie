@@ -21,6 +21,7 @@ export const sampleForm: FormA = formA.parse({
 const live = { status: 'live', areaSlug: 'powai-vikhroli', availableFrom: '2026-11-15', verified: true } as const
 
 const place = (n: number, patch: Partial<ListingResponse>): ListingResponse => emptyListing({ id: id(n), ...live, ...patch })
+const flatmate = (name: string) => ({ name, age: null, whatTheyDo: null, food: null, photoKey: null, photoUrl: null })
 
 const person = (n: number, patch: Partial<CardResponse>): CardResponse => ({
   id: id(n), fullName: 'Divya Trivedi', age: 26, jobRole: 'Business analyst', commuteAddress: null,
@@ -38,10 +39,10 @@ const personMatch = (card: CardResponse, labels: Labels = {}): MatchResult => ({
 const sampleMatches: Found = {
   total: 8,
   results: [
-    placeMatch(place(1, { kind: 'room_in_flat', placeType: '3bhk', roomType: 'private', rates: [{ sharing: null, rent: 18000, deposit: 36000 }], vegOnlyKitchen: true, smokingAllowed: false, alcoholAllowed: false }), { bestMatch: true }),
+    placeMatch(place(1, { kind: 'room_in_flat', placeType: '3bhk', roomType: 'private', rates: [{ sharing: null, rent: 18000, deposit: 36000 }], vegOnlyKitchen: true, smokingAllowed: false, alcoholAllowed: false, guests: 'welcome', flatmates: [flatmate('Sienna'), flatmate('Pippa')] }), { bestMatch: true }),
     personMatch(person(2, { lifestyle: { food: 'veg', smoking: 'non_smoker', drinks: 'none_at_home', guests: 'guests_welcome', sleep: 'night_owl' } }), { bestMatch: true }),
-    placeMatch(place(3, { kind: 'owner_flat', placeType: '1bhk', furnishing: 'semi', rates: [{ sharing: null, rent: 24000, deposit: 72000 }], vegOnlyKitchen: true, smokingAllowed: false })),
-    placeMatch(place(4, { kind: 'pg', pgName: 'Shanti Ladies PG', rates: [{ sharing: 'single', rent: 16000, deposit: 16000 }, { sharing: 'double', rent: 11000, deposit: 11000 }], vegOnlyKitchen: true, smokingAllowed: false })),
+    placeMatch(place(3, { kind: 'owner_flat', placeType: '1bhk', furnishing: 'semi', bathroom: 'attached', rates: [{ sharing: null, rent: 24000, deposit: 72000 }], vegOnlyKitchen: true, smokingAllowed: false })),
+    placeMatch(place(4, { kind: 'pg', pgName: 'Shanti Ladies PG', whoCanMoveIn: 'women', whoIsWelcome: ['working_professionals'], sharing: ['single', 'double'], meals: 'veg_included', curfew: '10pm', rates: [{ sharing: 'single', rent: 16000, deposit: 16000 }, { sharing: 'double', rent: 11000, deposit: 11000 }], vegOnlyKitchen: true, smokingAllowed: false })),
     placeMatch(place(5, { kind: 'broker_flat', placeType: '2bhk', furnishing: 'fully', brokerage: 25000, rates: [{ sharing: null, rent: 23000, deposit: 69000 }], vegOnlyKitchen: true, smokingAllowed: false, verified: false })),
     personMatch(person(6, { fullName: 'Aarav Mehta', age: 19, jobRole: null, whosMoving: 'student', managedByParent: true, verified: false, bio: null })),
     personMatch(person(7, { fullName: 'Sneha Kulkarni', age: 24, jobRole: 'UX designer', lifestyle: { food: 'veg', guests: 'weekends_only' } }), { didntSay: ['non_smokers'] }),

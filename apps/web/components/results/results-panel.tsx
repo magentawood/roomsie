@@ -82,8 +82,8 @@ function ResultGrid({ results, picks, onOpen }: { results: MatchResult[]; picks?
         return (
           <li key={card.id}>
             {result.kind === 'person'
-              ? <PersonCard card={result.card} label={label} onOpen={() => onOpen(result)} />
-              : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaLabels[result.listing.areaSlug] : undefined} label={label} onOpen={() => onOpen(result)} />}
+              ? <PersonCard card={result.card} label={label} selected={picked} onOpen={() => onOpen(result)} />
+              : <PlaceCard listing={result.listing} areaName={result.listing.areaSlug ? areaLabels[result.listing.areaSlug] : undefined} label={label} selected={picked} onOpen={() => onOpen(result)} />}
           </li>
         )
       })}

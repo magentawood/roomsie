@@ -80,7 +80,7 @@ export function PersonDetail({ person, panel }: { person: PersonResponse; panel?
         <header className="flex flex-col gap-1.5 border-b border-secondary pb-4">
           <div className="flex flex-wrap items-center justify-between gap-x-5 gap-y-2">
             <h1 className="text-lg font-semibold text-primary">{person.fullName}</h1>
-            {person.verified && <Badge tone="success">Verified</Badge>}
+            {person.verified && <Badge tone="success" size="lg" verified>Verified</Badge>}
             {person.managedByParent && <Badge tone="gray" dot={false}>Managed by a parent</Badge>}
           </div>
           <p className="text-md text-tertiary">{aboutLine(person)}</p>
