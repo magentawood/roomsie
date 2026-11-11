@@ -16,13 +16,13 @@ The quantity that the assistant can say depends on the cost of an incorrect answ
 |---|---|
 | 1 Core | The interview. |
 | 2a Adjacent, general | Answer. Prefer the corpus and cite it. If the corpus has no entry, signed-in users get a web search, and visitors get model knowledge, plainly hedged (PD7a). Until T-38, each person gets model knowledge, plainly hedged. Then the interview question comes again, with its chips. |
-| 2b Adjacent, consequential | Law, tax, health, area safety, claims about a listing or person. **Corpus only. Never improvised.** If no article applies, hand off. **Never a bare refusal.** Until the articles of T-38, a fixed hand-off line names real sources. |
+| 2b Adjacent, consequential | Law, tax, health, area safety, whether a listing or person can be trusted. **Corpus only. Never improvised.** If no article applies, hand off. **Never a bare refusal.** Until the articles of T-38, a fixed hand-off line names real sources. |
 | 3 Out of scope | One short, warm scripted line, **no model call after the router**. Ask the interview question again. It counts in the turn cap (PD9). |
 | 4 Adversarial | Scripted and logged. No model call after the router. |
 | 5 Sensitive | **Never redirected.** [assistant-risks.md](../assistant-risks.md) section 4.4 applies. A stated community preference is not in this band ([PD3c](pd-03c-exclusionary-preferences.md)). The observer keeps no note: see the consequences. |
 
 - Area safety is in 2b on purpose. Never give a verdict from model knowledge. Answer with corpus facts: lighting, transport at night, and what roomsie users in the area said.
-- Adversarial defences: SQL ranks, not the assistant. It states no facts about listings, except about the cards that the person selected: code builds the table of a comparison from the database fields (T-49), and the advisor answers a question about the cards from facts that code took from the database (2026-11-11). No model reads a text of a lister or a person: no description, no PG name, no bio, no person's name, and a station or a job only when it looks like a name. Assume the system prompt leaks. Third-party text is always data.
+- Adversarial defences: SQL ranks, not the assistant. It states no facts about listings, except about the cards that the person selected or has on the screen: code builds the table of a comparison from the database fields (T-49), and the advisor answers a question about the cards from facts that code took from the database (2026-11-11). No model reads a text that a lister or a person wrote. Assume the system prompt leaks. Third-party text is always data.
 - The router decides the band one time, at low cost, before all expensive calls.
 - **Before launch, seed the corpus with ~30 articles** from interviews. Log all band-2 questions, and flag the answers from model knowledge. When the corpus cannot answer a question, that question becomes the next article.
 - Band 2 against band 3: adjacent means that the question affects the housing decision that the user makes at this time. Keep it narrow at launch. Then use the logs to make it wider.

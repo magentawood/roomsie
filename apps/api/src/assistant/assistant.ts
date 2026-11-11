@@ -102,7 +102,9 @@ const holds = (label: TurnLabel, turn: Pick<TurnState, 'failed' | 'mentionsOwnVa
  * The steps of a typed turn (PD7a). The extractor starts with the router, so the router adds no wait (T-34).
  * `sameMove`: on the first message of a new goal, the check for an open goal of the same move. A match holds the message.
  */
-export async function runTurn({ context, cards, sameMove, ...given }: TurnInput & { text: string; context: ComposerContext; cards: SelectedCards | null; sameMove?: SameMoveCheck }, deps: AssistantDeps) {
+export async function runTurn({ context, cards, shown = null, sameMove, ...given }: TurnInput & {
+  text: string; context: ComposerContext; cards: SelectedCards | null; shown?: SelectedCards | null; sameMove?: SameMoveCheck
+}, deps: AssistantDeps) {
   const input = { ...given, text: withoutCardLabel(given.text) }
   const start: TurnState = { ...input, ...noExtraction(input.form, false) }
   const [label, extracted] = await Promise.all([routeTurn(input, deps), extractor(start, deps)])
@@ -120,11 +122,16 @@ export async function runTurn({ context, cards, sameMove, ...given }: TurnInput 
     const held = { ...target, values: valuesOf(turn.form, turn.changed), ambiguous: turn.ambiguous, outsidePlaces: turn.outsidePlaces, typed: true }
     return { form: input.form, reply: heldReply(held, turn.language), conflicts: [], label, ownValues: turn.ownValues, hiddenPreferences: {}, outsidePlaces: [], notePlan, held: true }
   }
+  // With no selection, a question about the search reads the cards on the screen: "how far is this listing?" (the founders, 2026-11-11).
+  const seen = !notes && !asked && shown && comparesOn(label) && label.band !== 'consequential' ? shown : null
+  const facts = asked ? { cards: asked.facts, cardsAre: 'selected' as const } : seen ? { cards: seen.facts, cardsAre: 'shown' as const } : {}
   // A general question of band 2a gets a short answer before the open question, and a question about cards an answer from their
   // facts (PD10). It is one more call, only on such a turn.
-  const advice = !notes && (asked || label.band === 'general')
-    ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text, ...(asked && { cards: asked.facts }) }, deps) : null
-  const fixed = notes ? notesReply(context.formB.length > 0, turn) : asked ? cardsReply(asked, advice, turn) : null
+  const advice = !notes && (asked || seen || label.band === 'general')
+    ? await advisor(input.goalId, { version: 1, language: turn.language, question: input.text, ...facts }, deps) : null
+  // A core question about the cards on the screen gets only the answer. A general one keeps its hedge and the open question.
+  const fixed = notes ? notesReply(context.formB.length > 0, turn) : asked ? cardsReply(asked, advice, turn)
+    : seen && advice && label.band === 'core' ? cardsReply({ comparison: null, facts: seen.facts }, advice, turn) : null
   const scripted = fixed ?? await replyWriter(turn, deps, advice)
   const reply = !fixed && label.band === 'core' && !turn.failed && !hidden ? await composeReply(scripted, turn, context, deps) : scripted
   return {

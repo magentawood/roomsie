@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import type { Comparison } from '@roomsie/contract'
+import type { Comparison, MatchResult } from '@roomsie/contract'
 import { toggled } from './chat'
-import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, firstFields, fieldsOf, isFull, questionOf, storedPick, tableOf, toggledPick, type Picked } from './compare'
+import { aboutOf, askedPick, askPlaceholder, compareOf, compareRefusal, firstFields, fieldsOf, isFull, questionOf, shownOf, storedPick, tableOf, toggledPick, type Picked } from './compare'
 
 const place = (id: string): Picked => ({ kind: 'place', id, name: `Place ${id}` })
 const person = (id: string): Picked => ({ kind: 'person', id, name: `Person ${id}` })
@@ -125,5 +125,15 @@ describe('the refusal of a comparison', () => {
     expect(compareRefusal('not valid: body')).toMatch(/few minutes/)
     expect(compareRefusal('not valid: compare')).toMatch(/no longer open/)
     expect(compareRefusal('not valid: text')).toBeNull()
+  })
+})
+
+describe('the cards on the screen of a question with no selection', () => {
+  const listing = (id: string) => ({ kind: 'listing', listing: { id, kind: 'room_in_flat', pgName: null, placeType: '2bhk', roomType: 'private' }, bestMatch: false, didntSay: [] }) as unknown as MatchResult
+  it('sends the open card, else the first four results, and nothing with no results', () => {
+    const results = ['a', 'b', 'c', 'd', 'e'].map(listing)
+    expect(shownOf({ kind: 'person', id: 'p' }, results)).toEqual({ kind: 'person', ids: ['p'] })
+    expect(shownOf(null, results)).toEqual({ kind: 'place', ids: ['a', 'b', 'c', 'd'] })
+    expect(shownOf(null, [])).toBeNull()
   })
 })

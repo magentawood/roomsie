@@ -69,6 +69,18 @@ export function compareOf(picked: Picked[], resultIds: string[]): CompareRequest
   return { kind: picked[0]!.kind, ids: picked.map((p) => p.id).toSorted((a, b) => rank(a) - rank(b)) }
 }
 
+/**
+ * With no selection, the cards on the screen of the person go with a question: the card open in the results panel, or the first
+ * results of one kind, best match first. "How far is this listing?" then has its card (the founders, 2026-11-11). Null: none.
+ */
+export function shownOf(open: { kind: CompareKind; id: string } | null, results: MatchResult[]): CompareRequest | null {
+  if (open) return { kind: open.kind, ids: [open.id] }
+  const first = results[0]
+  if (!first) return null
+  const cards = results.map(pickOf).filter((card) => card.kind === pickOf(first).kind).slice(0, maxCompared)
+  return { kind: cards[0]!.kind, ids: cards.map((card) => card.id) }
+}
+
 type Option<K extends CompareKind> = Extract<Comparison, { kind: K }>['options'][number]
 type Field<K extends CompareKind> = { label: string; text: (option: Option<K>) => string | null }
 

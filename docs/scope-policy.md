@@ -46,7 +46,7 @@ Scope: questions where an incorrect answer causes real harm:
 - Exact facts about stamp duty, registration or tax
 - A health question
 - **Whether an area is safe**
-- A factual claim about one listing or person
+- Whether a listing or a person can be trusted
 
 Rules:
 
